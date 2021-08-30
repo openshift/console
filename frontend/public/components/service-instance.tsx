@@ -12,7 +12,7 @@ import {
   serviceCatalogStatus,
   referenceForModel,
 } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { ExternalLink } from './utils/link';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { ResourceIcon } from './utils/resource-icon';
@@ -297,10 +297,10 @@ const ServiceInstancesTableHeader = () => {
 };
 ServiceInstancesTableHeader.displayName = 'ServiceInstancesTableHeader';
 
-const ServiceInstancesTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const ServiceInstancesTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   const clusterServiceClassRefName = _.get(obj, 'spec.clusterServiceClassRef.name');
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(ServiceInstanceModel)}
@@ -339,7 +339,7 @@ const ServiceInstancesTableRow: RowFunction<K8sResourceKind> = ({ obj, index, ke
           resource={obj}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

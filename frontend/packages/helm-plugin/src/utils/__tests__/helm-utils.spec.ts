@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import { t } from '../../../../../__mocks__/i18next';
 import {
   mockHelmReleases,
   mockHelmChartData,
@@ -21,8 +21,6 @@ import {
   getChartEntriesByName,
   loadHelmManifestResources,
 } from '../helm-utils';
-
-const t = (key: TFunction) => key;
 
 describe('Helm Releases Utils', () => {
   it('should return deployed or failed status for a helm release', () => {
@@ -76,14 +74,11 @@ describe('Helm Releases Utils', () => {
   it('should return the chart versions, concatenated with the App Version, available for the helm chart', () => {
     const chartVersions = getChartVersions(mockHelmChartData, t);
     expect(chartVersions).toEqual({
-      '1.0.1--IBM Helm Repo':
-        '1.0.1helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.1--Red Hat Helm Repo':
-        '1.0.1helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.2--IBM Helm Repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.2--Red Hat Helm Repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.3--IBM Helm Repo':
-        '1.0.3helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
+      '1.0.1--IBM Helm Repo': '1.0.1 / App Version 3.10.5 (Provided by IBM Helm Repo)',
+      '1.0.1--Red Hat Helm Repo': '1.0.1 / App Version 3.10.5 (Provided by Red Hat Helm Repo)',
+      '1.0.2--IBM Helm Repo': '1.0.2 (Provided by IBM Helm Repo)',
+      '1.0.2--Red Hat Helm Repo': '1.0.2 (Provided by Red Hat Helm Repo)',
+      '1.0.3--IBM Helm Repo': '1.0.3 / App Version 3.12 (Provided by IBM Helm Repo)',
     });
   });
 

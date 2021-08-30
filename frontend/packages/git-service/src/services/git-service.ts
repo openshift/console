@@ -12,6 +12,8 @@ export function getGitService(
   ref?: string,
   contextDir?: string,
   secret?: SecretKind,
+  devfilePath?: string,
+  dockerfilePath?: string,
 ): BaseService {
   let secretType: GitSecretType;
   let secretContent: any;
@@ -33,6 +35,8 @@ export function getGitService(
     contextDir,
     secretType,
     secretContent,
+    devfilePath,
+    dockerfilePath,
   };
 
   switch (gitProvider) {

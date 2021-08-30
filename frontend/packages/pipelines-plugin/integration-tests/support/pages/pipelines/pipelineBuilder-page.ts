@@ -58,8 +58,8 @@ export const pipelineBuilderPage = {
       .type(pipelineName);
   },
   AddTask: (taskName: string = 'kn') => {
-    cy.get('input.odc-quick-search-bar__input').type(taskName);
-    cy.get('button.odc-quick-search-details__form-button').click();
+    cy.get('input.ocs-quick-search-bar__input').type(taskName);
+    cy.get('button.ocs-quick-search-details__form-button').click();
   },
   selectTask: (taskName: string = 'kn') => {
     cy.get('body').then(($body) => {

@@ -38,6 +38,7 @@ import {
   getControlPlaneHealth,
   getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
+import { USER_PREFERENCES_BASE_URL } from './components/user-preferences/const';
 import * as models from './models';
 import {
   API_SERVERS_UP,
@@ -256,6 +257,19 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/console-operator/ConsoleOperatorConfig' /* webpackChunkName: "console-operator-config" */
           )
         ).ConsoleOperatorConfigDetailsPage,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [USER_PREFERENCES_BASE_URL, `${USER_PREFERENCES_BASE_URL}/:group`],
+      loader: async () =>
+        (
+          await import(
+            './components/user-preferences/UserPreferencePage' /* webpackChunkName: "co-user-preference" */
+          )
+        ).default,
     },
   },
 ];

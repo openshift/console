@@ -54,6 +54,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
 
   const uiSchema = React.useMemo(() => getJSONSchemaOrder(formSchema, {}), [formSchema]);
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'helm.installUgradeForm.editor.lastView';
+
   const formEditor = formData && formSchema && (
     <DynamicFormField
       name="formData"
@@ -139,6 +141,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
             name="editorType"
             formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
             yamlContext={{ name: 'yamlData', editor: yamlEditor }}
+            lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
           />
         )}
       </FormBody>

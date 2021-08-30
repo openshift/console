@@ -4,7 +4,7 @@ import { StarIcon } from '@patternfly/react-icons';
 import { info, sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { RowFunction, Table } from '@console/internal/components/factory';
+import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { useBaseImages } from '../../../hooks/use-base-images';
@@ -79,6 +79,17 @@ const vmTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
 
 vmTemplateTableHeader.displayName = 'VMTemplateTableHeader';
 
+const getRowProps = () => ({
+  className: 'kv-vm-template__row',
+});
+
+const VMRow: React.FC<RowFunctionArgs> = (props) =>
+  props.obj.template ? (
+    <VMTemplateRow {...props} obj={props.obj.template} />
+  ) : (
+    <VMCustomizeRow {...props} obj={props.obj.customizeTemplate} />
+  );
+
 const VMTemplateTable: React.FC<VMTemplateTableProps> = (props) => {
   const { t } = useTranslation();
   const [isPinned, togglePin] = usePinnedTemplates();
@@ -100,15 +111,6 @@ const VMTemplateTable: React.FC<VMTemplateTableProps> = (props) => {
     baseImagePods,
   ]);
 
-  const row = React.useCallback<RowFunction<VirtualMachineTemplateBundle>>(
-    (rowProps) =>
-      rowProps.obj.template ? (
-        <VMTemplateRow {...rowProps} obj={rowProps.obj.template} />
-      ) : (
-        <VMCustomizeRow {...rowProps} obj={rowProps.obj.customizeTemplate} />
-      ),
-    [],
-  );
   return (
     <Stack hasGutter className="kubevirt-vm-template-list">
       <StackItem className="kv-vm-template__support">
@@ -119,7 +121,7 @@ const VMTemplateTable: React.FC<VMTemplateTableProps> = (props) => {
           {...props}
           aria-label={t('kubevirt-plugin~Virtual Machine Templates')}
           Header={() => vmTemplateTableHeader(!namespace, t)}
-          Row={row}
+          Row={VMRow}
           virtualize
           customData={{
             dataVolumes,
@@ -148,6 +150,7 @@ const VMTemplateTable: React.FC<VMTemplateTableProps> = (props) => {
                 obj.template ? obj.template.variants[0] : obj.customizeTemplate.template,
               ),
           }}
+          getRowProps={getRowProps}
         />
       </StackItem>
     </Stack>

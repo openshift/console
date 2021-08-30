@@ -10,6 +10,6 @@ export default {
   },
   spec: {
     config:
-      '{\n    "cniVersion": "0.3.1",\n    "name": "br0-l2",\n    "plugins": [{\n        "type": "bridge",\n        "bridge": "br0",\n        "ipam": {}\n    }]\n}\n',
+      '{"cniVersion": "0.3.1","name": "br0-l2", "plugins": [{"type": "bridge", "bridge": "br0", "ipam": {}}]}',
   },
 };

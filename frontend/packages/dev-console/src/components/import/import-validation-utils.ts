@@ -46,7 +46,7 @@ const hasDomain = (url: string, domain: string): boolean => {
   );
 };
 
-export const detectGitType = (url: string): string => {
+export const detectGitType = (url: string): GitTypes => {
   if (!gitUrlRegex.test(url)) {
     // Not a URL
     return GitTypes.invalid;
@@ -78,6 +78,9 @@ export const detectGitRepoName = (url: string): string | undefined => {
   if (!gitUrlRegex.test(url)) {
     return undefined;
   }
-  const name = url.split('/').pop();
+  const name = url
+    .replace(/\/$/, '')
+    .split('/')
+    .pop();
   return createComponentName(name);
 };

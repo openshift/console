@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { EventingTriggerModel, EventingBrokerModel } from '../../../models';
@@ -10,11 +10,8 @@ import { tableColumnClasses } from './trigger-table';
 type TriggerRowType = {
   broker?: string;
 };
-const TriggerRow: RowFunction<EventTriggerKind, TriggerRowType> = ({
+const TriggerRow: React.FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = ({
   obj,
-  index,
-  key,
-  style,
   customData,
 }) => {
   const {
@@ -31,7 +28,7 @@ const TriggerRow: RowFunction<EventTriggerKind, TriggerRowType> = ({
     ? getCondition(obj.status.conditions, TriggerConditionTypes.Ready)
     : null;
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData columnID="name" className={tableColumnClasses[0]}>
         <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
@@ -73,7 +70,7 @@ const TriggerRow: RowFunction<EventTriggerKind, TriggerRowType> = ({
       <TableData className={tableColumnClasses[8]}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

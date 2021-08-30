@@ -31,6 +31,7 @@ import {
   PipelineModel,
   TaskModel,
   EventListenerModel,
+  RepositoryModel,
 } from '../models';
 import {
   PipelineRunKind,
@@ -436,6 +437,8 @@ export const pipelinesTab = (kindObj: K8sKind) => {
       return 'trigger-bindings';
     case ClusterTriggerBindingModel.kind:
       return 'cluster-trigger-bindings';
+    case RepositoryModel.kind:
+      return 'repositories';
     default:
       return null;
   }

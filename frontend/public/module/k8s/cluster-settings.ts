@@ -210,11 +210,11 @@ Browser: ${window.navigator.userAgent}
 `);
   return _.isEmpty(prerelease)
     ? {
-        label: i18next.t('public~Open Support Case with Red Hat'),
+        label: i18next.t('public~Open support case with Red Hat'),
         href: `https://access.redhat.com/support/cases/#/case/new?product=OpenShift%20Container%20Platform&version=${major}.${minor}&clusterId=${cv.spec.clusterID}`,
       }
     : {
-        label: i18next.t('public~Report Bug to Red Hat'),
+        label: i18next.t('public~Report bug to Red Hat'),
         href: `https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform&version=${bugzillaVersion}&cf_environment=${environment}`,
       };
 };
@@ -250,7 +250,7 @@ export const getOCMLink = (clusterID: string): string =>
   `https://console.redhat.com/openshift/details/${clusterID}`;
 
 export const getConditionUpgradeableFalse = (resource) =>
-  resource.status?.conditions.find(
+  resource.status?.conditions?.find(
     (c) => c.type === 'Upgradeable' && c.status === K8sResourceConditionStatus.False,
   );
 

@@ -30,3 +30,6 @@ export const GROUP_PADDING = [DEFAULT_GROUP_PAD];
 
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 export const UNASSIGNED_KEY = '#UNASSIGNED_APP#';
+
+export const ALLOW_EXPORT_APP = 'ALLOW_EXPORT_APP';
+export const EXPORT_CR_NAME = 'primer';

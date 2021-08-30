@@ -183,6 +183,9 @@ export const createKafkaConnection = async (
     metadata: {
       name: kafkaName,
       namespace: currentNamespace,
+      labels: {
+        'app.kubernetes.io/component': 'external-service',
+      },
     },
     spec: {
       kafkaId,

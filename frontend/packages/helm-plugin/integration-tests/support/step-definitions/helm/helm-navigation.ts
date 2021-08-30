@@ -41,14 +41,13 @@ Then('Install Helm Chart page is displayed', () => {
 
 Then('release name displays as {string}', (name: string) => {
   cy.get(catalogPO.installHelmChart.releaseName).should('have.value', name);
-  cy.get(catalogPO.installHelmChart.cancel).click();
 });
 
 Given('user is at Install Helm Chart page', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChart);
-  catalogPage.search('Nodejs Ex K v0.2.1');
-  catalogPage.selectHelmChartCard('Nodejs Ex K v0.2.1');
+  catalogPage.search('Nodejs Ex K');
+  catalogPage.selectHelmChartCard('Nodejs Ex K');
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
 
@@ -154,4 +153,19 @@ When('user selects {string} option from Type section', (catalogType: string) => 
 
 Then('user can see {string} card on the Add page', (cardName: string) => {
   addPage.verifyCard(cardName);
+});
+
+Then('form view radio button is selected by default', () => {
+  cy.get('#form-radiobutton-editorType-form-field').should('be.checked');
+});
+
+Then('yaml view radio button is enabled', () => {
+  cy.get('#form-radiobutton-editorType-yaml-field').should('not.be.checked');
+});
+
+Then('Ingress, Service, Image sections are displayed in form view', () => {
+  cy.get('#root_ingress_field-group').should('be.visible');
+  cy.get('#root_service_accordion-toggle').should('be.visible');
+  cy.get('#root_image_field-group').should('be.visible');
+  cy.get(catalogPO.installHelmChart.cancel).click();
 });

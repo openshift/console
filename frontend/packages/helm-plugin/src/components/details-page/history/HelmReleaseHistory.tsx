@@ -19,6 +19,10 @@ interface HelmReleaseHistoryProps {
   customData: HelmRelease;
 }
 
+const getRowProps = (obj) => ({
+  id: obj.revision,
+});
+
 const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
   match,
   obj,
@@ -53,6 +57,17 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
     };
   }, [helmReleaseName, namespace, memoizedObj, t]);
 
+  const totalRevisions = revisions?.length;
+  const latestHelmReleaseVersion = latestHelmRelease?.version;
+
+  const customData = React.useMemo(
+    () => ({
+      totalRevisions,
+      latestHelmReleaseVersion,
+    }),
+    [latestHelmReleaseVersion, totalRevisions],
+  );
+
   if (loadError) {
     return <StatusBox loaded loadError={loadError} label={t('helm-plugin~Helm Release history')} />;
   }
@@ -63,16 +78,10 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
       loaded={revisionsLoaded}
       sortBy="version"
       sortOrder={SortByDirection.desc}
-      resourceRow={(args) =>
-        HelmReleaseHistoryRow({
-          ...args,
-          customData: {
-            totalRevisions: revisions?.length,
-            latestHelmReleaseVersion: latestHelmRelease?.version,
-          },
-        })
-      }
+      customData={customData}
+      ResourceRow={HelmReleaseHistoryRow}
       resourceHeader={HelmReleaseHistoryHeader(t)}
+      getRowProps={getRowProps}
     />
   );
 };

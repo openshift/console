@@ -482,7 +482,7 @@ export const IngressModel: K8sKind = {
   // t('public~Ingresses')
   labelPluralKey: 'public~Ingresses',
   apiGroup: 'networking.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   plural: 'ingresses',
   abbr: 'I',
   namespaced: true,
@@ -1103,7 +1103,7 @@ export const CSIDriverModel: K8sKind = {
   labelPlural: 'CSIDrivers',
   // t('public~CSIDrivers')
   labelPluralKey: 'public~CSIDrivers',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   apiGroup: 'storage.k8s.io',
   plural: 'csidrivers',
   abbr: 'CSI',

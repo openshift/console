@@ -273,7 +273,7 @@ export const limitsValidationSchema = (t: TFunction) =>
 
 export const imageValidationSchema = (t: TFunction) =>
   yup.object().when('build', {
-    is: (build) => build.strategy !== 'Docker' && build.strategy !== 'Devfile',
+    is: (build) => build.strategy === 'Source',
     then: yup.object().shape({
       selected: yup.string().required(t('devconsole~Required')),
       tag: yup.string().required(t('devconsole~Required')),
@@ -303,6 +303,7 @@ export const dockerValidationSchema = (t: TFunction) =>
       containerPort: yup
         .number()
         .test(isInteger(t('devconsole~Container port should be an integer'))),
+      dockerfileHasError: yup.boolean().oneOf([false]),
     }),
   });
 

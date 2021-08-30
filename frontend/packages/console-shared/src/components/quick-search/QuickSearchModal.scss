@@ -1,0 +1,10 @@
+.ocs-quick-search-modal {
+  --pf-c-modal-box--BackgroundColor: none !important;
+  box-shadow: none !important;
+  &__no-backdrop {
+    .pf-c-backdrop {
+      background: none;
+      position: absolute;
+    }
+  }
+}

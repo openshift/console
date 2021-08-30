@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { RowFunction, Table } from '@console/internal/components/factory';
+import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
   useK8sWatchResource,
@@ -27,7 +27,7 @@ import { VMSnapshotRow } from './vm-snapshot-row';
 export type VMSnapshotsTableProps = {
   data?: any[];
   customData?: object;
-  row: RowFunction;
+  Row: React.FC<RowFunctionArgs>;
   columnClasses: string[];
   loadError: any;
   loaded: boolean;
@@ -36,7 +36,7 @@ export type VMSnapshotsTableProps = {
 export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
   data,
   customData,
-  row: Row,
+  Row,
   columnClasses,
   loaded,
   loadError,
@@ -154,7 +154,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
             isDisabled,
             isVMRunning: isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi),
           }}
-          row={VMSnapshotRow}
+          Row={VMSnapshotRow}
           columnClasses={snapshotsTableColumnClasses}
         />
       </div>

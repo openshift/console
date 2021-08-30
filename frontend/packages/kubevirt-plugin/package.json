@@ -33,9 +33,6 @@
       ],
       "kubevirt-v2v": [
         "integration-tests/v2v/*.scenario.ts"
-      ],
-      "kubevirt-gating": [
-        "integration-tests/tests/vm.tab.snapshots.scenario.ts"
       ]
     },
     "exposedModules": {
@@ -67,7 +64,8 @@
       "dashboardHealth": "src/components/dashboards-page/overview-dashboard/health.ts",
       "dashboardInventory": "src/components/dashboards-page/overview-dashboard/inventory.tsx",
       "dashboardActivity": "src/components/dashboards-page/overview-dashboard/activity.tsx",
-      "topology": "src/topology/topology-plugin.ts"
+      "topology": "src/topology/topology-plugin.ts",
+      "kubevirtFlags": "src/flags"
     }
   }
 }

@@ -3,7 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Table, TableData, TableRow } from '@console/internal/components/factory';
+import { Table, TableData } from '@console/internal/components/factory';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
@@ -58,9 +58,9 @@ const FileSystemsTableHeader = (t: TFunction) => () => {
 };
 FileSystemsTableHeader.displayName = 'FileSystemsTableHeader';
 
-const FileSystemTableRow = ({ obj: fileSystem, index, key, style }) => {
+const FileSystemTableRow = ({ obj: fileSystem }) => {
   return (
-    <TableRow id={fileSystem?.metadata?.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>{fileSystem?.metadata?.name}</TableData>
       <TableData className={tableColumnClasses[1]}>
         {fileSystem?.metadata?.fileSystemType}
@@ -68,7 +68,7 @@ const FileSystemTableRow = ({ obj: fileSystem, index, key, style }) => {
       <TableData className={tableColumnClasses[2]}>{fileSystem?.metadata?.mountPoint}</TableData>
       <TableData className={tableColumnClasses[3]}>{fileSystem?.metadata?.totalBytes}</TableData>
       <TableData className={tableColumnClasses[4]}>{fileSystem?.metadata?.usedBytes}</TableData>
-    </TableRow>
+    </>
   );
 };
 

@@ -116,10 +116,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           } = currentCSVAnnotations;
 
           const subscription =
-            loaded &&
-            subscriptionFor(subscriptions?.data)(operatorGroups?.data)(pkg.status.packageName)(
-              namespace,
-            );
+            loaded && subscriptionFor(subscriptions?.data)(operatorGroups?.data)(pkg)(namespace);
 
           const clusterServiceVersion =
             loaded &&
@@ -139,6 +136,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             isInstalling:
               loaded &&
               !_.isNil(subscription) &&
+              !_.isNil(clusterServiceVersion?.status?.phase) &&
               clusterServiceVersion?.status?.phase !== 'Succeeded',
             subscription,
             installState: installed ? InstalledState.Installed : InstalledState.NotInstalled,

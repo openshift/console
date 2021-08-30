@@ -133,7 +133,6 @@ export const getOCSRequestData = (
   selectedArbiterZone?: string,
   stretchClusterChecked?: boolean,
   availablePvsCount?: number,
-  name?: string,
 ): StorageClusterKind => {
   const scName: string = storageClass.name;
   const isNoProvisioner: boolean = storageClass?.provisioner === NO_PROVISIONER;
@@ -149,7 +148,7 @@ export const getOCSRequestData = (
     apiVersion: 'ocs.openshift.io/v1',
     kind: 'StorageCluster',
     metadata: {
-      name: name || OCS_INTERNAL_CR_NAME,
+      name: OCS_INTERNAL_CR_NAME,
       namespace: CEPH_STORAGE_NAMESPACE,
     },
     spec: {
@@ -177,12 +176,12 @@ export const getOCSRequestData = (
         ),
       ],
       ...Object.assign(
-        publicNetwork
+        publicNetwork || clusterNetwork
           ? {
               network: {
                 provider: 'multus',
                 selectors: {
-                  public: publicNetwork,
+                  ...Object.assign(publicNetwork ? { public: publicNetwork } : {}),
                   ...Object.assign(clusterNetwork ? { cluster: clusterNetwork } : {}),
                 },
               },

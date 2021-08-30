@@ -111,14 +111,31 @@ spec:
     channel: ${HCO_SUBSCRIPTION_CHANNEL}
 EOF
 
-# Wait
-sleep 300
+# Wait for HCO cr to be created
+sleep 60
 
-oc create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/deploy/hco.cr.yaml \
-  -n kubevirt-hyperconverged
+for i in {1..20}
+do
+  echo "Attempt ${i}/20"
+  if oc create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/deploy/hco.cr.yaml -n kubevirt-hyperconverged; then
+    echo "HCO cr is created"
+    break
+  fi
+  sleep 30
+done
 
 # Wait for kubevirt virt-operator to be available
-oc -n kubevirt-hyperconverged wait deployment/virt-operator --for=condition=Available --timeout="10m"
+sleep 60
+
+for i in {1..20}
+do
+  echo "Attempt ${i}/20"
+  if oc -n kubevirt-hyperconverged wait deployment/virt-operator --for=condition=Available --timeout="10m"; then
+    echo "virt-operator is Available"
+    break
+  fi
+  sleep 30
+done
 
 # ----------------------------------------------------------------------------------------------------
 # Create storage class and storage namespace for testing

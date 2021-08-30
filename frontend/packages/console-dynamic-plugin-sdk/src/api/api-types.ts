@@ -33,7 +33,7 @@ export type WatchK8sResources<R extends ResourcesObject> = {
 };
 
 export type UseK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCommon[]>(
-  initResource: WatchK8sResource,
+  initResource: WatchK8sResource | null,
 ) => WatchK8sResult<R>;
 
 export type UseK8sWatchResources = <R extends ResourcesObject>(
@@ -43,3 +43,19 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
 export type UseResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
 ) => [ResolvedExtension<E>[], boolean, any[]];
+
+export type ConsoleFetch = (
+  url: string,
+  options?: RequestInit,
+  timeout?: number,
+) => Promise<Response>;
+
+export type ConsoleFetchJSON<T = any> = {
+  (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
+  delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
+  post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+};
+
+export type ConsoleFetchText = (...args: Parameters<ConsoleFetch>) => Promise<string>;

@@ -29,14 +29,6 @@ jest.mock('@console/shared', () => {
   };
 });
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 describe('TopologyPageToolbar tests', () => {
   it('should render view shortcuts button on topology page toolbar', () => {
     const mockViewChange = jest.fn();
@@ -71,7 +63,7 @@ describe('TopologyPageToolbar tests', () => {
     const wrapper = shallow(
       <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
     );
-    expect(wrapper.find(Tooltip).props().content).toBe('topology~Graph view');
+    expect(wrapper.find(Tooltip).props().content).toBe('Graph view');
   });
 
   it('should show the topology list icon when on topology page', () => {
@@ -83,7 +75,7 @@ describe('TopologyPageToolbar tests', () => {
     const wrapper = shallow(
       <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
     );
-    expect(wrapper.find(Tooltip).props().content).toBe('topology~List view');
+    expect(wrapper.find(Tooltip).props().content).toBe('List view');
   });
 
   it('should not contain view switcher when when no project is selected', () => {

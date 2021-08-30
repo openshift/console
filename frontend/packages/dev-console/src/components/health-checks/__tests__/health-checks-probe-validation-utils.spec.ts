@@ -1,5 +1,5 @@
-import { TFunction } from 'i18next';
 import { cloneDeep } from 'lodash';
+import { t } from '../../../../../../__mocks__/i18next';
 import { healthChecksDefaultValues } from '../health-checks-probe-utils';
 import { healthChecksValidationSchema, MAX_INT32 } from '../health-checks-probe-validation-utils';
 
@@ -8,8 +8,6 @@ const mockHealthCheckFormData = {
     readinessProbe: healthChecksDefaultValues,
   },
 };
-
-const t = (key: TFunction) => key;
 
 describe('healthChecksValidationSchema', () => {
   let mockData;

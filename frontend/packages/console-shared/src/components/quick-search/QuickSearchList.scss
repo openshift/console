@@ -1,4 +1,4 @@
-.odc-quick-search-list {
+.ocs-quick-search-list {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
     border-bottom: var(--pf-c-data-list__item--sm--BorderBottomWidth) solid
       var(--pf-c-data-list__item--sm--BorderBottomColor) !important;
     &:last-of-type {
-      .odc-quick-search-content__list--overflow & {
+      .ocs-quick-search-content__list--overflow & {
         border-bottom: 0 !important;
       }
     }

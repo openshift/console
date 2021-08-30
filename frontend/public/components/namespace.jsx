@@ -2,25 +2,34 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import {
+  Alert,
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStatePrimary,
+  Title,
+  Tooltip,
+} from '@patternfly/react-core';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { connect } from 'react-redux';
-import { Alert, Tooltip, Button } from '@patternfly/react-core';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import * as fuzzy from 'fuzzysearch';
+
 import {
   Status,
   getRequester,
   getDescription,
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
-  NAMESPACE_USERSETTINGS_PREFIX,
-  NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
   GreenCheckCircleIcon,
   getName,
@@ -32,6 +41,7 @@ import {
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
   useUserSettingsCompatibility,
   isModifiedEvent,
+  REQUESTER_FILTER,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
@@ -46,10 +56,9 @@ import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   DetailsItem,
-  Dropdown,
   ExternalLink,
   Firehose,
   Kebab,
@@ -89,10 +98,42 @@ import {
 import { removeQueryArgument } from './utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
+import {
+  NamespaceDropdown,
+  isCurrentUser,
+  isOtherUser,
+  isSystemNamespace,
+} from '@console/shared/src/components/namespace';
+
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
-const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
+
+// KKD CHECK TO SEE THAT ITEMS CHANGE WHEN LANGUAGE CHANGES
+const getFilters = () => [
+  {
+    filterGroupName: i18next.t('public~Requester'),
+    type: 'requester',
+    reducer: (namespace) => {
+      const name = namespace.metadata?.name;
+      const requester = namespace.metadata?.annotations['openshift.io/requester'];
+      if (isCurrentUser(requester)) {
+        return REQUESTER_FILTER.ME;
+      }
+      if (isOtherUser(requester, name)) {
+        return REQUESTER_FILTER.USER;
+      }
+      if (isSystemNamespace({ title: name })) {
+        return REQUESTER_FILTER.SYSTEM;
+      }
+    },
+    items: [
+      { id: REQUESTER_FILTER.ME, title: i18next.t('public~Me') },
+      { id: REQUESTER_FILTER.USER, title: i18next.t('public~User') },
+      { id: REQUESTER_FILTER.SYSTEM, title: i18next.t('public~System'), hideIfEmpty: true },
+    ],
+  },
+];
 
 export const deleteModal = (kind, ns) => {
   const { labelKey, labelKind, weight, accessReview } = Kebab.factory.Delete(kind, ns);
@@ -283,7 +324,7 @@ const namespacesRowStateToProps = ({ UI }) => ({
 });
 
 const NamespacesTableRow = connect(namespacesRowStateToProps)(
-  withTranslation()(({ obj: ns, index, key, style, metrics, tableColumns, t }) => {
+  withTranslation()(({ obj: ns, metrics, customData: { tableColumns }, t }) => {
     const name = getName(ns);
     const requester = getRequester(ns);
     const bytes = metrics?.memory?.[name];
@@ -293,7 +334,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
     const columns =
       tableColumns?.length > 0 ? new Set(tableColumns) : getNamespacesSelectedColumns();
     return (
-      <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
+      <>
         <TableData className={namespaceColumnInfo.name.classes}>
           <ResourceLink kind="Namespace" name={ns.metadata.name} />
         </TableData>
@@ -362,19 +403,9 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
         <TableData className={Kebab.columnClass}>
           <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
         </TableData>
-      </TableRow>
+      </>
     );
   }),
-);
-
-const NamespacesRow = (rowArgs) => (
-  <NamespacesTableRow
-    obj={rowArgs.obj}
-    index={rowArgs.index}
-    rowKey={rowArgs.key}
-    style={rowArgs.style}
-    tableColumns={rowArgs.customData?.tableColumns}
-  />
 );
 
 const mapDispatchToProps = (dispatch) => ({
@@ -403,6 +434,24 @@ export const NamespacesList = connect(
       tableColumns?.[NamespacesColumnManagementID]?.length > 0
         ? new Set(tableColumns[NamespacesColumnManagementID])
         : null;
+
+    const customData = React.useMemo(
+      () => ({
+        tableColumns: tableColumns?.[NamespacesColumnManagementID],
+      }),
+      [tableColumns],
+    );
+    const NamespaceNotFoundMessage = () => (
+      <EmptyState>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title size="md" headingLevel="h2">
+          {t('public~No namespaces found')}
+        </Title>
+        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStatePrimary />
+      </EmptyState>
+    );
+
     return (
       <Table
         {...props}
@@ -410,9 +459,10 @@ export const NamespacesList = connect(
         columnManagementID={NamespacesColumnManagementID}
         aria-label={t('public~Namespaces')}
         Header={NamespacesTableHeader}
-        Row={NamespacesRow}
-        customData={{ tableColumns: tableColumns?.[NamespacesColumnManagementID] }}
+        Row={NamespacesTableRow}
+        customData={customData}
         virtualize
+        EmptyMsg={NamespaceNotFoundMessage}
       />
     );
   }),
@@ -432,6 +482,7 @@ export const NamespacesPage = withUserSettingsCompatibility(
   return (
     <ListPage
       {...props}
+      rowFilters={getFilters()}
       ListComponent={NamespacesList}
       canCreate={true}
       createHandler={() => createNamespaceModal({ blocking: true })}
@@ -588,7 +639,7 @@ const projectRowStateToProps = ({ UI }) => ({
 });
 
 const ProjectTableRow = connect(projectRowStateToProps)(
-  withTranslation()(({ obj: project, index, rowKey, style, customData = {}, metrics, t }) => {
+  withTranslation()(({ obj: project, customData = {}, metrics, t }) => {
     const name = getName(project);
     const requester = getRequester(project);
     const {
@@ -609,7 +660,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
         : getProjectSelectedColumns({ showMetrics, showActions })
       : null;
     return (
-      <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
+      <>
         <TableData className={namespaceColumnInfo.name.classes}>
           {customData && ProjectLinkComponent ? (
             <ProjectLinkComponent project={project} />
@@ -694,35 +745,29 @@ const ProjectTableRow = connect(projectRowStateToProps)(
             <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
           </TableData>
         )}
-      </TableRow>
+      </>
     );
   }),
 );
 ProjectTableRow.displayName = 'ProjectTableRow';
 
-const ProjectRow = (rowArgs) => (
-  <ProjectTableRow
-    obj={rowArgs.obj}
-    index={rowArgs.index}
-    rowKey={rowArgs.key}
-    style={rowArgs.style}
-    customData={rowArgs.customData}
-  />
-);
-
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
+  const customData = React.useMemo(
+    () => ({
+      ProjectLinkComponent: ProjectLink,
+      actionsEnabled: false,
+      isColumnManagementEnabled: false,
+    }),
+    [],
+  );
   return (
     <Table
       {...props}
       aria-label={t('public~Projects')}
       Header={projectHeaderWithoutActions}
-      Row={ProjectRow}
-      customData={{
-        ProjectLinkComponent: ProjectLink,
-        actionsEnabled: false,
-        isColumnManagementEnabled: false,
-      }}
+      Row={ProjectTableRow}
+      customData={customData}
       virtualize
     />
   );
@@ -730,6 +775,7 @@ export const ProjectsTable = (props) => {
 
 const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
 const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
+
 const ProjectList_ = connectToFlags(
   FLAGS.CAN_CREATE_PROJECT,
   FLAGS.CAN_GET_NS,
@@ -770,7 +816,26 @@ const ProjectList_ = connectToFlags(
         detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
       />
     );
-    const ProjectNotFoundMessage = () => <MsgBox title={t('public~No projects found')} />;
+
+    const ProjectNotFoundMessage = () => (
+      <EmptyState>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title size="md" headingLevel="h2">
+          {t('public~No projects found')}
+        </Title>
+        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStatePrimary />
+      </EmptyState>
+    );
+
+    const customData = React.useMemo(
+      () => ({
+        showMetrics,
+        tableColumns: tableColumns?.[projectColumnManagementID],
+      }),
+      [showMetrics, tableColumns],
+    );
+
     return (
       <Table
         {...tableProps}
@@ -779,9 +844,9 @@ const ProjectList_ = connectToFlags(
         aria-label={t('public~Projects')}
         data={data}
         Header={showMetrics ? headerWithMetrics : headerNoMetrics}
-        Row={ProjectRow}
+        Row={ProjectTableRow}
         EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
-        customData={{ showMetrics, tableColumns: tableColumns?.[projectColumnManagementID] }}
+        customData={customData}
         virtualize
       />
     );
@@ -811,6 +876,7 @@ export const ProjectsPage = connectToFlags(
     return (
       <ListPage
         {...rest}
+        rowFilters={getFilters()}
         ListComponent={ProjectList}
         canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
         createHandler={() => createProjectModal({ blocking: true })}
@@ -1051,125 +1117,70 @@ const RolesPage = ({ obj: { metadata } }) => (
   />
 );
 
-const autocompleteFilter = (text, item) => fuzzy(text, item);
-
 const namespaceBarDropdownStateToProps = (state) => {
-  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
-  const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
-
-  return { canListNS, canCreateProject };
+  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS); //
+  return { canListNS };
 };
 const namespaceBarDropdownDispatchToProps = (dispatch) => ({
   showStartGuide: (show) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
 });
 
-class NamespaceBarDropdowns_ extends React.Component {
-  componentDidUpdate() {
-    const { namespace, showStartGuide } = this.props;
+const NamespaceBarDropdowns_ = (props) => {
+  const {
+    activeNamespace,
+    canListNS,
+    children,
+    disabled,
+    namespace,
+    onNamespaceChange,
+    setActiveNamespace,
+    showStartGuide,
+    useProjects,
+  } = props;
+
+  React.useEffect(() => {
     if (namespace.loaded) {
       const noProjects = _.isEmpty(namespace.data);
       showStartGuide(noProjects);
     }
+  }, [namespace.data, namespace.loaded, showStartGuide]);
+
+  if (flagPending(canListNS)) {
+    return null;
   }
 
-  render() {
-    const {
-      activeNamespace,
-      onNamespaceChange,
-      setActiveNamespace,
-      canListNS,
-      canCreateProject,
-      useProjects,
-      children,
-      disabled,
-      t,
-    } = this.props;
-    if (flagPending(canListNS)) {
-      return null;
-    }
+  return (
+    <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
+      <NamespaceDropdown
+        onSelect={(event, newNamespace) => {
+          onNamespaceChange && onNamespaceChange(newNamespace);
+          setActiveNamespace(newNamespace);
+          removeQueryArgument('project-name');
+        }}
+        onCreateNew={() => {
+          createProjectModal({
+            blocking: true,
+            onSubmit: (newProject) => {
+              setActiveNamespace(newProject.metadata.name);
+              removeQueryArgument('project-name');
+            },
+          });
+        }}
+        selected={activeNamespace || ALL_NAMESPACES_KEY}
+        isProjects={getModel(useProjects).label === 'Project'}
+        disabled={disabled}
+        shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
+      />
 
-    const { loaded, data } = this.props.namespace;
-    const model = getModel(useProjects);
-    const allNamespacesTitle =
-      model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
-    const items = {};
-    if (canListNS) {
-      items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
-    }
+      {children}
+    </div>
+  );
+};
 
-    _.map(data, 'metadata.name')
-      .sort()
-      .forEach((name) => (items[name] = name));
-
-    let title = activeNamespace;
-    if (activeNamespace === ALL_NAMESPACES_KEY) {
-      title = allNamespacesTitle;
-    } else if (loaded && !_.has(items, title)) {
-      // If the currently active namespace is not found in the list of all namespaces, put it in anyway
-      items[title] = title;
-    }
-    const defaultActionItem = canCreateProject
-      ? [
-          {
-            actionTitle:
-              model.label === 'Project' ? t('public~Create Project') : t('public~Create Namespace'),
-            actionKey: CREATE_NEW_RESOURCE,
-          },
-        ]
-      : [];
-
-    const onChange = (newNamespace) => {
-      if (newNamespace === CREATE_NEW_RESOURCE) {
-        createProjectModal({
-          blocking: true,
-          onSubmit: (newProject) => {
-            setActiveNamespace(newProject.metadata.name);
-            removeQueryArgument('project-name');
-          },
-        });
-      } else {
-        onNamespaceChange && onNamespaceChange(newNamespace);
-        setActiveNamespace(newNamespace);
-        removeQueryArgument('project-name');
-      }
-    };
-
-    return (
-      <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
-        <Dropdown
-          disabled={disabled}
-          className="co-namespace-selector"
-          menuClassName="co-namespace-selector__menu"
-          buttonClassName="pf-m-plain"
-          canFavorite
-          items={items}
-          actionItems={defaultActionItem}
-          titlePrefix={model.label === 'Project' ? t('public~Project') : t('public~Namespace')}
-          title={title}
-          onChange={onChange}
-          selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
-          autocompleteFilter={autocompleteFilter}
-          autocompletePlaceholder={
-            model.label === 'Project'
-              ? t('public~Select Project...')
-              : t('public~Select Namespace...')
-          }
-          userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
-          storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
-          shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
-        />
-        {children}
-      </div>
-    );
-  }
-}
-
-const NamespaceBarDropdownsWithTranslation = connect(
+const NamespaceBarDropdowns = connect(
   namespaceBarDropdownStateToProps,
   namespaceBarDropdownDispatchToProps,
-)(withTranslation()(withLastNamespace(NamespaceBarDropdowns_)));
-
-const NamespaceBarDropdowns = withTranslation()(NamespaceBarDropdownsWithTranslation);
+)(withLastNamespace(NamespaceBarDropdowns_));
 
 const NamespaceBar_ = ({
   hideProjects = false,
@@ -1185,6 +1196,9 @@ const NamespaceBar_ = ({
           {children}
         </div>
       ) : (
+        // Data from Firehose is not used directly by the NamespaceDropdown nor the children.
+        // Data is used to determine if the StartGuide should be shown.
+        // See NamespaceBarDropdowns_  above.
         <Firehose
           resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}
         >

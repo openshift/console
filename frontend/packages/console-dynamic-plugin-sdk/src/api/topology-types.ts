@@ -63,6 +63,10 @@ export type CreateConnectionGetter = (
   target?: Node,
 ) => CreateConnection;
 
+export type RelationshipProviderProvides = (source: Node, target: Node) => Promise<boolean>;
+
+export type RelationshipProviderCreate = (source: Node, target: Node) => Promise<void>;
+
 export enum TopologyDisplayFilterType {
   show = 'show',
   expand = 'expand',
@@ -171,6 +175,16 @@ export type GraphData = {
   eventSourceEnabled: boolean;
   createConnectorExtensions?: CreateConnectionGetter[];
   decorators?: { [key: string]: TopologyDecorator[] };
+};
+
+export type BuildConfigOverviewItem = K8sResourceCommon & {
+  builds: K8sResourceCommon[];
+};
+
+export type BuildConfigData = {
+  loaded: boolean;
+  loadError: string;
+  buildConfigs: BuildConfigOverviewItem[];
 };
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';

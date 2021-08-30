@@ -12,7 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
-import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, MultiListPage, Table, TableData } from './factory';
 import {
   Kebab,
   SectionHeading,
@@ -318,6 +318,35 @@ const Details = ({ obj: rq }) => {
   );
 };
 
+const ResourceQuotaTableRow = ({ obj: rq }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink
+          kind={quotaKind(rq)}
+          name={rq.metadata.name}
+          namespace={rq.metadata.namespace}
+          className="co-resource-item__resource-name"
+        />
+      </TableData>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        {rq.metadata.namespace ? (
+          <ResourceLink kind="Namespace" name={rq.metadata.namespace} />
+        ) : (
+          t('public~None')
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <ResourceKebab actions={quotaActions(rq)} kind={quotaKind(rq)} resource={rq} />
+      </TableData>
+    </>
+  );
+};
+
 export const ResourceQuotasList = (props) => {
   const { t } = useTranslation();
   const ResourceQuotaTableHeader = () => {
@@ -340,33 +369,6 @@ export const ResourceQuotasList = (props) => {
         props: { className: tableColumnClasses[2] },
       },
     ];
-  };
-  const ResourceQuotaTableRow = ({ obj: rq, index, key, style }) => {
-    return (
-      <TableRow id={rq.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink
-            kind={quotaKind(rq)}
-            name={rq.metadata.name}
-            namespace={rq.metadata.namespace}
-            className="co-resource-item__resource-name"
-          />
-        </TableData>
-        <TableData
-          className={classNames(tableColumnClasses[1], 'co-break-word')}
-          columnID="namespace"
-        >
-          {rq.metadata.namespace ? (
-            <ResourceLink kind="Namespace" name={rq.metadata.namespace} />
-          ) : (
-            t('public~None')
-          )}
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          <ResourceKebab actions={quotaActions(rq)} kind={quotaKind(rq)} resource={rq} />
-        </TableData>
-      </TableRow>
-    );
   };
   return (
     <Table

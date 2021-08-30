@@ -46,7 +46,7 @@ const BaseLabelsModal = withHandlePromise((props) => {
     props.handlePromise(promise, props.close);
   };
 
-  const { kind, resource, descriptionKey, messageKey, labelClassName } = props;
+  const { kind, resource, descriptionKey, messageKey, messageVariables, labelClassName } = props;
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
@@ -59,7 +59,7 @@ const BaseLabelsModal = withHandlePromise((props) => {
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             {messageKey
-              ? t(messageKey)
+              ? t(messageKey, messageVariables)
               : t(
                   'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
                 )}
@@ -97,19 +97,25 @@ export const labelsModal = createModalLauncher((props) => (
   <BaseLabelsModal path={LABELS_PATH} {...props} />
 ));
 
-export const podSelectorModal = createModalLauncher((props) => (
-  <BaseLabelsModal
-    path={
-      ['replicationcontrolleres', 'services'].includes(props.kind.plural)
-        ? '/spec/selector'
-        : '/spec/selector/matchLabels'
-    }
-    isPodSelector={true}
-    // t('public~Pod selector')
-    descriptionKey="public~Pod selector"
-    // t('public~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.')
-    messageKey="public~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}."
-    labelClassName="co-text-pod"
-    {...props}
-  />
-));
+export const podSelectorModal = createModalLauncher((props) => {
+  const { t } = useTranslation();
+  return (
+    <BaseLabelsModal
+      path={
+        ['replicationcontrolleres', 'services'].includes(props.kind.plural)
+          ? '/spec/selector'
+          : '/spec/selector/matchLabels'
+      }
+      isPodSelector={true}
+      // t('public~Pod selector')
+      descriptionKey="public~Pod selector"
+      // t('public~Determines the set of pods targeted by this {{kind}}.')
+      messageKey={'public~Determines the set of pods targeted by this {{kind}}.'}
+      messageVariables={{
+        kind: props.kind.labelKey ? t(props.kind.labelKey) : props.kind.label.toLowerCase(),
+      }}
+      labelClassName="co-text-pod"
+      {...props}
+    />
+  );
+});

@@ -7,7 +7,6 @@ import {
   MultiListPage,
   DetailsPage,
   RowFunctionArgs,
-  TableRow,
 } from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -42,14 +41,6 @@ import {
   SubscriptionStatus,
 } from './subscription';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('SubscriptionTableRow', () => {
   let wrapper: ShallowWrapper;
   let subscription: SubscriptionKind;
@@ -57,9 +48,6 @@ describe('SubscriptionTableRow', () => {
   const updateWrapper = () => {
     const rowArgs: RowFunctionArgs<SubscriptionKind> = {
       obj: subscription,
-      index: 0,
-      key: '0',
-      style: {},
     } as any;
 
     wrapper = shallow(<SubscriptionTableRow {...rowArgs} />);
@@ -77,7 +65,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for subscription name', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -85,7 +72,6 @@ describe('SubscriptionTableRow', () => {
     ).toEqual(subscription.metadata.name);
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -93,7 +79,6 @@ describe('SubscriptionTableRow', () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -103,48 +88,29 @@ describe('SubscriptionTableRow', () => {
 
   it('renders actions kebab', () => {
     const menuArgs = [ClusterServiceVersionModel, subscription];
+    expect(wrapper.find(ResourceKebab).props().kind).toEqual(referenceForModel(SubscriptionModel));
+    expect(wrapper.find(ResourceKebab).props().resource).toEqual(subscription);
+    expect(wrapper.find(ResourceKebab).props().actions[0]).toEqual(Kebab.factory.Edit);
     expect(
       wrapper
-        .find(TableRow)
-        .find(ResourceKebab)
-        .props().kind,
-    ).toEqual(referenceForModel(SubscriptionModel));
-    expect(
-      wrapper
-        .find(TableRow)
-        .find(ResourceKebab)
-        .props().resource,
-    ).toEqual(subscription);
-    expect(
-      wrapper
-        .find(TableRow)
-        .find(ResourceKebab)
-        .props().actions[0],
-    ).toEqual(Kebab.factory.Edit);
-    expect(
-      wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[1](...menuArgs).labelKey,
     ).toEqual('olm~Remove Subscription');
     expect(
       wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[1](...menuArgs).callback,
     ).toBeDefined();
     expect(
       wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[2](...menuArgs).labelKey,
     ).toEqual('olm~View ClusterServiceVersion...');
     expect(
       wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[2](...menuArgs).href,
@@ -154,7 +120,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for namespace name', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -162,7 +127,6 @@ describe('SubscriptionTableRow', () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -176,7 +140,6 @@ describe('SubscriptionTableRow', () => {
 
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
@@ -187,12 +150,11 @@ describe('SubscriptionTableRow', () => {
   it('renders column for subscription state when unknown state', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
         .text(),
-    ).toEqual('olm~Unknown failure');
+    ).toEqual('Unknown failure');
   });
 
   it('renders column for subscription state when update in progress', () => {
@@ -201,7 +163,6 @@ describe('SubscriptionTableRow', () => {
 
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
@@ -215,7 +176,6 @@ describe('SubscriptionTableRow', () => {
 
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
@@ -226,7 +186,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for current subscription channel', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(3)
         .shallow()
         .text(),
@@ -236,11 +195,10 @@ describe('SubscriptionTableRow', () => {
   it('renders column for approval strategy', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(4)
         .shallow()
         .text(),
-    ).toEqual('olm~Automatic');
+    ).toEqual('Automatic');
   });
 });
 
@@ -265,11 +223,11 @@ describe('SubscriptionsList', () => {
       .Header()
       .map((header) => header.title);
     expect(headerTitles).toEqual([
-      'olm~Name',
-      'olm~Namespace',
-      'olm~Status',
-      'olm~Update channel',
-      'olm~Update approval',
+      'Name',
+      'Namespace',
+      'Status',
+      'Update channel',
+      'Update approval',
       '',
     ]);
   });
@@ -285,11 +243,11 @@ describe('SubscriptionsPage', () => {
 
   it('renders a `MultiListPage` component with the correct props', () => {
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(SubscriptionsList);
-    expect(wrapper.find(MultiListPage).props().title).toEqual('olm~Subscriptions');
+    expect(wrapper.find(MultiListPage).props().title).toEqual('Subscriptions');
     expect(wrapper.find(MultiListPage).props().canCreate).toBe(true);
     expect(wrapper.find(MultiListPage).props().createProps).toEqual({ to: '/operatorhub' });
-    expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('olm~Create Subscription');
-    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('olm~Subscriptions by package');
+    expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('Create Subscription');
+    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Subscriptions by package');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
       {
         kind: referenceForModel(SubscriptionModel),
@@ -327,7 +285,7 @@ describe('SubscriptionUpdates', () => {
         (node) =>
           node.type() === 'dt' &&
           node.hasClass('co-detail-table__section-header') &&
-          node.text().includes('olm~Update channel'),
+          node.text().includes('Update channel'),
       )
       .parents()
       .at(0)
@@ -345,7 +303,7 @@ describe('SubscriptionUpdates', () => {
         (node) =>
           node.type() === 'dt' &&
           node.hasClass('co-detail-table__section-header') &&
-          node.text().includes('olm~Update approval'),
+          node.text().includes('Update approval'),
       )
       .parents()
       .at(0)
@@ -382,7 +340,7 @@ describe('SubscriptionDetails', () => {
     wrapper = wrapper.setProps({ obj, clusterServiceVersions: [testClusterServiceVersion] });
 
     const link = wrapper
-      .findWhere((node) => node.equals(<dt>olm~Installed version</dt>))
+      .findWhere((node) => node.equals(<dt>Installed version</dt>))
       .parents()
       .at(0)
       .find('dd')
@@ -395,7 +353,7 @@ describe('SubscriptionDetails', () => {
 
   it('renders link to catalog source', () => {
     const link = wrapper
-      .findWhere((node) => node.equals(<dt>olm~CatalogSource</dt>))
+      .findWhere((node) => node.equals(<dt>CatalogSource</dt>))
       .parents()
       .at(0)
       .find('dd')

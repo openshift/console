@@ -9,7 +9,7 @@ type TopologyGroupResourcesPanelProps = {
   linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
 };
 
-const TopologyGroupResourcesPanel: React.SFC<TopologyGroupResourcesPanelProps> = ({
+const TopologyGroupResourcesPanel: React.FC<TopologyGroupResourcesPanelProps> = ({
   manifestResources,
   releaseNamespace,
   linkForResource,

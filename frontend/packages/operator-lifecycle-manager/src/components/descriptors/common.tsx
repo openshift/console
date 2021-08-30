@@ -20,6 +20,7 @@ export const Invalid: React.FC<{ path: string }> = ({ path }) => {
 
 export const DefaultCapability: React.FC<CommonCapabilityProps> = ({
   description,
+  descriptor,
   label,
   obj,
   fullPath,
@@ -31,10 +32,15 @@ export const DefaultCapability: React.FC<CommonCapabilityProps> = ({
       return <span className="text-muted">{t('public~None')}</span>;
     }
     if (_.isObject(value) || _.isArray(value)) {
-      return <span className="text-muted">{t('public~Unsupported')}</span>;
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[Invalid descriptor] descriptor is incompatible with property ${descriptor.path} and will have no effect`,
+        descriptor,
+      );
+      return null;
     }
     return _.toString(value);
-  }, [t, value]);
+  }, [descriptor, t, value]);
 
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
@@ -61,11 +67,17 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps> = ({
     const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
     const gvk = suffix?.replace(/:/g, '~');
     if (!_.isString(value)) {
-      return <Invalid path={descriptor.path} />;
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[Invalid descriptor] descriptor is incompatible with property ${descriptor.path} and will have no effect`,
+        descriptor,
+      );
+
+      return null;
     }
 
     return <ResourceLink kind={gvk} name={value} namespace={obj.metadata.namespace} />;
-  }, [value, capability, obj.metadata.namespace, t, descriptor.path]);
+  }, [value, capability, obj.metadata.namespace, t, descriptor]);
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {detail}

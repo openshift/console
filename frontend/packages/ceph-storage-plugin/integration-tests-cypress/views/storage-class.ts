@@ -13,7 +13,7 @@ const configureKms = () => {
   // save
   cy.byTestID('confirm-action').click();
   cy.byTestID('save-action').click();
-  cy.byTestID('edit-kms-link').contains('Change connection details');
+  cy.byTestID('kms-connection-dropdown').should('contain', 'vault');
 };
 
 export const createStorageClass = (scName: string, poolName?: string, encrypted?: boolean) => {

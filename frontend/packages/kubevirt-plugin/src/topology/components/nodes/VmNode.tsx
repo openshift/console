@@ -136,7 +136,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
     case VMStatus.RUNNING:
       statusClass = 'kubevirt-m-running';
       break;
-    case VMStatus.OFF:
+    case VMStatus.STOPPED:
       statusClass = 'kubevirt-m-off';
       break;
     case VMStatus.V2V_CONVERSION_IN_PROGRESS:

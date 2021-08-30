@@ -64,7 +64,6 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   useExplicitPipelineTaskTouch();
 
   const statusRef = React.useRef(status);
-  const containerRef = React.useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
   const savedCallback = React.useRef(() => {});
 
@@ -84,12 +83,13 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   };
 
   const updateTasks = (changes: CleanupResults): void => {
-    const { tasks, listTasks, finallyTasks, finallyListTasks } = changes;
+    const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } = changes;
 
     setFieldValue('formData', {
       ...formData,
       tasks,
       listTasks,
+      loadingTasks,
       finallyTasks,
       finallyListTasks,
     });
@@ -102,9 +102,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const taskGroup: PipelineBuilderTaskGroup = {
     tasks: formData.tasks,
     listTasks: formData.listTasks,
+    loadingTasks: formData.loadingTasks,
     highlightedIds: selectedIds,
     finallyTasks: formData.finallyTasks,
     finallyListTasks: formData.finallyListTasks,
+  };
+
+  const onUpdateTasks = (updatedTaskGroup, op) => {
+    updateTasks(applyChange(updatedTaskGroup, op));
   };
 
   const closeSidebarAndHandleReset = React.useCallback(() => {
@@ -113,6 +118,8 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     handleReset();
   }, [handleReset]);
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'pipeline.pipelineBuilderForm.editor.lastView';
+
   const formEditor = (
     <PipelineBuilderFormEditor
       hasExistingPipeline={!!existingPipeline}
@@ -120,9 +127,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       taskResources={taskResources}
       onTaskSelection={onTaskSelection}
       onTaskSearch={onTaskSearch}
-      onUpdateTasks={(updatedTaskGroup, op) => {
-        updateTasks(applyChange(updatedTaskGroup, op));
-      }}
+      onUpdateTasks={onUpdateTasks}
     />
   );
 
@@ -132,20 +137,24 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
 
   return (
     <>
-      <div ref={contentRef} className="odc-pipeline-builder-form">
+      <div
+        ref={contentRef}
+        className="odc-pipeline-builder-form ocs-quick-search-modal__no-backdrop"
+      >
         <Stack>
           <StackItem>
             <PipelineBuilderHeader namespace={namespace} />
           </StackItem>
           <FlexForm onSubmit={handleSubmit}>
             <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
-              <div ref={containerRef} />
               <PipelineQuickSearch
                 namespace={namespace}
-                viewContainer={containerRef.current}
+                viewContainer={contentRef.current}
                 isOpen={menuOpen}
                 callback={savedCallback.current}
                 setIsOpen={(open) => setMenuOpen(open)}
+                onUpdateTasks={onUpdateTasks}
+                taskGroup={taskGroup}
               />
               <SyncedEditorField
                 name="editorType"
@@ -161,6 +170,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   editor: yamlEditor,
                   sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
                 }}
+                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
               />
             </FormBody>
             <FormFooter
@@ -177,7 +187,8 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                     !_.isEmpty(errors) ||
                     !_.isEmpty(status?.tasks) ||
                     !_.isEmpty(status?.[STATUS_KEY_NAME_ERROR]) ||
-                    formData.tasks.length === 0
+                    formData.tasks.length === 0 ||
+                    formData.loadingTasks.length > 0
               }
               resetLabel={t('pipelines-plugin~Cancel')}
               sticky

@@ -69,6 +69,7 @@ export type VMStatus = {
   conditions?: any[];
   created?: boolean;
   ready?: boolean;
+  printableStatus?: string;
   stateChangeRequests?: VMStatusStateChangeRequest[];
 };
 

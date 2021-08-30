@@ -15,13 +15,16 @@ Feature: Navigations on Helm Chart
 
 
         @smoke
-        Scenario: Install Helm Chart page: HR-05-TC02
+        Scenario: Install Helm Chart page details: HR-05-TC02
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs Ex K" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
              Then Install Helm Chart page is displayed
               And release name displays as "nodejs-ex-k"
+              And form view radio button is selected by default
+              And yaml view radio button is enabled
+              And Ingress, Service, Image sections are displayed in form view
 
 
         @smoke
@@ -35,7 +38,7 @@ Feature: Navigations on Helm Chart
         Scenario: Install Helm Chart: HR-05-TC04
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs Ex K" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user clicks on the Install button
              Then user will be redirected to Topology page
@@ -44,8 +47,7 @@ Feature: Navigations on Helm Chart
 
         @smoke
         Scenario: Open the Helm tab on the navigation bar when helm charts are present: HR-05-TC05
-            Given user has installed helm chart
-              And user is at the Helm page
+            Given user is at the Helm page
              When user clicks on the Helm tab
              Then user will be redirected to Helm releases page
               And user will see the helm charts listed
@@ -60,7 +62,7 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Deployed" are listed
 
 
-        @manual
+        @regression @manual
         Scenario: Filter out failed Helm Charts: HR-05-TC07
             Given user is at the Helm page
              When user clicks on the filter drop down
@@ -69,7 +71,7 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Failed" are listed
 
 
-        @manual
+        @regression @manual
         Scenario: Filter out other Helm charts: HR-05-TC08
             Given user is at the Helm page
              When user clicks on the filter drop down
@@ -105,7 +107,7 @@ Feature: Navigations on Helm Chart
         @smoke
         Scenario: Search for the not available Helm Chart: HR-05-TC12
             Given user is at the Helm page
-             When user searches for a helm chart "Nodejs Ex K v0.10.0"
+             When user searches for a helm chart "Nodejs Ex K"
              Then user is able to see message on the Helm page as "Not found"
 
 

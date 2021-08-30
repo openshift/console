@@ -1,9 +1,12 @@
-.kv-sysprep--main {
+form.kv-sysprep--main.pf-c-form {
   width: 40vw;
+  grid-gap: 0;
 }
 
 .kv-sysprep--title {
   display: inline-flex;
+  align-items: baseline;
+  margin-top: var(--pf-global--spacer--md);
 }
 
 .kv-sysprep--error {

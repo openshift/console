@@ -20,6 +20,7 @@
   "viewportHeight": 960,
   "env": {
     "UPLOAD_IMG": "/tmp/cirros.img",
-    "DOWNSTREAM": false
+    "DOWNSTREAM": false,
+    "DUALSTACK": false
   }
 }

@@ -20,7 +20,7 @@ Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
 });
 
-Given('user is at Import from git page', () => {
+Given('user is at Import from Git form', () => {
   addPage.selectCardFromOptions(addOptions.Git);
 });
 
@@ -71,7 +71,7 @@ When('user clicks Cancel button on Add page', () => {
 
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
-  gitPage.verifyValidatedMessage();
+  gitPage.verifyValidatedMessage(gitUrl);
   cy.get('body').then(($el) => {
     if ($el.find('[aria-label$="Alert"]').length) {
       cy.log('Builder image detected');

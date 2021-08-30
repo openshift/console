@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { CodeIcon } from '@patternfly/react-icons';
+import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -17,11 +18,24 @@ import {
   PostFormSubmissionAction,
   CustomFeatureFlag,
 } from '@console/plugin-sdk';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
+import { TopologyDataModelFactory } from '@console/topology/src/extensions';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import { getGuidedTour } from './components/guided-tour';
+import { getBindableServiceResources } from './components/topology/bindable-services/bindable-service-resources';
 import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
+
+const getBindableServicesTopologyDataModel = () =>
+  import(
+    './components/topology/bindable-services/data-transformer' /* webpackChunkName: "topology-bindable-services" */
+  ).then((m) => m.getBindableServicesTopologyDataModel);
+
+const isServiceBindable = () =>
+  import(
+    './components/topology/bindable-services/isBindable' /* webpackChunkName: "topology-bindable-services" */
+  ).then((m) => m.isServiceBindable);
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -34,7 +48,8 @@ type ConsumedExtensions =
   | OverviewResourceTab
   | OverviewTabSection
   | GuidedTour
-  | PostFormSubmissionAction;
+  | PostFormSubmissionAction
+  | TopologyDataModelFactory;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -208,13 +223,25 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: true,
       path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
       loader: async () =>
         (
           await import(
-            './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
+            './components/buildconfig/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfig" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/buildconfigs/~new/form', '/k8s/ns/:ns/buildconfigs/:name/form'],
+      loader: async () =>
+        (
+          await import(
+            './components/buildconfig/BuildConfigFormPage' /* webpackChunkName: "dev-console-buildconfig-form" */
           )
         ).default,
     },
@@ -378,6 +405,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       type: INCONTEXT_ACTIONS_CONNECTS_TO,
       callback: doConnectsToBinding,
+    },
+  },
+  {
+    type: 'Topology/DataModelFactory',
+    properties: {
+      id: 'bindable-service-topology-model-factory',
+      priority: 100,
+      resources: getBindableServiceResources,
+      getDataModel: applyCodeRefSymbol(getBindableServicesTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(isServiceBindable),
+    },
+    flags: {
+      required: [ALLOW_SERVICE_BINDING_FLAG],
     },
   },
 ];

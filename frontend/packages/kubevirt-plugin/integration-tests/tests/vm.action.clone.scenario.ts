@@ -164,7 +164,7 @@ describe('Test clone VM.', () => {
       createResources([multusNAD, testVM]);
       applyResource(datavolumeClonerClusterRole);
       applyResource(allowCloneRoleBinding);
-      await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+      await vm.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
       await vm.addNIC(multusNetworkInterface);
       await vm.detailViewAction(VM_ACTION.Start);
     }, VM_IMPORT_TIMEOUT_SECS + VM_BOOTUP_TIMEOUT_SECS);
@@ -193,7 +193,7 @@ describe('Test clone VM.', () => {
         await cloneDialog.selectNamespace(vmClonedToOtherNS.namespace);
         await cloneDialog.clone();
         await withResource(leakedResources, vmClonedToOtherNS.asResource(), async () => {
-          await vmClonedToOtherNS.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+          await vmClonedToOtherNS.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
         });
       },
       VM_IMPORT_TIMEOUT_SECS,
@@ -213,7 +213,7 @@ describe('Test clone VM.', () => {
     );
 
     it('ID(CNV-2825) Running VM is stopped when cloned', async () => {
-      await vm.waitForStatus(VM_STATUS.Off, PAGE_LOAD_TIMEOUT_SECS);
+      await vm.waitForStatus(VM_STATUS.Stopped, PAGE_LOAD_TIMEOUT_SECS);
     });
 
     it('ID(CNV-1734) Cloned VM has changed MAC address.', async () => {

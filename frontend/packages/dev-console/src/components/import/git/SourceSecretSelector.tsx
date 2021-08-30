@@ -1,35 +1,54 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { useFormikContext, FormikValues, useField } from 'formik';
+import { useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { SecretModel } from '@console/internal/models';
 import { getFieldId } from '@console/shared';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 import { secretModalLauncher } from '../CreateSecretModal';
 
 const CREATE_SOURCE_SECRET = 'create-source-secret';
 
-const SourceSecretSelector: React.FC = () => {
+const SourceSecretSelector: React.FC<{
+  formContextField?: string;
+}> = ({ formContextField }) => {
+  const fieldPrefix = formContextField ? `${formContextField}.` : '';
+
   const { t } = useTranslation();
-  const [secret] = useField('git.secret');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const namespace: string = _.get(values, `${fieldPrefix}project.name`);
+  const secret: string = _.get(values, `${fieldPrefix}git.secret`);
+  const [data, loaded, loadError] = useK8sWatchResource({
+    kind: SecretModel.kind,
+    namespace,
+    name: secret,
+    optional: true,
+    isList: false,
+  });
 
   const handleSave = (name: string) => {
-    setFieldValue('git.secret', name);
+    setFieldValue(`${fieldPrefix}git.secret`, name);
   };
 
   const handleDropdownChange = (key: string) => {
     if (key === CREATE_SOURCE_SECRET) {
-      setFieldValue('git.secret', secret.value);
+      setFieldValue(`${fieldPrefix}git.secret`, secret);
       secretModalLauncher({
-        namespace: values.project.name,
+        namespace,
         save: handleSave,
         secretType: SecretTypeAbstraction.source,
       });
     } else {
-      setFieldValue('git.secret', key);
+      setFieldValue(`${fieldPrefix}git.secret`, key);
     }
   };
+
+  React.useEffect(() => {
+    loaded && !loadError && data && setFieldValue(`${fieldPrefix}git.secretResource`, data);
+  }, [loaded, loadError, data, setFieldValue, fieldPrefix]);
 
   return (
     <>
@@ -41,15 +60,15 @@ const SourceSecretSelector: React.FC = () => {
         <SourceSecretDropdown
           dropDownClassName="dropdown--full-width"
           menuClassName="dropdown-menu--text-wrap"
-          namespace={values.project.name}
+          namespace={namespace}
           actionItems={[
             {
               actionTitle: t('devconsole~Create new Secret'),
               actionKey: CREATE_SOURCE_SECRET,
             },
           ]}
-          selectedKey={secret.value}
-          title={secret.value}
+          selectedKey={secret}
+          title={secret}
           onChange={handleDropdownChange}
         />
       </FormGroup>

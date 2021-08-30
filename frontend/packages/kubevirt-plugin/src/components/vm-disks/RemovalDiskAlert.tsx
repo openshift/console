@@ -6,7 +6,7 @@ export const RemovalDiskAlert: React.FC<{
   hotplugDiskNames?: string[];
 }> = ({ hotplugDiskNames }) => {
   const { t } = useTranslation();
-  const diskList = hotplugDiskNames.join(', ');
+  const diskList = hotplugDiskNames?.join(', ');
   return (
     hotplugDiskNames?.length > 0 && (
       <Alert

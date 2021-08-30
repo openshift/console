@@ -11,7 +11,6 @@ import {
   MultiListPage,
   DetailsPage,
   Table,
-  TableRow,
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
@@ -62,11 +61,11 @@ const componentsTableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
 ];
 
-export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style }) => {
+export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       {/* Name */}
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
@@ -135,7 +134,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key
           resource={obj}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -193,7 +192,7 @@ export const InstallPlansList = requireOperatorGroup((props: InstallPlansListPro
       {...props}
       aria-label={t('olm~InstallPlans')}
       Header={InstallPlanTableHeader}
-      Row={(rowArgs) => <InstallPlanTableRow {...rowArgs} />}
+      Row={InstallPlanTableRow}
       EmptyMsg={EmptyMsg}
     />
   );

@@ -2,6 +2,7 @@ export const CEPH_HEALTHY = 'is healthy';
 export const CEPH_DEGRADED = 'health is degraded';
 export const CEPH_ERROR = 'health is in error state';
 export const CEPH_UNKNOWN = 'is not available';
+export const CEPH_BRAND_NAME = 'Red Hat Ceph Storage';
 export const CEPH_STORAGE_NAMESPACE = 'openshift-storage';
 export const PROJECTS = 'Projects';
 export const STORAGE_CLASSES = 'Storage Classes';
@@ -32,6 +33,7 @@ export const MINIMUM_NODES = 3;
 export const SECOND = 1000;
 export const OCS_NS = 'openshift-storage';
 export const NB_PROVISIONER = 'noobaa.io/obc';
+export const ODF_MANAGED_LABEL = 'odf-managed-service';
 export enum StoreType {
   BS = 'BackingStore',
   NS = 'NamespaceStore',

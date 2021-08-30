@@ -5,9 +5,10 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import i18next from 'i18next';
 
 import { Status } from '@console/shared';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
   CopyToClipboard,
   DetailsItem,
@@ -89,7 +90,7 @@ const getRouteLabel = (route: RouteKind): string => {
 
   let label = getRouteHost(route, false);
   if (!label) {
-    return '<unknown host>';
+    return i18next.t('public~<unknown host>');
   }
 
   if (_.get(route, 'spec.wildcardPolicy') === 'Subdomain') {
@@ -152,9 +153,9 @@ const tableColumnClasses = [
 
 const kind = 'Route';
 
-const RouteTableRow: RowFunction<RouteKind> = ({ obj: route, index, key, style }) => {
+const RouteTableRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj: route }) => {
   return (
-    <TableRow id={route.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={route.metadata.name} namespace={route.metadata.namespace} />
       </TableData>
@@ -181,7 +182,7 @@ const RouteTableRow: RowFunction<RouteKind> = ({ obj: route, index, key, style }
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={route} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

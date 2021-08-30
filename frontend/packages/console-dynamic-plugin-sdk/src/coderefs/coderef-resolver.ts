@@ -10,9 +10,8 @@ import {
   ExtensionProperties,
   UpdateExtensionProperties,
 } from '../types';
-import { mergeExtensionProperties } from '../utils/store';
-
-// TODO(vojtech): support code refs at any level within the properties object
+import { deepForOwn } from '../utils/object';
+import { settleAllPromises } from '../utils/promise';
 
 const codeRefSymbol = Symbol('CodeRef');
 
@@ -30,12 +29,6 @@ export const isExecutableCodeRef = (obj): obj is CodeRef =>
   _.isFunction(obj) &&
   _.isEqual(Object.getOwnPropertySymbols(obj), [codeRefSymbol]) &&
   obj[codeRefSymbol] === true;
-
-export const filterEncodedCodeRefProperties = (properties) =>
-  _.pickBy(properties, isEncodedCodeRef) as { [propName: string]: EncodedCodeRef };
-
-export const filterExecutableCodeRefProperties = (properties) =>
-  _.pickBy(properties, isExecutableCodeRef) as { [propName: string]: CodeRef };
 
 /**
  * Parse the `EncodedCodeRef` value into `[moduleName, exportName]` tuple.
@@ -61,7 +54,7 @@ export const loadReferencedObject = async <TExport = any>(
   errorCallback: VoidFunction,
 ): Promise<TExport> => {
   const [moduleName, exportName] = parseEncodedCodeRefValue(ref.$codeRef);
-  let requestedModule: object;
+  let requestedModule: {};
 
   if (!moduleName) {
     console.error(`Malformed code reference '${ref.$codeRef}' of plugin ${pluginID}`);
@@ -99,35 +92,15 @@ export const resolveEncodedCodeRefs = (
   errorCallback: VoidFunction,
 ): Extension[] =>
   _.cloneDeep(extensions).map((e) => {
-    const refs = filterEncodedCodeRefProperties(e.properties);
-
-    Object.entries(refs).forEach(([propName, ref]) => {
-      const executableCodeRef: CodeRef = async () =>
-        loadReferencedObject(ref, entryModule, pluginID, errorCallback);
-
-      e.properties[propName] = applyCodeRefSymbol(executableCodeRef);
+    deepForOwn<EncodedCodeRef>(e.properties, isEncodedCodeRef, (ref, key, obj) => {
+      const loader = applyCodeRefSymbol(async () =>
+        loadReferencedObject(ref, entryModule, pluginID, errorCallback),
+      );
+      obj[key] = Object.defineProperty(loader, 'name', { value: `${pluginID}-${ref.$codeRef}` });
     });
 
     return e;
   });
-
-/**
- * Returns the properties of extension `E` with `CodeRef` functions replaced with referenced objects.
- */
-export const resolveCodeRefProperties = async <E extends Extension<P>, P = ExtensionProperties<E>>(
-  extension: E,
-): Promise<ResolvedCodeRefProperties<P>> => {
-  const refs = filterExecutableCodeRefProperties(extension.properties);
-  const resolvedValues = Object.assign({}, extension.properties);
-
-  await Promise.all(
-    Object.entries(refs).map(async ([propName, ref]) => {
-      resolvedValues[propName] = await ref();
-    }),
-  );
-
-  return resolvedValues as ResolvedCodeRefProperties<P>;
-};
 
 /**
  * Returns an extension with its `CodeRef` properties replaced with referenced objects.
@@ -139,6 +112,17 @@ export const resolveExtension = async <
 >(
   extension: E,
 ): Promise<R> => {
-  const resolvedProperties = await resolveCodeRefProperties<E, P>(extension);
-  return (mergeExtensionProperties(extension, resolvedProperties) as unknown) as R;
+  const valueResolutions: Promise<void>[] = [];
+
+  deepForOwn<CodeRef>(extension.properties, isExecutableCodeRef, (ref, key, obj) => {
+    valueResolutions.push(
+      ref().then((resolvedValue) => {
+        obj[key] = resolvedValue;
+      }),
+    );
+  });
+
+  await settleAllPromises(valueResolutions);
+
+  return (extension as unknown) as R;
 };

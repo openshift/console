@@ -25,6 +25,7 @@ import {
   PipelineBuilderFormikStatus,
   PipelineBuilderFormValues,
   PipelineBuilderFormYamlValues,
+  PipelineBuilderLoadingTask,
   PipelineBuilderTaskBase,
   PipelineBuilderTaskResources,
   TaskErrors,
@@ -94,7 +95,6 @@ export const findTask = (
     ) {
       return null;
     }
-
     const {
       taskRef: { kind, name },
     } = task;
@@ -245,6 +245,25 @@ export const safeName = (reservedNames: string[], desiredName: string): string =
   return desiredName;
 };
 
+export const convertResourceToLoadingTask = (
+  usedNames: string[],
+  resource: TaskKind,
+  isFinallyTask: boolean,
+  runAfter?: string[],
+): PipelineBuilderLoadingTask => {
+  const kind = resource.kind ?? TaskModel.kind;
+  return {
+    name: safeName(usedNames, resource.metadata.name),
+    runAfter: isFinallyTask ? [] : runAfter,
+    taskRef: {
+      kind,
+      name: resource.metadata.name,
+    },
+    resource,
+    isFinallyTask,
+  };
+};
+
 export const convertResourceToTask = (
   usedNames: string[],
   resource: TaskKind,
@@ -321,7 +340,7 @@ export const convertBuilderFormToPipeline = (
   } = formValues;
   const listIds = listTasks.map((listTask) => listTask.name);
   // Strip remaining builder-only properties
-  const unhandledSpec = _.omit(others, 'finallyListTasks');
+  const unhandledSpec = _.omit(others, 'finallyListTasks', 'loadingTasks');
 
   return {
     ...existingPipeline,
@@ -362,6 +381,7 @@ export const convertPipelineToBuilderForm = (pipeline: PipelineKind): PipelineBu
     })),
     tasks,
     listTasks: [],
+    loadingTasks: [],
     finallyTasks,
     finallyListTasks: [],
   };

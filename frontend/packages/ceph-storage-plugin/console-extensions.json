@@ -105,7 +105,8 @@
       "href": "/ocs-dashboards"
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_MANAGED", "ODF_MODEL"]
     }
   },
   {
@@ -119,28 +120,14 @@
     },
     "flags": {
       "required": ["MCG"],
-      "disallowed": ["OCS"]
-    }
-  },
-  {
-    "type": "console.page/resource/list",
-    "properties": {
-      "model": {
-        "group": "ceph.rook.io",
-        "version": "v1",
-        "kind": "CephBlockPool"
-      },
-      "component": { "$codeRef": "blockPoolListPage.BlockPoolListPage" }
-    },
-    "flags": {
-      "required": ["OCS"]
+      "disallowed": ["OCS", "ODF_MODEL"]
     }
   },
   {
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/k8s/ns/:ns/ceph.rook.io~v1~CephBlockPool/~new"],
+      "path": "/odf/system/ocs.openshift.io~v1~StorageCluster/:systemName/ceph.rook.io~v1~CephBlockPool/create/~new",
       "component": {
         "$codeRef": "blockPoolCreatePage.default"
       }
@@ -150,14 +137,13 @@
     }
   },
   {
-    "type": "console.page/resource/details",
+    "type": "console.page/route",
     "properties": {
-      "model": {
-        "group": "ceph.rook.io",
-        "version": "v1",
-        "kind": "CephBlockPool"
-      },
-      "component": { "$codeRef": "blockPoolDetailsPage.default" }
+      "exact": false,
+      "path": "/odf/system/ocs.openshift.io~v1~StorageCluster/:systemName/ceph.rook.io~v1~CephBlockPool/:poolName",
+      "component": {
+        "$codeRef": "blockPoolDetailsPage.default"
+      }
     },
     "flags": {
       "required": ["OCS"]
@@ -176,7 +162,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/odf/resource/noobaa.io~v1alpha1~BackingStore/~new",
+      "path": "/odf/resource/noobaa.io~v1alpha1~BackingStore/create/~new",
       "exact": true,
       "component": {
         "$codeRef": "bsCreate.default"
@@ -186,7 +172,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/odf/resource/noobaa.io~v1alpha1~NamespaceStore/~new",
+      "path": "/odf/resource/noobaa.io~v1alpha1~NamespaceStore/create/~new",
       "exact": true,
       "component": {
         "$codeRef": "nssCreate.default"
@@ -196,10 +182,20 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/odf/resource/noobaa.io~v1alpha1~BucketClass/~new",
+      "path": "/odf/resource/noobaa.io~v1alpha1~BucketClass/create/~new",
       "exact": true,
       "component": {
         "$codeRef": "bcCreate.default"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/system/ocs.openshift.io~v1~StorageCluster/:systemName",
+      "exact": false,
+      "component": {
+        "$codeRef": "odfSystemDashboard.default"
       }
     }
   }

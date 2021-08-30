@@ -8,11 +8,6 @@ import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 
 import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-}));
-
 jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview: jest.fn(),
 }));

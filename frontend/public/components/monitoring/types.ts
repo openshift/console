@@ -1,34 +1,39 @@
 import { APIError } from '@console/shared';
 import {
   Silence,
-  AlertStates,
   PrometheusAlert,
   Alert,
-  SilenceStates,
-  AlertSeverity,
-  RuleStates,
   PrometheusRule,
   PrometheusLabels,
   PrometheusValue,
   Rule,
-} from '@console/dynamic-plugin-sdk';
+  RuleStates,
+  AlertStates,
+  AlertSeverity,
+  SilenceStates,
+} from '@console/dynamic-plugin-sdk/src/api/common-types';
 
-import { RowFunction } from '../factory';
+import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';
 
 export {
-  Silence,
-  AlertStates,
-  PrometheusAlert,
-  Alert,
   SilenceStates,
   AlertSeverity,
   RuleStates,
+  AlertStates,
+};
+
+// prettier 1.x doesn't support TS 3.8 syntax
+// eslint-disable-next-line prettier/prettier
+export type {
+  PrometheusAlert,
+  Alert,
   PrometheusRule,
   PrometheusLabels,
   PrometheusValue,
   Rule,
-};
+  Silence,
+}
 
 export const enum AlertSource {
   Platform = 'platform',
@@ -95,7 +100,7 @@ export type ListPageProps = {
   loadError?: string;
   nameFilterID: string;
   reduxID: string;
-  Row: RowFunction;
+  Row: React.FC<RowFunctionArgs>;
   rowFilters: RowFilter[];
   showTitle?: boolean;
 };

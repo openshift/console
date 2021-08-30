@@ -204,7 +204,7 @@ const config: Configuration = {
       chunksSortMode: 'none',
     }),
     new MonacoWebpackPlugin({
-      languages: ['yaml'],
+      languages: ['yaml', 'dockerfile'],
     }),
     new CopyWebpackPlugin([{ from: './public/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/console-shared/locales', to: 'locales' }]),

@@ -11,7 +11,7 @@ describe('LogSnippet utils test', () => {
       LogSnippetTaskData[0].status,
       null,
     ) as ErrorDetailsWithStaticLog;
-    expect(title).toEqual('Failure on task {{taskName}} - check logs for details.');
+    expect(title).toEqual('Failure on task taskrun1-abhi - check logs for details.');
     expect(staticMessage).toEqual('Unknown failure condition');
   });
 
@@ -21,7 +21,7 @@ describe('LogSnippet utils test', () => {
       LogSnippetTaskData[0].status,
       testContainer,
     ) as ErrorDetailsWithStaticLog;
-    expect(title).toEqual('Failure on task {{taskName}} - check logs for details.');
+    expect(title).toEqual('Failure on task taskrun1-abhi - check logs for details.');
     expect(staticMessage).toEqual('Unknown failure condition');
   });
 
@@ -31,7 +31,7 @@ describe('LogSnippet utils test', () => {
       LogSnippetTaskData[1].status,
       testContainer,
     ) as ErrorDetailsWithLogName;
-    expect(title).toEqual('Failure on task {{taskName}} - check logs for details.');
+    expect(title).toEqual('Failure on task taskrun1-abhi - check logs for details.');
     expect(podName).toEqual(LogSnippetTaskData[1].status.podName);
     expect(containerName).toEqual(testContainer);
   });

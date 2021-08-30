@@ -3,9 +3,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { TimeoutError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
-import { TimeoutError } from '../../co-fetch';
 
 export const Box: React.FC<BoxProps> = ({ children, className }) => (
   <div className={classNames('cos-status-box', className)}>{children}</div>

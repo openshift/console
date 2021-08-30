@@ -18,6 +18,8 @@ import {
   TopologyCreateConnector as DynamicTopologyCreateConnector,
   TopologyDecoratorProvider as DynamicTopologyDecoratorProvider,
   TopologyDisplayFilters as DynamicTopologyDisplayFilters,
+  TopologyRelationshipProvider,
+  isTopologyRelationshipProvider,
 } from '@console/dynamic-plugin-sdk';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
@@ -142,6 +144,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const [dynamicExtensionDecorators, dynamicExtensionDecoratorsResolved] = useResolvedExtensions<
     DynamicTopologyDecoratorProvider
   >(isDynamicTopologyDecoratorProvider);
+  const [relationshipProvider] = useResolvedExtensions<TopologyRelationshipProvider>(
+    isTopologyRelationshipProvider,
+  );
 
   const [topologyDecorators, setTopologyDecorators] = React.useState<{
     [key: string]: TopologyDecorator[];
@@ -178,6 +183,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
             )
           : [],
       decorators: topologyDecorators,
+      relationshipProviderExtensions: relationshipProvider,
     }),
     [
       createConnectors,
@@ -187,6 +193,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       dynamicCreateConnectorsResolved,
       eventSourceEnabled,
       namespace,
+      relationshipProvider,
       topologyDecorators,
     ],
   );
@@ -341,7 +348,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
         </StackItem>
         <StackItem isFilled className={containerClasses}>
           <div className="co-file-dropzone co-file-dropzone__flex">
-            <div ref={setViewContainer} className="pf-topology-content">
+            <div
+              ref={setViewContainer}
+              className="pf-topology-content ocs-quick-search-modal__no-backdrop"
+            >
               {canDrop && isOver && (
                 <div
                   className={classNames(

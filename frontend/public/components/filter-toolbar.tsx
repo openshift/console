@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { connect } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import {
   Badge,
   Button,
@@ -22,13 +24,15 @@ import {
   setOrRemoveQueryArgument,
 } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
-import { filterList as filterListAction } from '../actions/k8s';
+import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
 import { ColumnLayout } from './modals/column-management-modal';
 import { TextFilter } from './factory';
 import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared/src';
+import { OnFilterChange } from './factory/ListPage/filter-hook';
+import { FilterValue } from './factory/table-filters';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -52,24 +56,24 @@ type FilterKeys = {
   [key: string]: string;
 };
 
-const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
-  const {
-    rowFilters,
-    data,
-    hideColumnManagement,
-    hideLabelFilter,
-    hideNameLabelFilters,
-    columnLayout,
-    nameFilterPlaceholder,
-    labelFilterPlaceholder,
-    location,
-    textFilter = filterTypeMap[FilterType.NAME],
-    labelFilter = filterTypeMap[FilterType.LABEL],
-    uniqueFilterName,
-    reduxIDs,
-    filterList,
-    kinds,
-  } = props;
+export const FilterToolbar: React.FC<FilterToolbarProps> = ({
+  rowFilters,
+  data,
+  hideColumnManagement,
+  hideLabelFilter,
+  hideNameLabelFilters,
+  columnLayout,
+  nameFilterPlaceholder,
+  labelFilterPlaceholder,
+  textFilter = filterTypeMap[FilterType.NAME],
+  labelFilter = filterTypeMap[FilterType.LABEL],
+  uniqueFilterName,
+  reduxIDs,
+  onFilterChange,
+  labelPath,
+}) => {
+  const dispatch = useDispatch();
+  const location = useLocation();
 
   const { t } = useTranslation();
   const translateFilterType = (value: string) => {
@@ -107,7 +111,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const generatedRowFilters = useDeepCompareMemoize(
     (rowFilters ?? []).map((rowFilter) => ({
       ...rowFilter,
-      items: (rowFilter.itemsGenerator?.(props, kinds) ?? rowFilter.items).map((item) => ({
+      items: rowFilter.items.map((item) => ({
         ...item,
         count: rowFilter.isMatch
           ? _.filter(data, (d) => rowFilter.isMatch(d, item.id)).length
@@ -117,12 +121,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   );
 
   // Reduce generatedRowFilters once and memoize
-  const [filters, filtersNameMap, filterKeys, defaultSelections]: [
-    Filter,
-    FilterKeys,
-    FilterKeys,
-    string[],
-  ] = React.useMemo(
+  const [filters, filtersNameMap, filterKeys, defaultSelections] = React.useMemo<
+    [Filter, FilterKeys, FilterKeys, string[]]
+  >(
     () =>
       generatedRowFilters.reduce(
         (
@@ -167,32 +168,39 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   // Map row filters to select groups
   const dropdownItems = generatedRowFilters.map((rowFilter) => (
     <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
-      {rowFilter.items?.map?.((item) => (
-        <SelectOption
-          data-test-row-filter={item.id}
-          key={item.id}
-          inputId={item.id}
-          value={item.id}
-        >
-          <span className="co-filter-dropdown-item__name">{item.title}</span>
-          <Badge key={item.id} isRead>
-            {item.count}
-          </Badge>
-        </SelectOption>
-      ))}
+      {rowFilter.items?.map?.((item) =>
+        item.hideIfEmpty && (item.count === 0 || item.count === '0') ? (
+          <></>
+        ) : (
+          <SelectOption
+            data-test-row-filter={item.id}
+            key={item.id}
+            inputId={item.id}
+            value={item.id}
+          >
+            <span className="co-filter-dropdown-item__name">{item.title}</span>
+            <Badge key={item.id} isRead>
+              {item.count}
+            </Badge>
+          </SelectOption>
+        ),
+      )}
     </SelectGroup>
   ));
 
   const applyFilters = React.useCallback(
-    (type, filter) => reduxIDs?.forEach?.((id) => filterList(id, type, filter)),
-    [reduxIDs, filterList],
+    (type: string, input: FilterValue) =>
+      onFilterChange
+        ? onFilterChange(type, input)
+        : reduxIDs?.forEach?.((id) => dispatch(filterList(id, type, input))),
+    [onFilterChange, reduxIDs, dispatch],
   );
 
   const applyRowFilter = (selected: string[]) => {
     generatedRowFilters?.forEach?.(({ items, type }) => {
       const all = items?.map?.(({ id }) => id) ?? [];
       const recognized = _.intersection(selected, all);
-      applyFilters(type, { selected: new Set(recognized), all });
+      applyFilters(type, { selected: [...new Set(recognized)], all });
     });
   };
 
@@ -228,7 +236,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const applyNameFilter = React.useCallback(
     (value: string) => {
       setOrRemoveQueryArgument(nameFilterQueryArgumentKey, value);
-      applyFilters(textFilter, value);
+      applyFilters(textFilter, { selected: [value] });
     },
     [applyFilters, nameFilterQueryArgumentKey, textFilter],
   );
@@ -253,7 +261,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
       applyFilters(labelFilter, { all: labelFilters });
     }
     if (!hideNameLabelFilters) {
-      applyFilters(textFilter, nameInputText);
+      applyFilters(textFilter, { selected: [nameInputText] });
     }
     if (_.isEmpty(selectedRowFilters)) {
       updateRowFilterSelected(defaultSelections);
@@ -358,7 +366,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                       setTextValue={setLabelInputText}
                       placeholder={labelFilterPlaceholder ?? t('public~Search by label...')}
                       data={data}
-                      labelPath={props.labelPath}
+                      labelPath={labelPath}
                     />
                   ) : (
                     <TextFilter
@@ -402,7 +410,6 @@ type FilterToolbarProps = {
   rowFilters?: RowFilter[];
   data?: any;
   reduxIDs?: string[];
-  filterList?: any;
   textFilter?: string;
   hideColumnManagement?: boolean;
   hideLabelFilter?: boolean;
@@ -416,26 +423,24 @@ type FilterToolbarProps = {
   labelFilterPlaceholder?: string;
   // Used when multiple tables are in the same page
   uniqueFilterName?: string;
+  onFilterChange?: OnFilterChange;
 };
 
 type RowFilterItem = {
   id?: string;
   title?: string;
+  hideIfEmpty?: string;
   [key: string]: string;
 };
 
 export type RowFilter<R = any> = {
   defaultSelected?: string[];
   filterGroupName: string;
-  isMatch?: (param: R, id: string) => boolean;
+  isMatch?: (obj: R, id: string) => boolean;
   type: string;
   items?: RowFilterItem[];
-  itemsGenerator?: (...args) => RowFilterItem[];
-  reducer?: (param: R) => React.ReactText;
-  filter?: any;
+  reducer?: (obj: R) => React.ReactText;
+  filter?: (input: FilterValue, obj: R) => boolean;
 };
 
-export const FilterToolbar = withRouter(
-  connect(null, { filterList: filterListAction })(FilterToolbar_),
-);
 FilterToolbar.displayName = 'FilterToolbar';

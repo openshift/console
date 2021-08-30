@@ -1,4 +1,6 @@
 import { ADD_SOURCE, COMMUNITY } from '../const/index';
+import { VirtualMachineData } from '../types/vm';
+import { wizard } from './wizard';
 
 export const getRow = (templateName: string, within: VoidFunction) =>
   cy
@@ -75,6 +77,14 @@ export const virtualization = {
     clickCreateNewTemplateFrom: (templateName: string) => {
       getRow(templateName, () => cy.byLegacyTestID('kebab-button').click());
       cy.byTestActionID('Create new Template').click();
+    },
+    createTemplateFromWizard: (data: VirtualMachineData) => {
+      wizard.template.open();
+      wizard.vm.fillGeneralForm(data);
+      wizard.vm.fillNetworkForm(data);
+      wizard.vm.fillStorageForm(data);
+      wizard.vm.fillAdvancedForm(data);
+      wizard.vm.fillConfirmForm(data);
     },
   },
 };

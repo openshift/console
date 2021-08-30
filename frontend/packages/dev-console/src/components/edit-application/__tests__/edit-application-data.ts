@@ -4,7 +4,12 @@ import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { serverlessInitialValues } from '../../import/__mocks__/serverless-mock';
-import { DeployImageFormData, GitImportFormData, Resources } from '../../import/import-types';
+import {
+  DeployImageFormData,
+  GitImportFormData,
+  GitTypes,
+  Resources,
+} from '../../import/import-types';
 import { AppResources } from '../edit-application-types';
 
 export const knativeService: K8sResourceKind = {
@@ -534,7 +539,7 @@ export const gitImportInitialValues: GitImportFormData = {
   },
   git: {
     url: 'https://github.com/divyanshiGupta/nationalparks-py',
-    type: 'github',
+    type: GitTypes.github,
     ref: '',
     dir: '/',
     showGitType: false,
@@ -560,6 +565,9 @@ export const gitImportInitialValues: GitImportFormData = {
     strategy: 'Source',
   },
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const externalImageValues: DeployImageFormData = {
@@ -630,6 +638,9 @@ export const externalImageValues: DeployImageFormData = {
   build: { env: [], triggers: {}, strategy: '' },
   isSearchingForImage: false,
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const internalImageValues: DeployImageFormData = {
@@ -700,6 +711,9 @@ export const internalImageValues: DeployImageFormData = {
   build: { env: [], triggers: {}, strategy: '' },
   isSearchingForImage: false,
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const knAppResources: AppResources = {
@@ -781,9 +795,15 @@ export const knExternalImageValues: DeployImageFormData = {
   allowInsecureRegistry: false,
   serverless: serverlessInitialValues,
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const gitImportInitialValuesWithHealthChecksEnabled: GitImportFormData = {
   ...gitImportInitialValues,
   healthChecks: healthChecksData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };

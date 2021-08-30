@@ -10,6 +10,8 @@ import {
   REGEXP_ARRAY_PATH,
   REGEXP_CAPTURE_GROUP_SUBGROUP,
   REGEXP_NESTED_ARRAY_PATH,
+  COMMON_COMPATIBLE_CAPABILITIES,
+  CAPABILITY_SORT_ORDER,
 } from './const';
 import { Descriptor, SpecCapability, StatusCapability, CommonCapability } from './types';
 
@@ -120,11 +122,13 @@ export const getPatchPathFromDescriptor = (descriptor: Descriptor): string =>
 const getCompatibleCapabilities = (type: string): (StatusCapability | SpecCapability)[] => {
   switch (type) {
     case 'object':
-      return OBJECT_COMPATIBLE_CAPABILITIES;
+      return [...COMMON_COMPATIBLE_CAPABILITIES, ...OBJECT_COMPATIBLE_CAPABILITIES];
     case 'array':
-      return ARRAY_COMPATIBLE_CAPABILITIES;
+      return [...COMMON_COMPATIBLE_CAPABILITIES, ...ARRAY_COMPATIBLE_CAPABILITIES];
+    case 'primitive':
+      return [...COMMON_COMPATIBLE_CAPABILITIES, ...PRIMITIVE_COMPATIBLE_CAPABILITIES];
     default:
-      return PRIMITIVE_COMPATIBLE_CAPABILITIES;
+      return [];
   }
 };
 
@@ -134,54 +138,47 @@ const getCompatibleCapabilities = (type: string): (StatusCapability | SpecCapabi
 export function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   type: string,
-  allowDeprecated?: boolean,
 ): CapabilityType[] {
   const compatibleCapabilities = getCompatibleCapabilities(type);
-  const [valid, invalid, deprecated] = _.reduce(
-    descriptor?.['x-descriptors'] ?? [],
-    ([validAccumulator, invalidAccumulator, deprecatedAccumulator], capability) => {
-      const isDeprecated = DEPRECATED_CAPABILITIES.some((deprecatedCapability) =>
-        capability.startsWith(deprecatedCapability),
-      );
-
+  return (descriptor?.['x-descriptors'] ?? [])
+    .filter((capability) => {
       const isCompatible =
         type === 'any' ||
         compatibleCapabilities.some((compatibleCapability) =>
           capability.startsWith(compatibleCapability),
         );
-
-      const isValid = (!isDeprecated || allowDeprecated) && isCompatible;
-      return [
-        [...(validAccumulator ?? []), ...(isValid ? [capability] : [])],
-        [...(invalidAccumulator ?? []), ...(!isValid ? [capability] : [])],
-        [...(deprecatedAccumulator ?? []), ...(isDeprecated ? [capability] : [])],
-      ];
-    },
-    [[], [], []],
-  );
-
-  if (invalid?.length) {
-    invalid.forEach((invalidCapability) => {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[Invalid x-descriptor] "${invalidCapability}" is incompatible with ${type} values and will have no effect`,
-        descriptor,
+      const isDeprecated = DEPRECATED_CAPABILITIES.some((deprecatedCapability) =>
+        capability.startsWith(deprecatedCapability),
       );
-    });
-  }
 
-  if (deprecated?.length) {
-    deprecated.forEach((deprecatedCapability) => {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[Deprecated x-descriptor] "${deprecatedCapability}" is no longer supported ${!allowDeprecated &&
-          'and will have no effect'}`,
-        descriptor,
-      );
-    });
-  }
+      if (isDeprecated) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[Deprecated x-descriptor] "${capability}" is deprecated and support will be removed in a future release.`,
+          descriptor,
+        );
+      }
 
-  return valid ?? [];
+      if (!isCompatible) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[Invalid x-descriptor] "${capability}" is incompatible with ${type} values and will have no effect`,
+          descriptor,
+        );
+        return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      const aIndex = CAPABILITY_SORT_ORDER.findIndex((capability) => a.startsWith(capability));
+      const bIndex = CAPABILITY_SORT_ORDER.findIndex((capability) => b.startsWith(capability));
+      // If either a or b don't exist in the sorting array, sort the missing item last
+      if (aIndex < 0 || bIndex < 0) {
+        return bIndex - aIndex;
+      }
+      return aIndex - bIndex;
+    });
 }
 
 const getValueType = (value: any): string => {
@@ -197,19 +194,17 @@ const getValueType = (value: any): string => {
 export function getValidCapabilitiesForValue<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   value: any,
-  allowDeprecated?: boolean,
 ): CapabilityType[] {
   const type = getValueType(value);
-  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type, allowDeprecated);
+  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type);
 }
 
 export function getValidCapabilitiesForSchema<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   schema: JSONSchema7,
-  allowDeprecated?: boolean,
 ): CapabilityType[] {
   const type = getSchemaType(schema);
-  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type, allowDeprecated);
+  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type);
 }
 
 export const isMainStatusDescriptor = (descriptor: Descriptor): boolean =>

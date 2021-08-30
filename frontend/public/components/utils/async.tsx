@@ -8,7 +8,7 @@ import { LoadingBox } from './status-box';
  */
 const sameLoader = (a: () => Promise<React.ComponentType>) => (
   b: () => Promise<React.ComponentType>,
-) => (a || 'a').toString() === (b || 'b').toString();
+) => a?.name === b?.name && (a || 'a').toString() === (b || 'b').toString();
 
 enum AsyncComponentError {
   ComponentNotFound = 'COMPONENT_NOT_FOUND',

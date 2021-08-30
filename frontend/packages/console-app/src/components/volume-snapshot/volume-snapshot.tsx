@@ -4,13 +4,7 @@ import * as classNames from 'classnames';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import {
-  TableRow,
-  TableData,
-  ListPage,
-  Table,
-  RowFunction,
-} from '@console/internal/components/factory';
+import { TableData, ListPage, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   ResourceLink,
   ResourceKebab,
@@ -109,7 +103,7 @@ const Header = (disableItems = {}) => () => {
   ].filter((item) => !disableItems[item.title]);
 };
 
-const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customData }) => {
+const Row: React.FC<RowFunctionArgs<VolumeSnapshotKind>> = ({ obj, customData }) => {
   const { name, namespace, creationTimestamp } = obj?.metadata || {};
   const size = obj?.status?.restoreSize;
   const sizeBase = convertToBaseValue(size);
@@ -121,7 +115,7 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
   const snapshotContent = obj?.status?.boundVolumeSnapshotContentName;
   const snapshotClass = obj?.spec?.volumeSnapshotClassName;
   return (
-    <TableRow id={obj?.metadata?.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(VolumeSnapshotModel)}
@@ -174,7 +168,7 @@ const Row: RowFunction<VolumeSnapshotKind> = ({ key, obj, style, index, customDa
           actions={menuActions}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

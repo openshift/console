@@ -1,6 +1,12 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { OverviewItem } from '@console/shared/src';
+import { K8sResourceKind, apiVersionForModel } from '@console/internal/module/k8s';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src/types';
+import {
+  getDefaultOperatorIcon,
+  getImageForCSVIcon,
+  getOperatorBackedServiceKindMap,
+  OverviewItem,
+} from '@console/shared/src';
 import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
 import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
 import { edgesFromServiceBinding } from '@console/topology/src/operators/operators-data-transformer';
@@ -37,9 +43,16 @@ export const createOverviewItem = (obj: K8sResourceKind): OverviewItem<K8sResour
   };
 };
 
-export const getTopologyRhoasNodes = (kafkaConnections: K8sResourceKind[]): NodeModel[] => {
+export const getTopologyRhoasNodes = (
+  kafkaConnections: K8sResourceKind[],
+  resources: TopologyDataResources,
+): NodeModel[] => {
   const nodes = [];
   for (const obj of kafkaConnections) {
+    const resKindMap = getOperatorBackedServiceKindMap(
+      resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[],
+    );
+    const csvData = resKindMap?.[obj.kind];
     const data: TopologyDataObject = {
       id: obj.metadata.uid,
       name: obj.metadata.name,
@@ -49,6 +62,7 @@ export const getTopologyRhoasNodes = (kafkaConnections: K8sResourceKind[]): Node
       resources: createOverviewItem(obj),
       data: {
         resource: obj,
+        icon: getImageForCSVIcon(csvData?.spec?.icon?.[0]) || getDefaultOperatorIcon(),
       },
     };
     nodes.push(getTopologyNodeItem(obj, TYPE_MANAGED_KAFKA_CONNECTION, data, KAFKA_PROPS));
@@ -94,14 +108,14 @@ export const getRhoasServiceBindingEdges = (
 
   return edges;
 };
-export const getRhoasTopologyDataModel = () => (
+export const getRhoasTopologyDataModel = (
   namespace: string,
   resources: TopologyDataResources,
   workloads: K8sResourceKind[],
 ): Promise<Model> => {
   const serviceBindingRequests = resources?.serviceBindingRequests?.data;
   const rhoasDataModel: Model = {
-    nodes: getTopologyRhoasNodes(resources.kafkaConnections.data),
+    nodes: getTopologyRhoasNodes(resources.kafkaConnections.data, resources),
     edges: [],
   };
   if (rhoasDataModel.nodes?.length) {

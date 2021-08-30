@@ -1,5 +1,6 @@
-.odc-quick-search-modal-body {
+.ocs-quick-search-modal-body {
   display: flex;
   flex-direction: column;
-  min-height: 60px;
+  background: var(--pf-global--BackgroundColor--100);
+  box-shadow: var(--pf-c-modal-box--BoxShadow);
 }

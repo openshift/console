@@ -205,3 +205,22 @@ export const EventListenerModel: K8sKind = {
   badge: BadgeType.TECH,
   color,
 };
+
+export const RepositoryModel: K8sKind = {
+  apiGroup: 'pipelinesascode.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Repository',
+  // t('pipelines-plugin~Repository')
+  labelKey: 'pipelines-plugin~Repository',
+  // t('pipelines-plugin~Repositories')
+  labelPluralKey: 'pipelines-plugin~Repositories',
+  plural: 'repositories',
+  abbr: 'R',
+  namespaced: true,
+  kind: 'Repository',
+  id: 'repository',
+  labelPlural: 'Repositories',
+  crd: true,
+  badge: BadgeType.DEV,
+  color,
+};

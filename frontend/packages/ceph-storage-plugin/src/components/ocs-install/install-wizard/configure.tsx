@@ -189,6 +189,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               state={state}
               dispatch={dispatch}
               mode={mode}
+              hideTitle
               className="ocs-install-encryption"
             />
           )}

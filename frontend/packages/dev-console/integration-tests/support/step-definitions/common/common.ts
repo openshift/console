@@ -59,7 +59,6 @@ When('user clicks create button', () => {
 
 Given('user has selected namespace {string}', (projectName: string) => {
   projectNameSpace.selectProject(projectName);
-  cy.log(`User has selected namespace ${projectName}`);
 });
 
 When('user clicks on {string} link', (buttonName: string) => {

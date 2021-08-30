@@ -7,10 +7,16 @@ export enum StartedByAnnotation {
 export enum TektonTaskAnnotation {
   minVersion = ' tekton.dev/pipelines.minVersion',
   tags = 'tekton.dev/tags',
+  categories = 'tekton.dev/categories',
+  installedFrom = 'openshift.io/installed-from',
 }
-
+export enum TektonTaskProviders {
+  redhat = 'Red Hat',
+  community = 'Community',
+}
 export enum TektonTaskLabel {
   providerType = 'operator.tekton.dev/provider-type',
+  version = 'app.kubernetes.io/version',
 }
 export enum TektonResourceLabel {
   pipeline = 'tekton.dev/pipeline',

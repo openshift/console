@@ -5,7 +5,21 @@ import CatalogServiceProvider, {
   CatalogService,
 } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
 import { QuickSearchController, QuickSearchProviders } from '@console/shared';
-import { TaskSearchCallback } from '../pipelines/pipeline-builder/types';
+import { TektonTaskProviders } from '../pipelines/const';
+import { useCleanupOnFailure, useLoadingTaskCleanup } from '../pipelines/pipeline-builder/hooks';
+import {
+  PipelineBuilderTaskGroup,
+  TaskSearchCallback,
+  UpdateTasksCallback,
+} from '../pipelines/pipeline-builder/types';
+import {
+  createTask,
+  findInstalledTask,
+  getSelectedVersionUrl,
+  isTaskSearchable,
+  updateTask,
+} from './pipeline-quicksearch-utils';
+import PipelineQuickSearchDetails from './PipelineQuickSearchDetails';
 
 interface QuickSearchProps {
   namespace: string;
@@ -13,6 +27,8 @@ interface QuickSearchProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   callback: TaskSearchCallback;
+  onUpdateTasks: UpdateTasksCallback;
+  taskGroup: PipelineBuilderTaskGroup;
 }
 
 const Contents: React.FC<{
@@ -24,20 +40,62 @@ const Contents: React.FC<{
   isOpen,
   setIsOpen,
   callback,
+  onUpdateTasks,
+  taskGroup,
 }) => {
   const { t } = useTranslation();
   const savedCallback = React.useRef(null);
+  savedCallback.current = callback;
+  const [failedTasks, setFailedTasks] = React.useState<string[]>([]);
 
-  React.useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+  useLoadingTaskCleanup(onUpdateTasks, taskGroup);
+  useCleanupOnFailure(failedTasks, onUpdateTasks, taskGroup);
 
-  const catalogServiceItems = catalogService.items.map((service) => {
-    service.cta.callback = () => {
-      savedCallback.current(service.data);
+  const catalogServiceItems = catalogService.items.reduce((acc, item) => {
+    const installedTask = findInstalledTask(catalogService.items, item);
+
+    if (item.provider === TektonTaskProviders.community) {
+      item.attributes.installed = '';
+      if (installedTask) {
+        const installedVersion = item.attributes?.versions?.find(
+          (v) => v.version === installedTask.attributes?.versions[0]?.version,
+        );
+        if (installedVersion) {
+          item.attributes.installed = installedVersion.id.toString();
+        }
+      }
+    }
+
+    item.cta.callback = ({ selectedVersion }) => {
+      return new Promise((resolve) => {
+        if (item.provider === TektonTaskProviders.community) {
+          const selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
+          if (installedTask) {
+            if (selectedVersion === item.attributes.installed) {
+              resolve(savedCallback.current(installedTask.data));
+            } else {
+              resolve(savedCallback.current({ metadata: { name: item.data.name } }));
+              updateTask(selectedVersionUrl, installedTask, namespace, item.data.name).catch(() =>
+                setFailedTasks([...failedTasks, item.data.name]),
+              );
+            }
+          } else {
+            resolve(savedCallback.current({ metadata: { name: item.data.name } }));
+            createTask(selectedVersionUrl, namespace).catch(() =>
+              setFailedTasks([...failedTasks, item.data.name]),
+            );
+          }
+        } else {
+          resolve(savedCallback.current(item.data));
+        }
+      });
     };
-    return service;
-  });
+
+    if (isTaskSearchable(catalogService.items, item)) {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
 
   const quickSearchProviders: QuickSearchProviders = [
     {
@@ -60,8 +118,8 @@ const Contents: React.FC<{
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       disableKeyboardOpen
-      limitItemCount={0}
       icon={<PlusCircleIcon width="1.5em" height="1.5em" />}
+      detailsRenderer={(props) => <PipelineQuickSearchDetails {...props} />}
     />
   );
 };
@@ -72,6 +130,8 @@ const PipelineQuickSearch: React.FC<QuickSearchProps> = ({
   isOpen,
   setIsOpen,
   callback,
+  onUpdateTasks,
+  taskGroup,
 }) => {
   return (
     <CatalogServiceProvider namespace={namespace} catalogId="pipelines-task-catalog">
@@ -84,6 +144,8 @@ const PipelineQuickSearch: React.FC<QuickSearchProps> = ({
             setIsOpen,
             catalogService,
             callback,
+            onUpdateTasks,
+            taskGroup,
           }}
         />
       )}

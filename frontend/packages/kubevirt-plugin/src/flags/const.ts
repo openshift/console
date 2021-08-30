@@ -1,0 +1,3 @@
+export const FLAG_KUBEVIRT = 'KUBEVIRT';
+export const FLAG_KUBEVIRT_HAS_V1_API = 'KUBEVIRT_HAS_v1_API';
+export const FLAG_KUBEVIRT_HAS_PRINTABLESTATUS = 'KUBEVIRT_HAS_printableStatus';

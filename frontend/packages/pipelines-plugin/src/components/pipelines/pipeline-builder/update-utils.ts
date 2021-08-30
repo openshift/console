@@ -12,6 +12,7 @@ import {
   UpdateOperationAction,
   UpdateOperationAddData,
   UpdateOperationConvertToFinallyTaskData,
+  UpdateOperationConvertToLoadingTaskData,
   UpdateOperationConvertToTaskData,
   UpdateOperationDeleteListTaskData,
   UpdateOperationFixInvalidTaskListData,
@@ -19,6 +20,7 @@ import {
   UpdateOperationRenameTaskData,
 } from './types';
 import {
+  convertResourceToLoadingTask,
   convertResourceToTask,
   mapAddRelatedToOthers,
   mapBeRelated,
@@ -124,6 +126,83 @@ const convertFinallyListToTask: UpdateOperationAction<UpdateOperationConvertToTa
     finallyListTasks: finallyListTasks
       .filter((n) => n.name !== name)
       .map((listTask) => mapReplaceRelatedInOthers(newPipelineTask.name, name, listTask)),
+  };
+};
+
+const convertLoadingNodeToFinallyTask: UpdateOperationAction<UpdateOperationConvertToTaskData> = (
+  taskGrouping,
+  data,
+) => {
+  const { name, resource, runAfter } = data;
+  const { tasks, loadingTasks, finallyTasks } = taskGrouping;
+  const usedNames = getTaskNames([...tasks, ...finallyTasks]);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
+  return {
+    ...taskGrouping,
+    finallyTasks: [
+      ...finallyTasks.map((pipelineTask) =>
+        mapReplaceRelatedInOthers(newPipelineTask.name, name, pipelineTask),
+      ),
+      newPipelineTask,
+    ],
+    loadingTasks: loadingTasks
+      .filter((n) => n.name !== name)
+      .map((listTask) => mapReplaceRelatedInOthers(newPipelineTask.name, name, listTask)),
+  };
+};
+
+const convertLoadingNodeToTask: UpdateOperationAction<UpdateOperationConvertToTaskData> = (
+  taskGrouping,
+  data,
+) => {
+  const { name, resource, runAfter } = data;
+  const { tasks, loadingTasks, finallyTasks } = taskGrouping;
+  const usedNames = getTaskNames([...tasks, ...finallyTasks]);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
+  return {
+    ...taskGrouping,
+    tasks: [
+      ...tasks.map((pipelineTask) =>
+        mapReplaceRelatedInOthers(newPipelineTask.name, name, pipelineTask),
+      ),
+      newPipelineTask,
+    ],
+    loadingTasks: loadingTasks
+      .filter((n) => n.name !== name)
+      .map((listTask) => mapReplaceRelatedInOthers(newPipelineTask.name, name, listTask)),
+  };
+};
+
+const convertToLoadingTask: UpdateOperationAction<UpdateOperationConvertToLoadingTaskData> = (
+  taskGrouping,
+  data,
+) => {
+  const { name, resource, runAfter, isFinallyTask } = data;
+  const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } = taskGrouping;
+  const usedNames = getTaskNames([...tasks, ...finallyTasks]);
+  const newLoadingTask = convertResourceToLoadingTask(usedNames, resource, isFinallyTask, runAfter);
+
+  return {
+    ...taskGrouping,
+    loadingTasks: [...loadingTasks, newLoadingTask],
+    tasks: [
+      ...tasks
+        .filter((n) => n.name !== name)
+        .map((pipelineTask) => mapReplaceRelatedInOthers(newLoadingTask.name, name, pipelineTask)),
+    ],
+    finallyTasks: [
+      ...finallyTasks
+        .filter((n) => n.name !== name)
+        .map((pipelineTask) => mapReplaceRelatedInOthers(newLoadingTask.name, name, pipelineTask)),
+    ],
+    listTasks: [
+      ...listTasks
+        .filter((n) => n.name !== name && !isFinallyTask)
+        .map((pipelineTask) => mapReplaceRelatedInOthers(newLoadingTask.name, name, pipelineTask)),
+    ],
+    finallyListTasks: finallyListTasks
+      .filter((n) => n.name !== name && isFinallyTask)
+      .map((listTask) => mapReplaceRelatedInOthers(newLoadingTask.name, name, listTask)),
   };
 };
 
@@ -253,6 +332,28 @@ const fixInvalidListTask: UpdateOperationAction<UpdateOperationFixInvalidTaskLis
     listTasks,
   };
 };
+const fixInvalidFinallyListTask: UpdateOperationAction<UpdateOperationFixInvalidTaskListData> = (
+  taskGrouping,
+  data,
+) => {
+  const { existingName, resource, runAfter } = data;
+  const { tasks, finallyTasks, finallyListTasks } = taskGrouping;
+  const usedNames = getTaskNames([...finallyTasks, ...tasks]);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
+
+  return {
+    ...taskGrouping,
+    finallyTasks: [
+      ...finallyTasks
+        .filter((pipelineTask) => pipelineTask.name !== existingName)
+        .map((pipelineTask) =>
+          mapReplaceRelatedInOthers(newPipelineTask.name, existingName, pipelineTask),
+        ),
+      newPipelineTask,
+    ],
+    finallyListTasks,
+  };
+};
 
 const addFinallyListTask: UpdateOperationAction<UpdateOperationConvertToFinallyTaskData> = (
   taskGrouping,
@@ -270,10 +371,11 @@ export const applyChange = (
   op: UpdateOperation,
 ): CleanupResults => {
   const { type, data } = op;
-  const { tasks, listTasks, finallyTasks, finallyListTasks } = taskGroup;
+  const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } = taskGroup;
   const taskGrouping: PipelineBuilderTaskGrouping = {
     tasks,
     listTasks,
+    loadingTasks,
     finallyTasks,
     finallyListTasks,
   };
@@ -292,8 +394,19 @@ export const applyChange = (
       return renameTask(taskGrouping, data as UpdateOperationRenameTaskData);
     case UpdateOperationType.FIX_INVALID_LIST_TASK:
       return fixInvalidListTask(taskGrouping, data as UpdateOperationFixInvalidTaskListData);
+    case UpdateOperationType.FIX_INVALID_FINALLY_LIST_TASK:
+      return fixInvalidFinallyListTask(taskGrouping, data as UpdateOperationFixInvalidTaskListData);
     case UpdateOperationType.ADD_FINALLY_LIST_TASK:
       return addFinallyListTask(taskGrouping, data as UpdateOperationConvertToFinallyTaskData);
+    case UpdateOperationType.ADD_LOADING_TASK:
+      return convertToLoadingTask(taskGrouping, data as UpdateOperationConvertToLoadingTaskData);
+    case UpdateOperationType.CONVERT_LOADING_TASK_TO_TASK:
+      return convertLoadingNodeToTask(taskGrouping, data as UpdateOperationConvertToTaskData);
+    case UpdateOperationType.CONVERT_LOADING_TASK_TO_FINALLY_TASK:
+      return convertLoadingNodeToFinallyTask(
+        taskGrouping,
+        data as UpdateOperationConvertToTaskData,
+      );
     default:
       throw new Error(`Invalid update operation ${type}`);
   }

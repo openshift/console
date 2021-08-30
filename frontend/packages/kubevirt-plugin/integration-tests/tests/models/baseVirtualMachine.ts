@@ -107,7 +107,7 @@ export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
         );
         break;
       case VM_ACTION.Stop:
-        await this.waitForStatus(VM_STATUS.Off, resolveTimeout(timeout, VM_STOP_TIMEOUT_SECS));
+        await this.waitForStatus(VM_STATUS.Stopped, resolveTimeout(timeout, VM_STOP_TIMEOUT_SECS));
         break;
       case VM_ACTION.Clone:
         await browser.wait(

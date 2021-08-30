@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import '@patternfly/patternfly/patternfly-addons.css';
 import { useTranslation } from 'react-i18next';
-import { Table, TableRow, TableData, RowFunctionArgs } from '../factory';
+import { Table, TableData, RowFunctionArgs } from '../factory';
 import {
   referenceForModel,
   ClusterOperator,
@@ -29,13 +29,13 @@ const ResourceObjectName: React.FC<ResourceObjectNameProps> = ({ gsv, name, name
   return <>{name}</>;
 };
 
-const Row: React.FC<RowFunctionArgs> = ({ obj, index, key, style, customData: { findModel } }) => {
+const Row: React.FC<RowFunctionArgs> = ({ obj, customData: { findModel } }) => {
   const { name, resource, namespace, group } = obj;
   const model = findModel(group, resource);
 
   const gsv = model ? referenceForModel(model) : null;
   return (
-    <TableRow id={key} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceObjectName gsv={gsv} name={name} namespace={namespace} />
       </TableData>
@@ -47,7 +47,7 @@ const Row: React.FC<RowFunctionArgs> = ({ obj, index, key, style, customData: { 
       <TableData className={tableColumnClasses[3]}>
         {namespace ? <ResourceLink kind="Namespace" name={namespace} /> : '-'}
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -82,13 +82,19 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
       props: { className: tableColumnClasses[3] },
     },
   ];
+  const customData = React.useMemo(
+    () => ({
+      findModel,
+    }),
+    [findModel],
+  );
   return (
     <div className="co-m-pane__body">
       <Table
         {...props}
         Header={Header}
         Row={Row}
-        customData={{ findModel }}
+        customData={customData}
         aria-label={t('public~Related objects')}
         NoDataEmptyMsg={EmptyMessage}
       />

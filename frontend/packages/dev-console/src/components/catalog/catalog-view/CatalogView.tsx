@@ -212,7 +212,9 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const catalogItems = React.useMemo(() => {
     if (!isGrouped) return filteredItems;
 
-    return _.groupBy(filteredItems, (item) => item.attributes?.[activeGrouping]);
+    return _.groupBy(filteredItems, (item) => item.attributes?.[activeGrouping]) as {
+      [key: string]: CatalogItem[];
+    };
   }, [activeGrouping, filteredItems, isGrouped]);
 
   React.useEffect(() => {

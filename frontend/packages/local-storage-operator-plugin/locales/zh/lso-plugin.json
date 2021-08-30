@@ -24,7 +24,7 @@
   "Node Selector": "节点选择器",
   "Local Volume Discovery": "本地卷发现",
   "Allows you to discover the available disks on all available nodes": "允许您在所有可用节点上发现可用磁盘",
-  "Local Volume Set Name": "本地卷集名称",
+  "LocalVolumeSet Name": "本地卷集名称",
   "StorageClass Name": "存储类名称",
   "Filter Disks By": "过滤磁盘",
   "Uses the available disks that match the selected filters only on selected nodes.": "使用在所选节点上与所选过滤器相匹配的可用磁盘。",

@@ -52,7 +52,6 @@ const ExecNewPodForm: React.FC<ExecNewPodFormProps> = ({
         label={t('devconsole~Environment variables (runtime only)')}
         envs={deploymentStrategy[dataAttribute][lifecycleHook].lch.execNewPod.env ?? []}
         obj={resourceObj}
-        envPath={['spec', 'template', 'spec', 'containers']}
       />
       <InputField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.volumes`}

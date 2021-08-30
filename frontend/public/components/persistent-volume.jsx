@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
   LabelList,
@@ -36,9 +36,9 @@ const tableColumnClasses = [
 
 const kind = 'PersistentVolume';
 
-const PVTableRow = ({ obj, index, key, style }) => {
+const PVTableRow = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
@@ -69,7 +69,7 @@ const PVTableRow = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

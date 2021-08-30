@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
+import { useActivePerspective } from '@console/shared';
 
 import {
   monitoringDashboardsSetEndTime,
@@ -18,15 +19,17 @@ import customTimeRangeModal from './custom-time-range-modal';
 
 const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
 
-const TimespanDropdown = () => {
+const TimespanDropdown: React.FC = () => {
   const { t } = useTranslation();
-
+  const [activePerspective] = useActivePerspective();
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
 
   const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'timespan']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
   );
-  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
+  const endTime = useSelector(({ UI }: RootState) =>
+    UI.getIn(['monitoringDashboards', activePerspective, 'endTime']),
+  );
 
   const timeSpanFromParams = getQueryArgument('timeRange');
   const endTimeFromParams = getQueryArgument('endTime');
@@ -35,15 +38,15 @@ const TimespanDropdown = () => {
   const onChange = React.useCallback(
     (v: string) => {
       if (v === CUSTOM_TIME_RANGE_KEY) {
-        customTimeRangeModal({});
+        customTimeRangeModal({ activePerspective });
       } else {
         setQueryArgument('timeRange', parsePrometheusDuration(v).toString());
         removeQueryArgument('endTime');
-        dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
-        dispatch(monitoringDashboardsSetEndTime(null));
+        dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v), activePerspective));
+        dispatch(monitoringDashboardsSetEndTime(null, activePerspective));
       }
     },
-    [dispatch],
+    [activePerspective, dispatch],
   );
 
   const items = {

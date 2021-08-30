@@ -8,6 +8,7 @@ export enum detailsTab {
   vmTemplate = '[data-test-id="details-Template"]',
   vmOwner = '[data-test-selector="details-item-value__Owner"]',
   vmStatus = '[data-test="status-text"]',
+  vmPrintableStatus = '[data-test="vm-printable-status-text"]',
   vmPod = '[data-test-id="details-Pod"]',
   vmBootOrder = '[data-test-id="details-Boot Order"]',
   vmIP = '[data-test-id="details-IP Address"]',
@@ -52,7 +53,7 @@ export enum diskDialog {
   diskName = 'input[id="disk-name"]',
   size = 'input[id="disk-size-row-size"]',
   diskType = 'select[id="disk-type"]',
-  storageClass = 'select[id="disk-storage-class"]',
+  storageClass = '[data-test="storage-class-dropdown"]',
   diskInterface = 'button[id="disk-select-interface"]',
   add = 'button[data-test="confirm-action"]',
 }
@@ -60,9 +61,12 @@ export enum diskDialog {
 // storageClass
 export enum storageClass {
   advanced = '[data-test="advanced-section"]',
-  dropdown = 'button[id="form-ds-sc-select"]',
-  selectMenu = '.pf-c-select__menu',
+  dropdown = '[data-test="storage-class-dropdown"]',
+  selectMenu = '.co-resource-item__resource-name',
 }
 
 // yaml page
 export const createYAMLButton = 'button[data-test="save-changes"]';
+
+// multiple IP pop-up
+export const ipPopOverContent = '.pf-c-popover__content';

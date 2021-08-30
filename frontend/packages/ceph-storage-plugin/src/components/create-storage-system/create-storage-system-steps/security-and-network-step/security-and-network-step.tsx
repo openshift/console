@@ -11,7 +11,7 @@ import { NetworkFormGroup } from '../../../ocs-install/install-wizard/configure'
 export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, dispatch }) => {
   const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
 
-  const { networkType: nwType, clusterNetwork, publicNetwork } = state;
+  const { networkType: nwType, clusterNetwork, publicNetwork, encryption, kms } = state;
 
   const setNetworkType = (networkType: NetworkType) => {
     dispatch({ type: 'securityAndNetwork/setNetworkType', payload: networkType });
@@ -32,7 +32,7 @@ export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, d
 
   return (
     <Form noValidate={false}>
-      <Encryption state={state} dispatch={dispatch} />
+      <Encryption encryption={encryption} kms={kms} dispatch={dispatch} />
       {isMultusSupported && (
         <NetworkFormGroup
           networkType={nwType}

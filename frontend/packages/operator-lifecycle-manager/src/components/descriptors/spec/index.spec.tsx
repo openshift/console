@@ -12,14 +12,6 @@ import * as configureSize from './configure-size';
 import { EndpointList } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 const OBJ = {
   ...testResourceInstance,
   spec: {
@@ -63,7 +55,7 @@ describe('Spec descriptors', () => {
 
   it('renders spec value as text if no matching capability component', () => {
     expect(wrapper.find('dt').text()).toEqual(descriptor.displayName);
-    expect(wrapper.find('dd').text()).toEqual('public~None');
+    expect(wrapper.find('dd').text()).toEqual('None');
   });
 
   it('renders a pod count modal link', (done) => {
@@ -133,7 +125,7 @@ describe('Spec descriptors', () => {
         .find('dt')
         .at(0)
         .text(),
-    ).toEqual('olm~Resource limits');
+    ).toEqual('Resource limits');
     expect(
       wrapper
         .find('dd')
@@ -147,7 +139,7 @@ describe('Spec descriptors', () => {
         .find('dt')
         .at(1)
         .text(),
-    ).toEqual('olm~Resource requests');
+    ).toEqual('Resource requests');
     expect(
       wrapper
         .find('dd')

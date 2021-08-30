@@ -24,7 +24,6 @@ import {
   generateClientKeySecret,
   EncryptionDispatch,
 } from '../../kms-config/utils';
-import { StorageClassState } from '../../../utils/kms-encryption';
 import './advanced-kms-modal.scss';
 import { WizardState } from '../../create-storage-system/reducer';
 
@@ -255,7 +254,10 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
 });
 
 export type AdvancedKMSModalProps = {
-  state: InternalClusterState | State | StorageClassState | WizardState['securityAndNetwork'];
+  state:
+    | InternalClusterState
+    | State
+    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
   dispatch: EncryptionDispatch;
   mode?: string;
 } & HandlePromiseProps &

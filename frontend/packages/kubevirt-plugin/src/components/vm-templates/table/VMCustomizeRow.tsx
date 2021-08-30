@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Level, LevelItem, Stack, StackItem } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import {
   FirehoseResult,
   history,
@@ -104,24 +104,15 @@ const VMCustomizeStatus: React.FC<VMCustomizeStatusProps> = ({
   );
 };
 
-const VMCustomizeRow: RowFunction<{ vm: VMKind; template: TemplateKind }, VMTemplateRowProps> = ({
-  obj: { vm, template },
-  customData: { namespace, vmis, pvcs, dataVolumes, pods },
-  index,
-  key,
-  style,
-}) => {
+const VMCustomizeRow: React.FC<RowFunctionArgs<
+  { vm: VMKind; template: TemplateKind },
+  VMTemplateRowProps
+>> = ({ obj: { vm, template }, customData: { namespace, vmis, pvcs, dataVolumes, pods } }) => {
   const { t } = useTranslation();
   const dimensify = dimensifyRow(tableColumnClasses(!namespace));
 
   return (
-    <TableRow
-      className="kv-vm-template__row"
-      id={vm.metadata.uid}
-      index={index}
-      trKey={key}
-      style={style}
-    >
+    <>
       <TableData className={dimensify()}>
         <Button
           className={'kv-pin-customize-btn'}
@@ -155,7 +146,7 @@ const VMCustomizeRow: RowFunction<{ vm: VMKind; template: TemplateKind }, VMTemp
           id={`kebab-for-${vm.metadata.uid}`}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

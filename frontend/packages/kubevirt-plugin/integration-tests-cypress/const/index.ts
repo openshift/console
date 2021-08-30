@@ -18,6 +18,7 @@ export const PREPARING_FOR_CUSTOMIZATION = 'Preparing for customization';
 export const READY_FOR_CUSTOMIZATION = 'Ready for customization';
 export const YAML_VM_NAME = 'vm-example';
 export const STATUS_READY = 'Ready';
+export const TEMPLATE_SUPPORT = 'Support by template provider';
 
 export enum DEFAULTS_VALUES {
   NOT_AVAILABLE = 'Not available',
@@ -49,12 +50,13 @@ export enum VM_STATUS {
   Pending = 'Pending',
   Importing = 'Importing',
   Starting = 'Starting',
+  Provisioning = 'Provisioning',
   Paused = 'Paused',
   Migrating = 'Migration',
   Stopping = 'Stopping',
   Running = 'Running',
   Cloning = 'Cloning',
-  Off = 'Off',
+  Stopped = 'Stopped',
 }
 
 export enum VM_ACTION_TIMEOUT {
@@ -90,4 +92,11 @@ export enum DISK_INTERFACE {
 export enum DISK_DRIVE {
   Disk = 'Disk',
   CDROM = 'CD-ROM',
+}
+
+export enum OS {
+  fedora = 'Fedora 32 or higher',
+  win10 = 'Microsoft Windows 10',
+  win2k12 = 'Microsoft Windows Server 2012 R2',
+  rhel8 = 'Red Hat Enterprise Linux 8.0 or higher',
 }

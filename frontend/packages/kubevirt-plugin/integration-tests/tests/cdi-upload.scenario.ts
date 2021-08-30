@@ -182,7 +182,7 @@ describe('KubeVirt Auto Clone', () => {
         async () => {
           await fedoraPVC.create();
           await fedora.create();
-          await fedora.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+          await fedora.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
           // only delete template pvc for ocs, hpp does not support this
           if (STORAGE_CLASS === 'ocs-storagecluster-ceph-rbd') {
             await fedoraPVC.delete();
@@ -208,7 +208,7 @@ describe('KubeVirt Auto Clone', () => {
         async () => {
           await win10PVC.create();
           await win10.create();
-          await win10.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+          await win10.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
           await win10.start();
           await win10.navigateToDetail();
         },

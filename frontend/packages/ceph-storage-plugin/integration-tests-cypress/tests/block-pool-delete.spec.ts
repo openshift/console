@@ -4,13 +4,12 @@ import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 import {
   poolName,
   scName,
-  createBlockPool,
   navigateToBlockPool,
   verifyFooterActions,
   poolMessage,
 } from '../views/block-pool';
 import { pvc } from '../views/pvc';
-import { createStorageClass, deleteStorageClassFromCli } from '../views/storage-class';
+import { createStorageClass } from '../views/storage-class';
 
 const pvcName: string = 'testing-pvc';
 
@@ -19,17 +18,20 @@ describe('Test block pool deletion under OCS UI', () => {
     cy.login();
     cy.visit('/');
     cy.install();
-    cy.log('Creating a test pool');
-    createBlockPool();
+    // Todo(bipuladh): Enable after downstream builds are available with v1 CSIDrivers
+    // cy.log('Creating a test pool');
+    // createBlockPool();
   });
 
   after(() => {
-    deleteStorageClassFromCli(scName);
+    // Todo(bipuladh): Enable after downstream builds are available with v1 CSIDrivers
+    // deleteStorageClassFromCli(scName);
     checkErrors();
     cy.logout();
   });
 
-  it('deletion of a non-default pool deletion pool is successful', () => {
+  // Todo(bipuladh): Enable after downstream builds are available with v1 CSIDrivers
+  xit('deletion of a non-default pool deletion pool is successful', () => {
     cy.log('Create storage class using newly created pool');
     createStorageClass(scName, poolName);
 
@@ -61,6 +63,7 @@ describe('Test block pool deletion under OCS UI', () => {
   });
 
   it('Deleting the default block pools should fail', () => {
+    navigateToBlockPool();
     cy.log('Click delete kebab action');
     cy.byLegacyTestID('kebab-button')
       .last()

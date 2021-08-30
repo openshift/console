@@ -10,7 +10,7 @@ Feature: Helm Chart E2E
 
         @to-do
         Scenario: Helm Scenarios: EE-01-TC01
-            Given user has created helm chart "Nodejs Ex K v0.2.1" from Add Page
+            Given user has created helm chart "Nodejs Ex K" from Add Page
              When user navigates to Helm Page
               And user navigates to Topology page
               And user opens the Sidebar for Helm Chart "nodejs-ex-k"

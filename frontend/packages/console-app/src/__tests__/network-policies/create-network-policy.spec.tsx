@@ -46,13 +46,13 @@ describe('NetworkPolicyForm', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toEqual(`${i18nNS}~Create`);
+    ).toEqual('Create');
     expect(
       buttonBar
         .find(Button)
         .at(1)
         .childAt(0)
         .text(),
-    ).toEqual(`${i18nNS}~Cancel`);
+    ).toEqual('Cancel');
   });
 });

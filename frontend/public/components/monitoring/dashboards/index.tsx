@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import { Button, Label, Select, SelectOption } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
+import * as cx from 'classnames';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -9,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
-import { RedExclamationCircleIcon } from '@console/shared';
+import { RedExclamationCircleIcon, useActivePerspective } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -50,9 +51,12 @@ import {
   MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
   Panel,
+  Row,
 } from './types';
 import { useBoolean } from '../hooks/useBoolean';
 import { useIsVisible } from '../hooks/useIsVisible';
+import { useFetchDashboards } from './useFetchDashboards';
+import { getAllVariables } from './monitoring-dashboard-utils';
 
 const NUM_SAMPLES = 30;
 
@@ -102,6 +106,8 @@ const evaluateTemplate = (
 
   return result;
 };
+
+const NamespaceContext = React.createContext('');
 
 const FilterSelect: React.FC<FilterSelectProps> = ({
   items,
@@ -153,15 +159,18 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   );
 };
 
+const VariableOption = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
+
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   const { t } = useTranslation();
+  const [activePerspective] = useActivePerspective();
 
   const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'timespan']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
   );
 
   const variables = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'variables']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'variables']),
   );
   const variable = variables.toJS()[name];
   const query = evaluateTemplate(variable.query, variables, timespan);
@@ -187,35 +196,47 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
         timespan,
       });
 
-      dispatch(monitoringDashboardsPatchVariable(name, { isLoading: true }));
+      dispatch(monitoringDashboardsPatchVariable(name, { isLoading: true }, activePerspective));
 
       safeFetch(url)
         .then(({ data }) => {
           setIsError(false);
           const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
-          dispatch(monitoringDashboardsVariableOptionsLoaded(name, newOptions));
+          dispatch(monitoringDashboardsVariableOptionsLoaded(name, newOptions, activePerspective));
         })
         .catch((err) => {
-          dispatch(monitoringDashboardsPatchVariable(name, { isLoading: false }));
+          dispatch(
+            monitoringDashboardsPatchVariable(name, { isLoading: false }, activePerspective),
+          );
           if (err.name !== 'AbortError') {
             setIsError(true);
           }
         });
     }
-  }, [dispatch, name, query, safeFetch, timespan]);
+  }, [activePerspective, dispatch, name, query, safeFetch, timespan]);
 
   React.useEffect(() => {
     if (variable.value && variable.value !== getQueryArgument(name)) {
-      setQueryArgument(name, variable.value);
+      if (activePerspective === 'dev' && name !== 'namespace') {
+        setQueryArgument(name, variable.value);
+      } else if (activePerspective === 'admin') {
+        setQueryArgument(name, variable.value);
+      }
     }
-  }, [name, variable.value]);
+  }, [activePerspective, name, variable.value]);
 
   const onChange = React.useCallback(
     (v: string) => {
-      setQueryArgument(name, v);
-      dispatch(monitoringDashboardsPatchVariable(name, { value: v }));
+      if (v !== variable.value) {
+        if (activePerspective === 'dev' && name !== 'namespace') {
+          setQueryArgument(name, v);
+        } else if (activePerspective === 'admin') {
+          setQueryArgument(name, v);
+        }
+        dispatch(monitoringDashboardsPatchVariable(name, { value: v }, activePerspective));
+      }
     },
-    [dispatch, name],
+    [activePerspective, dispatch, name, variable.value],
   );
 
   if (variable.isHidden || (!isError && _.isEmpty(variable.options))) {
@@ -228,8 +249,6 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   _.each(variable.options, (option) => {
     items[option] = option;
   });
-
-  const OptionComponent = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
 
   return (
     <div className="form-group monitoring-dashboards__dropdown-wrap">
@@ -250,7 +269,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
         <FilterSelect
           items={items}
           onChange={onChange}
-          OptionComponent={OptionComponent}
+          OptionComponent={VariableOption}
           selectedKey={variable.value}
         />
       )}
@@ -258,9 +277,9 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   );
 };
 
-const AllVariableDropdowns = () => {
+const AllVariableDropdowns = ({ namespace }) => {
   const variables = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'variables']),
+    UI.getIn(['monitoringDashboards', namespace ? 'dev' : 'admin', 'variables']),
   );
 
   return (
@@ -272,58 +291,62 @@ const AllVariableDropdowns = () => {
   );
 };
 
-const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ items, onChange, selectedKey }) => {
-  const { t } = useTranslation();
+type TagColor = 'red' | 'purple' | 'blue' | 'green' | 'cyan' | 'orange';
+const tagColors: TagColor[] = ['red', 'purple', 'blue', 'green', 'cyan', 'orange'];
 
-  const tagColors: ('red' | 'purple' | 'blue' | 'green' | 'cyan' | 'orange')[] = [
-    'red',
-    'purple',
-    'blue',
-    'green',
-    'cyan',
-    'orange',
-  ];
+const Tag: React.FC<{ color: TagColor; text: string }> = React.memo(({ color, text }) => (
+  <Label className="monitoring-dashboards__dashboard_dropdown_tag" color={color}>
+    {text}
+  </Label>
+));
 
-  const allTags = _.flatMap(items, 'tags');
-  const uniqueTags = _.uniq(allTags);
+const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
+  ({ items, onChange, selectedKey }) => {
+    const { t } = useTranslation();
 
-  const OptionComponent = ({ itemKey }) => (
-    <SelectOption className="monitoring-dashboards__dashboard_dropdown_item" value={itemKey}>
-      {items[itemKey]?.title}
-      {items[itemKey]?.tags.map((tag, i) => (
-        <Label
-          className="monitoring-dashboards__dashboard_dropdown_tag"
-          color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
-          key={i}
+    const allTags = _.flatMap(items, 'tags');
+    const uniqueTags = _.uniq(allTags);
+
+    const OptionComponent = ({ itemKey }) => (
+      <SelectOption className="monitoring-dashboards__dashboard_dropdown_item" value={itemKey}>
+        {items[itemKey]?.title}
+        {items[itemKey]?.tags.map((tag, i) => (
+          <Tag
+            color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
+            key={i}
+            text={tag}
+          />
+        ))}
+      </SelectOption>
+    );
+
+    const selectItems = _.mapValues(items, 'title');
+
+    return (
+      <div className="form-group monitoring-dashboards__dropdown-wrap">
+        <label
+          className="monitoring-dashboards__dropdown-title"
+          htmlFor="monitoring-board-dropdown"
         >
-          {tag}
-        </Label>
-      ))}
-    </SelectOption>
-  );
+          {t('public~Dashboard')}
+        </label>
+        <FilterSelect
+          items={selectItems}
+          onChange={onChange}
+          OptionComponent={OptionComponent}
+          selectedKey={selectedKey}
+        />
+      </div>
+    );
+  },
+);
 
-  const selectItems = _.mapValues(items, 'title');
-
-  return (
-    <div className="form-group monitoring-dashboards__dropdown-wrap">
-      <label className="monitoring-dashboards__dropdown-title" htmlFor="monitoring-board-dropdown">
-        {t('public~Dashboard')}
-      </label>
-      <FilterSelect
-        items={selectItems}
-        onChange={onChange}
-        OptionComponent={OptionComponent}
-        selectedKey={selectedKey}
-      />
-    </div>
-  );
-};
-
-export const PollIntervalDropdown = () => {
+export const PollIntervalDropdown: React.FC = () => {
   const { t } = useTranslation();
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
+  const [activePerspective] = useActivePerspective();
   const interval = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'pollInterval']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'pollInterval']),
   );
 
   const dispatch = useDispatch();
@@ -334,9 +357,9 @@ export const PollIntervalDropdown = () => {
       } else {
         removeQueryArgument('refreshInterval');
       }
-      dispatch(monitoringDashboardsSetPollInterval(v));
+      dispatch(monitoringDashboardsSetPollInterval(v, activePerspective));
     },
-    [dispatch],
+    [dispatch, activePerspective],
   );
 
   return (
@@ -353,16 +376,40 @@ export const PollIntervalDropdown = () => {
   );
 };
 
-const QueryBrowserLink = ({ queries }) => {
+const TimeDropdowns: React.FC = React.memo(() => (
+  <div className="monitoring-dashboards__options">
+    <TimespanDropdown />
+    <PollIntervalDropdown />
+  </div>
+));
+
+const HeaderTop: React.FC = React.memo(() => {
   const { t } = useTranslation();
 
+  return (
+    <div className="monitoring-dashboards__header">
+      <h1 className="co-m-pane__heading">
+        <span>{t('public~Dashboards')}</span>
+      </h1>
+      <TimeDropdowns />
+    </div>
+  );
+});
+
+const QueryBrowserLink = ({ queries }) => {
+  const { t } = useTranslation();
   const params = new URLSearchParams();
   queries.forEach((q, i) => params.set(`query${i}`, q));
+  const namespace = React.useContext(NamespaceContext);
 
   return (
     <DashboardCardLink
       aria-label={t('public~Inspect')}
-      to={`/monitoring/query-browser?${params.toString()}`}
+      to={
+        namespace
+          ? `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`
+          : `/monitoring/query-browser?${params.toString()}`
+      }
     >
       {t('public~Inspect')}
     </DashboardCardLink>
@@ -403,15 +450,16 @@ const getPanelClassModifier = (panel: Panel): string => {
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
 
-const Card: React.FC<CardProps> = ({ panel }) => {
+const Card: React.FC<CardProps> = React.memo(({ panel }) => {
+  const [activePerspective] = useActivePerspective();
   const pollInterval = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'pollInterval']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'pollInterval']),
   );
   const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'timespan']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
   );
   const variables = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'variables']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'variables']),
   );
 
   const ref = React.useRef();
@@ -509,7 +557,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
       </DashboardCard>
     </div>
   );
-};
+});
 
 const PanelsRow: React.FC<{ row: Row }> = ({ row }) => {
   const showButton = row.showTitle && !_.isEmpty(row.title);
@@ -520,7 +568,7 @@ const PanelsRow: React.FC<{ row: Row }> = ({ row }) => {
   const title = isExpanded ? 'Hide' : 'Show';
 
   return (
-    <div>
+    <div data-test-id={`panel-${_.kebabCase(row?.title)}`}>
       {showButton && (
         <Button
           aria-label={title}
@@ -557,50 +605,12 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
-
+  const namespace = match.params?.ns;
+  const activePerspective = namespace ? 'dev' : 'admin';
   const [board, setBoard] = React.useState<string>();
-  const [boards, setBoards] = React.useState<Board[]>([]);
-  const [error, setError] = React.useState<string>();
-  const [isLoading, , , setLoaded] = useBoolean(true);
-
-  const safeFetch = React.useCallback(useSafeFetch(), []);
-
+  const [boards, isLoading, error] = useFetchDashboards(namespace);
   // Clear queries on unmount
   React.useEffect(() => () => dispatch(queryBrowserDeleteAllQueries()), [dispatch]);
-
-  React.useEffect(() => {
-    safeFetch('/api/console/monitoring-dashboard-config')
-      .then((response) => {
-        setLoaded();
-        setError(undefined);
-
-        const getBoardData = (item): Board => {
-          try {
-            return {
-              data: JSON.parse(_.values(item.data)[0]),
-              name: item.metadata.name,
-            };
-          } catch (e) {
-            setError(
-              t('public~Could not parse JSON data for dashboard "{{dashboard}}"', {
-                dashboard: item.metadata.name,
-              }),
-            );
-          }
-        };
-
-        const newBoards = _.sortBy(_.map(response.items, getBoardData), (v) =>
-          _.toLower(v?.data?.title),
-        );
-        setBoards(newBoards);
-      })
-      .catch((err) => {
-        setLoaded();
-        if (err.name !== 'AbortError') {
-          setError(_.get(err, 'json.error', err.message));
-        }
-      });
-  }, [safeFetch, setLoaded, t]);
 
   const boardItems = React.useMemo(
     () =>
@@ -615,7 +625,9 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
     (newBoard: string) => {
       let timeSpan: string;
       let endTime: string;
-      let url = `/monitoring/dashboards/${newBoard}`;
+      let url = namespace
+        ? `/dev-monitoring/ns/${namespace}?dashboard=${newBoard}`
+        : `/monitoring/dashboards/${newBoard}`;
 
       const refreshInterval = getQueryArgument('refreshInterval');
 
@@ -636,139 +648,99 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         }
       }
       if (newBoard !== board) {
-        const data = _.find(boards, { name: newBoard })?.data;
-
-        const allVariables = {};
-        _.each(data?.templating?.list, (v) => {
-          if (v.type === 'query' || v.type === 'interval') {
-            // Look for query param that is equal to the variable name
-            let value = getQueryArgument(v.name);
-
-            // Look for an option that should be selected by default
-            if (value === null) {
-              value = _.find(v.options, { selected: true })?.value;
-            }
-
-            // If no default option was found, default to "All" (if present)
-            if (value === undefined && v.includeAll) {
-              value = MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY;
-            }
-
-            allVariables[v.name] = ImmutableMap({
-              includeAll: !!v.includeAll,
-              isHidden: v.hide !== 0,
-              isLoading: v.type === 'query',
-              options: _.map(v.options, 'value'),
-              query: v.type === 'query' ? v.query : undefined,
-              value: value || v.options?.[0]?.value,
-            });
-          }
-        });
-        dispatch(monitoringDashboardsPatchAllVariables(allVariables));
+        const allVariables = getAllVariables(boards, newBoard, namespace);
+        dispatch(monitoringDashboardsPatchAllVariables(allVariables, activePerspective));
 
         // Set time range and poll interval options to their defaults or from the query params if available
-
         if (refreshInterval) {
-          dispatch(monitoringDashboardsSetPollInterval(_.toNumber(refreshInterval)));
+          dispatch(
+            monitoringDashboardsSetPollInterval(_.toNumber(refreshInterval), activePerspective),
+          );
         }
-        dispatch(monitoringDashboardsSetEndTime(_.toNumber(endTime) || null));
+        dispatch(monitoringDashboardsSetEndTime(_.toNumber(endTime) || null, activePerspective));
         dispatch(
           monitoringDashboardsSetTimespan(
             _.toNumber(timeSpan) || MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
+            activePerspective,
           ),
         );
 
         setBoard(newBoard);
-        history.replace(url);
+        if (getQueryArgument('dashboard') !== newBoard) {
+          history.replace(url);
+        }
       }
     },
-    [board, boards, dispatch],
+    [activePerspective, board, boards, dispatch, namespace],
   );
 
   // Display dashboard present in the params or show the first board
   React.useEffect(() => {
     if (!board && !_.isEmpty(boards)) {
-      const boardName = match.params.board || boards?.[0]?.name;
-      changeBoard(boardName);
+      const boardName = getQueryArgument('dashboard');
+      changeBoard((namespace ? boardName : match.params.board) || boards?.[0]?.name);
     }
-  }, [board, boards, changeBoard, match.params.board]);
+  }, [board, boards, changeBoard, match.params.board, namespace]);
+
+  React.useEffect(() => {
+    const newBoard = getQueryArgument('dashboard');
+    const allVariables = getAllVariables(boards, newBoard, namespace);
+    dispatch(monitoringDashboardsPatchAllVariables(allVariables, activePerspective));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [namespace]);
+
+  // If we don't find any rows, build the rows array based on what we have in `data.panels`
+  const rows = React.useMemo(() => {
+    const data = _.find(boards, { name: board })?.data;
+
+    return data?.rows?.length
+      ? data.rows
+      : data?.panels?.reduce((acc, panel) => {
+          if (panel.type === 'row' || acc.length === 0) {
+            acc.push(_.cloneDeep(panel));
+          } else {
+            const row = acc[acc.length - 1];
+            if (_.isNil(row.panels)) {
+              row.panels = [];
+            }
+            row.panels.push(panel);
+          }
+          return acc;
+        }, []);
+  }, [board, boards]);
 
   if (error) {
     return <ErrorAlert message={error} />;
   }
 
-  const data = _.find(boards, { name: board })?.data;
-
-  // If we don't find any rows, build the rows array based on what we have in `data.panels`
-  const rows = data?.rows?.length
-    ? data.rows
-    : data?.panels?.reduce((acc, panel) => {
-        if (panel.type === 'row' || acc.length === 0) {
-          acc.push(_.cloneDeep(panel));
-        } else {
-          const row = acc[acc.length - 1];
-          if (_.isNil(row.panels)) {
-            row.panels = [];
-          }
-          row.panels.push(panel);
-        }
-        return acc;
-      }, []);
-
   return (
     <>
-      <Helmet>
-        <title>{t('public~Metrics dashboards')}</title>
-      </Helmet>
+      {!namespace && (
+        <Helmet>
+          <title>{t('public~Metrics dashboards')}</title>
+        </Helmet>
+      )}
       <div className="co-m-nav-title co-m-nav-title--detail">
-        <div className="monitoring-dashboards__header">
-          <h1 className="co-m-pane__heading">
-            <span>{t('public~Dashboards')}</span>
-          </h1>
-          <div className="monitoring-dashboards__options">
-            <TimespanDropdown />
-            <PollIntervalDropdown />
-          </div>
-        </div>
+        {!namespace && <HeaderTop />}
         <div className="monitoring-dashboards__variables">
-          {!_.isEmpty(boardItems) && (
-            <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
-          )}
-          <AllVariableDropdowns key={board} />
+          <div
+            className={cx('monitoring-dashboards__dropdowns', {
+              'monitoring-dashboards__variable-dropdowns': namespace,
+            })}
+          >
+            {!_.isEmpty(boardItems) && (
+              <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
+            )}
+            <AllVariableDropdowns key={board} namespace={namespace} />
+          </div>
+          {namespace && <TimeDropdowns />}
         </div>
       </div>
-      <Dashboard>{isLoading ? <LoadingInline /> : <Board key={board} rows={rows} />}</Dashboard>
+      <NamespaceContext.Provider value={namespace}>
+        <Dashboard>{isLoading ? <LoadingInline /> : <Board key={board} rows={rows} />}</Dashboard>
+      </NamespaceContext.Provider>
     </>
   );
-};
-
-type TemplateVariable = {
-  hide: number;
-  includeAll: boolean;
-  name: string;
-  options: { selected: boolean; value: string }[];
-  query: string;
-  type: string;
-};
-
-type Row = {
-  collapse?: boolean;
-  panels: Panel[];
-  showTitle?: boolean;
-  title?: string;
-};
-
-type Board = {
-  data: {
-    panels: Panel[];
-    rows: Row[];
-    templating: {
-      list: TemplateVariable[];
-    };
-    tags: string[];
-    title: string;
-  };
-  name: string;
 };
 
 type Variable = {
@@ -812,7 +784,7 @@ type CardProps = {
 
 type MonitoringDashboardsPageProps = {
   match: {
-    params: { board: string };
+    params: { board: string; ns?: string };
   };
 };
 

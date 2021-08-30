@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu } from '@console/internal/components/utils';
-import CloseButton from '@console/shared/src/components/close-button';
 import { TaskKind } from '../../../../types';
 import PipelineResourceRef from '../../../shared/common/PipelineResourceRef';
 import TaskSidebarShortcuts from './TaskSidebarShortcuts';
@@ -9,26 +8,15 @@ import TaskSidebarShortcuts from './TaskSidebarShortcuts';
 import './TaskSidebarHeader.scss';
 
 type TaskSidebarHeaderProps = {
-  onClose: () => void;
   removeThisTask: () => void;
   taskResource: TaskKind;
 };
 
-const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({
-  onClose,
-  removeThisTask,
-  taskResource,
-}) => {
+const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({ removeThisTask, taskResource }) => {
   const { t } = useTranslation();
 
   return (
     <div className="opp-task-sidebar-header">
-      <div className="co-sidebar-dismiss clearfix">
-        <CloseButton
-          onClick={onClose}
-          additionalClassName="co-close-button--float-right co-sidebar-dismiss__close-button"
-        />
-      </div>
       <div className="opp-task-sidebar-header__title">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">

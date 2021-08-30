@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind, K8sKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { addUsersModal, removeUserModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import {
@@ -49,9 +49,9 @@ const menuActions = [addUsers, ...Kebab.factory.common];
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-const GroupTableRow: RowFunction<GroupKind> = ({ obj, index, key, style }) => {
+const GroupTableRow: React.FC<RowFunctionArgs<GroupKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(GroupModel)} name={obj.metadata.name} />
       </TableData>
@@ -62,7 +62,7 @@ const GroupTableRow: RowFunction<GroupKind> = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(GroupModel)} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -176,7 +176,7 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
 const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
-    staticFilters={[{ 'role-binding-group': obj.metadata.name }]}
+    staticFilters={{ 'role-binding-group': obj.metadata.name }}
     name={obj.metadata.name}
     kind={obj.kind}
   />

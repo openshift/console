@@ -172,6 +172,8 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
 
   isSizeEditingSupported = (size: number) => size === 0 || this !== StorageUISource.IMPORT_DISK; // if imported disk has 0 size, leave the user to decide
 
+  isAttachDisk = () => this === StorageUISource.ATTACH_DISK;
+
   hasDynamicSize = () => this === StorageUISource.CONTAINER_EPHEMERAL;
 
   canBeChangedToThisSource = (diskType: DiskType) => {

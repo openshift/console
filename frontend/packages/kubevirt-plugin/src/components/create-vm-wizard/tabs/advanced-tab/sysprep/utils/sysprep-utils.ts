@@ -1,7 +1,7 @@
 import { ConfigMapModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { VMKind } from '@console/kubevirt-plugin/src/types';
 import { VMWrapper } from '../../../../../../k8s/wrapper/vm/vm-wrapper';
+import { VMKind } from '../../../../../../types';
 import { buildOwnerReference } from '../../../../../../utils';
 
 export const SYSPREP = 'sysprep';

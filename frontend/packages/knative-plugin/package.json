@@ -24,7 +24,17 @@
       "actions": "src/actions",
       "icons": "src/utils/icons.ts",
       "catalog": "src/catalog",
-      "yamlTemplates": "src/yaml-templates.ts"
+      "yamlTemplates": "src/yaml-templates.ts",
+      "revisionsComponent": "src/components/revisions",
+      "routesComponent": "src/components/routes",
+      "servicesComponent": "src/components/services",
+      "overviewComponent": "src/components/overview",
+      "pubSubComponent": "src/components/pub-sub",
+      "addComponent": "src/components/add",
+      "knativeComponent": "src/components",
+      "eventingComponent": "src/components/eventing",
+      "knatifyComponent": "src/components/knatify",
+      "topology": "src/topology"
     }
   }
 }

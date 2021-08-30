@@ -21,7 +21,7 @@
     "properties": {
       "id": "container-images",
       "name": "%devconsole~Container images%",
-      "insertBefore": "serverless",
+      "insertBefore": "eventing",
       "insertAfter": "git-repository"
     }
   },
@@ -31,7 +31,7 @@
       "id": "local-machine",
       "name": "%devconsole~From Local Machine%",
       "insertBefore": "pipelines",
-      "insertAfter": "serverless"
+      "insertAfter": "eventing"
     }
   },
   {
@@ -67,32 +67,13 @@
       "id": "import-from-git",
       "groupId": "git-repository",
       "href": "/import/ns/:namespace",
-      "label": "%devconsole~From Git%",
+      "label": "%devconsole~Import from Git%",
       "description": "%devconsole~Import code from your Git repository to be built and deployed%",
       "icon": { "$codeRef": "icons.gitIconSVG" },
       "accessReview": [
         { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
         { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
         { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
-        { "group": "", "resource": "secrets", "verb": "create" },
-        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
-        { "group": "", "resource": "services", "verb": "create" }
-      ]
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "import-from-devfile",
-      "groupId": "git-repository",
-      "href": "/import/ns/:namespace?importType=devfile",
-      "label": "%devconsole~From Devfile%",
-      "description": "%devconsole~Import your Devfile from your Git repository to be built and deployed%",
-      "icon": { "$codeRef": "icons.devfileIconSVG" },
-      "accessReview": [
-        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
-        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
-        { "group": "apps", "resource": "deployments", "verb": "create" },
         { "group": "", "resource": "secrets", "verb": "create" },
         { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
         { "group": "", "resource": "services", "verb": "create" }
@@ -113,25 +94,6 @@
         { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
         { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
         { "group": "image.openshift.io", "resource": "imagestreamimports", "verb": "create" },
-        { "group": "", "resource": "secrets", "verb": "create" },
-        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
-        { "group": "", "resource": "services", "verb": "create" }
-      ]
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "properties": {
-      "id": "import-from-dockerfile",
-      "groupId": "git-repository",
-      "href": "/import/ns/:namespace?importType=docker",
-      "label": "%devconsole~From Dockerfile%",
-      "description": "%devconsole~Import your Dockerfile from your Git repository to be built and deployed%",
-      "icon": { "$codeRef": "icons.dockerfileIconSVG" },
-      "accessReview": [
-        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
-        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
-        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
         { "group": "", "resource": "secrets", "verb": "create" },
         { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
         { "group": "", "resource": "services", "verb": "create" }
@@ -456,6 +418,59 @@
         "kind": "DeploymentConfig"
       },
       "provider": { "$codeRef": "actions.useEditImportActionProvider" }
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.getDevConsoleComponentFactory"
+      }
+    }
+  },
+  {
+    "type": "console.topology/relationship/provider",
+    "properties": {
+      "provides": {
+        "$codeRef": "topology.providerProvidesServiceBinding"
+      },
+      "tooltip": "%devconsole~Create Service Binding%",
+      "create": {
+        "$codeRef": "topology.providerCreateServiceBinding"
+      },
+      "priority": 100
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-hpas",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "topology.getHpaTabSectionForTopologySideBar"
+      },
+      "insertAfter": "topology-tab-section-builds-overview"
+    }
+  },
+  {
+    "type": "console.topology/details/tab",
+    "properties": {
+      "id": "topology-side-bar-tab-observe",
+      "label": "%devconsole~Observe%",
+      "insertAfter": "topology-side-bar-tab-resource"
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-observe",
+      "tab": "topology-side-bar-tab-observe",
+      "section": {
+        "$codeRef": "topology.getObserveSideBarTabSection"
+      }
     }
   }
 ]

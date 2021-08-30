@@ -11,11 +11,6 @@ jest.mock('react', () => ({
   useLayoutEffect: require.requireActual('react').useEffect,
 }));
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-}));
-
 describe('GettingStartedCard', () => {
   it('should render the card with title', () => {
     const wrapper = shallow(<GettingStartedGrid />);

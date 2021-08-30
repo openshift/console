@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventModel } from '@console/internal/models';
 import { EventKind } from '@console/internal/module/k8s';
-import { VMKind } from '@console/kubevirt-plugin/src/types';
 import EventItem from '@console/shared/src/components/dashboard/activity-card/EventItem';
 import { NORMAL } from '../../constants';
 import { getNamespace } from '../../selectors';
 import { getVmEventsFilters } from '../../selectors/event/filters';
+import { VMKind } from '../../types';
 
 import './vm-events-status-card.scss';
 

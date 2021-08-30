@@ -4,14 +4,6 @@ import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { PageContents as AddPage } from '../AddPage';
 import AddCardsLoader from '../AddPageLayout';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('AddPage', () => {
   type AddPageProps = React.ComponentProps<typeof AddPage>;
   let wrapper: ShallowWrapper<AddPageProps>;

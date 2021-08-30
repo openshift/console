@@ -35,7 +35,8 @@
       "resourceListPage": "./src/components/odf-resources/resource-list-page.tsx",
       "bsCreate": "./src/components/create-backingstore-page/create-bs-page.tsx",
       "bcCreate": "./src/components/bucket-class/create-bc.tsx",
-      "nssCreate": "./src/components/namespace-store/create-namespace-store.tsx"
+      "nssCreate": "./src/components/namespace-store/create-namespace-store.tsx",
+      "odfSystemDashboard": "./src/components/dashboards/odf-system-dashboard.tsx"
     }
   }
 }

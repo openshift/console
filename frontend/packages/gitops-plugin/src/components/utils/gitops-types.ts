@@ -36,15 +36,27 @@ export interface GitOpsResource {
   namespace: string;
 }
 
-export interface GitOpsEnvironmentService {
-  name: string;
+export interface GitOpsEnvironmentService extends GitOpsHealthResources {
   source?: { url?: string; type?: string; icon?: React.ReactNode };
-  images: string[];
-  resources: GitOpsResource[];
+  images?: string[];
+  resources?: GitOpsResource[];
   workloadKind?: string;
   image?: string;
   podRing?: React.ReactNode;
   commitDetails?: React.ReactNode;
+  serviceStatus?: string;
+}
+
+export interface GitOpsHealthResources {
+  name: string;
+  health?: string;
+  status?: string;
+}
+
+export interface GitOpsRevisionMetadata {
+  author: string;
+  message: string;
+  revision: string;
 }
 
 export interface GitOpsEnvironment {
@@ -52,6 +64,15 @@ export interface GitOpsEnvironment {
   environment: string;
   timestamp?: React.ReactNode;
   services: GitOpsEnvironmentService[];
+  secrets?: GitOpsHealthResources[];
+  deployments?: GitOpsHealthResources[];
+  routes?: GitOpsHealthResources[];
+  roleBindings?: GitOpsHealthResources[];
+  clusterRoles?: GitOpsHealthResources[];
+  clusterRoleBindings?: GitOpsHealthResources[];
+  status?: string;
+  revision?: GitOpsRevisionMetadata;
+  lastDeployed?: string;
 }
 
 export interface CommitData {

@@ -1,3 +1,4 @@
+import { TEMPLATE_SUPPORT } from '../const/index';
 import { ProvisionSource } from '../enums/provisionSource';
 import { VirtualMachineData } from '../types/vm';
 import { addDisk, addNIC } from './dialog';
@@ -123,10 +124,37 @@ export const wizard = {
       cy.get(wizardView.successList).click();
     },
     fillGeneralForm: (vmData: VirtualMachineData) => {
-      const { name, provisionSource, sourceAvailable, flavor, pvcName, pvcNS } = vmData;
+      const {
+        name,
+        templateProvider,
+        templateSupport,
+        os,
+        provisionSource,
+        sourceAvailable,
+        flavor,
+        pvcName,
+        pvcNS,
+      } = vmData;
       cy.get(wizardView.vmName)
         .clear()
         .type(name);
+      if (templateProvider !== undefined) {
+        cy.get(wizardView.templateProvider)
+          .clear()
+          .type(templateProvider);
+      }
+      if (templateSupport !== undefined && !templateSupport) {
+        cy.get(wizardView.templateSupport).click();
+        cy.get(wizardView.selectItem)
+          .contains(TEMPLATE_SUPPORT)
+          .click();
+      }
+      if (os !== undefined) {
+        cy.get(wizardView.osDropdown).click();
+        cy.get(wizardView.selectItem)
+          .contains(os)
+          .click({ force: true });
+      }
       if (!sourceAvailable) {
         fillBootSource(provisionSource, pvcName, pvcNS);
       }
@@ -196,9 +224,13 @@ export const wizard = {
     },
     fillConfirmForm: (vmData: VirtualMachineData) => {
       const { startOnCreation } = vmData;
-      if (!startOnCreation) {
-        cy.get(wizardView.startOnCreation).click();
-      }
+      cy.get('body').then(($body) => {
+        if ($body.find(wizardView.startOnCreation).length) {
+          if (!startOnCreation) {
+            cy.get(wizardView.startOnCreation).click();
+          }
+        }
+      });
       cy.get(wizardView.nextBtn).click();
       cy.get(wizardView.successList).click();
     },

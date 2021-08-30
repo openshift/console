@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import { ListPage, Table, TableRow, TableData } from './factory';
+import { ListPage, Table, TableData } from './factory';
 import { Kebab, LabelList, ResourceKebab, ResourceLink, Selector } from './utils';
 import { PrometheusModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -17,10 +17,10 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const PrometheusTableRow = ({ obj: instance, index, key, style }) => {
+const PrometheusTableRow = ({ obj: instance }) => {
   const { metadata, spec } = instance;
   return (
-    <TableRow id={instance.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(PrometheusModel)}
@@ -50,7 +50,7 @@ const PrometheusTableRow = ({ obj: instance, index, key, style }) => {
           resource={instance}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

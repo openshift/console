@@ -13,6 +13,7 @@ export type Disk = {
   };
   source?: DISK_SOURCE;
   bootable?: boolean;
+  preallocation?: boolean;
 };
 
 export type Network = {
@@ -38,6 +39,8 @@ export type VirtualMachineData = {
   description?: string;
   namespace?: string;
   template?: string;
+  templateProvider?: string;
+  templateSupport?: boolean;
   templateNamespace?: string;
   flavor?: Flavor;
   os?: string;

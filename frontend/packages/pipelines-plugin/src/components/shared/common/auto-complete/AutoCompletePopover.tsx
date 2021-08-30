@@ -62,18 +62,18 @@ const AutoCompletePopover: React.FC<AutoCompletePopoverProps> = ({
                   }
                 }}
               >
-                <MenuList translate="no">
+                <MenuList>
                   {options.length === 0 ? (
                     // There is a tab-index problem with the Menus from PF. If the first option is removed, it breaks tab indexes
                     // Need key 0 because of PF bug
-                    <MenuItem key={0} itemId={-1} translate="no" isDisabled>
+                    <MenuItem key={0} itemId={-1} isDisabled>
                       {t('pipelines-plugin~No options matching your criteria')}
                     </MenuItem>
                   ) : (
                     options.map((value, idx) => (
                       // Using index-based keys to get around PF bug, see above
                       // eslint-disable-next-line react/no-array-index-key
-                      <MenuItem key={idx} itemId={idx} translate="no">
+                      <MenuItem key={idx} itemId={idx}>
                         {value}
                       </MenuItem>
                     ))

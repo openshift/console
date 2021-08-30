@@ -30,7 +30,7 @@ describe('KubeVirt VM scheduling', () => {
 
   beforeAll(async () => {
     createResource(testVM);
-    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+    await vm.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
   });
 
   afterAll(() => {

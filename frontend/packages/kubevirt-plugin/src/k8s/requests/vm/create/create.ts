@@ -16,7 +16,12 @@ import {
   VMImportProvider,
   VMSettingsField,
 } from '../../../../components/create-vm-wizard/types';
-import { TEMPLATE_PARAM_VM_NAME, TEMPLATE_PARAM_VM_NAME_DESC } from '../../../../constants/vm';
+import {
+  TEMPLATE_PARAM_VM_NAME,
+  TEMPLATE_PARAM_VM_NAME_DESC,
+  TEMPLATE_PARAM_VM_PASSWORD,
+  TEMPLATE_PARAM_VM_PASSWORD_DESC,
+} from '../../../../constants/vm';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { selectVM } from '../../../../selectors/vm-template/basic';
@@ -81,6 +86,12 @@ export const createVMTemplate = async (params: CreateVMParams) => {
         name: TEMPLATE_PARAM_VM_NAME,
         description: TEMPLATE_PARAM_VM_NAME_DESC,
         required: true,
+      },
+      {
+        name: TEMPLATE_PARAM_VM_PASSWORD,
+        description: TEMPLATE_PARAM_VM_PASSWORD_DESC,
+        generate: 'expression',
+        from: '[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}',
       },
     ],
   });

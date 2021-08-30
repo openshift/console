@@ -1,4 +1,4 @@
-import { Node } from '@patternfly/react-topology';
+import { Node } from '@patternfly/react-topology/src/types';
 import i18next from 'i18next';
 import {
   addResourceMenuWithoutCatalog,

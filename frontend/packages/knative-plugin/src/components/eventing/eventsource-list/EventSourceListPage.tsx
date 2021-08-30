@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { MultiListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import {
-  K8sResourceKind,
+  K8sResourceCommon,
   modelFor,
   referenceFor,
   referenceForModel,
@@ -45,29 +45,24 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
         : [],
     [sourcesModel, modelsLoaded],
   );
-  const getModelId = React.useCallback((obj: K8sResourceKind) => {
+  const getModelId = React.useCallback((obj: K8sResourceCommon) => {
     const reference = referenceFor(obj);
     const model = getDynamicEventSourceModel(reference) || modelFor(reference);
     return model.id;
   }, []);
 
-  const rowFilterReducer = React.useCallback(
-    ({ selected }: { selected: Set<string>; all: string[] }, obj: K8sResourceKind) =>
-      selected.size === 0 || selected.has(getModelId(obj)),
-    [getModelId],
-  );
-
-  const eventSourceRowFilters: RowFilter[] = React.useMemo(
+  const eventSourceRowFilters = React.useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
         filterGroupName: 'Type',
         type: 'event-source-type',
         items: sourcesModel.map(({ id, label }) => ({ id, title: label })),
         reducer: getModelId,
-        filter: rowFilterReducer,
+        filter: (filter, obj) =>
+          !filter.selected?.length || filter.selected?.includes(getModelId(obj)),
       },
     ],
-    [sourcesModel, getModelId, rowFilterReducer],
+    [sourcesModel, getModelId],
   );
   return (
     <MultiListPage

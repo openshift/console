@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { VirtualMachineModel } from '../../src/models';
 import {
   click,
   createResources,
@@ -53,9 +53,9 @@ describe('Kubevirt VM dashboard tab', () => {
   it(
     'ID(CNV-3330) Status card',
     async () => {
-      await vm.waitForStatus(VM_STATUS.Off);
+      await vm.waitForStatus(VM_STATUS.Stopped);
       await vm.navigateToOverview();
-      expect(dashboardView.vmStatus.getText()).toEqual(VM_STATUS.Off);
+      expect(dashboardView.vmStatus.getText()).toEqual(VM_STATUS.Stopped);
 
       await vm.start();
       await vm.navigateToOverview();

@@ -8,14 +8,6 @@ import { EventSource } from '../EventSource';
 
 type EventSourceProps = React.ComponentProps<typeof EventSource>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('EventSourceSpec', () => {
   let wrapper: ShallowWrapper<EventSourceProps>;
   const namespaceName = 'myApp';

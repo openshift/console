@@ -46,7 +46,7 @@ export enum catalogCards {
   nginxHTTPServer = 'Nginx HTTP server and a reverse proxy',
   jenkins = 'Jenkins',
   knativeKafka = 'Knative Kafka',
-  helmNodejs = 'Nodejs Ex K v0.2.1',
+  helmNodejs = 'Nodejs Ex K',
 }
 
 export enum catalogTypes {
@@ -60,16 +60,16 @@ export enum catalogTypes {
 }
 
 export enum builderImages {
-  Perl = 'Perl',
-  PHP = 'PHP',
-  Nginx = 'Nginx',
-  Httpd = 'Httpd',
-  NETCore = '.NET Core',
-  Go = 'Go',
-  Ruby = 'Ruby',
-  Python = 'Python',
-  Java = 'Java',
-  NodeJs = 'Node.js',
+  Perl = 'perl',
+  PHP = 'php',
+  Nginx = 'nginx',
+  Httpd = 'httpd',
+  NETCore = 'dotnet',
+  Go = 'golang',
+  Ruby = 'ruby',
+  Python = 'python',
+  Java = 'java',
+  NodeJs = 'nodejs',
 }
 
 export enum eventSourceCards {

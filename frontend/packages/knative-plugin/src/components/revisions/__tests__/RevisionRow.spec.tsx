@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
@@ -14,20 +15,11 @@ describe('RevisionRow', () => {
   beforeEach(() => {
     revData = {
       obj: revisionObj,
-      index: 0,
-      key: '0',
-      style: {
-        height: 'auto',
-        left: 0,
-        position: 'absolute',
-        top: 0,
-        width: '100%',
-      },
     } as any;
   });
 
   it('should show ResourceLink for associated service', () => {
-    const wrapper = shallow(RevisionRow(revData));
+    const wrapper = shallow(<RevisionRow {...revData} />);
     const serviceDataTable = wrapper.find(TableData).at(2);
     expect(wrapper.find(TableData)).toHaveLength(8);
     expect(serviceDataTable.find(ResourceLink)).toHaveLength(1);
@@ -46,27 +38,27 @@ describe('RevisionRow', () => {
         },
       },
     };
-    const wrapper = shallow(RevisionRow(revData));
+    const wrapper = shallow(<RevisionRow {...revData} />);
     const serviceDataTable = wrapper.find(TableData).at(2);
     expect(wrapper.find(TableData)).toHaveLength(8);
     expect(serviceDataTable.find(ResourceLink)).toHaveLength(0);
   });
 
   it('should show appropriate conditions', () => {
-    const wrapper = shallow(RevisionRow(revData));
+    const wrapper = shallow(<RevisionRow {...revData} />);
     const conditionColData = wrapper.find(TableData).at(4);
     expect(conditionColData.props().children).toEqual('3 OK / 4');
   });
 
   it('should show "-" in case of no status', () => {
     revData = _.omit(revData, 'obj.status');
-    const wrapper = shallow(RevisionRow(revData));
+    const wrapper = shallow(<RevisionRow {...revData} />);
     const conditionColData = wrapper.find(TableData).at(4);
     expect(conditionColData.props().children).toEqual('-');
   });
 
   it('should show appropriate ready status and reason for ready state', () => {
-    const wrapper = shallow(RevisionRow(revData));
+    const wrapper = shallow(<RevisionRow {...revData} />);
     const readyColData = wrapper.find(TableData).at(5);
     const reasonColData = wrapper.find(TableData).at(6);
     expect(readyColData.props().children).toEqual('True');
@@ -88,7 +80,7 @@ describe('RevisionRow', () => {
         ],
       },
     };
-    const wrapper = shallow(RevisionRow(revData));
+    const wrapper = shallow(<RevisionRow {...revData} />);
     const readyColData = wrapper.find(TableData).at(5);
     const reasonColData = wrapper.find(TableData).at(6);
     expect(readyColData.props().children).toEqual('False');

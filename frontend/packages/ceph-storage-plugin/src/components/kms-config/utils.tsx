@@ -13,7 +13,6 @@ import {
 import { Action } from '../ocs-install/attached-devices-mode/reducer';
 import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
 import { KMSConfig, KMSConfigMap } from '../../types';
-import { StorageClassClusterAction } from '../../utils/kms-encryption';
 import { CreateStorageSystemAction } from '../create-storage-system/reducer';
 
 export const parseURL = (url: string) => {
@@ -66,25 +65,82 @@ export const generateClientKeySecret = (clientKey: string) => ({
   },
 });
 
-export const createKmsResources = (kms: KMSConfig, update = false, previousData?: any) => {
-  let tokenSecret: SecretKind;
-  if (kms.token) {
-    tokenSecret = {
-      apiVersion: SecretModel.apiVersion,
-      kind: SecretModel.kind,
-      metadata: {
-        name: KMSSecretName,
-        namespace: CEPH_STORAGE_NAMESPACE,
+export const createAdvancedKmsResources = (kms: KMSConfig) => {
+  const advancedKmsResources: Promise<K8sResourceKind>[] = [];
+
+  if (kms.caCert) advancedKmsResources.push(k8sCreate(SecretModel, kms.caCert));
+  if (kms.clientCert) advancedKmsResources.push(k8sCreate(SecretModel, kms.clientCert));
+  if (kms.clientKey) advancedKmsResources.push(k8sCreate(SecretModel, kms.clientKey));
+
+  return advancedKmsResources;
+};
+
+export const createCsiKmsResources = (kms: KMSConfig, update: boolean = false) => {
+  const parsedAddress = parseURL(kms.address.value);
+  const csiConfigData: KMSConfigMap = {
+    KMS_PROVIDER: 'vaulttokens',
+    KMS_SERVICE_NAME: kms.name.value,
+    VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
+    VAULT_BACKEND_PATH: kms.backend,
+    VAULT_CACERT: kms.caCert?.metadata.name,
+    VAULT_TLS_SERVER_NAME: kms.tls,
+    VAULT_CLIENT_CERT: kms.clientCert?.metadata.name,
+    VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
+    VAULT_NAMESPACE: kms.providerNamespace,
+    VAULT_TOKEN_NAME: kms.token.value ? KMSSecretName : '',
+    VAULT_CACERT_FILE: kms.caCertFile,
+    VAULT_CLIENT_CERT_FILE: kms.clientCertFile,
+    VAULT_CLIENT_KEY_FILE: kms.clientKeyFile,
+  };
+
+  const csiConfigObj: ConfigMapKind = {
+    apiVersion: ConfigMapModel.apiVersion,
+    kind: ConfigMapModel.kind,
+    data: {
+      [`${kms.name.value}`]: JSON.stringify(csiConfigData),
+    },
+    metadata: {
+      name: KMSConfigMapCSIName,
+      namespace: CEPH_STORAGE_NAMESPACE,
+    },
+  };
+
+  const csiKmsResources: Promise<K8sResourceKind>[] =
+    /** kms.token.value === "" if we are calling this function from StorageClass KMS flow.
+     * Hence, we need to createAdvancedKmsResources, else it is already created if calling from OCS wizard flow.
+     */
+    kms.token.value ? [] : createAdvancedKmsResources(kms);
+
+  if (update) {
+    const cmPatch = [
+      {
+        op: 'replace',
+        path: `/data/${kms.name.value}`,
+        value: JSON.stringify(csiConfigData),
       },
-      stringData: {
-        token: kms.token.value,
-      },
-    };
+    ];
+    csiKmsResources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
+  } else {
+    csiKmsResources.push(k8sCreate(ConfigMapModel, csiConfigObj));
   }
 
-  const resources: Promise<K8sResourceKind>[] = [];
+  return csiKmsResources;
+};
 
+export const createClusterKmsResources = (kms: KMSConfig) => {
   const parsedAddress = parseURL(kms.address.value);
+
+  const tokenSecret: SecretKind = {
+    apiVersion: SecretModel.apiVersion,
+    kind: SecretModel.kind,
+    metadata: {
+      name: KMSSecretName,
+      namespace: CEPH_STORAGE_NAMESPACE,
+    },
+    stringData: {
+      token: kms.token.value,
+    },
+  };
 
   const configData: KMSConfigMap = {
     KMS_PROVIDER: 'vault',
@@ -110,67 +166,15 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
     },
   };
 
-  const csiConfigData: KMSConfigMap = {
-    KMS_PROVIDER: 'vaulttokens',
-    KMS_SERVICE_NAME: kms.name.value,
-    VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
-    VAULT_BACKEND_PATH: kms.backend,
-    VAULT_CACERT: kms.caCert?.metadata.name,
-    VAULT_TLS_SERVER_NAME: kms.tls,
-    VAULT_CLIENT_CERT: kms.clientCert?.metadata.name,
-    VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
-    VAULT_NAMESPACE: kms.providerNamespace,
-    VAULT_TOKEN_NAME: KMSSecretName,
-    VAULT_CACERT_FILE: kms.caCertFile,
-    VAULT_CLIENT_CERT_FILE: kms.clientCertFile,
-    VAULT_CLIENT_KEY_FILE: kms.clientKeyFile,
-  };
+  const clusterKmsResources: Promise<K8sResourceKind>[] = createAdvancedKmsResources(kms);
+  clusterKmsResources.push(k8sCreate(SecretModel, tokenSecret));
+  clusterKmsResources.push(k8sCreate(ConfigMapModel, configMapObj));
 
-  const csiConfigObj: ConfigMapKind = {
-    apiVersion: ConfigMapModel.apiVersion,
-    kind: ConfigMapModel.kind,
-    data: {
-      [`1-${kms.name.value}`]: JSON.stringify(csiConfigData),
-    },
-    metadata: {
-      name: KMSConfigMapCSIName,
-      namespace: CEPH_STORAGE_NAMESPACE,
-    },
-  };
-
-  if (kms.caCert) {
-    resources.push(k8sCreate(SecretModel, kms.caCert));
-  }
-
-  if (kms.clientCert) {
-    resources.push(k8sCreate(SecretModel, kms.clientCert));
-  }
-
-  if (kms.clientKey) {
-    resources.push(k8sCreate(SecretModel, kms.clientKey));
-  }
-
-  if (update) {
-    const patchValue = Object.keys(previousData).length + 1;
-    const cmPatch = [
-      {
-        op: 'replace',
-        path: `/data/${patchValue}-${kms.name.value}`,
-        value: JSON.stringify(csiConfigData),
-      },
-    ];
-    resources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
-  } else {
-    resources.push(k8sCreate(SecretModel, tokenSecret));
-    resources.push(k8sCreate(ConfigMapModel, configMapObj));
-    resources.push(k8sCreate(ConfigMapModel, csiConfigObj));
-  }
-
-  return resources;
+  return [...clusterKmsResources, ...createCsiKmsResources(kms)];
 };
 
 export type EncryptionDispatch = React.Dispatch<
-  Action | InternalClusterAction | StorageClassClusterAction | CreateStorageSystemAction
+  Action | InternalClusterAction | CreateStorageSystemAction
 >;
 
 export const setEncryptionDispatch = (

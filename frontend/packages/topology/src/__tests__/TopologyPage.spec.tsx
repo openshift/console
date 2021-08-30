@@ -5,6 +5,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { useUserSettingsCompatibility } from '@console/shared/src';
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
+import { usePreferredTopologyView } from '../user-preferences/usePreferredTopologyView';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
@@ -38,13 +39,9 @@ jest.mock('@console/shared', () => {
   };
 });
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
+jest.mock('../user-preferences/usePreferredTopologyView', () => ({
+  usePreferredTopologyView: jest.fn(),
+}));
 
 const match = { params: { name: 'default' }, isExact: true, path: '', url: '' };
 
@@ -54,45 +51,83 @@ describe('Topology page tests', () => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
       projects: { data: [], loaded: true, loadError: '' },
     });
-    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
   });
 
   it('should render topology page', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
     const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
     expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
   it('should default to graph view', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
     const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
 
   it('should allow setting default to list view', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
     const wrapper = shallow(
       <TopologyPage match={match} hideProjects={false} defaultViewType={TopologyViewType.list} />,
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
-  it('should render graph if useUserSettingsCompatibility setting returns that', () => {
-    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['graph', () => {}, true]);
+  it('should render view from URL view path and ignore userSettings if it is available', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['list', true]);
+    const viewMatch = {
+      params: { name: 'default' },
+      isExact: true,
+      path: '/topology/graph',
+      url: '',
+    };
+    const wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+  });
+
+  it('should render view using the preferred view from user settings if it exists and does not have value "latest", and all user settings have loaded', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['graph', true]);
     const wrapper = shallow(
       <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
 
-  it('should render list if useUserSettingsCompatibility setting returns that', () => {
+  it('should render view using the last viewed from user settings if it exists and preferred view has value "latest", and all user settings have loaded', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['graph', () => {}, true]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['latest', true]);
+    const wrapper = shallow(
+      <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
+    );
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+  });
+
+  it('should render view using the last viewed from user settings if it exists and preferred view does not exist", and all user settings have loaded', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue([undefined, true]);
     const wrapper = shallow(
       <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
+  it('should render view using the default view if preferred and last view from user settings does not exist", and all user settings have loaded', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue([undefined, () => {}, true]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue([undefined, true]);
+    const wrapper = shallow(
+      <TopologyPage match={match} hideProjects={false} defaultViewType={TopologyViewType.list} />,
+    );
+    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
+  });
+
   it('should continue to support URL view path for graph', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
     const viewMatch = {
       params: { name: 'default' },
       isExact: true,
@@ -104,6 +139,8 @@ describe('Topology page tests', () => {
   });
 
   it('should continue to support URL view path for list', () => {
+    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
     const viewMatch = {
       params: { name: 'default' },
       isExact: true,

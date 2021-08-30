@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { EventingSubscriptionModel } from '../../../models';
@@ -10,11 +10,8 @@ import { tableColumnClasses } from './subscription-table';
 type SubscriptionRowType = {
   channel?: string;
 };
-const SubscriptionRow: RowFunction<EventSubscriptionKind, SubscriptionRowType> = ({
+const SubscriptionRow: React.FC<RowFunctionArgs<EventSubscriptionKind, SubscriptionRowType>> = ({
   obj,
-  index,
-  key,
-  style,
   customData,
 }) => {
   const {
@@ -32,7 +29,7 @@ const SubscriptionRow: RowFunction<EventSubscriptionKind, SubscriptionRowType> =
     ? getCondition(obj.status.conditions, SubscriptionConditionTypes.Ready)
     : null;
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData columnID="name" className={tableColumnClasses[0]}>
         <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
@@ -71,7 +68,7 @@ const SubscriptionRow: RowFunction<EventSubscriptionKind, SubscriptionRowType> =
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

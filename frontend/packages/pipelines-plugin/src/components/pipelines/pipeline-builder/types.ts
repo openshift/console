@@ -27,9 +27,19 @@ export type PipelineBuilderTaskBase = { name: string; runAfter?: string[] };
 
 export type PipelineBuilderListTask = PipelineBuilderTaskBase;
 
+export type PipelineBuilderLoadingTask = PipelineBuilderTaskBase & {
+  isFinallyTask: boolean;
+  resource: TaskKind;
+  taskRef: {
+    kind: string;
+    name: string;
+  };
+};
+
 export type PipelineBuilderTaskGrouping = {
   tasks: PipelineTask[];
   listTasks: PipelineBuilderListTask[];
+  loadingTasks: PipelineBuilderLoadingTask[];
   finallyTasks: PipelineTask[];
   finallyListTasks: PipelineBuilderListTask[];
 };
@@ -106,6 +116,14 @@ export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
 export type UpdateOperationConvertToFinallyTaskData = {
   listTaskName: string;
 };
+
+export type UpdateOperationConvertToLoadingTaskData = {
+  name: string;
+  resource: TaskKind;
+  runAfter?: string[];
+  isFinallyTask: boolean;
+};
+
 export type UpdateOperationFixInvalidTaskListData = UpdateOperationBaseData & {
   existingName: string;
   resource: TaskKind;
@@ -126,6 +144,7 @@ export type UpdateOperationRenameTaskData = UpdateOperationBaseData & {
 export type CleanupResults = {
   tasks: PipelineTask[];
   listTasks: PipelineBuilderListTask[];
+  loadingTasks: PipelineBuilderLoadingTask[];
   finallyTasks: PipelineTask[];
   finallyListTasks: PipelineBuilderListTask[];
 };

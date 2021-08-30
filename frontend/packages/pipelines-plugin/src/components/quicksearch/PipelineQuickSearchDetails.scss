@@ -1,0 +1,29 @@
+.opp-quick-search-details {
+  padding-top: var(--pf-global--spacer--md);
+
+  &__form-button,
+  &__version-dropdown {
+    margin: var(--pf-global--spacer--md) 0px !important;
+    width: max-content;
+  }
+
+  &__version-dropdown-item {
+    min-width: 7em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__provider {
+    color: var(--pf-global--Color--200);
+  }
+
+  &__description {
+    font-size: 15px !important;
+  }
+
+  &__badges-section {
+    margin: var(--pf-global--spacer--md) 0;
+    --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm) !important;
+  }
+}

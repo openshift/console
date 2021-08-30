@@ -65,6 +65,9 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
       tag: tag.name,
       tagObj: tag,
     },
+    import: {
+      showEditImportStrategy: true,
+    },
   };
 
   const handleSubmit = (values: UploadJarFormData, actions: FormikHelpers<UploadJarFormData>) => {

@@ -2,7 +2,8 @@ import { configureVault, isPodRunningWithEncryptedPV } from '../support/vault-st
 import { pvc } from '../views/pvc';
 import { createStorageClass } from '../views/storage-class';
 
-describe('Test Ceph pool creation', () => {
+// Todo(bipuladh): Enable after downstream builds are available with v1 CSIDrivers
+xdescribe('Test Ceph pool creation', () => {
   before(() => {
     configureVault();
     cy.login();

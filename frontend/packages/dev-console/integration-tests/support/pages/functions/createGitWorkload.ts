@@ -13,7 +13,7 @@ export const createGitWorkload = (
 ) => {
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl(gitUrl);
-  gitPage.verifyValidatedMessage();
+  gitPage.verifyValidatedMessage(gitUrl);
   gitPage.enterComponentName(componentName);
   gitPage.selectResource(resourceType);
   gitPage.enterAppName(appName);

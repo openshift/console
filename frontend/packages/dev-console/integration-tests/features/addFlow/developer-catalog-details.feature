@@ -4,8 +4,9 @@ Feature: Developer Catalog Page
 
 
         Background:
-            Given user has installed OpenShift Serverless Operator
-              And user is at developer perspective
+            # commented below line as serverless operator is not available in operatorhub
+            # Given user has installed OpenShift Serverless Operator
+            Given user is at developer perspective
               And user is at Add page
               And user has created or selected namespace "aut-addflow-pagedetails"
 
@@ -38,7 +39,8 @@ Feature: Developer Catalog Page
              Then user is able to see cards with name containing "node"
 
 
-        @smoke
+        # https://issues.redhat.com/browse/ODC-6249: Installing OpenShift Serverless Operator is not enough here. Test should also ensure that Knative Eventing resource is created.
+        @smoke @broken-test
         Scenario: Event Sources on default Developer Catalog: A-09-TC04
             Given user is at Developer Catalog page
              When user clicks on Event Sources type

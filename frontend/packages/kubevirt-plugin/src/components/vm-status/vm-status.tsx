@@ -46,7 +46,7 @@ import { VMTabURLEnum } from '../vms/types';
 
 import './vm-status.scss';
 
-const getStatusSuffixLabelKey = (vmStatusBundle: VMStatusBundle) => {
+export const getStatusSuffixLabelKey = (vmStatusBundle: VMStatusBundle) => {
   if (vmStatusBundle.status.getGroup() === StatusGroup.VMIMPORT) {
     switch (new VMImportWrappper(vmStatusBundle.vmImport).getType()) {
       case VMImportType.OVIRT:
@@ -111,7 +111,10 @@ type PendingChangesPopoverContentProps = {
 
 // Use onMouseUp instead of onClick since PF4 popup prevents
 // child components to use onClick and onMouseDown
-const PendingChangesPopoverContent: React.FC<PendingChangesPopoverContentProps> = ({ vm, vmi }) => {
+export const PendingChangesPopoverContent: React.FC<PendingChangesPopoverContentProps> = ({
+  vm,
+  vmi,
+}) => {
   const { t } = useTranslation();
   return (
     <VMStatusPopoverContent
@@ -206,7 +209,7 @@ export const getVMStatusIcon = (
     icon = PausedIcon;
   } else if (status === VMStatusEnum.RUNNING) {
     icon = SyncAltIcon;
-  } else if (status === VMStatusEnum.OFF) {
+  } else if (status === VMStatusEnum.STOPPED) {
     icon = OffIcon;
   } else if (status.isError()) {
     icon = RedExclamationCircleIcon;

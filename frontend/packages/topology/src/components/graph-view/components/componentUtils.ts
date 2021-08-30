@@ -351,11 +351,16 @@ const createConnectorCallback = () => (
   if (source === target) {
     return null;
   }
+  const relationshipProviders = target.getGraph()?.getData()?.relationshipProviderExtensions;
+  const curRelProvider = relationshipProviders?.find(({ uid }) => dropHints.includes(uid));
+  if (curRelProvider) {
+    return curRelProvider.properties.create(source, target);
+  }
+
   const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
   if (isGraph(target) || !createConnectors) {
     return Promise.resolve(createVisualConnector(source, target));
   }
-
   const creator = createConnectors.find((getter) => !!getter(dropHints, source, target));
   if (creator) {
     return creator(dropHints, source, target)(source, target);

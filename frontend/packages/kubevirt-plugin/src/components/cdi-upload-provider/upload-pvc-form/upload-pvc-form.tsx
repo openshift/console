@@ -722,7 +722,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
                   )}{' '}
                   <ExternalLink
                     text={t('kubevirt-plugin~Learn more')}
-                    href="https://docs.openshift.com/container-platform/4.7/virt/virtual_machines/virtual_disks/virt-uploading-local-disk-images-block.html"
+                    href="https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/virtual_disks/virt-uploading-local-disk-images-block.html"
                   />
                 </p>
               </Alert>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   DetailsItem,
   Kebab,
@@ -49,9 +49,9 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ServiceTableRow = ({ obj: s, index, key, style }) => {
+const ServiceTableRow = ({ obj: s }) => {
   return (
-    <TableRow id={s.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} />
       </TableData>
@@ -73,7 +73,7 @@ const ServiceTableRow = ({ obj: s, index, key, style }) => {
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={s} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

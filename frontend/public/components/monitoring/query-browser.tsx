@@ -175,21 +175,31 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
   const tooltipMaxWidth = Math.min(width / 2 + 60, TOOLTIP_MAX_WIDTH);
   const isOnLeft = x > (width - 40) / 2;
 
-  const allSeries = activePoints
-    .flatMap((point, i) =>
-      point.y === null
-        ? []
-        : [
-            {
-              color: style[i]?.fill,
-              name: style[i]?.name,
-              total: point._y1 ?? point.y,
-              value: valueFormatter(style[i]?.units)(point.y),
-            },
-          ],
-    )
-    .sort((a, b) => b.total - a.total)
-    .slice(0, TOOLTIP_MAX_ENTRIES);
+  // Sort the entries in the tooltip from largest to smallest (to match the position of points in
+  // the graph) and limit to the maximum number we can display. There could be a large number of
+  // points, so we use a slightly less succinct approach to avoid sorting the whole list of points
+  // and to avoid processing points that won't fit in the tooltip.
+  const largestPoints = [];
+  activePoints.forEach(({ _y1, y }, i) => {
+    const total = _y1 ?? y;
+    if (
+      largestPoints.length < TOOLTIP_MAX_ENTRIES ||
+      largestPoints[TOOLTIP_MAX_ENTRIES - 1].total < total
+    ) {
+      const point = {
+        color: style[i]?.fill,
+        name: style[i]?.name,
+        total,
+        value: valueFormatter(style[i]?.units)(y),
+      };
+      largestPoints.splice(
+        _.sortedIndexBy(largestPoints, point, (p) => -p.total),
+        0,
+        point,
+      );
+    }
+  });
+  const allSeries = largestPoints.slice(0, TOOLTIP_MAX_ENTRIES);
 
   return (
     <>
@@ -975,7 +985,7 @@ type TooltipProps = {
   activePoints?: { x: number; y: number; _y1?: number }[];
   center?: { x: number; y: number };
   height?: number;
-  style?: { fill: string; name: string };
+  style?: { fill: string; name: string; units: string };
   width?: number;
   x?: number;
 };

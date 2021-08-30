@@ -29,7 +29,6 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { DataVolumeModel } from '@console/kubevirt-plugin/src/models';
 import {
   AccessMode,
   DataVolumeSourceType,
@@ -47,6 +46,7 @@ import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { DataVolumeModel } from '../../../models';
 import { ValidationErrorType } from '../../../selectors';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { getName } from '../../../selectors/selectors';
@@ -311,18 +311,35 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     },
   };
 
+  const bodyRequestAddVolumePVC: V1AddVolumeOptions = {
+    disk: resultDisk.asResource(true),
+    name,
+    volumeSource: {
+      persistentVolumeClaim: {
+        claimName: pvcName,
+      },
+    },
+  };
+
   const submit = (e) => {
     e.preventDefault();
 
     if (isValid) {
       if (isVMRunning) {
-        const dvRequest = k8sCreate(DataVolumeModel, resultDataVolume.asResource(true));
         if (autoDetach) {
-          handlePromise(
-            dvRequest.then(() => addHotplugNonPersistent(vmi, bodyRequestAddVolume)),
-            close,
-          );
+          if (source.isAttachDisk()) {
+            handlePromise(addHotplugNonPersistent(vmi, bodyRequestAddVolumePVC), close);
+          } else {
+            const dvRequest = k8sCreate(DataVolumeModel, resultDataVolume.asResource(true));
+            handlePromise(
+              dvRequest.then(() => addHotplugNonPersistent(vmi, bodyRequestAddVolume)),
+              close,
+            );
+          }
+        } else if (source.isAttachDisk()) {
+          handlePromise(addHotplugPersistent(vm, bodyRequestAddVolumePVC), close);
         } else {
+          const dvRequest = k8sCreate(DataVolumeModel, resultDataVolume.asResource(true));
           handlePromise(
             dvRequest.then(() => addHotplugPersistent(vm, bodyRequestAddVolume)),
             close,
@@ -660,6 +677,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 <StorageClassDropdown
                   name={t('kubevirt-plugin~Storage Class')}
                   onChange={(scName) => onStorageClassNameChanged(scName)}
+                  selectedKey={storageClassName}
                   data-test="storage-class-dropdown"
                 />
               </StackItem>

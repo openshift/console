@@ -1,22 +1,24 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { RowFunction, Table } from '@console/internal/components/factory';
+import { RowFunctionArgs, Table, TableProps } from '@console/internal/components/factory';
 import { dimensifyHeader } from '../../../../../../utils';
 import { AffinityRowData } from '../../types';
 
 export type AffinityTableProps = {
   data?: AffinityRowData[];
   customData?: object;
-  row: RowFunction;
+  Row: React.FC<RowFunctionArgs>;
   columnClasses?: string[];
+  getRowProps: TableProps<AffinityRowData>['getRowProps'];
 };
 
 export const AffinityTable: React.FC<AffinityTableProps> = ({
   data,
   customData,
-  row: Row,
+  Row,
   columnClasses,
+  getRowProps,
 }) => {
   const { t } = useTranslation();
   return (
@@ -55,6 +57,7 @@ export const AffinityTable: React.FC<AffinityTableProps> = ({
       customData={{ ...customData, columnClasses }}
       virtualize
       loaded
+      getRowProps={getRowProps}
     />
   );
 };

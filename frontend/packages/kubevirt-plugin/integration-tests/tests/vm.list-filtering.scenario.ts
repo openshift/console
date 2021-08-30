@@ -28,9 +28,9 @@ describe('Test List View Filtering', () => {
   });
 
   it('ID(CNV-3615) Displays correct count of Off VMs', async () => {
-    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+    await vm.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
     await vm.navigateToListView();
-    const offCount = await filterCount(VM_STATUS.Off);
+    const offCount = await filterCount(VM_STATUS.Stopped);
     expect(offCount).toEqual(1);
   });
 

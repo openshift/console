@@ -125,6 +125,20 @@ export type PipelineRunParam = {
   resource?: object;
 };
 
+export type PipelineRunStatus = {
+  succeededCondition?: string;
+  creationTimestamp?: string;
+  conditions?: Condition[];
+  startTime?: string;
+  completionTime?: string;
+  taskRuns?: PLRTaskRuns;
+  pipelineSpec: PipelineSpec;
+  skippedTasks?: {
+    name: string;
+  }[];
+  pipelineResults?: TektonResultsRun[];
+};
+
 export type PipelineRunKind = K8sResourceCommon & {
   spec: {
     pipelineRef?: { name: string };
@@ -137,19 +151,7 @@ export type PipelineRunKind = K8sResourceCommon & {
     // Only used in a single case - cancelling a pipeline; should not be copied between PLRs
     status?: 'PipelineRunCancelled' | 'PipelineRunPending';
   };
-  status?: {
-    succeededCondition?: string;
-    creationTimestamp?: string;
-    conditions?: Condition[];
-    startTime?: string;
-    completionTime?: string;
-    taskRuns?: PLRTaskRuns;
-    pipelineSpec: PipelineSpec;
-    skippedTasks?: {
-      name: string;
-    }[];
-    pipelineResults?: TektonResultsRun[];
-  };
+  status?: PipelineRunStatus;
 };
 
 export type PipelineWithLatest = PipelineKind & {

@@ -18,10 +18,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { QuickStartModel } from '@console/app/src/models';
 import {
   MultiListPage,
-  RowFunction,
+  RowFunctionArgs,
   Table,
   TableData,
-  TableRow,
 } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -130,7 +129,7 @@ const PendingChanges: React.FC = () => {
   return <div className="kv-vm-row_status-extra-label">{t('kubevirt-plugin~Pending changes')}</div>;
 };
 
-const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
+const VMRow: React.FC<RowFunctionArgs<VMRowObjType>> = ({ obj }) => {
   const { vm, vmi, vmImport } = obj;
   const { name, namespace, node, creationTimestamp, uid, vmStatusBundle } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
@@ -157,7 +156,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
   const arePendingChanges = hasPendingChanges(vm, vmi);
 
   return (
-    <TableRow key={`${key}${name}`} id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ResourceLink kind={kubevirtReferenceForModel(model)} name={name} namespace={namespace} />
       </TableData>
@@ -185,7 +184,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
       <TableData className={dimensify(true)}>
         <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -193,7 +192,6 @@ const VMListEmpty: React.FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const namespace = useNamespace();
-
   const searchText = 'virtual machine';
   const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
     kind: kubevirtReferenceForModel(QuickStartModel),
@@ -206,7 +204,6 @@ const VMListEmpty: React.FC = () => {
         displayName.toLowerCase().includes(searchText) ||
         description.toLowerCase().includes(searchText),
     );
-
   return (
     <EmptyState>
       <EmptyStateIcon icon={VirtualMachineIcon} />
@@ -274,7 +271,7 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
 
 VMList.displayName = 'VMList';
 
-const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
+export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
   const { t } = useTranslation();
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
@@ -434,7 +431,6 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
   const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
-
   return (
     <MultiListPage
       {...modifiedProps}
@@ -483,5 +479,3 @@ type VirtualMachinesPageProps = {
     noProjectsAvailable?: boolean;
   };
 };
-
-export { VirtualMachinesPage };

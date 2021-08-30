@@ -1,27 +1,7 @@
 import * as _ from 'lodash-es';
+import i18next from 'i18next';
 
 import { ContainerSpec, ContainerStatus, PodKind } from './';
-
-const PullPolicy = {
-  Always: {
-    id: 'Always',
-    label: 'Always Pull',
-    description: 'Pull down a new copy of the container image whenever a new pod is created.',
-    default: true,
-  },
-  IfNotPresent: {
-    id: 'IfNotPresent',
-    label: 'Pull If Needed',
-    description: 'If the container isn’t available locally, pull it down.',
-  },
-  Never: {
-    id: 'Never',
-    label: 'Never Pull',
-    description:
-      "Don't pull down a container image. " +
-      "If the correct container image doesn't exist locally, the pod will fail to start correctly.",
-  },
-};
 
 // Parses the state from k8s container info field of a pod.
 // Returned object will always have a 'label' property,
@@ -53,8 +33,33 @@ export const getContainerStatus = (pod: PodKind, containerName: string): Contain
   return _.find(statuses, identity) || _.find(initStatuses, identity);
 };
 
-const getPullPolicy = (container: ContainerSpec) =>
-  _.find(PullPolicy, { id: _.get(container, 'imagePullPolicy') });
+const getPullPolicy = (container: ContainerSpec) => {
+  const pullPolicy = {
+    Always: {
+      id: 'Always',
+      label: i18next.t('public~Always pull'),
+      description: i18next.t(
+        'public~Pull down a new copy of the container image whenever a new pod is created.',
+      ),
+      default: true,
+    },
+    IfNotPresent: {
+      id: 'IfNotPresent',
+      label: i18next.t('public~Pull if needed'),
+      description: i18next.t('public~If the container isn’t available locally, pull it down.'),
+    },
+    Never: {
+      id: 'Never',
+      label: i18next.t('public~Never pull'),
+      description: i18next.t(
+        "public~Don't pull down a container image. If the correct container image doesn't exist locally, the pod will fail to start correctly.",
+      ),
+    },
+  };
 
-export const getPullPolicyLabel = (container: ContainerSpec): string =>
-  _.get(getPullPolicy(container), 'label', '');
+  return pullPolicy[container?.imagePullPolicy];
+};
+
+export const getPullPolicyLabel = (container: ContainerSpec): string => {
+  return getPullPolicy(container)?.label || '';
+};

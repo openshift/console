@@ -9,7 +9,11 @@ import { CreateStorageSystemHeader } from './header';
 import { BackingStorage } from './create-storage-system-steps';
 import { initialState, reducer, WizardReducer } from './reducer';
 import { createSteps } from './create-steps';
-import { Steps, StepsName, StorageClusterIdentifier } from '../../constants/create-storage-system';
+import {
+  Steps,
+  StepsName,
+  STORAGE_CLUSTER_SYSTEM_KIND,
+} from '../../constants/create-storage-system';
 import { StorageSystemKind } from '../../types';
 import { StorageSystemModel } from '../../models';
 
@@ -20,13 +24,13 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
     StorageSystemModel,
   );
 
-  const { url, params } = match;
+  const { url } = match;
 
   let wizardSteps: WizardStep[] = [];
   let hasOCS: boolean = false;
 
   if (ssLoaded && !ssLoadError) {
-    hasOCS = ssList?.items?.some((ss) => ss.spec.kind === StorageClusterIdentifier);
+    hasOCS = ssList?.items?.some((ss) => ss.spec.kind === STORAGE_CLUSTER_SYSTEM_KIND);
     wizardSteps = createSteps(t, state, dispatch, hasOCS);
   }
 
@@ -59,8 +63,8 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
             state={state}
             hasOCS={hasOCS}
             dispatch={dispatch}
+            storageSystems={ssList?.items}
             disableNext={!ssLoaded || !!ssLoadError}
-            appName={params.appName}
           />
         }
         cancelButtonText={t('ceph-storage-plugin~Cancel')}

@@ -12,7 +12,7 @@ import {
   PersistentVolumeClaimKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { useActivePerspective, useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { PipelineRunModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import { getLatestRun } from '../../utils/pipeline-augment';
@@ -30,6 +30,19 @@ export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
 
 export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
   useTabbedTableBreadcrumbsFor(kindObj, match, 'triggers', pipelinesTab(kindObj));
+
+export const useDevPipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  const navOption = isAdminPerspective ? `pipelines` : 'dev-pipelines';
+  return useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    navOption,
+    pipelinesTab(kindObj),
+    undefined,
+    true,
+  );
+};
 
 export const useLatestPipelineRun = (pipelineName: string, namespace: string): PipelineRunKind => {
   const pipelineRunResource: WatchK8sResource = {

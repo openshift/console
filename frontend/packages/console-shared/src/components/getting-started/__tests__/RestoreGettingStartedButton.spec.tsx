@@ -12,11 +12,6 @@ jest.mock('react', () => ({
   useLayoutEffect: require.requireActual('react').useEffect,
 }));
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-}));
-
 jest.mock('../useGettingStartedShowState', () => ({
   ...require.requireActual('../useGettingStartedShowState'),
   useGettingStartedShowState: jest.fn(),

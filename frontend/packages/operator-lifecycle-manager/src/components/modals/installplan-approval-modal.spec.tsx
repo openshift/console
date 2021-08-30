@@ -17,14 +17,6 @@ import {
 } from './installplan-approval-modal';
 import Spy = jasmine.Spy;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe(InstallPlanApprovalModal.name, () => {
   let wrapper: ShallowWrapper<InstallPlanApprovalModalProps>;
   let k8sUpdate: Spy;
@@ -51,7 +43,7 @@ describe(InstallPlanApprovalModal.name, () => {
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('public~Save');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save');
   });
 
   it('renders a radio button for each available approval strategy', () => {

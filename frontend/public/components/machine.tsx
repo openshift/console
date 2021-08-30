@@ -13,10 +13,15 @@ import {
   getMachinePhase,
 } from '@console/shared';
 import { MachineModel } from '../models';
-import { MachineKind, referenceForModel } from '../module/k8s';
+import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, TableData } from './factory';
+import ListPageFilter from './factory/ListPage/ListPageFilter';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageBody from './factory/ListPage/ListPageBody';
+import { useListPageFilter } from './factory/ListPage/filter-hook';
+import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   DetailsItem,
   Kebab,
@@ -28,6 +33,9 @@ import {
   navFactory,
 } from './utils';
 import { ResourceEventStream } from './events';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import VirtualizedTable, { RowProps, TableColumn } from './factory/Table/VirtualizedTable';
+import { sortResourceByValue } from './factory/Table/sort';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
@@ -47,13 +55,13 @@ const tableColumnClasses = [
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const MachineTableRow: RowFunction<MachineKind> = ({ obj, index, key, style }) => {
+const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj }) => {
   const nodeName = getMachineNodeName(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   const providerState = getMachineProviderState(obj);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink
           kind={machineReference}
@@ -79,7 +87,7 @@ const MachineTableRow: RowFunction<MachineKind> = ({ obj, index, key, style }) =
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -161,50 +169,58 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   );
 };
 
-export const MachineList: React.SFC = (props) => {
+type MachineListProps = {
+  data: MachineKind[];
+  unfilteredData: MachineKind[];
+  loaded: boolean;
+  loadError: any;
+};
+
+export const MachineList: React.FC<MachineListProps> = (props) => {
   const { t } = useTranslation();
-  const MachineTableHeader = () => {
-    return [
+
+  const machineTableColumn = React.useMemo<TableColumn<MachineKind>[]>(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
+        sort: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
+        sort: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
         title: t('public~Node'),
-        sortField: 'status.nodeRef.name',
+        sort: 'status.nodeRef.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
         title: t('public~Phase'),
-        sortFunc: 'machinePhase',
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
         title: t('public~Provider state'),
-        sortField: 'status.providerStatus.instanceState',
+        sort: 'status.providerStatus.instanceState',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
       },
       {
         title: t('public~Region'),
-        sortField: "metadata.labels['machine.openshift.io/region']",
+        sort: "metadata.labels['machine.openshift.io/region']",
         transforms: [sortable],
         props: { className: tableColumnClasses[5] },
       },
       {
         title: t('public~Availability zone'),
-        sortField: "metadata.labels['machine.openshift.io/zone']",
+        sort: "metadata.labels['machine.openshift.io/zone']",
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
       },
@@ -212,31 +228,63 @@ export const MachineList: React.SFC = (props) => {
         title: '',
         props: { className: tableColumnClasses[7] },
       },
-    ];
-  };
+    ],
+    [t],
+  );
+
   return (
-    <Table
+    <VirtualizedTable<MachineKind>
       {...props}
       aria-label={t('public~Machines')}
-      Header={MachineTableHeader}
+      columns={machineTableColumn}
       Row={MachineTableRow}
-      virtualize
     />
   );
 };
 
-export const MachinePage: React.SFC<MachinePageProps> = (props) => {
+export const MachinePage: React.FC<MachinePageProps> = ({
+  selector,
+  namespace,
+  showTitle = true,
+  hideLabelFilter,
+  hideNameLabelFilters,
+  hideColumnManagement,
+}) => {
   const { t } = useTranslation();
 
+  const [machines, loaded, loadError] = useK8sWatchResource<MachineKind[]>({
+    kind: referenceForModel(MachineModel),
+    isList: true,
+    selector,
+    namespace,
+  });
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(machines);
+
   return (
-    <ListPage
-      {...props}
-      ListComponent={MachineList}
-      kind={machineReference}
-      textFilter="machine"
-      filterLabel={t('public~by machine or node name')}
-      canCreate
-    />
+    <>
+      <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
+        <ListPageCreate groupVersionKind={referenceForModel(MachineModel)}>
+          {t('public~Create machine')}
+        </ListPageCreate>
+      </ListPageHeader>
+      <ListPageBody>
+        <ListPageFilter
+          data={data}
+          loaded={loaded}
+          onFilterChange={onFilterChange}
+          hideNameLabelFilters={hideNameLabelFilters}
+          hideLabelFilter={hideLabelFilter}
+          hideColumnManagement={hideColumnManagement}
+        />
+        <MachineList
+          data={filteredData}
+          unfilteredData={machines}
+          loaded={loaded}
+          loadError={loadError}
+        />
+      </ListPageBody>
+    </>
   );
 };
 
@@ -261,7 +309,10 @@ export type MachineDetailsProps = {
 export type MachinePageProps = {
   showTitle?: boolean;
   namespace?: string;
-  selector?: any;
+  selector?: Selector;
+  hideLabelFilter?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideColumnManagement?: boolean;
 };
 
 export type MachineDetailsPageProps = {

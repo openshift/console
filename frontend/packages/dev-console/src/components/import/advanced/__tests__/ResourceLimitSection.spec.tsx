@@ -8,14 +8,6 @@ import ResourceLimitSection from '../ResourceLimitSection';
 let resourceLimitSectionProps: React.ComponentProps<typeof ResourceLimitSection>;
 const useFormikContextMock = useFormikContext as jest.Mock;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     values: {
@@ -42,8 +34,6 @@ jest.mock('formik', () => ({
   })),
 }));
 
-const i18nNS = 'devconsole';
-
 describe('ResourceLimitSection', () => {
   beforeEach(() => {
     resourceLimitSectionProps = {
@@ -55,7 +45,7 @@ describe('ResourceLimitSection', () => {
   it('should render helptext for resource limit section', () => {
     const wrapper = shallow(<ResourceLimitSection {...resourceLimitSectionProps} />);
     expect(wrapper.find(FormSection).props().subTitle).toEqual(
-      `${i18nNS}~Resource limits control how much CPU and memory a container will consume on a node.`,
+      'Resource limits control how much CPU and memory a container will consume on a node.',
     );
   });
 

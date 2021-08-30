@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { PENDING_RESTART_LABEL } from '../../constants';
@@ -82,8 +82,6 @@ export type VMNicSimpleRowProps = {
   validation?: NetworkSimpleDataValidation;
   columnClasses: string[];
   actionsComponent: React.ReactNode;
-  index: number;
-  style: object;
   isPendingRestart?: boolean;
 };
 
@@ -92,14 +90,12 @@ export const NicSimpleRow: React.FC<VMNicSimpleRowProps> = ({
   validation = {},
   columnClasses,
   actionsComponent,
-  index,
-  style,
   isPendingRestart,
 }) => {
   const dimensify = dimensifyRow(columnClasses);
 
   return (
-    <TableRow id={name} index={index} trKey={name} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ValidationCell
           validation={validation.name}
@@ -123,21 +119,17 @@ export const NicSimpleRow: React.FC<VMNicSimpleRowProps> = ({
         <ValidationCell validation={validation.macAddress}>{macAddress || DASH}</ValidationCell>
       </TableData>
       <TableData className={dimensify(true)}>{actionsComponent}</TableData>
-    </TableRow>
+    </>
   );
 };
 
-export const NicRow: RowFunction<NetworkBundle, VMNicRowCustomData> = ({
+export const NicRow: React.FC<RowFunctionArgs<NetworkBundle, VMNicRowCustomData>> = ({
   obj: { name, nic, network, ...restData },
   customData: { isDisabled, withProgress, vmLikeEntity, vmi, columnClasses, pendingChangesNICs },
-  index,
-  style,
 }) => (
   <NicSimpleRow
     data={{ ...restData, name }}
     columnClasses={columnClasses}
-    index={index}
-    style={style}
     isPendingRestart={!!pendingChangesNICs?.has(name)}
     actionsComponent={
       <Kebab

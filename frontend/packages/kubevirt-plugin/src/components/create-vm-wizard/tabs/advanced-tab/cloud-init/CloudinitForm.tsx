@@ -67,7 +67,7 @@ const CloudinitForm: React.FC<CloudinitFormProps> = ({
         fieldId={cloudinitIDGenerator(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS)}
         className="kv-cloudint-advanced-tab-with-editor--validation-text"
       >
-        {authKeys.map((_, idx) => {
+        {authKeys?.map((_, idx) => {
           const uiIDX = idx.toString();
           const inputID = cloudinitIDGenerator(
             joinIDs(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, 'key', uiIDX),
@@ -106,7 +106,7 @@ const CloudinitForm: React.FC<CloudinitFormProps> = ({
           icon={<PlusCircleIcon />}
           variant={ButtonVariant.link}
           isInline
-          onClick={() => setAuthKeys((keys) => [...keys, ''])}
+          onClick={() => setAuthKeys((keys) => (keys ? [...keys, ''] : ['']))}
         >
           {t('kubevirt-plugin~Add SSH Key')}
         </Button>

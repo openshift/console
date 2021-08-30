@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
@@ -28,9 +28,9 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
   );
 };
 
-const PipelineRunRow: RowFunction<PipelineRunKind> = ({ obj, index, key, style }) => {
+const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelinerunReference}
@@ -59,7 +59,7 @@ const PipelineRunRow: RowFunction<PipelineRunKind> = ({ obj, index, key, style }
           resource={obj}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

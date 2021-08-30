@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { FormikErrors, useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
+import CloseButton from '@console/shared/src/components/close-button';
 import {
   PipelineTask,
   PipelineTaskParam,
@@ -70,9 +71,15 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
   return (
     <Stack className="opp-task-sidebar">
+      <StackItem className="co-sidebar-dismiss  clearfix">
+        <CloseButton
+          onClick={onClose}
+          dataTestID="sidebar-close-button"
+          additionalClassName="co-close-button--float-right co-sidebar-dismiss__close-button"
+        />
+      </StackItem>
       <StackItem className="opp-task-sidebar__header">
         <TaskSidebarHeader
-          onClose={onClose}
           taskResource={taskResource}
           removeThisTask={() => onRemoveTask(thisTask.name)}
         />

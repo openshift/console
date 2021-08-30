@@ -33,6 +33,7 @@ export const startOnCreation = '#start-vm';
 export const successList = 'button[data-test="success-list"]';
 
 // customize wizard
+export const osDropdown = '#operating-system-dropdown';
 export const flavorDropdown = 'button[id="flavor-dropdown]';
 export const selectItem = '.pf-c-select__menu-item';
 export const nextBtn = 'button[id="create-vm-wizard-submit-btn"]';
@@ -47,3 +48,7 @@ export const password = 'input[id="cloudint-password"]';
 export const hostname = 'input[id="cloudint-hostname"]';
 export const sshKeys = (index: number) => `input[id="cloudint-ssh_authorized_keys-key-${index}"]`;
 export const addSSHKey = 'button[id="cloudint-ssh_authorized_keys-add"]';
+
+// template wizard
+export const templateProvider = '#template-provider';
+export const templateSupport = '#template-supported';

@@ -12,7 +12,7 @@ export const KMSConfigMapName = 'ocs-kms-connection-details';
 export const KMSConfigMapCSIName = 'csi-kms-connection-details';
 export const KMSSecretName = 'ocs-kms-token';
 
-export const KMSEmptyState: KMSConfig = Object.freeze({
+export const KMSEmptyState: KMSConfig = Object.seal({
   name: {
     value: '',
     valid: true,

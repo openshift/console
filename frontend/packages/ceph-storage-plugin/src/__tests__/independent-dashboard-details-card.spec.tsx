@@ -7,14 +7,6 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import { DetailsCard } from '../components/dashboards/persistent-external/details-card';
 import { dashboardData } from '../__mocks__/independent-mode-dashboard-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('DetailsCard', () => {
   let wrapper: ShallowWrapper<DashboardItemProps>;
 

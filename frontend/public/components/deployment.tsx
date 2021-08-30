@@ -28,7 +28,7 @@ import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import { DetailsPage, ListPage, Table, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -277,21 +277,11 @@ type DeploymentDetailsProps = {
 
 const kind = 'Deployment';
 
-const DeploymentTableRow: RowFunction<DeploymentKind> = ({ obj, index, key, style, ...props }) => {
+const DeploymentTableRow: React.FC<RowFunctionArgs<DeploymentKind>> = ({ obj, ...props }) => {
   const resourceKind = referenceFor(obj);
   const context = { [resourceKind]: obj };
   const customActionMenu = <LazyActionMenu context={context} />;
-  return (
-    <WorkloadTableRow
-      obj={obj}
-      index={index}
-      rowKey={key}
-      style={style}
-      customActionMenu={customActionMenu}
-      kind={kind}
-      {...props}
-    />
-  );
+  return <WorkloadTableRow obj={obj} customActionMenu={customActionMenu} kind={kind} {...props} />;
 };
 
 const DeploymentTableHeader = () => {

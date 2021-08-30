@@ -12,7 +12,7 @@ import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
 import { MachinePage } from './machine';
 import { configureMachineAutoscalerModal, configureReplicaCountModal } from './modals';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   Kebab,
   KebabAction,
@@ -93,7 +93,7 @@ export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploym
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-export const MachineCounts: React.SFC<MachineCountsProps> = ({
+export const MachineCounts: React.FC<MachineCountsProps> = ({
   resourceKind,
   resource,
 }: {
@@ -206,7 +206,7 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~Machine set details')} />
+        <SectionHeading text={t('public~MachineSet details')} />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
         <div className="row">
           <div className="col-md-6">
@@ -245,6 +245,41 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   );
 };
 
+const MachineSetTableRow: React.FC<RowFunctionArgs<MachineSetKind>> = ({ obj }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink
+          kind={machineSetReference}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+        />
+      </TableData>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Link
+          to={`${resourcePath(
+            machineSetReference,
+            obj.metadata.name,
+            obj.metadata.namespace,
+          )}/machines`}
+        >
+          {getReadyReplicas(obj)} {t('public~of')} {getDesiredReplicas(obj)} {t('public~machines')}
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
+      </TableData>
+    </>
+  );
+};
+
 export const MachineSetList: React.SFC = (props) => {
   const { t } = useTranslation();
   const MachineSetTableHeader = () => {
@@ -275,44 +310,10 @@ export const MachineSetList: React.SFC = (props) => {
     ];
   };
 
-  const MachineSetTableRow: RowFunction<MachineSetKind> = ({ obj, index, key, style }) => {
-    return (
-      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink
-            kind={machineSetReference}
-            name={obj.metadata.name}
-            namespace={obj.metadata.namespace}
-          />
-        </TableData>
-        <TableData
-          className={classNames(tableColumnClasses[1], 'co-break-word')}
-          columnID="namespace"
-        >
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          <Link
-            to={`${resourcePath(
-              machineSetReference,
-              obj.metadata.name,
-              obj.metadata.namespace,
-            )}/machines`}
-          >
-            {getReadyReplicas(obj)} {t('public~of')} {getDesiredReplicas(obj)}{' '}
-            {t('public~machines')}
-          </Link>
-        </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
-        </TableData>
-      </TableRow>
-    );
-  };
   return (
     <Table
       {...props}
-      aria-label={t('public~Machine sets')}
+      aria-label={t('public~MachineSets')}
       Header={MachineSetTableHeader}
       Row={MachineSetTableRow}
       virtualize
@@ -320,9 +321,18 @@ export const MachineSetList: React.SFC = (props) => {
   );
 };
 
-export const MachineSetPage: React.SFC<MachineSetPageProps> = (props) => (
-  <ListPage {...props} ListComponent={MachineSetList} kind={machineSetReference} canCreate />
-);
+export const MachineSetPage: React.SFC<MachineSetPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <ListPage
+      {...props}
+      title={t('public~MachineSets')}
+      ListComponent={MachineSetList}
+      kind={machineSetReference}
+      canCreate
+    />
+  );
+};
 
 export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = (props) => (
   <DetailsPage

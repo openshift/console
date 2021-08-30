@@ -5,14 +5,6 @@ import * as shared from '@console/shared';
 import CloudShellTab from '../CloudShellTab';
 import CloudShellTerminal from '../CloudShellTerminal';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 describe('CloudShellTab', () => {
   it('should not render redirect component if flag check is pending', () => {
     spyOn(shared, 'useFlag').and.returnValue(undefined);

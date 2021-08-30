@@ -30,6 +30,7 @@ const useV2VConfigMap = () => {
     } catch (e) {
       setError(e);
       setData(defaultConfigMapData);
+      dispatch(v2vConfigMapActions[v2vConfigMapActionsNames.updateImages](defaultConfigMapData));
     }
     setLoaded(true);
   }, [dispatch]);

@@ -10,7 +10,7 @@ import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
-import { DetailsPage, MultiListPage, TextFilter, Table, TableRow, TableData } from '../factory';
+import { DetailsPage, MultiListPage, TextFilter, Table, TableData } from '../factory';
 import {
   Kebab,
   SectionHeading,
@@ -55,9 +55,9 @@ const menuActions = [
 
 const roleColumnClasses = ['', '', Kebab.columnClass];
 
-const RolesTableRow = ({ obj: role, index, key, style }) => {
+const RolesTableRow = ({ obj: role }) => {
   return (
-    <TableRow id={role.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={roleColumnClasses[0]}>
         <ResourceLink
           kind={roleKind(role)}
@@ -75,7 +75,7 @@ const RolesTableRow = ({ obj: role, index, key, style }) => {
       <TableData className={roleColumnClasses[2]}>
         <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -160,10 +160,10 @@ const bindingsColumnClasses = [
   'pf-u-w-16-on-sm',
 ];
 
-const BindingsTableRow = ({ obj: binding, index, key, style }) => {
+const BindingsTableRow = ({ obj: binding }) => {
   const { t } = useTranslation();
   return (
-    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={bindingsColumnClasses[0]}>
         <BindingName binding={binding} />
       </TableData>
@@ -172,7 +172,7 @@ const BindingsTableRow = ({ obj: binding, index, key, style }) => {
       <TableData className={bindingsColumnClasses[3]}>
         {binding.namespace || t('public~All namespaces')}
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

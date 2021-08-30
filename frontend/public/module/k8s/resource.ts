@@ -151,8 +151,8 @@ export const k8sKill = <R extends K8sResourceCommon>(
       kind,
       Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts),
     ),
-    requestInit,
     json,
+    requestInit,
   );
 
 export const k8sKillByName = <R extends K8sResourceCommon>(

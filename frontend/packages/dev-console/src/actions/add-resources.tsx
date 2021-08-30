@@ -3,8 +3,6 @@ import {
   GitAltIcon,
   OsImageIcon,
   CatalogIcon,
-  CubeIcon,
-  LayerGroupIcon,
   DatabaseIcon,
   LaptopCodeIcon,
   BoltIcon,
@@ -24,7 +22,7 @@ export const fromGit: AddActionItem = {
   id: 'import-from-git',
   action: createKebabAction(
     // t('devconsole~From Git')
-    'devconsole~From Git',
+    'devconsole~Import from Git',
     <GitAltIcon />,
     ImportOptions.GIT,
     allImportResourceAccess,
@@ -49,28 +47,6 @@ export const fromCatalog: AddActionItem = {
     'devconsole~From Catalog',
     <CatalogIcon />,
     ImportOptions.CATALOG,
-  ),
-};
-
-export const fromDockerfile: AddActionItem = {
-  id: 'import-from-dockerfile',
-  action: createKebabAction(
-    // t('devconsole~From Dockerfile')
-    'devconsole~From Dockerfile',
-    <CubeIcon />,
-    ImportOptions.DOCKERFILE,
-    allImportResourceAccess,
-  ),
-};
-
-export const fromDevfile: AddActionItem = {
-  id: 'import-from-devfile',
-  action: createKebabAction(
-    // t('devconsole~From Devfile')
-    'devconsole~From Devfile',
-    <LayerGroupIcon />,
-    ImportOptions.DEVFILE,
-    allImportResourceAccess,
   ),
 };
 
@@ -133,8 +109,6 @@ export const addResourceMenu: KebabAction[] = [
   fromSamples,
   fromGit,
   containerImage,
-  fromDockerfile,
-  fromDevfile,
   fromCatalog,
   fromDatabaseCatalog,
   fromOperatorBacked,
@@ -144,21 +118,13 @@ export const addResourceMenu: KebabAction[] = [
   .filter(disabledFilter)
   .map(actionMapper);
 
-export const addGroupResourceMenu: KebabAction[] = [
-  fromGit,
-  containerImage,
-  fromDockerfile,
-  fromDevfile,
-  uploadJarFile,
-]
+export const addGroupResourceMenu: KebabAction[] = [fromGit, containerImage, uploadJarFile]
   .filter(disabledFilter)
   .map(actionMapper);
 
 export const addResourceMenuWithoutCatalog: KebabAction[] = [
   fromGit,
   containerImage,
-  fromDockerfile,
-  fromDevfile,
   fromOperatorBacked,
   uploadJarFile,
 ]

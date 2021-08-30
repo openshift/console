@@ -5,15 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 
 import { Conditions } from './conditions';
-import {
-  DetailsPage,
-  ListPage,
-  Table,
-  TableRow,
-  TableData,
-  TableProps,
-  RowFunction,
-} from './factory';
+import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
 import {
   referenceFor,
   kindForReference,
@@ -110,18 +102,12 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
     ];
   };
 
-  const TableRowForKind: RowFunction<K8sResourceKind> = ({
-    obj,
-    index,
-    key,
-    style,
-    customData,
-  }) => {
+  const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
     const kind = referenceFor(obj) || customData.kind;
     const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common];
 
     return (
-      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <>
         <TableData className={tableColumnClasses[0]}>
           <ResourceLink
             kind={customData.kind}
@@ -142,7 +128,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
         <TableData className={tableColumnClasses[3]}>
           <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
         </TableData>
-      </TableRow>
+      </>
     );
   };
 
@@ -155,11 +141,18 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
     return model.labelPluralKey ? t(model.labelPluralKey) : model.labelPlural;
   };
 
+  const customData = React.useMemo(
+    () => ({
+      kind: kinds[0],
+    }),
+    [kinds],
+  );
+
   return (
     <Table
       {...props}
       aria-label={getAriaLabel(kinds[0])}
-      customData={{ kind: kinds[0] }}
+      customData={customData}
       Header={TableHeader}
       Row={TableRowForKind}
       virtualize

@@ -33,14 +33,6 @@ import {
 import { GlobalConfigPage } from '../../public/components/cluster-settings/global-config';
 import { Firehose, HorizontalNav, ResourceLink, Timestamp } from '../../public/components/utils';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
@@ -53,8 +45,6 @@ jest.mock('react-redux', () => {
     useDispatch: jest.fn(),
   };
 });
-
-const i18nNS = 'public';
 
 describe('Cluster Settings page', () => {
   let wrapper: ShallowWrapper<any>;
@@ -69,7 +59,7 @@ describe('Cluster Settings page', () => {
     expect(wrapper.exists()).toBe(true);
   });
   it('should render correct Cluster Settings page title', () => {
-    expect(wrapper.contains(`${i18nNS}~Cluster Settings`)).toBeTruthy();
+    expect(wrapper.contains('Cluster Settings')).toBeTruthy();
   });
   it('should render the Firehose Component with the props', () => {
     expect(wrapper.find(Firehose).exists()).toBe(true);
@@ -111,19 +101,19 @@ describe('Cluster Settings page', () => {
         .find(HorizontalNav)
         .at(0)
         .props().pages[0].name,
-    ).toBe(`${i18nNS}~Details`);
+    ).toBe('Details');
     expect(
       wrapper
         .find(HorizontalNav)
         .at(0)
         .props().pages[1].name,
-    ).toBe(`${i18nNS}~ClusterOperators`);
+    ).toBe('ClusterOperators');
     expect(
       wrapper
         .find(HorizontalNav)
         .at(0)
         .props().pages[2].name,
-    ).toBe(`${i18nNS}~Configuration`);
+    ).toBe('Configuration');
     expect(
       wrapper
         .find(HorizontalNav)
@@ -239,7 +229,7 @@ describe('Current Version Header', () => {
   });
 
   it('should render the Current Version heading', () => {
-    expect(wrapper.text()).toBe(`${i18nNS}~Current version`);
+    expect(wrapper.text()).toBe('Current version');
   });
 });
 
@@ -267,7 +257,7 @@ describe('Update Status', () => {
   });
 
   it('should render the Update Status value', () => {
-    expect(wrapper.render().text()).toBe(` ${i18nNS}~Available updates`);
+    expect(wrapper.render().text()).toBe(' Available updates');
   });
 });
 
@@ -302,7 +292,7 @@ describe('Update Link', () => {
         .find('[data-test-id="cv-update-button"]')
         .render()
         .text(),
-    ).toBe('public~Update');
+    ).toBe('Update');
   });
 });
 
@@ -324,7 +314,7 @@ describe('Updates Graph', () => {
         .find(ChannelName)
         .at(0)
         .text(),
-    ).toBe(`${i18nNS}~{{currentChannel}} channel`);
+    ).toBe('stable-4.5 channel');
   });
   it('should render the value of current version', () => {
     expect(
@@ -348,7 +338,7 @@ describe('Updates Graph', () => {
         .find(ChannelName)
         .at(1)
         .text(),
-    ).toBe('public~{{newerChannel}} channel');
+    ).toBe('stable-4.6 channel');
   });
 });
 
@@ -386,7 +376,7 @@ describe('Current Version Header while updating', () => {
   });
 
   it('should render the Current Version heading', () => {
-    expect(wrapper.text()).toBe(`${i18nNS}~Last completed version`);
+    expect(wrapper.text()).toBe('Last completed version');
   });
 });
 
@@ -400,7 +390,7 @@ describe('Update Status while updating', () => {
   });
 
   it('should render the Updating Message Text value', () => {
-    expect(wrapper.text()).toBe(`${i18nNS}~Update to {{version}} in progress`);
+    expect(wrapper.text()).toBe('Update to 4.5.4 in progress');
   });
 });
 

@@ -52,5 +52,3 @@ export const applyKnativeDisplayOptions = (model: Model, filters: DisplayFilters
   });
   return appliedFilters;
 };
-
-export const applyDisplayOptions = () => applyKnativeDisplayOptions;

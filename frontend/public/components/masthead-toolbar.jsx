@@ -37,8 +37,22 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
-import { languagePreferencesModal } from './modals';
 import { withTelemetry, withQuickStartContext } from '@console/shared/src/hoc';
+
+const defaultHelpLinks = [
+  {
+    // t('public~Learning Portal')
+    label: 'Learning Portal',
+    externalLink: true,
+    href: 'https://learn.openshift.com/?ref=webconsole',
+  },
+  {
+    // t('public~OpenShift Blog')
+    label: 'OpenShift Blog',
+    externalLink: true,
+    href: 'https://blog.openshift.com',
+  },
+];
 
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
@@ -378,6 +392,14 @@ class MastheadToolbarContents_ extends React.Component {
       ],
     });
 
+    // Add default help links to start of additional links from operator
+    additionalHelpActions.actions = defaultHelpLinks
+      .map((helpLink) => ({
+        ...helpLink,
+        label: t(`public~${helpLink.label}`),
+      }))
+      .concat(additionalHelpActions.actions);
+
     if (!_.isEmpty(additionalHelpActions.actions)) {
       helpActions.push(additionalHelpActions);
     }
@@ -458,7 +480,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks, t, quickStartContext } = this.props;
+    const { flags, consoleLinks, t } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
@@ -479,10 +501,7 @@ class MastheadToolbarContents_ extends React.Component {
     const actions = [];
     const userActions = [
       {
-        label: t('public~Language preference'),
-        callback: () => languagePreferencesModal({ quickStartContext }),
-        component: 'button',
-        dataTest: 'language',
+        component: <Link to="/user-preferences">{t('public~User Preferences')}</Link>,
       },
     ];
 

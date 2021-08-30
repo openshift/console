@@ -51,7 +51,7 @@ describe('Test VM/VMI actions', () => {
     before(() => {
       vm.create(vmData);
       virtualization.vms.visit();
-      waitForStatus(VM_STATUS.Off);
+      waitForStatus(VM_STATUS.Stopped);
     });
 
     it('ID(CNV-4013) Starts VM', () => {
@@ -83,7 +83,7 @@ describe('Test VM/VMI actions', () => {
         .should('exist')
         .click();
       cy.byLegacyTestID('horizontal-link-Details').click();
-      waitForStatus(VM_STATUS.Off);
+      waitForStatus(VM_STATUS.Stopped);
     });
 
     it('ID(CNV-4017) Starts VM', () => {

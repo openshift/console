@@ -29,7 +29,6 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
-import { VMKind } from '@console/kubevirt-plugin/src/types';
 import {
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
@@ -54,6 +53,7 @@ import { vCPUCount } from '../../../selectors/vm/cpu';
 import { getCPU } from '../../../selectors/vm/selectors';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../../statuses/template/types';
+import { VMKind } from '../../../types';
 import { validateVmLikeEntityName } from '../../../utils/validations';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormRow } from '../../form/form-row';

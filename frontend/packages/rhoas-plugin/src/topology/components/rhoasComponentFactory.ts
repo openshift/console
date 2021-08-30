@@ -12,9 +12,9 @@ import {
   CreateConnector,
   noRegroupWorkloadContextMenu,
 } from '@console/topology/src/components/graph-view';
+import BindableNode from '@console/topology/src/components/graph-view/components/nodes/trapezoidNode/BindableNode';
 import { withEditReviewAccess } from '@console/topology/src/utils';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from './const';
-import KafkaNode from './KafkaNode';
 
 export const getRhoasComponentFactory = (
   kind,
@@ -30,7 +30,7 @@ export const getRhoasComponentFactory = (
         withEditReviewAccess('patch')(
           withDragNode(nodeDragSourceSpec(type))(
             withSelection({ controlled: true })(
-              withContextMenu(noRegroupWorkloadContextMenu)(KafkaNode),
+              withContextMenu(noRegroupWorkloadContextMenu)(BindableNode),
             ),
           ),
         ),

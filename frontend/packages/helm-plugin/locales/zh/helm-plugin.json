@@ -1,4 +1,6 @@
 {
+  "Helm Chart Repository": "Helm Chart 仓库",
+  "Helm Chart Repositories": "Helm Chart 仓库",
   "Helm Chart": "Helm Chart",
   "Browse the catalog to discover and install Helm Charts": "浏览目录以发现并安装 Helm Chart",
   "Helm Charts": "Helm Chart",
@@ -16,6 +18,7 @@
   "Rollback": "回滚",
   "## README\n{{readmeData}}": "## README\n{{readmeData}}",
   "README not available": "README 不可用",
+  "This Helm Chart is provided by a trusted partner and has been verified for ease of integration.": "该 Helm Chart 由值得信任的合作伙伴提供，并经过验证以方便集成。",
   "Certified": "已认证",
   "Chart version": "chart 版本",
   "App version": "应用版本",
@@ -51,7 +54,6 @@
   "All data entered for version <1>{{currentVersion}}</1> will be reset": "为版本 <1>{{currentVersion}}</1> 输入的所有数据都将被重置",
   "Proceed": "继续",
   "Cancel": "取消",
-  "Select the chart version.": "选择 chart 版本。",
   "Select the version to upgrade to.": "选择要升级到的版本。",
   "No versions available": "无可用版本",
   "For more information on the chart, refer to this <2>README</2>": "如需了解更多与 chart 相关的信息，请参阅 <2>README</2>",
