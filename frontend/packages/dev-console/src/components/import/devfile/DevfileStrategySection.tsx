@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService } from '@console/git-service/src';
+import { getGitService, ImportStrategy } from '@console/git-service/src';
 import { InputField } from '@console/shared/src';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import FormSection from '../section/FormSection';
@@ -13,6 +13,7 @@ const DevfileStrategySection: React.FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
+    import: { showEditImportStrategy, strategies, selectedStrategy },
     git: { url, type, ref, dir, secretResource },
     devfile,
   } = values;
@@ -40,7 +41,7 @@ const DevfileStrategySection: React.FC = () => {
     if (!values.devfile?.devfileSourceUrl) {
       // No need to check the existence of the file, waste of a call to the gitService for this need
       const devfileContents = gitService && (await gitService.getDevfileContent());
-      if (!devfileContents) {
+      if (!devfile.devfilePath || !devfileContents) {
         setFieldValue('devfile.devfileContent', null);
         setFieldValue('devfile.devfileHasError', true);
         setValidated(ValidatedOptions.error);
@@ -65,10 +66,18 @@ const DevfileStrategySection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    handleDevfileChange();
-    // We need to run only one when component mounts and then onBlur will take care of it.
+    if (selectedStrategy.type === ImportStrategy.DEVFILE) {
+      strategies.forEach((s) => {
+        if (s.type === ImportStrategy.DEVFILE) {
+          setFieldValue('import.selectedStrategy.detectedFiles', s.detectedFiles);
+          setFieldValue('devfile.devfilePath', s.detectedFiles[0]);
+          setFieldValue('docker.dockerfilePath', 'Dockerfile');
+          handleDevfileChange();
+        }
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedStrategy.type, setFieldValue, strategies]);
 
   return (
     <>
@@ -77,7 +86,7 @@ const DevfileStrategySection: React.FC = () => {
           {devfileParseError}
         </Alert>
       )}
-      {values.import.showEditImportStrategy && (
+      {showEditImportStrategy && (
         <FormSection>
           <InputField
             type={TextInputTypes.text}
