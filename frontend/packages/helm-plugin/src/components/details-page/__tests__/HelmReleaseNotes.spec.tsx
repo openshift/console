@@ -5,6 +5,10 @@ import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseNotes from '../notes/HelmReleaseNotes';
 import HelmReleaseNotesEmptyState from '../notes/HelmReleaseNotesEmptyState';
 
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+  useResizeObserver: jest.fn(),
+}));
+
 describe('HelmReleaseNotes', () => {
   it('should render the SyncMarkdownView component when notes are available', () => {
     const helmReleaseResources = mount(<HelmReleaseNotes customData={mockHelmReleases[0]} />);

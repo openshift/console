@@ -10,6 +10,10 @@ jest.mock('showdown', () => ({
   },
 }));
 
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+  useResizeObserver: jest.fn(),
+}));
+
 describe('markdown-view', () => {
   it('should render markdown view inline and iframe', () => {
     expect(

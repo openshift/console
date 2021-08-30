@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
-import { useForceRender } from '@console/shared';
+import { useForceRender, useResizeObserver } from '@console/shared';
 
 import './_markdown-view.scss';
 
@@ -202,6 +202,8 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     updateDimensions();
     setLoaded(true);
   }, [updateDimensions]);
+
+  useResizeObserver(updateDimensions, frame);
 
   // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
   const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
