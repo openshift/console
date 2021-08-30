@@ -6,6 +6,7 @@ export const cancelBtn = 'button[id="create-vm-wizard-cancel-btn"]';
 export const customizeBtn = 'button[data-test-id="wizard-customize"]';
 
 export const wizardNav = '.pf-c-wizard__nav-list';
+export const wizardNavLink = '.pf-c-wizard__nav-link';
 export const templateTitle = '.catalog-tile-pf-title';
 
 export const imageSourceDropdown = '#image-source-type-dropdown';
@@ -41,7 +42,7 @@ export const selectPXENIC = 'select[id="pxe-bootsource"]';
 export const cloudInit = 'button[id="cloud"]';
 export const ssh = 'button[id="ssh"]';
 export const formView = 'input[name="form-checkbox"]';
-export const yamlEditor = '..monaco-scrollable-element';
+export const yamlEditor = '.editor-scrollable.monaco-scrollable-element';
 export const yamlView = 'input[name="yaml-checkbox"]';
 export const username = 'input[id="cloudint-user"]';
 export const password = 'input[id="cloudint-password"]';
