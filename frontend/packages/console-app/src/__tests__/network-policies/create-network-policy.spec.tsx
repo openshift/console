@@ -5,7 +5,6 @@ import { ButtonBar } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
 
-const i18nNS = 'public';
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
   return {
