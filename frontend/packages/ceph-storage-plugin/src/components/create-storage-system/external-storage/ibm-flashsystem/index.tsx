@@ -161,4 +161,8 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
 };
 
 export const flashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
-  !!state.endpoint && !!state.username && !!state.password && !!state.poolname;
+  !!state.endpoint &&
+  isValidUrl(state.endpoint) &&
+  !!state.username &&
+  !!state.password &&
+  !!state.poolname;
