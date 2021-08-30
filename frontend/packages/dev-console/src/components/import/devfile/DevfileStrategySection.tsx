@@ -41,12 +41,10 @@ const DevfileStrategySection: React.FC = () => {
       // No need to check the existence of the file, waste of a call to the gitService for this need
       const devfileContents = gitService && (await gitService.getDevfileContent());
       if (!devfileContents) {
-        setFieldValue('docker.dockerfilePath', 'Dockerfile');
         setFieldValue('devfile.devfileContent', null);
         setFieldValue('devfile.devfileHasError', true);
         setValidated(ValidatedOptions.error);
       } else {
-        setFieldValue('docker.dockerfilePath', 'Dockerfile');
         setFieldValue('devfile.devfileContent', devfileContents);
         setFieldValue('devfile.devfileHasError', false);
         setValidated(ValidatedOptions.success);
