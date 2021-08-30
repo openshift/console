@@ -1,6 +1,6 @@
-import { TEMPLATE_SUPPORT } from '../const/index';
-import { ProvisionSource } from '../enums/provisionSource';
 import { VirtualMachineData } from '../types/vm';
+import { TEMPLATE_SUPPORT } from '../utils/const/index';
+import { ProvisionSource } from '../utils/const/provisionSource';
 import { addDisk, addNIC } from './dialog';
 import { modalTitle, modalConfirm, storageClass } from './selector';
 import * as wizardView from './selector-wizard';

@@ -1,9 +1,9 @@
-import { TEMPLATE_NAME, VM_ACTION_TIMEOUT, VM_STATUS } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { virtualization } from '../../view/virtualization';
-import { vm, waitForStatus } from '../../view/vm';
+import { TEMPLATE_NAME, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { virtualization } from '../../views/virtualization';
+import { vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,

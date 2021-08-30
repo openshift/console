@@ -1,10 +1,10 @@
-import { OS_IMAGES_NS, TEMPLATE_BASE_IMAGE, TEMPLATE_NAME } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { pvc } from '../../view/pvc';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { OS_IMAGES_NS, TEMPLATE_BASE_IMAGE, TEMPLATE_NAME } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { pvc } from '../../views/pvc';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const imageFormats = ['/tmp/cirros.iso', '/tmp/cirros.gz', '/tmp/cirros.xz'];
 const invalidImage = '/tmp/cirros.txt';

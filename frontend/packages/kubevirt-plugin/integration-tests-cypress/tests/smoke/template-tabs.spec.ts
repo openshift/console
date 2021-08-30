@@ -1,5 +1,5 @@
 import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
+import { virtualization } from '../../views/virtualization';
 
 const template = 'rhel6-server-small';
 

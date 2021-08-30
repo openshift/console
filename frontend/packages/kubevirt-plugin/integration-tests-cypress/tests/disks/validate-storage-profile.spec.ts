@@ -1,10 +1,10 @@
 import { listPage } from '@console/cypress-integration-tests/views/list-page';
-import { TEMPLATE_NAME } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { TEMPLATE_NAME } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
   name: `validate-storage-profile-${testName}`,

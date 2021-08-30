@@ -1,6 +1,6 @@
 import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
-import { wizard } from '../../view/wizard';
+import { virtualization } from '../../views/virtualization';
+import { wizard } from '../../views/wizard';
 
 const TEMPLATE_NAME = 'foo';
 const TEMPLATE_NO_SUPPORT_NAME = 'foo-no-support';

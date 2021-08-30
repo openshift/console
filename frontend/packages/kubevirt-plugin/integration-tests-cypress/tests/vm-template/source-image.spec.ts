@@ -1,3 +1,4 @@
+import { testName } from '../../support';
 import {
   ADD_SOURCE,
   IMPORTING,
@@ -7,11 +8,10 @@ import {
   TEMPLATE_NAME,
   TEST_PROVIDER,
   VM_STATUS,
-} from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
-import { testName } from '../../support';
-import { addSource } from '../../view/add-source';
-import { virtualization } from '../../view/virtualization';
+} from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { addSource } from '../../views/add-source';
+import { virtualization } from '../../views/virtualization';
 
 describe('test vm template source image', () => {
   before(() => {

@@ -1,5 +1,5 @@
-import { VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS, VMI_ACTION } from '../const/index';
 import { VirtualMachineData } from '../types/vm';
+import { VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS, VMI_ACTION } from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
 import { detailsTab, createYAMLButton } from './selector';
 import { create, vmYAML } from './selector-wizard';
