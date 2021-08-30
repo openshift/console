@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAccessReview } from '@console/internal/components/utils';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
-import { k8sCreate, k8sGet, k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   useFlag,
   useIsMobile,
@@ -14,8 +13,13 @@ import {
 } from '@console/shared/src';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';
 import { ExportModel } from '../../models';
-import { getExportAppData } from '../../utils/export-app-utils';
-import exportApplicationModal from './export-app-modal';
+import {
+  createExportResource,
+  getExportAppData,
+  getExportResource,
+  killExportResource,
+} from '../../utils/export-app-utils';
+import exportApplicationModal from './ExportApplicationModal';
 import { ExportAppUserSettings } from './types';
 
 type ExportApplicationProps = {
@@ -43,7 +47,7 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
 
   const createExportCR = async () => {
     try {
-      const exportResp = await k8sCreate<K8sResourceKind>(ExportModel, getExportAppData(namespace));
+      const exportResp = await createExportResource(getExportAppData(namespace));
       const key = `${namespace}-${exportResp.metadata.name}`;
       const exportAppToastConfig = {
         ...exportAppToast,
@@ -84,6 +88,20 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
     }
   };
 
+  const killExportCR = async (): Promise<boolean> => {
+    const exportResData = await getExportResource(namespace);
+    if (exportResData) {
+      await killExportResource(exportResData);
+    }
+    return true;
+  };
+
+  const restartExportCR = async (): Promise<boolean> => {
+    await killExportCR();
+    await createExportCR();
+    return true;
+  };
+
   const exportAppClickHandle = async () => {
     if (isCreating) {
       exportApplicationModal({ namespace });
@@ -91,13 +109,18 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
     }
     try {
       setIsCreating(true);
-      const exportRes = await k8sGet(ExportModel, EXPORT_CR_NAME, namespace);
+      const exportRes = await getExportResource(namespace);
       if (exportRes && exportRes.status?.completed !== true) {
         const startTime = dateTimeFormatter.format(new Date(exportRes.metadata.creationTimestamp));
-        exportApplicationModal({ namespace, startTime });
+        exportApplicationModal({
+          namespace,
+          startTime,
+          onCancelExport: killExportCR,
+          onRestartExport: restartExportCR,
+        });
         setIsCreating(false);
       } else if (exportRes && exportRes.status?.completed) {
-        await k8sKill(ExportModel, exportRes);
+        await killExportResource(exportRes);
         const exportAppToastConfig = _.omit(exportAppToast, `${namespace}-${EXPORT_CR_NAME}`);
         setExportAppToast(exportAppToastConfig);
         await createExportCR();
