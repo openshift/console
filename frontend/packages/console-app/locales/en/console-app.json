@@ -247,6 +247,7 @@
   "Edit YAML": "Edit YAML",
   "Creating snapshot for claim <1>{{pvcName}}</1>": "Creating snapshot for claim <1>{{pvcName}}</1>",
   "PersistentVolumeClaim": "PersistentVolumeClaim",
+  "PersistentVolumeClaim in {{namespace}} namespace": "PersistentVolumeClaim in {{namespace}} namespace",
   "Snapshot Class": "Snapshot Class",
   "Create": "Create",
   "VolumeSnapshotClass details": "VolumeSnapshotClass details",
