@@ -206,7 +206,7 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~Machine set details')} />
+        <SectionHeading text={t('public~MachineSet details')} />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
         <div className="row">
           <div className="col-md-6">
@@ -313,7 +313,7 @@ export const MachineSetList: React.SFC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('public~Machine sets')}
+      aria-label={t('public~MachineSets')}
       Header={MachineSetTableHeader}
       Row={MachineSetTableRow}
       virtualize
@@ -321,9 +321,18 @@ export const MachineSetList: React.SFC = (props) => {
   );
 };
 
-export const MachineSetPage: React.SFC<MachineSetPageProps> = (props) => (
-  <ListPage {...props} ListComponent={MachineSetList} kind={machineSetReference} canCreate />
-);
+export const MachineSetPage: React.SFC<MachineSetPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <ListPage
+      {...props}
+      title={t('public~MachineSets')}
+      ListComponent={MachineSetList}
+      kind={machineSetReference}
+      canCreate
+    />
+  );
+};
 
 export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = (props) => (
   <DetailsPage
