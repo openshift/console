@@ -20,6 +20,12 @@ import {
 } from '@patternfly/react-core';
 import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import {
+  RowFilterItem,
+  ColumnLayout,
+  OnFilterChange,
+  FilterValue,
+} from '@console/dynamic-plugin-sdk';
+import {
   Dropdown as DropdownInternal,
   setOrRemoveQueryArgument,
 } from '@console/internal/components/utils';
@@ -28,11 +34,8 @@ import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
-import { ColumnLayout } from './modals/column-management-modal';
-import { TextFilter } from './factory';
 import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared/src';
-import { OnFilterChange } from './factory/ListPage/filter-hook';
-import { FilterValue } from './factory/table-filters';
+import { TextFilter } from './factory';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -113,9 +116,9 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
       ...rowFilter,
       items: rowFilter.items.map((item) => ({
         ...item,
-        count: rowFilter.isMatch
-          ? _.filter(data, (d) => rowFilter.isMatch(d, item.id)).length
-          : _.countBy(data, rowFilter.reducer)?.[item.id] ?? '0',
+        count: (rowFilter as RowMatchFilter).isMatch
+          ? _.filter(data, (d) => (rowFilter as RowMatchFilter).isMatch(d, item.id)).length
+          : _.countBy(data, (rowFilter as RowReducerFilter).reducer)?.[item.id] ?? '0',
       })),
     })),
   );
@@ -406,6 +409,24 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   );
 };
 
+type RowFilterBase<R> = {
+  filterGroupName: string;
+  type: string;
+  items: RowFilterItem[];
+  filter?: (input: FilterValue, obj: R) => boolean;
+  defaultSelected?: string[];
+};
+
+export type RowMatchFilter<R = any> = RowFilterBase<R> & {
+  isMatch: (obj: R, id: string) => boolean;
+};
+
+export type RowReducerFilter<R = any> = RowFilterBase<R> & {
+  reducer: (obj: R) => React.ReactText;
+};
+
+export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R>;
+
 type FilterToolbarProps = {
   rowFilters?: RowFilter[];
   data?: any;
@@ -424,23 +445,6 @@ type FilterToolbarProps = {
   // Used when multiple tables are in the same page
   uniqueFilterName?: string;
   onFilterChange?: OnFilterChange;
-};
-
-type RowFilterItem = {
-  id?: string;
-  title?: string;
-  hideIfEmpty?: string;
-  [key: string]: string;
-};
-
-export type RowFilter<R = any> = {
-  defaultSelected?: string[];
-  filterGroupName: string;
-  isMatch?: (obj: R, id: string) => boolean;
-  type: string;
-  items?: RowFilterItem[];
-  reducer?: (obj: R) => React.ReactText;
-  filter?: (input: FilterValue, obj: R) => boolean;
 };
 
 FilterToolbar.displayName = 'FilterToolbar';

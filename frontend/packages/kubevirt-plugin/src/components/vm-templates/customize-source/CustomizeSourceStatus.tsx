@@ -49,7 +49,7 @@ const CustomizeSourceStatus: React.FC<CustomizeSourceStatusProps> = ({
                 name={vm.metadata.name}
                 namespace={vm.metadata.namespace}
                 className="kv-customize-source__status-link"
-                isinline
+                inline
               />
             </StackItem>
           </Stack>

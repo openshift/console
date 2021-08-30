@@ -211,6 +211,7 @@ const NodeTableHeader = () => {
     },
     {
       title: '',
+      id: '',
       props: { className: Kebab.columnClass },
     },
   ];

@@ -24,6 +24,7 @@ import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
+import { RowFilter, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -98,12 +99,7 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 // t('public~Invalid login or password. Please try again.')
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { useListPageFilter } from './factory/ListPage/filter-hook';
-import { RowFilter } from './filter-toolbar';
-import VirtualizedTable, {
-  RowProps,
-  TableColumn,
-  TableData,
-} from './factory/Table/VirtualizedTable';
+import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 
@@ -324,6 +320,7 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
   },
   {
     title: '',
+    id: '',
     props: { className: Kebab.columnClass },
   },
 ];
@@ -867,6 +864,13 @@ export const getFilters = (t: TFunction): RowFilter<PodKind>[] => [
   {
     filterGroupName: t('public~Status'),
     type: 'pod-status',
+    filter: (phases, pod) => {
+      if (!phases || !phases.selected || !phases.selected.length) {
+        return true;
+      }
+      const phase = podPhaseFilterReducer(pod);
+      return phases.selected.includes(phase) || !_.includes(phases.all, phase);
+    },
     reducer: podPhaseFilterReducer,
     items: [
       { id: 'Running', title: 'Running' },

@@ -2,13 +2,13 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
 import { getNodeRole, getLabelsAsString } from '@console/shared';
+import { FilterValue, RowFilter } from '@console/dynamic-plugin-sdk';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { roleType } from '../RBAC';
 import {
   K8sResourceKind,
   MachineKind,
-  podPhaseFilterReducer,
   serviceCatalogStatus,
   serviceClassDisplayName,
   servicePlanDisplayName,
@@ -26,7 +26,6 @@ import {
 } from '../monitoring/utils';
 
 import { Alert, AlertStates, Rule, Silence } from '../monitoring/types';
-import { RowFilter } from '../filter-toolbar';
 import { requesterFilter } from '@console/shared/src/components/namespace';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
@@ -120,15 +119,6 @@ export const tableFilters: FilterMap = {
     }
     const labels = getLabelsAsString(obj);
     return !!values.all.every((v) => labels.includes(v));
-  },
-
-  'pod-status': (phases, pod) => {
-    if (!phases || !phases.selected || !phases.selected.length) {
-      return true;
-    }
-
-    const phase = podPhaseFilterReducer(pod);
-    return phases.selected.includes(phase) || !_.includes(phases.all, phase);
   },
 
   'node-status': (statuses, node) => {
@@ -293,11 +283,6 @@ export const getAllTableFilters = (rowFilters: RowFilter[]): FilterMap => ({
   ...tableFilters,
   ...rowFiltersToFilterFuncs(rowFilters),
 });
-
-export type FilterValue = {
-  selected?: string[];
-  all?: string[];
-};
 
 export type FilterMap = {
   [key: string]: (value: FilterValue, obj: any) => boolean;

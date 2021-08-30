@@ -40,6 +40,8 @@ import {
 } from '@console/shared';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
+import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
+import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
 import {
   alertingRuleSource,
@@ -73,7 +75,6 @@ import {
   VolumeSnapshotKind,
 } from '../../module/k8s';
 import { useTableData } from './table-data-hook';
-import { RowFilter } from '../filter-toolbar';
 
 const sorts = {
   alertingRuleSource,
@@ -445,7 +446,7 @@ export const Table: React.FC<TableProps> = ({
     defaultSortOrder,
     staticFilters,
     filters,
-    rowFilters,
+    rowFilters: rowFilters as RowFilterExt[],
     propData,
     loaded,
     isPinned,
