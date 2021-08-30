@@ -4,7 +4,7 @@ import { useFormikContext, FormikErrors, FormikTouched } from 'formik';
 import { isEmpty } from 'lodash';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RepoStatus, ImportStrategy, getGitService, BaseService } from '@console/git-service';
+import { RepoStatus, ImportStrategy, getGitService } from '@console/git-service';
 import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { BuildStrategyType } from '@console/internal/components/build';
@@ -166,22 +166,38 @@ const GitSection: React.FC<GitSectionProps> = ({
     [builderImages, gitUrlError, setFieldValue],
   );
 
-  const handleDevfileStrategyDetection = React.useCallback(
-    async (gitService: BaseService) => {
-      if (!values.devfile?.devfileSourceUrl) {
-        // No need to check the existence of the file, waste of a call to the gitService for this need
-        const devfileContents = gitService && (await gitService.getDevfileContent());
-        if (!devfileContents) {
-          setFieldValue('devfile.devfileContent', null);
-          setFieldValue('devfile.devfileHasError', true);
-        } else {
-          setFieldValue('devfile.devfileContent', devfileContents);
-          setFieldValue('devfile.devfileHasError', false);
-        }
+  const handleDevfileStrategyDetection = React.useCallback(async () => {
+    const gitService = getGitService(
+      values.git.url,
+      // TODO: ODC-6250 - GitTypes is not compatibily to git service type GitProvider
+      values.git.type as any,
+      values.git.ref,
+      values.git.dir,
+      values.git.secretResource,
+      values.devfile?.devfilePath,
+      values.docker?.dockerfilePath,
+    );
+    if (!values.devfile?.devfilePath || !values.devfile?.devfileSourceUrl) {
+      // No need to check the existence of the file, waste of a call to the gitService for this need
+      const devfileContents = gitService && (await gitService.getDevfileContent());
+      if (!devfileContents) {
+        setFieldValue('devfile.devfileContent', null);
+        setFieldValue('devfile.devfileHasError', true);
+      } else {
+        setFieldValue('devfile.devfileContent', devfileContents);
+        setFieldValue('devfile.devfileHasError', false);
       }
-    },
-    [setFieldValue, values.devfile],
-  );
+    }
+  }, [
+    setFieldValue,
+    values.devfile,
+    values.docker,
+    values.git.dir,
+    values.git.ref,
+    values.git.secretResource,
+    values.git.type,
+    values.git.url,
+  ]);
 
   const handleGitUrlChange = React.useCallback(
     async (url: string, ref: string, dir: string) => {
@@ -292,7 +308,9 @@ const GitSection: React.FC<GitSectionProps> = ({
           }
           case ImportStrategy.DEVFILE: {
             setFieldValue('build.strategy', BuildStrategyType.Devfile);
-            handleDevfileStrategyDetection(gitService);
+            setFieldValue('devfile.devfilePath', importStrategies[0].detectedFiles[0]);
+            setFieldValue('docker.dockerfilePath', 'Dockerfile');
+            handleDevfileStrategyDetection();
             break;
           }
           case ImportStrategy.DOCKERFILE: {

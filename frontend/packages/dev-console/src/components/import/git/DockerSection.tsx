@@ -3,7 +3,7 @@ import { TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { CubeIcon } from '@patternfly/react-icons';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService } from '@console/git-service/src';
+import { getGitService, ImportStrategy } from '@console/git-service/src';
 import { InputField } from '@console/shared';
 import FormSection from '../section/FormSection';
 
@@ -11,8 +11,10 @@ const DockerSection: React.FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
+    import: { showEditImportStrategy, strategies, selectedStrategy },
     git: { url, type, ref, dir, secretResource },
     docker,
+    formType,
   } = values;
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
 
@@ -49,14 +51,21 @@ const DockerSection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    handleDockerfileChange();
-    // We need to run only one when component mounts and then onBlur will take care of it.
+    if (selectedStrategy.type === ImportStrategy.DOCKERFILE) {
+      strategies.forEach((s) => {
+        if (s.type === ImportStrategy.DOCKERFILE) {
+          setFieldValue('import.selectedStrategy.detectedFiles', s.detectedFiles);
+          setFieldValue('docker.dockerfilePath', s.detectedFiles[0]);
+          handleDockerfileChange();
+        }
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedStrategy.type, setFieldValue, strategies]);
 
   return (
     <FormSection>
-      {values.import.showEditImportStrategy && (
+      {showEditImportStrategy && (
         <InputField
           type={TextInputTypes.text}
           name="docker.dockerfilePath"
@@ -68,7 +77,7 @@ const DockerSection: React.FC = () => {
           required
         />
       )}
-      {values.formType !== 'edit' && (
+      {formType !== 'edit' && (
         <div className="co-catalog-item-details">
           <CubeIcon size="xl" />
           &nbsp;
