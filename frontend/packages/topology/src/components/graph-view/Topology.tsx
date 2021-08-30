@@ -285,7 +285,7 @@ const Topology: React.FC<TopologyProps &
             action(() => {
               visualization
                 .getGraph()
-                .panIntoView(visibleEntity, { offset: 20, minimumVisible: 40 });
+                .panIntoView(visibleEntity, { offset: 20, minimumVisible: 100 });
               resizeTimeout = null;
             }),
             500,
