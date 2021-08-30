@@ -4,6 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import {
   Table,
   TableProps,
@@ -11,7 +12,6 @@ import {
   RowFunctionArgs,
   MultiListPage,
 } from '@console/internal/components/factory';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import {
   FirehoseResourcesResult,
   humanizeBinaryBytes,

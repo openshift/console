@@ -12,6 +12,7 @@ import {
   Status,
   getMachinePhase,
 } from '@console/shared';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
@@ -34,11 +35,7 @@ import {
 } from './utils';
 import { ResourceEventStream } from './events';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import VirtualizedTable, {
-  RowProps,
-  TableColumn,
-  TableData,
-} from './factory/Table/VirtualizedTable';
+import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 

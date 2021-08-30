@@ -2,8 +2,7 @@ import * as React from 'react';
 import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk';
-import { TableColumn, RowProps } from './VirtualizedTable';
+import { K8sResourceCommon, TableColumn, RowProps } from '@console/dynamic-plugin-sdk';
 import { TableRow } from '../table';
 
 type VirtualizedTableBodyProps<D, R = {}> = {

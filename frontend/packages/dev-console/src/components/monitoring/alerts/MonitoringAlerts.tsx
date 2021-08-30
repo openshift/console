@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
+import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
 import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
@@ -73,7 +74,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
     if (columnIndex > -1) {
       setSortBy({ index: columnIndex + 1, direction: sortOrder });
     }
-    const fRules = getFilteredRows(filtersObj, alertFilters, rules);
+    const fRules = getFilteredRows(filtersObj, alertFilters as RowFilterExt[], rules);
     const { orderBy, func } = listSortsObj;
     return applyListSort(
       fRules,

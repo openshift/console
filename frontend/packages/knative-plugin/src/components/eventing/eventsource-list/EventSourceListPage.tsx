@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import {
   K8sResourceCommon,
   modelFor,

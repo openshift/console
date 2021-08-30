@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getPhase } from './noobaa-utils';
 

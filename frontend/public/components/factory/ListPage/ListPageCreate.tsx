@@ -1,45 +1,33 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import {
-  Button,
-  ButtonProps,
-  DropdownToggle,
-  Dropdown,
-  DropdownItem,
-} from '@patternfly/react-core';
+import { Button, DropdownToggle, Dropdown, DropdownItem } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import {
+  ListPageCreateProps,
+  CreateWithPermissionsProps,
+  ListPageCreateLinkProps,
+  ListPageCreateButtonProps,
+  ListPageCreateDropdownProps,
+} from '@console/dynamic-plugin-sdk';
 
 import { RequireCreatePermission } from '../../utils';
-import { K8sKind, GroupVersionKind } from '../../../module/k8s/types';
-
-type CreateWithPermissionsProps = {
-  createAccessReview?: {
-    model: K8sKind;
-    namespace?: string;
-  };
-};
 
 const CreateWithPermissions: React.FC<CreateWithPermissionsProps> = ({
   createAccessReview,
   children,
-}) =>
-  !_.isEmpty(createAccessReview) ? (
-    <RequireCreatePermission
-      model={createAccessReview.model}
-      namespace={createAccessReview.namespace}
-    >
+}) => {
+  const [k8sModel] = useK8sModel(createAccessReview?.groupVersionKind);
+  return !_.isEmpty(createAccessReview) ? (
+    <RequireCreatePermission model={k8sModel} namespace={createAccessReview.namespace}>
       {children}
     </RequireCreatePermission>
   ) : (
     <>{children}</>
   );
-
-type ListPageCreateLinkProps = CreateWithPermissionsProps & {
-  to: string;
 };
 
 export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = ({
@@ -56,8 +44,6 @@ export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = ({
   </CreateWithPermissions>
 );
 
-type ListPageCreateButtonProps = CreateWithPermissionsProps & ButtonProps;
-
 export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
   createAccessReview,
   ...rest
@@ -66,13 +52,6 @@ export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
     <Button variant="primary" id="yaml-create" data-test="item-create" {...rest} />
   </CreateWithPermissions>
 );
-
-type ListPageCreateDropdownProps = CreateWithPermissionsProps & {
-  items: {
-    [key: string]: React.ReactNode;
-  };
-  onClick: (item: string) => void;
-};
 
 export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
   items,
@@ -99,10 +78,6 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
       />
     </CreateWithPermissions>
   );
-};
-
-type ListPageCreateProps = CreateWithPermissionsProps & {
-  groupVersionKind: GroupVersionKind;
 };
 
 const ListPageCreate: React.FC<ListPageCreateProps> = ({

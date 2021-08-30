@@ -64,6 +64,7 @@ const columnLayout = [
   },
   {
     title: '',
+    id: '',
   },
 ];
 
@@ -121,6 +122,7 @@ const columnLayoutNamespaceDisabled = [
   },
   {
     title: '',
+    id: '',
   },
 ];
 
