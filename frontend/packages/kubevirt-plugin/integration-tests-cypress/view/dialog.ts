@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import { DISK_SOURCE, VM_ACTION_TIMEOUT } from '../const';
+import { DISK_SOURCE } from '../const';
 import { Disk, Network } from '../types/vm';
 import { diskDialog, deleteDiskBtn, kebabBtn, nicDialog, disksTab } from './selector';
 import { modalConfirmBtn } from './snapshot';
@@ -101,11 +100,3 @@ export const delDisk = (name: string) => {
   cy.get(deleteDiskBtn).click();
   cy.get(modalConfirmBtn).click();
 };
-<<<<<<< HEAD
-=======
-
-export const waitForCurrentVMStatus = (status: string, timeout?: number) => {
-  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
-  cy.contains(disksTab.currVMStatus, status, { timeout: timeOut }).should('exist');
-};
->>>>>>> f3ebba7d2f (Excessive eslint te[porarily disabled)

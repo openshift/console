@@ -1,4 +1,4 @@
-import { DISK_DRIVE, DISK_SOURCE, Flavor } from '../const/index';
+import { DISK_DRIVE, DISK_SOURCE, Flavor } from '../const';
 import { ProvisionSource } from '../enums/provisionSource';
 
 export type Disk = {
@@ -18,6 +18,7 @@ export type Disk = {
   provisionSource?: ProvisionSource;
   pvcName?: string;
   pvcNS?: string;
+  description?: string;
 };
 
 export type Network = {
