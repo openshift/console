@@ -117,7 +117,16 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectManagedODF,
     },
     flags: {
-      required: [OCS_FLAG],
+      required: [OCS_MODEL_FLAG],
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectManagedODF,
+    },
+    flags: {
+      required: [ODF_MODEL_FLAG],
     },
   },
   {
