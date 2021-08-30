@@ -656,6 +656,9 @@ export const createOrUpdateResources = async (
 
   if (verb === 'create') {
     responses.push(await createWebhookSecret(formData, 'generic', dryRun));
+    if (webhookTrigger) {
+      responses.push(await createWebhookSecret(formData, gitType, dryRun));
+    }
   }
 
   const defaultAnnotations = getGitAnnotations(repository, ref);
@@ -689,12 +692,13 @@ export const createOrUpdateResources = async (
       knDeploymentResource,
       dryRun,
     );
-    return Promise.all([
+    const knativeResources = await Promise.all([
       verb === 'update'
         ? k8sUpdate(KnServiceModel, knDeploymentResource, null, null, dryRun ? dryRunOpt : {})
         : k8sCreate(KnServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
       ...domainMappingResources,
     ]);
+    return [...knativeResources, ...responses];
   }
 
   if (formData.resources === Resources.Kubernetes) {
@@ -740,10 +744,6 @@ export const createOrUpdateResources = async (
     } else if (canCreateRoute) {
       responses.push(await k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
     }
-  }
-
-  if (webhookTrigger && verb === 'create') {
-    responses.push(await createWebhookSecret(formData, gitType, dryRun));
   }
 
   return responses;
