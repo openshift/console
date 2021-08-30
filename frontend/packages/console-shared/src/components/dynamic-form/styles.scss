@@ -30,8 +30,11 @@
   --pf-c-accordion__toggle-text--hover--FontWeight: 600 !important;
   margin-bottom: 0.5rem;
 
-  .pf-c-accordion__toggle::before {
-    display: none;
+  .pf-c-accordion__toggle {
+    &:before,
+    &:after {
+      display: none;
+    }
   }
 
   h3 {
