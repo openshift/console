@@ -52,6 +52,20 @@ const isColumnVisible = <D extends any>(
   return true;
 };
 
+export type TableDataProps = {
+  id: string;
+  activeColumnIDs: Set<string>;
+  className?: string;
+};
+
+export const TableData: React.FC<TableDataProps> = ({ className, id, activeColumnIDs, children }) =>
+  (activeColumnIDs.has(id) || id === '') && (
+    <td id={id} className={className} role="gridcell">
+      {children}
+    </td>
+  );
+TableData.displayName = 'TableData';
+
 export type TableColumn<D> = ICell & {
   title: string;
   id?: string;

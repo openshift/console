@@ -14,8 +14,8 @@ export const useActiveColumns = <D = any>({
   columnManagementID,
 }: {
   columns: TableColumn<D>[];
-  showNamespaceOverride: boolean;
-  columnManagementID: string;
+  showNamespaceOverride?: boolean;
+  columnManagementID?: string;
 }): [TableColumn<D>[], boolean] => {
   const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
