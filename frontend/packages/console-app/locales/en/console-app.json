@@ -1,4 +1,5 @@
 {
+  "Administrator": "Administrator",
   "VolumeSnapshotContents": "VolumeSnapshotContents",
   "General": "General",
   "Language & region": "Language & region",
@@ -262,7 +263,6 @@
   "VolumeSnapshotContent": "VolumeSnapshotContent",
   "Snapshot content": "Snapshot content",
   "VolumeSnapshots": "VolumeSnapshots",
-  "Administrator": "Administrator",
   "Cluster": "Cluster",
   "Control Plane": "Control Plane",
   "Control Plane status": "Control Plane status",

@@ -1,43 +1,41 @@
-import { LoadedExtension, Perspective } from '@console/plugin-sdk';
+import { Perspective } from '@console/dynamic-plugin-sdk';
+import { LoadedExtension } from '@console/plugin-sdk';
 
 export const mockPerspectiveExtensions: LoadedExtension<Perspective>[] = [
   {
-    type: 'Perspective',
+    type: 'console.perspective',
     properties: {
       id: 'acm',
       name: 'ACM',
       icon: null,
-      getLandingPageURL: () => '',
-      getK8sLandingPageURL: () => '',
-      getImportRedirectURL: () => '',
+      landingPageURL: async () => () => '',
+      importRedirectURL: async () => () => '',
     },
     pluginID: '',
     pluginName: '',
     uid: '',
   },
   {
-    type: 'Perspective',
+    type: 'console.perspective',
     properties: {
       id: 'admin',
       name: 'Administrator',
       icon: null,
-      getLandingPageURL: () => '',
-      getK8sLandingPageURL: () => '',
-      getImportRedirectURL: () => '',
+      landingPageURL: async () => () => '',
+      importRedirectURL: async () => () => '',
     },
     pluginID: '',
     pluginName: '',
     uid: '',
   },
   {
-    type: 'Perspective',
+    type: 'console.perspective',
     properties: {
       id: 'dev',
       name: 'Developer',
       icon: null,
-      getLandingPageURL: () => '',
-      getK8sLandingPageURL: () => '',
-      getImportRedirectURL: () => '',
+      landingPageURL: async () => () => '',
+      importRedirectURL: async () => () => '',
     },
     pluginID: '',
     pluginName: '',

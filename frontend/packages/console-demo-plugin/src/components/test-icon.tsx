@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export default (
+export default () => (
   <svg
     style={{ verticalAlign: '-0.125em' }}
     fill="currentColor"

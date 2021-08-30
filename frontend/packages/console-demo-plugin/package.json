@@ -13,6 +13,9 @@
       "demo": [
         "integration-tests/**/*.scenario.ts"
       ]
+    },
+    "exposedModules": {
+      "perspective": "src/utils/perspective"
     }
   }
 }

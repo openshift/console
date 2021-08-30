@@ -22,15 +22,10 @@ import { NamespaceRedirect } from './utils/namespace-redirect';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
+import { RoutePage, isRoutePage, useExtensions, LoadedExtension } from '@console/plugin-sdk';
 import {
   Perspective,
-  RoutePage,
   isPerspective,
-  isRoutePage,
-  useExtensions,
-  LoadedExtension,
-} from '@console/plugin-sdk';
-import {
   RoutePage as DynamicRoutePage,
   isRoutePage as isDynamicRoutePage,
 } from '@console/dynamic-plugin-sdk';
@@ -59,6 +54,21 @@ _.each(namespacedPrefixes, (p) => {
   namespacedRoutes.push(`${p}/ns/:ns`);
   namespacedRoutes.push(`${p}/all-namespaces`);
 });
+
+const DefaultPageRedirect: React.FC<{
+  url: Perspective['properties']['landingPageURL'];
+  flags: { [key: string]: boolean };
+  firstVisit: boolean;
+}> = ({ url, flags, firstVisit }) => {
+  const [resolvedUrl, setResolvedUrl] = React.useState<string>();
+  React.useEffect(() => {
+    (async () => {
+      setResolvedUrl((await url())(flags, firstVisit));
+    })();
+  }, [url, flags, firstVisit]);
+
+  return resolvedUrl ? <Redirect to={resolvedUrl} /> : null;
+};
 
 type DefaultPageProps = {
   flags: FlagsObject;
@@ -93,10 +103,12 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   const perspective = perspectiveExtensions.find((p) => p.properties.id === activePerspective);
 
   // support redirecting to perspective landing page
-  return flags[FLAGS.OPENSHIFT] ? (
-    <Redirect to={perspective.properties.getLandingPageURL(flags, firstVisit.current)} />
-  ) : (
-    <Redirect to={perspective.properties.getK8sLandingPageURL(flags, firstVisit.current)} />
+  return (
+    <DefaultPageRedirect
+      flags={flags}
+      firstVisit={firstVisit.current}
+      url={perspective.properties.landingPageURL}
+    />
   );
 };
 

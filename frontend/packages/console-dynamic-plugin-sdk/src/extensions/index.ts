@@ -7,6 +7,7 @@ export * from './feature-flags';
 export * from './file-upload';
 export * from './navigation';
 export * from './pages';
+export * from './perspectives';
 export * from './pvc';
 export * from './redux';
 export * from './resource-metadata';

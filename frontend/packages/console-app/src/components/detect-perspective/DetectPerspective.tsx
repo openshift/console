@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
+import { isPerspective, Perspective } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 import { PerpsectiveContext } from './perspective-context';
 import PerspectiveDetector from './PerspectiveDetector';
 import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';

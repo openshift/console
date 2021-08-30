@@ -32,6 +32,7 @@ import {
   ResourceListPage,
   ResourceTabPage,
 } from '../extensions/pages';
+import { Perspective } from '../extensions/perspectives';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
 import { ReduxReducer } from '../extensions/redux';
 import { ModelMetadata } from '../extensions/resource-metadata';
@@ -98,7 +99,8 @@ export type SupportedExtension =
   | CreateResource
   | CreateResource
   | UserPreferenceGroup
-  | UserPreferenceItem;
+  | UserPreferenceItem
+  | Perspective;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
