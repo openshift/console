@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { useTranslation } from 'react-i18next';
 import { Form, FormSelect, FormSelectOption, FormSelectProps, Radio } from '@patternfly/react-core';
+import { useFlag } from '@console/shared/src';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { StorageClassModel } from '@console/internal/models';
@@ -20,6 +21,7 @@ import { ErrorHandler } from '../../error-handler';
 import { ExternalStorage } from '../../external-storage/types';
 import { NO_PROVISIONER } from '../../../../constants';
 import './backing-storage-step.scss';
+import { GUARDED_FEATURES } from '../../../../features';
 
 const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
   dispatch,
@@ -111,6 +113,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
   const [sc, scLoaded, scLoadError] = useK8sGet<ListKind<StorageClassResourceKind>>(
     StorageClassModel,
   );
+  const isMCGStandalone = useFlag(GUARDED_FEATURES.ODF_MCG_STANDALONE);
 
   const formattedSS: StorageSystemSet = formatStorageSystemList(storageSystems);
 
@@ -228,13 +231,15 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           }
           id={`bs-${BackingStorageType.EXTERNAL}`}
         />
-        <AdvancedSection
-          dispatch={dispatch}
-          deployment={deployment}
-          isAdvancedOpen={isAdvancedOpen}
-          hasOCS={hasOCS}
-          currentStep={stepIdReached}
-        />
+        {isMCGStandalone && (
+          <AdvancedSection
+            dispatch={dispatch}
+            deployment={deployment}
+            isAdvancedOpen={isAdvancedOpen}
+            hasOCS={hasOCS}
+            currentStep={stepIdReached}
+          />
+        )}
       </Form>
     </ErrorHandler>
   );
