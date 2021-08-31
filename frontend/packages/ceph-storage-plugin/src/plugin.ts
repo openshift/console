@@ -39,6 +39,8 @@ import {
   MCG_FLAG,
   OCS_FLAG,
   detectComponents,
+  ODF_MANAGED_FLAG,
+  detectManagedODF,
 } from './features';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
 
@@ -105,6 +107,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectManagedODF,
+    },
+    flags: {
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -652,6 +663,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_FLAG],
+      disallowed: [ODF_MANAGED_FLAG],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/ocs-dashboards`,
+      loader: () => import('./components/dashboards/ocs-dashboards').then((m) => m.DashboardsPage),
+    },
+    flags: {
+      required: [MCG_FLAG],
+      disallowed: [OCS_FLAG],
     },
   },
   {
