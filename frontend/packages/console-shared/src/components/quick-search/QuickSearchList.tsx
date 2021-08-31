@@ -114,7 +114,9 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                   className="ocs-quick-search-list__item-content"
                   dataListCells={[
                     <DataListCell isIcon key={`${item.uid}-icon`}>
-                      {item.icon?.node ?? getIcon(item)}
+                      <div className="ocs-quick-search-list__item-icon">
+                        {item.icon?.node ?? getIcon(item)}
+                      </div>
                     </DataListCell>,
                     <DataListCell
                       style={{ paddingTop: 'var(--pf-global--spacer--sm)' }}
