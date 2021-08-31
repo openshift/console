@@ -17,7 +17,7 @@ import {
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { OCS_FLAG } from '@console/ceph-storage-plugin/src/features';
+import { OCS_FLAG, ODF_MANAGED_FLAG } from '@console/ceph-storage-plugin/src/features';
 import * as models from './models';
 import { getObcStatusGroups } from './components/buckets-card/utils';
 
@@ -110,6 +110,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [NOOBAA_FLAG, OCS_FLAG],
+      disallowed: [ODF_MANAGED_FLAG],
     },
   },
   {

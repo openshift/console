@@ -43,6 +43,7 @@ export const OCS_DEVICE_REPLICA = Object.freeze({
 });
 export const RGW_PROVISIONER = 'openshift-storage.ceph.rook.io/bucket';
 export const NOOBAA_PROVISIONER = 'openshift-storage.noobaa.io/obc';
+export const ODF_MANAGED_LABEL = 'odf-managed-service';
 export const SECOND = 1000;
 
 export enum MODES {
