@@ -132,7 +132,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
       )}
       <FormGroup
         fieldId="kms-provider"
-        label={t('ceph-storage-plugin~Key Management Service Provider')}
+        label={t('ceph-storage-plugin~Key management service provider')}
         className={`${className}__form-body`}
       >
         <FormSelect
@@ -150,14 +150,13 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
       </FormGroup>
       <FormGroup
         fieldId="kms-service-name"
-        label={t('ceph-storage-plugin~Service Name')}
+        label={t('ceph-storage-plugin~Service name')}
         className={`${className}__form-body`}
         helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
         validated={isValid(kms.name.valid)}
-        helperText={
-          !hideTitle &&
-          t('ceph-storage-plugin~A unique name for the key management service within the project.')
-        }
+        helperText={t(
+          'ceph-storage-plugin~A unique name for the key management service within the project.',
+        )}
         isRequired
       >
         <TextInput

@@ -126,7 +126,7 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({
   return (
     <div className="odf-install__chart-wrapper">
       <div className="odf-install_capacity-header">
-        {t('ceph-storage-plugin~Selected Capacity')}
+        {t('ceph-storage-plugin~Selected capacity')}
       </div>
       <div className="odf-install__stats">
         <Button
@@ -197,7 +197,7 @@ const NodeListModal: React.FC<NodeListModalProps> = ({ filteredNodes, onCancel, 
 
   return (
     <Modal
-      title={t('ceph-storage-plugin~Selected Nodes')}
+      title={t('ceph-storage-plugin~Selected nodes')}
       isOpen={showNodeList}
       onClose={onCancel}
       className="odf-install__filtered-modal"

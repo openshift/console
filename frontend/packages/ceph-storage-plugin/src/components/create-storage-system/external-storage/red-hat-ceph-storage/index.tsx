@@ -71,14 +71,14 @@ export const ConnectionDetails: React.FC<ExternalComponentProps<RHCSState>> = ({
     <ErrorHandler error={podsLoadError || csvLoadError} loaded={podsLoaded && csvLoaded}>
       <Form>
         <FormGroup
-          label={t('ceph-storage-plugin~External storage metadata')}
+          label={t('ceph-storage-plugin~External storage system metadata')}
           fieldId="external-storage-system-metadata"
           className="odf-connection-details__form-group"
           helperText={
             <div className="odf-connection-details__helper-text">
               <Trans t={t} ns="ceph-storage-plugin">
                 Download <code>{{ SCRIPT_NAME }}</code> script and run on the RHCS cluster, then
-                upload the results (JSON).
+                upload the results (JSON) in the External storage system metadata field.
               </Trans>{' '}
               {downloadFile && (
                 <a
@@ -114,7 +114,7 @@ export const ConnectionDetails: React.FC<ExternalComponentProps<RHCSState>> = ({
             onReadFinished={() => setFormState('isLoading', false)}
             browseButtonText={t('ceph-storage-plugin~Browse')}
             clearButtonText={t('ceph-storage-plugin~Clear')}
-            filenamePlaceholder={t('ceph-storage-plugin~Upload JSON file')}
+            filenamePlaceholder={t('ceph-storage-plugin~Upload helper script')}
           />
         </FormGroup>
       </Form>
