@@ -1,5 +1,31 @@
 .ocs-quick-search-bar {
+  &:hover {
+    cursor: move;
+  }
+  &__input-dummy {
+    padding: 5px 8px;
+    position: fixed;
+    visibility: hidden;
+    max-width: 100%;
+    z-index: 0;
+    white-space: nowrap;
+  }
   &__input {
     height: 60px !important;
+    cursor: auto;
+    border: none !important;
+    outline: none;
+    display: block;
+    z-index: 1;
+    &-wrapper {
+      max-width: 100%;
+      display: inline-flex;
+    }
+  }
+  &__border-none {
+    border: none !important;
+  }
+  &__spinner {
+    margin-left: auto !important;
   }
 }

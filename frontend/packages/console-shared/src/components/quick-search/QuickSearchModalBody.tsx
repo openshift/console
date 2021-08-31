@@ -255,6 +255,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       minWidth={minWidth}
       bounds={draggableBoundary}
       onResizeStop={handleResizeStop}
+      dragHandleClassName="ocs-quick-search-bar"
+      cancel=".ocs-quick-search-bar__input"
       enableResizing={
         catalogItems === null || catalogItems?.length === 0
           ? {
