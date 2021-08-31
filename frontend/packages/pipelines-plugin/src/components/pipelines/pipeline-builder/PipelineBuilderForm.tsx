@@ -132,7 +132,12 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   );
 
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" model={PipelineModel} onSave={handleSubmit} />
+    <YAMLEditorField
+      name="yamlData"
+      model={PipelineModel}
+      showSamples={!existingPipeline}
+      onSave={handleSubmit}
+    />
   );
 
   return (

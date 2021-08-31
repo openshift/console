@@ -17,6 +17,7 @@ import HPADetailsForm from './HPADetailsForm';
 import { HPAFormValues } from './types';
 
 type HPAFormProps = {
+  existingHPA?: HorizontalPodAutoscalerKind;
   targetResource: K8sResourceCommon;
 };
 
@@ -27,6 +28,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   status,
   setStatus,
   isSubmitting,
+  existingHPA,
   targetResource,
   validateForm,
   values,
@@ -36,7 +38,12 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" model={HorizontalPodAutoscalerModel} onSave={handleSubmit} />
+    <YAMLEditorField
+      name="yamlData"
+      model={HorizontalPodAutoscalerModel}
+      showSamples={!existingHPA}
+      onSave={handleSubmit}
+    />
   );
   const customMetrics = false;
 

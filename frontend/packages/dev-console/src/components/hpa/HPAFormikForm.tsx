@@ -79,7 +79,7 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
       validationSchema={hpaValidationSchema(t)}
     >
       {(props: FormikProps<HPAFormValues>) => (
-        <HPAForm {...props} targetResource={targetResource} />
+        <HPAForm {...props} existingHPA={existingHPA} targetResource={targetResource} />
       )}
     </Formik>
   );

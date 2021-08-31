@@ -28,7 +28,7 @@ const ChannelYamlEditor: React.FC = () => {
 
   return (
     <FormSection flexLayout fullWidth>
-      <YAMLEditorField name="yamlData" />
+      <YAMLEditorField name="yamlData" showSamples />
     </FormSection>
   );
 };

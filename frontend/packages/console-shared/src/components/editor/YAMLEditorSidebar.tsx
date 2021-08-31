@@ -30,7 +30,7 @@ const YAMLEditorSidebar: React.FC<YAMLEditorSidebarProps> = ({
   const editor = editorRef.current?.editor;
 
   const insertYamlContent = React.useCallback(
-    (id, yamlContent, kind) => {
+    (id: string = 'default', yamlContent: string = '', kind) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
 
       const selection = editor.getSelection();
@@ -70,7 +70,7 @@ const YAMLEditorSidebar: React.FC<YAMLEditorSidebarProps> = ({
   );
 
   const replaceYamlContent = React.useCallback(
-    (id, yamlContent, kind) => {
+    (id: string = 'default', yamlContent: string = '', kind: string) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
       editor.setValue(yaml);
     },
@@ -78,7 +78,7 @@ const YAMLEditorSidebar: React.FC<YAMLEditorSidebarProps> = ({
   );
 
   const downloadYamlContent = React.useCallback(
-    (id = 'default', yamlContent = '', kind) => {
+    (id: string = 'default', yamlContent: string = '', kind: string) => {
       try {
         const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
         downloadYaml(yaml);
