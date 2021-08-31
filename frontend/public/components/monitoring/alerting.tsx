@@ -88,7 +88,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { getURLSearchParams } from '../utils/link';
+import { getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
@@ -595,7 +595,11 @@ const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template
     }
   });
 
-  return <p>{messageParts}</p>;
+  return (
+    <p>
+      <LinkifyExternal>{messageParts}</LinkifyExternal>
+    </p>
+  );
 };
 
 const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) => {
