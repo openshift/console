@@ -66,7 +66,7 @@ const factorOutError = <T>(list: (T | ConversionError)[]): T[] | ConversionError
   return list as T[];
 };
 
-const selectorToK8s = (
+export const selectorToK8s = <T>(
   selector: string[][],
   emptyValue: Selector | undefined,
 ): Selector | undefined | ConversionError => {

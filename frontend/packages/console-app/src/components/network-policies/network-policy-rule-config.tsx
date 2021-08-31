@@ -62,7 +62,7 @@ const emptyPeer = (type: NetworkPolicyPeerType): NetworkPolicyPeer => {
 
 export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigProps> = (props) => {
   const { t } = useTranslation();
-  const { direction, onChange, onRemove, rule } = props;
+  const { policyNamespace, direction, onChange, onRemove, rule } = props;
   const peersHelp =
     direction === 'ingress'
       ? t(
@@ -122,6 +122,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
             />
           ) : (
             <NetworkPolicyPeerSelectors
+              policyNamespace={policyNamespace}
               direction={direction}
               namespaceSelector={peer.namespaceSelector}
               podSelector={peer.podSelector || []}
@@ -177,6 +178,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
 };
 
 type RuleConfigProps = {
+  policyNamespace: string;
   direction: 'ingress' | 'egress';
   rule: NetworkPolicyRule;
   onChange: (rule: NetworkPolicyRule) => void;

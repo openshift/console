@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
+import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
 export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorProps> = (props) => {
   const { t } = useTranslation();
-  const { direction, onChange, podSelector, namespaceSelector } = props;
+  const { policyNamespace, direction, onChange, podSelector, namespaceSelector } = props;
 
   const handlePodSelectorChange = (updated: string[][]) => {
     onChange(updated, namespaceSelector);
@@ -55,11 +56,17 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
           onChange={handlePodSelectorChange}
         />
       </div>
+      <NetworkPolicySelectorPreview
+        policyNamespace={policyNamespace}
+        podSelector={podSelector}
+        namespaceSelector={namespaceSelector}
+      />
     </>
   );
 };
 
 type PeerSelectorProps = {
+  policyNamespace: string;
   podSelector: string[][];
   namespaceSelector?: string[][];
   direction: 'ingress' | 'egress';

@@ -25,6 +25,7 @@ import {
   networkPolicyToK8sResource,
 } from './network-policy-model';
 import { NetworkPolicyRuleConfigPanel } from './network-policy-rule-config';
+import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
 const emptyRule = (): NetworkPolicyRule => {
   return {
@@ -190,6 +191,10 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
           values={networkPolicy.podSelector}
           onChange={handleMainPodSelectorChange}
         />
+        <NetworkPolicySelectorPreview
+          policyNamespace={networkPolicy.namespace}
+          podSelector={networkPolicy.podSelector}
+        />
       </div>
       <div className="form-group co-create-networkpolicy__type">
         <Title headingLevel="h2">{t('public~Policy type')}</Title>
@@ -260,6 +265,7 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
           {networkPolicy.ingress.rules.map((rule, idx) => (
             <NetworkPolicyRuleConfigPanel
               key={rule.key}
+              policyNamespace={networkPolicy.namespace}
               direction="ingress"
               rule={rule}
               onChange={(r) => {
@@ -307,6 +313,7 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
           {networkPolicy.egress.rules.map((rule, idx) => (
             <NetworkPolicyRuleConfigPanel
               key={rule.key}
+              policyNamespace={networkPolicy.namespace}
               direction="egress"
               rule={rule}
               onChange={(r) => {
