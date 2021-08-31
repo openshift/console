@@ -202,7 +202,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
           }
           const secretId = secret?.items?.[0]?.metadata?.uid;
           if (secretId) {
-            redirect = `${config.redirectURL}?selectId=${secretId}&selectTab=Release+Notes`;
+            redirect = `${config.redirectURL}?selectId=${secretId}&selectTab=Release+notes`;
           }
         }
 
