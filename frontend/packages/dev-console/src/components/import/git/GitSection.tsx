@@ -373,7 +373,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
       );
     }
-    return '';
+    return t('devconsole~Repository URL to build and deploy your code from');
   }, [t, values.git.isUrlValidating, validated, repoStatus]);
 
   const resetFields = React.useCallback(() => {
