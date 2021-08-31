@@ -91,9 +91,8 @@ export const LSOInstallAlert = () => {
       isInline
     >
       <Trans t={t} ns="ceph-storage-plugin">
-        Before we can create a StorageCluster, the Local Storage Operator needs to be installed.
-        When installation is finished come back to OpenShift Container Storage to create a
-        StorageCluster.
+        Before we can create a StorageSystem, the Local Storage Operator needs to be installed. When
+        installation is finished come back to OpenShift Data Foundation to create a StorageSystem.
         <div className="ceph-ocs-install__lso-alert__button">
           <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
             Install
