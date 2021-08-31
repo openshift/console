@@ -17,7 +17,10 @@ Feature: Create Application from Docker file
               And name field auto populates with value "flask-dockerfile-example" in Import from Git form
 
 
-        @smoke
+        # @smoke
+        # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
+        # TODO: Use Cypress HTTP mocking to solve the github rate limiting issue. See - https://docs.cypress.io/guides/guides/network-requests
+        @regression @manual
         Scenario Outline: Create a workload from Docker file with "<resource_type>" as resource type: A-05-TC02
             Given user is on Import from Git form
              When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"

@@ -8,7 +8,10 @@ Feature: Create Application from git form
               And user has created or selected namespace "aut-addflow-git"
 
 
-        @smoke @odc-5009
+        # @smoke @odc-5009
+        # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
+        # TODO: Use Cypress HTTP mocking to solve the github rate limiting issue. See - https://docs.cypress.io/guides/guides/network-requests
+        @regression @manual
         Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>": A-06-TC01
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
