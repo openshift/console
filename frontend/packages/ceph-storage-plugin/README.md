@@ -22,6 +22,7 @@ UI features are activated based on the annotations. The following table maps a f
 | Taint nodes |`features.ocs.openshift.io/enabled` | `taint-nodes` |
 | Pool management |`features.ocs.openshift.io/enabled` | `pool-management` |
 | Thick Provision |`features.ocs.openshift.io/enabled` | `thick-provision` |
+| MCG standalone deployment |`features.ocs.openshift.io/enabled` | `mcg-standalone` |
 | Disk Replacement Action| `cluster.ocs.openshift.io/local-devices` | `true`|
 | Disk Inventory OCS Status Column | `cluster.ocs.openshift.io/local-devices` | `true`|
 
