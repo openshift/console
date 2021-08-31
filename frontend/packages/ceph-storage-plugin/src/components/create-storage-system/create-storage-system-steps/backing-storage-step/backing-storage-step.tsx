@@ -7,10 +7,18 @@ import { StorageClassDropdown } from '@console/internal/components/utils/storage
 import { ListKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { StorageClassModel } from '@console/internal/models';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import {
+  ClusterServiceVersionKind,
+  ClusterServiceVersionModel,
+} from '@console/operator-lifecycle-manager/src';
 import { AdvancedSection } from './advanced-section';
 import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
-import { getStorageSystemKind } from '../../../../utils/create-storage-system';
+import {
+  getODFCsv,
+  getStorageSystemKind,
+  getSupportedVendors,
+} from '../../../../utils/create-storage-system';
 import { WizardState, WizardDispatch } from '../../reducer';
 import {
   BackingStorageType,
@@ -19,7 +27,7 @@ import {
 } from '../../../../constants/create-storage-system';
 import { ErrorHandler } from '../../error-handler';
 import { ExternalStorage } from '../../external-storage/types';
-import { NO_PROVISIONER } from '../../../../constants';
+import { CEPH_STORAGE_NAMESPACE, NO_PROVISIONER } from '../../../../constants';
 import './backing-storage-step.scss';
 import { GUARDED_FEATURES } from '../../../../features';
 
@@ -114,15 +122,22 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
     StorageClassModel,
   );
   const isMCGStandalone = useFlag(GUARDED_FEATURES.ODF_MCG_STANDALONE);
+  const [csvList, csvListLoaded, csvListLoadError] = useK8sGet<ListKind<ClusterServiceVersionKind>>(
+    ClusterServiceVersionModel,
+    null,
+    CEPH_STORAGE_NAMESPACE,
+  );
 
   const formattedSS: StorageSystemSet = formatStorageSystemList(storageSystems);
-
   const hasOCS: boolean = formattedSS.has(STORAGE_CLUSTER_SYSTEM_KIND);
+
+  const odfCsv = getODFCsv(csvList?.items);
+  const supportedODFVendors = getSupportedVendors(odfCsv);
 
   const allowedExternalStorage: ExternalStorage[] = SUPPORTED_EXTERNAL_STORAGE.filter(
     ({ model }) => {
       const kind = getStorageSystemKind(model);
-      return !formattedSS.has(kind);
+      return supportedODFVendors.includes(kind) && !formattedSS.has(kind);
     },
   );
 
@@ -176,7 +191,10 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
   };
 
   return (
-    <ErrorHandler error={error || scLoadError} loaded={loaded && scLoaded}>
+    <ErrorHandler
+      error={error || scLoadError || csvListLoadError}
+      loaded={loaded && scLoaded && csvListLoaded}
+    >
       <Form>
         <Radio
           label={t('ceph-storage-plugin~Use an existing storage class')}
