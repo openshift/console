@@ -87,13 +87,13 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
 
   const steps: WizardStep[] = [
     {
-      name: t('ceph-storage-plugin~Select capacity and nodes'),
+      name: t('ceph-storage-plugin~Capacity and nodes'),
       id: CreateStepsSC.STORAGEANDNODES,
       component: <SelectCapacityAndNodes state={state} dispatch={dispatch} />,
       enableNext: !!(state.nodes.length >= MINIMUM_NODES && scName),
     },
     {
-      name: t('ceph-storage-plugin~Configure'),
+      name: t('ceph-storage-plugin~Security and network'),
       id: CreateStepsSC.CONFIGURE,
       component: <Configure state={state} dispatch={dispatch} mode={mode} />,
       enableNext: state.encryption.hasHandled && hasConfiguredNetwork && state.kms.hasHandled,

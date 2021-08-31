@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
-import { Link } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
@@ -125,7 +124,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
 
   const discoveryNodes = state.lvdIsSelectNodes ? state.lvdSelectNodes : state.lvdAllNodes;
 
-  const { getStep, getIndex, getAnchor } = navUtils;
+  const { getParamString, getStep, getIndex, getAnchor } = navUtils;
   const hasConfiguredNetwork =
     state.networkType === NetworkType.MULTUS
       ? !!(state.publicNetwork || state.clusterNetwork)
@@ -202,18 +201,10 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
     </WizardFooter>
   );
 
-  const toLink = (steps: any, currentStep: string, modes: any) =>
-    getAnchor(getIndex(steps, currentStep), getIndex(modes, modes.ATTACHED_DEVICES));
-
   const steps: WizardStep[] = [
     {
       id: CreateStepsSC.DISCOVER,
-      name: (
-        <Link to={toLink(CreateStepsSC, CreateStepsSC.DISCOVER, MODES)}>
-          {' '}
-          {t('ceph-storage-plugin~Discover disks')}{' '}
-        </Link>
-      ),
+      name: t('ceph-storage-plugin~Discover disks'),
       component: (
         <DiscoverDisks
           inProgress={state.lvdInProgress}
@@ -227,42 +218,22 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
     },
     {
       id: CreateStepsSC.STORAGECLASS,
-      name: (
-        <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGECLASS, MODES)}>
-          {' '}
-          {t('ceph-storage-plugin~Create StorageClass')}{' '}
-        </Link>
-      ),
+      name: t('ceph-storage-plugin~Create StorageClass'),
       component: <CreateStorageClass dispatch={dispatch} state={state} ns={lsoNs} />,
     },
     {
       id: CreateStepsSC.STORAGEANDNODES,
-      name: (
-        <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGEANDNODES, MODES)}>
-          {' '}
-          {t('ceph-storage-plugin~Capacity and nodes')}{' '}
-        </Link>
-      ),
       component: <StorageAndNodes dispatch={dispatch} state={state} />,
+      name: t('ceph-storage-plugin~Capacity and nodes'),
     },
     {
       id: CreateStepsSC.CONFIGURE,
-      name: (
-        <Link to={toLink(CreateStepsSC, CreateStepsSC.CONFIGURE, MODES)}>
-          {' '}
-          {t('ceph-storage-plugin~Security and network')}{' '}
-        </Link>
-      ),
+      name: t('ceph-storage-plugin~Security and network'),
       component: <Configure dispatch={dispatch} state={state} mode={mode} />,
     },
     {
       id: CreateStepsSC.REVIEWANDCREATE,
-      name: (
-        <Link to={toLink(CreateStepsSC, CreateStepsSC.REVIEWANDCREATE, MODES)}>
-          {' '}
-          {t('ceph-storage-plugin~Review and create')}{' '}
-        </Link>
-      ),
+      name: t('ceph-storage-plugin~Review and create'),
       nextButtonText: t('ceph-storage-plugin~Create'),
       component: (
         <ReviewAndCreate state={state} inProgress={inProgress} errorMessage={errorMessage} />
@@ -275,6 +246,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
       <StackItem>
         {showInfoAlert && (
           <Alert
+            aria-label={t('ceph-storage-plugin~Info Alert')}
             className="co-alert ocs-install-info-alert"
             variant="info"
             isInline
@@ -301,6 +273,14 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
           onClose={() =>
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
           }
+          onGoToStep={(step) => {
+            history.push(
+              `~new?${getParamString(
+                getIndex(CreateStepsSC, step.id),
+                getIndex(MODES, MODES.ATTACHED_DEVICES),
+              )}`,
+            );
+          }}
           footer={CustomFooter}
           cancelButtonText={t('ceph-storage-plugin~Cancel')}
           nextButtonText={t('ceph-storage-plugin~Next')}
