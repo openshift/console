@@ -50,6 +50,8 @@ export enum nicDialog {
 // disk modal
 export enum diskDialog {
   source = 'button[id="disk-select-source"]',
+  diskURL = 'input[id="disk-url"]',
+  diskContainer = 'input[id="disk-container"]',
   diskName = 'input[id="disk-name"]',
   size = 'input[id="disk-size-row-size"]',
   diskType = 'select[id="disk-type"]',

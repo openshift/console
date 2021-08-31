@@ -52,3 +52,9 @@ export const addSSHKey = 'button[id="cloudint-ssh_authorized_keys-add"]';
 // template wizard
 export const templateProvider = '#template-provider';
 export const templateSupport = '#template-supported';
+
+// storage step
+export const selectBootSource = 'select[id="storage-bootsource"]';
+export const rootdisk = '[data-id="rootdisk"]';
+export const kebabBtn = '[data-test-id="kebab-button"]';
+export const deleteBtn = '[data-test-action="Delete"]';

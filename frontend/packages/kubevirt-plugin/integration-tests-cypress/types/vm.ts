@@ -1,4 +1,4 @@
-import { DISK_DRIVE, DISK_SOURCE, Flavor } from '../utils/const/index';
+import { DISK_DRIVE, Flavor } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
 
 export type Disk = {
@@ -11,7 +11,7 @@ export type Disk = {
     volumeMode?: string;
     accessMode?: string;
   };
-  source?: DISK_SOURCE;
+  source?: ProvisionSource;
   bootable?: boolean;
   preallocation?: boolean;
   autoDetach?: boolean;

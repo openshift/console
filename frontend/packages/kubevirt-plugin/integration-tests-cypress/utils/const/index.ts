@@ -70,15 +70,6 @@ export enum Flavor {
   CUSTOM = 'Custom',
 }
 
-export enum DISK_SOURCE {
-  AttachDisk = 'Use an existing PVC',
-  AttachClonedDisk = 'Clone existing PVC',
-  Blank = 'Blank',
-  Container = 'Import via Registry (creates PVC)',
-  EphemeralContainer = 'Container (ephemeral)',
-  Url = 'Import via URL',
-}
-
 export enum DISK_INTERFACE {
   VirtIO = 'virtio',
   sata = 'sata',
