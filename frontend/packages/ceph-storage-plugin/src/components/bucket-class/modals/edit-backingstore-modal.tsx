@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Button } from '@patternfly/react-core';
-import { k8sUpdate } from '@console/internal/module/k8s';
+import { k8sUpdate, K8sKind } from '@console/internal/module/k8s';
 import {
   ModalTitle,
   ModalBody,
@@ -287,3 +288,8 @@ export default createModalLauncher(BucketClassEditModal);
 type BucketClassEditModalProps = {
   bucketClass: BucketClassKind;
 };
+
+export const editBucketClass = (t: TFunction) => (_kind: K8sKind, resource: BucketClassKind) => ({
+  labelKey: t('ceph-storage-plugin~Edit Bucket Class Resources'),
+  callback: () => createModalLauncher(BucketClassEditModal)({ bucketClass: resource as any }),
+});

@@ -1,7 +1,13 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Kebab, LabelList, Timestamp, ResourceKebab } from '@console/internal/components/utils';
+import {
+  Kebab,
+  LabelList,
+  Timestamp,
+  ResourceKebab,
+  KebabAction,
+} from '@console/internal/components/utils';
 import { OperandStatus } from '@console/operator-lifecycle-manager/src/components/operand';
 import {
   referenceFor,
@@ -24,6 +30,7 @@ import {
   NooBaaBucketClassModel,
   NooBaaNamespaceStoreModel,
 } from '../../models';
+import { editBucketClass } from '../bucket-class/modals/edit-backingstore-modal';
 
 const tableColumnClasses = [
   '',
@@ -36,11 +43,12 @@ const tableColumnClasses = [
 
 type CustomRowData = {
   resourceKind: string;
+  actions?: KebabAction[];
 };
 
 const Row: React.FC<RowFunctionArgs<K8sResourceCommon, CustomRowData>> = ({
   obj,
-  customData: { resourceKind },
+  customData: { resourceKind, actions = [] },
 }) => {
   return (
     <>
@@ -63,7 +71,11 @@ const Row: React.FC<RowFunctionArgs<K8sResourceCommon, CustomRowData>> = ({
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={Kebab.factory.common} kind={referenceFor(obj)} resource={obj} />
+        <ResourceKebab
+          actions={[...actions, ...Kebab.factory.common]}
+          kind={referenceFor(obj)}
+          resource={obj}
+        />
       </TableData>
     </>
   );
@@ -123,17 +135,20 @@ const ResourceTable: React.FC<ResourceListProps> = (props) => {
 
 type GenericListPageProps = {
   resourceKind: string;
+  actions?: KebabAction[];
 };
+
 const GenericListPage: React.FC<GenericListPageProps> = (props) => {
-  const { resourceKind } = props;
+  const { resourceKind, actions } = props;
   const createProps = {
     to: `/odf/resource/${resourceKind}/create/~new`,
   };
   const customData = React.useMemo(
     () => ({
       resourceKind,
+      actions,
     }),
-    [resourceKind],
+    [resourceKind, actions],
   );
   return (
     <ListPage
@@ -152,9 +167,15 @@ export const BackingStoreListPage: React.FC = () => (
   <GenericListPage resourceKind={referenceForModel(NooBaaBackingStoreModel)} />
 );
 
-export const BucketClassListPage: React.FC = () => (
-  <GenericListPage resourceKind={referenceForModel(NooBaaBucketClassModel)} />
-);
+export const BucketClassListPage: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <GenericListPage
+      resourceKind={referenceForModel(NooBaaBucketClassModel)}
+      actions={[editBucketClass(t)]}
+    />
+  );
+};
 
 export const NamespaceStoreListPage: React.FC = () => (
   <GenericListPage resourceKind={referenceForModel(NooBaaNamespaceStoreModel)} />

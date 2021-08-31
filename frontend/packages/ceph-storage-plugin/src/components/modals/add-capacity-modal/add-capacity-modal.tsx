@@ -20,6 +20,7 @@ import {
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { getName, getRequestedPVCSize } from '@console/shared';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { CAPACITY_INFO_QUERIES } from '@console/ceph-storage-plugin/src/queries';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
@@ -40,7 +41,7 @@ import { filterSC, isArbiterSC, isValidTopology } from '../../../utils/install';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import { pvResource, nodeResource } from '../../../resources';
 import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
-import { DeviceSet } from '../../../types';
+import { DeviceSet, StorageSystemKind, StorageClusterKind } from '../../../types';
 import './add-capacity-modal.scss';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
 
@@ -83,6 +84,29 @@ type RawCapacityProps = {
   osdSizeWithoutUnit: number;
   replica: number;
   t: TFunction;
+};
+
+type AddSSCapacityModalProps = {
+  storageSystem: StorageSystemKind;
+  close?: () => void;
+  cancel?: () => void;
+};
+
+export const AddSSCapacityModal: React.FC<AddSSCapacityModalProps> = ({
+  storageSystem,
+  close,
+  cancel,
+}) => {
+  const [ocs, ocsLoaded, ocsError] = useK8sGet<StorageClusterKind>(
+    OCSServiceModel,
+    storageSystem.spec.name,
+    storageSystem.spec.namespace,
+  );
+  if (!ocsLoaded || ocsError) {
+    return null;
+  }
+
+  return <AddCapacityModal ocsConfig={ocs} close={close} cancel={cancel} />;
 };
 
 export const AddCapacityModal = (props: AddCapacityModalProps) => {
@@ -283,3 +307,4 @@ export type AddCapacityModalProps = {
 };
 
 export const addCapacityModal = createModalLauncher(AddCapacityModal);
+export const addSSCapacityModal = createModalLauncher(AddSSCapacityModal);
