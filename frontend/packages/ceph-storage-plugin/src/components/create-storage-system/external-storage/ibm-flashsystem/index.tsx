@@ -50,7 +50,7 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
   return (
     <>
       <FormGroup
-        label={t('ceph-storage-plugin~Endpoint')}
+        label={t('ceph-storage-plugin~IP address')}
         fieldId="endpoint-input"
         isRequired
         validated={endpointValid}
