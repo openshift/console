@@ -32,7 +32,7 @@ export type BuildConfigGitSource = {
   type: 'Git';
   git: {
     uri: string;
-    ref: string;
+    ref?: string;
   };
   contextDir?: string;
 };
