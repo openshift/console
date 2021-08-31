@@ -203,7 +203,7 @@
   "Disks limit will set the maximum number of PVs to create on a node. If the field is empty we will create PVs for all available disks on the matching nodes.": "Disks limit will set the maximum number of PVs to create on a node. If the field is empty we will create PVs for all available disks on the matching nodes.",
   "All": "All",
   "Local Storage Operator not installed": "Local Storage Operator not installed",
-  "Before we can create a StorageCluster, the Local Storage Operator needs to be installed. When installation is finished come back to OpenShift Container Storage to create a StorageCluster.<1><0>Install</0></1>": "Before we can create a StorageCluster, the Local Storage Operator needs to be installed. When installation is finished come back to OpenShift Container Storage to create a StorageCluster.<1><0>Install</0></1>",
+  "Before we can create a StorageSystem, the Local Storage Operator needs to be installed. When installation is finished come back to OpenShift Data Foundation to create a StorageSystem.<1><0>Install</0></1>": "Before we can create a StorageSystem, the Local Storage Operator needs to be installed. When installation is finished come back to OpenShift Data Foundation to create a StorageSystem.<1><0>Install</0></1>",
   "Checking Local Storage Operator installation": "Checking Local Storage Operator installation",
   "Discovering disks on all hosts. This may take a few minutes.": "Discovering disks on all hosts. This may take a few minutes.",
   "Minimum Node Requirement": "Minimum Node Requirement",
