@@ -117,23 +117,18 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
           ))}
       </ChartGroup>
       <ChartGroup>
-        {bar
-          ? gData.map((barData, index) => (
-              <ChartBar
-                alignment="middle"
-                key={`bar-${index}`} // eslint-disable-line react/no-array-index-key
-                name={`bar-${index}`}
-                data={[barData]}
-              />
-            ))
-          : gData.map((line, index) => (
-              <ChartLine
-                groupComponent={<g />}
-                key={`line-${index}`} // eslint-disable-line react/no-array-index-key
-                name={`line-${index}`}
-                data={[line]}
-              />
-            ))}
+        {bar ? (
+          <ChartBar alignment="middle" key="bar" data={gData} />
+        ) : (
+          gData.map((line, index) => (
+            <ChartLine
+              groupComponent={<g />}
+              key={`line-${index}`} // eslint-disable-line react/no-array-index-key
+              name={`line-${index}`}
+              data={[line]}
+            />
+          ))
+        )}
       </ChartGroup>
     </Chart>
   );

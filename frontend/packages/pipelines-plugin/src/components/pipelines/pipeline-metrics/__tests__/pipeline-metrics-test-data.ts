@@ -8,6 +8,24 @@ export const promqlEmptyResponse: PrometheusResponse = {
   },
 };
 
+export const groupedData = [
+  {
+    x: '2021-08-29T18:30:00.000Z',
+    y: 5,
+    metric: {},
+  },
+  {
+    x: '2021-08-30T18:30:00.000Z',
+    y: 7,
+    metric: {},
+  },
+  {
+    x: '2021-08-31T18:30:00.000Z',
+    y: 15,
+    metric: {},
+  },
+];
+
 export const promqlResponse: PrometheusResponse = {
   status: 'success',
   data: {
