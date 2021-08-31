@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
+import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import {
   FLAGS,
   useActivePerspective,
@@ -190,6 +191,8 @@ const AppContents: React.FC<{}> = () => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
   const dynamicRoutePages = useExtensions<DynamicRoutePage>(isDynamicRoutePage);
+  const [, allPluginsProcessed] = useDynamicPluginInfo();
+
   const [pluginPageRoutes, inactivePluginPageRoutes] = React.useMemo(
     () =>
       getPluginPageRoutes(
@@ -712,11 +715,15 @@ const AppContents: React.FC<{}> = () => {
               />
               <Route path="/" exact component={DefaultPage} />
 
-              <LazyRoute
-                loader={() =>
-                  import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
-                }
-              />
+              {allPluginsProcessed ? (
+                <LazyRoute
+                  loader={() =>
+                    import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
+                  }
+                />
+              ) : (
+                <Route component={LoadingBox} />
+              )}
             </Switch>
           </React.Suspense>
         </div>
