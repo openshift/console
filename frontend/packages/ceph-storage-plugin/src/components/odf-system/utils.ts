@@ -26,6 +26,7 @@ type SystemMetrics = {
     iops: HumanizeResult;
     throughput: HumanizeResult;
     latency: HumanizeResult;
+    health: string;
   };
 };
 
@@ -36,6 +37,7 @@ type MetricNormalize = (
   rawCapacity: PrometheusResponse,
   usedCapacity: PrometheusResponse,
   iops: PrometheusResponse,
+  healthData: PrometheusResponse,
 ) => SystemMetrics;
 
 export const normalizeMetrics: MetricNormalize = (
@@ -45,8 +47,17 @@ export const normalizeMetrics: MetricNormalize = (
   rawCapacity,
   usedCapacity,
   iops,
+  healthData,
 ) => {
-  if (_.isEmpty(systems) || !latency || !throughput || !rawCapacity || !usedCapacity || !iops) {
+  if (
+    _.isEmpty(systems) ||
+    !latency ||
+    !throughput ||
+    !rawCapacity ||
+    !usedCapacity ||
+    !iops ||
+    !healthData
+  ) {
     return {};
   }
   return systems.reduce<SystemMetrics>((acc, curr) => {
@@ -69,7 +80,23 @@ export const normalizeMetrics: MetricNormalize = (
       latency: humanizeLatency(
         latency.data.result.find((item) => item?.metric?.managedBy === curr.spec.name)?.value?.[1],
       ),
+      health: healthData.data.result.find(
+        (item) => item?.metric?.storage_system === curr.metadata.name,
+      )?.value?.[1],
     };
     return acc;
   }, {});
+};
+
+export const healthStateMap = (state: string) => {
+  switch (state) {
+    case '0':
+      return 'Ready';
+    case '1':
+      return 'Warning';
+    case '2':
+      return 'Error';
+    default:
+      return null;
+  }
 };
