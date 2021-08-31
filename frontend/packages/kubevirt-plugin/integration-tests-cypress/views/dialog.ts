@@ -29,13 +29,27 @@ export const addDisk = (disk: Disk) => {
   if (disk.source) {
     cy.get(diskDialog.source).click();
     cy.get('.pf-c-select__menu-item-main')
-      .contains(disk.source)
+      .contains(disk.source.getDescription())
       .click();
+    cy.get('body').then(($body) => {
+      if ($body.find(diskDialog.diskURL).length) {
+        cy.get(diskDialog.diskURL)
+          .clear()
+          .type(disk.source.getSource());
+      }
+      if ($body.find(diskDialog.diskContainer).length) {
+        cy.get(diskDialog.diskContainer)
+          .clear()
+          .type(disk.source.getSource());
+      }
+    });
   }
   cy.get(diskDialog.diskName)
     .clear()
     .type(disk.name);
-  cy.get(diskDialog.size).type(disk.size);
+  if (disk.size) {
+    cy.get(diskDialog.size).type(disk.size);
+  }
   if (disk.drive) {
     cy.get(diskDialog.diskType)
       .select(disk.drive)
