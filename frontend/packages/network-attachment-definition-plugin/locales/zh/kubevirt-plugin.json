@@ -2,6 +2,8 @@
   "No network attachment definitions found": "没有找到网络附加定义",
   "Create network attachment definition": "创建网络附加定义",
   "Learn how to use network attachment definitions": "了解如何使用网络附加定义",
+  "NetworkAttachmentDefinition details": "网络附加定义详情",
+  "Type": "类型",
   "Network attachment definition name cannot be empty": "网络附加定义名不能为空",
   "Network attachment definition name can contain only alphanumeric characters": "网络附加定义名只能包含字母数字字符",
   "Network attachment definition name must start/end with alphanumeric character": "网络附加定义名必须使用字母数字字符开始和结束",
