@@ -14,6 +14,9 @@ export const ExportAppContextProvider = ExportAppContext.Provider;
 export const useExportAppFormToast = () => {
   const toast = useToast();
   const { t } = useTranslation();
+  const [currentToasts, setCurrentToasts] = React.useState<{ [key: string]: { toastId: string } }>(
+    {},
+  );
   const [exportAppToast, setExportAppToast, exportAppToastLoaded] = useUserSettings<
     ExportAppUserSettings
   >(`${USERSETTINGS_PREFIX}.exportApp`, {}, true);
@@ -36,13 +39,45 @@ export const useExportAppFormToast = () => {
     return watchRes;
   }, [exportAppToast, exportAppToastLoaded]);
 
-  const extraResources = useK8sWatchResources<{ [k: string]: K8sResourceKind }>(
+  const exportResources = useK8sWatchResources<{ [k: string]: K8sResourceKind }>(
     exportAppWatchResources,
   );
 
+  const cleanToast = React.useCallback(
+    (k: string) => {
+      const toastDismiss = currentToasts[k];
+      if (toastDismiss) {
+        toast.removeToast(toastDismiss.toastId);
+        setCurrentToasts(_.omit(currentToasts, k));
+      }
+    },
+    [currentToasts, toast],
+  );
+
+  const cleanToastConfig = React.useCallback(
+    (k: string) => {
+      if (exportAppToastLoaded) {
+        setExportAppToast(_.omit(exportAppToast, k));
+      }
+    },
+    [exportAppToast, exportAppToastLoaded, setExportAppToast],
+  );
+
+  React.useEffect(() => {
+    if (exportResources) {
+      const keys = Object.keys(exportResources);
+      keys.forEach((k) => {
+        if (exportResources[k].loadError?.response?.status === 404) {
+          cleanToast(k);
+          cleanToastConfig(k);
+        }
+      });
+    }
+  }, [cleanToast, cleanToastConfig, exportResources]);
+
   const showDownloadToast = React.useCallback(
-    (expNamespace: string, routeUrl: string) => {
-      toast.addToast({
+    (expNamespace: string, routeUrl: string, key: string) => {
+      const toastId = toast.addToast({
         variant: AlertVariant.info,
         title: t('topology~Export Application'),
         content: t(
@@ -57,36 +92,55 @@ export const useExportAppFormToast = () => {
             dismiss: true,
             label: t('topology~Download'),
             callback: () => {
+              cleanToast(key);
+              cleanToastConfig(key);
               window.open(routeUrl, '_blank');
             },
             component: 'a',
           },
         ],
+        onClose: () => cleanToastConfig(key),
       });
+      setCurrentToasts((toasts) => ({ ...toasts, [key]: { toastId } }));
     },
-    [t, toast],
+    [cleanToast, cleanToastConfig, t, toast],
   );
 
   React.useEffect(() => {
     if (exportAppToastLoaded) {
       const keys = Object.keys(exportAppToast);
       keys.forEach((k) => {
+        const isValidResource =
+          exportResources[k].loaded &&
+          !exportResources[k].loadError &&
+          exportResources[k].data &&
+          exportAppToast[k].uid === exportResources[k].data.metadata.uid;
         if (
-          extraResources[k].loaded &&
-          !extraResources[k].loadError &&
-          extraResources[k].data &&
-          exportAppToast[k].uid === extraResources[k].data.metadata.uid &&
-          extraResources[k].data.status?.completed &&
-          extraResources[k].data.status?.route
+          isValidResource &&
+          exportResources[k].data.status?.completed &&
+          exportResources[k].data.status?.route &&
+          !currentToasts[k]
         ) {
-          const exportAppToastConfig = _.omit(exportAppToast, k);
-          setExportAppToast(exportAppToastConfig);
           showDownloadToast(
-            extraResources[k].data.metadata.namespace,
-            extraResources[k].data.status.route,
+            exportResources[k].data.metadata.namespace,
+            exportResources[k].data.status.route,
+            k,
           );
+        } else if (
+          isValidResource &&
+          !exportResources[k].data.status?.completed &&
+          currentToasts[k]
+        ) {
+          cleanToast(k);
         }
       });
     }
-  }, [extraResources, exportAppToast, exportAppToastLoaded, setExportAppToast, showDownloadToast]);
+  }, [
+    exportResources,
+    exportAppToast,
+    exportAppToastLoaded,
+    showDownloadToast,
+    currentToasts,
+    cleanToast,
+  ]);
 };
