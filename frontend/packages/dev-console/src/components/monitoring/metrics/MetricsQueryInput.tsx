@@ -70,9 +70,6 @@ const MetricsQueryInput: React.FC = () => {
     if (text && text.localeCompare(q) !== 0) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
-      if (query) {
-        removeQueryArgument('query0');
-      }
     }
   }, [query, queries, CUSTOM_QUERY]);
 
@@ -105,21 +102,24 @@ const MetricsQueryInput: React.FC = () => {
       .catch(() => {});
   }, [namespace, safeFetch, dispatch]);
 
-  const onChange = (selectedValue: string) => {
-    setMetric(metricsQuery(t)[selectedValue]);
-    setChangeKey(!changeKey);
-    if (selectedValue && selectedValue === ADD_NEW_QUERY) {
-      setTitle(CUSTOM_QUERY);
-      setIsPromQlDisabled(true);
-      setShowPromQl(true);
-    } else {
-      setTitle(metricsQuery(t)[selectedValue]);
-      setIsPromQlDisabled(false);
-    }
-    if (query) {
-      removeQueryArgument('query0');
-    }
-  };
+  const onChange = React.useCallback(
+    (selectedValue: string) => {
+      setMetric(metricsQuery(t)[selectedValue]);
+      setChangeKey(!changeKey);
+      if (selectedValue && selectedValue === ADD_NEW_QUERY) {
+        setTitle(CUSTOM_QUERY);
+        setIsPromQlDisabled(true);
+        setShowPromQl(true);
+      } else {
+        setTitle(metricsQuery(t)[selectedValue]);
+        setIsPromQlDisabled(false);
+      }
+      if (query) {
+        removeQueryArgument('query0');
+      }
+    },
+    [CUSTOM_QUERY, changeKey, query, t],
+  );
 
   return (
     <>
