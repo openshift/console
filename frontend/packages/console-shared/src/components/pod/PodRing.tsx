@@ -26,6 +26,7 @@ const handleScalingCallback = (
   obj: K8sResourceKind,
   path: string,
 ) => {
+  // console.log('debounce to', operation);
   const patch = [{ op: 'replace', path, value: operation }];
   const opts = { path: 'scale' };
   const promise: Promise<K8sResourceKind> = k8sPatch(resourceKind, obj, patch, opts);
@@ -70,8 +71,8 @@ const PodRing: React.FC<PodRingProps> = ({
     (operation: number) => handleScalingCallback(operation, resourceKind, obj, path),
     1000,
     {
-      leading: true,
-      trailing: false,
+      leading: false,
+      trailing: true,
     },
   );
 
@@ -98,6 +99,8 @@ const PodRing: React.FC<PodRingProps> = ({
     hpaControlledScaling,
     t,
     hpa,
+    clickCount,
+    // obj.spec.replicas !== clickCount ? clickCount : undefined,
   );
 
   return (

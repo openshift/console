@@ -117,6 +117,7 @@ export const podRingLabel = (
   ownerKind: string,
   pods: ExtPodKind[],
   t: TFunction,
+  clickCount?: number,
 ): PodRingLabelData => {
   let currentPodCount;
   let desiredPodCount;
@@ -131,11 +132,12 @@ export const podRingLabel = (
   };
 
   const failedPodCount = getFailedPods(pods);
+  // console.log('ownerKind', ownerKind, clickCount, obj.status?.readyReplicas, '->',obj.status?.replicas);
   switch (ownerKind) {
     case DaemonSetModel.kind:
       currentPodCount = (obj.status?.currentNumberScheduled || 0) + failedPodCount;
-      desiredPodCount = obj.status?.desiredNumberScheduled;
-      desiredPodCount = obj.status?.desiredNumberScheduled;
+      desiredPodCount =
+        typeof clickCount !== 'undefined' ? clickCount : obj.status?.desiredNumberScheduled;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount, t);
       podRingLabelData.title = titleData.title;
@@ -144,7 +146,7 @@ export const podRingLabel = (
       break;
     case RevisionModel.kind:
       currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
-      desiredPodCount = obj.spec?.replicas;
+      desiredPodCount = typeof clickCount !== 'undefined' ? clickCount : obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       if (!isPending && !desiredPodCount) {
         podRingLabelData.title = t('console-shared~Autoscaled');
@@ -173,7 +175,7 @@ export const podRingLabel = (
       break;
     default:
       currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
-      desiredPodCount = obj.spec?.replicas;
+      desiredPodCount = typeof clickCount !== 'undefined' ? clickCount : obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount, t);
       podRingLabelData.title = titleData.title;
@@ -213,10 +215,11 @@ export const usePodRingLabel = (
   hpaControlledScaling: boolean = false,
   t: TFunction,
   hpa?: HorizontalPodAutoscalerKind,
+  clickCount?: number,
 ): PodRingLabelType => {
   const podRingLabelData = hpaControlledScaling
     ? hpaPodRingLabel(obj, hpa, pods, t)
-    : podRingLabel(obj, ownerKind, pods, t);
+    : podRingLabel(obj, ownerKind, pods, t, clickCount);
   const { title, subTitle, longTitle, longSubtitle, reversed } = podRingLabelData;
 
   return React.useMemo(
