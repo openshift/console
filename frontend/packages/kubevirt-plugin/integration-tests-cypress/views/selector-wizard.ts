@@ -6,6 +6,7 @@ export const cancelBtn = 'button[id="create-vm-wizard-cancel-btn"]';
 export const customizeBtn = 'button[data-test-id="wizard-customize"]';
 
 export const wizardNav = '.pf-c-wizard__nav-list';
+export const wizardNavLink = '.pf-c-wizard__nav-link';
 export const templateTitle = '.catalog-tile-pf-title';
 
 export const imageSourceDropdown = '#image-source-type-dropdown';
