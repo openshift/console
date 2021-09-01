@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { YAML_VM_NAME, STATUS_READY, TEMPLATE_NAME } from '../../utils/const/index';
+import { YAML_VM_NAME, STATUS_READY, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import * as snapshotView from '../../views/snapshot';
 import { tab } from '../../views/tab';
@@ -11,7 +11,7 @@ const vmData: VirtualMachineData = {
   name: `test-vm-snapshot-${testName}`,
   description: 'rhel8 vm for snapshot',
   namespace: testName,
-  template: TEMPLATE_NAME,
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

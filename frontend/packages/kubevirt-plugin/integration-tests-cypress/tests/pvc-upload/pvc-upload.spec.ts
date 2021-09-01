@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { OS_IMAGES_NS, TEMPLATE_BASE_IMAGE, TEMPLATE_NAME } from '../../utils/const/index';
+import { OS_IMAGES_NS, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { pvc } from '../../views/pvc';
 import { virtualization } from '../../views/virtualization';
@@ -9,10 +9,11 @@ import { vm } from '../../views/vm';
 const imageFormats = ['/tmp/cirros.iso', '/tmp/cirros.gz', '/tmp/cirros.xz'];
 const invalidImage = '/tmp/cirros.txt';
 const os = 'Red Hat Enterprise Linux 6.0 or higher - Default data image already exists';
+const template = TEMPLATE.RHEL6;
 const vmData: VirtualMachineData = {
   name: `pvc-test-vm-${testName}`,
   namespace: testName,
-  template: TEMPLATE_NAME,
+  template: template.name,
   sshEnable: false,
   startOnCreation: true,
   sourceAvailable: true,
@@ -29,7 +30,7 @@ describe('kubevirt PVC upload', () => {
     cy.deleteResource({
       kind: 'DataVolume',
       metadata: {
-        name: TEMPLATE_BASE_IMAGE,
+        name: template.dvName,
         namespace: OS_IMAGES_NS,
       },
     });
@@ -69,7 +70,7 @@ describe('kubevirt PVC upload', () => {
     });
 
     it('ID(CNV-5176) It shows an error when uploading data to golden OS again', () => {
-      cy.createDataVolume(TEMPLATE_BASE_IMAGE, OS_IMAGES_NS);
+      cy.createDataVolume(template.dvName, OS_IMAGES_NS);
       pvc.form.open();
       pvc.form.selectOS(os);
       cy.get('.pf-c-alert__title')
@@ -85,7 +86,7 @@ describe('kubevirt PVC upload', () => {
         cy.deleteResource({
           kind: 'DataVolume',
           metadata: {
-            name: TEMPLATE_BASE_IMAGE,
+            name: template.dvName,
             namespace: OS_IMAGES_NS,
           },
         });
@@ -104,10 +105,10 @@ describe('kubevirt PVC upload', () => {
         { timeout: 600000 },
       );
 
-      cy.uploadFromCLI(TEMPLATE_BASE_IMAGE, OS_IMAGES_NS, Cypress.env('UPLOAD_IMG'), '1');
+      cy.uploadFromCLI(template.dvName, OS_IMAGES_NS, Cypress.env('UPLOAD_IMG'), '1');
 
       virtualization.templates.visit();
-      virtualization.templates.testSource(TEMPLATE_NAME, 'Unknown');
+      virtualization.templates.testSource(template.name, 'Unknown');
     });
 
     it('ID(CNV-5597) Verify create VM from the template whose source is uploaded via CLI', () => {
@@ -120,12 +121,12 @@ describe('kubevirt PVC upload', () => {
       cy.deleteResource({
         kind: 'DataVolume',
         metadata: {
-          name: TEMPLATE_BASE_IMAGE,
+          name: template.dvName,
           namespace: OS_IMAGES_NS,
         },
       });
       virtualization.templates.visit();
-      virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
+      virtualization.templates.testSource(template.name, 'Add source');
     });
   });
 });

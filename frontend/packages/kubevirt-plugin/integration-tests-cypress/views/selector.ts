@@ -70,3 +70,10 @@ export const createYAMLButton = 'button[data-test="save-changes"]';
 
 // multiple IP pop-up
 export const ipPopOverContent = '.pf-c-popover__content';
+
+// template list
+export const nameFilter = 'input[data-test="name-filter-input"]';
+// export const starIcon = '.pf-c-button.pf-m-plain.kv-pin-remove-btn';
+export const unStarIcon = '.pf-c-button.pf-m-plain.kv-pin-btn';
+export const supportLevel = '[data-test-id="details-Support"]';
+export const supportLevelTag = '[data-test="template-support"]';
