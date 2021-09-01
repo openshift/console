@@ -270,3 +270,24 @@ Feature: Topology chart area
               And user sees shortcut for Access create connector handle
               And user sees shortcut for Qpen quick search modal
               And user sees shortcut for Drag and drop a JAR file into Topology
+
+
+        @regression @manual @odc-5722
+        Scenario: Display of External Bindable resources: T-06-TC24
+            Given user has installed Service Binding operator
+            #Please refer to test case KM-01-TC01 for creating kafka connection
+              And user has created external bindable resource Kafka Connection "kafka-instance-123"
+             When user navigates to Topology chart view
+             Then user will see the bindable resource "kafka-instance-123" in trapezoid shape
+
+
+        @regression @manual @odc-5722
+        Scenario: Connect to External Bindable resources: T-06-TC25
+            Given user has installed Service Binding operator
+            #Please refer to test case KM-01-TC01 for creating kafka connection
+              And user has created external bindable resource Kafka Connection "kafka-instance-123"
+              And user is at the Topology chart view
+             When user created a deployment workload "node-js-git-1"
+              And user drag the connector from the deployment workload
+              And user drops the connector on the enabled bindable resource
+             Then user will see service binding connection
