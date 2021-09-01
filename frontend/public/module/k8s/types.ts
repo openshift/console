@@ -1,4 +1,3 @@
-import { JSONSchema7 } from 'json-schema';
 import { BadgeType, NodeAddress } from '@console/shared';
 import {
   ObjectReference,
@@ -8,6 +7,7 @@ import {
   AccessReviewResourceAttributes,
   Selector,
   MatchLabels,
+  K8sResourceCondition,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
 
@@ -17,20 +17,6 @@ export type PartialObjectMetadata = {
   apiVersion: string;
   kind: string;
   metadata: ObjectMetadata;
-};
-
-export enum K8sResourceConditionStatus {
-  True = 'True',
-  False = 'False',
-  Unknown = 'Unknown',
-}
-
-export type K8sResourceCondition = {
-  type: string;
-  status: keyof typeof K8sResourceConditionStatus;
-  lastTransitionTime?: string;
-  reason?: string;
-  message?: string;
 };
 
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
@@ -496,34 +482,6 @@ export type CronJobKind = {
   };
 };
 
-export type CRDVersion = {
-  name: string;
-  served: boolean;
-  storage: boolean;
-  schema: {
-    // NOTE: Actually a subset of JSONSchema, but using this type for convenience
-    openAPIV3Schema: JSONSchema7;
-  };
-};
-
-export type CustomResourceDefinitionKind = {
-  spec: {
-    group: string;
-    versions: CRDVersion[];
-    names: {
-      kind: string;
-      singular: string;
-      plural: string;
-      listKind: string;
-      shortNames?: string[];
-    };
-    scope: 'Cluster' | 'Namespaced';
-  };
-  status?: {
-    conditions?: K8sResourceCondition[];
-  };
-} & K8sResourceCommon;
-
 export type RouteTarget = {
   kind: 'Service';
   name: string;
@@ -659,12 +617,6 @@ export type MachineSetKind = {
     replicas: number;
   };
 } & K8sResourceCommon;
-
-export type Patch = {
-  op: string;
-  path: string;
-  value?: any;
-};
 
 export type RollingUpdate = { maxUnavailable?: number | string; maxSurge?: number | string };
 export type DeploymentUpdateStrategy =

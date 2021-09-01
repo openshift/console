@@ -1,9 +1,15 @@
 import * as _ from 'lodash-es';
-import { K8sResourceCommon, Selector } from '@console/dynamic-plugin-sdk/src';
+import {
+  K8sResourceCommon,
+  Options,
+  Patch,
+  QueryParams,
+  Selector,
+} from '@console/dynamic-plugin-sdk/src';
 
 import { coFetchJSON } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
-import { K8sKind, Patch } from './types';
+import { K8sKind } from './types';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
 
@@ -17,21 +23,6 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }: K8sKind): string => {
 
   p += apiVersion;
   return p;
-};
-
-type QueryParams = {
-  watch?: string;
-  labelSelector?: string;
-  fieldSelector?: string;
-  resourceVersion?: string;
-  [key: string]: string;
-};
-
-export type Options = {
-  ns?: string;
-  name?: string;
-  path?: string;
-  queryParams?: QueryParams;
 };
 
 export const getK8sResourcePath = (model: K8sKind, options: Options): string => {
