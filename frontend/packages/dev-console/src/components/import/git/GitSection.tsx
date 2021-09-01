@@ -135,7 +135,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     name: nameTouched,
     application: { name: applicationNameTouched } = {},
     image: { selected: imageSelectorTouched } = {},
-    git: { dir: gitDirTouched } = {},
+    git: { dir: gitDirTouched, url: gitUrlTouched } = {},
   } = touched;
   const { git: { url: gitUrlError } = {} } = errors;
 
@@ -345,7 +345,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
-    (!dirty || gitDirTouched) &&
+    (!dirty || gitDirTouched || gitUrlTouched) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
@@ -356,6 +356,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     values.git.url,
     values.git.ref,
     values.git.dir,
+    gitUrlTouched,
   ]);
 
   const helpText = React.useMemo(() => {
@@ -373,7 +374,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
       );
     }
-    return '';
+    return t('devconsole~Repository URL to build and deploy your code from');
   }, [t, values.git.isUrlValidating, validated, repoStatus]);
 
   const resetFields = React.useCallback(() => {
