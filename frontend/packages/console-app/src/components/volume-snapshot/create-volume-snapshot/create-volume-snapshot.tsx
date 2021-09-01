@@ -257,7 +257,9 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
                 onChange={handlePVCName}
                 selectedKey={selectedPVCName}
                 dataFilter={isBound}
-                desc={`Persistent Volume Claim in ${namespace} namespace`}
+                desc={t('console-app~PersistentVolumeClaim in {{namespace}} namespace', {
+                  namespace,
+                })}
               />
             </>
           )}
