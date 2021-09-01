@@ -14,7 +14,7 @@ export const exposePluginAPI = () => {
     HorizontalNav: require('@console/internal/components/utils/horizontal-nav').HorizontalNavFacade,
   };
   window.internalAPI = {
-    AcitivityItem: require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
+    ActivityItem: require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
       .default,
     ActivityBody: require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
       .default,
