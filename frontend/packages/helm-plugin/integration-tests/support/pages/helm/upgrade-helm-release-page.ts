@@ -20,7 +20,7 @@ export const upgradeHelmRelease = {
       .eq(randNum)
       .click();
     if (yamlView === true) {
-      modal.modalTitleShouldContain('Change Chart Version?');
+      modal.modalTitleShouldContain('Change chart version?');
       modal.submit();
     }
   },
