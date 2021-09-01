@@ -43,7 +43,7 @@ import {
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage, TableData } from './factory';
+import { DetailsPage } from './factory';
 import ListPageBody from './factory/ListPage/ListPageBody';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
@@ -99,7 +99,11 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { useListPageFilter } from './factory/ListPage/filter-hook';
 import { RowFilter } from './filter-toolbar';
-import VirtualizedTable, { RowProps, TableColumn } from './factory/Table/VirtualizedTable';
+import VirtualizedTable, {
+  RowProps,
+  TableColumn,
+  TableData,
+} from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 
@@ -324,17 +328,6 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
   },
 ];
 
-const getSelectedColumns = (showNodes: boolean, t: TFunction): Set<string> => {
-  return new Set(
-    getColumns(showNodes, t).reduce((acc, column) => {
-      if (column.id && !column.additional) {
-        acc.push(column.id);
-      }
-      return acc;
-    }, []),
-  );
-};
-
 const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
   obj: pod,
   rowData: { showNodes },
@@ -353,46 +346,49 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
   const { readyCount, totalContainers } = podReadiness(pod);
   const phase = podPhase(pod);
   const restarts = podRestarts(pod);
-  const columns = activeColumnIDs?.size > 0 ? activeColumnIDs : getSelectedColumns(showNodes, t);
   const resourceKind = referenceFor(pod);
   const context = { [resourceKind]: pod };
   return (
     <>
-      <TableData className={podColumnInfo.name.classes}>
+      <TableData
+        className={podColumnInfo.name.classes}
+        id={podColumnInfo.name.id}
+        activeColumnIDs={activeColumnIDs}
+      >
         <ResourceLink kind={kind} name={name} namespace={namespace} />
       </TableData>
       <TableData
         className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
-        columns={columns}
-        columnID={podColumnInfo.namespace.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.namespace.id}
       >
         <ResourceLink kind="Namespace" name={namespace} />
       </TableData>
       <TableData
         className={podColumnInfo.status.classes}
-        columns={columns}
-        columnID={podColumnInfo.status.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.status.id}
       >
         <PodStatus pod={pod} />
       </TableData>
       <TableData
         className={podColumnInfo.ready.classes}
-        columns={columns}
-        columnID={podColumnInfo.ready.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.ready.id}
       >
         {readyCount}/{totalContainers}
       </TableData>
       <TableData
         className={podColumnInfo.restarts.classes}
-        columns={columns}
-        columnID={podColumnInfo.restarts.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.restarts.id}
       >
         {restarts}
       </TableData>
       <TableData
         className={podColumnInfo.owner.classes}
-        columns={columns}
-        columnID={podColumnInfo.owner.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.owner.id}
       >
         {showNodes ? (
           <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
@@ -402,47 +398,47 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
       </TableData>
       <TableData
         className={podColumnInfo.memory.classes}
-        columns={columns}
-        columnID={podColumnInfo.memory.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.memory.id}
       >
         {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
       </TableData>
       <TableData
         className={podColumnInfo.cpu.classes}
-        columns={columns}
-        columnID={podColumnInfo.cpu.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.cpu.id}
       >
         {cores ? t('public~{{numCores}} cores', { numCores: formatCores(cores) }) : '-'}
       </TableData>
       <TableData
         className={podColumnInfo.created.classes}
-        columns={columns}
-        columnID={podColumnInfo.created.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.created.id}
       >
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData
         className={podColumnInfo.node.classes}
-        columns={columns}
-        columnID={podColumnInfo.node.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.node.id}
       >
         <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
       </TableData>
       <TableData
         className={podColumnInfo.labels.classes}
-        columns={columns}
-        columnID={podColumnInfo.labels.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.labels.id}
       >
         <LabelList kind={kind} labels={labels} />
       </TableData>
       <TableData
         className={podColumnInfo.ipaddress.classes}
-        columns={columns}
-        columnID={podColumnInfo.ipaddress.id}
+        activeColumnIDs={activeColumnIDs}
+        id={podColumnInfo.ipaddress.id}
       >
         {pod?.status?.podIP ?? '-'}
       </TableData>
-      <TableData className={Kebab.columnClass}>
+      <TableData className={Kebab.columnClass} activeColumnIDs={activeColumnIDs} id="">
         <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />
       </TableData>
     </>
