@@ -45,7 +45,7 @@ const NamespaceMenuToggle = (props: {
       // Checking to see if user clicked on a favorite icon.  This is needed because
       // if unfavoriting a item, PF removes the item from the DOM before
       // the click event is registered
-      !event.target.closest('.pf-m-favorite') &&
+      !event.target.closest?.('.pf-m-favorite') &&
       !toggleRef.current.contains(event.target)
     ) {
       onToggle(false);
