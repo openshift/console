@@ -24,7 +24,7 @@ import { EmptyBox, LoadingBox, StatusBox } from './status-box';
 import {
   HorizontalNavProps as HorizontalNavFacadeProps,
   NavPage,
-} from '@console/dynamic-plugin-sdk/src/api/component-api-types';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />

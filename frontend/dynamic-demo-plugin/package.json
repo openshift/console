@@ -3,15 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "clean": "rm -rf ./dist",
-    "build": "yarn clean && NODE_ENV=production yarn ts-node ./node_modules/.bin/webpack --mode=production",
-    "build-dev": "yarn clean && yarn ts-node ./node_modules/.bin/webpack --mode=development",
+    "pre-build": "rm -rf ./dist && yarn install",
+    "build": "yarn pre-build && NODE_ENV=production yarn ts-node ./node_modules/.bin/webpack",
+    "build-dev": "yarn pre-build && yarn ts-node ./node_modules/.bin/webpack",
     "http-server": "./http-server.sh ./dist",
     "i18n": "i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
-    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@console)/)/'"
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@openshift-console)/)/'"
+  },
+  "dependencies": {
+    "@openshift-console/dynamic-plugin-sdk": "file:../packages/console-dynamic-plugin-sdk/dist"
   },
   "devDependencies": {
-    "@console/dynamic-plugin-sdk": "link:../packages/console-dynamic-plugin-sdk/dist",
     "@types/react": "16.8.13",
     "copy-webpack-plugin": "^6.4.1",
     "http-server": "0.12.x",

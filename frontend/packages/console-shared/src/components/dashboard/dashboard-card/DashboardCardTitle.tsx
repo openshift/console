@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { DashboardCardTitleProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { DashboardCardTitleProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 const DashboardCardTitle: React.FC<DashboardCardTitleProps> = React.memo(
   ({ className, children }) => (
