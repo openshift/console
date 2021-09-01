@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import { Button, Label, Select, SelectOption } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
-import * as cx from 'classnames';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -724,11 +723,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
       <div className="co-m-nav-title co-m-nav-title--detail">
         {!namespace && <HeaderTop />}
         <div className="monitoring-dashboards__variables">
-          <div
-            className={cx('monitoring-dashboards__dropdowns', {
-              'monitoring-dashboards__variable-dropdowns': namespace,
-            })}
-          >
+          <div className="monitoring-dashboards__dropdowns">
             {!_.isEmpty(boardItems) && (
               <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
             )}
