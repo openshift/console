@@ -29,7 +29,7 @@ export const helmDetailsPage = {
     modal.submit();
     modal.shouldBeClosed();
   },
-  enterReleaseNameInUninstallPopup: (releaseName: string = 'nodejs-ex-k') => {
+  enterReleaseNameInUninstallPopup: (releaseName: string = 'nodejs-release') => {
     modal.modalTitleShouldContain('Uninstall Helm Release?');
     cy.get('form strong').should('have.text', releaseName);
     cy.get(helmPO.uninstallHelmRelease.releaseName).type(releaseName);

@@ -179,7 +179,7 @@ Feature: Topology chart area
               And user selects Postgres and clicks on Create
               And user fills the form and clicks Create
               And user hovers on Add to Project and clicks on Helm Charts
-              And user selects Nodejs Ex K and clicks on Install Helm Charts
+              And user selects Nodejs and clicks on Install Helm Charts
               And user clicks on Install
               And user hovers on Add to Project and clicks on From Event Source
               And user selects Api Server Source and clicks on Create Event Source

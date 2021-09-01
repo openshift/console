@@ -123,8 +123,8 @@ When('user clicks on the rollback button', () => {
   cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
 });
 
-When('user enters the release name', () => {
-  helmDetailsPage.enterReleaseNameInUninstallPopup();
+When('user enters the release name {string}', (releaseName: string) => {
+  helmDetailsPage.enterReleaseNameInUninstallPopup(releaseName);
 });
 
 When('user clicks on the Uninstall button', () => {

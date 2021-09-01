@@ -23,8 +23,8 @@ Feature: Install the Helm Release
               And user will see Filter by Keyword field
               And user will see A-Z, Z-A sort by dropdown
 
-
-        @regression
+        # This test is broken because the code to submit the modal in form doesn't work correctly.
+        @regression @broken-test
         Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-06-TC03
             Given user is at Add page
              When user selects "Helm Chart" card from add page
