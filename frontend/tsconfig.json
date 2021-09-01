@@ -18,7 +18,6 @@
     ".yarn",
     "**/node_modules",
     "**/dist",
-    "dynamic-demo-plugin",
     "packages/console-dynamic-plugin-sdk/scripts"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
