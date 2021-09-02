@@ -33,7 +33,17 @@ describe('TaskRunsRow', () => {
       customData: {
         showPipelineColumn: true,
       },
+      index: 0,
+      key: '0',
+      style: {
+        height: 'auto',
+        left: 0,
+        position: 'absolute',
+        top: 0,
+        width: '100%',
+      },
       columns: null,
+      isScrolling: true,
     };
   });
 

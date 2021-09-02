@@ -46,7 +46,6 @@ import {
   resourceObjPath,
   KebabAction,
   openshiftHelpBase,
-  Page,
 } from '@console/internal/components/utils';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import {
@@ -101,7 +100,7 @@ import {
   upgradeRequiresApproval,
 } from '../utils';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
-import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
+import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
@@ -1239,7 +1238,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
               },
             ]
           : []),
-        ...providedAPIs.map<Page<ProvidedAPIPageProps>>((api: CRDDescription) => ({
+        ...providedAPIs.map((api: CRDDescription) => ({
           href: referenceForProvidedAPI(api),
           name: ['Details', 'YAML', 'Subscription', 'Events'].includes(api.displayName)
             ? `${api.displayName} Operand`

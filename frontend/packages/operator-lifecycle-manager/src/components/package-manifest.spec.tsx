@@ -45,6 +45,10 @@ describe('PackageManifestTableRow', () => {
       <PackageManifestTableRow
         obj={testPackageManifest}
         customData={{ catalogSource: testCatalogSource }}
+        index={0}
+        key={'0'}
+        style={null}
+        isScrolling
         columns={columns}
       />,
     );
@@ -93,6 +97,10 @@ describe('PackageManifestTableRow', () => {
       <PackageManifestTableRow
         obj={testPackageManifest}
         customData={{ catalogSource: null }}
+        index={0}
+        key={'0'}
+        style={null}
+        isScrolling
         columns={columns}
       />,
     );

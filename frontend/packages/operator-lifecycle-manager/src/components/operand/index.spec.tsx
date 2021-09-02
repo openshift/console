@@ -106,7 +106,9 @@ describe(OperandTableRow.displayName, () => {
 
   beforeEach(() => {
     spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
-    wrapper = shallow(<OperandTableRow obj={testResourceInstance} columns={[]} />);
+    wrapper = shallow(
+      <OperandTableRow obj={testResourceInstance} index={0} rowKey={'0'} style={{}} />,
+    );
   });
 
   it('renders column for resource name', () => {

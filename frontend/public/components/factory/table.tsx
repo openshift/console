@@ -277,10 +277,14 @@ const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
     keyMapper: (rowIndex) => _.get(props.data[rowIndex], 'metadata.uid', rowIndex),
   });
 
-  const rowRenderer = ({ index, isVisible, key, style, parent }) => {
+  const rowRenderer = ({ index, isScrolling: scrolling, isVisible, key, style, parent }) => {
     const rowArgs = {
       obj: data[index],
+      index,
       columns,
+      isScrolling: scrolling,
+      key,
+      style,
       customData,
     };
 
@@ -328,9 +332,15 @@ const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
 
 export type RowFunctionArgs<T = any, C = any> = {
   obj: T;
+  index: number;
   columns: any[];
+  isScrolling: boolean;
+  key: string;
+  style: object;
   customData?: C;
 };
+
+export type RowFunction<T = any, C = any> = (args: RowFunctionArgs<T, C>) => React.ReactElement;
 
 export type VirtualBodyProps<D = any, C = any> = {
   customData?: C;

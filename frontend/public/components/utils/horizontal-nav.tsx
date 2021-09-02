@@ -63,6 +63,28 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
   }
 }
 
+// export type Page = {
+//   href?: string;
+//   path?: string;
+//   name?: string;
+//   nameKey?: string;
+//   component?: React.ComponentType<PageComponentProps>;
+//   badge?: React.ReactNode;
+//   pageData?: any;
+//   queryParams?: string;
+// };
+
+export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
+  href?: string;
+  path?: string;
+  name?: string;
+  component?: React.ComponentType<PageComponentProps & D>;
+  badge?: React.ReactNode;
+  pageData?: D;
+  nameKey?: string;
+  queryParams?: string;
+};
+
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
   details: (component) => ({
@@ -181,7 +203,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
 
   const tabs = (
     <>
-      {pages.map(({ name, nameKey, href, path }) => {
+      {pages.map(({ name, nameKey, href, path, queryParams }) => {
         const matchURL = matchPath(location.pathname, {
           path: `${basePath}/${path || href}`,
           exact: true,
@@ -192,7 +214,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
         return (
           <li className={klass} key={nameKey || name}>
             <Link
-              to={`${baseURL.replace(/\/$/, '')}/${href}`}
+              to={`${baseURL.replace(/\/$/, '')}/${href}${queryParams ?? ''}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
             >
               {nameKey ? t(nameKey) : name}
@@ -297,7 +319,12 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     <div className={classNames('co-m-page__body', props.className)}>
       <div className="co-m-horizontal-nav">
         {!props.hideNav && (
-          <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />
+          <NavBar
+            pages={pages}
+            baseURL={props.match.url}
+            basePath={props.match.path}
+            alertURL={props.alertURL}
+          />
         )}
       </div>
       {renderContent(routes)}
@@ -333,13 +360,6 @@ export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = 
   fieldSelector?: string;
 };
 
-export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
-  component?: React.ComponentType<PageComponentProps & D>;
-  badge?: React.ReactNode;
-  pageData?: D;
-  nameKey?: string;
-};
-
 export type NavBarProps = {
   pages: Page[];
   baseURL: string;
@@ -347,6 +367,7 @@ export type NavBarProps = {
   history: History;
   location: Location<any>;
   match: Match<any>;
+  alertURL?: string;
 };
 
 export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resource'> & {
@@ -362,6 +383,7 @@ export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resou
   EmptyMsg?: React.ComponentType<any>;
   customData?: any;
   noStatusBox?: boolean;
+  alertURL?: string;
 };
 
 HorizontalNav.displayName = 'HorizontalNav';
