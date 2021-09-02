@@ -142,9 +142,6 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SetUser:
       return state.set('user', action.payload.user);
 
-    case ActionType.MonitoringDashboardsClearVariables:
-      return state.setIn(['monitoringDashboards', 'variables'], ImmutableMap());
-
     case ActionType.MonitoringDashboardsPatchVariable:
       return state.mergeIn(
         ['monitoringDashboards', action.payload.perspective, 'variables', action.payload.key],
