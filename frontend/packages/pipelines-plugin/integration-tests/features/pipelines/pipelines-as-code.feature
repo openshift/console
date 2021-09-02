@@ -101,7 +101,22 @@ Feature: Perform Actions on repository
 
 
         @regression @to-do
-        Scenario Outline: Delete the repository from the Repository details page: P-11-TC09
+        Scenario Outline: Pipeline Run Details page for the repository: P-11-TC09
+            Given pipeline run is displayed for "<repository_name>"
+              And user is at the repositories page
+             When user clicks Last Run value of repository "<repository_name>"
+             Then user will be redirected to Pipeline Run Details page
+              And user is able to see Details, YAML, TaskRuns, Logs and Events tabs
+              And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created At, Owner, Status, Pipeline, Repository, Branch, commit id and Event type
+              And Actions dropdown display on the top right corner of the page
+
+        Examples:
+                  | repository_name |
+                  | test-repo       |
+
+
+        @regression @to-do
+        Scenario Outline: Delete the repository from the Repository details page: P-11-TC10
             Given repository "<repository_name>" is present on Repositories page
              When user searches repository "<repository_name>" in repositories page
               And user clicks repository "<repository_name>" from searched results on Repositories page
