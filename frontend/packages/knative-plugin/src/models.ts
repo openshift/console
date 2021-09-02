@@ -1,7 +1,6 @@
 import { chart_color_cyan_400 as knativeServingColor } from '@patternfly/react-tokens/dist/js/chart_color_cyan_400';
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import { K8sKind } from '@console/internal/module/k8s';
-import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 import {
   KNATIVE_EVENT_SOURCE_APIGROUP,
   KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
@@ -390,7 +389,6 @@ export const CamelIntegrationModel: K8sKind = {
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,
-  badge: BadgeType.TECH,
 };
 
 export const KafkaModel: K8sKind = {
@@ -445,7 +443,6 @@ export const CamelKameletBindingModel: K8sKind = {
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,
-  badge: BadgeType.TECH,
 };
 
 export const CamelKameletModel: K8sKind = {
@@ -464,7 +461,6 @@ export const CamelKameletModel: K8sKind = {
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,
-  badge: BadgeType.TECH,
 };
 
 export const CamelIntegrationPlatformModel: K8sKind = {
@@ -483,5 +479,4 @@ export const CamelIntegrationPlatformModel: K8sKind = {
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,
-  badge: BadgeType.TECH,
 };
