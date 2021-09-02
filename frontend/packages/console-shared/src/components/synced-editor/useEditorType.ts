@@ -44,7 +44,9 @@ export const useEditorType = (
   React.useEffect(() => {
     if (resourceLoaded) {
       const editorType: EditorType = getEditorType();
-      setLastViewedEditorType(editorType);
+      if (!lastViewedEditorType || lastViewedEditorType !== editorType) {
+        setLastViewedEditorType(editorType);
+      }
       setActiveEditorType(editorType);
     }
     // run this hook only after all resources have loaded
