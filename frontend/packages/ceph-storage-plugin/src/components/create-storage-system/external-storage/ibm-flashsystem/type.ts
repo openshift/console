@@ -37,4 +37,5 @@ export type FlashSystemState = {
   password: string;
   endpoint: string;
   poolname: string;
+  volmode: string;
 };

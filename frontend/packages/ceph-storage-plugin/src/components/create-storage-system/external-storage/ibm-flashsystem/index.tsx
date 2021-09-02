@@ -7,6 +7,8 @@ import {
   Button,
   Tooltip,
   ValidatedOptions,
+  Select,
+  SelectOption,
 } from '@patternfly/react-core';
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 import { SecretKind, apiVersionForModel } from '@console/internal/module/k8s';
@@ -16,11 +18,14 @@ import { FlashSystemState, IBMFlashSystemKind } from './type';
 import { IBMFlashSystemModel } from './models';
 import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
 
+const VOLUME_MODES = ['thick', 'thin'];
+
 export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<FlashSystemState>> = ({
   setFormState,
   formState,
 }) => {
   const { t } = useTranslation();
+  const [isOpen, setIsOpen] = React.useState(false);
   const [reveal, setReveal] = React.useState(false);
   const [endpointValid, setEndpointValid] = React.useState(ValidatedOptions.default);
 
@@ -29,6 +34,14 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
     value && isValidUrl(value)
       ? setEndpointValid(ValidatedOptions.success)
       : setEndpointValid(ValidatedOptions.error);
+  };
+
+  const onToggle = () => setIsOpen(!isOpen);
+
+  const onModeSelect = (event, value) => {
+    event.preventDefault();
+    setFormState('volmode', value);
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -89,6 +102,21 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           isRequired
         />
       </FormGroup>
+      <FormGroup label={t('ceph-storage-plugin~Volume Mode')} fieldId="volume-mode-input">
+        <Select
+          onSelect={onModeSelect}
+          id="volume-mode-input"
+          selections={formState.volmode}
+          onToggle={onToggle}
+          isOpen={isOpen}
+          isDisabled={false}
+          placeholderText={VOLUME_MODES[0]}
+        >
+          {VOLUME_MODES.map((mode) => (
+            <SelectOption key={mode} value={mode} />
+          ))}
+        </Select>
+      </FormGroup>
     </>
   );
 };
@@ -121,7 +149,7 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
       defaultPool: {
         poolName: form.poolname,
         storageclassName: storageClassName,
-        spaceEfficiency: defaultVolumeMode,
+        spaceEfficiency: form.volmode ? form.volmode : defaultVolumeMode,
         fsType: defaultFilesystem,
         volumeNamePrefix: defaultVolumePrefix,
       },
