@@ -13,10 +13,7 @@ import { ExternalLink, HandlePromiseProps, withHandlePromise } from '../utils';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { RadioInput } from '../radio';
-import {
-  CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER,
-  CLUSTER_VERSION_CUSTOM_UPSTREAM_SERVER_URL_PLACEHOLDER,
-} from '@console/shared/src/constants';
+import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
 import { TextInput } from '@patternfly/react-core';
 import { openshiftHelpBase } from '@console/internal/components/utils';
 
@@ -26,22 +23,22 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     const currentUpstream = cv?.spec?.upstream;
 
     const [customSelected, setCustomSelected] = React.useState(!!currentUpstream);
-    const [customUrl, setCustomURL] = React.useState(currentUpstream);
-    const [invalidCustomUrl, setInvalidCustomURL] = React.useState(false);
+    const [customURL, setCustomURL] = React.useState(currentUpstream);
+    const [invalidCustomURL, setInvalidCustomURL] = React.useState(false);
 
     const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
       e.preventDefault();
       if (customSelected) {
-        if (!customUrl) {
+        if (!customURL) {
           setInvalidCustomURL(true);
           return;
-        } else if (customUrl === currentUpstream) {
+        } else if (customURL === currentUpstream) {
           return handlePromise(Promise.resolve(), close);
         }
       } else if (!currentUpstream) {
         return handlePromise(Promise.resolve(), close);
       }
-      const value = customSelected ? customUrl : null;
+      const value = customSelected ? customURL : null;
       const patch = [{ op: 'add', path: '/spec/upstream', value }];
       return handlePromise(k8sPatch(ClusterVersionModel, cv, patch), close);
     };
@@ -91,16 +88,16 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
                 <TextInput
                   id={'cluster-version-custom-upstream-server-url'}
                   type="url"
-                  placeholder={CLUSTER_VERSION_CUSTOM_UPSTREAM_SERVER_URL_PLACEHOLDER}
-                  value={customUrl}
+                  placeholder="https://example.com/api/upgrades_info/v1/graph"
+                  value={customURL}
                   onChange={(text) => {
                     setCustomSelected(true);
                     setCustomURL(text);
                     setInvalidCustomURL(false);
                   }}
-                  validated={invalidCustomUrl ? 'error' : 'default'}
+                  validated={invalidCustomURL ? 'error' : 'default'}
                 />
-                {invalidCustomUrl && (
+                {invalidCustomURL && (
                   <div className="pf-c-form">
                     <div className="pf-c-form__helper-text pf-m-error">
                       {t('public~Please enter a URL')}
@@ -116,7 +113,7 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
           inProgress={props.inProgress}
           submitText={t('public~Save')}
           cancel={props.cancel}
-          submitDisabled={invalidCustomUrl}
+          submitDisabled={invalidCustomURL}
         />
       </form>
     );

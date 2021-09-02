@@ -158,7 +158,6 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
       <DetailsItem label={t('public~Owner')} obj={resource} path="metadata.ownerReferences">
         <OwnerReferences resource={resource} />
       </DetailsItem>
-      <UpstreamConfigDetailsItem resource={resource} />
     </dl>
   );
 };
@@ -205,7 +204,7 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
       group: ClusterVersionModel.apiGroup,
       resource: ClusterVersionModel.plural,
       verb: 'patch',
-      name: resource.metadata.name,
+      name: resource?.metadata?.name,
     }) && window.SERVER_FLAGS.branding !== 'dedicated';
   return (
     <DetailsItem label={t('public~Upstream configuration')} obj={resource} path="spec.upstream">
@@ -222,7 +221,7 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
           variant="link"
           isDisabled={!clusterVersionIsEditable}
         >
-          {resource.spec.upstream || t('public~Default update server')}
+          {resource?.spec?.upstream || t('public~Default update server')}
           {clusterVersionIsEditable && (
             <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
           )}
