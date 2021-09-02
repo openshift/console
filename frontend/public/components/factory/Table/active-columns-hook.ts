@@ -6,7 +6,7 @@ import {
   useActiveNamespace,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { TableColumn } from './VirtualizedTable';
+import { TableColumn } from '@console/dynamic-plugin-sdk';
 
 export const useActiveColumns = <D = any>({
   columns,
