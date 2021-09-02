@@ -15,6 +15,7 @@ import {
 import { history } from '@console/internal/components/utils';
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { setFlag } from '@console/internal/actions/features';
+
 import { WizardCommonProps, WizardState } from './reducer';
 import {
   createExternalSubSystem,
@@ -66,6 +67,7 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     capacityAndNodes,
     createLocalVolumeSet,
     securityAndNetwork,
+    connectionDetails,
     nodes,
   } = state;
   const { externalStorage } = backingStorage;
@@ -87,7 +89,7 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
         canGoToNextStep(createStorageClass, storageClass.name)
       );
     case StepsName(t)[Steps.ConnectionDetails]:
-      return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
+      return canGoToNextStep && canGoToNextStep(connectionDetails, storageClass.name);
     case StepsName(t)[Steps.CreateLocalVolumeSet]:
       return chartNodes.size >= MINIMUM_NODES && volumeSetName.trim().length && isValidDiskSize;
     case StepsName(t)[Steps.CapacityAndNodes]:
@@ -131,16 +133,15 @@ export const setActionFlags = (
 
 const handleBackingStorageNext = async (
   backingStorage: WizardState['backingStorage'],
-  handleError: (err: string) => void,
-  storageSystems: StorageSystemKind[] = [],
+  handleError: (err: string, showError: boolean) => void,
   moveToNextStep: () => void,
+  isSSPresent: boolean,
 ) => {
   const { externalStorage, type, deployment } = backingStorage;
   const { model, displayName } = getExternalStorage(externalStorage) || {
     model: { kind: '', apiVersion: '', apiGroup: '' },
     displayName: '',
   };
-  const isSSPresent = storageSystems.find((ss) => ss.spec.kind === model.kind);
   const isRhcs = externalStorage === OCSServiceModel.kind;
 
   try {
@@ -161,15 +162,16 @@ const handleBackingStorageNext = async (
       moveToNextStep();
     } else moveToNextStep();
   } catch (err) {
-    handleError(err.message);
+    handleError(err.message, true);
   }
 };
 
 const handleReviewAndCreateNext = async (
   state: WizardState,
   hasOCS: boolean,
-  handleError: (err: string) => void,
+  handleError: (err: string, showError: boolean) => void,
   flagDispatcher: any,
+  externalSystem: StorageSystemKind,
 ) => {
   const { connectionDetails, createStorageClass, storageClass, nodes } = state;
   const { externalStorage, deployment, type } = state.backingStorage;
@@ -192,8 +194,18 @@ const handleReviewAndCreateNext = async (
     } else if (type === BackingStorageType.EXTERNAL) {
       const { createPayload, model, displayName } = getExternalStorage(externalStorage) || {};
 
-      const subSystemName = isRhcs ? OCS_EXTERNAL_CR_NAME : getExternalSubSystemName(displayName);
+      const firstExternalSystemName = getExternalSubSystemName(displayName);
+      const hasAnExternalSystem = externalSystem?.metadata?.name === firstExternalSystemName;
+
+      const subSystemName = isRhcs
+        ? OCS_EXTERNAL_CR_NAME
+        : hasAnExternalSystem
+        ? `${firstExternalSystemName}-${storageClass.name}`.substring(0, 230)
+        : firstExternalSystemName;
+
       const subSystemState = isRhcs ? connectionDetails : createStorageClass;
+      const subSystemKind = getStorageSystemKind(model);
+
       const subSystemPayloads = createPayload(
         subSystemName,
         subSystemState,
@@ -203,12 +215,13 @@ const handleReviewAndCreateNext = async (
 
       await createExternalSubSystem(subSystemPayloads);
       if (!hasOCS) await createStorageCluster(state);
+      if (hasAnExternalSystem) await createStorageSystem(subSystemName, subSystemKind);
     }
     // These flags control the enablement of dashboards and other ODF UI components in console
     setActionFlags(isMCG ? BackingStorageType.EXISTING : type, flagDispatcher, isRhcs);
     history.push('/odf/systems');
   } catch (err) {
-    handleError(err.message);
+    handleError(err.message, true);
   }
 };
 
@@ -231,6 +244,11 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
 
   const jumpToNextStep = canJumpToNextStep(stepName, state, t);
 
+  const { model } = getExternalStorage(state.backingStorage.externalStorage) || {
+    model: { kind: '', apiVersion: '', apiGroup: '' },
+  };
+  const externalSystem = storageSystems?.find((ss) => ss.spec.kind === getStorageSystemKind(model));
+
   const moveToNextStep = () => {
     dispatch({
       type: 'wizard/setStepIdReached',
@@ -239,9 +257,9 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
     onNext();
   };
 
-  const handleError = (errorMessage: string) => {
+  const handleError = (errorMessage: string, showError: boolean) => {
     setRequestError(errorMessage);
-    setShowErrorAlert(true);
+    setShowErrorAlert(showError);
   };
 
   const handleNext = async () => {
@@ -251,8 +269,8 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         await handleBackingStorageNext(
           state.backingStorage,
           handleError,
-          storageSystems,
           moveToNextStep,
+          !!externalSystem,
         );
         setRequestInProgress(false);
         break;
@@ -264,7 +282,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         break;
       case StepsName(t)[Steps.ReviewAndCreate]:
         setRequestInProgress(true);
-        await handleReviewAndCreateNext(state, hasOCS, handleError, flagDispatcher);
+        await handleReviewAndCreateNext(state, hasOCS, handleError, flagDispatcher, externalSystem);
         setRequestInProgress(false);
         break;
       default:
@@ -279,7 +297,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
           className="odf-create-storage-system-footer__alert"
           variant="danger"
           isInline
-          actionClose={<AlertActionCloseButton onClose={() => setShowErrorAlert(false)} />}
+          actionClose={<AlertActionCloseButton onClose={() => handleError('', false)} />}
           title={t('ceph-storage-plugin~An error has occurred')}
         >
           {requestError}

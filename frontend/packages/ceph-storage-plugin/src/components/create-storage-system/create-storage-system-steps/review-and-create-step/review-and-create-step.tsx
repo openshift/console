@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { TextContent, Text, TextVariants, List, ListItem } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src';
@@ -25,7 +26,7 @@ export const ReviewItem = ({ children, title }) => (
   </div>
 );
 
-export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
+export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS }) => {
   const { t } = useTranslation();
   const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
 
@@ -35,6 +36,8 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
     securityAndNetwork,
     createLocalVolumeSet,
     backingStorage,
+    connectionDetails,
+    createStorageClass,
     nodes,
   } = state;
   const { capacity, arbiterLocation, enableArbiter } = capacityAndNodes;
@@ -42,6 +45,8 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
   const { deployment, externalStorage, type } = backingStorage;
 
   const isMCG = deployment === DeploymentType.MCG;
+  const isRhcs = !_.isEmpty(connectionDetails);
+  const isStandaloneExternal = hasOCS && !_.isEmpty(createStorageClass);
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
   const formattedCapacity = !isNoProvisioner
@@ -65,7 +70,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
   return (
     <>
       <ReviewItem title={t('ceph-storage-plugin~Backing storage')}>
-        {!isMCG && (
+        {!isMCG && !isRhcs && (
           <ListItem>
             {t('ceph-storage-plugin~StorageClass: {{name}}', {
               name: storageClass.name || createLocalVolumeSet.volumeSetName,
@@ -85,7 +90,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
           </ListItem>
         )}
       </ReviewItem>
-      {!isMCG && (
+      {!isMCG && !isRhcs && !isStandaloneExternal && (
         <ReviewItem title={t('ceph-storage-plugin~Capacity and nodes')}>
           <ListItem>
             {t('ceph-storage-plugin~Cluster capacity: {{capacity}}', {
@@ -119,39 +124,42 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
           )}
         </ReviewItem>
       )}
-      {isMCG ? (
-        <ReviewItem title={t('ceph-storage-plugin~Security')}>
-          <ListItem>{t('ceph-storage-plugin~Encryption: Enabled')}</ListItem>
-          <ListItem>
-            {t('ceph-storage-plugin~External key management service: {{kmsStatus}}', {
-              kmsStatus,
-            })}
-          </ListItem>
-        </ReviewItem>
-      ) : (
-        <ReviewItem title={t('ceph-storage-plugin~Security and network')}>
-          <ListItem>
-            {t('ceph-storage-plugin~Encryption: {{encryptionStatus}}', { encryptionStatus })}
-          </ListItem>
-          {hasEncryption && (
+      {!isRhcs &&
+        !isStandaloneExternal &&
+        (isMCG ? (
+          <ReviewItem title={t('ceph-storage-plugin~Security')}>
+            <ListItem>{t('ceph-storage-plugin~Encryption: Enabled')}</ListItem>
             <ListItem>
               {t('ceph-storage-plugin~External key management service: {{kmsStatus}}', {
                 kmsStatus,
               })}
             </ListItem>
-          )}
-          {isMultusSupported && (
+          </ReviewItem>
+        ) : (
+          <ReviewItem title={t('ceph-storage-plugin~Security and network')}>
             <ListItem>
-              {t('ceph-storage-plugin~Network: {{networkType}}', {
-                networkType: NetworkTypeLabels[networkType],
-              })}
+              {t('ceph-storage-plugin~Encryption: {{encryptionStatus}}', { encryptionStatus })}
             </ListItem>
-          )}
-        </ReviewItem>
-      )}
+            {hasEncryption && (
+              <ListItem>
+                {t('ceph-storage-plugin~External key management service: {{kmsStatus}}', {
+                  kmsStatus,
+                })}
+              </ListItem>
+            )}
+            {isMultusSupported && (
+              <ListItem>
+                {t('ceph-storage-plugin~Network: {{networkType}}', {
+                  networkType: NetworkTypeLabels[networkType],
+                })}
+              </ListItem>
+            )}
+          </ReviewItem>
+        ))}
     </>
   );
 };
 type ReviewAndCreateProps = {
   state: WizardState;
+  hasOCS: boolean;
 };
