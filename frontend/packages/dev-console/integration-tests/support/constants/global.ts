@@ -38,7 +38,7 @@ export enum authenticationType {
 }
 
 export enum resources {
-  DeploymentConfigs = 'Deployment Configs',
+  Deployments = 'Deployments',
   BuildConfigs = 'Build Configs',
   Services = 'Services',
   ImageStreams = 'Image Streams',
