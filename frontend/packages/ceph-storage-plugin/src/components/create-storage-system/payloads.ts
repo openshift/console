@@ -22,7 +22,7 @@ import { cephStorageLabel } from '../../selectors';
 import { KMSConfigMap, StorageSystemKind } from '../../types';
 import { createAdvancedKmsResources, parseURL } from '../kms-config/utils';
 
-export const createStorageSystem = (subSystemName: string, subSystemKind: string) => {
+export const createStorageSystem = async (subSystemName: string, subSystemKind: string) => {
   const payload: StorageSystemKind = {
     apiVersion: apiVersionForModel(StorageSystemModel),
     kind: StorageSystemModel.kind,
@@ -51,8 +51,11 @@ export const createNoobaaKmsResources = async (kms: WizardState['securityAndNetw
       token: kms.token.value,
     },
   };
-
-  return Promise.all([k8sCreate(SecretModel, tokenSecret), ...createAdvancedKmsResources(kms)]);
+  try {
+    await Promise.all([k8sCreate(SecretModel, tokenSecret), ...createAdvancedKmsResources(kms)]);
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const createNoobaaResource = async (kms: WizardState['securityAndNetwork']['kms']) => {
@@ -142,10 +145,21 @@ export const labelNodes = async (nodes: WizardNodeState[]) => {
     if (!node.labels?.[cephStorageLabel])
       requests.push(k8sPatchByName(NodeModel, node.name, null, patch));
   });
-  return Promise.all(requests);
+  try {
+    await Promise.all(requests);
+  } catch (err) {
+    throw err;
+  }
 };
 
-export const createExternalSubSystem = (subSystemPayloads: Payload[]) =>
-  Promise.all(
-    subSystemPayloads.map(async (payload) => k8sCreate(payload.model as K8sKind, payload.payload)),
-  );
+export const createExternalSubSystem = async (subSystemPayloads: Payload[]) => {
+  try {
+    await Promise.all(
+      subSystemPayloads.map(async (payload) =>
+        k8sCreate(payload.model as K8sKind, payload.payload),
+      ),
+    );
+  } catch (err) {
+    throw err;
+  }
+};

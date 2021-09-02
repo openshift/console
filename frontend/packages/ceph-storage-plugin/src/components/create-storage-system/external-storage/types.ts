@@ -1,6 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FlashSystemState } from './ibm-flashsystem/type';
-import { IP_FAMILY } from '../../../constants';
 
 /**
  *  Configures a new external storage vendor to the Storage System Creation wizard.
@@ -106,8 +105,7 @@ type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 export type RHCSState = {
   fileData: string;
-  isRejected: boolean;
+  errorMessage: boolean;
   isLoading: boolean;
   fileName: string;
-  ipFamily: IP_FAMILY;
 };
