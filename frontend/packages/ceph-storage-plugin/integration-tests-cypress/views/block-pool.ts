@@ -19,8 +19,8 @@ export const poolMessage: {
 };
 
 export const navigateToBlockPool = () => {
-  commonFlows.navigateToOCS();
-  cy.byLegacyTestID('horizontal-link-Block Pools').click();
+  commonFlows.navigateToOCSDashboard();
+  cy.byLegacyTestID('horizontal-link-BlockPools').click();
 };
 
 export const populateBlockPoolForm = () => {

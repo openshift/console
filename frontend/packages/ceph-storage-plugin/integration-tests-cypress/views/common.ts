@@ -6,6 +6,11 @@ export const commonFlows = {
     cy.byTestOperatorRow('OpenShift Container Storage').click();
   },
   checkAll: () => cy.get('input[name=check-all]'),
+  navigateToOCSDashboard: () => {
+    cy.clickNavLink(['Storage', 'OpenShift Data Foundation']);
+    cy.byLegacyTestID('horizontal-link-Storage Systems').click();
+    cy.contains('ocs-storagecluster').click();
+  },
 };
 
 export const commandPoll = (

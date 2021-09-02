@@ -1,15 +1,13 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
-import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 import {
   createBlockPool,
   deleteBlockPoolFromCli,
   verifyFooterActions,
   verifyBlockPoolJSON,
-  poolMessage,
 } from '../views/block-pool';
 
-describe('Test block pool update under OCS UI', () => {
+describe('Test block pool update under ODF UI', () => {
   before(() => {
     cy.login();
     cy.visit('/');
@@ -47,12 +45,6 @@ describe('Test block pool update under OCS UI', () => {
 
   it('Test editing a default block pool is not allowed', () => {
     cy.log('Click edit kebab action');
-    cy.byLegacyTestID('kebab-button')
-      .last()
-      .click();
-    cy.byTestActionID('Edit BlockPool').click();
-    cy.log('Editing not allowed message is visible');
-    cy.byTestID('empty-state-body').contains(poolMessage[POOL_PROGRESS.NOTALLOWED]);
-    verifyFooterActions(POOL_PROGRESS.NOTALLOWED);
+    cy.byLegacyTestID('kebab-button').should('be.disabled');
   });
 });
