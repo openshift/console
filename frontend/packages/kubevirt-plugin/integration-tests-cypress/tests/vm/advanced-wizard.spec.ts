@@ -1,14 +1,14 @@
 import { testName } from '../../support';
-import { VirtualMachineData } from '../../types/vm';
+import { Network, VirtualMachineData } from '../../types/vm';
 import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
-// const nic0: Network = {
-//   name: 'nic-0',
-//   nad: 'bridge-network',
-// };
+const nic0: Network = {
+  name: 'nic-0',
+  nad: 'bridge-network',
+};
 
 const urlVM: VirtualMachineData = {
   name: `url-vm-customize-wizard-${testName}`,
@@ -44,15 +44,16 @@ const pvcVM: VirtualMachineData = {
   startOnCreation: true,
 };
 
-// const pxeVM: VirtualMachineData = {
-//   name: `pxe-vm-customize-wizard-${testName}`,
-//   description: 'ID(CNV-771): create VM from PXE',
-//   namespace: testName,
-//   template: 'Fedora 32+ VM',
-//   provisionSource: ProvisionSource.PXE,
-//   sshEnable: false,
-//   networkInterfaces: [nic0],
-// };
+const pxeVM: VirtualMachineData = {
+  name: `pxe-vm-customize-wizard-${testName}`,
+  description: 'ID(CNV-771): create VM from PXE',
+  namespace: testName,
+  template: TEMPLATE.FEDORA.name,
+  provisionSource: ProvisionSource.PXE,
+  sshEnable: false,
+  networkInterfaces: [nic0],
+  startOnCreation: false,
+};
 
 describe('Test VM creation', () => {
   before(() => {
@@ -93,5 +94,12 @@ describe('Test VM creation', () => {
       virtualization.vms.visit();
       vm.customizeCreate(vmData);
     });
+  });
+
+  it('ID(CNV-771): create VM from PXE', () => {
+    if (Cypress.env('DOWNSTREAM')) {
+      virtualization.vms.visit();
+      vm.customizeCreate(pxeVM);
+    }
   });
 });
