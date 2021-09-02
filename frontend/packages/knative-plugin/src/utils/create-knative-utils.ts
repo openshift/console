@@ -282,10 +282,9 @@ export const getDomainMappingRequests = async (
   const {
     serverless: { domainMapping: selectedDomainMapping = [] },
   } = formData;
-  const domainMappingResources = await getDomainMappingResources(
-    knativeSvcResource,
-    selectedDomainMapping,
-  );
+  const domainMappingResources = await getDomainMappingResources(knativeSvcResource, [
+    ...new Set(selectedDomainMapping.map((dm) => dm.replace(/ *\([^)]*\) */g, ''))),
+  ]);
   const requests: Promise<K8sResourceKind>[] = [];
   domainMappingResources.length &&
     domainMappingResources.forEach(({ action, resource: dmRes }) => {
