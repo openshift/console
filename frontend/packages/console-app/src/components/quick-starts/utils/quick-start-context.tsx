@@ -18,6 +18,7 @@ import {
 } from '@console/shared';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';
 
 export { QuickStartContext };
 export { QuickStartContextProvider };
@@ -26,7 +27,7 @@ export const getProcessedResourceBundle = (resourceBundle, lng) => {
   const params = new URLSearchParams(window.location.search);
   const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
-  const language = lng || localStorage.getItem('bridge/language') || 'en';
+  const language = lng || getLastLanguage() || 'en';
   let consoleBundle = resourceBundle;
   if (pseudolocalizationEnabled && language === 'en') {
     consoleBundle = {};
@@ -174,7 +175,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [activeQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const language = localStorage.getItem('bridge/language') || 'en';
+  const language = getLastLanguage() || 'en';
   const resourceBundle = i18n.getResourceBundle(language, 'console-app');
   const processedResourceBundle = getProcessedResourceBundle(resourceBundle, language);
 
