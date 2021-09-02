@@ -46,7 +46,12 @@ export const createMenuItems = (actions: KebabMenuOption[]) =>
     ) : (
       <ContextMenuItem
         key={index} // eslint-disable-line react/no-array-index-key
-        component={<KebabItem option={option} onClick={() => onKebabOptionClick(option)} />}
+        /* wrap in Fragment as KebabItem is a Function Component: gives warning on adding ref prop */
+        component={
+          <>
+            <KebabItem option={option} onClick={() => onKebabOptionClick(option)} />{' '}
+          </>
+        }
       />
     ),
   );
