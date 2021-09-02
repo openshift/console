@@ -13,14 +13,15 @@ import {
   defaultRequestSize,
   KMSSecretName,
   NO_PROVISIONER,
+  OCS_INTERNAL_CR_NAME,
 } from '../../constants';
-import { NooBaaSystemModel, OCSServiceModel, StorageSystemModel } from '../../models';
+import { OCSServiceModel, StorageSystemModel } from '../../models';
 import { getOCSRequestData } from '../ocs-install/ocs-request-data';
 import { capacityAndNodesValidate } from '../../utils/create-storage-system';
 import { ValidationType } from '../../utils/common-ocs-install-el';
 import { cephStorageLabel } from '../../selectors';
-import { KMSConfigMap, StorageSystemKind } from '../../types';
-import { createAdvancedKmsResources, parseURL } from '../kms-config/utils';
+import { StorageSystemKind } from '../../types';
+import { createAdvancedKmsResources } from '../kms-config/utils';
 
 export const createStorageSystem = async (subSystemName: string, subSystemKind: string) => {
   const payload: StorageSystemKind = {
@@ -58,47 +59,22 @@ export const createNoobaaKmsResources = async (kms: WizardState['securityAndNetw
   }
 };
 
-export const createNoobaaResource = async (kms: WizardState['securityAndNetwork']['kms']) => {
-  const noobaaPayload: K8sResourceKind = {
-    apiVersion: apiVersionForModel(NooBaaSystemModel),
-    kind: NooBaaSystemModel.kind,
-    metadata: { name: 'noobaa', namespace: CEPH_STORAGE_NAMESPACE },
+export const createMCGStorageCluster = async (enableKms: boolean) => {
+  const storageClusterPayload: K8sResourceKind = {
+    apiVersion: apiVersionForModel(OCSServiceModel),
+    kind: OCSServiceModel.kind,
+    metadata: { name: OCS_INTERNAL_CR_NAME, namespace: CEPH_STORAGE_NAMESPACE },
     spec: {
-      dbResources: { requests: { cpu: '0.1', memory: '1Gi' } },
-      dbType: 'postgres',
-      coreResources: {
-        requests: {
-          cpu: '0.1',
-          memory: '1Gi',
-        },
+      multiCloudGateway: {
+        reconcileStrategy: 'standalone',
       },
-      security: {},
+      encryption: {
+        enable: enableKms,
+        kms: { enable: enableKms },
+      },
     },
   };
-  if (kms) {
-    const parsedAddress = parseURL(kms.address.value);
-
-    const configData: KMSConfigMap = {
-      KMS_PROVIDER: 'vault',
-      KMS_SERVICE_NAME: kms.name.value,
-      VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
-      VAULT_BACKEND_PATH: kms.backend,
-      VAULT_CACERT: kms.caCert?.metadata.name,
-      VAULT_TLS_SERVER_NAME: kms.tls,
-      VAULT_CLIENT_CERT: kms.clientCert?.metadata.name,
-      VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
-      VAULT_NAMESPACE: kms.providerNamespace,
-    };
-
-    noobaaPayload.spec.security = {
-      kms: {
-        connectionDetails: configData,
-        tokenSecretName: KMSSecretName,
-      },
-    };
-  }
-
-  return k8sCreate(NooBaaSystemModel, noobaaPayload);
+  return k8sCreate(OCSServiceModel, storageClusterPayload);
 };
 
 export const createStorageCluster = async (state: WizardState) => {
