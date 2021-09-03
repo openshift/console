@@ -45,8 +45,12 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     const { t } = useTranslation();
 
     return (
-      <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
-        <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
+      <form
+        onSubmit={submit}
+        name="form"
+        className="configure-upstream-modal modal-content modal-content--no-inner-scroll"
+      >
+        <ModalTitle>{t('public~Edit update server configuration')}</ModalTitle>
         <ModalBody>
           <p>
             {t(

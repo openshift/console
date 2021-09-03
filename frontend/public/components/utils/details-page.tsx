@@ -207,7 +207,7 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
       name: resource?.metadata?.name,
     }) && window.SERVER_FLAGS.branding !== 'dedicated';
   return (
-    <DetailsItem label={t('public~Upstream configuration')} obj={resource} path="spec.upstream">
+    <DetailsItem label={t('public~Update server')} obj={resource} path="spec.upstream">
       <div>
         <Button
           type="button"
