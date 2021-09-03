@@ -41,3 +41,4 @@ export enum StoreType {
   BS = 'BackingStore',
   NS = 'NamespaceStore',
 }
+export const ODF_MODEL_FLAG = 'ODF_FLAG';
