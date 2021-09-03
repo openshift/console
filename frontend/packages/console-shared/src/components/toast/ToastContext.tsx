@@ -30,6 +30,8 @@ export type ToastOptions = {
   timeout?: number | boolean;
   // Callback when the toast is removed.
   onRemove?: (id: string) => void;
+  // Callback to run when toast is dismissed with close button
+  onClose?: () => void;
 };
 
 export type ToastContextType = {
