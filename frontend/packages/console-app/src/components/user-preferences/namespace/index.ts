@@ -1,2 +1,2 @@
-export { default as NamespaceDropdown } from './NamespaceDropdown';
+export { default as UserPreferenceNamespaceDropdown } from './UserPreferenceNamespaceDropdown';
 export * from './usePreferredNamespace';

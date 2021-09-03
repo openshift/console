@@ -168,6 +168,61 @@ const NamespaceGroup: React.FC<{
 
 /* ****************************************** */
 
+type CustomOption = {
+  group?: string;
+  items: {
+    key: string;
+    title: string;
+  }[];
+};
+type CustomContentProps = {
+  options: CustomOption[];
+  selectedKey: string;
+};
+const CustomContent: React.FC<CustomContentProps> = ({ options, selectedKey }) => {
+  if (options.length === 0) {
+    return null;
+  }
+  return (
+    <>
+      {options.map((option) => {
+        if (option?.items.length === 0) {
+          return null;
+        }
+        const menuItems = (
+          // @ts-ignore
+          <MenuList>
+            {option.items.map((item) => (
+              // @ts-ignore
+              <MenuItem
+                key={item.key}
+                itemId={item.key}
+                isSelected={selectedKey === item.title}
+                data-test="dropdown-menu-item-link"
+              >
+                {item.title}
+              </MenuItem>
+            ))}
+          </MenuList>
+        );
+        return (
+          <>
+            <Divider />
+            {option.group ? (
+              // @ts-ignore
+              <MenuGroup label={option.group}>{menuItems}</MenuGroup>
+            ) : (
+              menuItems
+            )}
+          </>
+        );
+      })}
+    </>
+  );
+};
+
+/* ****************************************** */
+
 // The items in the footer are not accessible via the keyboard.
 // This is being tracked in: https://github.com/patternfly/patternfly-react/issues/6031
 
@@ -212,7 +267,17 @@ const NamespaceMenu: React.FC<{
   allNamespacesTitle: string;
   onCreateNew: () => void;
   menuRef: React.MutableRefObject<HTMLDivElement>;
-}> = ({ setOpen, onSelect, selected, isProjects, allNamespacesTitle, onCreateNew, menuRef }) => {
+  customOptions?: CustomOption[];
+}> = ({
+  setOpen,
+  onSelect,
+  selected,
+  isProjects,
+  allNamespacesTitle,
+  onCreateNew,
+  menuRef,
+  customOptions = [],
+}) => {
   // const menuRef = React.useRef(null);
   const filterRef = React.useRef(null);
 
@@ -246,7 +311,10 @@ const NamespaceMenu: React.FC<{
       const { name } = item.metadata;
       return { title: name, key: name };
     });
-    if (!items.some((option) => option.title === selected) && selected !== ALL_NAMESPACES_KEY) {
+    const isItemsIncludeSelected: boolean = [...customOptions, { items }].some((option) =>
+      option.items.some((item) => item.title === selected),
+    );
+    if (!isItemsIncludeSelected && selected !== ALL_NAMESPACES_KEY) {
       items.push({ title: selected, key: selected }); // Add current namespace if it isn't included
     }
     items.sort((a, b) => a.title.localeCompare(b.title));
@@ -255,7 +323,7 @@ const NamespaceMenu: React.FC<{
       items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
     }
     return items;
-  }, [allNamespacesTitle, canList, options, optionsLoaded, selected]);
+  }, [allNamespacesTitle, canList, customOptions, options, optionsLoaded, selected]);
 
   const hasSystemNamespaces = React.useMemo(
     () => optionItems.some((option) => isSystemNamespace(option)),
@@ -352,6 +420,7 @@ const NamespaceMenu: React.FC<{
             }}
           />
         ) : null}
+        <CustomContent options={customOptions} selectedKey={selected} />
         <NamespaceGroup
           isFavorites
           options={filteredFavorites}
@@ -372,6 +441,11 @@ const NamespaceMenu: React.FC<{
 
 /* ****************************************** */
 
+export enum TitleStyle {
+  prefixed = 'prefixed',
+  none = 'none',
+}
+
 const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
   disabled,
   isProjects,
@@ -379,6 +453,8 @@ const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
   selected,
   onCreateNew,
   shortCut,
+  customOptions,
+  titleStyle,
 }) => {
   const { t } = useTranslation();
   const menuRef = React.useRef(null);
@@ -397,6 +473,7 @@ const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
     allNamespacesTitle,
     onCreateNew,
     menuRef,
+    customOptions,
   };
 
   return (
@@ -406,9 +483,13 @@ const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
         menu={<NamespaceMenu {...NamespaceMenuProps} />}
         menuRef={menuRef}
         isOpen={isOpen}
-        title={`${
-          isProjects ? t('console-shared~Project') : t('console-shared~Namespace')
-        }: ${title}`}
+        title={
+          titleStyle === TitleStyle.prefixed
+            ? `${
+                isProjects ? t('console-shared~Project') : t('console-shared~Namespace')
+              }: ${title}`
+            : title
+        }
         onToggle={(menuState) => {
           setOpen(menuState);
         }}
@@ -425,6 +506,8 @@ type NamespaceDropdownProps = {
   onCreateNew?: () => void;
   shortCut?: string;
   selected?: string;
+  customOptions?: CustomOption[];
+  titleStyle?: TitleStyle;
 };
 
 export default NamespaceDropdown;

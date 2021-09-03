@@ -196,7 +196,7 @@
       "description": "%console-app~If a project is not selected, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "userPreferences.NamespaceDropdown" }
+        "component": { "$codeRef": "userPreferences.UserPreferenceNamespaceDropdown" }
       },
       "insertBefore": "topology.preferredView"
     }

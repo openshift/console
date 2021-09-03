@@ -1,0 +1,20 @@
+.co-namespace-preference__dropdown {
+  .co-namespace-dropdown {
+    margin: 0;
+    max-width: 100%;
+  }
+  button.co-namespace-dropdown__menu-toggle {
+  border-width: var(--pf-global--BorderWidth--sm);
+  border-color: var(--pf-global--BorderColor--300) var(--pf-global--BorderColor--300) var(--pf-global--BorderColor--200) var(--pf-global--BorderColor--300);
+  border-style: solid;
+  padding: var(--pf-global--spacer--form-element) var(--pf-global--spacer--sm) !important;
+  font-size: var(--pf-global--FontSize--md) !important;
+
+  &:hover, &:focus {
+      border-bottom-color: var(--pf-global--active-color--100);
+  }
+}
+.pf-c-menu__content {
+    max-height: 400px;
+}
+}

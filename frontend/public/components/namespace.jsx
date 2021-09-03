@@ -100,6 +100,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 
 import {
   NamespaceDropdown,
+  TitleStyle,
   isCurrentUser,
   isOtherUser,
   isSystemNamespace,
@@ -1170,6 +1171,7 @@ const NamespaceBarDropdowns_ = (props) => {
         isProjects={getModel(useProjects).label === 'Project'}
         disabled={disabled}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
+        titleStyle={TitleStyle.prefix}
       />
 
       {children}
