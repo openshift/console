@@ -1,6 +1,7 @@
 .ocs-quick-search-content {
   flex: 1;
   overflow-y: hidden;
+  border-top: 1px solid var(--pf-global--BorderColor--100);
   &__list {
     width: 40%;
     height: 100%;
