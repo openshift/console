@@ -13,12 +13,15 @@ import {
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 import { SecretKind, apiVersionForModel } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
-import { isValidUrl } from '@console/shared';
 import { FlashSystemState, IBMFlashSystemKind } from './type';
 import { IBMFlashSystemModel } from './models';
 import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
 
 const VOLUME_MODES = ['thick', 'thin'];
+const isValidIP = (address) =>
+  /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+    address,
+  );
 
 export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<FlashSystemState>> = ({
   setFormState,
@@ -31,7 +34,7 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
 
   const onChange = (value: string) => {
     setFormState('endpoint', value);
-    value && isValidUrl(value)
+    value && isValidIP(value)
       ? setEndpointValid(ValidatedOptions.success)
       : setEndpointValid(ValidatedOptions.error);
   };
@@ -52,7 +55,7 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
         isRequired
         validated={endpointValid}
         helperText={t('ceph-storage-plugin~Rest API IP address of IBM FlashSystem.')}
-        helperTextInvalid={t('ceph-storage-plugin~The endpoint is not a valid URL')}
+        helperTextInvalid={t('ceph-storage-plugin~The endpoint is not a valid IP address')}
       >
         <TextInput
           id="endpoint-input"
@@ -102,7 +105,7 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           isRequired
         />
       </FormGroup>
-      <FormGroup label={t('ceph-storage-plugin~Volume Mode')} fieldId="volume-mode-input">
+      <FormGroup label={t('ceph-storage-plugin~Volume mode')} fieldId="volume-mode-input">
         <Select
           onSelect={onModeSelect}
           id="volume-mode-input"
@@ -191,7 +194,7 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
 
 export const flashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
   !!state.endpoint &&
-  isValidUrl(state.endpoint) &&
+  isValidIP(state.endpoint) &&
   !!state.username &&
   !!state.password &&
   !!state.poolname;
