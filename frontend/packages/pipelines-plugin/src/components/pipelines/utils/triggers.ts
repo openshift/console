@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { flatten, mapValues } from 'lodash';
+import {
+  WatchK8sResource,
+  WatchK8sResources,
+  WatchK8sResults,
+  WatchK8sResultsObject,
+} from '@console/dynamic-plugin-sdk';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import {
   useK8sWatchResource,
   useK8sWatchResources,
-  WatchK8sResource,
-  WatchK8sResources,
-  WatchK8sResults,
-  WatchK8sResultsObject,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { RouteModel } from '@console/internal/models';
 import { K8sResourceCommon, referenceForModel, RouteKind } from '@console/internal/module/k8s';

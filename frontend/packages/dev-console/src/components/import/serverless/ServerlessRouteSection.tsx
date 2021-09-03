@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { LoadingInline } from '@console/internal/components/utils';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { DomainMappingModel } from '@console/knative-plugin/src';
 import { SelectInputField } from '@console/shared';

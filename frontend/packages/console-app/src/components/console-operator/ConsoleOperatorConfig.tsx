@@ -12,14 +12,12 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { EmptyBox, LoadingBox, navFactory, ResourceLink } from '@console/internal/components/utils';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import {

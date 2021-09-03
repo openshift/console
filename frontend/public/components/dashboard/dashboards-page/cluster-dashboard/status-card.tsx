@@ -30,6 +30,7 @@ import {
   isResolvedDashboardsOverviewHealthOperator,
   ResolvedExtension,
   useResolvedExtensions,
+  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
@@ -59,7 +60,7 @@ import {
   URLHealthItem,
   ResourceHealthItem,
 } from './health-item';
-import { WatchK8sResource, useK8sWatchResource } from '../../../utils/k8s-watch-hook';
+import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterDashboardContext } from './context';
 import { useAccessReview } from '../../../utils';

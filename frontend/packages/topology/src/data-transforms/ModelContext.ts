@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { Model } from '@patternfly/react-topology';
 import { observable, computed } from 'mobx';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   TopologyDataModelDepicted,

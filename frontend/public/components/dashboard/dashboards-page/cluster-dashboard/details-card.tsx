@@ -16,6 +16,7 @@ import DetailsBody from '@console/shared/src/components/dashboard/details-card/D
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import { useTranslation } from 'react-i18next';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
@@ -36,7 +37,7 @@ import { flagPending, featureReducerName } from '../../../../reducers/features';
 import { ExternalLink, useAccessReview } from '../../../utils';
 import { RootState } from '../../../../redux';
 import { Link } from 'react-router-dom';
-import { useK8sWatchResource, WatchK8sResource } from '../../../utils/k8s-watch-hook';
+import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
 
 const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {

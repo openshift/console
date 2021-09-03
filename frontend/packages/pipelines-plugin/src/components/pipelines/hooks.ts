@@ -1,10 +1,8 @@
 import { match as RMatch } from 'react-router-dom';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import {

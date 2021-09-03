@@ -6,10 +6,8 @@ import { match as RouterMatch } from 'react-router';
 import { Alert, Button } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { history, LoadingBox } from '@console/internal/components/utils';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { getNamespace } from '@console/shared';
 import CreateStorageClusterWizard from './install-wizard';

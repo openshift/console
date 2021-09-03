@@ -18,17 +18,6 @@ import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { K8sState } from '../../reducers/k8s';
 
-export {
-  ResourcesObject,
-  WatchK8sResults,
-  WatchK8sResultsObject,
-  WatchK8sResource,
-  WatchK8sResources,
-  UseK8sWatchResource,
-  UseK8sWatchResources,
-  WatchK8sResult,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-
 export class NoModelError extends Error {
   constructor() {
     super('Model does not exist');
