@@ -65,9 +65,8 @@ export const wizard = {
       cy.get(wizardView.vmWizard).click();
     },
     selectTemplate: (vmData: VirtualMachineData) => {
-      const { template } = vmData;
       cy.get(wizardView.templateTitle)
-        .contains(template)
+        .contains(vmData.template.name)
         .should('exist')
         .click();
       cy.get(wizardView.next).click();

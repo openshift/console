@@ -1,5 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
+import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import * as wizardView from '../../views/selector-wizard';
 import { virtualization } from '../../views/virtualization';
@@ -9,7 +10,7 @@ const vmData: VirtualMachineData = {
   name: `validate-nad-for-pxe-${testName}`,
   description: 'windows vm',
   namespace: testName,
-  template: 'Microsoft Windows Server 2019 VM',
+  template: TEMPLATE.WIN10,
   provisionSource: ProvisionSource.PXE,
 };
 

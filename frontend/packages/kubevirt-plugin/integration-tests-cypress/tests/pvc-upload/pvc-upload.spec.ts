@@ -13,7 +13,7 @@ const template = TEMPLATE.RHEL6;
 const vmData: VirtualMachineData = {
   name: `pvc-test-vm-${testName}`,
   namespace: testName,
-  template: template.name,
+  template,
   sshEnable: false,
   startOnCreation: true,
   sourceAvailable: true,

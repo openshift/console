@@ -27,7 +27,7 @@ const vmData: VirtualMachineData = {
   name: `vm-${testName}`,
   description: 'VM creation wizard Cloud init',
   namespace: testName,
-  template: TEMPLATE.RHEL6.name,
+  template: TEMPLATE.RHEL6,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,

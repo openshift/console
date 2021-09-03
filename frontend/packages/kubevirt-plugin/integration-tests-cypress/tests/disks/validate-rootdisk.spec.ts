@@ -34,7 +34,7 @@ const ephemeralDisk: Disk = {
 const vmData: VirtualMachineData = {
   name: `validate-rootdisk-${testName}`,
   namespace: testName,
-  template: TEMPLATE.WIN10.name,
+  template: TEMPLATE.WIN10,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
 };

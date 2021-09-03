@@ -1,5 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
+import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
@@ -8,7 +9,7 @@ const vmData: VirtualMachineData = {
   name: `validate-windows-virtio-${testName}`,
   description: 'windows vm',
   namespace: testName,
-  template: 'Microsoft Windows Server 2019 VM',
+  template: TEMPLATE.WIN2K12R2,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,

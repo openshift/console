@@ -1,5 +1,5 @@
 import { testName } from '../../support';
-import { Network, VirtualMachineData } from '../../types/vm';
+import { Network, Template, VirtualMachineData } from '../../types/vm';
 import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
@@ -17,7 +17,7 @@ const urlTemplate: VirtualMachineData = {
   templateProvider: 'foo',
   templateSupport: true,
   os: TEMPLATE.RHEL8.os,
-  template: TEMPLATE.RHEL8.name,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
 };
@@ -29,7 +29,7 @@ const registryTemplate: VirtualMachineData = {
   templateProvider: 'foo',
   templateSupport: true,
   os: TEMPLATE.WIN2K12R2.os,
-  template: TEMPLATE.WIN2K12R2.name,
+  template: TEMPLATE.WIN2K12R2,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
 };
@@ -40,7 +40,7 @@ const pvcTemplate: VirtualMachineData = {
   namespace: testName,
   templateProvider: 'foo',
   templateSupport: true,
-  template: TEMPLATE.FEDORA.name,
+  template: TEMPLATE.FEDORA,
   os: TEMPLATE.FEDORA.os,
   provisionSource: ProvisionSource.CLONE_PVC,
   pvcName: 'clone-pvc-fedora',
@@ -54,7 +54,7 @@ const pxeTemplate: VirtualMachineData = {
   templateProvider: 'foo',
   templateSupport: true,
   os: TEMPLATE.FEDORA.os,
-  template: TEMPLATE.FEDORA.name,
+  template: TEMPLATE.FEDORA,
   provisionSource: ProvisionSource.PXE,
   networkInterfaces: [nic0],
 };
@@ -92,9 +92,10 @@ describe('Test VM creation', () => {
     it(`${data.description}`, () => {
       virtualization.templates.visit();
       virtualization.templates.createTemplateFromWizard(data);
+      const vmt: Template = { name: data.name };
       const vmData: VirtualMachineData = {
         name: `vm-from-${data.name}`,
-        template: data.name,
+        template: vmt,
         sourceAvailable: true,
       };
       virtualization.vms.visit();
