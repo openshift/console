@@ -34,7 +34,6 @@ export const perspective = {
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
     if (switchPerspective.Developer) {
-      cy.testA11y('Developer perspective with guide tour modal');
       guidedTour.close();
       // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');
@@ -42,10 +41,14 @@ export const perspective = {
     nav.sidenav.switcher.shouldHaveText(perspectiveName);
     cy.get('body').then(($body) => {
       if ($body.find('[aria-label="Close drawer panel"]').length) {
-        cy.get('[aria-label="Close drawer panel"]').click();
-        cy.get('button')
-          .contains('Leave')
-          .click();
+        if ($body.find('[data-test="Next button"]').length) {
+          cy.get('[aria-label="Close drawer panel"]').click();
+          cy.get('button')
+            .contains('Leave')
+            .click();
+        } else {
+          cy.get('[aria-label="Close drawer panel"]').click();
+        }
       }
     });
   },

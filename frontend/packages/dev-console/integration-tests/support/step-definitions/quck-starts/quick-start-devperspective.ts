@@ -164,3 +164,16 @@ Then('user can see Start button', () => {
 Then('user can see {string} Steps visible for the Quick Start', (steps: string) => {
   cy.get(quickStartSidebarPO.quickStartSidebarBody).contains(steps);
 });
+
+When('user clicks {string} card', (quickStartDisplayName: string) => {
+  cy.get(quickStartCard(quickStartDisplayName))
+    .scrollIntoView()
+    .should('be.visible')
+    .click();
+  cy.get(quickStartSidebarPO.quickStartSidebarBody).should('be.visible');
+});
+
+Then('user can see url has {string} in the address bar', (urlString: string) => {
+  cy.url().should('include', urlString);
+  cy.log(urlString);
+});
