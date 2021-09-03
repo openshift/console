@@ -57,7 +57,7 @@ Feature: Perform Actions on repository
 
 
         @smoke @to-do
-        Scenario: Actions menu of newly created reposiotry in Repository details page: P-11-TC05
+        Scenario: Actions menu of newly created repository in Repository details page: P-11-TC05
             Given user is at repositories details page with newly created repository "test-repo"
              When user clicks Actions menu in the repository details page
              Then Actions menu display with options Edit labels, Edit annotations, Edit repository, Delete repository
@@ -69,7 +69,7 @@ Feature: Perform Actions on repository
              When user searches repository "<repository_name>" in repositories page
               And user clicks repository "<repository_name>" from searched results on Repositories page
               And user selects option "Edit Repository" from Actions menu drop down
-             Then user modifies the yaml code in the yaml view of the reposiotry
+             Then user modifies the yaml code in the yaml view of the repository
               And user clicks on the save button
              Then user is able to see a success alert message on same page
 
@@ -116,7 +116,7 @@ Feature: Perform Actions on repository
 
 
         @regression @to-do
-        Scenario Outline: Pipeline Runs tab of the Reposiotry details page: P-11-TC10
+        Scenario: Pipeline Runs tab of the Repository details page: P-11-TC10
             Given repository "test-repo" is present on the Repositories page
              When user searches repository "test-repo" in repositories page
               And user clicks repository "test-repo" from searched results on Repositories page
