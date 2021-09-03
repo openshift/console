@@ -41,17 +41,13 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPi
   );
 
   React.useEffect(() => {
-    if (builderImages && recommendedStrategy?.type !== ImportStrategy.S2I) {
-      strategies.filter((s) => {
-        if (s.type === ImportStrategy.S2I) {
-          setFieldValue('image.isRecommending', true);
-          setFieldValue('import.selectedStrategy.detectedCustomData', s.detectedCustomData);
-          handleBuilderImageSelection(s.detectedCustomData);
-          return true;
-        }
-        return false;
-      });
-
+    if (builderImages && recommendedStrategy && recommendedStrategy.type !== ImportStrategy.S2I) {
+      const s2iStrategy = strategies.find((s) => s.type === ImportStrategy.S2I);
+      if (s2iStrategy) {
+        setFieldValue('image.isRecommending', true);
+        setFieldValue('import.selectedStrategy.detectedCustomData', s2iStrategy.detectedCustomData);
+        handleBuilderImageSelection(s2iStrategy.detectedCustomData);
+      }
       image.selected
         ? setFieldValue('import.strategyChanged', true)
         : setFieldValue('import.strategyChanged', false);

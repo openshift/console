@@ -9,7 +9,7 @@ import FormSection from '../section/FormSection';
 
 const DockerSection: React.FC = () => {
   const { t } = useTranslation();
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const {
     import: { showEditImportStrategy, strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
@@ -51,19 +51,17 @@ const DockerSection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    if (recommendedStrategy?.type !== ImportStrategy.DOCKERFILE) {
-      strategies.filter((s) => {
-        if (s.type === ImportStrategy.DOCKERFILE) {
-          setFieldValue('import.selectedStrategy.detectedFiles', s.detectedFiles);
-          setFieldValue('docker.dockerfilePath', s.detectedFiles[0]);
-          handleDockerfileChange();
-          validated === ValidatedOptions.success
-            ? setFieldValue('import.strategyChanged', true)
-            : setFieldValue('import.strategyChanged', false);
-          return true;
-        }
-        return false;
-      });
+    if (recommendedStrategy && recommendedStrategy.type !== ImportStrategy.DOCKERFILE) {
+      const dockerfileStrategy = strategies.find((s) => s.type === ImportStrategy.DOCKERFILE);
+      if (dockerfileStrategy) {
+        setFieldValue('import.selectedStrategy.detectedFiles', dockerfileStrategy.detectedFiles);
+        setFieldValue('docker.dockerfilePath', dockerfileStrategy.detectedFiles?.[0]);
+        handleDockerfileChange();
+        validated === ValidatedOptions.success
+          ? setFieldValue('import.strategyChanged', true)
+          : setFieldValue('import.strategyChanged', false);
+      }
+      setFieldTouched('docker.dockerfilePath', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);

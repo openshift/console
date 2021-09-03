@@ -23,11 +23,13 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
   projects,
 }) => {
   const { t } = useTranslation();
+  const searchParams = new URLSearchParams(window.location.search);
+  const imageStreamName = searchParams.get('imagestream');
   return (
     <form onSubmit={handleSubmit}>
       <FormBody>
         <BuilderSection builderImages={builderImages} />
-        <GitSection showSample builderImages={builderImages} />
+        <GitSection showSample builderImages={builderImages} imageStreamName={imageStreamName} />
         <AppSection
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}

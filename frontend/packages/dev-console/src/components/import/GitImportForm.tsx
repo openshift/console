@@ -8,6 +8,7 @@ import PipelineSection from '@console/pipelines-plugin/src/components/import/pip
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
+import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
 import { GitImportFormProps, GitTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
@@ -28,9 +29,14 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   const searchParams = new URLSearchParams(window.location.search);
   const gitRepoUrl = searchParams.get('gitRepo');
   const formType = searchParams.get('formType');
+  const importType = searchParams.get('importType');
   const {
     git: { validated, gitType },
   } = values;
+  const showFullForm =
+    importType === 'devfile' ||
+    (validated !== ValidatedOptions.default && gitType !== GitTypes.invalid);
+
   return (
     <form onSubmit={handleSubmit} data-test-id="import-git-form">
       <FormBody>
@@ -42,10 +48,15 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
             }
           }
           formType={formType}
+          importType={importType}
         />
-        {validated !== ValidatedOptions.default && gitType !== GitTypes.invalid && (
+        {showFullForm && (
           <>
-            <ImportStrategySection builderImages={builderImages} />
+            {importType === 'devfile' ? (
+              <DevfileStrategySection />
+            ) : (
+              <ImportStrategySection builderImages={builderImages} />
+            )}
             <AppSection
               project={values.project}
               noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
