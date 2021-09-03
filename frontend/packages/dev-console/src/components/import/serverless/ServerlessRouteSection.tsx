@@ -13,6 +13,7 @@ import { SelectInputField } from '@console/shared';
 import { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import PortInputField from '../route/PortInputField';
 import {
+  getAllOtherDomainMappingInUse,
   getOtherKsvcFromDomainMapping,
   hasOtherKsvcDomainMappings,
   removeDuplicateDomainMappings,
@@ -73,6 +74,7 @@ const ServerlessRouteSection: React.FC = () => {
 
   const placeholderPort = defaultUnknownPort;
   const portOptions = ports.map((port) => port?.containerPort.toString());
+  const domainsInUse = getAllOtherDomainMappingInUse(serverless.domainMapping, data, name) ?? [];
   return (
     <>
       <PortInputField
@@ -91,7 +93,7 @@ const ServerlessRouteSection: React.FC = () => {
             label={t('devconsole~Domain mapping')}
             options={domainMappingResources}
             placeholderText={t('devconsole~Add domain')}
-            helpText={t('devconsole~Enter custom domain to map to the Serverless Deployment')}
+            helpText={t('devconsole~Enter custom domain to map to the Knative service')}
             isCreatable
             hasOnCreateOption
           />
@@ -102,8 +104,24 @@ const ServerlessRouteSection: React.FC = () => {
               isInline
               title={t('devconsole~Domain mapping(s) will be updated')}
             >
-              {t(
-                'devconsole~Some of the selected domain mappings already reference Serverless deployments in this namespace.  These Serverless deployments will be updated to no longer map to the domain mapping.',
+              <div style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}>
+                {t(
+                  'devconsole~Warning: The following domain(s) will be removed from the associated service',
+                )}
+              </div>
+              {domainsInUse.length > 0 && (
+                <ul>
+                  {domainsInUse.map((dm) => {
+                    return (
+                      <li key={dm.metadata.uid}>
+                        {t(`devconsole~{{domainMapping}} from {{knativeService}}`, {
+                          domainMapping: dm.metadata.name,
+                          knativeService: dm.spec.ref.name,
+                        })}
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </Alert>
           )}

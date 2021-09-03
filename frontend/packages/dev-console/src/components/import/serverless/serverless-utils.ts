@@ -37,7 +37,11 @@ export const removeDuplicateDomainMappings = (
   return [
     ...new Set(
       allDomainMappings
-        ?.filter((dm) => connectedDomainMappings?.includes(removeKsvcInfoFromDomainMapping(dm)))
+        ?.filter((dm) =>
+          connectedDomainMappings?.length > 0
+            ? connectedDomainMappings?.includes(removeKsvcInfoFromDomainMapping(dm))
+            : true,
+        )
         .map((n) => removeKsvcInfoFromDomainMapping(n)),
     ),
   ];
@@ -45,3 +49,20 @@ export const removeDuplicateDomainMappings = (
 
 export const hasOtherKsvcDomainMappings = (domainMapping: string[]): boolean =>
   domainMapping.some((dm) => new RegExp(DOMAIN_MAPPING_KSVC_INFO_REGEX).test(dm));
+
+export const getAllOtherDomainMappingInUse = (
+  domainMappings: string[],
+  data: K8sResourceKind[] = [],
+  serviceName: string,
+): K8sResourceKind[] =>
+  domainMappings
+    .filter((d) => hasOtherKsvcDomainMappings([d]))
+    .map((dm) => {
+      const selectedDomain = data?.find(
+        (d) => d.metadata.name === removeKsvcInfoFromDomainMapping(dm),
+      );
+      return selectedDomain && selectedDomain.spec?.ref?.name !== serviceName
+        ? selectedDomain
+        : null;
+    })
+    .filter((d) => !!d);
