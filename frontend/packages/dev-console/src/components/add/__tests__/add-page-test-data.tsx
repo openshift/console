@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { CatalogIcon } from '@patternfly/react-icons';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk/src';
-import { CatalogIcon } from '@patternfly/react-icons';
 
 type AddActionExtension = ResolvedExtension<AddAction>;
 type AddActionGroupExtension = LoadedExtension<AddActionGroup>;
@@ -187,8 +187,8 @@ const channel: AddActionExtension = {
   properties: {
     description:
       'Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
-    groupId: 'serverless',
-    href: '/channel',
+    groupId: 'eventing',
+    href: '/channel/ns/:namespace',
     icon: 'static/assets/channel.svg',
     id: 'knative-eventing-channel',
     label: 'Channel',
@@ -320,7 +320,7 @@ const containerImagesActionGroup: AddActionGroupExtension = {
   properties: {
     id: 'container-images',
     name: 'Container images',
-    insertBefore: 'serverless',
+    insertBefore: 'eventing',
     insertAfter: 'git-repository',
   },
   type: 'dev-console.add/action-group',
@@ -335,19 +335,19 @@ const localMachine: AddActionGroupExtension = {
     id: 'local-machine',
     name: 'From Local Machine',
     insertBefore: 'pipelines',
-    insertAfter: 'serverless',
+    insertAfter: 'eventing',
   },
   type: 'dev-console.add/action-group',
   uid: '@console/dev-console[36]',
 };
 
-const serverless: AddActionGroupExtension = {
+const eventing: AddActionGroupExtension = {
   flags: { required: [], disallowed: [] },
   pluginID: '@console/knative-plugin',
   pluginName: '@console/knative-plugin',
   properties: {
-    id: 'serverless',
-    name: 'Serverless',
+    id: 'eventing',
+    name: 'Eventing',
     insertBefore: 'local-machine',
     insertAfter: 'container-images',
   },
@@ -393,7 +393,7 @@ export const addActionGroupExtensions: AddActionGroupExtension[] = [
   containerImagesActionGroup,
   developerCatalog,
   pipelinesActionGroup,
-  serverless,
+  eventing,
   gitRepository,
   localMachine,
 ];
