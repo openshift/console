@@ -19,8 +19,7 @@ import { setFlag } from '@console/internal/actions/features';
 import { WizardCommonProps, WizardState } from './reducer';
 import {
   createExternalSubSystem,
-  createNoobaaKmsResources,
-  createNoobaaResource,
+  createMCGStorageCluster,
   createStorageCluster,
   createStorageSystem,
   labelNodes,
@@ -182,9 +181,8 @@ const handleReviewAndCreateNext = async (
   try {
     if (isMCG) {
       await labelOCSNamespace();
-      if (encryption.advanced) await createNoobaaKmsResources(kms);
-      await createNoobaaResource(encryption.advanced ? kms : null);
-      await createStorageSystem(OCS_INTERNAL_CR_NAME, STORAGE_CLUSTER_SYSTEM_KIND);
+      if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
+      await createMCGStorageCluster(encryption.advanced);
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
       await labelOCSNamespace();
       await labelNodes(nodes);
