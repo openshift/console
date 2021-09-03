@@ -5,7 +5,6 @@ import {
   OS_IMAGES_NS,
   TEMPLATE,
   VM_ACTION,
-  VM_ACTION_TIMEOUT,
   VM_STATUS,
 } from '../../utils/const/index';
 import {
@@ -109,7 +108,7 @@ describe('test dev console', () => {
       cy.byLegacyTestID('base-node-handler').click();
       cy.get('.odc-resource-icon-virtualmachine').click();
 
-      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Running);
 
       cy.get(detailsTab.vmPod).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
       cy.get(detailsTab.vmIP).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
@@ -135,28 +134,28 @@ describe('test dev console', () => {
     });
 
     it('ID(CNV-5702) restart vm', () => {
-      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Running);
 
       detailViewAction(VM_ACTION.Restart);
-      waitForStatus(VM_STATUS.Starting, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
-      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Starting);
+      waitForStatus(VM_STATUS.Running);
     });
 
     it('ID(CNV-5702) stop vm', () => {
       detailViewAction(VM_ACTION.Stop);
-      waitForStatus(VM_STATUS.Stopped, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Stopped);
     });
 
     it('ID(CNV-5702) start vm', () => {
       detailViewAction(VM_ACTION.Start);
-      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Running);
     });
 
     it('ID(CNV-5702) migrate vm', () => {
       if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
         detailViewAction(VM_ACTION.Migrate);
-        waitForStatus(VM_STATUS.Migrating, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
-        waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+        waitForStatus(VM_STATUS.Migrating);
+        waitForStatus(VM_STATUS.Running);
       }
     });
 
@@ -169,7 +168,7 @@ describe('test dev console', () => {
       cy.get(confirmCloneButton).click();
 
       // delete origin VM
-      waitForStatus(VM_STATUS.Stopped, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Stopped);
       detailViewAction(VM_ACTION.Delete);
 
       cy.byLegacyTestID('base-node-handler').should('have.length', 1);

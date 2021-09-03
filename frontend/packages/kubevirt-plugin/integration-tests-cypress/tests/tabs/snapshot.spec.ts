@@ -61,7 +61,7 @@ describe('Test vm snapshot', () => {
       cy.get(snapshotView.restoreBtn(snapshotName)).should('be.disabled');
 
       tab.navigateToDetails();
-      vm.stop(vmData);
+      vm.stop();
       tab.navigateToSnapshot();
       cy.get('.pf-c-table__text')
         .contains('Name')

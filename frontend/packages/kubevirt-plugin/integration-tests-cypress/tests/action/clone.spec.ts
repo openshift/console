@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { Disk, Network, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { TEMPLATE, VM_ACTION, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { selectActionFromDropdown } from '../../views/actions';
 import * as cloneView from '../../views/clone';
@@ -144,8 +144,8 @@ describe('Test VM Clone', () => {
       .should('exist')
       .click();
     tab.navigateToDetails();
-    waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    waitForStatus(VM_STATUS.Starting);
+    waitForStatus(VM_STATUS.Running);
   });
 
   it('ID(CNV-1734) Cloned VM has changed MAC address', () => {
