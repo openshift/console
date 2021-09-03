@@ -9,7 +9,7 @@ import { vm } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `validate-storage-profile-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL8.name,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

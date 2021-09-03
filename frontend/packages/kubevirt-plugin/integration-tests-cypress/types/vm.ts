@@ -1,4 +1,3 @@
-import { DISK_DRIVE, Flavor } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
 
 export type Disk = {
@@ -6,7 +5,7 @@ export type Disk = {
   size?: string;
   storageClass?: string;
   interface?: string;
-  drive?: DISK_DRIVE;
+  drive?: string;
   advanced?: {
     volumeMode?: string;
     accessMode?: string;
@@ -39,15 +38,23 @@ export type CloudInitConfig = {
   sshKeys?: string[];
 };
 
+export type Template = {
+  name?: string;
+  dvName?: string;
+  metadataName?: string;
+  os?: string;
+  supportLevel?: string;
+};
+
 export type VirtualMachineData = {
   name?: string;
   description?: string;
   namespace?: string;
-  template?: string;
+  template?: Template;
   templateProvider?: string;
   templateSupport?: boolean;
   templateNamespace?: string;
-  flavor?: Flavor;
+  flavor?: string;
   os?: string;
   pvcName?: string;
   pvcNS?: string;

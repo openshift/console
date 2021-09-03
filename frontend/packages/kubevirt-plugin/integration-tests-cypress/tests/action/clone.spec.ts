@@ -13,7 +13,7 @@ import { vm, waitForStatus } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `test-vm-clone-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL6.name,
+  template: TEMPLATE.RHEL6,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,

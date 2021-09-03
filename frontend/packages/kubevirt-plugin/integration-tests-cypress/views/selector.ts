@@ -35,7 +35,6 @@ export const startOnClone = 'input[id="clone-dialog-vm-start"]';
 // alert
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
-export const warningAlert = '.pf-c-alert.pf-m-inline.pf-m-warning';
 
 // nic modal
 export enum nicDialog {
@@ -49,6 +48,7 @@ export enum nicDialog {
 
 // disk modal
 export enum diskDialog {
+  addDisk = 'button[id="add-disk"]',
   source = 'button[id="disk-select-source"]',
   diskURL = 'input[id="disk-url"]',
   diskContainer = 'input[id="disk-container"]',
@@ -58,10 +58,6 @@ export enum diskDialog {
   storageClass = '[data-test="storage-class-dropdown"]',
   diskInterface = 'button[id="disk-select-interface"]',
   add = 'button[data-test="confirm-action"]',
-  diskURL = 'input[id="disk-url"]',
-  diskContainer = 'input[id="disk-container"]',
-  diskPVC = 'select[id="disk-pvc"]',
-  autoDetach = 'input[id="disk-auto-detach"]',
 }
 
 // storageClass
@@ -83,10 +79,7 @@ export const nameFilter = 'input[data-test="name-filter-input"]';
 export const unStarIcon = '.pf-c-button.pf-m-plain.kv-pin-btn';
 export const supportLevel = '[data-test-id="details-Support"]';
 export const supportLevelTag = '[data-test="template-support"]';
+export const createVMBtn = 'button[data-test="create-from-template"]';
+export const templateLink = (name: string) => `[data-test-id="${name}"]`;
 
-// VM's disks tab
-export enum disksTab {
-  addDiskBtn = 'button[id="add-disk"]',
-  deleteDiskBtn = 'button[data-test-action="Delete"]',
-  currVMStatusLbl = 'span[data-test="resource-status"]',
-}
+export const resourceTitle = '[data-test-id="resource-title"]';

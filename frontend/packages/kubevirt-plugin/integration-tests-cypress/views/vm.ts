@@ -1,8 +1,21 @@
 import { VirtualMachineData } from '../types/vm';
-import { VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS, VMI_ACTION } from '../utils/const/index';
+import {
+  TEMPLATE_ACTION,
+  VM_ACTION,
+  VM_ACTION_TIMEOUT,
+  VM_STATUS,
+  VMI_ACTION,
+} from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
-import { detailsTab, createYAMLButton, disksTab } from './selector';
-import { create, vmYAML } from './selector-wizard';
+import {
+  detailsTab,
+  createYAMLButton,
+  createVMBtn,
+  nameFilter,
+  resourceTitle,
+  templateLink,
+} from './selector';
+import { create, vmYAML, customizeBtn } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
 
@@ -45,39 +58,43 @@ export const action = (selector: string) => {
   });
 };
 
+export const wizardFlow = (vmData: VirtualMachineData) => {
+  if (!vmData.sourceAvailable) {
+    wizard.vm.fillBootSourceForm(vmData);
+  }
+  wizard.vm.fillReviewForm(vmData);
+  if (vmData.startOnCreation) {
+    waitForStatus(VM_STATUS.Starting);
+    waitForStatus(VM_STATUS.Running);
+  } else {
+    waitForStatus(VM_STATUS.Stopped);
+  }
+};
+
+export const advanceWizardFlow = (vmData: VirtualMachineData) => {
+  cy.get(customizeBtn).click();
+  wizard.vm.fillGeneralForm(vmData);
+  wizard.vm.fillNetworkForm(vmData);
+  wizard.vm.fillStorageForm(vmData);
+  wizard.vm.fillAdvancedForm(vmData);
+  wizard.vm.fillConfirmForm(vmData);
+  if (vmData.startOnCreation) {
+    waitForStatus(VM_STATUS.Starting);
+    waitForStatus(VM_STATUS.Running);
+  } else {
+    waitForStatus(VM_STATUS.Stopped);
+  }
+};
+
 export const vm = {
-  create: (vmData: VirtualMachineData) => {
-    const { startOnCreation, sourceAvailable } = vmData;
+  create: (vmData: VirtualMachineData, customize = false) => {
     virtualization.vms.visit();
     wizard.vm.open();
     wizard.vm.selectTemplate(vmData);
-    if (!sourceAvailable) {
-      wizard.vm.fillBootSourceForm(vmData);
-    }
-    wizard.vm.fillReviewForm(vmData);
-    if (startOnCreation) {
-      waitForStatus(VM_STATUS.Starting);
-      waitForStatus(VM_STATUS.Running);
+    if (customize) {
+      advanceWizardFlow(vmData);
     } else {
-      waitForStatus(VM_STATUS.Stopped);
-    }
-  },
-  customizeCreate: (vmData: VirtualMachineData) => {
-    const { startOnCreation } = vmData;
-    virtualization.vms.visit();
-    wizard.vm.open();
-    wizard.vm.selectTemplate(vmData);
-    cy.byLegacyTestID('wizard-customize').click();
-    wizard.vm.fillGeneralForm(vmData);
-    wizard.vm.fillNetworkForm(vmData);
-    wizard.vm.fillStorageForm(vmData);
-    wizard.vm.fillAdvancedForm(vmData);
-    wizard.vm.fillConfirmForm(vmData);
-    if (startOnCreation) {
-      waitForStatus(VM_STATUS.Starting);
-      waitForStatus(VM_STATUS.Running);
-    } else {
-      waitForStatus(VM_STATUS.Stopped);
+      wizardFlow(vmData);
     }
   },
   start: () => {
@@ -128,10 +145,34 @@ export const vm = {
     cy.get(create).click();
     cy.get(vmYAML).click();
     cy.get(createYAMLButton).click();
+    cy.get(resourceTitle).should('be.visible');
   },
-};
-
-export const waitForVMStatusLabel = (status: string, timeout?: number) => {
-  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_BOOTUP;
-  cy.contains(disksTab.currVMStatusLbl, status, { timeout: timeOut }).should('exist');
+  createFromCreateVMBtn: (vmData: VirtualMachineData, customize = false) => {
+    virtualization.templates.visit();
+    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
+    cy.get(nameFilter)
+      .clear()
+      .type(vmData.template.dvName);
+    // wait for filter item
+    cy.contains('Add source').should('not.exist');
+    cy.get(createVMBtn)
+      .should('be.visible')
+      .click();
+    if (customize) {
+      advanceWizardFlow(vmData);
+    } else {
+      wizardFlow(vmData);
+    }
+  },
+  createFromActionsBtn: (vmData: VirtualMachineData, customize = false) => {
+    virtualization.templates.visit();
+    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
+    cy.get(templateLink(vmData.template.metadataName)).click();
+    detailViewAction(TEMPLATE_ACTION.Create);
+    if (customize) {
+      advanceWizardFlow(vmData);
+    } else {
+      wizardFlow(vmData);
+    }
+  },
 };

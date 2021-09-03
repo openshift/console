@@ -16,7 +16,7 @@ const disk1: Disk = {
 const vmData: VirtualMachineData = {
   name: `validate-disk-preallocation-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL8.name,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

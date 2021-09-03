@@ -11,7 +11,7 @@ const vmData: VirtualMachineData = {
   name: `test-vm-snapshot-${testName}`,
   description: 'rhel8 vm for snapshot',
   namespace: testName,
-  template: TEMPLATE.RHEL8.name,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

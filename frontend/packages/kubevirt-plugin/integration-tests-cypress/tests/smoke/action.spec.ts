@@ -9,7 +9,7 @@ import { vm, waitForStatus } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `smoke-test-vm-actions-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL6.name,
+  template: TEMPLATE.RHEL7,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

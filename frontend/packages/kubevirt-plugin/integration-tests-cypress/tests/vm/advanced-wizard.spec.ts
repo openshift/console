@@ -14,7 +14,7 @@ const urlVM: VirtualMachineData = {
   name: `url-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-869): create VM from URL',
   namespace: testName,
-  template: TEMPLATE.RHEL8.name,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,
@@ -25,7 +25,7 @@ const registryVM: VirtualMachineData = {
   name: `registry-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-870): create VM from container image',
   namespace: testName,
-  template: TEMPLATE.WIN10.name,
+  template: TEMPLATE.WIN10,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
@@ -36,7 +36,7 @@ const pvcVM: VirtualMachineData = {
   name: `pvc-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-2446): create VM from existing PVC',
   namespace: testName,
-  template: TEMPLATE.FEDORA.name,
+  template: TEMPLATE.FEDORA,
   provisionSource: ProvisionSource.CLONE_PVC,
   pvcName: 'clone-pvc-fedora',
   pvcNS: testName,
@@ -48,7 +48,7 @@ const pxeVM: VirtualMachineData = {
   name: `pxe-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-771): create VM from PXE',
   namespace: testName,
-  template: TEMPLATE.FEDORA.name,
+  template: TEMPLATE.FEDORA,
   provisionSource: ProvisionSource.PXE,
   sshEnable: false,
   networkInterfaces: [nic0],
@@ -92,14 +92,14 @@ describe('Test VM creation', () => {
   [urlVM, registryVM, pvcVM].forEach((vmData) => {
     it(`Creates ${vmData.description}`, () => {
       virtualization.vms.visit();
-      vm.customizeCreate(vmData);
+      vm.create(vmData, true);
     });
   });
 
   it('ID(CNV-771): create VM from PXE', () => {
     if (Cypress.env('DOWNSTREAM')) {
       virtualization.vms.visit();
-      vm.customizeCreate(pxeVM);
+      vm.create(pxeVM, true);
     }
   });
 });

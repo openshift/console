@@ -8,7 +8,7 @@ import { vm, waitForStatus } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL8.name,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
