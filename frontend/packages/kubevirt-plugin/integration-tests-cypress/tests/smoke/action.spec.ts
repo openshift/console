@@ -55,20 +55,20 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-4013) Starts VM', () => {
-      vm.start(vmData);
+      vm.start();
     });
 
     it('ID(CNV-4014) Restarts VM', () => {
-      vm.restart(vmData);
+      vm.restart();
     });
 
     it('ID(CNV-765) Unpauses VM', () => {
-      vm.pause(vmData);
-      vm.unpause(vmData);
+      vm.pause();
+      vm.unpause();
     });
 
     it('ID(CNV-4015) Stops VM', () => {
-      vm.stop(vmData);
+      vm.stop();
     });
 
     it('ID(CNV-4016) Deletes VM', () => {
@@ -87,28 +87,28 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-4017) Starts VM', () => {
-      vm.start(vmData);
+      vm.start();
     });
 
     it('ID(CNV-4018) Restarts VM', () => {
-      vm.restart(vmData);
+      vm.restart();
     });
 
     it('ID(CNV-1794) Unpauses VM', () => {
-      vm.pause(vmData);
-      vm.unpause(vmData);
+      vm.pause();
+      vm.unpause();
     });
 
     it('ID(CNV-4019) Unpauses VM via modal dialog', () => {
-      vm.pause(vmData);
+      vm.pause();
       waitForStatus(VM_STATUS.Paused);
       cy.get(`button[id=${vmData.namespace}-${vmData.name}-status-edit]`).click();
       cy.byTestID('confirm-action').click();
-      waitForStatus(VM_STATUS.Running, vmData);
+      waitForStatus(VM_STATUS.Running);
     });
 
     it('ID(CNV-4020) Stops VM', () => {
-      vm.stop(vmData);
+      vm.stop();
     });
 
     it('ID(CNV-4021) Deletes VM', () => {
@@ -123,7 +123,7 @@ describe('Test VM/VMI actions', () => {
       cy.deleteResource(vmiFixture);
       cy.applyResource(vmiFixture);
       virtualization.vms.visit();
-      waitForStatus(VM_STATUS.Running, vmiData);
+      waitForStatus(VM_STATUS.Running);
     });
 
     it('ID(CNV-3693) Test VMI list view action', () => {

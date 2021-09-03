@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { TEMPLATE, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm, waitForStatus } from '../../views/vm';
@@ -60,7 +60,7 @@ describe('smoke tests', () => {
     it('vm details tab is loaded', () => {
       cy.byLegacyTestID('horizontal-link-Details').click();
       cy.contains('Virtual Machine Details').should('be.visible');
-      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Running);
     });
 
     it('vm yaml tab is loaded', () => {
