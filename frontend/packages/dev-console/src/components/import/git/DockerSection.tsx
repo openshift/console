@@ -11,7 +11,7 @@ const DockerSection: React.FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
-    import: { showEditImportStrategy, strategies, selectedStrategy },
+    import: { showEditImportStrategy, strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
     docker,
     formType,
@@ -29,7 +29,7 @@ const DockerSection: React.FC = () => {
       docker.dockerfilePath,
     );
     const isDockerFilePresent = gitService && (await gitService.isDockerfilePresent());
-    if (isDockerFilePresent) {
+    if (docker.dockerfilePath && isDockerFilePresent) {
       setValidated(ValidatedOptions.success);
       setFieldValue('docker.dockerfileHasError', false);
     } else {
@@ -51,17 +51,22 @@ const DockerSection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    if (selectedStrategy.type === ImportStrategy.DOCKERFILE) {
-      strategies.forEach((s) => {
+    if (recommendedStrategy?.type !== ImportStrategy.DOCKERFILE) {
+      strategies.filter((s) => {
         if (s.type === ImportStrategy.DOCKERFILE) {
           setFieldValue('import.selectedStrategy.detectedFiles', s.detectedFiles);
           setFieldValue('docker.dockerfilePath', s.detectedFiles[0]);
           handleDockerfileChange();
+          validated === ValidatedOptions.success
+            ? setFieldValue('import.strategyChanged', true)
+            : setFieldValue('import.strategyChanged', false);
+          return true;
         }
+        return false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStrategy.type, setFieldValue, strategies]);
+  }, [recommendedStrategy, setFieldValue, strategies]);
 
   return (
     <FormSection>
@@ -70,14 +75,20 @@ const DockerSection: React.FC = () => {
           type={TextInputTypes.text}
           name="docker.dockerfilePath"
           label={t('devconsole~Dockerfile path')}
+          placeholder={t('devconsole~Enter Dockerfile path')}
           helpText={helpText}
           helpTextInvalid={helpText}
           validated={validated}
-          onBlur={handleDockerfileChange}
+          onBlur={() => {
+            handleDockerfileChange();
+            validated === ValidatedOptions.success
+              ? setFieldValue('import.strategyChanged', true)
+              : setFieldValue('import.strategyChanged', false);
+          }}
           required
         />
       )}
-      {formType !== 'edit' && (
+      {formType !== 'edit' && !docker.dockerfileHasError && (
         <div className="co-catalog-item-details">
           <CubeIcon size="xl" />
           &nbsp;
