@@ -3,7 +3,7 @@ import { Alert } from '@console/internal/components/monitoring/types';
 import { K8sResourceKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult, convertToBaseValue } from '@console/internal/components/utils';
 import { cephStorageProvisioners } from '@console/shared/src/utils';
-import { OCS_OPERATOR } from '../constants';
+import { OCS_OPERATOR, ODF_OPERATOR } from '../constants';
 
 export const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
 
@@ -66,6 +66,12 @@ export const getOperatorVersion = (operator: K8sResourceKind): string =>
 export const getOCSVersion = (items: FirehoseResult): string => {
   const itemsData: K8sResourceKind[] = items?.data;
   const operator: K8sResourceKind = _.find(itemsData, (item) => item?.spec?.name === OCS_OPERATOR);
+  return getOperatorVersion(operator);
+};
+
+export const getODFVersion = (items: FirehoseResult): string => {
+  const itemsData: K8sResourceKind[] = items?.data;
+  const operator: K8sResourceKind = _.find(itemsData, (item) => item?.spec?.name === ODF_OPERATOR);
   return getOperatorVersion(operator);
 };
 

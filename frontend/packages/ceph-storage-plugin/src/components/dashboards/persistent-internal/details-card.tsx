@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getInfrastructurePlatform } from '@console/shared';
+import { getInfrastructurePlatform, useFlag } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -24,8 +24,8 @@ import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { OCSServiceModel } from '../../../models';
-import { getOCSVersion } from '../../../selectors';
-import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
+import { getOCSVersion, getODFVersion } from '../../../selectors';
+import { CEPH_STORAGE_NAMESPACE, ODF_MODEL_FLAG } from '../../../constants';
 import { StorageClusterKind } from '../../../types';
 
 const ocsResource: FirehoseResource = {
@@ -49,6 +49,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   resources,
 }) => {
   const { t } = useTranslation();
+  const isODF = useFlag(ODF_MODEL_FLAG);
   const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
     InfrastructureModel,
     'cluster',
@@ -72,12 +73,15 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
 
   const subscription = resources?.subscription as FirehoseResult;
   const subscriptionLoaded = subscription?.loaded;
-  const ocsVersion = getOCSVersion(subscription);
-  const ocsPath = `${resourcePathFromModel(
+  const serviceVersion = !isODF ? getOCSVersion(subscription) : getODFVersion(subscription);
+  const servicePath = `${resourcePathFromModel(
     ClusterServiceVersionModel,
-    ocsVersion,
+    serviceVersion,
     CEPH_STORAGE_NAMESPACE,
   )}`;
+  const serviceName = isODF
+    ? t('ceph-storage-plugin~OpenShift Data Foundation')
+    : t('ceph-storage-plugin~OpenShift Container Storage');
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -91,8 +95,8 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             isLoading={false}
             error={false}
           >
-            <Link data-test="ocs-link" to={ocsPath}>
-              {t('ceph-storage-plugin~OpenShift Container Storage')}
+            <Link data-test="ocs-link" to={servicePath}>
+              {serviceName}
             </Link>
           </DetailItem>
           <DetailItem
@@ -118,9 +122,9 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             key="version"
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
-            error={subscriptionLoaded && !ocsVersion}
+            error={subscriptionLoaded && !serviceVersion}
           >
-            {ocsVersion}
+            {serviceVersion}
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>

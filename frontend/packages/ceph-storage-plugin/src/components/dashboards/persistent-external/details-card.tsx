@@ -8,7 +8,7 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult, ExternalLink } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
+import { getName, useFlag } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
@@ -16,9 +16,9 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { SecretModel } from '@console/internal/models';
-import { getOCSVersion } from '../../../selectors';
+import { getOCSVersion, getODFVersion } from '../../../selectors';
 import { OCSServiceModel } from '../../../models';
-import { CEPH_STORAGE_NAMESPACE, CEPH_BRAND_NAME } from '../../../constants';
+import { CEPH_STORAGE_NAMESPACE, CEPH_BRAND_NAME, ODF_MODEL_FLAG } from '../../../constants';
 
 const getCephLink = (secret: SecretKind): string => {
   const data = secret?.data?.userKey;
@@ -53,6 +53,7 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
   resources,
 }) => {
   const { t } = useTranslation();
+  const isODF = useFlag(ODF_MODEL_FLAG);
 
   React.useEffect(() => {
     k8sResources.forEach((r) => watchK8sResource(r));
@@ -71,7 +72,13 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
   const ocsName = getName(ocsData?.[0]);
   const subscriptionLoaded = subscription?.loaded;
   const subscriptionError = subscription?.loadError;
-  const subscriptionVersion = getOCSVersion(subscription as FirehoseResult);
+  const subscriptionVersion = !isODF
+    ? getOCSVersion(subscription as FirehoseResult)
+    : getODFVersion(subscription as FirehoseResult);
+
+  const serviceName = isODF
+    ? t('ceph-storage-plugin~OpenShift Data Foundation')
+    : t('ceph-storage-plugin~OpenShift Container Storage');
   const cephLink = getCephLink(secretData);
 
   return (
@@ -81,9 +88,7 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem title={t('ceph-storage-plugin~Service Name')}>
-            OpenShift Container Storage
-          </DetailItem>
+          <DetailItem title={t('ceph-storage-plugin~Service Name')}>{serviceName}</DetailItem>
           <DetailItem
             title={t('ceph-storage-plugin~Cluster Name')}
             error={!!ocsError}
