@@ -16,13 +16,13 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPi
   const {
     values: {
       image,
-      import: { showEditImportStrategy, strategies, selectedStrategy },
+      import: { showEditImportStrategy, strategies, recommendedStrategy },
     },
     setFieldValue,
   } = useFormikContext<FormikValues>();
 
   const handleBuilderImageSelection = React.useCallback(
-    async (detectedBuildTypes: DetectedBuildType[]) => {
+    async (detectedBuildTypes?: DetectedBuildType[]) => {
       setFieldValue('image.isRecommending', false);
       const recommendedBuildType =
         builderImages &&
@@ -41,19 +41,26 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPi
   );
 
   React.useEffect(() => {
-    if (builderImages && selectedStrategy.type === ImportStrategy.S2I) {
-      strategies.forEach((s) => {
+    if (builderImages && recommendedStrategy?.type !== ImportStrategy.S2I) {
+      strategies.filter((s) => {
         if (s.type === ImportStrategy.S2I) {
           setFieldValue('image.isRecommending', true);
           setFieldValue('import.selectedStrategy.detectedCustomData', s.detectedCustomData);
           handleBuilderImageSelection(s.detectedCustomData);
+          return true;
         }
+        return false;
       });
+
+      image.selected
+        ? setFieldValue('import.strategyChanged', true)
+        : setFieldValue('import.strategyChanged', false);
     }
   }, [
     builderImages,
     handleBuilderImageSelection,
-    selectedStrategy.type,
+    image.selected,
+    recommendedStrategy,
     setFieldValue,
     strategies,
   ]);

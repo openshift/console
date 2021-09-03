@@ -13,7 +13,7 @@ const DevfileStrategySection: React.FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
-    import: { showEditImportStrategy, strategies, selectedStrategy },
+    import: { showEditImportStrategy, strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
     devfile,
   } = values;
@@ -21,11 +21,14 @@ const DevfileStrategySection: React.FC = () => {
   useDevfileSource();
   const selectedSample = useSelectedDevfileSample();
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
+  const searchParams = new URLSearchParams(window.location.search);
+  const gitRepoUrl = searchParams.get('gitRepo');
+  const formType = searchParams.get('formType');
 
   const devfileInfo = React.useMemo(() => {
     let info;
-    if (values.devfile?.devfileContent) {
-      const devfileJSON = safeYAMLToJS(values.devfile.devfileContent);
+    if (devfile.devfileContent) {
+      const devfileJSON = safeYAMLToJS(devfile.devfileContent);
       info = {
         displayName: devfileJSON.metadata?.name || 'Devfile',
         tags: devfileJSON.metadata?.version ? [devfileJSON.metadata.version] : [],
@@ -34,24 +37,21 @@ const DevfileStrategySection: React.FC = () => {
     }
     if (selectedSample) info = selectedSample;
     return info;
-  }, [selectedSample, values.devfile]);
+  }, [selectedSample, devfile]);
 
   const handleDevfileChange = React.useCallback(async () => {
     const gitService = getGitService(url, type, ref, dir, secretResource, devfile.devfilePath);
-    if (!values.devfile?.devfileSourceUrl) {
-      // No need to check the existence of the file, waste of a call to the gitService for this need
-      const devfileContents = gitService && (await gitService.getDevfileContent());
-      if (!devfile.devfilePath || !devfileContents) {
-        setFieldValue('devfile.devfileContent', null);
-        setFieldValue('devfile.devfileHasError', true);
-        setValidated(ValidatedOptions.error);
-      } else {
-        setFieldValue('devfile.devfileContent', devfileContents);
-        setFieldValue('devfile.devfileHasError', false);
-        setValidated(ValidatedOptions.success);
-      }
+    const devfileContents = gitService && (await gitService.getDevfileContent());
+    if (!devfileContents) {
+      setFieldValue('devfile.devfileContent', null);
+      setFieldValue('devfile.devfileHasError', true);
+      setValidated(ValidatedOptions.error);
+    } else {
+      setFieldValue('devfile.devfileContent', devfileContents);
+      setFieldValue('devfile.devfileHasError', false);
+      setValidated(ValidatedOptions.success);
     }
-  }, [devfile.devfilePath, dir, ref, secretResource, setFieldValue, type, url, values.devfile]);
+  }, [devfile, dir, ref, secretResource, setFieldValue, type, url]);
 
   const helpText = React.useMemo(() => {
     if (validated === ValidatedOptions.success) {
@@ -66,18 +66,23 @@ const DevfileStrategySection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    if (selectedStrategy.type === ImportStrategy.DEVFILE) {
-      strategies.forEach((s) => {
+    if (recommendedStrategy?.type !== ImportStrategy.DEVFILE) {
+      strategies.filter((s) => {
         if (s.type === ImportStrategy.DEVFILE) {
           setFieldValue('import.selectedStrategy.detectedFiles', s.detectedFiles);
           setFieldValue('devfile.devfilePath', s.detectedFiles[0]);
           setFieldValue('docker.dockerfilePath', 'Dockerfile');
           handleDevfileChange();
+          validated === ValidatedOptions.success
+            ? setFieldValue('import.strategyChanged', true)
+            : setFieldValue('import.strategyChanged', false);
+          return true;
         }
+        return false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStrategy.type, setFieldValue, strategies]);
+  }, [recommendedStrategy, setFieldValue, strategies]);
 
   return (
     <>
@@ -92,10 +97,17 @@ const DevfileStrategySection: React.FC = () => {
             type={TextInputTypes.text}
             name="devfile.devfilePath"
             label={t('devconsole~Devfile Path')}
+            placeholder={t('devconsole~Enter Devfile path')}
             helpText={helpText}
             helpTextInvalid={helpText}
             validated={validated}
-            onBlur={handleDevfileChange}
+            onBlur={() => {
+              handleDevfileChange();
+              validated === ValidatedOptions.success
+                ? setFieldValue('import.strategyChanged', true)
+                : setFieldValue('import.strategyChanged', false);
+            }}
+            isDisabled={formType === 'sample' && !!gitRepoUrl}
             required
           />
         </FormSection>

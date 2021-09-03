@@ -240,6 +240,7 @@ export interface ImportStrategyData {
   recommendedStrategy?: DetectedStrategyFormData;
   selectedStrategy?: DetectedStrategyFormData;
   showEditImportStrategy?: boolean;
+  strategyChanged?: boolean;
 }
 
 export interface DeploymentData {

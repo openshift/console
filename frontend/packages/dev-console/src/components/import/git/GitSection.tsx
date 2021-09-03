@@ -166,38 +166,45 @@ const GitSection: React.FC<GitSectionProps> = ({
     [builderImages, gitUrlError, setFieldValue],
   );
 
-  const handleDevfileStrategyDetection = React.useCallback(async () => {
-    const gitService = getGitService(
-      values.git.url,
-      // TODO: ODC-6250 - GitTypes is not compatibily to git service type GitProvider
-      values.git.type as any,
-      values.git.ref,
-      values.git.dir,
-      values.git.secretResource,
-      values.devfile?.devfilePath,
-      values.docker?.dockerfilePath,
-    );
-    if (!values.devfile?.devfilePath || !values.devfile?.devfileSourceUrl) {
-      // No need to check the existence of the file, waste of a call to the gitService for this need
-      const devfileContents = gitService && (await gitService.getDevfileContent());
-      if (!devfileContents) {
+  const handleDevfileStrategyDetection = React.useCallback(
+    async (devfilePath: string, gitType: any) => {
+      if (gitUrlError) {
         setFieldValue('devfile.devfileContent', null);
         setFieldValue('devfile.devfileHasError', true);
-      } else {
-        setFieldValue('devfile.devfileContent', devfileContents);
-        setFieldValue('devfile.devfileHasError', false);
+        return;
       }
-    }
-  }, [
-    setFieldValue,
-    values.devfile,
-    values.docker,
-    values.git.dir,
-    values.git.ref,
-    values.git.secretResource,
-    values.git.type,
-    values.git.url,
-  ]);
+      setFieldValue('devfile.devfilePath', devfilePath);
+      setFieldValue('docker.dockerfilePath', 'Dockerfile');
+      const gitService = getGitService(
+        values.git.url,
+        gitType,
+        values.git.ref,
+        values.git.dir,
+        values.git.secretResource,
+        devfilePath,
+      );
+      if (!values.devfile?.devfileSourceUrl) {
+        // No need to check the existence of the file, waste of a call to the gitService for this need
+        const devfileContents = gitService && (await gitService.getDevfileContent());
+        if (!devfileContents) {
+          setFieldValue('devfile.devfileContent', null);
+          setFieldValue('devfile.devfileHasError', true);
+        } else {
+          setFieldValue('devfile.devfileContent', devfileContents);
+          setFieldValue('devfile.devfileHasError', false);
+        }
+      }
+    },
+    [
+      gitUrlError,
+      setFieldValue,
+      values.devfile,
+      values.git.dir,
+      values.git.ref,
+      values.git.secretResource,
+      values.git.url,
+    ],
+  );
 
   const handleGitUrlChange = React.useCallback(
     async (url: string, ref: string, dir: string) => {
@@ -295,6 +302,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         setFieldValue('import.recommendedStrategy', null);
         values.formType !== 'edit' && setFieldValue('import.showEditImportStrategy', true);
       }
+      setFieldValue('import.strategyChanged', false);
 
       if (importStrategies.length > 0) {
         switch (importStrategies[0].type) {
@@ -308,14 +316,13 @@ const GitSection: React.FC<GitSectionProps> = ({
           }
           case ImportStrategy.DEVFILE: {
             setFieldValue('build.strategy', BuildStrategyType.Devfile);
-            setFieldValue('devfile.devfilePath', importStrategies[0].detectedFiles[0]);
-            setFieldValue('docker.dockerfilePath', 'Dockerfile');
-            handleDevfileStrategyDetection();
+            handleDevfileStrategyDetection(importStrategies[0].detectedFiles[0], gitType);
             break;
           }
           case ImportStrategy.DOCKERFILE: {
             setFieldValue('build.strategy', BuildStrategyType.Docker);
             setFieldValue('docker.dockerfilePath', importStrategies[0].detectedFiles[0]);
+            setFieldValue('docker.dockerfileHasError', false);
             break;
           }
           default:
@@ -359,8 +366,8 @@ const GitSection: React.FC<GitSectionProps> = ({
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
     setFieldTouched('git.url', true);
-    handleGitUrlChange(url, ref, dir);
-  }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
+    debouncedHandleGitUrlChange(url, ref, dir);
+  }, [debouncedHandleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
     (!dirty || gitDirTouched) &&
