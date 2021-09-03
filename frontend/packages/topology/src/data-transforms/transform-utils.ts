@@ -1,7 +1,7 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
+import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
   apiVersionForReference,

@@ -1,4 +1,4 @@
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { ServiceBindingModel } from '../models';

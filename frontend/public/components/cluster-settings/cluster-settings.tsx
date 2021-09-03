@@ -92,10 +92,7 @@ import {
   UpstreamConfigDetailsItem,
   useAccessReview,
 } from '../utils';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
@@ -103,6 +100,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 

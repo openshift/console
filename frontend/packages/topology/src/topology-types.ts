@@ -9,7 +9,7 @@ import {
   ModelKind,
   GraphElement,
 } from '@patternfly/react-topology';
-import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import { ExtPodKind, OverviewItem } from '@console/shared';
 

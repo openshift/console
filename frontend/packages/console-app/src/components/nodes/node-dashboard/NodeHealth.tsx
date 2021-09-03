@@ -3,13 +3,10 @@ import { Gallery, GalleryItem, Alert } from '@patternfly/react-core';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils';
 import { pluralize } from '@console/internal/components/utils/details-page';
-import {
-  useK8sWatchResource,
-  WatchK8sResult,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { MachineModel, MachineHealthCheckModel } from '@console/internal/models';
 import {
   referenceForModel,

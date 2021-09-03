@@ -4,12 +4,14 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useResolvedExtensions, isYAMLTemplate, YAMLTemplate } from '@console/dynamic-plugin-sdk';
-import { AsyncComponent } from '@console/internal/components/utils';
 import {
-  useK8sWatchResource,
+  useResolvedExtensions,
+  isYAMLTemplate,
+  YAMLTemplate,
   WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+} from '@console/dynamic-plugin-sdk';
+import { AsyncComponent } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleYAMLSampleModel } from '@console/internal/models';
 import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
 import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';

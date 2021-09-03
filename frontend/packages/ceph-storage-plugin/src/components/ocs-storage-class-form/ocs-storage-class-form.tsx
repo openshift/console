@@ -19,10 +19,8 @@ import { useDeepCompareMemoize } from '@console/shared';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ProvisionerProps } from '@console/plugin-sdk';
 import {
