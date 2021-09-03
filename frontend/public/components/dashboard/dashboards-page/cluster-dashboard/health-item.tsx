@@ -16,6 +16,9 @@ import {
   DashboardsOverviewHealthURLSubsystem as DynamicDashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem as DynamicDashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthResourceSubsystem as DynamicDashboardsOverviewHealthResourceSubsystem,
+  WatchK8sResources,
+  WatchK8sResults,
+  ResourcesObject,
 } from '@console/dynamic-plugin-sdk';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { OperatorsSection } from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
@@ -26,12 +29,7 @@ import {
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sKind } from '../../../../module/k8s';
 import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
-import {
-  ResourcesObject,
-  useK8sWatchResources,
-  WatchK8sResources,
-  WatchK8sResults,
-} from '../../../utils/k8s-watch-hook';
+import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import { uniqueResource } from './utils';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';

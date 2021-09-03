@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
 import { KNATIVE_SERVING_LABEL } from '../const';

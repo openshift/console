@@ -9,7 +9,7 @@ import {
   EventModel,
   SecretModel,
 } from '@console/internal/models';
-import { WatchK8sResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { LocalVolumeDiscoveryResult } from '@console/local-storage-operator-plugin/src/models';
 import {

@@ -3,16 +3,14 @@ import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import {
   history,
   resourcePathFromModel,
   LoadingBox,
   LoadError,
 } from '@console/internal/components/utils';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { referenceForModel, SecretKind } from '@console/internal/module/k8s';
 import { getName, nameValidationSchema } from '@console/shared';

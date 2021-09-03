@@ -5,7 +5,7 @@ import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { ExternalLink } from '@console/internal/components/utils/link';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceHealthHandler } from '@console/plugin-sdk';

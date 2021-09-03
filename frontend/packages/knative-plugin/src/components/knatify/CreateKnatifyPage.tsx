@@ -9,13 +9,14 @@ import { DeployImageFormData } from '@console/dev-console/src/components/import/
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
-import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
 import {
-  useK8sWatchResources,
+  Perspective,
+  isPerspective,
   WatchK8sResults,
   WatchK8sResultsObject,
-} from '@console/internal/components/utils/k8s-watch-hook';
+} from '@console/dynamic-plugin-sdk';
+import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';

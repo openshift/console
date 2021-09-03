@@ -1,15 +1,11 @@
 import { TFunction } from 'i18next';
+import { WatchK8sResources, ResourcesObject, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   FirehoseResource,
   FirehoseResult,
   FirehoseResourcesResult,
 } from '@console/internal/components/utils';
-import {
-  WatchK8sResources,
-  ResourcesObject,
-  WatchK8sResults,
-} from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import {

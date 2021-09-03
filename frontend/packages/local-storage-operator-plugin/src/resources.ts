@@ -1,4 +1,4 @@
-import { WatchK8sResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { NodeModel } from '@console/internal/models';
 
 export const nodeResource: WatchK8sResource = {

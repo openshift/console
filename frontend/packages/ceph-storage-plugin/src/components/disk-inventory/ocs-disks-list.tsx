@@ -23,10 +23,7 @@ import {
 import { TemplateInstanceModel } from '@console/internal/models';
 import { TemplateInstanceKind } from '@console/internal/module/k8s';
 import { PrometheusResult } from '@console/internal/components/graphs';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { RootState } from '@console/internal/redux';
 import { NotificationAlerts } from '@console/internal/reducers/ui';
 import { Alert } from '@console/internal/components/monitoring/types';
@@ -36,6 +33,7 @@ import {
   NodesDisksListPageProps,
 } from '@console/local-storage-operator-plugin/src/components/disks-list/disks-list-page';
 import { getAnnotations } from '@console/shared/src';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { OCSKebabOptions } from './ocs-kebab-options';
 import { OCSStatus } from './ocs-status-column';
 import {

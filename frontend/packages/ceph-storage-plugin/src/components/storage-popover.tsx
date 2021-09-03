@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import {
   HealthState,
   healthStateMapping,

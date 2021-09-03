@@ -41,11 +41,9 @@ import {
   ProjectDashboardInventoryItem as DynamicProjectDashboardInventoryItem,
   isProjectDashboardInventoryItem as isDynamicProjectDashboardInventoryItem,
   K8sResourceCommon,
-} from '@console/dynamic-plugin-sdk';
-import {
-  useK8sWatchResources,
   WatchK8sResources,
-} from '@console/internal/components/utils/k8s-watch-hook';
+} from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 
 const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
   kind: model.crd ? referenceForModel(model) : model.kind,

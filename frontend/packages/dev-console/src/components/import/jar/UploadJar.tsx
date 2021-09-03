@@ -2,9 +2,8 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResultsObject, Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
-import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';
 import {
