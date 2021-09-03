@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Alert, AlertGroup, AlertActionCloseButton, AlertActionLink } from '@patternfly/react-core';
 import ToastContext, { ToastOptions, ToastContextType } from './ToastContext';
 
+import './ToastProvider.scss';
+
 const ToastProvider: React.FC = ({ children }) => {
   const [toasts, setToasts] = React.useState<ToastOptions[]>([]);
 
@@ -49,7 +51,7 @@ const ToastProvider: React.FC = ({ children }) => {
     <ToastContext.Provider value={controller}>
       {children}
       {toasts.length ? (
-        <AlertGroup appendTo={() => document.body} isToast>
+        <AlertGroup appendTo={() => document.body} isToast className="ocs-toast-provider">
           {toasts.map((toast) => (
             <Alert
               key={toast.id}
