@@ -21,7 +21,7 @@ import {
   getSampleContextDir,
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
-import { GitData, GitReadableTypes, GitTypes } from '../import-types';
+import { GitData, GitReadableTypes, GitTypes, DetectedStrategyFormData } from '../import-types';
 import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
 import AdvancedGitOptions from './AdvancedGitOptions';
@@ -47,6 +47,7 @@ export type GitSectionFormData = {
   devfile?: {
     devfilePath: string;
     devfileSourceUrl: string;
+    devfileContent?: string;
   };
   docker?: {
     dockerfilePath: string;
@@ -57,6 +58,9 @@ export type GitSectionFormData = {
   project: {
     name: string;
   };
+  import?: {
+    recommendedStrategy?: DetectedStrategyFormData;
+  };
 };
 
 export interface GitSectionProps {
@@ -66,6 +70,8 @@ export interface GitSectionProps {
   defaultSample?: { url: string; ref?: string; dir?: string };
   showSample?: boolean;
   formType?: string;
+  importType?: string;
+  imageStreamName?: string;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
@@ -75,6 +81,8 @@ const GitSection: React.FC<GitSectionProps> = ({
   defaultSample,
   showSample = !!defaultSample,
   formType,
+  importType,
+  imageStreamName,
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
@@ -173,18 +181,17 @@ const GitSection: React.FC<GitSectionProps> = ({
         setFieldValue('devfile.devfileHasError', true);
         return;
       }
-      setFieldValue('devfile.devfilePath', devfilePath);
-      setFieldValue('docker.dockerfilePath', 'Dockerfile');
-      const gitService = getGitService(
-        values.git.url,
-        gitType,
-        values.git.ref,
-        values.git.dir,
-        values.git.secretResource,
-        devfilePath,
-      );
       if (!values.devfile?.devfileSourceUrl) {
-        // No need to check the existence of the file, waste of a call to the gitService for this need
+        setFieldValue('devfile.devfilePath', devfilePath);
+        setFieldValue('docker.dockerfilePath', 'Dockerfile');
+        const gitService = getGitService(
+          values.git.url,
+          gitType,
+          values.git.ref,
+          values.git.dir,
+          values.git.secretResource,
+          devfilePath,
+        );
         const devfileContents = gitService && (await gitService.getDevfileContent());
         if (!devfileContents) {
           setFieldValue('devfile.devfileContent', null);
@@ -211,15 +218,15 @@ const GitSection: React.FC<GitSectionProps> = ({
       if (isSubmitting || status?.submitError) return;
       setValidated(ValidatedOptions.default);
       setFieldValue('git.validated', ValidatedOptions.default);
+      setFieldValue('git.isUrlValidating', true);
       if (gitUrlError) {
         // Reset git type field when url is not valid or empty so that when new url valid is added, we run git type detection again.
         // Don't do anything else if URL is not valid.
         setFieldValue('git.showGitType', false);
         setFieldTouched('git.type', false);
+        setFieldValue('git.isUrlValidating', false);
         return;
       }
-
-      setFieldValue('git.isUrlValidating', true);
 
       const detectedGitType = detectGitType(url);
       const gitType = values.git.showGitType ? values.git.type : detectedGitType;
@@ -285,6 +292,22 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
 
+      if (
+        (importType === 'devfile' && values.devfile?.devfileContent) ||
+        imageStreamName ||
+        values.formType === 'edit'
+      ) {
+        setValidated(ValidatedOptions.success);
+        setFieldValue('git.validated', ValidatedOptions.success);
+        setFieldValue('git.isUrlValidating', false);
+        values.formType === 'edit' &&
+          values.build.strategy === BuildStrategyType.Source &&
+          handleBuilderImageRecommendation(
+            importStrategies?.find((s) => s.type === ImportStrategy.S2I)?.detectedCustomData,
+          );
+        return;
+      }
+
       setFieldValue('import.loaded', loaded);
       setFieldValue('import.loadError', loadError);
       setFieldValue('import.strategies', importStrategies);
@@ -348,10 +371,13 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.formType,
       values.application.name,
       values.application.selectedKey,
+      values.build.strategy,
       nameTouched,
+      importType,
+      imageStreamName,
       setFieldTouched,
-      builderImages,
       handleBuilderImageRecommendation,
+      builderImages,
       handleDevfileStrategyDetection,
     ],
   );

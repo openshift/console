@@ -11,7 +11,7 @@ import DevfileInfo from './DevfileInfo';
 
 const DevfileStrategySection: React.FC = () => {
   const { t } = useTranslation();
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const {
     import: { showEditImportStrategy, strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
@@ -22,12 +22,12 @@ const DevfileStrategySection: React.FC = () => {
   const selectedSample = useSelectedDevfileSample();
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const searchParams = new URLSearchParams(window.location.search);
-  const gitRepoUrl = searchParams.get('gitRepo');
-  const formType = searchParams.get('formType');
+  const importType = searchParams.get('importType');
 
   const devfileInfo = React.useMemo(() => {
     let info;
-    if (devfile.devfileContent) {
+    if (selectedSample) info = selectedSample;
+    else if (devfile.devfileContent) {
       const devfileJSON = safeYAMLToJS(devfile.devfileContent);
       info = {
         displayName: devfileJSON.metadata?.name || 'Devfile',
@@ -35,7 +35,6 @@ const DevfileStrategySection: React.FC = () => {
         iconClass: devfileJSON.metadata?.name ? `icon-${devfileJSON.metadata?.name}` : '',
       };
     }
-    if (selectedSample) info = selectedSample;
     return info;
   }, [selectedSample, devfile]);
 
@@ -51,7 +50,7 @@ const DevfileStrategySection: React.FC = () => {
       setFieldValue('devfile.devfileHasError', false);
       setValidated(ValidatedOptions.success);
     }
-  }, [devfile, dir, ref, secretResource, setFieldValue, type, url]);
+  }, [devfile.devfilePath, dir, ref, secretResource, setFieldValue, type, url]);
 
   const helpText = React.useMemo(() => {
     if (validated === ValidatedOptions.success) {
@@ -66,23 +65,30 @@ const DevfileStrategySection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    if (recommendedStrategy?.type !== ImportStrategy.DEVFILE) {
-      strategies.filter((s) => {
-        if (s.type === ImportStrategy.DEVFILE) {
-          setFieldValue('import.selectedStrategy.detectedFiles', s.detectedFiles);
-          setFieldValue('devfile.devfilePath', s.detectedFiles[0]);
-          setFieldValue('docker.dockerfilePath', 'Dockerfile');
-          handleDevfileChange();
-          validated === ValidatedOptions.success
-            ? setFieldValue('import.strategyChanged', true)
-            : setFieldValue('import.strategyChanged', false);
-          return true;
-        }
-        return false;
-      });
+    if (
+      importType !== 'devfile' &&
+      recommendedStrategy &&
+      recommendedStrategy.type !== ImportStrategy.DEVFILE
+    ) {
+      const devfileStrategy = strategies.find((s) => s.type === ImportStrategy.DEVFILE);
+      if (devfileStrategy) {
+        setFieldValue('import.selectedStrategy.detectedFiles', devfileStrategy.detectedFiles);
+        setFieldValue('devfile.devfilePath', devfileStrategy.detectedFiles?.[0]);
+        setFieldValue('docker.dockerfilePath', 'Dockerfile');
+        handleDevfileChange();
+        validated === ValidatedOptions.success
+          ? setFieldValue('import.strategyChanged', true)
+          : setFieldValue('import.strategyChanged', false);
+      }
+      setFieldTouched('devfile.devfilePath', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);
+
+  React.useEffect(() => {
+    importType === 'devfile' && devfile.devfilePath && handleDevfileChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [devfile.devfilePath, importType]);
 
   return (
     <>
@@ -91,7 +97,7 @@ const DevfileStrategySection: React.FC = () => {
           {devfileParseError}
         </Alert>
       )}
-      {showEditImportStrategy && (
+      {showEditImportStrategy && importType !== 'devfile' && (
         <FormSection>
           <InputField
             type={TextInputTypes.text}
@@ -107,7 +113,6 @@ const DevfileStrategySection: React.FC = () => {
                 ? setFieldValue('import.strategyChanged', true)
                 : setFieldValue('import.strategyChanged', false);
             }}
-            isDisabled={formType === 'sample' && !!gitRepoUrl}
             required
           />
         </FormSection>

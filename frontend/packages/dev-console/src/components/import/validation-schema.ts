@@ -304,15 +304,18 @@ export const dockerValidationSchema = (t: TFunction) =>
         .number()
         .test(isInteger(t('devconsole~Container port should be an integer'))),
       dockerfileHasError: yup.boolean().oneOf([false]),
+      dockerfilePath: yup.string().required(t('devconsole~Required')),
     }),
   });
 
-export const devfileValidationSchema = yup.object().when('build', {
-  is: (build) => build.strategy === 'Devfile',
-  then: yup.object().shape({
-    devfileHasError: yup.boolean().oneOf([false]),
-  }),
-});
+export const devfileValidationSchema = (t: TFunction) =>
+  yup.object().when('build', {
+    is: (build) => build.strategy === 'Devfile',
+    then: yup.object().shape({
+      devfileHasError: yup.boolean().oneOf([false]),
+      devfilePath: yup.string().required(t('devconsole~Required')),
+    }),
+  });
 
 export const buildValidationSchema = yup.object().shape({
   strategy: yup.string(),
