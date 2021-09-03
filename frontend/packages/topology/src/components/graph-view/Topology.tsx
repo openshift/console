@@ -146,7 +146,7 @@ const Topology: React.FC<TopologyProps &
     DynamicTopologyComponentFactory
   >(isDynamicTopologyComponentFactory);
 
-  const createVisualization = () => {
+  const createVisualization = React.useCallback(() => {
     const storedLayout = topologyLayoutDataJson?.[namespace];
     const newVisualization = new Visualization();
     newVisualization.registerElementFactory(odcElementFactory);
@@ -184,15 +184,19 @@ const Topology: React.FC<TopologyProps &
       const selectedEntity = ids[0] ? newVisualization.getElementById(ids[0]) : null;
       onSelect(selectedEntity);
     });
-    setVisualization(newVisualization);
     return newVisualization;
-  };
+  }, [namespace, onGraphModelChange, onSelect, setTopologyLayoutData, topologyLayoutDataJson]);
 
   const visualizationRef = React.useRef<Visualization>();
   if (!visualizationRef.current) {
     visualizationRef.current = createVisualization();
   }
   const visualization = visualizationRef.current;
+  React.useEffect(() => {
+    if (visualization) {
+      setVisualization(visualization);
+    }
+  }, [setVisualization, visualization]);
 
   React.useEffect(() => {
     if (model && visualizationReady) {
