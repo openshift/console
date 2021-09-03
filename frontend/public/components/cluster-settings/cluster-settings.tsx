@@ -89,6 +89,7 @@ import {
   SectionHeading,
   Timestamp,
   truncateMiddle,
+  UpstreamConfigDetailsItem,
   useAccessReview,
 } from '../utils';
 import {
@@ -1001,6 +1002,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             <dd>
               <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
             </dd>
+            <UpstreamConfigDetailsItem resource={cv} />
             {autoscalers && (
               <>
                 <dt>{t('public~Cluster autoscaler')}</dt>
