@@ -1,4 +1,5 @@
 import {
+  getAllOtherDomainMappingInUse,
   getAutoscaleWindow,
   getOtherKsvcFromDomainMapping,
   hasOtherKsvcDomainMappings,
@@ -77,8 +78,12 @@ describe('hasOtherKsvcDomainMappings', () => {
 describe('removeDuplicateDomainMappings', () => {
   it('should return empty arary if the domain mapping empty or null', () => {
     expect(removeDuplicateDomainMappings(null, null)).toEqual([]);
-    expect(removeDuplicateDomainMappings(['a'], null)).toEqual([]);
     expect(removeDuplicateDomainMappings([], [])).toEqual([]);
+  });
+
+  it('should return the domainMapping  even if the connected domains are empty or invalid ', () => {
+    expect(removeDuplicateDomainMappings(['domain.org'], null)).toEqual(['domain.org']);
+    expect(removeDuplicateDomainMappings(['domain.org'], [])).toEqual(['domain.org']);
   });
 
   it('should return unique value in the array', () => {
@@ -97,7 +102,7 @@ describe('getOtherKsvcFromDomainMapping', () => {
     expect(getOtherKsvcFromDomainMapping({}, '')).toBeNull();
   });
 
-  it('should return null the ksvc name if is matching with the current ksvc name', () => {
+  it('should return null as the ksvc name if it is matching with the current ksvc name', () => {
     expect(
       getOtherKsvcFromDomainMapping(domainMappings[0], domainMappings[0].spec.ref.name),
     ).toBeNull();
@@ -122,5 +127,46 @@ describe('removeKsvcInfoFromDomainMapping', () => {
 
   it('should return only the domain name if the ksvc info is the string', () => {
     expect(removeKsvcInfoFromDomainMapping('domain.org (ksvc-service-one)')).toBe('domain.org');
+  });
+});
+
+describe('getAllOtherDomainMappingInUse', () => {
+  it('should return empty array for the empty input', () => {
+    expect(getAllOtherDomainMappingInUse([], [], 'test')).toEqual([]);
+  });
+
+  it('should return empty array if selected domain is not already in the cluster', () => {
+    expect(getAllOtherDomainMappingInUse(['domain.org'], [], 'service-one')).toEqual([]);
+  });
+
+  it('should return empty if the selected domain is mapped to current knative service', () => {
+    const selectedDomains = ['example.domain1.org'];
+    const currentKsvc = 'service-one';
+    const domainsInUse = getAllOtherDomainMappingInUse(
+      selectedDomains,
+      domainMappings,
+      currentKsvc,
+    );
+    expect(domainsInUse).toHaveLength(0);
+  });
+
+  it('should return domains if the selected domains are not mapped to current Knative service', () => {
+    const domainsInUse = getAllOtherDomainMappingInUse(
+      ['example.domain1.org (service-one)', 'example.domain2.org (service-two)'],
+      domainMappings,
+      'service-three',
+    );
+    expect(domainsInUse).toHaveLength(2);
+    expect(domainsInUse[0].metadata.name).toBe('example.domain1.org');
+    expect(domainsInUse[1].metadata.name).toBe('example.domain2.org');
+  });
+
+  it('should not return domains if the user creates domain with the same name again', () => {
+    const domainsInUse = getAllOtherDomainMappingInUse(
+      ['example.domain1.org', 'example.domain2.org'],
+      domainMappings,
+      'service-three',
+    );
+    expect(domainsInUse).toHaveLength(0);
   });
 });
