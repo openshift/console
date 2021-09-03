@@ -648,6 +648,10 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         }
       }
       if (newBoard !== board) {
+        if (getQueryArgument('dashboard') !== newBoard) {
+          history.replace(url);
+        }
+
         const allVariables = getAllVariables(boards, newBoard, namespace);
         dispatch(monitoringDashboardsPatchAllVariables(allVariables, activePerspective));
 
@@ -666,9 +670,6 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         );
 
         setBoard(newBoard);
-        if (getQueryArgument('dashboard') !== newBoard) {
-          history.replace(url);
-        }
       }
     },
     [activePerspective, board, boards, dispatch, namespace],

@@ -7,7 +7,6 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
-import { TechPreviewBadge } from '@console/shared';
 import { useEventSourceStatus } from '../../hooks';
 import { CamelKameletBindingModel } from '../../models';
 import ConnectedEventSource from './EventSource';
@@ -36,10 +35,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
       <Helmet>
         <title>{t('knative-plugin~Event Source')}</title>
       </Helmet>
-      <PageHeading
-        title={t('knative-plugin~Create Event Source')}
-        badge={isKameletSource ? <TechPreviewBadge /> : null}
-      >
+      <PageHeading title={t('knative-plugin~Create Event Source')}>
         {t(
           'knative-plugin~Create an Event source to register interest in a class of events from a particular system. Configure using the YAML and form views.',
         )}

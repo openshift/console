@@ -164,7 +164,7 @@
     "type": "console.user-preference/group",
     "properties": {
       "id": "language",
-      "label": "%console-app~Language & region%"
+      "label": "%console-app~Language%"
     }
   },
   {

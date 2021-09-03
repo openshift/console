@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -160,14 +161,19 @@ export const MirroringCard: React.FC = () => {
                   icon={healthStateMapping[mirroringImageHealth]?.icon}
                 />
               </MirroringCardItem>
-              <MirroringCardItem>
-                <ExpandableSection toggleText={t('ceph-storage-plugin~Show image states')}>
-                  <MirroringImageHealthChart t={t} poolObj={obj} />
-                </ExpandableSection>
-              </MirroringCardItem>
-              <MirroringCardItem>
-                <MirroringImageStatePopover t={t} />
-              </MirroringCardItem>
+              {!_.isEmpty(obj.status?.mirroringStatus?.summary?.states) && (
+                <>
+                  <MirroringCardItem>
+                    <ExpandableSection toggleText={t('ceph-storage-plugin~Show image states')}>
+                      <MirroringImageHealthChart t={t} poolObj={obj} />
+                    </ExpandableSection>
+                  </MirroringCardItem>
+                  <MirroringCardItem>
+                    <MirroringImageStatePopover t={t} />
+                  </MirroringCardItem>
+                </>
+              )}
+
               <MirroringCardItem isLoading={!obj} title={t('ceph-storage-plugin~Last checked')}>
                 {formatedDateTime}
               </MirroringCardItem>

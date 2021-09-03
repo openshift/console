@@ -5,15 +5,17 @@ import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
   SubscriptionKind,
+  SubscriptionModel,
 } from '@console/operator-lifecycle-manager/src';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { subscriptionResource } from '../../resources';
 
-export const useFetchCsv = (specName: string): UseFetchCsvResult => {
+export const useFetchCsv = (specName: string, namespace?: string): UseFetchCsvResult => {
   const { t } = useTranslation();
-  const [subs, subsLoaded, subsLoadError] = useK8sWatchResource<SubscriptionKind[]>(
-    subscriptionResource,
-  );
+  const [subs, subsLoaded, subsLoadError] = useK8sWatchResource<SubscriptionKind[]>({
+    isList: true,
+    kind: referenceForModel(SubscriptionModel),
+    namespace,
+  });
   const csvName = React.useRef<string>(null);
   const csvNamespace = React.useRef<string>(null);
 

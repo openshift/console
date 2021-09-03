@@ -112,7 +112,12 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
     </>
   );
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" model={EventingBrokerModel} onSave={handleSubmit} />
+    <YAMLEditorField
+      name="yamlData"
+      model={EventingBrokerModel}
+      showSamples
+      onSave={handleSubmit}
+    />
   );
   return (
     <FlexForm onSubmit={handleSubmit}>

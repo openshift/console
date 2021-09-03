@@ -1,52 +1,54 @@
 import * as _ from 'lodash-es';
 import i18n from 'i18next';
-
-const getLocale = () => localStorage.getItem('bridge/language');
+import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 // The maximum allowed clock skew in milliseconds where we show a date as "Just now" even if it is from the future.
 export const maxClockSkewMS = -60000;
 
 // https://tc39.es/ecma402/#datetimeformat-objects
-export const timeFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
+export const timeFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
   hour: 'numeric',
   minute: 'numeric',
 });
 
-export const timeFormatterWithSeconds = new Intl.DateTimeFormat(getLocale() || undefined, {
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-});
-
-export const dateFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-});
-
-export const dateFormatterNoYear = new Intl.DateTimeFormat(getLocale() || undefined, {
-  month: 'short',
-  day: 'numeric',
-});
-
-export const dateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
-  month: 'short',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  year: 'numeric',
-});
-
-export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat(getLocale() || undefined, {
-  month: 'short',
-  day: 'numeric',
+export const timeFormatterWithSeconds = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
   hour: 'numeric',
   minute: 'numeric',
   second: 'numeric',
+});
+
+export const dateFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+  month: 'short',
+  day: 'numeric',
   year: 'numeric',
 });
 
-export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
+export const dateFormatterNoYear = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+  month: 'short',
+  day: 'numeric',
+});
+
+export const dateTimeFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  year: 'numeric',
+});
+
+export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat(
+  getLastLanguage() || undefined,
+  {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    year: 'numeric',
+  },
+);
+
+export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
   month: 'short',
   day: 'numeric',
   hour: 'numeric',
@@ -57,7 +59,7 @@ export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undef
 });
 
 export const relativeTimeFormatter = Intl.RelativeTimeFormat
-  ? new Intl.RelativeTimeFormat(getLocale() || undefined)
+  ? new Intl.RelativeTimeFormat(getLastLanguage() || undefined)
   : null;
 
 export const getDuration = (ms: number) => {

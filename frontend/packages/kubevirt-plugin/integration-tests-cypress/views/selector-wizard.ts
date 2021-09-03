@@ -6,6 +6,7 @@ export const cancelBtn = 'button[id="create-vm-wizard-cancel-btn"]';
 export const customizeBtn = 'button[data-test-id="wizard-customize"]';
 
 export const wizardNav = '.pf-c-wizard__nav-list';
+export const wizardNavLink = '.pf-c-wizard__nav-link';
 export const templateTitle = '.catalog-tile-pf-title';
 
 export const imageSourceDropdown = '#image-source-type-dropdown';
@@ -52,3 +53,9 @@ export const addSSHKey = 'button[id="cloudint-ssh_authorized_keys-add"]';
 // template wizard
 export const templateProvider = '#template-provider';
 export const templateSupport = '#template-supported';
+
+// storage step
+export const selectBootSource = 'select[id="storage-bootsource"]';
+export const rootdisk = '[data-id="rootdisk"]';
+export const kebabBtn = '[data-test-id="kebab-button"]';
+export const deleteBtn = '[data-test-action="Delete"]';

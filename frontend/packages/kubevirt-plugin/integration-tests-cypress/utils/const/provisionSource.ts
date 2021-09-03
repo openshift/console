@@ -13,11 +13,19 @@ export class ProvisionSource extends ObjectEnum<string> {
     'quay.io/kubevirt/cirros-container-disk-demo:latest',
   );
 
+  static readonly EPHEMERAL = new ProvisionSource(
+    'Ephemeral',
+    'Container (ephemeral)',
+    'quay.io/kubevirt/cirros-container-disk-demo:latest',
+  );
+
   static readonly PXE = new ProvisionSource('PXE', 'PXE (network boot - adds network interface)');
 
   static readonly CLONE_PVC = new ProvisionSource('Clone', 'Clone existing PVC (creates PVC)');
 
   static readonly UPLOAD = new ProvisionSource('Upload', 'Upload local file (creates PVC)');
+
+  static readonly BLANK = new ProvisionSource('Blank', 'Blank (creates PVC)');
 
   private readonly description: string;
 

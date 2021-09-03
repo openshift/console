@@ -5,8 +5,8 @@ import {
   PrometheusResponse,
   HealthState,
   StatusGroupMapper,
-} from '../../../extensions/console-types';
-import { K8sKind, Alert } from '../../common-types';
+} from '../extensions/console-types';
+import { K8sKind, Alert } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
   className?: string;

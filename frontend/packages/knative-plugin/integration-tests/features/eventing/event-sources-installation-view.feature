@@ -4,7 +4,7 @@ Feature: Event Sources Installation View
 
 
         Background:
-            Given user has installed Knative Apache Camelk Integration Operator
+            Given user has installed Red Hat Integration - Camel K Operator
 
 
         @regression @manual

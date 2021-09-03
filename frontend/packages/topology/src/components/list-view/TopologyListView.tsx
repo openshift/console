@@ -153,7 +153,6 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       const newVisualization = new Visualization();
       newVisualization.registerElementFactory(odcElementFactory);
       newVisualization.fromModel(listModel);
-      setVisualization(newVisualization);
       return newVisualization;
     };
 
@@ -163,6 +162,12 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
     }
 
     const visualization = visualizationRef.current;
+
+    React.useEffect(() => {
+      if (visualization) {
+        setVisualization(visualization);
+      }
+    }, [setVisualization, visualization]);
 
     React.useEffect(() => {
       if (model) {

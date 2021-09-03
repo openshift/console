@@ -135,7 +135,8 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
   const storageSecretTemplate: SecretKind = {
     apiVersion: apiVersionForModel(SecretModel),
     stringData: {
-      managementAddress: form.endpoint,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      management_address: form.endpoint,
       password: form.password,
       username: form.username,
     },
@@ -161,4 +162,8 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
 };
 
 export const flashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
-  !!state.endpoint && !!state.username && !!state.password && !!state.poolname;
+  !!state.endpoint &&
+  isValidUrl(state.endpoint) &&
+  !!state.username &&
+  !!state.password &&
+  !!state.poolname;

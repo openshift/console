@@ -6,6 +6,8 @@ import { RemoteEntryModule } from './types';
  * Vendor modules shared between Console application and its dynamic plugins.
  */
 export const sharedVendorModules = [
+  '@openshift-console/dynamic-plugin-sdk',
+  '@openshift-console/dynamic-plugin-sdk/lib/api/internal-api',
   'react',
   'react-helmet',
   'react-i18next',
@@ -21,6 +23,10 @@ export const sharedVendorModules = [
  */
 export const overrideSharedModules = (entryModule: RemoteEntryModule) => {
   entryModule.override({
+    '@openshift-console/dynamic-plugin-sdk': async () => () =>
+      require('@console/dynamic-plugin-sdk/src/index-lib'),
+    '@openshift-console/dynamic-plugin-sdk/lib/api/internal-api': async () => () =>
+      require('@console/dynamic-plugin-sdk/src/api/internal-api'),
     react: async () => () => require('react'),
     'react-helmet': async () => () => require('react-helmet'),
     'react-i18next': async () => () => require('react-i18next'),

@@ -4,11 +4,10 @@ import {
   Table as PfTable,
   TableHeader,
   TableGridBreakpoint,
-  OnSelect,
   SortByDirection,
-  ICell,
 } from '@patternfly/react-table';
 import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
+import { VirtualizedTableFC, TableColumn, TableDataProps } from '@console/dynamic-plugin-sdk';
 
 import VirtualizedTableBody from './VirtualizedTableBody';
 import { history, StatusBox, WithScrollContainer } from '../../utils';
@@ -30,7 +29,7 @@ const isColumnVisible = <D extends any>(
   column: TableColumn<D>,
   columnIDs: string[],
 ): boolean => {
-  if (column.title === '') {
+  if (column.id === '') {
     return true;
   }
   const columnIndex = columnIDs.indexOf(column.id);
@@ -52,37 +51,15 @@ const isColumnVisible = <D extends any>(
   return true;
 };
 
-export type TableColumn<D> = ICell & {
-  title: string;
-  id?: string;
-  additional?: boolean;
-  sort?: ((data: D[], sortDirection: SortByDirection) => D[]) | string;
-};
+export const TableData: React.FC<TableDataProps> = ({ className, id, activeColumnIDs, children }) =>
+  (activeColumnIDs.has(id) || id === '') && (
+    <td id={id} className={className} role="gridcell">
+      {children}
+    </td>
+  );
+TableData.displayName = 'TableData';
 
-export type RowProps<D, R extends any = {}> = {
-  obj: D;
-  rowData: R;
-  activeColumnIDs: Set<string>;
-};
-
-type VirtualizedTableProps<D, R extends any = {}> = {
-  data: D[];
-  unfilteredData: D[];
-  loaded: boolean;
-  loadError: any;
-  columns: TableColumn<D>[];
-  Row: React.ComponentType<RowProps<D, R>>;
-  NoDataEmptyMsg?: React.ComponentType<{}>;
-  EmptyMsg?: React.ComponentType<{}>;
-  scrollNode?: () => HTMLElement;
-  onSelect?: OnSelect;
-  label?: string;
-  'aria-label'?: string;
-  gridBreakPoint?: TableGridBreakpoint;
-  rowData?: R;
-};
-
-const VirtualizedTable = <D, R extends any = {}>({
+const VirtualizedTable: VirtualizedTableFC = ({
   data,
   loaded,
   loadError,
@@ -97,7 +74,7 @@ const VirtualizedTable = <D, R extends any = {}>({
   Row,
   rowData,
   unfilteredData,
-}: VirtualizedTableProps<D, R>) => {
+}) => {
   const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
   const [sortBy, setSortBy] = React.useState<{
     index: number;
@@ -181,7 +158,7 @@ const VirtualizedTable = <D, R extends any = {}>({
         <AutoSizer disableHeight>
           {({ width }) => (
             <div ref={registerChild}>
-              <VirtualizedTableBody<D, R>
+              <VirtualizedTableBody
                 Row={Row}
                 height={height}
                 isScrolling={isScrolling}

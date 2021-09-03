@@ -3,16 +3,25 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import CloseButton from '@console/shared/src/components/close-button';
 
-import { definitionFor } from '../../module/k8s';
-import { ResourceSidebarSnippets, ResourceSidebarSamples } from './resource-sidebar-samples';
+import { definitionFor, K8sKind } from '../../module/k8s';
+import {
+  ResourceSidebarSnippets,
+  ResourceSidebarSamples,
+  LoadSampleYaml,
+  DownloadSampleYaml,
+} from './resource-sidebar-samples';
 import { ExploreType } from './explore-type-sidebar';
 import { SimpleTabNav, Tab } from '../utils';
+import { Sample } from '@console/shared';
 
 const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
 };
 
-const ResourceSidebarWrapper = (props) => {
+const ResourceSidebarWrapper: React.FC<{
+  label: string;
+  toggleSidebar: () => void;
+}> = (props) => {
   const { label, children, toggleSidebar } = props;
 
   return (
@@ -32,11 +41,16 @@ const ResourceSidebarWrapper = (props) => {
   );
 };
 
-const ResourceSchema = ({ kindObj, schema }) => (
+const ResourceSchema: React.FC<{ kindObj: K8sKind; schema: any }> = ({ kindObj, schema }) => (
   <ExploreType kindObj={kindObj} schema={schema} scrollTop={sidebarScrollTop} />
 );
 
-const ResourceSamples = ({ samples, kindObj, downloadSampleYaml, loadSampleYaml }) => (
+const ResourceSamples: React.FC<{
+  samples: Sample[];
+  loadSampleYaml: LoadSampleYaml;
+  downloadSampleYaml: DownloadSampleYaml;
+  kindObj: K8sKind;
+}> = ({ samples, kindObj, downloadSampleYaml, loadSampleYaml }) => (
   <ResourceSidebarSamples
     samples={samples}
     kindObj={kindObj}
@@ -45,11 +59,24 @@ const ResourceSamples = ({ samples, kindObj, downloadSampleYaml, loadSampleYaml 
   />
 );
 
-const ResourceSnippets = ({ snippets, insertSnippetYaml }) => (
+const ResourceSnippets: React.FC<{
+  snippets: Sample[];
+  insertSnippetYaml(id: string, yaml: string, reference: string);
+}> = ({ snippets, insertSnippetYaml }) => (
   <ResourceSidebarSnippets snippets={snippets} insertSnippetYaml={insertSnippetYaml} />
 );
 
-export const ResourceSidebar = (props) => {
+export const ResourceSidebar: React.FC<{
+  kindObj: K8sKind;
+  downloadSampleYaml: DownloadSampleYaml;
+  schema: any;
+  sidebarLabel: string;
+  loadSampleYaml: LoadSampleYaml;
+  insertSnippetYaml: (id: string, yaml: string, reference: string) => void;
+  toggleSidebar: () => void;
+  samples: Sample[];
+  snippets: Sample[];
+}> = (props) => {
   const { t } = useTranslation();
   const {
     downloadSampleYaml,

@@ -1,5 +1,4 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 export type AlertAction = ExtensionDeclaration<
   'console.alert-action',

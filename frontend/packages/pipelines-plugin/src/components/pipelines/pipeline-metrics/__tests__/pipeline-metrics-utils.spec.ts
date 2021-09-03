@@ -1,5 +1,9 @@
-import { getRangeVectorData, getXaxisValues } from '../pipeline-metrics-utils';
-import { promqlEmptyResponse, promqlResponse } from './pipeline-metrics-test-data';
+import {
+  getRangeVectorData,
+  getTransformedDataPoints,
+  getXaxisValues,
+} from '../pipeline-metrics-utils';
+import { groupedData, promqlEmptyResponse, promqlResponse } from './pipeline-metrics-test-data';
 
 describe('Pipeline Metrics utils: getXaxisValues', () => {
   const ONE_DAY_DURATION = 86400000;
@@ -64,5 +68,27 @@ describe('Pipeline Metrics utils: getRangeVectorData', () => {
     expect(validData).toHaveLength(6);
     expect(validData[0][0].x).toEqual('nodejs-ex-effv75');
     expect(validData[0][0].y).toEqual(1800);
+  });
+});
+
+describe('Pipeline Metrics utils: getTransformedDataPoints', () => {
+  it('Should return the current value unchanged for single datapoint', () => {
+    const singleDatapoint = groupedData[0];
+    const data = getTransformedDataPoints([singleDatapoint]);
+    expect(data).toHaveLength(1);
+    expect(data[0].y).toEqual(5);
+  });
+
+  it('Should not contain the value from the previous in datapoints', () => {
+    const data = getTransformedDataPoints(groupedData);
+    expect(data).toHaveLength(3);
+    expect(data[2].x).toEqual('2021-08-31T18:30:00.000Z');
+    expect(data[2].y).toEqual(3);
+  });
+
+  it('Should return the correct count for multiple datapoints', () => {
+    const data = getTransformedDataPoints(groupedData);
+    const totalCount = data.reduce((acc, d) => acc + d.y, 0);
+    expect(totalCount).toEqual(10);
   });
 });

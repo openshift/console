@@ -19,10 +19,9 @@ import { sortable, wrappable } from '@patternfly/react-table';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { ColumnLayout } from '@console/internal/components/modals/column-management-modal';
+import { RowFilter, ColumnLayout } from '@console/dynamic-plugin-sdk';
 import ODFSystemLink from './system-link';
-import { getGVK, normalizeMetrics } from './utils';
+import { getGVK, normalizeMetrics, healthStateMap } from './utils';
 import { getActions } from './actions';
 import { StorageSystemModel } from '../../models';
 import { StorageSystemKind } from '../../types';
@@ -55,7 +54,7 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
   const systemName = obj?.metadata?.name;
   const { normalizedMetrics } = customData;
 
-  const { rawCapacity, usedCapacity, iops, throughput, latency } =
+  const { rawCapacity, usedCapacity, iops, throughput, latency, health } =
     normalizedMetrics?.[systemName] || {};
 
   return (
@@ -64,7 +63,9 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
         <ODFSystemLink kind={systemKind} systemName={systemName} providerName={providerName} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <Status status={obj?.metadata?.deletionTimestamp ? 'Terminating' : obj?.status?.phase} />
+        <Status
+          status={obj?.metadata?.deletionTimestamp ? 'Terminating' : healthStateMap(health)}
+        />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{rawCapacity?.string || '-'}</TableData>
       <TableData className={tableColumnClasses[3]}>{usedCapacity?.string || '-'}</TableData>
@@ -150,6 +151,10 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
     endpoint: PrometheusEndpoint.QUERY,
     query: ODF_QUERIES[ODFQueries.USED_CAPACITY],
   });
+  const [health] = usePrometheusPoll({
+    endpoint: PrometheusEndpoint.QUERY,
+    query: ODF_QUERIES[ODFQueries.HEALTH],
+  });
 
   const normalizedMetrics = React.useMemo(
     () => ({
@@ -160,9 +165,10 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
         rawCapacity,
         usedCapacity,
         iops,
+        health,
       ),
     }),
-    [props.data, iops, latency, rawCapacity, throughput, usedCapacity],
+    [props.data, iops, latency, rawCapacity, throughput, usedCapacity, health],
   );
 
   return (

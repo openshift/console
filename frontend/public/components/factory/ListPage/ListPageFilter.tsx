@@ -1,23 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { ListPageFilterProps } from '@console/dynamic-plugin-sdk';
 
-import { FilterToolbar, RowFilter } from '../../filter-toolbar';
-import { ColumnLayout } from '../../modals/column-management-modal';
-import { OnFilterChange } from './filter-hook';
-
-type ListPageFilterProps<D = any> = {
-  data: D;
-  loaded: boolean;
-  rowFilters?: RowFilter[];
-  nameFilterPlaceholder?: string;
-  labelFilterPlaceholder?: string;
-  textFilter?: string;
-  hideNameLabelFilters?: boolean;
-  hideLabelFilter?: boolean;
-  columnLayout?: ColumnLayout;
-  onFilterChange: OnFilterChange;
-  hideColumnManagement?: boolean;
-};
+import { FilterToolbar } from '../../filter-toolbar';
 
 const ListPageFilter: React.FC<ListPageFilterProps> = ({
   data,
@@ -25,7 +10,6 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
   rowFilters,
   nameFilterPlaceholder,
   labelFilterPlaceholder,
-  textFilter,
   hideNameLabelFilters,
   hideLabelFilter,
   columnLayout,
@@ -40,7 +24,6 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
       nameFilterPlaceholder={nameFilterPlaceholder}
       labelFilterPlaceholder={labelFilterPlaceholder}
       onFilterChange={onFilterChange}
-      textFilter={textFilter}
       hideNameLabelFilters={hideNameLabelFilters}
       hideLabelFilter={hideLabelFilter}
       columnLayout={columnLayout}

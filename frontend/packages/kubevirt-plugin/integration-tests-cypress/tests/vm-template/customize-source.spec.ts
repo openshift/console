@@ -4,15 +4,15 @@ import {
   OS_IMAGES_NS,
   PREPARING_FOR_CUSTOMIZATION,
   READY_FOR_CUSTOMIZATION,
-  TEMPLATE_BASE_IMAGE,
-  TEMPLATE_METADATA_NAME,
-  TEMPLATE_NAME,
+  TEMPLATE,
   TEST_PROVIDER,
 } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { addSource } from '../../views/add-source';
 import { customizeSource, PROVIDER } from '../../views/customize-source';
 import { virtualization } from '../../views/virtualization';
+
+const template = TEMPLATE.RHEL6;
 
 describe('test vm template source image', () => {
   before(() => {
@@ -22,7 +22,7 @@ describe('test vm template source image', () => {
     cy.deleteResource({
       kind: 'DataVolume',
       metadata: {
-        name: TEMPLATE_BASE_IMAGE,
+        name: template.dvName,
         namespace: OS_IMAGES_NS,
       },
     });
@@ -33,7 +33,7 @@ describe('test vm template source image', () => {
     cy.deleteResource({
       kind: 'DataVolume',
       metadata: {
-        name: TEMPLATE_BASE_IMAGE,
+        name: template.dvName,
         namespace: OS_IMAGES_NS,
       },
     });
@@ -48,12 +48,12 @@ describe('test vm template source image', () => {
   it('customize common template source', () => {
     const vmtName = 'tmp-customized';
     virtualization.templates.visit();
-    virtualization.templates.addSource(TEMPLATE_NAME);
+    virtualization.templates.addSource(template.name);
     addSource.addBootSource(ProvisionSource.REGISTRY);
-    virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
-    virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
+    virtualization.templates.testSource(template.name, IMPORTING);
+    virtualization.templates.testSource(template.name, TEST_PROVIDER);
 
-    virtualization.templates.customizeSource(TEMPLATE_METADATA_NAME);
+    virtualization.templates.customizeSource(template.metadataName);
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();
@@ -70,7 +70,7 @@ describe('test vm template source image', () => {
     cy.createUserTemplate(testName);
     virtualization.templates.visit();
 
-    virtualization.templates.customizeSource(TEMPLATE_METADATA_NAME);
+    virtualization.templates.customizeSource(template.metadataName);
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();

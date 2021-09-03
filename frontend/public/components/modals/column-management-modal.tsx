@@ -9,6 +9,7 @@ import {
   DataListItemCells,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
 
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -203,18 +204,4 @@ export type ColumnManagementModalProps = {
   cancel?: () => void;
   close?: () => void;
   columnLayout: ColumnLayout;
-};
-
-export type ColumnLayout = {
-  id: string;
-  columns: ManagedColumn[];
-  selectedColumns: Set<string>;
-  showNamespaceOverride?: boolean;
-  type: string;
-};
-
-export type ManagedColumn = {
-  id?: string;
-  title: string;
-  additional?: boolean;
 };

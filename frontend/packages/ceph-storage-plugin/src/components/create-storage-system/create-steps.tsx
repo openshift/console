@@ -57,7 +57,7 @@ export const createSteps = (
     },
     reviewAndCreate: {
       name: StepsName(t)[Steps.ReviewAndCreate],
-      component: <ReviewAndCreate state={state} />,
+      component: <ReviewAndCreate state={state} hasOCS={hasOCS} />,
     },
   };
 

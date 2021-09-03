@@ -206,6 +206,13 @@ const Details = ({ obj: s }) => {
         <div className="col-md-6">
           <SectionHeading text={t('public~Service routing')} />
           <dl>
+            <dt>{t('public~Hostname')}</dt>
+            <dd>
+              <div className="co-select-to-copy">
+                {s.metadata.name}.{s.metadata.namespace}.srv.cluster.local
+              </div>
+              <div>{t('public~Accessible within the cluster only')}</div>
+            </dd>
             <dt>{t('public~Service address')}</dt>
             <dd className="service-ips">
               <ServiceAddress s={s} />

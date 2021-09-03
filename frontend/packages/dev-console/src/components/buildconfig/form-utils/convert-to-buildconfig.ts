@@ -25,10 +25,14 @@ const convertFormDataToBuildConfigSource = (
       buildConfig.spec.source = {
         ...buildConfig.spec.source,
         type: 'Git',
-        git: {
-          uri: git.url,
-          ref: git.ref,
-        },
+        git: git.ref
+          ? {
+              uri: git.url,
+              ref: git.ref,
+            }
+          : {
+              uri: git.url,
+            },
         contextDir: git.dir,
       };
       if (git.secret) {
@@ -45,6 +49,18 @@ const convertFormDataToBuildConfigSource = (
           ...buildConfig.spec.strategy,
         };
       }
+
+      // Updates both app.openshift.io/vcs-* annotations only if the url exists
+      // so that we set the branch also if it was not defined earlier.
+      if (buildConfig.metadata.annotations?.['app.openshift.io/vcs-uri']) {
+        buildConfig.metadata.annotations['app.openshift.io/vcs-uri'] = git.url;
+        if (git.ref) {
+          buildConfig.metadata.annotations['app.openshift.io/vcs-ref'] = git.ref;
+        } else {
+          delete buildConfig.metadata.annotations['app.openshift.io/vcs-ref'];
+        }
+      }
+
       break;
     }
     case 'dockerfile': {

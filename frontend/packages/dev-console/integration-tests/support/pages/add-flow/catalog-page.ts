@@ -157,7 +157,7 @@ export const catalogPage = {
           .click();
         break;
       }
-      case 'Nodejs Ex K': {
+      case 'Nodejs': {
         cy.get(catalogPO.cards.helmNodejs)
           .first()
           .click();

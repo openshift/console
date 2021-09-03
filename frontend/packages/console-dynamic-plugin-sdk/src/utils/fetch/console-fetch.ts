@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import 'whatwg-fetch';
-import { ConsoleFetchText, ConsoleFetchJSON, ConsoleFetch } from '../../api/api-types';
+import { ConsoleFetchText, ConsoleFetchJSON, ConsoleFetch } from '../../extensions/console-types';
 import { TimeoutError, RetryError } from '../error/http-error';
 import { getCSRFToken, validateStatus, getImpersonateHeaders } from './console-fetch-utils';
 

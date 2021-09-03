@@ -46,7 +46,7 @@ export enum catalogCards {
   nginxHTTPServer = 'Nginx HTTP server and a reverse proxy',
   jenkins = 'Jenkins',
   knativeKafka = 'Knative Kafka',
-  helmNodejs = 'Nodejs Ex K',
+  helmNodejs = 'Nodejs',
 }
 
 export enum catalogTypes {

@@ -1,19 +1,20 @@
 import { testName } from '../../support';
-import { VirtualMachineData } from '../../types/vm';
+import { Network, VirtualMachineData } from '../../types/vm';
+import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
-// const nic0: Network = {
-//   name: 'nic-0',
-//   nad: 'bridge-network',
-// };
+const nic0: Network = {
+  name: 'nic-0',
+  nad: 'bridge-network',
+};
 
 const urlVM: VirtualMachineData = {
   name: `url-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-869): create VM from URL',
   namespace: testName,
-  template: 'Red Hat Enterprise Linux 8.0+ VM',
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,
@@ -24,7 +25,7 @@ const registryVM: VirtualMachineData = {
   name: `registry-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-870): create VM from container image',
   namespace: testName,
-  template: 'Microsoft Windows 10 VM',
+  template: TEMPLATE.WIN10.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
@@ -35,7 +36,7 @@ const pvcVM: VirtualMachineData = {
   name: `pvc-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-2446): create VM from existing PVC',
   namespace: testName,
-  template: 'Fedora 32+ VM',
+  template: TEMPLATE.FEDORA.name,
   provisionSource: ProvisionSource.CLONE_PVC,
   pvcName: 'clone-pvc-fedora',
   pvcNS: testName,
@@ -43,15 +44,16 @@ const pvcVM: VirtualMachineData = {
   startOnCreation: true,
 };
 
-// const pxeVM: VirtualMachineData = {
-//   name: `pxe-vm-customize-wizard-${testName}`,
-//   description: 'ID(CNV-771): create VM from PXE',
-//   namespace: testName,
-//   template: 'Fedora 32+ VM',
-//   provisionSource: ProvisionSource.PXE,
-//   sshEnable: false,
-//   networkInterfaces: [nic0],
-// };
+const pxeVM: VirtualMachineData = {
+  name: `pxe-vm-customize-wizard-${testName}`,
+  description: 'ID(CNV-771): create VM from PXE',
+  namespace: testName,
+  template: TEMPLATE.FEDORA.name,
+  provisionSource: ProvisionSource.PXE,
+  sshEnable: false,
+  networkInterfaces: [nic0],
+  startOnCreation: false,
+};
 
 describe('Test VM creation', () => {
   before(() => {
@@ -92,5 +94,12 @@ describe('Test VM creation', () => {
       virtualization.vms.visit();
       vm.customizeCreate(vmData);
     });
+  });
+
+  it('ID(CNV-771): create VM from PXE', () => {
+    if (Cypress.env('DOWNSTREAM')) {
+      virtualization.vms.visit();
+      vm.customizeCreate(pxeVM);
+    }
   });
 });

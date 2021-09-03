@@ -6,10 +6,6 @@ export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults'
 export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
 export const EXPECT_LOGIN_SCRIPT_PATH = './utils/expect-login.sh';
 
-export const TEMPLATE_NAME = 'Red Hat Enterprise Linux 6.0+ VM';
-export const TEMPLATE_BASE_IMAGE = 'rhel6';
-export const TEMPLATE_METADATA_NAME = 'rhel6-server-small';
-
 export const TEST_PROVIDER = 'test-provider';
 export const IMPORTING = 'Importing';
 export const ADD_SOURCE = 'Add source';
@@ -74,15 +70,6 @@ export enum Flavor {
   CUSTOM = 'Custom',
 }
 
-export enum DISK_SOURCE {
-  AttachDisk = 'Use an existing PVC',
-  AttachClonedDisk = 'Clone existing PVC',
-  Blank = 'Blank',
-  Container = 'Import via Registry (creates PVC)',
-  EphemeralContainer = 'Container (ephemeral)',
-  Url = 'Import via URL',
-}
-
 export enum DISK_INTERFACE {
   VirtIO = 'virtio',
   sata = 'sata',
@@ -94,9 +81,61 @@ export enum DISK_DRIVE {
   CDROM = 'CD-ROM',
 }
 
-export enum OS {
-  fedora = 'Fedora 32 or higher',
-  win10 = 'Microsoft Windows 10',
-  win2k12 = 'Microsoft Windows Server 2012 R2',
-  rhel8 = 'Red Hat Enterprise Linux 8.0 or higher',
-}
+export const TEMPLATE = {
+  RHEL6: {
+    name: 'Red Hat Enterprise Linux 6.0+ VM',
+    dvName: 'rhel6',
+    metadataName: 'rhel6-server-small',
+    os: 'Red Hat Enterprise Linux 6.0 or higher',
+    supportLevel: 'Full',
+  },
+  RHEL7: {
+    name: 'Red Hat Enterprise Linux 7.0+ VM',
+    dvName: 'rhel7',
+    metadataName: 'rhel7-server-small',
+    os: 'Red Hat Enterprise Linux 7.0 or higher',
+    supportLevel: 'Full',
+  },
+  RHEL8: {
+    name: 'Red Hat Enterprise Linux 8.0+ VM',
+    dvName: 'rhel8',
+    metadataName: 'rhel8-server-small',
+    os: 'Red Hat Enterprise Linux 8.0 or higher',
+    supportLevel: 'Full',
+  },
+  RHEL9: {
+    name: 'Red Hat Enterprise Linux 9.0 Alpha VM',
+    dvName: 'rhel9',
+    metadataName: 'rhel9-server-small',
+    os: 'Red Hat Enterprise Linux 9.0 or higher',
+    supportLevel: 'Limited',
+  },
+  FEDORA: {
+    name: 'Fedora 32+ VM',
+    dvName: 'fedora',
+    metadataName: 'fedora-server-small',
+    os: 'Fedora 32 or higher',
+    supportLevel: 'Community',
+  },
+  CENTOS7: {
+    name: 'CentOS 7.0+ VM',
+    dvName: 'centos7',
+    metadataName: 'centos7-server-small',
+    os: 'CentOS 7 or higher',
+    supportLevel: 'Community',
+  },
+  WIN10: {
+    name: 'Microsoft Windows 10 VM',
+    dvName: 'win10',
+    metadataName: 'windows10-desktop-medium',
+    os: 'Microsoft Windows 10',
+    supportLevel: 'Full',
+  },
+  WIN2K12R2: {
+    name: 'Microsoft Windows Server 2012 R2 VM',
+    dvName: 'win2k12r2',
+    metadataName: 'windows2k12r2-server-medium',
+    os: 'Microsoft Windows Server 2012 R2',
+    supportLevel: 'Full',
+  },
+};

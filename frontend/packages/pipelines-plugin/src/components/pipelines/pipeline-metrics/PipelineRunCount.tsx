@@ -3,6 +3,7 @@ import { ChartVoronoiContainer } from '@patternfly/react-charts';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import Measure from 'react-measure';
+import { DataPoint } from '@console/internal/components/graphs';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingInline } from '@console/internal/components/utils';
 import { DEFAULT_CHART_HEIGHT, DEFAULT_SAMPLES } from '../const';
@@ -11,6 +12,7 @@ import { TimeSeriesChart } from './charts/TimeSeriesChart';
 import {
   formatDate,
   formatTimeSeriesValues,
+  getTransformedDataPoints,
   PipelineMetricsGraphProps,
 } from './pipeline-metrics-utils';
 
@@ -54,7 +56,10 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
     return formatTimeSeriesValues(result, DEFAULT_SAMPLES, timespan);
   });
   const grouped = _.groupBy(newGraphData[0], (g) => formatDate(g.x));
-  const finalArray = _.compact(_.keys(grouped).map((x) => _.maxBy(grouped[x], 'y')));
+  const finalArray: DataPoint[] = getTransformedDataPoints(
+    _.compact(_.keys(grouped).map((x) => _.maxBy(grouped[x], 'y'))),
+  );
+
   return (
     <Measure bounds>
       {({ measureRef, contentRect }) => (

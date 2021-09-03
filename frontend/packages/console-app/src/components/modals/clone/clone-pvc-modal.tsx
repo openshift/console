@@ -181,9 +181,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
                   </p>
                 </div>
                 <div>
-                  <p className="co-clone-pvc-modal__pvc-details">
-                    {t('console-app~Storage Class')}
-                  </p>
+                  <p className="co-clone-pvc-modal__pvc-details">{t('console-app~StorageClass')}</p>
                   <p>
                     <ResourceIcon kind={StorageClassModel.kind} />
                     {resource.spec?.storageClassName || '-'}

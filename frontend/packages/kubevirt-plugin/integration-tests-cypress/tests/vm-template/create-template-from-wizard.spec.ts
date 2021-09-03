@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { Network, VirtualMachineData } from '../../types/vm';
-import { OS } from '../../utils/const/index';
+import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
@@ -16,8 +16,8 @@ const urlTemplate: VirtualMachineData = {
   namespace: testName,
   templateProvider: 'foo',
   templateSupport: true,
-  os: OS.rhel8,
-  template: 'Red Hat Enterprise Linux 8.0+ VM',
+  os: TEMPLATE.RHEL8.os,
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
 };
@@ -28,8 +28,8 @@ const registryTemplate: VirtualMachineData = {
   namespace: testName,
   templateProvider: 'foo',
   templateSupport: true,
-  os: OS.win2k12,
-  template: 'Microsoft Windows Server 2012 R2 VM',
+  os: TEMPLATE.WIN2K12R2.os,
+  template: TEMPLATE.WIN2K12R2.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
 };
@@ -40,8 +40,8 @@ const pvcTemplate: VirtualMachineData = {
   namespace: testName,
   templateProvider: 'foo',
   templateSupport: true,
-  template: 'Fedora 32+ VM',
-  os: OS.fedora,
+  template: TEMPLATE.FEDORA.name,
+  os: TEMPLATE.FEDORA.os,
   provisionSource: ProvisionSource.CLONE_PVC,
   pvcName: 'clone-pvc-fedora',
   pvcNS: testName,
@@ -53,8 +53,8 @@ const pxeTemplate: VirtualMachineData = {
   namespace: testName,
   templateProvider: 'foo',
   templateSupport: true,
-  os: OS.fedora,
-  template: 'Fedora 32+ VM',
+  os: TEMPLATE.FEDORA.os,
+  template: TEMPLATE.FEDORA.name,
   provisionSource: ProvisionSource.PXE,
   networkInterfaces: [nic0],
 };

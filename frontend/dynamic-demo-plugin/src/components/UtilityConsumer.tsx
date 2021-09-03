@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/api';
+import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
 
 const UtilityConsumer: React.FC = () => {
   return (

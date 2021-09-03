@@ -14,6 +14,7 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
+import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   HelmActionType,
@@ -153,9 +154,10 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     if (editorType === EditorType.Form) {
       const ajv = new Ajv();
       const validSchema = ajv.validateSchema(formSchema);
-      const validFormData = validSchema && ajv.validate(formSchema, formData);
+      const prunedFormData = prune(formData);
+      const validFormData = validSchema && ajv.validate(formSchema, prunedFormData);
       if (validFormData) {
-        valuesObj = formData;
+        valuesObj = prunedFormData;
       } else {
         actions.setStatus({
           submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { SecondaryStatus } from '../../status';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';

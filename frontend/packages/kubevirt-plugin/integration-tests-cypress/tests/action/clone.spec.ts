@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { Disk, Network, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE_NAME, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { TEMPLATE, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { selectActionFromDropdown } from '../../views/actions';
 import * as cloneView from '../../views/clone';
@@ -13,11 +13,11 @@ import { vm, waitForStatus } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `test-vm-clone-${testName}`,
   namespace: testName,
-  template: TEMPLATE_NAME,
+  template: TEMPLATE.RHEL6.name,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,
-  startOnCreation: false,
+  startOnCreation: true,
 };
 
 const nic1: Network = {
@@ -39,7 +39,6 @@ describe('Test VM Clone', () => {
     cy.cdiCloner(testName, 'default');
     cy.createNAD(testName);
     virtualization.vms.visit();
-    waitForStatus(VM_STATUS.Stopped, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
   });
 
   after(() => {
@@ -80,19 +79,22 @@ describe('Test VM Clone', () => {
   });
 
   it('ID(CNV-1730) Displays warning in clone wizard when cloned VM is running', () => {
-    vm.start(vmData);
     selectActionFromDropdown(VM_ACTION.Clone, actionButtons.kebabButton);
     cy.get('.pf-c-alert__title')
       .contains(`The VM ${vmData.name} is still running. It will be powered off while cloning.`)
       .should('exist');
+    cy.get(cloneView.cancel).click();
   });
 
   it('ID(CNV-1863) Prefills correct data in the clone VM dialog', () => {
+    selectActionFromDropdown(VM_ACTION.Clone, actionButtons.kebabButton);
     cy.get(cloneView.vmName).should('have.value', `${vmData.name}-clone`);
     cy.get(cloneView.nameSpace).should('have.value', testName);
+    cy.get(cloneView.cancel).click();
   });
 
   it('ID(CNV-3058) Clones VM to a different namespace', () => {
+    selectActionFromDropdown(VM_ACTION.Clone, actionButtons.kebabButton);
     cy.get(cloneView.vmName).should('have.value', `${vmData.name}-clone`);
     cy.get(cloneView.nameSpace)
       .select('default')

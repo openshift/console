@@ -17,8 +17,7 @@ import {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { ColumnLayout } from '@console/internal/components/modals/column-management-modal';
+import { RowFilter, ColumnLayout } from '@console/dynamic-plugin-sdk';
 import ODFResourceLink from './link';
 import {
   NooBaaBackingStoreModel,

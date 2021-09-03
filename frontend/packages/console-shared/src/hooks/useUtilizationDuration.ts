@@ -2,7 +2,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
-import { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import * as UIActions from '@console/internal/actions/ui';
 import { DEFAULT_DURATION, DEFAULT_DURATION_KEY } from '../constants';
 

@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { NODE_STATUS_TITLE_KEYS } from '../../constants';
 import { BareMetalNodeListBundle, isCSRBundle } from '../types';
 

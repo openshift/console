@@ -1,6 +1,10 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { PrometheusResponse, PrometheusResult } from '@console/internal/components/graphs';
+import {
+  DataPoint,
+  PrometheusResponse,
+  PrometheusResult,
+} from '@console/internal/components/graphs';
 import { humanizeNumberSI } from '@console/internal/components/utils';
 import {
   dateFormatterNoYear,
@@ -130,3 +134,12 @@ export const PipelineMetricsTimeRangeOptions = () => ({
   '3w': i18next.t('pipelines-plugin~3 weeks'),
   '4w': i18next.t('pipelines-plugin~4 weeks'),
 });
+
+export const getTransformedDataPoints = (data: DataPoint[]): DataPoint[] => {
+  let previousValue = 0;
+  return _.sortBy(data, 'x').map((val) => {
+    const currentValue = val.y - previousValue;
+    previousValue += val.y;
+    return { ...val, y: currentValue };
+  });
+};

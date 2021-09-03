@@ -29,8 +29,8 @@ Feature: Observe tab on the topology Sidebar
 
         @smoke, @odc-3698
         Scenario: Observe tab on the Sidebar for Helm Release: M-04-TC02
-            Given helm release "nodejs-ex-k" is present in topology page
-             When user clicks on the workload "node-js-ex" to open the sidebar
+            Given helm release "nodejs" is present in topology page
+             When user clicks on the workload "nodejs" to open the sidebar
               And user clicks on Observe tab
               And user clicks on View dashboard link
              Then page redirected to the Observe page

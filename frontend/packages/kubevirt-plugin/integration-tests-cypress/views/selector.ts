@@ -50,6 +50,8 @@ export enum nicDialog {
 export enum diskDialog {
   addDisk = 'button[id="add-disk"]',
   source = 'button[id="disk-select-source"]',
+  diskURL = 'input[id="disk-url"]',
+  diskContainer = 'input[id="disk-container"]',
   diskName = 'input[id="disk-name"]',
   size = 'input[id="disk-size-row-size"]',
   diskType = 'select[id="disk-type"]',
@@ -70,3 +72,10 @@ export const createYAMLButton = 'button[data-test="save-changes"]';
 
 // multiple IP pop-up
 export const ipPopOverContent = '.pf-c-popover__content';
+
+// template list
+export const nameFilter = 'input[data-test="name-filter-input"]';
+// export const starIcon = '.pf-c-button.pf-m-plain.kv-pin-remove-btn';
+export const unStarIcon = '.pf-c-button.pf-m-plain.kv-pin-btn';
+export const supportLevel = '[data-test-id="details-Support"]';
+export const supportLevelTag = '[data-test="template-support"]';
