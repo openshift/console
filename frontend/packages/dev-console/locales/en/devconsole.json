@@ -185,6 +185,7 @@
   "Post Lifecycle Hook": "Post Lifecycle Hook",
   "Post hooks execute after the deployment strategy completes.": "Post hooks execute after the deployment strategy completes.",
   "Container name": "Container name",
+  "Select container name": "Select container name",
   "Add another argument": "Add another argument",
   "Enter the command to run inside the container. The command is considered sucessful if its exit code is 0. Drag and drop to reorder arguments.": "Enter the command to run inside the container. The command is considered sucessful if its exit code is 0. Drag and drop to reorder arguments.",
   "Environment variables (runtime only)": "Environment variables (runtime only)",
