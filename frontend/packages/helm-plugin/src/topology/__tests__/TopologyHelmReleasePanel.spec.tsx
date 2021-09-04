@@ -8,6 +8,10 @@ import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';
 import { ConnectedTopologyHelmReleasePanel } from '../TopologyHelmReleasePanel';
 import { mockHelmReleaseNode, mockManifest, mockReleaseNotes } from './mockData';
 
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+  useResizeObserver: jest.fn(),
+}));
+
 describe('TopologyHelmReleasePanel', () => {
   it('should render the resources tab by default', () => {
     const component = mount(
