@@ -16,7 +16,6 @@ const ImportStrategySelector: React.FC = () => {
       build: { strategy },
     },
     setFieldValue,
-    setFieldTouched,
   } = useFormikContext<FormikValues>();
   const fieldId = getFieldId('import.selectedStrategy', 'importStrategySelect');
 
@@ -54,9 +53,9 @@ const ImportStrategySelector: React.FC = () => {
       setFieldValue('import.selectedStrategy.priority', item.priority);
       setFieldValue('import.selectedStrategy.detectedFiles', item.detectedFiles);
       setFieldValue('build.strategy', item.build);
-      setFieldTouched('import.selectedStrategy', true);
+      setFieldValue('import.strategyChanged', false);
     },
-    [setFieldTouched, setFieldValue],
+    [setFieldValue],
   );
 
   useFormikValidationFix(strategy);

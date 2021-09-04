@@ -86,11 +86,11 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       secretResource: {},
     },
     docker: {
-      dockerfilePath: 'Dockerfile',
-      dockerfileHasError: false,
+      dockerfilePath: '',
+      dockerfileHasError: true,
     },
     devfile: {
-      devfilePath: 'devfile.yaml',
+      devfilePath: '',
       devfileHasError: false,
     },
     build: {
@@ -114,6 +114,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       },
       recommendedStrategy: null,
       showEditImportStrategy: false,
+      strategyChanged: false,
     },
   };
 
