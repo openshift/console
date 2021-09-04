@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { TEMPLATE, VM_ACTION, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { actionButtons, detailsTab, errorAlert } from '../../views/selector';
 import { tab } from '../../views/tab';
@@ -51,7 +51,7 @@ describe('Test VM Migration', () => {
 
   it('ID(CNV-2140) Migrate VM action button is displayed when VM is running', () => {
     virtualization.vms.visit();
-    vm.start(vmData);
+    vm.start();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
@@ -61,14 +61,14 @@ describe('Test VM Migration', () => {
     cy.byTestActionID(VM_ACTION.Cancel).should('not.exist');
 
     if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
-      vm.migrate(vmData, false);
+      vm.migrate(false);
       cy.byLegacyTestID(actionButtons.actionDropdownButton).click();
       cy.contains('Migrate Virtual Machine').should('not.exist');
       cy.byTestActionID(VM_ACTION.Cancel).should('exist');
-      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_MIGRATE);
+      waitForStatus(VM_STATUS.Running);
     }
     if (Cypress.env('STORAGE_CLASS') === 'hostpath-provisioner') {
-      vm.migrate(vmData, false);
+      vm.migrate(false);
       cy.get(errorAlert)
         .contains('all PVCs must be shared')
         .should('exist');
@@ -86,7 +86,7 @@ describe('Test VM Migration', () => {
       // migrate again
       cy.get(detailsTab.vmNode).then(($node) => {
         const nodeName = $node.text();
-        vm.migrate(vmData);
+        vm.migrate();
         cy.get(detailsTab.vmNode).should(($node1) => {
           const nodeName1 = $node1.text();
           expect(nodeName1).not.toEqual(nodeName);
@@ -99,7 +99,7 @@ describe('Test VM Migration', () => {
     if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
       cy.get(detailsTab.vmNode).then(($node) => {
         const node = $node.text();
-        vm.migrate(vmData, false);
+        vm.migrate(false);
         action(VM_ACTION.Cancel);
         cy.get(detailsTab.vmNode).should(($node1) => {
           const node1 = $node1.text();

@@ -80,7 +80,7 @@ describe('kubevirt PVC upload', () => {
 
     it('ID(CNV-5041) VM can be up after deleting the uploaded PVC', () => {
       vm.create(vmData);
-      vm.stop(vmData);
+      vm.stop();
       // only delete template pvc for ocs, hpp does not support this
       if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
         cy.deleteResource({
@@ -91,7 +91,7 @@ describe('kubevirt PVC upload', () => {
           },
         });
       }
-      vm.start(vmData);
+      vm.start();
       vm.delete();
     });
   });
@@ -113,7 +113,7 @@ describe('kubevirt PVC upload', () => {
 
     it('ID(CNV-5597) Verify create VM from the template whose source is uploaded via CLI', () => {
       vm.create(vmData);
-      vm.stop(vmData);
+      vm.stop();
       vm.delete();
     });
 

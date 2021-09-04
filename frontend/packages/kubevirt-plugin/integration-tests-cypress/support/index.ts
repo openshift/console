@@ -3,11 +3,7 @@ import { projectDropdown } from '../../../integration-tests-cypress/views/common
 import { V1alpha1DataVolume } from '../../src/types/api';
 import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
-import {
-  EXPECT_LOGIN_SCRIPT_PATH,
-  KUBEVIRT_PROJECT_NAME,
-  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
-} from '../utils/const/index';
+import { KUBEVIRT_PROJECT_NAME, KUBEVIRT_STORAGE_CLASS_DEFAULTS } from '../utils/const/index';
 
 export * from '../../../integration-tests-cypress/support';
 
@@ -22,7 +18,6 @@ declare global {
       dropFile(filePath: string, fileName: string, inputSelector: string): void;
       createUserTemplate(namespace: string): void;
       cdiCloner(srcNS: string, destNS: string): void;
-      waitForLoginPrompt(vmName: string, namespace: string): void;
       Login(): void;
       deleteTestProject(namespace: string): void;
       pauseVM(vmData: VirtualMachineData): void;
@@ -156,13 +151,6 @@ Cypress.Commands.add('cdiCloner', (srcNS: string, destNS: string) => {
     cloner.roleBinding.subjects[0].namespace = destNS;
     cloner.roleBinding.metadata.namespace = srcNS;
     cy.applyResource(cloner.roleBinding);
-  });
-});
-
-Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) => {
-  cy.exec(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${vmName} ${namespace}`, {
-    failOnNonZeroExit: false,
-    timeout: 600000,
   });
 });
 

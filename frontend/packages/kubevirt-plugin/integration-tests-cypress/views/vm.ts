@@ -6,18 +6,31 @@ import { create, vmYAML } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
 
-export const waitForStatus = (status: string, vmData?: VirtualMachineData, timeout?: number) => {
-  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
-  if (status === VM_STATUS.Running) {
-    const { name, namespace } = vmData;
-    cy.waitForLoginPrompt(name, namespace);
+export const waitForStatus = (status: string) => {
+  switch (status) {
+    case VM_STATUS.Running: {
+      cy.contains(detailsTab.vmStatus, VM_STATUS.Running, {
+        timeout: VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP,
+      }).should('exist');
+      break;
+    }
+    case VM_STATUS.Stopped: {
+      cy.contains(detailsTab.vmStatus, VM_STATUS.Stopped, {
+        timeout: VM_ACTION_TIMEOUT.VM_IMPORT,
+      }).should('exist');
+      break;
+    }
+    case VM_STATUS.Starting: {
+      cy.contains(detailsTab.vmStatus, VM_STATUS.Starting, {
+        timeout: VM_ACTION_TIMEOUT.VM_IMPORT,
+      }).should('exist');
+      break;
+    }
+    default: {
+      cy.contains(detailsTab.vmStatus, status).should('exist');
+      break;
+    }
   }
-
-  if (status === VM_STATUS.Starting) {
-    const startingStatuses = [VM_STATUS.Starting, VM_STATUS.Provisioning];
-    const regex = new RegExp(`${startingStatuses.join('|')}`, 'g');
-    cy.contains(detailsTab.vmStatus, regex, { timeout: timeOut }).should('exist');
-  } else cy.contains(detailsTab.vmStatus, status, { timeout: timeOut }).should('exist');
 };
 
 export const action = (selector: string) => {
@@ -43,10 +56,10 @@ export const vm = {
     }
     wizard.vm.fillReviewForm(vmData);
     if (startOnCreation) {
-      waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
-      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Starting);
+      waitForStatus(VM_STATUS.Running);
     } else {
-      waitForStatus(VM_STATUS.Stopped, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+      waitForStatus(VM_STATUS.Stopped);
     }
   },
   customizeCreate: (vmData: VirtualMachineData) => {
@@ -61,25 +74,25 @@ export const vm = {
     wizard.vm.fillAdvancedForm(vmData);
     wizard.vm.fillConfirmForm(vmData);
     if (startOnCreation) {
-      waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
-      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Starting);
+      waitForStatus(VM_STATUS.Running);
     } else {
-      waitForStatus(VM_STATUS.Stopped, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+      waitForStatus(VM_STATUS.Stopped);
     }
   },
-  start: (vmData: VirtualMachineData) => {
+  start: () => {
     waitForStatus(VM_STATUS.Stopped);
     action(VM_ACTION.Start);
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    waitForStatus(VM_STATUS.Running);
   },
-  restart: (vmData: VirtualMachineData) => {
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+  restart: () => {
+    waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Restart);
-    waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    waitForStatus(VM_STATUS.Starting);
+    waitForStatus(VM_STATUS.Running);
   },
-  stop: (vmData: VirtualMachineData) => {
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+  stop: () => {
+    waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Stop);
     waitForStatus(VM_STATUS.Stopped);
   },
@@ -93,22 +106,22 @@ export const vm = {
     });
     cy.byTestID('create-vm-empty').should('be.visible');
   },
-  unpause: (vmData: VirtualMachineData) => {
+  unpause: () => {
     waitForStatus(VM_STATUS.Paused);
     action(VM_ACTION.Unpause);
-    waitForStatus(VM_STATUS.Running, vmData);
+    waitForStatus(VM_STATUS.Running);
   },
-  migrate: (vmData: VirtualMachineData, waitForComplete = true) => {
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+  migrate: (waitForComplete = true) => {
+    waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Migrate);
     if (waitForComplete) {
-      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_MIGRATE);
+      waitForStatus(VM_STATUS.Running);
     }
   },
-  pause: (vmData: VirtualMachineData) => {
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+  pause: () => {
+    waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Pause);
-    waitForStatus(VM_STATUS.Paused, vmData);
+    waitForStatus(VM_STATUS.Paused);
   },
   createFromYAML: () => {
     virtualization.vms.visit();
