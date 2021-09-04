@@ -57,7 +57,7 @@ Feature: Perform Actions on repository
 
 
         @smoke @to-do
-        Scenario: Actions menu of newly created reposiotry in Repository details page: P-11-TC05
+        Scenario: Actions menu of newly created repository in Repository details page: P-11-TC05
             Given user is at repositories details page with newly created repository "test-repo"
              When user clicks Actions menu in the repository details page
              Then Actions menu display with options Edit labels, Edit annotations, Edit repository, Delete repository
@@ -69,7 +69,7 @@ Feature: Perform Actions on repository
              When user searches repository "<repository_name>" in repositories page
               And user clicks repository "<repository_name>" from searched results on Repositories page
               And user selects option "Edit Repository" from Actions menu drop down
-             Then user modifies the yaml code in the yaml view of the reposiotry
+             Then user modifies the yaml code in the yaml view of the repository
               And user clicks on the save button
              Then user is able to see a success alert message on same page
 
@@ -101,7 +101,33 @@ Feature: Perform Actions on repository
 
 
         @regression @to-do
-        Scenario Outline: Delete the repository from the Repository details page: P-11-TC09
+        Scenario Outline: Pipeline Run Details page for the repository: P-11-TC09
+            Given pipeline run is displayed for "<repository_name>"
+              And user is at the repositories page
+             When user clicks Last Run value of repository "<repository_name>"
+             Then user will be redirected to Pipeline Run Details page
+              And user is able to see Details, YAML, TaskRuns, Logs and Events tabs
+              And Details tab is displayed with fields Repository, Branch, Commit id and Event type
+              And Actions dropdown display on the top right corner of the page
+
+        Examples:
+                  | repository_name |
+                  | test-repo       |
+
+
+        @regression @to-do
+        Scenario: Pipeline Runs tab of the Repository details page: P-11-TC10
+            Given repository "test-repo" is present on the Repositories page
+             When user searches repository "test-repo" in repositories page
+              And user clicks repository "test-repo" from searched results on Repositories page
+              And user clicks on Pipeline Runs tab
+             Then user is able to see Name, Commit id, Status, Task status, Started, Duration and Branch fields
+              And user hovers over the commit id
+             Then user should see commit message in tooltip
+
+
+        @regression @to-do
+        Scenario Outline: Delete the repository from the Repository details page: P-11-TC11
             Given repository "<repository_name>" is present on Repositories page
              When user searches repository "<repository_name>" in repositories page
               And user clicks repository "<repository_name>" from searched results on Repositories page
