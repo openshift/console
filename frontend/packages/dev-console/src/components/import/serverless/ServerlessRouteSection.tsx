@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -9,6 +10,12 @@ import { DomainMappingModel } from '@console/knative-plugin/src';
 import { SelectInputField } from '@console/shared';
 import { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import PortInputField from '../route/PortInputField';
+import {
+  getAllOtherDomainMappingInUse,
+  getOtherKsvcFromDomainMapping,
+  hasOtherKsvcDomainMappings,
+  removeDuplicateDomainMappings,
+} from './serverless-utils';
 
 const ServerlessRouteSection: React.FC = () => {
   const { t } = useTranslation();
@@ -36,9 +43,15 @@ const ServerlessRouteSection: React.FC = () => {
   );
   const domainMappingResources = React.useMemo(() => {
     return domainMappingLoaded && !domainMappingLoadErr
-      ? data.map((dm) => ({ value: dm.metadata.name, disabled: false }))
+      ? data.map((dm) => {
+          const ksvc = getOtherKsvcFromDomainMapping(dm, name);
+          return {
+            value: ksvc ? `${dm.metadata.name} (${ksvc})` : dm.metadata.name,
+            disabled: false,
+          };
+        })
       : [];
-  }, [data, domainMappingLoaded, domainMappingLoadErr]);
+  }, [domainMappingLoaded, domainMappingLoadErr, data, name]);
 
   React.useEffect(() => {
     if (domainMappingLoaded && !domainMappingLoadErr && data?.length) {
@@ -51,7 +64,7 @@ const ServerlessRouteSection: React.FC = () => {
       ];
       setFieldValue('serverless', {
         ...serverless,
-        domainMapping: [...new Set(newDomainMap)],
+        domainMapping: removeDuplicateDomainMappings(newDomainMap, mappedDomain),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,6 +72,7 @@ const ServerlessRouteSection: React.FC = () => {
 
   const placeholderPort = defaultUnknownPort;
   const portOptions = ports.map((port) => port?.containerPort.toString());
+  const domainsInUse = getAllOtherDomainMappingInUse(serverless.domainMapping, data, name) ?? [];
   return (
     <>
       <PortInputField
@@ -70,16 +84,46 @@ const ServerlessRouteSection: React.FC = () => {
         options={portOptions}
       />
       {domainMappingLoaded || domainMappingLoadErr ? (
-        <SelectInputField
-          data-test-id="kafkasource-bootstrapservers-field"
-          name="serverless.domainMapping"
-          label={t('devconsole~Domain mapping')}
-          options={domainMappingResources}
-          placeholderText={t('devconsole~Add domain')}
-          helpText={t('devconsole~Mapping a custom domain to the Knative service')}
-          isCreatable
-          hasOnCreateOption
-        />
+        <>
+          <SelectInputField
+            data-test-id="domain-mapping-field"
+            name="serverless.domainMapping"
+            label={t('devconsole~Domain mapping')}
+            options={domainMappingResources}
+            placeholderText={t('devconsole~Add domain')}
+            helpText={t('devconsole~Enter custom domain to map to the Knative service')}
+            isCreatable
+            hasOnCreateOption
+          />
+          {hasOtherKsvcDomainMappings(serverless.domainMapping) && (
+            <Alert
+              data-test="domain-mapping-warning"
+              variant="warning"
+              isInline
+              title={t('devconsole~Domain mapping(s) will be updated')}
+            >
+              <div style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}>
+                {t(
+                  'devconsole~Warning: The following domain(s) will be removed from the associated service',
+                )}
+              </div>
+              {domainsInUse.length > 0 && (
+                <ul>
+                  {domainsInUse.map((dm) => {
+                    return (
+                      <li key={dm.metadata.uid}>
+                        {t(`devconsole~{{domainMapping}} from {{knativeService}}`, {
+                          domainMapping: dm.metadata.name,
+                          knativeService: dm.spec.ref.name,
+                        })}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </Alert>
+          )}
+        </>
       ) : (
         <LoadingInline />
       )}
