@@ -35,6 +35,7 @@ export const startOnClone = 'input[id="clone-dialog-vm-start"]';
 // alert
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
+export const alertDescr = '.pf-c-alert__description';
 
 // nic modal
 export enum nicDialog {
@@ -58,6 +59,8 @@ export enum diskDialog {
   storageClass = '[data-test="storage-class-dropdown"]',
   diskInterface = 'button[id="disk-select-interface"]',
   add = 'button[data-test="confirm-action"]',
+  diskPVC = 'select[id="disk-pvc"]',
+  autoDetach = 'input[id="disk-auto-detach"]',
 }
 
 // storageClass
@@ -83,3 +86,6 @@ export const createVMBtn = 'button[data-test="create-from-template"]';
 export const templateLink = (name: string) => `[data-test-id="${name}"]`;
 
 export const resourceTitle = '[data-test-id="resource-title"]';
+
+export const kebabBtn = 'button[data-test-id="kebab-button"]';
+export const deleteDiskBtn = 'button[data-test-action="Delete"]';

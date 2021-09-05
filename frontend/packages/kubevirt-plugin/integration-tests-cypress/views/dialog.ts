@@ -1,5 +1,6 @@
 import { Disk, Network } from '../types/vm';
-import { diskDialog, nicDialog } from './selector';
+import { ProvisionSource } from '../utils/const/provisionSource';
+import { diskDialog, nicDialog, kebabBtn, deleteDiskBtn, modalConfirm } from './selector';
 
 export const addNIC = (nic: Network) => {
   cy.get(nicDialog.addNIC).click();
@@ -44,6 +45,31 @@ export const addDisk = (disk: Disk) => {
       }
     });
   }
+  const sourceUrl = disk.source ? disk.source.getValue() : '';
+  switch (disk.source) {
+    case ProvisionSource.URL:
+      if (sourceUrl) {
+        cy.get(diskDialog.diskURL).type(sourceUrl);
+      } else {
+        throw new Error('No `disk.source` provided!!!');
+      }
+      break;
+    case ProvisionSource.REGISTRY:
+      if (sourceUrl) {
+        cy.get(diskDialog.diskContainer).type(sourceUrl);
+      } else {
+        throw new Error('No `disk.source` provided!!!');
+      }
+      break;
+    case ProvisionSource.EXISTING:
+    case ProvisionSource.CLONE_PVC:
+      cy.get(diskDialog.diskPVC).select(disk.pvcName);
+      break;
+    case ProvisionSource.EPHEMERAL:
+    case ProvisionSource.BLANK:
+      break;
+    default:
+  }
   cy.get(diskDialog.diskName)
     .clear()
     .type(disk.name);
@@ -68,5 +94,20 @@ export const addDisk = (disk: Disk) => {
   if (disk.preallocation) {
     cy.contains('Enable preallocation').click();
   }
+  if (disk.autoDetach === true) {
+    cy.get(diskDialog.autoDetach)
+      .check()
+      .should('be.checked');
+  } else if (disk.autoDetach === false) {
+    cy.get(diskDialog.autoDetach)
+      .uncheck()
+      .should('not.be.checked');
+  }
   cy.get(diskDialog.add).click();
+};
+
+export const delDisk = (name: string) => {
+  cy.get(`[data-id="${name}"] ${kebabBtn}`).click();
+  cy.get(deleteDiskBtn).click();
+  cy.get(modalConfirm).click();
 };

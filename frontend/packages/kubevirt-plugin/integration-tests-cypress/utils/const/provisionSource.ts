@@ -25,6 +25,8 @@ export class ProvisionSource extends ObjectEnum<string> {
 
   static readonly UPLOAD = new ProvisionSource('Upload', 'Upload local file (creates PVC)');
 
+  static readonly EXISTING = new ProvisionSource('Use', 'Use existing PVC');
+
   static readonly BLANK = new ProvisionSource('Blank', 'Blank (creates PVC)');
 
   private readonly description: string;
