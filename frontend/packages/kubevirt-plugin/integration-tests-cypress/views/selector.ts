@@ -79,3 +79,7 @@ export const nameFilter = 'input[data-test="name-filter-input"]';
 export const unStarIcon = '.pf-c-button.pf-m-plain.kv-pin-btn';
 export const supportLevel = '[data-test-id="details-Support"]';
 export const supportLevelTag = '[data-test="template-support"]';
+export const createVMBtn = 'button[data-test="create-from-template"]';
+export const templateLink = (name: string) => `[data-test-id="${name}"]`;
+
+export const resourceTitle = '[data-test-id="resource-title"]';

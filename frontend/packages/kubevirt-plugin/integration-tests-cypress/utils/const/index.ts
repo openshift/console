@@ -41,6 +41,10 @@ export enum VMI_ACTION {
   Delete = 'Delete Virtual Machine Instance',
 }
 
+export enum TEMPLATE_ACTION {
+  Create = 'Create Virtual Machine',
+}
+
 // VM Status
 export enum VM_STATUS {
   Pending = 'Pending',
@@ -136,6 +140,13 @@ export const TEMPLATE = {
     dvName: 'win2k12r2',
     metadataName: 'windows2k12r2-server-medium',
     os: 'Microsoft Windows Server 2012 R2',
+    supportLevel: 'Full',
+  },
+  DEFAULT: {
+    name: 'vm-template-example',
+    dvName: 'vm-template-example',
+    metadataName: 'vm-template-example',
+    os: 'Red Hat Enterprise Linux 8.0 or higher',
     supportLevel: 'Full',
   },
 };

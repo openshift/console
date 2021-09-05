@@ -10,7 +10,7 @@ import { action, vm, waitForStatus } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `test-vm-migration-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL8.name,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,

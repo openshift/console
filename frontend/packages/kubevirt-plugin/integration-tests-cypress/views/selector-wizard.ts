@@ -1,6 +1,7 @@
 export const create = '[data-test-id="item-create"]';
 export const vmWizard = '[data-test-id="vm-wizard"]';
 export const vmYAML = '[data-test-id="vm-yaml"]';
+export const templateYAML = '[data-test-id="template-yaml"]';
 export const next = 'button[data-test-id="wizard-next"]';
 export const cancelBtn = 'button[id="create-vm-wizard-cancel-btn"]';
 export const customizeBtn = 'button[data-test-id="wizard-customize"]';
