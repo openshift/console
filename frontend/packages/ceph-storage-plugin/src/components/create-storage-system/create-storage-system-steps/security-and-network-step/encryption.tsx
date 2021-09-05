@@ -192,6 +192,10 @@ export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatc
       )
     : t('ceph-storage-plugin~MultiCloud Object Gateway is always encrypted.');
 
+  const encryptionLabel = !isMCG
+    ? t('ceph-storage-plugin~Enable data encryption for block and file storage')
+    : t('ceph-storage-plugin~Enable encryption');
+
   return (
     <>
       <FormGroup fieldId="configure-encryption" label={t('ceph-storage-plugin~Encryption')}>
@@ -200,7 +204,7 @@ export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatc
           id="configure-encryption"
           isChecked={isMCG || encryptionChecked}
           isDisabled={isMCG}
-          label={t('ceph-storage-plugin~Enable Encryption')}
+          label={encryptionLabel}
           description={description}
           onChange={handleEncryptionOnChange}
           body={

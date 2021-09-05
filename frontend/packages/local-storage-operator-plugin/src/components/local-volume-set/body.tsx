@@ -201,8 +201,8 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
               <Tooltip
                 content={
                   !validMinDiskSize
-                    ? 'Please enter a positive Integer'
-                    : 'Please enter a value less than or equal to max disk size'
+                    ? t('lso-plugin~Please enter a positive Integer')
+                    : t('lso-plugin~Please enter a value less than or equal to max disk size')
                 }
                 isVisible={!validMinDiskSize || (invalidMinGreaterThanMax && activeMinDiskSize)}
                 trigger="manual"
@@ -234,8 +234,8 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
               <Tooltip
                 content={
                   !validMaxDiskSize
-                    ? 'Please enter a positive Integer'
-                    : 'Please enter a value greater than or equal to min disk size'
+                    ? t('lso-plugin~Please enter a positive Integer')
+                    : t('lso-plugin~Please enter a value greater than or equal to min disk size')
                 }
                 isVisible={!validMaxDiskSize || (invalidMinGreaterThanMax && activeMaxDiskSize)}
                 trigger="manual"

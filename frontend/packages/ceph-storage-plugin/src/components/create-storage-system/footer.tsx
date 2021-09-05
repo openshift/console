@@ -310,7 +310,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
           onClick={handleNext}
         >
           {stepName === StepsName(t)[Steps.ReviewAndCreate]
-            ? t('ceph-storage-plugin~Create')
+            ? t('ceph-storage-plugin~Create StorageSystem')
             : t('ceph-storage-plugin~Next')}
         </Button>
         {/* Disabling the back button for the first step (Backing storage) in wizard */}
