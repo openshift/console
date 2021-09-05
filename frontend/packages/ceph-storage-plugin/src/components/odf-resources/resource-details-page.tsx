@@ -2,7 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { Kebab, navFactory, LoadingBox, LoadError } from '@console/internal/components/utils';
+import {
+  Kebab,
+  navFactory,
+  LoadingBox,
+  LoadError,
+  KebabAction,
+} from '@console/internal/components/utils';
 import { OperandDetails } from '@console/operator-lifecycle-manager/src/components/operand';
 import { referenceForModel, nameForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -14,7 +20,9 @@ import {
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { CEPH_STORAGE_NAMESPACE, OCS_OPERATOR } from '../../constants';
+import { CEPH_STORAGE_NAMESPACE, NOOBAA_OPERATOR } from '../../constants';
+import { NooBaaBucketClassModel } from '../../models';
+import { editBucketClass } from '../bucket-class/modals/edit-backingstore-modal';
 
 const csvResource = {
   kind: referenceForModel(ClusterServiceVersionModel),
@@ -42,10 +50,22 @@ export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => 
   const [crd] = useK8sWatchResource(crdResource);
 
   const ocsCSV = csvLoaded
-    ? csvItems?.find((item) => item.metadata.name.includes(OCS_OPERATOR))
+    ? csvItems?.find((item) => item.metadata.name.includes(NOOBAA_OPERATOR))
     : null;
 
   const isLoading = _.isEmpty(model) || _.isEmpty(crd) || _.isEmpty(csvItems);
+
+  const actions = React.useMemo(() => {
+    let commonActions = [...Kebab.factory.common];
+    if (
+      referenceForModel(NooBaaBucketClassModel).toLocaleUpperCase() ===
+      props.match.params.resourceKind.toLocaleLowerCase()
+    ) {
+      const bucketClassActions = editBucketClass(t);
+      commonActions = [bucketClassActions, ...commonActions];
+    }
+    return commonActions;
+  }, [t, props.match.params.resourceKind]);
 
   if (csvError) {
     return <LoadError label={props.match.params.resourceKind} />;
@@ -86,11 +106,16 @@ export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => 
         navFactory.editYaml(),
         navFactory.events(ResourceEventStream),
       ]}
-      menuActions={Kebab.factory.common}
+      menuActions={actions}
     />
   ) : (
     <LoadingBox />
   );
 };
 
-type GenericDetailsPageProps = RouteComponentProps<{ resourceKind: string; resourceName: string }>;
+type GenericDetailsPageProps = RouteComponentProps<{
+  resourceKind: string;
+  resourceName: string;
+}> & {
+  actions?: KebabAction[];
+};
