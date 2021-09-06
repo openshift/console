@@ -1,7 +1,7 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import {
-  DEFAULTS_VALUES,
+  DEFAULT_VALUES,
   OS_IMAGES_NS,
   TEMPLATE,
   VM_ACTION,
@@ -110,9 +110,9 @@ describe('test dev console', () => {
 
       waitForStatus(VM_STATUS.Running);
 
-      cy.get(detailsTab.vmPod).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
-      cy.get(detailsTab.vmIP).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
-      cy.get(detailsTab.vmNode).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
+      cy.get(detailsTab.vmPod).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
+      cy.get(detailsTab.vmIP).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
+      cy.get(detailsTab.vmNode).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
       cy.get(detailsTab.vmTemplate).should('contain', template.dvName);
     });
 

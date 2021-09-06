@@ -16,9 +16,10 @@ export const YAML_VM_NAME = 'vm-example';
 export const STATUS_READY = 'Ready';
 export const TEMPLATE_SUPPORT = 'Support by template provider';
 
-export enum DEFAULTS_VALUES {
+export enum DEFAULT_VALUES {
   NOT_AVAILABLE = 'Not available',
   GUEST_AGENT_REQUIRED = 'Guest agent required',
+  GUEST_AGENT_UNAVAILABLE = 'Guest agent is unavailable',
   VM_NOT_RUNNING = 'Virtual machine not running',
 }
 
