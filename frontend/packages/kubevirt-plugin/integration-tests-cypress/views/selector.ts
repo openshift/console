@@ -93,3 +93,4 @@ export const createVMBtn = 'button[data-test="create-from-template"]';
 export const templateLink = (name: string) => `[data-test-id="${name}"]`;
 
 export const resourceTitle = '[data-test-id="resource-title"]';
+export const resourceStatus = '[data-test="resource-status"]';

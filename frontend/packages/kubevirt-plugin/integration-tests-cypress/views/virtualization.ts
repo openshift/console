@@ -25,6 +25,7 @@ export const virtualization = {
   templates: {
     visit: () => {
       cy.clickNavLink(['Workloads', 'Virtualization']);
+      cy.byLegacyTestID('item-create').should('exist');
       cy.byLegacyTestID('horizontal-link-Templates').click();
     },
     addSource: (templateName: string) =>
