@@ -12,7 +12,8 @@
     "exposedModules": {
       "utils": "src/utils/index.ts",
       "topology": "src/components/topology",
-      "topologySidebar": "src/components/topology/sidebar"
+      "topologySidebar": "src/components/topology/sidebar",
+      "actions": "src/actions"
     }
   }
 }

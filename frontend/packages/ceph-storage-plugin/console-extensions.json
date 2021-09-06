@@ -198,5 +198,12 @@
         "$codeRef": "odfSystemDashboard.default"
       }
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "csv-actions",
+      "provider": { "$codeRef": "actions.useCsvActions" }
+    }
   }
 ]

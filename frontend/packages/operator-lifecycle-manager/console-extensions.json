@@ -87,5 +87,12 @@
       "tab": "topology-side-bar-tab-resource",
       "section": { "$codeRef": "topologySidebar.getOperatorBackedPanelResourceSection" }
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "csv-actions",
+      "provider": { "$codeRef": "actions.useDefaultCSVActions" }
+    }
   }
 ]

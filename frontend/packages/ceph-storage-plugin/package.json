@@ -36,7 +36,8 @@
       "bsCreate": "./src/components/create-backingstore-page/create-bs-page.tsx",
       "bcCreate": "./src/components/bucket-class/create-bc.tsx",
       "nssCreate": "./src/components/namespace-store/create-namespace-store.tsx",
-      "odfSystemDashboard": "./src/components/dashboards/odf-system-dashboard.tsx"
+      "odfSystemDashboard": "./src/components/dashboards/odf-system-dashboard.tsx",
+      "actions": "src/actions"
     }
   }
 }

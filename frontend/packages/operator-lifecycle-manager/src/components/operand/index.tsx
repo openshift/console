@@ -70,6 +70,9 @@ import { Resources } from '../k8s-resource';
 import ModelStatusBox from '../model-status-box';
 import { csvNameFromWindow, OperandLink } from './operand-link';
 
+/**
+ * @depricated these actions has been converted to Action extension, src/actions/csv-actions.ts
+ */
 export const getOperandActions = (
   ref: K8sResourceKindReference,
   actionExtensions: ClusterServiceVersionAction[],
