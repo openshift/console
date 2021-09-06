@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { Firehose, ResourceIcon, StatusBox } from '@console/internal/components/utils';
 import {
   GroupVersionKind,
@@ -20,8 +21,8 @@ import {
   flattenCsvResources,
   linkForCsvResource,
 } from '@console/operator-lifecycle-manager/src/components/k8s-resource';
-import TopologyGroupResourcesPanel from '../components/side-bar/TopologyGroupResourcesPanel';
-import { TopologyDataObject } from '../topology-types';
+import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
+import { OperatorGroupData } from './types';
 
 type OperatorResourcesProps = {
   namespace: string;
@@ -120,7 +121,7 @@ const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
 };
 
 type TopologyOperatorBackedResourcesProps = {
-  item: TopologyDataObject;
+  item: TopologyDataObject<OperatorGroupData>;
   csv: ClusterServiceVersionKind;
 };
 

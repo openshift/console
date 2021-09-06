@@ -1,3 +1,6 @@
+/**
+ * @deprecated This panel panel is being contributed through dyanmic extensions from operator-lifecycle-manager/src/components/topology/sidebar
+ */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -13,7 +16,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ManagedByOperatorResourceLink } from '@console/internal/components/utils/managed-by';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
-  ClusterServiceVersionKind,
+  // ClusterServiceVersionKind,
   ClusterServiceVersionModel,
 } from '@console/operator-lifecycle-manager/src';
 import { getOperandActions } from '@console/operator-lifecycle-manager/src/components/operand';
@@ -22,9 +25,7 @@ import {
   isClusterServiceVersionAction,
   useExtensions,
 } from '@console/plugin-sdk/src';
-import { TopologyDataObject } from '../topology-types';
-import { OperatorGroupData } from './operator-topology-types';
-import TopologyOperatorBackedResources from './TopologyOperatorBackedResources';
+// import TopologyOperatorBackedResources from '../../../operator-lifecycle-manager/src/components/topology/sidebar/TopologyOperatorBackedResources';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -43,7 +44,7 @@ const dispatchToProps = (dispatch): PropsFromDispatch => ({
 });
 
 type TopologyOperatorBackedPanelProps = {
-  item: TopologyDataObject<OperatorGroupData>;
+  item: any;
 };
 
 const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
@@ -75,12 +76,12 @@ const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
   }, [csvName, namespace]);
 
   const resources = useK8sWatchResources(resourcesList);
-  const ResourcesSection = () => (
-    <TopologyOperatorBackedResources
-      item={item}
-      csv={resources.csv.data as ClusterServiceVersionKind}
-    />
-  );
+  // const ResourcesSection = () => (
+  //   <TopologyOperatorBackedResources
+  //     item={item}
+  //     csv={resources.csv.data as ClusterServiceVersionKind}
+  //   />
+  // );
   const DetailsSection = () => (
     <div className="overview__sidebar-pane-body">
       <SectionHeading text={t('topology~Operator details')} />
@@ -120,7 +121,7 @@ const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
           onClickTab={onClickTab}
           tabs={[
             { name: t('topology~Details'), component: DetailsSection },
-            { name: t('topology~Resources'), component: ResourcesSection },
+            // { name: t('topology~Resources'), component: ResourcesSection },
           ]}
           tabProps={null}
           additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"

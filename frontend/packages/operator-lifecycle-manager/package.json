@@ -11,7 +11,8 @@
     "entry": "src/plugin.tsx",
     "exposedModules": {
       "utils": "src/utils/index.ts",
-      "topology": "src/components/topology"
+      "topology": "src/components/topology",
+      "topologySidebar": "src/components/topology/sidebar"
     }
   }
 }
