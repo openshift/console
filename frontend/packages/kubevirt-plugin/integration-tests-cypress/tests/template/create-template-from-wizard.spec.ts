@@ -59,7 +59,7 @@ const pxeTemplate: VirtualMachineData = {
   networkInterfaces: [nic0],
 };
 
-describe('Test VM creation', () => {
+describe('Test template creation', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
@@ -69,8 +69,8 @@ describe('Test VM creation', () => {
   });
 
   after(() => {
-    [urlTemplate, registryTemplate, pvcTemplate, pxeTemplate].forEach((vmData) => {
-      cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    [urlTemplate, registryTemplate, pvcTemplate, pxeTemplate].forEach((data) => {
+      cy.deleteResource(K8S_KIND.Template, data.name, data.namespace);
     });
 
     cy.deleteResource(K8S_KIND.NAD, NAD_NAME, testName);
