@@ -38,6 +38,7 @@ import {
   detectManagedODF,
   detectComponents,
 } from './features';
+import { ODF_MODEL_FLAG } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
 import { STORAGE_CLUSTER_SYSTEM_KIND } from './constants/create-storage-system';
 
@@ -62,7 +63,6 @@ const blockPoolRef = referenceForModel(models.CephBlockPoolModel);
 const storageSystemGvk = referenceForModel(models.StorageSystemModel);
 
 const OCS_MODEL_FLAG = 'OCS_MODEL';
-const ODF_MODEL_FLAG = 'ODF_MODEL';
 
 const plugin: Plugin<ConsumedExtensions> = [
   {

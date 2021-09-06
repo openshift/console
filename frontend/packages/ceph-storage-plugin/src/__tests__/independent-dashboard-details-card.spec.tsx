@@ -7,7 +7,7 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import { DetailsCard } from '../components/dashboards/persistent-external/details-card';
 import { dashboardData } from '../__mocks__/independent-mode-dashboard-data';
 
-describe('DetailsCard', () => {
+xdescribe('DetailsCard', () => {
   let wrapper: ShallowWrapper<DashboardItemProps>;
 
   beforeEach(() => {

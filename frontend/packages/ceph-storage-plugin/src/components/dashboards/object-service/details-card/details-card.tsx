@@ -24,9 +24,9 @@ import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import { getOCSVersion } from '../../../../selectors';
+import { getOCSVersion, getODFVersion } from '../../../../selectors';
 import { RGW_FLAG } from '../../../../features';
-import { CEPH_STORAGE_NAMESPACE } from '../../../../constants';
+import { CEPH_STORAGE_NAMESPACE, ODF_MODEL_FLAG } from '../../../../constants';
 import { getMetric } from '../../../../utils';
 import './details-card.scss';
 
@@ -53,6 +53,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
     'cluster',
   );
   const { t } = useTranslation();
+  const isODF = useFlag(ODF_MODEL_FLAG);
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
     watchPrometheus(NOOBAA_SYSTEM_NAME_QUERY);
@@ -85,12 +86,16 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
 
   const subscription = _.get(resources, 'subscription') as FirehoseResult;
   const subscriptionLoaded = _.get(subscription, 'loaded');
-  const ocsVersion = getOCSVersion(subscription);
+  const serviceVersion = !isODF ? getOCSVersion(subscription) : getODFVersion(subscription);
+
+  const serviceName = !isODF
+    ? t('ceph-storage-plugin~OpenShift Data Foundation')
+    : t('ceph-storage-plugin~OpenShift Container Storage');
 
   const hasRGW = useFlag(RGW_FLAG);
-  const ocsPath = `${resourcePathFromModel(
+  const servicePath = `${resourcePathFromModel(
     ClusterServiceVersionModel,
-    ocsVersion,
+    serviceVersion,
     CEPH_STORAGE_NAMESPACE,
   )}`;
   return (
@@ -106,7 +111,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             error={false}
             isLoading={false}
           >
-            <Link to={ocsPath}>{t('ceph-storage-plugin~OpenShift Container Storage')}</Link>
+            <Link to={servicePath}>{serviceName}</Link>
           </DetailItem>
           <DetailItem
             key="system_name"
@@ -140,9 +145,9 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             key="version"
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
-            error={subscriptionLoaded && !ocsVersion}
+            error={subscriptionLoaded && !serviceVersion}
           >
-            {ocsVersion}
+            {serviceVersion}
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
