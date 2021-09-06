@@ -121,6 +121,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const errors: FormikErrors<GitSectionFormData> = formContextField
     ? _.get(formikErrors, formContextField, {})
     : formikErrors;
+  const formReloadCount: number = _.get(formikValues, 'formReloadCount');
 
   const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
     defaultSample || {};
@@ -396,13 +397,14 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [debouncedHandleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
-    (!dirty || gitDirTouched) &&
+    (!dirty || gitDirTouched || formReloadCount) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
     dirty,
     isSubmitting,
     gitDirTouched,
+    formReloadCount,
     debouncedHandleGitUrlChange,
     values.git.url,
     values.git.ref,
