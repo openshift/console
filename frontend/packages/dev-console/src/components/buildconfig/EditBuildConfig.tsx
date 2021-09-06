@@ -33,6 +33,7 @@ const EditBuildConfig: React.FC<EditBuildConfigProps> = ({
     const values = convertBuildConfigToFormData(watchedBuildConfig);
     values.yamlData = safeJSToYAML(watchedBuildConfig, '', { skipInvalid: true });
     values.resourceVersion = watchedBuildConfig?.metadata?.resourceVersion;
+    values.formReloadCount = 0;
     return values;
   });
 

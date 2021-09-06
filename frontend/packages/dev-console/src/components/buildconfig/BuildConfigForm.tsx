@@ -73,6 +73,7 @@ const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
     }
     setFieldValue('yamlData', safeJSToYAML(watchedBuildConfig, '', { skipInvalid: true }), false);
     setFieldValue('resourceVersion', watchedBuildConfig?.metadata?.resourceVersion, true);
+    setFieldValue('formReloadCount', values.formReloadCount + 1);
   }, [setErrors, setFieldValue, setStatus, values, watchedBuildConfig]);
 
   return (

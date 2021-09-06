@@ -18,7 +18,7 @@ export type SourceSectionFormData = {
   };
 };
 
-const SourceSection: React.FC<{}> = () => {
+const SourceSection: React.FC = () => {
   const { t } = useTranslation();
 
   const [, meta] = useField<string>('formData.name');
@@ -51,7 +51,6 @@ const SourceSection: React.FC<{}> = () => {
       ) : null}
 
       {type === 'git' ? <GitSection title="" formContextField="formData.source.git" /> : null}
-
       {type === 'dockerfile' ? (
         <EditorField
           name="formData.source.dockerfile"

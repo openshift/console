@@ -14,6 +14,7 @@ export type BuildConfigFormikValues = {
   editorType: EditorType;
   yamlData: string;
   resourceVersion: string | undefined;
+  formReloadCount?: number;
 } & NameSectionFormData &
   SourceSectionFormData &
   ImagesSectionFormData &
