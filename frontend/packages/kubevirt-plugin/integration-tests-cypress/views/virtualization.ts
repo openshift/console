@@ -1,5 +1,5 @@
 import { VirtualMachineData } from '../types/vm';
-import { ADD_SOURCE, COMMUNITY } from '../utils/const/index';
+import { ADD_SOURCE, COMMUNITY, TEMPLATE_ACTION } from '../utils/const/index';
 import { wizard } from './wizard';
 
 export const getRow = (templateName: string, within: VoidFunction) =>
@@ -86,6 +86,13 @@ export const virtualization = {
       wizard.vm.fillStorageForm(data);
       wizard.vm.fillAdvancedForm(data);
       wizard.vm.fillConfirmForm(data);
+    },
+    delete: (templateName: string) => {
+      cy.clickNavLink(['Workloads', 'Virtualization']);
+      cy.byLegacyTestID('horizontal-link-Templates').click();
+      getRow(templateName, () => cy.byLegacyTestID('kebab-button').click());
+      cy.contains(TEMPLATE_ACTION.Delete).click();
+      cy.byTestID('confirm-action').click();
     },
   },
 };
