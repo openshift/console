@@ -69,6 +69,7 @@ export const createWizardNodeState = (nodes: NodeKind[] = []): WizardNodeState[]
 export const capacityAndNodesValidate = (
   nodes: WizardNodeState[],
   enableStretchCluster: boolean,
+  isNoProvSC: boolean,
 ): ValidationType[] => {
   const validations = [];
 
@@ -76,7 +77,7 @@ export const capacityAndNodesValidate = (
   const totalMemory = getTotalMemory(nodes);
   const zones = getAllZone(nodes);
 
-  if (!enableStretchCluster && isFlexibleScaling(nodes.length, zones.size)) {
+  if (!enableStretchCluster && isNoProvSC && isFlexibleScaling(nodes.length, zones.size)) {
     validations.push(ValidationType.ATTACHED_DEVICES_FLEXIBLE_SCALING);
   }
   if (shouldDeployAsMinimal(totalCpu, totalMemory, nodes.length)) {
