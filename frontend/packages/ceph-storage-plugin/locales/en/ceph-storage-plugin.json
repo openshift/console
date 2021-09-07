@@ -720,7 +720,6 @@
   "When the nodes in the selected StorageClass are spread across fewer than 3 availability zones, the StorageCluster will be deployed with the host based failure domain.": "When the nodes in the selected StorageClass are spread across fewer than 3 availability zones, the StorageCluster will be deployed with the host based failure domain.",
   "Cluster-Wide and StorageClass": "Cluster-Wide and StorageClass",
   "Cluster-Wide": "Cluster-Wide",
-  "and": "and",
   "Select at least 2 Backing Store resources": "Select at least 2 Backing Store resources",
   "Select at least 1 Backing Store resource": "Select at least 1 Backing Store resource",
   "x {{replica}} replicas = {{osdSize, number}} TiB": "x {{replica}} replicas = {{osdSize, number}} TiB",
