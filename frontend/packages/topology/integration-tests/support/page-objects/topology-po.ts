@@ -7,8 +7,16 @@ export const topologyPO = {
   emptyText: '[data-test="no-resources-found"]',
   addToApplication: '[data-test-action="devconsole~Add to Application"]',
   addToApplicationInContext: 'button.pf-topology-context-sub-menu.pf-c-dropdown__menu-item',
+  quickSearch: '[data-test="quick-search-bar"]',
+  filterByResourceDropDown: '[data-test="filter-by-resource"] button',
+  topologyDropDown: 'button[aria-label="Options menu"]',
+  emptyView: {
+    startBuildingYourApplicationLink: '[data-test="start-building-your-application"]',
+    addPageLink: '[data-test="add-page"]',
+  },
   graph: {
     reset: '#reset-view',
+    layoutViewGroup: '.odc-topology__layout-group',
     zoomIn: '#zoom-in',
     zoomOut: '#zoom-out',
     fitToScreen: '#fit-to-screen',
@@ -31,10 +39,9 @@ export const topologyPO = {
       connectivityMode: '[id="showGroups"]',
       consumptionMode: '[id="hideGroups"]',
       expandSwitchToggle: '.pf-c-switch__input',
-      applicationGroupingsDisabled: '.pf-c-check.pf-c-select__menu-item.pf-m-disabled',
-    },
-    filterByResource: {
-      filterByResourceDropDown: '[data-test="filter-by-resource"]',
+      applicationGroupings: '[id$=expand-app-groups]',
+      showLabels: '[id$=show-labels]',
+      showPodCount: '[id$=show-pod-count]',
     },
     contextMenuOptions: {
       addToProject: '.pf-topology-context-sub-menu',

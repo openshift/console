@@ -29,7 +29,7 @@ export const gitPage = {
   },
   enterAppName: (appName: string) => {
     cy.get('body').then(($body) => {
-      if ($body.find('#form-input-application-name-field').length) {
+      if ($body.find('#form-input-application-name-field').length !== 0) {
         cy.get('#form-input-application-name-field')
           .scrollIntoView()
           .clear()
@@ -38,7 +38,7 @@ export const gitPage = {
           .type(appName)
           .should('have.value', appName);
         cy.log(`Application Name "${appName}" is created`);
-      } else if ($body.find('#form-dropdown-application-name-field').length) {
+      } else if ($body.find('#form-dropdown-application-name-field').length !== 0) {
         cy.get(gitPO.appName).click();
         cy.get('[data-test-id="dropdown-text-filter"]').type(appName);
         cy.get('[role="listbox"]').then(($el) => {

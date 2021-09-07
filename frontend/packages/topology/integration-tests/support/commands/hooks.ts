@@ -1,3 +1,4 @@
+/* eslint-disable no-console, promise/catch-or-return */
 before(() => {
   cy.login();
   cy.document()

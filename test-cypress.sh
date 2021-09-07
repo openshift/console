@@ -48,6 +48,7 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-olm-headless
   yarn run test-cypress-helm-headless
   yarn run test-cypress-knative-headless
+  yarn run test-cypress-topology-headless
   exit;
 fi
 

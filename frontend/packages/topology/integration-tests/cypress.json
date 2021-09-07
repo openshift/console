@@ -23,11 +23,11 @@
   "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
   "videosFolder": "../../../gui_test_screenshots/cypress/videos",
   "env": {
-    "TAGS": "@topology and (@smoke or @regression) and not (@manual or @to-do or @un-verified)",
-    "NAMESPACE": "aut-topology"
+    "TAGS": "@topology and (@smoke or @regression or @pre-condition) and not (@manual or @to-do or @un-verified or @broken-test)",
+    "NAMESPACE": "aut-topology-ci"
   },
   "retries": {
-    "runMode": 1,
+    "runMode": 0,
     "openMode": 0
   }
 }
