@@ -82,11 +82,11 @@ export const createStorageCluster = async (state: WizardState) => {
   const { capacity, enableArbiter, arbiterLocation, pvCount } = capacityAndNodes;
   const { encryption, publicNetwork, clusterNetwork, kms } = securityAndNetwork;
 
-  const storage = (storageClass?.provisioner === NO_PROVISIONER
-    ? defaultRequestSize.BAREMETAL
-    : capacity) as string;
+  const isNoProvisioner = storageClass?.provisioner === NO_PROVISIONER;
 
-  const validations = capacityAndNodesValidate(nodes, enableArbiter);
+  const storage = (isNoProvisioner ? defaultRequestSize.BAREMETAL : capacity) as string;
+
+  const validations = capacityAndNodesValidate(nodes, enableArbiter, isNoProvisioner);
 
   const isMinimal = validations.includes(ValidationType.MINIMAL);
 

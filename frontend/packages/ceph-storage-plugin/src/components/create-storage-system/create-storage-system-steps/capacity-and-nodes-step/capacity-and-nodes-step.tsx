@@ -260,7 +260,7 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
 
-  const validations = capacityAndNodesValidate(nodes, enableArbiter);
+  const validations = capacityAndNodesValidate(nodes, enableArbiter, isNoProvisioner);
 
   return (
     <Form>
