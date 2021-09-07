@@ -5,7 +5,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
   display: flex;
   flex-shrink: 0; // prevent collapse of tabs
   list-style: none;
-  margin: 0 !important;
+  margin: 0;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0;
