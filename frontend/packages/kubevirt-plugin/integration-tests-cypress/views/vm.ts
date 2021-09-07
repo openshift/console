@@ -100,6 +100,7 @@ export const vm = {
   start: () => {
     waitForStatus(VM_STATUS.Stopped);
     action(VM_ACTION.Start);
+    waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
   },
   restart: () => {
