@@ -1,10 +1,9 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_ACTION, VM_STATUS } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE, VM_ACTION, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { actionButtons, detailsTab, errorAlert } from '../../views/selector';
 import { tab } from '../../views/tab';
-import { virtualization } from '../../views/virtualization';
 import { action, vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -23,24 +22,13 @@ describe('Test VM Migration', () => {
     cy.visit('/');
     cy.createProject(testName);
     vm.create(vmData);
-    virtualization.vms.visit();
+    cy.visitVMsList();
     waitForStatus(VM_STATUS.Stopped);
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-6764) Migrate VM action button is not displayed when VM is off', () => {
@@ -50,7 +38,7 @@ describe('Test VM Migration', () => {
   });
 
   it('ID(CNV-2140) Migrate VM action button is displayed when VM is running', () => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
     vm.start();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
@@ -76,7 +64,7 @@ describe('Test VM Migration', () => {
   });
 
   it('ID(CNV-2133) Migrate already migrated VM', () => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
     if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
       cy.byLegacyTestID(vmData.name)
         .should('exist')

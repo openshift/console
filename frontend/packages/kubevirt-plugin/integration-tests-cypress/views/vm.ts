@@ -7,15 +7,8 @@ import {
   VMI_ACTION,
 } from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
-import {
-  detailsTab,
-  createYAMLButton,
-  createVMBtn,
-  nameFilter,
-  resourceTitle,
-  templateLink,
-} from './selector';
-import { create, vmYAML, customizeBtn } from './selector-wizard';
+import { detailsTab, createVMBtn, nameFilter, templateLink } from './selector';
+import { customizeBtn } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
 
@@ -102,12 +95,16 @@ export const vm = {
     action(VM_ACTION.Start);
     waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000);
   },
   restart: () => {
     waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Restart);
     waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(5000);
   },
   stop: () => {
     waitForStatus(VM_STATUS.Running);
@@ -140,13 +137,6 @@ export const vm = {
     waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Pause);
     waitForStatus(VM_STATUS.Paused);
-  },
-  createFromYAML: () => {
-    virtualization.vms.visit();
-    cy.get(create).click();
-    cy.get(vmYAML).click();
-    cy.get(createYAMLButton).click();
-    cy.get(resourceTitle).should('be.visible');
   },
   createFromCreateVMBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();

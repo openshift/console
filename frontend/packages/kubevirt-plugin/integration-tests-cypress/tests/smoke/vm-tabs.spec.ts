@@ -1,8 +1,7 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_STATUS } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
-import { virtualization } from '../../views/virtualization';
 import { vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -24,30 +23,20 @@ describe('smoke tests', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteTestProject(testName);
   });
 
   describe('visit vm list page', () => {
     it('vm list page is loaded', () => {
-      virtualization.vms.visit();
+      cy.visitVMsList();
       cy.byLegacyTestID(vmData.name).should('exist');
     });
   });
 
   describe('visit vm tabs', () => {
     before(() => {
+      cy.visitVMsList();
       cy.byLegacyTestID(vmData.name)
         .should('exist')
         .click();

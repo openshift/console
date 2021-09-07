@@ -2,6 +2,7 @@ import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import {
   DEFAULT_VALUES,
+  K8S_KIND,
   TEMPLATE,
   VM_ACTION,
   VM_ACTION_TIMEOUT,
@@ -12,7 +13,6 @@ import { ProvisionSource } from '../../utils/const/provisionSource';
 import { detailViewAction } from '../../views/actions';
 import { dashboardTab, detailsTab } from '../../views/selector';
 import { tab } from '../../views/tab';
-import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -30,25 +30,14 @@ describe('Test VM details tab', () => {
   before(() => {
     cy.Login();
     cy.createProject(testName);
-    virtualization.vms.visit();
+    cy.visitVMsList();
     vm.create(vmData);
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: YAML_VM_NAME,
-        namespace: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteResource(K8S_KIND.VM, YAML_VM_NAME, testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-4037) Check VM details while VM is running without guest agent installed', () => {
@@ -64,7 +53,7 @@ describe('Test VM details tab', () => {
   });
 
   it('ID(CNV-763) Check VM details while VM is off', () => {
-    vm.createFromYAML();
+    cy.createDefaultVM();
     // Details card
     tab.navigateToDetails();
     cy.get(detailsTab.vmName).should('contain', YAML_VM_NAME);

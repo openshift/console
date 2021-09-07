@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { OS_IMAGES_NS, TEMPLATE } from '../../utils/const/index';
+import { K8S_KIND, OS_IMAGES_NS, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { pvc } from '../../views/pvc';
 import { virtualization } from '../../views/virtualization';
@@ -27,26 +27,9 @@ describe('kubevirt PVC upload', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'DataVolume',
-      metadata: {
-        name: template.dvName,
-        namespace: OS_IMAGES_NS,
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteTestProject(testName);
     cy.exec('rm -fr /tmp/cirros.*');
   });
 
@@ -83,13 +66,7 @@ describe('kubevirt PVC upload', () => {
       vm.stop();
       // only delete template pvc for ocs, hpp does not support this
       if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
-        cy.deleteResource({
-          kind: 'DataVolume',
-          metadata: {
-            name: template.dvName,
-            namespace: OS_IMAGES_NS,
-          },
-        });
+        cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
       }
       vm.start();
       vm.delete();
@@ -107,7 +84,7 @@ describe('kubevirt PVC upload', () => {
 
       cy.uploadFromCLI(template.dvName, OS_IMAGES_NS, Cypress.env('UPLOAD_IMG'), '1');
 
-      virtualization.templates.visit();
+      cy.visitVMTemplatesList();
       virtualization.templates.testSource(template.name, 'Unknown');
     });
 
@@ -118,14 +95,8 @@ describe('kubevirt PVC upload', () => {
     });
 
     it('ID(CNV-5598) Delete DV/PVC from CLI', () => {
-      cy.deleteResource({
-        kind: 'DataVolume',
-        metadata: {
-          name: template.dvName,
-          namespace: OS_IMAGES_NS,
-        },
-      });
-      virtualization.templates.visit();
+      cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
+      cy.visitVMTemplatesList();
       virtualization.templates.testSource(template.name, 'Add source');
     });
   });

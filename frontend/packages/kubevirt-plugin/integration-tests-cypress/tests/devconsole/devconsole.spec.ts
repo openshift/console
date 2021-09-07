@@ -2,6 +2,7 @@ import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import {
   DEFAULT_VALUES,
+  K8S_KIND,
   OS_IMAGES_NS,
   TEMPLATE,
   VM_ACTION,
@@ -30,6 +31,8 @@ const vm: VirtualMachineData = {
   namespace: testName,
 };
 
+const cloneVMName = `${vm.name}-clone`;
+
 describe('test dev console', () => {
   before(() => {
     cy.viewport(1536, 960);
@@ -41,33 +44,11 @@ describe('test dev console', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'DataVolume',
-      metadata: {
-        name: template.dvName,
-        namespace: OS_IMAGES_NS,
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vm.name,
-        namespace: vm.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: `${vm.name}-clone`,
-        namespace: testName,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
+    cy.deleteResource(K8S_KIND.VM, vm.name, vm.namespace);
+    cy.deleteResource(K8S_KIND.VM, cloneVMName, testName);
+    cy.deleteTestProject(testName);
+
     switchPerspective(Perspective.Administrator);
   });
 

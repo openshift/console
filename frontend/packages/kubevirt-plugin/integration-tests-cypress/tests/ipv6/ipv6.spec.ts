@@ -1,10 +1,9 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_ACTION } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE, VM_ACTION } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { listViewAction } from '../../views/actions';
 import { ipPopOverContent } from '../../views/selector';
-import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -26,18 +25,13 @@ describe('Test multiple IP addresses are displayed for VM', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-6953) Test multiple IP addresses are displayed for VM', () => {
     if (Cypress.env('DUALSTACK')) {
-      virtualization.vms.visit();
+      cy.visitVMsList();
       vm.create(vmData);
       listViewAction(VM_ACTION.Start);
       cy.contains('+1 more')
