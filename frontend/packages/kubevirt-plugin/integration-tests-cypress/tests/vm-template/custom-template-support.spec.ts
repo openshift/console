@@ -2,6 +2,7 @@ import { testName } from '@console/cypress-integration-tests/support';
 import {
   ADD_SOURCE,
   IMPORTING,
+  K8S_KIND,
   OS_IMAGES_NS,
   TEMPLATE,
   TEST_PROVIDER,
@@ -15,24 +16,6 @@ import { virtualization } from '../../views/virtualization';
 const template = TEMPLATE.RHEL6;
 const TEMPLATE_PROVIDER = 'bar';
 
-const deleteSourceDV = () =>
-  cy.deleteResource({
-    kind: 'DataVolume',
-    metadata: {
-      name: template.dvName,
-      namespace: OS_IMAGES_NS,
-    },
-  });
-
-const deleteSourcePVC = () =>
-  cy.deleteResource({
-    kind: 'PersistentVolumeClaim',
-    metadata: {
-      name: template.dvName,
-      namespace: OS_IMAGES_NS,
-    },
-  });
-
 describe('test custom template creation support', () => {
   before(() => {
     cy.login();
@@ -41,18 +24,12 @@ describe('test custom template creation support', () => {
   });
 
   beforeEach(() => {
-    virtualization.templates.visit();
-    deleteSourceDV();
-    deleteSourcePVC();
+    cy.visitVMTemplatesList();
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-5729) create custom template from common template with no boot source', () => {

@@ -1,13 +1,13 @@
 import { testName } from '../../support';
 import { Network, Template, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE } from '../../utils/const/index';
+import { NAD_NAME, K8S_KIND, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const nic0: Network = {
   name: 'nic-1',
-  nad: 'bridge-network',
+  nad: NAD_NAME,
 };
 
 const urlTemplate: VirtualMachineData = {
@@ -69,28 +69,17 @@ describe('Test VM creation', () => {
   });
 
   after(() => {
-    [urlTemplate, registryTemplate, pvcTemplate, pxeTemplate].forEach((data) => {
-      cy.deleteResource({
-        kind: 'Template',
-        metadata: {
-          name: data.name,
-          namespace: data.namespace,
-        },
-      });
+    [urlTemplate, registryTemplate, pvcTemplate, pxeTemplate].forEach((vmData) => {
+      cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
     });
 
-    cy.deleteResource({
-      kind: 'NetworkAttachmentDefinition',
-      metadata: {
-        name: 'bridge-network',
-        namespace: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.NAD, NAD_NAME, testName);
+    cy.deleteTestProject(testName);
   });
 
   [urlTemplate, registryTemplate, pvcTemplate, pxeTemplate].forEach((data) => {
     it(`${data.description}`, () => {
-      virtualization.templates.visit();
+      cy.visitVMTemplatesList();
       virtualization.templates.createTemplateFromWizard(data);
       const vmt: Template = { name: data.name };
       const vmData: VirtualMachineData = {
@@ -98,7 +87,7 @@ describe('Test VM creation', () => {
         template: vmt,
         sourceAvailable: true,
       };
-      virtualization.vms.visit();
+      cy.visitVMsList();
       vm.create(vmData);
       vm.delete();
     });

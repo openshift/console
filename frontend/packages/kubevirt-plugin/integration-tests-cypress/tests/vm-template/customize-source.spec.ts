@@ -1,6 +1,7 @@
 import { testName } from '../../support';
 import {
   IMPORTING,
+  K8S_KIND,
   OS_IMAGES_NS,
   PREPARING_FOR_CUSTOMIZATION,
   READY_FOR_CUSTOMIZATION,
@@ -19,35 +20,18 @@ describe('test vm template source image', () => {
     cy.Login();
     cy.visit('');
     cy.createProject(testName);
-    cy.deleteResource({
-      kind: 'DataVolume',
-      metadata: {
-        name: template.dvName,
-        namespace: OS_IMAGES_NS,
-      },
-    });
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
     cy.cdiCloner(testName, OS_IMAGES_NS);
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'DataVolume',
-      metadata: {
-        name: template.dvName,
-        namespace: OS_IMAGES_NS,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
+    cy.deleteTestProject(testName);
   });
 
   it('customize common template source', () => {
     const vmtName = 'tmp-customized';
-    virtualization.templates.visit();
+    cy.visitVMTemplatesList();
     virtualization.templates.addSource(template.name);
     addSource.addBootSource(ProvisionSource.REGISTRY);
     virtualization.templates.testSource(template.name, IMPORTING);
@@ -56,7 +40,7 @@ describe('test vm template source image', () => {
     virtualization.templates.customizeSource(template.metadataName);
     customizeSource.fillForm({ vmtName });
 
-    virtualization.templates.visit();
+    cy.visitVMTemplatesList();
     virtualization.templates.testSource(vmtName, PREPARING_FOR_CUSTOMIZATION);
     virtualization.templates.testSource(vmtName, READY_FOR_CUSTOMIZATION);
     virtualization.templates.launchConsole(vmtName);
@@ -68,12 +52,12 @@ describe('test vm template source image', () => {
   it('customize user template source', () => {
     const vmtName = 'tmp-user-customized';
     cy.createUserTemplate(testName);
-    virtualization.templates.visit();
+    cy.visitVMTemplatesList();
 
     virtualization.templates.customizeSource(template.metadataName);
     customizeSource.fillForm({ vmtName });
 
-    virtualization.templates.visit();
+    cy.visitVMTemplatesList();
     virtualization.templates.testSource(vmtName, PREPARING_FOR_CUSTOMIZATION);
     virtualization.templates.testSource(vmtName, READY_FOR_CUSTOMIZATION);
     virtualization.templates.launchConsole(vmtName);

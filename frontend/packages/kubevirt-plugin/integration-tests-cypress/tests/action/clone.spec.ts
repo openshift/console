@@ -1,13 +1,12 @@
 import { testName } from '../../support';
 import { Disk, Network, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_ACTION, VM_STATUS } from '../../utils/const/index';
+import { K8S_KIND, NAD_NAME, TEMPLATE, VM_ACTION, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { selectActionFromDropdown } from '../../views/actions';
 import * as cloneView from '../../views/clone';
 import { addDisk, addNIC } from '../../views/dialog';
 import { actionButtons } from '../../views/selector';
 import { tab } from '../../views/tab';
-import { virtualization } from '../../views/virtualization';
 import { vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -22,13 +21,15 @@ const vmData: VirtualMachineData = {
 
 const nic1: Network = {
   name: 'nic-1',
-  nad: 'bridge-network',
+  nad: NAD_NAME,
 };
 
 const disk1: Disk = {
   name: 'disk-1',
   size: '1',
 };
+
+const cloneVMName = `${vmData.name}-clone1`;
 
 describe('Test VM Clone', () => {
   before(() => {
@@ -38,44 +39,15 @@ describe('Test VM Clone', () => {
     vm.create(vmData);
     cy.cdiCloner(testName, 'default');
     cy.createNAD(testName);
-    virtualization.vms.visit();
+    cy.visitVMsList();
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: `${vmData.name}-clone`,
-        namespace: 'default',
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: `${vmData.name}-clone1`,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'NetworkAttachmentDefinition',
-      metadata: {
-        name: 'bridge-network',
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteResource(K8S_KIND.VM, `${vmData.name}-clone`, 'default');
+    cy.deleteResource(K8S_KIND.VM, cloneVMName, vmData.namespace);
+    cy.deleteResource(K8S_KIND.NAD, NAD_NAME, testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-1730) Displays warning in clone wizard when cloned VM is running', () => {
@@ -104,7 +76,7 @@ describe('Test VM Clone', () => {
   });
 
   it('ID(CNV-1732) Validates VM name', () => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
@@ -129,7 +101,7 @@ describe('Test VM Clone', () => {
   });
 
   it('ID(CNV-2825) Running VM is stopped when cloned', () => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
@@ -138,7 +110,7 @@ describe('Test VM Clone', () => {
   });
 
   it('ID(CNV-1733) Start cloned VM on creation', () => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.selectProject('default');
     cy.byLegacyTestID(`${vmData.name}-clone`)
       .should('exist')
@@ -149,7 +121,7 @@ describe('Test VM Clone', () => {
   });
 
   it('ID(CNV-1734) Cloned VM has changed MAC address', () => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.byLegacyTestID(`${vmData.name}-clone`)
       .should('exist')
       .click();
@@ -160,7 +132,7 @@ describe('Test VM Clone', () => {
       .then(($mac) => {
         mac1 = $mac.text();
       });
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.selectProject(testName);
     cy.byLegacyTestID(vmData.name)
       .should('exist')
@@ -176,7 +148,7 @@ describe('Test VM Clone', () => {
 
   it('ID(CNV-1744) Clone VM with added NIC and disk', () => {
     cy.selectProject(testName);
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
@@ -191,11 +163,11 @@ describe('Test VM Clone', () => {
     selectActionFromDropdown(VM_ACTION.Clone, actionButtons.actionDropdownButton);
     cy.get(cloneView.vmName)
       .clear()
-      .type(`${vmData.name}-clone1`);
+      .type(cloneVMName);
     cy.get(cloneView.confirmCloneButton).click();
 
-    virtualization.vms.visit();
-    cy.byLegacyTestID(`${vmData.name}-clone1`)
+    cy.visitVMsList();
+    cy.byLegacyTestID(cloneVMName)
       .should('exist')
       .click();
 

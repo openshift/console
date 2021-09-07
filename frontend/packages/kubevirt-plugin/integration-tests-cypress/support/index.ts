@@ -3,14 +3,19 @@ import { projectDropdown } from '../../../integration-tests-cypress/views/common
 import { V1alpha1DataVolume } from '../../src/types/api';
 import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
-import { KUBEVIRT_PROJECT_NAME, KUBEVIRT_STORAGE_CLASS_DEFAULTS } from '../utils/const/index';
+import {
+  K8S_KIND,
+  KUBEVIRT_PROJECT_NAME,
+  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
+} from '../utils/const/index';
+import './virtualization';
 
 export * from '../../../integration-tests-cypress/support';
 
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
-      deleteResource(resource: any, ignoreNotFound?: boolean): void;
+      deleteResource(kind: string, name: string, namespace?: string): void;
       applyResource(resource: any): void;
       createResource(resource: any): void;
       waitForResource(resource: any): void;
@@ -28,28 +33,25 @@ declare global {
   }
 }
 
-Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
-  const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
-
+Cypress.Commands.add('deleteResource', (kind: string, name: string, namespace?: string) => {
   // If cluster resource, ommit namespace
-  if (!resource.metadata.namespace) {
+  if (!namespace) {
     cy.exec(
-      `kubectl delete --ignore-not-found=${ignoreNotFound} --cascade ${kind} ${resource.metadata.name} --wait=true --timeout=120s || true`,
+      `kubectl delete --ignore-not-found=true --cascade ${kind} ${name} --wait=true --timeout=180s || true`,
       { timeout: 180000 },
     );
-
     return;
   }
 
   cy.exec(
-    `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name} --wait=true --timeout=120s`,
+    `kubectl delete --ignore-not-found=true -n ${namespace} --cascade ${kind} ${name} --wait=true --timeout=120s`,
     { timeout: 120000 },
   );
 
-  // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
-  if (['VirtualMachine', 'DataVolume', 'PersistentVolumeClaim'].includes(kind)) {
+  if (kind === K8S_KIND.VM) {
+    // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
     cy.exec(
-      `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} vmi ${resource.metadata.name} --wait=true --timeout=120s`,
+      `kubectl delete --ignore-not-found=true -n ${namespace} vmi ${name} --wait=true --timeout=120s`,
       { timeout: 120000 },
     );
   }

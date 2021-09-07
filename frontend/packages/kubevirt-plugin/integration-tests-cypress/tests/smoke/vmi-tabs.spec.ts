@@ -1,6 +1,6 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
-import { virtualization } from '../../views/virtualization';
+import { K8S_KIND } from '../../utils/const/index';
 
 const vmiName = 'vmi-ephemeral';
 
@@ -14,30 +14,20 @@ describe('smoke tests', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachineInstance',
-      metadata: {
-        name: vmiName,
-        namespace: testName,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VMI, vmiName, testName);
+    cy.deleteTestProject(testName);
   });
 
   describe('visit vmi list page', () => {
     it('vmi list page is loaded', () => {
-      virtualization.vms.visit();
+      cy.visitVMsList();
       cy.byLegacyTestID(vmiName).should('exist');
     });
   });
 
   describe('visit vmi tabs', () => {
     before(() => {
+      cy.visitVMsList();
       cy.byLegacyTestID(vmiName)
         .should('exist')
         .click();

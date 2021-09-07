@@ -1,13 +1,12 @@
 import { testName } from '../../support';
 import { Network, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE } from '../../utils/const/index';
+import { K8S_KIND, NAD_NAME, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
-import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const nic0: Network = {
   name: 'nic-0',
-  nad: 'bridge-network',
+  nad: NAD_NAME,
 };
 
 const urlVM: VirtualMachineData = {
@@ -66,39 +65,23 @@ describe('Test VM creation', () => {
 
   after(() => {
     [urlVM, registryVM, pvcVM].forEach((vmData) => {
-      cy.deleteResource({
-        kind: 'VirtualMachine',
-        metadata: {
-          name: vmData.name,
-          namespace: vmData.namespace,
-        },
-      });
+      cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
     });
-    cy.deleteResource({
-      kind: 'NetworkAttachmentDefinition',
-      metadata: {
-        name: 'bridge-network',
-        namespace: testName,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+
+    cy.deleteResource(K8S_KIND.NAD, NAD_NAME, testName);
+    cy.deleteTestProject(testName);
   });
 
   [urlVM, registryVM, pvcVM].forEach((vmData) => {
     it(`Creates ${vmData.description}`, () => {
-      virtualization.vms.visit();
+      cy.visitVMsList();
       vm.create(vmData, true);
     });
   });
 
   it('ID(CNV-771): create VM from PXE', () => {
     if (Cypress.env('DOWNSTREAM')) {
-      virtualization.vms.visit();
+      cy.visitVMsList();
       vm.create(pxeVM, true);
     }
   });

@@ -1,33 +1,21 @@
-import { testName } from '../../support';
-import { virtualization } from '../../views/virtualization';
-
 const template = 'rhel6-server-small';
 
 describe('smoke tests', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
-    cy.createProject(testName);
-  });
-
-  after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
   });
 
   describe('visit template list page', () => {
     it('template list page is loaded', () => {
-      virtualization.templates.visit();
+      cy.visitVMTemplatesList();
       cy.byLegacyTestID(template).should('exist');
     });
   });
 
   describe('visit template tabs', () => {
     before(() => {
+      cy.visitVMTemplatesList();
       cy.byLegacyTestID(template)
         .should('exist')
         .click();

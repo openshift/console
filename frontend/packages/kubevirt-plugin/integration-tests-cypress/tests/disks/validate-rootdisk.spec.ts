@@ -11,7 +11,6 @@ import {
   rootdisk,
   selectBootSource,
 } from '../../views/selector-wizard';
-import { virtualization } from '../../views/virtualization';
 import { wizard } from '../../views/wizard';
 
 const blankDisk: Disk = {
@@ -40,7 +39,7 @@ const vmData: VirtualMachineData = {
 };
 
 function visitStorageStep(data: VirtualMachineData) {
-  virtualization.vms.visit();
+  cy.visitVMsList();
   wizard.vm.open();
   wizard.vm.selectTemplate(data);
   cy.byLegacyTestID('wizard-customize').click();
@@ -69,9 +68,7 @@ describe('Validate root disk', () => {
 
   afterEach(() => {
     cy.get(cancelBtn).click();
-    cy.get('button')
-      .contains('Cancel')
-      .click();
+    cy.byButtonText('Cancel').click();
   });
 
   it('ID(CNV-5469) Blank disk cannot be used as bootdisk', () => {

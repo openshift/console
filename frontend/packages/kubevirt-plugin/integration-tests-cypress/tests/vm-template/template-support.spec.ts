@@ -1,5 +1,5 @@
 import { testName } from '../../support';
-import { TEMPLATE } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE } from '../../utils/const/index';
 import { virtualization } from '../../views/virtualization';
 import { wizard } from '../../views/wizard';
 
@@ -13,33 +13,16 @@ describe('test VM template support', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   beforeEach(() => {
-    virtualization.templates.visit();
+    cy.visitVMTemplatesList();
   });
 
   afterEach(() => {
-    cy.deleteResource({
-      kind: 'Template',
-      metadata: {
-        name: TEMPLATE_NAME,
-        namespace: testName,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Template',
-      metadata: {
-        name: TEMPLATE_NO_SUPPORT_NAME,
-        namespace: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.Template, TEMPLATE_NAME, testName);
+    cy.deleteResource(K8S_KIND.Template, TEMPLATE_NO_SUPPORT_NAME, testName);
   });
 
   it('details show user supported template', () => {

@@ -1,9 +1,8 @@
 import { listPage } from '@console/cypress-integration-tests/views/list-page';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
-import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -95,28 +94,18 @@ describe('ID(CNV-6923) Verify storageProfile with a fake storageClass', () => {
     cy.createStorageClass(); // ensure SC existence
     cy.editStorageProfile(); // ensure SP has default properties for AccessMode and VolumeMode
     vm.create(vmData);
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
     cy.deleteStorageClass();
     cy.deleteStorageProfile();
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-6922) Verify storageProfile in add disk modal', () => {
@@ -126,7 +115,7 @@ describe('ID(CNV-6923) Verify storageProfile with a fake storageClass', () => {
     cy.byLegacyTestID('modal-cancel-action').click();
   });
   it('ID(CNV-6921) Verify storageProfile in template add boot source modal', () => {
-    virtualization.templates.visit();
+    cy.visitVMTemplatesList();
     listPage.rows.shouldBeLoaded();
     cy.get('[data-test-template-name="rhel8-server-small"]')
       .contains('Add source')

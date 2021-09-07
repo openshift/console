@@ -1,11 +1,8 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { ERROR_OCCURRED } from '../../utils/const/errorString';
-import { TEMPLATE, VM_STATUS } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
-import { modalCancel } from '../../views/selector';
-import { virtualization } from '../../views/virtualization';
 import { vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -16,14 +13,6 @@ const vmData: VirtualMachineData = {
   pvcSize: '1',
   sshEnable: false,
   startOnCreation: false,
-};
-
-const vmFixture = {
-  kind: 'VirtualMachine',
-  metadata: {
-    name: vmData.name,
-    namespace: vmData.namespace,
-  },
 };
 
 const vmiData: VirtualMachineData = {
@@ -39,20 +28,15 @@ describe('Test VM/VMI actions', () => {
   });
 
   after(() => {
-    cy.deleteResource(vmFixture);
-    cy.deleteResource(vmiFixture);
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteResource(K8S_KIND.VMI, vmiData.name, vmiData.namespace);
+    cy.deleteTestProject(testName);
   });
 
   describe('Test VM list view action', () => {
     before(() => {
       vm.create(vmData);
-      virtualization.vms.visit();
+      cy.visitVMsList();
       waitForStatus(VM_STATUS.Stopped);
     });
 
@@ -66,13 +50,6 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-765) Unpauses VM', () => {
       vm.pause();
-      cy.get('body').then(($body) => {
-        if ($body.text().includes(ERROR_OCCURRED)) {
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(5000);
-          cy.get(modalCancel).click();
-        }
-      });
       vm.unpause();
     });
 
@@ -105,25 +82,11 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-1794) Unpauses VM', () => {
       vm.pause();
-      cy.get('body').then(($body) => {
-        if ($body.text().includes(ERROR_OCCURRED)) {
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(5000);
-          cy.get(modalCancel).click();
-        }
-      });
       vm.unpause();
     });
 
     it('ID(CNV-4019) Unpauses VM via modal dialog', () => {
       vm.pause();
-      cy.get('body').then(($body) => {
-        if ($body.text().includes(ERROR_OCCURRED)) {
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(5000);
-          cy.get(modalCancel).click();
-        }
-      });
       waitForStatus(VM_STATUS.Paused);
       cy.get(`button[id=${vmData.namespace}-${vmData.name}-status-edit]`).click();
       cy.byTestID('confirm-action').click();
@@ -143,9 +106,9 @@ describe('Test VM/VMI actions', () => {
     beforeEach(() => {
       vmiFixture.metadata.name = vmiData.name;
       vmiFixture.metadata.namespace = testName;
-      cy.deleteResource(vmiFixture);
+      cy.deleteResource(K8S_KIND.VMI, vmiData.name, vmiData.namespace);
       cy.applyResource(vmiFixture);
-      virtualization.vms.visit();
+      cy.visitVMsList();
       waitForStatus(VM_STATUS.Running);
     });
 
