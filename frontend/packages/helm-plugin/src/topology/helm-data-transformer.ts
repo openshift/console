@@ -54,7 +54,7 @@ export const getTopologyHelmReleaseGroupItem = (
 
   const secret = secrets.find((nextSecret) => {
     const { labels } = nextSecret.metadata;
-    return labels?.name?.includes(releaseName) && labels?.version === releaseVersion.toString();
+    return labels?.name === releaseName && labels?.version === releaseVersion.toString();
   });
 
   if (secret) {
