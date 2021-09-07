@@ -9,11 +9,11 @@ Feature: Basic Codeready Workspaces usage
 
     @smoke
     Scenario: CRW is shown in Applications menu in Masthead
-        When user click on Application button in Masthead
+        When user clicks on Application button in Masthead
         Then "CodeReady Workspaces" entry is present in Application menu in Masthead
 
     @smoke
     Scenario: CRW Dashboard is opened when user clicks on CRW in Applications menu in Masthead
-        When user click on Application button in Masthead
-        And user click on Codeready Workspaces in Application menu in Masthead
+        When user clicks on Application button in Masthead
+        And user clicks on Codeready Workspaces in Application menu in Masthead
         Then user is redirected to Codeready Workspaces Dashboard

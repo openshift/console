@@ -3,7 +3,7 @@ import { submitButton } from '@console/cypress-integration-tests/views/form';
 import { authorizeAccessPage } from '../../pages/crw/authorizeAccess';
 import { keycloakRegistrationPage } from '../../pages/crw/keycloak';
 
-When('user click on Codeready Workspaces in Application menu in Masthead', () => {
+When('user clicks on Codeready Workspaces in Application menu in Masthead', () => {
   cy.byTestID('application-launcher-item')
     .should('have.attr', 'target', '_blank')
     .invoke('removeAttr', 'target')

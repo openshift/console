@@ -1,6 +1,6 @@
 import { Then, When } from 'cypress-cucumber-preprocessor/steps';
 
-When('user click on Application button in Masthead', () => {
+When('user clicks on Application button in Masthead', () => {
   cy.byLegacyTestID('application-launcher')
     .should('be.visible')
     .click();
