@@ -6,6 +6,7 @@ import { getModifyApplicationAction } from './modify-application';
 
 export const useTopologyWorloadActionProvider = (element: GraphElement) => {
   const actions = useMemo(() => {
+    if (element.getType() !== TYPE_WORKLOAD) return [];
     const resource = getResource(element);
     const k8sKind = modelFor(referenceFor(resource));
     return [getModifyApplicationAction(k8sKind, resource)];

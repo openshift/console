@@ -207,5 +207,20 @@
       "insertBefore": "console.preferredCreateEditMethod",
       "insertAfter": "console.preferredNamespace"
     }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-application",
+      "tab": "topology-side-bar-tab-resource",
+      "section": { "$codeRef": "applicationSidebar.getApplicationPanelResourceTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "applicationSidebar.getApplicationPanelResourceLink" }
+    }
   }
 ]

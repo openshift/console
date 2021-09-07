@@ -19,7 +19,6 @@ import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import { OperatorGroupData } from '../../operators/operator-topology-types';
 import TopologyOperatorBackedPanel from '../../operators/TopologyOperatorBackedPanel';
 import { TopologyDataObject } from '../../topology-types';
-import TopologyApplicationPanel from '../application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologySideBarContent from './TopologySideBarContent';
@@ -31,16 +30,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
 
   if (isNode(selectedEntity)) {
     if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
-      return (
-        <TopologyApplicationPanel
-          graphData={selectedEntity.getGraph().getData()}
-          application={{
-            id: selectedEntity.getId(),
-            name: selectedEntity.getLabel(),
-            resources: selectedEntity.getData().groupResources,
-          }}
-        />
-      );
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
       return <TopologySideBarContent element={selectedEntity} />;

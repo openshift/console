@@ -13,7 +13,7 @@ const TopologyActions: React.FC<TopologyActionsProps> = ({ element }) => {
     const resource = getResource(element);
     return {
       'topology-actions': element,
-      [referenceFor(resource)]: resource,
+      ...(resource ? { [referenceFor(resource)]: resource } : {}),
     };
   }, [element]);
   return (
