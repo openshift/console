@@ -1,21 +1,31 @@
 export enum detailsTab {
   // general fields
   vmName = '[data-test-selector="details-item-value__Name"]',
-  vmNS = '[data-test-selector="details-item-label__Namespace"]',
+  vmNS = '[data-test-selector="details-item-value__Namespace"]',
   vmLabels = '[data-test="label-list"]',
   vmDesc = '[data-test-id="details-Description"]',
   vmOS = '[data-test-id="details-Operating System"]',
   vmTemplate = '[data-test-id="details-Template"]',
-  vmOwner = '[data-test-selector="details-item-value__Owner"]',
   vmStatus = '[data-test="status-text"]',
-  vmPrintableStatus = '[data-test="vm-printable-status-text"]',
   vmPod = '[data-test-id="details-Pod"]',
   vmBootOrder = '[data-test-id="details-Boot Order"]',
   vmIP = '[data-test-id="details-IP Address"]',
   vmHostname = '[data-test-id="details-Hostname"]',
   vmTimezone = '[data-test-id="details-Time Zone"]',
   vmNode = '[data-test-id="details-Node"]',
-  vmWorkProfile = '[data-test-id="details-Workload Profile"]',
+
+  services = '#services',
+  activeUser = '#logged-in-users',
+}
+
+export enum dashboardTab {
+  detailsCardItem = '.co-details-card__item-value',
+  utilsCardItem = '[data-test-id="utilization-item"]',
+  inventoryCardItem = '.co-inventory-card__item',
+  vmHealth = '[data-test="Virtual Machine-health-item"]',
+  guestAgentHealth = '[data-test="Guest Agent-health-item"]',
+  guestAgentOK = '[data-test="success-icon"]',
+  eventsCardBody = '.co-activity-card__recent-accordion',
 }
 
 export enum actionButtons {

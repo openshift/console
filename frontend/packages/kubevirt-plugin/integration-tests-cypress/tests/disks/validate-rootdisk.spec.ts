@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
-import { bootsourceError } from '../../utils/const/errorString';
+import { BOOTSOURCE_ERROR } from '../../utils/const/errorString';
 import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { addDisk } from '../../views/dialog';
@@ -51,9 +51,9 @@ function visitStorageStep(data: VirtualMachineData) {
 function checkDiskBootable(diskName: string, bootable: boolean) {
   cy.get(selectBootSource).select(diskName);
   if (bootable) {
-    cy.contains(bootsourceError).should('not.exist');
+    cy.contains(BOOTSOURCE_ERROR).should('not.exist');
   } else {
-    cy.contains(bootsourceError).should('exist');
+    cy.contains(BOOTSOURCE_ERROR).should('exist');
   }
 }
 
