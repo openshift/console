@@ -23,6 +23,7 @@ import {
   attachDevicesWithArbiter,
   attachDevices,
   OCS_DEVICE_SET_ARBITER_REPLICA,
+  NO_PROVISIONER,
 } from '../../../../constants';
 import {
   getNodeInfo,
@@ -119,10 +120,19 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     if (isFlexibleScalingSupported) {
       dispatch({
         type: 'setEnableFlexibleScaling',
-        value: !stretchClusterChecked && isFlexibleScaling(nodesCount, zonesCount),
+        value:
+          !stretchClusterChecked &&
+          isFlexibleScaling(nodesCount, zonesCount, storageClass?.provisioner === NO_PROVISIONER),
       });
     }
-  }, [dispatch, zonesCount, nodesCount, stretchClusterChecked, isFlexibleScalingSupported]);
+  }, [
+    dispatch,
+    zonesCount,
+    nodesCount,
+    stretchClusterChecked,
+    isFlexibleScalingSupported,
+    storageClass,
+  ]);
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
     dispatch({ type: 'setStorageClass', value: sc });

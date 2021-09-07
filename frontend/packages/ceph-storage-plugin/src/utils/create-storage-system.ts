@@ -77,7 +77,7 @@ export const capacityAndNodesValidate = (
   const totalMemory = getTotalMemory(nodes);
   const zones = getAllZone(nodes);
 
-  if (!enableStretchCluster && isNoProvSC && isFlexibleScaling(nodes.length, zones.size)) {
+  if (!enableStretchCluster && isFlexibleScaling(nodes.length, zones.size, isNoProvSC)) {
     validations.push(ValidationType.ATTACHED_DEVICES_FLEXIBLE_SCALING);
   }
   if (shouldDeployAsMinimal(totalCpu, totalMemory, nodes.length)) {
