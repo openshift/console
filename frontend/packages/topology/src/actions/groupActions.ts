@@ -1,7 +1,9 @@
 import { Model, Node } from '@patternfly/react-topology';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { addGroupResourceMenu } from '@console/dev-console/src/actions/add-resources';
 import { MenuOptions } from '@console/dev-console/src/utils/add-resources-menu-utils';
+import { Action } from '@console/dynamic-plugin-sdk';
 import { asAccessReview } from '@console/internal/components/utils';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -29,6 +31,37 @@ const cleanUpWorkloadNode = async (workload: OdcNodeModel): Promise<K8sResourceK
   return cleanUpWorkload(workload.resource, workload.data?.isKnativeResource ?? false);
 };
 
+export const DeleteApplicationAction = ({ name, resources }: TopologyApplicationObject): Action => {
+  // accessReview needs a resource but group is not a k8s resource,
+  // so currently picking the first resource to do the rbac checks (might change in future)
+  const primaryResource = resources[0].resource;
+  const resourceModel = modelFor(primaryResource.kind)
+    ? modelFor(primaryResource.kind)
+    : modelFor(referenceFor(primaryResource));
+  return {
+    id: 'delete-application',
+    label: i18next.t('topology~Delete Application'),
+    cta: () => {
+      const reqs = [];
+      deleteResourceModal({
+        blocking: true,
+        resourceName: name,
+        resourceType: ApplicationModel.label,
+        onSubmit: () => {
+          resources.forEach((resource) => {
+            reqs.push(cleanUpWorkloadNode(resource));
+          });
+          return Promise.all(reqs);
+        },
+      });
+    },
+    accessReview: asAccessReview(resourceModel, primaryResource, 'delete'),
+  };
+};
+
+/**
+ * @deprecated this action has been migrated to use Action extension, use `DeleteApplicationAction`
+ */
 const deleteGroup = (application: TopologyApplicationObject) => {
   // accessReview needs a resource but group is not a k8s resource,
   // so currently picking the first resource to do the rbac checks (might change in future)

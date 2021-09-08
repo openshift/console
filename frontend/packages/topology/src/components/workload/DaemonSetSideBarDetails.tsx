@@ -39,6 +39,6 @@ const DaemonSetSideBarDetails: React.FC<DaemonSetOverviewDetailsProps> = ({ ds }
 
 export const getDaemonSetSideBarDetails = (element: GraphElement) => {
   const resource = getResource(element);
-  if (resource.kind !== DaemonSetModel.kind) return undefined;
+  if (!resource || resource.kind !== DaemonSetModel.kind) return undefined;
   return <DaemonSetSideBarDetails ds={resource} />;
 };

@@ -50,6 +50,6 @@ const DeploymentSideBarDetails: React.FC<DeploymentSideBarDetailsProps> = ({ dep
 
 export const getDeploymentSideBarDetails = (element: GraphElement) => {
   const resource = getResource<DeploymentKind>(element);
-  if (resource.kind !== DeploymentModel.kind) return undefined;
+  if (!resource || resource.kind !== DeploymentModel.kind) return undefined;
   return <DeploymentSideBarDetails deployment={resource} />;
 };

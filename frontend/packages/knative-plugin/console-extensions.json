@@ -774,5 +774,15 @@
     "flags": {
       "required": ["KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useAddToApplicationActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
   }
 ]

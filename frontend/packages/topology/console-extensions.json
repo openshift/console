@@ -222,5 +222,12 @@
       "priority": 100,
       "link": { "$codeRef": "applicationSidebar.getApplicationPanelResourceLink" }
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useApplicationPanelActionProvider" }
+    }
   }
 ]
