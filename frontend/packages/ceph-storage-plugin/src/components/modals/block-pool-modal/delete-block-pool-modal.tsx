@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { useLocation } from 'react-router-dom';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import {
@@ -22,6 +23,7 @@ import { withHandlePromise } from '@console/internal/components/utils';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { StorageClassModel, PersistentVolumeClaimModel } from '@console/internal/models';
 
+import { history } from '@console/internal/components/utils/router';
 import { BlockPoolModalFooter } from './modal-footer';
 import { BlockPoolStatus } from '../../block-pool/body';
 import { CephClusterKind, OcsStorageClassKind, StoragePoolKind } from '../../../types';
@@ -84,9 +86,16 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
     }
   }, [scResources, scLoaded, pvcResources, pvcLoaded, state.poolStatus, poolName, t]);
 
+  const location = useLocation();
   // Delete block pool
   const deletePool = () => {
-    handlePromise(k8sKill(CephBlockPoolModel, blockPoolConfig), () => close());
+    handlePromise(k8sKill(CephBlockPoolModel, blockPoolConfig), () => {
+      close();
+      // Go to block pool list page if pool is deleted
+      if (location.pathname.includes(poolName)) {
+        history.push(location.pathname.split(`/${poolName}`)[0]);
+      }
+    });
   };
 
   const MODAL_TITLE = t('ceph-storage-plugin~Delete BlockPool');
