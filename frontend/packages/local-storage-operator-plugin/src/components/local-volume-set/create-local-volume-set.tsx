@@ -37,7 +37,7 @@ const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ match }) =>
   const onSubmit = async (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
 
-    const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : nodesData;
+    const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : state.lvsAllNodes;
     const nodesByHostNameLabel = getNodesByHostNameLabel(lvsNodes);
     const requestData = getLocalVolumeSetRequestData(state, nodesByHostNameLabel, ns);
 
