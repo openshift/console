@@ -150,11 +150,6 @@ describe('test custom template creation support', () => {
     // verify VM started
     virtualization.vms.testStatus(
       VM_NAME_WITH_BOOT_SOURCE,
-      'Provisioning',
-      VM_ACTION_TIMEOUT.VM_BOOTUP,
-    );
-    virtualization.vms.testStatus(
-      VM_NAME_WITH_BOOT_SOURCE,
       'Starting',
       VM_ACTION_TIMEOUT.VM_BOOTUP,
     );

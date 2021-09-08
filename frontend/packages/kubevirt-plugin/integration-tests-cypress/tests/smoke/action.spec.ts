@@ -1,8 +1,10 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
+import { ERROR_OCCURRED } from '../../utils/const/errorString';
 import { TEMPLATE, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
+import { modalCancel } from '../../views/selector';
 import { virtualization } from '../../views/virtualization';
 import { vm, waitForStatus } from '../../views/vm';
 
@@ -64,6 +66,13 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-765) Unpauses VM', () => {
       vm.pause();
+      cy.get('body').then(($body) => {
+        if ($body.text().includes(ERROR_OCCURRED)) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(5000);
+          cy.get(modalCancel).click();
+        }
+      });
       vm.unpause();
     });
 
@@ -96,11 +105,25 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-1794) Unpauses VM', () => {
       vm.pause();
+      cy.get('body').then(($body) => {
+        if ($body.text().includes(ERROR_OCCURRED)) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(5000);
+          cy.get(modalCancel).click();
+        }
+      });
       vm.unpause();
     });
 
     it('ID(CNV-4019) Unpauses VM via modal dialog', () => {
       vm.pause();
+      cy.get('body').then(($body) => {
+        if ($body.text().includes(ERROR_OCCURRED)) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(5000);
+          cy.get(modalCancel).click();
+        }
+      });
       waitForStatus(VM_STATUS.Paused);
       cy.get(`button[id=${vmData.namespace}-${vmData.name}-status-edit]`).click();
       cy.byTestID('confirm-action').click();
