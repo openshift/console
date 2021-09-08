@@ -420,3 +420,10 @@ export type ResourceLinkProps = {
 
 export type UseK8sModel = (groupVersionKind?: GroupVersionKind) => [K8sKind, boolean];
 export type UseK8sModels = () => [{ [key: string]: K8sKind }, boolean];
+
+export type PerspectiveType = string;
+
+export type UseActivePerspective = () => [
+  PerspectiveType,
+  React.Dispatch<React.SetStateAction<PerspectiveType>>,
+];

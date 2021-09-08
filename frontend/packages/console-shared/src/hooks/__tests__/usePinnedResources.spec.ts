@@ -1,6 +1,6 @@
+import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
 import { useExtensions } from '@console/plugin-sdk';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
-import { useActivePerspective } from '../useActivePerspective';
 import { usePinnedResources } from '../usePinnedResources';
 import { useUserSettingsCompatibility } from '../useUserSettingsCompatibility';
 
@@ -10,7 +10,9 @@ const useUserSettingsCompatibilityMock = useUserSettingsCompatibility as jest.Mo
 const setPinnedResourcesMock = jest.fn();
 
 jest.mock('@console/plugin-sdk', () => ({ useExtensions: jest.fn() }));
-jest.mock('../useActivePerspective', () => ({ useActivePerspective: jest.fn() }));
+jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  default: jest.fn(),
+}));
 jest.mock('../useUserSettingsCompatibility', () => ({ useUserSettingsCompatibility: jest.fn() }));
 
 describe('usePinnedResources', () => {

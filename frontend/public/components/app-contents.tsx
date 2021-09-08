@@ -2,13 +2,15 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import {
-  FLAGS,
   useActivePerspective,
-  useUserSettings,
-  getPerspectiveVisitedKey,
-} from '@console/shared';
+  Perspective,
+  isPerspective,
+  RoutePage as DynamicRoutePage,
+  isRoutePage as isDynamicRoutePage,
+} from '@console/dynamic-plugin-sdk';
+import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
+import { FLAGS, useUserSettings, getPerspectiveVisitedKey } from '@console/shared';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
@@ -24,12 +26,7 @@ import { NamespaceRedirect } from './utils/namespace-redirect';
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { RoutePage, isRoutePage, useExtensions, LoadedExtension } from '@console/plugin-sdk';
-import {
-  Perspective,
-  isPerspective,
-  RoutePage as DynamicRoutePage,
-  isRoutePage as isDynamicRoutePage,
-} from '@console/dynamic-plugin-sdk';
+
 import CreateResource from './create-resource';
 
 const RedirectComponent = (props) => {

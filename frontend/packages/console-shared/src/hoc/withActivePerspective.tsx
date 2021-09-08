@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { PerspectiveType } from '@console/app/src/components/detect-perspective/perspective-context';
-import { useActivePerspective } from '../hooks';
+import { PerspectiveType, useActivePerspective } from '@console/dynamic-plugin-sdk';
 
 type WithActivePerspectiveProps = {
   activePerspective?: PerspectiveType;

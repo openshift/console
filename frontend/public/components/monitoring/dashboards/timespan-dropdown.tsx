@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { useActivePerspective } from '@console/shared';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 
 import {
   monitoringDashboardsSetEndTime,

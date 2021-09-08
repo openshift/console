@@ -11,6 +11,10 @@ type DetectorProps = {
   )[];
 };
 
+type PerspectiveDetectorProps = {
+  setActivePerspective: (perspective: string) => void;
+};
+
 const Detector: React.FC<DetectorProps> = ({
   setActivePerspective,
   perspectiveExtensions,
@@ -48,10 +52,6 @@ const Detector: React.FC<DetectorProps> = ({
   ]);
 
   return null;
-};
-
-type PerspectiveDetectorProps = {
-  setActivePerspective: (perspective: string) => void;
 };
 
 const PerspectiveDetector: React.FC<PerspectiveDetectorProps> = ({ setActivePerspective }) => {

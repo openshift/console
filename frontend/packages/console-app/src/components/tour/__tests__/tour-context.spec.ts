@@ -6,8 +6,8 @@ import { TourActions } from '../const';
 import * as TourModule from '../tour-context';
 import { TourDataType } from '../type';
 
-jest.mock('@console/shared/src/hooks/useActivePerspective', () => ({
-  useActivePerspective: () => ['dev', jest.fn()],
+jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  default: () => ['dev', jest.fn()],
 }));
 
 const { tourReducer, useTourValuesForContext, useTourStateForPerspective } = TourModule;
