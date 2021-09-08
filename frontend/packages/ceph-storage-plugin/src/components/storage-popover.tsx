@@ -35,7 +35,7 @@ export const StoragePopover: React.FC<StoragePopoverProps> = ({ ceph }) => {
         secondColumn={t('ceph-storage-plugin~Health')}
       >
         <Status key="ocs" value={value} icon={icon}>
-          <Link to="/ocs-dashboards">{t('ceph-storage-plugin~Openshift Data Foundation')}</Link>
+          <Link to="/odf">{t('ceph-storage-plugin~Openshift Data Foundation')}</Link>
         </Status>
       </StatusPopupSection>
     </>
