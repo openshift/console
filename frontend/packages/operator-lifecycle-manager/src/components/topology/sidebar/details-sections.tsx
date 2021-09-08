@@ -9,7 +9,7 @@ const DetailsSection: React.FC<{ resource: K8sResourceKind }> = ({ resource }) =
   const { t } = useTranslation();
   return (
     <div className="overview__sidebar-pane-body">
-      <SectionHeading text={t('topology~Operator details')} />
+      <SectionHeading text={t('olm~Operator details')} />
       <ResourceSummary resource={resource} />
     </div>
   );

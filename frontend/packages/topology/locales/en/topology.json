@@ -146,8 +146,6 @@
   "Kiali": "Kiali",
   "Create a binding connector": "Create a binding connector",
   "Operator groupings": "Operator groupings",
-  "Operator details": "Operator details",
-  "Managed by": "Managed by",
   "Error: no resource provided to update Application for.": "Error: no resource provided to update Application for.",
   "Error: invalid resource kind provided for updating Application.": "Error: invalid resource kind provided for updating Application.",
   "Unable to retrieve model for: {{kind}}": "Unable to retrieve model for: {{kind}}",

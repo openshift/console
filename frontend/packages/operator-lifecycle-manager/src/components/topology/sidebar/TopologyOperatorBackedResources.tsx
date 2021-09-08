@@ -50,7 +50,7 @@ const OperatorResources: React.FC<OperatorResourcesProps> = ({
       data={manifestResources}
       loaded={loaded}
       loadError={loadError}
-      label={t('topology~Resources')}
+      label={t('olm~Resources')}
     >
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
@@ -143,7 +143,7 @@ const TopologyOperatorBackedResources: React.FC<TopologyOperatorBackedResourcesP
 
     return (
       <div className="co-m-pane__heading-owner">
-        {t('topology~Managed by')}{' '}
+        {t('olm~Managed by')}{' '}
         <span className="co-resource-item">
           <ResourceIcon kind={kind} />
           <Link to={link} className="co-resource-item__resource-name" data-test-operand-link={name}>
