@@ -127,21 +127,21 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
     );
   };
 
-  const removeIngressRule = (idx) => {
+  const removeIngressRule = (idx: number) => {
     updateIngressRules([
       ...networkPolicy.ingress.rules.slice(0, idx),
       ...networkPolicy.ingress.rules.slice(idx + 1),
     ]);
   };
 
-  const removeEgressRule = (idx) => {
+  const removeEgressRule = (idx: number) => {
     updateEgressRules([
       ...networkPolicy.egress.rules.slice(0, idx),
       ...networkPolicy.egress.rules.slice(idx + 1),
     ]);
   };
 
-  const save = (event) => {
+  const save = (event: React.FormEvent) => {
     event.preventDefault();
 
     const policy = networkPolicyToK8sResource(networkPolicy);
