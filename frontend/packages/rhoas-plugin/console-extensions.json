@@ -156,5 +156,67 @@
     "flags": {
       "required": ["RHOAS_FLAG"]
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rhoas.redhat.com",
+        "version": "v1alpha1",
+        "kind": "KafkaConnection"
+      },
+      "provider": { "$codeRef": "rhoasActions.useKafkaConnectionActionProvider" }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "rhoasTopologySidebar.getKafkaConnectionPanelResourceLink" }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.topology/details/resource-alert",
+    "properties": {
+      "id": "rhoas-plugin-alert",
+      "contentProvider": {
+        "$codeRef": "rhoasTopologySidebar.useKafkaConnectionAlert"
+      }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "rhoas-plugin-tab-section-default",
+      "tab": "topology-side-bar-tab-details",
+      "section": {
+        "$codeRef": "rhoasTopologySidebar.getDetailsTabSectionForTopologySideBar"
+      }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "rhoas-plugin-tab-section-resource",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "rhoasTopologySidebar.getResourceTabSectionForTopologySideBar"
+      }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
   }
 ]

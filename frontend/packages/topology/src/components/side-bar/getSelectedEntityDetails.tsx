@@ -15,7 +15,6 @@ import {
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
 import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
-import TopologyKafkaPanel from '@console/rhoas-plugin/src/topology/components/TopologyKafkaPanel';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
 import { OdcBaseEdge } from '../../elements';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
@@ -50,7 +49,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_MANAGED_KAFKA_CONNECTION) {
-      return <TopologyKafkaPanel item={selectedEntity} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
       return <TopologySideBarContent element={selectedEntity} />;
