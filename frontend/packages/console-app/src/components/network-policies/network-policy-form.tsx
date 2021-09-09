@@ -185,7 +185,7 @@ const NetworkPolicyFormComponent: React.FunctionComponent<NetworkPolicyFormProps
         networkFeatures?.PolicyPeerIPBlockExceptions === undefined && (
           <Alert
             variant="info"
-            title={<p>{t('public~When using the OpenShift SDN cluster network provider:')}</p>}
+            title={t('public~When using the OpenShift SDN cluster network provider:')}
             actionClose={<AlertActionCloseButton onClose={() => setShowSDNAlert(false)} />}
           >
             <ul>

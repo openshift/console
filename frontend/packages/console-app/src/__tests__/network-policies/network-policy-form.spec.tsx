@@ -4,18 +4,6 @@ import { mount } from 'enzyme';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));

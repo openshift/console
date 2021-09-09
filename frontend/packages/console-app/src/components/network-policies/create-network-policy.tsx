@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { getActiveNamespace } from '@console/internal/actions/ui';
+import { useActiveNamespace } from 'packages/console-shared/src';
+import { resourcePathFromModel } from 'public/components/utils';
+import { NetworkPolicyModel } from 'public/models';
 import { NetworkPolicyForm } from './network-policy-form';
 
 import './_create-network-policy.scss';
 
-export const CreateNetworkPolicy: React.FunctionComponent<{}> = () => {
+export const CreateNetworkPolicy: React.FC<{}> = () => {
   const { t } = useTranslation();
   const namespaceProps = {
-    namespace: getActiveNamespace(),
+    namespace: useActiveNamespace()[0],
   };
   return (
     <div className="co-m-pane__body co-m-pane__form">
@@ -17,7 +19,11 @@ export const CreateNetworkPolicy: React.FunctionComponent<{}> = () => {
         <div className="co-m-pane__name">{t('public~Create NetworkPolicy')}</div>
         <div className="co-m-pane__heading-link">
           <Link
-            to={`/k8s/ns/${namespaceProps.namespace}/networkpolicies/~new`}
+            to={`${resourcePathFromModel(
+              NetworkPolicyModel,
+              undefined,
+              namespaceProps.namespace,
+            )}/~new`}
             id="yaml-link"
             data-test="yaml-link"
             replace
