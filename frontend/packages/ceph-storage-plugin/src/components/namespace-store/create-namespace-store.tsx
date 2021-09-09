@@ -6,14 +6,18 @@ import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { getName } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NamespaceStoreForm from './namespace-store-form';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
+import { ODF_MODEL_FLAG } from '../../constants';
 import { NooBaaNamespaceStoreModel } from '../../models';
 
 const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) => {
   const { t } = useTranslation();
   const { ns, appName } = match.params;
+  const isOdfInstalled = useFlag(ODF_MODEL_FLAG);
+
   const onCancel = () => history.goBack();
 
   return (
@@ -22,8 +26,10 @@ const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) =>
         <BreadCrumbs
           breadcrumbs={[
             {
-              name: 'Openshift Data Foundation',
-              path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+              name: isOdfInstalled ? 'OpenShift Data Foundation' : 'OpenShift Container Storage',
+              path: isOdfInstalled
+                ? '/odf'
+                : resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
             },
             { name: t('ceph-storage-plugin~Create NamespaceStore '), path: match.url },
           ]}

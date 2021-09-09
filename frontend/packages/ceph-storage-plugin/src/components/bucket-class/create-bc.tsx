@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Title, Wizard } from '@patternfly/react-core';
 import {
@@ -9,6 +8,7 @@ import {
   k8sGet,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
@@ -25,6 +25,7 @@ import { CacheNamespaceStorePage } from './wizard-pages/namespace-store-pages/ca
 import { MultiNamespaceStorePage } from './wizard-pages/namespace-store-pages/multi-namespace-store';
 import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-class';
 import { validateBucketClassName, validateDuration } from '../../utils/bucket-class';
+import { ODF_MODEL_FLAG } from '../../constants';
 import { NooBaaBucketClassModel } from '../../models';
 import { PlacementPolicy } from '../../types';
 
@@ -40,6 +41,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { ns, appName } = match.params;
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
+  const isOdfInstalled = useFlag(ODF_MODEL_FLAG);
 
   React.useEffect(() => {
     k8sGet(ClusterServiceVersionModel, appName, ns)
@@ -252,12 +254,10 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         <BreadCrumbs
           breadcrumbs={[
             {
-              name: _.get(
-                clusterServiceVersion,
-                'spec.displayName',
-                'Openshift Data Foundation Operator',
-              ),
-              path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+              name: isOdfInstalled ? 'OpenShift Data Foundation' : 'OpenShift Container Storage',
+              path: isOdfInstalled
+                ? '/odf'
+                : resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
             },
             {
               name: t('ceph-storage-plugin~Create BucketClass'),
