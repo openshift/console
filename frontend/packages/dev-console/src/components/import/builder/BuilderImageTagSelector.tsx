@@ -69,7 +69,6 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
   return (
     <>
       <div style={!showEditImportStrategy ? { display: 'none' } : {}}>
-        <br />
         <DropdownField
           name="image.tag"
           label={t('devconsole~Builder Image version')}
