@@ -1,6 +1,5 @@
 import { TEMPLATE } from '../../utils/const/index';
-import { nameFilter, unStarIcon, supportLevel, supportLevelTag } from '../../views/selector';
-import { virtualization } from '../../views/virtualization';
+import { unStarIcon, supportLevel, supportLevelTag } from '../../views/selector';
 
 const template = TEMPLATE.RHEL9;
 
@@ -8,10 +7,8 @@ describe('Test RHEL9 template', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
-    virtualization.templates.visit();
-    cy.get(nameFilter)
-      .clear()
-      .type(template.dvName);
+    cy.visitVMTemplatesList();
+    cy.filterByName(template.dvName);
   });
 
   // TODO: RHEL9 should be starred after it's official released.

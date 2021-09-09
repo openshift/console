@@ -2,6 +2,7 @@ import { testName } from '../../support';
 import {
   ADD_SOURCE,
   IMPORTING,
+  K8S_KIND,
   OS_IMAGES_NS,
   TEMPLATE,
   TEST_PROVIDER,
@@ -20,27 +21,13 @@ describe('test vm template source image', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   beforeEach(() => {
-    virtualization.templates.visit();
-    cy.deleteResource({
-      kind: 'DataVolume',
-      metadata: {
-        name: template.dvName,
-        namespace: OS_IMAGES_NS,
-      },
-    });
-    cy.deleteResource({
-      kind: 'DataVolume',
-      metadata: { name: testName, namespace: 'default' },
-    });
+    cy.visitVMTemplatesList();
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
+    cy.deleteResource(K8S_KIND.DV, testName, 'default');
   });
 
   it('ID(CNV-5652) add Container image and delete', () => {

@@ -4,7 +4,6 @@ import { CloudInitConfig, VirtualMachineData } from '../../types/vm';
 import { TEMPLATE } from '../../utils/const';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import * as wizardView from '../../views/selector-wizard';
-import { virtualization } from '../../views/virtualization';
 import { wizard } from '../../views/wizard';
 
 const yamlUserName = 'cnv-ui-tester';
@@ -40,7 +39,7 @@ describe('VM creation wizard Cloud init editor fields', () => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
-    virtualization.vms.visit();
+    cy.visitVMsList();
     wizard.vm.open();
     wizard.vm.selectTemplate(vmData);
     wizard.vm.fillBootSourceForm(vmData);
@@ -65,12 +64,9 @@ describe('VM creation wizard Cloud init editor fields', () => {
 
   after(() => {
     cy.get(wizardView.cancelBtn);
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.byButtonText('Cancel').click();
+
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-6879) VM creation wizard advanced cloud init editor should have user and password fields in the form editor', () => {

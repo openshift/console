@@ -3,7 +3,6 @@ import { VirtualMachineData } from '../../types/vm';
 import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import * as wizardView from '../../views/selector-wizard';
-import { virtualization } from '../../views/virtualization';
 import { wizard } from '../../views/wizard';
 
 const vmData: VirtualMachineData = {
@@ -18,17 +17,7 @@ describe('Validate NAD for PXE provision source', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
-    cy.createProject(testName);
-    virtualization.vms.visit();
-  });
-
-  after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.visitVMsList();
   });
 
   it('ID(CNV-5045) Verify PXE provision source must have NAD available', () => {

@@ -15,6 +15,7 @@ export const READY_FOR_CUSTOMIZATION = 'Ready for customization';
 export const YAML_VM_NAME = 'vm-example';
 export const STATUS_READY = 'Ready';
 export const TEMPLATE_SUPPORT = 'Support by template provider';
+export const NAD_NAME = 'bridge-network'; // refer to fixture/nad.ts
 
 export enum DEFAULT_VALUES {
   NOT_AVAILABLE = 'Not available',
@@ -84,6 +85,15 @@ export enum DISK_INTERFACE {
 export enum DISK_DRIVE {
   Disk = 'Disk',
   CDROM = 'CD-ROM',
+}
+
+export enum K8S_KIND {
+  DV = 'DataVolume',
+  NAD = 'net-attach-def',
+  PVC = 'PersistentVolumeClaim',
+  Template = 'Template',
+  VM = 'VirtualMachine',
+  VMI = 'VirtualMachineInstance',
 }
 
 export const TEMPLATE = {

@@ -1,7 +1,5 @@
 import { VirtualMachineData } from '../types/vm';
 import { ADD_SOURCE, COMMUNITY } from '../utils/const/index';
-import { createYAMLButton, resourceTitle } from './selector';
-import { create, templateYAML } from './selector-wizard';
 import { wizard } from './wizard';
 
 export const getRow = (templateName: string, within: VoidFunction) =>
@@ -88,13 +86,6 @@ export const virtualization = {
       wizard.vm.fillStorageForm(data);
       wizard.vm.fillAdvancedForm(data);
       wizard.vm.fillConfirmForm(data);
-    },
-    createTemplateFromYAML: () => {
-      cy.clickNavLink(['Workloads', 'Virtualization']);
-      cy.get(create).click();
-      cy.get(templateYAML).click();
-      cy.get(createYAMLButton).click();
-      cy.get(resourceTitle).should('be.visible');
     },
   },
 };

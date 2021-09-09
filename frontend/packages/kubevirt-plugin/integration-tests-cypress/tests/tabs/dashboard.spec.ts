@@ -2,6 +2,7 @@ import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import {
   DEFAULT_VALUES,
+  K8S_KIND,
   TEMPLATE,
   VM_ACTION,
   VM_ACTION_TIMEOUT,
@@ -35,20 +36,9 @@ describe('Test VM dashboard tab', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: YAML_VM_NAME,
-        namespace: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteResource(K8S_KIND.VM, YAML_VM_NAME, testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-3332) Check VM dashboard while VM is running without guest agent installed', () => {
@@ -68,7 +58,7 @@ describe('Test VM dashboard tab', () => {
   });
 
   it('ID(CNV-3331) Check VM dashboard while VM is off', () => {
-    vm.createFromYAML();
+    cy.createDefaultVM();
 
     // status icon
     cy.get(resourceStatus).should('contain', VM_STATUS.Stopped);

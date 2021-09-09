@@ -1,8 +1,7 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
-import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const rhelData: VirtualMachineData = {
@@ -47,25 +46,15 @@ describe('Test vm creation', () => {
 
   after(() => {
     [rhelData, fedoraData, winData].forEach((data) => {
-      cy.deleteResource({
-        kind: 'VirtualMachine',
-        metadata: {
-          name: data.name,
-          namespace: data.namespace,
-        },
-      });
+      cy.deleteResource(K8S_KIND.VM, data.name, data.namespace);
     });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+
+    cy.deleteTestProject(testName);
   });
 
   [fedoraData, rhelData, winData].forEach((data) => {
     it(`creates ${data.description}`, () => {
-      virtualization.vms.visit();
+      cy.visitVMsList();
       vm.create(data);
     });
   });

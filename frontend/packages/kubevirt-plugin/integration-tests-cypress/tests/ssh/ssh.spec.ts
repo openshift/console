@@ -20,12 +20,7 @@ describe('Connect to a VM using SSH testing', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   sshTestingFunctions.forEach((fn) => fn({ vmName: `${testName}-vm` }));

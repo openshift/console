@@ -7,16 +7,11 @@ describe('ID(CNV-5654) test vm empty state', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   beforeEach(() => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
   });
 
   it('Empty state has link to quick starts', () => {

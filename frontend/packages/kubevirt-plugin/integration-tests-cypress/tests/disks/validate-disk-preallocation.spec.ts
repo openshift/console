@@ -1,10 +1,9 @@
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { addDisk } from '../../views/dialog';
 import { tab } from '../../views/tab';
-import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const disk1: Disk = {
@@ -29,20 +28,15 @@ describe('Test disk preallocation', () => {
     cy.visit('/');
     cy.createProject(testName);
     vm.create(vmData);
-    virtualization.vms.visit();
+    cy.visitVMsList();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-6955) Verify preallocation is true in disk data volume', () => {

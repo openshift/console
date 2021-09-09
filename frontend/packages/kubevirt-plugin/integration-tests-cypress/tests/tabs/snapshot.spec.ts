@@ -1,10 +1,9 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { YAML_VM_NAME, STATUS_READY, TEMPLATE } from '../../utils/const/index';
+import { K8S_KIND, YAML_VM_NAME, STATUS_READY, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import * as snapshotView from '../../views/snapshot';
 import { tab } from '../../views/tab';
-import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -25,25 +24,14 @@ describe('Test vm snapshot', () => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
-    virtualization.vms.visit();
+    cy.visitVMsList();
     vm.create(vmData);
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: YAML_VM_NAME,
-        namespace: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteResource(K8S_KIND.VM, YAML_VM_NAME, testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-4717) Create/restore/delete vm snapshot', () => {
@@ -82,7 +70,7 @@ describe('Test vm snapshot', () => {
   });
 
   it('ID(CNV-6844) It shows warning if there are no disks for snapshot', () => {
-    vm.createFromYAML();
+    cy.createDefaultVM();
     tab.navigateToSnapshot();
     snapshotView.warningNoDisksFound();
   });

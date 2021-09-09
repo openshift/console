@@ -1,7 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE } from '../../utils/const/index';
-import { virtualization } from '../../views/virtualization';
+import { K8S_KIND, TEMPLATE } from '../../utils/const/index';
 import { vm } from '../../views/vm';
 
 const vmData0: VirtualMachineData = {
@@ -25,26 +24,16 @@ describe('Test VM creation', () => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
-    virtualization.templates.createTemplateFromYAML();
+    cy.createDefaultTemplate();
   });
 
   after(() => {
     [vmData0, vmData1].forEach((data) => {
-      cy.deleteResource({
-        kind: 'VirtualMachine',
-        metadata: {
-          name: data.name,
-          namespace: data.namespace,
-        },
-      });
-      cy.deleteResource({
-        kind: 'Template',
-        metadata: {
-          name: TEMPLATE.DEFAULT.name,
-          namespace: testName,
-        },
-      });
+      cy.deleteResource(K8S_KIND.VM, data.name, data.namespace);
     });
+
+    cy.deleteResource(K8S_KIND.Template, TEMPLATE.DEFAULT.name, testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-4202) Create vm from default template via actions button', () => {

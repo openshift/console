@@ -11,12 +11,7 @@ describe('ID (CNV-6821) Sysprep testing', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   it('should navigate to advanced wizard - advanced tab', () => {
