@@ -137,7 +137,7 @@
     "apollo-client": "^2.6.8",
     "apollo-link-http": "^1.0.20",
     "apollo-link-ws": "^1.0.20",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "classnames": "2.x",
     "core-js": "2.x",
     "d3": "^5.9.2",
