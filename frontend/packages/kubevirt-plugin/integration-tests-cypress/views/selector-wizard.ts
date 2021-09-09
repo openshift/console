@@ -60,3 +60,6 @@ export const selectBootSource = 'select[id="storage-bootsource"]';
 export const rootdisk = '[data-id="rootdisk"]';
 export const kebabBtn = '[data-test-id="kebab-button"]';
 export const deleteBtn = '[data-test-action="Delete"]';
+
+// review step
+export const bootSource = '#wizard-review-provision_source_type';
