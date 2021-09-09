@@ -266,9 +266,13 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
           !isJournal && !logFilename ? (
             <EmptyState variant={EmptyStateVariant.full} isFullHeight>
               <Title headingLevel="h2" size="lg">
-                {logFilenamesExist
-                  ? t('public~No log file selected')
-                  : t('public~No log files exist')}
+                {isLoadingFilenames ? (
+                  <LoadingInline />
+                ) : logFilenamesExist ? (
+                  t('public~No log file selected')
+                ) : (
+                  t('public~No log files exist')
+                )}
               </Title>
               {logFilenamesExist && (
                 <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>
