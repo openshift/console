@@ -8,11 +8,13 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
 
-const NetworkPolicyFormComponent = NetworkPolicyForm.WrappedComponent;
+jest.mock('@console/shared/src/hooks/flag', () => ({
+  useFlag: () => true,
+}));
 
 describe('NetworkPolicyForm without permissions to fetch CNI type', () => {
   (useK8sGet as jest.Mock).mockReturnValue([null, true, 'error fetching CNI']);
-  const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
+  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
 
   it('should render a warning in case the customer is using Openshift SDN', () => {
     const alert = wrapper.find(Alert);
@@ -37,7 +39,7 @@ describe('NetworkPolicyForm without permissions to fetch CNI type', () => {
 describe('NetworkPolicyForm with Unknown CNI type', () => {
   const unknownSDNSpec = { spec: { networkType: 'Calico' } };
   (useK8sGet as jest.Mock).mockReturnValue([unknownSDNSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
+  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
 
   it('should render a warning in case the customer is using Openshift SDN', () => {
     const alert = wrapper.find(Alert);
@@ -62,7 +64,7 @@ describe('NetworkPolicyForm with Unknown CNI type', () => {
 describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
   const openShiftSDNSpec = { spec: { networkType: 'OpenShiftSDN' } };
   (useK8sGet as jest.Mock).mockReturnValue([openShiftSDNSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
+  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
 
   it('should not render any warning', () => {
     const alert = wrapper.find(Alert);
@@ -84,7 +86,7 @@ describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
 describe('NetworkPolicyForm with OVN Kubernetes CNI type', () => {
   const ovnK8sSpec = { spec: { networkType: 'OVNKubernetes' } };
   (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
+  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
 
   it('should not render any warning', () => {
     const alert = wrapper.find(Alert);

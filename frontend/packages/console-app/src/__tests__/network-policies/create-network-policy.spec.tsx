@@ -9,12 +9,14 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
 
-const NetworkPolicyFormComponent = NetworkPolicyForm.WrappedComponent;
+jest.mock('@console/shared/src/hooks/flag', () => ({
+  useFlag: () => true,
+}));
 
 describe('NetworkPolicyForm', () => {
   const ovnK8sSpec = { spec: { defaultNetwork: { type: 'OVNKubernetes' } } };
   (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
+  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
 
   it('should render CreateNetworkPolicy component', () => {
     expect(wrapper.exists()).toBe(true);

@@ -23,9 +23,8 @@ import {
 import { NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
-import { connectToFlags } from '@console/internal/reducers/connectToFlags';
-import { FlagsObject } from '@console/internal/reducers/features';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import {
   isNetworkPolicyConversionError,
@@ -45,14 +44,11 @@ const emptyRule = (): NetworkPolicyRule => {
 
 type NetworkPolicyFormProps = {
   namespace: string;
-  flags: FlagsObject;
 };
 
-const NetworkPolicyFormComponent: React.FunctionComponent<NetworkPolicyFormProps> = ({
-  namespace,
-  flags,
-}) => {
+export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace }) => {
   const { t } = useTranslation();
+  const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
   const emptyPolicy: NetworkPolicy = {
     name: '',
@@ -202,7 +198,7 @@ const NetworkPolicyFormComponent: React.FunctionComponent<NetworkPolicyFormProps
             <p>
               {t('public~More information:')}&nbsp;
               <ExternalLink
-                href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+                href={getNetworkPolicyDocLink(isOpenShift)}
                 text={t('public~NetworkPolicies documentation')}
               />
             </p>
@@ -369,5 +365,3 @@ const NetworkPolicyFormComponent: React.FunctionComponent<NetworkPolicyFormProps
     </Form>
   );
 };
-
-export const NetworkPolicyForm = connectToFlags(FLAGS.OPENSHIFT)(NetworkPolicyFormComponent);
