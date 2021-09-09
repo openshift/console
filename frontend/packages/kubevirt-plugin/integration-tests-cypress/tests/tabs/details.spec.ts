@@ -1,7 +1,7 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import {
-  DEFAULTS_VALUES,
+  DEFAULT_VALUES,
   TEMPLATE,
   VM_ACTION,
   VM_ACTION_TIMEOUT,
@@ -57,9 +57,9 @@ describe('Test VM details tab', () => {
       .click();
     tab.navigateToDetails();
 
-    cy.get(detailsTab.vmHostname).should('contain', DEFAULTS_VALUES.GUEST_AGENT_REQUIRED);
-    cy.get(detailsTab.vmTimezone).should('contain', DEFAULTS_VALUES.GUEST_AGENT_REQUIRED);
-    cy.get(detailsTab.activeUser).should('contain', DEFAULTS_VALUES.GUEST_AGENT_REQUIRED);
+    cy.get(detailsTab.vmHostname).should('contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED);
+    cy.get(detailsTab.vmTimezone).should('contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED);
+    cy.get(detailsTab.activeUser).should('contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED);
     cy.get(detailsTab.services).should('contain', `${vmData.name}-ssh-service`);
   });
 
@@ -72,12 +72,12 @@ describe('Test VM details tab', () => {
     cy.get(detailsTab.vmOS).should('contain', TEMPLATE.RHEL8.os);
     cy.get(detailsTab.vmTemplate).should('contain', 'rhel8-server-tiny');
     cy.get(detailsTab.vmStatus).should('contain', VM_STATUS.Stopped);
-    cy.get(detailsTab.vmPod).should('contain', DEFAULTS_VALUES.NOT_AVAILABLE);
-    cy.get(detailsTab.vmIP).should('contain', DEFAULTS_VALUES.NOT_AVAILABLE);
-    cy.get(detailsTab.vmHostname).should('contain', DEFAULTS_VALUES.VM_NOT_RUNNING);
-    cy.get(detailsTab.vmTimezone).should('contain', DEFAULTS_VALUES.VM_NOT_RUNNING);
-    cy.get(detailsTab.vmNode).should('contain', DEFAULTS_VALUES.NOT_AVAILABLE);
-    cy.get(detailsTab.activeUser).should('contain', DEFAULTS_VALUES.VM_NOT_RUNNING);
+    cy.get(detailsTab.vmPod).should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
+    cy.get(detailsTab.vmIP).should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
+    cy.get(detailsTab.vmHostname).should('contain', DEFAULT_VALUES.VM_NOT_RUNNING);
+    cy.get(detailsTab.vmTimezone).should('contain', DEFAULT_VALUES.VM_NOT_RUNNING);
+    cy.get(detailsTab.vmNode).should('contain', DEFAULT_VALUES.NOT_AVAILABLE);
+    cy.get(detailsTab.activeUser).should('contain', DEFAULT_VALUES.VM_NOT_RUNNING);
   });
 
   it('ID(CNV-4037) Check VM details while VM is running', () => {
@@ -102,11 +102,11 @@ describe('Test VM details tab', () => {
       cy.get(detailsTab.vmOS).should('contain', 'Red Hat Enterprise Linux');
       cy.get(detailsTab.vmTemplate).should('contain', 'rhel8-server-tiny');
       cy.get(detailsTab.vmStatus).should('contain', VM_STATUS.Running);
-      cy.get(detailsTab.vmPod).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
-      cy.get(detailsTab.vmIP).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
+      cy.get(detailsTab.vmPod).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
+      cy.get(detailsTab.vmIP).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
       cy.get(detailsTab.vmHostname).should('contain', YAML_VM_NAME);
       cy.get(detailsTab.vmTimezone).should('contain', 'EDT');
-      cy.get(detailsTab.vmNode).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
+      cy.get(detailsTab.vmNode).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
       cy.get(detailsTab.activeUser).should('contain', 'No Active Users');
     }
   });
