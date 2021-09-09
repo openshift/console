@@ -49,6 +49,7 @@ i18n
       'lso-plugin',
       'metal3-plugin',
       'nodes',
+      'notification-drawer',
       'olm',
       'olm',
       'pipelines-plugin',
