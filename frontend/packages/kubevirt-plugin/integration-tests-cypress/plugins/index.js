@@ -2,6 +2,7 @@
 // the project's config changing)
 const fs = require('fs');
 const wp = require('@cypress/webpack-preprocessor');
+const del = require('del');
 
 module.exports = (on, config) => {
   const options = {
@@ -50,6 +51,14 @@ module.exports = (on, config) => {
       launchOptions.args.push('--disable-dev-shm-usage');
     }
     return launchOptions;
+  });
+  on('after:spec', (spec, results) => {
+    if (results.stats.failures === 0 && results.video) {
+      // `del()` returns a promise, so it's important to return it to ensure
+      // deleting the video is finished before moving on
+      return del(results.video);
+    }
+    return null;
   });
   // `config` is the resolved Cypress config
   config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(

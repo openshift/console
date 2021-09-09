@@ -3,6 +3,8 @@
   "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
   "videosFolder": "../../../gui_test_screenshots/cypress/videos",
   "video": true,
+  "videoCompression": false,
+  "experimentalRunEvents": true,
   "reporter": "../../../node_modules/cypress-multi-reporters",
   "reporterOptions": {
     "configFile": "reporter-config.json"
