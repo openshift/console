@@ -212,7 +212,9 @@ const handleReviewAndCreateNext = async (
       );
 
       await createExternalSubSystem(subSystemPayloads);
-      if (!hasOCS) await createStorageCluster(state);
+      // Create storage cluster if one is not present except for external RHCS
+      if (!hasOCS && !isRhcs) await createStorageCluster(state);
+      // Create a new storage system for non RHCS external vendor if one is not present
       if (hasAnExternalSystem) await createStorageSystem(subSystemName, subSystemKind);
     }
     // These flags control the enablement of dashboards and other ODF UI components in console
