@@ -27,6 +27,7 @@ import {
   ImportData,
   Resources,
   BaseFormData,
+  ImportTypes,
 } from './import-types';
 import { validationSchema } from './import-validation-utils';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
@@ -113,7 +114,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         detectedFiles: [],
       },
       recommendedStrategy: null,
-      showEditImportStrategy: false,
+      showEditImportStrategy: importData.type !== ImportTypes.git,
       strategyChanged: false,
     },
   };
