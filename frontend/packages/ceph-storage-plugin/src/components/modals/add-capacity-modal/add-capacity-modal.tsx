@@ -292,7 +292,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
           errorMessage={errorMessage}
           submitText={t('ceph-storage-plugin~Add')}
           cancel={cancel}
-          submitDisabled={isNoProvionerSC ? !availablePvsCount || nodesError : !osdSizeWithoutUnit}
+          submitDisabled={isNoProvionerSC && (!availablePvsCount || nodesError)}
         />
       </div>
     </form>
