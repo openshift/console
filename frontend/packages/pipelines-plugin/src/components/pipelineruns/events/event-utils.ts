@@ -1,9 +1,6 @@
 import * as React from 'react';
-import {
-  WatchK8sResources,
-  useK8sWatchResources,
-  WatchK8sResults,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import {
   EventInvolvedObject,

@@ -16,7 +16,7 @@ export const pageTitle = {
   Search: 'Search',
   HelmReleases: 'Helm Releases',
   Project: 'Project Details',
-  ConfigMaps: 'Config Maps',
+  ConfigMaps: 'ConfigMaps',
   Secrets: 'Secrets',
   PipelineRunDetails: 'PipelineRun details',
   PipelineDetails: 'Pipeline details',

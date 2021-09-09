@@ -1,5 +1,16 @@
 [
   {
+    "type": "console.perspective",
+    "properties": {
+      "id": "admin",
+      "default": true,
+      "name": "%console-app~Administrator%",
+      "icon": { "$codeRef": "perspective.icon" },
+      "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" },
+      "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
+    }
+  },
+  {
     "type": "console.flag/model",
     "properties": {
       "flag": "DEVWORKSPACE",
@@ -153,7 +164,7 @@
     "type": "console.user-preference/group",
     "properties": {
       "id": "language",
-      "label": "%console-app~Language & region%"
+      "label": "%console-app~Language%"
     }
   },
   {

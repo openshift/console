@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
 import Pseudo from 'i18next-pseudo';
+import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 import { pluginStore } from './plugins';
 import { dateTimeFormatter, fromNow } from './components/utils/datetime';
@@ -27,7 +28,7 @@ export const init = () => {
       backend: {
         loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
       },
-      lng: localStorage.getItem('bridge/language'),
+      lng: getLastLanguage(),
       fallbackLng: 'en',
       load: 'languageOnly',
       debug: process.env.NODE_ENV === 'development',

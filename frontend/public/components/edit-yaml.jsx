@@ -613,7 +613,8 @@ export const EditYAML_ = connect(stateToProps)(
             : { samples: [], snippets: [] };
           const definition = model ? definitionFor(model) : { properties: [] };
           const showSchema = definition && !_.isEmpty(definition.properties);
-          const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
+          const hasSidebarContent =
+            showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
           const sidebarLink =
             !showSidebar && hasSidebarContent ? (
               <Button type="button" variant="link" isInline onClick={this.toggleSidebar}>

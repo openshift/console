@@ -11,17 +11,11 @@ import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { checkAccess, HorizontalNav } from '@console/internal/components/utils';
-import { ConfigMapModel } from '@console/internal/models';
+import { HorizontalNav } from '@console/internal/components/utils';
 import { FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
-import {
-  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
-  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
-} from '../../constants/v2v';
 import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../flags/const';
 import { VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
@@ -74,15 +68,6 @@ const vmMenuItems = (t: TFunction) => [
   },
 ];
 
-const importMenuItems = (t: TFunction) => [
-  {
-    test: 'vm-import',
-    wizardName: VMWizardName.WIZARD,
-    mode: VMWizardMode.IMPORT,
-    label: t('kubevirt-plugin~With Import wizard'),
-  },
-];
-
 const templateMenuItems = (t: TFunction) => [
   {
     test: 'template-wizard',
@@ -101,31 +86,8 @@ const templateMenuItems = (t: TFunction) => [
 export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => {
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
-  const [importAllowed, setImportAllowed] = useSafetyFirst(false);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
-
-  React.useEffect(() => {
-    VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES.forEach((configMapNamespace) => {
-      checkAccess({
-        group: ConfigMapModel.apiGroup,
-        verb: 'get',
-        resource: ConfigMapModel.plural,
-        name: VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
-        namespace: configMapNamespace,
-      })
-        .then((result) => {
-          if (result?.status?.allowed) {
-            setImportAllowed(true);
-          }
-        })
-        // Default to enabling the action if the access review fails so that we
-        // don't incorrectly block users from actions they can perform. The server
-        // still enforces access control.
-        .catch(() => setImportAllowed(true));
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const namespace = props.match.params.ns;
 
@@ -193,7 +155,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
                 label={t('kubevirt-plugin~Virtual Machine')}
                 key="vm"
               >
-                {[...vmMenuItems(t), ...(importAllowed ? importMenuItems(t) : [])].map(getMenuItem)}
+                {vmMenuItems(t).map(getMenuItem)}
               </DropdownGroup>,
               <DropdownGroup
                 className="kv-dropdown-group kv-dropdown-group--separator"

@@ -5,6 +5,7 @@ import { convertToBaseValue } from '@console/internal/components/utils';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isInteger } from '../../utils/yup-validation-util';
 import { Resources } from './import-types';
+import { removeKsvcInfoFromDomainMapping } from './serverless/serverless-utils';
 
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
@@ -151,12 +152,22 @@ export const serverlessValidationSchema = (t: TFunction) =>
         }),
       }),
       domainMapping: yup.array().of(
-        yup.string().matches(hostnameRegex, {
-          message: t(
-            'devconsole~Domain name must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+        yup
+          .string()
+          .transform(removeKsvcInfoFromDomainMapping)
+          .matches(hostnameRegex, {
+            message: t(
+              'devconsole~Domain name must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+            ),
+            excludeEmptyString: true,
+          })
+          .test(
+            'domainname-has-segements',
+            t('devconsole~Domain name must consist of at least two segments separated by dots.'),
+            function(domainName: string) {
+              return domainName.split('.').length >= 2;
+            },
           ),
-          excludeEmptyString: true,
-        }),
       ),
     }),
   });
@@ -304,15 +315,18 @@ export const dockerValidationSchema = (t: TFunction) =>
         .number()
         .test(isInteger(t('devconsole~Container port should be an integer'))),
       dockerfileHasError: yup.boolean().oneOf([false]),
+      dockerfilePath: yup.string().required(t('devconsole~Required')),
     }),
   });
 
-export const devfileValidationSchema = yup.object().when('build', {
-  is: (build) => build.strategy === 'Devfile',
-  then: yup.object().shape({
-    devfileHasError: yup.boolean().oneOf([false]),
-  }),
-});
+export const devfileValidationSchema = (t: TFunction) =>
+  yup.object().when('build', {
+    is: (build) => build.strategy === 'Devfile',
+    then: yup.object().shape({
+      devfileHasError: yup.boolean().oneOf([false]),
+      devfilePath: yup.string().required(t('devconsole~Required')),
+    }),
+  });
 
 export const buildValidationSchema = yup.object().shape({
   strategy: yup.string(),

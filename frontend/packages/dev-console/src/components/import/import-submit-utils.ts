@@ -1,6 +1,7 @@
 import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { Perspective } from '@console/dynamic-plugin-sdk';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
@@ -39,7 +40,6 @@ import {
   updateServiceAccount,
   getSecretAnnotations,
 } from '@console/pipelines-plugin/src/utils/pipeline-utils';
-import { Perspective } from '@console/plugin-sdk';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   getAppLabels,
@@ -656,6 +656,9 @@ export const createOrUpdateResources = async (
 
   if (verb === 'create') {
     responses.push(await createWebhookSecret(formData, 'generic', dryRun));
+    if (webhookTrigger) {
+      responses.push(await createWebhookSecret(formData, gitType, dryRun));
+    }
   }
 
   const defaultAnnotations = getGitAnnotations(repository, ref);
@@ -689,12 +692,13 @@ export const createOrUpdateResources = async (
       knDeploymentResource,
       dryRun,
     );
-    return Promise.all([
+    const knativeResources = await Promise.all([
       verb === 'update'
         ? k8sUpdate(KnServiceModel, knDeploymentResource, null, null, dryRun ? dryRunOpt : {})
         : k8sCreate(KnServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
       ...domainMappingResources,
     ]);
+    return [...knativeResources, ...responses];
   }
 
   if (formData.resources === Resources.Kubernetes) {
@@ -742,19 +746,15 @@ export const createOrUpdateResources = async (
     }
   }
 
-  if (webhookTrigger && verb === 'create') {
-    responses.push(await createWebhookSecret(formData, gitType, dryRun));
-  }
-
   return responses;
 };
 
-export const handleRedirect = (
+export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
-  const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
+  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
   history.push(redirectURL);
 };

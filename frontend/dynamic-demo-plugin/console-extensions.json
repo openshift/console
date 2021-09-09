@@ -94,5 +94,25 @@
       "path": "/example/nav",
       "component": { "$codeRef": "navPage" }
     }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-list-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "List page",
+      "href": "/demo-list-page"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/demo-list-page",
+      "component": { "$codeRef": "listPage" }
+    }
   }
 ]

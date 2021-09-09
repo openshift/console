@@ -23,6 +23,7 @@ import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/componen
 import {
   getNodeRoles,
   getMachinePhase,
+  getMachineSetInstanceType,
   nodeMemory,
   nodeCPU,
   nodeFS,
@@ -39,6 +40,8 @@ import {
 } from '@console/shared';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
+import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
+import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
 import {
   alertingRuleSource,
@@ -72,7 +75,6 @@ import {
   VolumeSnapshotKind,
 } from '../../module/k8s';
 import { useTableData } from './table-data-hook';
-import { RowFilter } from '../filter-toolbar';
 
 const sorts = {
   alertingRuleSource,
@@ -86,6 +88,7 @@ const sorts = {
   dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
   ingressValidHosts,
   serviceCatalogStatus,
+  instanceType: (obj): string => getMachineSetInstanceType(obj),
   jobCompletionsSucceeded: (job) => job?.status?.succeeded || 0,
   jobType: (job) => getJobTypeAndCompletions(job).type,
   nodeReadiness: (node: NodeKind) => {
@@ -443,7 +446,7 @@ export const Table: React.FC<TableProps> = ({
     defaultSortOrder,
     staticFilters,
     filters,
-    rowFilters,
+    rowFilters: rowFilters as RowFilterExt[],
     propData,
     loaded,
     isPinned,

@@ -3,16 +3,18 @@ import { TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { CubeIcon } from '@patternfly/react-icons';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService } from '@console/git-service/src';
+import { getGitService, ImportStrategy } from '@console/git-service/src';
 import { InputField } from '@console/shared';
 import FormSection from '../section/FormSection';
 
 const DockerSection: React.FC = () => {
   const { t } = useTranslation();
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const {
+    import: { showEditImportStrategy, strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
     docker,
+    formType,
   } = values;
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
 
@@ -27,7 +29,7 @@ const DockerSection: React.FC = () => {
       docker.dockerfilePath,
     );
     const isDockerFilePresent = gitService && (await gitService.isDockerfilePresent());
-    if (isDockerFilePresent) {
+    if (docker.dockerfilePath && isDockerFilePresent) {
       setValidated(ValidatedOptions.success);
       setFieldValue('docker.dockerfileHasError', false);
     } else {
@@ -49,26 +51,42 @@ const DockerSection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    handleDockerfileChange();
-    // We need to run only one when component mounts and then onBlur will take care of it.
+    if (recommendedStrategy && recommendedStrategy.type !== ImportStrategy.DOCKERFILE) {
+      const dockerfileStrategy = strategies.find((s) => s.type === ImportStrategy.DOCKERFILE);
+      if (dockerfileStrategy) {
+        setFieldValue('import.selectedStrategy.detectedFiles', dockerfileStrategy.detectedFiles);
+        setFieldValue('docker.dockerfilePath', dockerfileStrategy.detectedFiles?.[0]);
+        handleDockerfileChange();
+        validated === ValidatedOptions.success
+          ? setFieldValue('import.strategyChanged', true)
+          : setFieldValue('import.strategyChanged', false);
+      }
+      setFieldTouched('docker.dockerfilePath', true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [recommendedStrategy, setFieldValue, strategies]);
 
   return (
     <FormSection>
-      {values.import.showEditImportStrategy && (
+      {showEditImportStrategy && (
         <InputField
           type={TextInputTypes.text}
           name="docker.dockerfilePath"
           label={t('devconsole~Dockerfile path')}
+          placeholder={t('devconsole~Enter Dockerfile path')}
           helpText={helpText}
           helpTextInvalid={helpText}
           validated={validated}
-          onBlur={handleDockerfileChange}
+          onBlur={() => {
+            handleDockerfileChange();
+            validated === ValidatedOptions.success
+              ? setFieldValue('import.strategyChanged', true)
+              : setFieldValue('import.strategyChanged', false);
+          }}
           required
         />
       )}
-      {values.formType !== 'edit' && (
+      {formType !== 'edit' && !docker.dockerfileHasError && (
         <div className="co-catalog-item-details">
           <CubeIcon size="xl" />
           &nbsp;

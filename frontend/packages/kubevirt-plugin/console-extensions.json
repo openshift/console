@@ -420,13 +420,26 @@
     "type": "console.dashboards/overview/health/url",
     "properties": {
       "title": "Virtualization",
+      "url": "apis/subresources.kubevirt.io/v1alpha3/healthz",
+      "healthHandler": {
+        "$codeRef": "dashboardHealth.getKubevirtHealthState"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT_HAS_v1alpha3_API"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/url",
+    "properties": {
+      "title": "Virtualization",
       "url": "apis/subresources.kubevirt.io/v1/healthz",
       "healthHandler": {
         "$codeRef": "dashboardHealth.getKubevirtHealthState"
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT_HAS_v1_API"]
     }
   },
   {

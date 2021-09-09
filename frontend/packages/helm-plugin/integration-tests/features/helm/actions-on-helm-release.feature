@@ -10,30 +10,30 @@ Feature: Perform Actions on Helm Releases
         Scenario: Install Helm Chart from +Add Page using Form View: HR-06-TC04
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K" card from catalog page
+              And user searches and selects "Nodejs" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
-              And user enters Release Name as "nodejs-ex-k"
+              And user enters Release Name as "nodejs-release-2"
               And user clicks on the Install button
              Then user will be redirected to Topology page
-              And Topology page have the helm chart workload "nodejs-ex-k"
+              And Topology page have the helm chart workload "nodejs-release-2"
 
 
         Scenario: Context menu options of helm release: HR-01-TC01
             Given user is at the Topology page
-             When user right clicks on the helm release "nodejs-ex-k" to open the context menu
+             When user right clicks on the helm release "nodejs-release-2" to open the context menu
              Then user is able to see the context menu with actions Upgrade and Uninstall Helm Release
 
 
         Scenario: Actions menu on Helm page: HR-01-TC02
-            Given user is on the Helm page with helm release "nodejs-ex-k"
+            Given user is on the Helm page with helm release "nodejs-release-2"
              When user clicks on the Kebab menu
              Then user is able to see kebab menu with actions Upgrade, Rollback and Uninstall Helm Release
 
 
         Scenario: Uninstall Helm Release through Context Menu: HR-01-TC03
             Given user is at the Topology page
-             When user right clicks on the helm release "nodejs-ex-k" to open the context menu
+             When user right clicks on the helm release "nodejs-release-2" to open the context menu
               And user clicks on the "Uninstall Helm Release" action
-              And user enters the release name
+              And user enters the release name "nodejs-release-2"
               And user clicks on the Uninstall button
              Then user will be redirected to Topology page

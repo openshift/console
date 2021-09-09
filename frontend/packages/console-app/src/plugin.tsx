@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { CogsIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import {
   ClusterVersionModel,
@@ -14,7 +12,6 @@ import {
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
 import {
   Plugin,
-  Perspective,
   ModelDefinition,
   RoutePage,
   DashboardsOverviewResourceActivity,
@@ -48,7 +45,6 @@ import {
 } from './queries';
 
 type ConsumedExtensions =
-  | Perspective
   | ModelDefinition
   | RoutePage
   | DashboardsOverviewResourceActivity
@@ -65,20 +61,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'Perspective',
-    properties: {
-      id: 'admin',
-      // t('console-app~Administrator')
-      name: '%console-app~Administrator%',
-      icon: <CogsIcon />,
-      default: true,
-      getLandingPageURL: (flags) =>
-        flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects',
-      getK8sLandingPageURL: () => '/search',
-      getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
   },
   {

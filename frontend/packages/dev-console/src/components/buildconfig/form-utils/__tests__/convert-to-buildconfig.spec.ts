@@ -271,6 +271,133 @@ describe('convertFormDataToBuildConfig', () => {
         configMaps: [{ configMap: { name: 'a-configmap' }, destinationDir: '/configmap' }],
       });
     });
+
+    it('updates the app.openshift.io/vcs-* annotations when the git parameters are changed', () => {
+      const originBuildConfig: BuildConfig = {
+        apiVersion: 'build.openshift.io/v1',
+        kind: 'BuildConfig',
+        metadata: {
+          namespace: 'a-namespace',
+          name: 'a-buildconfig',
+          annotations: {
+            'app.openshift.io/vcs-uri': 'https://github.com/openshift/console',
+            'app.openshift.io/vcs-ref': 'master',
+          },
+        },
+        spec: {
+          source: {
+            type: 'Git',
+            git: {
+              uri: 'https://github.com/openshift/console',
+              ref: 'master',
+            },
+            contextDir: '/',
+          },
+        },
+      };
+      const values = getInitialBuildConfigFormikValues();
+      values.formData.source.type = 'git';
+      values.formData.source.git.git.url = 'https://github.com/openshift/another-repo';
+      values.formData.source.git.git.ref = 'another-branch';
+
+      const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
+
+      expect(buildConfig.metadata.annotations).toEqual({
+        'app.openshift.io/vcs-uri': 'https://github.com/openshift/another-repo',
+        'app.openshift.io/vcs-ref': 'another-branch',
+      });
+      expect(buildConfig.spec.source).toEqual({
+        type: 'Git',
+        git: {
+          uri: 'https://github.com/openshift/another-repo',
+          ref: 'another-branch',
+        },
+        contextDir: '/',
+      });
+    });
+
+    it('removes the app.openshift.io/vcs-ref annotation when the git branch is not defined', () => {
+      const originBuildConfig: BuildConfig = {
+        apiVersion: 'build.openshift.io/v1',
+        kind: 'BuildConfig',
+        metadata: {
+          namespace: 'a-namespace',
+          name: 'a-buildconfig',
+          annotations: {
+            'app.openshift.io/vcs-uri': 'https://github.com/openshift/console',
+            'app.openshift.io/vcs-ref': 'master',
+          },
+        },
+        spec: {
+          source: {
+            type: 'Git',
+            git: {
+              uri: 'https://github.com/openshift/console',
+            },
+            contextDir: '/',
+          },
+        },
+      };
+      const values = getInitialBuildConfigFormikValues();
+      values.formData.source.type = 'git';
+      values.formData.source.git.git.url = 'https://github.com/openshift/another-repo';
+      values.formData.source.git.git.ref = '';
+
+      const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
+
+      expect(buildConfig.metadata.annotations).toEqual({
+        'app.openshift.io/vcs-uri': 'https://github.com/openshift/another-repo',
+      });
+      expect(buildConfig.spec.source).toEqual({
+        type: 'Git',
+        git: {
+          uri: 'https://github.com/openshift/another-repo',
+        },
+        contextDir: '/',
+      });
+    });
+
+    it('sets the app.openshift.io/vcs-ref annotation when the git ref is newly set', () => {
+      const originBuildConfig: BuildConfig = {
+        apiVersion: 'build.openshift.io/v1',
+        kind: 'BuildConfig',
+        metadata: {
+          namespace: 'a-namespace',
+          name: 'a-buildconfig',
+          annotations: {
+            'app.openshift.io/vcs-uri': 'https://github.com/openshift/console',
+          },
+        },
+        spec: {
+          source: {
+            type: 'Git',
+            git: {
+              uri: 'https://github.com/openshift/console',
+            },
+            contextDir: '/',
+          },
+        },
+      };
+      const values = getInitialBuildConfigFormikValues();
+      values.formData.source.type = 'git';
+      values.formData.source.git.git.url = 'https://github.com/openshift/another-repo';
+      values.formData.source.git.git.ref = 'new-branch';
+
+      const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
+
+      expect(buildConfig.metadata.annotations).toEqual({
+        'app.openshift.io/vcs-uri': 'https://github.com/openshift/another-repo',
+        'app.openshift.io/vcs-ref': 'new-branch',
+      });
+      expect(buildConfig.spec.source).toEqual({
+        type: 'Git',
+        git: {
+          uri: 'https://github.com/openshift/another-repo',
+          ref: 'new-branch',
+        },
+        contextDir: '/',
+      });
+    });
   });
 
   describe('images section', () => {

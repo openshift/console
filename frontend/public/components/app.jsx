@@ -26,6 +26,7 @@ import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
+import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
@@ -203,18 +204,21 @@ class App_ extends React.PureComponent {
     );
 
     return (
-      <DetectPerspective>
-        <DetectNamespace>
-          {contextProviderExtensions.reduce(
-            (children, e) => (
-              <EnhancedProvider key={e.uid} {...e.properties}>
-                {children}
-              </EnhancedProvider>
-            ),
-            content,
-          )}
-        </DetectNamespace>
-      </DetectPerspective>
+      <>
+        <DetectPerspective>
+          <DetectNamespace>
+            {contextProviderExtensions.reduce(
+              (children, e) => (
+                <EnhancedProvider key={e.uid} {...e.properties}>
+                  {children}
+                </EnhancedProvider>
+              ),
+              content,
+            )}
+          </DetectNamespace>
+        </DetectPerspective>
+        <DetectLanguage />
+      </>
     );
   }
 }

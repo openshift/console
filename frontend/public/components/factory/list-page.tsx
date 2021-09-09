@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
+import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 
 import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';
@@ -29,7 +30,6 @@ import {
   RequireCreatePermission,
 } from '../utils';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
-import { ColumnLayout } from '../modals/column-management-modal';
 
 type CreateProps = {
   action?: string;

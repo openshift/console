@@ -1,9 +1,7 @@
 import * as React from 'react';
 import axios, { Canceler } from 'axios';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { CDIConfigModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';

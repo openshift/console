@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/internal/components/utils';
 import { CloudKafka } from '../../utils/rhoas-types';
 import ServiceIconStatus from './ServiceIconStatus';
+import './ServiceInstanceTable.scss';
 
 type FormattedKafkas = {
   cells: JSX.Element[];

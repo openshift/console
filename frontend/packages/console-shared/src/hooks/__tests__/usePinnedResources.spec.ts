@@ -75,7 +75,7 @@ describe('usePinnedResources', () => {
 
     // Expect default pins
     expect(result.current).toEqual([
-      [{ kind: 'ConfigMap' }, { kind: 'Secret' }],
+      ['core~~ConfigMap', 'core~~Secret'],
       expect.any(Function),
       true,
     ]);

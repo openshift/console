@@ -1,4 +1,4 @@
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { DiskType } from '../../constants/vm/storage';
 
 const typeReducer = (obj) => {

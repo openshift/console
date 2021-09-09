@@ -34,6 +34,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
       selectedStrategy,
       showEditImportStrategy,
       recommendedStrategy,
+      strategyChanged,
     },
     devfile,
     docker,
@@ -68,14 +69,14 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
     let variant;
     if (loaded && !loadError && importStrategies.length > 0) {
       variant = AlertVariant.success;
-      if (selectedStrategy.type === recommendedStrategy.type) {
+      if (recommendedStrategy && !strategyChanged) {
         if (importStrategies.length > 1) {
           title = t('devconsole~Multiple import strategies detected');
         } else if (importStrategies.length === 1) {
-          title = t('devconsole~{{strategy}} detected.', { strategy: selectedStrategy.name });
+          title = t('devconsole~{{strategy}} detected.', { strategy: recommendedStrategy.name });
         }
-        description = recommendedStrategyDescriptions[selectedStrategy.type];
-      } else {
+        description = recommendedStrategyDescriptions[recommendedStrategy.type];
+      } else if (strategyChanged) {
         title = t('devconsole~Import strategy changed to {{strategy}}', {
           strategy: selectedStrategy.name,
         });
@@ -101,11 +102,11 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
     loaded,
     loadError,
     importStrategies.length,
-    selectedStrategy.type,
-    selectedStrategy.name,
     recommendedStrategy,
+    strategyChanged,
     recommendedStrategyDescriptions,
     t,
+    selectedStrategy.name,
   ]);
 
   const handleEditStrategy = React.useCallback(() => {
@@ -115,6 +116,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
       recommendedValues.current = values;
     }
     setFieldValue('import.showEditImportStrategy', !showEditImportStrategy);
+    setFieldValue('import.strategyChanged', false);
   }, [setFieldValue, setValues, showEditImportStrategy, values]);
 
   return (

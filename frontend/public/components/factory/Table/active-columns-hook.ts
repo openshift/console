@@ -6,7 +6,7 @@ import {
   useActiveNamespace,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { TableColumn } from './VirtualizedTable';
+import { TableColumn } from '@console/dynamic-plugin-sdk';
 
 export const useActiveColumns = <D = any>({
   columns,
@@ -14,8 +14,8 @@ export const useActiveColumns = <D = any>({
   columnManagementID,
 }: {
   columns: TableColumn<D>[];
-  showNamespaceOverride: boolean;
-  columnManagementID: string;
+  showNamespaceOverride?: boolean;
+  columnManagementID?: string;
 }): [TableColumn<D>[], boolean] => {
   const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,

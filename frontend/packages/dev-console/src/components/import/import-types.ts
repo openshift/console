@@ -1,6 +1,6 @@
 import { ValidatedOptions } from '@patternfly/react-core';
+import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
-import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
@@ -240,6 +240,7 @@ export interface ImportStrategyData {
   recommendedStrategy?: DetectedStrategyFormData;
   selectedStrategy?: DetectedStrategyFormData;
   showEditImportStrategy?: boolean;
+  strategyChanged?: boolean;
 }
 
 export interface DeploymentData {

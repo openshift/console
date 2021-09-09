@@ -3,24 +3,23 @@ import {
   ADD_SOURCE,
   IMPORTING,
   OS_IMAGES_NS,
-  TEMPLATE_BASE_IMAGE,
-  TEMPLATE_NAME,
+  TEMPLATE,
   TEST_PROVIDER,
   VM_ACTION_TIMEOUT,
-} from '../../const';
-import { ProvisionSource } from '../../enums/provisionSource';
-import { addSource } from '../../view/add-source';
-import { virtualization } from '../../view/virtualization';
-import * as templateSupportModal from '../../view/vm-template/template-support-modal';
+} from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { addSource } from '../../views/add-source';
+import * as templateSupportModal from '../../views/template-support-modal';
+import { virtualization } from '../../views/virtualization';
 
-const TEMPLATE = TEMPLATE_NAME;
+const template = TEMPLATE.RHEL6;
 const TEMPLATE_PROVIDER = 'bar';
 
 const deleteSourceDV = () =>
   cy.deleteResource({
     kind: 'DataVolume',
     metadata: {
-      name: TEMPLATE_BASE_IMAGE,
+      name: template.dvName,
       namespace: OS_IMAGES_NS,
     },
   });
@@ -29,7 +28,7 @@ const deleteSourcePVC = () =>
   cy.deleteResource({
     kind: 'PersistentVolumeClaim',
     metadata: {
-      name: TEMPLATE_BASE_IMAGE,
+      name: template.dvName,
       namespace: OS_IMAGES_NS,
     },
   });
@@ -60,11 +59,11 @@ describe('test custom template creation support', () => {
     const NEW_TEMPLATE_NAME = `foo-no-source-${testName}`;
     const VM_NAME_NO_BOOT_SOURCE = `foo-vm-no-source-${testName}`;
 
-    virtualization.templates.testSource(TEMPLATE, ADD_SOURCE);
-    virtualization.templates.clickCreateNewTemplateFrom(TEMPLATE);
+    virtualization.templates.testSource(template.name, ADD_SOURCE);
+    virtualization.templates.clickCreateNewTemplateFrom(template.name);
 
     // verify template fields
-    cy.get('#operating-system-dropdown').contains('Red Hat Enterprise Linux 6.0 or higher');
+    cy.get('#operating-system-dropdown').contains(template.os);
     cy.get('#flavor-dropdown').contains('Small (default): 1 CPU | 2 GiB Memory');
     cy.get('#workload-profile-dropdown').contains('Server (default)');
 
@@ -107,19 +106,19 @@ describe('test custom template creation support', () => {
     );
   });
 
-  xit('ID(CNV-5729) create custom template from common template with a boot source', () => {
+  it('ID(CNV-5729) create custom template from common template with a boot source', () => {
     const NEW_TEMPLATE_NAME = `foo-with-source-${testName}`;
     const VM_NAME_WITH_BOOT_SOURCE = `foo-vm-with-source-${testName}`;
 
-    virtualization.templates.addSource(TEMPLATE);
+    virtualization.templates.addSource(template.name);
     addSource.addBootSource(ProvisionSource.REGISTRY);
-    virtualization.templates.testSource(TEMPLATE, IMPORTING);
-    virtualization.templates.testSource(TEMPLATE, TEST_PROVIDER);
+    virtualization.templates.testSource(template.name, IMPORTING);
+    virtualization.templates.testSource(template.name, TEST_PROVIDER);
 
-    virtualization.templates.clickCreateNewTemplateFrom(TEMPLATE);
+    virtualization.templates.clickCreateNewTemplateFrom(template.name);
 
     // verify template fields
-    cy.get('#operating-system-dropdown').contains('Red Hat Enterprise Linux 6.0 or higher');
+    cy.get('#operating-system-dropdown').contains(template.os);
     cy.get('#flavor-dropdown').contains('Small (default): 1 CPU | 2 GiB Memory');
     cy.get('#workload-profile-dropdown').contains('Server (default)');
 
@@ -149,6 +148,11 @@ describe('test custom template creation support', () => {
     cy.byTestID('success-list').click();
 
     // verify VM started
+    virtualization.vms.testStatus(
+      VM_NAME_WITH_BOOT_SOURCE,
+      'Starting',
+      VM_ACTION_TIMEOUT.VM_BOOTUP,
+    );
     virtualization.vms.testStatus(VM_NAME_WITH_BOOT_SOURCE, 'Running', VM_ACTION_TIMEOUT.VM_BOOTUP);
   });
 });

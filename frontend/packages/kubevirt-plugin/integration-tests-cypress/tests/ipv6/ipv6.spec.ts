@@ -1,17 +1,17 @@
-import { VM_ACTION } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { listViewAction } from '../../view/actions';
-import { ipPopOverContent } from '../../view/selector';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { TEMPLATE, VM_ACTION } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { listViewAction } from '../../views/actions';
+import { ipPopOverContent } from '../../views/selector';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
   name: `testvm-for-ipv6-${testName}`,
   description: 'fedora vm',
   namespace: testName,
-  template: 'Fedora 32+ VM',
+  template: TEMPLATE.RHEL7,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,

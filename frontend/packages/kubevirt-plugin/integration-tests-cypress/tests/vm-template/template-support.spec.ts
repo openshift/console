@@ -1,6 +1,7 @@
 import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
-import { wizard } from '../../view/wizard';
+import { TEMPLATE } from '../../utils/const/index';
+import { virtualization } from '../../views/virtualization';
+import { wizard } from '../../views/wizard';
 
 const TEMPLATE_NAME = 'foo';
 const TEMPLATE_NO_SUPPORT_NAME = 'foo-no-support';
@@ -56,8 +57,8 @@ describe('test VM template support', () => {
 
   if (Cypress.env('DOWNSTREAM')) {
     it('shows support modal for community supported template', () => {
-      virtualization.templates.testSupport('CentOS 7.0+ VM');
-      virtualization.templates.clickCreate('CentOS 7.0+ VM');
+      virtualization.templates.testSupport(TEMPLATE.CENTOS7.name);
+      virtualization.templates.clickCreate(TEMPLATE.CENTOS7.os);
       cy.get('.ReactModal__Overlay').within(() => {
         cy.get('a').should('have.attr', 'href', 'https://www.centos.org');
         cy.byLegacyTestID('modal-cancel-action').click();
@@ -66,7 +67,7 @@ describe('test VM template support', () => {
 
     it('shows no support modal for user supported template based on community supported one', () => {
       wizard.template.open();
-      wizard.template.createTemplate(TEMPLATE_NAME, 'bar', true, 'CentOS 7 or higher');
+      wizard.template.createTemplate(TEMPLATE_NAME, 'bar', true, TEMPLATE.CENTOS7.os);
       virtualization.templates.testProvider(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSource(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSupport(TEMPLATE_NAME, 'bar');
@@ -76,7 +77,7 @@ describe('test VM template support', () => {
 
     it('shows support modal for user template based on community supported one', () => {
       wizard.template.open();
-      wizard.template.createTemplate(TEMPLATE_NAME, 'bar', false, 'CentOS 7 or higher');
+      wizard.template.createTemplate(TEMPLATE_NAME, 'bar', false, TEMPLATE.CENTOS7.os);
       virtualization.templates.testProvider(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSource(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSupport(TEMPLATE_NAME);
@@ -88,19 +89,14 @@ describe('test VM template support', () => {
     });
 
     it('shows no support modal for supported template', () => {
-      virtualization.templates.testSupport('Red Hat Enterprise Linux 8.0+ VM', 'Red Hat');
-      virtualization.templates.clickCreate('Red Hat Enterprise Linux 8.0+ VM');
+      virtualization.templates.testSupport(TEMPLATE.RHEL8.name, 'Red Hat');
+      virtualization.templates.clickCreate(TEMPLATE.RHEL8.name);
       cy.get('.ReactModal__Overlay').should('not.exist');
     });
 
     it('shows no support modal for user supported template', () => {
       wizard.template.open();
-      wizard.template.createTemplate(
-        TEMPLATE_NAME,
-        'bar',
-        true,
-        'Red Hat Enterprise Linux 8.0 or higher',
-      );
+      wizard.template.createTemplate(TEMPLATE_NAME, 'bar', true, TEMPLATE.RHEL8.os);
       virtualization.templates.testProvider(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSource(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSupport(TEMPLATE_NAME, 'bar', 'Red Hat');
@@ -110,7 +106,7 @@ describe('test VM template support', () => {
 
     it('shows support modal for user template with no support', () => {
       wizard.template.open();
-      wizard.template.createTemplate(TEMPLATE_NAME, 'bar', false, 'CentOS 7 or higher');
+      wizard.template.createTemplate(TEMPLATE_NAME, 'bar', false, TEMPLATE.CENTOS7.os);
       virtualization.templates.testProvider(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSource(TEMPLATE_NAME, 'bar');
       cy.exec(

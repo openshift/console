@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom';
+import { UseListPageFilter, FilterValue } from '@console/dynamic-plugin-sdk';
 
-import { getAllTableFilters, FilterValue, FilterMap } from '../table-filters';
-import { RowFilter } from '../../filter-toolbar';
-
-export type OnFilterChange = (type: string, value: FilterValue) => void;
+import { getAllTableFilters, FilterMap } from '../table-filters';
 
 const filterData = <D>(
   data: D[],
@@ -20,11 +18,7 @@ const filterData = <D>(
   );
 };
 
-export const useListPageFilter = <D>(
-  data: D[],
-  rowFilters?: RowFilter[],
-  staticFilters?: { [key: string]: FilterValue },
-): [D[], D[], OnFilterChange] => {
+export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFilters) => {
   const [filter, setFilter] = React.useState<{ [key: string]: FilterValue }>();
 
   const location = useLocation();

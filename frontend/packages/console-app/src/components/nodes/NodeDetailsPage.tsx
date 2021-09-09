@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod';
-import { navFactory } from '@console/internal/components/utils';
+import { navFactory, PageComponentProps } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
 import { nodeStatus } from '../../status/node';
 import { menuActions } from './menu-actions';
@@ -12,6 +12,14 @@ import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
 import NodeTerminal from './NodeTerminal';
+
+const NodePodsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => (
+  <PodsPage
+    showTitle={false}
+    fieldSelector={`spec.nodeName=${obj.metadata.name}`}
+    showNamespaceOverride
+  />
+);
 
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { editYaml, events, logs, pods } = navFactory;
@@ -30,13 +38,7 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
         component: NodeDetails,
       },
       editYaml(),
-      pods(({ obj }) => (
-        <PodsPage
-          showTitle={false}
-          fieldSelector={`spec.nodeName=${obj.metadata.name}`}
-          showNamespaceOverride
-        />
-      )),
+      pods(NodePodsPage),
       logs(NodeLogs),
       events(ResourceEventStream),
       ...(!_.some(

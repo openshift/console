@@ -1,10 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {
-  useK8sWatchResources,
-  WatchK8sResources,
-  WatchK8sResults,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useDebounceCallback } from '@console/shared';
 import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';

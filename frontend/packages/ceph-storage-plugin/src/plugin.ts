@@ -38,7 +38,9 @@ import {
   detectManagedODF,
   detectComponents,
 } from './features';
+import { ODF_MODEL_FLAG } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
+import { STORAGE_CLUSTER_SYSTEM_KIND } from './constants/create-storage-system';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -61,7 +63,6 @@ const blockPoolRef = referenceForModel(models.CephBlockPoolModel);
 const storageSystemGvk = referenceForModel(models.StorageSystemModel);
 
 const OCS_MODEL_FLAG = 'OCS_MODEL';
-const ODF_MODEL_FLAG = 'ODF_MODEL';
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -117,7 +118,16 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectManagedODF,
     },
     flags: {
-      required: [OCS_FLAG],
+      required: [OCS_MODEL_FLAG],
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectManagedODF,
+    },
+    flags: {
+      required: [ODF_MODEL_FLAG],
     },
   },
   {
@@ -453,6 +463,32 @@ const plugin: Plugin<ConsumedExtensions> = [
           .catch((e) => {
             // eslint-disable-next-line no-console
             console.error('Error loading block Pool Modal', e);
+          });
+      },
+    },
+  },
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      id: 'add-capacity',
+      kind: models.StorageSystemModel.kind,
+      label: '%ceph-storage-plugin~Add Capacity%',
+      apiGroup: models.StorageSystemModel.apiGroup,
+      hidden: (kind, obj) => {
+        if (obj.spec.kind !== STORAGE_CLUSTER_SYSTEM_KIND) {
+          return true;
+        }
+        return false;
+      },
+      callback: (kind, obj) => () => {
+        const props = { storageSystem: obj };
+        import(
+          './components/modals/add-capacity-modal/add-capacity-modal' /* webpackChunkName: "ceph-storage-add-capacity-modal" */
+        )
+          .then((m) => m.addSSCapacityModal(props))
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.error('Error loading Add Capacity Modal', e);
           });
       },
     },

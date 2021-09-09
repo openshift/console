@@ -182,7 +182,7 @@ const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequ
         <ResourceLink
           kind={initializationResourceKind}
           name={initializationResourceKind}
-          namepace={initializationResourceNamespace}
+          namespace={initializationResourceNamespace}
         />
         <ResourceStatus badgeAlt>
           <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('olm~Required')} />

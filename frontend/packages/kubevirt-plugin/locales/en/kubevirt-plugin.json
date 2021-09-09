@@ -795,7 +795,6 @@
   "The Migration Tool operator could not be installed because it is not available on the cluster": "The Migration Tool operator could not be installed because it is not available on the cluster",
   "With Wizard": "With Wizard",
   "With YAML": "With YAML",
-  "With Import wizard": "With Import wizard",
   "Template": "Template",
   "This Virtual Machine is migrating and cannot be started at the moment": "This Virtual Machine is migrating and cannot be started at the moment",
   "Open Console in New Window": "Open Console in New Window",

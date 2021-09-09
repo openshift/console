@@ -131,29 +131,29 @@ export const topologySidePane = {
   },
   selectResource: (opt: resources | string, namespace: string) => {
     switch (opt) {
-      case 'Deployment Configs':
-      case resources.DeploymentConfigs: {
-        cy.get(`[href="/k8s/ns/${namespace}/deploymentconfigs/nodejs-example"]`).click();
+      case 'Deployments':
+      case resources.Deployments: {
+        cy.get(`[href="/k8s/ns/${namespace}/deployments/nodejs-release"]`).click();
         break;
       }
       case 'Build Configs':
       case resources.BuildConfigs: {
-        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/nodejs-example"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/nodejs-release"]`).click();
         break;
       }
       case 'Services':
       case resources.Services: {
-        cy.get(`[href="/k8s/ns/${namespace}/services/nodejs-example"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/services/nodejs-release"]`).click();
         break;
       }
       case 'Image Streams':
       case resources.ImageStreams: {
-        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/nodejs-example"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/nodejs-release"]`).click();
         break;
       }
       case 'Routes':
       case resources.Routes: {
-        cy.get(`[href="/k8s/ns/${namespace}/routes/nodejs-example"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/routes/nodejs-release"]`).click();
         break;
       }
       default: {

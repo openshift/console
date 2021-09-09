@@ -32,7 +32,7 @@ describe('SyncedEditorField', () => {
 
   const mockEditors = {
     form: <DynamicFormField name="formData" schema={{}} />,
-    yaml: <YAMLEditorField name="yamlData" />,
+    yaml: <YAMLEditorField name="yamlData" showSamples />,
   };
 
   const props: SyncedEditorFieldProps = {

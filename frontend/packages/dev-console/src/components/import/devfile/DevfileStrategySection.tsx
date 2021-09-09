@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService } from '@console/git-service/src';
+import { getGitService, ImportStrategy } from '@console/git-service/src';
 import { InputField } from '@console/shared/src';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import FormSection from '../section/FormSection';
@@ -11,8 +11,9 @@ import DevfileInfo from './DevfileInfo';
 
 const DevfileStrategySection: React.FC = () => {
   const { t } = useTranslation();
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const {
+    import: { showEditImportStrategy, strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
     devfile,
   } = values;
@@ -20,39 +21,36 @@ const DevfileStrategySection: React.FC = () => {
   useDevfileSource();
   const selectedSample = useSelectedDevfileSample();
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
+  const searchParams = new URLSearchParams(window.location.search);
+  const importType = searchParams.get('importType');
 
   const devfileInfo = React.useMemo(() => {
     let info;
-    if (values.devfile?.devfileContent) {
-      const devfileJSON = safeYAMLToJS(values.devfile.devfileContent);
+    if (selectedSample) info = selectedSample;
+    else if (devfile.devfileContent) {
+      const devfileJSON = safeYAMLToJS(devfile.devfileContent);
       info = {
         displayName: devfileJSON.metadata?.name || 'Devfile',
         tags: devfileJSON.metadata?.version ? [devfileJSON.metadata.version] : [],
         iconClass: devfileJSON.metadata?.name ? `icon-${devfileJSON.metadata?.name}` : '',
       };
     }
-    if (selectedSample) info = selectedSample;
     return info;
-  }, [selectedSample, values.devfile]);
+  }, [selectedSample, devfile]);
 
   const handleDevfileChange = React.useCallback(async () => {
     const gitService = getGitService(url, type, ref, dir, secretResource, devfile.devfilePath);
-    if (!values.devfile?.devfileSourceUrl) {
-      // No need to check the existence of the file, waste of a call to the gitService for this need
-      const devfileContents = gitService && (await gitService.getDevfileContent());
-      if (!devfileContents) {
-        setFieldValue('docker.dockerfilePath', 'Dockerfile');
-        setFieldValue('devfile.devfileContent', null);
-        setFieldValue('devfile.devfileHasError', true);
-        setValidated(ValidatedOptions.error);
-      } else {
-        setFieldValue('docker.dockerfilePath', 'Dockerfile');
-        setFieldValue('devfile.devfileContent', devfileContents);
-        setFieldValue('devfile.devfileHasError', false);
-        setValidated(ValidatedOptions.success);
-      }
+    const devfileContents = gitService && (await gitService.getDevfileContent());
+    if (!devfileContents) {
+      setFieldValue('devfile.devfileContent', null);
+      setFieldValue('devfile.devfileHasError', true);
+      setValidated(ValidatedOptions.error);
+    } else {
+      setFieldValue('devfile.devfileContent', devfileContents);
+      setFieldValue('devfile.devfileHasError', false);
+      setValidated(ValidatedOptions.success);
     }
-  }, [devfile.devfilePath, dir, ref, secretResource, setFieldValue, type, url, values.devfile]);
+  }, [devfile.devfilePath, dir, ref, secretResource, setFieldValue, type, url]);
 
   const helpText = React.useMemo(() => {
     if (validated === ValidatedOptions.success) {
@@ -67,10 +65,30 @@ const DevfileStrategySection: React.FC = () => {
   }, [t, validated]);
 
   React.useEffect(() => {
-    handleDevfileChange();
-    // We need to run only one when component mounts and then onBlur will take care of it.
+    if (
+      importType !== 'devfile' &&
+      recommendedStrategy &&
+      recommendedStrategy.type !== ImportStrategy.DEVFILE
+    ) {
+      const devfileStrategy = strategies.find((s) => s.type === ImportStrategy.DEVFILE);
+      if (devfileStrategy) {
+        setFieldValue('import.selectedStrategy.detectedFiles', devfileStrategy.detectedFiles);
+        setFieldValue('devfile.devfilePath', devfileStrategy.detectedFiles?.[0]);
+        setFieldValue('docker.dockerfilePath', 'Dockerfile');
+        handleDevfileChange();
+        validated === ValidatedOptions.success
+          ? setFieldValue('import.strategyChanged', true)
+          : setFieldValue('import.strategyChanged', false);
+      }
+      setFieldTouched('devfile.devfilePath', true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [recommendedStrategy, setFieldValue, strategies]);
+
+  React.useEffect(() => {
+    importType === 'devfile' && devfile.devfilePath && handleDevfileChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [devfile.devfilePath, importType]);
 
   return (
     <>
@@ -79,16 +97,22 @@ const DevfileStrategySection: React.FC = () => {
           {devfileParseError}
         </Alert>
       )}
-      {values.import.showEditImportStrategy && (
+      {showEditImportStrategy && importType !== 'devfile' && (
         <FormSection>
           <InputField
             type={TextInputTypes.text}
             name="devfile.devfilePath"
             label={t('devconsole~Devfile Path')}
+            placeholder={t('devconsole~Enter Devfile path')}
             helpText={helpText}
             helpTextInvalid={helpText}
             validated={validated}
-            onBlur={handleDevfileChange}
+            onBlur={() => {
+              handleDevfileChange();
+              validated === ValidatedOptions.success
+                ? setFieldValue('import.strategyChanged', true)
+                : setFieldValue('import.strategyChanged', false);
+            }}
             required
           />
         </FormSection>

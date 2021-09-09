@@ -4,11 +4,12 @@ import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 import {
   ALL_APPLICATIONS_KEY,
   useActivePerspective,
@@ -85,11 +86,11 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       secretResource: {},
     },
     docker: {
-      dockerfilePath: 'Dockerfile',
-      dockerfileHasError: false,
+      dockerfilePath: '',
+      dockerfileHasError: true,
     },
     devfile: {
-      devfilePath: 'devfile.yaml',
+      devfilePath: '',
       devfileHasError: false,
     },
     build: {
@@ -113,6 +114,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       },
       recommendedStrategy: null,
       showEditImportStrategy: false,
+      strategyChanged: false,
     },
   };
 

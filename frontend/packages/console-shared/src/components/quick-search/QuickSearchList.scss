@@ -9,6 +9,7 @@
       var(--pf-c-data-list--sm--BorderTopColor) !important;
     flex: 1;
     overflow-y: auto;
+    margin-bottom: 0 !important;
   }
   &__item {
     border-bottom: var(--pf-c-data-list__item--sm--BorderBottomWidth) solid
@@ -26,13 +27,14 @@
     }
   }
   &__item-row {
-    padding: 0 var(--pf-global--spacer--sm);
+    padding: 0 var(--pf-global--spacer--sm) !important;
   }
   &__item-content {
     align-items: center;
   }
   &__item-icon {
     width: 30px;
+    text-align: center;
   }
   &__item-name {
     font-size: var(--pf-global--FontSize--md);

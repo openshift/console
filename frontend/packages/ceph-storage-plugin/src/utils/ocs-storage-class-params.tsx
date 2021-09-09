@@ -94,8 +94,8 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
         },
         thickProvision: {
           name: 'Enable Thick Provisioning',
+          hintText: 'Volumes will allocate the requested capacity upon volume creation',
           Component: ThickProvision,
-          hintText: 'Volumes will allocate the requested capacity upon volume creation.',
         },
       },
     },

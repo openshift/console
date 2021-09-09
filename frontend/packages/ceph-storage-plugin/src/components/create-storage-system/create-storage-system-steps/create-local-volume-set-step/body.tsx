@@ -122,11 +122,11 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   return (
     <>
       <FormGroup
-        label={t('ceph-storage-plugin~LocalVolumeSet Name')}
+        label={t('ceph-storage-plugin~LocalVolumeSet name')}
         isRequired
         fieldId="create-lvs-volume-set-name"
         helperText={t(
-          'ceph-storage-plugin~A LocalVolumeSet allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
+          'ceph-storage-plugin~A LocalVolumeSet will be created to allow you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
         )}
       >
         <TextInput
@@ -138,7 +138,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         />
       </FormGroup>
       <FormGroup
-        label={t('ceph-storage-plugin~StorageClass Name')}
+        label={t('ceph-storage-plugin~StorageClass name')}
         fieldId="create-lvs-storage-class-name"
       >
         <TextInput
@@ -155,7 +155,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         />
       </FormGroup>
       <Text component={TextVariants.h3} className="odf-create-lvs__filter-volumes-text--margin">
-        {t('ceph-storage-plugin~Filter Disks By')}
+        {t('ceph-storage-plugin~Filter disks by')}
       </Text>
       <Radio
         label={<AllNodesLabel count={allNodes?.length} />}
@@ -183,7 +183,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
       {radio === FilterDiskBy.SELECTED_NODES && (
         <SelectNodesTable nodes={nodes} onRowSelected={onRowSelected} />
       )}
-      <FormGroup label={t('ceph-storage-plugin~Disk Type')} fieldId="create-lvs-disk-type-dropdown">
+      <FormGroup label={t('ceph-storage-plugin~Disk type')} fieldId="create-lvs-disk-type-dropdown">
         <Dropdown
           id="create-lvs-disk-type-dropdown"
           dropDownClassName="dropdown--full-width"
@@ -198,7 +198,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         data-test-id="create-lvs-form-advanced"
       >
         <FormGroup
-          label={t('ceph-storage-plugin~Volume Mode')}
+          label={t('ceph-storage-plugin~Volume mode')}
           fieldId="create-odf-disk-mode-dropdown"
           className="odf-create-lvs__disk-mode-dropdown--margin"
         >
@@ -212,7 +212,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           />
         </FormGroup>
         <FormGroup
-          label="Device Type"
+          label={t('ceph-storage-plugin~Device type')}
           fieldId="create-odf-device-type-dropdown"
           className="odf-create-lvs__device-type-dropdown--margin"
         >
@@ -225,13 +225,13 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           />
         </FormGroup>
         <FormGroup
-          label={t('ceph-storage-plugin~Disk Size')}
+          label={t('ceph-storage-plugin~Disk size')}
           fieldId="create-lvs-disk-size"
           className="odf-create-lvs__disk-size-form-group--margin"
         >
           <div id="create-lvs-disk-size" className="odf-create-lvs__disk-size-form-group-div">
             <FormGroup
-              label={t('ceph-storage-plugin~Min')}
+              label={t('ceph-storage-plugin~Minimum')}
               fieldId="create-lvs-min-disk-size"
               className="odf-create-lvs__disk-size-form-group-max-min-input"
             >
@@ -264,7 +264,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
             </FormGroup>
             <div>-</div>
             <FormGroup
-              label={t('ceph-storage-plugin~Max')}
+              label={t('ceph-storage-plugin~Maximum')}
               fieldId="create-lvs-max-disk-size"
               className="odf-create-lvs__disk-size-form-group-max-min-input"
             >
@@ -295,17 +295,23 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
                 />
               </Tooltip>
             </FormGroup>
-            <Dropdown
-              id="create-lvs-disk-size-unit-dropdown"
-              items={diskSizeUnitOptions}
-              title={diskSizeUnitOptions[state.diskSizeUnit]}
-              selectedKey={state.diskSizeUnit}
-              onChange={(unit: string) => formHandler('diskSizeUnit', unit)}
-            />
+            <FormGroup
+              label={t('ceph-storage-plugin~Units')}
+              fieldId="create-lvs-disk-size-unit-dropdown"
+              className="odf-create-lvs__disk-size-form-group-max-min-input"
+            >
+              <Dropdown
+                id="create-lvs-disk-size-unit-dropdown"
+                items={diskSizeUnitOptions}
+                title={diskSizeUnitOptions[state.diskSizeUnit]}
+                selectedKey={state.diskSizeUnit}
+                onChange={(unit: string) => formHandler('diskSizeUnit', unit)}
+              />
+            </FormGroup>
           </div>
         </FormGroup>
         <FormGroup
-          label={t('ceph-storage-plugin~Maximum Disks Limit')}
+          label={t('ceph-storage-plugin~Maximum disks limit')}
           fieldId="create-lvs-max-disk-limit"
         >
           <p className="help-block odf-create-lvs__max-disk-limit-help-text--margin">

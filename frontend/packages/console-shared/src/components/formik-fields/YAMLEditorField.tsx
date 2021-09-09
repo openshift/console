@@ -4,12 +4,16 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { AsyncComponent } from '@console/internal/components/utils';
 import {
-  useK8sWatchResource,
+  useResolvedExtensions,
+  isYAMLTemplate,
+  YAMLTemplate,
   WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+} from '@console/dynamic-plugin-sdk';
+import { AsyncComponent } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleYAMLSampleModel } from '@console/internal/models';
+import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
 import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
 import { getResourceSidebarSamples } from '../../utils';
 import { YAMLEditorFieldProps } from './field-types';
@@ -26,6 +30,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
   label,
   model,
   schema,
+  showSamples,
   onSave,
 }) => {
   const [field] = useField(name);
@@ -53,7 +58,22 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
 
   const definition = model ? definitionFor(model) : { properties: [] };
   const hasSchema = !!schema || (!!definition && !isEmpty(definition.properties));
-  const hasSidebarContent = hasSchema || !isEmpty(samples) || !isEmpty(snippets);
+  const hasSidebarContent = hasSchema || (showSamples && !isEmpty(samples)) || !isEmpty(snippets);
+
+  const [templateExtensions] = useResolvedExtensions<YAMLTemplate>(isYAMLTemplate);
+
+  const sanitizeYamlContent = React.useCallback(
+    (id: string = 'default', yaml: string = '', kind: string) => {
+      if (yaml) {
+        return yaml;
+      }
+      const yamlByExtension: string = getYAMLTemplates(
+        templateExtensions?.filter((e) => e.properties.model.kind === kind),
+      ).getIn([kind, id]);
+      return yamlByExtension?.trim() || '';
+    },
+    [templateExtensions],
+  );
 
   return (
     <div className="osc-yaml-editor" data-test="yaml-editor">
@@ -84,8 +104,9 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
             editorRef={editorRef}
             model={model}
             schema={schema}
-            samples={samples}
+            samples={showSamples ? samples : []}
             snippets={snippets}
+            sanitizeYamlContent={sanitizeYamlContent}
             sidebarLabel={label}
             toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           />

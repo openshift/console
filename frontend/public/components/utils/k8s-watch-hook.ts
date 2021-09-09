@@ -7,26 +7,16 @@ import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 import {
+  WatchK8sResource,
   UseK8sWatchResource,
   UseK8sWatchResources,
-  WatchK8sResource,
-} from '@console/dynamic-plugin-sdk/src/api/api-types';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 import { makeQuery, makeReduxID } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
 import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { K8sState } from '../../reducers/k8s';
-
-export {
-  UseK8sWatchResource,
-  WatchK8sResult,
-  ResourcesObject,
-  WatchK8sResults,
-  WatchK8sResultsObject,
-  WatchK8sResource,
-  WatchK8sResources,
-} from '@console/dynamic-plugin-sdk/src/api/api-types';
 
 export class NoModelError extends Error {
   constructor() {

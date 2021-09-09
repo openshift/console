@@ -19,7 +19,8 @@ import {
   referenceFor,
   Toleration,
 } from '../../module/k8s';
-import { labelsModal } from '../modals';
+import { configureClusterUpstreamModal, labelsModal } from '../modals';
+import { ClusterVersionModel } from '../../models';
 
 const editLabelsModal = (e, props) => {
   e.preventDefault();
@@ -193,6 +194,43 @@ export const RuntimeClass: React.FC<RuntimeClassProps> = ({ obj, path }) => {
   );
 };
 
+export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps> = ({
+  resource,
+}) => {
+  const { t } = useTranslation();
+  // TODO this specific RBAC is duplicated across several modals and pages
+  const clusterVersionIsEditable =
+    useAccessReview({
+      group: ClusterVersionModel.apiGroup,
+      resource: ClusterVersionModel.plural,
+      verb: 'patch',
+      name: resource?.metadata?.name,
+    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+  return (
+    <DetailsItem label={t('public~Upstream configuration')} obj={resource} path="spec.upstream">
+      <div>
+        <Button
+          type="button"
+          isInline
+          data-test-id="cluster-version-upstream-server-url"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            clusterVersionIsEditable && configureClusterUpstreamModal({ cv: resource });
+          }}
+          variant="link"
+          isDisabled={!clusterVersionIsEditable}
+        >
+          {resource?.spec?.upstream || t('public~Default update server')}
+          {clusterVersionIsEditable && (
+            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+          )}
+        </Button>
+      </div>
+    </DetailsItem>
+  );
+};
+
 export type ResourceSummaryProps = {
   resource: K8sResourceKind;
   showPodSelector?: boolean;
@@ -208,6 +246,10 @@ export type ResourceSummaryProps = {
 };
 
 export type ResourcePodCountProps = {
+  resource: K8sResourceKind;
+};
+
+export type UpstreamConfigDetailsItemProps = {
   resource: K8sResourceKind;
 };
 

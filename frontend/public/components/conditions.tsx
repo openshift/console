@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Timestamp } from './utils';
+import { LinkifyExternal, Timestamp } from './utils';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { K8sResourceCondition } from '../module/k8s';
 
@@ -40,7 +40,7 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditions }) => {
         className="hidden-xs col-sm-5 col-md-4 co-break-word co-pre-line co-conditions__message"
         data-test={`condition[${i}].message`}
       >
-        {condition.message?.trim() || '-'}
+        <LinkifyExternal>{condition.message?.trim() || '-'}</LinkifyExternal>
       </div>
     </div>
   ));

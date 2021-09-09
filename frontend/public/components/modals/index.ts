@@ -109,6 +109,11 @@ export const removeVolumeModal = (props) =>
     m.removeVolumeModal(props),
   );
 
+export const configureClusterUpstreamModal = (props) =>
+  import(
+    './configure-cluster-upstream-modal' /* webpackChunkName: "configure-cluster-upstream-modal" */
+  ).then((m) => m.configureClusterUpstreamModal(props));
+
 export const configureMachineAutoscalerModal = (props) =>
   import(
     './configure-machine-autoscaler-modal' /* webpackChunkName: "configure-machine-autoscaler-modal" */

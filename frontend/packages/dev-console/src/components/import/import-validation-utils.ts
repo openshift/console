@@ -28,7 +28,7 @@ export const validationSchema = (t: TFunction) =>
     image: imageValidationSchema(t),
     git: gitValidationSchema(t),
     docker: dockerValidationSchema(t),
-    devfile: devfileValidationSchema,
+    devfile: devfileValidationSchema(t),
     deployment: deploymentValidationSchema(t),
     serverless: serverlessValidationSchema(t),
     route: routeValidationSchema(t),

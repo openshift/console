@@ -35,6 +35,9 @@ export const quickStartDisplayNameToName = (displayName: string) => {
     case 'Add health checks to your sample application': {
       return 'add-healthchecks';
     }
+    case 'Install the OpenShift Serverless Operator': {
+      return 'install-serverless';
+    }
     default: {
       throw new Error('Option is not available');
     }

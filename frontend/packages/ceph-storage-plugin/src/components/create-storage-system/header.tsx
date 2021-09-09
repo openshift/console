@@ -21,7 +21,7 @@ export const CreateStorageSystemHeader: React.FC<CreateStorageSystemHeaderProps>
         <Text component={TextVariants.h1}>{t('ceph-storage-plugin~Create StorageSystem')}</Text>
         <Text component={TextVariants.small}>
           {t(
-            'ceph-storage-plugin~StorageSystem is an entity of OpenShift Data Foundation. It represents all of the required storage and compute resources.',
+            'ceph-storage-plugin~Create a StorageSystem to represent your OpenShift Data Foundation system and all its required storage and computing resources.',
           )}
         </Text>
       </TextContent>

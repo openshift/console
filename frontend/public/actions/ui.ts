@@ -26,7 +26,6 @@ export enum ActionType {
   SetActiveNamespace = 'setActiveNamespace',
   SetCreateProjectMessage = 'setCreateProjectMessage',
   SetCurrentLocation = 'setCurrentLocation',
-  MonitoringDashboardsClearVariables = 'monitoringDashboardsClearVariables',
   MonitoringDashboardsPatchVariable = 'monitoringDashboardsPatchVariable',
   MonitoringDashboardsPatchAllVariables = 'monitoringDashboardsPatchAllVariables',
   MonitoringDashboardsSetEndTime = 'monitoringDashboardsSetEndTime',
@@ -299,8 +298,6 @@ export const updateOverviewLabels = (labels: string[]) =>
   action(ActionType.UpdateOverviewLabels, { labels });
 export const updateOverviewFilterValue = (value: string) =>
   action(ActionType.UpdateOverviewFilterValue, { value });
-export const monitoringDashboardsClearVariables = () =>
-  action(ActionType.MonitoringDashboardsClearVariables);
 export const monitoringDashboardsPatchVariable = (key: string, patch: any, perspective: string) =>
   action(ActionType.MonitoringDashboardsPatchVariable, { key, patch, perspective });
 export const monitoringDashboardsPatchAllVariables = (variables: any, perspective: string) =>
@@ -335,7 +332,7 @@ export const monitoringLoaded = (
   });
 export const monitoringErrored = (
   key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
-  loadError: any,
+  loadError: Error,
   perspective = 'admin',
 ) =>
   action(ActionType.SetMonitoringData, {
@@ -416,7 +413,6 @@ const uiActions = {
   updateOverviewSelectedGroup,
   updateOverviewLabels,
   updateOverviewFilterValue,
-  monitoringDashboardsClearVariables,
   monitoringDashboardsPatchVariable,
   monitoringDashboardsPatchAllVariables,
   monitoringDashboardsSetEndTime,

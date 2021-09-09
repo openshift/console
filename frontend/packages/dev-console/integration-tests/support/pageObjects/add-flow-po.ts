@@ -130,7 +130,7 @@ export const catalogPO = {
     nginxHTTPServer:
       'a[data-test="Template-Nginx HTTP server and a reverse proxy"] .catalog-tile-pf-title',
     knativeKafka: '[data-test="OperatorBackedService-Knative Kafka"]',
-    helmNodejs: '[data-test="HelmChart-Nodejs Ex K"]',
+    helmNodejs: '[data-test="HelmChart-Nodejs"]',
   },
   sidePane: {
     dialog: '[role="dialog"]',

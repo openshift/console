@@ -62,11 +62,11 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   return (
     <>
       <TextContent>
-        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Select Capacity')}</Text>
+        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Select capacity')}</Text>
       </TextContent>
       <FormGroup
         fieldId="requested-capacity-dropdown"
-        label={t('ceph-storage-plugin~Requested Capacity')}
+        label={t('ceph-storage-plugin~Requested capacity')}
         labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>
@@ -86,7 +86,7 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
       </FormGroup>
       <TextContent>
         <Text id="select-nodes" component={TextVariants.h3}>
-          {t('ceph-storage-plugin~Select Nodes')}
+          {t('ceph-storage-plugin~Select nodes')}
         </Text>
       </TextContent>
       <Grid>
@@ -181,11 +181,11 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   return (
     <>
       <TextContent>
-        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Selected Capacity')}</Text>
+        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Selected capacity')}</Text>
       </TextContent>
       <FormGroup
         fieldId="available-raw-capacity"
-        label={t('ceph-storage-plugin~Available Raw Capacity')}
+        label={t('ceph-storage-plugin~Available raw capacity')}
       >
         <Grid hasGutter>
           <GridItem span={5}>
@@ -199,7 +199,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
                 <Trans ns="ceph-storage-plugin">
                   The available capacity is based on all attached disks associated with the selected{' '}
                   {/* eslint-disable-next-line react/no-unescaped-entities */}
-                  StorageClass <em>"{{ storageClassName }}"</em>
+                  StorageClass <b>{{ storageClassName }}</b>
                 </Trans>
               </Text>
             </TextContent>
@@ -219,7 +219,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
       )}
       <TextContent>
         <Text id="selected-nodes" component={TextVariants.h3}>
-          {t('ceph-storage-plugin~Selected Nodes')}
+          {t('ceph-storage-plugin~Selected nodes')}
         </Text>
       </TextContent>
       <Grid>
@@ -260,7 +260,7 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
 
-  const validations = capacityAndNodesValidate(nodes, enableArbiter);
+  const validations = capacityAndNodesValidate(nodes, enableArbiter, isNoProvisioner);
 
   return (
     <Form>

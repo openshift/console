@@ -4,7 +4,7 @@ import { useFormikContext, FormikErrors, FormikTouched } from 'formik';
 import { isEmpty } from 'lodash';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RepoStatus, ImportStrategy, getGitService, BaseService } from '@console/git-service';
+import { RepoStatus, ImportStrategy, getGitService } from '@console/git-service';
 import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { BuildStrategyType } from '@console/internal/components/build';
@@ -21,7 +21,7 @@ import {
   getSampleContextDir,
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
-import { GitData, GitReadableTypes, GitTypes } from '../import-types';
+import { GitData, GitReadableTypes, GitTypes, DetectedStrategyFormData } from '../import-types';
 import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
 import AdvancedGitOptions from './AdvancedGitOptions';
@@ -47,6 +47,7 @@ export type GitSectionFormData = {
   devfile?: {
     devfilePath: string;
     devfileSourceUrl: string;
+    devfileContent?: string;
   };
   docker?: {
     dockerfilePath: string;
@@ -57,6 +58,9 @@ export type GitSectionFormData = {
   project: {
     name: string;
   };
+  import?: {
+    recommendedStrategy?: DetectedStrategyFormData;
+  };
 };
 
 export interface GitSectionProps {
@@ -66,6 +70,8 @@ export interface GitSectionProps {
   defaultSample?: { url: string; ref?: string; dir?: string };
   showSample?: boolean;
   formType?: string;
+  importType?: string;
+  imageStreamName?: string;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
@@ -75,6 +81,8 @@ const GitSection: React.FC<GitSectionProps> = ({
   defaultSample,
   showSample = !!defaultSample,
   formType,
+  importType,
+  imageStreamName,
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
@@ -113,6 +121,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const errors: FormikErrors<GitSectionFormData> = formContextField
     ? _.get(formikErrors, formContextField, {})
     : formikErrors;
+  const formReloadCount: number = _.get(formikValues, 'formReloadCount');
 
   const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
     defaultSample || {};
@@ -167,9 +176,23 @@ const GitSection: React.FC<GitSectionProps> = ({
   );
 
   const handleDevfileStrategyDetection = React.useCallback(
-    async (gitService: BaseService) => {
+    async (devfilePath: string, gitType: any) => {
+      if (gitUrlError) {
+        setFieldValue('devfile.devfileContent', null);
+        setFieldValue('devfile.devfileHasError', true);
+        return;
+      }
       if (!values.devfile?.devfileSourceUrl) {
-        // No need to check the existence of the file, waste of a call to the gitService for this need
+        setFieldValue('devfile.devfilePath', devfilePath);
+        setFieldValue('docker.dockerfilePath', 'Dockerfile');
+        const gitService = getGitService(
+          values.git.url,
+          gitType,
+          values.git.ref,
+          values.git.dir,
+          values.git.secretResource,
+          devfilePath,
+        );
         const devfileContents = gitService && (await gitService.getDevfileContent());
         if (!devfileContents) {
           setFieldValue('devfile.devfileContent', null);
@@ -180,7 +203,15 @@ const GitSection: React.FC<GitSectionProps> = ({
         }
       }
     },
-    [setFieldValue, values.devfile],
+    [
+      gitUrlError,
+      setFieldValue,
+      values.devfile,
+      values.git.dir,
+      values.git.ref,
+      values.git.secretResource,
+      values.git.url,
+    ],
   );
 
   const handleGitUrlChange = React.useCallback(
@@ -188,15 +219,15 @@ const GitSection: React.FC<GitSectionProps> = ({
       if (isSubmitting || status?.submitError) return;
       setValidated(ValidatedOptions.default);
       setFieldValue('git.validated', ValidatedOptions.default);
+      setFieldValue('git.isUrlValidating', true);
       if (gitUrlError) {
         // Reset git type field when url is not valid or empty so that when new url valid is added, we run git type detection again.
         // Don't do anything else if URL is not valid.
         setFieldValue('git.showGitType', false);
         setFieldTouched('git.type', false);
+        setFieldValue('git.isUrlValidating', false);
         return;
       }
-
-      setFieldValue('git.isUrlValidating', true);
 
       const detectedGitType = detectGitType(url);
       const gitType = values.git.showGitType ? values.git.type : detectedGitType;
@@ -262,6 +293,22 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
 
+      if (
+        (importType === 'devfile' && values.devfile?.devfileContent) ||
+        imageStreamName ||
+        values.formType === 'edit'
+      ) {
+        setValidated(ValidatedOptions.success);
+        setFieldValue('git.validated', ValidatedOptions.success);
+        setFieldValue('git.isUrlValidating', false);
+        values.formType === 'edit' &&
+          values.build.strategy === BuildStrategyType.Source &&
+          handleBuilderImageRecommendation(
+            importStrategies?.find((s) => s.type === ImportStrategy.S2I)?.detectedCustomData,
+          );
+        return;
+      }
+
       setFieldValue('import.loaded', loaded);
       setFieldValue('import.loadError', loadError);
       setFieldValue('import.strategies', importStrategies);
@@ -279,6 +326,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         setFieldValue('import.recommendedStrategy', null);
         values.formType !== 'edit' && setFieldValue('import.showEditImportStrategy', true);
       }
+      setFieldValue('import.strategyChanged', false);
 
       if (importStrategies.length > 0) {
         switch (importStrategies[0].type) {
@@ -292,12 +340,13 @@ const GitSection: React.FC<GitSectionProps> = ({
           }
           case ImportStrategy.DEVFILE: {
             setFieldValue('build.strategy', BuildStrategyType.Devfile);
-            handleDevfileStrategyDetection(gitService);
+            handleDevfileStrategyDetection(importStrategies[0].detectedFiles[0], gitType);
             break;
           }
           case ImportStrategy.DOCKERFILE: {
             setFieldValue('build.strategy', BuildStrategyType.Docker);
             setFieldValue('docker.dockerfilePath', importStrategies[0].detectedFiles[0]);
+            setFieldValue('docker.dockerfileHasError', false);
             break;
           }
           default:
@@ -323,10 +372,13 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.formType,
       values.application.name,
       values.application.selectedKey,
+      values.build.strategy,
       nameTouched,
+      importType,
+      imageStreamName,
       setFieldTouched,
-      builderImages,
       handleBuilderImageRecommendation,
+      builderImages,
       handleDevfileStrategyDetection,
     ],
   );
@@ -341,17 +393,18 @@ const GitSection: React.FC<GitSectionProps> = ({
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
     setFieldTouched('git.url', true);
-    handleGitUrlChange(url, ref, dir);
-  }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
+    debouncedHandleGitUrlChange(url, ref, dir);
+  }, [debouncedHandleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
-    (!dirty || gitDirTouched) &&
+    (!dirty || gitDirTouched || formReloadCount) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
     dirty,
     isSubmitting,
     gitDirTouched,
+    formReloadCount,
     debouncedHandleGitUrlChange,
     values.git.url,
     values.git.ref,
@@ -373,7 +426,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
       );
     }
-    return '';
+    return t('devconsole~Repository URL to build and deploy your code from');
   }, [t, values.git.isUrlValidating, validated, repoStatus]);
 
   const resetFields = React.useCallback(() => {

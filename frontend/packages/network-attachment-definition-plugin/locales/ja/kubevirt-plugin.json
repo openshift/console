@@ -2,6 +2,8 @@
   "No network attachment definitions found": "ネットワーク接続定義が見つかりません",
   "Create network attachment definition": "ネットワーク接続定義の作成",
   "Learn how to use network attachment definitions": "ネットワーク接続定義の使用方法について",
+  "NetworkAttachmentDefinition details": "ネットワーク接続定義の詳細",
+  "Type": "タイプ",
   "Network attachment definition name cannot be empty": "ネットワーク接続定義名は空にできません",
   "Network attachment definition name can contain only alphanumeric characters": "ネットワーク接続定義名には、英数字のみを含めることができます",
   "Network attachment definition name must start/end with alphanumeric character": "ネットワーク接続定義名は英数字で開始/終了する必要があります",

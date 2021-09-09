@@ -7,7 +7,6 @@ import {
   isGraph,
 } from '@patternfly/react-topology';
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk/src';
 import {
   history,
   KebabItem,
@@ -16,14 +15,6 @@ import {
   kebabOptionsToMenu,
   isKebabSubMenu,
 } from '@console/internal/components/utils';
-import {
-  getMenuOptionType,
-  GroupedMenuOption,
-  MenuOption,
-  MenuOptionType,
-  orderExtensionBasedOnInsertBeforeAndAfter,
-} from '@console/shared';
-import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 import { graphActions } from '../../../actions/graphActions';
 import { groupActions } from '../../../actions/groupActions';
 import { workloadActions } from '../../../actions/workloadActions';
@@ -55,43 +46,15 @@ export const createMenuItems = (actions: KebabMenuOption[]) =>
     ) : (
       <ContextMenuItem
         key={index} // eslint-disable-line react/no-array-index-key
-        component={<KebabItem option={option} onClick={() => onKebabOptionClick(option)} />}
+        /* wrap in Fragment as KebabItem is a Function Component: gives warning on adding ref prop */
+        component={
+          <>
+            <KebabItem option={option} onClick={() => onKebabOptionClick(option)} />{' '}
+          </>
+        }
       />
     ),
   );
-
-export const createContextMenuItems = (actions: MenuOption[]) => {
-  const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(actions);
-  return sortedOptions.map((option: MenuOption) => {
-    const optionType = getMenuOptionType(option);
-    switch (optionType) {
-      case MenuOptionType.SUB_MENU:
-        return (
-          <ContextSubMenuItem label={option.label} key={option.id}>
-            {createContextMenuItems((option as GroupedMenuOption).children)}
-          </ContextSubMenuItem>
-        );
-      case MenuOptionType.GROUP_MENU:
-        return (
-          <>
-            <div className="pf-c-dropdown__group-title">{option.label}</div>
-            {createContextMenuItems((option as GroupedMenuOption).children)}
-          </>
-        );
-      default:
-        return (
-          <ContextMenuItem
-            key={option.id}
-            component={
-              <div className="pf-c-dropdown__menu-item">
-                <ActionMenuItem action={option as Action} />
-              </div>
-            }
-          />
-        );
-    }
-  });
-};
 
 export const workloadContextMenu = (element: Node) =>
   createMenuItems(

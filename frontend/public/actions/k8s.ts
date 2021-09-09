@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import { Dispatch } from 'react-redux';
 import { ActionType as Action, action } from 'typesafe-actions';
+import { FilterValue } from '@console/dynamic-plugin-sdk';
 
 import {
   cacheResources,
@@ -12,7 +13,6 @@ import { makeReduxID } from '../components/utils/k8s-watcher';
 import { APIServiceModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { referenceForModel, K8sResourceKind, K8sKind, fetchSwagger } from '../module/k8s';
-import { FilterValue } from '../components/factory/table-filters';
 
 export enum ActionType {
   ReceivedResources = 'resources',

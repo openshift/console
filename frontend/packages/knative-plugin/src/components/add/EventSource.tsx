@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
@@ -13,7 +14,7 @@ import {
 } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';

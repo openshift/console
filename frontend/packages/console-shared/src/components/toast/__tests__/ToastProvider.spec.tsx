@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertActionLink } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, AlertActionLink } from '@patternfly/react-core';
 import { mount, ReactWrapper } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import ToastContext, { ToastContextType, ToastVariant } from '../ToastContext';
@@ -174,5 +174,24 @@ describe('ToastProvider', () => {
 
     expect(actionFn).toHaveBeenCalledTimes(1);
     expect(wrapper.find(Alert).length).toBe(0);
+  });
+
+  it('should call onToastClose if provided on toast close', () => {
+    const toastClose = jest.fn();
+    act(() => {
+      toastContext.addToast({
+        title: 'test success',
+        variant: ToastVariant.success,
+        content: 'description 1',
+        onClose: toastClose,
+        dismissible: true,
+      });
+    });
+
+    wrapper.update();
+    const closeBtn = wrapper.find(AlertActionCloseButton);
+    expect(closeBtn.exists()).toBe(true);
+    closeBtn.simulate('click');
+    expect(toastClose).toHaveBeenCalled();
   });
 });
