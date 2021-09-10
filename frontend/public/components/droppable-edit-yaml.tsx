@@ -20,6 +20,7 @@ const boxTarget = {
     }
   },
 };
+let fileUploadContents = '';
 
 const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, monitor) => ({
   connectDropTarget: connectObj.dropTarget(),
@@ -32,7 +33,6 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
     constructor(props) {
       super(props);
       this.state = {
-        files: [],
         fileUpload: '',
         errors: [],
       };
@@ -40,23 +40,17 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
       this.clearFileUpload = this.clearFileUpload.bind(this);
     }
 
-    addDocument(existingEditorContent: string, newFileContent: string) {
-      return existingEditorContent
-        ? `${existingEditorContent}\n---\n${newFileContent}`
-        : newFileContent;
+    addDocument(newFileContent: string) {
+      fileUploadContents = _.isEmpty(fileUploadContents)
+        ? newFileContent
+        : `${fileUploadContents}\n---\n${newFileContent}`;
     }
 
-    readFileContents(file) {
-      const { allowMultiple } = this.props;
+    readFileContents(file, lastFile) {
       // If unsupported file type is dropped into drop zone, file will be undefined
       if (!file) {
         return;
       }
-      const currentFile: DroppedFile = {
-        id: _.uniqueId(),
-        name: file.name,
-        size: file.size,
-      };
       // limit size size uploading to 1 mb
       if (file.size <= maxFileUploadSize) {
         const reader = new FileReader();
@@ -67,12 +61,10 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
               errors: [...previousState.errors, `Ignoring ${file.name}: ${fileTypeErrorMsg}`],
             }));
           } else {
-            this.setState((previousState) => ({
-              fileUpload: allowMultiple
-                ? this.addDocument(previousState.fileUpload, input.trim())
-                : input,
-              files: [...previousState.files, currentFile],
-            }));
+            this.addDocument(input.trim());
+            if (lastFile) {
+              this.setState({ fileUpload: fileUploadContents });
+            }
           }
         };
         reader.readAsText(file, 'UTF-8');
@@ -90,23 +82,23 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
       }
       this.clearFileUpload();
       if (allowMultiple) {
-        monitor.getItem().files.forEach((yamlFile) => {
-          this.readFileContents(yamlFile);
+        monitor.getItem().files.forEach((yamlFile, i) => {
+          this.readFileContents(yamlFile, i === monitor.getItem().files.length - 1);
         });
       } else {
         const [file] = monitor.getItem().files;
-        this.readFileContents(file);
+        this.readFileContents(file, true);
       }
     }
 
     clearFileUpload() {
       this.setState({ fileUpload: '', errors: [] });
+      fileUploadContents = '';
     }
 
     render() {
       const { allowMultiple, obj } = this.props;
-      const { fileUpload, errors } = this.state;
-
+      const { errors, fileUpload } = this.state;
       return (
         <EditYAMLComponent
           {...this.props}
@@ -145,6 +137,5 @@ export type DroppedFile = {
 
 export type DroppableEditYAMLState = {
   errors: string[];
-  files?: DroppedFile[];
   fileUpload: string;
 };
