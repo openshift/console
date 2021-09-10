@@ -45,6 +45,7 @@ export enum VMI_ACTION {
 
 export enum TEMPLATE_ACTION {
   Create = 'Create Virtual Machine',
+  Delete = 'Delete Template',
 }
 
 // VM Status

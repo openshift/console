@@ -136,7 +136,6 @@ export const vm = {
   pause: () => {
     waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Pause);
-    waitForStatus(VM_STATUS.Paused);
   },
   createFromCreateVMBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();

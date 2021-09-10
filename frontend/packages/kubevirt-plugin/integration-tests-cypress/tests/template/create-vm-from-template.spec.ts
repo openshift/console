@@ -19,7 +19,7 @@ const vmData1: VirtualMachineData = {
   sourceAvailable: true,
 };
 
-describe('Test VM creation', () => {
+describe('Test VM creation from template page', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
@@ -31,7 +31,6 @@ describe('Test VM creation', () => {
     [vmData0, vmData1].forEach((data) => {
       cy.deleteResource(K8S_KIND.VM, data.name, data.namespace);
     });
-
     cy.deleteResource(K8S_KIND.Template, TEMPLATE.DEFAULT.name, testName);
     cy.deleteTestProject(testName);
   });

@@ -22,6 +22,7 @@ export const addNIC = (nic: Network) => {
       .click();
   }
   cy.get(nicDialog.add).click();
+  cy.byDataID(nic.name).should('exist');
 };
 
 export const addDisk = (disk: Disk) => {
@@ -69,4 +70,15 @@ export const addDisk = (disk: Disk) => {
     cy.contains('Enable preallocation').click();
   }
   cy.get(diskDialog.add).click();
+  cy.byDataID(disk.name).should('exist');
+};
+
+export const deleteRow = (rowID: string) => {
+  cy.byDataID(rowID).should('exist');
+  cy.byDataID(rowID)
+    .find('[data-test-id="kebab-button"]')
+    .click();
+  cy.byTestActionID('Delete').click();
+  cy.byTestID('confirm-action').click();
+  cy.byDataID(rowID).should('not.exist');
 };
