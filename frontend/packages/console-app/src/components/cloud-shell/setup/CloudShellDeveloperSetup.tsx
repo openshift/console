@@ -23,11 +23,13 @@ type Props = StateProps & {
   onSubmit?: (namespace: string) => void;
   onCancel?: () => void;
   workspaceModel: K8sKind;
+  operatorNamespace: string;
 };
 
 const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   activeNamespace,
   workspaceModel,
+  operatorNamespace,
   onSubmit,
   onCancel,
 }) => {
@@ -53,6 +55,7 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
         newCloudShellWorkSpace(
           createCloudShellResourceName(),
           namespace,
+          operatorNamespace,
           workspaceModel.apiVersion,
         ),
       );
