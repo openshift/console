@@ -1,5 +1,4 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { projectDropdown } from '../../../integration-tests-cypress/views/common';
 import { V1alpha1DataVolume } from '../../src/types/api';
 import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
@@ -193,8 +192,22 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('selectProject', (project: string) => {
-  projectDropdown.selectProject(project);
-  projectDropdown.shouldContain(project);
+  // it's flaky by using projectDropdown, try to avoid it
+  // projectDropdown.selectProject(project);
+  // projectDropdown.shouldContain(project);
+  cy.byLegacyTestID('namespace-bar-dropdown')
+    .contains('Project:')
+    .click();
+  cy.byTestID('showSystemSwitch').check();
+  cy.byTestID('dropdown-menu-item-link')
+    .contains('.pf-c-menu__item-text', project)
+    .should('exist');
+  cy.get('.pf-c-menu__item-text')
+    .contains(project)
+    .click();
+  cy.byLegacyTestID('namespace-bar-dropdown')
+    .contains(project)
+    .should('exist');
 });
 
 Cypress.Commands.add('createNAD', (namespace: string) => {

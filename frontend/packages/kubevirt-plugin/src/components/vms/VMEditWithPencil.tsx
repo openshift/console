@@ -10,7 +10,7 @@ type VMEditWithPencilProps = {
 const VMEditWithPencil: React.FC<VMEditWithPencilProps> = ({ children, isEdit, onEditClick }) => {
   return (
     <Button
-      data-test="edit-annotations"
+      data-test="edit-button"
       type="button"
       isInline
       isDisabled={!isEdit}
