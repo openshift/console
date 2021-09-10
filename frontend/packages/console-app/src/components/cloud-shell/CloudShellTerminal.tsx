@@ -9,9 +9,10 @@ import {
   WithUserSettingsCompatibilityProps,
   useFlag,
 } from '@console/shared';
+import { TerminalInitData, initTerminal, startWorkspace } from './cloud-shell-utils';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import { TerminalInitData, initTerminal } from './cloud-shell-utils';
+import useCloudShellNamespace from './useCloudShellNamespace';
 import useCloudShellWorkspace from './useCloudShellWorkspace';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 
@@ -39,6 +40,8 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   userSettingState: namespace,
   setUserSettingState: setNamespace,
 }) => {
+  const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
+  const [unrecoverableErrorFound, setUnrecoverableErrorFound] = React.useState<boolean>(false);
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initError, setInitError] = React.useState<string>();
   const [isAdmin, isAdminCheckLoading] = useAccessReview2({
@@ -63,6 +66,25 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
 
   const { t } = useTranslation();
 
+  // wait until the web terminal is loaded.
+  // if the namespace has any problems loading then set the terminal into an unrecoverable state
+  React.useEffect(() => {
+    if (namespaceLoadError) {
+      setUnrecoverableErrorFound(true);
+      setInitError(namespaceLoadError);
+    }
+  }, [namespaceLoadError]);
+
+  // start the workspace if no unrecoverable errors were found
+  React.useEffect(() => {
+    if (!unrecoverableErrorFound && workspace?.spec && !workspace.spec.started) {
+      startWorkspace(workspace);
+    }
+    // Run this effect if the workspace name or namespace changes.
+    // This effect should only be run once per workspace.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unrecoverableErrorFound, workspace?.metadata?.name, workspace?.metadata?.namespace]);
+
   // save the namespace once the workspace has loaded
   React.useEffect(() => {
     if (loaded && !loadError) {
@@ -71,11 +93,13 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
     }
   }, [loaded, loadError, workspaceNamespace, setNamespace]);
 
-  // clear the init data and error if the workspace changes
+  // clear the init data and error if the workspace changes and if the loading process isn't in an unrecoverable state
   React.useEffect(() => {
-    setInitData(undefined);
-    setInitError(undefined);
-  }, [username, workspaceName, workspaceNamespace]);
+    if (!unrecoverableErrorFound) {
+      setInitData(undefined);
+      setInitError(undefined);
+    }
+  }, [unrecoverableErrorFound, username, workspaceName, workspaceNamespace]);
 
   // initialize the terminal once it is Running
   React.useEffect(() => {
@@ -132,7 +156,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   }
 
   // loading the workspace resource
-  if (!loaded || isAdminCheckLoading) {
+  if (!loaded || isAdminCheckLoading || !operatorNamespace) {
     return <TerminalLoadingBox message="" />;
   }
 
@@ -165,6 +189,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
           setNamespace(ns);
         }}
         workspaceModel={workspaceModel}
+        operatorNamespace={operatorNamespace}
       />
     );
   }
@@ -177,6 +202,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
       onSubmit={(ns: string) => {
         setNamespace(ns);
       }}
+      operatorNamespace={operatorNamespace}
     />
   );
 };

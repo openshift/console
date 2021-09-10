@@ -15,9 +15,14 @@ import { useTranslation } from 'react-i18next';
 type Props = {
   onInitialize: (namespace: string) => void;
   workspaceModel: K8sKind;
+  operatorNamespace: string;
 };
 
-const CloudShellAdminSetup: React.FunctionComponent<Props> = ({ onInitialize, workspaceModel }) => {
+const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
+  onInitialize,
+  workspaceModel,
+  operatorNamespace,
+}) => {
   const { t } = useTranslation();
 
   const [initError, setInitError] = React.useState<string>();
@@ -49,6 +54,7 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({ onInitialize, wo
           newCloudShellWorkSpace(
             createCloudShellResourceName(),
             CLOUD_SHELL_PROTECTED_NAMESPACE,
+            operatorNamespace,
             workspaceModel.apiVersion,
           ),
         );
