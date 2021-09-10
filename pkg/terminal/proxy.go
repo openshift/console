@@ -25,6 +25,8 @@ const (
 	ProxyEndpoint = "/api/terminal/proxy/"
 	// AvailableEndpoint path used to check if functionality is enabled
 	AvailableEndpoint = "/api/terminal/available/"
+	// InstalledNamespaceEndpoint path used to get the namespace where the controller is installed
+	InstalledNamespaceEndpoint = "/api/terminal/installedNamespace"
 	// WorkspaceInitEndpoint is used to initialize a kubeconfig in the workspace
 	WorkspaceInitEndpoint = "exec/init"
 	// WorkspaceActivityEndpoint is used to prevent idle timeout in a workspace
@@ -203,6 +205,31 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (p *Proxy) HandleTerminalInstalledNamespace(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	subscription, err := GetWebTerminalSubscriptions()
+	if err != nil {
+		klog.Errorf("Failed to check the web terminal subscription: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	operatorNamespace, err := GetWebTerminalNamespace(subscription)
+	if err != nil {
+		klog.Errorf("Failed to get the namespace of the web terminal subscription: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write([]byte(operatorNamespace))
 }
 
 func (p *Proxy) handleExecInit(host *url.URL, token string, r *http.Request, w http.ResponseWriter) {
