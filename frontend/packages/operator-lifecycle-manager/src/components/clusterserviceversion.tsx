@@ -100,7 +100,6 @@ import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import {
   SubscriptionDetails,
   catalogSourceForSubscription,
-  upgradeRequiresApproval,
   UpgradeApprovalLink,
 } from './subscription';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
@@ -111,7 +110,11 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { Trans, useTranslation } from 'react-i18next';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
-import { getClusterServiceVersionPlugins, isPluginEnabled } from '../utils';
+import {
+  getClusterServiceVersionPlugins,
+  isPluginEnabled,
+  upgradeRequiresApproval,
+} from '../utils';
 import { consolePluginModal } from './modals/console-plugin-modal';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
