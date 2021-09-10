@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useActiveNamespace } from 'packages/console-shared/src';
-import { resourcePathFromModel } from 'public/components/utils';
-import { NetworkPolicyModel } from 'public/models';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { NetworkPolicyModel } from '@console/internal/models';
+import { useActiveNamespace } from '@console/shared/src';
 import { NetworkPolicyForm } from './network-policy-form';
 
 import './_create-network-policy.scss';
