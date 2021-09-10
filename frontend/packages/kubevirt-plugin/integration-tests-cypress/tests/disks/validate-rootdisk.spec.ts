@@ -60,6 +60,7 @@ describe('Validate root disk', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
+    cy.createProject(testName);
   });
 
   beforeEach(() => {
@@ -69,6 +70,10 @@ describe('Validate root disk', () => {
   afterEach(() => {
     cy.get(cancelBtn).click();
     cy.byButtonText('Cancel').click();
+  });
+
+  after(() => {
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-5469) Blank disk cannot be used as bootdisk', () => {

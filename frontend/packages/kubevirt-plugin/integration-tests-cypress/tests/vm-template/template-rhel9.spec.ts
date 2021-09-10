@@ -1,3 +1,4 @@
+import { testName } from '../../support';
 import { TEMPLATE } from '../../utils/const/index';
 import { unStarIcon, supportLevel, supportLevelTag } from '../../views/selector';
 
@@ -7,8 +8,13 @@ describe('Test RHEL9 template', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
+    cy.createProject(testName);
     cy.visitVMTemplatesList();
     cy.filterByName(template.dvName);
+  });
+
+  after(() => {
+    cy.deleteTestProject(testName);
   });
 
   // TODO: RHEL9 should be starred after it's official released.

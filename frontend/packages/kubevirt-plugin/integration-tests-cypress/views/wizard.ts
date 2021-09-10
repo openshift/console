@@ -222,7 +222,13 @@ export const wizard = {
       cy.get(wizardView.nextBtn).click();
     },
     fillConfirmForm: (vmData: VirtualMachineData) => {
-      const { startOnCreation } = vmData;
+      const { provisionSource, startOnCreation } = vmData;
+
+      // enhancement for https://issues.redhat.com/browse/CNV-5162
+      if (provisionSource === ProvisionSource.URL) {
+        cy.get(wizardView.bootSource).should('contain', provisionSource.getSource());
+      }
+
       cy.get('body').then(($body) => {
         if ($body.find(wizardView.startOnCreation).length) {
           if (!startOnCreation) {

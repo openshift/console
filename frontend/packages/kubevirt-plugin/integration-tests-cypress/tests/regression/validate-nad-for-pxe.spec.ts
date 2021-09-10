@@ -17,7 +17,12 @@ describe('Validate NAD for PXE provision source', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
+    cy.createProject(testName);
     cy.visitVMsList();
+  });
+
+  after(() => {
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-5045) Verify PXE provision source must have NAD available', () => {
