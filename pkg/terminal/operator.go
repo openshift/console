@@ -2,9 +2,10 @@ package terminal
 
 import (
 	"context"
-
+	goErrors "errors"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -12,7 +13,7 @@ import (
 )
 
 var (
-	OperatorAPIResource = &schema.GroupVersionResource{
+	OperatorAPISubscriptionResource = &schema.GroupVersionResource{
 		Group:    "operators.coreos.com",
 		Version:  "v1alpha1",
 		Resource: "subscriptions",
@@ -27,7 +28,6 @@ var (
 const (
 	webhookName             = "controller.devfile.io"
 	webTerminalOperatorName = "web-terminal"
-	operatorsNamespace      = "openshift-operators"
 )
 
 // checkWebTerminalOperatorIsRunning checks if the workspace operator is running and webhooks are enabled,
@@ -62,20 +62,8 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 
 // checkWebTerminalOperatorIsInstalled checks to see that a web-terminal-operator is installed on the cluster
 func checkWebTerminalOperatorIsInstalled() (bool, error) {
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		return false, err
-	}
 
-	config.GroupVersion = OperatorGroupVersion
-	config.APIPath = "apis"
-
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		return false, err
-	}
-
-	_, err = client.Resource(*OperatorAPIResource).Namespace(operatorsNamespace).Get(context.TODO(), webTerminalOperatorName, metav1.GetOptions{})
+	_, err := GetWebTerminalSubscriptions()
 	if err != nil {
 		// Web Terminal subscription is not found but it's technically not a real error so we don't want to propogate it. Just say that the operator is not installed
 		if errors.IsNotFound(err) {
@@ -86,4 +74,37 @@ func checkWebTerminalOperatorIsInstalled() (bool, error) {
 	}
 
 	return true, nil
+}
+
+func GetWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	config.GroupVersion = OperatorGroupVersion
+	config.APIPath = "apis"
+
+	client, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+	subs, err := client.Resource(*OperatorAPISubscriptionResource).List(context.TODO(), metav1.ListOptions{
+		FieldSelector: "metadata.name=" + webTerminalOperatorName,
+	})
+	if err != nil {
+		return subs, err
+	}
+	return subs, err
+}
+
+func GetWebTerminalNamespace(subs *unstructured.UnstructuredList) (string, error) {
+	if len(subs.Items) > 1 {
+		return "", goErrors.New("found multiple subscriptions for web-terminal when only one should be found")
+	}
+
+	webTerminalSubscription := subs.Items[0]
+	namespace := webTerminalSubscription.GetNamespace()
+
+	return namespace, nil
 }
