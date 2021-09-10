@@ -9,6 +9,7 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
+import * as knativeUtils from '@console/knative-plugin/src/utils/create-knative-utils';
 import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
@@ -105,10 +106,10 @@ describe('Import Submit Utils', () => {
         ImageStreamModel.kind,
         BuildConfigModel.kind,
         SecretModel.kind,
+        SecretModel.kind,
         DeploymentModel.kind,
         ServiceModel.kind,
         RouteModel.kind,
-        SecretModel.kind,
       ]);
       done();
     });
@@ -124,10 +125,10 @@ describe('Import Submit Utils', () => {
         ImageStreamModel.kind,
         BuildConfigModel.kind,
         SecretModel.kind,
+        SecretModel.kind,
         DeploymentConfigModel.kind,
         ServiceModel.kind,
         RouteModel.kind,
-        SecretModel.kind,
       ]);
       done();
     });
@@ -138,18 +139,31 @@ describe('Import Submit Utils', () => {
 
       const imageStreamSpy = jest
         .spyOn(submitUtils, 'createOrUpdateImageStream')
-        .mockImplementation(() => ({
-          status: {
-            dockerImageReference: 'test:1234',
-          },
-        }));
+        .mockImplementation(() =>
+          Promise.resolve({
+            model: {
+              kind: 'ImageStream',
+            },
+            status: {
+              dockerImageReference: 'test:1234',
+            },
+          }),
+        );
+
+      jest.spyOn(knativeUtils, 'getKnativeServiceDepResource').mockImplementation(() => {});
 
       const returnValue = await createOrUpdateResources(t, mockData, buildImage.obj, false);
       // createImageStream is called as separate entity
       expect(imageStreamSpy).toHaveBeenCalled();
-      expect(returnValue).toHaveLength(1);
+      expect(returnValue).toHaveLength(5);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
-      expect(models).toEqual([ServiceModel.kind]);
+      expect(models).toEqual([
+        ServiceModel.kind,
+        ImageStreamModel.kind,
+        BuildConfigModel.kind,
+        SecretModel.kind,
+        SecretModel.kind,
+      ]);
       done();
     });
   });
