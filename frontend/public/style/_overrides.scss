@@ -272,10 +272,6 @@ form.pf-c-form {
       --pf-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-global--spacer--xl);
     }
 
-    .pf-c-nav__item {
-      list-style: none;
-    }
-
     .pf-c-nav__link {
       font-size: $co-side-nav-section-font-size;
     }
@@ -392,4 +388,16 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
 
 .form-group--doubled-bottom-margin {
   margin-bottom: ($form-group-margin-bottom * 2);
+}
+
+// Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
+ul {
+  list-style: disc;
+}
+// And here we explicitly remove it from PF components so it doesn't show.
+ul.pf-c-alert-group,
+ul.pf-c-nav__list,
+ul.pf-c-simple-list__list,
+ul.pf-c-tree-view__list {
+  list-style: none !important;
 }
