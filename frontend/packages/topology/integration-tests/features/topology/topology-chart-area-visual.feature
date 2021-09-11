@@ -272,7 +272,7 @@ Feature: Topology chart area
               And user sees shortcut for Drag and drop a JAR file into Topology
 
 
-        @regression @manual @odc-5722
+        @regression @manual
         Scenario: Display of External Bindable resources: T-06-TC24
             Given user has installed Service Binding operator
             #Please refer to test case KM-01-TC01 for creating kafka connection
@@ -281,7 +281,7 @@ Feature: Topology chart area
              Then user will see the bindable resource "kafka-instance-123" in trapezoid shape
 
 
-        @regression @manual @odc-5722
+        @regression @manual
         Scenario: Connect to External Bindable resources: T-06-TC25
             Given user has installed Service Binding operator
             #Please refer to test case KM-01-TC01 for creating kafka connection

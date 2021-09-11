@@ -1,4 +1,3 @@
-@odc-2148
 Feature: Export of application
               As a user, I have an unmanaged application which I want to export. I'd like to be able to later add that code to git or some shared location so that I can share with others, or import into a new cluster or same cluster but different project, or be able to apply updates to an existing application.
 

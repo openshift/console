@@ -14,7 +14,7 @@ Feature: Create a workload of 'knative Service' type resource
               And Knative Service option is displayed under Resources section
 
 
-        @regression @odc-5009
+        @regression
         Scenario: knative resource type in docker file add flow: KN-05-TC02
             Given user is at Add page
              When user clicks on Import from Git
@@ -61,7 +61,7 @@ Feature: Create a workload of 'knative Service' type resource
                   | openshift/hello-openshift | knative-ex-registry |
 
 
-        @regression @odc-5009
+        @regression
         Scenario Outline: Create a workload from Docker file card on Add page: KN-05-TC06
             Given user is on Import from Git form
              When user enters Docker URL as "<docker_git_url>"

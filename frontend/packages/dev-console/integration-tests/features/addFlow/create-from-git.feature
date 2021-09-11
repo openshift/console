@@ -8,7 +8,7 @@ Feature: Create Application from git form
               And user has created or selected namespace "aut-addflow-git"
 
 
-        # @smoke @odc-5009
+        # @smoke
         # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
         # TODO: Use Cypress HTTP mocking to solve the github rate limiting issue. See - https://docs.cypress.io/guides/guides/network-requests
         @regression @manual
@@ -178,7 +178,7 @@ Feature: Create Application from git form
                   | https://github.com/sclorg/nodejs-ex.git        | nodejs-ex-git-app  | nodejs-ex-git         |
 
 
-        @regression @manual @odc-5009
+        @regression @manual
         Scenario Outline: Dotnet Builder image detection for git url "<git_url>": A-06-TC13
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
@@ -191,11 +191,11 @@ Feature: Create Application from git form
               And .NET builder image card tile is highlighted with * mark
 
         Examples:
-                  | git_url                                                   | dir_name | app_name              | name              |
-                  | https://github.com/redhat-developer/s2i-dotnetcore-ex.git | /app     | dotnetcore-ex-git-app | dotnetcore-ex-git |
+                  | git_url                                                   | dir_name |
+                  | https://github.com/redhat-developer/s2i-dotnetcore-ex.git | /app     |
 
 
-        @regression @manual @odc-5009
+        @regression @manual
         Scenario Outline: "Unable to detect the builder image" warning message displays for server related git urls: A-06-TC14
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
@@ -203,6 +203,6 @@ Feature: Create Application from git form
               And user is able to see warning message "Unable to detect the import strategy"
 
         Examples:
-                  | git_url                                | builder_image |
-                  | https://github.com/sclorg/httpd-ex.git | httpd         |
-                  | https://github.com/sclorg/nginx-ex.git | Nginx         |
+                  | git_url                                |
+                  | https://github.com/sclorg/httpd-ex.git |
+                  | https://github.com/sclorg/nginx-ex.git |
