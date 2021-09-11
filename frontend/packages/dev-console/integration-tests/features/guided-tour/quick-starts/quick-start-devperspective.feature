@@ -1,4 +1,4 @@
-@guided-tour @regression
+@guided-tour
 Feature: Build with guided documentation card in developer console
               As a user, I want to view Build with guided documentation card in Add page
 
@@ -70,7 +70,7 @@ Feature: Build with guided documentation card in developer console
              Then user is able to resize the Quick Start drawer
 
 
-        @odc-5010 @manual
+        @manual
         Scenario: Disabling Quick Start: QS-03-TC09
             Given user is logged in as an admin
              When user clicks on Search in navigation menu
@@ -85,7 +85,7 @@ Feature: Build with guided documentation card in developer console
              Then user will not be able to see "Exploring Serverless applications", "Get started with a sample application", "Install the OpenShift Pipelines Operator" and "Add health checks to your sample application" quick starts in the quick start catalog
 
 
-        @regression @odc-5715
+        @regression
         Scenario: Unique url to a Quick Start: QS-03-TC10
             Given user is at Quick Starts catalog page
              When user clicks "Install the OpenShift Serverless Operator" card

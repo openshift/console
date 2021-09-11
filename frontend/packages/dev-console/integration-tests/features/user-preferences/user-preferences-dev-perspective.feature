@@ -1,4 +1,3 @@
-@odc-5227
 Feature: Manage user preferences
               As a user, I need the ability to set/edit my preferences for the OCP Console.
 

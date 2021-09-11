@@ -1,4 +1,4 @@
-@pipelines @odc-5149
+@pipelines
 Feature: Perform Actions on repository
               As a developer, I want to create, edit, delete and view the repositories
 

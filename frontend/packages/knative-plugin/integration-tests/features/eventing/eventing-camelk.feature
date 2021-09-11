@@ -17,7 +17,7 @@ Feature: CamelK Connector Event Sources
               And user is able to see multiple sources of the kind kamelets
 
 
-        @regression @5676 @to-do
+        @regression @to-do
         Scenario: Kamelets from Community provider in event sources page : KC-02-TC02
             Given user is at Event Sources page
              When user clicks on "Apache Software Foundation" provider filter

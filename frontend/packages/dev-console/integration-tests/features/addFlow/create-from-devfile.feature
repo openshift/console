@@ -9,7 +9,7 @@ Feature: Create Application from Devfile
               And user is at Add page
 
 
-        @regression @odc-5009
+        @regression
         Scenario: Deploy git workload with devfile from topology page: A-04-TC01
             Given user has created workload "nodejs-ex-git" with resource type "Deployment"
               And user is at the Topology page
@@ -22,7 +22,7 @@ Feature: Create Application from Devfile
               And user is able to see workload "node-bulletin-board-1" in topology page
 
 
-        @regression @odc-5009
+        @regression
         Scenario: Create the workload from dev file: A-04-TC02
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/redhat-developer/devfile-sample"
