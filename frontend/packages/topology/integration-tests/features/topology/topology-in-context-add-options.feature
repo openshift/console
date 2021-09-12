@@ -11,7 +11,7 @@ Feature: Add in context from the Developer Catalog
               And user is at Topology page
 
 
-        @smoke @to-do @odc-5009
+        @smoke @to-do
         Scenario: Add to Project in Context options: T-10-TC01
              When user right clicks on graph
               And user clicks on Add to Project

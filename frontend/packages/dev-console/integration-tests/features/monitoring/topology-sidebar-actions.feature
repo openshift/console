@@ -9,7 +9,7 @@ Feature: Observe tab on the topology Sidebar
               And user has created or selected namespace "aut-observe-sidebar"
 
 
-        @smoke, @odc-3698
+        @smoke
         Scenario Outline: Navigating to Observe page from topology page Sidebar for "<resourceType>" workload : M-04-TC01
             Given user has created workload "<workload>" with resource type "<resourceType>"
               And user is at Topology page
@@ -27,7 +27,7 @@ Feature: Observe tab on the topology Sidebar
                   | parks-test-dc | Deployment Config |
 
 
-        @smoke, @odc-3698
+        @smoke
         Scenario: Observe tab on the Sidebar for Helm Release: M-04-TC02
             Given helm release "nodejs" is present in topology page
              When user clicks on the workload "nodejs" to open the sidebar

@@ -15,7 +15,7 @@ Feature: Observe Page
              Then user will see Dashboard, Metrics, Alerts, Events tabs
 
 
-        @regression, @odc-3698
+        @regression
         Scenario: Dashboard tab on the Observe page with Kubernetes / Compute Resources / Namespace (Workloads) option selected: M-02-TC02
             Given user has created workload "parks-test" with resource type "Deployment"
               And user is on Observe page
@@ -34,7 +34,7 @@ Feature: Observe Page
               And user will see "Rate of Packets Dropped" charts
 
 
-        @regression, @odc-3698
+        @regression
         Scenario: Dashboard tab on the Observe page with Kubernetes / Compute Resources / Namespace (Pods) option selected: M-02-TC03
             Given user is on Observe page
              When user clicks on "Dashboard" tab
@@ -56,7 +56,7 @@ Feature: Observe Page
               And user will see "Storage IO - Distribution" chart
 
 
-        @regression, @odc-3698
+        @regression
         Scenario: Dashboard tab on the Observe page with Kubernetes / Compute Resources / Workload option selected: M-02-TC04
             Given user is on Observe page
              When user clicks on "Dashboard" tab
@@ -77,7 +77,7 @@ Feature: Observe Page
               And user will see "Rate of Packets Dropped" charts
 
 
-        @regression, @odc-3698
+        @regression
         Scenario: Dashboard tab on the Observe page with Kubernetes / Compute Resources / Pods option selected: M-02-TC05
             Given user is on Observe page
              When user clicks on "Dashboard" tab
@@ -99,7 +99,7 @@ Feature: Observe Page
               And user will see "Storage IO - Distribution" chart
 
 
-        @regression, @odc-3698
+        @regression
         Scenario: Inspect chart directs to Metrics tab: M-02-TC06
             Given user is on Observe page
              When user clicks on "Dashboard" tab

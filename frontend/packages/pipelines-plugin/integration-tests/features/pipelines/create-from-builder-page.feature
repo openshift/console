@@ -107,7 +107,7 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "pipeline-params"
 
 
-        @regression @to-do @odc-4315
+        @regression @to-do
         Scenario: Deleting added task with delete icon in pipeline builder page: P-02-TC07
             Given user is at Pipeline Builder page
              When user clicks on Add task
@@ -119,7 +119,7 @@ Feature: Create the pipeline from builder page
              Then user can see the task in series gets removed
 
 
-        @regression @to-do @odc-4315
+        @regression @to-do
         Scenario Outline: Create a pipeline with TektonHub task not present in cluster from pipeline builder page: P-02-TC08
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -136,7 +136,7 @@ Feature: Create the pipeline from builder page
                   | p-task-1      | kn        |
 
 
-        @regression @to-do @odc-4315
+        @regression @to-do
         Scenario: Upgrade tasks that are already installed on the cluster in pipeline builder page: P-02-TC09
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-client"
@@ -148,7 +148,7 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "pipeline-client"
 
 
-        @regression @to-do @odc-4315
+        @regression @to-do
         Scenario Outline: Create a pipeline with TektonHub task present in cluster from pipeline builder page: P-02-TC010
             Given user is at Pipeline Builder page
               And user has installed tekton hub "<task_name>" in cluster

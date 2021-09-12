@@ -1,5 +1,5 @@
 @health-checks
-Feature: Health Checks
+Feature: Perform Health Checks related Actions
               As a user, I should be able to perform Health Checks on workloads
 
         Background:
@@ -42,7 +42,6 @@ Feature: Health Checks
 
 
         @smoke @to-do
-        Scenario: Add Health Checks to Deployment Configs from Actions dropdown Sidebar: HC-02-TC03
         Scenario Outline: Add Health Checks to Deployment Configs from Actions dropdown Sidebar: HC-02-TC03
             Given workload "health-checks-dc" with resource type "Deployment Config" is present in topology page
              When user clicks on the workload "health-checks-dc" to open the sidebar
