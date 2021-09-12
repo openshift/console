@@ -16,6 +16,8 @@ export enum detailsTab {
 
   services = '#services',
   activeUser = '#logged-in-users',
+
+  vmEditWithPencil = '[data-test="edit-button"]',
 }
 
 export enum dashboardTab {
@@ -45,6 +47,7 @@ export const startOnClone = 'input[id="clone-dialog-vm-start"]';
 // alert
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
+export const pendingChangeAlert = '.pf-c-alert.pf-m-inline.pf-m-warning.kv__pending_changes-alert';
 
 // nic modal
 export enum nicDialog {
