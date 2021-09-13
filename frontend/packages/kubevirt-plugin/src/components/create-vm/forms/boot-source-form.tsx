@@ -128,7 +128,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
     <Form>
       <FormRow fieldId="form-ds-sc" isRequired>
         <StorageClassDropdown
-          name={t('kubevirt-plugin~Storage Class')}
+          name={t('kubevirt-plugin~Storage class')}
           onChange={(sc) => onStorageClassNameChanged(sc)}
           data-test="storage-class-dropdown"
         />
