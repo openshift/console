@@ -208,7 +208,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
             items={diskModeDropdownItems}
             title={state.diskMode}
             selectedKey={state.diskMode}
-            onChange={(mode: string) => formHandler('diskMode', mode)}
+            onChange={(mode: string) => formHandler('diskMode', diskModeDropdownItems[mode])}
           />
         </FormGroup>
         <FormGroup
