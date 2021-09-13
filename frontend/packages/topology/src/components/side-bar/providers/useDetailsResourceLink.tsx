@@ -15,7 +15,7 @@ export const useDetailsResourceLink = (
   const resourceLink = React.useMemo(() => {
     return resolved
       ? resurceLinkExtension
-          .sort((a, b) => a.properties.priority - b.properties.priority)
+          .sort((a, b) => b.properties.priority - a.properties.priority)
           .find(({ properties: { link } }) => !!link(element))
           ?.properties?.link?.(element)
       : null;

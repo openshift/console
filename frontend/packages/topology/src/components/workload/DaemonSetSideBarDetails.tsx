@@ -5,7 +5,6 @@ import { ResourceSummary, StatusBox } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodRing, usePodsWatcher } from '@console/shared';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 type DaemonSetOverviewDetailsProps = {
@@ -39,7 +38,6 @@ const DaemonSetSideBarDetails: React.FC<DaemonSetOverviewDetailsProps> = ({ ds }
 };
 
 export const getDaemonSetSideBarDetails = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
   if (resource.kind !== DaemonSetModel.kind) return undefined;
   return <DaemonSetSideBarDetails ds={resource} />;
