@@ -107,7 +107,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
         loaded={!loading}
         EmptyMsg={() => (
           <div id="no-files-systems-found-msg" className="pf-u-text-align-center">
-            {t('kubevirt-plugin~No File Systems Found')}
+            {t('kubevirt-plugin~No file systems found')}
           </div>
         )}
         virtualize
@@ -118,7 +118,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
   return (
     <div className="kubevirt-vm-details__file-systems">
       <h3 id="file-systems-header">
-        {t('kubevirt-plugin~File Systems')}
+        {t('kubevirt-plugin~File systems')}
         <FieldLevelHelp>
           {t(
             'kubevirt-plugin~The following information regarding how the disks are partitioned is provided by the guest agent.',
