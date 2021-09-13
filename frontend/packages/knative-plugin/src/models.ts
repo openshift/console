@@ -247,6 +247,24 @@ export const EventSourceKafkaModel: K8sKind = {
   color: knativeEventingColor.value,
 };
 
+export const EventSourceCephModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
+  apiVersion: 'v1alpha1',
+  kind: 'CephSource',
+  label: 'CephSource',
+  // t('knative-plugin~CephSource')
+  labelKey: 'knative-plugin~CephSource',
+  labelPlural: 'CephSources',
+  // t('knative-plugin~CephSources')
+  labelPluralKey: 'knative-plugin~CephSources',
+  plural: 'cephsources',
+  id: 'cephsource',
+  abbr: 'CPS',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
 export const EventSourceSinkBindingModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion,

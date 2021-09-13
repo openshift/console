@@ -5,6 +5,7 @@ import {
   EventSourceKafkaModel,
   EventSourcePingModel,
   EventSourceSinkBindingModel,
+  EventSourceCephModel,
 } from '../models';
 
 export const getEventSourceCatalogProviderData = (
@@ -39,6 +40,12 @@ export const getEventSourceCatalogProviderData = (
     [EventSourceSinkBindingModel.kind]: {
       description: t(
         'knative-plugin~Used to connect OpenShift managed applications like Deployments, StatefulSets, or Jobs to an event sink, for example, a Knative Service, Channel, or Broker. SinkBinding is similar to a ContainerSource but works on existing OpenShift Application resources, whereas the ContainerSource Container lifecycle is fully managed by OpenShift Serverless itself.',
+      ),
+      provider: 'Red Hat',
+    },
+    [EventSourceCephModel.kind]: {
+      description: t(
+        'knative-plugin~Used to connect OpenShift managed applications to Ceph notifications.',
       ),
       provider: 'Red Hat',
     },
