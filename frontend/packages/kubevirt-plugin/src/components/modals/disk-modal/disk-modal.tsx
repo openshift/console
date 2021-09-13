@@ -419,12 +419,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   let modalTitle;
   if (isVMRunning) {
     modalTitle = isEditing
-      ? t('kubevirt-plugin~Edit {{type}} (Hot plugged)', { type })
-      : t('kubevirt-plugin~Add {{type}} (Hot plugged)', { type });
+      ? t('kubevirt-plugin~Edit disk (Hot plugged)')
+      : t('kubevirt-plugin~Add disk (Hot plugged)');
   } else {
-    modalTitle = isEditing
-      ? t('kubevirt-plugin~Edit {{type}}', { type })
-      : t('kubevirt-plugin~Add {{type}}', { type });
+    modalTitle = isEditing ? t('kubevirt-plugin~Edit disk') : t('kubevirt-plugin~Add disk');
   }
   return (
     <div className="modal-content">
@@ -611,9 +609,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           <FormRow fieldId={asId('auto-detach')}>
             <Checkbox
               id={asId('auto-detach')}
-              label={t('kubevirt-plugin~Automatically detach this disk when this VM restarts')}
+              label={t('kubevirt-plugin~Detach this disk upon VM restart')}
               description={t(
-                'kubevirt-plugin~Enable automatic detachment is available only for hot-plugged disks',
+                'kubevirt-plugin~Leave this option unchecked to make your hotplugged disk a permanent part of your virtual machine configuration.',
               )}
               isDisabled={!isVMRunning}
               isChecked={autoDetach}

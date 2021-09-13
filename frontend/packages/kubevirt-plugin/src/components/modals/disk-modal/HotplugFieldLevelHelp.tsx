@@ -12,7 +12,9 @@ export const HotplugFieldLevelHelp = () => {
           <b>{t('kubevirt-plugin~Hot-plugged disk')}</b>
         </StackItem>
         <StackItem>
-          {t('kubevirt-plugin~The disk will be immediately added (hot plugged) to the running VM.')}
+          {t(
+            'kubevirt-plugin~This disk will be added immediately (hotplugged) to your running virtual machine.',
+          )}
         </StackItem>
       </Stack>
     </FieldLevelHelp>
