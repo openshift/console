@@ -785,7 +785,6 @@
   "The Migration Tool operator could not be installed because it is not available on the cluster": "Migration Tool Operator はクラスターで利用できないため、インストールできませんでした。",
   "With Wizard": "ウィザードの使用",
   "With YAML": "YAML の使用",
-  "With Import wizard": "インポートウィザードの使用",
   "Template": "テンプレート",
   "This Virtual Machine is migrating and cannot be started at the moment": "この仮想マシンは移行中であり、現時点で起動することはできません",
   "Open Console in New Window": "新規ウィンドウでコンソールを開く",
