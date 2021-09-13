@@ -785,7 +785,6 @@
   "The Migration Tool operator could not be installed because it is not available on the cluster": "마이그레이션 툴 Operator를 클러스터에서 사용할 수 없기 때문에 이를 설치할 수 없습니다.",
   "With Wizard": "마법사 사용",
   "With YAML": "YAML 사용",
-  "With Import wizard": "마법사 가져 오기 사용",
   "Template": "템플릿",
   "This Virtual Machine is migrating and cannot be started at the moment": "이 가상 머신은 마이그레이션하고 있으므로 지금 시작할 수 없습니다.",
   "Open Console in New Window": "새 창에서 콘솔 열기",
