@@ -1111,7 +1111,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage
-    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new?rolekind=Role`}
+    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
     namespace={metadata.name}
     showTitle={false}
   />
