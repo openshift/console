@@ -153,7 +153,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
             {showStorages && !isCreateDisabled && (
               <SplitItem>
                 <Button {...addButtonProps} variant={ButtonVariant.secondary}>
-                  {t('kubevirt-plugin~Add Disk')}
+                  {t('kubevirt-plugin~Add disk')}
                 </Button>
               </SplitItem>
             )}
@@ -196,7 +196,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
                     icon={<PlusCircleIcon />}
                     variant={ButtonVariant.link}
                   >
-                    {t('kubevirt-plugin~Add Disk')}
+                    {t('kubevirt-plugin~Add disk')}
                   </Button>
                 )}
               </EmptyState>
