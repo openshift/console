@@ -1,6 +1,13 @@
 import { testName } from '../../support';
 import { K8S_KIND, YAML_VM_NAME } from '../../utils/const/index';
 import { detailsTab, modalConfirm, modalTitle, pendingChangeAlert } from '../../views/selector';
+import {
+  bootOrder,
+  addSource,
+  selectDevice,
+  draggablePointer,
+  deletePointer,
+} from '../../views/selector-tabs';
 import { tab } from '../../views/tab';
 import { vm } from '../../views/vm';
 
@@ -9,12 +16,6 @@ enum bootDevices {
   cloudinitDisk = 'cloudinitdisk (Disk)',
   defaultNIC = 'default (NIC)',
 }
-
-const bootOrder = '.kv-vm-resource--boot-order';
-const addSource = '#add-device-btm';
-const selectDevice = 'select[id="add-device-select"]';
-const draggablePointer = 'div[style="cursor: move;"]';
-const deletePointer = 'div[style="cursor: pointer;"]';
 
 describe('Test VM details tab', () => {
   before(() => {
