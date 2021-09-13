@@ -21,6 +21,8 @@
   }
   .co-copy-to-clipboard__text {
     max-height: 25vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
