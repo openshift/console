@@ -54,7 +54,7 @@
   {
     "type": "console.storage-provider",
     "properties": {
-      "name": "ObjectBucketClaim",
+      "name": "%ceph-storage-plugin~ObjectBucketClaim%",
       "Component": {
         "$codeRef": "storageProvider"
       }
