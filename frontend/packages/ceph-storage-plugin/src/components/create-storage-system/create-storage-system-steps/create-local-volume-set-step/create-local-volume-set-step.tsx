@@ -38,7 +38,13 @@ import { LocalVolumeSetBody } from './body';
 import { SelectedCapacity } from './selected-capacity';
 import { createWizardNodeState } from '../../../../utils/create-storage-system';
 import { GUARDED_FEATURES } from '../../../../features';
-import { arbiterText, LSO_OPERATOR, MINIMUM_NODES, OCS_TOLERATION } from '../../../../constants';
+import {
+  arbiterText,
+  LSO_OPERATOR,
+  MINIMUM_NODES,
+  NO_PROVISIONER,
+  OCS_TOLERATION,
+} from '../../../../constants';
 import { ErrorHandler } from '../../error-handler';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { useFetchCsv } from '../../use-fetch-csv';
@@ -59,6 +65,7 @@ const makeLocalVolumeSetCall = (
   ns: string,
   onNext: () => void,
   lvsNodes: WizardState['nodes'],
+  dispatch: WizardDispatch,
 ) => {
   setInProgress(true);
 
@@ -73,6 +80,12 @@ const makeLocalVolumeSetCall = (
   k8sCreate(LocalVolumeSetModel, requestData)
     .then(() => {
       setInProgress(false);
+      if (!storageClassName) {
+        dispatch({
+          type: 'wizard/setStorageClass',
+          payload: { name: state.volumeSetName, provisioner: NO_PROVISIONER },
+        });
+      }
       onNext();
     })
     .catch((err) => {
@@ -306,6 +319,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       ns,
       handleNext,
       nodes,
+      dispatch,
     );
   };
 
