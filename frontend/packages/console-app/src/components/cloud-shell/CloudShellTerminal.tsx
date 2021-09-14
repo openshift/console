@@ -41,7 +41,6 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   setUserSettingState: setNamespace,
 }) => {
   const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
-  const [unrecoverableErrorFound, setUnrecoverableErrorFound] = React.useState<boolean>(false);
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initError, setInitError] = React.useState<string>();
   const [isAdmin, isAdminCheckLoading] = useAccessReview2({
@@ -66,24 +65,37 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
 
   const { t } = useTranslation();
 
+  const unrecoverableErrorFound = !operatorNamespace && namespaceLoadError;
+
   // wait until the web terminal is loaded.
   // if the namespace has any problems loading then set the terminal into an unrecoverable state
   React.useEffect(() => {
     if (namespaceLoadError) {
-      setUnrecoverableErrorFound(true);
       setInitError(namespaceLoadError);
     }
   }, [namespaceLoadError]);
 
   // start the workspace if no unrecoverable errors were found
   React.useEffect(() => {
-    if (!unrecoverableErrorFound && workspace?.spec && !workspace.spec.started) {
+    if (
+      operatorNamespace &&
+      !unrecoverableErrorFound &&
+      workspace?.spec &&
+      !workspace.spec.started
+    ) {
       startWorkspace(workspace);
     }
     // Run this effect if the workspace name or namespace changes.
     // This effect should only be run once per workspace.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unrecoverableErrorFound, workspace?.metadata?.name, workspace?.metadata?.namespace]);
+  }, [
+    operatorNamespace,
+    unrecoverableErrorFound,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    workspace?.metadata?.name,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    workspace?.metadata?.namespace,
+  ]);
 
   // save the namespace once the workspace has loaded
   React.useEffect(() => {
