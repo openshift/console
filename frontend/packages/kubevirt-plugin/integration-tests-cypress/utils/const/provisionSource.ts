@@ -1,11 +1,8 @@
 import { ObjectEnum } from '../../../src/constants/object-enum';
+import { IMAGE_URL } from './index';
 
 export class ProvisionSource extends ObjectEnum<string> {
-  static readonly URL = new ProvisionSource(
-    'URL',
-    'Import via URL (creates PVC)',
-    'https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img',
-  );
+  static readonly URL = new ProvisionSource('URL', 'Import via URL (creates PVC)', IMAGE_URL);
 
   static readonly REGISTRY = new ProvisionSource(
     'Registry',

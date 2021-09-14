@@ -15,7 +15,7 @@ import { wizard } from './wizard';
 export const waitForStatus = (status: string) => {
   switch (status) {
     case VM_STATUS.Running: {
-      cy.contains(detailsTab.vmStatus, VM_STATUS.Running, {
+      cy.contains(detailsTab.vmStatus, /^Running$/, {
         timeout: VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP,
       }).should('exist');
       break;

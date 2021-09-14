@@ -40,19 +40,25 @@ describe('Test VM Migration', () => {
   it('ID(CNV-2140) Migrate VM action button is displayed when VM is running', () => {
     cy.visitVMsList();
     vm.start();
-    cy.byLegacyTestID(vmData.name)
-      .should('exist')
-      .click();
-    tab.navigateToDetails();
-    cy.byLegacyTestID(actionButtons.actionDropdownButton).click();
-    cy.contains('Migrate Virtual Machine').should('exist');
+    cy.byLegacyTestID(actionButtons.kebabButton).click();
+    cy.byTestActionID(VM_ACTION.Migrate).should('exist');
     cy.byTestActionID(VM_ACTION.Cancel).should('not.exist');
+    cy.contains('Virtualization').click();
 
     if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
+      cy.byLegacyTestID(vmData.name)
+        .should('exist')
+        .click();
+      tab.navigateToDetails();
       vm.migrate(false);
+      waitForStatus(VM_STATUS.Migrating);
       cy.byLegacyTestID(actionButtons.actionDropdownButton).click();
-      cy.contains('Migrate Virtual Machine').should('not.exist');
+      // TODO: add a check to verify it on kebab button as well
+      // https://issues.redhat.com/browse/CNV-14140
+      cy.byTestActionID(VM_ACTION.Migrate).should('not.exist');
       cy.byTestActionID(VM_ACTION.Cancel).should('exist');
+      cy.contains('Virtual Machine Details').click();
+      cy.reload();
       waitForStatus(VM_STATUS.Running);
     }
     if (Cypress.env('STORAGE_CLASS') === 'hostpath-provisioner') {

@@ -1,10 +1,4 @@
-export const listViewKebabDropdown = 'kebab-button';
-export const detailViewDropdown = 'actions-menu-button';
-export const detailViewDropdownMenu = 'action-items';
-export const modalTitle = '[data-test-id="modal-title"]';
-export const confirmButton = '[data-test="confirm-action"]';
-export const confirmCloneButton = 'button[id="confirm-action"]';
-export const kebabButton = 'kebab-button';
+import { actionButtons, modalCancel, modalConfirm, modalTitle } from './selector';
 
 export const selectActionFromDropdown = (action: string, selector: string) => {
   cy.byLegacyTestID(selector).click();
@@ -12,19 +6,21 @@ export const selectActionFromDropdown = (action: string, selector: string) => {
 };
 
 export const detailViewAction = (action) => {
-  selectActionFromDropdown(action, detailViewDropdown);
+  selectActionFromDropdown(action, actionButtons.actionDropdownButton);
   cy.get('body').then(($body) => {
     if ($body.find(modalTitle).length) {
-      cy.get(confirmButton).click();
+      cy.get(modalConfirm).click();
+      cy.get(modalCancel).should('not.exist');
     }
   });
 };
 
 export const listViewAction = (action) => {
-  selectActionFromDropdown(action, kebabButton);
+  selectActionFromDropdown(action, actionButtons.kebabButton);
   cy.get('body').then(($body) => {
     if ($body.find(modalTitle).length) {
-      cy.get(confirmButton).click();
+      cy.get(modalConfirm).click();
+      cy.get(modalCancel).should('not.exist');
     }
   });
 };
