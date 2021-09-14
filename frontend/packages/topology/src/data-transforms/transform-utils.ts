@@ -163,7 +163,7 @@ export const getTopologyEdgeItems = (
       edges.push({
         id: `${uid}_${targetNode}`,
         type: TYPE_CONNECTS_TO,
-        resource: dc,
+        label: 'Visual connector',
         source: uid,
         target: targetNode,
       });

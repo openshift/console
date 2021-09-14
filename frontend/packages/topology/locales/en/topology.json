@@ -89,6 +89,7 @@
   "Connections": "Connections",
   "Kiali link": "Kiali link",
   "Kiali Graph view": "Kiali Graph view",
+  "{{label}}": "{{label}}",
   "Build <1></1> was cancelled": "Build <1></1> was cancelled",
   "Build <1></1> was complete": "Build <1></1> was complete",
   "Build <1></1> encountered an error": "Build <1></1> encountered an error",

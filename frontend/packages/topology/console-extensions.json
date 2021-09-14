@@ -229,5 +229,22 @@
       "contextId": "topology-actions",
       "provider": { "$codeRef": "actions.useApplicationPanelActionProvider" }
     }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 10,
+      "link": { "$codeRef": "vcSidebar.getEdgeResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-visual-connector",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "vcSidebar.getVisualConnectorResourceTabSection"
+      }
+    }
   }
 ]
