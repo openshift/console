@@ -19,7 +19,7 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
   deployment,
   isAdvancedOpen,
   dispatch,
-  hasOCS,
+  isDisabled,
   currentStep,
 }) => {
   const { t } = useTranslation();
@@ -63,7 +63,7 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
           onSelect={handleSelection}
           selections={deployment}
           isOpen={isSelectOpen}
-          isDisabled={hasOCS}
+          isDisabled={isDisabled}
         >
           {selectOptions}
         </Select>
@@ -76,6 +76,6 @@ type AdvancedSelectionProps = {
   dispatch: WizardDispatch;
   deployment: WizardState['backingStorage']['deployment'];
   isAdvancedOpen: WizardState['backingStorage']['isAdvancedOpen'];
-  hasOCS: boolean;
+  isDisabled: boolean;
   currentStep: number;
 };

@@ -37,6 +37,7 @@ import { ExternalStorage } from '../../external-storage/types';
 import { CEPH_STORAGE_NAMESPACE, NO_PROVISIONER } from '../../../../constants';
 import './backing-storage-step.scss';
 import { GUARDED_FEATURES } from '../../../../features';
+import { OCSServiceModel } from '../../../../models';
 
 const RHCS_SUPPORTED_INFRA = ['BareMetal', 'None', 'VSphere', 'OpenStack', 'oVirt', 'IBMCloud'];
 
@@ -295,7 +296,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
             dispatch={dispatch}
             deployment={deployment}
             isAdvancedOpen={isAdvancedOpen}
-            hasOCS={hasOCS}
+            isDisabled={hasOCS || externalStorage === OCSServiceModel.kind}
             currentStep={stepIdReached}
           />
         )}
