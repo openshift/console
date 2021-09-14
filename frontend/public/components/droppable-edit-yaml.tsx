@@ -20,7 +20,6 @@ const boxTarget = {
     }
   },
 };
-let fileUploadContents = '';
 
 const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, monitor) => ({
   connectDropTarget: connectObj.dropTarget(),
@@ -30,6 +29,7 @@ const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, m
 
 export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
   class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {
+    private fileUploadContents: string = '';
     constructor(props) {
       super(props);
       this.state = {
@@ -41,9 +41,9 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
     }
 
     addDocument(newFileContent: string) {
-      fileUploadContents = _.isEmpty(fileUploadContents)
+      this.fileUploadContents = _.isEmpty(this.fileUploadContents)
         ? newFileContent
-        : `${fileUploadContents}\n---\n${newFileContent}`;
+        : `${this.fileUploadContents}\n---\n${newFileContent}`;
     }
 
     readFileContents(file, lastFile) {
@@ -63,7 +63,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
           } else {
             this.addDocument(input.trim());
             if (lastFile) {
-              this.setState({ fileUpload: fileUploadContents });
+              this.setState({ fileUpload: this.fileUploadContents });
             }
           }
         };
@@ -93,7 +93,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
 
     clearFileUpload() {
       this.setState({ fileUpload: '', errors: [] });
-      fileUploadContents = '';
+      this.fileUploadContents = '';
     }
 
     render() {
