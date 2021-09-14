@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { getTerminalInstalledNamespace } from './cloud-shell-utils';
 
 const useCloudShellNamespace = (): [string, string] => {
-  const [terminalNamespace, setTerminalNamespace] = React.useState<string>();
-  const [fetchError, setFetchError] = React.useState<string>();
+  const [terminalNamespace, setTerminalNamespace] = useSafetyFirst<string>(undefined);
+  const [fetchError, setFetchError] = useSafetyFirst<string>(undefined);
   React.useEffect(() => {
     const fetchNamespace = async () => {
       try {
@@ -18,7 +19,7 @@ const useCloudShellNamespace = (): [string, string] => {
       }
     };
     fetchNamespace();
-  }, [terminalNamespace]);
+  }, [setFetchError, setTerminalNamespace, terminalNamespace]);
 
   return [terminalNamespace, fetchError];
 };
