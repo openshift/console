@@ -1,7 +1,7 @@
 import { VirtualMachineData } from '../types/vm';
 import { VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS, VMI_ACTION } from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
-import { detailsTab, createYAMLButton } from './selector';
+import { detailsTab, createYAMLButton, disksTab } from './selector';
 import { create, vmYAML } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
@@ -116,4 +116,9 @@ export const vm = {
     cy.get(vmYAML).click();
     cy.get(createYAMLButton).click();
   },
+};
+
+export const waitForVMStatusLabel = (status: string, timeout?: number) => {
+  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_BOOTUP;
+  cy.contains(disksTab.currVMStatusLbl, status, { timeout: timeOut }).should('exist');
 };

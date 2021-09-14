@@ -1,5 +1,7 @@
 import { Disk, Network } from '../types/vm';
-import { diskDialog, nicDialog } from './selector';
+import { DISK_SOURCE } from '../utils/const';
+import { diskDialog, nicDialog, disksTab } from './selector';
+import { modalConfirmBtn, kebabBtn } from './snapshot';
 
 export const addNIC = (nic: Network) => {
   cy.get(nicDialog.addNIC).click();
@@ -25,12 +27,37 @@ export const addNIC = (nic: Network) => {
 };
 
 export const addDisk = (disk: Disk) => {
-  cy.get(diskDialog.addDisk).click();
+  cy.get(disksTab.addDiskBtn).click();
   if (disk.source) {
     cy.get(diskDialog.source).click();
     cy.get('.pf-c-select__menu-item-main')
       .contains(disk.source)
       .click();
+    const sourceUrl = disk.provisionSource ? disk.provisionSource.getValue() : '';
+    switch (disk.source) {
+      case DISK_SOURCE.Url:
+        if (sourceUrl) {
+          cy.get(diskDialog.diskURL).type(sourceUrl);
+        } else {
+          throw new Error('No `disk.provisionSource` provided!!!');
+        }
+        break;
+      case DISK_SOURCE.Container:
+        if (sourceUrl) {
+          cy.get(diskDialog.diskContainer).type(sourceUrl);
+        } else {
+          throw new Error('No `disk.provisionSource` provided!!!');
+        }
+        break;
+      case DISK_SOURCE.AttachDisk:
+      case DISK_SOURCE.AttachClonedDisk:
+        cy.get(diskDialog.diskPVC).select(disk.pvcName);
+        break;
+      case DISK_SOURCE.EphemeralContainer:
+      case DISK_SOURCE.Blank:
+        break;
+      default:
+    }
   }
   cy.get(diskDialog.diskName)
     .clear()
@@ -54,5 +81,20 @@ export const addDisk = (disk: Disk) => {
   if (disk.preallocation) {
     cy.contains('Enable preallocation').click();
   }
-  cy.get(diskDialog.add).click();
+  if (disk.autoDetach === true) {
+    cy.get(diskDialog.autoDetach)
+      .check()
+      .should('be.checked');
+  } else if (disk.autoDetach === false) {
+    cy.get(diskDialog.autoDetach)
+      .uncheck()
+      .should('not.be.checked');
+  }
+  cy.get(modalConfirmBtn).click();
+};
+
+export const deleteDisk = (name: string) => {
+  cy.get(`[data-id="${name}"] ${kebabBtn}`).click();
+  cy.get(disksTab.deleteDiskBtn).click();
+  cy.get(modalConfirmBtn).click();
 };
