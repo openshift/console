@@ -166,3 +166,8 @@ export const vm = {
     }
   },
 };
+
+export const waitForVMStatusLabel = (status: string, timeout?: number) => {
+  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_BOOTUP;
+  cy.contains(disksTab.currVMStatusLbl, status, { timeout: timeOut }).should('exist');
+};
