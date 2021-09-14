@@ -2,8 +2,8 @@ package terminal
 
 import (
 	"context"
-	goErrors "errors"
-	"k8s.io/apimachinery/pkg/api/errors"
+	"errors"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -44,7 +44,7 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 
 	_, err = client.AdmissionregistrationV1().MutatingWebhookConfigurations().Get(context.TODO(), webhookName, metav1.GetOptions{})
 	if err != nil {
-		if errors.IsNotFound(err) {
+		if k8sErrors.IsNotFound(err) {
 			return false, nil
 		}
 		return false, err
@@ -52,7 +52,7 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 
 	_, err = client.AdmissionregistrationV1().ValidatingWebhookConfigurations().Get(context.TODO(), webhookName, metav1.GetOptions{})
 	if err != nil {
-		if errors.IsNotFound(err) {
+		if k8sErrors.IsNotFound(err) {
 			return false, nil
 		}
 		return false, err
@@ -66,13 +66,12 @@ func checkWebTerminalOperatorIsInstalled() (bool, error) {
 	_, err := GetWebTerminalSubscriptions()
 	if err != nil {
 		// Web Terminal subscription is not found but it's technically not a real error so we don't want to propogate it. Just say that the operator is not installed
-		if errors.IsNotFound(err) {
+		if k8sErrors.IsNotFound(err) {
 			return false, nil
 		}
 
 		return false, err
 	}
-
 	return true, nil
 }
 
@@ -100,7 +99,7 @@ func GetWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
 
 func GetWebTerminalNamespace(subs *unstructured.UnstructuredList) (string, error) {
 	if len(subs.Items) > 1 {
-		return "", goErrors.New("found multiple subscriptions for web-terminal when only one should be found")
+		return "", errors.New("found multiple subscriptions for web-terminal when only one should be found")
 	}
 
 	webTerminalSubscription := subs.Items[0]
