@@ -1,7 +1,7 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE_NAME, VM_STATUS } from '../../utils/const/index';
+import { TEMPLATE, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm, waitForStatus } from '../../views/vm';
@@ -9,7 +9,7 @@ import { vm, waitForStatus } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `smoke-test-vm-actions-${testName}`,
   namespace: testName,
-  template: TEMPLATE_NAME,
+  template: TEMPLATE.RHEL6.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

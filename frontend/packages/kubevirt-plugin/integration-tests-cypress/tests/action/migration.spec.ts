@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE_NAME, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { TEMPLATE, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { actionButtons, detailsTab, errorAlert } from '../../views/selector';
 import { tab } from '../../views/tab';
@@ -10,7 +10,7 @@ import { action, vm, waitForStatus } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `test-vm-migration-${testName}`,
   namespace: testName,
-  template: TEMPLATE_NAME,
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,

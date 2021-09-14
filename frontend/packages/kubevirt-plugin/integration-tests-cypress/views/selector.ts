@@ -35,7 +35,7 @@ export const startOnClone = 'input[id="clone-dialog-vm-start"]';
 // alert
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
-export const alertDescr = '.pf-c-alert__description';
+export const warningAlert = '.pf-c-alert.pf-m-inline.pf-m-warning';
 
 // nic modal
 export enum nicDialog {
@@ -74,6 +74,13 @@ export const createYAMLButton = 'button[data-test="save-changes"]';
 
 // multiple IP pop-up
 export const ipPopOverContent = '.pf-c-popover__content';
+
+// template list
+export const nameFilter = 'input[data-test="name-filter-input"]';
+// export const starIcon = '.pf-c-button.pf-m-plain.kv-pin-remove-btn';
+export const unStarIcon = '.pf-c-button.pf-m-plain.kv-pin-btn';
+export const supportLevel = '[data-test-id="details-Support"]';
+export const supportLevelTag = '[data-test="template-support"]';
 
 // VM's disks tab
 export enum disksTab {

@@ -3,8 +3,7 @@ import { VirtualMachineData } from '../../types/vm';
 import {
   DEFAULTS_VALUES,
   OS_IMAGES_NS,
-  TEMPLATE_BASE_IMAGE,
-  TEMPLATE_NAME,
+  TEMPLATE,
   VM_ACTION,
   VM_ACTION_TIMEOUT,
   VM_STATUS,
@@ -25,6 +24,8 @@ import {
 import { detailsTab } from '../../views/selector';
 import { waitForStatus } from '../../views/vm';
 
+const template = TEMPLATE.RHEL6;
+
 const vm: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,
   namespace: testName,
@@ -37,14 +38,14 @@ describe('test dev console', () => {
     cy.visit('/');
     cy.createProject(testName);
     cy.cdiCloner(testName, OS_IMAGES_NS);
-    cy.createDataVolume(TEMPLATE_BASE_IMAGE, OS_IMAGES_NS);
+    cy.createDataVolume(template.dvName, OS_IMAGES_NS);
   });
 
   after(() => {
     cy.deleteResource({
       kind: 'DataVolume',
       metadata: {
-        name: TEMPLATE_BASE_IMAGE,
+        name: template.dvName,
         namespace: OS_IMAGES_NS,
       },
     });
@@ -83,7 +84,7 @@ describe('test dev console', () => {
     it('ID(CNV-5699) create virtual machine', () => {
       cy.byLegacyTestID(addHeader).click();
       cy.get('[data-test="item dev-catalog-virtualization"]').click();
-      cy.contains(TEMPLATE_NAME)
+      cy.contains(template.name)
         .should('be.visible')
         .click();
       cy.contains('Create from template').click({ force: true });
@@ -113,7 +114,7 @@ describe('test dev console', () => {
       cy.get(detailsTab.vmPod).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
       cy.get(detailsTab.vmIP).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
       cy.get(detailsTab.vmNode).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
-      cy.get(detailsTab.vmTemplate).should('contain', TEMPLATE_BASE_IMAGE);
+      cy.get(detailsTab.vmTemplate).should('contain', template.dvName);
     });
 
     it('ID(CNV-5701) review resources tab', () => {
