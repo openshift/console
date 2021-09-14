@@ -246,5 +246,12 @@
         "$codeRef": "vcSidebar.getVisualConnectorResourceTabSection"
       }
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useTopologyVisualConnectorActionProvider" }
+    }
   }
 ]
