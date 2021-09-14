@@ -1,8 +1,8 @@
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
+import { BOOTSOURCE_ERROR } from '../../utils/const/errorString';
 import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
-import { BOOTSOURCE_ERROR } from '../../utils/const/string';
 import { addDisk } from '../../views/dialog';
 import {
   cancelBtn,
