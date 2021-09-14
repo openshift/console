@@ -111,7 +111,7 @@ const getHeader = (t: TFunction, columnClasses: string[]) => () =>
         transforms: [sortable],
       },
       {
-        title: t('kubevirt-plugin~Storage Class'),
+        title: t('kubevirt-plugin~Storage class'),
         sortField: 'storageClass',
         transforms: [sortable],
       },
