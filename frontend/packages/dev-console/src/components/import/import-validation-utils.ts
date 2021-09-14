@@ -65,9 +65,13 @@ export const detectGitType = (url: string): GitTypes => {
 };
 
 export const createComponentName = (nameString: string): string => {
-  if (nameRegex.test(nameString)) {
-    return nameString;
-  }
+  try {
+    if (nameRegex.test(nameString)) {
+      return nameString;
+    }
+    // eslint-disable-next-line no-empty
+  } catch {}
+
   const kebabCaseStr = _.kebabCase(nameString);
   return nameString.match(/^\d/) || kebabCaseStr.match(/^\d/)
     ? `ocp-${kebabCaseStr}`
