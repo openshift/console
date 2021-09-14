@@ -143,7 +143,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     name: nameTouched,
     application: { name: applicationNameTouched } = {},
     image: { selected: imageSelectorTouched } = {},
-    git: { dir: gitDirTouched } = {},
+    git: { dir: gitDirTouched, type: gitTypeTouched } = {},
   } = touched;
   const { git: { url: gitUrlError } = {} } = errors;
 
@@ -312,7 +312,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       setFieldValue('import.loadError', loadError);
       setFieldValue('import.strategies', importStrategies);
       if (importStrategies.length > 0) {
-        values.formType !== 'edit' && setFieldValue('import.showEditImportStrategy', false);
+        setFieldValue('import.showEditImportStrategy', false);
         setFieldValue('import.selectedStrategy', importStrategies[0]);
         setFieldValue('import.recommendedStrategy', importStrategies[0]);
       } else {
@@ -323,7 +323,7 @@ const GitSection: React.FC<GitSectionProps> = ({
           detectedFiles: [],
         });
         setFieldValue('import.recommendedStrategy', null);
-        values.formType !== 'edit' && setFieldValue('import.showEditImportStrategy', true);
+        setFieldValue('import.showEditImportStrategy', true);
       }
       setFieldValue('import.strategyChanged', false);
 
@@ -396,7 +396,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [debouncedHandleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
-    (!dirty || gitDirTouched) &&
+    (!dirty || gitDirTouched || gitTypeTouched) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
@@ -407,6 +407,8 @@ const GitSection: React.FC<GitSectionProps> = ({
     values.git.url,
     values.git.ref,
     values.git.dir,
+    values.git.type,
+    gitTypeTouched,
   ]);
 
   const helpText = React.useMemo(() => {
