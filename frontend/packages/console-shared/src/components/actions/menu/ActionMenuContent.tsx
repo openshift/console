@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Menu, MenuContent, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core';
+import { Menu, MenuContent, MenuGroup, MenuItem, MenuList, Divider } from '@patternfly/react-core';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import { GroupedMenuOption, MenuOption, MenuOptionType } from '../types';
@@ -12,9 +12,18 @@ type GroupMenuContentProps = {
 };
 
 const GroupMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) => (
-  <MenuGroup label={option.label} translate="no">
-    <ActionMenuContent options={option.children} onClick={onClick} focusItem={option.children[0]} />
-  </MenuGroup>
+  <>
+    <Divider />
+    <MenuGroup label={option.label} translate="no">
+      <MenuList>
+        <ActionMenuContent
+          options={option.children}
+          onClick={onClick}
+          focusItem={option.children[0]}
+        />
+      </MenuList>
+    </MenuGroup>
+  </>
 );
 
 // Need to keep this in the same file to avoid circular dependency.
@@ -23,11 +32,15 @@ const SubMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) =>
     data-test-action={option.id}
     flyoutMenu={
       <Menu containsFlyout>
-        <ActionMenuContent
-          options={option.children}
-          onClick={onClick}
-          focusItem={option.children[0]}
-        />
+        <MenuContent data-test-id="action-items" translate="no">
+          <MenuList>
+            <ActionMenuContent
+              options={option.children}
+              onClick={onClick}
+              focusItem={option.children[0]}
+            />
+          </MenuList>
+        </MenuContent>
       </Menu>
     }
   >
@@ -44,40 +57,38 @@ type ActionMenuContentProps = {
 const ActionMenuContent: React.FC<ActionMenuContentProps> = ({ options, onClick, focusItem }) => {
   const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(options);
   return (
-    <MenuContent data-test-id="action-items" translate="no">
-      <MenuList>
-        {sortedOptions.map((option) => {
-          const optionType = getMenuOptionType(option);
-          switch (optionType) {
-            case MenuOptionType.SUB_MENU:
-              return (
-                <SubMenuContent
-                  key={option.id}
-                  option={option as GroupedMenuOption}
-                  onClick={onClick}
-                />
-              );
-            case MenuOptionType.GROUP_MENU:
-              return (
-                <GroupMenuContent
-                  key={option.id}
-                  option={option as GroupedMenuOption}
-                  onClick={onClick}
-                />
-              );
-            default:
-              return (
-                <ActionMenuItem
-                  key={option.id}
-                  action={option as Action}
-                  onClick={onClick}
-                  autoFocus={focusItem ? option === focusItem : undefined}
-                />
-              );
-          }
-        })}
-      </MenuList>
-    </MenuContent>
+    <>
+      {sortedOptions.map((option) => {
+        const optionType = getMenuOptionType(option);
+        switch (optionType) {
+          case MenuOptionType.SUB_MENU:
+            return (
+              <SubMenuContent
+                key={option.id}
+                option={option as GroupedMenuOption}
+                onClick={onClick}
+              />
+            );
+          case MenuOptionType.GROUP_MENU:
+            return (
+              <GroupMenuContent
+                key={option.id}
+                option={option as GroupedMenuOption}
+                onClick={onClick}
+              />
+            );
+          default:
+            return (
+              <ActionMenuItem
+                key={option.id}
+                action={option as Action}
+                onClick={onClick}
+                autoFocus={focusItem ? option === focusItem : undefined}
+              />
+            );
+        }
+      })}
+    </>
   );
 };
 

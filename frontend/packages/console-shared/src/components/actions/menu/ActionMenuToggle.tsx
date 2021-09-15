@@ -1,33 +1,31 @@
 import * as React from 'react';
-import { Popper, MenuToggle } from '@patternfly/react-core';
+import { MenuToggle } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ActionMenuVariant } from '../types';
 
-type ActionMenuRendererProps = {
+type ActionMenuToggleProps = {
   isOpen: boolean;
   isDisabled: boolean;
-  menu: React.ReactElement;
   menuRef: React.RefObject<HTMLElement>;
+  toggleRef: React.RefObject<HTMLButtonElement>;
   toggleVariant?: ActionMenuVariant;
   toggleTitle?: string;
   onToggleClick: (state: React.SetStateAction<boolean>) => void;
   onToggleHover: () => void;
 };
 
-const ActionMenuRenderer: React.FC<ActionMenuRendererProps> = ({
+const ActionMenuToggle: React.FC<ActionMenuToggleProps> = ({
   isOpen,
   isDisabled,
-  menu,
   menuRef,
+  toggleRef,
   toggleVariant = ActionMenuVariant.KEBAB,
   toggleTitle,
   onToggleClick,
   onToggleHover,
 }) => {
   const { t } = useTranslation();
-  const toggleRef = React.useRef(null);
-  const containerRef = React.useRef(null);
   const isKebabVariant = toggleVariant === ActionMenuVariant.KEBAB;
   const toggleLabel = toggleTitle || t('console-shared~Actions');
 
@@ -72,7 +70,7 @@ const ActionMenuRenderer: React.FC<ActionMenuRendererProps> = ({
     onToggleClick((open) => !open);
   };
 
-  const toggle = (
+  return (
     <MenuToggle
       variant={toggleVariant}
       innerRef={toggleRef}
@@ -88,19 +86,6 @@ const ActionMenuRenderer: React.FC<ActionMenuRendererProps> = ({
       {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
     </MenuToggle>
   );
-
-  return (
-    <div ref={containerRef}>
-      <Popper
-        trigger={toggle}
-        popper={menu}
-        placement="bottom-end"
-        isVisible={isOpen}
-        appendTo={containerRef.current}
-        popperMatchesTriggerWidth={false}
-      />
-    </div>
-  );
 };
 
-export default ActionMenuRenderer;
+export default ActionMenuToggle;

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Menu } from '@patternfly/react-core';
+import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { checkAccess } from '@console/internal/components/utils';
 import { ActionMenuVariant, MenuOption } from '../types';
 import ActionMenuContent from './ActionMenuContent';
-import ActionMenuRenderer from './ActionMenuRenderer';
+import ActionMenuToggle from './ActionMenuToggle';
 
 type ActionMenuProps = {
   actions: Action[];
@@ -26,7 +26,9 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   const isKebabVariant = variant === ActionMenuVariant.KEBAB;
   const [isVisible, setVisible] = useSafetyFirst(isKebabVariant);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const menuRef = React.useRef(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const toggleRef = React.useRef<HTMLButtonElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const menuOptions = options || actions;
 
   const hideMenu = () => {
@@ -71,22 +73,36 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
 
   const menu = (
     <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>
-      <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={options[0]} />
+      <MenuContent data-test-id="action-items" translate="no">
+        <MenuList>
+          <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={options[0]} />
+        </MenuList>
+      </MenuContent>
     </Menu>
   );
 
   return (
     isVisible && (
-      <ActionMenuRenderer
-        isOpen={isOpen}
-        isDisabled={isDisabled}
-        menu={menu}
-        menuRef={menuRef}
-        toggleVariant={variant}
-        toggleTitle={label}
-        onToggleClick={setIsOpen}
-        onToggleHover={handleHover}
-      />
+      <div ref={containerRef}>
+        <ActionMenuToggle
+          isOpen={isOpen}
+          isDisabled={isDisabled}
+          toggleRef={toggleRef}
+          toggleVariant={variant}
+          toggleTitle={label}
+          menuRef={menuRef}
+          onToggleClick={setIsOpen}
+          onToggleHover={handleHover}
+        />
+        <Popper
+          reference={toggleRef}
+          popper={menu}
+          placement="bottom-end"
+          isVisible={isOpen}
+          appendTo={containerRef.current}
+          popperMatchesTriggerWidth={false}
+        />
+      </div>
     )
   );
 };
