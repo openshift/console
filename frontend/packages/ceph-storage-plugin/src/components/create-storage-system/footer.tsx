@@ -212,8 +212,12 @@ const handleReviewAndCreateNext = async (
       );
 
       await createExternalSubSystem(subSystemPayloads);
+      await labelOCSNamespace();
       // Create storage cluster if one is not present except for external RHCS
-      if (!hasOCS && !isRhcs) await createStorageCluster(state);
+      if (!hasOCS && !isRhcs) {
+        await labelNodes(nodes);
+        await createStorageCluster(state);
+      }
       // Create a new storage system for non RHCS external vendor if one is not present
       if (hasAnExternalSystem) await createStorageSystem(subSystemName, subSystemKind);
     }
