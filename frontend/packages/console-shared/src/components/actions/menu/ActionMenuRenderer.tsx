@@ -11,7 +11,7 @@ type ActionMenuRendererProps = {
   menuRef: React.RefObject<HTMLElement>;
   toggleVariant?: ActionMenuVariant;
   toggleTitle?: string;
-  onToggleClick: (state: boolean) => void;
+  onToggleClick: (state: React.SetStateAction<boolean>) => void;
   onToggleHover: () => void;
 };
 
@@ -59,7 +59,7 @@ const ActionMenuRenderer: React.FC<ActionMenuRendererProps> = ({
       window.removeEventListener('keydown', handleMenuKeys);
       window.removeEventListener('click', handleClickOutside);
     }; // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // This needs to be run only on component mount/unmount
+  }, [isOpen]); // This needs to be run only on component mount/unmount
 
   const handleToggleClick = (ev) => {
     ev.stopPropagation(); // Stop handleClickOutside from handling
@@ -69,7 +69,7 @@ const ActionMenuRenderer: React.FC<ActionMenuRendererProps> = ({
       );
       firstElement?.focus();
     }, 0);
-    onToggleClick(!isOpen);
+    onToggleClick((open) => !open);
   };
 
   const toggle = (
