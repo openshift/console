@@ -10,16 +10,9 @@ import {
   addTrigger,
   addSubscription,
   setSinkSource,
-  setSinkPubsub,
   EditKsvc,
 } from '../actions';
-import {
-  ServiceModel,
-  EventingSubscriptionModel,
-  EventingTriggerModel,
-  EventingBrokerModel,
-  CamelKameletBindingModel,
-} from '../models';
+import { ServiceModel, CamelKameletBindingModel, EventingBrokerModel } from '../models';
 import {
   getDynamicEventSourcesModelRefs,
   isEventingChannelResourceKind,
@@ -43,12 +36,6 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
       referenceForModel(resourceKind) === referenceForModel(CamelKameletBindingModel)
     ) {
       menuActions.push(setSinkSource);
-    }
-    if (
-      referenceForModel(resourceKind) === referenceForModel(EventingSubscriptionModel) ||
-      referenceForModel(resourceKind) === referenceForModel(EventingTriggerModel)
-    ) {
-      menuActions.push(setSinkPubsub);
     }
     if (referenceForModel(resourceKind) === referenceForModel(EventingBrokerModel)) {
       menuActions.push(addTrigger);
