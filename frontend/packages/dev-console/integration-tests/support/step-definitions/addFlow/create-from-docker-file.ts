@@ -11,6 +11,11 @@ When('user enters Git Repo URL as {string}', (gitUrl: string) => {
   devFilePage.verifyValidatedMessage(gitUrl);
 });
 
+When('user enters Git Repo URL as {string} in Import from Git form', (gitUrl: string) => {
+  gitPage.enterGitUrl(gitUrl);
+  devFilePage.verifyValidatedMessage(gitUrl);
+});
+
 When('user selects {string} radio button in Resource type section', (resourceType: string) => {
   gitPage.selectResource(resourceType);
 });

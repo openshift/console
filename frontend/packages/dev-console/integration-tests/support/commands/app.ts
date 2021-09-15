@@ -20,6 +20,7 @@ declare global {
       selectActionsMenuOption(actionsMenuOption: string): Chainable<Element>;
       dropdownSwitchTo(dropdownMenuOption: string): Chainable<Element>;
       isDropdownVisible(): Chainable<Element>;
+      checkErrors(): Chainable<Element>;
     }
   }
 }
@@ -104,4 +105,32 @@ Cypress.Commands.add('isDropdownVisible', () => {
     .click()
     .get('.pf-c-dropdown__menu')
     .should('be.visible');
+});
+
+Cypress.Commands.add('checkErrors', () => {
+  cy.get('body').then(($body) => {
+    if ($body.find('[data-test-id="reset-button"]').length !== 0) {
+      cy.byLegacyTestID('reset-button').click({ force: true });
+      cy.log('After Scenario: Still form is open, so cancelling the form');
+    } else if ($body.find('[aria-label="Danger Alert"]').length !== 0) {
+      cy.get('[aria-label="Danger Alert"]')
+        .find('.co-pre-line')
+        .then(($alert) => {
+          cy.log(
+            `Displaying following error: "${$alert.text()}", so closing this form and proceeding with next scenario`,
+          );
+        });
+      cy.byLegacyTestID('reset-button').click({ force: true });
+    } else if ($body.find('[data-test-id="modal-cancel-action"]').length !== 0) {
+      cy.log('Modal is not getting closed, due to error. so closing it forcefully');
+      cy.byLegacyTestID('modal-cancel-action').click({ force: true });
+      cy.get('body').then(($body1) => {
+        if ($body1.find('[data-test-id="reset-button"]').length !== 0) {
+          cy.byLegacyTestID('reset-button').click({ force: true });
+        }
+      });
+    } else {
+      cy.log('Scenario executed successfully');
+    }
+  });
 });
