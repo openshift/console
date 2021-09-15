@@ -63,7 +63,7 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 // checkWebTerminalOperatorIsInstalled checks to see that a web-terminal-operator is installed on the cluster
 func checkWebTerminalOperatorIsInstalled() (bool, error) {
 
-	_, err := GetWebTerminalSubscriptions()
+	_, err := getWebTerminalSubscriptions()
 	if err != nil {
 		// Web Terminal subscription is not found but it's technically not a real error so we don't want to propogate it. Just say that the operator is not installed
 		if k8sErrors.IsNotFound(err) {
@@ -75,7 +75,7 @@ func checkWebTerminalOperatorIsInstalled() (bool, error) {
 	return true, nil
 }
 
-func GetWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
+func getWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ func GetWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
 	return subs, err
 }
 
-func GetWebTerminalNamespace(subs *unstructured.UnstructuredList) (string, error) {
+func getWebTerminalNamespace(subs *unstructured.UnstructuredList) (string, error) {
 	if len(subs.Items) > 1 {
 		return "", errors.New("found multiple subscriptions for web-terminal when only one should be found")
 	}
