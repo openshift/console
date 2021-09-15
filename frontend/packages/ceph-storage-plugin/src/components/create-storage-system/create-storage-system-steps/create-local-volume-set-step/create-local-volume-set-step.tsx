@@ -1,23 +1,30 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
+  Bullseye,
   Form,
+  Flex,
+  FlexItem,
+  Text,
+  TextContent,
   Grid,
   GridItem,
   Modal,
   WizardContext,
   WizardContextType,
 } from '@patternfly/react-core';
-import { history } from '@console/internal/components/utils';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
 import {
   LocalVolumeDiscoveryResult,
   LocalVolumeSetModel,
 } from '@console/local-storage-operator-plugin/src/models';
-import { useFlag } from '@console/shared/src';
+import { useFlag, RedExclamationCircleIcon } from '@console/shared/src';
+
 import {
+  K8sResourceCommon,
+  apiVersionForModel,
   k8sCreate,
   ListKind,
   NodeKind,
@@ -33,7 +40,18 @@ import { LABEL_SELECTOR } from '@console/local-storage-operator-plugin/src/const
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LocalVolumeDiscoveryResultKind } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { NodeModel } from '@console/internal/models';
+import { NodeModel, NamespaceModel } from '@console/internal/models';
+import {
+  SubscriptionModel,
+  OperatorGroupModel,
+  PackageManifestModel,
+} from '@console/operator-lifecycle-manager/src/models';
+import {
+  OperatorGroupKind,
+  PackageManifestKind,
+  SubscriptionKind,
+  InstallPlanApproval,
+} from '@console/operator-lifecycle-manager/src/types';
 import { LocalVolumeSetBody } from './body';
 import { SelectedCapacity } from './selected-capacity';
 import { createWizardNodeState } from '../../../../utils/create-storage-system';
@@ -44,18 +62,21 @@ import {
   MINIMUM_NODES,
   NO_PROVISIONER,
   OCS_TOLERATION,
+  LOCAL_STORAGE_NAMESPACE,
 } from '../../../../constants';
 import { ErrorHandler } from '../../error-handler';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { useFetchCsv } from '../../use-fetch-csv';
 import { RequestErrors } from '../../../ocs-install/install-wizard/review-and-create';
 import './create-local-volume-set-step.scss';
+import '../../create-storage-system.scss';
 import { nodesWithoutTaints } from '../../../../utils/install';
 
-const goToLSOInstallationPage = () =>
-  history.push(
-    '/operatorhub/all-namespaces?details-item=local-storage-operator-redhat-operators-openshift-marketplace',
-  );
+enum InstallStatus {
+  Failed = 'Failed',
+  Progressing = 'Progressing',
+  Succeeded = 'Succeeded',
+}
 
 const makeLocalVolumeSetCall = (
   state: WizardState['createLocalVolumeSet'],
@@ -94,25 +115,21 @@ const makeLocalVolumeSetCall = (
     });
 };
 
-export const LSOInstallAlert = () => {
+export const LSOInstallFailed = () => {
   const { t } = useTranslation();
   return (
-    <Alert
-      variant="info"
-      title={t('ceph-storage-plugin~Local Storage Operator not installed')}
-      className="odf-create-lvs__alert--override"
-      isInline
-    >
-      <Trans t={t} ns="ceph-storage-plugin">
-        Before we can create a StorageSystem, the Local Storage Operator needs to be installed. When
-        installation is finished come back to OpenShift Data Foundation to create a StorageSystem.
-        <div className="ceph-ocs-install__lso-alert__button">
-          <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
-            Install
-          </Button>
-        </div>
-      </Trans>
-    </Alert>
+    <Bullseye className="odf-create-storage-system-wizard-body">
+      <Flex direction={{ default: 'column' }}>
+        <FlexItem alignSelf={{ default: 'alignSelfCenter' }}>
+          <RedExclamationCircleIcon size={'xl'} />
+        </FlexItem>
+        <FlexItem>
+          <TextContent>
+            <Text>{t('ceph-storage-plugin~Local Storage Operator installation failed')}</Text>
+          </TextContent>
+        </FlexItem>
+      </Flex>
+    </Bullseye>
   );
 };
 
@@ -172,10 +189,23 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   const [lvdResults, lvdResultsLoaded] = useK8sWatchResource<LocalVolumeDiscoveryResultKind[]>(
     getLvdrResource(allNodes.current, csv?.metadata?.namespace),
   );
+  const [lsoOpGroup, lsoOpGroupLoaded, lsoOpGroupLoadError] = useK8sGet<
+    ListKind<OperatorGroupKind>
+  >(OperatorGroupModel, '', LOCAL_STORAGE_NAMESPACE);
+  const [lsoPkgManifest, lsoPkgManifestLoaded, lsoPkgManifestLoadError] = useK8sGet<
+    PackageManifestKind
+  >(PackageManifestModel, LSO_OPERATOR, LOCAL_STORAGE_NAMESPACE);
+  const [lsoNs, lsoNsLoaded, lsoNsLoadError] = useK8sGet<K8sResourceCommon>(
+    NamespaceModel,
+    LOCAL_STORAGE_NAMESPACE,
+  );
+
   const [lvdInProgress, setLvdInProgress] = React.useState(false);
   const [lvdError, setLvdError] = React.useState(null);
   const [lvsetInProgress, setLvsetInProgress] = React.useState(false);
   const [lvsetError, setLvsetError] = React.useState(null);
+  const [lsoInstallStatus, setLsoInstallStatus] = React.useState(InstallStatus.Progressing);
+  const madeLsoInstallationCall = React.useRef(false);
 
   React.useEffect(() => {
     const nonTaintedNodes = nodesWithoutTaints(rawNodes?.items);
@@ -188,28 +218,113 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
     }
   }, [csv, csvLoadError, csvLoaded, rawNodes]);
 
+  React.useEffect(() => {
+    if (csv?.status?.phase === 'Succeeded') setLsoInstallStatus(InstallStatus.Succeeded);
+    else if (csv?.status?.phase === 'Failed') setLsoInstallStatus(InstallStatus.Failed);
+  }, [csv]);
+
   const discoveriesLoaded =
     csvLoaded &&
     !lvdInProgress &&
     rawNodesLoaded &&
     lvdResultsLoaded &&
     allNodes.current?.length === lvdResults?.length;
-
   const discoveriesLoadError = csvLoadError || rawNodesLoadError || lvdError;
+  const lsoResourcesLoaded = lsoOpGroupLoaded && lsoPkgManifestLoaded && lsoNsLoaded;
+  const lsoResourcesLoadError = lsoOpGroupLoadError || lsoPkgManifestLoadError || lsoNsLoadError;
   const ns = csv?.metadata?.namespace;
+
+  const makeLsoInstallationCall = async () => {
+    const {
+      channels,
+      packageName,
+      catalogSource,
+      catalogSourceNamespace,
+      defaultChannel,
+    } = lsoPkgManifest.status;
+    const lsoNsResource: K8sResourceCommon = {
+      apiVersion: apiVersionForModel(NamespaceModel) as K8sResourceCommon['apiVersion'],
+      kind: 'Namespace',
+      metadata: {
+        name: LOCAL_STORAGE_NAMESPACE,
+      },
+    };
+    const lsoOpGroupResource: OperatorGroupKind = {
+      apiVersion: apiVersionForModel(OperatorGroupModel) as OperatorGroupKind['apiVersion'],
+      kind: 'OperatorGroup',
+      metadata: {
+        generateName: `${LOCAL_STORAGE_NAMESPACE}-`,
+        namespace: LOCAL_STORAGE_NAMESPACE,
+      },
+      spec: {
+        targetNamespaces: [LOCAL_STORAGE_NAMESPACE],
+      },
+    };
+    const lsoSubscriptionResource: SubscriptionKind = {
+      apiVersion: apiVersionForModel(SubscriptionModel) as SubscriptionKind['apiVersion'],
+      kind: 'Subscription',
+      metadata: {
+        name: packageName,
+        namespace: LOCAL_STORAGE_NAMESPACE,
+      },
+      spec: {
+        source: catalogSource,
+        sourceNamespace: catalogSourceNamespace,
+        name: packageName,
+        startingCSV: channels.find((ch) => ch.name === defaultChannel).currentCSV,
+        channel: defaultChannel,
+        installPlanApproval: InstallPlanApproval.Automatic,
+      },
+    };
+
+    try {
+      if (!lsoNs) await k8sCreate(NamespaceModel, lsoNsResource);
+      if (!lsoOpGroup.items?.length) await k8sCreate(OperatorGroupModel, lsoOpGroupResource);
+      await k8sCreate(SubscriptionModel, lsoSubscriptionResource);
+    } catch (err) {
+      setLsoInstallStatus(InstallStatus.Failed);
+    }
+  };
+
+  if (lsoResourcesLoaded && csvLoaded && !madeLsoInstallationCall.current) {
+    if (
+      lsoResourcesLoadError ||
+      !lsoOpGroup.items?.length ||
+      csvLoadError?.message === 'Not found'
+    ) {
+      madeLsoInstallationCall.current = true;
+      makeLsoInstallationCall();
+    }
+  }
+
+  // For errors other than CSV "Not found" error. If it is CSV "Not found" error then no need to display <LSOInstallFailed /> FC,
+  // makeLsoInstallationCall() will be called and will install the LSO.
+  const loadErrors: boolean = discoveriesLoadError && csvLoadError?.message !== 'Not found';
+  // If CSV or Operator gets deleted after successful installation.
+  // We will need to display <LSOInstallFailed /> FC.
+  const isCsvDeleted: boolean =
+    discoveriesLoadError?.message === 'Not found' && lsoInstallStatus === InstallStatus.Succeeded;
 
   return (
     <ErrorHandler
-      loaded={discoveriesLoaded}
+      loaded={
+        discoveriesLoaded && lsoResourcesLoaded && lsoInstallStatus !== InstallStatus.Progressing
+      }
       loadingMessage={
-        !csvLoaded
+        !csvLoaded || !lsoResourcesLoaded
           ? t('ceph-storage-plugin~Checking Local Storage Operator installation')
-          : !discoveriesLoaded
+          : lsoInstallStatus === InstallStatus.Progressing
+          ? t(
+              'ceph-storage-plugin~Installing the Local Storage Operator. This may take a few minutes.',
+            )
+          : !discoveriesLoaded && lsoInstallStatus === InstallStatus.Succeeded
           ? t('ceph-storage-plugin~Discovering disks on all hosts. This may take a few minutes.')
           : null
       }
-      error={discoveriesLoadError}
-      errorMessage={csvLoadError || csv?.status?.phase !== 'Succeeded' ? <LSOInstallAlert /> : null}
+      error={loadErrors || isCsvDeleted || lsoInstallStatus === InstallStatus.Failed}
+      errorMessage={
+        lsoInstallStatus === InstallStatus.Failed || csvLoadError ? <LSOInstallFailed /> : null
+      }
     >
       <>
         <Grid>

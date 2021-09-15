@@ -12,6 +12,7 @@ export const BY_REQUESTED = 'By Requested Capacity';
 export const OCS_OPERATOR = 'ocs-operator';
 export const ODF_OPERATOR = 'odf-operator';
 export const LSO_OPERATOR = 'local-storage-operator';
+export const LOCAL_STORAGE_NAMESPACE = 'openshift-local-storage';
 export const NOOBAA_OPERATOR = 'noobaa-operator';
 export const OCS_EXTERNAL_CR_NAME = 'ocs-external-storagecluster';
 export const OCS_INTERNAL_CR_NAME = 'ocs-storagecluster';
