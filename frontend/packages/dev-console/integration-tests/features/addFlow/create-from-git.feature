@@ -157,13 +157,11 @@ Feature: Create Application from git form
 
         # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
         @regression @manual
-        Scenario Outline: Builder iamge detected for git url "<git_url>": A-06-TC12
+        Scenario Outline: Builder image detected for git url "<git_url>": A-06-TC12
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
              Then git url "<git_url>" gets Validated
-              And import strategy as Builder Image is detected
               And builder image is detected
-              And builder image version drop down is displayed
               And Application name displays as "<app_name>"
               And Name displays as "<name>"
 
@@ -188,7 +186,6 @@ Feature: Create Application from git form
               And user enters Context dir as "<dir_name>"
              Then git url "<git_url>" gets Validated
               And user is able to see "Builder Image(s) selected" message
-              And .NET builder image card tile is highlighted with * mark
 
         Examples:
                   | git_url                                                   | dir_name |
@@ -200,7 +197,7 @@ Feature: Create Application from git form
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
              Then git url "<git_url>" gets Validated
-              And user is able to see warning message "Unable to detect the import strategy"
+              And user is able to see warning message "Unable to detect Import strategy"
 
         Examples:
                   | git_url                                |

@@ -226,6 +226,11 @@ export const createForm = {
       .get(formPO.cancel)
       .should('be.enabled')
       .click(),
+  clickSave: () =>
+    cy
+      .get(formPO.create)
+      .should('be.enabled')
+      .click(),
   sectionTitleShouldContain: (sectionTitle: string) =>
     cy.get(gitPO.sectionTitle).should('have.text', sectionTitle),
 };
