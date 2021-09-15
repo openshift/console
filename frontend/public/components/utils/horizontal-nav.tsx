@@ -190,7 +190,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
           'co-m-horizontal-nav-item--active': matchURL?.isExact,
         });
         return (
-          <li className={klass} key={nameKey || name}>
+          <li className={klass} key={href}>
             <Link
               to={`${baseURL.replace(/\/$/, '')}/${href}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
