@@ -250,9 +250,16 @@ export const networkPolicyNormalizeK8sResource = (from: NetworkPolicyKind): Netw
   return clone;
 };
 
-const selectorFromK8s = (selector?: Selector): string[][] | ConversionError => {
+const selectorFromK8s = (
+  selector: Selector | undefined,
+  path: string,
+  t: TFunction,
+): string[][] | ConversionError => {
   if (!selector) {
     return [];
+  }
+  if (selector.matchExpressions) {
+    return errors.notSupported(t, `${path}.matchExpressions`);
   }
   const matchLabels = selector.matchLabels || {};
   return _.isEmpty(matchLabels) ? [] : _.map(matchLabels, (key: string, val: string) => [val, key]);
@@ -300,14 +307,14 @@ const peerFromK8s = (
     out.ipBlock = ipblock;
   } else {
     if (peer.podSelector) {
-      const podSel = selectorFromK8s(peer.podSelector);
+      const podSel = selectorFromK8s(peer.podSelector, `${path}.podSelector`, t);
       if (isError(podSel)) {
         return podSel;
       }
       out.podSelector = podSel;
     }
     if (peer.namespaceSelector) {
-      const nsSel = selectorFromK8s(peer.namespaceSelector);
+      const nsSel = selectorFromK8s(peer.namespaceSelector, `${path}.namespaceSelector`, t);
       if (isError(nsSel)) {
         return nsSel;
       }
@@ -391,18 +398,21 @@ export const networkPolicyFromK8sResource = (
   t: TFunction,
 ): NetworkPolicy | ConversionError => {
   if (!from.metadata) {
-    return errors.isMissing(t, 'Metadata');
+    return errors.isMissing(t, 'metadata');
   }
   if (!from.spec) {
-    return errors.isMissing(t, 'Spec');
+    return errors.isMissing(t, 'spec');
   }
   // per spec, podSelector can be null, but key must be present
   if (!_.has(from.spec, 'podSelector')) {
-    return errors.isMissing(t, 'Spec.podSelector');
+    return errors.isMissing(t, 'spec.podSelector');
   }
-  const podSelector = selectorFromK8s(from.spec.podSelector);
+  const podSelector = selectorFromK8s(from.spec.podSelector, 'spec.podSelector', t);
   if (isError(podSelector)) {
     return podSelector;
+  }
+  if (from.spec.policyTypes && !_.isArray(from.spec.policyTypes)) {
+    return errors.shouldBeAnArray(t, 'spec.policyTypes');
   }
 
   // Note, the logic differs between ingress and egress, see https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#networkpolicyspec-v1-networking-k8s-io
@@ -415,12 +425,12 @@ export const networkPolicyFromK8sResource = (
     ? from.spec.policyTypes.includes(networkPolicyTypeIngress)
     : true;
 
-  const ingressRules = rulesFromK8s(from.spec.ingress, 'Spec.ingress', 'from', affectsIngress, t);
+  const ingressRules = rulesFromK8s(from.spec.ingress, 'spec.ingress', 'from', affectsIngress, t);
   if (isError(ingressRules)) {
     return ingressRules;
   }
 
-  const egressRules = rulesFromK8s(from.spec.egress, 'Spec.egress', 'to', affectsEgress, t);
+  const egressRules = rulesFromK8s(from.spec.egress, 'spec.egress', 'to', affectsEgress, t);
   if (isError(egressRules)) {
     return egressRules;
   }

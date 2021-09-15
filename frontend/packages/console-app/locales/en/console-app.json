@@ -103,6 +103,7 @@
   "Restore": "Restore",
   "Create by completing the form.": "Create by completing the form.",
   "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.",
+  "non iso back and forth conversion, some fields in YAML would be lost.": "non iso back and forth conversion, some fields in YAML would be lost.",
   "Create NetworkPolicy": "Create NetworkPolicy",
   "Allow pods from the same namespace": "Allow pods from the same namespace",
   "Allow pods from inside the cluster": "Allow pods from inside the cluster",

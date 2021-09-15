@@ -59,12 +59,14 @@ export const CreateNetworkPolicy: React.FC<{
     const normalizedK8S = networkPolicyNormalizeK8sResource(obj);
     const converted = networkPolicyFromK8sResource(normalizedK8S, t);
     if (isNetworkPolicyConversionError(converted)) {
-      throw converted;
+      throw converted.error;
     } else {
       // Convert back to check for unsupported fields (check isomorphism)
       const reconverted = networkPolicyToK8sResource(converted);
       if (!_.isEqual(normalizedK8S, reconverted)) {
-        throw new Error('Unsupported YAML or JSON');
+        throw new Error(
+          t('console-app~non iso back and forth conversion, some fields in YAML would be lost.'),
+        );
       }
     }
   };
@@ -97,6 +99,7 @@ export const CreateNetworkPolicy: React.FC<{
         onChange={checkPolicyValidForForm}
         YAMLEditor={YAMLEditor}
         lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+        displayConversionError
       />
     </>
   );
