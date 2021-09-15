@@ -214,14 +214,15 @@ func (p *Proxy) HandleTerminalInstalledNamespace(w http.ResponseWriter, r *http.
 		return
 	}
 
-	subscription, err := GetWebTerminalSubscriptions()
+	subscription, err := getWebTerminalSubscriptions()
 	if err != nil {
 		klog.Errorf("Failed to check the web terminal subscription: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
-	operatorNamespace, err := GetWebTerminalNamespace(subscription)
+	operatorNamespace, err := getWebTerminalNamespace(subscription)
 	if err != nil {
 		klog.Errorf("Failed to get the namespace of the web terminal subscription: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
