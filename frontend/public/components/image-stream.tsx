@@ -111,7 +111,7 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
         {from && referencesTag && (
           <ResourceLink
             kind={ImageStreamTagsReference}
-            name={getImageStreamTagName(imageStream.metadata.name, from.name)}
+            name={from.name}
             namespace={imageStream.metadata.namespace}
             title={from.name}
           />
