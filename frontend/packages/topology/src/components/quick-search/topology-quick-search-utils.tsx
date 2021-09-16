@@ -36,7 +36,7 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
             label: t('topology~Start'),
           },
           icon: {
-            url: qs.spec.icon,
+            url: qs.spec.icon as string,
           },
           description,
         };
