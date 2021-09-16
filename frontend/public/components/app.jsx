@@ -299,6 +299,7 @@ const CaptureTelemetry = React.memo(() => {
 const PollConsoleUpdates = React.memo(() => {
   const toastContext = useToast();
   const { t } = useTranslation();
+  const [isToastOpen, setToastOpen] = React.useState(false);
   const [pluginsData, pluginsError] = useURLPoll(
     `${window.SERVER_FLAGS.basePath}api/check-updates`,
   );
@@ -313,7 +314,7 @@ const PollConsoleUpdates = React.memo(() => {
   const pluginsChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
   const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
 
-  if (pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
+  if (!isToastOpen && pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
     toastContext.addToast({
       variant: AlertVariant.warning,
       title: t('public~Web console update is available'),
@@ -329,7 +330,10 @@ const PollConsoleUpdates = React.memo(() => {
           callback: () => window.location.reload(),
         },
       ],
+      onClose: () => setToastOpen(false),
+      onRemove: () => setToastOpen(false),
     });
+    setToastOpen(true);
   }
 
   return null;
