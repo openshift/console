@@ -6,7 +6,6 @@ import {
   OS_IMAGES_NS,
   TEMPLATE,
   TEST_PROVIDER,
-  VM_STATUS,
 } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { addSource } from '../../views/add-source';
@@ -55,7 +54,6 @@ describe('test vm template source image', () => {
       pvcName: testName,
       pvcNamespace: 'default',
     });
-    virtualization.templates.testSource(template.name, VM_STATUS.Cloning);
     virtualization.templates.testSource(template.name, TEST_PROVIDER);
     virtualization.templates.deleteSource(template.metadataName);
     virtualization.templates.testSource(template.name, ADD_SOURCE);

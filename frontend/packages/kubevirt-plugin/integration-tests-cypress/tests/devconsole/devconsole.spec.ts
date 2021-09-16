@@ -8,12 +8,7 @@ import {
   VM_ACTION,
   VM_STATUS,
 } from '../../utils/const/index';
-import {
-  detailViewAction,
-  detailViewDropdown,
-  modalTitle,
-  selectActionFromDropdown,
-} from '../../views/actions';
+import { detailViewAction, selectActionFromDropdown } from '../../views/actions';
 import { alertTitle, confirmCloneButton } from '../../views/clone';
 import {
   addHeader,
@@ -21,7 +16,7 @@ import {
   switchPerspective,
   topologyHeader,
 } from '../../views/dev-perspective';
-import { detailsTab } from '../../views/selector';
+import { actionButtons, detailsTab, modalTitle } from '../../views/selector';
 import { waitForStatus } from '../../views/vm';
 
 const template = TEMPLATE.RHEL6;
@@ -141,7 +136,7 @@ describe('test dev console', () => {
     });
 
     it('ID(CNV-5702) clone vm', () => {
-      selectActionFromDropdown(VM_ACTION.Clone, detailViewDropdown);
+      selectActionFromDropdown(VM_ACTION.Clone, actionButtons.actionDropdownButton);
       cy.get(modalTitle)
         .contains('Clone Virtual Machine')
         .should('exist');

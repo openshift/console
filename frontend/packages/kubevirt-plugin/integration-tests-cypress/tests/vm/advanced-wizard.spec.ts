@@ -76,6 +76,7 @@ describe('Test VM creation', () => {
     it(`Creates ${vmData.description}`, () => {
       cy.visitVMsList();
       vm.create(vmData, true);
+      vm.delete();
     });
   });
 

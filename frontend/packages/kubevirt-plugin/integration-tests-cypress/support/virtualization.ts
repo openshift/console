@@ -4,6 +4,7 @@ import { create, templateYAML, vmYAML } from '../views/selector-wizard';
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
+      loaded(): Chainable<Element>;
       visitVMsList(): Chainable<Element>;
       visitVMTemplatesList(): Chainable<Element>;
       filterByName(name: string): Chainable<Element>;
@@ -14,6 +15,10 @@ declare global {
 }
 
 // any command added below, must be added to global Cypress interface above
+//
+Cypress.Commands.add('loaded', () => {
+  cy.get('.loading-box.loading-box__loaded').should('be.visible');
+});
 
 Cypress.Commands.add('visitVMsList', () => {
   cy.clickNavLink(['Workloads', 'Virtualization']);
