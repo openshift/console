@@ -26,6 +26,7 @@ const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
 const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE || 'false';
 const REACT_REFRESH = process.env.REACT_REFRESH;
+const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
 
 /* Helpers */
@@ -78,13 +79,14 @@ const config: Configuration = {
         exclude: /node_modules\/(?!(bitbucket|ky)\/)/,
         use: [
           { loader: 'cache-loader' },
-          {
-            loader: 'thread-loader',
-            options: {
-              // Leave one core spare for fork-ts-checker-webpack-plugin
-              workers: require('os').cpus().length - 1,
-            },
-          },
+          // Disable thread-loader in CI
+          ...(!OPENSHIFT_CI
+            ? [
+                {
+                  loader: 'thread-loader',
+                },
+              ]
+            : []),
           ...(REACT_REFRESH
             ? [
                 {
@@ -133,7 +135,7 @@ const config: Configuration = {
             },
           },
           { loader: 'cache-loader' },
-          { loader: 'thread-loader' },
+          ...(!OPENSHIFT_CI ? [{ loader: 'thread-loader' }] : []),
           {
             loader: 'css-loader',
             options: {
