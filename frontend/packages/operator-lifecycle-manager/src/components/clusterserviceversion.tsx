@@ -85,6 +85,7 @@ import {
   PackageManifestKind,
   SubscriptionKind,
 } from '../types';
+import { upgradeRequiresApproval } from '../utils';
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../const';
 import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
@@ -93,7 +94,6 @@ import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import {
   SubscriptionDetails,
   catalogSourceForSubscription,
-  upgradeRequiresApproval,
   UpgradeApprovalLink,
 } from './subscription';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';

@@ -46,6 +46,7 @@
   "Pending": "Pending",
   "Degraded": "Degraded",
   "Loading": "Loading",
+  "Upgrade available": "Upgrade available",
   "{{title}} breakdown": "{{title}} breakdown",
   "Total capacity": "Total capacity",
   "Total limit": "Total limit",
