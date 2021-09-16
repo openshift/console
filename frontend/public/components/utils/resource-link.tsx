@@ -46,7 +46,7 @@ export const resourcePathFromModel = (model: K8sKind, name?: string, namespace?:
   return url;
 };
 
-export const resourceListPathFromModel = (model: K8sKind, namespace: string) =>
+export const resourceListPathFromModel = (model: K8sKind, namespace?: string) =>
   resourcePathFromModel(model, null, namespace);
 
 /**

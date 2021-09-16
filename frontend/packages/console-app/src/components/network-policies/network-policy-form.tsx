@@ -61,6 +61,7 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState('');
   const [showSDNAlert, setShowSDNAlert] = React.useState(true);
+  const podsPreviewPopoverRef = React.useRef();
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setNetworkPolicy({ ...networkPolicy, name: event.currentTarget.value });
@@ -191,9 +192,17 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
           values={networkPolicy.podSelector}
           onChange={handleMainPodSelectorChange}
         />
+        <p>
+          {t('public~Show a preview of the')}{' '}
+          <Button ref={podsPreviewPopoverRef} variant="link" isInline>
+            {t('public~affected pods')}
+          </Button>{' '}
+          {t('that this policy will apply to')}
+        </p>
         <NetworkPolicySelectorPreview
           policyNamespace={networkPolicy.namespace}
           podSelector={networkPolicy.podSelector}
+          popoverRef={podsPreviewPopoverRef}
         />
       </div>
       <div className="form-group co-create-networkpolicy__type">
