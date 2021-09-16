@@ -5,6 +5,11 @@
  */
 /* eslint-disable no-console */
 
+function isWSReconnectDisabled() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('disable-ws-reconnect') === 'true';
+}
+
 function createURL(host, path) {
   let url;
 
@@ -53,11 +58,13 @@ export function WSFactory(id, options) {
 }
 
 WSFactory.prototype._reconnect = function() {
-  if (this._connectionAttempt || this._state === 'destroyed') {
+  const wsReconnectDisabled = isWSReconnectDisabled();
+  if (wsReconnectDisabled || this._connectionAttempt || this._state === 'destroyed') {
     return;
   }
 
-  let delay = 1000;
+  // Initial delay between 1 and 3 seconds (scaled by 1.5)
+  let delay = Math.round(Math.random() * 2 + 1) * 1000;
 
   const attempt = () => {
     if (!this.options.reconnect || this._state === 'open') {

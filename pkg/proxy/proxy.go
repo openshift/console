@@ -17,7 +17,8 @@ import (
 )
 
 var websocketPingInterval = 30 * time.Second
-var websocketTimeout = 30 * time.Second
+var websocketPongTimeout = 34 * time.Second
+var websocketWriteTimeout = 30 * time.Second
 
 type Config struct {
 	HeaderBlacklist []string
@@ -262,7 +263,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case <-ticker.C:
 			writeMutex.Lock()
 			// Send pings to client to prevent load balancers and other middlemen from closing the connection early
-			err := frontend.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(websocketTimeout))
+			err := frontend.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(websocketWriteTimeout))
 			writeMutex.Unlock()
 			if err != nil {
 				return
@@ -272,6 +273,8 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func copyMsgs(writeMutex *sync.Mutex, dest, src *websocket.Conn) error {
+	src.SetReadDeadline(time.Now().Add(websocketPongTimeout))
+	src.SetPongHandler(func(string) error { src.SetReadDeadline(time.Now().Add(websocketPongTimeout)); return nil })
 	for {
 		messageType, msg, err := src.ReadMessage()
 		if err != nil {
