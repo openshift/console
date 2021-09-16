@@ -18,12 +18,18 @@ export const waitForStatus = (status: string) => {
       cy.contains(detailsTab.vmStatus, /^Running$/, {
         timeout: VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP,
       }).should('exist');
+      // wait for vmi appear
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
       break;
     }
     case VM_STATUS.Stopped: {
       cy.contains(detailsTab.vmStatus, VM_STATUS.Stopped, {
         timeout: VM_ACTION_TIMEOUT.VM_IMPORT,
       }).should('exist');
+      // wait for vmi disappear
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(15000);
       break;
     }
     case VM_STATUS.Starting: {
@@ -95,16 +101,12 @@ export const vm = {
     action(VM_ACTION.Start);
     waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000);
   },
   restart: () => {
     waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Restart);
     waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000);
   },
   stop: () => {
     waitForStatus(VM_STATUS.Running);

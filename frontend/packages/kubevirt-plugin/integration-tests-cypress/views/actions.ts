@@ -2,6 +2,7 @@ import { actionButtons, modalCancel, modalConfirm, modalTitle } from './selector
 
 export const selectActionFromDropdown = (action: string, selector: string) => {
   cy.byLegacyTestID(selector).click();
+  cy.contains(action).should('exist');
   cy.byTestActionID(action).click();
 };
 
