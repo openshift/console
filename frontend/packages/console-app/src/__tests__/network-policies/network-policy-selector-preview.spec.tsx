@@ -50,8 +50,6 @@ const setMockK8sWatchResource = (
 };
 
 describe('PodsPreview', () => {
-  const policyNamespace = 'ns1';
-
   beforeEach(() => {
     mockK8sWatchResource.mockClear();
   });
@@ -64,7 +62,7 @@ describe('PodsPreview', () => {
           ['foo', 'bar'],
           ['baz', 'bae'],
         ]}
-        namespace={policyNamespace}
+        namespace={'ns1'}
       />,
     );
 
@@ -78,7 +76,7 @@ describe('PodsPreview', () => {
         .text(),
     ).toMatch(/^List of pods matching foo=bar\s*baz=bae$/);
 
-    // Verify that there is a first entry for the namespace, with 5 subchildren: the maximum pods
+    // Verify that there is a first entry for the namespace, with 2 subchildren
     const ns = wrapper.find('TreeViewListItem[name="ns1"]');
     expect(ns.length).toBe(1);
     const pods = ns.children().find('TreeViewListItem');
@@ -113,9 +111,7 @@ describe('PodsPreview', () => {
 
   test('limits the number of previewed pods and shows a link to the complete list', () => {
     setMockK8sWatchResource(33, 1, { foo: 'bar' });
-    const wrapper = mount(
-      <PodsPreview podSelector={[['foo', 'bar']]} namespace={policyNamespace} />,
-    );
+    const wrapper = mount(<PodsPreview podSelector={[['foo', 'bar']]} namespace={'ns1'} />);
 
     // Verify that there is a first entry for the namespace, with only 5 pods
     const ns = wrapper.find('TreeViewListItem[name="ns1"]');
@@ -131,9 +127,9 @@ describe('PodsPreview', () => {
     expect(link.text()).toBe('View all 33 results');
   });
 
-  test('when the pod selector is empty, the "View all" link does not attach labels', () => {
+  test('when the pod selector is empty, the "View all" link does not add query labels', () => {
     setMockK8sWatchResource(77, 1, { foo: 'bar', baz: 'bae' });
-    const wrapper = mount(<PodsPreview podSelector={[]} namespace={policyNamespace} />);
+    const wrapper = mount(<PodsPreview podSelector={[]} namespace={'ns1'} />);
     const link = wrapper.find('a').findWhere((w) => w.render().prop('href') === '/k8s/ns/ns1/pods');
     expect(link.text()).toBe('View all 77 results');
   });
