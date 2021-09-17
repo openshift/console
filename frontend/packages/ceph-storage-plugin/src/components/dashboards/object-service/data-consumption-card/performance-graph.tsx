@@ -87,7 +87,7 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
             scale={{ x: 'time', y: 'linear' }}
             height={493}
             width={width}
-            padding={{ top: 15, bottom: 30, left: 40, right: 30 }}
+            padding={{ top: 15, bottom: 30, left: 60, right: 30 }}
             legendPosition="bottom-left"
             legendComponent={
               <ChartLegend
