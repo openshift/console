@@ -3,11 +3,9 @@ import { GraphElement } from '@patternfly/react-topology';
 import { Link } from 'react-router-dom';
 import { ResourceIcon, resourcePath } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 export const getWorkloadResourceLink = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
   const kindReference = referenceFor(resource);
   return (

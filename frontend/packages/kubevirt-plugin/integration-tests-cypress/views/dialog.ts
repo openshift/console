@@ -63,8 +63,12 @@ export const addDisk = (disk: Disk) => {
       .click();
   }
   if (Cypress.env('STORAGE_CLASS')) {
-    cy.get(diskDialog.storageClass).click();
-    cy.get(`#${Cypress.env('STORAGE_CLASS')}-link`).click({ force: true });
+    cy.get('body').then(($body) => {
+      if ($body.find(diskDialog.storageClass).length) {
+        cy.get(diskDialog.storageClass).click();
+        cy.get(`#${Cypress.env('STORAGE_CLASS')}-link`).click({ force: true });
+      }
+    });
   }
   if (disk.preallocation) {
     cy.contains('Enable preallocation').click();

@@ -785,7 +785,6 @@
   "The Migration Tool operator could not be installed because it is not available on the cluster": "无法安装 Migration Tool Operator，因为它在集群中不可用",
   "With Wizard": "使用向导",
   "With YAML": "使用 YAML",
-  "With Import wizard": "使用导入向导",
   "Template": "模板",
   "This Virtual Machine is migrating and cannot be started at the moment": "此虚拟机正在进行迁移，现在无法启动",
   "Open Console in New Window": "在新窗口中打开控制台",

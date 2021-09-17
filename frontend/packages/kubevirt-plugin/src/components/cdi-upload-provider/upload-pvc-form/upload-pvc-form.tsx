@@ -465,7 +465,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
             <Stack hasGutter>
               <StackItem>
                 <StorageClassDropdown
-                  name={t('kubevirt-plugin~Storage Class')}
+                  name={t('kubevirt-plugin~Storage class')}
                   onChange={(sc) => setStorageClassName(sc?.metadata?.name)}
                   data-test="storage-class-dropdown"
                 />

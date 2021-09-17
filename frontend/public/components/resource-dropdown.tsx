@@ -32,7 +32,6 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
   const [isOpen, setOpen] = React.useState(false);
   const [selectedOptions, setSelectedOptions] = React.useState(selected);
-  const [filterText, setFilterText] = React.useState<string>(null);
 
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
@@ -101,9 +100,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     .toArray();
 
   const onCustomFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event) {
-      setFilterText(event.target.value.toLowerCase());
-    }
+    const filterText = event?.target.value.toLocaleLowerCase();
     if (filterText === null || filterText === '') {
       return items;
     }
@@ -117,7 +114,6 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   };
 
   const onToggle = (newOpenState: boolean) => {
-    setFilterText(null);
     setOpen(newOpenState);
   };
 

@@ -1,5 +1,6 @@
 import { testName } from '../../support';
 import { K8S_KIND, TEMPLATE } from '../../utils/const/index';
+import { modalCancel } from '../../views/selector';
 import { virtualization } from '../../views/virtualization';
 import { wizard } from '../../views/wizard';
 
@@ -41,7 +42,7 @@ describe('test VM template support', () => {
   if (Cypress.env('DOWNSTREAM')) {
     it('shows support modal for community supported template', () => {
       virtualization.templates.testSupport(TEMPLATE.CENTOS7.name);
-      virtualization.templates.clickCreate(TEMPLATE.CENTOS7.os);
+      virtualization.templates.clickCreate(TEMPLATE.CENTOS7.name);
       cy.get('.ReactModal__Overlay').within(() => {
         cy.get('a').should('have.attr', 'href', 'https://www.centos.org');
         cy.byLegacyTestID('modal-cancel-action').click();
@@ -82,7 +83,7 @@ describe('test VM template support', () => {
       wizard.template.createTemplate(TEMPLATE_NAME, 'bar', true, TEMPLATE.RHEL8.os);
       virtualization.templates.testProvider(TEMPLATE_NAME, 'bar');
       virtualization.templates.testSource(TEMPLATE_NAME, 'bar');
-      virtualization.templates.testSupport(TEMPLATE_NAME, 'bar', 'Red Hat');
+      virtualization.templates.testSupport(TEMPLATE_NAME, 'bar');
       virtualization.templates.clickCreate(TEMPLATE_NAME);
       cy.get('.ReactModal__Overlay').should('not.exist');
     });
@@ -100,6 +101,7 @@ describe('test VM template support', () => {
       cy.get('.ReactModal__Overlay').within(() => {
         cy.byTestID('no-support-description').should('exist');
       });
+      cy.get(modalCancel).click();
     });
   }
 });

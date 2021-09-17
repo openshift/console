@@ -1,5 +1,6 @@
 import { TEST_PROVIDER } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
+import { storageClass } from './selector';
 
 export const provisionSourceInputs = {
   [ProvisionSource.URL.getValue()]: '#provision-source-url',
@@ -44,10 +45,11 @@ export const addSource = {
           .contains('Advanced')
           .click(),
       );
-      cy.get('#form-ds-sc-select').click();
-      cy.get('.pf-c-select__menu')
+      cy.get(storageClass.dropdown).click();
+      cy.get(storageClass.selectMenu)
         .contains(Cypress.env('STORAGE_CLASS'))
         .click();
+      cy.contains('Access mode').should('exist');
     }
     cy.get('#confirm-action').should('not.be.disabled');
     cy.get('#confirm-action').click();

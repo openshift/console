@@ -76,7 +76,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     { title: t('kubevirt-plugin~Source') },
     { title: t('kubevirt-plugin~Size') },
     { title: t('kubevirt-plugin~Interface') },
-    { title: t('kubevirt-plugin~Storage Class') },
+    { title: t('kubevirt-plugin~Storage class') },
     { title: t('kubevirt-plugin~Access Mode') },
     { title: t('kubevirt-plugin~Volume Mode') },
   ];

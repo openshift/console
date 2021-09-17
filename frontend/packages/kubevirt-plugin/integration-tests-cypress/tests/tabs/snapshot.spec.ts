@@ -46,7 +46,7 @@ describe('Test vm snapshot', () => {
       cy.get(snapshotView.status(snapshotName)).contains(STATUS_READY);
 
       // verify restore is disabled while VM is running
-      cy.get(snapshotView.restoreBtn(snapshotName)).should('be.disabled');
+      cy.get(snapshotView.restoreBtn(snapshotName)).should('have.attr', 'aria-disabled', 'true');
 
       tab.navigateToDetails();
       vm.stop();
@@ -56,6 +56,7 @@ describe('Test vm snapshot', () => {
         .should('be.visible');
 
       // restore snapshot
+      cy.get(snapshotView.restoreBtn(snapshotName)).should('have.attr', 'aria-disabled', 'false');
       snapshotView.restoreSnapshot(snapshotName);
       cy.get(snapshotView.lastRestored(snapshotName)).contains('Just now');
 

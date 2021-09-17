@@ -2,6 +2,10 @@ export const OS_IMAGES_NS = Cypress.env('DOWNSTREAM')
   ? 'openshift-virtualization-os-images'
   : 'kubevirt-os-images';
 
+export const IMAGE_URL = Cypress.env('DOWNSTREAM')
+  ? 'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/cirros-images/cirros-0.4.0-x86_64-disk.raw.xz'
+  : 'https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img';
+
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
 export const EXPECT_LOGIN_SCRIPT_PATH = './utils/expect-login.sh';

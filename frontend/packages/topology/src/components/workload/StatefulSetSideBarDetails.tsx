@@ -4,7 +4,6 @@ import { ResourceSummary } from '@console/internal/components/utils';
 import { StatefulSetModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 type StatefulSetSideBarDetailsProps = {
@@ -21,7 +20,6 @@ const StatefulSetSideBarDetails: React.FC<StatefulSetSideBarDetailsProps> = ({ s
 );
 
 export const getStatefulSetSideBarDetails = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
   if (resource.kind !== StatefulSetModel.kind) return undefined;
   return <StatefulSetSideBarDetails ss={resource} />;

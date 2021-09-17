@@ -2,7 +2,7 @@ import { VirtualMachineData } from '../types/vm';
 import { TEMPLATE_SUPPORT } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
 import { addDisk, addNIC } from './dialog';
-import { modalTitle, modalConfirm, storageClass } from './selector';
+import { modalCancel, modalTitle, modalConfirm, storageClass } from './selector';
 import * as wizardView from './selector-wizard';
 
 const fillBootSource = (
@@ -15,6 +15,8 @@ const fillBootSource = (
   cy.get(wizardView.selectMenu)
     .contains(provisionSource.getDescription())
     .click({ force: true });
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(1000);
   switch (provisionSource) {
     case ProvisionSource.URL: {
       cy.get(wizardView.sourceURL).type(provisionSource.getSource());
@@ -44,7 +46,9 @@ const fillBootSource = (
       break;
     }
     case ProvisionSource.REGISTRY: {
-      cy.get(wizardView.sourceRegistry).type(provisionSource.getSource());
+      cy.get(wizardView.sourceRegistry)
+        .clear()
+        .type(provisionSource.getSource());
       if (pvcSize) {
         cy.get(wizardView.pvcSize)
           .clear()
@@ -83,16 +87,14 @@ export const wizard = {
         cy.get(wizardView.cdrom).click();
       }
       if (Cypress.env('STORAGE_CLASS')) {
-        cy.get(storageClass.advanced).within(() =>
-          cy
-            .get('button')
-            .contains('Advanced')
-            .click(),
-        );
+        cy.get(storageClass.advanced)
+          .find('.pf-c-expandable-section__toggle-icon')
+          .click();
         cy.get(storageClass.dropdown).click();
         cy.get(storageClass.selectMenu)
           .contains(Cypress.env('STORAGE_CLASS'))
           .click();
+        cy.contains('Access mode').should('exist');
       }
       cy.get(wizardView.next).click();
     },
@@ -121,6 +123,7 @@ export const wizard = {
       }
       cy.get(wizardView.next).click();
       cy.get(wizardView.successList).click();
+      cy.loaded();
     },
     fillGeneralForm: (vmData: VirtualMachineData) => {
       const {
@@ -163,6 +166,8 @@ export const wizard = {
           .contains(flavor)
           .click();
       }
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
       cy.get(wizardView.nextBtn).click();
     },
     fillNetworkForm: (vmData: VirtualMachineData) => {
@@ -178,7 +183,20 @@ export const wizard = {
       cy.get(wizardView.nextBtn).click();
     },
     fillStorageForm: (vmData: VirtualMachineData) => {
-      const { disks } = vmData;
+      const { disks, provisionSource } = vmData;
+      if (Cypress.env('STORAGE_CLASS') && provisionSource !== ProvisionSource.CLONE_PVC) {
+        cy.get(wizardView.rootdisk)
+          .find(wizardView.kebabBtn)
+          .click();
+        cy.get('[data-test-action="Edit"]').click();
+        cy.get(storageClass.dropdown).click();
+        cy.get(storageClass.selectMenu)
+          .contains(Cypress.env('STORAGE_CLASS'))
+          .click();
+        cy.contains('Access mode').should('exist');
+        cy.get(modalConfirm).click();
+        cy.get(modalCancel).should('not.exist');
+      }
       if (disks !== undefined) {
         disks.forEach((disk) => {
           addDisk(disk);
@@ -238,6 +256,7 @@ export const wizard = {
       });
       cy.get(wizardView.nextBtn).click();
       cy.get(wizardView.successList).click();
+      cy.loaded();
     },
   },
   template: {

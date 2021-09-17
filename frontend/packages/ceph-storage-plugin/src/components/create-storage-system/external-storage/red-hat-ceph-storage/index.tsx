@@ -8,7 +8,7 @@ import { PodModel, SecretModel } from '@console/internal/models';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 import { K8sKind } from 'packages/console-dynamic-plugin-sdk/src';
 import { RHCSState, CanGoToNextStep, CreatePayload, ExternalComponentProps } from '../types';
-import { CEPH_STORAGE_NAMESPACE, IP_FAMILY, ODF_OPERATOR } from '../../../../constants';
+import { CEPH_STORAGE_NAMESPACE, IP_FAMILY, OCS_OPERATOR } from '../../../../constants';
 import {
   checkError,
   createDownloadFile,
@@ -37,7 +37,7 @@ export const ConnectionDetails: React.FC<ExternalComponentProps<RHCSState>> = ({
 }) => {
   const { t } = useTranslation();
   const [pods, podsLoaded, podsLoadError] = useK8sGet<ListKind<PodKind>>(PodModel);
-  const [csv, csvLoaded, csvLoadError] = useFetchCsv(ODF_OPERATOR, CEPH_STORAGE_NAMESPACE);
+  const [csv, csvLoaded, csvLoadError] = useFetchCsv(OCS_OPERATOR, CEPH_STORAGE_NAMESPACE);
 
   const { fileName, fileData, errorMessage, isLoading } = formState;
 

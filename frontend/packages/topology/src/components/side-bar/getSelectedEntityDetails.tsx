@@ -4,7 +4,6 @@ import {
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
 } from '@console/helm-plugin/src/topology/components/const';
-import TopologyHelmWorkloadPanel from '@console/helm-plugin/src/topology/TopologyHelmWorkloadPanel';
 import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
 import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
 import {
@@ -54,7 +53,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       return <TopologyKafkaPanel item={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
-      return <TopologyHelmWorkloadPanel item={selectedEntity.getData() as TopologyDataObject} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
       return (

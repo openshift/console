@@ -1878,6 +1878,7 @@
     "@patternfly/react-icons" "^4.11.14"
     "@patternfly/react-styles" "^4.11.13"
     "@patternfly/react-tokens" "^4.12.15"
+
     focus-trap "6.2.2"
     react-dropzone "9.0.0"
     tippy.js "5.1.2"

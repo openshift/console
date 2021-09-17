@@ -122,7 +122,7 @@
   {
     "type": "console.topology/details/resource-link",
     "properties": {
-      "priority": 50,
+      "priority": 0,
       "link": { "$codeRef": "workload.getWorkloadResourceLink" }
     }
   },
