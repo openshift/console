@@ -21,6 +21,7 @@ export const DASHBOARD_LINK = '/dashboards/persistent-storage';
 export const AVAILABLE = 'Available';
 export const OSD_REMOVAL_TEMPLATE = 'ocs-osd-removal';
 export const PVC_PROVISIONER_ANNOTATION = 'volume.beta.kubernetes.io/storage-provisioner';
+export const ODF_MANAGED_LABEL = 'odf-managed-service';
 export const dropdownUnits = {
   GiB: 'Gi',
   TiB: 'Ti',
