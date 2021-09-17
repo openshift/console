@@ -5,15 +5,15 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "clean": "rm -rf ./dist",
-    "build": "yarn clean && yarn validate && yarn generate && yarn tsc",
+    "clean": "rm -rf dist generated",
+    "build": "yarn clean && yarn validate && yarn compile && yarn generate",
+    "compile": "for ext in '' '-internal' '-webpack' ; do yarn tsc -p tsconfig${ext}.json ; done",
     "generate": "yarn generate-schema && yarn generate-doc && yarn generate-pkg-assets",
-    "generate-schema": "yarn ts-node ./scripts/generate-schema.ts",
-    "generate-doc": "yarn ts-node ./scripts/generate-doc.ts",
-    "generate-pkg-assets": "yarn ts-node ./scripts/generate-pkg-assets.ts",
-    "validate": "yarn ts-node ./scripts/validate-extensions.ts",
-    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
-    "publish": "yarn build && yarn publish dist --no-git-tag-version"
+    "generate-schema": "yarn ts-node scripts/generate-schema.ts",
+    "generate-doc": "yarn ts-node scripts/generate-doc.ts",
+    "generate-pkg-assets": "yarn ts-node scripts/generate-pkg-assets.ts",
+    "validate": "yarn ts-node scripts/validate-extensions.ts",
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
     "@types/ejs": "3.x",

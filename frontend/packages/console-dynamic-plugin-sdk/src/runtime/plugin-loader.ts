@@ -5,7 +5,7 @@ import { PluginStore } from '@console/plugin-sdk/src/store';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
-import { overrideSharedModules } from '../shared-modules';
+import { overrideSharedModules } from '../shared-modules-override';
 import { RemoteEntryModule } from '../types';
 import { resolveURL } from '../utils/url';
 import { fetchPluginManifest } from './plugin-manifest';

@@ -8,7 +8,7 @@ import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import { sharedVendorModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { getSharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
@@ -32,7 +32,7 @@ const WDS_PORT = 8080;
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
 const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-const sharedVendorTest = new RegExp(`node_modules\\/(${sharedVendorModules.join('|')})\\/`);
+const sharedPluginTest = new RegExp(`node_modules\\/(${getSharedPluginModules().join('|')})\\/`);
 
 const config: Configuration = {
   entry: [
@@ -69,7 +69,7 @@ const config: Configuration = {
     rules: [
       {
         // Disable tree shaking on modules shared with Console dynamic plugins
-        test: sharedVendorTest,
+        test: sharedPluginTest,
         sideEffects: true,
       },
       { test: /\.glsl$/, loader: 'raw!glslify' },
