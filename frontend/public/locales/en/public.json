@@ -1456,7 +1456,7 @@
   "Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to \"Delete\"": "Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to \"Delete\"",
   "Volume binding mode": "Volume binding mode",
   "Select volume binding mode": "Select volume binding mode",
-  "Determines when persistent volume claims will be provisioned and bound. Defaults to \"WaitForFirstConsumer\"": "Determines when persistent volume claims will be provisioned and bound. Defaults to \"WaitForFirstConsumer\"",
+  "Determines when persistent volume claims will be provisioned and bound. Defaults to \"Immediate\"": "Determines when persistent volume claims will be provisioned and bound. Defaults to \"Immediate\"",
   "Provisioner": "Provisioner",
   "Select Provisioner": "Select Provisioner",
   "Determines what volume plugin is used for provisioning PersistentVolumes.": "Determines what volume plugin is used for provisioning PersistentVolumes.",

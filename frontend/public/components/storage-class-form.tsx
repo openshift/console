@@ -49,7 +49,7 @@ const defaultState = {
     type: null,
     parameters: {},
     reclaim: null,
-    volumeBindingMode: 'WaitForFirstConsumer',
+    volumeBindingMode: 'Immediate',
     expansion: true,
   },
   customParams: [['', '']],
@@ -995,7 +995,7 @@ class StorageClassFormWithTranslation extends React.Component<
     const reclaimPolicyKey =
       newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
     const volumeBindingModeKey =
-      newStorageClass.volumeBindingMode || this.volumeBindingModes.WaitForFirstConsumer;
+      newStorageClass.volumeBindingMode || this.volumeBindingModes.Immediate;
     const expansionFlag =
       newStorageClass.type && this.storageTypes[newStorageClass.type].allowVolumeExpansion;
     const allowExpansion = expansionFlag ? newStorageClass.expansion : false;
@@ -1078,7 +1078,7 @@ class StorageClassFormWithTranslation extends React.Component<
             />
             <span className="help-block">
               {t(
-                'public~Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
+                'public~Determines when persistent volume claims will be provisioned and bound. Defaults to "Immediate"',
               )}
             </span>
           </div>
