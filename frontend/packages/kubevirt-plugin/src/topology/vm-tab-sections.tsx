@@ -22,8 +22,12 @@ export const getVmSidePanelDetailsTabSection = (element: GraphElement) => {
 };
 
 const usePodsAdapterForVm = (resource: K8sResourceCommon): PodsAdapterDataType => {
-  const { podData: { pods = [] } = {}, loaded, loadError } = usePodsForVm(resource);
-  return { pods, loaded, loadError };
+  const { podData, loaded, loadError } = usePodsForVm(resource);
+  return React.useMemo(() => ({ pods: podData?.pods ?? [], loaded, loadError }), [
+    loadError,
+    loaded,
+    podData,
+  ]);
 };
 
 export const getVmSidePanelPodsAdapter = (
