@@ -1870,10 +1870,10 @@
     xterm "^4.8.1"
     xterm-addon-fit "^0.2.1"
 
-"@patternfly/react-core@4.147.2":
-  version "4.147.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-4.147.2.tgz#b127a746dbddffbb3a1a9de896f9bcc51fae664d"
-  integrity sha512-XbWiI2HhU6u72WkFa+scg6ny6NE4/3A79SwKsCQzcVKT8Nv49UAQsvVX31TKEIT1rQIkUzhgMFtcoe3Kk5SR6A==
+"@patternfly/react-core@4.148.1":
+  version "4.148.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-4.148.1.tgz#456268f00a48b0d80f39296dd88d59e3200c9d03"
+  integrity sha512-jDYJ9N4NFJKbTKE+cy/MRf2m2T/cPPkwAH0ZucvlhlawLC6riyZLEjpuK4l24unXh5ESMtGFDrBLdImoxErs3w==
   dependencies:
     "@patternfly/react-icons" "^4.11.8"
     "@patternfly/react-styles" "^4.11.8"

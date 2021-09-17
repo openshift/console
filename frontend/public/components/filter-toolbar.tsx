@@ -298,6 +298,10 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   deleteChip={(filter, chip: ToolbarChip) => updateRowFilterSelected([chip.key])}
                   categoryName={key}
                   deleteChipGroup={() => clearAllRowFilter(key)}
+                  chipGroupCollapsedText={t('public~{{numRemaining}} more', {
+                    numRemaining: '${remaining}',
+                  })}
+                  chipGroupExpandedText={t('public~Show less')}
                 >
                   {acc}
                 </ToolbarFilter>
