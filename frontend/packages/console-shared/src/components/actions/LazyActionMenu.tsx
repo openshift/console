@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { MenuToggle } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { Menu, Popper, MenuContent, MenuList } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils';
 import ActionServiceProvider from './ActionServiceProvider';
-import ActionMenuRenderer from './menu/ActionMenuRenderer';
+import ActionMenuContent from './menu/ActionMenuContent';
+import ActionMenuToggle from './menu/ActionMenuToggle';
 import { ActionContext, ActionMenuVariant } from './types';
 
 type LazyActionMenuProps = {
@@ -16,11 +15,22 @@ type LazyActionMenuProps = {
   isDisabled?: boolean;
 };
 
-type LazyRendererProps = {
+type LazyMenuRendererProps = {
+  isOpen: boolean;
   actions: Action[];
-} & React.ComponentProps<typeof ActionMenuRenderer>;
+  containerRef: React.RefObject<HTMLDivElement>;
+  menuRef: React.RefObject<HTMLDivElement>;
+  toggleRef: React.RefObject<HTMLButtonElement>;
+} & React.ComponentProps<typeof ActionMenuContent>;
 
-const LazyRenderer: React.FC<LazyRendererProps> = ({ actions, ...restProps }) => {
+const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
+  isOpen,
+  actions,
+  containerRef,
+  menuRef,
+  toggleRef,
+  ...restProps
+}) => {
   React.useEffect(() => {
     // Check access after loading actions from service over a kebab to minimize flicker when opened.
     // This depends on `checkAccess` being memoized.
@@ -31,7 +41,26 @@ const LazyRenderer: React.FC<LazyRendererProps> = ({ actions, ...restProps }) =>
     });
   }, [actions]);
 
-  return <ActionMenuRenderer {...restProps} />;
+  const menu = (
+    <Menu ref={menuRef} containsFlyout onSelect={restProps.onClick}>
+      <MenuContent data-test-id="action-items" translate="no">
+        <MenuList>
+          <ActionMenuContent {...restProps} />
+        </MenuList>
+      </MenuContent>
+    </Menu>
+  );
+
+  return (
+    <Popper
+      reference={toggleRef}
+      popper={menu}
+      placement="bottom-end"
+      isVisible={isOpen}
+      appendTo={containerRef.current}
+      popperMatchesTriggerWidth={false}
+    />
+  );
 };
 
 const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
@@ -40,25 +69,14 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
   label,
   isDisabled,
 }) => {
-  const { t } = useTranslation();
-  const isKebabVariant = variant === ActionMenuVariant.KEBAB;
-  const [active, setActive] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [initActionLoader, setInitActionLoader] = React.useState<boolean>(false);
-  const toggleRef = React.useRef<HTMLButtonElement>();
-  const toggleRefCb = React.useCallback(() => toggleRef.current, []);
-  const toggleLabel = label || t('console-shared~Actions');
-
-  const toggleMenu = () => setActive((value) => !value);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const toggleRef = React.useRef<HTMLButtonElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const hideMenu = () => {
-    toggleRef.current?.focus();
-    setActive(false);
-  };
-
-  const handleRequestClose = (e?: MouseEvent) => {
-    if (!e || !toggleRef.current?.contains(e.target as Node)) {
-      hideMenu();
-    }
+    setIsOpen(false);
   };
 
   const handleHover = React.useCallback(() => {
@@ -66,32 +84,30 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
   }, []);
 
   return (
-    <div>
-      <MenuToggle
-        variant={variant}
-        innerRef={toggleRef}
-        isExpanded={active}
+    <div ref={containerRef}>
+      <ActionMenuToggle
+        isOpen={isOpen}
         isDisabled={isDisabled}
-        aria-expanded={active}
-        aria-label={toggleLabel}
-        aria-haspopup="true"
-        data-test-id={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
-        onClick={toggleMenu}
-        {...(isKebabVariant ? { onFocus: handleHover, onMouseEnter: handleHover } : {})}
-      >
-        {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
-      </MenuToggle>
+        toggleRef={toggleRef}
+        toggleVariant={variant}
+        toggleTitle={label}
+        menuRef={menuRef}
+        onToggleClick={setIsOpen}
+        onToggleHover={handleHover}
+      />
       {initActionLoader && (
         <ActionServiceProvider context={context}>
           {({ actions, options, loaded }) =>
             loaded && (
-              <LazyRenderer
+              <LazyMenuRenderer
+                isOpen={isOpen}
                 actions={actions}
-                open={!isDisabled && active}
                 options={options}
-                toggleRef={toggleRefCb}
+                containerRef={containerRef}
+                menuRef={menuRef}
+                toggleRef={toggleRef}
                 onClick={hideMenu}
-                onRequestClose={handleRequestClose}
+                focusItem={options[0]}
               />
             )
           }
