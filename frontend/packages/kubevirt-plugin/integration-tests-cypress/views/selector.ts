@@ -43,6 +43,7 @@ export const modalTitle = '[data-test-id="modal-title"]';
 export const modalConfirm = '[data-test="confirm-action"]';
 export const modalCancel = '[data-test-id="modal-cancel-action"]';
 export const startOnClone = 'input[id="clone-dialog-vm-start"]';
+export const saveAndRestart = '#save-and-restart';
 
 // alert
 export const alertTitle = '.pf-c-alert__title';

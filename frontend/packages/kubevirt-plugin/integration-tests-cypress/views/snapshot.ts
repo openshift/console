@@ -20,17 +20,20 @@ export const takeSnapshot = (name: string) => {
     .type(name);
   cy.get(approveCheckbox).click();
   cy.get(saveBtn).click();
+  cy.get(modalCancelBtn).should('not.exist');
 };
 
 export const restoreSnapshot = (name: string) => {
   cy.get(restoreBtn(name)).click();
   cy.get(modalConfirmBtn).click();
+  cy.get(modalCancelBtn).should('not.exist');
 };
 
 export const deleteSnapshot = () => {
   cy.get(kebabBtn).click();
   cy.get(deleteBtn).click();
   cy.get(modalConfirmBtn).click();
+  cy.get(modalCancelBtn).should('not.exist');
 };
 
 export const warningNoDisksFound = () => {

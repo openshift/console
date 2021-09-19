@@ -71,9 +71,6 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
 
   const extraProps = {
     onKeyDown: handleKeyDown,
-    // Override PF tabIndex -1 to make action items tabbable.
-    // This is needed to mimic older tabbable behavior since we do not use PF Menu component as a wrapper.
-    tabIndex: 0,
     ...(external ? { to: href, isExternalLink: external } : {}),
   };
 

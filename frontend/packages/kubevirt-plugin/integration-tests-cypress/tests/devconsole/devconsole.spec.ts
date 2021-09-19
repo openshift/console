@@ -8,12 +8,7 @@ import {
   VM_ACTION,
   VM_STATUS,
 } from '../../utils/const/index';
-import {
-  detailViewAction,
-  detailViewDropdown,
-  modalTitle,
-  selectActionFromDropdown,
-} from '../../views/actions';
+import { detailViewAction, selectActionFromDropdown } from '../../views/actions';
 import { alertTitle, confirmCloneButton } from '../../views/clone';
 import {
   addHeader,
@@ -21,7 +16,7 @@ import {
   switchPerspective,
   topologyHeader,
 } from '../../views/dev-perspective';
-import { detailsTab } from '../../views/selector';
+import { actionButtons, detailsTab, modalTitle } from '../../views/selector';
 import { waitForStatus } from '../../views/vm';
 
 const template = TEMPLATE.RHEL6;
@@ -79,15 +74,12 @@ describe('test dev console', () => {
   });
 
   describe('review vm tabs', () => {
-    after(() => {
-      cy.get('button[type="button"]')
-        .contains('Details')
-        .click();
-    });
-
     it('ID(CNV-5700) review details tab', () => {
       cy.byLegacyTestID('base-node-handler').click();
       cy.get('.odc-resource-icon-virtualmachine').click();
+      cy.get('.co-m-horizontal-nav__menu-item')
+        .contains('Details')
+        .click();
 
       waitForStatus(VM_STATUS.Running);
 
@@ -99,7 +91,7 @@ describe('test dev console', () => {
 
     it('ID(CNV-5701) review resources tab', () => {
       // navigate to resource tab
-      cy.get('button[type="button"]')
+      cy.get('.co-m-horizontal-nav__menu-item')
         .contains('Resources')
         .click();
 
@@ -110,11 +102,15 @@ describe('test dev console', () => {
 
   describe('vm actions in devconsole', () => {
     beforeEach(() => {
+      cy.byLegacyTestID(addHeader).click();
       cy.byLegacyTestID(topologyHeader).click();
       cy.byLegacyTestID('base-node-handler').click();
     });
 
     it('ID(CNV-5702) restart vm', () => {
+      cy.get('.co-m-horizontal-nav__menu-item')
+        .contains('Details')
+        .click();
       waitForStatus(VM_STATUS.Running);
 
       detailViewAction(VM_ACTION.Restart);
@@ -134,6 +130,7 @@ describe('test dev console', () => {
 
     it('ID(CNV-5702) migrate vm', () => {
       if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
+        waitForStatus(VM_STATUS.Running);
         detailViewAction(VM_ACTION.Migrate);
         waitForStatus(VM_STATUS.Migrating);
         waitForStatus(VM_STATUS.Running);
@@ -141,7 +138,7 @@ describe('test dev console', () => {
     });
 
     it('ID(CNV-5702) clone vm', () => {
-      selectActionFromDropdown(VM_ACTION.Clone, detailViewDropdown);
+      selectActionFromDropdown(VM_ACTION.Clone, actionButtons.actionDropdownButton);
       cy.get(modalTitle)
         .contains('Clone Virtual Machine')
         .should('exist');
