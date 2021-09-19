@@ -1,3 +1,5 @@
+import yamlParser from 'js-yaml';
+import { isEmpty, omit } from 'lodash';
 import { CLOUDINIT_DISK } from '../../../../../../constants/vm';
 import { DiskBus, DiskType, VolumeType } from '../../../../../../constants/vm/storage';
 import { CloudInitDataHelper } from '../../../../../../k8s/wrapper/vm/cloud-init-data-helper';
@@ -7,6 +9,18 @@ import { prefixedID } from '../../../../../../utils';
 import { iGet, toJS, toShallowJS } from '../../../../../../utils/immutable';
 import { VMWizardStorageType } from '../../../../types';
 import { cloudInitActions } from '../redux/actions';
+
+const cleanUserData = (userData: string): string => {
+  try {
+    const userDataJS = userData && yamlParser.load(userData);
+    if (isEmpty(userDataJS?.ssh_authorized_keys?.[0])) {
+      return yamlParser.dump(omit(userDataJS, 'ssh_authorized_keys'));
+    }
+  } catch (e) {
+    console.log(e?.message); // eslint-disable-line no-console
+  }
+  return userData;
+};
 
 export const onDataChanged = (
   userData: string,
@@ -27,7 +41,10 @@ export const onDataChanged = (
     return;
   }
 
-  const typeData = CloudInitDataHelper.toCloudInitNoCloudSource(userData, encodeDataToBase64);
+  const typeData = CloudInitDataHelper.toCloudInitNoCloudSource(
+    cleanUserData(userData),
+    encodeDataToBase64,
+  );
 
   if (!iCloudInitStorage) {
     dispatch(
