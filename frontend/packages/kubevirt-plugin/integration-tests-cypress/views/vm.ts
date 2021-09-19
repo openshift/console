@@ -7,7 +7,7 @@ import {
   VMI_ACTION,
 } from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
-import { detailsTab, createVMBtn, nameFilter, templateLink } from './selector';
+import { detailsTab, disksTab, createVMBtn, nameFilter, templateLink } from './selector';
 import { customizeBtn } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
@@ -167,4 +167,9 @@ export const vm = {
       wizardFlow(vmData);
     }
   },
+};
+
+export const waitForVMStatusLabel = (status: string, timeout?: number) => {
+  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
+  cy.contains(disksTab.currVMStatusLbl, status, { timeout: timeOut }).should('exist');
 };
