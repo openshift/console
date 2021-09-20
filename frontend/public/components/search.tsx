@@ -242,6 +242,10 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                 }))}
                 deleteChip={updateNewItems}
                 categoryName={t('public~Resource')}
+                chipGroupCollapsedText={t('public~{{numRemaining}} more', {
+                  numRemaining: '${remaining}',
+                })}
+                chipGroupExpandedText={t('public~Show less')}
               >
                 <ResourceListDropdown
                   selected={[...selectedItems]}
