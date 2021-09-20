@@ -7,7 +7,7 @@ import { Dropdown } from '@console/internal/components/utils';
 import { NetworkPolicyPort } from './network-policy-model';
 
 export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps> = (props) => {
-  const { direction, ports, onChange } = props;
+  const { ports, onChange } = props;
   const { t } = useTranslation();
 
   const onSingleChange = (port: NetworkPolicyPort, index: number) => {
@@ -20,13 +20,6 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
 
   return (
     <>
-      <div className="form-group co-create-networkpolicy__ports-type">
-        <label>
-          {direction === 'ingress'
-            ? t('console-app~Allow traffic to')
-            : t('console-app~Allow traffic from')}
-        </label>
-      </div>
       {
         <div className="form-group co-create-networkpolicy__ports-list">
           <label>{t('console-app~Ports')}</label>
@@ -95,7 +88,6 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
 };
 
 type NetworkPolicyPortsProps = {
-  direction: 'ingress' | 'egress';
   ports: NetworkPolicyPort[];
   onChange: (ports: NetworkPolicyPort[]) => void;
 };
