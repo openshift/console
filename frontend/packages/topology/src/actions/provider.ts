@@ -43,7 +43,7 @@ export const useApplicationPanelActionProvider = (element: GraphElement) => {
 };
 
 export const useTopologyVisualConnectorActionProvider = (element: Edge) => {
-  const resource = getResource(element.getSource());
+  const resource = getResource(element.getSource?.());
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource ?? {}));
   const actions = useMemo(() => {
     if (!kindObj || element.getType() !== TYPE_CONNECTS_TO) return undefined;
