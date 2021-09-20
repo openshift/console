@@ -141,18 +141,29 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   );
 };
 
+type FormEditorProps = {
+  formData?: K8sResourceKind;
+  onChange?: (data: K8sResourceKind) => void;
+  prune?: (data: K8sResourceKind) => any;
+};
+
+type YAMLEditorProps = {
+  initialYAML?: string;
+  onChange?: (yaml: string) => void;
+};
+
 type SyncedEditorProps = {
   context: {
     formContext: { [key: string]: any };
     yamlContext: { [key: string]: any };
   };
-  FormEditor: React.ElementType<any>;
+  FormEditor: React.ComponentType<FormEditorProps>;
   initialType?: EditorType;
   initialData?: K8sResourceKind;
   onChangeEditorType?: (newType: EditorType) => void;
   onChange?: (data: K8sResourceKind) => void;
   prune?: (data: K8sResourceKind) => any;
-  YAMLEditor: React.ElementType<any>;
+  YAMLEditor: React.ComponentType<YAMLEditorProps>;
   lastViewUserSettingKey: string;
   displayConversionError?: boolean;
 };
