@@ -362,8 +362,7 @@ graphQLReady.onReady(() => {
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
-    const { stack } = error;
-    const formattedStack = stack?.replace(/\\n/g, '\n');
+    const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     window.windowError = `unhandled error: ${message} ${formattedStack || ''}`;
     // eslint-disable-next-line no-console
     console.error(window.windowError);
