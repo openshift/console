@@ -1,13 +1,7 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { operators, switchPerspective } from '../../constants';
-import {
-  perspective,
-  operatorsPage,
-  installOperator,
-  verifyAndInstallKnativeOperator,
-  verifyAndInstallPipelinesOperator,
-} from '../../pages';
+import { perspective, operatorsPage, installOperator, verifyAndInstallOperator } from '../../pages';
 
 Given('user has installed Web Terminal operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
@@ -28,9 +22,18 @@ Given('user has installed Web Terminal operator', () => {
 });
 
 Given('user has installed OpenShift Serverless Operator', () => {
-  verifyAndInstallKnativeOperator();
+  verifyAndInstallOperator(operators.ServerlessOperator);
 });
 
 Given('user has installed OpenShift Pipelines Operator', () => {
-  verifyAndInstallPipelinesOperator();
+  verifyAndInstallOperator(operators.PipelinesOperator);
 });
+
+Given(
+  '{operator} operator is installed on the cluster in {string} namespace',
+  (operator: operators, namespace: string) => {
+    cy.logout();
+    cy.login(); // make sure we are logged in as kubeadmin
+    verifyAndInstallOperator(operator, namespace);
+  },
+);

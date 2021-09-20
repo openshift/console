@@ -6,6 +6,15 @@ import { nav } from '@console/cypress-integration-tests/views/nav';
 import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
 import { perspective, projectNameSpace, navigateTo } from '../../pages';
 
+Given('user has logged in as a basic user', () => {
+  cy.logout();
+  const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
+  const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
+  const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
+  cy.login(idp, username, password);
+  guidedTour.close();
+});
+
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
   // Due to bug ODC-6231

@@ -84,6 +84,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.pipelinesOperatorCard).click();
         break;
       }
+      case 'Red Hat CodeReady Workspaces':
+      case operators.RedHatCodereadyWorkspaces: {
+        cy.get(operatorsPO.operatorHub.redHatCodeReadyWorkspacesCard).click();
+        break;
+      }
       case 'OpenShift Serverless Operator':
       case operators.ServerlessOperator: {
         cy.get(operatorsPO.operatorHub.serverlessOperatorCard).click();

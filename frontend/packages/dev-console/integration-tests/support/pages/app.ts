@@ -33,7 +33,7 @@ export const perspective = {
   switchTo: (perspectiveName: switchPerspective) => {
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
-    if (switchPerspective.Developer) {
+    if (perspectiveName === switchPerspective.Developer) {
       guidedTour.close();
       // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');
@@ -201,6 +201,16 @@ export const projectNameSpace = {
         }
       });
     cy.get('@projectNameSpaceDropdown').should('have.text', `Project: ${projectName}`);
+  },
+
+  selectProjectOrDoNothing: (projectName: string) => {
+    projectNameSpace.clickProjectDropdown();
+    cy.byLegacyTestID('dropdown-text-filter').type(projectName);
+    cy.get('[role="listbox"]').then(($el) => {
+      if ($el.find('li[role="option"]').length !== 0) {
+        cy.get(`[id="${projectName}-link"]`).click();
+      }
+    });
   },
 
   selectProject: (projectName: string) => {
