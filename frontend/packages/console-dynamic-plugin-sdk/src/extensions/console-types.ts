@@ -316,16 +316,16 @@ export type ListPageHeaderProps = {
   badge?: React.ReactNode;
 };
 
-export type CreateWithPermissionsProps = {
-  createAccessReview?: {
-    groupVersionKind: GroupVersionKind;
-    namespace?: string;
-  };
+export type CreateAccessReview = {
+  groupVersionKind: GroupVersionKind;
+  namespace?: string;
 };
 
-export type ListPageCreateProps = CreateWithPermissionsProps & {
-  groupVersionKind: GroupVersionKind;
+export type CreateWithPermissionsProps = {
+  createAccessReview?: CreateAccessReview;
 };
+
+export type ListPageCreateProps = CreateWithPermissionsProps & CreateAccessReview;
 
 export type ListPageCreateLinkProps = CreateWithPermissionsProps & {
   to: string;

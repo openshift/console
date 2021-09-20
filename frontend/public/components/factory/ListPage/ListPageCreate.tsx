@@ -20,9 +20,9 @@ const CreateWithPermissions: React.FC<CreateWithPermissionsProps> = ({
   createAccessReview,
   children,
 }) => {
-  const [k8sModel] = useK8sModel(createAccessReview?.groupVersionKind);
+  const [model] = useK8sModel(createAccessReview?.groupVersionKind);
   return !_.isEmpty(createAccessReview) ? (
-    <RequireCreatePermission model={k8sModel} namespace={createAccessReview.namespace}>
+    <RequireCreatePermission model={model} namespace={createAccessReview.namespace}>
       {children}
     </RequireCreatePermission>
   ) : (
@@ -104,9 +104,14 @@ const ListPageCreate: React.FC<ListPageCreateProps> = ({
     }
   }
 
+  const accessReview: ListPageCreateLinkProps['createAccessReview'] = createAccessReview || {
+    groupVersionKind,
+    namespace,
+  };
+
   return (
     !!to && (
-      <ListPageCreateLink createAccessReview={createAccessReview} to={to}>
+      <ListPageCreateLink createAccessReview={accessReview} to={to}>
         {children}
       </ListPageCreateLink>
     )
