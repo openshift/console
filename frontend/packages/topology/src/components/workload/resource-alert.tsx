@@ -11,6 +11,7 @@ import {
   StatefulSetModel,
 } from '@console/internal/models';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
 import { getResource } from '../../utils';
 
 const addHealthChecksRefs = [
@@ -18,6 +19,7 @@ const addHealthChecksRefs = [
   referenceForModel(DeploymentModel),
   referenceForModel(DaemonSetModel),
   referenceForModel(StatefulSetModel),
+  referenceForModel(KnativeServiceModel),
 ];
 
 export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAlertContent | null => {

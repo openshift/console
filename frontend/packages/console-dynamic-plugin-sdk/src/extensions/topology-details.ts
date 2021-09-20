@@ -156,6 +156,8 @@ export type PodsAdapterDataType<E = K8sResourceCommon> = {
   pods: E[];
   loaded: boolean;
   loadError: string;
+  emptyText?: string;
+  allPodsLink?: string;
   buildConfigData?: BuildConfigData;
 };
 

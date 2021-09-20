@@ -2,9 +2,13 @@ import * as React from 'react';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
-import { getRevisionActions } from '../../actions/getRevisionActions';
+import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  ActionMenuVariant,
+  ActionServiceProvider,
+  useTabbedTableBreadcrumbsFor,
+  ActionMenu,
+} from '@console/shared';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
 const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
@@ -16,15 +20,27 @@ const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = 
     'serving',
     serverlessTab(kindObj.kind),
   );
-  const menuActionsCreator = (kindsObj: K8sKind, obj: K8sResourceKind) =>
-    getRevisionActions().map((action) => action(kindsObj, obj));
+
+  const actionMenu = (kindObjData: K8sKind, obj: K8sResourceKind) => {
+    const resourceKind = referenceForModel(kindObjData);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
 
   return (
     <DetailsPage
       {...props}
       breadcrumbsFor={() => breadcrumbs}
       pages={pages}
-      menuActions={menuActionsCreator}
+      customActionMenu={actionMenu}
     />
   );
 };

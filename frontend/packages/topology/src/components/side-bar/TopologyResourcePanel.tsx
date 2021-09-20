@@ -16,7 +16,7 @@ const TopologyResourcePanel: React.FC<TopologyResourcePanelProps> = ({ element }
   // adds extra check, custom sidebar for all knative resources excluding deployment
   const itemKind = item?.resource?.kind ?? null;
   if (_.get(item, 'data.isKnativeResource', false) && itemKind && itemKind !== 'Deployment') {
-    return <KnativeResourceOverviewPage item={item.resources} />;
+    return <KnativeResourceOverviewPage item={item.resources} element={element} />;
   }
   if (element.getType() === TYPE_WORKLOAD) return <TopologySideBarContent element={element} />;
   return (

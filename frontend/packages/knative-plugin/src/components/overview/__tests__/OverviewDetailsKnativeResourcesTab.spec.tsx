@@ -11,8 +11,6 @@ import {
 import * as fetchDynamicEventSources from '../../../utils/fetch-dynamic-eventsources-utils';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import EventSourceResources from '../EventSourceResources';
-import KnativeRevisionResources from '../KnativeRevisionResources';
-import KnativeServiceResources from '../KnativeServiceResources';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
@@ -34,16 +32,6 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
         isOperatorBackedService: false,
       },
     };
-  });
-  it('should render KnativeServiceResources on sidebar', () => {
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(KnativeServiceResources)).toHaveLength(1);
-  });
-
-  it('should render KnativeRevisionResources on sidebar', () => {
-    knItem.item = { ...knItem.item, ...{ obj: MockKnativeResources.revisions.data[0] } };
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(KnativeRevisionResources)).toHaveLength(1);
   });
 
   it('should render EventSourceResources on sidebar', () => {

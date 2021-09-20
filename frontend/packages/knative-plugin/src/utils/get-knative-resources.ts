@@ -353,7 +353,7 @@ export const knativeCamelDomainMappingResourceWatchers = (
 };
 
 export const getTrafficByRevision = (revName: string, service: K8sResourceKind) => {
-  if (!service.status?.traffic?.length) {
+  if (!service?.status?.traffic?.length) {
     return {};
   }
   const trafficPercent = service.status.traffic
