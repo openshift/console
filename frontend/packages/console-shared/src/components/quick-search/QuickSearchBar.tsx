@@ -38,7 +38,9 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
       <div className="ocs-quick-search-bar__input-wrapper">
         {/* <span> is only used to calculate the width of input based on the text in search */}
         <span className="ocs-quick-search-bar__input-dummy" ref={spanRef}>
-          {searchTerm?.length > 0 ? searchTerm.replace(/ /g, '\u00a0') : searchPlaceholder}
+          {searchTerm?.length >= searchPlaceholder.length
+            ? searchTerm.replace(/ /g, '\u00a0')
+            : searchPlaceholder}
         </span>
         <TextInput
           type="text"
