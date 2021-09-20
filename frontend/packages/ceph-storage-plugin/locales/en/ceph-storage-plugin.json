@@ -590,6 +590,7 @@
   "Using {{networkLabel}}": "Using {{networkLabel}}",
   "Discover disks": "Discover disks",
   "Review and create": "Review and create",
+  "Info Alert": "Info Alert",
   "Internal - Attached devices": "Internal - Attached devices",
   "Can be used on any platform where there are attached devices to the nodes, using the Local Storage Operator. The infrastructure StorageClass is provided by Local Storage Operator, on top of the attached drives.": "Can be used on any platform where there are attached devices to the nodes, using the Local Storage Operator. The infrastructure StorageClass is provided by Local Storage Operator, on top of the attached drives.",
   "Before we can create a StorageCluster, the Local Storage operator needs to be installed. When installation is finished come back to OpenShift Container Storage to create a StorageCluster.<1><0>Install</0></1>": "Before we can create a StorageCluster, the Local Storage operator needs to be installed. When installation is finished come back to OpenShift Container Storage to create a StorageCluster.<1><0>Install</0></1>",
