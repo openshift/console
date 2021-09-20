@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
-import { Title, Wizard } from '@patternfly/react-core';
+import { Title, Wizard, WizardStep } from '@patternfly/react-core';
 import {
   apiVersionForModel,
   k8sCreate,
@@ -202,7 +202,14 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     );
   };
 
-  const steps = [
+  const [stepsReached, setStepsReached] = React.useState(1);
+
+  const StepPositionMap = Object.entries(CreateStepsBC).reduce((acc, cur, index) => {
+    acc[cur[0]] = index + 1;
+    return acc;
+  }, {});
+
+  const steps: WizardStep[] = [
     {
       id: CreateStepsBC.GENERAL,
       name: t('ceph-storage-plugin~General'),
@@ -222,6 +229,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? !!state.tier1Policy
           : !!state.namespacePolicyType,
+      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.PLACEMENT],
     },
     {
       id: CreateStepsBC.RESOURCES,
@@ -236,6 +244,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? backingStoreNextConditions()
           : namespaceStoreNextConditions(),
+      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.RESOURCES],
     },
     {
       id: CreateStepsBC.REVIEW,
@@ -243,6 +252,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       component: <ReviewPage state={state} />,
       nextButtonText: t('ceph-storage-plugin~Create BucketClass'),
       enableNext: creationConditionsSatisfied(),
+      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.REVIEW],
     },
   ];
 
@@ -286,6 +296,12 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           backButtonText={t('ceph-storage-plugin~Back')}
           onSave={finalStep}
           onClose={() => history.goBack()}
+          onNext={({ id }) => {
+            const idIndexPlusOne = StepPositionMap[id];
+            const newStepHigherBound =
+              stepsReached < idIndexPlusOne ? idIndexPlusOne : stepsReached;
+            setStepsReached(newStepHigherBound);
+          }}
         />
       </div>
     </>
