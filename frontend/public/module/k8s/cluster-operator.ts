@@ -28,7 +28,7 @@ export const getStatusAndMessage = (operator: ClusterOperator) => {
 
   const available: any = _.find(conditions, { type: 'Available', status: 'True' });
   if (available) {
-    return { status: OperatorStatus.Available, message: available.message };
+    return { status: OperatorStatus.Available, message: '' };
   }
 
   return { status: OperatorStatus.Unknown, message: '' };
