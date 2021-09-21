@@ -20,13 +20,14 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
+import { Status, useFlag } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { GetSecret } from './secret';
 import { menuActionCreator, menuActions } from './menu-actions';
 import { obcStatusFilter } from '../../utils/table-filters';
 import { isBound, getPhase } from '../../utils';
 import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
+import { RGW_FLAG, MCG_FLAG } from '../../features';
 
 const kind = referenceForModel(NooBaaObjectBucketClaimModel);
 
@@ -185,6 +186,9 @@ const ObjectBucketClaimsList: React.FC = (props) => {
 
 export const ObjectBucketClaimsPage: React.FC = (props) => {
   const { t } = useTranslation();
+  const hasRGW = useFlag(RGW_FLAG);
+  const hasMCG = useFlag(MCG_FLAG);
+  const hasNone = !hasRGW && !hasMCG;
 
   const createProps = {
     to: `${resourcePathFromModel(
@@ -200,7 +204,7 @@ export const ObjectBucketClaimsPage: React.FC = (props) => {
       ListComponent={ObjectBucketClaimsList}
       kind={referenceForModel(NooBaaObjectBucketClaimModel)}
       canCreate
-      createProps={createProps}
+      createProps={!hasNone ? createProps : null}
       rowFilters={[obcStatusFilter(t)]}
     />
   );
