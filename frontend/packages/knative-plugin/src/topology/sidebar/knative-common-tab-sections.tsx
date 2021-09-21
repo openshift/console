@@ -16,6 +16,7 @@ import KSRoutesOverviewList from '../../components/overview/RoutesOverviewList';
 import { RevisionModel } from '../../models';
 import { RevisionKind } from '../../types';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
+import { TYPE_EVENT_PUB_SUB_LINK } from '../const';
 import { NodeType } from '../topology-types';
 import { KnativeOverviewDetails } from './KnativeOverviewSections';
 
@@ -79,7 +80,16 @@ export const getKnativeSidepanelPodsAdapterSection = (
 };
 
 export const getKnativeSidepanelDetailsTab = (element: GraphElement) => {
-  if (element.getType() === NodeType.KnService || element.getType() === NodeType.Revision) {
+  if (
+    [
+      TYPE_EVENT_PUB_SUB_LINK,
+      NodeType.PubSub,
+      NodeType.EventSource,
+      NodeType.EventSourceKafka,
+      NodeType.KnService,
+      NodeType.Revision,
+    ].includes(element.getType())
+  ) {
     const knObj = element.getData().resources;
     return <KnativeOverviewDetails item={knObj} />;
   }

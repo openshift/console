@@ -612,19 +612,6 @@
   {
     "type": "console.topology/details/tab-section",
     "properties": {
-      "id": "knative-plugin-tab-section-default",
-      "tab": "topology-side-bar-tab-details",
-      "section": {
-        "$codeRef": "knativeTopologySidebar.getDetailsTabPubSubSectionForTopologySideBar"
-      }
-    },
-    "flags": {
-      "required": ["KNATIVE_EVENTING"]
-    }
-  },
-  {
-    "type": "console.topology/details/tab-section",
-    "properties": {
       "id": "knative-plugin-tab-section-resource-pubsub",
       "tab": "topology-side-bar-tab-resource",
       "section": {
@@ -805,7 +792,7 @@
       }
     },
     "flags": {
-      "required": ["KNATIVE_SERVING_SERVICE"]
+      "required": ["KNATIVE_SERVING_SERVICE" , "KNATIVE_EVENTING"]
     }
   },
   {
@@ -989,6 +976,39 @@
     },
     "flags": {
       "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useEventSourcesActionsProviderForTopology" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "event-source-actions",
+      "provider": { "$codeRef": "actions.useEventSourcesActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-eventsource-sink",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getKnativeSidepanelSinkSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
     }
   }
 ]

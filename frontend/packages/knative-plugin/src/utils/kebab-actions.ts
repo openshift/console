@@ -13,6 +13,7 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
   const menuActions: KebabAction[] = [];
   const eventSourceModelrefs: string[] = getDynamicEventSourcesModelRefs();
   if (resourceKind) {
+    // remove this after migrating the menu actions in the DefaultDetailsPage and DefaultListPage
     if (
       _.includes(eventSourceModelrefs, referenceForModel(resourceKind)) ||
       referenceForModel(resourceKind) === referenceForModel(CamelKameletBindingModel)

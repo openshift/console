@@ -10,8 +10,7 @@ import {
 } from '@patternfly/react-topology';
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { ModifyApplication } from '@console/topology/src/actions';
-import { contextMenuActions } from '@console/topology/src/actions/contextMenuActions';
+import { ModifyApplication, contextMenuActions } from '@console/topology/src/actions';
 import {
   NodeComponentProps,
   withContextMenu,
@@ -127,7 +126,7 @@ export const getKnativeComponentFactory = (
       return withEditReviewAccess('patch')(
         withDragNode(nodeDragSourceSpec(type))(
           withSelection({ controlled: true })(
-            withContextMenu(knativeContextMenu)(
+            withContextMenu(contextMenuActions)(
               withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
             ),
           ),
@@ -174,7 +173,7 @@ export const getKnativeComponentFactory = (
         withEditReviewAccess('patch')(
           withDragNode(nodeDragSourceSpec(type))(
             withSelection({ controlled: true })(
-              withContextMenu(knativeContextMenu)(
+              withContextMenu(contextMenuActions)(
                 withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
               ),
             ),

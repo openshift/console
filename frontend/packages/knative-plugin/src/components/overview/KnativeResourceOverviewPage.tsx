@@ -17,10 +17,11 @@ import {
   KNATIVE_EVENTING_APIGROUP,
   CAMEL_APIGROUP,
 } from '../../const';
-import { RevisionModel, ServiceModel } from '../../models';
+import { CamelKameletBindingModel, RevisionModel, ServiceModel } from '../../models';
 import { URI_KIND } from '../../topology/const';
 import { KnativeOverviewDetails } from '../../topology/sidebar/KnativeOverviewSections';
 import {
+  getDynamicEventSourcesModelRefs,
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
   isEventingPubSubLinkKind,
@@ -45,6 +46,7 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   element,
 }: KnativeResourceOverviewPageProps) => {
   const { t } = useTranslation();
+  const eventSourceModelrefs: string[] = getDynamicEventSourcesModelRefs();
 
   if (item?.obj?.kind === URI_KIND) {
     return <SinkUriResourcesTab itemData={item} menuAction={editSinkUri} />;
@@ -88,7 +90,12 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
     );
   }
 
-  if (resourceModel.kind === ServiceModel.kind || resourceModel.kind === RevisionModel.kind) {
+  if (
+    [ServiceModel.kind, RevisionModel.kind, CamelKameletBindingModel.kind].includes(
+      resourceModel.kind,
+    ) ||
+    eventSourceModelrefs.includes(referenceForModel(resourceModel))
+  ) {
     return <TopologySideBarContent element={element} />;
   }
 
