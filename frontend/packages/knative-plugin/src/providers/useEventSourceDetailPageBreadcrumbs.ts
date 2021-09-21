@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { K8sKind } from '@console/internal/module/k8s';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared';
-import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 import { CamelKameletBindingModel } from '../models';
 import { getEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
 import { serverlessTab } from '../utils/serverless-tab-utils';

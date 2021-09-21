@@ -4,17 +4,13 @@ import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
+import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { useExtensions } from '@console/plugin-sdk';
-import {
-  ALL_APPLICATIONS_KEY,
-  useActivePerspective,
-  usePostFormSubmitAction,
-} from '@console/shared';
+import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';

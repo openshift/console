@@ -16,7 +16,7 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import { getBadgeFromType, usePinnedResources, useActivePerspective } from '@console/shared';
+import { getBadgeFromType, usePinnedResources } from '@console/shared';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -44,6 +44,7 @@ import { useExtensions, isResourceListPage, ResourceListPage } from '@console/pl
 import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
+  useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {

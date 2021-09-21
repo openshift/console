@@ -1,9 +1,9 @@
+import { PerspectiveType } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
 import {
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_USER_SETTINGS_KEY,
 } from '../../consts';
-import { PerspectiveType } from './perspective-context';
 
 export const useLastPerspective = (): [
   string,

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
+import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
 import { history } from '../utils';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useActivePerspective, ACM_LINK_ID } from '@console/shared';
+import { ACM_LINK_ID } from '@console/shared';
 import { K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ConsoleLinkModel } from '../../models';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';

@@ -2,13 +2,13 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { SemVer } from 'semver';
+import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory/';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
-import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 import { PipelineModel } from '../../../models';
 import { pipelineTestData, PipelineExampleNames } from '../../../test-data/pipeline-data';
 import { PipelineRunKind } from '../../../types';
@@ -32,8 +32,8 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/useActivePerspective', () => ({
-  useActivePerspective: jest.fn(),
+jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  default: jest.fn(),
 }));
 
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;

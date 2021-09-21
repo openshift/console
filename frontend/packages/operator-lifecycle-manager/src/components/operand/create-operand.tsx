@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
   StatusBox,
@@ -22,7 +23,6 @@ import {
   CustomResourceDefinitionKind,
   definitionFor,
 } from '@console/internal/module/k8s';
-import { useActivePerspective } from '@console/shared';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
 import {
   getSchemaErrors,
