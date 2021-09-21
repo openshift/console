@@ -1098,7 +1098,7 @@
   "Exceptions": "Exceptions",
   "with exceptions": "with exceptions",
   "Any port": "Any port",
-  "Network policy details": "Network policy details",
+  "NetworkPolicy details": "NetworkPolicy details",
   "Pods accept all traffic by default. They can be isolated via NetworkPolicies which specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will reject all traffic not explicitly allowed via a NetworkPolicy. See more details in: <2></2>.": "Pods accept all traffic by default. They can be isolated via NetworkPolicies which specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will reject all traffic not explicitly allowed via a NetworkPolicy. See more details in: <2></2>.",
   "NetworkPolicies documentation": "NetworkPolicies documentation",
   "All incoming traffic is denied to Pods in {{namespace}}": "All incoming traffic is denied to Pods in {{namespace}}",
