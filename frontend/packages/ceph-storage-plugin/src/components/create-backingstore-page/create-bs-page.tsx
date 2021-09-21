@@ -5,13 +5,16 @@ import { Alert, AlertActionCloseButton, Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import CreateBackingStoreForm from './create-bs';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
+import { ODF_MODEL_FLAG } from '../../constants';
 
 const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const [showHelp, setShowHelp] = React.useState(true);
   const { ns, appName } = match.params;
+  const isODF = useFlag(ODF_MODEL_FLAG);
 
   const onCancel = () => {
     history.goBack();
@@ -23,8 +26,8 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
         <BreadCrumbs
           breadcrumbs={[
             {
-              name: 'Openshift Container Storage',
-              path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+              name: isODF ? 'OpenShift Data Foundation' : 'OpenShift Container Storage',
+              path: isODF ? '/odf' : resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
             },
             { name: t('ceph-storage-plugin~Create BackingStore '), path: match.url },
           ]}
