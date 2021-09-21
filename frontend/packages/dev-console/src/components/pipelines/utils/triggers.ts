@@ -28,7 +28,7 @@ type TriggerTemplateMapping = { [key: string]: TriggerTemplateKind };
 
 const getResourceName = (resource: K8sResourceCommon): string => resource.metadata.name;
 const getEventListenerTemplateNames = (el: EventListenerKind): string[] =>
-  el.spec.triggers?.map((elTrigger: EventListenerKindTrigger) => elTrigger.template.name);
+  el.spec.triggers?.map((elTrigger: EventListenerKindTrigger) => elTrigger.template?.name);
 const getEventListenerGeneratedName = (eventListener: EventListenerKind) =>
   eventListener.status?.configuration.generatedName;
 
