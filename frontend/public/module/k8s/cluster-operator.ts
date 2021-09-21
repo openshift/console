@@ -5,11 +5,17 @@ export enum OperatorStatus {
   Available = 'Available',
   Progressing = 'Progressing',
   Degraded = 'Degraded',
+  CannotUpdate = 'Cannot update',
   Unknown = 'Unknown',
 }
 
 export const getStatusAndMessage = (operator: ClusterOperator) => {
   const conditions = _.get(operator, 'status.conditions');
+  const cannotUpdate: any = _.find(conditions, { type: 'Upgradeable', status: 'False' });
+  if (cannotUpdate) {
+    return { status: OperatorStatus.CannotUpdate, message: cannotUpdate.message };
+  }
+
   const degraded: any = _.find(conditions, { type: 'Degraded', status: 'True' });
   if (degraded) {
     return { status: OperatorStatus.Degraded, message: degraded.message };
