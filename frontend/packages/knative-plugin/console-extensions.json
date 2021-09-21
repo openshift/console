@@ -702,5 +702,77 @@
     "flags": {
       "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
     }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Channel"
+      },
+      "page": {
+        "name": "%knative-plugin~Subscriptions%",
+        "href": "subscriptions"
+      },
+      "component": { "$codeRef": "eventingComponent.ChannelSubscriptionTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Broker"
+      },
+      "page": {
+        "name": "%knative-plugin~Triggers%",
+        "href": "triggers"
+      },
+      "component": { "$codeRef": "eventingComponent.BrokerTriggerTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1beta1",
+        "kind": "KafkaChannel"
+      },
+      "page": {
+        "name": "%knative-plugin~Subscriptions%",
+        "href": "subscriptions"
+      },
+      "component": { "$codeRef": "eventingComponent.ChannelSubscriptionTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "InMemoryChannel"
+      },
+      "page": {
+        "name": "%knative-plugin~Subscriptions%",
+        "href": "subscriptions"
+      },
+      "component": { "$codeRef": "eventingComponent.ChannelSubscriptionTab" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
   }
 ]
