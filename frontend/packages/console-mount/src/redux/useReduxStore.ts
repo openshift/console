@@ -1,6 +1,6 @@
 import { applyMiddleware, combineReducers, compose, createStore, Store } from 'redux';
 import thunk from './middleware/thunk';
-import flags from './reducers/flags';
+import { baseReducers } from './reducers';
 import { RootState } from './types';
 
 const composeEnhancers =
@@ -9,10 +9,6 @@ const composeEnhancers =
 let cachedStore: Store<RootState> = null;
 const useReduxStore = (): Store<RootState> => {
   if (!cachedStore) {
-    const baseReducers = Object.freeze({
-      FLAGS: flags,
-    });
-
     const store = createStore(
       combineReducers<RootState>(baseReducers),
       {},

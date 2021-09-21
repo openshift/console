@@ -8,10 +8,10 @@ import {
 } from '@console/dynamic-plugin-sdk';
 
 type TopLevelRoutesProps = {
-  children: () => React.ReactElement;
+  mainAppComponent: React.FunctionComponent;
 };
 
-const TopLevelRoutes: React.FC<TopLevelRoutesProps> = ({ children }) => {
+const TopLevelRoutes: React.FC<TopLevelRoutesProps> = ({ mainAppComponent }) => {
   const [standaloneRouteExtensions] = useResolvedExtensions(isStandaloneRoutePage);
 
   return (
@@ -24,7 +24,7 @@ const TopLevelRoutes: React.FC<TopLevelRoutesProps> = ({ children }) => {
           render={(routeProps) => <e.properties.component {...routeProps} />}
         />
       ))}
-      <Route path="/" component={children} />
+      <Route path="/" component={mainAppComponent} />
     </Switch>
   );
 };

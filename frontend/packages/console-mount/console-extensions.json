@@ -63,5 +63,19 @@
       "path": "/test",
       "component": { "$codeRef": "testRoutePage" }
     }
+  },
+  {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "demo-reducer",
+      "reducer": { "$codeRef": "reducers.demoReducer" }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "context.ContextTestProvider" },
+      "useValueHook": { "$codeRef": "context.useContextTestHook" }
+    }
   }
 ]

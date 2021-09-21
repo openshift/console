@@ -18,7 +18,9 @@
     "exposedModules": {
       "testRoutePage": "src/demo/TestRoutePage.tsx",
       "perspectiveIcons": "src/demo/perspectiveIcons.tsx",
-      "perspectiveURLS": "src/demo/perspectiveURLs.ts"
+      "perspectiveURLS": "src/demo/perspectiveURLs.ts",
+      "reducers": "src/demo/reducer.ts",
+      "context": "src/demo/context.ts"
     }
   }
 }

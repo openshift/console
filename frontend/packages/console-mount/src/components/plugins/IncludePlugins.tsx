@@ -18,11 +18,7 @@ const IncludePlugins: React.FC = () => {
       const dynamicPluginNames = getEnabledDynamicPluginNames();
       const pluginStore = new PluginStore(activePlugins, dynamicPluginNames);
 
-      const TEMP = 'init-plugins';
-      if (!window[TEMP]) {
-        window[TEMP] = true;
-        initConsolePlugins(pluginStore, store as any);
-      }
+      initConsolePlugins(pluginStore, store);
     }
   }, [store]);
 
