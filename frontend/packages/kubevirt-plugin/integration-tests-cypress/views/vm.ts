@@ -27,9 +27,6 @@ export const waitForStatus = (status: string) => {
       cy.contains(detailsTab.vmStatus, VM_STATUS.Stopped, {
         timeout: VM_ACTION_TIMEOUT.VM_IMPORT,
       }).should('exist');
-      // wait for vmi disappear
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(15000);
       break;
     }
     case VM_STATUS.Starting: {
@@ -112,6 +109,9 @@ export const vm = {
     waitForStatus(VM_STATUS.Running);
     action(VM_ACTION.Stop);
     waitForStatus(VM_STATUS.Stopped);
+    // wait for VMI to disappear
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(15000);
   },
   delete: () => {
     cy.get('body').then(($body) => {

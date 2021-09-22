@@ -23,3 +23,9 @@ export const dedicatedResources = '[data-test-id="details-Dedicated Resources"]'
 export const dedicatedResourcesCheckbox = '#dedicated-resources-checkbox';
 export const evictionStrategy = '[data-test-id="details-Eviction Strategy"]';
 export const liveMigrateCheckbox = '#eviction-strategy';
+
+// active user
+export const loggedInUser = '#logged-in-users';
+
+// disk tab
+export const fileSystems = '.kubevirt-vm-details__file-systems';

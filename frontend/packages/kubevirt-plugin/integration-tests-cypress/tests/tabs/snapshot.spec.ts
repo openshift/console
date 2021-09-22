@@ -19,7 +19,7 @@ const vmData: VirtualMachineData = {
 
 const snapshotName = 'test-snapshot';
 
-describe('Test vm snapshot', () => {
+describe('Test VM snapshot', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
@@ -34,7 +34,7 @@ describe('Test vm snapshot', () => {
     cy.deleteTestProject(testName);
   });
 
-  it('ID(CNV-4717) Create/restore/delete vm snapshot', () => {
+  it('ID(CNV-4717) Create/restore/delete VM snapshot', () => {
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();

@@ -54,7 +54,7 @@ export const virtualization = {
     },
     testSource: (templateName: string, sourceStatus: string, timeout = 600000) =>
       getRow(templateName, () =>
-        cy.byTestID('template-source', { timeout }).should('have.text', sourceStatus),
+        cy.byTestID('template-source', { timeout }).should('contain', sourceStatus),
       ),
     deleteSource: (templateName: string) => {
       cy.get(`[data-test-template-name="${templateName}"] > button`).click();

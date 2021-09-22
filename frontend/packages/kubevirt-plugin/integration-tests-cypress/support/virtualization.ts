@@ -1,4 +1,4 @@
-import { createYAMLButton, nameFilter, resourceTitle } from '../views/selector';
+import { createYAMLButton, loadingBox, nameFilter, resourceTitle } from '../views/selector';
 import { create, templateYAML, vmYAML } from '../views/selector-wizard';
 
 declare global {
@@ -17,7 +17,7 @@ declare global {
 // any command added below, must be added to global Cypress interface above
 //
 Cypress.Commands.add('loaded', () => {
-  cy.get('.loading-box.loading-box__loaded').should('be.visible');
+  cy.get(loadingBox).should('be.visible');
 });
 
 Cypress.Commands.add('visitVMsList', () => {
