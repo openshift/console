@@ -33,18 +33,19 @@ export const addDisk = (disk: Disk) => {
     cy.get('.pf-c-select__menu-item-main')
       .contains(disk.source.getDescription())
       .click();
-    const sourceUrl = disk.source.getSource();
+    const sourceURL = disk.source.getSource();
     switch (disk.source) {
       case ProvisionSource.URL:
-        if (sourceUrl) {
-          cy.get(diskDialog.diskURL).type(sourceUrl);
+        if (sourceURL) {
+          cy.get(diskDialog.diskURL).type(sourceURL);
         } else {
           throw new Error('No `disk.source value` provided!!!');
         }
         break;
       case ProvisionSource.REGISTRY:
-        if (sourceUrl) {
-          cy.get(diskDialog.diskContainer).type(sourceUrl);
+      case ProvisionSource.EPHEMERAL:
+        if (sourceURL) {
+          cy.get(diskDialog.diskContainer).type(sourceURL);
         } else {
           throw new Error('No `disk.source value` provided!!!');
         }
@@ -53,7 +54,6 @@ export const addDisk = (disk: Disk) => {
       case ProvisionSource.CLONE_PVC:
         cy.get(diskDialog.diskPVC).select(disk.pvcName);
         break;
-      case ProvisionSource.EPHEMERAL:
       case ProvisionSource.BLANK:
         break;
       default:
