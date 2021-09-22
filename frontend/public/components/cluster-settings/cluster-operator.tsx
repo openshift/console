@@ -32,7 +32,11 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
-import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import RelatedObjectsPage from './related-objects';
 import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings';
 
@@ -46,6 +50,7 @@ const getIcon = (status: OperatorStatus) => {
     [OperatorStatus.Progressing]: <SyncAltIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
+    [OperatorStatus.Unavailable]: <RedExclamationCircleIcon />,
     [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
 };
