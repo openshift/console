@@ -85,17 +85,17 @@ Feature: Navigations on Helm Chart
         Scenario: Select all filters: HR-05-TC09
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "All" Helm charts
-             Then the checkbox for the "All" Helm chart is checked
+              And user selects all the checkboxes "Deployed", "Failed" and "Others"
+             Then all the Helm charts are listed
 
 
         @regression
         Scenario: Clear all filters: HR-05-TC10
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "All" Helm charts
+              And user selects all the checkboxes "Deployed", "Failed" and "Others"
               And user clicks on the clear all filters button
-             Then "All" filters selected will get removed
+             Then All the filters selected will get removed
 
 
         @regression
