@@ -1,4 +1,4 @@
-import { ExtensionK8sGroupKindModel } from '../api/common-types';
+import { ExtensionK8sKindVersionModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
@@ -17,7 +17,8 @@ export type HorizontalNavTab = ExtensionDeclaration<
   'console.tab/horizontalNav',
   {
     /** The model for which this provider show tab. */
-    model: ExtensionK8sGroupKindModel;
+    model: ExtensionK8sKindVersionModel;
+    /** The page to be show in horizontal tab. It takes tab name as name and href of the tab */
     page: {
       name: string;
       href: string;

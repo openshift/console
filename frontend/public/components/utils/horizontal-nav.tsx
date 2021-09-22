@@ -16,6 +16,7 @@ import {
   useResolvedExtensions,
   HorizontalNavTab as DynamicHorizontalNavTab,
   isHorizontalNavTab as DynamicIsHorizontalNavTab,
+  ExtensionK8sGroupModel,
 } from '@console/dynamic-plugin-sdk';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
@@ -285,7 +286,11 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     () =>
       navTabExtentionsResolved
         ? dynamicNavTabExtensions
-            .filter((tab) => referenceForExtensionModel(tab.properties.model) === objReference)
+            .filter(
+              (tab) =>
+                referenceForExtensionModel(tab.properties.model as ExtensionK8sGroupModel) ===
+                objReference,
+            )
             .map((tab) => ({
               ...tab.properties.page,
               component: tab.properties.component,

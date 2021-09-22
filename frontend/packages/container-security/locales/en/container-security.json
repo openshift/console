@@ -1,4 +1,5 @@
 {
+  "Vulnerabilities": "Vulnerabilities",
   "Image Manifest Vulnerabilities details": "Image Manifest Vulnerabilities details",
   "{{total, number}} total": "{{total, number}} total",
   "Quay Security Scanner has detected {{total, number}} vulnerabilities.": "Quay Security Scanner has detected {{total, number}} vulnerabilities.",
@@ -20,7 +21,6 @@
   "Security scan": "Security scan",
   "No vulnerabilities found": "No vulnerabilities found",
   "Severity": "Severity",
-  "Vulnerabilities": "Vulnerabilities",
   "Name": "Name",
   "Package": "Package",
   "Current version": "Current version",
