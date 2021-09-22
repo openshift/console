@@ -89,7 +89,7 @@ describe('Interacting with the environment variable editor', () => {
       expect(resourceText).toEqual(valueFrom);
       expect(prefixText).toEqual(prefix);
     } else {
-      expect(resourceText).toEqual('hello-openshift');
+      expect(resourceText).toEqual('httpd');
       expect(prefixText).toEqual('');
     }
   };

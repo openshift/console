@@ -388,8 +388,8 @@ describe('Add Secret to Workloads', () => {
         spec: {
           containers: [
             {
-              name: 'hello-openshift',
-              image: 'openshift/hello-openshift',
+              name: 'httpd',
+              image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
             },
           ],
         },

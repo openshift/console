@@ -95,7 +95,7 @@ describe('Filtering', () => {
 
   it('searches for pod by label and filtering by name', async () => {
     await browser.get(
-      `${appHost}/search/all-namespaces?kind=Pod&name=${WORKLOAD_NAME}&q=app%3Dhello-openshift`,
+      `${appHost}/search/all-namespaces?kind=Pod&name=${WORKLOAD_NAME}&q=app%3Dhttpd`,
     );
     await crudView.isLoaded();
     await browser.wait(
