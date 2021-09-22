@@ -409,6 +409,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      path: `/ocs-dashboards`,
+      loader: () => import('./components/dashboards/ocs-system-dashboard').then((m) => m.default),
+    },
+    flags: {
+      required: [MCG_FLAG],
+      disallowed: [OCS_FLAG, ODF_MODEL_FLAG],
+    },
+  },
+  {
     type: 'Project/Dashboard/Inventory/Item',
     properties: {
       model: models.NooBaaObjectBucketClaimModel,
