@@ -267,7 +267,7 @@
     "fork-ts-checker-webpack-plugin": "4.x",
     "geckodriver": "1.x",
     "glob": "7.x",
-    "glslify-loader": "1.x",
+    "glslify-loader": "^2.0.0",
     "graphql-tag": "^2.10.3",
     "html-webpack-plugin": "3.x",
     "husky": "^4.2.5",
