@@ -1,0 +1,17 @@
+.kv-running-vms-card__chart-label {
+  font-size: 10px;
+}
+
+.kv-running-vms-card--gradient {
+  position: relative;
+  &:after {
+    background: linear-gradient(rgba(255, 255, 255, 0), var(--pf-global--BackgroundColor--100));
+    bottom: 0;
+    content: '';
+    left: 0;
+    min-height: 2rem;
+    pointer-events: none;
+    position: absolute;
+    width: calc(100% - var(--pf-global--spacer--lg));
+  }
+}
