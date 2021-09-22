@@ -66,7 +66,7 @@ const OBCTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
         {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <ResourceKebab actions={menuActions} kind={kind} resource={obj} hoverMessage="Deleting" />
       </TableData>
     </>
   );
