@@ -49,6 +49,7 @@ export const saveAndRestart = '#save-and-restart';
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
 export const pendingChangeAlert = '.pf-c-alert.pf-m-inline.pf-m-warning.kv__pending_changes-alert';
+export const warningAlert = '.pf-c-alert.pf-m-inline.pf-m-warning';
 
 // nic modal
 export enum nicDialog {
@@ -72,6 +73,8 @@ export enum diskDialog {
   storageClass = '[data-test="storage-class-dropdown"]',
   diskInterface = 'button[id="disk-select-interface"]',
   add = 'button[data-test="confirm-action"]',
+  diskPVC = 'select[id="disk-pvc"]',
+  autoDetach = 'input[id="disk-auto-detach"]',
 }
 
 // storageClass
@@ -98,3 +101,10 @@ export const templateLink = (name: string) => `[data-test-id="${name}"]`;
 
 export const resourceTitle = '[data-test-id="resource-title"]';
 export const resourceStatus = '[data-test="resource-status"]';
+
+// VM's disks tab
+export enum disksTab {
+  addDiskBtn = 'button[id="add-disk"]',
+  deleteDiskBtn = 'button[data-test-action="Delete"]',
+  currVMStatusLbl = 'span[data-test="resource-status"]',
+}
