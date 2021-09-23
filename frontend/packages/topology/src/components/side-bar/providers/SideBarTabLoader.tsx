@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import {
   DetailsTab,
   DetailsTabSection,
@@ -10,6 +11,8 @@ import {
 import { Tab } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
+import { getResource } from '@console/topology/src/utils';
+import { DefaultResourceSideBar } from '../DefaultResourceSideBar';
 
 const TabSection: React.FC = ({ children }) => <>{children}</>;
 
@@ -19,6 +22,11 @@ type SideBarTabLoaderProps = {
 };
 
 const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }) => {
+  const { t } = useTranslation();
+  const [isSectionRendered, setIsSectionRendered] = React.useState<{ [tab: string]: boolean[] }>(
+    {},
+  );
+  const renderSection = React.useRef<{ [tab: string]: boolean[] }>({});
   const tabExtensions = useExtensions<DetailsTab>(isDetailsTab);
   const [tabSectionExtensions, resolved] = useResolvedExtensions<DetailsTabSection>(
     isDetailsTabSection,
@@ -31,11 +39,29 @@ const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }
     [tabExtensions],
   );
 
+  const renderNull = React.useCallback((tab: string): [number, () => null] => {
+    renderSection.current[tab]
+      ? renderSection.current[tab].push(true)
+      : (renderSection.current[tab] = [true]);
+    const index = renderSection.current[tab].length - 1;
+    return [
+      index,
+      (): null => {
+        renderSection.current[tab][index] = false;
+        setIsSectionRendered(renderSection.current);
+        return null;
+      },
+    ];
+  }, []);
   const tabSections = React.useMemo(() => {
     return resolved
       ? tabSectionExtensions.reduce((tabs, { properties: { tab, section, ...rest } }) => {
-          const resolvedSection = section(element);
-          if (!resolvedSection) return tabs;
+          const [index, callback] = renderNull(tab);
+          const resolvedSection = section(element, callback);
+          if (!resolvedSection) {
+            renderSection.current[tab][index] = false;
+            return tabs;
+          }
           return {
             ...tabs,
             ...(tabs.hasOwnProperty(tab)
@@ -44,13 +70,17 @@ const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }
           };
         }, {})
       : {};
-  }, [tabSectionExtensions, element, resolved]);
+  }, [resolved, tabSectionExtensions, element, renderNull]);
 
   const [tabs, loaded] = React.useMemo(() => {
     if (Object.keys(tabSections).length === 0) return [[], false];
 
     const resolvedTabs = orderedTabs.reduce((acc, { id, label }) => {
-      if (!tabSections.hasOwnProperty(id)) return acc;
+      if (
+        !tabSections.hasOwnProperty(id) ||
+        (isSectionRendered[id] && !isSectionRendered[id].some((s) => s))
+      )
+        return acc;
       const tabContent = orderExtensionBasedOnInsertBeforeAndAfter<{
         resolvedSection: React.ReactNode;
         id: string;
@@ -61,7 +91,16 @@ const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }
     }, []);
 
     return [resolvedTabs, true];
-  }, [tabSections, orderedTabs]);
+  }, [tabSections, isSectionRendered, orderedTabs]);
+
+  if (tabs.length === 0) {
+    const resource = getResource(element);
+    resource &&
+      tabs.push({
+        name: t('topology~Details'),
+        component: () => <DefaultResourceSideBar resource={resource} />,
+      });
+  }
 
   return children(tabs, loaded);
 };

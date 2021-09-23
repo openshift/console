@@ -12,7 +12,10 @@ import { BuildOverview } from './BuildOverview';
 import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
-const BuildTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
+const BuildTabSection: React.FC<{ element: GraphElement; renderNull: () => null }> = ({
+  element,
+  renderNull,
+}) => {
   const [
     { data: buildConfigs, loaded: buildConfigsDataLoaded },
     setBuildConfigsData,
@@ -45,9 +48,11 @@ const BuildTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
       )}
       {buildConfigsDataLoaded && <BuildOverview buildConfigs={buildConfigs.buildConfigs} />}
     </TopologySideBarTabSection>
-  ) : null;
+  ) : (
+    renderNull()
+  );
 };
 
-export const getBuildsSideBarTabSection = (element: GraphElement) => {
-  return <BuildTabSection element={element} />;
+export const getBuildsSideBarTabSection = (element: GraphElement, renderNull: () => null) => {
+  return <BuildTabSection element={element} renderNull={renderNull} />;
 };
