@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Page } from '@patternfly/react-core';
+import { Page, SkipToContent } from '@patternfly/react-core';
+import { useLocation } from 'react-router-dom';
 import { PageLoader } from '../loading';
 import Masthead from './frame/Masthead';
 import Navigation from './frame/Navigation';
@@ -9,6 +10,7 @@ type PageFrameProps = {
 };
 
 const PageFrame: React.FC<PageFrameProps> = ({ children }) => {
+  const location = useLocation();
   const [navOpen, setNavOpen] = React.useState<boolean>(true);
 
   return (
@@ -16,6 +18,11 @@ const PageFrame: React.FC<PageFrameProps> = ({ children }) => {
       <Page
         header={<Masthead navOpen={navOpen} onNavToggle={setNavOpen} />}
         sidebar={<Navigation navOpen={navOpen} />}
+        skipToContent={
+          <SkipToContent href={`${location.pathname}${location.search}#content`}>
+            Skip to Content
+          </SkipToContent>
+        }
       >
         <React.Suspense fallback={<PageLoader />}>{children}</React.Suspense>
       </Page>
