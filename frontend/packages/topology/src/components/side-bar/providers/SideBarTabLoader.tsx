@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import { GraphElement, isEdge } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import {
   DetailsTab,
@@ -13,6 +13,7 @@ import { useExtensions } from '@console/plugin-sdk';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import { getResource } from '@console/topology/src/utils';
 import { DefaultResourceSideBar } from '../DefaultResourceSideBar';
+import TopologyEdgeResourcesPanel from '../TopologyEdgeResourcesPanel';
 
 const TabSection: React.FC = ({ children }) => <>{children}</>;
 
@@ -93,12 +94,18 @@ const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }
     return [resolvedTabs, true];
   }, [tabSections, isSectionRendered, orderedTabs]);
 
+  // show default side bar
   if (tabs.length === 0) {
     const resource = getResource(element);
     resource &&
       tabs.push({
         name: t('topology~Details'),
         component: () => <DefaultResourceSideBar resource={resource} />,
+      });
+    isEdge(element) &&
+      tabs.push({
+        name: t('topology~Resources'),
+        component: () => <TopologyEdgeResourcesPanel edge={element} />,
       });
   }
 
