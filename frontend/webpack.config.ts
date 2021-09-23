@@ -150,6 +150,7 @@ const config: Configuration = {
           },
           {
             loader: 'resolve-url-loader',
+            // https://github.com/bholloway/resolve-url-loader/blob/v4-maintenance/packages/resolve-url-loader/README.md#options
             options: {
               sourceMap: true,
             },
@@ -158,7 +159,9 @@ const config: Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              outputStyle: 'compressed',
+              sassOptions: {
+                outputStyle: 'compressed',
+              },
             },
           },
         ],
