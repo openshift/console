@@ -691,6 +691,7 @@ export const getSinkUriTopologyEdgeItems = (
     edges.push({
       id: `${uid}_${targetUid}`,
       type: EdgeType.EventSource,
+      label: i18next.t('knative-plugin~Event source connector'),
       source: uid,
       target: targetUid,
     });
@@ -738,6 +739,7 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
         edges.push({
           id: `${uid}_${resUid}`,
           type: EdgeType.EventSource,
+          label: i18next.t('knative-plugin~Event source connector'),
           source: uid,
           target: resUid,
         });
@@ -855,6 +857,7 @@ export const getKnSourceKafkaTopologyEdgeItems = (
       acc.push({
         id: edgeId,
         type: EdgeType.EventSourceKafkaLink,
+        label: i18next.t('knative-plugin~Kafka connector'),
         source: kafkaSource.metadata?.uid,
         target: kafkaConnection.metadata?.uid,
       });
@@ -887,6 +890,7 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
         edges.push({
           id: `${uid}_${resUid}`,
           type: EdgeType.Traffic,
+          label: i18next.t('knative-plugin~Traffic distribution connector'),
           source: uid,
           target: resUid,
           data: { percent: trafficPercent },

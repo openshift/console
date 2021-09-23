@@ -50,7 +50,7 @@ describe('KnativeResourceOverviewPage', () => {
     );
     const resourceOverviewDetails = wrapper.find(ResourceOverviewDetails);
     expect(resourceOverviewDetails).toHaveLength(1);
-    expect(resourceOverviewDetails.at(0).props().menuActions).toHaveLength(4);
+    expect(resourceOverviewDetails.at(0).props().menuActions).toHaveLength(5);
     expect(resourceOverviewDetails.at(0).props().kindObj).toEqual(EventingSubscriptionModel);
   });
 });

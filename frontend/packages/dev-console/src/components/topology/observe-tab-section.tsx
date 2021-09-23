@@ -11,6 +11,9 @@ import MonitoringTab from '../monitoring/overview/MonitoringTab';
 
 export const getObserveSideBarTabSection = (element: GraphElement) => {
   const resource = getResource(element);
+  if (!resource) {
+    return undefined;
+  }
   if (
     !resource ||
     ![

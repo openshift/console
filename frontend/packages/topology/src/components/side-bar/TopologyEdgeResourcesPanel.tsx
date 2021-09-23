@@ -41,10 +41,21 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
           }
           const {
             metadata: { name, uid },
+            spec,
           } = resource;
+          const sinkUri = spec?.sinkUri;
+
           return (
             <li className="list-group-item  container-fluid" key={uid}>
-              <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
+              {!sinkUri ? (
+                <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
+              ) : (
+                <ExternalLink
+                  href={sinkUri}
+                  additionalClassName="co-external-link--block"
+                  text={sinkUri}
+                />
+              )}
             </li>
           );
         })}

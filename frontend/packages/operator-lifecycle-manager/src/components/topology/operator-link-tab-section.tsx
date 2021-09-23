@@ -9,6 +9,9 @@ export const getManagedByOperatorLinkSideBarTabSection = (element: GraphElement)
   if (element.getType() !== TYPE_WORKLOAD && !element.getData()?.data?.isKnativeResource)
     return undefined;
   const resource = getResource(element);
+  if (!resource) {
+    return undefined;
+  }
   return (
     <TopologySideBarTabSection>
       <ManagedByOperatorLink obj={resource} />

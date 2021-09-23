@@ -24,3 +24,5 @@ export {
   getKnativeSidepanelSinkSection,
   getKnativeURISinkResourceLink,
 } from './knative-eventsource-tab-sections';
+
+export { getKnativeConnectorSidepanelResourceSection } from './knative-connectors-tab-sections';
