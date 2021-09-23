@@ -7,11 +7,13 @@ import { useReduxStore } from '../../redux';
 import { IncludePlugins } from '../plugins';
 import MainAppContent from './MainAppContent';
 import TopLevelRoutes from './TopLevelRoutes';
+import useWindowErrorCatch from './useWindowErrorCatch';
 
 const history = createBrowserHistory();
 
 const AppRoot: React.FC = () => {
   const store = useReduxStore();
+  useWindowErrorCatch();
 
   return (
     <React.Suspense fallback={<Spinner />}>
