@@ -13,6 +13,11 @@ export type Disk = {
   source?: ProvisionSource;
   bootable?: boolean;
   preallocation?: boolean;
+  autoDetach?: boolean;
+  provisionSource?: ProvisionSource;
+  pvcName?: string;
+  pvcNS?: string;
+  description?: string;
 };
 
 export type Network = {
