@@ -27,7 +27,7 @@ import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-cla
 import { validateBucketClassName, validateDuration } from '../../utils/bucket-class';
 import { NooBaaBucketClassModel } from '../../models';
 import { PlacementPolicy } from '../../types';
-import { ODF_MODEL_FLAG } from '../../constants';
+import { ODF_MODEL_FLAG, CEPH_STORAGE_NAMESPACE } from '../../constants';
 
 enum CreateStepsBC {
   GENERAL = 'GENERAL',
@@ -39,7 +39,7 @@ enum CreateStepsBC {
 const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { ns, appName } = match.params;
+  const { ns = CEPH_STORAGE_NAMESPACE, appName } = match.params;
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const isODF = useFlag(ODF_MODEL_FLAG);
 
@@ -158,12 +158,15 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     const promiseObj = k8sCreate(NooBaaBucketClassModel, payload);
     promiseObj
       .then((obj) => {
+        const resourcePath = `${referenceForModel(NooBaaBucketClassModel)}/${getName(obj)}`;
         dispatch({ type: 'setIsLoading', value: false });
-        history.push(
-          `/k8s/ns/${ns}/clusterserviceversions/${getName(
-            clusterServiceVersion,
-          )}/${referenceForModel(NooBaaBucketClassModel)}/${getName(obj)}`,
-        );
+        isODF
+          ? history.push(`/odf/resource/${resourcePath}`)
+          : history.push(
+              `/k8s/ns/${ns}/clusterserviceversions/${getName(
+                clusterServiceVersion,
+              )}/${resourcePath}`,
+            );
       })
       .catch((err) => {
         dispatch({ type: 'setIsLoading', value: false });
