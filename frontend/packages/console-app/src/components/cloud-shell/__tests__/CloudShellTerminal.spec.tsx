@@ -5,10 +5,15 @@ import { useFlag } from '@console/shared';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
 import CloudShellDeveloperSetup from '../setup/CloudShellDeveloperSetup';
 import TerminalLoadingBox from '../TerminalLoadingBox';
+import useCloudShellNamespace from '../useCloudShellNamespace';
 import useCloudShellWorkspace from '../useCloudShellWorkspace';
 import { user } from './cloud-shell-test-data';
 
 jest.mock('../useCloudShellWorkspace', () => ({
+  default: jest.fn(),
+}));
+
+jest.mock('../useCloudShellNamespace', () => ({
   default: jest.fn(),
 }));
 
@@ -36,6 +41,7 @@ describe('CloudShellTerminal', () => {
   it('should display loading box', () => {
     useFlagMock.mockReturnValue(true);
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false]);
+    (useCloudShellNamespace as jest.Mock).mockReturnValueOnce(['sample-namespace', '']);
     const wrapper = shallow(
       <InternalCloudShellTerminal
         user={user}
@@ -49,6 +55,7 @@ describe('CloudShellTerminal', () => {
   it('should display error statusBox', () => {
     useFlagMock.mockReturnValue(true);
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false, true]);
+    (useCloudShellNamespace as jest.Mock).mockReturnValueOnce(['sample-namespace', '']);
     const wrapper = shallow(
       <InternalCloudShellTerminal
         user={user}
@@ -62,6 +69,7 @@ describe('CloudShellTerminal', () => {
   it('should display form if loaded and no workspace', () => {
     useFlagMock.mockReturnValue(true);
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([[], true]);
+    (useCloudShellNamespace as jest.Mock).mockReturnValueOnce(['sample-namespace', '']);
     const wrapper = shallow(
       <InternalCloudShellTerminal
         user={user}
