@@ -5,16 +5,18 @@ import { Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { getName } from '@console/shared';
+import { getName, useFlag } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NamespaceStoreForm from './namespace-store-form';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
 import { NooBaaNamespaceStoreModel } from '../../models';
+import { ODF_MODEL_FLAG, CEPH_STORAGE_NAMESPACE } from '../../constants';
 
 const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) => {
   const { t } = useTranslation();
-  const { ns, appName } = match.params;
+  const { ns = CEPH_STORAGE_NAMESPACE, appName } = match.params;
   const onCancel = () => history.goBack();
+  const isODF = useFlag(ODF_MODEL_FLAG);
 
   return (
     <>
@@ -45,11 +47,12 @@ const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) =>
         onCancel={onCancel}
         redirectHandler={(resources) => {
           const lastIndex = resources.length - 1;
-          history.push(
-            `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
-              NooBaaNamespaceStoreModel,
-            )}/${getName(resources[lastIndex])}`,
-          );
+          const resourcePath = `${referenceForModel(NooBaaNamespaceStoreModel)}/${getName(
+            resources[lastIndex],
+          )}`;
+          isODF
+            ? history.push(`/odf/resource/${resourcePath}`)
+            : history.push(`/k8s/ns/${ns}/clusterserviceversions/${appName}/${resourcePath}`);
         }}
         namespace={ns}
         className="nb-endpoints-page-form__short"
