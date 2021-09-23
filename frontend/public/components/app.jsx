@@ -50,7 +50,7 @@ import '@patternfly/quickstarts/dist/quickstarts.min.css';
 // PF4 Imports
 import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core';
 
-const breakpointMD = 768;
+const breakpointMD = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
@@ -165,9 +165,9 @@ class App_ extends React.PureComponent {
     const content = (
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+        <ConsoleNotifier location="BannerTop" />
         <QuickStartDrawer>
           <div id="app-content" className="co-m-app__content">
-            <ConsoleNotifier location="BannerTop" />
             <Page
               // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
               mainTabIndex={null}
@@ -196,10 +196,10 @@ class App_ extends React.PureComponent {
             </Page>
             <CloudShell />
             <GuidedTour />
-            <ConsoleNotifier location="BannerBottom" />
           </div>
           <div id="modal-container" role="dialog" aria-modal="true" />
         </QuickStartDrawer>
+        <ConsoleNotifier location="BannerBottom" />
       </>
     );
 

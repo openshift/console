@@ -1,6 +1,12 @@
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const';
+import {
+  TEMPLATE,
+  VM_ACTION,
+  VM_ACTION_TIMEOUT,
+  VM_STATUS,
+  K8S_KIND,
+} from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { detailViewAction, selectActionFromDropdown } from '../../views/actions';
 import { addDisk, deleteRow } from '../../views/dialog';
@@ -141,7 +147,7 @@ describe('Test UI for VM hotplug disks', () => {
     cy.createDataVolume(pvcName, testName);
     virtualization.vms.visit();
     vm.create(vmData);
-    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+    waitForStatus(VM_STATUS.Running);
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
@@ -149,19 +155,8 @@ describe('Test UI for VM hotplug disks', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'VirtualMachine',
-      metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
-      },
-    });
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+    cy.deleteResource('Namespace', testName);
   });
 
   it('ID(CNV-6834) Hotplug disk behavior on VM stop', () => {

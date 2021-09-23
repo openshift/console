@@ -1,6 +1,7 @@
 .co-notification-drawer {
   overflow-y: hidden !important;
-  z-index: 10;
+  // place above pf-m-sticky-top --pf-c-page--section--m-sticky-top--ZIndex + 10
+  z-index: 310 !important;
   @include co-break-word;
 }
 
