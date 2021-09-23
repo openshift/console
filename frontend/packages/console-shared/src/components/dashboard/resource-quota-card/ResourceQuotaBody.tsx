@@ -3,7 +3,12 @@ import { useTranslation } from 'react-i18next';
 
 import './resource-quota-card.scss';
 
-const ResourceQuotaBody: React.FC<ResourceQuotaBodyProps> = ({ error, isLoading, children }) => {
+const ResourceQuotaBody: React.FC<ResourceQuotaBodyProps> = ({
+  error,
+  isLoading,
+  noText,
+  children,
+}) => {
   let body: React.ReactNode;
   const { t } = useTranslation();
   if (error) {
@@ -11,7 +16,7 @@ const ResourceQuotaBody: React.FC<ResourceQuotaBodyProps> = ({ error, isLoading,
   } else if (isLoading) {
     body = <div className="skeleton-quota" />;
   } else if (!React.Children.count(children)) {
-    body = <div className="text-secondary">{t('console-shared~No resource quotas')}</div>;
+    body = <div className="text-secondary">{noText || t('console-shared~No ResourceQuotas')}</div>;
   }
 
   return <div className="co-dashboard-card__body--top-margin">{body || children}</div>;
@@ -22,4 +27,5 @@ export default ResourceQuotaBody;
 type ResourceQuotaBodyProps = {
   error: boolean;
   isLoading: boolean;
+  noText?: string;
 };

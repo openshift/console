@@ -18,7 +18,7 @@ import {
 } from '../../actions/dashboards';
 import { RootState } from '../../redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, AppliedClusterResourceQuotaKind } from '../../module/k8s';
 import { PrometheusResponse } from '../graphs';
 
 const mapDispatchToProps: DispatchToProps = (dispatch) => ({
@@ -221,6 +221,9 @@ export type DashboardItemProps = {
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
   resources?: {
-    [key: string]: FirehoseResult | FirehoseResult<K8sResourceKind>;
+    [key: string]:
+      | FirehoseResult
+      | FirehoseResult<K8sResourceKind>
+      | FirehoseResult<AppliedClusterResourceQuotaKind>;
   };
 };

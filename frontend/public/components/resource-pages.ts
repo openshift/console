@@ -8,6 +8,7 @@ import { ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { referenceForModel, GroupVersionKind, referenceForExtensionModel } from '../module/k8s';
 import {
   AlertmanagerModel,
+  AppliedClusterResourceQuotaModel,
   BuildConfigModel,
   BuildModel,
   ClusterOperatorModel,
@@ -275,6 +276,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.ResourceQuotasDetailsPage,
     ),
   )
+  .set(referenceForModel(AppliedClusterResourceQuotaModel), () =>
+    import('./resource-quota' /* webpackChunkName: "resource-quota" */).then(
+      (m) => m.AppliedClusterResourceQuotasDetailsPage,
+    ),
+  )
   .set(referenceForModel(LimitRangeModel), () =>
     import('./limit-range' /* webpackChunkName: "limit-range" */).then(
       (m) => m.LimitRangeDetailsPage,
@@ -517,6 +523,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ResourceQuotaModel), () =>
     import('./resource-quota' /* webpackChunkName: "resource-quota" */).then(
       (m) => m.ResourceQuotasPage,
+    ),
+  )
+  .set(referenceForModel(AppliedClusterResourceQuotaModel), () =>
+    import('./resource-quota' /* webpackChunkName: "resource-quota" */).then(
+      (m) => m.AppliedClusterResourceQuotasPage,
     ),
   )
   .set(referenceForModel(LimitRangeModel), () =>

@@ -62,7 +62,6 @@ export type Toleration = {
 // or status, weakening type checking.
 export type K8sResourceKind = K8sResourceCommon & {
   spec?: {
-    selector?: Selector | MatchLabels;
     [key: string]: any;
   };
   status?: { [key: string]: any };
@@ -323,6 +322,29 @@ export type DeploymentKind = {
     replicas?: number;
     unavailableReplicas?: number;
     updatedReplicas?: number;
+  };
+} & K8sResourceCommon;
+
+export type AppliedClusterResourceQuotaKind = {
+  spec?: {
+    selector?: {
+      labels?: Selector;
+      annotations?: MatchLabels;
+    };
+    quota?: {
+      hard?: { [key: string]: number };
+      scopes?: string[];
+      scopeSelector?: {
+        matchExpressions?: { scopeName: string; operator: string; values?: string[] }[];
+      };
+    };
+  };
+  status?: {
+    namespaces?: {
+      namespace: string;
+      status: { used?: { [key: string]: number }; hard?: { [key: string]: number } };
+    }[];
+    total?: { hard?: { [key: string]: number }; used?: { [key: string]: number } };
   };
 } & K8sResourceCommon;
 
