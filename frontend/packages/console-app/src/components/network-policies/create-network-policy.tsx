@@ -65,7 +65,9 @@ export const CreateNetworkPolicy: React.FC<{
       const reconverted = networkPolicyToK8sResource(converted);
       if (!_.isEqual(normalizedK8S, reconverted)) {
         throw new Error(
-          t('console-app~non iso back and forth conversion, some fields in YAML would be lost.'),
+          t(
+            'console-app~Not all YAML property values are supported in the form editor. Some data would be lost.',
+          ),
         );
       }
     }
