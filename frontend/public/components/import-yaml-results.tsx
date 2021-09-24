@@ -162,10 +162,10 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
             </Thead>
             <Tbody {...reactPropFix}>
               {importResources.map((resource, index) => (
-                <Tr key={`${resource.metadata.name}-${resource.metadata.kind}`} {...reactPropFix}>
+                <Tr key={`${resource.metadata.name}-${resource.kind}`} {...reactPropFix}>
                   <Td {...reactPropFix}>
                     <ResourceLink
-                      kind={referenceFor(resource) || resource.metadata.kind}
+                      kind={referenceFor(resource) || resource.kind}
                       name={resource.metadata.name}
                       namespace={resource.metadata?.namespace}
                       linkTo={!inFlight && !importStatus[index].error}

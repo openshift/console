@@ -17,8 +17,7 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream } = _.get(values, formContextField) || values;
-  const { imageStream: initialImageStream, isi: initialIsi } =
-    _.get(initialValues, formContextField) || initialValues;
+  const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
   const { state, dispatch, hasImageStreams, setHasImageStreams } = React.useContext(
     ImageStreamContext,
   );
@@ -42,7 +41,10 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
 
   const onDropdownChange = React.useCallback(
     (img: string) => {
-      setFieldValue(`${fieldPrefix}imageStream.tag`, initialImageStream.tag);
+      setFieldValue(
+        `${fieldPrefix}imageStream.tag`,
+        img === imageStream.image ? imageStream.tag : '',
+      );
       setFieldValue(`${fieldPrefix}isi`, initialIsi);
       const image = _.get(imgCollection, [imageStream.namespace, img], {});
       dispatch({ type: ImageStreamActions.setSelectedImageStream, value: image });
@@ -50,7 +52,8 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
     [
       setFieldValue,
       fieldPrefix,
-      initialImageStream.tag,
+      imageStream.tag,
+      imageStream.image,
       initialIsi,
       imgCollection,
       imageStream.namespace,
@@ -76,12 +79,6 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
     imageStream.image && onDropdownChange(imageStream.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageStream.image, isStreamsAvailable]);
-
-  React.useEffect(() => {
-    if (initialImageStream.image !== imageStream.image) {
-      initialImageStream.tag = '';
-    }
-  }, [imageStream.image, initialImageStream.image, initialImageStream.tag]);
 
   return (
     <ResourceDropdownField

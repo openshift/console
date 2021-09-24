@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import { Link, Router } from 'react-router-dom';
 import { mount, shallow } from 'enzyme';
 
-import { FLAGS, useActivePerspective } from '@console/shared';
+import { FLAGS } from '@console/shared';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { setFlag } from '@console/internal/actions/features';
 import * as UIActions from '@console/internal/actions/ui';
 import { history } from '@console/internal/components/utils/router';
@@ -14,8 +15,8 @@ import {
 } from '@console/internal/components/graphs/prometheus-graph';
 import store from '@console/internal/redux';
 
-jest.mock('@console/shared/src/hooks/useActivePerspective', () => ({
-  useActivePerspective: jest.fn(),
+jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  default: jest.fn(),
 }));
 
 const useActivePerspectiveMock = useActivePerspective as jest.Mock;

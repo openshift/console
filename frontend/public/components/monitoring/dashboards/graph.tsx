@@ -1,4 +1,4 @@
-import { useActivePerspective } from '@console/shared';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore

@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { mockPerspectiveExtensions } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
 import { useExtensions } from '@console/plugin-sdk';
 import { usePreferredPerspective } from '../../user-preferences';
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
-import { mockPerspectiveExtensions } from './perspective.data';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),

@@ -9,7 +9,7 @@ ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 cd frontend
 yarn run lint
 if [ "$OPENSHIFT_CI" = true ]; then
-    JEST_SUITE_NAME="OpenShift Console Unit Tests" JEST_JUNIT_OUTPUT_DIR="$ARTIFACT_DIR" yarn run test --ci --reporters=default --reporters=jest-junit
+    JEST_SUITE_NAME="OpenShift Console Unit Tests" JEST_JUNIT_OUTPUT_DIR="$ARTIFACT_DIR" yarn run test --ci --maxWorkers=2 --reporters=default --reporters=jest-junit
 else
     yarn run test
 fi

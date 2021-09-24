@@ -21,6 +21,7 @@ import {
   ResourceLinkProps,
   UseK8sModel,
   UseK8sModels,
+  UseActivePerspective,
 } from '../extensions/console-types';
 
 export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
@@ -35,6 +36,10 @@ export const consoleFetchJSON: ConsoleFetchJSON = require('@console/dynamic-plug
   .consoleFetchJSON;
 export const consoleFetchText: ConsoleFetchText = require('@console/dynamic-plugin-sdk/src/utils/fetch')
   .consoleFetchText;
+
+export const useActivePerspective: UseActivePerspective = require('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective')
+  .default;
+
 /**
  * A component that creates a Navigation bar. It takes array of NavPage objects and renderes a NavBar.
  * Routing is handled as part of the component.

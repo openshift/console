@@ -53,6 +53,10 @@ When('user enters Name as {string}', (name: string) => {
   gitPage.enterComponentName(name);
 });
 
+When('user enters Name as {string} in General section', (name: string) => {
+  gitPage.enterComponentName(name);
+});
+
 When('user unselects the advanced option Create a route to the application', () => {
   gitPage.unselectRoute();
 });

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Table, TableData } from '@console/internal/components/factory';
@@ -14,12 +13,12 @@ import { isGuestAgentInstalled } from '../../utils/guest-agent-utils';
 
 import './guest-agent-file-systems.scss';
 
-const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
+export const tableColumnClasses = [
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-sm',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
 ];
 
 const FileSystemsTableHeader = (t: TFunction) => () => {

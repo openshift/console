@@ -14,13 +14,14 @@ import {
   isPerspective,
   WatchK8sResults,
   WatchK8sResultsObject,
+  useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
 import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';
-import { BadgeType, getBadgeFromType, useActivePerspective, useRelatedHPA } from '@console/shared';
+import { BadgeType, getBadgeFromType, useRelatedHPA } from '@console/shared';
 import {
   getInitialValuesKnatify,
   knatifyResources,

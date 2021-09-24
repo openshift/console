@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { isPerspective, Perspective } from '@console/dynamic-plugin-sdk';
+import { isPerspective, Perspective, PerspectiveType } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
 import { usePreferredPerspective } from '../user-preferences';
-import { PerspectiveType } from './perspective-context';
 import { useLastPerspective } from './useLastPerspective';
 
 export const useValuesForPerspectiveContext = (): [

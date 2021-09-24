@@ -202,6 +202,9 @@ Cypress.Commands.add('selectProject', (project: string) => {
   cy.byTestID('dropdown-menu-item-link')
     .contains('.pf-c-menu__item-text', project)
     .should('exist');
+  // try to add a explict wait to remove the flake
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(3000);
   cy.get('.pf-c-menu__item-text')
     .contains(project)
     .click();

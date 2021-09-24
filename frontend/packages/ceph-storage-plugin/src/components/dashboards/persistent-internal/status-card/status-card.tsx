@@ -57,7 +57,7 @@ export const CephAlerts = withDashboardResources(
 const CephHealthCheck: React.FC<CephHealthCheckProps> = ({ cephHealthState, healthCheck }) => {
   const { t } = useTranslation();
   return (
-    <Flex direction={{ default: 'row' }}>
+    <Flex flexWrap={{ default: 'nowrap' }} direction={{ default: 'row' }}>
       <FlexItem>
         {
           (healthStateMapping[cephHealthState.state] || healthStateMapping[HealthState.UNKNOWN])

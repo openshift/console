@@ -1,5 +1,5 @@
 import { match as RMatch } from 'react-router-dom';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResource, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -10,7 +10,7 @@ import {
   PersistentVolumeClaimKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { useActivePerspective, useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { PipelineRunModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import { getLatestRun } from '../../utils/pipeline-augment';

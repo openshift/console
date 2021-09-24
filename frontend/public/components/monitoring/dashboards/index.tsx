@@ -9,7 +9,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
-import { RedExclamationCircleIcon, useActivePerspective } from '@console/shared';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { RedExclamationCircleIcon } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
 import { navFactory, Kebab } from '@console/internal/components/utils';
-import { useActivePerspective, useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { pipelinesTab } from '../../utils/pipeline-utils';
 import RepositoryDetails from './RepositoryDetails';
 import RepositoryPipelineRunListPage from './RepositoryPipelineRunListPage';

@@ -11,13 +11,12 @@ Feature: Create Application from Devfile
 
         @regression
         Scenario: Deploy git workload with devfile from topology page: A-04-TC01
-            Given user has created workload "nodejs-ex-git" with resource type "Deployment"
-              And user is at the Topology page
+            Given user is at the Topology page
              When user right clicks on topology empty graph
               And user selects "Import from Git" option from Add to Project context menu
               And user enters Git Repo URL as "https://github.com/redhat-developer/devfile-sample" in Import from Git form
-              And user enters workload name as "node-bulletin-board-1" in Name
-              And user clicks Create button
+              And user enters workload name as "node-bulletin-board-1"
+              And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "node-bulletin-board-1" in topology page
 
@@ -26,8 +25,8 @@ Feature: Create Application from Devfile
         Scenario: Create the workload from dev file: A-04-TC02
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/redhat-developer/devfile-sample"
-              And user enters workload name as "node-bulletin-board" in Name
-              And user clicks Create button
+              And user enters workload name as "node-bulletin-board"
+              And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "node-bulletin-board" in topology page
 
