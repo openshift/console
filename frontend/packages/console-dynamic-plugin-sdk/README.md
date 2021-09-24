@@ -24,13 +24,21 @@ dynamic-demo-plugin/
 └── webpack.config.ts
 ```
 
+## SDK packages
+
+| Package Name | Description |
+| --- | --- |
+| `@openshift-console/dynamic-plugin-sdk` | Provides the plugin API, types and utilities used by dynamic plugins at runtime. |
+| `@openshift-console/dynamic-plugin-sdk-webpack` | Provides webpack plugin `ConsoleRemotePlugin` used to build all dynamic plugin assets. |
+| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code. |
+
 ## `package.json`
 
 Plugin metadata is declared via the `consolePlugin` object.
 
 ```jsonc
 {
-  "name": "@console/dynamic-demo-plugin",
+  "name": "dynamic-demo-plugin",
   "version": "0.0.0",
   "private": true,
   // scripts, dependencies, devDependencies, ...
@@ -59,8 +67,7 @@ Dynamic plugins can expose modules representing additional code to be referenced
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
 each exposed module. Exposed modules are resolved relative to plugin's webpack `context` option.
 
-See [`ConsolePluginMetadata` type](/frontend/packages/console-dynamic-plugin-sdk/src/schema/plugin-package.ts)
-for details on the `consolePlugin` object and its schema.
+See `ConsolePluginMetadata` type for details on the `consolePlugin` object and its schema.
 
 ## `console-extensions.json`
 
@@ -105,10 +112,9 @@ support for module federation.
 All dynamic plugin assets are managed via webpack plugin `ConsoleRemotePlugin`.
 
 ```ts
-import * as webpack from 'webpack';
-import { ConsoleRemotePlugin } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
+const { ConsoleRemotePlugin } = require('@openshift-console/dynamic-plugin-sdk-webpack');
 
-const config: webpack.Configuration = {
+const config = {
   // 'entry' is optional, but unrelated to plugin assets
   plugins: [new ConsoleRemotePlugin()],
   // ... rest of webpack configuration
@@ -180,3 +186,17 @@ list of plugin names (disable specific plugins) or an empty string (disable all 
   be enabled or disabled separately.
 - Failure to resolve a code reference (unable to load module, missing module export etc.) will disable
   the plugin.
+
+## Publishing SDK packages
+
+To see the latest published version:
+
+```sh
+yarn info @openshift-console/dynamic-plugin-sdk dist-tags
+```
+
+To build and publish all distributable [SDK packages](#sdk-packages) to [npm registry](https://www.npmjs.com/):
+
+```sh
+PKG_VERSION='<new-version>' ./publish.sh
+```
