@@ -20,3 +20,5 @@ export const noUserLoggedIn = 'No users logged in';
 export const oneActiveUser = '1 user';
 export const timeOfLogin = 'Time of login';
 export const serialEmptyState = 'Click Connect to open serial console.';
+
+export const clearFilters = 'Clear all filters';

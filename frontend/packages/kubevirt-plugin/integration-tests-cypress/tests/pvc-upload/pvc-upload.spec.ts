@@ -75,17 +75,19 @@ describe('kubevirt PVC upload', () => {
 
   describe('test PVC upload via CLI', () => {
     it('ID(CNV-5044) Verify boot source is available for template after upload via CLI', () => {
-      cy.exec(
-        `test -f ${Cypress.env(
-          'UPLOAD_IMG',
-        )} || curl --fail -L ${ProvisionSource.URL.getSource()} -o ${Cypress.env('UPLOAD_IMG')}`,
-        { timeout: 600000 },
-      );
+      if (Cypress.env('DOWNSTREAM')) {
+        cy.exec(
+          `test -f ${Cypress.env(
+            'UPLOAD_IMG',
+          )} || curl --fail -L ${ProvisionSource.URL.getSource()} -o ${Cypress.env('UPLOAD_IMG')}`,
+          { timeout: 600000 },
+        );
 
-      cy.uploadFromCLI(template.dvName, OS_IMAGES_NS, Cypress.env('UPLOAD_IMG'), '1');
+        cy.uploadFromCLI(template.dvName, OS_IMAGES_NS, Cypress.env('UPLOAD_IMG'), '1');
 
-      cy.visitVMTemplatesList();
-      virtualization.templates.testSource(template.name, 'Unknown');
+        cy.visitVMTemplatesList();
+        virtualization.templates.testSource(template.name, 'Unknown');
+      }
     });
 
     it('ID(CNV-5597) Verify create VM from the template whose source is uploaded via CLI', () => {
