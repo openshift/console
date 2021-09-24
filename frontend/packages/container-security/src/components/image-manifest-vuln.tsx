@@ -8,6 +8,7 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import { DefaultList } from '@console/internal/components/default-resource';
 import {
   MultiListPage,
@@ -314,7 +315,8 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
 export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (props) => {
   const { t } = useTranslation();
   const { showTitle = true, hideNameLabelFilters = true } = props;
-  const namespace = props.namespace || props.match?.params?.ns || props.match?.params?.name;
+  const namespace =
+    props.namespace || props.match?.params?.ns || props.match?.params?.name || getActiveNamespace();
   return (
     <MultiListPage
       {...props}
