@@ -12,7 +12,7 @@ Given('user has created pipeline {string} with git resources', (pipelineName: st
   navigateTo(devNavigationMenu.Pipelines);
 });
 
-When('user clicks on Show credentials link present in Start Pipeline modal', () => {
+When('user clicks on Show Credentials link present in Start Pipeline modal', () => {
   modal.modalTitleShouldContain('Start Pipeline');
   startPipelineInPipelinesPage.clickShowCredentialOptions();
 });
