@@ -38,8 +38,8 @@ export const formPO = {
   },
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
-  save: '[data-test-id="submit-button"]',
   errorAlert: '[aria-label="Danger Alert"]',
+  save: '[data-test="save-changes"]',
   successAlert: '[aria-label="Success Alert"]',
 };
 export const alert = '.pf-c-alert';

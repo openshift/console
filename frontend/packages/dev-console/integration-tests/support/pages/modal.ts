@@ -45,7 +45,7 @@ export const editAnnotations = {
       .last()
       .type(value),
   removeAnnotation: (annotationKey: string) => {
-    cy.byTestID('pairs-list-name').each(($el, index) => {
+    cy.get(`div.row [data-test=pairs-list-name]`).each(($el, index) => {
       if ($el.prop('value').includes(annotationKey)) {
         cy.get('button[data-test="delete-button"]')
           .eq(index)

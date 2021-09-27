@@ -2,6 +2,8 @@ export const pipelineBuilderPO = {
   title: '.odc-pipeline-builder-header h1',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
+  pipeline: '#pipeline-link',
+  repository: '#repository-link',
   add: 'button.pf-c-button.pf-m-link.pf-m-inline',
   configureVia: {
     pipelineBuilder: '#form-radiobutton-editorType-form-field',
@@ -78,7 +80,10 @@ export const pipelineBuilderPO = {
     },
   },
 };
-
+export const createRepositoryPO = {
+  create: '[data-test="save-changes"]',
+  cancel: '[data-test="cancel"]',
+};
 export const pipelineDetailsPO = {
   title: '[data-test-section-heading="Pipeline details"]',
   detailsTab: '[data-test-id$="Details"]',
@@ -129,6 +134,33 @@ export const pipelineDetailsPO = {
     pipelineRunIcon: '[title="PipelineRun"]',
   },
 };
+
+export const repositoryDetailsPO = {
+  detailsTab: '[data-test-id$="Details"]',
+  yamlTab: '[data-test-id$="YAML"]',
+  pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
+  details: {
+    sectionTitle: '[data-test-section-heading="Repository details"]',
+    fieldNames: {
+      name: '[data-test="Name"]',
+      namespace: '[data-test="Namespace"]',
+      labels: '[data-test="Labels"]',
+      annotations: '[data-test="Annotations"]',
+      createdAt: '[data-test="Created at"]',
+      owner: '[data-test="Owner"]',
+    },
+    fieldValues: {
+      name: '[data-test-selector="details-item-value__Name"]',
+      namespace: '[data-test-selector="details-item-value__Namespace"]',
+      labels: '[data-test-selector="details-item-value__Labels"]',
+      annotations: '[data-test-selector="details-item-value__Annotations"]',
+      createdAt: '[data-test-selector="details-item-value__Created at"]',
+      owner: '[data-test-selector="details-item-value__Owner"]',
+    },
+  },
+};
+
+export const repositoriesPO = {};
 
 export const triggerTemplateDetailsPO = {
   title: '[data-test-section-heading="TriggerTemplate details"]',

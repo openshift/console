@@ -1,10 +1,48 @@
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
-import { pipelineActions } from '../../constants/pipelines';
+import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
+import { pipelineActions, pipelineTabs } from '../../constants/pipelines';
 import { pipelinesPO, pipelineBuilderPO } from '../../page-objects/pipelines-po';
 
 export const pipelinesPage = {
-  clickOnCreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
+  clickOnCreatePipeline: () => {
+    detailsPage.titleShouldContain(pageTitle.Pipelines);
+    cy.get('body').then(($body) => {
+      if ($body.find('[data-test-id= "dropdown-button"]').length !== 0) {
+        cy.byLegacyTestID('dropdown-button').click();
+        cy.get(pipelineBuilderPO.pipeline).click();
+      } else {
+        cy.get(pipelinesPO.createPipeline).click();
+      }
+    });
+  },
+
+  clickCreateRepository: () => {
+    detailsPage.titleShouldContain(pageTitle.Pipelines);
+    cy.get('body').then(($body) => {
+      if ($body.find('[data-test-id= "dropdown-button"]').length !== 0) {
+        cy.byLegacyTestID('dropdown-button').click();
+        cy.get(pipelineBuilderPO.repository).click();
+      } else {
+        cy.get(pipelinesPO.createPipeline).click();
+      }
+    });
+  },
+
+  selectTab: (tabName: pipelineTabs) => {
+    switch (tabName) {
+      case pipelineTabs.Pipelines:
+        cy.byLegacyTestID('horizontal-link-Pipelines').click();
+        break;
+      case pipelineTabs.Repositories:
+        cy.byLegacyTestID('horizontal-link-Repositories').click();
+        break;
+      default:
+        throw new Error('Given tab is not available');
+        break;
+    }
+  },
 
   selectKebabMenu: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table).within(() => {
@@ -76,6 +114,17 @@ export const pipelinesPage = {
         modal.modalTitleShouldContain('Edit Annotations');
         break;
       }
+      case pipelineActions.EditRepository: {
+        cy.byTestActionID(pipelineActions.EditRepository).click();
+        cy.contains('Repository details').should('be.visible');
+        break;
+      }
+      case pipelineActions.DeleteRepository: {
+        cy.byTestActionID(pipelineActions.DeleteRepository).click();
+        modal.modalTitleShouldContain('Delete Repository?');
+        cy.contains('Repository details').should('be.visible');
+        break;
+      }
       case pipelineActions.EditPipeline: {
         cy.byTestActionID(pipelineActions.EditPipeline).click();
         cy.get('h1.odc-pipeline-builder-header__title').should('contain.text', 'Pipeline Builder');
@@ -93,17 +142,12 @@ export const pipelinesPage = {
     }
   },
 
-  searchPipelineInPipelinesPage: (pipelineName: string) => {
+  search: (name: string) => {
     cy.get(pipelinesPO.search)
-      .should('be.visible')
       .clear()
-      .type(pipelineName);
+      .type(name);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
-  },
-
-  search: (pipelineName: string) => {
-    pipelinesPage.searchPipelineInPipelinesPage(pipelineName);
     cy.get(pipelinesPO.pipelinesTable.table).should('be.visible');
   },
 

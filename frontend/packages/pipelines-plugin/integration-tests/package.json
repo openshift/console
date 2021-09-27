@@ -8,6 +8,6 @@
   },
   "scripts": {
     "test-cypress": "../../../node_modules/.bin/cypress open --env openshift=true",
-    "test-cypress-headless": "node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome} --headless cypress:cli,cypress:server:specs --spec \"features/e2e/pipeline-ci.feature\";"
+    "test-cypress-headless": "node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome} --headless cypress:cli,cypress:server:specs --spec \"features/pipelines/*.feature\";"
   }
 }

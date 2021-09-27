@@ -82,11 +82,10 @@ export const verifyAndInstallOperator = (operator: operators, namespace?: string
 
 // If pipelines not available in left side navigation menu of developer navigation menu, then install from Operator Hub
 export const verifyAndInstallPipelinesOperator = () => {
-  perspective.switchTo(switchPerspective.Developer);
   app.waitForNameSpacesToLoad();
   app.waitForLoad();
   cy.get(devNavigationMenuPO.pageSideBar).then(($ele) => {
-    if ($ele.find(devNavigationMenuPO.pipelines).length !== 0) {
+    if ($ele.find(devNavigationMenuPO.pipelines).length) {
       cy.log(`${operators.PipelinesOperator} operator is already installed in the cluster`);
     } else {
       perspective.switchTo(switchPerspective.Administrator);
@@ -95,7 +94,7 @@ export const verifyAndInstallPipelinesOperator = () => {
       cy.get('body', {
         timeout: 50000,
       }).then(($body) => {
-        if ($body.find(operatorsPO.installOperators.noOperatorsFound).length !== 0) {
+        if ($body.find(operatorsPO.installOperators.noOperatorsFound)) {
           installOperator(operators.PipelinesOperator);
           // After https://issues.redhat.com/browse/SRVKP-1379 issue fix, will remove below wait time
           // eslint-disable-next-line cypress/no-unnecessary-waiting
