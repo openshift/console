@@ -30,7 +30,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
   const traffic = service.status?.traffic;
   const name = service.metadata?.name;
 
-  const filteredRevisions = (): K8sResourceKind[] => {
+  const filteredRevisions: K8sResourceKind[] = React.useMemo(() => {
     if (!revisions || !revisions.length) {
       return [];
     }
@@ -40,7 +40,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
     return revWithTraffic.length < MAX_REVISIONS
       ? _.concat(revWithTraffic, revWithoutTraffic.slice(0, MAX_REVISIONS - revWithTraffic.length))
       : revWithTraffic;
-  };
+  }, [revisions, traffic]);
 
   const getRevisionsLink = () => {
     const url = `/search/ns/${namespace}`;
@@ -79,7 +79,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
         </span>
       ) : (
         <ul className="list-group">
-          {_.map(filteredRevisions(), (revision) => (
+          {_.map(filteredRevisions, (revision) => (
             <RevisionsOverviewListItem
               key={revision.metadata.uid}
               revision={revision}
