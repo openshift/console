@@ -110,8 +110,8 @@ const SystemSwitch: React.FC<{
         //@ts-ignore */}
       <MenuInput>
         <Switch
-          id="no-label-switch-on"
           data-test="showSystemSwitch"
+          data-checked-state={isChecked}
           label={
             isProject
               ? t('console-shared~Show default projects')
