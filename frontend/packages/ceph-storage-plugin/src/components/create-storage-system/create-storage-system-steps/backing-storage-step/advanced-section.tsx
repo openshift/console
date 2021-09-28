@@ -38,6 +38,7 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
       // 'value' on SelectProps['onSelect'] is string hence not matching with payload which is of "DeploymentType"
       payload: value as DeploymentType,
     });
+    setIsSelectOpen(false);
   };
 
   const handleToggling: SelectProps['onToggle'] = (isExpanded: boolean) =>
