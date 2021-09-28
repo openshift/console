@@ -1,4 +1,5 @@
 import { testName } from '../../support';
+import { VirtualMachineData } from '../../types/vm';
 import {
   IMPORTING,
   K8S_KIND,
@@ -15,6 +16,18 @@ import { virtualization } from '../../views/virtualization';
 
 const template = TEMPLATE.RHEL6;
 
+const registryTemplate: VirtualMachineData = {
+  name: `registry-template-${testName}`,
+  description: 'ID(CNV-871): create template from registry',
+  namespace: testName,
+  templateProvider: 'foo',
+  templateSupport: true,
+  os: TEMPLATE.WIN2K12R2.os,
+  template: TEMPLATE.WIN2K12R2,
+  provisionSource: ProvisionSource.REGISTRY,
+  pvcSize: '1',
+};
+
 describe('test vm template source image', () => {
   before(() => {
     cy.Login();
@@ -26,6 +39,8 @@ describe('test vm template source image', () => {
 
   after(() => {
     cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
+    cy.deleteResource(K8S_KIND.Template, registryTemplate.name, testName);
+    cy.deleteResource(K8S_KIND.Template, registryTemplate.name, testName);
     cy.deleteTestProject(testName);
   });
 
@@ -47,14 +62,15 @@ describe('test vm template source image', () => {
     customizeSource.finishCustomization();
     virtualization.templates.filter(vmtName);
     virtualization.templates.testSource(vmtName, PROVIDER);
+    virtualization.templates.delete(vmtName);
   });
 
   it('customize user template source', () => {
     const vmtName = 'tmp-user-customized';
-    cy.createUserTemplate(testName);
     cy.visitVMTemplatesList();
+    virtualization.templates.createTemplateFromWizard(registryTemplate);
 
-    virtualization.templates.customizeSource(template.metadataName);
+    virtualization.templates.customizeSource(registryTemplate.name);
     customizeSource.fillForm({ vmtName });
 
     cy.visitVMTemplatesList();
@@ -64,5 +80,7 @@ describe('test vm template source image', () => {
     customizeSource.finishCustomization();
     virtualization.templates.filter(vmtName);
     virtualization.templates.testSource(vmtName, PROVIDER);
+    virtualization.templates.delete(vmtName);
+    virtualization.templates.delete(registryTemplate.name);
   });
 });

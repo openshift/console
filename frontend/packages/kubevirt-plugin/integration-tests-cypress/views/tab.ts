@@ -12,7 +12,7 @@ export enum tabs {
 
 export const navigateToTab = (tab: string) => {
   cy.byLegacyTestID(tab).should('be.visible');
-  cy.byLegacyTestID(tab).click();
+  cy.byLegacyTestID(tab).click({ force: true });
 };
 
 export const tab = {

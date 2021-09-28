@@ -56,7 +56,7 @@ function removeLabel(type: string) {
   cy.get(modalCancel).should('not.exist');
 }
 
-describe('Test VM details tab', () => {
+describe('Test VM scheduling policy', () => {
   before(() => {
     cy.Login();
     cy.createProject(testName);

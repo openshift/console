@@ -24,8 +24,8 @@ export enum dashboardTab {
   detailsCardItem = '.co-details-card__item-value',
   utilsCardItem = '[data-test-id="utilization-item"]',
   inventoryCardItem = '.co-inventory-card__item',
-  vmHealth = '[data-test="Virtual Machine-health-item"]',
-  guestAgentHealth = '[data-test="Guest Agent-health-item"]',
+  vmHealth = '[data-item-id="Virtual Machine-health-item"]',
+  guestAgentHealth = '[data-item-id="Guest Agent-health-item"]',
   guestAgentOK = '[data-test="success-icon"]',
   eventsCardBody = '.co-activity-card__recent-accordion',
 }
@@ -49,6 +49,7 @@ export const saveAndRestart = '#save-and-restart';
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
 export const pendingChangeAlert = '.pf-c-alert.pf-m-inline.pf-m-warning.kv__pending_changes-alert';
+export const alertDescription = '.pf-c-alert__description';
 
 // nic modal
 export enum nicDialog {
@@ -98,3 +99,4 @@ export const templateLink = (name: string) => `[data-test-id="${name}"]`;
 
 export const resourceTitle = '[data-test-id="resource-title"]';
 export const resourceStatus = '[data-test="resource-status"]';
+export const loadingBox = '.loading-box.loading-box__loaded';
