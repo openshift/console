@@ -468,7 +468,7 @@ $monitoring-line-height: 18px;
   background-color: $tooltip-background-color;
   color: #eee;
   font-size: 12px;
-  overflow-y: auto;
+  overflow-x: hidden;
   padding: 10px;
 }
 
@@ -480,8 +480,11 @@ $monitoring-line-height: 18px;
   width: 0;
 }
 
-.query-browser__tooltip-group {
-  align-items: stretch;
+.query-browser__tooltip-line {
+  stroke: $tooltip-background-color;
+}
+
+.query-browser__tooltip-series {
   display: flex;
 
   .query-browser__series-btn {
@@ -490,10 +493,6 @@ $monitoring-line-height: 18px;
     margin-top: 4px;
     margin-right: 3px;
   }
-}
-
-.query-browser__tooltip-line {
-  stroke: $tooltip-background-color;
 }
 
 .query-browser__tooltip-time {
