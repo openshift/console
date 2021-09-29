@@ -13,6 +13,10 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: () => true,
 }));
 
+jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
+  useUserSettingsCompatibility: () => ['', () => {}],
+}));
+
 const emptyPolicy: NetworkPolicyKind = {
   metadata: {
     name: '',
