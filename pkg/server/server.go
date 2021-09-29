@@ -301,6 +301,7 @@ func (s *Server) HTTPHandler() http.Handler {
 			rulesSourcePath      = prometheusProxyEndpoint + "/api/v1/rules"
 			querySourcePath      = prometheusProxyEndpoint + "/api/v1/query"
 			queryRangeSourcePath = prometheusProxyEndpoint + "/api/v1/query_range"
+			targetsSourcePath    = prometheusProxyEndpoint + "/api/v1/targets"
 			targetAPIPath        = prometheusProxyEndpoint + "/api/"
 
 			tenancyQuerySourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/query"
@@ -329,6 +330,13 @@ func (s *Server) HTTPHandler() http.Handler {
 			})),
 		)
 		handle(labelSourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				thanosProxy.ServeHTTP(w, r)
+			})),
+		)
+		handle(targetsSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
