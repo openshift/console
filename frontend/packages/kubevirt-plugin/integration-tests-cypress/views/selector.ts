@@ -49,6 +49,7 @@ export const saveAndRestart = '#save-and-restart';
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
 export const pendingChangeAlert = '.pf-c-alert.pf-m-inline.pf-m-warning.kv__pending_changes-alert';
+export const warningAlert = '.pf-c-alert.pf-m-inline.pf-m-warning';
 export const alertDescription = '.pf-c-alert__description';
 export const warningAlert = '.pf-c-alert.pf-m-inline.pf-m-warning';
 
