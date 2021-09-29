@@ -17,11 +17,9 @@ import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPan
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
 import TopologyKafkaPanel from '@console/rhoas-plugin/src/topology/components/TopologyKafkaPanel';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
-import { OdcBaseEdge } from '../../elements';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import { OperatorGroupData } from '../../operators/operator-topology-types';
 import TopologyOperatorBackedPanel from '../../operators/TopologyOperatorBackedPanel';
-import TopologyServiceBindingRequestPanel from '../../operators/TopologyServiceBindingRequestPanel';
 import { TopologyDataObject } from '../../topology-types';
 import TopologyApplicationPanel from '../application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
@@ -81,7 +79,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
     }
     if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
-      return <TopologyServiceBindingRequestPanel edge={selectedEntity as OdcBaseEdge} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
   }
