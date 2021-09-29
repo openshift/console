@@ -125,7 +125,7 @@
     "@patternfly/quickstarts": "1.2.3",
     "@patternfly/react-catalog-view-extension": "4.12.73",
     "@patternfly/react-charts": "6.15.23",
-    "@patternfly/react-core": "4.157.2",
+    "@patternfly/react-core": "4.157.8",
     "@patternfly/react-table": "4.30.2",
     "@patternfly/react-tokens": "4.12.18",
     "@patternfly/react-topology": "4.9.78",
