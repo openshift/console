@@ -341,7 +341,7 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
   },
 );
 
-export const PollIntervalDropdown: React.FC = () => {
+export const PollIntervalDropdown: React.FC<{}> = () => {
   const { t } = useTranslation();
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
   const [activePerspective] = useActivePerspective();
@@ -376,14 +376,14 @@ export const PollIntervalDropdown: React.FC = () => {
   );
 };
 
-const TimeDropdowns: React.FC = React.memo(() => (
+const TimeDropdowns: React.FC<{}> = React.memo(() => (
   <div className="monitoring-dashboards__options">
     <TimespanDropdown />
     <PollIntervalDropdown />
   </div>
 ));
 
-const HeaderTop: React.FC = React.memo(() => {
+const HeaderTop: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
 
   return (
@@ -609,6 +609,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
   const activePerspective = namespace ? 'dev' : 'admin';
   const [board, setBoard] = React.useState<string>();
   const [boards, isLoading, error] = useFetchDashboards(namespace);
+
   // Clear queries on unmount
   React.useEffect(() => () => dispatch(queryBrowserDeleteAllQueries()), [dispatch]);
 

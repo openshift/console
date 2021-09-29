@@ -388,7 +388,7 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
 };
 ReceiversTable.displayName = 'ReceiversTable';
 
-const ReceiversEmptyState: React.FC = () => {
+const ReceiversEmptyState: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <EmptyState variant={EmptyStateVariant.full}>

@@ -19,7 +19,7 @@ import customTimeRangeModal from './custom-time-range-modal';
 
 const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
 
-const TimespanDropdown: React.FC = () => {
+const TimespanDropdown: React.FC<{}> = () => {
   const { t } = useTranslation();
   const [activePerspective] = useActivePerspective();
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
