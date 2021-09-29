@@ -13,7 +13,8 @@ import { createStorageClass } from '../views/storage-class';
 
 const pvcName: string = 'testing-pvc';
 
-describe('Test block pool deletion under OCS UI', () => {
+/** @depricated testcases are moved to odf-console */
+xdescribe('Test block pool deletion under OCS UI', () => {
   before(() => {
     cy.login();
     cy.visit('/');
@@ -31,7 +32,7 @@ describe('Test block pool deletion under OCS UI', () => {
   });
 
   // Todo(bipuladh): Enable after downstream builds are available with v1 CSIDrivers
-  xit('deletion of a non-default pool deletion pool is successful', () => {
+  it('deletion of a non-default pool deletion pool is successful', () => {
     cy.log('Create storage class using newly created pool');
     createStorageClass(scName, poolName);
 
