@@ -3,8 +3,9 @@ import { Button, FormFieldGroupExpandable } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { ButtonBar } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { NetworkPolicyKind } from 'public/module/k8s';
+import { NetworkPolicyKind } from '@console/internal/module/k8s';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
+import { NetworkPolicyRuleConfigPanel } from '../../components/network-policies/network-policy-rule-config';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
@@ -30,7 +31,7 @@ const emptyPolicy: NetworkPolicyKind = {
 describe('NetworkPolicyForm', () => {
   const ovnK8sSpec = { spec: { defaultNetwork: { type: 'OVNKubernetes' } } };
   (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
+  const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should render CreateNetworkPolicy component', () => {
     expect(wrapper.exists()).toBe(true);
