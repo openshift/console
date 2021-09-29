@@ -17,7 +17,7 @@ const renderTemplate = (srcFile: string, data: {}) => {
     root: resolvePath('.'),
   });
 
-  const outPath = resolvePath(`dist/doc/${path.parse(srcFile).name}`);
+  const outPath = resolvePath(`generated/doc/${path.parse(srcFile).name}`);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, content);

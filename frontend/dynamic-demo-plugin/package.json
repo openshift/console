@@ -10,10 +10,9 @@
     "i18n": "i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@openshift-console)/)/'"
   },
-  "dependencies": {
-    "@openshift-console/dynamic-plugin-sdk": "file:../packages/console-dynamic-plugin-sdk/dist"
-  },
   "devDependencies": {
+    "@openshift-console/dynamic-plugin-sdk": "file:../packages/console-dynamic-plugin-sdk/dist/core",
+    "@openshift-console/dynamic-plugin-sdk-webpack": "file:../packages/console-dynamic-plugin-sdk/dist/webpack",
     "@types/react": "16.8.13",
     "copy-webpack-plugin": "^6.4.1",
     "http-server": "0.12.x",

@@ -68,7 +68,7 @@ console.log('Generating Console plugin JSON schemas');
 typeConfigs.forEach((tc) => {
   const schema = generateSchema(tc);
   const schemaString = JSON.stringify(schema, null, 2);
-  const outPath = resolvePath(`schema/${path.parse(tc.srcFile).name}`);
+  const outPath = resolvePath(`generated/schema/${path.parse(tc.srcFile).name}`);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(`${outPath}.json`, schemaString);

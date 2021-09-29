@@ -2,32 +2,42 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
+import { getCorePackage, getInternalPackage, getWebpackPackage } from './package-definitions';
 import { resolvePath, relativePath } from './utils/path';
 
-const createPackageJson = (packagePath: string) => {
-  const packageJson = readPkg.sync({ normalize: false });
-  packageJson.name = '@openshift-console/dynamic-plugin-sdk';
-  delete packageJson.private;
-  packageJson.license = 'Apache-2.0';
-  packageJson.main = 'lib/index-lib.js';
-  packageJson.readme = 'README.md';
-  packageJson.peerDependencies = _.pick(packageJson.devDependencies, 'webpack');
-  delete packageJson.dependencies;
-  delete packageJson.devDependencies;
-  delete packageJson.scripts;
-  fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
+const writePackageManifest = (manifest: readPkg.PackageJson, outDir: string) => {
+  const outPath = resolvePath(`${outDir}/package.json`);
+  fs.writeFileSync(outPath, JSON.stringify(manifest, null, 2));
+  console.log(chalk.green(relativePath(outPath)));
 };
 
-const preparePkgAssets = () => {
-  fs.mkdirSync(resolvePath('dist'), { recursive: true });
-  const pkgOutPath = resolvePath('dist/package.json');
-  console.log('Generating Console plugin package.json');
-  createPackageJson(pkgOutPath);
-  console.log(chalk.green(relativePath(pkgOutPath)));
-  console.log('Copying schema, license, and readme files');
-  fs.copySync(resolvePath('../../../LICENSE'), resolvePath('dist/LICENSE'));
-  fs.copySync(resolvePath('README.md'), resolvePath('dist/README.md'));
-  fs.copySync(resolvePath('schema'), resolvePath('dist/schema'), { recursive: true });
+const copyFiles = (files: Record<any, string>) => {
+  Object.entries(files).forEach(([src, dest]) => {
+    fs.copySync(resolvePath(src), resolvePath(dest), { recursive: true });
+    console.log(chalk.green(relativePath(dest)));
+  });
 };
 
-preparePkgAssets();
+const sdkPackage = readPkg.sync({ normalize: false });
+const rootPackage = readPkg.sync({ cwd: resolvePath('../..'), normalize: false });
+
+const missingDepNames = new Set<string>();
+const missingDepCallback = (name: string) => missingDepNames.add(name);
+
+const outPackages = [
+  getCorePackage(sdkPackage, rootPackage, missingDepCallback),
+  getInternalPackage(sdkPackage, rootPackage, missingDepCallback),
+  getWebpackPackage(sdkPackage, rootPackage, missingDepCallback),
+];
+
+if (missingDepNames.size > 0) {
+  console.error(`Failed to parse package dependencies: ${Array.from(missingDepNames).join(', ')}`);
+  process.exit(1);
+}
+
+outPackages.forEach((pkg) => {
+  console.log(`Generating assets for package ${chalk.bold(pkg.manifest.name)}`);
+
+  writePackageManifest(pkg.manifest, pkg.outDir);
+  copyFiles(_.mapValues(pkg.filesToCopy, (dest) => `${pkg.outDir}/${dest}`));
+});

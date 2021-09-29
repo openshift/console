@@ -4,11 +4,10 @@ import * as path from 'path';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import { sharedVendorModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { getSharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
@@ -20,6 +19,7 @@ interface Configuration extends webpack.Configuration {
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const VirtualModulesPlugin = require('webpack-virtual-modules');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -30,10 +30,15 @@ const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
 
 /* Helpers */
-const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
+const extractCSS = new MiniCssExtractPlugin({
+  filename: 'app-bundle.[contenthash].css',
+  // We follow BEM naming to scope CSS.
+  // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
+  ignoreOrder: true,
+});
 const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-const sharedVendorTest = new RegExp(`node_modules\\/(${sharedVendorModules.join('|')})\\/`);
+const sharedPluginTest = new RegExp(`node_modules\\/(${getSharedPluginModules().join('|')})\\/`);
 
 const config: Configuration = {
   entry: [
@@ -48,12 +53,13 @@ const config: Configuration = {
     chunkFilename: '[name]-[chunkhash].js',
   },
   devServer: {
-    writeToDisk: true,
     hot: HOT_RELOAD !== 'false',
-    inline: HOT_RELOAD !== 'false',
-    contentBase: false,
-    transportMode: 'ws',
+    webSocketServer: 'ws',
     port: WDS_PORT,
+    static: false,
+    devMiddleware: {
+      writeToDisk: true,
+    },
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
@@ -70,7 +76,7 @@ const config: Configuration = {
     rules: [
       {
         // Disable tree shaking on modules shared with Console dynamic plugins
-        test: sharedVendorTest,
+        test: sharedPluginTest,
         sideEffects: true,
       },
       { test: /\.glsl$/, loader: 'raw!glslify' },
@@ -144,6 +150,7 @@ const config: Configuration = {
           },
           {
             loader: 'resolve-url-loader',
+            // https://github.com/bholloway/resolve-url-loader/blob/v4-maintenance/packages/resolve-url-loader/README.md#options
             options: {
               sourceMap: true,
             },
@@ -152,7 +159,9 @@ const config: Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              outputStyle: 'compressed',
+              sassOptions: {
+                outputStyle: 'compressed',
+              },
             },
           },
         ],

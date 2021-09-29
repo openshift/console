@@ -152,16 +152,6 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/odf/resource/:resourceKind/:resourceName",
-      "exact": true,
-      "component": {
-        "$codeRef": "resourceDetailsPage.GenericDetailsPage"
-      }
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
       "path": "/odf/resource/noobaa.io~v1alpha1~BackingStore/create/~new",
       "exact": true,
       "component": {
@@ -186,6 +176,16 @@
       "exact": true,
       "component": {
         "$codeRef": "bcCreate.default"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/:resourceKind/:resourceName",
+      "exact": false,
+      "component": {
+        "$codeRef": "resourceDetailsPage.GenericDetailsPage"
       }
     }
   },
