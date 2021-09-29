@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "outDir": "dist/internal/lib"
+  },
+  "files": ["src/lib-internal.ts"]
+}

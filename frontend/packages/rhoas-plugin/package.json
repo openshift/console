@@ -15,7 +15,9 @@
       "constants": "src/const.ts",
       "catalog": "src/catalog",
       "topology": "src/topology",
-      "rhoasComponents": "src/components"
+      "rhoasComponents": "src/components",
+      "rhoasTopologySidebar": "src/topology/sidebar",
+      "rhoasActions": "src/actions"
     }
   }
 }

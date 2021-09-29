@@ -495,5 +495,55 @@
         "$codeRef": "topology.getObserveSideBarTabSection"
       }
     }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "topology.getSbrPanelResourceLink" }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-sbr-details",
+      "tab": "topology-side-bar-tab-details",
+      "section": {
+        "$codeRef": "topology.getSbrPanelDetailsSection"
+      }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-sbr-resource",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "topology.getSbrPanelResourceSection"
+      }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "binding.operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ServiceBinding"
+      },
+      "provider": { "$codeRef": "actions.useServiceBindingActionProvider" }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
   }
 ]

@@ -8,7 +8,7 @@ export const validatePluginManifestSchema = async (
   manifest: ConsolePluginManifestJSON,
   manifestURL: string,
 ) => {
-  const schema = (await import('../../schema/plugin-manifest')).default;
+  const schema = (await import('../../generated/schema/plugin-manifest')).default;
 
   // Use dynamic import to avoid pulling ajv dependency tree into main vendors chunk
   const SchemaValidator = await import(

@@ -1,36 +1,15 @@
-/* eslint-disable global-require */
-/* eslint-disable @typescript-eslint/no-require-imports */
-import { RemoteEntryModule } from './types';
-
 /**
- * Vendor modules shared between Console application and its dynamic plugins.
+ * Dynamic plugin SDK modules provided by Console application at runtime.
  */
-export const sharedVendorModules = [
+const pluginSDKModules = [
   '@openshift-console/dynamic-plugin-sdk',
-  '@openshift-console/dynamic-plugin-sdk/lib/api/internal-api',
-  'react',
-  'react-helmet',
-  'react-i18next',
-  'react-router',
-  'react-router-dom',
+  '@openshift-console/dynamic-plugin-sdk-internal',
 ];
 
 /**
- * At runtime, Console will override (i.e. enforce Console-bundled implementation of) shared
- * modules for each dynamic plugin, before loading any of the modules exposed by that plugin.
- *
- * This way, a single version of React etc. is used by the Console application.
+ * Get modules shared between Console application and its dynamic plugins.
  */
-export const overrideSharedModules = (entryModule: RemoteEntryModule) => {
-  entryModule.override({
-    '@openshift-console/dynamic-plugin-sdk': async () => () =>
-      require('@console/dynamic-plugin-sdk/src/index-lib'),
-    '@openshift-console/dynamic-plugin-sdk/lib/api/internal-api': async () => () =>
-      require('@console/dynamic-plugin-sdk/src/api/internal-api'),
-    react: async () => () => require('react'),
-    'react-helmet': async () => () => require('react-helmet'),
-    'react-i18next': async () => () => require('react-i18next'),
-    'react-router': async () => () => require('react-router'),
-    'react-router-dom': async () => () => require('react-router-dom'),
-  });
-};
+export const getSharedPluginModules = (includePluginSDK = true) =>
+  ['react', 'react-helmet', 'react-i18next', 'react-router-dom', 'react-router'].concat(
+    includePluginSDK ? pluginSDKModules : [],
+  );

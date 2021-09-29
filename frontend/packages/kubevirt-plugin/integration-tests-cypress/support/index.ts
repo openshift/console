@@ -1,8 +1,7 @@
-import { ConfigMapKind } from '@console/internal/module/k8s';
-import { V1alpha1DataVolume } from '../../src/types/api';
 import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
 import {
+  EXPECT_LOGIN_SCRIPT_PATH,
   K8S_KIND,
   KUBEVIRT_PROJECT_NAME,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
@@ -20,7 +19,6 @@ declare global {
       waitForResource(resource: any): void;
       createDataVolume(name: string, namespace: string): void;
       dropFile(filePath: string, fileName: string, inputSelector: string): void;
-      createUserTemplate(namespace: string): void;
       cdiCloner(srcNS: string, destNS: string): void;
       Login(): void;
       deleteTestProject(namespace: string): void;
@@ -28,6 +26,7 @@ declare global {
       uploadFromCLI(dvName: string, ns: string, imagePath: string, size: string): void;
       selectProject(project: string): void;
       createNAD(namespace: string): void;
+      waitForLoginPrompt(vmName: string, namespace: string): void;
     }
   }
 }
@@ -111,41 +110,6 @@ Cypress.Commands.add('dropFile', (filePath, fileName, inputSelector) => {
   });
 });
 
-const configureDataVolume = (dv: V1alpha1DataVolume, configMap: ConfigMapKind) => {
-  const storageClass = Cypress.env('STORAGE_CLASS');
-  dv.spec.pvc.accessModes = storageClass
-    ? [configMap.data[`${storageClass}.accessMode`]]
-    : [configMap.data.accessMode];
-  dv.spec.pvc.volumeMode = storageClass
-    ? configMap.data[`${storageClass}.volumeMode`]
-    : configMap.data.volumeMode;
-  if (storageClass) {
-    dv.spec.pvc.storageClassName = storageClass;
-  }
-};
-
-Cypress.Commands.add('createUserTemplate', (namespace: string) => {
-  cy.exec(
-    `kubectl get -o json -n ${KUBEVIRT_PROJECT_NAME} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
-  ).then((result) => {
-    const configMap = JSON.parse(result.stdout);
-    cy.fixture('user-template').then((ut) => {
-      ut.disk0.metadata.namespace = namespace;
-      configureDataVolume(ut.disk0, configMap);
-      cy.createResource(ut.disk0);
-      ut.disk1.metadata.namespace = namespace;
-      configureDataVolume(ut.disk1, configMap);
-      cy.createResource(ut.disk1);
-      ut.template.objects[0].spec.dataVolumeTemplates.forEach((dv: any) => {
-        configureDataVolume(dv, configMap);
-        dv.spec.source.pvc.namespace = namespace;
-      });
-      ut.template.metadata.namespace = namespace;
-      cy.createResource(ut.template);
-    });
-  });
-});
-
 Cypress.Commands.add('cdiCloner', (srcNS: string, destNS: string) => {
   cy.fixture('cdi-cloner').then((cloner) => {
     cy.applyResource(cloner.clusterRole);
@@ -216,4 +180,11 @@ Cypress.Commands.add('selectProject', (project: string) => {
 Cypress.Commands.add('createNAD', (namespace: string) => {
   nadFixture.metadata.namespace = namespace;
   cy.createResource(nadFixture);
+});
+
+Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) => {
+  cy.exec(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${vmName} ${namespace}`, {
+    failOnNonZeroExit: false,
+    timeout: 600000,
+  });
 });

@@ -4,15 +4,15 @@ import * as webpack from 'webpack';
 import { ReplaceSource } from 'webpack-sources';
 import { remoteEntryFile } from '../constants';
 import { ConsolePackageJSON } from '../schema/plugin-package';
-import { sharedVendorModules } from '../shared-modules';
+import { getSharedPluginModules } from '../shared-modules';
 import { SchemaValidator } from '../validation/SchemaValidator';
-import { ConsoleAssetPlugin } from './ConsoleAssetPlugin';
+import { loadSchema, ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 
 export const validatePackageFileSchema = (
   pkg: ConsolePackageJSON,
   description = 'package.json',
 ) => {
-  const schema = require('../../schema/plugin-package').default;
+  const schema = loadSchema('plugin-package');
   const validator = new SchemaValidator(description);
 
   if (pkg.consolePlugin) {
@@ -59,14 +59,14 @@ export class ConsoleRemotePlugin {
         library: { type: remoteEntryLibraryType, name: remoteEntryCallback },
         filename: remoteEntryFile,
         exposes: this.pkg.consolePlugin.exposedModules || {},
-        overridables: sharedVendorModules,
+        overridables: getSharedPluginModules(false),
       }).apply(compiler);
       new ConsoleAssetPlugin(this.pkg).apply(compiler);
 
       // Ignore require calls for modules that reside in Console monorepo packages
       new webpack.IgnorePlugin({
         resourceRegExp: /^@console\//,
-        contextRegExp: /node_modules\/@openshift-console\/dynamic-plugin-sdk\//,
+        contextRegExp: /node_modules\/@openshift-console\/dynamic-plugin-sdk/,
       }).apply(compiler);
     });
 

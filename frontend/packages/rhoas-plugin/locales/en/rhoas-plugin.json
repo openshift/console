@@ -55,10 +55,7 @@
   "URL": "URL",
   "Secret": "Secret",
   "No Secret": "No Secret",
-  "No data": "No data",
+  "Error moving event source kafka connector": "Error moving event source kafka connector",
   "Cloud Service": "Cloud Service",
-  "This resource represents service that exist outside your cluster": "This resource represents service that exist outside your cluster",
-  "Details": "Details",
-  "Resources": "Resources",
-  "Error moving event source kafka connector": "Error moving event source kafka connector"
+  "This resource represents service that exist outside your cluster": "This resource represents service that exist outside your cluster"
 }

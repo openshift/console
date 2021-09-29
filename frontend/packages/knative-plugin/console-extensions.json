@@ -540,6 +540,102 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "provider": { "$codeRef": "actions.useSinkPubSubActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "provider": { "$codeRef": "actions.useSinkPubSubActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Broker"
+      },
+      "provider": { "$codeRef": "actions.useBrokerActionProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KNATIVE_EVENTING_BROKER"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Channel"
+      },
+      "provider": { "$codeRef": "actions.useChannelActionProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KNATIVE_EVENTING_CHANNEL"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "InMemoryChannel"
+      },
+      "provider": { "$codeRef": "actions.useChannelActionProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_KNATIVE_EVENTING_CHANNEL"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "knative-plugin-tab-section-default",
+      "tab": "topology-side-bar-tab-details",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getDetailsTabPubSubSectionForTopologySideBar"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "knative-plugin-tab-section-resource-pubsub",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getResourceTabPubSubSectionForTopologySidebar"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
     "type": "console.topology/relationship/provider",
     "properties": {
       "provides": {

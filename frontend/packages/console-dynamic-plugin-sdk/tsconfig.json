@@ -1,15 +1,8 @@
 {
+  "extends": "./tsconfig-base.json",
   "compilerOptions": {
     "module": "esnext",
-    "moduleResolution": "node",
-    "target": "es2016",
-    "declaration": true,
-    "outDir": "dist/lib",
-    "experimentalDecorators": true,
-    "sourceMap": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "lib": ["es2016", "es2020.promise", "dom"]
+    "outDir": "dist/core/lib"
   },
-  "files": ["src/index-webpack.ts", "src/index-lib.ts", "src/api/internal-api.ts"]
+  "files": ["src/lib-core.ts"]
 }

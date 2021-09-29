@@ -21,6 +21,20 @@ yarn i18n
 
 This command launches the [code parser](https://github.com/i18next/i18next-parser), generates JSON files containing English key:value pairs for all internationalized strings, and consolidates any English JSON files with identical names to avoid namespace conflicts in i18next.
 
+#### Scope
+We are not able to translate all text in the application. Text located in backend code or non-Red-Hat-controlled development environments may not be accessible for translation.
+
+This may include items such as:
+* Resource statuses (i.e. "Running")
+* Events surfaced from Kubernetes
+* Alerts
+* Error messages displayed to the user or in logs
+* Operators that surface informational messages
+* Logging messages
+* Monitoring dashboard chart titles and dropdowns that come from the config map dashboard definition
+
+Localizaton is not included in the CLI at this time, and bidirectional (right-to-left) text such as Hebrew and Arabic are out of scope.
+
 #### Internationalization guidelines
 
 * Any usage of i18next's `TFunction` (rather than react-i18next's `TFunction`) must be performed inside a function or component.
@@ -104,4 +118,4 @@ These scripts can all be found in `./frontend/i18n-scripts`.
 For more information, please review the [README](./frontend/i18n-scripts/README.md).
 
 #### Testing
-We test that internationalization is working for various pages and components using the [i18next-pseudo](https://github.com/MattBoatman/i18next-pseudo) JavaScript library, which returns translated strings in "pseudolocalization" format. Our Cypress custom commands [cy.isPseudoLocalized()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L45) and [cy.testI18n()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L13) append query params to URLs to invoke "pseudolocalization" and are used in various test suites such as [pseudolocalization.spec.ts](https://github.com/openshift/console/blob/1072d1bf6007fcd50dffd57219c300d3fe882e8b/frontend/packages/integration-tests-cypress/tests/i18n/pseudolocalization.spec.ts#L29) and [resource-crud.spec.ts](https://github.com/openshift/console/blob/12d9a30211a86a4979effb80c7cc8af8a68fd4a4/frontend/packages/integration-tests-cypress/tests/crud/resource-crud.spec.ts#L141) to verify strings in the masthead, dashboard, navigation menu, list views, and detail pages are translated.      
+We test that internationalization is working for various pages and components using the [i18next-pseudo](https://github.com/MattBoatman/i18next-pseudo) JavaScript library, which returns translated strings in "pseudolocalization" format. Our Cypress custom commands [cy.isPseudoLocalized()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L45) and [cy.testI18n()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L13) append query params to URLs to invoke "pseudolocalization" and are used in various test suites such as [pseudolocalization.spec.ts](https://github.com/openshift/console/blob/1072d1bf6007fcd50dffd57219c300d3fe882e8b/frontend/packages/integration-tests-cypress/tests/i18n/pseudolocalization.spec.ts#L29) and [resource-crud.spec.ts](https://github.com/openshift/console/blob/12d9a30211a86a4979effb80c7cc8af8a68fd4a4/frontend/packages/integration-tests-cypress/tests/crud/resource-crud.spec.ts#L141) to verify strings in the masthead, dashboard, navigation menu, list views, and detail pages are translated.

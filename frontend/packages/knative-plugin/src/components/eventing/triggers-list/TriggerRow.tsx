@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { EventingTriggerModel, EventingBrokerModel } from '../../../models';
+import { LazyActionMenu } from '@console/shared/src';
+import { EventingBrokerModel } from '../../../models';
 import { EventTriggerKind, TriggerConditionTypes } from '../../../types';
 import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { tableColumnClasses } from './trigger-table';
@@ -20,10 +21,7 @@ const TriggerRow: React.FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = 
   } = obj;
 
   const objReference = referenceFor(obj);
-  const menuActions = [
-    ...Kebab.getExtensionsActionsForKind(EventingTriggerModel),
-    ...Kebab.factory.common,
-  ];
+  const context = { [objReference]: obj };
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, TriggerConditionTypes.Ready)
     : null;
@@ -68,7 +66,7 @@ const TriggerRow: React.FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = 
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[8]}>
-        <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import { EventingSubscriptionModel } from '../../../models';
+import { LazyActionMenu } from '@console/shared';
 import { EventSubscriptionKind, SubscriptionConditionTypes } from '../../../types';
 import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { tableColumnClasses } from './subscription-table';
@@ -20,11 +20,7 @@ const SubscriptionRow: React.FC<RowFunctionArgs<EventSubscriptionKind, Subscript
   } = obj;
 
   const objReference = referenceFor(obj);
-
-  const menuActions = [
-    ...Kebab.getExtensionsActionsForKind(EventingSubscriptionModel),
-    ...Kebab.factory.common,
-  ];
+  const context = { [objReference]: obj };
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, SubscriptionConditionTypes.Ready)
     : null;
@@ -66,7 +62,7 @@ const SubscriptionRow: React.FC<RowFunctionArgs<EventSubscriptionKind, Subscript
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[7]}>
-        <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

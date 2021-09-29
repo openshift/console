@@ -4,24 +4,21 @@ import {
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
 } from '@console/helm-plugin/src/topology/components/const';
-import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
 import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
 import {
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_EVENT_SOURCE_LINK,
   TYPE_REVISION_TRAFFIC,
   TYPE_KAFKA_CONNECTION_LINK,
+  TYPE_EVENT_PUB_SUB,
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
 import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
-import TopologyKafkaPanel from '@console/rhoas-plugin/src/topology/components/TopologyKafkaPanel';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
-import { OdcBaseEdge } from '../../elements';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import { OperatorGroupData } from '../../operators/operator-topology-types';
 import TopologyOperatorBackedPanel from '../../operators/TopologyOperatorBackedPanel';
-import TopologyServiceBindingRequestPanel from '../../operators/TopologyServiceBindingRequestPanel';
 import { TopologyDataObject } from '../../topology-types';
 import TopologyApplicationPanel from '../application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
@@ -50,7 +47,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_MANAGED_KAFKA_CONNECTION) {
-      return <TopologyKafkaPanel item={selectedEntity} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
       return <TopologySideBarContent element={selectedEntity} />;
@@ -65,13 +62,16 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
     if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
       return <TopologyVmPanel vmNode={selectedEntity} />;
     }
+
+    if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB) {
+      return <TopologySideBarContent element={selectedEntity} />;
+    }
     return <TopologyResourcePanel element={selectedEntity} />;
   }
 
   if (isEdge(selectedEntity)) {
     if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB_LINK) {
-      const itemResources = selectedEntity.getData();
-      return <KnativeResourceOverviewPage item={itemResources.resources} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     if (
       [TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK, TYPE_KAFKA_CONNECTION_LINK].includes(
@@ -81,7 +81,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
     }
     if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
-      return <TopologyServiceBindingRequestPanel edge={selectedEntity as OdcBaseEdge} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
   }

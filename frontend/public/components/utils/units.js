@@ -408,4 +408,9 @@ export const formatBytesAsMiB = (bytes) => {
   return formatToFractionalDigits(mib, 1);
 };
 
+export const formatBytesAsGiB = (bytes) => {
+  const gib = bytes / 1024 / 1024 / 1024;
+  return formatToFractionalDigits(gib, 2);
+};
+
 export const formatCores = (cores) => formatToFractionalDigits(cores, 3);
