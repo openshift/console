@@ -110,3 +110,10 @@ export enum disksTab {
   deleteDiskBtn = 'button[data-test-action="Delete"]',
   currVMStatusLbl = 'span[data-test="resource-status"]',
 }
+
+// VM's disks tab
+export enum disksTab {
+  addDiskBtn = 'button[id="add-disk"]',
+  deleteDiskBtn = 'button[data-test-action="Delete"]',
+  currVMStatusLbl = 'span[data-test="resource-status"]',
+}
