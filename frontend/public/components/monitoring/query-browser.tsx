@@ -205,7 +205,6 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     <>
       <VictoryPortal>
         <foreignObject
-          className="query-browser__tooltip-svg-wrap"
           height={TOOLTIP_MAX_HEIGHT}
           width={tooltipMaxWidth}
           x={isOnLeft ? x - tooltipMaxWidth : x}
@@ -218,13 +217,11 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
           >
             <div className="query-browser__tooltip-arrow" />
             <div className="query-browser__tooltip">
-              <div className="query-browser__tooltip-group">
-                <div className="query-browser__tooltip-time">
-                  {dateTimeFormatterWithSeconds.format(time)}
-                </div>
+              <div className="query-browser__tooltip-time">
+                {dateTimeFormatterWithSeconds.format(time)}
               </div>
               {allSeries.map((s, i) => (
-                <div className="query-browser__tooltip-group" key={i}>
+                <div className="query-browser__tooltip-series" key={i}>
                   <div className="query-browser__series-btn" style={{ backgroundColor: s.color }} />
                   <div className="co-nowrap co-truncate">{s.name}</div>
                   <div className="query-browser__tooltip-value">{s.value}</div>
