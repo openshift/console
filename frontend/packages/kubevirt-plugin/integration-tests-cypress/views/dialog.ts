@@ -1,5 +1,6 @@
 import { Disk, Network } from '../types/vm';
-import { diskDialog, nicDialog, menuItemMain } from './selector';
+import { ProvisionSource } from '../utils/const/provisionSource';
+import { diskDialog, nicDialog, menuItemMain, disksTab } from './selector';
 
 export const addNIC = (nic: Network) => {
   cy.get(nicDialog.addNIC).click();
@@ -26,24 +27,37 @@ export const addNIC = (nic: Network) => {
 };
 
 export const addDisk = (disk: Disk) => {
-  cy.get(diskDialog.addDisk).click();
+  cy.get(disksTab.addDiskBtn).click();
   if (disk.source) {
     cy.get(diskDialog.source).click();
     cy.get(menuItemMain)
       .contains(disk.source.getDescription())
       .click();
-    cy.get('body').then(($body) => {
-      if ($body.find(diskDialog.diskURL).length) {
-        cy.get(diskDialog.diskURL)
-          .clear()
-          .type(disk.source.getSource());
-      }
-      if ($body.find(diskDialog.diskContainer).length) {
-        cy.get(diskDialog.diskContainer)
-          .clear()
-          .type(disk.source.getSource());
-      }
-    });
+    const sourceURL = disk.source.getSource();
+    switch (disk.source) {
+      case ProvisionSource.URL:
+        if (sourceURL) {
+          cy.get(diskDialog.diskURL).type(sourceURL);
+        } else {
+          throw new Error('No `disk.source value` provided!!!');
+        }
+        break;
+      case ProvisionSource.REGISTRY:
+      case ProvisionSource.EPHEMERAL:
+        if (sourceURL) {
+          cy.get(diskDialog.diskContainer).type(sourceURL);
+        } else {
+          throw new Error('No `disk.source value` provided!!!');
+        }
+        break;
+      case ProvisionSource.EXISTING:
+      case ProvisionSource.CLONE_PVC:
+        cy.get(diskDialog.diskPVC).select(disk.pvcName);
+        break;
+      case ProvisionSource.BLANK:
+        break;
+      default:
+    }
   }
   cy.get(diskDialog.diskName)
     .clear()
@@ -73,6 +87,17 @@ export const addDisk = (disk: Disk) => {
   if (disk.preallocation) {
     cy.contains('Enable preallocation').click();
   }
+
+  if (disk.autoDetach === true) {
+    cy.get(diskDialog.autoDetach)
+      .check()
+      .should('be.checked');
+  } else if (disk.autoDetach === false) {
+    cy.get(diskDialog.autoDetach)
+      .uncheck()
+      .should('not.be.checked');
+  }
+
   cy.get(diskDialog.add).click();
   cy.byDataID(disk.name).should('exist');
 };
