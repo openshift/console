@@ -43,7 +43,7 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
 }) => {
   const allFilters = {
     ...props.filters,
-    ...(_.get(props.pipeline, 'filters.name') && { name: _.get(props.pipeline, 'filters.name') }),
+    ...(_.get(props.pipeline, 'filters') && { ..._.get(props.pipeline, 'filters') }),
   };
   const resourceData =
     props.pipeline && props.pipeline.data && propsReferenceForRuns

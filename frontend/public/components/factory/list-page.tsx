@@ -88,6 +88,7 @@ type ListPageWrapperProps<L = any, C = any> = {
   ListComponent: React.ComponentType<L>;
   kinds: string[];
   filters?: any;
+  loaded?: boolean;
   flatten?: Flatten;
   rowFilters?: RowFilter[];
   hideNameLabelFilters?: boolean;

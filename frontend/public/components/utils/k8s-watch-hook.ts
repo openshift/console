@@ -215,9 +215,10 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
           };
         } else if (resourceK8s.has(reduxIDs?.[key].id)) {
           const data = getReduxData(resourceK8s.getIn([reduxIDs[key].id, 'data']), resources[key]);
+          const filters = resourceK8s.getIn([reduxIDs[key].id, 'filters']).toJSON();
           const loaded = resourceK8s.getIn([reduxIDs[key].id, 'loaded']);
           const loadError = resourceK8s.getIn([reduxIDs[key].id, 'loadError']);
-          acc[key] = { data, loaded, loadError };
+          acc[key] = { data, loaded, loadError, filters };
         } else {
           acc[key] = {
             data: resources[key].isList ? [] : {},

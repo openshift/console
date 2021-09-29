@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FireMan, FireManProps } from '@console/internal/components/factory';
-import { Firehose } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, Selector } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
@@ -35,6 +35,12 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
     },
   ];
 
+  const watchedResources = {};
+  for (const resource of resources) {
+    watchedResources[resource.prop] = resource;
+  }
+  const { pipeline } = useK8sWatchResources(watchedResources);
+
   return (
     <FireMan
       {...props}
@@ -52,9 +58,10 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       title={showTitle ? t('pipelines-plugin~Pipelines') : null}
       badge={badge}
     >
-      <Firehose resources={resources}>
-        <PipelineAugmentRunsWrapper hideNameLabelFilters={props.hideNameLabelFilters} />
-      </Firehose>
+      <PipelineAugmentRunsWrapper
+        pipeline={pipeline}
+        hideNameLabelFilters={props.hideNameLabelFilters}
+      />
     </FireMan>
   );
 };

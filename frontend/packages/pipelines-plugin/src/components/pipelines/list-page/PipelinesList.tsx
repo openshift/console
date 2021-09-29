@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
-import { Firehose } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { filters } from './PipelineAugmentRuns';
@@ -15,20 +15,20 @@ const PipelinesList: React.FC<PipelinesListProps> = ({
     params: { ns: namespace },
   },
 }) => {
-  const resources = [
-    {
+  const watchedResources = {
+    [PipelineModel.id]: {
       isList: true,
       kind: referenceForModel(PipelineModel),
       namespace,
       prop: PipelineModel.id,
       filters: { ...filters },
     },
-  ];
+  };
+  const { pipeline } = useK8sWatchResources(watchedResources);
+
   return (
     <div className="co-m-pane__body">
-      <Firehose resources={resources}>
-        <PipelineAugmentRunsWrapper />
-      </Firehose>
+      <PipelineAugmentRunsWrapper pipeline={pipeline} />
     </div>
   );
 };
