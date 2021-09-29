@@ -61,18 +61,12 @@ describe('Validate root disk', () => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
-  });
-
-  beforeEach(() => {
     visitStorageStep(vmData);
   });
 
-  afterEach(() => {
+  after(() => {
     cy.get(cancelBtn).click();
     cy.byButtonText('Cancel').click();
-  });
-
-  after(() => {
     cy.deleteTestProject(testName);
   });
 
