@@ -3,6 +3,7 @@ package actions
 import (
 	"strings"
 
+	"github.com/openshift/console/pkg/helm/metrics"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/release"
 )
@@ -16,5 +17,11 @@ func UninstallRelease(name string, conf *action.Configuration) (*release.Uninsta
 		}
 		return nil, err
 	}
+
+	ch := resp.Release.Chart
+	if ch != nil && ch.Metadata != nil && ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+		metrics.HandleconsoleHelmUninstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+	}
+
 	return resp, nil
 }
