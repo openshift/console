@@ -148,6 +148,8 @@
   "Duplicate keys found in peer namespace selector": "Duplicate keys found in peer namespace selector",
   "Duplicate keys found in main pod selector": "Duplicate keys found in main pod selector",
   "CIDR": "CIDR",
+  "If this field is empty, traffic will be allowed from all external sources.": "If this field is empty, traffic will be allowed from all external sources.",
+  "If this field is empty, traffic will be allowed to all external sources.": "If this field is empty, traffic will be allowed to all external sources.",
   "Exceptions": "Exceptions",
   "Remove exception": "Remove exception",
   "Add exception": "Add exception",
