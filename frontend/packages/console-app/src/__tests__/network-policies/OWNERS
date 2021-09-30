@@ -1,0 +1,8 @@
+reviewers:
+  - jotak
+  - mariomac
+  - OlivierCazade
+approvers:
+  - jotak
+labels:
+  - component/network-policies
