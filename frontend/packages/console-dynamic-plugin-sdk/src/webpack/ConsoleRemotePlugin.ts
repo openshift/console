@@ -1,10 +1,12 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as webpack from 'webpack';
 import { ReplaceSource } from 'webpack-sources';
 import { remoteEntryFile } from '../constants';
 import { ConsolePackageJSON } from '../schema/plugin-package';
-import { getSharedPluginModules } from '../shared-modules';
+import { sharedPluginModules } from '../shared-modules';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { loadSchema, ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 
@@ -59,8 +61,13 @@ export class ConsoleRemotePlugin {
         library: { type: remoteEntryLibraryType, name: remoteEntryCallback },
         filename: remoteEntryFile,
         exposes: this.pkg.consolePlugin.exposedModules || {},
-        overridables: getSharedPluginModules(false),
+        overridables: sharedPluginModules.filter((m) => {
+          // Exclude modules not present in webpack managed paths (e.g. node_modules)
+          return Array.from(compiler.managedPaths).some((p) => fs.existsSync(path.resolve(p, m)));
+        }),
       }).apply(compiler);
+
+      // Generate additional Console plugin assets
       new ConsoleAssetPlugin(this.pkg).apply(compiler);
 
       // Ignore require calls for modules that reside in Console monorepo packages

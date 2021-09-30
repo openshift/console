@@ -7,7 +7,7 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import { getSharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
@@ -38,7 +38,7 @@ const extractCSS = new MiniCssExtractPlugin({
 });
 const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-const sharedPluginTest = new RegExp(`node_modules\\/(${getSharedPluginModules().join('|')})\\/`);
+const sharedPluginTest = new RegExp(`node_modules\\/(${sharedPluginModules.join('|')})\\/`);
 
 const config: Configuration = {
   entry: [
