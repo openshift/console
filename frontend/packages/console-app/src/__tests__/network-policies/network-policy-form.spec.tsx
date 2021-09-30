@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Alert, FormFieldGroupExpandable } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { NetworkPolicyKind } from '@console/internal/module/k8s';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
@@ -12,9 +13,26 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: () => true,
 }));
 
+jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
+  useUserSettingsCompatibility: () => ['', () => {}],
+}));
+
+const emptyPolicy: NetworkPolicyKind = {
+  metadata: {
+    name: '',
+    namespace: 'default',
+  },
+  spec: {
+    podSelector: {},
+    ingress: [{}],
+    egress: [{}],
+    policyTypes: ['Ingress', 'Egress'],
+  },
+};
+
 describe('NetworkPolicyForm without permissions to fetch CNI type', () => {
   (useK8sGet as jest.Mock).mockReturnValue([null, true, 'error fetching CNI']);
-  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
+  const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should render a warning in case the customer is using Openshift SDN', () => {
     const alert = wrapper.find(Alert);
@@ -39,7 +57,7 @@ describe('NetworkPolicyForm without permissions to fetch CNI type', () => {
 describe('NetworkPolicyForm with Unknown CNI type', () => {
   const unknownSDNSpec = { spec: { networkType: 'Calico' } };
   (useK8sGet as jest.Mock).mockReturnValue([unknownSDNSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
+  const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should render a warning in case the customer is using Openshift SDN', () => {
     const alert = wrapper.find(Alert);
@@ -64,7 +82,7 @@ describe('NetworkPolicyForm with Unknown CNI type', () => {
 describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
   const openShiftSDNSpec = { spec: { networkType: 'OpenShiftSDN' } };
   (useK8sGet as jest.Mock).mockReturnValue([openShiftSDNSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
+  const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should not render any warning', () => {
     const alert = wrapper.find(Alert);
@@ -86,7 +104,7 @@ describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
 describe('NetworkPolicyForm with OVN Kubernetes CNI type', () => {
   const ovnK8sSpec = { spec: { networkType: 'OVNKubernetes' } };
   (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
-  const wrapper = mount(<NetworkPolicyForm namespace="default" />);
+  const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should not render any warning', () => {
     const alert = wrapper.find(Alert);

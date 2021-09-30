@@ -25,7 +25,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
     <>
       <div className="form-group co-create-networkpolicy__ipblock">
         <label className="co-required" htmlFor="cidr">
-          {t('public~CIDR')}
+          {t('console-app~CIDR')}
         </label>
         <input
           className="pf-c-form-control"
@@ -41,7 +41,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
       </div>
       {networkFeaturesLoaded && networkFeatures.PolicyPeerIPBlockExceptions !== false && (
         <div className="form-group co-create-networkpolicy__exceptions">
-          <label>{t('public~Exceptions')}</label>
+          <label>{t('console-app~Exceptions')}</label>
           {ipBlock.except.map((exc, idx) => (
             <div className="pf-c-input-group" key={exc.key}>
               <input
@@ -55,7 +55,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 value={exc.value}
               />
               <Button
-                aria-label={t('public~Remove exception')}
+                aria-label={t('console-app~Remove exception')}
                 className="co-create-networkpolicy__remove-exception"
                 onClick={() => {
                   ipBlock.except = [
@@ -82,7 +82,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
               variant="link"
             >
               <PlusCircleIcon className="co-icon-space-r" />
-              {t('public~Add exception')}
+              {t('console-app~Add exception')}
             </Button>
           </div>
         </div>

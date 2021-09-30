@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { RouteModel } from '@console/internal/models';
 import { ListKind, RouteKind } from '@console/internal/module/k8s';
@@ -24,14 +25,17 @@ const useSSHCommand = (vm: VMKind | VMIKind): useSSHCommandResult => {
   );
 
   // Temp fix for routes
-  const route = allRoutes?.items?.[0]?.spec?.host?.replace(/.*apps/, 'api');
-  const user = getCloudInitValues(vm, 'user') || DEFAULT;
+  const result = useMemo(() => {
+    const route = allRoutes?.items?.[0]?.spec?.host?.replace(/.*apps/, 'api');
+    const user = getCloudInitValues(vm, 'user') || DEFAULT;
 
-  const command = `ssh ${user !== DEFAULT ? user : `<${DEFAULT}>`}@${route} -p ${
-    sshServices?.port
-  }`;
+    const command = `ssh ${user !== DEFAULT ? user : `<${DEFAULT}>`}@${route} -p ${
+      sshServices?.port
+    }`;
+    return { command, user, port: sshServices?.port, isRoutesLoaded, loadingRoutesError };
+  }, [allRoutes, isRoutesLoaded, loadingRoutesError, sshServices, vm]);
 
-  return { command, user, port: sshServices?.port, isRoutesLoaded, loadingRoutesError };
+  return result;
 };
 
 export default useSSHCommand;

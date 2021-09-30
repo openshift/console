@@ -103,9 +103,9 @@ describe('Kubernetes resource CRUD operations', () => {
     'StorageClass',
     'Route',
     'PersistentVolumeClaim',
-    'NetworkPolicy',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
+  const resourcesWithSyncedEditor = new Set(['NetworkPolicy']);
 
   testObjs.forEach((testObj, resource) => {
     const {
@@ -133,6 +133,9 @@ describe('Kubernetes resource CRUD operations', () => {
         }
         if (resourcesWithCreationForm.has(kind)) {
           cy.byTestID('yaml-link').click();
+        }
+        if (resourcesWithSyncedEditor.has(kind)) {
+          cy.byTestID('YAML view-radio-input').click();
         }
         // sidebar needs to be fully loaded, else it sometimes overlays the Create button
         cy.byTestID('resource-sidebar').should('exist');

@@ -8,6 +8,7 @@ import {
   FormFieldGroupExpandable,
   FormFieldGroupHeader,
   AlertActionCloseButton,
+  AlertVariant,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ import {
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { NetworkPolicyModel } from '@console/internal/models';
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, NetworkPolicyKind } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -29,11 +30,13 @@ import { NetworkPolicyConditionalSelector } from './network-policy-conditional-s
 import {
   isNetworkPolicyConversionError,
   NetworkPolicy,
+  networkPolicyFromK8sResource,
+  networkPolicyNormalizeK8sResource,
   NetworkPolicyRule,
   networkPolicyToK8sResource,
+  checkNetworkPolicyValidity,
 } from './network-policy-model';
 import { NetworkPolicyRuleConfigPanel } from './network-policy-rule-config';
-import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
 const emptyRule = (): NetworkPolicyRule => {
   return {
@@ -44,58 +47,69 @@ const emptyRule = (): NetworkPolicyRule => {
 };
 
 type NetworkPolicyFormProps = {
-  namespace: string;
+  formData: NetworkPolicyKind;
+  onChange: (newFormData: NetworkPolicyKind) => void;
 };
 
-export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace }) => {
+export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
-  const emptyPolicy: NetworkPolicy = {
-    name: '',
-    namespace,
-    podSelector: [['', '']],
-    ingress: {
-      denyAll: false,
-      rules: [],
-    },
-    egress: {
-      denyAll: false,
-      rules: [],
-    },
-  };
+  const normalizedK8S = networkPolicyNormalizeK8sResource(formData);
+  const converted = networkPolicyFromK8sResource(normalizedK8S, t);
+  const [networkPolicy, setNetworkPolicy] = React.useState(converted);
 
-  const [networkPolicy, setNetworkPolicy] = React.useState(emptyPolicy);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState('');
   const [showSDNAlert, setShowSDNAlert] = React.useState(true);
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
-  const podsPreviewPopoverRef = React.useRef();
+
+  if (isNetworkPolicyConversionError(networkPolicy)) {
+    // Note, this case is not expected to happen. Validity of the network policy for form should have been checked prior to showing this form.
+    // When used with the SyncedEditor, an error is thrown when the data is invalid, that should prevent the user from opening the form with invalid data, hence not running into this conditional block.
+    return (
+      <div className="co-m-pane__body">
+        <Alert
+          variant={AlertVariant.danger}
+          title={t(
+            'console-app~This NetworkPolicy cannot be displayed in form. Please switch to the YAML editor.',
+          )}
+        >
+          {networkPolicy.error}
+        </Alert>
+      </div>
+    );
+  }
+
+  const onPolicyChange = (policy: NetworkPolicy) => {
+    setNetworkPolicy(policy);
+    onChange(networkPolicyToK8sResource(policy));
+  };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setNetworkPolicy({ ...networkPolicy, name: event.currentTarget.value });
+    onPolicyChange({ ...networkPolicy, name: event.currentTarget.value });
 
   const handleMainPodSelectorChange = (updated: string[][]) => {
-    setNetworkPolicy({ ...networkPolicy, podSelector: updated });
+    onPolicyChange({ ...networkPolicy, podSelector: updated });
   };
 
   const handleDenyAllIngress: React.ReactEventHandler<HTMLInputElement> = (event) =>
-    setNetworkPolicy({
+    onPolicyChange({
       ...networkPolicy,
       ingress: { ...networkPolicy.ingress, denyAll: event.currentTarget.checked },
     });
 
   const handleDenyAllEgress: React.ReactEventHandler<HTMLInputElement> = (event) =>
-    setNetworkPolicy({
+    onPolicyChange({
       ...networkPolicy,
       egress: { ...networkPolicy.egress, denyAll: event.currentTarget.checked },
     });
 
   const updateIngressRules = (rules: NetworkPolicyRule[]) =>
-    setNetworkPolicy({ ...networkPolicy, ingress: { ...networkPolicy.ingress, rules } });
+    onPolicyChange({ ...networkPolicy, ingress: { ...networkPolicy.ingress, rules } });
 
   const updateEgressRules = (rules: NetworkPolicyRule[]) =>
-    setNetworkPolicy({ ...networkPolicy, egress: { ...networkPolicy.egress, rules } });
+    onPolicyChange({ ...networkPolicy, egress: { ...networkPolicy.egress, rules } });
 
   const addIngressRule = () => {
     updateIngressRules([emptyRule(), ...networkPolicy.ingress.rules]);
@@ -110,11 +124,11 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace 
       title: (
         <>
           <YellowExclamationTriangleIcon className="co-icon-space-r" />
-          {t('public~Are you sure?')}
+          {t('console-app~Are you sure?')}
         </>
       ),
       message: msg,
-      btnText: t('public~Remove all'),
+      btnText: t('console-app~Remove all'),
       executeFn: () => {
         execute();
         return Promise.resolve();
@@ -125,7 +139,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace 
   const removeAllIngress = () => {
     removeAll(
       t(
-        'public~This action will remove all rules within the Ingress section and cannot be undone.',
+        'console-app~This action will remove all rules within the Ingress section and cannot be undone.',
       ),
       () => updateIngressRules([]),
     );
@@ -133,7 +147,9 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace 
 
   const removeAllEgress = () => {
     removeAll(
-      t('public~This action will remove all rules within the Egress section and cannot be undone.'),
+      t(
+        'console-app~This action will remove all rules within the Egress section and cannot be undone.',
+      ),
       () => updateEgressRules([]),
     );
   };
@@ -155,12 +171,13 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace 
   const save = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const policy = networkPolicyToK8sResource(networkPolicy);
-    if (isNetworkPolicyConversionError(policy)) {
-      setError(policy.error);
+    const invalid = checkNetworkPolicyValidity(networkPolicy, t);
+    if (invalid) {
+      setError(invalid.error);
       return;
     }
 
+    const policy = networkPolicyToK8sResource(networkPolicy);
     setInProgress(true);
     k8sCreate(NetworkPolicyModel, policy)
       .then(() => {
@@ -176,208 +193,196 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace 
   };
 
   return (
-    <Form onSubmit={save} className="co-create-networkpolicy">
-      {showSDNAlert &&
-        networkFeaturesLoaded &&
-        networkFeatures?.PolicyEgress === undefined &&
-        networkFeatures?.PolicyPeerIPBlockExceptions === undefined && (
-          <Alert
-            variant="info"
-            title={t('public~When using the OpenShift SDN cluster network provider:')}
-            actionClose={<AlertActionCloseButton onClose={() => setShowSDNAlert(false)} />}
-          >
-            <ul>
-              <li>{t('public~Egress network policy is not supported.')}</li>
-              <li>
-                {t(
-                  'public~IP block exceptions are not supported and would cause the entire IP block section to be ignored.',
-                )}
-              </li>
-            </ul>
-            <p>
-              {t('Refer to your cluster administrator to know which network provider is used.')}
-            </p>
-            <p>
-              {t('public~More information:')}&nbsp;
-              <ExternalLink
-                href={getNetworkPolicyDocLink(isOpenShift)}
-                text={t('public~NetworkPolicies documentation')}
-              />
-            </p>
-          </Alert>
-        )}
-      <div className="form-group co-create-networkpolicy__name">
-        <label className="co-required" htmlFor="name">
-          {t('public~Policy name')}
-        </label>
-        <input
-          className="pf-c-form-control"
-          type="text"
-          onChange={handleNameChange}
-          value={networkPolicy.name}
-          placeholder="my-policy"
-          id="name"
-          name="name"
-          required
-        />
-      </div>
-      <div className="form-group co-create-networkpolicy__podselector">
-        <NetworkPolicyConditionalSelector
-          selectorType="pod"
-          helpText={t(
-            'public~If no pod selector is provided, the policy will apply to all pods in the namespace.',
+    <div className="co-m-pane__body co-m-pane__form">
+      <Form onSubmit={save} className="co-create-networkpolicy">
+        {showSDNAlert &&
+          networkFeaturesLoaded &&
+          networkFeatures?.PolicyEgress === undefined &&
+          networkFeatures?.PolicyPeerIPBlockExceptions === undefined && (
+            <Alert
+              variant="info"
+              title={t('console-app~When using the OpenShift SDN cluster network provider:')}
+              actionClose={<AlertActionCloseButton onClose={() => setShowSDNAlert(false)} />}
+            >
+              <ul>
+                <li>{t('console-app~Egress network policy is not supported.')}</li>
+                <li>
+                  {t(
+                    'console-app~IP block exceptions are not supported and would cause the entire IP block section to be ignored.',
+                  )}
+                </li>
+              </ul>
+              <p>
+                {t('Refer to your cluster administrator to know which network provider is used.')}
+              </p>
+              <p>
+                {t('console-app~More information:')}&nbsp;
+                <ExternalLink
+                  href={getNetworkPolicyDocLink(isOpenShift)}
+                  text={t('console-app~NetworkPolicies documentation')}
+                />
+              </p>
+            </Alert>
           )}
-          values={networkPolicy.podSelector}
-          onChange={handleMainPodSelectorChange}
-        />
-        <p>
-          {t('public~Show a preview of the')}{' '}
-          <Button ref={podsPreviewPopoverRef} variant="link" isInline>
-            {t('public~affected pods')}
-          </Button>{' '}
-          {t('that this policy will apply to')}
-        </p>
-        <NetworkPolicySelectorPreview
-          policyNamespace={networkPolicy.namespace}
-          podSelector={networkPolicy.podSelector}
-          popoverRef={podsPreviewPopoverRef}
-        />
-      </div>
-      <div className="form-group co-create-networkpolicy__type">
-        <Title headingLevel="h2">{t('public~Policy type')}</Title>
-      </div>
-      <div className="form-group co-create-networkpolicy__deny">
-        <label>{t('public~Select default ingress and egress deny rules')}</label>
+        <div className="form-group co-create-networkpolicy__name">
+          <label className="co-required" htmlFor="name">
+            {t('console-app~Policy name')}
+          </label>
+          <input
+            className="pf-c-form-control"
+            type="text"
+            onChange={handleNameChange}
+            value={networkPolicy.name}
+            placeholder="my-policy"
+            id="name"
+            name="name"
+            required
+          />
+        </div>
+        <div className="form-group co-create-networkpolicy__podselector">
+          <NetworkPolicyConditionalSelector
+            selectorType="pod"
+            helpText={t(
+              'console-app~If no pod selector is provided, the policy will apply to all pods in the namespace.',
+            )}
+            values={networkPolicy.podSelector}
+            onChange={handleMainPodSelectorChange}
+          />
+        </div>
+        <div className="form-group co-create-networkpolicy__type">
+          <Title headingLevel="h2">{t('console-app~Policy type')}</Title>
+        </div>
+        <div className="form-group co-create-networkpolicy__deny">
+          <label>{t('console-app~Select default ingress and egress deny rules')}</label>
 
-        <div className="co-create-networkpolicy__deny-checkboxes">
-          <div className="co-create-networkpolicy__deny-checkbox">
-            <Checkbox
-              label={t('public~Deny all ingress traffic')}
-              onChange={handleDenyAllIngress}
-              checked={networkPolicy.ingress.denyAll}
-              name="denyAllIngress"
-            />
-          </div>
-          {networkFeaturesLoaded && networkFeatures.PolicyEgress !== false && (
+          <div className="co-create-networkpolicy__deny-checkboxes">
             <div className="co-create-networkpolicy__deny-checkbox">
               <Checkbox
-                label={t('public~Deny all egress traffic')}
-                onChange={handleDenyAllEgress}
-                checked={networkPolicy.egress.denyAll}
-                name="denyAllEgress"
+                label={t('console-app~Deny all ingress traffic')}
+                onChange={handleDenyAllIngress}
+                checked={networkPolicy.ingress.denyAll}
+                name="denyAllIngress"
               />
             </div>
-          )}
-        </div>
-      </div>
-      {!networkPolicy.ingress.denyAll && (
-        <FormFieldGroupExpandable
-          toggleAriaLabel="Ingress"
-          className="co-create-networkpolicy__expandable-xl"
-          isExpanded
-          header={
-            <FormFieldGroupHeader
-              titleText={{ text: t('public~Ingress'), id: 'ingress-header' }}
-              actions={
-                <>
-                  <Button
-                    variant="link"
-                    isDisabled={networkPolicy.ingress.rules.length === 0}
-                    onClick={removeAllIngress}
-                  >
-                    {t('public~Remove all')}
-                  </Button>
-                  <Button variant="secondary" onClick={addIngressRule}>
-                    {t('public~Add ingress rule')}
-                  </Button>
-                </>
-              }
-            />
-          }
-        >
-          <div className="help-block" id="ingress-help">
-            <p>
-              {t(
-                'public~List of ingress rules to be applied to the selected pods. Traffic is allowed from a source if it matches at least one rule.',
-              )}
-            </p>
+            {networkFeaturesLoaded && networkFeatures.PolicyEgress !== false && (
+              <div className="co-create-networkpolicy__deny-checkbox">
+                <Checkbox
+                  label={t('console-app~Deny all egress traffic')}
+                  onChange={handleDenyAllEgress}
+                  checked={networkPolicy.egress.denyAll}
+                  name="denyAllEgress"
+                />
+              </div>
+            )}
           </div>
-          {networkPolicy.ingress.rules.map((rule, idx) => (
-            <NetworkPolicyRuleConfigPanel
-              key={rule.key}
-              policyNamespace={networkPolicy.namespace}
-              direction="ingress"
-              rule={rule}
-              onChange={(r) => {
-                const newRules = [...networkPolicy.ingress.rules];
-                newRules[idx] = r;
-                updateIngressRules(newRules);
-              }}
-              onRemove={() => removeIngressRule(idx)}
-            />
-          ))}
-        </FormFieldGroupExpandable>
-      )}
-      {!networkPolicy.egress.denyAll &&
-        networkFeaturesLoaded &&
-        networkFeatures.PolicyEgress !== false && (
+        </div>
+        {!networkPolicy.ingress.denyAll && (
           <FormFieldGroupExpandable
-            toggleAriaLabel="Egress"
+            toggleAriaLabel="Ingress"
             className="co-create-networkpolicy__expandable-xl"
             isExpanded
             header={
               <FormFieldGroupHeader
-                titleText={{ text: t('public~Egress'), id: 'egress-header' }}
+                titleText={{ text: t('console-app~Ingress'), id: 'ingress-header' }}
                 actions={
                   <>
                     <Button
                       variant="link"
-                      isDisabled={networkPolicy.egress.rules.length === 0}
-                      onClick={removeAllEgress}
+                      isDisabled={networkPolicy.ingress.rules.length === 0}
+                      onClick={removeAllIngress}
                     >
-                      {t('public~Remove all')}
+                      {t('console-app~Remove all')}
                     </Button>
-                    <Button variant="secondary" onClick={addEgressRule}>
-                      {t('public~Add egress rule')}
+                    <Button variant="secondary" onClick={addIngressRule}>
+                      {t('console-app~Add ingress rule')}
                     </Button>
                   </>
                 }
               />
             }
           >
-            <div className="help-block" id="egress-help">
+            <div className="help-block" id="ingress-help">
               <p>
                 {t(
-                  'public~List of egress rules to be applied to the selected pods. Traffic is allowed to a destination if it matches at least one rule.',
+                  'console-app~List of ingress rules to be applied to the selected pods. Traffic is allowed from a source if it matches at least one rule.',
                 )}
               </p>
             </div>
-            {networkPolicy.egress.rules.map((rule, idx) => (
+            {networkPolicy.ingress.rules.map((rule, idx) => (
               <NetworkPolicyRuleConfigPanel
                 key={rule.key}
-                policyNamespace={networkPolicy.namespace}
-                direction="egress"
+                direction="ingress"
                 rule={rule}
                 onChange={(r) => {
-                  const newRules = [...networkPolicy.egress.rules];
+                  const newRules = [...networkPolicy.ingress.rules];
                   newRules[idx] = r;
-                  updateEgressRules(newRules);
+                  updateIngressRules(newRules);
                 }}
-                onRemove={() => removeEgressRule(idx)}
+                onRemove={() => removeIngressRule(idx)}
               />
             ))}
           </FormFieldGroupExpandable>
         )}
-      <ButtonBar errorMessage={error} inProgress={inProgress}>
-        <ActionGroup className="pf-c-form">
-          <Button type="submit" id="save-changes" variant="primary">
-            {t('public~Create')}
-          </Button>
-          <Button onClick={history.goBack} id="cancel" variant="secondary">
-            {t('public~Cancel')}
-          </Button>
-        </ActionGroup>
-      </ButtonBar>
-    </Form>
+        {!networkPolicy.egress.denyAll &&
+          networkFeaturesLoaded &&
+          networkFeatures.PolicyEgress !== false && (
+            <FormFieldGroupExpandable
+              toggleAriaLabel="Egress"
+              className="co-create-networkpolicy__expandable-xl"
+              isExpanded
+              header={
+                <FormFieldGroupHeader
+                  titleText={{ text: t('console-app~Egress'), id: 'egress-header' }}
+                  actions={
+                    <>
+                      <Button
+                        variant="link"
+                        isDisabled={networkPolicy.egress.rules.length === 0}
+                        onClick={removeAllEgress}
+                      >
+                        {t('console-app~Remove all')}
+                      </Button>
+                      <Button variant="secondary" onClick={addEgressRule}>
+                        {t('console-app~Add egress rule')}
+                      </Button>
+                    </>
+                  }
+                />
+              }
+            >
+              <div className="help-block" id="egress-help">
+                <p>
+                  {t(
+                    'console-app~List of egress rules to be applied to the selected pods. Traffic is allowed to a destination if it matches at least one rule.',
+                  )}
+                </p>
+              </div>
+              {networkPolicy.egress.rules.map((rule, idx) => (
+                <NetworkPolicyRuleConfigPanel
+                  key={rule.key}
+                  direction="egress"
+                  rule={rule}
+                  onChange={(r) => {
+                    const newRules = [...networkPolicy.egress.rules];
+                    newRules[idx] = r;
+                    updateEgressRules(newRules);
+                  }}
+                  onRemove={() => removeEgressRule(idx)}
+                />
+              ))}
+            </FormFieldGroupExpandable>
+          )}
+        <ButtonBar errorMessage={error} inProgress={inProgress}>
+          <ActionGroup className="pf-c-form">
+            <Button type="submit" id="save-changes" variant="primary">
+              {t('console-app~Create')}
+            </Button>
+            <Button onClick={history.goBack} id="cancel" variant="secondary">
+              {t('console-app~Cancel')}
+            </Button>
+          </ActionGroup>
+        </ButtonBar>
+      </Form>
+    </div>
   );
 };

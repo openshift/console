@@ -25,19 +25,24 @@ export const NetworkPolicyConditionalSelector: React.FunctionComponent<NetworkPo
 ) => {
   const { t } = useTranslation();
   const { selectorType, helpText, values, onChange } = props;
-  const [isVisible, setVisible] = React.useState(false);
+  const [isVisible, setVisible] = React.useState(values.length > 0);
 
   const handleSelectorChange = (updated: { nameValuePairs: string[][] }) => {
     onChange(updated.nameValuePairs);
   };
 
-  const title = selectorType === 'pod' ? t('public~Pod selector') : t('public~Namespace selector');
+  const title =
+    selectorType === 'pod' ? t('console-app~Pod selector') : t('console-app~Namespace selector');
   const addSelectorText =
-    selectorType === 'pod' ? t('public~Add pod selector') : t('public~Add namespace selector');
+    selectorType === 'pod'
+      ? t('console-app~Add pod selector')
+      : t('console-app~Add namespace selector');
   const secondHelpText =
     selectorType === 'pod'
-      ? t('public~Pods having all the supplied key/value pairs as labels will be selected.')
-      : t('public~Namespaces having all the supplied key/value pairs as labels will be selected.');
+      ? t('console-app~Pods having all the supplied key/value pairs as labels will be selected.')
+      : t(
+          'console-app~Namespaces having all the supplied key/value pairs as labels will be selected.',
+        );
 
   return (
     <>
@@ -54,9 +59,9 @@ export const NetworkPolicyConditionalSelector: React.FunctionComponent<NetworkPo
           </div>
           <NameValueEditorComponent
             nameValuePairs={values.length > 0 ? values : [['', '']]}
-            valueString={t('public~Selector')}
-            nameString={t('public~Label')}
-            addString={t('public~Add label')}
+            valueString={t('console-app~Selector')}
+            nameString={t('console-app~Label')}
+            addString={t('console-app~Add label')}
             readOnly={false}
             allowSorting={false}
             updateParentData={handleSelectorChange}
