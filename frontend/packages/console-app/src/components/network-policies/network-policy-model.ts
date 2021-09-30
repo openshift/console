@@ -86,7 +86,7 @@ const errors = {
   }),
 };
 
-const selectorToK8s = (selector: string[][]): Selector => {
+export const selectorToK8s = (selector: string[][]): Selector => {
   const filtered = selector.filter((pair) => pair.length >= 2 && pair[0] !== '');
   if (filtered.length > 0) {
     return { matchLabels: _.fromPairs(filtered) };
