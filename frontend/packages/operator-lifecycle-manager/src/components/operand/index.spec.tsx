@@ -99,6 +99,11 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => {
   };
 });
 
+jest.mock('react-redux', () => ({
+  ...(jest as any).requireActual('react-redux'),
+  useDispatch: () => jest.fn(),
+}));
+
 const i18nNS = 'public';
 
 describe(OperandTableRow.displayName, () => {
