@@ -92,6 +92,23 @@ export enum DISK_DRIVE {
   CDROM = 'CD-ROM',
 }
 
+export enum NIC_MODEL {
+  virtio = 'virtio',
+  e1000e = 'e1000e',
+}
+
+export enum NIC_TYPE {
+  Bridge = 'Bridge',
+  SR_IOV = 'SR-IOV',
+}
+
+export enum EXAMPLE_VM_NIC {
+  Name = 'default',
+  Model = 'virtio',
+  Type = 'masquerade',
+  Network = 'Pod Networking',
+}
+
 export enum K8S_KIND {
   DV = 'DataVolume',
   NAD = 'net-attach-def',

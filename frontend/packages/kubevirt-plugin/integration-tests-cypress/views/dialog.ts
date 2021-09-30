@@ -1,5 +1,5 @@
 import { Disk, Network } from '../types/vm';
-import { diskDialog, nicDialog } from './selector';
+import { diskDialog, nicDialog, menuItemMain } from './selector';
 
 export const addNIC = (nic: Network) => {
   cy.get(nicDialog.addNIC).click();
@@ -8,7 +8,7 @@ export const addNIC = (nic: Network) => {
     .type(nic.name);
   if (nic.model) {
     cy.get(nicDialog.model).click();
-    cy.get('.pf-c-select__menu-item-main')
+    cy.get(menuItemMain)
       .contains(nic.model)
       .click();
   }
@@ -17,7 +17,7 @@ export const addNIC = (nic: Network) => {
     .should('have.value', nic.nad);
   if (nic.type) {
     cy.get(nicDialog.nicType).click();
-    cy.get('.pf-c-select__menu-item-main')
+    cy.get(menuItemMain)
       .contains(nic.type)
       .click();
   }
@@ -29,7 +29,7 @@ export const addDisk = (disk: Disk) => {
   cy.get(diskDialog.addDisk).click();
   if (disk.source) {
     cy.get(diskDialog.source).click();
-    cy.get('.pf-c-select__menu-item-main')
+    cy.get(menuItemMain)
       .contains(disk.source.getDescription())
       .click();
     cy.get('body').then(($body) => {
@@ -58,7 +58,7 @@ export const addDisk = (disk: Disk) => {
   }
   if (disk.interface) {
     cy.get(diskDialog.diskInterface).click();
-    cy.get('.pf-c-select__menu-item-main')
+    cy.get(menuItemMain)
       .contains(disk.interface)
       .click();
   }
