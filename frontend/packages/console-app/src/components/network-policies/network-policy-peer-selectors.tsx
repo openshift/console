@@ -51,7 +51,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
         <NetworkPolicyConditionalSelector
           selectorType="pod"
           helpText={helpTextPodSelector}
-          values={podSelector}
+          values={podSelector || []}
           onChange={handlePodSelectorChange}
         />
       </div>

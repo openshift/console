@@ -23,8 +23,8 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
   };
 
   const dropdownItems = {
-    all: <>{t('public~All ports')}</>,
-    some: <>{t('public~Certain ports')}</>,
+    all: <>{t('console-app~All ports')}</>,
+    some: <>{t('console-app~Certain ports')}</>,
   };
   const selectedKey = allPorts ? 'all' : 'some';
 
@@ -32,7 +32,9 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
     <>
       <div className="form-group co-create-networkpolicy__ports-type">
         <label>
-          {direction === 'ingress' ? t('public~Allow traffic to') : t('public~Allow traffic from')}
+          {direction === 'ingress'
+            ? t('console-app~Allow traffic to')
+            : t('console-app~Allow traffic from')}
         </label>
         <Dropdown
           dropDownClassName="dropdown--full-width"
@@ -52,7 +54,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
       </div>
       {!allPorts && (
         <div className="form-group co-create-networkpolicy__ports-list">
-          <label>{t('public~Ports')}</label>
+          <label>{t('console-app~Ports')}</label>
           {ports.map((port, idx) => {
             const key = `port-${idx}`;
             return (
@@ -80,7 +82,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   value={port.port}
                 />
                 <Button
-                  aria-label={t('public~Remove port')}
+                  aria-label={t('console-app~Remove port')}
                   className="co-create-networkpolicy__remove-port"
                   onClick={() => onRemove(idx)}
                   type="button"
@@ -101,7 +103,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
               variant="link"
             >
               <PlusCircleIcon className="co-icon-space-r" />
-              {t('public~Add port')}
+              {t('console-app~Add port')}
             </Button>
           </div>
         </div>
