@@ -13,7 +13,6 @@ import {
   TYPE_EVENT_PUB_SUB,
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
-import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
@@ -60,7 +59,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       );
     }
     if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
-      return <TopologyVmPanel vmNode={selectedEntity} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
 
     if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB) {

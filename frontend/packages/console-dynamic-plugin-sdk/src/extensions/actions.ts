@@ -95,7 +95,9 @@ export type Action = {
   /** A unique identifier for this action. */
   id: string;
   /** The label to display in the UI. */
-  label: string;
+  label: React.ReactNode;
+  /** Subtext for the menu item */
+  description?: string;
   /** Executable callback or href.
    * External links should automatically provide an external link icon on action.
    * */
