@@ -10,6 +10,8 @@ const loginStateItem = (key) => loginState(key);
 const userID = 'userID';
 const name = 'name';
 const email = 'email';
+const clearLocalStorageKeys = [userID, name, email];
+const lastClusterKey = 'bridge/last-cluster';
 
 const setNext = (next) => {
   if (!next) {
@@ -26,8 +28,8 @@ const setNext = (next) => {
   }
 };
 
-const clearLocalStorage = () => {
-  [userID, name, email].forEach((key) => {
+const clearLocalStorage = (keys) => {
+  keys.forEach((key) => {
     try {
       localStorage.removeItem(key);
     } catch (e) {
@@ -52,17 +54,20 @@ export const authSvc = {
   email: () => loginStateItem(email),
 
   // Avoid logging out multiple times if concurrent requests return unauthorized.
-  logout: _.once((next) => {
+  logout: _.once((next, cluster) => {
     setNext(next);
-    clearLocalStorage();
-    coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST' })
+    clearLocalStorage(clearLocalStorageKeys);
+    coFetch(
+      cluster ? `${window.SERVER_FLAGS.logoutURL}/${cluster}` : window.SERVER_FLAGS.logoutURL,
+      { method: 'POST' },
+    )
       // eslint-disable-next-line no-console
       .catch((e) => console.error('Error logging out', e))
       .then(() => {
         if (window.SERVER_FLAGS.logoutRedirect && !next) {
           window.location = window.SERVER_FLAGS.logoutRedirect;
         } else {
-          authSvc.login();
+          authSvc.login(cluster);
         }
       });
   }),
@@ -92,7 +97,7 @@ export const authSvc = {
   // endpoint, otherwise the user will be logged in again immediately after
   // logging out.
   logoutKubeAdmin: () => {
-    clearLocalStorage();
+    clearLocalStorage(clearLocalStorageKeys);
     // First POST to the console server to clear the console session cookie.
     coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST' })
       // eslint-disable-next-line no-console
@@ -117,14 +122,19 @@ export const authSvc = {
       });
   },
 
-  login: () => {
+  logoutMulticluster: () => {
+    clearLocalStorage([...clearLocalStorageKeys, lastClusterKey]);
+    window.location = window.SERVER_FLAGS.multiclusterLogoutRedirect;
+  },
+
+  login: (cluster) => {
     // Ensure that we don't redirect to the current URL in a loop
     // when using local bridge in development mode without authorization.
-    if (
-      window.location.href !== window.SERVER_FLAGS.loginURL &&
-      window.location.pathname !== window.SERVER_FLAGS.loginURL
-    ) {
-      window.location = window.SERVER_FLAGS.loginURL;
+    const loginURL = cluster
+      ? `${window.SERVER_FLAGS.loginURL}/${cluster}`
+      : window.SERVER_FLAGS.loginURL;
+    if (![window.location.href, window.location.pathname].includes(loginURL)) {
+      window.location = loginURL;
     }
   },
 };

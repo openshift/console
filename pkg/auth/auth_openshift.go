@@ -12,6 +12,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/openshift/console/pkg/proxy"
+	"github.com/openshift/console/pkg/serverutils"
 )
 
 // openShiftAuth implements OpenShift Authentication as defined in:
@@ -20,6 +21,7 @@ type openShiftAuth struct {
 	cookiePath    string
 	secureCookies bool
 	specialURLs   SpecialAuthURLs
+	clusterName   string
 }
 
 type openShiftConfig struct {
@@ -28,6 +30,7 @@ type openShiftConfig struct {
 	issuerURL     string
 	cookiePath    string
 	secureCookies bool
+	clusterName   string
 }
 
 func validateAbsURL(value string) error {
@@ -114,6 +117,7 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 				requestTokenURL,
 				kubeAdminLogoutURL,
 			},
+			c.clusterName,
 		}, nil
 }
 
@@ -140,7 +144,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 	// only logic using the OAuth2 implicit flow.
 	// https://tools.ietf.org/html/rfc6749#section-4.2
 	cookie := http.Cookie{
-		Name:     openshiftSessionCookieName,
+		Name:     GetCookieName(o.clusterName),
 		Value:    ls.rawToken,
 		MaxAge:   int(expiresIn),
 		HttpOnly: true,
@@ -158,7 +162,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 
 	// Delete session cookie
 	cookie := http.Cookie{
-		Name:     openshiftSessionCookieName,
+		Name:     GetCookieName(o.clusterName),
 		Value:    "",
 		MaxAge:   0,
 		HttpOnly: true,
@@ -170,15 +174,17 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func getOpenShiftUser(r *http.Request) (*User, error) {
+	cluster := serverutils.GetCluster(r)
+	cookieName := GetCookieName(cluster)
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
-	cookie, err := r.Cookie(openshiftSessionCookieName)
+	cookie, err := r.Cookie(cookieName)
 	if err != nil {
 		return nil, err
 	}
 	if cookie.Value == "" {
-		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", openshiftSessionCookieName)
+		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", cookieName)
 	}
 
 	return &User{

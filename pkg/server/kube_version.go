@@ -2,18 +2,19 @@ package server
 
 import (
 	"errors"
+
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 )
 
-func (s *Server) GetKubeVersion() string {
+func (s *Server) GetKubeVersion(cluster string) string {
 	if s.KubeVersion != "" {
 		return s.KubeVersion
 	}
 	config := &rest.Config{
-		Host:      s.K8sProxyConfig.Endpoint.String(),
-		Transport: s.K8sClient.Transport,
+		Host:      s.K8sProxyConfigs[cluster].Endpoint.String(),
+		Transport: s.K8sClients[cluster].Transport,
 	}
 	kubeVersion, err := kubeVersion(config)
 	if err != nil {

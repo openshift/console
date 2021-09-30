@@ -69,6 +69,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
           tty: 1,
           container: activeContainer,
           command: command.map((c) => encodeURIComponent(c)).join('&command='),
+          cluster: store.getState().UI.get('activeCluster'),
         },
       };
 

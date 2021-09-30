@@ -2,13 +2,13 @@ import * as _ from 'lodash-es';
 
 import { referenceForModel } from '../../module/k8s/k8s';
 
-export const makeReduxID = (k8sKind = {}, query) => {
+export const makeReduxID = (k8sKind = {}, query, cluster = 'local-cluster') => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
   }
 
-  return `${referenceForModel(k8sKind)}${qs}`;
+  return `${cluster}:${referenceForModel(k8sKind)}${qs}`;
 };
 
 /** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string, limit?: number) => {[key: string]: string}} */

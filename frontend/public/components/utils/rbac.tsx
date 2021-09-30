@@ -5,6 +5,7 @@ import * as _ from 'lodash-es';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 
 import store from '../../redux';
+import { getActiveCluster } from '../../actions/ui';
 import { impersonateStateToProps } from '../../reducers/ui';
 import {
   AccessReviewResourceAttributes,
@@ -55,7 +56,7 @@ const checkAccessInternal = _.memoize(
     };
     return k8sCreate(SelfSubjectAccessReviewModel, ssar);
   },
-  (...args) => args.join('~'),
+  (...args) => [...args, getActiveCluster()].join('~'),
 );
 
 const getImpersonateKey = (impersonate): string => {

@@ -167,6 +167,7 @@ export type FireManProps = {
   helpText?: React.ReactNode;
   title: string;
   autoFocus?: boolean;
+  cluster?: string;
 };
 
 type FireManState = {
@@ -188,14 +189,22 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
       this.applyFilter = this.applyFilter.bind(this);
 
       const reduxIDs = props.resources.map((r) =>
-        makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
+        makeReduxID(
+          kindObj(r.kind),
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
+          this.props.cluster,
+        ),
       );
       this.state = { reduxIDs };
     }
 
-    UNSAFE_componentWillReceiveProps({ resources }) {
+    UNSAFE_componentWillReceiveProps({ resources, cluster }: FireManProps) {
       const reduxIDs = resources.map((r) =>
-        makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
+        makeReduxID(
+          kindObj(r.kind),
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
+          cluster,
+        ),
       );
       if (_.isEqual(reduxIDs, this.state.reduxIDs)) {
         return;

@@ -113,7 +113,8 @@ const ConnectToState = connect(mapStateToProps)(
   }, propsAreEqual),
 );
 
-const stateToProps = ({ k8s }, { resources }) => {
+const stateToProps = ({ k8s, UI }, { resources }) => {
+  const cluster = UI.get('activeCluster');
   const k8sModels = resources.reduce(
     (models, { kind }) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])),
     ImmutableMap(),
@@ -124,6 +125,7 @@ const stateToProps = ({ k8s }, { resources }) => {
       makeReduxID(
         k8sModels.get(r.kind),
         makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
+        cluster,
       ),
       'loaded',
     ]);
@@ -132,6 +134,7 @@ const stateToProps = ({ k8s }, { resources }) => {
     k8sModels,
     loaded: resources.every(loaded),
     inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
+    cluster,
   };
 };
 
@@ -148,6 +151,7 @@ export const Firehose = connect(
     areStatePropsEqual: (next, prev) =>
       next.loaded === prev.loaded &&
       next.inFlight === prev.inFlight &&
+      next.cluster === prev.cluster &&
       shallowMapEquals(next.k8sModels, prev.k8sModels),
   },
 )(
@@ -182,6 +186,7 @@ export const Firehose = connect(
     }
 
     componentDidUpdate(prevProps) {
+      const clusterChanged = prevProps.cluster !== this.props.cluster;
       const discoveryComplete =
         !this.props.inFlight && !this.props.loaded && this.state.firehoses.length === 0;
       const resourcesChanged =
@@ -189,14 +194,14 @@ export const Firehose = connect(
         _.intersectionWith(prevProps.resources, this.props.resources, _.isEqual).length !==
           this.props.resources.length;
 
-      if (discoveryComplete || resourcesChanged) {
+      if (discoveryComplete || clusterChanged || resourcesChanged) {
         this.clear();
         this.start();
       }
     }
 
     start() {
-      const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight } = this.props;
+      const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight, cluster } = this.props;
 
       let firehoses = [];
       if (!(inFlight && _.some(resources, ({ kind }) => !k8sModels.get(kind)))) {
@@ -210,7 +215,7 @@ export const Firehose = connect(
               resource.limit,
             );
             const k8sKind = k8sModels.get(resource.kind);
-            const id = makeReduxID(k8sKind, query);
+            const id = makeReduxID(k8sKind, query, cluster);
             return _.extend({}, resource, { query, id, k8sKind });
           })
           .filter((f) => {

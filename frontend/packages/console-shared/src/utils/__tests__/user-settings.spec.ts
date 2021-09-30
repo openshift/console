@@ -40,7 +40,10 @@ describe('createConfigMap', () => {
 
     expect(actual).toEqual(configMap);
     expect(coFetchMock).toHaveBeenCalledTimes(1);
-    expect(coFetchMock).lastCalledWith('/api/console/user-settings', { method: 'POST' });
+    expect(coFetchMock).lastCalledWith('/api/console/user-settings', {
+      headers: { 'X-Cluster': 'local-cluster' },
+      method: 'POST',
+    });
   });
 });
 
@@ -61,6 +64,7 @@ describe('updateConfigMap', () => {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/merge-patch+json;charset=UTF-8',
+          'X-Cluster': 'local-cluster',
         },
         body: '{"data":{"key":"value"}}',
       },

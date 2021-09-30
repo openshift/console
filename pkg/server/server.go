@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/coreos/pkg/health"
+	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/graphql/resolver"
@@ -34,14 +35,16 @@ import (
 )
 
 const (
-	indexPageTemplateName     = "index.html"
-	tokenizerPageTemplateName = "tokener.html"
+	indexPageTemplateName              = "index.html"
+	tokenizerPageTemplateName          = "tokener.html"
+	multiclusterLogoutPageTemplateName = "multicluster-logout.html"
 
 	authLoginEndpoint                = "/auth/login"
 	AuthLoginCallbackEndpoint        = "/auth/callback"
 	AuthLoginSuccessEndpoint         = "/"
 	AuthLoginErrorEndpoint           = "/error"
 	authLogoutEndpoint               = "/auth/logout"
+	authLogoutMulticlusterEndpoint   = "/api/logout/multicluster"
 	k8sProxyEndpoint                 = "/api/kubernetes/"
 	graphQLEndpoint                  = "/api/graphql"
 	prometheusProxyEndpoint          = "/api/prometheus"
@@ -62,51 +65,54 @@ const (
 )
 
 type jsGlobals struct {
-	ConsoleVersion            string   `json:"consoleVersion"`
-	AuthDisabled              bool     `json:"authDisabled"`
-	KubectlClientID           string   `json:"kubectlClientID"`
-	BasePath                  string   `json:"basePath"`
-	LoginURL                  string   `json:"loginURL"`
-	LoginSuccessURL           string   `json:"loginSuccessURL"`
-	LoginErrorURL             string   `json:"loginErrorURL"`
-	LogoutURL                 string   `json:"logoutURL"`
-	LogoutRedirect            string   `json:"logoutRedirect"`
-	RequestTokenURL           string   `json:"requestTokenURL"`
-	KubeAdminLogoutURL        string   `json:"kubeAdminLogoutURL"`
-	KubeAPIServerURL          string   `json:"kubeAPIServerURL"`
-	PrometheusBaseURL         string   `json:"prometheusBaseURL"`
-	PrometheusTenancyBaseURL  string   `json:"prometheusTenancyBaseURL"`
-	AlertManagerBaseURL       string   `json:"alertManagerBaseURL"`
-	MeteringBaseURL           string   `json:"meteringBaseURL"`
-	Branding                  string   `json:"branding"`
-	CustomProductName         string   `json:"customProductName"`
-	CustomLogoURL             string   `json:"customLogoURL"`
-	StatuspageID              string   `json:"statuspageID"`
-	DocumentationBaseURL      string   `json:"documentationBaseURL"`
-	AlertManagerPublicURL     string   `json:"alertManagerPublicURL"`
-	GrafanaPublicURL          string   `json:"grafanaPublicURL"`
-	PrometheusPublicURL       string   `json:"prometheusPublicURL"`
-	ThanosPublicURL           string   `json:"thanosPublicURL"`
-	LoadTestFactor            int      `json:"loadTestFactor"`
-	InactivityTimeout         int      `json:"inactivityTimeout"`
-	GOARCH                    string   `json:"GOARCH"`
-	GOOS                      string   `json:"GOOS"`
-	GraphQLBaseURL            string   `json:"graphqlBaseURL"`
-	DevCatalogCategories      string   `json:"developerCatalogCategories"`
-	UserSettingsLocation      string   `json:"userSettingsLocation"`
-	AddPage                   string   `json:"addPage"`
-	ConsolePlugins            []string `json:"consolePlugins"`
-	QuickStarts               string   `json:"quickStarts"`
-	ProjectAccessClusterRoles string   `json:"projectAccessClusterRoles"`
+	ConsoleVersion             string   `json:"consoleVersion"`
+	AuthDisabled               bool     `json:"authDisabled"`
+	KubectlClientID            string   `json:"kubectlClientID"`
+	BasePath                   string   `json:"basePath"`
+	LoginURL                   string   `json:"loginURL"`
+	LoginSuccessURL            string   `json:"loginSuccessURL"`
+	LoginErrorURL              string   `json:"loginErrorURL"`
+	LogoutURL                  string   `json:"logoutURL"`
+	LogoutRedirect             string   `json:"logoutRedirect"`
+	MulticlusterLogoutRedirect string   `json:"multiclusterLogoutRedirect"`
+	RequestTokenURL            string   `json:"requestTokenURL"`
+	KubeAdminLogoutURL         string   `json:"kubeAdminLogoutURL"`
+	KubeAPIServerURL           string   `json:"kubeAPIServerURL"`
+	PrometheusBaseURL          string   `json:"prometheusBaseURL"`
+	PrometheusTenancyBaseURL   string   `json:"prometheusTenancyBaseURL"`
+	AlertManagerBaseURL        string   `json:"alertManagerBaseURL"`
+	MeteringBaseURL            string   `json:"meteringBaseURL"`
+	Branding                   string   `json:"branding"`
+	CustomProductName          string   `json:"customProductName"`
+	CustomLogoURL              string   `json:"customLogoURL"`
+	StatuspageID               string   `json:"statuspageID"`
+	DocumentationBaseURL       string   `json:"documentationBaseURL"`
+	AlertManagerPublicURL      string   `json:"alertManagerPublicURL"`
+	GrafanaPublicURL           string   `json:"grafanaPublicURL"`
+	PrometheusPublicURL        string   `json:"prometheusPublicURL"`
+	ThanosPublicURL            string   `json:"thanosPublicURL"`
+	LoadTestFactor             int      `json:"loadTestFactor"`
+	InactivityTimeout          int      `json:"inactivityTimeout"`
+	GOARCH                     string   `json:"GOARCH"`
+	GOOS                       string   `json:"GOOS"`
+	GraphQLBaseURL             string   `json:"graphqlBaseURL"`
+	DevCatalogCategories       string   `json:"developerCatalogCategories"`
+	UserSettingsLocation       string   `json:"userSettingsLocation"`
+	AddPage                    string   `json:"addPage"`
+	ConsolePlugins             []string `json:"consolePlugins"`
+	QuickStarts                string   `json:"quickStarts"`
+	ProjectAccessClusterRoles  string   `json:"projectAccessClusterRoles"`
+	Clusters                   []string `json:"clusters"`
 }
 
 type Server struct {
-	K8sProxyConfig       *proxy.Config
+	K8sProxyConfigs      map[string]*proxy.Config
 	BaseURL              *url.URL
 	LogoutRedirect       *url.URL
 	PublicDir            string
 	TectonicVersion      string
 	Auther               *auth.Authenticator
+	Authers              map[string]*auth.Authenticator
 	StaticUser           *auth.User
 	ServiceAccountToken  string
 	KubectlClientID      string
@@ -122,7 +128,7 @@ type Server struct {
 	// Map that contains list of enabled plugins and their endpoints.
 	EnabledConsolePlugins map[string]string
 	// A client with the correct TLS setup for communicating with the API server.
-	K8sClient                        *http.Client
+	K8sClients                       map[string]*http.Client
 	ThanosProxyConfig                *proxy.Config
 	ThanosTenancyProxyConfig         *proxy.Config
 	ThanosTenancyProxyForRulesConfig *proxy.Config
@@ -174,8 +180,18 @@ func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 
 	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
-		s.K8sProxyConfig.Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
+		for cluster := range s.K8sProxyConfigs {
+			s.K8sProxyConfigs[cluster].Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
+		}
 	}
+
+	localK8sProxyConfig := s.K8sProxyConfigs[serverutils.LocalClusterName]
+	localK8sClient := s.K8sClients[serverutils.LocalClusterName]
+	k8sProxies := make(map[string]*proxy.Proxy)
+	for cluster, proxyConfig := range s.K8sProxyConfigs {
+		k8sProxies[cluster] = proxy.NewProxy(proxyConfig)
+	}
+
 	handle := func(path string, handler http.Handler) {
 		mux.Handle(proxy.SingleJoiningSlash(s.BaseURL.Path, path), handler)
 	}
@@ -210,10 +226,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	authHandler := func(hf http.HandlerFunc) http.Handler {
-		return authMiddleware(s.Auther, hf)
+		return authMiddleware(s.Authers, hf)
 	}
 	authHandlerWithUser := func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
-		return authMiddlewareWithUser(s.Auther, hf)
+		return authMiddlewareWithUser(s.Authers, hf)
 	}
 
 	if s.authDisabled() {
@@ -230,9 +246,15 @@ func (s *Server) HTTPHandler() http.Handler {
 	if !s.authDisabled() {
 		handleFunc(authLoginEndpoint, s.Auther.LoginFunc)
 		handleFunc(authLogoutEndpoint, s.Auther.LogoutFunc)
+		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster)
 		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc(fn))
-
 		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
+		for clusterName, clusterAuther := range s.Authers {
+			if clusterAuther != nil {
+				handleFunc(fmt.Sprintf("%s/%s", authLoginEndpoint, clusterName), clusterAuther.LoginFunc)
+				handleFunc(fmt.Sprintf("%s/%s", AuthLoginCallbackEndpoint, clusterName), clusterAuther.CallbackFunc(fn))
+			}
+		}
 	}
 
 	handleFunc("/api/", notFoundHandler)
@@ -255,10 +277,18 @@ func (s *Server) HTTPHandler() http.Handler {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
-	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			cluster := serverutils.GetCluster(r)
+			k8sProxy, k8sProxyFound := k8sProxies[cluster]
+
+			if !k8sProxyFound {
+				klog.Errorf("Bad Request. Invalid cluster: %v", cluster)
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
 			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 			k8sProxy.ServeHTTP(w, r)
 		})),
@@ -269,8 +299,8 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,
-		s.K8sProxyConfig.TLSClientConfig,
-		s.K8sProxyConfig.Endpoint)
+		localK8sProxyConfig.TLSClientConfig,
+		localK8sProxyConfig.Endpoint)
 
 	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
@@ -281,7 +311,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		panic(err)
 	}
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
-	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
+	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxies[serverutils.LocalClusterName]}
 	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
 	handler := graphqlws.NewHandler()
@@ -420,8 +450,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
 		APIServerURL: s.KubeAPIServerURL,
-		Client:       s.K8sClient,
+		Client:       localK8sClient,
 	}
+
 	handle(operandsListEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -436,14 +467,14 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	// User settings
 	userSettingHandler := usersettings.UserSettingsHandler{
-		K8sProxyConfig:      s.K8sProxyConfig,
-		Client:              s.K8sClient,
-		Endpoint:            s.K8sProxyConfig.Endpoint.String(),
+		K8sProxyConfig:      localK8sProxyConfig,
+		Client:              localK8sClient,
+		Endpoint:            localK8sProxyConfig.Endpoint.String(),
 		ServiceAccountToken: s.ServiceAccountToken,
 	}
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
-	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, s)
+	helmHandlers := helmhandlerspkg.New(localK8sProxyConfig.Endpoint.String(), localK8sClient.Transport, s)
 
 	pluginsHandler := plugins.NewPluginsHandler(
 		&http.Client{
@@ -529,36 +560,48 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
+	for plugin := range s.EnabledConsolePlugins {
+		plugins = append(plugins, plugin)
+	}
+
+	clusters := make([]string, 0, len(s.K8sProxyConfigs))
+	for cluster := range s.K8sProxyConfigs {
+		clusters = append(clusters, cluster)
+	}
+
 	jsg := &jsGlobals{
-		ConsoleVersion:            version.Version,
-		AuthDisabled:              s.authDisabled(),
-		KubectlClientID:           s.KubectlClientID,
-		BasePath:                  s.BaseURL.Path,
-		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:                 proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		LogoutRedirect:            s.LogoutRedirect.String(),
-		KubeAPIServerURL:          s.KubeAPIServerURL,
-		Branding:                  s.Branding,
-		CustomProductName:         s.CustomProductName,
-		StatuspageID:              s.StatuspageID,
-		InactivityTimeout:         s.InactivityTimeout,
-		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
-		AlertManagerPublicURL:     s.AlertManagerPublicURL.String(),
-		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
-		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
-		ThanosPublicURL:           s.ThanosPublicURL.String(),
-		GOARCH:                    s.GOARCH,
-		GOOS:                      s.GOOS,
-		LoadTestFactor:            s.LoadTestFactor,
-		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
-		DevCatalogCategories:      s.DevCatalogCategories,
-		UserSettingsLocation:      s.UserSettingsLocation,
-		ConsolePlugins:            getMapKeys(s.EnabledConsolePlugins),
-		QuickStarts:               s.QuickStarts,
-		AddPage:                   s.AddPage,
-		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
+		ConsoleVersion:             version.Version,
+		AuthDisabled:               s.authDisabled(),
+		KubectlClientID:            s.KubectlClientID,
+		BasePath:                   s.BaseURL.Path,
+		LoginURL:                   proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LoginSuccessURL:            proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:              proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		LogoutRedirect:             s.LogoutRedirect.String(),
+		MulticlusterLogoutRedirect: proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutMulticlusterEndpoint),
+		KubeAPIServerURL:           s.KubeAPIServerURL,
+		Branding:                   s.Branding,
+		CustomProductName:          s.CustomProductName,
+		StatuspageID:               s.StatuspageID,
+		InactivityTimeout:          s.InactivityTimeout,
+		DocumentationBaseURL:       s.DocumentationBaseURL.String(),
+		AlertManagerPublicURL:      s.AlertManagerPublicURL.String(),
+		GrafanaPublicURL:           s.GrafanaPublicURL.String(),
+		PrometheusPublicURL:        s.PrometheusPublicURL.String(),
+		ThanosPublicURL:            s.ThanosPublicURL.String(),
+		GOARCH:                     s.GOARCH,
+		GOOS:                       s.GOOS,
+		LoadTestFactor:             s.LoadTestFactor,
+		GraphQLBaseURL:             proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
+		DevCatalogCategories:       s.DevCatalogCategories,
+		UserSettingsLocation:       s.UserSettingsLocation,
+		ConsolePlugins:             plugins,
+		QuickStarts:                s.QuickStarts,
+		AddPage:                    s.AddPage,
+		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
+		Clusters:                   clusters,
 	}
 
 	if !s.authDisabled() {
@@ -620,6 +663,16 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 		return
 	}
 
+	// Proxy request to correct cluster
+	cluster := serverutils.GetCluster(r)
+	k8sProxy, k8sProxyFound := s.K8sProxyConfigs[cluster]
+	k8sClient, k8sClientFound := s.K8sClients[cluster]
+	if !k8sProxyFound || !k8sClientFound {
+		klog.Errorf("Bad Request. Invalid cluster: %v", cluster)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	tokenName := user.Token
 	if strings.HasPrefix(tokenName, sha256Prefix) {
 		tokenName = tokenToObjectName(tokenName)
@@ -627,7 +680,7 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 
 	// Delete the OpenShift OAuthAccessToken.
 	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + tokenName
-	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
+	url := proxy.SingleJoiningSlash(k8sProxy.Endpoint.String(), path)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to create token DELETE request: %v", err)})
@@ -635,7 +688,7 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	}
 
 	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-	resp, err := s.K8sClient.Do(req)
+	resp, err := k8sClient.Do(req)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to delete token: %v", err)})
 		return
@@ -644,6 +697,46 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 	resp.Body.Close()
+}
+
+func (s *Server) handleLogoutMulticluster(w http.ResponseWriter, r *http.Request) {
+	for cluster, auther := range s.Authers {
+		cookieName := auth.GetCookieName(cluster)
+		if cookie, _ := r.Cookie(cookieName); cookie != nil {
+			clearedCookie := http.Cookie{
+				Name:     cookie.Name,
+				Value:    "",
+				MaxAge:   0,
+				HttpOnly: cookie.HttpOnly,
+				Path:     auther.GetCookiePath(),
+				Secure:   cookie.Secure,
+			}
+			klog.Infof("Deleting cookie %v", cookie.Name)
+			http.SetCookie(w, &clearedCookie)
+		}
+	}
+
+	jsg := struct {
+		BasePath          string `json:"basePath"`
+		Branding          string `json:"branding"`
+		CustomProductName string `json:"customProductName"`
+	}{
+		BasePath:          s.BaseURL.Path,
+		Branding:          s.Branding,
+		CustomProductName: s.CustomProductName,
+	}
+	tpl := template.New(multiclusterLogoutPageTemplateName)
+	tpl.Delims("[[", "]]")
+	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, multiclusterLogoutPageTemplateName))
+	if err != nil {
+		fmt.Printf("%v not found in configured public-dir path: %v", multiclusterLogoutPageTemplateName, err)
+		os.Exit(1)
+	}
+
+	if err := tpls.ExecuteTemplate(w, multiclusterLogoutPageTemplateName, jsg); err != nil {
+		fmt.Printf("%v", err)
+		os.Exit(1)
+	}
 }
 
 // tokenToObjectName returns the oauthaccesstokens object name for the given raw token,
@@ -656,7 +749,7 @@ func tokenToObjectName(token string) string {
 
 func getMapKeys(m map[string]string) []string {
 	keys := []string{}
-	for key, _ := range m {
+	for key := range m {
 		keys = append(keys, key)
 	}
 	return keys

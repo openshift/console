@@ -25,6 +25,7 @@ import { pluginStore } from '../plugins';
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
+import DetectCluster from '@console/app/src/components/detect-cluster/DetectCluster';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import { useExtensions } from '@console/plugin-sdk';
@@ -204,7 +205,7 @@ class App_ extends React.PureComponent {
     );
 
     return (
-      <>
+      <DetectCluster>
         <DetectPerspective>
           <DetectNamespace>
             {contextProviderExtensions.reduce(
@@ -218,7 +219,7 @@ class App_ extends React.PureComponent {
           </DetectNamespace>
         </DetectPerspective>
         <DetectLanguage />
-      </>
+      </DetectCluster>
     );
   }
 }

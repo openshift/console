@@ -6,7 +6,12 @@ export const USER_SETTING_CONFIGMAP_NAMESPACE = 'openshift-console-user-settings
 
 export const createConfigMap = async (): Promise<ConfigMapKind> => {
   try {
-    const response = await coFetch('/api/console/user-settings', { method: 'POST' });
+    const response = await coFetch('/api/console/user-settings', {
+      method: 'POST',
+      headers: {
+        'X-Cluster': 'local-cluster',
+      },
+    });
     return response.json();
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -37,6 +42,7 @@ export const updateConfigMap = async (
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/merge-patch+json;charset=UTF-8',
+        'X-Cluster': 'local-cluster',
       },
       body: JSON.stringify(patch),
     });

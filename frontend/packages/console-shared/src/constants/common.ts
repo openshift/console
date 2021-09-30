@@ -32,6 +32,7 @@ export const STORAGE_PREFIX = 'bridge';
 
 export const USERSETTINGS_PREFIX = 'console';
 
+export const LAST_CLUSTER_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastCluster`;
 // This localStorage key predates the storage prefix.
 export const NAMESPACE_USERSETTINGS_PREFIX = `${USERSETTINGS_PREFIX}.namespace`;
 export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';

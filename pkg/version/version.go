@@ -5,5 +5,5 @@ package version
 var Version string
 
 type KubeVersionGetter interface {
-	GetKubeVersion() string
+	GetKubeVersion(cluster string) string
 }

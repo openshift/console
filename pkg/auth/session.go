@@ -8,7 +8,7 @@ import (
 	"k8s.io/klog"
 )
 
-const openshiftSessionCookieName = "openshift-session-token"
+const openshiftAccessTokenCookieName = "openshift-session-token"
 
 type oldSession struct {
 	token string

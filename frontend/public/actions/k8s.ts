@@ -91,13 +91,17 @@ export const watchK8sObject = (
   dispatch(startWatchK8sObject(id));
   REF_COUNTS[id] = 1;
 
+  if (!query.cluster) {
+    query.cluster = getState().UI.get('activeCluster');
+  }
+
   if (query.name) {
     query.fieldSelector = `metadata.name=${query.name}`;
     delete query.name;
   }
 
   const poller = () => {
-    k8sGet(k8sType, name, namespace).then(
+    k8sGet(k8sType, name, namespace, { cluster: query.cluster }).then(
       (o) => dispatch(modifyObject(id, o)),
       (e) => dispatch(errored(id, e)),
     );
@@ -153,6 +157,9 @@ export const watchK8sList = (
     return nop;
   }
 
+  if (!query.cluster) {
+    query.cluster = getState().UI.get('activeCluster');
+  }
   dispatch(startWatchK8sList(id, query));
   REF_COUNTS[id] = 1;
 
@@ -171,6 +178,8 @@ export const watchK8sList = (
         ...(continueToken ? { continue: continueToken } : {}),
       },
       true,
+      undefined,
+      query.cluster,
     );
 
     if (!REF_COUNTS[id]) {
