@@ -74,7 +74,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
 
   it(`attempts to uninstall the Operator, shows 'Cannot load Operands' alert`, () => {
     // return a static error response
-    cy.intercept('GET', 'api/list-operands', {
+    cy.intercept('GET', 'api/list-operands/?*', {
       statusCode: 400, // Bad Request
       body: { error: 'Failed to list operands' },
     }).as('listOperands');
@@ -91,7 +91,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   it(`attempts to uninstall the Operator, shows 'Error uninstalling Operator' alert`, () => {
     // invalidate the request so operator doesn't get uninstalled, as opposed to
     // letting request go thru unchanged and mocking the response
-    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/', (req) => {
+    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*', (req) => {
       // examples:
       // .../api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/test-mpnsw/subscriptions/datagrid-foobar
       // .../api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/test-mpnsw/clusterserviceversions/datagrid-operator.v8.2.0-foobar
@@ -110,7 +110,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
 
   it(`attempts to uninstall the Operator and delete all Operand Instances, shows 'Error Deleting Operands' alert`, () => {
     // invalidate the request so operator doesn't get uninstalled
-    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/', (req) => {
+    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*', (req) => {
       req.url = `${req.url}-foobar`;
     }).as('deleteOperatorSubscriptionAndCSV');
 
