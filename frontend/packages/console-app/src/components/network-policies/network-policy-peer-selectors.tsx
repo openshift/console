@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
@@ -58,13 +58,13 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
         />
       </div>
       <p>
-        {t('public~Show a preview of the')}{' '}
-        <Button ref={podsPreviewPopoverRef} variant="link" isInline>
-          {t('public~affected pods')}
-        </Button>{' '}
-        {props.direction === 'ingress'
-          ? t('that this ingress rule will apply to')
-          : t('that this egress rule will apply to')}
+        <Trans ns="console-app">
+          Show a preview of the{' '}
+          <Button ref={podsPreviewPopoverRef} variant="link" isInline>
+            affected pods
+          </Button>{' '}
+          that this {props.direction} rule will apply to
+        </Trans>
       </p>
       <NetworkPolicySelectorPreview
         policyNamespace={policyNamespace}

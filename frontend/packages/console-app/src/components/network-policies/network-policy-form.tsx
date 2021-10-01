@@ -11,7 +11,7 @@ import {
   AlertVariant,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Checkbox } from '@console/internal/components/checkbox';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
@@ -251,11 +251,13 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             onChange={handleMainPodSelectorChange}
           />
           <p>
-            {t('console-app~Show a preview of the')}{' '}
-            <Button ref={podsPreviewPopoverRef} variant="link" isInline>
-              {t('console-app~affected pods')}
-            </Button>{' '}
-            {t('that this policy will apply to')}
+            <Trans ns="console-app">
+              Show a preview of the{' '}
+              <Button ref={podsPreviewPopoverRef} variant="link" isInline>
+                affected pods
+              </Button>{' '}
+              that this policy will apply to
+            </Trans>
           </p>
           <NetworkPolicySelectorPreview
             policyNamespace={networkPolicy.namespace}

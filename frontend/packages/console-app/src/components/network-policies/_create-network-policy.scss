@@ -49,3 +49,8 @@
 .pf-c-tree-view__list-item {
   list-style: none;
 }
+
+.co-create-networkpolicy__selector-preview button.pf-c-tree-view__node[role="treeitem"],
+.co-create-networkpolicy__selector-preview button.pf-c-tree-view__node[role="treeitem"] > .pf-c-tree-view__node-container {
+  cursor: default;
+}
