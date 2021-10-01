@@ -117,6 +117,7 @@
   "Selector": "Selector",
   "Label": "Label",
   "Add label": "Add label",
+  "This NetworkPolicy cannot be displayed in form. Please switch to the YAML editor.": "This NetworkPolicy cannot be displayed in form. Please switch to the YAML editor.",
   "Are you sure?": "Are you sure?",
   "Remove all": "Remove all",
   "This action will remove all rules within the Ingress section and cannot be undone.": "This action will remove all rules within the Ingress section and cannot be undone.",
