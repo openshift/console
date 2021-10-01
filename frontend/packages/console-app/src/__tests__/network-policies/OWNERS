@@ -4,5 +4,3 @@ reviewers:
   - OlivierCazade
 approvers:
   - jotak
-labels:
-  - component/network-policies
