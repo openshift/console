@@ -65,7 +65,7 @@ const safeSelector = (selector?: string[][]): [Selector, string?] => {
       return [{ matchLabels: {} }, label[1]];
     }
   }
-  return [selectorToK8s(selector, { matchLabels: {} }) as Selector, undefined];
+  return [selectorToK8s(selector) as Selector, undefined];
 };
 
 function useWatch<T>(kind: string, selector: Selector, namespace?: string) {

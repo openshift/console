@@ -8,6 +8,7 @@ import {
   FormFieldGroupExpandable,
   FormFieldGroupHeader,
   AlertActionCloseButton,
+  AlertVariant,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ import {
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { NetworkPolicyModel } from '@console/internal/models';
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, NetworkPolicyKind } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -29,8 +30,11 @@ import { NetworkPolicyConditionalSelector } from './network-policy-conditional-s
 import {
   isNetworkPolicyConversionError,
   NetworkPolicy,
+  networkPolicyFromK8sResource,
+  networkPolicyNormalizeK8sResource,
   NetworkPolicyRule,
   networkPolicyToK8sResource,
+  checkNetworkPolicyValidity,
 } from './network-policy-model';
 import { NetworkPolicyRuleConfigPanel } from './network-policy-rule-config';
 import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
@@ -44,58 +48,70 @@ const emptyRule = (): NetworkPolicyRule => {
 };
 
 type NetworkPolicyFormProps = {
-  namespace: string;
+  formData: NetworkPolicyKind;
+  onChange: (newFormData: NetworkPolicyKind) => void;
 };
 
-export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace }) => {
+export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
-  const emptyPolicy: NetworkPolicy = {
-    name: '',
-    namespace,
-    podSelector: [['', '']],
-    ingress: {
-      denyAll: false,
-      rules: [],
-    },
-    egress: {
-      denyAll: false,
-      rules: [],
-    },
-  };
+  const normalizedK8S = networkPolicyNormalizeK8sResource(formData);
+  const converted = networkPolicyFromK8sResource(normalizedK8S, t);
+  const [networkPolicy, setNetworkPolicy] = React.useState(converted);
 
-  const [networkPolicy, setNetworkPolicy] = React.useState(emptyPolicy);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState('');
   const [showSDNAlert, setShowSDNAlert] = React.useState(true);
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
   const podsPreviewPopoverRef = React.useRef();
 
+  if (isNetworkPolicyConversionError(networkPolicy)) {
+    // Note, this case is not expected to happen. Validity of the network policy for form should have been checked prior to showing this form.
+    // When used with the SyncedEditor, an error is thrown when the data is invalid, that should prevent the user from opening the form with invalid data, hence not running into this conditional block.
+    return (
+      <div className="co-m-pane__body">
+        <Alert
+          variant={AlertVariant.danger}
+          title={t(
+            'console-app~This NetworkPolicy cannot be displayed in form. Please switch to the YAML editor.',
+          )}
+        >
+          {networkPolicy.error}
+        </Alert>
+      </div>
+    );
+  }
+
+  const onPolicyChange = (policy: NetworkPolicy) => {
+    setNetworkPolicy(policy);
+    onChange(networkPolicyToK8sResource(policy));
+  };
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setNetworkPolicy({ ...networkPolicy, name: event.currentTarget.value });
+    onPolicyChange({ ...networkPolicy, name: event.currentTarget.value });
 
   const handleMainPodSelectorChange = (updated: string[][]) => {
-    setNetworkPolicy({ ...networkPolicy, podSelector: updated });
+    onPolicyChange({ ...networkPolicy, podSelector: updated });
   };
 
   const handleDenyAllIngress: React.ReactEventHandler<HTMLInputElement> = (event) =>
-    setNetworkPolicy({
+    onPolicyChange({
       ...networkPolicy,
       ingress: { ...networkPolicy.ingress, denyAll: event.currentTarget.checked },
     });
 
   const handleDenyAllEgress: React.ReactEventHandler<HTMLInputElement> = (event) =>
-    setNetworkPolicy({
+    onPolicyChange({
       ...networkPolicy,
       egress: { ...networkPolicy.egress, denyAll: event.currentTarget.checked },
     });
 
   const updateIngressRules = (rules: NetworkPolicyRule[]) =>
-    setNetworkPolicy({ ...networkPolicy, ingress: { ...networkPolicy.ingress, rules } });
+    onPolicyChange({ ...networkPolicy, ingress: { ...networkPolicy.ingress, rules } });
 
   const updateEgressRules = (rules: NetworkPolicyRule[]) =>
-    setNetworkPolicy({ ...networkPolicy, egress: { ...networkPolicy.egress, rules } });
+    onPolicyChange({ ...networkPolicy, egress: { ...networkPolicy.egress, rules } });
 
   const addIngressRule = () => {
     updateIngressRules([emptyRule(), ...networkPolicy.ingress.rules]);
@@ -157,12 +173,13 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ namespace 
   const save = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const policy = networkPolicyToK8sResource(networkPolicy);
-    if (isNetworkPolicyConversionError(policy)) {
-      setError(policy.error);
+    const invalid = checkNetworkPolicyValidity(networkPolicy, t);
+    if (invalid) {
+      setError(invalid.error);
       return;
     }
 
+    const policy = networkPolicyToK8sResource(networkPolicy);
     setInProgress(true);
     k8sCreate(NetworkPolicyModel, policy)
       .then(() => {
