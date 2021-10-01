@@ -982,6 +982,16 @@
     "type": "console.action/provider",
     "properties": {
       "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useUriActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
       "provider": { "$codeRef": "actions.useEventSourcesActionsProviderForTopology" }
     },
     "flags": {

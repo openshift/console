@@ -22,7 +22,6 @@ import {
   EditableDragOperationType,
 } from '@console/topology/src/components/graph-view';
 import { withEditReviewAccess, getResource } from '@console/topology/src/utils';
-import { editSinkUri } from '../../actions/edit-sink-uri';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -61,32 +60,17 @@ export const knativeContextMenu = (element: Node) => {
   const model = modelFor(referenceFor(item));
 
   const actions = [];
-  if (element.getType() === TYPE_EVENT_PUB_SUB_LINK) {
-    actions.push(...Kebab.getExtensionsActionsForKind(model), ...Kebab.factory.common);
-  } else {
-    actions.push(
-      ModifyApplication,
-      ...Kebab.getExtensionsActionsForKind(model),
-      ...Kebab.factory.common,
-    );
-  }
+  actions.push(
+    ModifyApplication,
+    ...Kebab.getExtensionsActionsForKind(model),
+    ...Kebab.factory.common,
+  );
 
   const kebabOptions = actions.map((action) => {
     return action(model, item);
   });
 
   return createMenuItems(kebabOptionsToMenu(kebabOptions));
-};
-
-export const editUriContextMenu = (element: Node) => {
-  const item = element.getData();
-  const actions = [];
-  const { obj, eventSources } = item.resources;
-  if (eventSources.length > 0) {
-    const sourceModel = modelFor(referenceFor(eventSources[0]));
-    actions.push(editSinkUri(sourceModel, obj, eventSources));
-  }
-  return createMenuItems(kebabOptionsToMenu(actions));
 };
 
 const dragOperation: EditableDragOperationType = {
@@ -139,7 +123,7 @@ export const getKnativeComponentFactory = (
         withEditReviewAccess('update')(
           withDragNode(nodeDragSourceSpec(type))(
             withSelection({ controlled: true })(
-              withContextMenu(knativeContextMenu)(
+              withContextMenu(contextMenuActions)(
                 withDndDrop<any, any, {}, NodeComponentProps>(pubSubDropTargetSpec)(
                   EventingPubSubNode,
                 ),
@@ -151,7 +135,7 @@ export const getKnativeComponentFactory = (
     case TYPE_SINK_URI:
       return withDragNode(nodeDragSourceSpec(type))(
         withSelection({ controlled: true })(
-          withContextMenu(editUriContextMenu)(
+          withContextMenu(contextMenuActions)(
             withDndDrop<any, any, {}, NodeComponentProps>(sinkUriDropTargetSpec)(SinkUriNode),
           ),
         ),
@@ -183,7 +167,7 @@ export const getKnativeComponentFactory = (
     case TYPE_KAFKA_CONNECTION_LINK:
       return withTargetDrag(eventSourceKafkaLinkDragSourceSpec())(KafkaConnectionLink);
     case TYPE_EVENT_PUB_SUB_LINK:
-      return withContextMenu(knativeContextMenu)(
+      return withContextMenu(contextMenuActions)(
         withTargetDrag(eventingPubSubLinkDragSourceSpec())(EventingPubSubLink),
       );
     default:

@@ -14,4 +14,5 @@ export {
   useEventSourcesActionsProvider,
   useEventSourcesActionsProviderForTopology,
   useModifyApplicationActionProvider,
+  useUriActionsProvider,
 } from './providers';
