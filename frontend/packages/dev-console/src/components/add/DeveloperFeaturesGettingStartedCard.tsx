@@ -7,7 +7,6 @@ import {
   GettingStartedLink,
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
-import { fromHelmCharts } from '../../actions/add-resources';
 import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 
 export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
@@ -20,7 +19,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const links: GettingStartedLink[] = [];
 
   const disabledAddActions = getDisabledAddActions();
-  if (!disabledAddActions?.includes(fromHelmCharts.id)) {
+  if (!disabledAddActions?.includes('helm')) {
     links.push({
       id: 'helm-charts',
       title: t('devconsole~Discover certified Helm Charts'),

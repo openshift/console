@@ -1,6 +1,4 @@
-import * as React from 'react';
 import {
-  GraphElement,
   Edge,
   ModelKind,
   withPanZoom,
@@ -12,6 +10,7 @@ import {
   DragObjectWithType,
   isNode,
   Node,
+  ComponentFactory,
 } from '@patternfly/react-topology';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import { edgeActions } from '../../../actions/edgeActions';
@@ -58,10 +57,7 @@ const connectToActions = (edge: Edge) => {
   return createMenuItems(kebabOptionsToMenu(actions));
 };
 
-export const componentFactory = (
-  kind,
-  type,
-): React.ComponentType<{ element: GraphElement }> | undefined => {
+export const componentFactory: ComponentFactory = (kind, type) => {
   switch (type) {
     case TYPE_APPLICATION_GROUP:
       return withDndDrop(applicationGroupDropTargetSpec)(

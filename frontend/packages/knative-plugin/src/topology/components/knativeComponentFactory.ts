@@ -45,6 +45,7 @@ import {
   CREATE_PUB_SUB_CONNECTOR_OPERATION,
   eventSourceKafkaLinkDragSourceSpec,
   CREATE_EV_SRC_KAFKA_CONNECTOR_OPERATION,
+  kafkaSourceCreateConnectorCallback,
 } from './knativeComponentUtils';
 import EventingPubSubNode from './nodes/EventingPubSubNode';
 import EventSource from './nodes/EventSource';
@@ -129,7 +130,7 @@ export const getKnativeComponentFactory = (
     case TYPE_EVENT_SOURCE_LINK:
       return withTargetDrag(eventSourceLinkDragSourceSpec())(EventSourceLink);
     case TYPE_EVENT_SOURCE_KAFKA:
-      return withCreateConnector(createConnectorCallback(), CreateConnector, '', {
+      return withCreateConnector(kafkaSourceCreateConnectorCallback, CreateConnector, '', {
         dragOperation: dragOperationKafka,
       })(
         withEditReviewAccess('patch')(

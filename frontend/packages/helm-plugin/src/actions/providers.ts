@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import { GraphElement, isGraph, Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { useActiveNamespace } from '@console/shared';
 import { getResource } from '@console/topology/src/utils';
 import { TYPE_HELM_RELEASE } from '../topology/components/const';
+import { AddHelmChartAction } from './add-resources';
 import { getHelmDeleteAction, getHelmRollbackAction, getHelmUpgradeAction } from './creators';
 import { HelmActionsScope } from './types';
 
@@ -24,8 +26,8 @@ export const useHelmActionProvider = (scope: HelmActionsScope) => {
 };
 
 export const useHelmActionProviderForTopology = (element: GraphElement) => {
-  const nodeType = element.getType();
   const scope = React.useMemo(() => {
+    const nodeType = element.getType();
     if (nodeType !== TYPE_HELM_RELEASE) return undefined;
     const releaseName = element.getLabel();
     const {
@@ -40,7 +42,24 @@ export const useHelmActionProviderForTopology = (element: GraphElement) => {
       },
       actionOrigin: 'topology',
     };
-  }, [element, nodeType]);
+  }, [element]);
   const result = useHelmActionProvider(scope);
   return result;
+};
+
+export const useTopologyActionProvider = ({
+  element,
+  connectorSource,
+}: {
+  element: GraphElement;
+  connectorSource?: Node;
+}) => {
+  const [namespace] = useActiveNamespace();
+
+  return React.useMemo(() => {
+    if (isGraph(element) && !connectorSource) {
+      return [[AddHelmChartAction(namespace, 'add-to-project', true)], true, undefined];
+    }
+    return [[], true, undefined];
+  }, [connectorSource, element, namespace]);
 };

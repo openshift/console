@@ -152,6 +152,16 @@
     }
   },
   {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "helmActions.useTopologyActionProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "helm",

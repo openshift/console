@@ -1,11 +1,6 @@
 import * as React from 'react';
 import i18next from 'i18next';
-import { ImportOptions } from '@console/dev-console/src/components/import/import-types';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
-import {
-  createKebabAction,
-  KebabAction,
-} from '@console/dev-console/src/utils/add-resources-menu-utils';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import * as eventSourceImg from '../imgs/event-source.svg';
@@ -15,7 +10,7 @@ const eventSourceIconStyle = {
   height: '1em',
 };
 const EventSourceIcon: React.FC = () => {
-  return <img style={eventSourceIconStyle} src={eventSourceImg} alt="" />;
+  return <img style={eventSourceIconStyle} src={eventSourceImg} alt="Event Source logo" />;
 };
 
 export const AddEventSourceAction = (
@@ -39,19 +34,6 @@ export const AddEventSourceAction = (
       href: `${pageUrl}?${params.toString()}`,
     },
     path,
-    insertAfter: ['upload-jar'],
+    insertAfter: 'upload-jar',
   };
-};
-
-/**
- * @deprecated this action has been migration to use new Action extensions, use AddEventSourceAction
- */
-export const addEventSource: { id: string; action: KebabAction } = {
-  id: 'knative-event-source',
-  action: createKebabAction(
-    // t('knative-plugin~Event Source')
-    'knative-plugin~Event Source',
-    <EventSourceIcon />,
-    ImportOptions.EVENTSOURCE,
-  ),
 };

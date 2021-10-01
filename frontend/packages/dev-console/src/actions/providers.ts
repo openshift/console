@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import { GraphElement, Node, isGraph } from '@patternfly/react-topology';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src';
+import { K8sModel, Action } from '@console/dynamic-plugin-sdk';
+import { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   BuildConfigModel,
@@ -20,9 +21,14 @@ import {
 import { useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
-import { getDisabledAddActions } from '../utils/useAddActionExtensions';
-import { AddActions } from './add-actions';
+import { AddActions, disabledActionsFilter } from './add-resources';
+import { DeleteApplicationAction } from './context-menu';
 import { EditImportApplication } from './creators';
+
+type TopologyActionProvider = (data: {
+  element: GraphElement;
+  connectorSource?: Node;
+}) => [Action[], boolean, Error];
 
 export const useEditImportActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
@@ -56,19 +62,22 @@ const resourceAttributes = (model: K8sModel, namespace: string): AccessReviewRes
   };
 };
 
-export const useAddToApplicationActionProvider = (element: GraphElement) => {
-  const [activeNamespace] = useActiveNamespace();
-  const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, activeNamespace));
-  const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, activeNamespace));
+export const useTopologyGraphActionProvider: TopologyActionProvider = ({
+  element,
+  connectorSource,
+}) => {
+  const [namespace] = useActiveNamespace();
+  const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, namespace));
+  const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, namespace));
   const deploymentConfigAccess = useAccessReview(
-    resourceAttributes(DeploymentConfigModel, activeNamespace),
+    resourceAttributes(DeploymentConfigModel, namespace),
   );
   const imageStreamImportAccess = useAccessReview(
-    resourceAttributes(ImageStreamImportsModel, activeNamespace),
+    resourceAttributes(ImageStreamImportsModel, namespace),
   );
-  const secretAccess = useAccessReview(resourceAttributes(SecretModel, activeNamespace));
-  const routeAccess = useAccessReview(resourceAttributes(RouteModel, activeNamespace));
-  const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, activeNamespace));
+  const secretAccess = useAccessReview(resourceAttributes(SecretModel, namespace));
+  const routeAccess = useAccessReview(resourceAttributes(RouteModel, namespace));
+  const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, namespace));
   const isImportResourceAccess =
     buildConfigsAccess &&
     imageStreamAccess &&
@@ -78,40 +87,141 @@ export const useAddToApplicationActionProvider = (element: GraphElement) => {
     serviceAccess;
   const isCatalogImageResourceAccess = isImportResourceAccess && imageStreamImportAccess;
 
-  const actions = React.useMemo(() => {
-    if (element.getType() !== TYPE_APPLICATION_GROUP) return undefined;
-    const application = element.getLabel();
-    return [
-      AddActions.FromGit(
-        activeNamespace,
-        application,
-        undefined,
-        'add-to-application',
-        isImportResourceAccess,
-      ),
-      AddActions.ContainerImage(
-        activeNamespace,
-        application,
-        undefined,
-        'add-to-application',
-        isCatalogImageResourceAccess,
-      ),
-      AddActions.UploadJarFile(
-        activeNamespace,
-        application,
-        undefined,
-        'add-to-application',
-        isCatalogImageResourceAccess,
-      ),
-    ];
-  }, [activeNamespace, element, isCatalogImageResourceAccess, isImportResourceAccess]);
-
-  const disabledActions = getDisabledAddActions();
-
   return React.useMemo(() => {
-    if (actions) {
-      return [actions.filter((item) => !disabledActions?.includes(item.id)), true, undefined];
+    const sourceObj = connectorSource?.getData()?.resource;
+    const sourceReference = sourceObj
+      ? `${referenceFor(sourceObj)}/${sourceObj?.metadata?.name}`
+      : undefined;
+    if (isGraph(element)) {
+      const actions = sourceReference
+        ? [
+            AddActions.FromGit(namespace, undefined, sourceReference, '', !isImportResourceAccess),
+            AddActions.ContainerImage(
+              namespace,
+              undefined,
+              sourceReference,
+              '',
+              !isCatalogImageResourceAccess,
+            ),
+            AddActions.OperatorBacked(namespace, undefined, sourceReference, ''),
+            AddActions.UploadJarFile(
+              namespace,
+              undefined,
+              sourceReference,
+              '',
+              !isCatalogImageResourceAccess,
+            ),
+          ].filter(disabledActionsFilter)
+        : [
+            AddActions.Samples(
+              namespace,
+              undefined,
+              undefined,
+              'add-to-project',
+              !isImportResourceAccess,
+            ),
+            AddActions.FromGit(
+              namespace,
+              undefined,
+              undefined,
+              'add-to-project',
+              !isImportResourceAccess,
+            ),
+            AddActions.ContainerImage(
+              namespace,
+              undefined,
+              undefined,
+              'add-to-project',
+              !isCatalogImageResourceAccess,
+            ),
+            AddActions.DevCatalog(namespace, undefined, undefined, 'add-to-project'),
+            AddActions.DatabaseCatalog(namespace, undefined, undefined, 'add-to-project'),
+            AddActions.OperatorBacked(namespace, undefined, undefined, 'add-to-project'),
+            AddActions.UploadJarFile(
+              namespace,
+              undefined,
+              undefined,
+              'add-to-project',
+              !isCatalogImageResourceAccess,
+            ),
+          ].filter(disabledActionsFilter);
+      return [actions, true, undefined];
     }
     return [[], true, undefined];
-  }, [actions, disabledActions]);
+  }, [element, connectorSource, namespace, isImportResourceAccess, isCatalogImageResourceAccess]);
+};
+
+export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
+  element,
+  connectorSource,
+}) => {
+  const [namespace] = useActiveNamespace();
+  const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, namespace));
+  const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, namespace));
+  const deploymentConfigAccess = useAccessReview(
+    resourceAttributes(DeploymentConfigModel, namespace),
+  );
+  const imageStreamImportAccess = useAccessReview(
+    resourceAttributes(ImageStreamImportsModel, namespace),
+  );
+  const secretAccess = useAccessReview(resourceAttributes(SecretModel, namespace));
+  const routeAccess = useAccessReview(resourceAttributes(RouteModel, namespace));
+  const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, namespace));
+  const isImportResourceAccess =
+    buildConfigsAccess &&
+    imageStreamAccess &&
+    deploymentConfigAccess &&
+    secretAccess &&
+    routeAccess &&
+    serviceAccess;
+  const isCatalogImageResourceAccess = isImportResourceAccess && imageStreamImportAccess;
+
+  const application = element.getLabel();
+  const appData: TopologyApplicationObject = React.useMemo(
+    () => ({
+      id: element.getId(),
+      name: application,
+      resources: element.getData()?.groupResources,
+    }),
+    [element, application],
+  );
+  const primaryResource = appData.resources?.[0].resource || {};
+  const [kindObj, inFlight] = useK8sModel(referenceFor(primaryResource));
+
+  return React.useMemo(() => {
+    if (element.getType() === TYPE_APPLICATION_GROUP) {
+      if (inFlight) return [[], !inFlight, undefined];
+      const path = connectorSource ? '' : 'add-to-application';
+      const actions = [
+        ...(connectorSource ? [] : [DeleteApplicationAction(appData, kindObj)]),
+        AddActions.FromGit(namespace, application, undefined, path, !isImportResourceAccess),
+        AddActions.ContainerImage(
+          namespace,
+          application,
+          undefined,
+          path,
+          !isCatalogImageResourceAccess,
+        ),
+        AddActions.UploadJarFile(
+          namespace,
+          application,
+          undefined,
+          path,
+          !isCatalogImageResourceAccess,
+        ),
+      ].filter(disabledActionsFilter);
+      return [actions, !inFlight, undefined];
+    }
+    return [[], true, undefined];
+  }, [
+    element,
+    inFlight,
+    connectorSource,
+    namespace,
+    application,
+    isImportResourceAccess,
+    isCatalogImageResourceAccess,
+    appData,
+    kindObj,
+  ]);
 };
