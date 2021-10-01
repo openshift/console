@@ -88,7 +88,7 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 }
 
 func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, orignalRequest *http.Request) {
-	newRequest, err := http.NewRequest("Get", requestURL.String(), nil)
+	newRequest, err := http.NewRequest("GET", requestURL.String(), nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to create GET request for %q plugin: %v", pluginName, err)
 		klog.Error(errMsg)
