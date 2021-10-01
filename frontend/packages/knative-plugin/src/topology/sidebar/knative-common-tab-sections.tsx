@@ -16,9 +16,9 @@ import KSRoutesOverviewList from '../../components/overview/RoutesOverviewList';
 import { RevisionModel } from '../../models';
 import { RevisionKind } from '../../types';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
-import { TYPE_EVENT_PUB_SUB_LINK } from '../const';
+import { TYPE_EVENT_PUB_SUB_LINK, TYPE_KNATIVE_SERVICE, TYPE_SINK_URI } from '../const';
 import { NodeType } from '../topology-types';
-import { KnativeOverviewDetails } from './KnativeOverviewSections';
+import { KnativeOverviewDetails, EventSourcesOverviewList } from './KnativeOverviewSections';
 
 const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataType => {
   const { t } = useTranslation();
@@ -107,4 +107,10 @@ export const getKnativeSidepanelRoutesSection = (element: GraphElement) => {
     );
   }
   return undefined;
+};
+
+export const getKnativeSidepanelEventSourcesSection = (element: GraphElement) => {
+  if (![TYPE_KNATIVE_SERVICE, TYPE_SINK_URI].includes(element.getType())) return undefined;
+  const knObj = element.getData().resources;
+  return <EventSourcesOverviewList items={knObj.eventSources} />;
 };

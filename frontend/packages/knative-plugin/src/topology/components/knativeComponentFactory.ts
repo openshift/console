@@ -1,27 +1,23 @@
 import * as React from 'react';
 import {
   GraphElement,
-  Node,
   withDragNode,
   withTargetDrag,
   withSelection,
   withDndDrop,
   withCreateConnector,
 } from '@patternfly/react-topology';
-import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { ModifyApplication, contextMenuActions } from '@console/topology/src/actions';
+import { contextMenuActions } from '@console/topology/src/actions';
 import {
   NodeComponentProps,
   withContextMenu,
   withNoDrop,
   nodeDragSourceSpec,
-  createMenuItems,
   createConnectorCallback,
   CreateConnector,
   EditableDragOperationType,
 } from '@console/topology/src/components/graph-view';
-import { withEditReviewAccess, getResource } from '@console/topology/src/utils';
+import { withEditReviewAccess } from '@console/topology/src/utils';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -54,24 +50,6 @@ import EventingPubSubNode from './nodes/EventingPubSubNode';
 import EventSource from './nodes/EventSource';
 import RevisionNode from './nodes/RevisionNode';
 import SinkUriNode from './nodes/SinkUriNode';
-
-export const knativeContextMenu = (element: Node) => {
-  const item = getResource(element);
-  const model = modelFor(referenceFor(item));
-
-  const actions = [];
-  actions.push(
-    ModifyApplication,
-    ...Kebab.getExtensionsActionsForKind(model),
-    ...Kebab.factory.common,
-  );
-
-  const kebabOptions = actions.map((action) => {
-    return action(model, item);
-  });
-
-  return createMenuItems(kebabOptionsToMenu(kebabOptions));
-};
 
 const dragOperation: EditableDragOperationType = {
   type: CREATE_PUB_SUB_CONNECTOR_OPERATION,

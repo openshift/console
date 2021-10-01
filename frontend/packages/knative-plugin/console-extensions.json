@@ -1020,5 +1020,15 @@
     "flags": {
       "required": ["KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "knativeTopologySidebar.getKnativeURISinkResourceLink" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
   }
 ]

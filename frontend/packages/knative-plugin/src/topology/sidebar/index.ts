@@ -4,7 +4,6 @@ export {
   getKnativeSidepanelDomainMappingsSection,
   getKnativeSidepanelTriggersSection,
   getKnativeSidepanelSubscriptionsSection,
-  getKnativeSidepanelEventSourcesSection,
   getKnativeSidepanelBuildAdapterSection,
   getKnativeSidepanelRevisionSection,
 } from './knative-service-tab-sections';
@@ -13,6 +12,7 @@ export {
   getKnativeSidepanelDetailsTab,
   getKnativeSidepanelRoutesSection,
   getKnativeSidepanelPodsAdapterSection,
+  getKnativeSidepanelEventSourcesSection,
 } from './knative-common-tab-sections';
 
 export {
@@ -20,4 +20,7 @@ export {
   getKnativeSidepanelConfigurationsSection,
 } from './knative-revision-tab-sections';
 
-export { getKnativeSidepanelSinkSection } from './knative-eventsource-tab-sections';
+export {
+  getKnativeSidepanelSinkSection,
+  getKnativeURISinkResourceLink,
+} from './knative-eventsource-tab-sections';

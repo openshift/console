@@ -9,7 +9,6 @@ import { getSubscriberByType } from '../knative-topology-utils';
 import { NodeType } from '../topology-types';
 import {
   DomainMappingsOverviewList,
-  EventSourcesOverviewList,
   SubscriptionsOverviewList,
   TriggersOverviewList,
 } from './KnativeOverviewSections';
@@ -31,12 +30,6 @@ export const getKnativeSidepanelBuildAdapterSection = (
   if (element.getType() !== NodeType.KnService) return undefined;
   const resource = getResource(element);
   return { resource, provider: useBuildConfigsWatcher };
-};
-
-export const getKnativeSidepanelEventSourcesSection = (element: GraphElement) => {
-  if (element.getType() !== NodeType.KnService) return undefined;
-  const knObj = element.getData().resources;
-  return <EventSourcesOverviewList items={knObj.eventSources} />;
 };
 
 export const getKnativeSidepanelSubscriptionsSection = (element: GraphElement) => {
