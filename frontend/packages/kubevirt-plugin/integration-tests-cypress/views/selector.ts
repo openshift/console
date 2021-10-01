@@ -100,3 +100,5 @@ export const templateLink = (name: string) => `[data-test-id="${name}"]`;
 export const resourceTitle = '[data-test-id="resource-title"]';
 export const resourceStatus = '[data-test="resource-status"]';
 export const loadingBox = '.loading-box.loading-box__loaded';
+
+export const menuItemMain = '.pf-c-select__menu-item-main';

@@ -1,15 +1,12 @@
 /**
- * Dynamic plugin SDK modules provided by Console application at runtime.
+ * Modules shared between the Console application and its dynamic plugins.
  */
-const pluginSDKModules = [
+export const sharedPluginModules = [
   '@openshift-console/dynamic-plugin-sdk',
   '@openshift-console/dynamic-plugin-sdk-internal',
+  'react',
+  'react-helmet',
+  'react-i18next',
+  'react-router-dom',
+  'react-router',
 ];
-
-/**
- * Get modules shared between Console application and its dynamic plugins.
- */
-export const getSharedPluginModules = (includePluginSDK = true) =>
-  ['react', 'react-helmet', 'react-i18next', 'react-router-dom', 'react-router'].concat(
-    includePluginSDK ? pluginSDKModules : [],
-  );

@@ -62,7 +62,7 @@
   "json.schemas": [
     {
       "fileMatch": ["**/console-extensions.json"],
-      "url": "./packages/console-dynamic-plugin-sdk/dist/schema/console-extensions.json"
+      "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
     }
   ],
   "editor.codeActionsOnSave": {

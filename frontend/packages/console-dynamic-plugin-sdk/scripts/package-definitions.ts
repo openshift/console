@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
-import { getSharedPluginModules } from '../src/shared-modules';
+import { sharedPluginModules } from '../src/shared-modules';
 
 type GeneratedPackage = {
   /** Package output directory. */
@@ -57,7 +57,11 @@ export const getCorePackage: GetPackageDefinition = (
     type: 'module',
     main: 'lib/lib-core.js',
     ...commonManifestFields,
-    dependencies: parseDeps(rootPackage, getSharedPluginModules(false), missingDepCallback),
+    dependencies: parseDeps(
+      rootPackage,
+      sharedPluginModules.filter((m) => !m.startsWith('@openshift-console/')),
+      missingDepCallback,
+    ),
   },
   filesToCopy: {
     ...commonFiles,
