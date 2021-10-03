@@ -15,6 +15,7 @@ describe('smoke tests', () => {
   });
 
   after(() => {
+    cy.visit('/');
     cy.deleteResource({
       kind: 'VirtualMachineInstance',
       metadata: {
