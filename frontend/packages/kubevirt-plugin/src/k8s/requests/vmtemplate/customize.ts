@@ -148,6 +148,7 @@ export const createVMForCustomization = async (
   pvcs: PersistentVolumeClaimKind[],
   provider: string,
   support: string,
+  V2VConfigMapImages: { [key: string]: string },
 ): Promise<VMKind> => {
   const templateWrapper = new VMTemplateWrapper(template, true);
 
@@ -187,7 +188,7 @@ export const createVMForCustomization = async (
     undefined,
     undefined,
     undefined,
-    undefined,
+    V2VConfigMapImages,
     size,
     false,
   );

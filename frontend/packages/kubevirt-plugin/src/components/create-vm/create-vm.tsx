@@ -185,7 +185,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     isList: true,
   });
 
-  const [V2VConfigMapImages, V2VConfigMapImagesLoaded, V2VConfigMapImagesError] = useV2VConfigMap();
+  const [V2VConfigMapImages, V2VConfigMapImagesLoaded] = useV2VConfigMap();
 
   const [scConfigMap, scLoaded, scError] = useStorageClassConfigMap();
   const {
@@ -201,7 +201,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
   const templates = filterTemplates([...userTemplates, ...baseTemplates]);
 
   const loaded = resourcesLoaded && projectsLoaded && scLoaded && V2VConfigMapImagesLoaded;
-  const loadError = resourcesLoadError || projectsError || scError || V2VConfigMapImagesError;
+  const loadError = resourcesLoadError || projectsError || scError;
 
   const sourceStatus =
     selectedTemplate &&
