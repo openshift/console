@@ -8,7 +8,7 @@ import { NetworkPolicyIPBlock } from './network-policy-model';
 
 export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps> = (props) => {
   const { t } = useTranslation();
-  const { onChange, ipBlock } = props;
+  const { onChange, ipBlock, direction } = props;
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
 
   const handleCIDRChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +38,17 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           aria-describedby="ipblock-help"
           required
         />
+        <div className="help-block">
+          <p>
+            {direction === 'ingress'
+              ? t(
+                  'console-app~If this field is empty, traffic will be allowed from all external sources.',
+                )
+              : t(
+                  'console-app~If this field is empty, traffic will be allowed to all external sources.',
+                )}
+          </p>
+        </div>
       </div>
       {networkFeaturesLoaded && networkFeatures.PolicyPeerIPBlockExceptions !== false && (
         <div className="form-group co-create-networkpolicy__exceptions">
