@@ -15,7 +15,7 @@ const testOperand: TestOperandProps = {
   kind: 'CheCluster',
   tabName: 'CodeReady Workspaces Cluster',
   exampleName: `codeready-workspaces`,
-  deleteURL: '/checlusters/',
+  deleteURL: '/api/kubernetes/apis/org.eclipse.che/*/namespaces/*/checlusters/codeready-workspaces',
 };
 
 const alertExists = (titleText: string) => {
@@ -91,10 +91,8 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   it(`attempts to uninstall the Operator, shows 'Error uninstalling Operator' alert`, () => {
     // invalidate the request so operator doesn't get uninstalled, as opposed to
     // letting request go thru unchanged and mocking the response
-    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*', (req) => {
-      // examples:
-      // .../api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/test-mpnsw/subscriptions/datagrid-foobar
-      // .../api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/test-mpnsw/clusterserviceversions/datagrid-operator.v8.2.0-foobar
+    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*/namespaces/**', (req) => {
+      // ex: .../api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/test-mpnsw/subscriptions/datagrid-foobar
       req.url = `${req.url}-foobar`;
     }).as('deleteOperatorSubscriptionAndCSV');
 
@@ -110,7 +108,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
 
   it(`attempts to uninstall the Operator and delete all Operand Instances, shows 'Error Deleting Operands' alert`, () => {
     // invalidate the request so operator doesn't get uninstalled
-    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*', (req) => {
+    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*/namespaces/**', (req) => {
       req.url = `${req.url}-foobar`;
     }).as('deleteOperatorSubscriptionAndCSV');
 
