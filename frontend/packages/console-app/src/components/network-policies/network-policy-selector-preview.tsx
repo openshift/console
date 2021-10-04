@@ -243,7 +243,11 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
           ) : (
             <div>{t('public~List of pods')}</div>
           )}
-          <TreeView data={preview.pods} hasGuides />
+          <TreeView
+            className="co-create-networkpolicy__selector-preview"
+            data={preview.pods}
+            hasGuides
+          />
           {preview.total && preview.total > maxPreviewPods && (
             <>
               {_.size(safeNsSelector.matchLabels) === 0 ? (
