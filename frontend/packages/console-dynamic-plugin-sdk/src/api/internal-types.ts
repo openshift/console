@@ -90,6 +90,8 @@ export type ResourceInventoryItemProps = {
   error: boolean;
   showLink?: boolean;
   TitleComponent?: React.ComponentType<{}>;
+  title?: string;
+  titlePlural?: string;
   ExpandedComponent?: React.ComponentType<{}>;
   basePath?: string;
   dataTest?: string;
