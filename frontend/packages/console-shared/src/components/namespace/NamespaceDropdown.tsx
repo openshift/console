@@ -285,6 +285,9 @@ const NamespaceMenu: React.FC<{
     (option, checkIsFavorite: boolean) => {
       const containsFilterText = fuzzysearch(filterText.toLowerCase(), option.title.toLowerCase());
 
+      if (checkIsFavorite) {
+        return containsFilterText && isFavorite(option);
+      }
       return (
         containsFilterText &&
         (systemNamespaces || !isSystemNamespace(option)) &&
@@ -335,12 +338,6 @@ const NamespaceMenu: React.FC<{
           filterText={filterText}
           isProject={isProjects}
         />
-        <SystemSwitch
-          hasSystemNamespaces={hasSystemNamespaces}
-          isProject={isProjects}
-          isChecked={systemNamespaces}
-          onChange={setSystemNamespaces}
-        />
         {filteredOptions.length === 0 ? (
           <NoResults
             isProjects={isProjects}
@@ -357,6 +354,12 @@ const NamespaceMenu: React.FC<{
           options={filteredFavorites}
           selectedKey={selected}
           favorites={favorites}
+        />
+        <SystemSwitch
+          hasSystemNamespaces={hasSystemNamespaces}
+          isProject={isProjects}
+          isChecked={systemNamespaces}
+          onChange={setSystemNamespaces}
         />
         <NamespaceGroup options={filteredOptions} selectedKey={selected} favorites={favorites} />
       </MenuContent>
