@@ -94,6 +94,7 @@ export interface EditDeploymentData {
   editorType: string;
   yamlData: string;
   formData: EditDeploymentFormData;
+  formReloadCount?: number;
 }
 
 export type EditDeploymentFormikValues = FormikValues & EditDeploymentData;

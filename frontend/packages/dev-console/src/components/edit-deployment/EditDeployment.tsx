@@ -38,6 +38,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
       skipInvalid: true,
     }),
     formData: convertDeploymentToEditForm(resource),
+    formReloadCount: 0,
   });
 
   const handleSubmit = (
