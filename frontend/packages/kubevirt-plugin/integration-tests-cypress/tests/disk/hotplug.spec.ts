@@ -22,7 +22,7 @@ const vmData: VirtualMachineData = {
 };
 
 const autoHotplugDiskBlank: Disk = {
-  description: 'ID(CNV-6856) Attach AutoDetach hotplug disk with [Blank] as source',
+  description: 'ID(CNV-7271) Attach AutoDetach hotplug disk with [Blank] as source',
   name: 'disk-auto-blank',
   source: ProvisionSource.BLANK,
   size: '2',
@@ -31,7 +31,7 @@ const autoHotplugDiskBlank: Disk = {
 
 const autoHotplugDiskUrl: Disk = {
   description:
-    'ID(CNV-6855) Attach AutoDetach hotplug disk with [Import via URL] as source selection',
+    'ID(CNV-7272) Attach AutoDetach hotplug disk with [Import via URL] as source',
   name: 'disk-auto-url',
   source: ProvisionSource.URL,
   size: '2',
@@ -39,7 +39,7 @@ const autoHotplugDiskUrl: Disk = {
 };
 
 const autoHotplugDiskReg: Disk = {
-  description: 'ID(CNV-6859) Attach AutoDetach hotplug disk with [Import via Registry]',
+  description: 'ID(CNV-7273) Attach AutoDetach hotplug disk with [Import via Registry] as source',
   name: 'disk-auto-reg',
   source: ProvisionSource.REGISTRY,
   size: '2',
@@ -47,7 +47,7 @@ const autoHotplugDiskReg: Disk = {
 };
 
 const autoHotplugDiskClone: Disk = {
-  description: 'ID(CNV-6858) Attach AutoDetach hotplug disk with [Clone existing PVC]',
+  description: 'ID(CNV-7276) Attach AutoDetach hotplug disk with [Clone existing PVC] as source',
   name: 'disk-auto-clone',
   source: ProvisionSource.CLONE_PVC,
   pvcName,
@@ -57,7 +57,7 @@ const autoHotplugDiskClone: Disk = {
 
 const autoHotplugDiskPVC: Disk = {
   description:
-    'ID(CNV-6857) Attach AutoDetach hotplug disk with [Use an existing PVC] as source selection',
+    'ID(CNV-7277) Attach AutoDetach hotplug disk with [Use an existing PVC] as source',
   name: 'disk-auto-use',
   source: ProvisionSource.EXISTING,
   pvcName,
@@ -66,7 +66,7 @@ const autoHotplugDiskPVC: Disk = {
 };
 
 const persHotplugDiskBlank: Disk = {
-  description: 'ID(CNV-6828) Attach Persistent hotplug disk with [Blank] as source',
+  description: 'ID(CNV-7279) Attach Persistent hotplug disk with [Blank] as source',
   name: 'disk-pers-blank',
   source: ProvisionSource.BLANK,
   size: '2',
@@ -74,7 +74,7 @@ const persHotplugDiskBlank: Disk = {
 };
 
 const persHotplugDiskUrl: Disk = {
-  description: 'ID(CNV-6860) Attach Persistent hotplug disk with [Import via URL] as source',
+  description: 'ID(CNV-7280) Attach Persistent hotplug disk with [Import via URL] as source',
   name: 'disk-pers-url',
   source: ProvisionSource.URL,
   size: '2',
@@ -82,7 +82,7 @@ const persHotplugDiskUrl: Disk = {
 };
 
 const persHotplugDiskReg: Disk = {
-  description: 'ID(CNV-6863) Attach Persistent hotplug disk with [Import via Registry] as source',
+  description: 'ID(CNV-7281) Attach Persistent hotplug disk with [Import via Registry] as source',
   name: 'disk-pers-reg',
   source: ProvisionSource.REGISTRY,
   size: '2',
@@ -90,7 +90,7 @@ const persHotplugDiskReg: Disk = {
 };
 
 const persHotplugDiskClone: Disk = {
-  description: 'ID(CNV-6862) Attach Persistent hotplug disk with [Clone existing PVC] as source',
+  description: 'ID(CNV-7281) Attach Persistent hotplug disk with [Clone existing PVC] as source',
   name: 'disk-pers-clone',
   source: ProvisionSource.CLONE_PVC,
   pvcName,
@@ -99,7 +99,7 @@ const persHotplugDiskClone: Disk = {
 };
 
 const persHotplugDiskPVC: Disk = {
-  description: 'ID(CNV-6861) Attach Persistent hotplug disk with [Use an existing PVC] as source',
+  description: 'ID(CNV-7278) Attach Persistent hotplug disk with [Use an existing PVC] as source',
   name: 'disk-pers-use',
   source: ProvisionSource.EXISTING,
   pvcName,
@@ -153,7 +153,7 @@ describe('Test UI for VM hotplug disks', () => {
     cy.deleteResource('Namespace', testName);
   });
 
-  it('ID(CNV-6834) Hotplug disk behavior on VM stop', () => {
+  it('ID(CNV-7284) Hotplug disk behavior on VM stop', () => {
     verifyDiskAttached(autoHotplugDisk, 'AutoDetachHotplug');
     verifyDiskAttached(persHotplugDisk, 'PersistingHotplug');
     selectActionFromDropdown(VM_ACTION.Stop, tags.actionButtons.actionDropdownButton);
@@ -172,7 +172,7 @@ describe('Test UI for VM hotplug disks', () => {
     waitForVMStatusLabel(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
   });
 
-  it('ID(CNV-6750) Hotplug disk behavior on VM restart', () => {
+  it('ID(CNV-7285) Hotplug disk behavior on VM restart', () => {
     verifyDiskAttached(autoHotplugDisk, 'AutoDetachHotplug');
     verifyDiskAttached(persHotplugDisk, 'PersistingHotplug');
     selectActionFromDropdown(VM_ACTION.Restart, tags.actionButtons.actionDropdownButton);
