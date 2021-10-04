@@ -154,10 +154,6 @@ form.pf-c-form {
     flex-direction: column;
   }
 
-  &__main-section {
-    overflow: hidden; // needed for Firefox to enable proper scrolling of content-scrollable
-  }
-
   // `.pf-c-page` specificity required
   .pf-c-toolbar {
     --pf-c-toolbar--PaddingTop: 0;
