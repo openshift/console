@@ -37,7 +37,10 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
         }
       })
       .catch((err) => {
-        if (mounted) setLoadedError(err);
+        if (mounted) {
+          setHelmCharts({});
+          setLoadedError(err);
+        }
       });
     return () => (mounted = false);
   }, []);
