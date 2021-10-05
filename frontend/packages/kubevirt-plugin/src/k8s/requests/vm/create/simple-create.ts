@@ -200,7 +200,7 @@ export const prepareVM = async (
         disk: windowsToolsStorage(winToolsContainerNames(containerImagesNames)).disk,
         volume: windowsToolsStorage(winToolsContainerNames(containerImagesNames)).volume,
       });
-    } else if (!isEmpty(sshKey) && enableSSHService) {
+    } else if (!isEmpty(sshKey)) {
       vmWrapper.updateVolume(
         new VolumeWrapper()
           .init({ name: CLOUDINIT_DISK })
