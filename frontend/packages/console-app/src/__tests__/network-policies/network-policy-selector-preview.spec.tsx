@@ -86,23 +86,19 @@ describe('PodsPreview', () => {
   });
 
   test('render pods from selected namespaces', () => {
-    setMockK8sWatchResource(6, 2, {});
+    setMockK8sWatchResource(12, 2, {});
     const wrapper = mount(<PodsPreview podSelector={[]} namespaceSelector={[['a', 'b']]} />); // show multiple namespaces
-    // It should show the first namespace with 3 children
+
+    // It should show both namespaces
     const ns1 = wrapper.find('TreeViewListItem[name="ns1"]');
     expect(ns1.length).toBe(1);
-    const pods1 = ns1.children().find('TreeViewListItem');
-    expect(pods1.length).toBe(3);
-    expect(pods1.at(0).prop('name')).toBe('pod1');
-    expect(pods1.at(1).prop('name')).toBe('pod3');
-    expect(pods1.at(2).prop('name')).toBe('pod5');
-    // It should show the second namespace only with 2 children (due to space limitation)
     const ns2 = wrapper.find('TreeViewListItem[name="ns2"]');
     expect(ns2.length).toBe(1);
+
+    // and the sum of all namespace pods should not be larger than 10 (due to space limitation)
+    const pods1 = ns1.children().find('TreeViewListItem');
     const pods2 = ns2.children().find('TreeViewListItem');
-    expect(pods2.length).toBe(2);
-    expect(pods2.at(0).prop('name')).toBe('pod2');
-    expect(pods2.at(1).prop('name')).toBe('pod4');
+    expect(pods1.length + pods2.length).toBe(10);
 
     // It should not show any link but just an informative message
     const msg = wrapper.findWhere((w) => w.text() === 'Showing 5 from 6 results');
@@ -113,12 +109,12 @@ describe('PodsPreview', () => {
     setMockK8sWatchResource(33, 1, { foo: 'bar' });
     const wrapper = mount(<PodsPreview podSelector={[['foo', 'bar']]} namespace={'ns1'} />);
 
-    // Verify that there is a first entry for the namespace, with only 5 pods
+    // Verify that there is a first entry for the namespace, with only 10 pods
     const ns = wrapper.find('TreeViewListItem[name="ns1"]');
     expect(ns.length).toBe(1);
     expect(ns.prop('name')).toBe('ns1');
     const pods = ns.children().find('TreeViewListItem');
-    expect(pods.length).toBe(5);
+    expect(pods.length).toBe(10);
 
     // Verify that there is a correct link to a list of filtered pods
     const link = wrapper

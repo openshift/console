@@ -9,7 +9,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { K8sResourceCommon, PodKind, Selector } from '@console/internal/module/k8s';
 
-const maxPreviewPods = 5;
+const maxPreviewPods = 10;
 const labelFilterQueryParamSeparator = ',';
 
 type NetworkPolicySelectorPreviewProps = {
@@ -251,7 +251,11 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
           {preview.total && preview.total > maxPreviewPods && (
             <>
               {_.size(safeNsSelector.matchLabels) === 0 ? (
-                <a href={`${resourceListPathFromModel(PodModel, namespace)}${podsFilterQuery}`}>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`${resourceListPathFromModel(PodModel, namespace)}${podsFilterQuery}`}
+                >
                   {t('public~View all {{total}} results', {
                     total: preview.total,
                   })}
