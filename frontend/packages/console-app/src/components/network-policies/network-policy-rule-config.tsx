@@ -165,7 +165,6 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
           );
         })}
         <NetworkPolicyPorts
-          direction={direction}
           ports={rule.ports}
           onChange={(ports) => {
             rule.ports = ports;

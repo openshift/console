@@ -545,5 +545,21 @@
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
     }
+  },
+  {
+    "type": "console.action/group",
+    "properties": {
+      "id": "add-to-application",
+      "label": "%devconsole~Add to Application%",
+      "submenu": true,
+      "insertAfter": ["delete-application"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useAddToApplicationActionProvider" }
+    }
   }
 ]

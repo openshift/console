@@ -22,24 +22,23 @@ const addHealthChecksRefs = [
 
 export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAlertContent | null => {
   const resource = getResource(element);
-  const {
-    kind,
-    metadata: { name, namespace },
-  } = resource;
+  const kind = resource?.kind;
+  const name = resource?.metadata?.name;
+  const namespace = resource?.metadata?.namespace;
   const { t } = useTranslation();
-  const kindForCRDResource = referenceFor(resource);
-  const resourceModel = modelFor(kindForCRDResource);
-  const resourceKind = resourceModel.crd ? kindForCRDResource : kind;
+  const kindForCRDResource = resource ? referenceFor(resource) : undefined;
+  const resourceModel = kindForCRDResource ? modelFor(kindForCRDResource) : undefined;
+  const resourceKind = resourceModel?.crd ? kindForCRDResource : kind;
 
   const canAddHealthChecks = useAccessReview({
-    group: resourceModel.apiGroup,
-    resource: resourceModel.plural,
+    group: resourceModel?.apiGroup,
+    resource: resourceModel?.plural,
     namespace,
     name,
     verb: 'update',
   });
 
-  if (!addHealthChecksRefs.includes(referenceFor(resource))) {
+  if (!resource || !addHealthChecksRefs.includes(referenceFor(resource))) {
     return null;
   }
 

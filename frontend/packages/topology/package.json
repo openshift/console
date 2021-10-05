@@ -26,7 +26,8 @@
       "reduxReducer": "src/utils/reducer.ts",
       "workload": "src/components/workload",
       "actions": "src/actions/provider.ts",
-      "exportAppContext": "src/components/export-app/export-app-context.ts"
+      "exportAppContext": "src/components/export-app/export-app-context.ts",
+      "applicationSidebar": "src/components/application-panel"
     }
   }
 }

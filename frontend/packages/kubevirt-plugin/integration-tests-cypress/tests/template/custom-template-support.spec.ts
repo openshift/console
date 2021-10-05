@@ -29,6 +29,7 @@ describe('test custom template creation support', () => {
   });
 
   after(() => {
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
     cy.deleteTestProject(testName);
   });
 

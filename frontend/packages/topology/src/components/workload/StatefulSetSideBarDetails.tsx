@@ -21,6 +21,6 @@ const StatefulSetSideBarDetails: React.FC<StatefulSetSideBarDetailsProps> = ({ s
 
 export const getStatefulSetSideBarDetails = (element: GraphElement) => {
   const resource = getResource(element);
-  if (resource.kind !== StatefulSetModel.kind) return undefined;
+  if (!resource || resource.kind !== StatefulSetModel.kind) return undefined;
   return <StatefulSetSideBarDetails ss={resource} />;
 };
