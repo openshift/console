@@ -10,5 +10,5 @@ export type BindableServicesKind = {
   metadata: {
     name: string;
   };
-  spec: BindableServiceGVK[];
+  status: BindableServiceGVK[];
 } & K8sResourceKind;
