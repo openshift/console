@@ -10,4 +10,5 @@ export {
   useSinkPubSubActionProvider,
   useBrokerActionProvider,
   useChannelActionProvider,
+  useAddToApplicationActionProvider,
 } from './providers';
