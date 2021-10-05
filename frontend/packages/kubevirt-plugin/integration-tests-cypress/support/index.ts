@@ -1,3 +1,4 @@
+import { projectDropdown } from '../../../integration-tests-cypress/views/common';
 import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
 import {
@@ -156,25 +157,8 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('selectProject', (project: string) => {
-  // it's flaky by using projectDropdown, try to avoid it
-  // projectDropdown.selectProject(project);
-  // projectDropdown.shouldContain(project);
-  cy.byLegacyTestID('namespace-bar-dropdown')
-    .contains('Project:')
-    .click();
-  cy.byTestID('showSystemSwitch').check();
-  cy.byTestID('dropdown-menu-item-link')
-    .contains('.pf-c-menu__item-text', project)
-    .should('exist');
-  // try to add a explict wait to remove the flake
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(3000);
-  cy.get('.pf-c-menu__item-text')
-    .contains(project)
-    .click();
-  cy.byLegacyTestID('namespace-bar-dropdown')
-    .contains(project)
-    .should('exist');
+  projectDropdown.selectProject(project);
+  projectDropdown.shouldContain(project);
 });
 
 Cypress.Commands.add('createNAD', (namespace: string) => {

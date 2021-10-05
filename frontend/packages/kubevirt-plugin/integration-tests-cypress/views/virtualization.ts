@@ -52,12 +52,13 @@ export const virtualization = {
         cy.byTestID('template-support-parent').should('not.exist');
       }
     },
-    testSource: (templateName: string, sourceStatus: string, timeout = 600000) =>
+    testSource: (templateName: string, sourceStatus: string, timeOut = 300000) =>
       getRow(templateName, () =>
-        cy.byTestID('template-source', { timeout }).should('contain', sourceStatus),
+        cy.byTestID('template-source', { timeout: timeOut }).should('contain', sourceStatus),
       ),
-    deleteSource: (templateName: string) => {
-      cy.get(`[data-test-template-name="${templateName}"] > button`).click();
+    deleteSource: (statusText: string) => {
+      cy.contains('[data-test="status-text"]', statusText).should('be.visible');
+      cy.contains('[data-test="status-text"]', statusText).click();
       cy.byTestID('delete-template-source').click();
       cy.byTestID('confirm-action').click();
     },

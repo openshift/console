@@ -30,24 +30,27 @@ const disk1: Disk = {
 };
 
 const cloneVMName = `${vmData.name}-clone1`;
+const cloneNS = `${testName}-clone-ns`;
 
 describe('Test VM Clone', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
+    cy.createProject(cloneNS);
     vm.create(vmData);
-    cy.cdiCloner(testName, 'default');
+    cy.cdiCloner(testName, cloneNS);
     cy.createNAD(testName);
     cy.visitVMsList();
   });
 
   after(() => {
     cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
-    cy.deleteResource(K8S_KIND.VM, `${vmData.name}-clone`, 'default');
+    cy.deleteResource(K8S_KIND.VM, `${vmData.name}-clone`, cloneNS);
     cy.deleteResource(K8S_KIND.VM, cloneVMName, vmData.namespace);
     cy.deleteResource(K8S_KIND.NAD, NAD_NAME, testName);
     cy.deleteTestProject(testName);
+    cy.deleteTestProject(cloneNS);
   });
 
   it('ID(CNV-1730) Displays warning in clone wizard when cloned VM is running', () => {
@@ -69,8 +72,8 @@ describe('Test VM Clone', () => {
     selectActionFromDropdown(VM_ACTION.Clone, actionButtons.kebabButton);
     cy.get(cloneView.vmName).should('have.value', `${vmData.name}-clone`);
     cy.get(cloneView.nameSpace)
-      .select('default')
-      .should('have.value', 'default');
+      .select(cloneNS)
+      .should('have.value', cloneNS);
     cy.get(cloneView.startOnClone).click();
     cy.get('#confirm-action').click();
   });
@@ -94,8 +97,8 @@ describe('Test VM Clone', () => {
 
     // Check warning is displayed when VM has same name as existing VM in another namespace
     cy.get(cloneView.nameSpace)
-      .select('default')
-      .should('have.value', 'default');
+      .select(cloneNS)
+      .should('have.value', cloneNS);
     cy.get(cloneView.helpText).should('not.exist');
     cy.get(cloneView.cancel).click();
   });
@@ -111,7 +114,7 @@ describe('Test VM Clone', () => {
 
   it('ID(CNV-1733) Start cloned VM on creation', () => {
     cy.visitVMsList();
-    cy.selectProject('default');
+    cy.selectProject(cloneNS);
     cy.byLegacyTestID(`${vmData.name}-clone`)
       .should('exist')
       .click();

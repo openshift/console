@@ -96,9 +96,11 @@ export const supportLevel = '[data-test-id="details-Support"]';
 export const supportLevelTag = '[data-test="template-support"]';
 export const createVMBtn = 'button[data-test="create-from-template"]';
 export const templateLink = (name: string) => `[data-test-id="${name}"]`;
-
 export const resourceTitle = '[data-test-id="resource-title"]';
 export const resourceStatus = '[data-test="resource-status"]';
 export const loadingBox = '.loading-box.loading-box__loaded';
-
 export const menuItemMain = '.pf-c-select__menu-item-main';
+
+// VMs list view
+export const filterBtn = '[data-test-id="filter-dropdown-toggle"]';
+export const filterStatus = (status: string) => `[data-test-row-filter="${status}"]`;
