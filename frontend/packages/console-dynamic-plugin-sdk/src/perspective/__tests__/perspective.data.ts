@@ -1,5 +1,5 @@
-import { Perspective } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/plugin-sdk';
+import { Perspective } from '../../extensions/perspectives';
+import { LoadedExtension } from '../../types';
 
 export const mockPerspectiveExtensions: LoadedExtension<Perspective>[] = [
   {

@@ -1,7 +1,7 @@
 import { Simulate } from 'react-dom/test-utils';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
+import { Extension } from '../../types';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,

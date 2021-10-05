@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as webpack from 'webpack';
@@ -62,8 +60,11 @@ export class ConsoleRemotePlugin {
         filename: remoteEntryFile,
         exposes: this.pkg.consolePlugin.exposedModules || {},
         overridables: sharedPluginModules.filter((m) => {
-          // Exclude modules not present in webpack managed paths (e.g. node_modules)
-          return Array.from(compiler.managedPaths).some((p) => fs.existsSync(path.resolve(p, m)));
+          // ContainerPlugin throws 'module not found' error if an overridable cannot be resolved.
+          // All shared plugin modules are mandatory *except* the Console internal API module.
+          return m !== '@openshift-console/dynamic-plugin-sdk-internal'
+            ? true
+            : !!{ ...this.pkg.devDependencies, ...this.pkg.dependencies }[m];
         }),
       }).apply(compiler);
 
