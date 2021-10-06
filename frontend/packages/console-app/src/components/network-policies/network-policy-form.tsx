@@ -247,6 +247,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             )}
             values={networkPolicy.podSelector}
             onChange={handleMainPodSelectorChange}
+            dataTest="main-pod-selector"
           />
         </div>
         <div className="form-group co-create-networkpolicy__type">
@@ -293,10 +294,11 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
                       variant="link"
                       isDisabled={networkPolicy.ingress.rules.length === 0}
                       onClick={removeAllIngress}
+                      data-test="remove-all-ingress"
                     >
                       {t('console-app~Remove all')}
                     </Button>
-                    <Button variant="secondary" onClick={addIngressRule}>
+                    <Button data-test="add-ingress" variant="secondary" onClick={addIngressRule}>
                       {t('console-app~Add ingress rule')}
                     </Button>
                   </>
@@ -338,10 +340,11 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
                         variant="link"
                         isDisabled={networkPolicy.egress.rules.length === 0}
                         onClick={removeAllEgress}
+                        data-test="remove-all-egress"
                       >
                         {t('console-app~Remove all')}
                       </Button>
-                      <Button variant="secondary" onClick={addEgressRule}>
+                      <Button data-test="add-egress" variant="secondary" onClick={addEgressRule}>
                         {t('console-app~Add egress rule')}
                       </Button>
                     </>

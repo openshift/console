@@ -44,6 +44,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   name={`${key}-protocol`}
                   className="btn-group"
                   onChange={(protocol) => onSingleChange({ ...port, protocol }, idx)}
+                  data-test="port-protocol"
                 />
                 <input
                   className="pf-c-form-control"
@@ -55,6 +56,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   name={`${key}-port`}
                   id={`${key}-port`}
                   value={port.port}
+                  data-test="port-input"
                 />
                 <Button
                   aria-label={t('console-app~Remove port')}
@@ -62,6 +64,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   onClick={() => onRemove(idx)}
                   type="button"
                   variant="plain"
+                  data-test="remove-port"
                 >
                   <MinusCircleIcon />
                 </Button>
@@ -76,6 +79,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
               }}
               type="button"
               variant="link"
+              data-test="add-port"
             >
               <PlusCircleIcon className="co-icon-space-r" />
               {t('console-app~Add port')}
