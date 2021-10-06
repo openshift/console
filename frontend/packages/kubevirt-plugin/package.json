@@ -12,7 +12,7 @@
     "@console/shared": "0.0.0-fixed",
     "@console/topology": "0.0.0-fixed",
     "@console/dev-console": "0.0.0-fixed",
-    "@patternfly/react-console": "4.3.2",
+    "@patternfly/react-console": "4.13.4",
     "unique-names-generator": "4.3.1"
   },
   "consolePlugin": {
