@@ -284,6 +284,9 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             header={
               <FormFieldGroupHeader
                 titleText={{ text: t('console-app~Ingress'), id: 'ingress-header' }}
+                titleDescription={t(
+                  'console-app~Add ingress rules to be applied to your selected pods. Traffic is allowed from pods if it matches at least one rule.',
+                )}
                 actions={
                   <>
                     <Button
@@ -301,13 +304,6 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
               />
             }
           >
-            <div className="help-block" id="ingress-help">
-              <p>
-                {t(
-                  'console-app~List of ingress rules to be applied to the selected pods. Traffic is allowed from a source if it matches at least one rule.',
-                )}
-              </p>
-            </div>
             {networkPolicy.ingress.rules.map((rule, idx) => (
               <NetworkPolicyRuleConfigPanel
                 key={rule.key}
@@ -333,6 +329,9 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
               header={
                 <FormFieldGroupHeader
                   titleText={{ text: t('console-app~Egress'), id: 'egress-header' }}
+                  titleDescription={t(
+                    'console-app~Add egress rules to be applied to your selected pods. Traffic is allowed to pods if it matches at least one rule.',
+                  )}
                   actions={
                     <>
                       <Button
@@ -350,13 +349,6 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
                 />
               }
             >
-              <div className="help-block" id="egress-help">
-                <p>
-                  {t(
-                    'console-app~List of egress rules to be applied to the selected pods. Traffic is allowed to a destination if it matches at least one rule.',
-                  )}
-                </p>
-              </div>
               {networkPolicy.egress.rules.map((rule, idx) => (
                 <NetworkPolicyRuleConfigPanel
                   key={rule.key}

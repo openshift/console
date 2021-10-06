@@ -7,6 +7,6 @@ export const sharedPluginModules = [
   'react',
   'react-helmet',
   'react-i18next',
-  'react-router-dom',
   'react-router',
+  'react-router-dom',
 ];

@@ -357,6 +357,7 @@ ul {
 // And here we explicitly remove it from PF components so it doesn't show.
 ul.pf-c-alert-group,
 ul.pf-c-nav__list,
+ul.pf-c-options-menu__menu,
 ul.pf-c-simple-list__list,
 ul.pf-c-tree-view__list {
   list-style: none !important;

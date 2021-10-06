@@ -28,6 +28,6 @@ const PodSideBarDetails: React.FC<PodSideBarDetailsProps> = ({ pod }) => {
 
 export const getPodSideBarDetails = (element: GraphElement) => {
   const resource = getResource<PodKind>(element);
-  if (resource.kind !== PodModel.kind) return undefined;
+  if (!resource || resource.kind !== PodModel.kind) return undefined;
   return <PodSideBarDetails pod={resource} />;
 };

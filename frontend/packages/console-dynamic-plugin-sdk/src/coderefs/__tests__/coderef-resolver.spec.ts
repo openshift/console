@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { EncodedCodeRef, CodeRef } from '../../types';
+import { Extension, EncodedCodeRef, CodeRef } from '../../types';
 import {
   getExecutableCodeRefMock,
   getEntryModuleMocks,
