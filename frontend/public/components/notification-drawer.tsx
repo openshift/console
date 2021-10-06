@@ -25,6 +25,10 @@ import {
   PrometheusRulesResponse,
   AlertSeverity,
 } from '@console/internal/components/monitoring/types';
+
+import { getClusterID } from '../module/k8s/cluster-settings';
+
+import { ServiceLevelNotification } from '@console/internal/components/utils/service-level';
 import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/observe';
 import { RedExclamationCircleIcon } from '@console/shared';
@@ -124,6 +128,17 @@ export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction
   return alertActions;
 };
 
+const SupportNotification = (cv: ClusterVersionKind, toggleNotificationDrawer: () => void) => {
+  const clusterID = getClusterID(cv);
+  return (
+    <ServiceLevelNotification
+      key="service-level-notification"
+      clusterID={clusterID}
+      toggleNotificationDrawer={toggleNotificationDrawer}
+    />
+  );
+};
+
 const getUpdateNotificationEntries = (
   cv: ClusterVersionKind,
   isEditable: boolean,
@@ -139,6 +154,10 @@ const getUpdateNotificationEntries = (
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
   const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
   const entries = [];
+
+  if (SupportNotification(cv, toggleNotificationDrawer) !== null) {
+    entries.push(SupportNotification(cv, toggleNotificationDrawer));
+  }
   if (!_.isEmpty(updateData)) {
     entries.push(
       <NotificationEntry

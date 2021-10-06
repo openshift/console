@@ -16,6 +16,7 @@ import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
+import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../../../utils/service-level';
 import {
   referenceForModel,
   getOpenShiftVersion,
@@ -123,7 +124,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
       fetchK8sVersion();
     }, [openshiftFlag, watchK8sResource, stopWatchK8sResource]);
 
-    const clusterId = getClusterID(clusterVersionData);
+    const clusterID = getClusterID(clusterVersionData);
     const openShiftVersion = getOpenShiftVersion(clusterVersionData);
     const cvChannel = getClusterVersionChannel(clusterVersionData);
 
@@ -157,15 +158,15 @@ export const DetailsCard_ = connect(mapStateToProps)(
                   </DetailItem>
                   <DetailItem
                     title={t('public~Cluster ID')}
-                    error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
+                    error={!!clusterVersionError || (clusterVersionLoaded && !clusterID)}
                     isLoading={!clusterVersionLoaded}
                   >
-                    <div className="co-select-to-copy">{clusterId}</div>
+                    <div className="co-select-to-copy">{clusterID}</div>
                     {window.SERVER_FLAGS.branding !== 'okd' &&
                       window.SERVER_FLAGS.branding !== 'azure' && (
                         <ExternalLink
                           text={t('public~OpenShift Cluster Manager')}
-                          href={getOCMLink(clusterId)}
+                          href={getOCMLink(clusterID)}
                         />
                       )}
                   </DetailItem>
@@ -184,6 +185,14 @@ export const DetailsCard_ = connect(mapStateToProps)(
                   >
                     <ClusterVersion cv={clusterVersionData} />
                   </DetailItem>
+
+                  <ServiceLevel clusterID={clusterID}>
+                    <DetailItem title={useServiceLevelTitle()} error={false} isLoading={false}>
+                      {/* Service Level handles loading and error state */}
+                      <ServiceLevelText clusterID={clusterID} />
+                    </DetailItem>
+                  </ServiceLevel>
+
                   <DetailItem
                     title={t('public~Update channel')}
                     isLoading={!clusterVersionLoaded && !clusterVersionError}

@@ -8,7 +8,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { history, Timestamp } from '@console/internal/components/utils';
+import { history, Timestamp, ExternalLink } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 
 export enum NotificationTypes {
@@ -35,19 +35,27 @@ const NotificationIcon: React.FC<NotificationIconTypes> = ({ type }) => {
   }
 };
 
-const NotificationAction: React.FC<NotificationActionProps> = ({ onClick, text }) => {
+const NotificationAction: React.FC<NotificationActionProps> = ({
+  onClick,
+  text,
+  actionExternalLinkURL,
+}) => {
   return (
     <div className="pf-c-notification-drawer__header-action">
-      <Button
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick(e);
-        }}
-        variant={ButtonVariant.link}
-        isInline
-      >
-        {text}
-      </Button>
+      {actionExternalLinkURL ? (
+        <ExternalLink text={text} href={actionExternalLinkURL} />
+      ) : (
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick(e);
+          }}
+          variant={ButtonVariant.link}
+          isInline
+        >
+          {text}
+        </Button>
+      )}
     </div>
   );
 };
@@ -56,6 +64,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
   alertAction,
   actionPath,
   actionText,
+  actionExternalLinkURL,
   title,
   description,
   isRead = false,
@@ -110,8 +119,12 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
           <span className="pf-screen-reader">{notificationTypeString(type)}</span>
           {title}
         </h4>
-        {((actionText && actionPath) || alertAction) && (
-          <NotificationAction text={actionText} onClick={onClick} />
+        {actionText && (actionPath || alertAction || actionExternalLinkURL) && (
+          <NotificationAction
+            text={actionText}
+            onClick={onClick}
+            actionExternalLinkURL={actionExternalLinkURL}
+          />
         )}
       </div>
       <div className="pf-c-notification-drawer__list-item-description">{description}</div>
@@ -126,6 +139,7 @@ export type NotificationEntryProps = {
   alertAction?: () => void;
   actionText?: string;
   actionPath?: string;
+  actionExternalLinkURL?: string;
   description: React.ReactNode;
   isRead?: boolean;
   targetPath?: string;
@@ -142,6 +156,7 @@ type NotificationIconTypes = {
 type NotificationActionProps = {
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   text?: string;
+  actionExternalLinkURL?: string;
 };
 
 export default NotificationEntry;

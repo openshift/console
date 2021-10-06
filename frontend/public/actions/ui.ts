@@ -31,6 +31,7 @@ export enum ActionType {
   SetActiveNamespace = 'setActiveNamespace',
   SetCreateProjectMessage = 'setCreateProjectMessage',
   SetCurrentLocation = 'setCurrentLocation',
+  SetServiceLevel = 'setServiceLevel',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
   SetClusterID = 'setClusterID',
   SortList = 'sortList',
@@ -171,6 +172,21 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location?) =
 export const setCurrentLocation = (location: string) =>
   action(ActionType.SetCurrentLocation, { location });
 
+export const setServiceLevel = (
+  serviceLevel: string,
+  daysRemaining: number = null,
+  clusterID: string = '',
+  trialDateEnd: string = null,
+  hasSecretAccess: boolean = false,
+) =>
+  action(ActionType.SetServiceLevel, {
+    serviceLevel,
+    daysRemaining,
+    clusterID,
+    trialDateEnd,
+    hasSecretAccess,
+  });
+
 export const setActiveApplication = (application: string) => {
   return action(ActionType.SetActiveApplication, { application });
 };
@@ -302,6 +318,7 @@ const uiActions = {
   setClusterID,
   selectOverviewItem,
   selectOverviewDetailsTab,
+  setServiceLevel,
   updateOverviewMetrics,
   updateOverviewResources,
   updateTimestamps,

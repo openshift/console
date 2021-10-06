@@ -19,6 +19,13 @@ export default (state: UIState, action: UIAction): UIState => {
       activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       createProjectMessage: '',
+      serviceLevel: ImmutableMap({
+        level: '',
+        daysRemaining: null,
+        trialDateEnd: null,
+        hasSecretAccess: false,
+        clusterID: '',
+      }),
       overview: ImmutableMap({
         metrics: {},
         resources: ImmutableMap({}),
@@ -60,6 +67,15 @@ export default (state: UIState, action: UIAction): UIState => {
       }
       return state.set('activeNamespace', ns);
     }
+
+    case ActionType.SetServiceLevel:
+      return state.set('serviceLevel', {
+        level: action.payload.serviceLevel,
+        daysRemaining: action.payload.daysRemaining,
+        clusterID: action.payload.clusterID,
+        trialDateEnd: action.payload.trialDateEnd,
+        hasSecretAccess: action.payload.hasSecretAccess,
+      });
 
     case ActionType.SortList:
       return state.mergeIn(

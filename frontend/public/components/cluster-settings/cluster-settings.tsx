@@ -105,6 +105,8 @@ import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
+import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../utils/service-level';
+
 const cancelUpdate = (cv: ClusterVersionKind) => {
   k8sPatch(ClusterVersionModel, cv, [{ path: '/spec/desiredUpdate', op: 'remove' }]).catch(
     (err) => {
@@ -995,6 +997,14 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                 </dd>
               </>
             )}
+            <ServiceLevel clusterID={clusterID}>
+              <>
+                <dt>{useServiceLevelTitle()}</dt>
+                <dd>
+                  <ServiceLevelText clusterID={clusterID} />
+                </dd>
+              </>
+            </ServiceLevel>
             <dt>{t('public~Cluster ID')}</dt>
             <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">
               {clusterID}

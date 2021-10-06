@@ -25,6 +25,7 @@ describe('Cluster Dashboard', () => {
         'Cluster ID',
         'Provider',
         'OpenShift version',
+        'Service Level Agreement (SLA)',
         'Update channel',
       ];
       const items = clusterDashboardView.detailsCardList.$$('dt');
