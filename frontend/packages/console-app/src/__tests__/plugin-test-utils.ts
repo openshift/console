@@ -7,7 +7,7 @@ import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-re
 const testedPlugins = loadActivePluginsForTestPurposes(resolvePluginPackages());
 const testedPluginStore = new PluginStore(testedPlugins);
 
-export const testedExtensions = ImmutableList<Extension>(testedPluginStore.getAllExtensions());
+export const testedExtensions = ImmutableList<Extension>(testedPluginStore.getExtensionsInUse());
 
 export const getDuplicates = (values: string[]) => {
   return _.transform(
