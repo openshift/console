@@ -23,6 +23,7 @@ import {
   createStorageCluster,
   createStorageSystem,
   labelNodes,
+  killStorageSystem,
 } from './payloads';
 import {
   BackingStorageType,
@@ -127,6 +128,23 @@ export const setActionFlags = (
       flagDispatcher(setFlag(OCS_FLAG, true));
       break;
     default:
+  }
+};
+
+const handleExternalSSCancel = async (
+  backingStorage: WizardState['backingStorage'],
+  isSSPresent: boolean,
+) => {
+  const { externalStorage, type } = backingStorage;
+  const { model, displayName } = getExternalStorage(externalStorage) || {
+    model: { kind: '', apiVersion: '', apiGroup: '' },
+    displayName: '',
+  };
+
+  if (isSSPresent && type === BackingStorageType.EXTERNAL) {
+    const subSystemName = getExternalSubSystemName(displayName);
+    const externalSystemKind = getStorageSystemKind(model);
+    await killStorageSystem(subSystemName, externalSystemKind);
   }
 };
 
@@ -294,6 +312,12 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
     }
   };
 
+  const handleCancel = async () => {
+    // Delete StorageSystem if flow is cancelled under appropriate conditions.
+    await handleExternalSSCancel(state.backingStorage, !!externalSystem);
+    history.goBack();
+  };
+
   return (
     <>
       {showErrorAlert && (
@@ -327,7 +351,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         >
           {t('ceph-storage-plugin~Back')}
         </Button>
-        <Button variant="link" onClick={history.goBack}>
+        <Button variant="link" onClick={handleCancel}>
           {t('ceph-storage-plugin~Cancel')}
         </Button>
       </WizardFooter>

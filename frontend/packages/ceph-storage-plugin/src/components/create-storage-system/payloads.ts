@@ -3,6 +3,7 @@ import {
   k8sCreate,
   k8sPatchByName,
   K8sResourceKind,
+  k8sKill,
 } from '@console/internal/module/k8s';
 import { NodeModel, SecretModel } from '@console/internal/models';
 import { K8sKind } from 'packages/console-dynamic-plugin-sdk/src';
@@ -22,6 +23,23 @@ import { ValidationType } from '../../utils/common-ocs-install-el';
 import { cephStorageLabel } from '../../selectors';
 import { StorageSystemKind } from '../../types';
 import { createAdvancedKmsResources } from '../kms-config/utils';
+
+export const killStorageSystem = async (subSystemName: string, subSystemKind: string) => {
+  const payload: StorageSystemKind = {
+    apiVersion: apiVersionForModel(StorageSystemModel),
+    kind: StorageSystemModel.kind,
+    metadata: {
+      name: `${subSystemName}-storagesystem`,
+      namespace: CEPH_STORAGE_NAMESPACE,
+    },
+    spec: {
+      name: subSystemName,
+      kind: subSystemKind,
+      namespace: CEPH_STORAGE_NAMESPACE,
+    },
+  };
+  k8sKill(StorageSystemModel, payload);
+};
 
 export const createStorageSystem = async (subSystemName: string, subSystemKind: string) => {
   const payload: StorageSystemKind = {
