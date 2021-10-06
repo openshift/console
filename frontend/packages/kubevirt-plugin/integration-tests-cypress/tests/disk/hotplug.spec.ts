@@ -30,8 +30,7 @@ const autoHotplugDiskBlank: Disk = {
 };
 
 const autoHotplugDiskUrl: Disk = {
-  description:
-    'ID(CNV-7272) Attach AutoDetach hotplug disk with [Import via URL] as source',
+  description: 'ID(CNV-7272) Attach AutoDetach hotplug disk with [Import via URL] as source',
   name: 'disk-auto-url',
   source: ProvisionSource.URL,
   size: '2',
@@ -56,8 +55,7 @@ const autoHotplugDiskClone: Disk = {
 };
 
 const autoHotplugDiskPVC: Disk = {
-  description:
-    'ID(CNV-7277) Attach AutoDetach hotplug disk with [Use an existing PVC] as source',
+  description: 'ID(CNV-7277) Attach AutoDetach hotplug disk with [Use an existing PVC] as source',
   name: 'disk-auto-use',
   source: ProvisionSource.EXISTING,
   pvcName,
