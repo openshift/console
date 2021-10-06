@@ -158,7 +158,7 @@
   "Select a storage platform you wish to connect": "Select a storage platform you wish to connect",
   "Select external system from list": "Select external system from list",
   "Use an existing StorageClass": "Use an existing StorageClass",
-  "OpenShift Data Foundation will use an existing infrastructure StorageClass provided by your hosting platform.": "OpenShift Data Foundation will use an existing infrastructure StorageClass provided by your hosting platform.",
+  "OpenShift Data Foundation will use an existing StorageClass provided by your hosting platform.": "OpenShift Data Foundation will use an existing StorageClass provided by your hosting platform.",
   "Create a new StorageClass using local storage devices": "Create a new StorageClass using local storage devices",
   "OpenShift Data Foundation will use an infrastructure StorageClass provided by the Local Storage Operator (LSO) on top of your attached drives. This option is available on any platform with devices attached to nodes.": "OpenShift Data Foundation will use an infrastructure StorageClass provided by the Local Storage Operator (LSO) on top of your attached drives. This option is available on any platform with devices attached to nodes.",
   "Connect an external storage platform": "Connect an external storage platform",

@@ -240,7 +240,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
         <Radio
           label={t('ceph-storage-plugin~Use an existing StorageClass')}
           description={t(
-            'ceph-storage-plugin~OpenShift Data Foundation will use an existing infrastructure StorageClass provided by your hosting platform.',
+            'ceph-storage-plugin~OpenShift Data Foundation will use an existing StorageClass provided by your hosting platform.',
           )}
           name={RADIO_GROUP_NAME}
           value={BackingStorageType.EXISTING}
