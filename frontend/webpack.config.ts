@@ -201,7 +201,7 @@ const config: Configuration = {
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
-    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
+    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, memoryLimit: 4096 }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',
