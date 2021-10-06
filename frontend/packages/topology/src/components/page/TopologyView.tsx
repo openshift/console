@@ -55,7 +55,7 @@ import {
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
 import TopologyQuickSearch from '../quick-search/TopologyQuickSearch';
-import { getSelectedEntityDetails } from '../side-bar/getSelectedEntityDetails';
+import { isSidebarRenderable, SelectedEntityDetails } from '../side-bar/SelectedEntityDetails';
 import TopologySideBar from '../side-bar/TopologySideBar';
 import TopologyEmptyState from './TopologyEmptyState';
 
@@ -325,14 +325,14 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [filteredModel, namespace, onSelect, viewType],
   );
 
-  const topologySideBarDetails = getSelectedEntityDetails(selectedEntity);
+  const isSidebarAvailable = isSidebarRenderable(selectedEntity);
 
   if (!filteredModel) {
     return null;
   }
 
   const containerClasses = classNames('pf-topology-container pf-topology-container__with-sidebar', {
-    'pf-topology-container__with-sidebar--open': topologySideBarDetails,
+    'pf-topology-container__with-sidebar--open': isSidebarAvailable,
   });
 
   const topologyViewComponent = (
@@ -371,8 +371,8 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
               ) : null}
             </div>
           </div>
-          <TopologySideBar show={!!topologySideBarDetails} onClose={() => onSelect()}>
-            {topologySideBarDetails}
+          <TopologySideBar show={isSidebarAvailable} onClose={() => onSelect()}>
+            <SelectedEntityDetails selectedEntity={selectedEntity} />
           </TopologySideBar>
         </StackItem>
         <TopologyQuickSearch
