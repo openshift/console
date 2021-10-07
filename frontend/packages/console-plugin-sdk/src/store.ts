@@ -46,11 +46,16 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
  * In development, this object is exposed as `window.pluginStore` for easier debugging.
  */
 export class PluginStore {
-  // Extensions contributed by static plugins (part of Console application itself)
-  private readonly staticPluginExtensions: LoadedExtension[];
+  // Extensions contributed by static plugins which are currently in use
+  private staticPluginExtensions: LoadedExtension[];
 
-  // Extensions contributed by dynamic plugins (loaded from remote hosts at runtime)
-  private dynamicPluginExtensions: LoadedExtension[] = [];
+  // Extensions contributed by dynamic plugins which are currently in use
+  private dynamicPluginExtensions: LoadedExtension[];
+
+  private readonly staticPlugins: StaticPlugin[];
+
+  // Static plugins that were disabled by loading replacement dynamic plugins
+  private readonly disabledStaticPluginNames = new Set<string>();
 
   private readonly allowedDynamicPluginNames: Set<string>;
 
@@ -63,18 +68,20 @@ export class PluginStore {
   private readonly listeners: VoidFunction[] = [];
 
   constructor(staticPlugins: ActivePlugin[] = [], allowedDynamicPluginNames: string[] = []) {
-    this.staticPluginExtensions = _.flatMap(
-      staticPlugins.map((p) =>
-        p.extensions.map((e, index) =>
-          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, p.name, index)),
+    this.staticPlugins = staticPlugins.map((plugin) => ({
+      name: plugin.name,
+      extensions: plugin.extensions.map((e, index) =>
+        Object.freeze(
+          augmentExtension(sanitizeExtension({ ...e }), plugin.name, plugin.name, index),
         ),
       ),
-    );
+    }));
 
     this.allowedDynamicPluginNames = new Set(allowedDynamicPluginNames);
+    this.updateExtensions();
   }
 
-  getAllExtensions() {
+  getExtensionsInUse() {
     return [...this.staticPluginExtensions, ...this.dynamicPluginExtensions];
   }
 
@@ -128,21 +135,43 @@ export class PluginStore {
       enabled: false,
     });
 
+    (manifest.disableStaticPlugins || [])
+      .filter(
+        (pluginName) =>
+          !this.disabledStaticPluginNames.has(pluginName) &&
+          this.staticPlugins.some((plugin) => plugin.name === pluginName),
+      )
+      .forEach((pluginName) => {
+        console.log(`Static plugin ${pluginName} will be disabled`);
+        this.disabledStaticPluginNames.add(pluginName);
+      });
+
+    this.updateExtensions();
     this.invokeListeners();
 
     console.log(`Added plugin ${pluginID}`);
   }
 
   private updateExtensions() {
-    this.dynamicPluginExtensions = Array.from(this.loadedDynamicPlugins.values()).reduce(
+    const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values());
+
+    this.staticPluginExtensions = this.staticPlugins
+      .filter((plugin) => !this.disabledStaticPluginNames.has(plugin.name))
+      .reduce((acc, plugin) => [...acc, ...plugin.extensions], [] as LoadedExtension[]);
+
+    this.dynamicPluginExtensions = dynamicPlugins.reduce(
       (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.processedExtensions] : acc),
-      [],
+      [] as LoadedExtension[],
     );
   }
 
   setDynamicPluginEnabled(pluginID: string, enabled: boolean) {
     if (!this.loadedDynamicPlugins.has(pluginID)) {
-      console.warn(`Attempt to ${enabled ? 'enable' : 'disable'} unknown plugin ${pluginID}`);
+      console.warn(
+        `Attempt to ${
+          enabled ? 'enable' : 'disable'
+        } plugin ${pluginID} that has not been loaded yet`,
+      );
       return;
     }
 
@@ -225,6 +254,8 @@ export class PluginStore {
     return {
       staticPluginExtensions: this.staticPluginExtensions,
       dynamicPluginExtensions: this.dynamicPluginExtensions,
+      staticPlugins: this.staticPlugins,
+      disabledStaticPluginNames: this.disabledStaticPluginNames,
       loadedDynamicPlugins: this.loadedDynamicPlugins,
       failedDynamicPluginNames: this.failedDynamicPluginNames,
       listeners: this.listeners,
@@ -233,6 +264,11 @@ export class PluginStore {
 }
 
 type FlagsObject = { [key: string]: boolean };
+
+type StaticPlugin = {
+  name: string;
+  extensions: LoadedExtension[];
+};
 
 type DynamicPluginManifest = Readonly<ConsolePluginManifestJSON>;
 

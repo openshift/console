@@ -264,7 +264,7 @@
     "eslint-plugin-import": "^2.22.1",
     "file-loader": "1.x",
     "find-up": "4.x",
-    "fork-ts-checker-webpack-plugin": "^6.3.3",
+    "fork-ts-checker-webpack-plugin": "4.x",
     "geckodriver": "1.x",
     "glob": "7.x",
     "glslify-loader": "^2.0.0",

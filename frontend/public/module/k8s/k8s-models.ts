@@ -42,7 +42,7 @@ const getK8sModels = () => {
     k8sModels = k8sModels.withMutations((map) => {
       const pluginModels = _.flatMap(
         pluginStore
-          .getAllExtensions()
+          .getExtensionsInUse()
           .filter(isModelDefinition)
           .map((md) => md.properties.models),
       );

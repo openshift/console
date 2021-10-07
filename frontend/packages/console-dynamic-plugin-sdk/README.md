@@ -57,15 +57,21 @@ Plugin metadata is declared via the `consolePlugin` object.
 }
 ```
 
-`consolePlugin.name` should be the same as `metadata.name` of the corresponding `ConsolePlugin` resource
-used to represent the plugin on the cluster. Therefore, it must be a valid
+`consolePlugin.name` is the plugin's unique identifier. It should be the same as `metadata.name`
+of the corresponding `ConsolePlugin` resource used to represent the plugin on the cluster.
+Therefore, it must be a valid
 [DNS subdomain name](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-subdomain-names).
 
 `consolePlugin.version` must be [semver](https://semver.org/) compliant.
 
 Dynamic plugins can expose modules representing additional code to be referenced, loaded and executed
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
-each exposed module. Exposed modules are resolved relative to plugin's webpack `context` option.
+each entry in `consolePlugin.exposedModules` object. Exposed modules are resolved relative to plugin's
+webpack `context` option.
+
+The `@console/pluginAPI` dependency is mandatory and refers to Console versions this dynamic plugin is
+compatible with. The `consolePlugin.dependencies` object may also refer to other dynamic plugins that
+are required for this dynamic plugin to work correctly.
 
 See `ConsolePluginMetadata` type for details on the `consolePlugin` object and its schema.
 

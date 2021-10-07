@@ -16,9 +16,6 @@ import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/comp
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
-import { OperatorGroupData } from '../../operators/operator-topology-types';
-import TopologyOperatorBackedPanel from '../../operators/TopologyOperatorBackedPanel';
-import { TopologyDataObject } from '../../topology-types';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologySideBarContent from './TopologySideBarContent';
@@ -42,11 +39,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
-      return (
-        <TopologyOperatorBackedPanel
-          item={selectedEntity.getData() as TopologyDataObject<OperatorGroupData>}
-        />
-      );
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
       return <TopologySideBarContent element={selectedEntity} />;

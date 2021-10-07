@@ -61,7 +61,7 @@ const addToCRDs = (ref: string, flag: string) => {
 };
 
 pluginStore
-  .getAllExtensions()
+  .getExtensionsInUse()
   .filter(isModelFeatureFlag)
   .forEach((ff) => {
     addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);

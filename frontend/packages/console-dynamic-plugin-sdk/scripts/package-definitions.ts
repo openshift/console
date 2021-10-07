@@ -45,6 +45,16 @@ const parseDepsAs = (
   missingDepCallback: MissingDependencyCallback,
 ) => _.mapKeys(parseDeps(pkg, Object.keys(deps), missingDepCallback), (value, key) => deps[key]);
 
+const parseSharedModuleDeps = (
+  pkg: readPkg.PackageJson,
+  missingDepCallback: MissingDependencyCallback,
+) =>
+  parseDeps(
+    pkg,
+    sharedPluginModules.filter((m) => !m.startsWith('@openshift-console/')),
+    missingDepCallback,
+  );
+
 export const getCorePackage: GetPackageDefinition = (
   sdkPackage,
   rootPackage,
@@ -57,11 +67,7 @@ export const getCorePackage: GetPackageDefinition = (
     type: 'module',
     main: 'lib/lib-core.js',
     ...commonManifestFields,
-    dependencies: parseDeps(
-      rootPackage,
-      sharedPluginModules.filter((m) => !m.startsWith('@openshift-console/')),
-      missingDepCallback,
-    ),
+    dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
   },
   filesToCopy: {
     ...commonFiles,
@@ -82,7 +88,7 @@ export const getInternalPackage: GetPackageDefinition = (
     type: 'module',
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
-    dependencies: getCorePackage(sdkPackage, rootPackage, missingDepCallback).manifest.dependencies,
+    dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
   },
   filesToCopy: {
     ...commonFiles,
