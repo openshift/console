@@ -195,14 +195,28 @@ list of plugin names (disable specific plugins) or an empty string (disable all 
 
 ## Publishing SDK packages
 
-To see the latest published version:
+To see the latest published version of the given package:
 
 ```sh
-yarn info @openshift-console/dynamic-plugin-sdk dist-tags
+yarn info <package-name> dist-tags --json | jq .data.latest
 ```
 
-To build and publish all distributable [SDK packages](#sdk-packages) to [npm registry](https://www.npmjs.com/):
+Before publishing, it's recommended to log into your npm user account:
 
 ```sh
-PKG_VERSION='<new-version>' ./publish.sh
+npm login
 ```
+
+Build all distributable [SDK packages](#sdk-packages) into `dist` directory:
+
+```sh
+yarn build
+```
+
+Finally, publish relevant packages to [npm registry](https://www.npmjs.com/):
+
+```sh
+yarn publish dist/<pkg> --no-git-tag-version --new-version <version>
+```
+
+If the given package doesn't exist in npm registry, add `--access public` to `yarn publish` command.
