@@ -60,7 +60,12 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
       <p>
         <Trans ns="console-app">
           Show a preview of the{' '}
-          <Button ref={podsPreviewPopoverRef} variant="link" isInline>
+          <Button
+            data-test={`show-affected-pods-${props.direction}}`}
+            ref={podsPreviewPopoverRef}
+            variant="link"
+            isInline
+          >
             affected pods
           </Button>{' '}
           that this {props.direction} rule will apply to
@@ -71,6 +76,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
         podSelector={podSelector}
         namespaceSelector={namespaceSelector}
         popoverRef={podsPreviewPopoverRef}
+        dataTest={`pods-preview-${props.direction}`}
       />
     </>
   );

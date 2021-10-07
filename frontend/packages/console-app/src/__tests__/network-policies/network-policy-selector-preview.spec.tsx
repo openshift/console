@@ -67,14 +67,9 @@ describe('PodsPreview', () => {
     );
 
     // Verify that the header with the label list is properly shown
-    const header = wrapper.children().findWhere((i) => i.text().includes('List of pods matching'));
-    expect(header.length).toBeGreaterThan(1);
-    expect(
-      header
-        .first()
-        .render()
-        .text(),
-    ).toMatch(/^List of pods matching foo=bar\s*baz=bae$/);
+    expect(wrapper.find(`[data-test="pods-preview-title"]`).text()).toMatch(
+      /^List of pods matching foo=bar\s*baz=bae$/,
+    );
 
     // Verify that there is a first entry for the namespace, with 2 subchildren
     const ns = wrapper.find('TreeViewListItem[name="ns1"]');
@@ -101,8 +96,9 @@ describe('PodsPreview', () => {
     expect(pods1.length + pods2.length).toBe(10);
 
     // It should not show any link but just an informative message
-    const msg = wrapper.findWhere((w) => w.text() === 'Showing 5 from 6 results');
-    expect(msg.length).not.toBe('a');
+    expect(wrapper.find(`[data-test="pods-preview-footer"]`).text()).toBe(
+      'Showing 10 from 12 results',
+    );
   });
 
   test('limits the number of previewed pods and shows a link to the complete list', () => {
@@ -117,16 +113,16 @@ describe('PodsPreview', () => {
     expect(pods.length).toBe(10);
 
     // Verify that there is a correct link to a list of filtered pods
-    const link = wrapper
-      .find('a')
-      .findWhere((w) => w.render().prop('href') === '/k8s/ns/ns1/pods?labels=foo%3Dbar');
+    const link = wrapper.find(`[data-test="pods-preview-footer-link"]`);
+    expect(link.prop('href')).toBe('/k8s/ns/ns1/pods?labels=foo%3Dbar');
     expect(link.text()).toBe('View all 33 results');
   });
 
   test('when the pod selector is empty, the "View all" link does not add query labels', () => {
     setMockK8sWatchResource(77, 1, { foo: 'bar', baz: 'bae' });
     const wrapper = mount(<PodsPreview podSelector={[]} namespace={'ns1'} />);
-    const link = wrapper.find('a').findWhere((w) => w.render().prop('href') === '/k8s/ns/ns1/pods');
+    const link = wrapper.find(`[data-test="pods-preview-footer-link"]`);
+    expect(link.prop('href')).toBe('/k8s/ns/ns1/pods');
     expect(link.text()).toBe('View all 77 results');
   });
 
@@ -140,11 +136,8 @@ describe('PodsPreview', () => {
         ]}
       />,
     );
-    const link = wrapper
-      .find('a')
-      .findWhere(
-        (w) => w.render().prop('href') === '/k8s/all-namespaces/pods?labels=foo%3Dbar%2Cbaz%3Dbae',
-      );
+    const link = wrapper.find(`[data-test="pods-preview-footer-link"]`);
+    expect(link.prop('href')).toBe('/k8s/all-namespaces/pods?labels=foo%3Dbar%2Cbaz%3Dbae');
     expect(link.text()).toBe('View all 12 results');
   });
 
@@ -220,7 +213,7 @@ describe('PodsPreview', () => {
   test('error on k8s api', () => {
     mockK8sWatchResource.mockReturnValue([null, true, 'K8s api ERROR']);
     const wrapper = mount(<PodsPreview podSelector={[]} />);
-    expect(wrapper.find('Alert').text()).toContain('K8s api ERROR');
+    expect(wrapper.find('Alert[data-test="pods-preview-alert"]').text()).toContain('K8s api ERROR');
   });
 
   test('error on selector labels', () => {
@@ -237,7 +230,7 @@ describe('PodsPreview', () => {
         ]}
       />,
     );
-    expect(wrapper.find('Alert').text()).toContain('Input error');
+    expect(wrapper.find('Alert[data-test="pods-preview-alert"]').text()).toContain('Input error');
 
     // verify that the conflicting labels have been filtered in the useK8sWatchResource call
     expect(mockK8sWatchResource.mock.calls.length).toBeGreaterThan(0);
@@ -260,12 +253,11 @@ describe('PodsPreview', () => {
     const wrapper = mount(<PodsPreview podSelector={[]} />);
 
     // Verify that a message is shown
-    const message = wrapper
-      .children()
-      .findWhere((i) => i.text().includes('No pods matching the provided labels'));
-    expect(message.length).toBeGreaterThan(1);
+    expect(wrapper.find(`[data-test="pods-preview-title"]`).text()).toContain(
+      'No pods matching the provided labels',
+    );
 
     // Verify that there are no entries in the tree viw
-    expect(wrapper.find('TreeView').length).toBe(0);
+    expect(wrapper.find('TreeView[data-test="pods-preview-tree"]').length).toBe(0);
   });
 });

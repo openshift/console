@@ -253,7 +253,12 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
           <p>
             <Trans ns="console-app">
               Show a preview of the{' '}
-              <Button ref={podsPreviewPopoverRef} variant="link" isInline>
+              <Button
+                data-test="show-affected-pods"
+                ref={podsPreviewPopoverRef}
+                variant="link"
+                isInline
+              >
                 affected pods
               </Button>{' '}
               that this policy will apply to
@@ -263,6 +268,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             policyNamespace={networkPolicy.namespace}
             podSelector={networkPolicy.podSelector}
             popoverRef={podsPreviewPopoverRef}
+            dataTest="policy-pods-preview"
           />
         </div>
         <div className="form-group co-create-networkpolicy__type">

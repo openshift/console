@@ -17,6 +17,7 @@ type NetworkPolicySelectorPreviewProps = {
   namespaceSelector?: string[][];
   policyNamespace: string;
   popoverRef: React.MutableRefObject<undefined>;
+  dataTest?: string;
 };
 
 export const NetworkPolicySelectorPreview: React.FC<NetworkPolicySelectorPreviewProps> = (
@@ -30,6 +31,7 @@ export const NetworkPolicySelectorPreview: React.FC<NetworkPolicySelectorPreview
       <Popover
         aria-label="pods-list"
         headerContent={<p />}
+        data-test={props.dataTest ? `${props.dataTest}-popover` : `pods-preview-popover`}
         bodyContent={
           props.namespaceSelector ? (
             allNamespaces ? (
@@ -226,24 +228,34 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
       : '';
 
   return preview.error ? (
-    <Alert variant="danger" isInline title={t("public~Can't preview pods")}>
+    <Alert
+      data-test="pods-preview-alert"
+      variant="danger"
+      isInline
+      title={t("public~Can't preview pods")}
+    >
       <p>{preview.error}</p>
     </Alert>
   ) : (
     <>
       {watchPodLoaded && preview.pods?.length === 0 && (
-        <div>{t('public~No pods matching the provided labels in the current namespace')}</div>
+        <div data-test="pods-preview-title">
+          {t('public~No pods matching the provided labels in the current namespace')}
+        </div>
       )}
       {preview.pods && preview.pods.length > 0 && (
         <>
-          {labelList?.length > 0 ? (
-            <div>
-              {t('public~List of pods matching')} {labelBadges}
-            </div>
-          ) : (
-            <div>{t('public~List of pods')}</div>
-          )}
+          <div data-test="pods-preview-title">
+            {labelList?.length > 0 ? (
+              <>
+                {t('public~List of pods matching')} {labelBadges}
+              </>
+            ) : (
+              t('public~List of pods')
+            )}
+          </div>
           <TreeView
+            data-test="pods-preview-tree"
             className="co-create-networkpolicy__selector-preview"
             data={preview.pods}
             hasGuides
@@ -255,6 +267,7 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
                   target="_blank"
                   rel="noopener noreferrer"
                   href={`${resourceListPathFromModel(PodModel, namespace)}${podsFilterQuery}`}
+                  data-test="pods-preview-footer-link"
                 >
                   {t('public~View all {{total}} results', {
                     total: preview.total,
@@ -265,7 +278,7 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
                 // or for all the namespaces, but does not allow filtering by namespace labels.
                 // So if the namespace selector has labels, we disable the link to avoid
                 // directing the user to incorrect data
-                <p>
+                <p data-test="pods-preview-footer">
                   {t('public~Showing {{shown}} from {{total}} results', {
                     shown: maxPreviewPods,
                     total: preview.total,
