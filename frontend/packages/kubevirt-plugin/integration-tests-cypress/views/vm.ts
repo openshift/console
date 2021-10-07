@@ -141,7 +141,6 @@ export const vm = {
   },
   createFromCreateVMBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
-    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
     cy.get(nameFilter)
       .clear()
       .type(vmData.template.dvName);
@@ -158,8 +157,7 @@ export const vm = {
   },
   createFromActionsBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
-    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
-    cy.get(templateLink(vmData.template.metadataName)).click();
+    cy.get(templateLink(vmData.template.metadataName)).click({ force: true });
     detailViewAction(TEMPLATE_ACTION.Create);
     if (customize) {
       advanceWizardFlow(vmData);

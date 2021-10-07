@@ -66,7 +66,11 @@ describe('Validate root disk', () => {
 
   after(() => {
     cy.get(cancelBtn).click();
+    cy.on('window:confirm', () => true);
+
     cy.byButtonText('Cancel').click();
+    cy.on('window:confirm', () => true);
+
     cy.deleteTestProject(testName);
   });
 

@@ -2,7 +2,6 @@ import { testName } from '../../support';
 import { K8S_KIND, YAML_VM_NAME } from '../../utils/const/index';
 import { detailsTab, modalConfirm, modalTitle, pendingChangeAlert } from '../../views/selector';
 import {
-  bootOrder,
   addSource,
   selectDevice,
   draggablePointer,
@@ -40,7 +39,7 @@ describe('Test VM details tab', () => {
   });
 
   it('ID(CNV-3548) Adds bootable device', () => {
-    cy.get(bootOrder)
+    cy.get('[data-test="boot-order-details-item"]')
       .find(detailsTab.vmEditWithPencil)
       .click();
     cy.get(addSource).click();
@@ -63,7 +62,7 @@ describe('Test VM details tab', () => {
   });
 
   it('ID(CNV-3547) Drags and drops to change boot order', () => {
-    cy.get(bootOrder)
+    cy.get('[data-test="boot-order-details-item"]')
       .find(detailsTab.vmEditWithPencil)
       .click();
 
@@ -88,7 +87,7 @@ describe('Test VM details tab', () => {
   });
 
   it('ID(CNV-3549) Deletes bootable device', () => {
-    cy.get(bootOrder)
+    cy.get('[data-test="boot-order-details-item"]')
       .find(detailsTab.vmEditWithPencil)
       .click();
     cy.get(deletePointer)
