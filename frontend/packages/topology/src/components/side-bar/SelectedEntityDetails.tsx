@@ -20,7 +20,16 @@ import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologySideBarContent from './TopologySideBarContent';
 
-export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
+export const isSidebarRenderable = (selectedEntity: GraphElement): boolean => {
+  if (isNode(selectedEntity) || isEdge(selectedEntity)) {
+    return true;
+  }
+  return false;
+};
+
+export const SelectedEntityDetails: React.FC<{ selectedEntity: GraphElement }> = ({
+  selectedEntity,
+}) => {
   if (!selectedEntity) {
     return null;
   }
