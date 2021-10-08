@@ -27,6 +27,7 @@ const commonManifestFields: Partial<readPkg.PackageJson> = {
 
 const commonFiles: GeneratedPackage['filesToCopy'] = {
   '../../../LICENSE': 'LICENSE',
+  'README.md': 'README.md',
 };
 
 const parseDeps = (
@@ -71,7 +72,6 @@ export const getCorePackage: GetPackageDefinition = (
   },
   filesToCopy: {
     ...commonFiles,
-    'README.md': 'README.md',
     'generated/doc': 'doc',
   },
 });
