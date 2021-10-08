@@ -134,47 +134,47 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
       <Helmet>
         <title>{t('kubevirt-plugin~Virtualization')}</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--row">
+      <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading" data-test-id="cluster-settings-page-heading">
           {t('kubevirt-plugin~Virtualization')}
+          <div className="co-actions" data-test-id="details-actions">
+            <MigrationTool />
+            <Dropdown
+              data-test-id="item-create"
+              onSelect={() => setOpen(false)}
+              toggle={
+                <DropdownToggle onToggle={setOpen} isPrimary>
+                  {t('kubevirt-plugin~Create')}
+                </DropdownToggle>
+              }
+              isOpen={isOpen}
+              dropdownItems={[
+                <DropdownGroup
+                  className="kv-dropdown-group"
+                  label={t('kubevirt-plugin~Virtual Machine')}
+                  key="vm"
+                >
+                  {vmMenuItems(t).map(getMenuItem)}
+                </DropdownGroup>,
+                <DropdownGroup
+                  className="kv-dropdown-group kv-dropdown-group--separator"
+                  key="separator"
+                >
+                  <DropdownSeparator />
+                </DropdownGroup>,
+                <DropdownGroup
+                  className="kv-dropdown-group"
+                  label={t('kubevirt-plugin~Template')}
+                  key="vm-template"
+                >
+                  {templateMenuItems(t).map(getMenuItem)}
+                </DropdownGroup>,
+              ]}
+              isGrouped
+              position={DropdownPosition.right}
+            />
+          </div>
         </h1>
-        <div className="co-actions" data-test-id="details-actions">
-          <MigrationTool />
-          <Dropdown
-            data-test-id="item-create"
-            onSelect={() => setOpen(false)}
-            toggle={
-              <DropdownToggle onToggle={setOpen} isPrimary>
-                {t('kubevirt-plugin~Create')}
-              </DropdownToggle>
-            }
-            isOpen={isOpen}
-            dropdownItems={[
-              <DropdownGroup
-                className="kv-dropdown-group"
-                label={t('kubevirt-plugin~Virtual Machine')}
-                key="vm"
-              >
-                {vmMenuItems(t).map(getMenuItem)}
-              </DropdownGroup>,
-              <DropdownGroup
-                className="kv-dropdown-group kv-dropdown-group--separator"
-                key="separator"
-              >
-                <DropdownSeparator />
-              </DropdownGroup>,
-              <DropdownGroup
-                className="kv-dropdown-group"
-                label={t('kubevirt-plugin~Template')}
-                key="vm-template"
-              >
-                {templateMenuItems(t).map(getMenuItem)}
-              </DropdownGroup>,
-            ]}
-            isGrouped
-            position={DropdownPosition.right}
-          />
-        </div>
       </div>
       <HorizontalNav
         {...props}
