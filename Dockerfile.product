@@ -16,19 +16,16 @@ FROM registry.ci.openshift.org/ocp/builder:rhel-8-base-nodejs-openshift-4.10 AS 
 ADD . .
 
 USER 0
-# required for node-gyp
-RUN yum install -y python3
 # extract the yarn dependencies that must be provided in the dist-git lookaside cache
 RUN tar fx yarn-offline.tar
 
 # bootstrap yarn so we can install and run the other tools.
 RUN container-entrypoint npm install ./yarn-1.9.4.tgz
 
-# prevent download of chromedriver, geckodriver, cypress binary, and node headers as part of module installs
+# prevent download of chromedriver, geckodriver, and the cypress binary as part of module installs
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
     GECKODRIVER_SKIP_DOWNLOAD=true \
-    CYPRESS_INSTALL_BINARY=0 \
-    NPM_CONFIG_TARBALL=$HOME/node-v14.16.0-headers.tar.gz
+    CYPRESS_INSTALL_BINARY=0
 
 # run the build
 RUN container-entrypoint ./build-frontend.sh
