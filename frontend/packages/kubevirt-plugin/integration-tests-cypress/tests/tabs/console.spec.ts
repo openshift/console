@@ -38,11 +38,7 @@ describe('Test VM console tab', () => {
     loginVNC();
     // after login VNC console, scroll up is flaky
     // so revisit VM tabs explicitly
-    cy.visit('/');
-    cy.visitVMsList();
-    cy.byLegacyTestID(YAML_VM_NAME)
-      .should('exist')
-      .click();
+    cy.reload();
     if (Cypress.env('DOWNSTREAM')) {
       tab.navigateToDetails();
       cy.get(loggedInUser).should('not.contain', noActiveUser);
@@ -54,11 +50,7 @@ describe('Test VM console tab', () => {
   it('ID(CNV-3609) Serial console connects', () => {
     tab.navigateToConsole();
     loginSerial();
-    cy.visit('/');
-    cy.visitVMsList();
-    cy.byLegacyTestID(YAML_VM_NAME)
-      .should('exist')
-      .click();
+    cy.reload();
     if (Cypress.env('DOWNSTREAM')) {
       tab.navigateToOverview();
       cy.get(dashboardTab.detailsCardItem)
@@ -67,6 +59,7 @@ describe('Test VM console tab', () => {
       cy.get(dashboardTab.detailsCardItem)
         .eq(8)
         .should('contain', oneActiveUser); // Active Users
+      tab.navigateToConsole();
     }
     // verify warning showing on VM actions while user is logged in
     [VM_ACTION.Stop, VM_ACTION.Restart, VM_ACTION.Delete].forEach((action) => {
@@ -75,7 +68,6 @@ describe('Test VM console tab', () => {
       cy.get(modalCancel).click();
     });
     // disconnect serial console
-    tab.navigateToConsole();
     disconnectSerial();
     cy.get(emptyState).should('contain', serialEmptyState);
     cy.byButtonText('Connect').should('exist');
