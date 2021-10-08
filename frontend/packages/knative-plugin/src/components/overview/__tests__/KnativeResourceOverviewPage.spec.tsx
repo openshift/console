@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
 import { LoadingBox } from '@console/internal/components/utils';
 import { OverviewItem } from '@console/shared';
+import TopologySideBarContent from '@console/topology/src/components/side-bar/TopologySideBarContent';
 import { RevisionModel, EventingSubscriptionModel } from '../../../models';
 import {
   revisionObj,
@@ -38,7 +39,7 @@ describe('KnativeResourceOverviewPage', () => {
         kindsInFlight={false}
       />,
     );
-    expect(wrapper.find(ResourceOverviewDetails)).toHaveLength(1);
+    expect(wrapper.find(TopologySideBarContent)).toHaveLength(1);
   });
   it('should render ResourceOverviewDetails for subscription with proper action menu', () => {
     const itemData = { ...item, ...{ obj: EventSubscriptionObj } };

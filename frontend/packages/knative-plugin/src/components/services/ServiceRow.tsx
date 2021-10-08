@@ -1,16 +1,9 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceLink,
-  ResourceKebab,
-  Timestamp,
-  ExternalLink,
-  kindObj,
-} from '@console/internal/components/utils';
-import { referenceForModel, referenceFor, K8sKind } from '@console/internal/module/k8s';
-import { ClampedText } from '@console/shared';
+import { ResourceLink, Timestamp, ExternalLink } from '@console/internal/components/utils';
+import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
+import { LazyActionMenu, ClampedText } from '@console/shared';
 import { ServiceModel } from '../../models';
 import { ServiceKind, ConditionTypes } from '../../types';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
@@ -22,8 +15,8 @@ const ServiceRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;
-  const kind = kindObj(referenceFor(obj)) as K8sKind;
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
+  const objReference = referenceFor(obj);
+  const context = { [objReference]: obj };
 
   return (
     <>
@@ -64,7 +57,7 @@ const ServiceRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
           '-'}
       </TableData>
       <TableData className={tableColumnClasses[8]}>
-        <ResourceKebab actions={menuActions} kind={serviceReference} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

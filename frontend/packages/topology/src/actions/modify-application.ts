@@ -6,11 +6,15 @@ import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants';
 import { editApplicationModal } from '@console/topology/src/components/modals';
 
-export const getModifyApplicationAction = (kind: K8sKind, obj: K8sResourceKind): Action => {
+export const getModifyApplicationAction = (
+  kind: K8sKind,
+  obj: K8sResourceKind,
+  insertBefore?: string | string[],
+): Action => {
   return {
     id: 'modify-application',
     label: i18next.t('topology~Edit Application grouping'),
-    insertBefore: 'edit-pod-count',
+    insertBefore: insertBefore ?? 'edit-pod-count',
     cta: () =>
       editApplicationModal({
         resourceKind: kind,
