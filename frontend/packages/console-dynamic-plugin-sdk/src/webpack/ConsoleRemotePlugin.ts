@@ -61,8 +61,8 @@ export class ConsoleRemotePlugin {
         exposes: this.pkg.consolePlugin.exposedModules || {},
         overridables: sharedPluginModules.filter((m) => {
           // ContainerPlugin throws 'module not found' error if an overridable cannot be resolved.
-          // All shared plugin modules are mandatory *except* the Console internal API module.
-          return m !== '@openshift-console/dynamic-plugin-sdk-internal'
+          // All shared plugin modules are mandatory *except* for Console internal API modules.
+          return !m.startsWith('@openshift-console/dynamic-plugin-sdk-internal')
             ? true
             : !!{ ...this.pkg.devDependencies, ...this.pkg.dependencies }[m];
         }),
