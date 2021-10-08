@@ -664,7 +664,7 @@
   "Last updated": "Last updated",
   "Storage Systems": "Storage Systems",
   "Used capacity": "Used capacity",
-  "Storage status represents the health status of Openshift Data Foundation's StorageCluster.": "Storage status represents the health status of Openshift Data Foundation's StorageCluster.",
+  "Storage status represents the health status of {{operatorName}}'s StorageCluster.": "Storage status represents the health status of {{operatorName}}'s StorageCluster.",
   "Health": "Health",
   "Standard": "Standard",
   "Data will be consumed by a Multi-cloud object gateway, deduped, compressed, and encrypted. The encrypted chunks would be saved on the selected BackingStores. Best used when the applications would always use the OpenShift Data Foundation endpoints to access the data.": "Data will be consumed by a Multi-cloud object gateway, deduped, compressed, and encrypted. The encrypted chunks would be saved on the selected BackingStores. Best used when the applications would always use the OpenShift Data Foundation endpoints to access the data.",
