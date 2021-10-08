@@ -65,13 +65,12 @@ import {
 import { DataVolumeModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
-import { getDataVolumeStorageSize } from '../../../selectors/dv/selectors';
 import { getName, getNamespace, getParameterValue } from '../../../selectors/selectors';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { OperatingSystemRecord } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
-import { BinaryUnit, convertToBytes } from '../../form/size-unit-utils';
+import { BinaryUnit } from '../../form/size-unit-utils';
 import { CDIUploadContext } from '../cdi-upload-provider';
 import {
   CDI_UPLOAD_OS_URL_PARAM,
@@ -712,19 +711,6 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             }
             errorMessage={errorMessage}
           >
-            {fileValue?.size * 2 > convertToBytes(getDataVolumeStorageSize(dvObj)) && (
-              <Alert variant="warning" isInline title={t('kubevirt-plugin~PVC size warning')}>
-                <p>
-                  {t(
-                    'kubevirt-plugin~PVC size is smaller than double the provided image. Please ensure your PVC size covers the requirements of the uncompressed image and any other space requirements.',
-                  )}{' '}
-                  <ExternalLink
-                    text={t('kubevirt-plugin~Learn more')}
-                    href="https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/virtual_disks/virt-uploading-local-disk-images-block.html"
-                  />
-                </p>
-              </Alert>
-            )}
             {isFileRejected && (
               <Alert variant="warning" isInline title={t('kubevirt-plugin~File type extension')}>
                 <p>
