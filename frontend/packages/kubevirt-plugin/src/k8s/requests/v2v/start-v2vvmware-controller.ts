@@ -1,20 +1,23 @@
+import { VMImportProvider } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/types';
+
 import { DeploymentModel, RoleModel } from '@console/internal/models';
+import { ConfigMapKind, DeploymentKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { getName } from '@console/shared/src';
+import { PatchBuilder } from '@console/shared/src/k8s';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+
 import { V2VVMWARE_DEPLOYMENT_NAME } from '../../../constants/v2v';
-import { getVmwareConfigMap, validateV2VConfigMap } from './v2vvmware-configmap';
 import { getContainerImage } from '../../../selectors/pod/container';
 import { getKubevirtV2vVmwareContainerImage, getV2vImagePullPolicy } from '../../../selectors/v2v';
-import { ConfigMapKind, DeploymentKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
-import { ServiceAccountWrappper } from '../../wrapper/k8s/service-account-wrapper';
-import { buildV2VVMwareRole } from './objects/v2vvmware-role';
-import { RoleBindingWrappper } from '../../wrapper/k8s/role-binding-wrapper';
-import { buildV2VVMwareDeployment } from './objects/v2vvmware-deployment';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { buildOwnerReference } from '../../../utils';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
+import { RoleBindingWrappper } from '../../wrapper/k8s/role-binding-wrapper';
 import { RoleWrappper } from '../../wrapper/k8s/role-wrapper';
-import { VMImportProvider } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/types';
+import { ServiceAccountWrappper } from '../../wrapper/k8s/service-account-wrapper';
+import { buildV2VVMwareDeployment } from './objects/v2vvmware-deployment';
+import { buildV2VVMwareRole } from './objects/v2vvmware-role';
+import { getVmwareConfigMap } from './v2vvmware-configmap';
+import { validateV2VConfigMap } from './v2vvmware-configmap-validator';
 
 const { info } = console;
 
