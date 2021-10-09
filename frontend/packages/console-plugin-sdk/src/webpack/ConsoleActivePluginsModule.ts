@@ -72,7 +72,7 @@ export class ConsoleActivePluginsModule {
         );
       }
     };
-
+    // TODO: TS2694: Namespace 'exports' has no exported member 'compilation'. -- Must fix
     const addFilesToCompilation = (compilation: webpack.compilation.Compilation) => {
       this.pluginPackages.forEach((pkg) => {
         getPluginFiles(pkg).forEach((f) => {
@@ -80,7 +80,7 @@ export class ConsoleActivePluginsModule {
         });
       });
     };
-
+    // TODO: TS2694: Namespace 'exports' has no exported member 'compilation'. -- Must fix
     const addErrorsToCompilation = (compilation: webpack.compilation.Compilation) => {
       errors.forEach((e) => {
         compilation.errors.push(new Error(e));

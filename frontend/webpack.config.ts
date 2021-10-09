@@ -67,15 +67,17 @@ const config: Configuration = {
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
+    fallback: {
+      fs: false,
+      stream: false,
+      crypto: false,
+      os: false,
+      path: false,
+      timers: false,
+      net: false,
+    },
   },
-  node: {
-    fs: 'empty',
-    // eslint-disable-next-line camelcase
-    child_process: 'empty',
-    net: 'empty',
-    crypto: 'empty',
-    module: 'empty',
-  },
+  node: false,
   module: {
     rules: [
       {
@@ -83,7 +85,7 @@ const config: Configuration = {
         test: sharedPluginTest,
         sideEffects: true,
       },
-      { test: /\.glsl$/, loader: 'raw!glslify' },
+      { test: /\.glsl$/, use: ['raw-loader', 'glslify-loader'] },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules\/(?!(bitbucket|ky)\/)/,
@@ -216,7 +218,7 @@ const config: Configuration = {
       filename: './tokener.html',
       template: './public/tokener.html',
       inject: false,
-      chunksSortMode: 'none',
+      chunksSortMode: 'manual',
     }),
     new HtmlWebpackPlugin({
       filename: './multicluster-logout.html',
@@ -228,7 +230,7 @@ const config: Configuration = {
       filename: './index.html',
       template: './public/index.html',
       production: NODE_ENV === 'production',
-      chunksSortMode: 'none',
+      chunksSortMode: 'manual',
     }),
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile'],
@@ -301,7 +303,7 @@ if (ANALYZE_BUNDLE === 'true') {
 
 /* Production settings */
 if (NODE_ENV === 'production') {
-  config.output.filename = '[name]-bundle-[hash].min.js';
+  config.output.filename = '[name]-bundle-[chunkhash].min.js';
   config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
   extractCSS.filename = '[name]-[chunkhash].min.css';
   // Causes error in --mode=production due to scope hoisting
