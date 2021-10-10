@@ -1,7 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { Button, DropdownToggle, Dropdown, DropdownItem } from '@patternfly/react-core';
+import {
+  Button,
+  DropdownToggle,
+  Dropdown,
+  DropdownItem,
+  DropdownPosition,
+} from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
@@ -63,6 +69,7 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
   return (
     <CreateWithPermissions createAccessReview={createAccessReview}>
       <Dropdown
+        position={DropdownPosition.right}
         toggle={
           <DropdownToggle onToggle={setOpen} toggleIndicator={CaretDownIcon} isPrimary>
             {children}
