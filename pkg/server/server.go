@@ -18,6 +18,7 @@ import (
 
 	"github.com/coreos/pkg/health"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/graphql/resolver"
@@ -56,6 +57,7 @@ const (
 	devfileEndpoint                  = "/api/devfile/"
 	devfileSamplesEndpoint           = "/api/devfile/samples/"
 	pluginAssetsEndpoint             = "/api/plugins/"
+	pluginProxyEndpoint              = "/api/proxy/"
 	localesEndpoint                  = "/locales/resource.json"
 	updatesEndpoint                  = "/api/check-updates"
 	operandsListEndpoint             = "/api/list-operands/"
@@ -122,6 +124,7 @@ type Server struct {
 	InactivityTimeout    int
 	// Map that contains list of enabled plugins and their endpoints.
 	EnabledConsolePlugins map[string]string
+	PluginProxy           string
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient                        *http.Client
 	ThanosProxyConfig                *proxy.Config
@@ -464,6 +467,35 @@ func (s *Server) HTTPHandler() http.Handler {
 		}),
 	))
 
+	if len(s.PluginProxy) != 0 {
+		proxyConfig, err := plugins.ParsePluginProxyConfig(s.PluginProxy)
+		if err != nil {
+			klog.Fatalf("Error parsing plugin proxy config: %s", err)
+			os.Exit(1)
+		}
+		proxyServiceHandlers, err := plugins.GetPluginProxyServiceHandlers(proxyConfig, s.PluginsProxyTLSConfig, pluginProxyEndpoint)
+		if err != nil {
+			klog.Fatalf("Error getting plugin proxy handlers: %s", err)
+			os.Exit(1)
+		}
+		if len(proxyServiceHandlers) != 0 {
+			klog.Infoln("The following console endpoints are now proxied to these services:")
+		}
+		for _, proxyServiceHandler := range proxyServiceHandlers {
+			klog.Infof(" - %s -> %s\n", proxyServiceHandler.ConsoleEndpoint, proxyServiceHandler.ProxyConfig.Endpoint)
+			serviceProxy := proxy.NewProxy(proxyServiceHandler.ProxyConfig)
+			handle(proxyServiceHandler.ConsoleEndpoint, http.StripPrefix(
+				proxy.SingleJoiningSlash(s.BaseURL.Path, proxyServiceHandler.ConsoleEndpoint),
+				authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+					if proxyServiceHandler.Authorize {
+						r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+					}
+					serviceProxy.ServeHTTP(w, r)
+				})),
+			)
+		}
+	}
+
 	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
 
 	handleFunc(localesEndpoint, func(w http.ResponseWriter, r *http.Request) {
@@ -674,7 +706,7 @@ func tokenToObjectName(token string) string {
 
 func getMapKeys(m map[string]string) []string {
 	keys := []string{}
-	for key, _ := range m {
+	for key := range m {
 		keys = append(keys, key)
 	}
 	return keys
