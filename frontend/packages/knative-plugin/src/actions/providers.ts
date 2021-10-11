@@ -10,7 +10,13 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { RevisionModel } from '../models';
-import { TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB } from '../topology/const';
+import {
+  TYPE_EVENT_SOURCE,
+  TYPE_EVENT_SOURCE_KAFKA,
+  TYPE_EVENT_PUB_SUB,
+  TYPE_KNATIVE_SERVICE,
+} from '../topology/const';
+import { NodeType } from '../topology/topology-types';
 import { AddBrokerAction } from './add-broker';
 import { AddChannelAction } from './add-channel';
 import { AddEventSourceAction } from './add-event-source';
@@ -21,6 +27,7 @@ import {
   deleteRevision,
   editKnativeService,
   setTrafficDistribution,
+  moveSinkSource,
 } from './creators';
 import { hideKnatifyAction, MakeServerless } from './knatify';
 
@@ -115,9 +122,42 @@ export const useAddToApplicationActionProvider = (element: GraphElement) => {
   }, [actions]);
 };
 
+export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
+  const result = React.useMemo(() => {
+    if (!resource) return [[], true, undefined];
+    const kindObj = modelFor(referenceFor(resource));
+    return [
+      [moveSinkSource(kindObj, resource), ...getCommonResourceActions(kindObj, resource)],
+      true,
+      undefined,
+    ];
+  }, [resource]);
+  return result;
+};
+
+export const useEventSourcesActionsProviderForTopology = (element: GraphElement) => {
+  const nodeType = element.getType();
+  const resource = React.useMemo(() => {
+    if (nodeType !== NodeType.EventSource && nodeType !== NodeType.EventSourceKafka)
+      return undefined;
+
+    return element.getData().resources.obj;
+  }, [nodeType, element]);
+  const result = useEventSourcesActionsProvider(resource);
+  return result;
+};
+
 export const useModifyApplicationActionProvider = (element: GraphElement) => {
   const actions = React.useMemo(() => {
-    if (![TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB].includes(element.getType())) return undefined;
+    if (
+      ![
+        TYPE_KNATIVE_SERVICE,
+        TYPE_EVENT_PUB_SUB,
+        TYPE_EVENT_SOURCE,
+        TYPE_EVENT_SOURCE_KAFKA,
+      ].includes(element.getType())
+    )
+      return undefined;
     const resource = element.getData().resources.obj;
     const k8sKind = modelFor(referenceFor(resource));
     return [
@@ -125,6 +165,7 @@ export const useModifyApplicationActionProvider = (element: GraphElement) => {
         'set-traffic-distribution',
         'add-tigger-broker',
         'add-subscription-channel',
+        'move-sink-source',
       ]),
     ];
   }, [element]);

@@ -11,5 +11,7 @@ export {
   useAddToApplicationActionProvider,
   useCommonActionsProvider,
   useKnativeServiceActionsProvider,
+  useEventSourcesActionsProvider,
+  useEventSourcesActionsProviderForTopology,
   useModifyApplicationActionProvider,
 } from './providers';

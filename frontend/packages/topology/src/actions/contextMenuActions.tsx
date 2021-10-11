@@ -43,7 +43,7 @@ export const contextMenuActions = (element: Node): React.ReactElement[] => {
   const resource = getResource(element);
   const context = {
     'topology-actions': element,
-    [referenceFor(resource)]: resource,
+    ...(resource ? { [referenceFor(resource)]: resource } : {}),
   };
   return [
     <ActionServiceProvider key="topology" context={context}>

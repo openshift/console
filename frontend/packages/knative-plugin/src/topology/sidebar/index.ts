@@ -1,7 +1,4 @@
-export {
-  getDetailsTabPubSubSectionForTopologySideBar,
-  getResourceTabPubSubSectionForTopologySidebar,
-} from './knative-pubsub-tab-sections';
+export { getResourceTabPubSubSectionForTopologySidebar } from './knative-pubsub-tab-sections';
 
 export {
   getKnativeSidepanelDomainMappingsSection,
@@ -22,3 +19,5 @@ export {
   getKnativeSidepanelDeploymentSection,
   getKnativeSidepanelConfigurationsSection,
 } from './knative-revision-tab-sections';
+
+export { getKnativeSidepanelSinkSection } from './knative-eventsource-tab-sections';
