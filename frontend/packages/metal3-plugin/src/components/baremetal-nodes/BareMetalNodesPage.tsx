@@ -43,13 +43,13 @@ const flattenResources = (resources: {
     const machine = machinesByNodeName[nodeName];
     const host = hostsByMachineName[getName(machine)];
     const nodeMaintenance = maintenancesByNodeName[nodeName];
-    const csr = getNodeServerCSR(csrs.data, node);
+    const csr = getNodeServerCSR(csrs?.data, node);
     const status = bareMetalNodeStatus({ node, nodeMaintenance, csr });
     // TODO(jtomasek): name is needed to make 'name' textFilter work.
     // Remove it when it is possible to pass custom textFilter as a function
     return { metadata: { name: nodeName }, host, machine, node, nodeMaintenance, status, csr };
   });
-  const csrBundle = getNodeClientCSRs(csrs.data);
+  const csrBundle = getNodeClientCSRs(csrs?.data);
   return [...csrBundle, ...nodeBundle];
 };
 
