@@ -77,7 +77,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
     )
     .then(({ isValid, ...tabState }: ResultsWrapper) => {
       const vm = tabState.requestResults[0]?.content?.data;
-      if (enableSSHService) {
+      if (vm && enableSSHService) {
         createOrDeleteSSHService(vm, enableSSHService);
       }
       if (sysprepData?.[AUTOUNATTEND] || sysprepData?.[UNATTEND]) {
