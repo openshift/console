@@ -84,6 +84,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.pipelinesOperatorCard).click();
         break;
       }
+      case 'Red Hat CodeReady Workspaces':
+      case operators.RedHatCodereadyWorkspaces: {
+        cy.get(operatorsPO.operatorHub.redHatCodeReadyWorkspacesCard).click();
+        break;
+      }
       case 'OpenShift Serverless Operator':
       case operators.ServerlessOperator: {
         cy.get(operatorsPO.operatorHub.serverlessOperatorCard).click();
@@ -99,22 +104,14 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.apacheKafkaOperatorCard).click();
         break;
       }
-      case 'Red Hat Camel K Operator':
+      case 'Red Hat Integration - Camel K':
       case operators.RedHatIntegrationCamelK: {
         cy.get(operatorsPO.operatorHub.redHatCamelKOperatorCard).click();
         break;
       }
-      case 'Apache Camel K Operator':
+      case 'Camel K Operator':
       case operators.ApacheCamelKOperator: {
         cy.get(operatorsPO.operatorHub.apacheCamelKOperatorCard).click();
-        modal.shouldBeOpened();
-        modal.submit();
-        modal.shouldBeClosed();
-        break;
-      }
-      case 'Knative Apache Camel K Operator':
-      case operators.KnativeApacheCamelOperator: {
-        cy.get(operatorsPO.operatorHub.knativeApacheCamelKOperatorCard).click();
         modal.shouldBeOpened();
         modal.submit();
         modal.shouldBeClosed();

@@ -1,4 +1,6 @@
+import * as fs from 'fs';
 import * as path from 'path';
+import * as findUp from 'find-up';
 import * as webpack from 'webpack';
 import { extensionsFile, pluginManifestFile } from '../constants';
 import { ConsoleExtensionsJSON } from '../schema/console-extensions';
@@ -8,11 +10,22 @@ import { parseJSONC } from '../utils/jsonc';
 import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { SchemaValidator } from '../validation/SchemaValidator';
 
+export const loadSchema = (relativePath: string) => {
+  const pkgDir = path.dirname(findUp.sync('package.json', { cwd: __dirname }));
+
+  const schemaPath = [
+    path.resolve(pkgDir, 'schema'),
+    path.resolve(pkgDir, 'generated/schema'),
+  ].find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
+
+  return require(path.resolve(schemaPath, relativePath)).default;
+};
+
 export const validateExtensionsFileSchema = (
   ext: ConsoleExtensionsJSON,
   description = extensionsFile,
 ) => {
-  const schema = require('../../schema/console-extensions').default;
+  const schema = loadSchema('console-extensions');
   return new SchemaValidator(description).validate(schema, ext);
 };
 
@@ -45,6 +58,7 @@ export class ConsoleAssetPlugin {
       displayName: pkg.consolePlugin.displayName,
       description: pkg.consolePlugin.description,
       dependencies: pkg.consolePlugin.dependencies,
+      disableStaticPlugins: pkg.consolePlugin.disableStaticPlugins,
       extensions: ext,
     };
   }

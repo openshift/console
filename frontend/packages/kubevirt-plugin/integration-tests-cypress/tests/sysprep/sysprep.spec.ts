@@ -1,5 +1,5 @@
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
+import { ProvisionSource } from '../../utils/const/provisionSource';
 
 const vmName = `${testName}-vm-advanced-wizard`;
 
@@ -11,12 +11,7 @@ describe('ID (CNV-6821) Sysprep testing', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   it('should navigate to advanced wizard - advanced tab', () => {

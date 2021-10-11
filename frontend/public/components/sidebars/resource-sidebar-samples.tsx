@@ -79,7 +79,7 @@ const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
 
 interface ResourceSidebarSnippetProps {
   snippet: Sample;
-  insertSnippetYaml(id: string, yaml: string, reference: string);
+  insertSnippetYaml: (id: string, yaml: string, reference: string) => void;
 }
 
 const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
@@ -193,9 +193,9 @@ export const ResourceSidebarSamples: React.FC<ResourceSidebarSamplesProps> = ({
   );
 };
 
-type LoadSampleYaml = (id: string, yaml: string, kind: string) => void;
+export type LoadSampleYaml = (id: string, yaml: string, kind: string) => void;
 
-type DownloadSampleYaml = (id: string, yaml: string, kind: string) => void;
+export type DownloadSampleYaml = (id: string, yaml: string, kind: string) => void;
 
 type ResourceSidebarSampleProps = {
   sample: Sample;

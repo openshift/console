@@ -1,0 +1,31 @@
+.odf-security-kms-connection {
+    padding-left: var(--pf-global--spacer--lg);
+  
+    &__form-body {
+      padding: var(--pf-global--spacer--md);
+    }
+  
+    &__form-body--small-padding {
+      padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0;
+    }
+  
+    &__form-alert {
+      margin: var(--pf-global--spacer--md);
+    }
+  
+    &__form-checkbox {
+      margin-top: var(--pf-global--spacer--md);
+    }
+  
+    &__pv-title {
+      display: inline-block;
+  
+      &--padding {
+        padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) 0;
+      }
+    }
+  }
+
+.odf-security-encryption {
+  padding-bottom: var(--pf-global--spacer--md);
+}

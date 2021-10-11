@@ -72,7 +72,7 @@ describe('EnvironmentVariablesSection', () => {
 
   it('should add new row with resourse and key dropdowns when (+) Add ConfigMap or Secret button is clicked', async () => {
     const addCMSButton = screen.getByRole('button', {
-      name: /public~add from configmap or secret/i,
+      name: /add from configmap or secret/i,
     });
 
     fireEvent.click(addCMSButton);
@@ -92,7 +92,7 @@ describe('EnvironmentVariablesSection', () => {
   });
 
   it('should remove row when (-) button is clicked', async () => {
-    const deleteButtons = screen.getAllByRole('button', { name: /public~delete/i });
+    const deleteButtons = screen.getAllByRole('button', { name: /delete/i });
 
     fireEvent.click(deleteButtons[0]);
 

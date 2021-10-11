@@ -7,7 +7,7 @@ import {
   RepoMetadata,
   RepoStatus,
 } from '../types';
-import { detectBuildTypes, isModernWebApp } from '../utils';
+import { detectBuildTypes, isModernWebApp } from '../utils/build-tool-detector';
 
 export abstract class BaseService {
   protected gitsource: GitSource;

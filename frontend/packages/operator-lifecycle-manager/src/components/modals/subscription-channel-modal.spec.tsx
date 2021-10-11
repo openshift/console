@@ -16,14 +16,6 @@ import {
 } from './subscription-channel-modal';
 import Spy = jasmine.Spy;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('SubscriptionChannelModal', () => {
   let wrapper: ShallowWrapper<SubscriptionChannelModalProps>;
   let k8sUpdate: Spy;
@@ -82,7 +74,7 @@ describe('SubscriptionChannelModal', () => {
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('public~Save');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save');
   });
 
   it('renders a radio button for each available channel in the package', () => {

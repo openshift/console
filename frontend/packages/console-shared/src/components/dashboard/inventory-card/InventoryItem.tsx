@@ -13,7 +13,7 @@ import {
   DashboardsInventoryItemGroup as DynamicDashboardsInventoryItemGroup,
   isDashboardsInventoryItemGroup as isDynamicDashboardsInventoryItemGroup,
 } from '@console/dynamic-plugin-sdk';
-import { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { pluralize } from '@console/internal/components/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';

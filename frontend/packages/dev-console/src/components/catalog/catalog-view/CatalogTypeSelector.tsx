@@ -23,11 +23,12 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
     () =>
       catalogTypes.map(
         (type) =>
-          type.description && (
+          type.description &&
+          catalogTypeCounts[type.value] > 0 && (
             <SyncMarkdownView key={type.value} content={type.description} inline />
           ),
       ),
-    [catalogTypes],
+    [catalogTypes, catalogTypeCounts],
   );
 
   return (

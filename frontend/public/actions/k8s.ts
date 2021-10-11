@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import { Dispatch } from 'react-redux';
 import { ActionType as Action, action } from 'typesafe-actions';
+import { FilterValue } from '@console/dynamic-plugin-sdk';
 
 import {
   cacheResources,
@@ -71,7 +72,7 @@ export const getResources = () => (dispatch: Dispatch) => {
     });
 };
 
-export const filterList = (id: string, name: string, value: string) =>
+export const filterList = (id: string, name: string, value: FilterValue) =>
   action(ActionType.FilterList, { id, name, value });
 
 export const startWatchK8sObject = (id: string) => action(ActionType.StartWatchK8sObject, { id });
@@ -310,12 +311,17 @@ export const watchAPIServices = () => (dispatch, getState) => {
     )
     .catch(() => {
       const poller = () =>
-        coFetchJSON('api/kubernetes/apis').then((d) => {
-          if (d.groups.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
-            dispatch(getResources());
-          }
-          dispatch(setAPIGroups(d.groups.length));
-        });
+        coFetchJSON('api/kubernetes/apis')
+          .then((d) => {
+            if (d.groups.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
+              dispatch(getResources());
+            }
+            dispatch(setAPIGroups(d.groups.length));
+          })
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.warn('Could not fetch API groups', e);
+          });
 
       POLLs[apiGroups] = setInterval(poller, 30 * 1000);
       poller();

@@ -64,6 +64,38 @@ Then('user will see Explore new developer features', () => {
   cy.byTestID('card developer-features').should('be.visible');
 });
 
+Then(
+  'user will see Create Application using Samples, Build with guided documentation and Explore new developer features under Getting started resources section',
+  () => {
+    cy.get(addPagePO.gettingStarted).should('be.visible');
+    cy.byTestID('card samples').should('be.visible');
+    cy.byTestID('card quick-start').should('be.visible');
+    cy.byTestID('card developer-features').should('be.visible');
+  },
+);
+
+Then(
+  'user will see All services, Database, Operator Backed and Helm Chart options under Developer Catalog section',
+  () => {
+    verifyAddPage.verifyAddPageCard('Developer Catalog');
+    verifyAddPage.verifyAddPageCard('All services');
+    verifyAddPage.verifyAddPageCard('Database');
+    verifyAddPage.verifyAddPageCard('Operator Backed');
+    verifyAddPage.verifyAddPageCard('Helm Chart');
+  },
+);
+
+Then('user will see Import from Git card under Git Repository section', () => {
+  verifyAddPage.verifyAddPageCard('Git Repository');
+  verifyAddPage.verifyAddPageCard('From Git');
+});
+
+Then('user will see Import YAML, Upload JAR file under From Local Machine section', () => {
+  verifyAddPage.verifyAddPageCard('Import YAML');
+  verifyAddPage.verifyAddPageCard('Upload JAR file');
+  verifyAddPage.verifyAddPageCard('From Local Machine');
+});
+
 Then('user will see {string} card', (addPageCard: string) => {
   verifyAddPage.verifyAddPageCard(addPageCard);
 });

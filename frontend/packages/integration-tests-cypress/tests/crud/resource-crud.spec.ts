@@ -9,6 +9,14 @@ import { listPage, ListPageSelector } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
 
+type TestDefinition = {
+  kind: string;
+  namespaced?: boolean;
+  humanizeKind?: boolean;
+  skipYamlReloadTest?: boolean;
+  skipYamlSaveTest?: boolean;
+};
+
 describe('Kubernetes resource CRUD operations', () => {
   before(() => {
     cy.login();
@@ -24,14 +32,11 @@ describe('Kubernetes resource CRUD operations', () => {
     cy.logout();
   });
 
-  const k8sObjs = OrderedMap<
-    string,
-    { kind: string; namespaced?: boolean; humanizeKind?: boolean }
-  >()
+  const k8sObjs = OrderedMap<string, TestDefinition>()
     .set('pods', { kind: 'Pod' })
     .set('services', { kind: 'Service' })
     .set('serviceaccounts', { kind: 'ServiceAccount', humanizeKind: false })
-    .set('secrets', { kind: 'Secret' })
+    .set('secrets', { kind: 'Secret', skipYamlReloadTest: true })
     .set('configmaps', { kind: 'ConfigMap', humanizeKind: false })
     .set('persistentvolumes', {
       kind: 'PersistentVolume',
@@ -47,7 +52,7 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('cronjobs', { kind: 'CronJob', humanizeKind: false })
     .set('jobs', { kind: 'Job' })
     .set('daemonsets', { kind: 'DaemonSet', humanizeKind: false })
-    .set('deployments', { kind: 'Deployment' })
+    .set('deployments', { kind: 'Deployment', skipYamlReloadTest: true, skipYamlSaveTest: true })
     .set('replicasets', { kind: 'ReplicaSet', humanizeKind: false })
     .set('replicationcontrollers', { kind: 'ReplicationController', humanizeKind: false })
     .set('persistentvolumeclaims', {
@@ -71,12 +76,20 @@ describe('Kubernetes resource CRUD operations', () => {
       kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
       namespaced: false,
     });
-  const openshiftObjs = OrderedMap<
-    string,
-    { kind: string; namespaced?: boolean; humanizeKind?: boolean }
-  >()
-    .set('deploymentconfigs', { kind: 'DeploymentConfig', humanizeKind: false })
-    .set('buildconfigs', { kind: 'BuildConfig', humanizeKind: false })
+
+  const openshiftObjs = OrderedMap<string, TestDefinition>()
+    .set('deploymentconfigs', {
+      kind: 'DeploymentConfig',
+      humanizeKind: false,
+      skipYamlReloadTest: true,
+      skipYamlSaveTest: true,
+    })
+    .set('buildconfigs', {
+      kind: 'BuildConfig',
+      humanizeKind: false,
+      skipYamlReloadTest: true,
+      skipYamlSaveTest: true,
+    })
     .set('imagestreams', { kind: 'ImageStream', humanizeKind: false })
     .set('routes', { kind: 'Route' })
     .set('user.openshift.io~v1~Group', {
@@ -90,11 +103,18 @@ describe('Kubernetes resource CRUD operations', () => {
     'StorageClass',
     'Route',
     'PersistentVolumeClaim',
-    'NetworkPolicy',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
+  const resourcesWithSyncedEditor = new Set(['NetworkPolicy']);
 
-  testObjs.forEach(({ kind, namespaced = true, humanizeKind = true }, resource) => {
+  testObjs.forEach((testObj, resource) => {
+    const {
+      kind,
+      namespaced = true,
+      humanizeKind = true,
+      skipYamlReloadTest,
+      skipYamlSaveTest,
+    } = testObj;
     // Ex: to execute just the Pod crud tests, set environment var 'cypress_k8sTestResource=Pod' before running cypress
     if (Cypress.env('k8sTestResource') && kind !== Cypress.env('k8sTestResource')) {
       return;
@@ -113,6 +133,9 @@ describe('Kubernetes resource CRUD operations', () => {
         }
         if (resourcesWithCreationForm.has(kind)) {
           cy.byTestID('yaml-link').click();
+        }
+        if (resourcesWithSyncedEditor.has(kind)) {
+          cy.byTestID('YAML view-radio-input').click();
         }
         // sidebar needs to be fully loaded, else it sometimes overlays the Create button
         cy.byTestID('resource-sidebar').should('exist');
@@ -187,11 +210,11 @@ describe('Kubernetes resource CRUD operations', () => {
           }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
         listPage.rows.clickKebabAction(name, editKind(kind, humanizeKind));
-        if (!['Deployment', 'DeploymentConfig'].includes(kind)) {
-          if (kind !== 'Secret') {
-            yamlEditor.isLoaded();
-            yamlEditor.clickReloadButton();
-          }
+        if (!skipYamlReloadTest) {
+          yamlEditor.isLoaded();
+          yamlEditor.clickReloadButton();
+        }
+        if (!skipYamlSaveTest) {
           yamlEditor.clickSaveCreateButton();
         }
       });

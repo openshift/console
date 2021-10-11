@@ -22,9 +22,9 @@ export const addPage = {
         break;
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
-        cy.byTestID('item import-from-dockerfile').click();
+        cy.byTestID('item import-from-git').click();
         cy.testA11y('Import from Docker file');
-        detailsPage.titleShouldContain(pageTitle.DockerFile);
+        detailsPage.titleShouldContain(pageTitle.Git);
         break;
       case 'Developer Catalog':
       case 'From Catalog':
@@ -80,9 +80,9 @@ export const addPage = {
         cy.testA11y(pageTitle.Channel);
         break;
       case addOptions.DevFile:
-        cy.byTestID('item import-from-devfile').click();
-        detailsPage.titleShouldContain(pageTitle.DevFile);
-        cy.testA11y(pageTitle.DevFile);
+        cy.byTestID('item import-from-git').click();
+        detailsPage.titleShouldContain(pageTitle.Git);
+        cy.testA11y(pageTitle.Git);
         break;
       case addOptions.UploadJARFile:
         cy.byTestID('item upload-jar').click();
@@ -121,8 +121,8 @@ export const verifyAddPage = {
       case 'Samples':
         cy.byTestID('card samples').should('be.visible');
         break;
-      case 'Serverless':
-        cy.byTestID('card serverless').should('be.visible');
+      case 'Eventing':
+        cy.byTestID('card eventing').should('be.visible');
         break;
       case 'Channel':
         cy.byTestID('item knative-eventing-channel').should('be.visible');
@@ -146,10 +146,10 @@ export const verifyAddPage = {
         cy.byTestID('item import-from-git').should('be.visible');
         break;
       case 'From Devfile':
-        cy.byTestID('item import-from-devfile').should('be.visible');
+        cy.byTestID('item import-from-git').should('be.visible');
         break;
       case 'From Dockerfile':
-        cy.byTestID('item import-from-dockerfile').should('be.visible');
+        cy.byTestID('item import-from-git').should('be.visible');
         break;
       case 'Import YAML':
         cy.byTestID('item import-yaml').should('be.visible');

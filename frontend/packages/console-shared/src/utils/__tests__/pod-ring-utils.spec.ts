@@ -1,8 +1,8 @@
-import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { DeploymentConfigModel, PodModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin';
+import { t } from '../../../../../__mocks__/i18next';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { ExtPodKind } from '../../types';
 import {
@@ -14,9 +14,6 @@ import {
 } from '../__mocks__/pod-utils-test-data';
 import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
 import * as utils from '../pod-utils';
-
-const t = (key): TFunction => key;
-const i18nNS = 'console-shared';
 
 describe('pod-ring utils:', () => {
   it('should return proper title, subtitle for podRingLabel', () => {
@@ -35,7 +32,7 @@ describe('pod-ring utils:', () => {
     const mockDeploymentData = _.set(_.cloneDeep(deployment), 'spec.replicas', 0);
     expect(
       podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPod as ExtPodKind], t).title,
-    ).toEqual(`${i18nNS}~Scaled to 0`);
+    ).toEqual('Scaled to 0');
     expect(
       podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPod as ExtPodKind], t)
         .subTitle,
@@ -52,7 +49,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('1');
-    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~Scaling to {{podSubTitle}}`);
+    expect(podRingLabelData.subTitle).toEqual('Scaling to 2');
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeTruthy();
     expect(podRingLabelData.reversed).toBeFalsy();
@@ -69,7 +66,7 @@ describe('pod-ring utils:', () => {
     );
 
     expect(podRingLabelData.title).toEqual('0');
-    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~Scaling to {{podSubTitle}}`);
+    expect(podRingLabelData.subTitle).toEqual('Scaling to 1');
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeTruthy();
     expect(podRingLabelData.reversed).toBeFalsy();
@@ -85,7 +82,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('0');
-    expect(podRingLabelData.subTitle).toEqual(`${i18nNS}~Scaling to {{podSubTitle}}`);
+    expect(podRingLabelData.subTitle).toEqual('Scaling to 1');
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeTruthy();
     expect(podRingLabelData.reversed).toBeFalsy();

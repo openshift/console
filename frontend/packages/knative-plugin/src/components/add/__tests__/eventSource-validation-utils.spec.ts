@@ -1,11 +1,8 @@
-import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { t } from '../../../../../../__mocks__/i18next';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
 import { eventSourceValidationSchema } from '../eventSource-validation-utils';
 import { EventSources } from '../import-types';
-
-const t = (key): TFunction => key;
-const i18nNS = 'knative-plugin';
 
 describe('Event Source ValidationUtils', () => {
   describe('CronJobSource : Event Source Validation', () => {
@@ -34,7 +31,7 @@ describe('Event Source ValidationUtils', () => {
       await eventSourceValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.message).toBe('Required');
           expect(err.type).toBe('required');
         });
     });
@@ -67,7 +64,7 @@ describe('Event Source ValidationUtils', () => {
       await eventSourceValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.message).toBe('Required');
           expect(err.type).toBe('required');
         });
     });
@@ -94,7 +91,7 @@ describe('Event Source ValidationUtils', () => {
       await eventSourceValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.message).toBe('Required');
           expect(err.type).toBe('min');
         });
     });
@@ -133,7 +130,7 @@ describe('Event Source ValidationUtils', () => {
       await eventSourceValidationSchema(t)
         .validate(ContainerSourceData)
         .catch((err) => {
-          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.message).toBe('Required');
           expect(err.type).toBe('required');
         });
     });
@@ -160,7 +157,7 @@ describe('Event Source ValidationUtils', () => {
       await eventSourceValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(`${i18nNS}~Required`);
+          expect(err.message).toBe('Required');
           expect(err.type).toBe('required');
         });
     });

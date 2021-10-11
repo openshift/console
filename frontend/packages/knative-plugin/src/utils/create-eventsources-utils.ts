@@ -3,6 +3,7 @@ import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
+import { Perspective } from '@console/dynamic-plugin-sdk';
 import { checkAccess, history } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
@@ -15,7 +16,6 @@ import {
   Descriptor,
   SpecCapability,
 } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
-import { Perspective } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
@@ -88,8 +88,8 @@ export const isSecretKeyRefPresent = (dataObj: {
   secretKeyRef: { name: string; key: string };
 }): boolean => !!(dataObj?.secretKeyRef?.name || dataObj?.secretKeyRef?.key);
 
-export const getKafkaSourceResource = (sourceFormData: any): K8sResourceKind => {
-  const baseResource = getEventSourcesDepResource(sourceFormData.formData);
+export const getKafkaSourceResource = (formData: any): K8sResourceKind => {
+  const baseResource = getEventSourcesDepResource(formData);
   const { net } = baseResource.spec;
   baseResource.spec.net = {
     ...net,
@@ -125,18 +125,23 @@ export const loadYamlData = (formData: EventSourceSyncFormData) => {
   return yamlDataObj;
 };
 
+export const getEventSourceResource = (formData: EventSourceFormData) => {
+  switch (formData.type) {
+    case EventSources.KafkaSource:
+      return getKafkaSourceResource(formData);
+    default:
+      return getEventSourcesDepResource(formData);
+  }
+};
+
 export const getCatalogEventSourceResource = (
   sourceFormData: EventSourceSyncFormData,
 ): K8sResourceKind => {
   if (sourceFormData.editorType === EditorType.YAML) {
     return loadYamlData(sourceFormData);
   }
-  switch (sourceFormData.formData.type) {
-    case EventSources.KafkaSource:
-      return getKafkaSourceResource(sourceFormData);
-    default:
-      return getEventSourcesDepResource(sourceFormData.formData);
-  }
+  const { formData } = sourceFormData;
+  return getEventSourceResource(formData);
 };
 
 export const getEventSourceData = (source: string) => {
@@ -272,16 +277,14 @@ export const getKameletMetadata = (kamelet: K8sResourceKind): EventSourceMetaDat
   if (kamelet?.kind === CamelKameletModel.kind) {
     const {
       kind,
-      metadata: { annotations },
-      spec: {
-        definition: { title, description },
-      },
+      metadata: { name, annotations },
+      spec,
     } = kamelet;
     const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
     const iconUrl = getEventSourceIcon(kind, kamelet);
     normalizedKamelet = {
-      name: title,
-      description,
+      name: spec?.definition?.title || name,
+      description: spec?.definition?.description || '',
       provider,
       iconUrl,
     };
@@ -335,13 +338,13 @@ export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
   return servers;
 };
 
-export const handleRedirect = (
+export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
-  const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
+  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
   history.push(redirectURL);
 };
 

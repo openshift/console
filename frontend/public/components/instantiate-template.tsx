@@ -6,7 +6,9 @@ import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ANNOTATIONS, withActivePerspective } from '@console/shared';
-import { isPerspective, Perspective, withExtensions } from '@console/plugin-sdk';
+
+import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
+import { withExtensions } from '@console/plugin-sdk';
 import * as catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
   getImageForIconClass,
@@ -217,7 +219,10 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
           const activeExtension = perspectiveExtensions.find(
             (p) => p.properties.id === activePerspective,
           );
-          history.push(activeExtension.properties.getImportRedirectURL(namespace));
+          (async () => {
+            const url = (await activeExtension.properties.importRedirectURL())(namespace);
+            history.push(url);
+          })();
         });
       })
       .catch((err) => this.setState({ inProgress: false, error: err.message }));

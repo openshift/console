@@ -33,7 +33,7 @@ describe('Pipeline sidebar overview', () => {
       spec: {},
     }));
     const wrapper = shallow(<PipelineOverview {...props} />);
-    expect(wrapper.find('Link').text()).toBe('View all {{pipelineRunsLength}}');
+    expect(wrapper.find('Link').text()).toBe('View all 4');
   });
 
   it('should show not view all link if there exactly MAX_VISIBLE pipelineruns', () => {

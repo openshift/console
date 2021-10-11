@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { BuildConfigData } from '../api/topology-types';
-import { CodeRef, ExtensionDeclaration } from '../types';
+import { Extension, CodeRef, ExtensionDeclaration } from '../types';
 import { K8sResourceCommon } from './console-types';
+import { BuildConfigData } from './topology-types';
 
 /** DetailsTab contributes a tab for the topology details panel. */
 export type DetailsTab = ExtensionDeclaration<
@@ -157,6 +156,8 @@ export type PodsAdapterDataType<E = K8sResourceCommon> = {
   pods: E[];
   loaded: boolean;
   loadError: string;
+  emptyText?: string;
+  allPodsLink?: string;
   buildConfigData?: BuildConfigData;
 };
 

@@ -1,8 +1,9 @@
 import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
-import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
+import { isPerspective, Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { referenceForExtensionModel } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk';
 import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
-import { useActivePerspective } from './useActivePerspective';
 import { useTelemetry } from './useTelemetry';
 import { useUserSettingsCompatibility } from './useUserSettingsCompatibility';
 
@@ -19,7 +20,12 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
   const defaultPins = useMemo(
     () =>
       perspectiveExtensions.reduce(
-        (acc, e) => ({ ...acc, [e.properties.id]: e.properties.defaultPins || [] }),
+        (acc, e) => ({
+          ...acc,
+          [e.properties.id]: (e.properties.defaultPins || []).map((gvk) =>
+            referenceForExtensionModel(gvk),
+          ),
+        }),
         {},
       ),
     [perspectiveExtensions],

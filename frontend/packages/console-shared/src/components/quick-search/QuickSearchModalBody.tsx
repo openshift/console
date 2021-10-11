@@ -44,7 +44,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   viewContainer,
 }) => {
   const DEFAULT_HEIGHT_WITH_NO_ITEMS = 60;
-  const DEFAULT_HEIGHT_WITH_ITEMS = 400;
+  const DEFAULT_HEIGHT_WITH_ITEMS = 483;
   const MIN_HEIGHT = 240;
   const MIN_WIDTH = 225;
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
@@ -255,6 +255,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       minWidth={minWidth}
       bounds={draggableBoundary}
       onResizeStop={handleResizeStop}
+      dragHandleClassName="ocs-quick-search-bar"
+      cancel=".ocs-quick-search-bar__input"
       enableResizing={
         catalogItems === null || catalogItems?.length === 0
           ? {

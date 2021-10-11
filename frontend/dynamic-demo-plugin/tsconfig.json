@@ -8,13 +8,7 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@console/dynamic-plugin-sdk/api": ["node_modules/@console/dynamic-plugin-sdk/lib/api/api"],
-      "@console/dynamic-plugin-sdk/webpack": [
-        "node_modules/@console/dynamic-plugin-sdk/lib/webpack"
-      ]
-    }
+    "skipLibCheck": true
   },
   "include": ["src"]
 }

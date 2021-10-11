@@ -29,6 +29,7 @@ const ExecNewPodForm: React.FC<ExecNewPodFormProps> = ({
       <DropdownField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.containerName`}
         label={t('devconsole~Container name')}
+        title={t('devconsole~Select container name')}
         items={getContainerNames(containers)}
         fullWidth
         required
@@ -52,7 +53,6 @@ const ExecNewPodForm: React.FC<ExecNewPodFormProps> = ({
         label={t('devconsole~Environment variables (runtime only)')}
         envs={deploymentStrategy[dataAttribute][lifecycleHook].lch.execNewPod.env ?? []}
         obj={resourceObj}
-        envPath={['spec', 'template', 'spec', 'containers']}
       />
       <InputField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.volumes`}

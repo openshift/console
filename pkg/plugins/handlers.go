@@ -87,8 +87,18 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 	p.proxyPluginRequest(pluginServiceRequestURL, pluginName, w, r)
 }
 
-func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, r *http.Request) {
-	resp, err := p.Client.Get(requestURL.String())
+func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, orignalRequest *http.Request) {
+	newRequest, err := http.NewRequest("GET", requestURL.String(), nil)
+	if err != nil {
+		errMsg := fmt.Sprintf("failed to create GET request for %q plugin: %v", pluginName, err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	proxy.CopyRequestHeaders(orignalRequest, newRequest)
+
+	resp, err := p.Client.Do(newRequest)
 	if err != nil {
 		errMsg := fmt.Sprintf("GET request for %q plugin failed: %v", pluginName, err)
 		klog.Error(errMsg)

@@ -9,32 +9,36 @@ import {
 } from '../../../public/components/factory/list-page';
 import { Firehose, PageHeading } from '../../../public/components/utils';
 
-const i18nNS = 'public';
-
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe(TextFilter.displayName, () => {
   let wrapper: ReactWrapper;
-  let label: string;
   let placeholder: string;
   let onChange: (value: string, event: React.FormEvent<HTMLInputElement>) => void;
   let defaultValue: string;
 
-  it('renders text input', () => {
+  it('renders text input without label', () => {
     onChange = () => null;
     defaultValue = '';
-    wrapper = mount(<TextFilter label={label} onChange={onChange} defaultValue={defaultValue} />);
+    wrapper = mount(<TextFilter onChange={onChange} defaultValue={defaultValue} />);
 
     const input = wrapper.find(TextInput);
 
     expect(input.props().type).toEqual('text');
-    expect(input.props().placeholder).toEqual(`${i18nNS}~Filter {{label}}...`);
+    expect(input.props().placeholder).toEqual('Filter ...');
+    expect(input.props().onChange).toEqual(onChange);
+    expect(input.props().defaultValue).toEqual(defaultValue);
+  });
+
+  it('renders text input with label', () => {
+    onChange = () => null;
+    defaultValue = '';
+    wrapper = mount(
+      <TextFilter label="resource" onChange={onChange} defaultValue={defaultValue} />,
+    );
+
+    const input = wrapper.find(TextInput);
+
+    expect(input.props().type).toEqual('text');
+    expect(input.props().placeholder).toEqual('Filter resource...');
     expect(input.props().onChange).toEqual(onChange);
     expect(input.props().defaultValue).toEqual(defaultValue);
   });

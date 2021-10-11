@@ -27,7 +27,6 @@ export const getAddPageUrl = (
   switch (type) {
     case ImportOptions.GIT:
       pageUrl = `/import/ns/${ns}`;
-      params.append('importType', 'git');
       contextSource &&
         params.append(
           QUERY_PROPERTIES.CONTEXT_ACTION,
@@ -44,19 +43,6 @@ export const getAddPageUrl = (
       break;
     case ImportOptions.CATALOG:
       pageUrl = `/catalog/ns/${ns}`;
-      break;
-    case ImportOptions.DOCKERFILE:
-      pageUrl = `/import/ns/${ns}`;
-      params.append('importType', 'docker');
-      contextSource &&
-        params.append(
-          QUERY_PROPERTIES.CONTEXT_ACTION,
-          JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
-        );
-      break;
-    case ImportOptions.DEVFILE:
-      pageUrl = `/import/ns/${ns}`;
-      params.append('importType', 'devfile');
       break;
     case ImportOptions.DATABASE:
       pageUrl = `/catalog/ns/${ns}`;

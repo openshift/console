@@ -5,14 +5,6 @@ import AddCardSectionEmptyState from '../AddCardSectionEmptyState';
 import { MasonryLayout } from '../layout/MasonryLayout';
 import { addActionExtensions, addActionGroupExtensions } from './add-page-test-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('AddCardSection', () => {
   type AddCardSectionProps = React.ComponentProps<typeof AddCardSection>;
   let wrapper: ShallowWrapper<AddCardSectionProps>;

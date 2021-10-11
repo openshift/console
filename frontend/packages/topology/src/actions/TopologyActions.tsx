@@ -11,9 +11,11 @@ type TopologyActionsProps = {
 const TopologyActions: React.FC<TopologyActionsProps> = ({ element }) => {
   const context = React.useMemo(() => {
     const resource = getResource(element);
+    const { csvName } = element.getData()?.data ?? {};
     return {
       'topology-actions': element,
-      [referenceFor(resource)]: resource,
+      ...(resource ? { [referenceFor(resource)]: resource } : {}),
+      ...(csvName ? { 'csv-actions': { csvName, resource } } : {}),
     };
   }, [element]);
   return (

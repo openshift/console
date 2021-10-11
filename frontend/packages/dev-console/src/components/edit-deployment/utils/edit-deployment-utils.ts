@@ -248,6 +248,9 @@ export const getTriggersAndImageStreamValues = (
         tag: imageName[1] ?? '',
         namespace: imageTrigger?.imageChangeParams.from.namespace ?? deployment.metadata.namespace,
       },
+      project: {
+        name: deployment.metadata.namespace,
+      },
     };
   }
 
@@ -266,6 +269,9 @@ export const getTriggersAndImageStreamValues = (
       tag: imageName[1] ?? '',
       namespace: imageTrigger?.from?.namespace ?? deployment.metadata.namespace,
     },
+    project: {
+      name: deployment.metadata.namespace,
+    },
   };
 };
 
@@ -275,9 +281,6 @@ export const convertDeploymentToEditForm = (
   const resourceType = getResourcesType(deployment);
   return {
     name: deployment.metadata.name,
-    project: {
-      name: deployment.metadata.namespace,
-    },
     resourceVersion: deployment.metadata.resourceVersion,
     deploymentStrategy: getStrategy(deployment, resourceType),
     containers: deployment.spec.template?.spec?.containers ?? [],
@@ -357,6 +360,7 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
     'recreateParams',
     'customParams',
     'imageStreamData',
+    'rollingUpdate',
   ]);
   switch (type) {
     case DeploymentStrategyType.recreateParams: {

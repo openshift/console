@@ -10,7 +10,7 @@ Feature: Knative Eventing Broker Support
               And user has created or selected namespace "aut-eventing-broker"
 
 
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Create Broker form: KE-10-TC01
             Given user is at create broker form
              Then user will see Form view default selected
@@ -18,18 +18,18 @@ Feature: Knative Eventing Broker Support
               And user will see Application drop down
               And user will see Name field for broker
 
-        
-        @regression @to-do @odc-5030
+
+        @regression @to-do
         Scenario: Create Broker using YAML view: KE-10-TC02
             Given user is at Add page
-             When user selects on "Broker" from "Serverless" card
+             When user selects on "Broker" from "Eventing" card
               And user selects "YAML view"
               And user clicks on Create button
              Then user will be redirected to Topology page
               And user will see the "default" broker created
 
-        
-        @smoke @to-do @odc-5030
+
+        @smoke @to-do
         Scenario: Sink event source to Broker: KE-10-TC03
             Given user has created broker "default"
               And user is at Add page
@@ -43,9 +43,9 @@ Feature: Knative Eventing Broker Support
              Then user will be redirected to Topology page
               And user will see "ping-source" event source created
               And user will see "ping-source" event source connected to "default" broker
- 
 
-        @regression @to-do @odc-5030
+
+        @regression @to-do
         Scenario: Sink multiple event sources to Broker: KE-10-TC04
             Given user has created or selected namespace "aut-eventing-multi-broker"
               And user has "ping-source" event source sinked to "default" broker

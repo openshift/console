@@ -5,16 +5,23 @@ Feature: CamelK Connector Event Sources
 
     #Scenarios of installing these operator has been included in operators.feature file
         Background:
-            Given user has installed Knative Apache Camelk Operator
+            Given user has installed Red Hat Integration - Camel K Operator
               And user has created or selected namespace "aut-knative-camel-event-source"
 
 
         @smoke
-        Scenario: CamelSource display in event sources add page: KC-02-TC01
+        Scenario: Kamelets display in event sources add page: KC-02-TC01
             Given user is at Add page
              When user clicks on "Event Sources" card
              Then user will be redirected to page with header name "Event Sources"
-              And user is able to see CamelSource event type
+              And user is able to see multiple sources of the kind kamelets
+
+
+        @regression @to-do
+        Scenario: Kamelets from Community provider in event sources page : KC-02-TC02
+            Given user is at Event Sources page
+             When user clicks on "Apache Software Foundation" provider filter
+             Then user is able to see community kamelets from "Apache Software Foundation" provider
 
 
         @regression @to-do

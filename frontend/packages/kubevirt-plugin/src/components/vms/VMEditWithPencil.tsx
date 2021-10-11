@@ -3,14 +3,21 @@ import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 
 type VMEditWithPencilProps = {
-  onEditClick: React.MouseEventHandler<HTMLButtonElement>;
+  onEditClick: React.MouseEventHandler;
   isEdit: boolean;
+  ButtonID?: string;
 };
 
-const VMEditWithPencil: React.FC<VMEditWithPencilProps> = ({ children, isEdit, onEditClick }) => {
+const VMEditWithPencil: React.FC<VMEditWithPencilProps> = ({
+  children,
+  isEdit,
+  onEditClick,
+  ButtonID,
+}) => {
   return (
     <Button
-      data-test="edit-annotations"
+      id={ButtonID}
+      data-test="edit-button"
       type="button"
       isInline
       isDisabled={!isEdit}

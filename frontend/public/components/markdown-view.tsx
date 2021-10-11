@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
-import { useForceRender } from '@console/shared';
+import { useForceRender, useResizeObserver } from '@console/shared';
 
 import './_markdown-view.scss';
 
@@ -170,38 +170,27 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   renderExtension,
 }) => {
   const [frame, setFrame] = React.useState<HTMLIFrameElement>();
+  const [frameHeight, setFrameHeight] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
-  const updateTimeoutHandle = React.useRef<number>();
 
-  const updateDimensions = React.useCallback(() => {
-    if (!frame?.contentWindow?.document.body.firstChild) {
-      return;
-    }
-    frame.style.height = `${frame.contentWindow.document.body.firstElementChild.scrollHeight}px`;
-
-    // Let the new height take effect, then reset again once we recompute
-    updateTimeoutHandle.current = setTimeout(() => {
-      if (exactHeight) {
-        frame.style.height = `${frame.contentWindow.document.body.firstElementChild.scrollHeight}px`;
-      } else {
-        // Increase by 15px for the case where a horizontal scrollbar might appear
-        frame.style.height = `${frame.contentWindow.document.body.firstElementChild.scrollHeight +
-          15}px`;
+  const updateDimensions = React.useCallback(
+    _.debounce(() => {
+      if (!frame?.contentWindow?.document?.body?.firstElementChild) {
+        return;
       }
-    });
-  }, [frame, exactHeight]);
-
-  React.useEffect(
-    () => () => {
-      clearTimeout(updateTimeoutHandle.current);
-    },
-    [],
+      setFrameHeight(
+        frame.contentWindow.document.body.firstElementChild.scrollHeight + (exactHeight ? 0 : 15),
+      );
+    }, 100),
+    [frame, exactHeight],
   );
 
   const onLoad = React.useCallback(() => {
     updateDimensions();
     setLoaded(true);
   }, [updateDimensions]);
+
+  useResizeObserver(updateDimensions, frame);
 
   // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
   const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
@@ -245,7 +234,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
       <iframe
         sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
         srcDoc={contents}
-        style={{ border: '0px', display: 'block', width: '100%', height: '0' }}
+        style={{ border: '0px', display: 'block', width: '100%', height: frameHeight }}
         ref={(r) => setFrame(r)}
         onLoad={() => onLoad()}
       />

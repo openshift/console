@@ -26,6 +26,7 @@ import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
+import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
@@ -41,7 +42,7 @@ import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
-import '../i18n';
+import { init as initI18n } from '../i18n';
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
@@ -49,11 +50,13 @@ import '@patternfly/quickstarts/dist/quickstarts.min.css';
 // PF4 Imports
 import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core';
 
-const breakpointMD = 768;
+const breakpointMD = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 import { graphQLReady } from '../graphql/client';
+
+initI18n();
 
 // Disable linkify 'fuzzy links' across the app.
 // Only linkify url strings beginning with a proper protocol scheme.
@@ -162,9 +165,9 @@ class App_ extends React.PureComponent {
     const content = (
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+        <ConsoleNotifier location="BannerTop" />
         <QuickStartDrawer>
           <div id="app-content" className="co-m-app__content">
-            <ConsoleNotifier location="BannerTop" />
             <Page
               // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
               mainTabIndex={null}
@@ -193,26 +196,29 @@ class App_ extends React.PureComponent {
             </Page>
             <CloudShell />
             <GuidedTour />
-            <ConsoleNotifier location="BannerBottom" />
           </div>
           <div id="modal-container" role="dialog" aria-modal="true" />
         </QuickStartDrawer>
+        <ConsoleNotifier location="BannerBottom" />
       </>
     );
 
     return (
-      <DetectPerspective>
-        <DetectNamespace>
-          {contextProviderExtensions.reduce(
-            (children, e) => (
-              <EnhancedProvider key={e.uid} {...e.properties}>
-                {children}
-              </EnhancedProvider>
-            ),
-            content,
-          )}
-        </DetectNamespace>
-      </DetectPerspective>
+      <>
+        <DetectPerspective>
+          <DetectNamespace>
+            {contextProviderExtensions.reduce(
+              (children, e) => (
+                <EnhancedProvider key={e.uid} {...e.properties}>
+                  {children}
+                </EnhancedProvider>
+              ),
+              content,
+            )}
+          </DetectNamespace>
+        </DetectPerspective>
+        <DetectLanguage />
+      </>
     );
   }
 }
@@ -293,6 +299,7 @@ const CaptureTelemetry = React.memo(() => {
 const PollConsoleUpdates = React.memo(() => {
   const toastContext = useToast();
   const { t } = useTranslation();
+  const [isToastOpen, setToastOpen] = React.useState(false);
   const [pluginsData, pluginsError] = useURLPoll(
     `${window.SERVER_FLAGS.basePath}api/check-updates`,
   );
@@ -307,7 +314,7 @@ const PollConsoleUpdates = React.memo(() => {
   const pluginsChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
   const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
 
-  if (pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
+  if (!isToastOpen && pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
     toastContext.addToast({
       variant: AlertVariant.warning,
       title: t('public~Web console update is available'),
@@ -323,7 +330,10 @@ const PollConsoleUpdates = React.memo(() => {
           callback: () => window.location.reload(),
         },
       ],
+      onClose: () => setToastOpen(false),
+      onRemove: () => setToastOpen(false),
     });
+    setToastOpen(true);
   }
 
   return null;
@@ -356,8 +366,7 @@ graphQLReady.onReady(() => {
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
-    const { stack } = error;
-    const formattedStack = stack?.replace(/\\n/g, '\n');
+    const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     window.windowError = `unhandled error: ${message} ${formattedStack || ''}`;
     // eslint-disable-next-line no-console
     console.error(window.windowError);

@@ -41,7 +41,12 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   };
 
   const onCreateOption = (newVal: string) => {
-    setNewOptions([...newOptions, { value: newVal, disabled: false }]);
+    const hasDuplicateOption = [...newOptions, ...options].find(
+      (option) => option.value === newVal,
+    );
+    if (!hasDuplicateOption) {
+      setNewOptions([...newOptions, { value: newVal, disabled: false }]);
+    }
   };
 
   const onClearSelection = () => {

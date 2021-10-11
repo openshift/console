@@ -49,6 +49,7 @@ export const CLOUD_SHELL_LABEL = 'console.openshift.io/terminal';
 export const CLOUD_SHELL_CREATOR_LABEL = 'controller.devfile.io/creator';
 export const CLOUD_SHELL_RESTRICTED_ANNOTATION = 'controller.devfile.io/restricted-access';
 export const CLOUD_SHELL_STOPPED_BY_ANNOTATION = 'controller.devfile.io/stopped-by';
+export const CLOUD_SHELL_SOURCE_ANNOTATION = 'controller.devfile.io/devworkspace-source';
 export const CLOUD_SHELL_PROTECTED_NAMESPACE = 'openshift-terminal';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
@@ -62,13 +63,13 @@ const v1alpha1DevworkspaceComponent = [
   },
 ];
 
-const devWorkspaceComponent = [
+const devWorkspaceComponent = (namespace: string) => [
   {
     name: 'web-terminal-tooling',
     plugin: {
       kubernetes: {
         name: 'web-terminal-tooling',
-        namespace: 'openshift-operators',
+        namespace,
       },
     },
   },
@@ -77,7 +78,7 @@ const devWorkspaceComponent = [
     plugin: {
       kubernetes: {
         name: 'web-terminal-exec',
-        namespace: 'openshift-operators',
+        namespace,
       },
     },
   },
@@ -85,19 +86,21 @@ const devWorkspaceComponent = [
 
 export const newCloudShellWorkSpace = (
   name: string,
-  namespace: string,
+  workspaceNamespace: string,
+  operatorNamespace: string,
   version: string,
 ): CloudShellResource => ({
   apiVersion: `workspace.devfile.io/${version}`,
   kind: 'DevWorkspace',
   metadata: {
     name,
-    namespace,
+    namespace: workspaceNamespace,
     labels: {
       [CLOUD_SHELL_LABEL]: 'true',
     },
     annotations: {
       [CLOUD_SHELL_RESTRICTED_ANNOTATION]: 'true',
+      [CLOUD_SHELL_SOURCE_ANNOTATION]: 'web-terminal',
     },
   },
   spec: {
@@ -107,7 +110,7 @@ export const newCloudShellWorkSpace = (
       components:
         version === v1alpha1WorkspaceModel.apiVersion
           ? v1alpha1DevworkspaceComponent
-          : devWorkspaceComponent,
+          : devWorkspaceComponent(operatorNamespace),
     },
   },
 });
@@ -153,3 +156,5 @@ export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
 export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: string) => {
   return k8sGet(workspaceModel, name, ns);
 };
+
+export const getTerminalInstalledNamespace = () => coFetch('/api/terminal/installedNamespace');

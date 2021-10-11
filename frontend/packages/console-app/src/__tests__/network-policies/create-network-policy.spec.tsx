@@ -1,30 +1,41 @@
 import * as React from 'react';
 import { Button, FormFieldGroupExpandable } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount } from 'enzyme';
 import { ButtonBar } from '@console/internal/components/utils';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { NetworkPolicyKind } from '@console/internal/module/k8s';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
-import { NetworkPolicy } from '../../components/network-policies/network-policy-model';
+import { NetworkPolicyRuleConfigPanel } from '../../components/network-policies/network-policy-rule-config';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
+jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
+  useK8sGet: jest.fn(),
+}));
 
-const i18nNS = 'public';
+jest.mock('@console/shared/src/hooks/flag', () => ({
+  useFlag: () => true,
+}));
+
+jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
+  useUserSettingsCompatibility: () => ['', () => {}],
+}));
+
+const emptyPolicy: NetworkPolicyKind = {
+  metadata: {
+    name: '',
+    namespace: 'default',
+  },
+  spec: {
+    podSelector: {},
+    ingress: [{}],
+    egress: [{}],
+    policyTypes: ['Ingress', 'Egress'],
+  },
+};
 
 describe('NetworkPolicyForm', () => {
-  let wrapper: ShallowWrapper<{}, { networkPolicy: NetworkPolicy }>;
-
-  beforeEach(() => {
-    wrapper = shallow(<NetworkPolicyForm namespace="default" />);
-  });
+  const ovnK8sSpec = { spec: { defaultNetwork: { type: 'OVNKubernetes' } } };
+  (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
+  const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should render CreateNetworkPolicy component', () => {
     expect(wrapper.exists()).toBe(true);
@@ -44,13 +55,31 @@ describe('NetworkPolicyForm', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toEqual(`${i18nNS}~Create`);
+    ).toEqual('Create');
     expect(
       buttonBar
         .find(Button)
         .at(1)
         .childAt(0)
         .text(),
-    ).toEqual(`${i18nNS}~Cancel`);
+    ).toEqual('Cancel');
+  });
+
+  it('should render multiple rules', () => {
+    const formData = { ...emptyPolicy };
+    formData.spec.ingress = [
+      {
+        from: [],
+        ports: [{}],
+      },
+    ];
+    formData.spec.egress = [
+      {
+        to: [],
+        ports: [{}],
+      },
+    ];
+    wrapper.setProps({ formData });
+    expect(wrapper.find(NetworkPolicyRuleConfigPanel)).toHaveLength(2);
   });
 });

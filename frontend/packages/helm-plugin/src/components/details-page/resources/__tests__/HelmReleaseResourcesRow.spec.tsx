@@ -8,14 +8,6 @@ import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmRelea
 
 let rowArgs: RowFunctionArgs<K8sResourceKind>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 describe('helmReleaseResourcesRow', () => {
   beforeEach(() => {
     rowArgs = {
@@ -48,6 +40,6 @@ describe('helmReleaseResourcesRow', () => {
       <HelmReleaseResourceStatus resource={rowArgs.obj} />,
     );
     expect(helmReleaseResourceStatus1.find(Link).exists()).toBe(true);
-    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('helm-plugin~Pods');
+    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('Pods');
   });
 });

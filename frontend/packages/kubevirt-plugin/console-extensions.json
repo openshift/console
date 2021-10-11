@@ -420,13 +420,26 @@
     "type": "console.dashboards/overview/health/url",
     "properties": {
       "title": "Virtualization",
+      "url": "apis/subresources.kubevirt.io/v1alpha3/healthz",
+      "healthHandler": {
+        "$codeRef": "dashboardHealth.getKubevirtHealthState"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT_HAS_v1alpha3_API"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/url",
+    "properties": {
+      "title": "Virtualization",
       "url": "apis/subresources.kubevirt.io/v1/healthz",
       "healthHandler": {
         "$codeRef": "dashboardHealth.getKubevirtHealthState"
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT_HAS_v1_API"]
     }
   },
   {
@@ -562,6 +575,64 @@
     },
     "flags": {
       "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-vm-details",
+      "tab": "topology-side-bar-tab-details",
+      "section": {
+        "$codeRef": "topologySidebar.getVmSidePanelDetailsTabSection"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "topologySidebar.getVmSidePanelPodsAdapter"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/network",
+    "properties": {
+      "adapt": {
+        "$codeRef": "topologySidebar.getVmSidePanelNetworkAdapter"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "topologySidebar.getVmSideBarResourceLink" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1",
+        "kind": "VirtualMachine"
+      },
+      "provider": {
+        "$codeRef": "actions.useVmActionsProvider"
+      }
     }
   }
 ]

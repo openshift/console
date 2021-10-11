@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   HealthState,
   healthStateMapping,
@@ -12,6 +13,7 @@ import Status, {
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { getCephHealthState } from './dashboards/persistent-internal/status-card/utils';
 import { WatchCephResource } from '../types';
+import { ODF_MANAGED_FLAG } from '../features';
 
 export const StoragePopover: React.FC<StoragePopoverProps> = ({ ceph }) => {
   const { t } = useTranslation();
@@ -24,6 +26,7 @@ export const StoragePopover: React.FC<StoragePopoverProps> = ({ ceph }) => {
       healthStateMapping[health.state].icon
     );
   const value = health.message || healthStateMessage(health.state, t);
+  const isOdfManaged = useFlag(ODF_MANAGED_FLAG);
 
   return (
     <>
@@ -35,7 +38,11 @@ export const StoragePopover: React.FC<StoragePopoverProps> = ({ ceph }) => {
         secondColumn={t('ceph-storage-plugin~Health')}
       >
         <Status key="ocs" value={value} icon={icon}>
-          <Link to="/ocs-dashboards">{t('ceph-storage-plugin~Openshift Data Foundation')}</Link>
+          {!isOdfManaged ? (
+            <Link to="/odf">{t('ceph-storage-plugin~OpenShift Data Foundation')}</Link>
+          ) : (
+            t('ceph-storage-plugin~OpenShift Data Foundation')
+          )}
         </Status>
       </StatusPopupSection>
     </>

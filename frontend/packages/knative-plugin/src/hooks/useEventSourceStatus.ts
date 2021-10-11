@@ -4,6 +4,7 @@ import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { EventSourceMetaData } from '../components/add/import-types';
+import { GLOBAL_OPERATOR_NS } from '../const';
 import { CamelKameletBindingModel, CamelKameletModel } from '../models';
 import { getEventSourceMetadata, getKameletMetadata } from '../utils/create-eventsources-utils';
 import { useEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
@@ -22,11 +23,19 @@ export const useEventSourceStatus = (
 } => {
   const { t } = useTranslation();
   const { eventSourceModels, loaded: eventSourceModelsLoaded } = useEventSourceModels();
-  const [kamelet, kameletLoaded] = useK8sGet<K8sResourceKind>(
+  const [kameletNs, kameletNsLoaded] = useK8sGet<K8sResourceKind>(
     CamelKameletModel,
     kameletName,
     namespace,
   );
+  const [kameletGlobalNs, kameletGlobalNsLoaded] = useK8sGet<K8sResourceKind>(
+    CamelKameletModel,
+    kameletName,
+    GLOBAL_OPERATOR_NS,
+  );
+
+  const kameletLoaded = kameletNsLoaded && kameletGlobalNsLoaded;
+  const kamelet = kameletLoaded && (kameletNs || kameletGlobalNs);
 
   const isKameletSource = kameletName && sourceKindProp === CamelKameletBindingModel.kind;
   const isSourceKindPresent = sourceKindProp || isKameletSource;
@@ -61,11 +70,11 @@ export const useEventSourceStatus = (
     };
   }, [
     isSourceKindPresent,
-    eventSourceModelsLoaded,
+    eventSourceModel,
     kameletLoaded,
     kamelet,
     isKameletSource,
-    eventSourceModel,
+    eventSourceModelsLoaded,
     t,
   ]);
 

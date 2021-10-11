@@ -14,49 +14,30 @@ const ImageStreamNsDropdown: React.FC<{ disabled?: boolean; formContextField?: s
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream } = _.get(values, formContextField) || values;
-  const { imageStream: initialImageStream, isi: initialIsi } =
-    _.get(initialValues, formContextField) || initialValues;
+  const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
   const { dispatch } = React.useContext(ImageStreamContext);
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
-  const onDropdownChange = React.useCallback(() => {
-    setFieldValue(`${fieldPrefix}imageStream.image`, initialImageStream.image);
-    setFieldValue(`${fieldPrefix}imageStream.tag`, initialImageStream.tag);
-    setFieldValue(`${fieldPrefix}isi`, initialIsi);
-    dispatch({ type: Action.setLoading, value: true });
-  }, [
-    dispatch,
-    fieldPrefix,
-    initialImageStream.image,
-    initialImageStream.tag,
-    initialIsi,
-    setFieldValue,
-  ]);
+  const onDropdownChange = React.useCallback(
+    (ns?: string) => {
+      if (ns) {
+        setFieldValue(`${fieldPrefix}imageStream.image`, '');
+        setFieldValue(`${fieldPrefix}imageStream.tag`, '');
+      }
+      setFieldValue(`${fieldPrefix}isi`, initialIsi);
+      dispatch({ type: Action.setLoading, value: true });
+    },
+    [dispatch, fieldPrefix, initialIsi, setFieldValue],
+  );
 
   React.useEffect(() => {
-    if (initialImageStream.image && imageStream.image !== initialImageStream.image) {
-      initialImageStream.image = imageStream.image;
-    }
     imageStream.namespace && onDropdownChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDropdownChange, imageStream.namespace]);
-
-  React.useEffect(() => {
-    if (initialImageStream.namespace !== imageStream.namespace) {
-      initialImageStream.image = '';
-      initialImageStream.tag = '';
-    }
-  }, [
-    imageStream.namespace,
-    initialImageStream.namespace,
-    initialImageStream.image,
-    initialImageStream.tag,
-  ]);
 
   return (
     <ResourceDropdownField
       name={`${fieldPrefix}imageStream.namespace`}
       label={t('devconsole~Project')}
-      title={t('devconsole~Select Project')}
+      title={imageStream.namespace || t('devconsole~Select Project')}
       fullWidth
       required
       resources={getProjectResource()}

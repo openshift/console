@@ -161,6 +161,12 @@ describe('pipeline-quicksearch-utils', () => {
   });
 
   describe('isInstalledNamespaceTask', () => {
+    it('should return false if the annotations are missing in the metadata', () => {
+      expect(
+        isInstalledNamespaceTask(omit(sampleClusterTaskCatalogItem, 'data.metadata.annotations')),
+      ).toBe(false);
+    });
+
     it('should return false if the tekton hub task is passed', () => {
       expect(isInstalledNamespaceTask(sampleTektonHubCatalogItem)).toBe(false);
     });
@@ -215,6 +221,15 @@ describe('pipeline-quicksearch-utils', () => {
   });
 
   describe('findInstalledTask', () => {
+    it('should return undefined if the annotations are missing in the metadata', () => {
+      expect(
+        findInstalledTask(
+          sampleCatalogItems,
+          omit(sampleClusterTaskCatalogItem, 'data.metadata.annotations'),
+        ),
+      ).toBeUndefined();
+    });
+
     it('should return undefined the catalogItem is not installed through pipeline builder', () => {
       expect(findInstalledTask(sampleCatalogItems, sampleTektonHubCatalogItem)).toBeUndefined();
     });

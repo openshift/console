@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
   StatusBox,
@@ -22,7 +23,6 @@ import {
   CustomResourceDefinitionKind,
   definitionFor,
 } from '@console/internal/module/k8s';
-import { useActivePerspective } from '@console/shared';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
 import {
   getSchemaErrors,
@@ -126,6 +126,8 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     [formHelpText, t],
   );
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.createOperandForm.editor.lastView';
+
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
       <div className="co-create-operand__header">
@@ -148,6 +150,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         onChangeEditorType={onChangeEditorType}
         prune={pruneFunc}
         YAMLEditor={OperandYAML}
+        lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
       />
     </StatusBox>
   );

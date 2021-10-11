@@ -1,4 +1,6 @@
+// remove this file after migrating all the knative sidepanels
 import * as React from 'react';
+import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
@@ -7,22 +9,22 @@ import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/m
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/topology/src/actions';
+import TopologySideBarContent from '@console/topology/src/components/side-bar/TopologySideBarContent';
 import { editSinkUri } from '../../actions/edit-sink-uri';
-import { getRevisionActions } from '../../actions/getRevisionActions';
 import {
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENTING_APIGROUP,
   CAMEL_APIGROUP,
 } from '../../const';
-import { RevisionModel } from '../../models';
+import { RevisionModel, ServiceModel } from '../../models';
 import { URI_KIND } from '../../topology/const';
+import { KnativeOverviewDetails } from '../../topology/sidebar/KnativeOverviewSections';
 import {
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
   isEventingPubSubLinkKind,
 } from '../../utils/fetch-dynamic-eventsources-utils';
-import KnativeOverview from './KnativeOverview';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import SinkUriResourcesTab from './SinkUriResourcesTab';
 
@@ -33,12 +35,14 @@ interface StateProps {
 
 export interface KnativeResourceOverviewPageProps extends StateProps {
   item?: OverviewItem;
+  element?: GraphElement;
 }
 
 export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOverviewPageProps> = ({
   item,
   knativeModels,
   kindsInFlight,
+  element,
 }: KnativeResourceOverviewPageProps) => {
   const { t } = useTranslation();
 
@@ -65,7 +69,7 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   const tabs = [
     {
       name: t('knative-plugin~Details'),
-      component: KnativeOverview,
+      component: KnativeOverviewDetails,
     },
     {
       name: t('knative-plugin~Resources'),
@@ -74,9 +78,7 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   ];
 
   const actions = [];
-  if (resourceModel.kind === RevisionModel.kind) {
-    actions.push(...getRevisionActions());
-  } else if (isEventingPubSubLinkKind(resourceModel.kind)) {
+  if (isEventingPubSubLinkKind(resourceModel.kind)) {
     actions.push(...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common);
   } else {
     actions.push(
@@ -84,6 +86,10 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
       ...Kebab.getExtensionsActionsForKind(resourceModel),
       ...Kebab.factory.common,
     );
+  }
+
+  if (resourceModel.kind === ServiceModel.kind || resourceModel.kind === RevisionModel.kind) {
+    return <TopologySideBarContent element={element} />;
   }
 
   return (

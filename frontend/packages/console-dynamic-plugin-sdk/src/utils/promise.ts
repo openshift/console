@@ -1,7 +1,9 @@
 /**
- * Unwrap the result of `Promise.allSettled` call as `[fulfilledValues, rejectedReasons]` tuple.
+ * Unwrap the result of `Promise.allSettled` call as `[fulfilledValues, rejectedReasons, results]` tuple.
  */
-const unwrapPromiseSettledResults = <T = any>(results: PromiseSettledResult<T>[]): [T[], any[]] => {
+const unwrapPromiseSettledResults = <T = any>(
+  results: PromiseSettledResult<T>[],
+): [T[], any[], PromiseSettledResult<T>[]] => {
   const fulfilledValues = results
     .filter((r) => r.status === 'fulfilled')
     .map((r: PromiseFulfilledResult<T>) => r.value);
@@ -10,7 +12,7 @@ const unwrapPromiseSettledResults = <T = any>(results: PromiseSettledResult<T>[]
     .filter((r) => r.status === 'rejected')
     .map((r: PromiseRejectedResult) => r.reason);
 
-  return [fulfilledValues, rejectedReasons];
+  return [fulfilledValues, rejectedReasons, results];
 };
 
 /**

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertActionLink } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, AlertActionLink } from '@patternfly/react-core';
 import { mount, ReactWrapper } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import ToastContext, { ToastContextType, ToastVariant } from '../ToastContext';
@@ -107,5 +107,91 @@ describe('ToastProvider', () => {
     expect(actionFn).toHaveBeenCalledTimes(1);
 
     expect(wrapper.find(Alert).length).toBe(0);
+  });
+
+  it('should have anchor tag if componet "a" is passed', () => {
+    const actionFn = jest.fn();
+    act(() => {
+      toastContext.addToast({
+        title: 'test success',
+        variant: ToastVariant.success,
+        content: 'description 1',
+        actions: [
+          {
+            label: 'action 1',
+            dismiss: true,
+            callback: actionFn,
+            component: 'a',
+          },
+        ],
+      });
+    });
+
+    wrapper.update();
+
+    expect(wrapper.find(Alert).length).toBe(1);
+    const alertActionLinks = wrapper.find(AlertActionLink);
+    expect(alertActionLinks.length).toBe(1);
+    expect(
+      alertActionLinks
+        .at(0)
+        .find('a')
+        .exists(),
+    ).toBe(true);
+  });
+
+  it('should dismiss toast on action on anchor click', () => {
+    const actionFn = jest.fn();
+    act(() => {
+      toastContext.addToast({
+        title: 'test success',
+        variant: ToastVariant.success,
+        content: 'description 1',
+        actions: [
+          {
+            label: 'action 1',
+            dismiss: true,
+            callback: actionFn,
+            component: 'a',
+          },
+        ],
+      });
+    });
+
+    wrapper.update();
+
+    expect(wrapper.find(Alert).length).toBe(1);
+    const alertActionLinks = wrapper.find(AlertActionLink);
+    expect(alertActionLinks.length).toBe(1);
+    act(() => {
+      alertActionLinks
+        .at(0)
+        .find('a')
+        .simulate('click');
+    });
+
+    wrapper.update();
+
+    expect(actionFn).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(Alert).length).toBe(0);
+  });
+
+  it('should call onToastClose if provided on toast close', () => {
+    const toastClose = jest.fn();
+    act(() => {
+      toastContext.addToast({
+        title: 'test success',
+        variant: ToastVariant.success,
+        content: 'description 1',
+        onClose: toastClose,
+        dismissible: true,
+      });
+    });
+
+    wrapper.update();
+    const closeBtn = wrapper.find(AlertActionCloseButton);
+    expect(closeBtn.exists()).toBe(true);
+    closeBtn.simulate('click');
+    expect(toastClose).toHaveBeenCalled();
   });
 });

@@ -15,7 +15,7 @@ export const useUpToDateVMLikeEntity = <P extends VMGenericLikeEntityKind>(vmLik
     return {
       name: vmName,
       kind:
-        model.kind === VirtualMachineModel.kind || VirtualMachineInstanceModel.kind
+        model.kind === VirtualMachineModel.kind || model.kind === VirtualMachineInstanceModel.kind
           ? kubevirtReferenceForModel(model)
           : TemplateModel.kind,
       namespace,

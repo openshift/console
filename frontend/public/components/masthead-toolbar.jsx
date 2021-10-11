@@ -37,7 +37,6 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
-import { languagePreferencesModal } from './modals';
 import { withTelemetry, withQuickStartContext } from '@console/shared/src/hoc';
 
 const defaultHelpLinks = [
@@ -481,7 +480,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks, t, quickStartContext } = this.props;
+    const { flags, consoleLinks, t } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
@@ -502,10 +501,7 @@ class MastheadToolbarContents_ extends React.Component {
     const actions = [];
     const userActions = [
       {
-        label: t('public~Language preference'),
-        callback: () => languagePreferencesModal({ quickStartContext }),
-        component: 'button',
-        dataTest: 'language',
+        component: <Link to="/user-preferences">{t('public~User Preferences')}</Link>,
       },
     ];
 

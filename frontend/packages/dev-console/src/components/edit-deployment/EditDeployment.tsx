@@ -2,12 +2,13 @@ import * as React from 'react';
 import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
-import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { useActivePerspective } from '@console/shared';
+import { useExtensions } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { handleRedirect } from '../import/import-submit-utils';
 import { Resources } from '../import/import-types';
@@ -33,7 +34,9 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
 
   const initialValues = React.useRef({
     editorType: EditorType.Form,
-    yamlData: '',
+    yamlData: safeJSToYAML(resource, 'yamlData', {
+      skipInvalid: true,
+    }),
     formData: convertDeploymentToEditForm(resource),
   });
 
@@ -76,9 +79,8 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
         });
         handleRedirect(namespace, perspective, perspectiveExtensions);
       })
-      .catch((e) => {
-        const err = e.message;
-        actions.setStatus({ submitSuccess: '', submitError: t('devconsole~{{err}}', { err }) });
+      .catch((err) => {
+        actions.setStatus({ submitSuccess: '', submitError: err.message });
       });
   };
 

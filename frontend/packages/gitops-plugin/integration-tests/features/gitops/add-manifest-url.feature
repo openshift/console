@@ -1,12 +1,10 @@
 @gitops
-Feature: Applications managed by GitOps and Create secret
+Feature: Applications managed by GitOps
     User should be able to see list of applications managed by GitOps
 
         Background:
             Given user has installed GitOps operator
               And user has installed Pipelines operator
-              And user has installed Sealed Secrets operator in "cicd" namespace
-              And user has created Sealed Secrets instance of name "sealedsecretcontroller"
               And user is at developer perspective
 
         @smoke
@@ -23,20 +21,21 @@ Feature: Applications managed by GitOps and Create secret
              Then user will see the list GitOps application groupings on the page
 
         @regression @manual
-        Scenario: Application Details page for Applications: GO-01-TC04
+        Scenario: Application Details page for Applications: GO-01-TC03
             Given user is on the Environments page
               And user can see the Applications on the page
              Then user can add new environments using kam cli
 
         @regression @manual
-        Scenario: Application Details page for Applications: GO-01-TC03
+        Scenario: Application Details page for Applications: GO-01-TC04
             Given user is on the Environments page
               And user can see the Applications on the page
-             Then user can see the columns attributes depending upon the GitOps "version"
-              And user can see various environments for that application
-              And user can see how many application or workloads are deployed in each environment
-              And user can see status of the application or workloads
              Then user can click application name and see the application Details page
+              And user can see various environments for that application
+              And user can see all workloads that are deployed in the environment
+              And user can see status of the workloads deployed in the environment
+              And user can see "Last deployed" date for workloads that are deployed in the environment
+              And user can see all "Resources" types and status for each workload that are deployed in the environment
 
 # scenario is commented, as we don't need to add Manifest URLs manually now
         # @regression @manual

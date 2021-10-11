@@ -3,11 +3,11 @@ import { addOptions, buildConfigOptions, messages } from '../../constants';
 import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
 import { dockerfilePage } from '../../pages/add-flow/dockerfile-page';
 
-Given('user is at Import from git page', () => {
+Given('user is at Import from Git form', () => {
   addPage.selectCardFromOptions(addOptions.Git);
 });
 
-When('user enters Git Repo url as {string}', (gitUrl: string) => {
+When('user enters Git Repo URL as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage(gitUrl);
 });
@@ -50,6 +50,10 @@ When('user enters Application name as {string}', (appName: string) => {
 });
 
 When('user enters Name as {string}', (name: string) => {
+  gitPage.enterComponentName(name);
+});
+
+When('user enters Name as {string} in General section', (name: string) => {
   gitPage.enterComponentName(name);
 });
 

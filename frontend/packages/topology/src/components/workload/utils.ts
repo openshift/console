@@ -26,7 +26,6 @@ import {
   useJobsForCronJobWatcher,
   usePodsWatcher,
 } from '@console/shared';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E extends Extension>(
@@ -54,9 +53,9 @@ const usePodsAdapterForWorkloads = (resource: K8sResourceCommon): PodsAdapterDat
 export const podsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
   if (
+    !resource ||
     ![
       DeploymentConfigModel.kind,
       DeploymentModel.kind,
@@ -73,9 +72,9 @@ export const podsAdapterForWorkloads = (
 export const buildsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<BuildConfigData> | undefined => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
   if (
+    !resource ||
     ![
       DeploymentConfigModel.kind,
       DeploymentModel.kind,
@@ -91,9 +90,9 @@ export const buildsAdapterForWorkloads = (
 export const networkAdapterForWorkloads = (
   element: GraphElement,
 ): NetworkAdapterType | undefined => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
   if (
+    !resource ||
     ![
       DeploymentConfigModel.kind,
       DeploymentModel.kind,
@@ -148,8 +147,7 @@ const usePodsAdapterForCronJobWorkloads = (resource: K8sResourceCommon): PodsAda
 export const podsAdapterForCronJobWorkload = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
-  if (resource.kind !== CronJobModel.kind) return undefined;
+  if (!resource || resource.kind !== CronJobModel.kind) return undefined;
   return { resource, provider: usePodsAdapterForCronJobWorkloads };
 };

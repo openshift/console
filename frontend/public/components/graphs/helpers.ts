@@ -5,7 +5,7 @@ import {
   DEFAULT_PROMETHEUS_SAMPLES,
   DEFAULT_PROMETHEUS_TIMESPAN,
 } from './index';
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 export { PrometheusEndpoint };
 
 // Range vector queries require end, start, and step search params

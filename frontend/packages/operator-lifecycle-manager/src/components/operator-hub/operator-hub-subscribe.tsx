@@ -68,6 +68,7 @@ import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '
 import { OperatorInstallStatusPage } from '../operator-install-page';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
+  const [inProgress, setInProgress] = React.useState(false);
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
   const [showInstallStatusPage, setShowInstallStatusPage] = React.useState(false);
@@ -246,9 +247,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     return t('olm~This mode is not supported by this Operator');
   };
   const subscriptionExists = (ns: string) =>
-    installedFor(props.subscription.data)(props.operatorGroup.data)(
-      props.packageManifest.data[0].status.packageName,
-    )(ns);
+    installedFor(props.subscription.data)(props.operatorGroup.data)(props.packageManifest.data[0])(
+      ns,
+    );
   const namespaceSupports = (ns: string) => (mode: InstallModeType) => {
     const operatorGroup = props.operatorGroup.data.find((og) => og.metadata.namespace === ns);
     if (!operatorGroup || !ns) {
@@ -274,6 +275,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const submit = async () => {
     // Clear any previous errors.
     setError('');
+    setInProgress(true);
 
     const ns: K8sResourceCommon = {
       metadata: {
@@ -388,13 +390,16 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           },
         ]);
       }
+      setInProgress(false);
       setShowInstallStatusPage(true);
     } catch (err) {
       setError(err.message || t('olm~Could not create Operator Subscription.'));
+      setInProgress(false);
     }
   };
 
   const formValid = () =>
+    inProgress ||
     [selectedUpdateChannel, selectedInstallMode, selectedTargetNamespace, selectedApproval].some(
       (v) => _.isNil(v) || _.isEmpty(v),
     ) ||
@@ -404,6 +409,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace));
 
   const formError = () => {
+    if (inProgress) {
+      return null;
+    }
     return (
       (error && (
         <Alert

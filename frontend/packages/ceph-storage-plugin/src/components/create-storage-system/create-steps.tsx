@@ -8,6 +8,7 @@ import {
   ReviewAndCreate,
   CreateLocalVolumeSet,
   SecurityAndNetwork,
+  Security,
 } from './create-storage-system-steps';
 import { WizardDispatch, WizardState } from './reducer';
 import {
@@ -31,8 +32,11 @@ export const createSteps = (
     storageClass,
     capacityAndNodes,
     securityAndNetwork,
+    nodes,
+    createLocalVolumeSet,
   } = state;
   const { externalStorage, deployment } = backingStorage;
+  const { encryption, kms } = securityAndNetwork;
 
   const commonSteps = {
     capacityAndNodes: {
@@ -42,6 +46,8 @@ export const createSteps = (
           dispatch={dispatch}
           state={capacityAndNodes}
           storageClass={storageClass}
+          volumeSetName={createLocalVolumeSet.volumeSetName}
+          nodes={nodes}
         />
       ),
     },
@@ -51,7 +57,7 @@ export const createSteps = (
     },
     reviewAndCreate: {
       name: StepsName(t)[Steps.ReviewAndCreate],
-      component: <ReviewAndCreate state={state} />,
+      component: <ReviewAndCreate state={state} hasOCS={hasOCS} />,
     },
   };
 
@@ -94,7 +100,13 @@ export const createSteps = (
     return [
       {
         id: 2,
+        name: StepsName(t)[Steps.Security],
         canJumpTo: stepIdReached >= 2,
+        component: <Security encryption={encryption} kms={kms} dispatch={dispatch} isMCG />,
+      },
+      {
+        id: 3,
+        canJumpTo: stepIdReached >= 3,
         ...commonSteps.reviewAndCreate,
       },
     ];
@@ -131,6 +143,8 @@ export const createSteps = (
               state={state.createLocalVolumeSet}
               dispatch={dispatch}
               storageClass={storageClass}
+              nodes={nodes}
+              stepIdReached={stepIdReached}
             />
           ),
         },

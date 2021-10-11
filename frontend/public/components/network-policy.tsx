@@ -300,7 +300,7 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~Network policy details')} />
+        <SectionHeading text={t('public~NetworkPolicy details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />

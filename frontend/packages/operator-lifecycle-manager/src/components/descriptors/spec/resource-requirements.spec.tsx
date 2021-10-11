@@ -13,14 +13,6 @@ import {
 } from './resource-requirements';
 import Spy = jasmine.Spy;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe(ResourceRequirementsModal.name, () => {
   let wrapper: ReactWrapper<ResourceRequirementsModalProps>;
   const title = 'TestResource Resource Requests';
@@ -64,7 +56,7 @@ describe(ResourceRequirementsModal.name, () => {
         .childAt(0)
         .text(),
     ).toContain(description);
-    expect(wrapper.find(modal.ModalSubmitFooter).props().submitText).toEqual('public~Save');
+    expect(wrapper.find(modal.ModalSubmitFooter).props().submitText).toEqual('Save');
   });
 
   it('calls function to update resource instance when form is submitted', (done) => {
@@ -141,14 +133,14 @@ describe(ResourceRequirementsModalLink.displayName, () => {
         .find(Button)
         .render()
         .text(),
-    ).toEqual('CPU: public~None, Memory: public~None, Storage: public~None');
+    ).toEqual('CPU: None, Memory: None, Storage: None');
   });
 
   it('opens resource requirements modal when clicked', (done) => {
     const modalSpy = jasmine.createSpy('modalSpy').and.callFake((args) => {
       expect(args.title).toEqual(`${obj.kind} Resource Limits`);
       expect(args.description).toEqual(
-        'olm~Define the resource {{type}} for this {{kind}} instance.',
+        'Define the resource limits for this TestResource instance.',
       );
       expect(args.obj).toEqual(obj);
       expect(args.model).toEqual(testModel);

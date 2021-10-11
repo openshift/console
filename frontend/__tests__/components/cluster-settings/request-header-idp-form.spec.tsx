@@ -10,24 +10,11 @@ import {
 } from '../../../public/components/cluster-settings/request-header-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
-const i18nNS = 'public';
-
 describe('Add Identity Provider: Request Header', () => {
   let wrapper: ShallowWrapper<{}, AddRequestHeaderPageState>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddRequestHeaderPage />);
+    wrapper = shallow(<AddRequestHeaderPage />).dive();
   });
 
   it('should render AddRequestHeaderPage component', () => {
@@ -35,7 +22,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render correct Request Header IDP page title', () => {
-    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: Request Header`)).toBeTruthy();
+    expect(wrapper.contains('Add Identity Provider: Request Header')).toBeTruthy();
   });
 
   it('should render the form elements of AddRequestHeaderPage component', () => {
@@ -47,7 +34,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper, 'public');
+    controlButtonTest(wrapper);
   });
 
   it('should prefill request-header in name field by default', () => {

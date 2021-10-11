@@ -1,5 +1,5 @@
 import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
+import { virtualization } from '../../views/virtualization';
 
 describe('ID(CNV-5654) test vm empty state', () => {
   before(() => {
@@ -7,22 +7,20 @@ describe('ID(CNV-5654) test vm empty state', () => {
   });
 
   after(() => {
-    cy.deleteResource({
-      kind: 'Namespace',
-      metadata: {
-        name: testName,
-      },
-    });
+    cy.deleteTestProject(testName);
   });
 
   beforeEach(() => {
-    virtualization.vms.visit();
+    cy.visitVMsList();
   });
 
-  // CI does not have quickstarts
-  xit('Empty state has link to quick starts', () => {
-    virtualization.vms.emptyState.clickQuickStarts();
-    cy.get('.pf-c-search-input__text-input').should('have.value', 'virtual machine');
+  it('Empty state has link to quick starts', () => {
+    // CI does not have quickstarts
+    if (Cypress.env('DOWNSTREAM')) {
+      virtualization.vms.emptyState.clickQuickStarts();
+      // TODO: uncomment it once https://issues.redhat.com/browse/CNV-14013 is fixed.
+      // cy.get('.pf-c-search-input__text-input').should('have.value', 'virtual machine');
+    }
   });
 
   it('Empty state has action to create VM', () => {

@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { MenuToggle } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { checkAccess } from '@console/internal/components/utils';
 import { ActionMenuVariant, MenuOption } from '../types';
-import ActionMenuRenderer from './ActionMenuRenderer';
+import ActionMenuContent from './ActionMenuContent';
+import ActionMenuToggle from './ActionMenuToggle';
 
 type ActionMenuProps = {
   actions: Action[];
@@ -24,26 +23,16 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   variant = ActionMenuVariant.KEBAB,
   label,
 }) => {
-  const { t } = useTranslation();
   const isKebabVariant = variant === ActionMenuVariant.KEBAB;
   const [isVisible, setVisible] = useSafetyFirst(isKebabVariant);
-  const [active, setActive] = React.useState<boolean>(false);
-  const toggleRef = React.useRef<HTMLButtonElement>();
-  const toggleRefCb = React.useCallback(() => toggleRef.current, []);
-  const toggleLabel = label || t('console-shared~Actions');
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const toggleRef = React.useRef<HTMLButtonElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const menuOptions = options || actions;
 
-  const toggleMenu = () => setActive((value) => !value);
-
   const hideMenu = () => {
-    toggleRef.current?.focus();
-    setActive(false);
-  };
-
-  const handleRequestClose = (e?: MouseEvent) => {
-    if (!e || !toggleRef.current?.contains(e.target as Node)) {
-      hideMenu();
-    }
+    setIsOpen(false);
   };
 
   const handleHover = React.useCallback(() => {
@@ -82,29 +71,36 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
       .catch(() => setVisible(true));
   }, [actions, isKebabVariant, setVisible]);
 
+  const menu = (
+    <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>
+      <MenuContent data-test-id="action-items" translate="no">
+        <MenuList>
+          <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={options[0]} />
+        </MenuList>
+      </MenuContent>
+    </Menu>
+  );
+
   return (
     isVisible && (
-      <div>
-        <MenuToggle
-          variant={variant}
-          innerRef={toggleRef}
-          isExpanded={active}
+      <div ref={containerRef}>
+        <ActionMenuToggle
+          isOpen={isOpen}
           isDisabled={isDisabled}
-          aria-expanded={active}
-          aria-label={toggleLabel}
-          aria-haspopup="true"
-          data-test-id={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
-          onClick={toggleMenu}
-          {...(isKebabVariant ? { onFocus: handleHover, onMouseEnter: handleHover } : {})}
-        >
-          {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
-        </MenuToggle>
-        <ActionMenuRenderer
-          open={!isDisabled && active}
-          options={menuOptions}
-          toggleRef={toggleRefCb}
-          onClick={hideMenu}
-          onRequestClose={handleRequestClose}
+          toggleRef={toggleRef}
+          toggleVariant={variant}
+          toggleTitle={label}
+          menuRef={menuRef}
+          onToggleClick={setIsOpen}
+          onToggleHover={handleHover}
+        />
+        <Popper
+          reference={toggleRef}
+          popper={menu}
+          placement="bottom-end"
+          isVisible={isOpen}
+          appendTo={containerRef.current}
+          popperMatchesTriggerWidth={false}
         />
       </div>
     )

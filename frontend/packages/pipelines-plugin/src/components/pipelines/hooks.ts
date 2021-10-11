@@ -1,10 +1,8 @@
 import { match as RMatch } from 'react-router-dom';
+import { WatchK8sResource, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import {
@@ -30,6 +28,19 @@ export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
 
 export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
   useTabbedTableBreadcrumbsFor(kindObj, match, 'triggers', pipelinesTab(kindObj));
+
+export const useDevPipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  const navOption = isAdminPerspective ? `pipelines` : 'dev-pipelines';
+  return useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    navOption,
+    pipelinesTab(kindObj),
+    undefined,
+    true,
+  );
+};
 
 export const useLatestPipelineRun = (pipelineName: string, namespace: string): PipelineRunKind => {
   const pipelineRunResource: WatchK8sResource = {

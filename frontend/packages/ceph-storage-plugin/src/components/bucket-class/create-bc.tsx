@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
-import { Title, Wizard } from '@patternfly/react-core';
+import { Title, Wizard, WizardStep } from '@patternfly/react-core';
 import {
   apiVersionForModel,
   k8sCreate,
@@ -13,6 +12,7 @@ import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { getName } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import GeneralPage from './wizard-pages/general-page';
 import PlacementPolicyPage from './wizard-pages/placement-policy-page';
 import BackingStorePage from './wizard-pages/backingstore-page';
@@ -27,6 +27,7 @@ import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-cla
 import { validateBucketClassName, validateDuration } from '../../utils/bucket-class';
 import { NooBaaBucketClassModel } from '../../models';
 import { PlacementPolicy } from '../../types';
+import { ODF_MODEL_FLAG } from '../../constants';
 
 enum CreateStepsBC {
   GENERAL = 'GENERAL',
@@ -40,6 +41,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { ns, appName } = match.params;
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
+  const isODF = useFlag(ODF_MODEL_FLAG);
 
   React.useEffect(() => {
     k8sGet(ClusterServiceVersionModel, appName, ns)
@@ -202,7 +204,14 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     );
   };
 
-  const steps = [
+  const [stepsReached, setStepsReached] = React.useState(1);
+
+  const StepPositionMap = Object.entries(CreateStepsBC).reduce((acc, cur, index) => {
+    acc[cur[0]] = index + 1;
+    return acc;
+  }, {});
+
+  const steps: WizardStep[] = [
     {
       id: CreateStepsBC.GENERAL,
       name: t('ceph-storage-plugin~General'),
@@ -222,6 +231,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? !!state.tier1Policy
           : !!state.namespacePolicyType,
+      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.PLACEMENT],
     },
     {
       id: CreateStepsBC.RESOURCES,
@@ -236,6 +246,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? backingStoreNextConditions()
           : namespaceStoreNextConditions(),
+      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.RESOURCES],
     },
     {
       id: CreateStepsBC.REVIEW,
@@ -243,6 +254,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       component: <ReviewPage state={state} />,
       nextButtonText: t('ceph-storage-plugin~Create BucketClass'),
       enableNext: creationConditionsSatisfied(),
+      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.REVIEW],
     },
   ];
 
@@ -252,12 +264,8 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         <BreadCrumbs
           breadcrumbs={[
             {
-              name: _.get(
-                clusterServiceVersion,
-                'spec.displayName',
-                'Openshift Data Foundation Operator',
-              ),
-              path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+              name: isODF ? 'OpenShift Data Foundation' : 'OpenShift Container Storage',
+              path: isODF ? '/odf' : resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
             },
             {
               name: t('ceph-storage-plugin~Create BucketClass'),
@@ -286,6 +294,12 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           backButtonText={t('ceph-storage-plugin~Back')}
           onSave={finalStep}
           onClose={() => history.goBack()}
+          onNext={({ id }) => {
+            const idIndexPlusOne = StepPositionMap[id];
+            const newStepHigherBound =
+              stepsReached < idIndexPlusOne ? idIndexPlusOne : stepsReached;
+            setStepsReached(newStepHigherBound);
+          }}
         />
       </div>
     </>

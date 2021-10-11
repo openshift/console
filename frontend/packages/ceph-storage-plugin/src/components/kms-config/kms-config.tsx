@@ -26,7 +26,13 @@ import { WizardState } from '../create-storage-system/reducer';
 
 import './kms-config.scss';
 
-export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mode, className }) => {
+export const KMSConfigure: React.FC<KMSConfigureProps> = ({
+  state,
+  dispatch,
+  mode,
+  hideTitle,
+  className,
+}) => {
   const { t } = useTranslation();
   const { kms } = state;
   const kmsObj: KMSConfig = _.cloneDeep(kms);
@@ -119,10 +125,14 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 
   return (
     <div className="co-m-pane__form">
-      {!mode && <h3 className="ocs-install-kms__heading">Connect to a Key Management Service</h3>}
+      {!hideTitle && (
+        <h3 className="ocs-install-kms__heading">
+          {t('ceph-storage-plugin~Connect to a Key Management Service')}
+        </h3>
+      )}
       <FormGroup
         fieldId="kms-provider"
-        label={t('ceph-storage-plugin~Key Management Service Provider')}
+        label={t('ceph-storage-plugin~Key management service provider')}
         className={`${className}__form-body`}
       >
         <FormSelect
@@ -140,14 +150,13 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
       </FormGroup>
       <FormGroup
         fieldId="kms-service-name"
-        label={t('ceph-storage-plugin~Service Name')}
+        label={t('ceph-storage-plugin~Service name')}
         className={`${className}__form-body`}
-        helperTextInvalid="This is a required field"
+        helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
         validated={isValid(kms.name.valid)}
-        helperText={
-          !mode &&
-          t('ceph-storage-plugin~A unique name for the key management service within the project.')
-        }
+        helperText={t(
+          'ceph-storage-plugin~A unique name for the key management service within the project.',
+        )}
         isRequired
       >
         <TextInput
@@ -205,7 +214,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
           />
         </FormGroup>
       </div>
-      {mode && (
+      {hideTitle && (
         <FormGroup
           fieldId="kms-token"
           label={t('ceph-storage-plugin~Token')}
@@ -224,7 +233,13 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
               isRequired
               validated={isValid(kms.token.valid)}
             />
-            <Tooltip content={revealToken ? 'Hide token' : 'Reveal token'}>
+            <Tooltip
+              content={
+                revealToken
+                  ? t('ceph-storage-plugin~Hide token')
+                  : t('ceph-storage-plugin~Reveal token')
+              }
+            >
               <Button variant="control" onClick={() => setRevealToken(!revealToken)}>
                 {revealToken ? <EyeSlashIcon /> : <EyeIcon />}
               </Button>
@@ -253,8 +268,12 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 };
 
 type KMSConfigureProps = {
-  state: InternalClusterState | State | WizardState['securityAndNetwork'];
+  state:
+    | InternalClusterState
+    | State
+    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
   dispatch: EncryptionDispatch;
-  mode?: string;
   className: string;
+  hideTitle?: boolean;
+  mode?: string;
 };

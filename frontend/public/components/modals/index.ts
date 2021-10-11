@@ -109,6 +109,11 @@ export const removeVolumeModal = (props) =>
     m.removeVolumeModal(props),
   );
 
+export const configureClusterUpstreamModal = (props) =>
+  import(
+    './configure-cluster-upstream-modal' /* webpackChunkName: "configure-cluster-upstream-modal" */
+  ).then((m) => m.configureClusterUpstreamModal(props));
+
 export const configureMachineAutoscalerModal = (props) =>
   import(
     './configure-machine-autoscaler-modal' /* webpackChunkName: "configure-machine-autoscaler-modal" */
@@ -143,8 +148,3 @@ export const managedResourceSaveModal = (props) =>
   import(
     './managed-resource-save-modal' /* webpackChunkName: "managed-resource-save-modal" */
   ).then((m) => m.managedResourceSaveModal(props));
-
-export const languagePreferencesModal = (props) =>
-  import(
-    './language-preferences-modal' /* webpackChunkName: "language-preferences-modal" */
-  ).then((m) => m.languagePreferencesModal(props));

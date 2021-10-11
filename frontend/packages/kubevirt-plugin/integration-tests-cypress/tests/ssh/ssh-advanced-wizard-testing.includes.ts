@@ -1,4 +1,4 @@
-import { ProvisionSource } from '../../enums/provisionSource';
+import { ProvisionSource } from '../../utils/const/provisionSource';
 
 export default ({ vmName }) =>
   describe('ID (CNV-5971) Test if ssh service is present in advanced wizard', () => {
@@ -36,7 +36,8 @@ export default ({ vmName }) =>
       cy.get('#ssh').click();
     });
 
-    it('checking expose service is checked', () => {
+    it('checking expose service is not checked by default', () => {
+      cy.get('#ssh-service-checkbox').click();
       cy.get('#ssh-service-checkbox').should('be.checked');
     });
 

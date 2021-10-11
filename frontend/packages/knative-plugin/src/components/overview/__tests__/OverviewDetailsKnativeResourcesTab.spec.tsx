@@ -7,15 +7,10 @@ import {
   getEventSourceResponse,
   sampleEventSourceSinkbinding,
   sampleSourceKameletBinding,
-  EventIMCObj,
-  EventSubscriptionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import * as fetchDynamicEventSources from '../../../utils/fetch-dynamic-eventsources-utils';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
-import EventPubSubResources from '../EventPubSubResources';
 import EventSourceResources from '../EventSourceResources';
-import KnativeRevisionResources from '../KnativeRevisionResources';
-import KnativeServiceResources from '../KnativeServiceResources';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
@@ -37,16 +32,6 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
         isOperatorBackedService: false,
       },
     };
-  });
-  it('should render KnativeServiceResources on sidebar', () => {
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(KnativeServiceResources)).toHaveLength(1);
-  });
-
-  it('should render KnativeRevisionResources on sidebar', () => {
-    knItem.item = { ...knItem.item, ...{ obj: MockKnativeResources.revisions.data[0] } };
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(KnativeRevisionResources)).toHaveLength(1);
   });
 
   it('should render EventSourceResources on sidebar', () => {
@@ -93,27 +78,6 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
     expect(wrapper.find(RevisionsOverviewList)).toHaveLength(1);
     expect(wrapper.find(KSRoutesOverviewList)).toHaveLength(1);
     expect(wrapper.find(ConfigurationsOverviewList)).toHaveLength(1);
-  });
-
-  it('should render EventPubSubResources on sidebar for Subscription', () => {
-    knItem.item = {
-      ...knItem.item,
-      ...{ obj: EventSubscriptionObj },
-    };
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(EventPubSubResources)).toHaveLength(1);
-  });
-
-  it('should render EventPubSubResources on sidebar for channel', () => {
-    jest
-      .spyOn(fetchDynamicEventSources, 'isEventingChannelResourceKind')
-      .mockImplementationOnce(() => true);
-    knItem.item = {
-      ...knItem.item,
-      ...{ obj: EventIMCObj },
-    };
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(EventPubSubResources)).toHaveLength(1);
   });
 
   it('should render EventSourceResources on sidebar for KameletBinding', () => {

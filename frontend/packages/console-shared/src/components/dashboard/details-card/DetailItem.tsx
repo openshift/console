@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { DetailItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { DetailItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export const DetailItem: React.FC<DetailItemProps> = React.memo(
   ({ title, isLoading = false, children, error = false, valueClassName, errorMessage }) => {

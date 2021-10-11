@@ -2,11 +2,16 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { addOptions } from '../../constants';
 import { gitPage, addPage, devFilePage } from '../../pages';
 
-Given('user is on Import from Docker file page', () => {
+Given('user is on Import from Git form', () => {
   addPage.selectCardFromOptions(addOptions.DockerFile);
 });
 
-When('user enters docker git url as {string}', (gitUrl: string) => {
+When('user enters Git Repo URL as {string}', (gitUrl: string) => {
+  gitPage.enterGitUrl(gitUrl);
+  devFilePage.verifyValidatedMessage(gitUrl);
+});
+
+When('user enters Git Repo URL as {string} in Import from Git form', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
   devFilePage.verifyValidatedMessage(gitUrl);
 });
@@ -24,7 +29,7 @@ Then('application name displays as {string}', (appName: string) => {
 });
 
 Then(
-  'name field auto populates with value {string} in Import from Docker file page',
+  'name field auto populates with value {string} in Import from Git form',
   (nodeName: string) => {
     gitPage.verifyNodeName(nodeName);
     gitPage.clickCancel();

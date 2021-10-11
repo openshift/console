@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { InProgressIcon, ErrorCircleOIcon, BanIcon } from '@patternfly/react-icons';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ProgressStatus } from '@console/shared';
 import { killUploadPVC } from '../../k8s/requests/cdi-upload/cdi-upload-requests';
@@ -29,6 +30,7 @@ export const getProgressVariant = (status: UPLOAD_STATUS) => {
 };
 
 export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc, title = 'Uploading' }) => {
+  const { t } = useTranslation();
   const { uploads } = React.useContext(CDIUploadContext);
   const upload = uploads.find(
     (upl) => upl.pvcName === pvc?.metadata?.name && upl.namespace === pvc?.metadata?.namespace,
@@ -40,6 +42,9 @@ export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc, title = 
     killUploadPVC(pvc?.metadata?.name, pvc?.metadata?.namespace).catch(setError);
   };
 
+  const onErrorDeleteSource = () =>
+    killUploadPVC(pvc?.metadata?.name, pvc?.metadata?.namespace).catch(setError);
+
   React.useEffect(() => {
     setError(upload?.uploadError);
   }, [upload]);
@@ -48,27 +53,29 @@ export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc, title = 
     switch (status) {
       case UPLOAD_STATUS.ERROR:
         return {
-          title: `Upload Error`,
+          title: t('kubevirt-plugin~Upload Error'),
           body: error?.message,
           icon: <ErrorCircleOIcon className="co-icon-and-text__icon" color={dangerColor.value} />,
         };
       case UPLOAD_STATUS.CANCELED:
         return {
-          title: error ? 'Cancel Error' : 'Upload Canceled',
-          body: error ? error?.message : 'Removing Resources',
+          title: error ? t('kubevirt-plugin~Cancel Error') : t('kubevirt-plugin~Upload Canceled'),
+          body: error ? error?.message : t('kubevirt-plugin~Removing Resources'),
           icon: (
             <BanIcon className="co-icon-and-text__icon" color={error ? dangerColor.value : ''} />
           ),
         };
       case UPLOAD_STATUS.UPLOADING:
         return {
-          title: `Uploading`,
-          body: 'Please do not close this window, you can keep navigating the app freely.',
+          title: t('kubevirt-plugin~Uploading'),
+          body: t(
+            'kubevirt-plugin~Please do not close this window, you can keep navigating the app freely.',
+          ),
           icon: <InProgressIcon className="co-icon-and-text__icon" />,
         };
       case UPLOAD_STATUS.SUCCESS:
         return {
-          title: `Upload Finished`,
+          title: t('kubevirt-plugin~Upload Finished'),
           icon: <InProgressIcon className="co-icon-and-text__icon" />,
         };
       default:
@@ -105,7 +112,20 @@ export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc, title = 
                   variant="link"
                   onMouseUp={onCancelClick}
                 >
-                  Cancel upload
+                  {t('kubevirt-plugin~Cancel upload')}
+                </Button>
+              </StackItem>
+            )}
+            {upload?.uploadStatus === UPLOAD_STATUS.ERROR && (
+              <StackItem>
+                <Button
+                  id="cdi-upload-delete-btn"
+                  className="pf-m-link--align-left"
+                  variant="link"
+                  onMouseUp={onErrorDeleteSource}
+                  isDanger
+                >
+                  {t('kubevirt-plugin~Delete source')}
                 </Button>
               </StackItem>
             )}
@@ -128,7 +148,7 @@ export const UploadPVCPopover: React.FC<PVCUploadStatusProps> = ({ pvc, title = 
         variant="link"
         onMouseUp={onCancelClick}
       >
-        Cancel upload
+        {t('kubevirt-plugin~Cancel upload')}
       </Button>
     </ProgressStatus>
   );

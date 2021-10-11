@@ -4,6 +4,8 @@ import {
   PersistentVolumeClaimKind,
   PodKind,
 } from '@console/internal/module/k8s';
+import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
+import { VMStatusBundle } from '../../statuses/vm/types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMIKind, VMKind } from '../../types/vm';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
@@ -71,3 +73,23 @@ export enum VMTabEnum {
   nics = 'Network Interfaces',
   disks = 'Disks',
 }
+
+export type ObjectBundle = {
+  vm: VMKind;
+  vmi: VMIKind;
+  vmImport: VMImportKind;
+};
+
+export type VMRowObjType = {
+  metadata: {
+    name: string;
+    namespace: string;
+    status: string;
+    node: string;
+    creationTimestamp: string;
+    uid: string;
+    lookupID: string;
+    vmStatusBundle: VMStatusBundle;
+    vmImportStatus?: V2VVMImportStatus;
+  };
+} & ObjectBundle;

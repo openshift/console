@@ -141,6 +141,10 @@ $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
   }
 }
 
+.monitoring-dashboards__dropdowns {
+  display: flex;
+}
+
 .monitoring-dashboards__options {
   display: flex;
   float: right;
@@ -224,6 +228,7 @@ $screen-phone-landscape-min-width: 567px;
 .monitoring-dashboards__variables {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 $monitoring-line-height: 18px;
@@ -454,10 +459,6 @@ $monitoring-line-height: 18px;
   padding: 10px 20px;
 }
 
-.query-browser__tech-preview {
-  margin: 0 10px;
-}
-
 .query-browser__toggle-graph {
   margin-bottom: 5px;
   float: right;
@@ -467,7 +468,7 @@ $monitoring-line-height: 18px;
   background-color: $tooltip-background-color;
   color: #eee;
   font-size: 12px;
-  overflow-y: auto;
+  overflow-x: hidden;
   padding: 10px;
 }
 
@@ -479,8 +480,11 @@ $monitoring-line-height: 18px;
   width: 0;
 }
 
-.query-browser__tooltip-group {
-  align-items: stretch;
+.query-browser__tooltip-line {
+  stroke: $tooltip-background-color;
+}
+
+.query-browser__tooltip-series {
   display: flex;
 
   .query-browser__series-btn {
@@ -489,10 +493,6 @@ $monitoring-line-height: 18px;
     margin-top: 4px;
     margin-right: 3px;
   }
-}
-
-.query-browser__tooltip-line {
-  stroke: $tooltip-background-color;
 }
 
 .query-browser__tooltip-time {

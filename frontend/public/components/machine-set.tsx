@@ -3,16 +3,33 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared';
+import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models';
-import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
+import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
+import {
+  K8sKind,
+  MachineDeploymentKind,
+  MachineSetKind,
+  MachineKind,
+  NodeKind,
+  referenceForModel,
+  Selector as SelectorType,
+} from '../module/k8s';
 import { MachinePage } from './machine';
 import { configureMachineAutoscalerModal, configureReplicaCountModal } from './modals';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, TableData } from './factory';
+import VirtualizedTable from './factory/Table/VirtualizedTable';
+import { sortResourceByValue } from './factory/Table/sort';
+import ListPageFilter from './factory/ListPage/ListPageFilter';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageBody from './factory/ListPage/ListPageBody';
+import { useListPageFilter } from './factory/ListPage/filter-hook';
+import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   Kebab,
   KebabAction,
@@ -24,8 +41,21 @@ import {
   navFactory,
   resourcePath,
   useAccessReview,
+  convertToBaseValue,
+  formatBytesAsGiB,
 } from './utils';
 import { ResourceEventStream } from './events';
+
+const MachinesResource = {
+  isList: true,
+  kind: referenceForModel(MachineModel),
+};
+
+const NodesResource = {
+  isList: true,
+  kind: NodeModel.kind,
+  namespaced: false,
+};
 
 const machineReplicasModal = (
   resourceKind: K8sKind,
@@ -91,7 +121,15 @@ export const getReadyReplicas = (machineSet: MachineSetKind | MachineDeploymentK
 export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
   machineSet?.status?.availableReplicas || 0;
 
-const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
+const tableColumnInfo = [
+  { className: '', id: 'name' },
+  { className: '', id: 'namespace' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'machines' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'instanceType' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'cpu' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'memory' },
+  { className: Kebab.columnClass, id: '' },
+];
 
 export const MachineCounts: React.FC<MachineCountsProps> = ({
   resourceKind,
@@ -146,9 +184,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({
               <dt className="co-detail-table__section-header">{t('public~Current count')}</dt>
               <dd>
                 <Tooltip content={t('public~The most recently observed number of replicas.')}>
-                  <span>
-                    {replicas} {t('public~machine', { count: replicas })}
-                  </span>
+                  <span>{t('public~{{replicas}} machine', { replicas, count: replicas })}</span>
                 </Tooltip>
               </dd>
             </dl>
@@ -163,7 +199,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({
                   )}
                 >
                   <span>
-                    {readyReplicas} {t('public~machine', { count: readyReplicas })}
+                    {t('public~{{readyReplicas}} machine', { readyReplicas, count: readyReplicas })}
                   </span>
                 </Tooltip>
               </dd>
@@ -179,7 +215,10 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({
                   )}
                 >
                   <span>
-                    {availableReplicas} {t('public~machine', { count: availableReplicas })}
+                    {t('public~{{availableReplicas}} machine', {
+                      availableReplicas,
+                      count: availableReplicas,
+                    })}
                   </span>
                 </Tooltip>
               </dd>
@@ -202,11 +241,12 @@ export const MachineTabPage: React.SFC<MachineTabPageProps> = ({
 const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   const machineRole = getMachineRole(obj);
   const { availabilityZone, region } = getMachineAWSPlacement(obj);
+  const instanceType = getMachineSetInstanceType(obj);
   const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~Machine set details')} />
+        <SectionHeading text={t('public~MachineSet details')} />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
         <div className="row">
           <div className="col-md-6">
@@ -219,6 +259,8 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
                   namespace={obj.metadata.namespace}
                 />
               </dd>
+              <dt>{t('public~Instance type')}</dt>
+              <dd>{instanceType || '-'}</dd>
               {machineRole && (
                 <>
                   <dt>{t('public~Machine role')}</dt>
@@ -245,85 +287,212 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   );
 };
 
-const MachineSetTableRow: React.FC<RowFunctionArgs<MachineSetKind>> = ({ obj }) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={machineSetReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`${resourcePath(
-            machineSetReference,
-            obj.metadata.name,
-            obj.metadata.namespace,
-          )}/machines`}
-        >
-          {getReadyReplicas(obj)} {t('public~of')} {getDesiredReplicas(obj)} {t('public~machines')}
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
-      </TableData>
-    </>
-  );
+type MachineSetListProps = {
+  data: MachineSetKind[];
+  unfilteredData: MachineSetKind[];
+  loaded: boolean;
+  loadError: any;
 };
 
-export const MachineSetList: React.SFC = (props) => {
+export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
   const { t } = useTranslation();
-  const MachineSetTableHeader = () => {
-    return [
+  const [machines, machinesLoaded] = useK8sWatchResource<MachineKind[]>(MachinesResource);
+  const [nodes, nodesLoaded] = useK8sWatchResource<NodeKind[]>(NodesResource);
+
+  const getRelatedNodes = React.useCallback(
+    (obj: MachineSetKind): NodeKind[] => {
+      const relatedMachines = machinesLoaded
+        ? machines?.filter(
+            (machine) =>
+              machine.metadata.labels?.['machine.openshift.io/cluster-api-machineset'] ===
+              obj.metadata.name,
+          )
+        : [];
+      return nodesLoaded && relatedMachines.length > 0
+        ? nodes.filter((node) =>
+            relatedMachines.some((machine) => node.metadata.uid === machine.status?.nodeRef?.uid),
+          )
+        : [];
+    },
+    [machines, machinesLoaded, nodes, nodesLoaded],
+  );
+  const numCores = React.useCallback(
+    (obj: MachineSetKind): number => {
+      const relatedNodes = getRelatedNodes(obj);
+      return nodesLoaded && relatedNodes.length > 0
+        ? convertToBaseValue(relatedNodes[0].status?.capacity.cpu) ?? 0
+        : 0;
+    },
+    [getRelatedNodes, nodesLoaded],
+  );
+
+  const memory = React.useCallback(
+    (obj: MachineSetKind): string | number => {
+      const relatedNodes = getRelatedNodes(obj);
+      return nodesLoaded && relatedNodes.length > 0
+        ? formatBytesAsGiB(convertToBaseValue(relatedNodes[0].status?.capacity.memory) ?? 0)
+        : 0;
+    },
+    [getRelatedNodes, nodesLoaded],
+  );
+
+  const machineSetTableColumn = React.useMemo<TableColumn<MachineSetKind>[]>(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
+        sort: 'metadata.name',
         transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        props: { className: tableColumnInfo[0].className },
+        id: tableColumnInfo[0].id,
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
+        sort: 'metadata.namespace',
         transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        props: { className: tableColumnInfo[1].className },
+        id: tableColumnInfo[1].id,
       },
       {
         title: t('public~Machines'),
-        sortField: 'status.readyReplicas',
+        sort: 'status.readyReplicas',
         transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        props: { className: tableColumnInfo[2].className },
+        id: tableColumnInfo[2].id,
+      },
+      {
+        title: t('public~Instance type'),
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue(direction, getMachineSetInstanceType)),
+        transforms: [sortable],
+        props: { className: tableColumnInfo[3].className },
+        id: tableColumnInfo[3].id,
+      },
+      {
+        title: t('public~CPU'),
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, numCores)),
+        transforms: [sortable],
+        props: { className: tableColumnInfo[4].className },
+        id: tableColumnInfo[4].id,
+      },
+      {
+        title: t('public~Memory'),
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, memory)),
+        transforms: [sortable],
+        props: { className: tableColumnInfo[5].className },
+        id: tableColumnInfo[5].id,
       },
       {
         title: '',
-        props: { className: tableColumnClasses[3] },
+        props: { className: tableColumnInfo[6].className },
+        id: tableColumnInfo[6].id,
       },
-    ];
-  };
+    ],
+    [memory, numCores, t],
+  );
 
+  const MachineSetTableRow: React.FC<RowProps<MachineSetKind>> = ({ obj }) => {
+    return (
+      <>
+        <TableData {...tableColumnInfo[0]}>
+          <ResourceLink
+            kind={machineSetReference}
+            name={obj.metadata.name}
+            namespace={obj.metadata.namespace}
+          />
+        </TableData>
+        <TableData
+          {...tableColumnInfo[1]}
+          className={classNames(tableColumnInfo[1].className, 'co-break-word')}
+        >
+          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        </TableData>
+        <TableData {...tableColumnInfo[2]}>
+          <Link
+            to={`${resourcePath(
+              machineSetReference,
+              obj.metadata.name,
+              obj.metadata.namespace,
+            )}/machines`}
+          >
+            {t('public~{{numReadyReplicas}} of {{numDesiredReplicas}} machine', {
+              numReadyReplicas: getReadyReplicas(obj),
+              numDesiredReplicas: getDesiredReplicas(obj),
+              count: getDesiredReplicas(obj),
+            })}
+          </Link>
+        </TableData>
+        <TableData {...tableColumnInfo[3]}>{getMachineSetInstanceType(obj) || '-'}</TableData>
+        <TableData {...tableColumnInfo[4]}>
+          {t('public~{{count}} core', {
+            count: numCores(obj),
+          })}
+        </TableData>
+        <TableData {...tableColumnInfo[5]}>
+          {t('public~{{memory}} GiB', {
+            memory: memory(obj),
+          })}
+        </TableData>
+        <TableData {...tableColumnInfo[6]}>
+          <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
+        </TableData>
+      </>
+    );
+  };
   return (
-    <Table
+    <VirtualizedTable<MachineSetKind>
       {...props}
-      aria-label={t('public~Machine sets')}
-      Header={MachineSetTableHeader}
+      loaded={nodesLoaded && machinesLoaded && props.loaded}
+      aria-label={t('public~MachineSets')}
+      columns={machineSetTableColumn}
       Row={MachineSetTableRow}
-      virtualize
     />
   );
 };
 
-export const MachineSetPage: React.SFC<MachineSetPageProps> = (props) => (
-  <ListPage {...props} ListComponent={MachineSetList} kind={machineSetReference} canCreate />
-);
+export const MachineSetPage: React.FC<MachineSetPageProps> = ({
+  namespace,
+  selector,
+  showTitle = true,
+  hideLabelFilter,
+  hideNameLabelFilters,
+  hideColumnManagement,
+}) => {
+  const [machineSets, loaded, loadError] = useK8sWatchResource<MachineSetKind[]>({
+    isList: true,
+    kind: referenceForModel(MachineSetModel),
+    selector,
+    namespace,
+  });
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(machineSets);
+
+  const { t } = useTranslation();
+  return (
+    <>
+      <ListPageHeader title={showTitle ? t('public~MachineSets') : undefined}>
+        <ListPageCreate groupVersionKind={referenceForModel(MachineSetModel)}>
+          {t('public~Create MachineSet')}
+        </ListPageCreate>
+      </ListPageHeader>
+      <ListPageBody>
+        <ListPageFilter
+          data={data}
+          loaded={loaded}
+          onFilterChange={onFilterChange}
+          hideNameLabelFilters={hideNameLabelFilters}
+          hideLabelFilter={hideLabelFilter}
+          hideColumnManagement={hideColumnManagement}
+        />
+        <MachineSetList
+          data={filteredData}
+          unfilteredData={machineSets}
+          loaded={loaded}
+          loadError={loadError}
+        />
+      </ListPageBody>
+    </>
+  );
+};
 
 export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = (props) => (
   <DetailsPage
@@ -355,7 +524,10 @@ export type MachineSetDetailsProps = {
 export type MachineSetPageProps = {
   showTitle?: boolean;
   namespace?: string;
-  selector?: any;
+  selector?: SelectorType;
+  hideLabelFilter?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideColumnManagement?: boolean;
 };
 
 export type MachineSetDetailsPageProps = {

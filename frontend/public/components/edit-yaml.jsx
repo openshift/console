@@ -16,6 +16,7 @@ import {
 } from '@console/shared';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorSidebar';
+import '@console/shared/src/components/editor/theme';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { isYAMLTemplate } from '@console/dynamic-plugin-sdk';
@@ -612,7 +613,8 @@ export const EditYAML_ = connect(stateToProps)(
             : { samples: [], snippets: [] };
           const definition = model ? definitionFor(model) : { properties: [] };
           const showSchema = definition && !_.isEmpty(definition.properties);
-          const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
+          const hasSidebarContent =
+            showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
           const sidebarLink =
             !showSidebar && hasSidebarContent ? (
               <Button type="button" variant="link" isInline onClick={this.toggleSidebar}>

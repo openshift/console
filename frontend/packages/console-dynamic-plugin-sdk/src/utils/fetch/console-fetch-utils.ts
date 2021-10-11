@@ -103,6 +103,7 @@ type ImpersonateHeaders = {
   'Impersonate-User': string;
 };
 export const getImpersonateHeaders = (): ImpersonateHeaders => {
+  if (!InternalReduxStore) return undefined;
   const { kind, name } = InternalReduxStore.getState().UI.get('impersonate', {});
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain

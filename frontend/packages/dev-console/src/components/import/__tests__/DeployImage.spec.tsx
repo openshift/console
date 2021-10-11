@@ -12,18 +12,6 @@ import DeployImagePage from '../DeployImagePage';
 import ImageSearchSection from '../image-search/ImageSearchSection';
 import ResourceSection from '../section/ResourceSection';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
 jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
   return {
     usePostFormSubmitAction: () => () => {},
@@ -35,8 +23,6 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => {
     useResizeObserver: () => {},
   };
 });
-
-const i18ns = 'devconsole';
 
 describe('DeployImage Page Test', () => {
   type DeployImagePageProps = React.ComponentProps<typeof DeployImagePage>;
@@ -69,7 +55,7 @@ describe('DeployImage Page Test', () => {
   });
   it('should render correct page title', () => {
     expect(deployImagePageWrapper.find(PageHeading).exists()).toBe(true);
-    expect(deployImagePageWrapper.find(PageHeading).prop('title')).toBe('devconsole~Deploy Image');
+    expect(deployImagePageWrapper.find(PageHeading).prop('title')).toBe('Deploy Image');
   });
 });
 
@@ -96,12 +82,10 @@ describe('Deploy Image Test', () => {
     expect(radioButtons.exists()).toBe(true);
     expect(radioButtons.length).toEqual(2);
     expect(radioButtons.at(0).prop('value')).toBe('external');
-    expect(radioButtons.at(0).prop('label')).toBe(`${i18ns}~Image name from external registry`);
+    expect(radioButtons.at(0).prop('label')).toBe('Image name from external registry');
     expect(radioButtons.at(0).prop('isChecked')).toBe(true);
     expect(radioButtons.at(1).prop('value')).toBe('internal');
-    expect(radioButtons.at(1).prop('label')).toBe(
-      `${i18ns}~Image stream tag from internal registry`,
-    );
+    expect(radioButtons.at(1).prop('label')).toBe('Image stream tag from internal registry');
     expect(radioButtons.at(1).prop('isChecked')).toBe(false);
   });
 

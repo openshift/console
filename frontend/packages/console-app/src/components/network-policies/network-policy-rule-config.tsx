@@ -9,6 +9,7 @@ import {
   FormFieldGroupHeader,
 } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,20 +21,20 @@ import { NetworkPolicyPeerIPBlock } from './network-policy-peer-ipblock';
 import { NetworkPolicyPeerSelectors } from './network-policy-peer-selectors';
 import { NetworkPolicyPorts } from './network-policy-ports';
 
-const getPeerRuleTitle = (t, direction: 'ingress' | 'egress', peer: NetworkPolicyPeer) => {
+const getPeerRuleTitle = (direction: 'ingress' | 'egress', peer: NetworkPolicyPeer) => {
   if (peer.ipBlock) {
     return direction === 'ingress'
-      ? t('public~Allow traffic from peers by IP block')
-      : t('public~Allow traffic to peers by IP block');
+      ? i18next.t('console-app~Allow traffic from peers by IP block')
+      : i18next.t('console-app~Allow traffic to peers by IP block');
   }
   if (peer.namespaceSelector) {
     return direction === 'ingress'
-      ? t('public~Allow traffic from pods inside the cluster')
-      : t('public~Allow traffic to pods inside the cluster');
+      ? i18next.t('console-app~Allow traffic from pods inside the cluster')
+      : i18next.t('console-app~Allow traffic to pods inside the cluster');
   }
   return direction === 'ingress'
-    ? t('public~Allow traffic from pods in the same namespace')
-    : t('public~Allow traffic to pods in the same namespace');
+    ? i18next.t('console-app~Allow traffic from pods in the same namespace')
+    : i18next.t('console-app~Allow traffic to pods in the same namespace');
 };
 
 const emptyPeer = (type: NetworkPolicyPeerType): NetworkPolicyPeer => {
@@ -65,10 +66,10 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
   const peersHelp =
     direction === 'ingress'
       ? t(
-          'public~Sources added to this rule will allow traffic to the pods defined above. Sources in this list are combined using a logical OR operation.',
+          'console-app~Sources added to this rule will allow traffic to the pods defined above. Sources in this list are combined using a logical OR operation.',
         )
       : t(
-          'public~Destinations added to this rule will allow traffic from the pods defined above. Destinations in this list are combined using a logical OR operation.',
+          'console-app~Destinations added to this rule will allow traffic from the pods defined above. Destinations in this list are combined using a logical OR operation.',
         );
 
   const addPeer = (type: NetworkPolicyPeerType) => {
@@ -76,7 +77,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
     onChange(rule);
   };
 
-  const removePeer = (idx) => {
+  const removePeer = (idx: number) => {
     rule.peers = [...rule.peers.slice(0, idx), ...rule.peers.slice(idx + 1)];
     onChange(rule);
   };
@@ -86,18 +87,18 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
       <CardTitle component="h4">
         <div className="co-create-networkpolicy__rule-header">
           <label>
-            {direction === 'ingress' ? t('public~Ingress rule') : t('public~Egress rule')}
+            {direction === 'ingress' ? t('console-app~Ingress rule') : t('console-app~Egress rule')}
           </label>
           <div className="co-create-networkpolicy__rule-header-right">
             <Button variant="link" onClick={onRemove}>
-              {t('public~Remove')}
+              {t('console-app~Remove')}
             </Button>
           </div>
           <NetworkPolicyAddPeerDropdown
             title={
               direction === 'ingress'
-                ? t('public~Add allowed source')
-                : t('public~Add allowed destination')
+                ? t('console-app~Add allowed source')
+                : t('console-app~Add allowed destination')
             }
             onSelect={addPeer}
           />
@@ -123,7 +124,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
             <NetworkPolicyPeerSelectors
               direction={direction}
               namespaceSelector={peer.namespaceSelector}
-              podSelector={peer.podSelector}
+              podSelector={peer.podSelector || []}
               onChange={(podSel, nsSel) => {
                 rule.peers[idx].podSelector = podSel;
                 rule.peers[idx].namespaceSelector = nsSel;
@@ -139,12 +140,12 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
                 header={
                   <FormFieldGroupHeader
                     titleText={{
-                      text: getPeerRuleTitle(t, direction, peer),
+                      text: getPeerRuleTitle(direction, peer),
                       id: `peer-header-${idx}`,
                     }}
                     actions={
                       <Button
-                        aria-label={t('public~Remove peer')}
+                        aria-label={t('console-app~Remove peer')}
                         className="co-create-networkpolicy__remove-peer"
                         onClick={() => removePeer(idx)}
                         type="button"
@@ -163,7 +164,6 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
           );
         })}
         <NetworkPolicyPorts
-          direction={direction}
           ports={rule.ports}
           onChange={(ports) => {
             rule.ports = ports;

@@ -11,7 +11,6 @@ import { JobModel } from '@console/internal/models';
 import { JobKind } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared/src';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 type JobSideBarDetailsProps = {
@@ -47,8 +46,7 @@ const JobSideBarDetails: React.FC<JobSideBarDetailsProps> = ({ job }) => {
 };
 
 export const getJobSideBarDetails = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource<JobKind>(element);
-  if (resource.kind !== JobModel.kind) return undefined;
+  if (!resource || resource.kind !== JobModel.kind) return undefined;
   return <JobSideBarDetails job={resource} />;
 };

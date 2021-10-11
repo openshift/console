@@ -1,8 +1,8 @@
-import { ProvisionSource } from '../../enums/provisionSource';
 import sshFixure from '../../fixtures/ssh';
+import { ProvisionSource } from '../../utils/const/provisionSource';
 
 export default ({ vmName }) =>
-  describe('ID (CNV-5970) Test creating a vm using simple wizard and adding an ssh key', () => {
+  describe('ID (CNV-5970) Test creating a vm using simple wizard and adding an SSH key', () => {
     it('starting to create a vm', () => {
       cy.get('[data-test=nav]')
         .filter('[href$=virtualization]')
@@ -29,12 +29,13 @@ export default ({ vmName }) =>
         .type(vmName);
     });
 
-    it('checking if ssh keys message is visible', () => {
+    it('checking if SSH keys message is visible when SSH service is checked', () => {
+      cy.get('#ssh-service-checkbox').check();
       cy.byTestID('SSHCreateService-info-message').should('be.visible');
     });
 
-    it('should open authorized keys component', () => {
-      cy.get('.SSHWizard-authorized-key').click();
+    it('should open authorized keys accordion', () => {
+      cy.get('#authorized-key').click();
     });
 
     it('checking no restore button', () => {
@@ -46,7 +47,7 @@ export default ({ vmName }) =>
       cy.get('.SSHFormKey-helperText-error').should('not.exist');
     });
 
-    it('should add an ssh key', () => {
+    it('should add an SSH key', () => {
       cy.get('.SSHFormKey-input-field').type(sshFixure.key);
     });
 
@@ -54,30 +55,24 @@ export default ({ vmName }) =>
       cy.get('.SSHFormKey-helperText-success').should('be.visible');
     });
 
-    it('checking remember ssh key is not checked', () => {
-      cy.get('#ssh-service-checkbox')
-        .first()
-        .should('not.be.checked');
+    it('checking remember SSH key is not checked', () => {
+      cy.get('#ssh-store-auth-key-checkbox').should('not.be.checked');
     });
 
-    it('should check remember ssh key', () => {
-      cy.get('#ssh-service-checkbox')
-        .first()
-        .check();
+    it('should check remember SSH key', () => {
+      cy.get('#ssh-store-auth-key-checkbox').check();
     });
 
-    it('checking if ssh  helper modal exist', () => {
+    it('checking if SSH  helper modal exist', () => {
       cy.byLegacyTestID('ssh-popover-button').click();
       cy.byTestID('ssh-popover').should('be.visible');
     });
 
-    it('checking if expose ssh service is checked by default', () => {
-      cy.get('[id=ssh-service-checkbox]')
-        .eq(1)
-        .should('be.checked');
+    it('checking if expose SSH service is checked by default', () => {
+      cy.get('#ssh-service-checkbox').should('be.checked');
     });
 
-    it('checking if ssh keys message is not visible', () => {
+    it('checking if SSH keys message is not visible', () => {
       cy.byTestID('SSHCreateService-info-message').should('not.exist');
     });
 

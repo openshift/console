@@ -8,14 +8,6 @@ import * as accessFilterHook from '../hooks/useAccessFilterExtensions';
 import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => {
   const addActionGroupExtensions = require.requireActual('./add-page-test-data');
   return { useExtensions: () => addActionGroupExtensions };
@@ -24,8 +16,6 @@ jest.mock('@console/plugin-sdk/src/api/useExtensions', () => {
 jest.mock('../hooks/useShowAddCardItemDetails', () => ({
   useShowAddCardItemDetails: jest.fn(),
 }));
-
-const i18nNS = 'devconsole~';
 
 describe('AddPageLayout', () => {
   type AddPageLayoutProps = React.ComponentProps<typeof AddPageLayout>;
@@ -111,7 +101,7 @@ describe('AddPageLayout', () => {
           .find(PageLayout)
           .shallow()
           .text()
-          .includes(`${i18nNS}Details on`),
+          .includes('Details on'),
       ).toBe(true);
     });
 
@@ -125,7 +115,7 @@ describe('AddPageLayout', () => {
           .find(PageLayout)
           .shallow()
           .text()
-          .includes(`${i18nNS}Details off`),
+          .includes('Details off'),
       ).toBe(true);
     });
 

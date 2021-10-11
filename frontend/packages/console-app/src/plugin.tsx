@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { CogsIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import {
   ClusterVersionModel,
@@ -14,7 +12,6 @@ import {
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
 import {
   Plugin,
-  Perspective,
   ModelDefinition,
   RoutePage,
   DashboardsOverviewResourceActivity,
@@ -38,6 +35,7 @@ import {
   getControlPlaneHealth,
   getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
+import { USER_PREFERENCES_BASE_URL } from './components/user-preferences/const';
 import * as models from './models';
 import {
   API_SERVERS_UP,
@@ -47,7 +45,6 @@ import {
 } from './queries';
 
 type ConsumedExtensions =
-  | Perspective
   | ModelDefinition
   | RoutePage
   | DashboardsOverviewResourceActivity
@@ -64,20 +61,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'Perspective',
-    properties: {
-      id: 'admin',
-      // t('console-app~Administrator')
-      name: '%console-app~Administrator%',
-      icon: <CogsIcon />,
-      default: true,
-      getLandingPageURL: (flags) =>
-        flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects',
-      getK8sLandingPageURL: () => '/search',
-      getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
   },
   {
@@ -256,6 +239,19 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/console-operator/ConsoleOperatorConfig' /* webpackChunkName: "console-operator-config" */
           )
         ).ConsoleOperatorConfigDetailsPage,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [USER_PREFERENCES_BASE_URL, `${USER_PREFERENCES_BASE_URL}/:group`],
+      loader: async () =>
+        (
+          await import(
+            './components/user-preferences/UserPreferencePage' /* webpackChunkName: "co-user-preference" */
+          )
+        ).default,
     },
   },
 ];

@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { KEY_CODES, MenuItem, Tooltip } from '@patternfly/react-core';
+import {
+  KEY_CODES,
+  MenuItem,
+  Tooltip,
+  DropdownItemProps,
+  MenuItemProps,
+} from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
@@ -9,6 +15,7 @@ import { impersonateStateToProps } from '@console/internal/reducers/ui';
 
 export type ActionMenuItemProps = {
   action: Action;
+  component?: React.ComponentType<MenuItemProps | DropdownItemProps>;
   autoFocus?: boolean;
   onClick?: () => void;
   onEscape?: () => void;
@@ -20,6 +27,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   onEscape,
   autoFocus,
   isAllowed,
+  component,
 }) => {
   const { label, icon, disabled, cta } = action;
   const { href, external } = cta as { href: string; external?: boolean };
@@ -50,21 +58,26 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
       handleClick(event);
     }
   };
+  const Component = component ?? MenuItem;
+
+  const props = {
+    icon,
+    autoFocus,
+    isDisabled,
+    className: classes,
+    onClick: handleClick,
+    'data-test-action': label,
+  };
+
+  const extraProps = {
+    onKeyDown: handleKeyDown,
+    ...(external ? { to: href, isExternalLink: external } : {}),
+  };
 
   return (
-    <MenuItem
-      className={classes}
-      icon={icon}
-      autoFocus={autoFocus}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      isDisabled={isDisabled}
-      data-test-action={label}
-      tabIndex={0} // Override PF tabIndex -1 to make action items tabbable
-      {...(external ? { to: href, isExternalLink: external } : {})}
-    >
+    <Component {...props} {...(component ? {} : extraProps)}>
       {label}
-    </MenuItem>
+    </Component>
   );
 };
 

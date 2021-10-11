@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { useLocation, Link } from 'react-router-dom';
 
 import { useDeepCompareMemoize, StatusIconAndText, Status } from '@console/shared';
 import { sortable, wrappable } from '@patternfly/react-table';
@@ -8,10 +9,9 @@ import { Tooltip } from '@patternfly/react-core';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { ListPage, Table, RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import {
-  ResourceLink,
+  ResourceIcon,
   ResourceKebab,
   Kebab,
-  resourcePathFromModel,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
@@ -19,14 +19,13 @@ import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers'
 import { StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
-import { menuActions } from './block-pool-menu-action';
+import { menuActions, disableMenuAction } from './block-pool-menu-action';
 import { healthStateMapping } from '../dashboards/block-pool/states';
 import { CephBlockPoolModel } from '../../models';
 import { StoragePoolKind, OcsStorageClassKind, CephClusterKind } from '../../types';
-import { CEPH_STORAGE_NAMESPACE, CEPH_EXTERNAL_CR_NAME } from '../../constants';
+import { CEPH_STORAGE_NAMESPACE } from '../../constants';
 import {
   BlockPoolColumnInfo,
-  isDefaultPool,
   getScNamesUsingPool,
   getPerPoolMetrics,
 } from '../../utils/block-pool';
@@ -103,7 +102,7 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
   const { t } = useTranslation();
   const blockPoolColumnInfo = BlockPoolColumnInfo(t);
   const props: BlockPoolListRowProps = customData;
-  const { name, namespace } = obj.metadata;
+  const { name } = obj.metadata;
   const replica = obj.spec?.replicated?.size;
   const mirroringStatus: boolean = obj.spec?.mirroring?.enabled;
   const mirroringImageHealth: string = mirroringStatus
@@ -122,6 +121,9 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
     [name, props],
   );
 
+  // Details page link
+  const to = `${props.listPagePath}/${name}`;
+
   // Metrics
   // {poolRawCapacity: {"pool-1" : size_bytes, "pool-2" : size_bytes, ...}}
   const rawCapacity: string = props.poolRawCapacity[name]
@@ -137,7 +139,10 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
         className={blockPoolColumnInfo.name.classes}
         columnID={blockPoolColumnInfo.name.id}
       >
-        <ResourceLink kind={referenceFor(obj)} name={name} namespace={namespace} />
+        <ResourceIcon kind={referenceForModel(CephBlockPoolModel)} />
+        <Link to={to} className="co-resource-item__resource-name" data-test={name}>
+          {name}
+        </Link>
       </TableData>
       <TableData
         className={blockPoolColumnInfo.status.classes}
@@ -197,11 +202,7 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
           actions={menuActions}
           kind={referenceFor(obj)}
           resource={obj}
-          isDisabled={
-            obj?.metadata?.deletionTimestamp ||
-            props?.cephCluster?.metadata?.name === CEPH_EXTERNAL_CR_NAME ||
-            isDefaultPool(obj)
-          }
+          isDisabled={disableMenuAction(obj, props?.cephCluster)}
           customData={{ tFunction: t }}
         />
       </TableData>
@@ -249,6 +250,7 @@ const BlockPoolList: React.FC<BlockPoolListProps> = (props) => {
       cephCluster: cephClusters?.[0],
       poolRawCapacity,
       poolCompressionSavings,
+      listPagePath: props.customData,
     };
   }, [
     cephClusters,
@@ -259,6 +261,7 @@ const BlockPoolList: React.FC<BlockPoolListProps> = (props) => {
     poolRawCapacityMetrics,
     rawCapLoadError,
     rawCapLoading,
+    props.customData,
   ]);
 
   return (
@@ -274,12 +277,10 @@ const BlockPoolList: React.FC<BlockPoolListProps> = (props) => {
 };
 
 export const BlockPoolListPage: React.FC<BlockListPoolPageProps> = (props) => {
+  const location = useLocation();
+  const listPagePath: string = location.pathname;
   const createProps = {
-    to: `${resourcePathFromModel(
-      CephBlockPoolModel,
-      null,
-      props.namespace ?? CEPH_STORAGE_NAMESPACE,
-    )}/~new`,
+    to: `${listPagePath}/create/~new`,
   };
   return (
     <ListPage
@@ -289,6 +290,7 @@ export const BlockPoolListPage: React.FC<BlockListPoolPageProps> = (props) => {
       createProps={createProps}
       kind={referenceForModel(CephBlockPoolModel)}
       ListComponent={BlockPoolList}
+      customData={listPagePath}
     />
   );
 };
@@ -302,10 +304,12 @@ type BlockPoolListRowProps = {
   storageClasses: OcsStorageClassKind[];
   poolRawCapacity: PoolMetrics;
   poolCompressionSavings: PoolMetrics;
+  listPagePath: string;
 };
 
 type BlockPoolListProps = {
   data: StoragePoolKind[];
+  customData: string;
 };
 
 type BlockListPoolPageProps = {

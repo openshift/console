@@ -5,6 +5,10 @@ OpenShift Data Foundation (ODF) operator supports connecting to an external vend
 
 All external vendors can contribute their UI via the `Create storage class` step of `CreateStorageSystem` wizard.
 
+#### Prerequisite:
+
+The `kind` of vendor should be present in [ODF operator CSV annotation](https://github.com/red-hat-storage/odf-operator/blob/405c2af1266fa11b53441dc3d4a329d330c999f5/config/manifests/bases/odf-operator.clusterserviceversion.yaml#L15) (`vendors.odf.openshift.io/kind`)
+
 Follow the steps written below to integrate with the ODF wizard:
 
 

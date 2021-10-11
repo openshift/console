@@ -310,7 +310,7 @@ export type DiscoveredDisk = {
 export type NavUtils = {
   getStep: (maxSteps?: number) => number;
   getParamString: (step: number, mode: number) => string;
-  getIndex: (searchSpace: any, search: string, offset?: number) => number;
+  getIndex: (searchSpace: any, search: React.ReactText, offset?: number) => number;
   getAnchor: (step: number, mode: number) => string;
 };
 
@@ -337,7 +337,7 @@ export type StorageSystemKind = K8sResourceCommon & {
     // namespace describes the name of managed storage vendor CR
     namespace: string;
   };
-  status: {
+  status?: {
     phase?: string;
     conditions?: any;
   };

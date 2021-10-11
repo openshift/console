@@ -1,0 +1,9 @@
+apiVersion: pipelinesascode.tekton.dev/v1alpha1
+kind: Repository
+metadata:
+  name: test-repo
+spec:
+  branch: main
+  event_type: push
+  url: 'https://github.com/tektoncd/cli.git'
+

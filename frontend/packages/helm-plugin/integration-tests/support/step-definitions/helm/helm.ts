@@ -49,8 +49,8 @@ Then('user will see the chart version dropdown', () => {
 });
 
 Then('user has added multiple helm charts repositories', () => {
-  createHelmReleaseWithName('Nodejs Ex K v0.2.1', 'nodejs-example');
-  createHelmReleaseWithName('Quarkus v0.0.3', 'quarkus');
+  createHelmReleaseWithName('Nodejs', 'nodejs-release');
+  createHelmReleaseWithName('Quarkus', 'quarkus');
   navigateTo(devNavigationMenu.Add);
 });
 

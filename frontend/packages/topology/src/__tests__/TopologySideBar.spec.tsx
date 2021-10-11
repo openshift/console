@@ -4,14 +4,6 @@ import { shallow } from 'enzyme';
 import CloseButton from '@console/shared/src/components/close-button';
 import TopologySideBar from '../components/side-bar/TopologySideBar';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('TopologySideBar:', () => {
   const props = {
     show: true,

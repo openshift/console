@@ -9,10 +9,10 @@ export const CloudServicesRequestModel: K8sKind = {
   plural: 'cloudservicesrequests',
   label: 'Cloud Services Request',
   // t('rhoas-plugin~Cloud Services Request')
-  labelKey: 'Cloud Services Request',
+  labelKey: 'rhoas-plugin~Cloud Services Request',
   labelPlural: 'Cloud Services Requests',
   // t('rhoas-plugin~Cloud Services Requests')
-  labelPluralKey: 'Cloud Services Requests',
+  labelPluralKey: 'rhoas-plugin~Cloud Services Requests',
   abbr: 'CSCR',
   namespaced: true,
   crd: true,
@@ -26,10 +26,10 @@ export const KafkaConnectionModel: K8sKind = {
   plural: 'kafkaconnections',
   label: 'Kafka Connection',
   // t('rhoas-plugin~Kafka Connection')
-  labelKey: 'Kafka Connection',
+  labelKey: 'rhoas-plugin~Kafka Connection',
   labelPlural: 'Kafka Connections',
   // t('rhoas-plugin~Kafka Connections')
-  labelPluralKey: 'Kafka Connections',
+  labelPluralKey: 'rhoas-plugin~Kafka Connections',
   abbr: 'AKC',
   namespaced: true,
   crd: true,
@@ -43,10 +43,10 @@ export const CloudServiceAccountRequest: K8sKind = {
   plural: 'cloudserviceaccountrequests',
   label: 'Cloud service Account Request',
   // t('rhoas-plugin~Cloud service Account Request')
-  labelKey: 'Cloud service Account Request',
+  labelKey: 'rhoas-plugin~Cloud service Account Request',
   labelPlural: 'Cloud Service Account Requests',
   // t('rhoas-plugin~Cloud Service Account Requests')
-  labelPluralKey: 'Cloud Service Account Requests',
+  labelPluralKey: 'rhoas-plugin~Cloud Service Account Requests',
   abbr: 'CSAR',
   namespaced: true,
   crd: true,

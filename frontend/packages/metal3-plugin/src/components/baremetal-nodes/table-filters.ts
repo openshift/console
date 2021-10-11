@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { NODE_STATUS_TITLE_KEYS } from '../../constants';
 import { BareMetalNodeListBundle, isCSRBundle } from '../types';
 
@@ -37,10 +37,12 @@ export const bareMetalNodeStatusFilter = (t: TFunction): RowFilter<BareMetalNode
   type: 'bare-metal-node-status',
   reducer: getBareMetalNodeFilterStatus,
   items: _.map(statesToFilterMap, ({ titleKey }, id) => ({ id, title: t(titleKey) })),
-  filter: (groups, bundle: BareMetalNodeListBundle) => {
+  filter: (groups, bundle) => {
     const status = isCSRBundle(bundle) ? 'approval' : getBareMetalNodeFilterStatus(bundle);
     return (
-      groups.selected.has(status) || !_.includes(groups.all, status) || _.isEmpty(groups.selected)
+      groups.selected?.includes(status) ||
+      !_.includes(groups.all, status) ||
+      _.isEmpty(groups.selected)
     );
   },
 });

@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { Alert } from '@patternfly/react-core';
+import { Alert, AlertGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingInline } from './status-box';
@@ -51,11 +51,18 @@ export const ButtonBar = ({
 }) => {
   return (
     <div className={classNames(className, 'co-m-btn-bar')}>
-      {successMessage && <SuccessMessage message={successMessage} />}
-      {errorMessage && <ErrorMessage message={errorMessage} />}
-      {injectDisabled(children, inProgress)}
-      {inProgress && <LoadingInline />}
-      {infoMessage && <InfoMessage message={infoMessage} />}
+      <AlertGroup
+        isLiveRegion
+        aria-live="polite"
+        aria-atomic="false"
+        aria-relevant="additions text"
+      >
+        {successMessage && <SuccessMessage message={successMessage} />}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
+        {injectDisabled(children, inProgress)}
+        {inProgress && <LoadingInline />}
+        {infoMessage && <InfoMessage message={infoMessage} />}
+      </AlertGroup>
     </div>
   );
 };

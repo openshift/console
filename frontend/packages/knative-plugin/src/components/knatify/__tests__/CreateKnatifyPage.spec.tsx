@@ -12,14 +12,6 @@ let createKnatifyPageProps: React.ComponentProps<typeof CreateKnatifyPage>;
 const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
 const useRelatedHPAMock = useRelatedHPA as jest.Mock;
 
-jest.mock('react-i18next', () => {
-  const reactI18Next = require.requireActual('react-i18next');
-  return {
-    ...reactI18Next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
 }));

@@ -1,6 +1,17 @@
 [
   {
-    "type": "console.navigation/resource-cluster",
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "flag": "SECURITY_LABELLER"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
     "properties": {
       "id": "imagevulnerabilities",
       "perspective": "admin",
@@ -15,6 +26,58 @@
       "dataAttributes": {
         "data-test-id": "imagemanifestvuln-header"
       }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Pod"
+      },
+      "page": {
+        "name": "%container-security~Vulnerabilities%",
+        "href": "vulnerabilities"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ImageManifestVulnPodTab" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "page": {
+        "name": "%container-security~Vulnerabilities%",
+        "href": "vulnerabilities"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ProjectImageManifestVulnListPage" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Namespace"
+      },
+      "page": {
+        "name": "%container-security~Vulnerabilities%",
+        "href": "vulnerabilities"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ProjectImageManifestVulnListPage" }
     },
     "flags": {
       "required": ["SECURITY_LABELLER"]

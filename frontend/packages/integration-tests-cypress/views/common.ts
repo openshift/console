@@ -15,6 +15,7 @@ export const projectDropdown = {
     cy.byLegacyTestID('namespace-bar-dropdown')
       .contains('Project:')
       .click();
+    cy.byTestID('showSystemSwitch').check();
     cy.byTestID('dropdown-menu-item-link')
       .contains(projectName)
       .click();

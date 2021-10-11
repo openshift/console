@@ -35,7 +35,9 @@
       "quickStartContext": "src/components/quick-starts/utils/quick-start-context.tsx",
       "fileUploadContext": "src/components/file-upload/file-upload-context.ts",
       "reduxReducer": "src/redux/reducer.ts",
-      "actions": "src/actions"
+      "actions": "src/actions",
+      "userPreferences": "src/components/user-preferences",
+      "perspective": "src/utils/perspective"
     }
   }
 }

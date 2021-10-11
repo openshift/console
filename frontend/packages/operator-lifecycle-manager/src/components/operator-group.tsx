@@ -12,7 +12,12 @@ import {
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
 import { OperatorGroupModel } from '../models';
-import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../types';
+import {
+  OperatorGroupKind,
+  SubscriptionKind,
+  InstallModeType,
+  PackageManifestKind,
+} from '../types';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) =>
   obj?.metadata?.annotations?.['olm.targetNamespaces'];
@@ -136,9 +141,14 @@ export const isSingle = (obj: OperatorGroupKind) =>
  */
 export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
   allGroups: OperatorGroupKind[] = [],
-) => (pkgName: string) => (ns = '') => {
+) => (pkg: PackageManifestKind) => (ns = '') => {
   return allSubscriptions
-    .filter((sub) => sub.spec.name === pkgName)
+    .filter(
+      (sub) =>
+        sub.spec.name === pkg.status.packageName &&
+        sub.spec.source === pkg.status.catalogSource &&
+        sub.spec.sourceNamespace === pkg.status.catalogSourceNamespace,
+    )
     .find((sub) =>
       allGroups.some(
         (og) =>
@@ -150,8 +160,8 @@ export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
 
 export const installedFor = (allSubscriptions: SubscriptionKind[] = []) => (
   allGroups: OperatorGroupKind[] = [],
-) => (pkgName: string) => (ns = '') => {
-  return !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkgName)(ns));
+) => (pkg: PackageManifestKind) => (ns = '') => {
+  return !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkg)(ns));
 };
 
 export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>

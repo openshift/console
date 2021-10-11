@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
-import { PerpsectiveContext } from './perspective-context';
+import { isPerspective, Perspective, PerspectiveContext } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 import PerspectiveDetector from './PerspectiveDetector';
 import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';
 
@@ -29,9 +29,9 @@ const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
   }, [perspectiveParam, activePerspective, setActivePerspective]);
   return loaded ? (
     activePerspective ? (
-      <PerpsectiveContext.Provider value={{ activePerspective, setActivePerspective }}>
+      <PerspectiveContext.Provider value={{ activePerspective, setActivePerspective }}>
         {children}
-      </PerpsectiveContext.Provider>
+      </PerspectiveContext.Provider>
     ) : (
       <PerspectiveDetector setActivePerspective={setActivePerspective} />
     )

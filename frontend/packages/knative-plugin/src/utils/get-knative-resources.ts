@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
 import { KNATIVE_SERVING_LABEL } from '../const';
@@ -353,7 +353,7 @@ export const knativeCamelDomainMappingResourceWatchers = (
 };
 
 export const getTrafficByRevision = (revName: string, service: K8sResourceKind) => {
-  if (!service.status?.traffic?.length) {
+  if (!service?.status?.traffic?.length) {
     return {};
   }
   const trafficPercent = service.status.traffic

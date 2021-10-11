@@ -30,6 +30,8 @@ export const operatorsPO = {
       '[data-test="knative-camel-operator-community-operators-openshift-marketplace"]',
     apacheKafkaOperatorCard: '[data-test^="amq-streams-redhat-operators"]',
     redHatSourceType: '[data-test-group-name="catalogSourceDisplayName"] [title="Red Hat"]',
+    redHatCodeReadyWorkspacesCard:
+      '[data-test^="codeready-workspaces-redhat-operators-openshift-marketplace"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
@@ -44,6 +46,7 @@ export const operatorsPO = {
     knativeServingLink: '[title="knativeservings.operator.knative.dev"]',
     knativeEventingLink: '[title="knativeeventings.operator.knative.dev"]',
     operatorStatus: '[data-test="status-text"]',
+    checlusterCRLink: '[title="checlusters.org.eclipse.che"]',
   },
   sidePane: {
     install: '[data-test-id="operator-install-btn"]',

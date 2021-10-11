@@ -18,25 +18,9 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   git: {
     type: ImportTypes.git,
     title: t('devconsole~Import from Git'),
-    buildStrategy: 'Source',
-    loader: () =>
-      import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then((m) => m.default),
-  },
-  docker: {
-    type: ImportTypes.docker,
-    title: t('devconsole~Import from Dockerfile'),
-    buildStrategy: 'Docker',
-    loader: () =>
-      import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then((m) => m.default),
-  },
-  devfile: {
-    type: ImportTypes.devfile,
-    title: t('devconsole~Import from Devfile'),
     buildStrategy: 'Devfile',
     loader: () =>
-      import('./devfile/DevfileImportForm' /* webpackChunkName: "devfile-import-form" */).then(
-        (m) => m.default,
-      ),
+      import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then((m) => m.default),
   },
   s2i: {
     type: ImportTypes.s2i,
@@ -70,24 +54,6 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
         name: imageStreamName,
         namespace: imageStreamNamespace,
       },
-      {
-        kind: ProjectModel.kind,
-        prop: 'projects',
-        isList: true,
-      },
-    ];
-  } else if (importType === ImportTypes.docker) {
-    importData = ImportFlows(t).docker;
-    resources = [
-      {
-        kind: ProjectModel.kind,
-        prop: 'projects',
-        isList: true,
-      },
-    ];
-  } else if (importType === ImportTypes.devfile) {
-    importData = ImportFlows(t).devfile;
-    resources = [
       {
         kind: ProjectModel.kind,
         prop: 'projects',

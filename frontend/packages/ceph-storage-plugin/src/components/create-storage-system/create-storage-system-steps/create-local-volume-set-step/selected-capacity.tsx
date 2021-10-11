@@ -1,27 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Button, Spinner } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 
 import { calculateRadius, Modal } from '@console/shared';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/';
 import { NodeModel } from '@console/internal/models';
 import { ListPage } from '@console/internal/components/factory';
-import { getName } from '@console/shared/src/selectors/common';
 import {
   DISK_TYPES,
   deviceTypeDropdownItems,
-  LABEL_OPERATOR,
 } from '@console/local-storage-operator-plugin/src/constants';
 import { NodesTable } from '@console/local-storage-operator-plugin/src/components/tables/nodes-table';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { LABEL_SELECTOR } from '@console/local-storage-operator-plugin/src/constants/disks-list';
-import { LocalVolumeDiscoveryResult } from '@console/local-storage-operator-plugin/src/models';
 import {
   DiskMetadata,
   LocalVolumeDiscoveryResultKind,
@@ -49,7 +40,7 @@ const isValidDiskProperty = (disk: DiscoveredDisk, property: DiskMetadata['prope
 const isValidDeviceType = (disk: DiscoveredDisk, types: string[]) =>
   types.includes(deviceTypeDropdownItems[disk.type.toUpperCase()]);
 
-const addNodesOnAvailableDisks = (disks: DiskMetadata[], node: string) =>
+const addNodesOnAvailableDisks = (disks: DiskMetadata[] = [], node: string) =>
   disks.reduce((availableDisks: DiscoveredDisk[], disk: DiscoveredDisk) => {
     if (isAvailableDisk(disk)) {
       disk.node = node;
@@ -59,44 +50,22 @@ const addNodesOnAvailableDisks = (disks: DiskMetadata[], node: string) =>
   }, []);
 
 const createDiscoveredDiskData = (results: LocalVolumeDiscoveryResultKind[]): DiscoveredDisk[] =>
-  results.reduce((discoveredDisk: DiscoveredDisk[], lvdr) => {
+  results?.reduce((discoveredDisk: DiscoveredDisk[], lvdr) => {
     const lvdrDisks = lvdr?.status?.discoveredDevices;
     const lvdrNode = lvdr?.spec?.nodeName;
-    const availableDisks = addNodesOnAvailableDisks(lvdrDisks, lvdrNode);
+    const availableDisks = addNodesOnAvailableDisks(lvdrDisks, lvdrNode) || [];
     return [...availableDisks, ...discoveredDisk];
   }, []);
 
-export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, dispatch }) => {
-  const allLvsNodes = state.lvsAllNodes.map(getName);
-  const selectedLvsNodes = state.lvsSelectNodes.map(getName);
-  const [isLoadingDonutChart, setIsLoadingDonutChart] = React.useState(true);
-  /**
-   * Fetching discovery results for all nodes passed
-   * for local volume set creation.
-   */
-  const lvdResultResource: WatchK8sResource = {
-    kind: referenceForModel(LocalVolumeDiscoveryResult),
-    namespace: ns,
-    isList: true,
-    selector: {
-      matchExpressions: [
-        {
-          key: LABEL_SELECTOR,
-          operator: LABEL_OPERATOR,
-          values: allLvsNodes,
-        },
-      ],
-    },
-  };
-
+export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({
+  state,
+  nodes,
+  lvdResults,
+  dispatch,
+}) => {
   const { t } = useTranslation();
-  const [lvdResults, lvdResultsLoaded, lvdResultsLoadError] = useK8sWatchResource<
-    LocalVolumeDiscoveryResultKind[]
-  >(lvdResultResource);
   const [showNodeList, setShowNodeList] = React.useState(false);
   const [showDiskList, setShowDiskList] = React.useState(false);
-
-  let filteredDisks: DiscoveredDisk[] = [];
 
   const minSize: number = state.minDiskSize
     ? Number(convertToBaseValue(`${state.minDiskSize} ${state.diskSizeUnit}`))
@@ -105,38 +74,42 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, d
     ? Number(convertToBaseValue(`${state.maxDiskSize} ${state.diskSizeUnit}`))
     : undefined;
 
-  const allDiscoveredDisks: DiscoveredDisk[] = React.useMemo(() => {
-    if (!lvdResultsLoadError && lvdResultsLoaded && allLvsNodes.length === lvdResults.length) {
-      setIsLoadingDonutChart(false);
-      return createDiscoveredDiskData(lvdResults);
-    }
-    return [];
-  }, [allLvsNodes.length, lvdResults, lvdResultsLoadError, lvdResultsLoaded]);
-
-  if (allDiscoveredDisks.length) {
-    filteredDisks = allDiscoveredDisks.filter(
-      (disk: DiscoveredDisk) =>
-        state.isValidDiskSize &&
-        isValidSize(disk, minSize, maxSize) &&
-        isValidDiskProperty(disk, DISK_TYPES[state.diskType]?.property) &&
-        isValidDeviceType(disk, state.deviceType),
-    );
-  }
-
-  const chartDisks = state.lvsIsSelectNodes
-    ? filteredDisks.filter((disk: DiscoveredDisk) => selectedLvsNodes.includes(disk.node))
-    : filteredDisks;
-  const chartNodes: Set<string> = chartDisks.reduce(
-    (nodes: Set<string>, disk: DiscoveredDisk) => nodes.add(disk.node),
-    new Set(),
+  const allDiscoveredDisks: DiscoveredDisk[] = React.useMemo(
+    () => createDiscoveredDiskData(lvdResults),
+    [lvdResults],
   );
 
-  if (!_.isEqual(chartNodes, state.chartNodes)) {
-    dispatch({
-      type: 'wizard/setCreateLocalVolumeSet',
-      payload: { field: 'chartNodes', value: chartNodes },
-    });
-  }
+  const filteredDisks: DiscoveredDisk[] = React.useMemo(
+    () =>
+      allDiscoveredDisks.length
+        ? allDiscoveredDisks.filter(
+            (disk: DiscoveredDisk) =>
+              state.isValidDiskSize &&
+              isValidSize(disk, minSize, maxSize) &&
+              isValidDiskProperty(disk, DISK_TYPES[state.diskType]?.property) &&
+              isValidDeviceType(disk, state.deviceType),
+          )
+        : [],
+    [allDiscoveredDisks, maxSize, minSize, state.deviceType, state.diskType, state.isValidDiskSize],
+  );
+
+  const chartDisks = React.useMemo(() => {
+    const selectedNodes = nodes.reduce((data, node) => data.add(node.name), new Set());
+    return filteredDisks.filter((disk: DiscoveredDisk) => selectedNodes.has(disk.node));
+  }, [filteredDisks, nodes]);
+
+  React.useEffect(() => {
+    const chartNodes: Set<string> = chartDisks.reduce(
+      (data: Set<string>, disk: DiscoveredDisk) => data.add(disk.node),
+      new Set(),
+    );
+    if (!_.isEqual(chartNodes, state.chartNodes)) {
+      dispatch({
+        type: 'wizard/setCreateLocalVolumeSet',
+        payload: { field: 'chartNodes', value: chartNodes },
+      });
+    }
+  }, [chartDisks, dispatch, state.chartNodes]);
 
   const totalCapacity = getTotalCapacity(allDiscoveredDisks);
   const selectedCapacity = getTotalCapacity(chartDisks);
@@ -153,18 +126,18 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, d
   return (
     <div className="odf-install__chart-wrapper">
       <div className="odf-install_capacity-header">
-        {t('ceph-storage-plugin~Selected Capacity')}
+        {t('ceph-storage-plugin~Selected capacity')}
       </div>
       <div className="odf-install__stats">
         <Button
           variant="link"
-          isDisabled={!chartNodes.size}
+          isDisabled={!state.chartNodes.size}
           onClick={() => setShowNodeList(true)}
           className="odf-install__node-list-btn"
         >
           {t('ceph-storage-plugin~{{nodes, number}} Node', {
-            nodes: chartNodes.size,
-            count: chartNodes.size,
+            nodes: state.chartNodes.size,
+            count: state.chartNodes.size,
           })}
         </Button>
         <div className="odf-install_stats--divider" />
@@ -180,29 +153,23 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, d
           })}
         </Button>
       </div>
-      {isLoadingDonutChart ? (
-        <div className="odf-install__odf_storageclass-donut_spinner">
-          <Spinner size="md" />
-        </div>
-      ) : (
-        <ChartDonut
-          ariaDesc={t('ceph-storage-plugin~Selected versus Available Capacity')}
-          ariaTitle={t('ceph-storage-plugin~Selected versus Available Capacity')}
-          height={220}
-          width={220}
-          radius={radius}
-          data={donutData}
-          labels={({ datum }) => `${humanizeBinaryBytes(datum.y).string} ${datum.x}`}
-          subTitle={t('ceph-storage-plugin~Out of {{capacity}}', {
-            capacity: humanizeBinaryBytes(totalCapacity).string,
-          })}
-          title={humanizeBinaryBytes(selectedCapacity).string}
-          constrainToVisibleArea
-          subTitleComponent={
-            <ChartLabel dy={5} style={{ fill: `var(--pf-global--palette--black-500)` }} />
-          }
-        />
-      )}
+      <ChartDonut
+        ariaDesc={t('ceph-storage-plugin~Selected versus Available Capacity')}
+        ariaTitle={t('ceph-storage-plugin~Selected versus Available Capacity')}
+        height={220}
+        width={220}
+        radius={radius}
+        data={donutData}
+        labels={({ datum }) => `${humanizeBinaryBytes(datum.y).string} ${datum.x}`}
+        subTitle={t('ceph-storage-plugin~Out of {{capacity}}', {
+          capacity: humanizeBinaryBytes(totalCapacity).string,
+        })}
+        title={humanizeBinaryBytes(selectedCapacity).string}
+        constrainToVisibleArea
+        subTitleComponent={
+          <ChartLabel dy={5} style={{ fill: `var(--pf-global--palette--black-500)` }} />
+        }
+      />
       <DiskListModal
         showDiskList={showDiskList}
         disks={chartDisks}
@@ -210,8 +177,8 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, d
       />
       <NodeListModal
         showNodeList={showNodeList}
+        filteredNodes={[...state.chartNodes]}
         onCancel={() => setShowNodeList(false)}
-        filteredNodes={[...chartNodes]}
       />
     </div>
   );
@@ -221,6 +188,8 @@ type SelectedCapacityProps = {
   state: WizardState['createLocalVolumeSet'];
   dispatch: WizardDispatch;
   ns: string;
+  nodes: WizardState['nodes'];
+  lvdResults: LocalVolumeDiscoveryResultKind[];
 };
 
 const NodeListModal: React.FC<NodeListModalProps> = ({ filteredNodes, onCancel, showNodeList }) => {
@@ -228,7 +197,7 @@ const NodeListModal: React.FC<NodeListModalProps> = ({ filteredNodes, onCancel, 
 
   return (
     <Modal
-      title={t('ceph-storage-plugin~Selected Nodes')}
+      title={t('ceph-storage-plugin~Selected nodes')}
       isOpen={showNodeList}
       onClose={onCancel}
       className="odf-install__filtered-modal"

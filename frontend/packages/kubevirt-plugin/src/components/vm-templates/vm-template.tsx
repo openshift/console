@@ -2,8 +2,8 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { Flatten, ListPage, MultiListPage } from '@console/internal/components/factory';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { CDI_APP_LABEL } from '../../constants';
@@ -38,16 +38,16 @@ const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [
       return 'user';
     },
     items: templateProviders(t),
-    filter: (types, obj: VirtualMachineTemplateBundle) => {
+    filter: (types, obj) => {
       let providerFilter = true;
-      if (types.selected.size > 0) {
-        if (templateProviders(t).length === types.selected.size) {
+      if (types.selected?.length > 0) {
+        if (templateProviders(t).length === types.selected.length) {
           providerFilter = true;
         } else if (obj.template) {
           const type = getTemplateProviderType(obj.template);
-          providerFilter = types.selected.has(type);
+          providerFilter = types.selected.includes(type);
         } else {
-          providerFilter = types.selected.has('user');
+          providerFilter = types.selected.includes('user');
         }
       }
       return providerFilter;

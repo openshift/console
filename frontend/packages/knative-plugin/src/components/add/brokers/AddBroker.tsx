@@ -3,10 +3,10 @@ import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
+import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
-import { useExtensions, isPerspective, Perspective } from '@console/plugin-sdk';
-import { useActivePerspective } from '@console/shared';
+import { useExtensions } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { EventingBrokerModel } from '../../../models';
 import { AddBrokerFormYamlValues } from '../import-types';
@@ -35,7 +35,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
   ): Promise<K8sResourceKind> => {
     let broker: K8sResourceKind;
     if (formValues.editorType === EditorType.Form) {
-      broker = convertFormToBrokerYaml(formValues);
+      broker = convertFormToBrokerYaml(formValues.formData);
     } else {
       try {
         broker = safeLoad(formValues.yamlData);

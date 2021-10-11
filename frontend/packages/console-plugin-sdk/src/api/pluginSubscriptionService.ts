@@ -33,10 +33,10 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
 
   subscriptionServiceInitialized = true;
 
-  const getAllExtensions = () => pluginStore.getAllExtensions();
-  const getAllFlags = () => reduxStore.getState().FLAGS;
+  const getExtensionsInUse = () => pluginStore.getExtensionsInUse();
+  const getFlags = () => reduxStore.getState().FLAGS;
 
-  type FeatureFlags = ReturnType<typeof getAllFlags>;
+  type FeatureFlags = ReturnType<typeof getFlags>;
 
   const invokeExtensionListener = (
     sub: ExtensionSubscription,
@@ -59,7 +59,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   };
 
   onExtensionSubscriptionAdded = (sub) => {
-    invokeExtensionListener(sub, getAllExtensions(), getAllFlags());
+    invokeExtensionListener(sub, getExtensionsInUse(), getFlags());
   };
 
   onDynamicPluginListenerAdded = (listener) => {
@@ -74,8 +74,8 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
       return;
     }
 
-    const nextExtensions = getAllExtensions();
-    const nextFlags = getAllFlags();
+    const nextExtensions = getExtensionsInUse();
+    const nextFlags = getFlags();
 
     if (_.isEqual(nextExtensions, lastExtensions) && nextFlags === lastFlags) {
       return;
@@ -193,4 +193,4 @@ type ExtensionSubscription<E extends Extension = Extension> = {
   listenerLastArgs?: E[];
 };
 
-type DynamicPluginListener = (pluginEntries: DynamicPluginInfo[]) => void;
+type DynamicPluginListener = (pluginInfoEntries: DynamicPluginInfo[]) => void;

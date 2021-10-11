@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
 import { SemVer } from 'semver';
+import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory/';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
+import store from '@console/internal/redux';
 import { PipelineModel } from '../../../models';
 import { pipelineTestData, PipelineExampleNames } from '../../../test-data/pipeline-data';
 import { PipelineRunKind } from '../../../types';
@@ -23,8 +26,14 @@ const templateNames = jest.spyOn(triggerUtils, 'usePipelineTriggerTemplateNames'
 const latestPipelineRun = jest.spyOn(hookUtils, 'useLatestPipelineRun');
 const operatorVersion = jest.spyOn(operatorUtils, 'usePipelineOperatorVersion');
 
+const useActivePerspectiveMock = useActivePerspective as jest.Mock;
+
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
+}));
+
+jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  default: jest.fn(),
 }));
 
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
@@ -54,29 +63,47 @@ describe('PipelineDetailsPage:', () => {
     templateNames.mockReturnValue([]);
     latestPipelineRun.mockReturnValue(null);
     (useK8sGet as jest.Mock).mockReturnValue([mockData.pipeline, true, null]);
+    useActivePerspectiveMock.mockClear();
   });
 
   it('should render the Details Page if the pipeline is loaded and available', () => {
     (useK8sGet as jest.Mock).mockReturnValue([mockData.pipeline, true, null]);
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
+    useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).exists()).toBe(true);
   });
 
   it('should render the loading box if the pipeline is not loaded yet', () => {
     (useK8sGet as jest.Mock).mockReturnValue([[], false, null]);
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
     expect(wrapper.find(LoadingBox).exists()).toBe(true);
   });
 
   it('should render the ErrorPage404 if the pipeline is not found', () => {
     (useK8sGet as jest.Mock).mockReturnValue([[], true, { response: { status: 404 } }]);
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
     expect(wrapper.find(ErrorPage404).exists()).toBe(true);
   });
 
   it('should have the latest metrics endpoint as default queryPrefix', () => {
     (useK8sGet as jest.Mock).mockReturnValue([mockData.pipeline, true, null]);
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).props().customData.queryPrefix).toBe(
       MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
     );
@@ -85,7 +112,11 @@ describe('PipelineDetailsPage:', () => {
   it('should use the new metrics endpoint if the pipeline operator is greater than 1.4.0', () => {
     (useK8sGet as jest.Mock).mockReturnValue([mockData.pipeline, true, null]);
     ((operatorVersion as unknown) as jest.Mock).mockReturnValue(new SemVer('1.8.0'));
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).props().customData.queryPrefix).toBe(
       MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
     );
@@ -94,7 +125,11 @@ describe('PipelineDetailsPage:', () => {
   it('should use the old metrics endpoint if the pipeline operator is less than 1.4.0', () => {
     (useK8sGet as jest.Mock).mockReturnValue([mockData.pipeline, true, null]);
     ((operatorVersion as unknown) as jest.Mock).mockReturnValue(new SemVer('1.2.1'));
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
     expect(wrapper.find(DetailsPage).props().customData.queryPrefix).toBe(
       MetricsQueryPrefix.TEKTON,
     );
@@ -102,8 +137,12 @@ describe('PipelineDetailsPage:', () => {
 
   it('should not contain Start last run menu item if the pipeline run is not present', () => {
     menuActions.mockReturnValue(getPipelineKebabActions(null, false));
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
-    const menuItems = wrapper.props().menuActions;
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
+    const menuItems: any = wrapper.find(DetailsPage).props().menuActions;
     const startLastRun = menuItems.find(
       (menu) =>
         menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start last run',
@@ -113,8 +152,13 @@ describe('PipelineDetailsPage:', () => {
 
   it('should contain Start last run menu item if the pipeline run is present', () => {
     menuActions.mockReturnValue(getPipelineKebabActions(pipelineRuns[0], false));
-    const wrapper = shallow(<PipelineDetailsPage {...PipelineDetailsPageProps} />);
-    const menuItems = wrapper.props().menuActions;
+    const wrapper = mount(
+      <Provider store={store}>
+        <PipelineDetailsPage {...PipelineDetailsPageProps} />
+      </Provider>,
+    );
+
+    const menuItems: any = wrapper.find(DetailsPage).props().menuActions;
     const startLastRun = menuItems.find(
       (menu) =>
         menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start last run',

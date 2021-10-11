@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { FirehoseResourcesResult } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Priority, priorityFor } from '../const';
@@ -32,7 +32,7 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
     },
   } = props;
 
-  const imageVulnerabilitiesRowFilters: RowFilter[] = [
+  const imageVulnerabilitiesRowFilters: RowFilter<ImageVuln>[] = [
     {
       filterGroupName: t('container-security~Severity'),
       items: [
@@ -47,7 +47,7 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
       type: 'vulnerability-severity',
       reducer: (v) => v.vulnerability.severity,
       filter: (filter, vuln) =>
-        filter.selected.has(vuln.vulnerability.severity) || _.isEmpty(filter.selected),
+        filter.selected?.includes(vuln.vulnerability.severity) || _.isEmpty(filter.selected),
     },
   ];
 

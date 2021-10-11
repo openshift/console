@@ -7,7 +7,6 @@ import {
   deviceTypeDropdownItems,
 } from '../../constants';
 import { LocalVolumeSetModel } from '../../models';
-import { State } from './state';
 import { LocalVolumeSetKind, DiskType } from './types';
 
 const getDeviceTypes = (deviceType: string[]) => {
@@ -22,7 +21,8 @@ const getDeviceTypes = (deviceType: string[]) => {
 };
 
 export const getLocalVolumeSetRequestData = (
-  state: State,
+  // @TODO: (afreen23) Fix the typings , this chanfge will require refactoring at mutiple places
+  state: any,
   nodes: string[],
   ns: string,
   toleration?: Toleration,

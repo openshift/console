@@ -1,20 +1,20 @@
 @knative-eventing
 Feature: Perform actions on Broker
               As a user, I should be able to perform actions on broker
-        
-        
+
+
         Background:
             Given user has installed OpenShift Serverless Operator
               And user has created Knative Eventing CR
               And user has created Knative Serving CR
               And user has created or selected namespace "aut-eventing-broker-actions"
               And user is at Topology page
-        
-        
-        @smoke @pre-condition @to-do @odc-5030
+
+
+        @smoke @pre-condition @to-do
         Scenario: Create Broker using Form view: KE-05-TC01
             Given user is at Add page
-             When user selects on "Broker" from "Serverless" card
+             When user selects on "Broker" from "Eventing" card
               And user selects "Form view"
               And user enters broker name as "default-broker"
               And user clicks on Create button
@@ -22,7 +22,7 @@ Feature: Perform actions on Broker
               And user will see the "default-broker" broker created
 
 
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Context Menu for Broker: KE-05-TC02
             Given user has created broker "default" in application groupings "app"
              When user right clicks on "default" broker
@@ -34,7 +34,7 @@ Feature: Perform actions on Broker
               And user will see "Delete Broker" option
 
 
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Details tab for the Broker: KE-05-TC03
              When user clicks on "default" broker to open the sidebar
               And user selects Details tab
@@ -44,7 +44,7 @@ Feature: Perform actions on Broker
               And user will see the owner and broker created time
 
 
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Edit Application grouping to new application action on Broker: KE-05-TC04
              When user right clicks on "default" broker to open the context menu
               And user clicks on "Edit Application grouping"
@@ -54,9 +54,9 @@ Feature: Perform actions on Broker
               And user clicks on Save button
              Then user will see "new-app" application created
 
-        
+
         #Please add the respective test data
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Edit Labels action on Broker: KE-05-TC05
              When user right clicks on "default" broker to open the context menu
               And user clicks on "Edit labels"
@@ -68,7 +68,7 @@ Feature: Perform actions on Broker
 
 
         #Please add the respective test data
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Edit Annotations action on Broker: KE-05-TC06
              When user right clicks on "default" broker to open the context menu
               And user clicks on "Edit annotations"
@@ -89,7 +89,7 @@ Feature: Perform actions on Broker
               And user will see Details and Triggers tab on broker details page
 
 
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Add Trigger to Broker: KE-05-TC08
             Given user has created knative service "kn-service"
               And user is at Topology page
@@ -101,7 +101,7 @@ Feature: Perform actions on Broker
              Then user will see "default-trigger" created
 
 
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Sidebar for the Broker connected with eventsources and knative services: KE-05-TC09
             Given user has "ping-source" event source sinked to "default" broker
              When user clicks on "default" broker to open the sidebar
@@ -111,7 +111,7 @@ Feature: Perform actions on Broker
               And user will see Pods and Deployments section
 
 
-        @regression @to-do @odc-5030
+        @regression @to-do
         Scenario: Edit Application grouping to no application group action on Broker: KE-05-TC10
              When user right clicks on "default" broker to open the context menu
               And user clicks on "Edit Application grouping"
@@ -120,8 +120,8 @@ Feature: Perform actions on Broker
               And user clicks on Save button
              Then user will not see "new-app" application
 
-        
-        @regression @to-do @odc-5030
+
+        @regression @to-do
         Scenario: Delete Broker action on Broker: KE-05-TC11
              When user clicks on "default" Broker to open the sidebar
               And user selects "Delete Broker" from Actions drop down

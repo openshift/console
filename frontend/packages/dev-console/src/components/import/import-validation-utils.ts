@@ -28,7 +28,7 @@ export const validationSchema = (t: TFunction) =>
     image: imageValidationSchema(t),
     git: gitValidationSchema(t),
     docker: dockerValidationSchema(t),
-    devfile: devfileValidationSchema,
+    devfile: devfileValidationSchema(t),
     deployment: deploymentValidationSchema(t),
     serverless: serverlessValidationSchema(t),
     route: routeValidationSchema(t),
@@ -46,7 +46,7 @@ const hasDomain = (url: string, domain: string): boolean => {
   );
 };
 
-export const detectGitType = (url: string): string => {
+export const detectGitType = (url: string): GitTypes => {
   if (!gitUrlRegex.test(url)) {
     // Not a URL
     return GitTypes.invalid;
@@ -65,9 +65,13 @@ export const detectGitType = (url: string): string => {
 };
 
 export const createComponentName = (nameString: string): string => {
-  if (nameRegex.test(nameString)) {
-    return nameString;
-  }
+  try {
+    if (nameRegex.test(nameString)) {
+      return nameString;
+    }
+    // eslint-disable-next-line no-empty
+  } catch {}
+
   const kebabCaseStr = _.kebabCase(nameString);
   return nameString.match(/^\d/) || kebabCaseStr.match(/^\d/)
     ? `ocp-${kebabCaseStr}`
@@ -78,6 +82,9 @@ export const detectGitRepoName = (url: string): string | undefined => {
   if (!gitUrlRegex.test(url)) {
     return undefined;
   }
-  const name = url.split('/').pop();
+  const name = url
+    .replace(/\/$/, '')
+    .split('/')
+    .pop();
   return createComponentName(name);
 };

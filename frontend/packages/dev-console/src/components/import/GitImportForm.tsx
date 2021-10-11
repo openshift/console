@@ -1,15 +1,17 @@
 import * as React from 'react';
+import { ValidatedOptions } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
-import BuilderSection from './builder/BuilderSection';
-import DockerSection from './git/DockerSection';
+import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
-import { GitImportFormProps } from './import-types';
+import { GitImportFormProps, GitTypes } from './import-types';
+import ImportStrategySection from './ImportStrategySection';
 import ResourceSection from './section/ResourceSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
@@ -24,19 +26,50 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   projects,
 }) => {
   const { t } = useTranslation();
+  const searchParams = new URLSearchParams(window.location.search);
+  const gitRepoUrl = searchParams.get('gitRepo');
+  const formType = searchParams.get('formType');
+  const importType = searchParams.get('importType');
+  const {
+    git: { validated, gitType },
+  } = values;
+  const showFullForm =
+    importType === 'devfile' ||
+    (validated !== ValidatedOptions.default && gitType !== GitTypes.invalid);
+
   return (
     <form onSubmit={handleSubmit} data-test-id="import-git-form">
       <FormBody>
-        <GitSection buildStrategy={values.build.strategy} builderImages={builderImages} />
-        <BuilderSection image={values.image} builderImages={builderImages} />
-        <DockerSection buildStrategy={values.build.strategy} />
-        <AppSection
-          project={values.project}
-          noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+        <GitSection
+          builderImages={builderImages}
+          defaultSample={
+            gitRepoUrl && {
+              url: gitRepoUrl,
+            }
+          }
+          formType={formType}
+          importType={importType}
         />
-        <ResourceSection />
-        <PipelineSection builderImages={builderImages} />
-        <AdvancedSection values={values} />
+        {showFullForm && (
+          <>
+            {importType === 'devfile' ? (
+              <DevfileStrategySection />
+            ) : (
+              <ImportStrategySection builderImages={builderImages} />
+            )}
+            <AppSection
+              project={values.project}
+              noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+            />
+            {values.import.selectedStrategy.type !== ImportStrategy.DEVFILE && (
+              <>
+                <ResourceSection />
+                <PipelineSection builderImages={builderImages} />
+                <AdvancedSection values={values} />
+              </>
+            )}
+          </>
+        )}
       </FormBody>
       <FormFooter
         handleReset={handleReset}

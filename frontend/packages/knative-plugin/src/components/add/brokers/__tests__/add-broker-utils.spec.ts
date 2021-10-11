@@ -6,8 +6,8 @@ import { convertFormToBrokerYaml, addBrokerInitialValues } from '../add-broker-u
 describe('broker-utils: ', () => {
   describe('convertFormToBrokerYaml', () => {
     it('should contain all the top level keys for broker', () => {
-      const formValues = addBrokerInitialValues('test-ns', '');
-      const broker = convertFormToBrokerYaml(formValues);
+      const { formData } = addBrokerInitialValues('test-ns', '');
+      const broker = convertFormToBrokerYaml(formData);
       expect(broker.apiVersion).toBe(apiVersionForModel(EventingBrokerModel));
       expect(broker.kind).toBe(EventingBrokerModel.kind);
       expect(broker.metadata).toBeDefined();
@@ -15,29 +15,26 @@ describe('broker-utils: ', () => {
     });
 
     it('should contain default application name', () => {
-      const formValues = addBrokerInitialValues('test-ns', '');
-      const broker = convertFormToBrokerYaml(formValues);
+      const { formData } = addBrokerInitialValues('test-ns', '');
+      const broker = convertFormToBrokerYaml(formData);
       expect(broker.metadata.labels[LABEL_PART_OF]).toBe(EVENT_BROKER_APP);
     });
 
     it('should contain custom application name', () => {
-      const formValues = addBrokerInitialValues('test-ns', 'custom-group-name');
-      const broker = convertFormToBrokerYaml(formValues);
+      const { formData } = addBrokerInitialValues('test-ns', 'custom-group-name');
+      const broker = convertFormToBrokerYaml(formData);
       expect(broker.metadata.labels[LABEL_PART_OF]).toBe('custom-group-name');
     });
 
     it('should not contain the metadata labels', () => {
-      const formValues = addBrokerInitialValues('test-ns', '');
+      const { formData } = addBrokerInitialValues('test-ns', '');
 
       const broker = convertFormToBrokerYaml({
-        ...formValues,
-        formData: {
-          ...formValues.formData,
-          application: {
-            initial: null,
-            name: '',
-            selectedKey: '',
-          },
+        ...formData,
+        application: {
+          initial: null,
+          name: '',
+          selectedKey: '',
         },
       });
       expect(broker.metadata.labels).toBeUndefined();

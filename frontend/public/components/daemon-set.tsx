@@ -231,7 +231,7 @@ export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = (props) => (
 );
 
 const DaemonSetPods: React.FC<DaemonSetPodsProps> = (props) => (
-  <PodsComponent {...props} customData={{ showNodes: true }} />
+  <PodsComponent {...props} showNodes />
 );
 
 export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => {

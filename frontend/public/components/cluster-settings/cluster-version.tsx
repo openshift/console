@@ -6,7 +6,7 @@ import { ClusterVersionModel } from '../../models';
 import { DetailsPage } from '../factory';
 import { Conditions } from '../conditions';
 import { ClusterVersionKind, K8sResourceKindReference, referenceForModel } from '../../module/k8s';
-import { navFactory, ResourceSummary, SectionHeading } from '../utils';
+import { navFactory, ResourceSummary, SectionHeading, UpstreamConfigDetailsItem } from '../utils';
 import { breadcrumbsForGlobalConfig } from './global-config';
 
 const clusterVersionReference: K8sResourceKindReference = referenceForModel(ClusterVersionModel);
@@ -18,7 +18,9 @@ const ClusterVersionDetails: React.FC<ClusterVersionDetailsProps> = ({ obj }) =>
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~ClusterVersion details')} />
-        <ResourceSummary resource={obj} />
+        <ResourceSummary resource={obj}>
+          <UpstreamConfigDetailsItem resource={obj} />
+        </ResourceSummary>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Conditions')} id="conditions" />

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
+import { useActiveNamespace } from '@console/shared/src';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { RootState } from '../../redux';
 
 const appendActiveNamespace = (namespace: string, pathname: string): string => {
   const basePath = pathname.replace(/\/$/, '');
@@ -11,21 +10,9 @@ const appendActiveNamespace = (namespace: string, pathname: string): string => {
     : `${basePath}/ns/${namespace}`;
 };
 
-interface StateProps {
-  activeNamespace: string;
-}
+export type NamespaceRedirectProps = RouteComponentProps;
 
-export type NamespaceRedirectProps = StateProps & RouteComponentProps;
-
-const NamespaceRedirect_: React.FC<NamespaceRedirectProps> = ({
-  activeNamespace,
-  location: { pathname },
-}) => <Redirect to={appendActiveNamespace(activeNamespace, pathname) + location.search} />;
-
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    activeNamespace: state.UI.get('activeNamespace'),
-  };
+export const NamespaceRedirect: React.FC<NamespaceRedirectProps> = ({ location: { pathname } }) => {
+  const [activeNamespace] = useActiveNamespace();
+  return <Redirect to={appendActiveNamespace(activeNamespace, pathname) + location.search} />;
 };
-
-export const NamespaceRedirect = connect(mapStateToProps)(NamespaceRedirect_);

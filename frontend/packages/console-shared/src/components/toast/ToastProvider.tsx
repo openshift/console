@@ -60,7 +60,12 @@ const ToastProvider: React.FC = ({ children }) => {
               onTimeout={() => removeToast(toast.id)}
               actionClose={
                 toast.dismissible ? (
-                  <AlertActionCloseButton onClose={() => removeToast(toast.id)} />
+                  <AlertActionCloseButton
+                    onClose={() => {
+                      toast.onClose && toast.onClose();
+                      removeToast(toast.id);
+                    }}
+                  />
                 ) : (
                   undefined
                 )
@@ -77,6 +82,7 @@ const ToastProvider: React.FC = ({ children }) => {
                           }
                           action.callback();
                         }}
+                        component={action.component}
                       >
                         {action.label}
                       </AlertActionLink>

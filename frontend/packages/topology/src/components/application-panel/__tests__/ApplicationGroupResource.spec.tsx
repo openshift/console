@@ -6,14 +6,6 @@ import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-reso
 import ApplicationGroupResource from '../ApplicationGroupResource';
 import TopologyApplicationResourceList from '../TopologyApplicationList';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-  };
-});
-
 describe(ApplicationGroupResource.displayName, () => {
   it('should component exists', () => {
     const wrapper = shallow(

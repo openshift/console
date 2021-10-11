@@ -9,13 +9,13 @@ Feature: Observe tab on the topology Sidebar
               And user has created or selected namespace "aut-observe-sidebar"
 
 
-        @smoke, @odc-3698
+        @smoke
         Scenario Outline: Navigating to Observe page from topology page Sidebar for "<resourceType>" workload : M-04-TC01
             Given user has created workload "<workload>" with resource type "<resourceType>"
               And user is at Topology page
              When user clicks on the workload "<workload>" to open the sidebar
               And user clicks on Observe tab
-              And user clicks on View monitoring dashboard link
+              And user clicks on View dashboard link
              Then page redirected to the Dashboard tab of Observe page
               And user will see the "Kubernetes / Compute Resources / Workload" selected in the Dashboard dropdown
               And user user will see "<workload>" option selected in the Workload dropdown
@@ -27,12 +27,12 @@ Feature: Observe tab on the topology Sidebar
                   | parks-test-dc | Deployment Config |
 
 
-        @smoke, @odc-3698
+        @smoke
         Scenario: Observe tab on the Sidebar for Helm Release: M-04-TC02
-            Given helm release "nodejs-ex-k" is present in topology page
-             When user clicks on the workload "node-js-ex" to open the sidebar
+            Given helm release "nodejs" is present in topology page
+             When user clicks on the workload "nodejs" to open the sidebar
               And user clicks on Observe tab
-              And user clicks on View monitoring dashboard link
+              And user clicks on View dashboard link
              Then page redirected to the Observe page
 
 

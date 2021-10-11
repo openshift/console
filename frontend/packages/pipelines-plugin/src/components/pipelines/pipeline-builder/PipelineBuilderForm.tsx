@@ -118,6 +118,8 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     handleReset();
   }, [handleReset]);
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'pipeline.pipelineBuilderForm.editor.lastView';
+
   const formEditor = (
     <PipelineBuilderFormEditor
       hasExistingPipeline={!!existingPipeline}
@@ -130,12 +132,20 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   );
 
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" model={PipelineModel} onSave={handleSubmit} />
+    <YAMLEditorField
+      name="yamlData"
+      model={PipelineModel}
+      showSamples={!existingPipeline}
+      onSave={handleSubmit}
+    />
   );
 
   return (
     <>
-      <div ref={contentRef} className="odc-pipeline-builder-form">
+      <div
+        ref={contentRef}
+        className="odc-pipeline-builder-form ocs-quick-search-modal__no-backdrop"
+      >
         <Stack>
           <StackItem>
             <PipelineBuilderHeader namespace={namespace} />
@@ -165,6 +175,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   editor: yamlEditor,
                   sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
                 }}
+                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
               />
             </FormBody>
             <FormFooter

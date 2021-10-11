@@ -18,14 +18,6 @@ jest.mock('formik', () => {
   };
 });
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 const canCreateFlags = { [FLAGS.CAN_CREATE_PROJECT]: true };
 const noFlags = {};
 

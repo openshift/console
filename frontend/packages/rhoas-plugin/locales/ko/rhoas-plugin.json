@@ -1,7 +1,14 @@
 {
+  "Cloud Services Request": "클라우드 서비스 요청",
+  "Cloud Services Requests": "클라우드 서비스 요청",
+  "Kafka Connection": "Kafka 연결",
+  "Kafka Connections": "Kafka 연결",
+  "Cloud service Account Request": "클라우드 서비스 계정 요청",
+  "Cloud Service Account Requests": "클라우드 서비스 계정 요청",
   "Managed Services": "관리 서비스",
   "Discover managed services to simplify deployments and reduce operational overhead & complexities": "배포를 단순화하고 운영 오버 헤드 및 복잡성을 줄이는 관리 서비스 검색",
   "Browse managed services to connect applications and microservices to support services to create a full solution.": "관리 서비스를 검색하여 애플리케이션과 마이크로 서비스를 지원 서비스에 연결하여 완전한 솔루션을 만듭니다.",
+  "Create a Kafka connector": "Kafka 커넥터 만들기",
   "Unlock with token": "토큰으로 잠금 해제",
   "Unlocked": "잠금 해제",
   "Red Hat OpenShift Application Services include services like Red Hat OpenShift Streams for Apache Kafka": "Red Hat OpenShift Application Services에는 Apache Kafka 용 Red Hat OpenShift Streams와 같은 서비스가 포함됩니다.",
@@ -48,11 +55,10 @@
   "URL": "URL",
   "Secret": "시크릿",
   "No Secret": "시크릿 없음",
-  "Create a Kafka connector": "Kafka 커넥터 만들기",
-  "Create a binding connector": "바인딩 커넥터 만들기",
   "No data": "데이터 없음",
   "Cloud Service": "클라우드 서비스",
   "This resource represents service that exist outside your cluster": "이 리소스는 클러스터 외부에 존재하는 서비스를 나타냅니다.",
   "Details": "세부 정보",
-  "Resources": "리소스"
+  "Resources": "리소스",
+  "Error moving event source kafka connector": "이벤트 소스 kafka 커넥터 이동 오류"
 }

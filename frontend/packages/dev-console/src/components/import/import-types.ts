@@ -1,5 +1,6 @@
 import { ValidatedOptions } from '@patternfly/react-core';
-import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
@@ -90,6 +91,7 @@ export interface DeployImageFormData {
   limits: LimitsData;
   healthChecks: HealthChecksFormData;
   fileUpload?: FileUploadData;
+  import?: ImportStrategyData;
 }
 
 export type FileUploadData = {
@@ -117,6 +119,7 @@ export interface BaseFormData {
 }
 export interface UploadJarFormData extends BaseFormData {
   fileUpload: FileUploadData;
+  import?: ImportStrategyData;
 }
 
 export interface GitImportFormData extends BaseFormData {
@@ -125,6 +128,7 @@ export interface GitImportFormData extends BaseFormData {
   git: GitData;
   docker: DockerData;
   devfile?: DevfileData;
+  import?: ImportStrategyData;
 }
 
 export interface ApplicationData {
@@ -160,16 +164,20 @@ export interface ProjectData {
 
 export interface GitData {
   url: string;
-  type: string;
+  detectedType?: GitTypes;
+  type: GitTypes;
   ref: string;
   dir: string;
   showGitType: boolean;
   secret: string;
   isUrlValidating: boolean;
+  validated?: ValidatedOptions;
+  secretResource?: K8sResourceKind;
 }
 
 export interface DockerData {
   dockerfilePath?: string;
+  dockerfileHasError?: boolean;
 }
 
 type DevfileData = {
@@ -218,6 +226,21 @@ export interface BuildData {
   env: (NameValuePair | NameValueFromPair)[];
   strategy: string;
   source?: { type: string };
+}
+
+export interface DetectedStrategyFormData extends DetectedStrategy {
+  title?: string;
+  iconUrl?: string;
+}
+
+export interface ImportStrategyData {
+  loaded?: boolean;
+  loadError?: string;
+  strategies?: DetectedStrategy[];
+  recommendedStrategy?: DetectedStrategyFormData;
+  selectedStrategy?: DetectedStrategyFormData;
+  showEditImportStrategy?: boolean;
+  strategyChanged?: boolean;
 }
 
 export interface DeploymentData {

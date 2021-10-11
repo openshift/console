@@ -316,9 +316,9 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
   });
 
   it('expect getKafkaSourceResource to return sasl and tls with secrets if enabled and present', () => {
-    const KafkaSourceData = getDefaultEventingData(EventSources.KafkaSource);
-    KafkaSourceData.formData.data[EventSources.KafkaSource] = {
-      ...KafkaSourceData.formData.data[EventSources.KafkaSource],
+    const { formData: KafkaSourceFormData } = getDefaultEventingData(EventSources.KafkaSource);
+    KafkaSourceFormData.data[EventSources.KafkaSource] = {
+      ...KafkaSourceFormData.data[EventSources.KafkaSource],
       bootstrapServers: ['server1', 'server2'],
       topics: ['topic1'],
       consumerGroup: 'knative-group',
@@ -340,7 +340,7 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
       spec: {
         net: { sasl, tls },
       },
-    } = getKafkaSourceResource(KafkaSourceData);
+    } = getKafkaSourceResource(KafkaSourceFormData);
     expect(sasl.enable).toBe(true);
     expect(sasl.user).toEqual({
       secretKeyRef: { name: 'username', key: 'userkey' },
@@ -349,9 +349,9 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
   });
 
   it('expect getKafkaSourceResource to return sasl and tls without secrets if not enabled', () => {
-    const KafkaSourceData = getDefaultEventingData(EventSources.KafkaSource);
-    KafkaSourceData.formData.data[EventSources.KafkaSource] = {
-      ...KafkaSourceData.formData.data[EventSources.KafkaSource],
+    const { formData: KafkaSourceFormData } = getDefaultEventingData(EventSources.KafkaSource);
+    KafkaSourceFormData.data[EventSources.KafkaSource] = {
+      ...KafkaSourceFormData.data[EventSources.KafkaSource],
       bootstrapServers: ['server1', 'server2'],
       topics: ['topic1'],
       consumerGroup: 'knative-group',
@@ -373,7 +373,7 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
       spec: {
         net: { sasl, tls },
       },
-    } = getKafkaSourceResource(KafkaSourceData);
+    } = getKafkaSourceResource(KafkaSourceFormData);
     expect(sasl.enable).toBeUndefined();
     expect(sasl).toEqual({ user: {}, password: {} });
     expect(tls.enable).toBeUndefined();

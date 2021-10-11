@@ -1,3 +1,5 @@
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { WatchK8sResourcesGeneric } from './console-types';
 import {
   CreateConnectionGetter,
   RelationshipProviderCreate,
@@ -10,9 +12,7 @@ import {
   TopologyDecoratorQuadrant,
   TopologyDisplayOption,
   ViewComponentFactory,
-} from '../api/topology-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
-import { WatchK8sResourcesGeneric } from './console-types';
+} from './topology-types';
 
 /** Getter for a ViewComponentFactory */
 export type TopologyComponentFactory = ExtensionDeclaration<

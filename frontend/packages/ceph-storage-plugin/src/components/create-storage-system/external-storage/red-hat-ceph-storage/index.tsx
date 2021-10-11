@@ -1,106 +1,124 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { FormGroup, FileUpload, FileUploadProps } from '@patternfly/react-core';
+import { FormGroup, FileUpload, FileUploadProps, Form } from '@patternfly/react-core';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { ListKind, PodKind } from '@console/internal/module/k8s';
+import { apiVersionForModel, ListKind, PodKind } from '@console/internal/module/k8s';
 import { PodModel, SecretModel } from '@console/internal/models';
-import { CEPH_STORAGE_NAMESPACE, IP_FAMILY } from '../../../../constants';
-import { checkError, getIPFamily } from '../../../ocs-install/external-mode/utils';
-import { CanGoToNextStep, RHCSState, CreatePayload, ExternalComponentProps } from '../types';
+import { getAnnotations } from '@console/shared/src/selectors/common';
+import { K8sKind } from 'packages/console-dynamic-plugin-sdk/src';
+import { RHCSState, CanGoToNextStep, CreatePayload, ExternalComponentProps } from '../types';
+import { CEPH_STORAGE_NAMESPACE, IP_FAMILY, OCS_OPERATOR } from '../../../../constants';
+import {
+  checkError,
+  createDownloadFile,
+  getIPFamily,
+  isValidJSON,
+  prettifyJSON,
+} from '../../../ocs-install/external-mode/utils';
 
 import './index.scss';
+import { ErrorHandler } from '../../error-handler';
+import { useFetchCsv } from '../../use-fetch-csv';
 
 const SCRIPT_NAME = 'ceph-external-cluster-details-exporter.py';
+
+export const getValidationKeys = (rawKeys: string): { plainKeys: string[]; secretKeys: [] } => {
+  const { configMaps, secrets, storageClasses } = rawKeys
+    ? JSON.parse(rawKeys)
+    : { configMaps: [], secrets: [], storageClasses: [] };
+  const plainKeys = _.concat(configMaps, storageClasses);
+  return { plainKeys, secretKeys: secrets };
+};
 
 export const ConnectionDetails: React.FC<ExternalComponentProps<RHCSState>> = ({
   setFormState,
   formState,
 }) => {
-  const [pods, podsLoaded, podsLoadError] = useK8sGet<ListKind<PodKind>>(PodModel);
   const { t } = useTranslation();
+  const [pods, podsLoaded, podsLoadError] = useK8sGet<ListKind<PodKind>>(PodModel);
+  const [csv, csvLoaded, csvLoadError] = useFetchCsv(OCS_OPERATOR, CEPH_STORAGE_NAMESPACE);
 
-  const { ipFamily, fileName, fileData } = formState;
+  const { fileName, fileData, errorMessage, isLoading } = formState;
 
-  React.useEffect(() => {
-    if (podsLoaded && !podsLoadError && pods?.items?.length) {
-      const address: string = pods.items?.[0]?.status?.podIP;
-      const ip: IP_FAMILY = address && getIPFamily(address);
-      if (address && ipFamily !== ip) {
-        setFormState('ipFamily', ipFamily);
-      }
+  const annotations = getAnnotations(csv);
+
+  const downloadFile = createDownloadFile(
+    annotations?.['external.features.ocs.openshift.io/export-script'],
+  );
+
+  const handleFileChange: FileUploadProps['onChange'] = (fData: string, fName) => {
+    if (isValidJSON(fData)) {
+      const { plainKeys, secretKeys } = getValidationKeys(
+        annotations?.['external.features.ocs.openshift.io/validation'],
+      );
+      const ipAddress: string = pods.items?.[0]?.status?.podIP;
+      const ipFamily: IP_FAMILY = ipAddress ? getIPFamily(ipAddress) : IP_FAMILY.IPV4;
+      const error: string = checkError(fData, plainKeys, secretKeys, ipFamily);
+      setFormState('errorMessage', error);
+    } else {
+      const invalidString: string = t(
+        'ceph-storage-plugin~The uploaded file is not a valid JSON file',
+      );
+      setFormState('errorMessage', fData ? invalidString : '');
     }
-  }, [ipFamily, pods, podsLoadError, podsLoaded, setFormState]);
 
-  const downloadFile = 'download-file.py';
-
-  const handleFileChange: FileUploadProps['onChange'] = (value, fName) => {
     setFormState('fileName', fName);
-    setFormState('fileData', value as string);
+    setFormState('fileData', fData);
   };
 
-  const handleFileRejected: FileUploadProps['dropzoneProps']['onDropRejected'] = (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _rejectedFiles,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _event,
-  ) => setFormState('isRejected', true);
-
-  const handleFileAccepted: FileUploadProps['dropzoneProps']['onDropAccepted'] = (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _acceptedFiles,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _event,
-  ) => (checkError(fileData, null, null, ipFamily) ? setFormState('isRejected', true) : null);
-
   return (
-    <FormGroup
-      label={t('ceph-storage-plugin~External storage metadata')}
-      fieldId="external-storage-system-metadata"
-      className="odf-connection-details__form-group"
-      helperText={
-        <div className="odf-connection-details__helper-text">
-          <Trans t={t} ns="ceph-storage-plugin">
-            Download <code>{{ SCRIPT_NAME }}</code> script and run on the RHCS cluster, then upload
-            the results (JSON).
-          </Trans>{' '}
-          {downloadFile && (
-            <a
-              id="downloadAnchorElem"
-              href={downloadFile}
-              download="ceph-external-cluster-details-exporter.py"
-              target="_blank"
-              rel="noopener noreferrer"
-              className=""
-            >
-              {t('ceph-storage-plugin~Download script')}
-            </a>
-          )}
-        </div>
-      }
-      helperTextInvalid={t('ceph-storage-plugin~The uploaded file is not a valid JSON file')}
-      validated={formState.isRejected ? 'error' : 'default'}
-    >
-      <FileUpload
-        id="external-storage-system-metadata"
-        type="text"
-        isRequired
-        className="odf-connection-details__file-upload"
-        browseButtonText={t('ceph-storage-plugin~Browse')}
-        filenamePlaceholder={t('ceph-storage-plugin~Upload JSON file')}
-        value={fileData}
-        filename={fileName}
-        onChange={handleFileChange}
-        onReadStarted={() => setFormState('isLoading', 'true')}
-        onReadFinished={() => setFormState('isLoading', 'false')}
-        isLoading={formState.isLoading}
-        dropzoneProps={{
-          accept: '.json',
-          onDropRejected: handleFileRejected,
-          onDropAccepted: handleFileAccepted,
-        }}
-        validated={formState.isRejected ? 'error' : 'default'}
-      />
-    </FormGroup>
+    <ErrorHandler error={podsLoadError || csvLoadError} loaded={podsLoaded && csvLoaded}>
+      <Form>
+        <FormGroup
+          label={t('ceph-storage-plugin~External storage system metadata')}
+          fieldId="external-storage-system-metadata"
+          className="odf-connection-details__form-group"
+          helperText={
+            <div className="odf-connection-details__helper-text">
+              <Trans t={t} ns="ceph-storage-plugin">
+                Download <code>{{ SCRIPT_NAME }}</code> script and run on the RHCS cluster, then
+                upload the results (JSON) in the External storage system metadata field.
+              </Trans>{' '}
+              {downloadFile && (
+                <a
+                  id="downloadAnchorElem"
+                  href={downloadFile}
+                  download="ceph-external-cluster-details-exporter.py"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('ceph-storage-plugin~Download script')}
+                </a>
+              )}
+            </div>
+          }
+          helperTextInvalid={errorMessage}
+          validated={errorMessage ? 'error' : 'default'}
+        >
+          <FileUpload
+            id="external-storage-system-metadata"
+            className="odf-connection-details__file-upload"
+            type="text"
+            isRequired
+            isReadOnly
+            value={prettifyJSON(fileData ?? '')}
+            filename={fileName}
+            isLoading={isLoading}
+            validated={errorMessage ? 'error' : 'default'}
+            dropzoneProps={{
+              accept: '.json',
+            }}
+            onChange={handleFileChange}
+            onReadStarted={() => setFormState('isLoading', true)}
+            onReadFinished={() => setFormState('isLoading', false)}
+            browseButtonText={t('ceph-storage-plugin~Browse')}
+            clearButtonText={t('ceph-storage-plugin~Clear')}
+            filenamePlaceholder={t('ceph-storage-plugin~Upload helper script')}
+          />
+        </FormGroup>
+      </Form>
+    </ErrorHandler>
   );
 };
 
@@ -131,7 +149,7 @@ export const rhcsPayload: CreatePayload<RHCSState> = (systemName, state, model) 
     {
       model,
       payload: {
-        apiVersion: model.apiVersion,
+        apiVersion: apiVersionForModel(model as K8sKind),
         apiGroup: model.apiGroup,
         kind: model.kind,
         metadata: {
@@ -152,4 +170,4 @@ export const rhcsPayload: CreatePayload<RHCSState> = (systemName, state, model) 
 };
 
 export const rhcsCanGoToNextStep: CanGoToNextStep<RHCSState> = (state) =>
-  !!state.fileData && !state.isRejected && !state.isLoading;
+  !!state.fileName && !!state.fileData && !state.errorMessage && !state.isLoading;

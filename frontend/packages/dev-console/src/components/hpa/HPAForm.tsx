@@ -17,6 +17,7 @@ import HPADetailsForm from './HPADetailsForm';
 import { HPAFormValues } from './types';
 
 type HPAFormProps = {
+  existingHPA?: HorizontalPodAutoscalerKind;
   targetResource: K8sResourceCommon;
 };
 
@@ -27,15 +28,22 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   status,
   setStatus,
   isSubmitting,
+  existingHPA,
   targetResource,
   validateForm,
   values,
 }) => {
   const { t } = useTranslation();
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.hpaForm.editor.lastView';
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" model={HorizontalPodAutoscalerModel} onSave={handleSubmit} />
+    <YAMLEditorField
+      name="yamlData"
+      model={HorizontalPodAutoscalerModel}
+      showSamples={!existingHPA}
+      onSave={handleSubmit}
+    />
   );
   const customMetrics = false;
 
@@ -61,6 +69,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
               sanitizeHPAToForm(newFormData, targetResource),
           }}
           yamlContext={{ name: 'yamlData', editor: yamlEditor }}
+          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
         />
       </FormBody>
       <FormFooter

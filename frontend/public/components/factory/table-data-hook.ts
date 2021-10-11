@@ -6,10 +6,10 @@ import { useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
 import { useDeepCompareMemoize } from '@console/shared';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 
 import { RootState } from '../../redux';
 import { tableFilters } from './table-filters';
-import { RowFilter } from '../filter-toolbar';
 import { Filter } from './table';
 
 export const getFilteredRows = <D = any>(

@@ -1,0 +1,12 @@
+.odc-import-strategy-selector {
+  &__tile {
+    width: 100%;
+  }
+  &__recommended {
+    position: absolute;
+    color: var(--pf-global--primary-color--100);
+    font-size: var(--pf-global--FontSize--md);
+    top: 3px;
+    right: 6px;
+  }
+}

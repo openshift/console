@@ -27,12 +27,9 @@ import {
   isDashboardsOverviewInventoryItem as isDynamicDashboardsOverviewInventoryItem,
   isDashboardsOverviewInventoryItemReplacement as isDynamicDashboardsOverviewInventoryItemReplacement,
   ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
-import {
-  useK8sWatchResource,
-  useK8sWatchResources,
   WatchK8sResources,
-} from '../../../utils/k8s-watch-hook';
+} from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 
 const mergeItems = (
   items: DashboardsOverviewInventoryItem[],

@@ -1,11 +1,8 @@
 import * as React from 'react';
+import { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { useAccessReview2 } from '@console/internal/components/utils';
-import {
-  WatchK8sResource,
-  useK8sWatchResource,
-  WatchK8sResult,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
 import { UserKind, referenceForModel, k8sList, K8sKind } from '@console/internal/module/k8s';
 import {
@@ -13,7 +10,6 @@ import {
   CLOUD_SHELL_CREATOR_LABEL,
   CloudShellResource,
   CLOUD_SHELL_RESTRICTED_ANNOTATION,
-  startWorkspace,
   CLOUD_SHELL_PROTECTED_NAMESPACE,
 } from './cloud-shell-utils';
 
@@ -160,15 +156,6 @@ const useCloudShellWorkspace = (
     setSearching,
     workspaceModel,
   ]);
-
-  React.useEffect(() => {
-    if (workspace?.spec && !workspace.spec.started) {
-      startWorkspace(workspace);
-    }
-    // Run this effect if the workspace name or namespace changes.
-    // This effect should only be run once per workspace.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspace?.metadata?.name, workspace?.metadata?.namespace]);
 
   return [
     workspace,

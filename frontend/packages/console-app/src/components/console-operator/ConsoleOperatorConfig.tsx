@@ -12,14 +12,12 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { EmptyBox, LoadingBox, navFactory, ResourceLink } from '@console/internal/components/utils';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import {
@@ -28,7 +26,7 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { DynamicPluginInfo, isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
+import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
@@ -84,13 +82,13 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
   });
-  const dynamicPluginInfo: DynamicPluginInfo[] = useDynamicPluginInfo();
+  const [pluginInfoEntries] = useDynamicPluginInfo();
   const [rows, setRows] = React.useState([]);
   const [sortBy, setSortBy] = React.useState<ISortBy>({});
   React.useEffect(() => {
     const data = consolePlugins.map((plugin) => {
       const pluginName = plugin?.metadata?.name;
-      const loadedPluginInfo = dynamicPluginInfo
+      const loadedPluginInfo = pluginInfoEntries
         .filter(isLoadedDynamicPluginInfo)
         .find((i) => i?.metadata?.name === pluginName);
       const enabled = !!obj?.spec?.plugins?.includes(pluginName);
@@ -124,7 +122,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
         };
       }),
     );
-  }, [consolePlugins, dynamicPluginInfo, obj]);
+  }, [consolePlugins, pluginInfoEntries, obj]);
   const headers = [
     {
       title: t('console-app~Name'),

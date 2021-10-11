@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import {
   HOST_REGISTERING_STATES,
   HOST_PROVISIONING_STATES,
@@ -64,15 +64,17 @@ export const getHostFilterStatus = (bundle: BareMetalHostBundle): string => {
   return _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 };
 
-export const hostStatusFilter = (t: TFunction): RowFilter => ({
+export const hostStatusFilter = (t: TFunction): RowFilter<BareMetalHostBundle> => ({
   filterGroupName: 'Status',
   type: 'host-status',
   reducer: getHostFilterStatus,
   items: _.map(hostStatesToFilterMap, ({ title }, id) => ({ id, title: t(title) })),
-  filter: (groups, bundle: BareMetalHostBundle) => {
+  filter: (groups, bundle) => {
     const status = getHostFilterStatus(bundle);
     return (
-      groups.selected.has(status) || !_.includes(groups.all, status) || _.isEmpty(groups.selected)
+      groups.selected?.includes(status) ||
+      !_.includes(groups.all, status) ||
+      _.isEmpty(groups.selected)
     );
   },
 });

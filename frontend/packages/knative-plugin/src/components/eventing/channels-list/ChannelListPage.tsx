@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceCommon, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
   getDynamicChannelModel,
   useChannelModels,
@@ -34,29 +34,24 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
     [eventSourceChannels, modelsLoaded],
   );
 
-  const getModelId = React.useCallback((obj: K8sResourceKind) => {
+  const getModelId = React.useCallback((obj: K8sResourceCommon) => {
     const reference = referenceFor(obj);
     const model = getDynamicChannelModel(reference);
     return model.id;
   }, []);
 
-  const rowFilterReducer = React.useCallback(
-    ({ selected }: { selected: Set<string>; all: string[] }, obj: K8sResourceKind) =>
-      selected.size === 0 || selected.has(getModelId(obj)),
-    [getModelId],
-  );
-
-  const channelRowFilter: RowFilter[] = React.useMemo(
+  const channelRowFilter = React.useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
         filterGroupName: 'Type',
         type: 'event-source-type',
         items: eventSourceChannels.map(({ id, label }) => ({ id, title: label })),
         reducer: getModelId,
-        filter: rowFilterReducer,
+        filter: (filter, obj) =>
+          !filter.selected?.length || filter.selected?.includes(getModelId(obj)),
       },
     ],
-    [eventSourceChannels, getModelId, rowFilterReducer],
+    [eventSourceChannels, getModelId],
   );
   return (
     <MultiListPage

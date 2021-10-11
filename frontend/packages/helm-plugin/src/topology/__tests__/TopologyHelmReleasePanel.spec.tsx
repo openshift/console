@@ -8,17 +8,9 @@ import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';
 import { ConnectedTopologyHelmReleasePanel } from '../TopologyHelmReleasePanel';
 import { mockHelmReleaseNode, mockManifest, mockReleaseNotes } from './mockData';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+  useResizeObserver: jest.fn(),
+}));
 
 describe('TopologyHelmReleasePanel', () => {
   it('should render the resources tab by default', () => {
@@ -32,7 +24,7 @@ describe('TopologyHelmReleasePanel', () => {
     const component = mount(
       <ConnectedTopologyHelmReleasePanel
         helmRelease={mockHelmReleaseNode}
-        selectedDetailsTab="helm-plugin~Details"
+        selectedDetailsTab="Details"
       />,
     );
     // Status box displayed because there is no mock secret
@@ -43,7 +35,7 @@ describe('TopologyHelmReleasePanel', () => {
     const component = mount(
       <ConnectedTopologyHelmReleasePanel
         helmRelease={mockHelmReleaseNode}
-        selectedDetailsTab="helm-plugin~Release notes"
+        selectedDetailsTab="Release notes"
       />,
     );
     // Status box displayed because there is no mock secret

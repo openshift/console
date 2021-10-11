@@ -7,6 +7,11 @@ $color-log-window-divider: $color-log-window-header-bg;
 .log-window {
   color: $color-log-window-text;
   background-color: $color-log-window-body-bg;
+
+  &--full-height {
+    height: 100%;
+    position: relative;
+  }
 }
 
 .log-window__header {
@@ -17,6 +22,15 @@ $color-log-window-divider: $color-log-window-header-bg;
 .log-window__body {
   background-color: $color-log-window-body-bg;
   font-family: $font-family-log-window-body;
+
+  &--full-height {
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
 
 .log-window__scroll-pane {
@@ -34,4 +48,10 @@ $color-log-window-divider: $color-log-window-header-bg;
 .log-window__lines--wrap {
   white-space: pre-wrap;
   width: inherit;
+}
+
+.log-window-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }

@@ -32,55 +32,59 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const invalidTypes = field.value || [];
-
-  const radioOptions: RadioGroupOption[] = [];
-  if (!invalidTypes.includes(Resources.Kubernetes)) {
-    radioOptions.push({
-      label: t(ReadableResourcesNames[Resources.Kubernetes]),
-      value: Resources.Kubernetes,
-      children: createHelpText(
-        DeploymentModel,
-        t(
-          'devconsole~A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.',
-          { deploymentLabel: DeploymentModel.label },
-        ),
-      ),
-    });
-  }
-  if (!invalidTypes.includes(Resources.OpenShift)) {
-    radioOptions.push({
-      label: t(ReadableResourcesNames[Resources.OpenShift]),
-      value: Resources.OpenShift,
-      children: createHelpText(
-        DeploymentConfigModel,
-        t(
-          'devconsole~A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.',
-          { deploymentConfigLabel: DeploymentConfigModel.label },
-        ),
-      ),
-    });
-  }
-
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
     namespace: getActiveNamespace(),
     verb: 'create',
   });
-  const canIncludeKnative =
-    !invalidTypes.includes(Resources.KnativeService) &&
-    flags[FLAG_KNATIVE_SERVING_SERVICE] &&
-    knativeServiceAccess;
-  if (canIncludeKnative) {
-    radioOptions.push({
-      label: t(ReadableResourcesNames[Resources.KnativeService]),
-      value: Resources.KnativeService,
-      children: createHelpText(
-        ServiceModel,
-        t('devconsole~A type of deployment that enables Serverless scaling to 0 when idle.'),
-      ),
-    });
-  }
+
+  const radioOptions = React.useMemo(() => {
+    const options: RadioGroupOption[] = [];
+    if (!invalidTypes.includes(Resources.Kubernetes)) {
+      options.push({
+        label: t(ReadableResourcesNames[Resources.Kubernetes]),
+        value: Resources.Kubernetes,
+        children: createHelpText(
+          DeploymentModel,
+          t(
+            'devconsole~A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.',
+            { deploymentLabel: DeploymentModel.label },
+          ),
+        ),
+      });
+    }
+    if (!invalidTypes.includes(Resources.OpenShift)) {
+      options.push({
+        label: t(ReadableResourcesNames[Resources.OpenShift]),
+        value: Resources.OpenShift,
+        children: createHelpText(
+          DeploymentConfigModel,
+          t(
+            'devconsole~A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.',
+            { deploymentConfigLabel: DeploymentConfigModel.label },
+          ),
+        ),
+      });
+    }
+
+    const canIncludeKnative =
+      !invalidTypes.includes(Resources.KnativeService) &&
+      flags[FLAG_KNATIVE_SERVING_SERVICE] &&
+      knativeServiceAccess;
+    if (canIncludeKnative) {
+      options.push({
+        label: t(ReadableResourcesNames[Resources.KnativeService]),
+        value: Resources.KnativeService,
+        children: createHelpText(
+          ServiceModel,
+          t('devconsole~A type of deployment that enables Serverless scaling to 0 when idle.'),
+        ),
+      });
+    }
+    return options;
+  }, [t, invalidTypes, flags, knativeServiceAccess]);
+
   return (
     <FormSection title={t('devconsole~Resources')} fullWidth>
       <div>{t('devconsole~Select the resource type to generate')}</div>

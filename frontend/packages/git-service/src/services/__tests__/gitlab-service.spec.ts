@@ -165,7 +165,10 @@ describe('Gitlab Service', () => {
   });
 
   it('should detect Dockerfile', () => {
-    const gitSource = { url: 'https://gitlab.com/jpratik999/tutorial-react-docker.git' };
+    const gitSource = {
+      url: 'https://gitlab.com/jpratik999/tutorial-react-docker.git',
+      dockerfilePath: 'Dockerfile',
+    };
 
     const gitService = new GitlabService(gitSource);
 
@@ -178,7 +181,10 @@ describe('Gitlab Service', () => {
   });
 
   it('should return exposed container port', () => {
-    const gitSource = { url: 'https://gitlab.com/jpratik999/tutorial-react-docker.git' };
+    const gitSource = {
+      url: 'https://gitlab.com/jpratik999/tutorial-react-docker.git',
+      dockerfilePath: 'Dockerfile',
+    };
 
     const gitService = new GitlabService(gitSource);
 
@@ -206,7 +212,10 @@ describe('Gitlab Service', () => {
   });
 
   it('should detect Devfile', () => {
-    const gitSource = { url: 'https://gitlab.com/aballant/nodejs-starter-devfile' };
+    const gitSource = {
+      url: 'https://gitlab.com/aballant/nodejs-starter-devfile',
+      devfilePath: 'devfile.yaml',
+    };
 
     const gitService = new GitlabService(gitSource);
 
@@ -219,7 +228,10 @@ describe('Gitlab Service', () => {
   });
 
   it('should not detect Devfile', () => {
-    const gitSource: GitSource = { url: 'https://gitlab.com/jpratik999/devconsole-git.git' };
+    const gitSource: GitSource = {
+      url: 'https://gitlab.com/jpratik999/devconsole-git.git',
+      devfilePath: 'devfile.yaml',
+    };
 
     const gitService = new GitlabService(gitSource);
 

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Alert, AlertVariant } from '@patternfly/react-core';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
 import { k8sKill, PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
 import {

@@ -5,7 +5,6 @@ import { DetailsItem, ResourceSummary, Timestamp } from '@console/internal/compo
 import { CronJobModel } from '@console/internal/models';
 import { CronJobKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 type CronJobSideBarDetailsProps = {
@@ -49,8 +48,7 @@ const CronJobSideBarDetails: React.FC<CronJobSideBarDetailsProps> = ({ cronjob }
 };
 
 export const getCronJobSideBarDetails = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource<CronJobKind>(element);
-  if (resource.kind !== CronJobModel.kind) return undefined;
+  if (!resource || resource.kind !== CronJobModel.kind) return undefined;
   return <CronJobSideBarDetails cronjob={resource} />;
 };

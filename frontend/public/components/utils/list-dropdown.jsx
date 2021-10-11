@@ -204,7 +204,7 @@ ListDropdown.propTypes = {
   disabled: PropTypes.bool,
 };
 
-const useProjectOrNamespaceModel = () => {
+export const useProjectOrNamespaceModel = () => {
   const canCreateNamespace = useAccessReview({
     group: NamespaceModel.apiGroup,
     resource: NamespaceModel.plural,
@@ -219,8 +219,8 @@ const useProjectOrNamespaceModel = () => {
   }
 
   // NamespaceModal is used when not on an openshift cluster
-  const model = canCreateNamespace || !openshiftFlag ? NamespaceModel : ProjectModel;
-  const canCreate = canCreateNamespace || (openshiftFlag && canCreateProject);
+  const model = openshiftFlag ? ProjectModel : NamespaceModel;
+  const canCreate = openshiftFlag ? canCreateProject : canCreateNamespace;
   return [model, canCreate];
 };
 

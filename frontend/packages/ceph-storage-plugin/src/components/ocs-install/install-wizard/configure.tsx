@@ -126,16 +126,18 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
 
   return (
     <FormGroup fieldId="configure-encryption" label="Encryption">
-      <Checkbox
-        data-test="encryption-checkbox"
-        id="configure-encryption"
-        isChecked={encryptionChecked}
-        label={t('ceph-storage-plugin~Enable Encryption')}
-        description={t(
-          'ceph-storage-plugin~Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted.',
-        )}
-        onChange={toggleEncryption}
-      />
+      <div id="configure-encryption">
+        <Checkbox
+          data-test="encryption-checkbox"
+          id="enable-encryption"
+          isChecked={encryptionChecked}
+          label={t('ceph-storage-plugin~Enable Encryption')}
+          description={t(
+            'ceph-storage-plugin~Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted.',
+          )}
+          onChange={toggleEncryption}
+        />
+      </div>
       {isKmsSupported && encryptionChecked && (
         <div className="ocs-install-encryption">
           <FormGroup
@@ -144,51 +146,56 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
             labelIcon={<FieldLevelHelp>{encryptionTooltip}</FieldLevelHelp>}
             className="ocs-install-encryption__form-body"
           >
-            <Checkbox
-              id="cluster-wide-encryption"
-              isChecked={encryption.clusterWide}
-              label={
-                <span className="ocs-install-encryption__pv-title--padding">
-                  {t('ceph-storage-plugin~Cluster-wide encryption')}
-                </span>
-              }
-              aria-label={t('ceph-storage-plugin~Cluster-wide encryption')}
-              description={t(
-                'ceph-storage-plugin~Encryption for the entire cluster (block and file)',
-              )}
-              onChange={toggleClusterWideEncryption}
-              className="ocs-install-encryption__form-checkbox"
-            />
-            <Checkbox
-              id="storage-class-encryption"
-              isChecked={encryption.storageClass}
-              label={<StorageClassEncryptionLabel />}
-              aria-label={t('ceph-storage-plugin~StorageClass encryption')}
-              description={t(
-                'ceph-storage-plugin~An encryption key will be generated for each persistent volume (block) created using an encryption enabled StorageClass.',
-              )}
-              onChange={toggleStorageClassEncryption}
-              className="ocs-install-encryption__form-checkbox"
-            />
+            <div id="encryption-options">
+              <Checkbox
+                id="cluster-wide-encryption"
+                isChecked={encryption.clusterWide}
+                label={
+                  <span className="ocs-install-encryption__pv-title--padding">
+                    {t('ceph-storage-plugin~Cluster-wide encryption')}
+                  </span>
+                }
+                aria-label={t('ceph-storage-plugin~Cluster-wide encryption')}
+                description={t(
+                  'ceph-storage-plugin~Encryption for the entire cluster (block and file)',
+                )}
+                onChange={toggleClusterWideEncryption}
+                className="ocs-install-encryption__form-checkbox"
+              />
+              <Checkbox
+                id="storage-class-encryption"
+                isChecked={encryption.storageClass}
+                label={<StorageClassEncryptionLabel />}
+                aria-label={t('ceph-storage-plugin~StorageClass encryption')}
+                description={t(
+                  'ceph-storage-plugin~An encryption key will be generated for each persistent volume (block) created using an encryption enabled StorageClass.',
+                )}
+                onChange={toggleStorageClassEncryption}
+                className="ocs-install-encryption__form-checkbox"
+              />
+            </div>
           </FormGroup>
           <FormGroup
             fieldId="advanced-encryption-options"
             label={t('ceph-storage-plugin~Connection settings')}
             className="ocs-install-encryption__form-body"
           >
-            <Checkbox
-              id="advanced-encryption"
-              isChecked={encryption.advanced}
-              label={t('ceph-storage-plugin~Connect to an external key management service')}
-              onChange={toggleAdvancedEncryption}
-              isDisabled={encryption.storageClass || !encryption.hasHandled}
-            />
+            <div id="advanced-encryption-options">
+              <Checkbox
+                id="advanced-encryption"
+                isChecked={encryption.advanced}
+                label={t('ceph-storage-plugin~Connect to an external key management service')}
+                onChange={toggleAdvancedEncryption}
+                isDisabled={encryption.storageClass || !encryption.hasHandled}
+              />
+            </div>
           </FormGroup>
           {(encryption.advanced || encryption.storageClass) && (
             <KMSConfigure
               state={state}
               dispatch={dispatch}
               mode={mode}
+              hideTitle
               className="ocs-install-encryption"
             />
           )}

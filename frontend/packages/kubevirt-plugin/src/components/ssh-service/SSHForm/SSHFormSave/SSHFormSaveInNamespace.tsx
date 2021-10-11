@@ -17,14 +17,17 @@ const SSHFormSaveInNamespace: React.FC = () => {
   return (
     <Flex className="SSHFormSaveInNamespace-main">
       <Checkbox
-        id="ssh-service-checkbox"
+        id="ssh-store-auth-key-checkbox"
         className="SSHFormSaveInNamespace-checkbox"
-        label={t(`kubevirt-plugin~Remember Authorized SSH key`)}
+        label={
+          <>
+            {t(`kubevirt-plugin~Remember Authorized SSH key`)} <SSHPopover />{' '}
+          </>
+        }
         isChecked={updateSSHKeyInGlobalNamespaceSecret}
         isDisabled={disableSaveInNamespaceCheckbox}
         onChange={(checked) => setUpdateSSHKeyInSecret(checked)}
       />
-      <SSHPopover />
     </Flex>
   );
 };

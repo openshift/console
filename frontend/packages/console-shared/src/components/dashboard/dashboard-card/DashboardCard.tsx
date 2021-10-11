@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card } from '@patternfly/react-core';
 import classNames from 'classnames';
-import { DashboardCardProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { DashboardCardProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import './card.scss';
 

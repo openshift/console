@@ -18,13 +18,13 @@ import {
   OutlinedBellIcon,
 } from '@patternfly/react-icons';
 
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import * as UIActions from '../../actions/ui';
 import { coFetchJSON } from '../../co-fetch';
@@ -88,7 +88,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { getURLSearchParams } from '../utils/link';
+import { getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
@@ -595,7 +595,11 @@ const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template
     }
   });
 
-  return <p>{messageParts}</p>;
+  return (
+    <p>
+      <LinkifyExternal>{messageParts}</LinkifyExternal>
+    </p>
+  );
 };
 
 const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) => {
@@ -1460,8 +1464,8 @@ const ruleHasAlertState = (rule: Rule, state: AlertStates): boolean =>
   state === AlertStates.NotFiring ? _.isEmpty(rule.alerts) : _.some(rule.alerts, { state });
 
 const ruleAlertStateFilter = (filter, rule: Rule) =>
-  (filter.selected.has(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
-  _.some(rule.alerts, (a) => filter.selected.has(a.state)) ||
+  (filter.selected?.includes(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
+  _.some(rule.alerts, (a) => filter.selected?.includes(a.state)) ||
   _.isEmpty(filter.selected);
 
 export const alertStateFilter = (): RowFilter => ({

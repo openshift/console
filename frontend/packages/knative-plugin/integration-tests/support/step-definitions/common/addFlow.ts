@@ -20,7 +20,7 @@ Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
 });
 
-Given('user is at Import from git page', () => {
+Given('user is at Import from Git form', () => {
   addPage.selectCardFromOptions(addOptions.Git);
 });
 

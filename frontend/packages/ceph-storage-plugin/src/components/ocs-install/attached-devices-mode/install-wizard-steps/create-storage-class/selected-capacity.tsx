@@ -15,10 +15,8 @@ import {
   LABEL_OPERATOR,
 } from '@console/local-storage-operator-plugin/src/constants';
 import { NodesTable } from '@console/local-storage-operator-plugin/src/components/tables/nodes-table';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { LABEL_SELECTOR } from '@console/local-storage-operator-plugin/src/constants/disks-list';
 import { LocalVolumeDiscoveryResult } from '@console/local-storage-operator-plugin/src/models';

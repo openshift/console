@@ -10,24 +10,11 @@ import {
 } from '../../../public/components/cluster-settings/ldap-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
-const i18nNS = 'public';
-
 describe('Add Identity Provider: LDAP', () => {
   let wrapper: ShallowWrapper<{}, AddLDAPPageState>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddLDAPPage />);
+    wrapper = shallow(<AddLDAPPage />).dive();
   });
 
   it('should render AddLDAPPage component', () => {
@@ -35,7 +22,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render correct LDAP IDP page title', () => {
-    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: LDAP`)).toBeTruthy();
+    expect(wrapper.contains('Add Identity Provider: LDAP')).toBeTruthy();
   });
 
   it('should render the form elements of AddLDAPPage component', () => {
@@ -48,7 +35,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper, 'public');
+    controlButtonTest(wrapper);
   });
 
   it('should prefill ldap in name field by default', () => {

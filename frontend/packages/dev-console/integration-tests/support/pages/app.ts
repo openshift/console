@@ -33,8 +33,7 @@ export const perspective = {
   switchTo: (perspectiveName: switchPerspective) => {
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
-    if (switchPerspective.Developer) {
-      cy.testA11y('Developer perspective with guide tour modal');
+    if (perspectiveName === switchPerspective.Developer) {
       guidedTour.close();
       // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');
@@ -42,10 +41,14 @@ export const perspective = {
     nav.sidenav.switcher.shouldHaveText(perspectiveName);
     cy.get('body').then(($body) => {
       if ($body.find('[aria-label="Close drawer panel"]').length) {
-        cy.get('[aria-label="Close drawer panel"]').click();
-        cy.get('button')
-          .contains('Leave')
-          .click();
+        if ($body.find('[data-test="Next button"]').length) {
+          cy.get('[aria-label="Close drawer panel"]').click();
+          cy.get('button')
+            .contains('Leave')
+            .click();
+        } else {
+          cy.get('[aria-label="Close drawer panel"]').click();
+        }
       }
     });
   },
@@ -163,43 +166,51 @@ export const projectNameSpace = {
 
   selectOrCreateProject: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
-    cy.get('[role="listbox"]')
-      .find('li')
-      .should('have.length.gt', 5);
+    cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
+    cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
     // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
-    cy.byLegacyTestID('dropdown-text-filter').type(projectName);
-    cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-dropdown__toggle-text')
+    cy.byTestID('dropdown-text-filter').type(projectName);
+    cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-menu-toggle__text')
       .first()
       .as('projectNameSpaceDropdown');
     app.waitForDocumentLoad();
-    cy.get('[role="listbox"]').then(($el) => {
-      if ($el.find('li[role="option"]').length === 0) {
-        cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
-        projectNameSpace.enterProjectName(projectName);
-        cy.byTestID('confirm-action').click();
-        app.waitForLoad();
-      } else {
-        cy.get('[role="listbox"]')
-          .find('li[role="option"]')
-          .each(($ele) => {
-            if ($ele.text() === projectName) {
-              cy.get(`[id="${projectName}-link"]`).click();
+    cy.get('[data-test="namespace-dropdown-menu"]')
+      .first()
+      .then(($el) => {
+        if ($el.find('[data-test="dropdown-menu-item-link"]').length === 0) {
+          cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
+          projectNameSpace.enterProjectName(projectName);
+          cy.byTestID('confirm-action').click();
+          app.waitForLoad();
+        } else {
+          cy.get('[data-test="namespace-dropdown-menu"]')
+            .find('[data-test="dropdown-menu-item-link"]')
+            .contains(projectName)
+            .click();
+          cy.get('@projectNameSpaceDropdown').then(($el1) => {
+            if ($el1.text().includes(projectName)) {
+              cy.get('@projectNameSpaceDropdown').should('contain.text', projectName);
+            } else {
+              cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
+              projectNameSpace.enterProjectName(projectName);
+              cy.byTestID('confirm-action').click();
+              app.waitForLoad();
             }
           });
-        cy.get('@projectNameSpaceDropdown').then(($el1) => {
-          if ($el1.text().includes(projectName)) {
-            cy.get('@projectNameSpaceDropdown').should('contain.text', projectName);
-          } else {
-            cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
-            projectNameSpace.enterProjectName(projectName);
-            cy.byTestID('confirm-action').click();
-            app.waitForLoad();
-          }
-        });
+        }
+      });
+    cy.get('@projectNameSpaceDropdown').should('have.text', `Project: ${projectName}`);
+  },
+
+  selectProjectOrDoNothing: (projectName: string) => {
+    projectNameSpace.clickProjectDropdown();
+    cy.byLegacyTestID('dropdown-text-filter').type(projectName);
+    cy.get('[role="listbox"]').then(($el) => {
+      if ($el.find('li[role="option"]').length !== 0) {
+        cy.get(`[id="${projectName}-link"]`).click();
       }
     });
-    cy.get('@projectNameSpaceDropdown').should('have.text', `Project: ${projectName}`);
   },
 
   selectProject: (projectName: string) => {
@@ -223,6 +234,11 @@ export const createForm = {
   clickCancel: () =>
     cy
       .get(formPO.cancel)
+      .should('be.enabled')
+      .click(),
+  clickSave: () =>
+    cy
+      .get(formPO.create)
       .should('be.enabled')
       .click(),
   sectionTitleShouldContain: (sectionTitle: string) =>

@@ -6,14 +6,6 @@ import { mockAlerts } from '@console/shared/src/utils/__mocks__/alerts-and-rules
 import MonitoringOverview from '../MonitoringOverview';
 import { mockPodEvents, mockResourceEvents, mockPods } from './mockData';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('Monitoring Metric Section', () => {
   const monitoringOverviewProps: React.ComponentProps<typeof MonitoringOverview> = {
     resource: {

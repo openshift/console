@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
-import { EditButton } from '../edit-button';
+import VMEditWithPencil from './VMEditWithPencil';
 
 const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
   canEdit = false,
+  dataTest,
   editButtonId,
-  customEditButton,
   editClassName,
   onEditClick,
   idValue,
@@ -37,14 +37,12 @@ const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   return (
     <>
       <dt>
-        <span className={editClassName}>
-          {title}{' '}
-          {customEditButton || (
-            <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
-          )}
+        <span className={editClassName} data-test={dataTest}>
+          {title}
+          <VMEditWithPencil ButtonID={editButtonId} isEdit={canEdit} onEditClick={onEditClick} />
           {arePendingChanges && (
             <Button
-              className="co-modal-btn-link--inline"
+              className="kv-vm-resource--link-pending-changes"
               variant="link"
               isInline
               onClick={onEditClick}
@@ -64,8 +62,8 @@ const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
 type VMDetailsItemProps = {
   title: string;
   canEdit?: boolean;
+  dataTest?: string;
   editButtonId?: string;
-  customEditButton?: React.ReactElement;
   editClassName?: string;
   onEditClick?: () => void;
   idValue?: string;

@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { APIError } from '@console/shared';
 import { HelmChartRepositoryModel } from '../../models';
@@ -40,7 +37,10 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
         }
       })
       .catch((err) => {
-        if (mounted) setLoadedError(err);
+        if (mounted) {
+          setHelmCharts({});
+          setLoadedError(err);
+        }
       });
     return () => (mounted = false);
   }, []);

@@ -4,14 +4,6 @@ import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) =>
-      key.split('~')[1].replace('{{version}}', params?.version),
-  }),
-}));
-
 jest.mock('@console/shared/src', () => ({
   ...require.requireActual('@console/shared/src'),
   useActiveNamespace: jest.fn(),

@@ -464,7 +464,9 @@ func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
 		HttpOnly: false,
 		Path:     path,
 		Secure:   a.secureCookies,
+		SameSite: http.SameSiteLaxMode,
 	}
+
 	http.SetCookie(*w, &cookie)
 }
 

@@ -175,7 +175,7 @@ export const getOriginRedirectURL = (
 ) => {
   switch (actionOrigin) {
     case HelmActionOrigins.topology:
-      return `/topology/ns/${namespace}/graph`;
+      return `/topology/ns/${namespace}`;
     case HelmActionOrigins.list:
       return `/helm-releases/ns/${namespace}`;
     case HelmActionOrigins.details:

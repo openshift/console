@@ -12,14 +12,6 @@ import {
 
 const MOCK_DATA = [[{ x: 1, y: 100 }]];
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('<AreaChart />', () => {
   it('should render an area chart', () => {
     const wrapper = shallow(<AreaChart title="Test Area" data={MOCK_DATA} />);

@@ -129,15 +129,6 @@ form.pf-c-form {
 }
 
 .pf-c-page {
-  display: block !important;
-  position: relative;
-
-  &__header {
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
 
   &__header-brand-link {
     flex: 0 1 auto !important; // so link doesn't grow larger than logo
@@ -156,15 +147,15 @@ form.pf-c-form {
     }
   }
 
-  &__main {
-    // `z-index: auto` is required for fullscreen terminal
-    --pf-c-page__main--ZIndex: auto;
-    bottom: 0;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: var(--pf-c-page__header--MinHeight);
-    transition: left 100ms ease;
+  // Positions fullscreen terminal on top of mast header
+  &__main.default-overflow {
+    z-index: calc(var(--pf-c-page__header--ZIndex) + 50);
+  }
+
+  // Apply to primary content section to prevent yaml editor and topology sections from collapsing
+  .pf-page__main-section--flex {
+    display: flex;
+    flex-direction: column;
   }
 
   // `.pf-c-page` specificity required
@@ -173,24 +164,6 @@ form.pf-c-form {
     --pf-c-toolbar__content--PaddingLeft: 0;
     --pf-c-toolbar__content--PaddingRight: 0;
     --pf-c-toolbar--RowGap: var(--pf-global--spacer--md);
-  }
-
-  .pf-c-page__main-section {
-    overflow: hidden; // needed for Firefox to enable proper scrolling of content-scrollable
-    --pf-c-page__main-section--PaddingBottom: 0;
-    --pf-c-page__main-section--PaddingLeft: 0;
-    --pf-c-page__main-section--PaddingRight: 0;
-    --pf-c-page__main-section--PaddingTop: 0;
-  }
-
-  .pf-c-page__sidebar {
-    --pf-c-page__sidebar--Transition: all 100ms ease;
-  }
-}
-
-@media screen and (min-width: $grid-float-breakpoint) {
-  .pf-m-expanded + .pf-c-page__main {
-    left: var(--pf-c-page__sidebar--Width);
   }
 }
 
@@ -238,21 +211,8 @@ form.pf-c-form {
 }
 
 .pf-c-page__sidebar {
-  --pf-c-page__sidebar-body--PaddingTop: 0;
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  top: var(--pf-c-page__header--MinHeight);
-  width: 0 !important; // only set size when expanded (.pf-m-expanded is added)
-
   @media screen and (min-width: $grid-float-breakpoint) {
     --pf-c-page__sidebar--BoxShadow: none;
-  }
-
-  &.pf-m-expanded {
-    width: var(
-      --pf-c-page__sidebar--Width
-    ) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
   }
 
   // Perspective switcher
@@ -270,10 +230,6 @@ form.pf-c-form {
       --pf-c-nav__list-link--after--Left: var(--pf-global--spacer--lg);
       --pf-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-global--spacer--xl);
       --pf-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-global--spacer--xl);
-    }
-
-    .pf-c-nav__item {
-      list-style: none;
     }
 
     .pf-c-nav__link {
@@ -392,4 +348,17 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
 
 .form-group--doubled-bottom-margin {
   margin-bottom: ($form-group-margin-bottom * 2);
+}
+
+// Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
+ul {
+  list-style: disc;
+}
+// And here we explicitly remove it from PF components so it doesn't show.
+ul.pf-c-alert-group,
+ul.pf-c-nav__list,
+ul.pf-c-options-menu__menu,
+ul.pf-c-simple-list__list,
+ul.pf-c-tree-view__list {
+  list-style: none !important;
 }

@@ -12,11 +12,17 @@ import {
   Status,
   getMachinePhase,
 } from '@console/shared';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
-import { MachineKind, referenceForModel } from '../module/k8s';
+import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage } from './factory';
+import ListPageFilter from './factory/ListPage/ListPageFilter';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageBody from './factory/ListPage/ListPageBody';
+import { useListPageFilter } from './factory/ListPage/filter-hook';
+import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   DetailsItem,
   Kebab,
@@ -28,33 +34,41 @@ import {
   navFactory,
 } from './utils';
 import { ResourceEventStream } from './events';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
+import { sortResourceByValue } from './factory/Table/sort';
+import { useActiveColumns } from './factory/Table/active-columns-hook';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
 export const machineReference = referenceForModel(MachineModel);
 
-const tableColumnClasses = [
-  '',
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { className: '', id: 'name' },
+  { className: '', id: 'namespace' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'nodeRef' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'phase' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'provider' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'region' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'avail' },
+  { className: Kebab.columnClass, id: '' },
 ];
 
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const MachineTableRow: React.FC<RowFunctionArgs<MachineKind>> = ({ obj }) => {
+const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs }) => {
   const nodeName = getMachineNodeName(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   const providerState = getMachineProviderState(obj);
   return (
     <>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+      <TableData
+        {...tableColumnInfo[0]}
+        className={classNames(tableColumnInfo[0].className, 'co-break-word')}
+        activeColumnIDs={activeColumnIDs}
+      >
         <ResourceLink
           kind={machineReference}
           name={obj.metadata.name}
@@ -62,21 +76,28 @@ const MachineTableRow: React.FC<RowFunctionArgs<MachineKind>> = ({ obj }) => {
         />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
+        {...tableColumnInfo[1]}
+        className={classNames(tableColumnInfo[1].className, 'co-break-word')}
+        activeColumnIDs={activeColumnIDs}
       >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      <TableData {...tableColumnInfo[2]} activeColumnIDs={activeColumnIDs}>
         {nodeName ? <NodeLink name={nodeName} /> : '-'}
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData {...tableColumnInfo[3]} activeColumnIDs={activeColumnIDs}>
         <Status status={getMachinePhase(obj)} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{providerState ?? '-'}</TableData>
-      <TableData className={tableColumnClasses[5]}>{region || '-'}</TableData>
-      <TableData className={tableColumnClasses[6]}>{zone || '-'}</TableData>
-      <TableData className={tableColumnClasses[7]}>
+      <TableData {...tableColumnInfo[4]} activeColumnIDs={activeColumnIDs}>
+        {providerState ?? '-'}
+      </TableData>
+      <TableData {...tableColumnInfo[5]} activeColumnIDs={activeColumnIDs}>
+        {region || '-'}
+      </TableData>
+      <TableData {...tableColumnInfo[6]} activeColumnIDs={activeColumnIDs}>
+        {zone || '-'}
+      </TableData>
+      <TableData {...tableColumnInfo[7]} activeColumnIDs={activeColumnIDs}>
         <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
       </TableData>
     </>
@@ -161,82 +182,131 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   );
 };
 
-export const MachineList: React.SFC = (props) => {
+type MachineListProps = {
+  data: MachineKind[];
+  unfilteredData: MachineKind[];
+  loaded: boolean;
+  loadError: any;
+};
+
+export const MachineList: React.FC<MachineListProps> = (props) => {
   const { t } = useTranslation();
-  const MachineTableHeader = () => {
-    return [
+
+  const machineTableColumns = React.useMemo<TableColumn<MachineKind>[]>(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
+        sort: 'metadata.name',
         transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        props: { className: tableColumnInfo[0].className },
+        id: tableColumnInfo[0].id,
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
+        sort: 'metadata.namespace',
         transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        props: { className: tableColumnInfo[1].className },
+        id: tableColumnInfo[1].id,
       },
       {
         title: t('public~Node'),
-        sortField: 'status.nodeRef.name',
+        sort: 'status.nodeRef.name',
         transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        props: { className: tableColumnInfo[2].className },
+        id: tableColumnInfo[2].id,
       },
       {
         title: t('public~Phase'),
-        sortFunc: 'machinePhase',
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
         transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        props: { className: tableColumnInfo[3].className },
+        id: tableColumnInfo[3].id,
       },
       {
         title: t('public~Provider state'),
-        sortField: 'status.providerStatus.instanceState',
+        sort: 'status.providerStatus.instanceState',
         transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
+        props: { className: tableColumnInfo[4].className },
+        id: tableColumnInfo[4].id,
       },
       {
         title: t('public~Region'),
-        sortField: "metadata.labels['machine.openshift.io/region']",
+        sort: "metadata.labels['machine.openshift.io/region']",
         transforms: [sortable],
-        props: { className: tableColumnClasses[5] },
+        props: { className: tableColumnInfo[5].className },
+        id: tableColumnInfo[5].id,
       },
       {
         title: t('public~Availability zone'),
-        sortField: "metadata.labels['machine.openshift.io/zone']",
+        sort: "metadata.labels['machine.openshift.io/zone']",
         transforms: [sortable],
-        props: { className: tableColumnClasses[6] },
+        props: { className: tableColumnInfo[6].className },
+        id: tableColumnInfo[6].id,
       },
       {
         title: '',
-        props: { className: tableColumnClasses[7] },
+        props: { className: tableColumnInfo[7].className },
+        id: tableColumnInfo[7].id,
       },
-    ];
-  };
+    ],
+    [t],
+  );
+
+  const [columns] = useActiveColumns({ columns: machineTableColumns });
+
   return (
-    <Table
+    <VirtualizedTable<MachineKind>
       {...props}
       aria-label={t('public~Machines')}
-      Header={MachineTableHeader}
+      columns={columns}
       Row={MachineTableRow}
-      virtualize
     />
   );
 };
 
-export const MachinePage: React.SFC<MachinePageProps> = (props) => {
+export const MachinePage: React.FC<MachinePageProps> = ({
+  selector,
+  namespace,
+  showTitle = true,
+  hideLabelFilter,
+  hideNameLabelFilters,
+  hideColumnManagement,
+}) => {
   const { t } = useTranslation();
 
+  const [machines, loaded, loadError] = useK8sWatchResource<MachineKind[]>({
+    kind: referenceForModel(MachineModel),
+    isList: true,
+    selector,
+    namespace,
+  });
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(machines);
+
   return (
-    <ListPage
-      {...props}
-      ListComponent={MachineList}
-      kind={machineReference}
-      textFilter="machine"
-      filterLabel={t('public~by machine or node name')}
-      canCreate
-    />
+    <>
+      <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
+        <ListPageCreate groupVersionKind={referenceForModel(MachineModel)}>
+          {t('public~Create machine')}
+        </ListPageCreate>
+      </ListPageHeader>
+      <ListPageBody>
+        <ListPageFilter
+          data={data}
+          loaded={loaded}
+          onFilterChange={onFilterChange}
+          hideNameLabelFilters={hideNameLabelFilters}
+          hideLabelFilter={hideLabelFilter}
+          hideColumnManagement={hideColumnManagement}
+        />
+        <MachineList
+          data={filteredData}
+          unfilteredData={machines}
+          loaded={loaded}
+          loadError={loadError}
+        />
+      </ListPageBody>
+    </>
   );
 };
 
@@ -261,7 +331,10 @@ export type MachineDetailsProps = {
 export type MachinePageProps = {
   showTitle?: boolean;
   namespace?: string;
-  selector?: any;
+  selector?: Selector;
+  hideLabelFilter?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideColumnManagement?: boolean;
 };
 
 export type MachineDetailsPageProps = {

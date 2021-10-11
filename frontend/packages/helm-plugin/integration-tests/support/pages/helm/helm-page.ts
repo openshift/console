@@ -45,7 +45,7 @@ export const helmPage = {
     }
     helmPage.selectHelmFilterDropDown();
   },
-  verifyStatusInHelmReleasesTable: (helmReleaseName: string = 'Nodejs Ex K v0.2.1') => {
+  verifyStatusInHelmReleasesTable: (helmReleaseName: string = 'Nodejs') => {
     cy.get(helmPO.table).should('exist');
     cy.get('tr td:nth-child(1)').each(($el, index) => {
       const text = $el.text();
@@ -59,7 +59,9 @@ export const helmPage = {
   },
   selectKebabMenu: () => {
     cy.get(helmPO.table).should('exist');
-    cy.byLegacyTestID('kebab-button').click();
+    cy.byLegacyTestID('kebab-button')
+      .first()
+      .click();
   },
   verifyHelmChartsListed: () => {
     cy.get(helmPO.noHelmSearchMessage)

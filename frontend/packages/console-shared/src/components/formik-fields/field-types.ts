@@ -80,8 +80,7 @@ export type FormSelectFieldProps = FieldProps & {
 };
 
 export interface EnvironmentFieldProps extends FieldProps {
-  obj?: K8sResourceKind;
-  envPath: string[];
+  obj: K8sResourceKind;
   envs?: (NameValuePair | NameValueFromPair)[];
 }
 
@@ -106,7 +105,7 @@ export interface MultiColumnFieldProps extends FieldProps {
 export interface YAMLEditorFieldProps extends FieldProps {
   model?: K8sKind;
   schema?: JSONSchema7;
-  onChange?: (value: string) => void;
+  showSamples: boolean;
   onSave?: () => void;
 }
 
@@ -117,7 +116,7 @@ export interface NameValuePair {
 
 export interface NameValueFromPair {
   name: string;
-  valueForm: ConfigMapKeyRef | SecretKeyRef;
+  valueFrom: ConfigMapKeyRef | SecretKeyRef;
 }
 
 export interface ConfigMapKeyRef {

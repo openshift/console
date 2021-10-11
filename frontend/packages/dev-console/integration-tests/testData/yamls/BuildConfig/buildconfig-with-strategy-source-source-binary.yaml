@@ -1,0 +1,102 @@
+kind: Build
+apiVersion: build.openshift.io/v1
+metadata:
+  annotations:
+    openshift.io/build-config.name: fruits-app-1
+    openshift.io/build.number: '1'
+    openshift.io/build.pod-name: fruits-app-1-1-build
+  name: fruits-app-1-1
+  namespace: aut-form-edit-build-config
+  ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      kind: BuildConfig
+      name: fruits-app-1
+      uid: 44291715-6933-4fac-82f1-481ea0fe7f29
+      controller: true
+  labels:
+    app: fruits-app-1
+    app.kubernetes.io/instance: fruits-app-1
+    openshift.io/build-config.name: fruits-app-1
+    app.kubernetes.io/component: fruits-app-1
+    openshift.io/build.start-policy: Serial
+    buildconfig: fruits-app-1
+    app.openshift.io/runtime: java
+    app.kubernetes.io/name: fruits-app-1
+    app.openshift.io/runtime-version: openjdk-11-el7
+spec:
+  serviceAccount: builder
+  source:
+    type: Binary
+    binary:
+      asFile: fruits-app-1.0.0-SNAPSHOT-runner.jar
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: >-
+          image-registry.openshift-image-registry.svc:5000/openshift/java@sha256:922ff4e248660350597fc7bd4b896df63169779bb8d21ec00d97a750a1cdfa1f
+      pullSecret:
+        name: builder-dockercfg-jjlfs
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'fruits-app-1:latest'
+    pushSecret:
+      name: builder-dockercfg-jjlfs
+  resources: {}
+  postCommit: {}
+  nodeSelector: null
+status:
+  output:
+    to:
+      imageDigest: 'sha256:da605b3ac4e0350944ecf39a8d8d8a5472e54a1150c3577d9c390adf9890975d'
+  config:
+    kind: BuildConfig
+    namespace: aut-form-edit-build-config
+    name: fruits-app-1
+  outputDockerImageReference: >-
+    image-registry.openshift-image-registry.svc:5000/aut-form-edit-build-config/fruits-app-1:latest
+  duration: 53000000000
+  startTimestamp: '2021-05-04T07:45:14Z'
+  stages:
+    - name: PullImages
+      startTime: '2021-05-04T07:45:20Z'
+      durationMilliseconds: 21036
+      steps:
+        - name: PullBaseImage
+          startTime: '2021-05-04T07:45:20Z'
+          durationMilliseconds: 21036
+    - name: Build
+      startTime: '2021-05-04T07:45:41Z'
+      durationMilliseconds: 19070
+      steps:
+        - name: DockerBuild
+          startTime: '2021-05-04T07:45:41Z'
+          durationMilliseconds: 19070
+    - name: PushImage
+      startTime: '2021-05-04T07:46:00Z'
+      durationMilliseconds: 6184
+      steps:
+        - name: PushImage
+          startTime: '2021-05-04T07:46:00Z'
+          durationMilliseconds: 6184
+  conditions:
+    - type: New
+      status: 'False'
+      lastUpdateTime: '2021-05-04T07:45:14Z'
+      lastTransitionTime: '2021-05-04T07:45:14Z'
+    - type: Pending
+      status: 'False'
+      lastUpdateTime: '2021-05-04T07:45:18Z'
+      lastTransitionTime: '2021-05-04T07:45:18Z'
+    - type: Running
+      status: 'False'
+      lastUpdateTime: '2021-05-04T07:46:07Z'
+      lastTransitionTime: '2021-05-04T07:46:07Z'
+    - type: Complete
+      status: 'True'
+      lastUpdateTime: '2021-05-04T07:46:07Z'
+      lastTransitionTime: '2021-05-04T07:46:07Z'
+  completionTimestamp: '2021-05-04T07:46:07Z'
+  phase: Complete

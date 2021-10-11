@@ -88,6 +88,9 @@ Feature: Perform the actions on Pipelines page
         Scenario Outline: Add the task by editing the pipeline: P-06-TC08
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user selects "Edit Pipeline" option from kebab menu of "<pipeline_name>"
+             When user clicks on Add task in parallel
+              And user searches "openshift-client" in quick search bar
+              And user clicks on Add in "openshift-client" task
               And user adds another task "openshift-client" in parallel
               And user clicks save on edit pipeline page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"

@@ -10,6 +10,7 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { PipelineModel } from '../../../models';
 import { PipelineKind } from '../../../types';
 import { initialPipelineFormData } from './const';
+import { sanitizeToYaml } from './form-switcher-validation';
 import PipelineBuilderForm from './PipelineBuilderForm';
 import { PipelineBuilderFormYamlValues, PipelineBuilderFormikValues } from './types';
 import { convertBuilderFormToPipeline, convertPipelineToBuilderForm } from './utils';
@@ -32,7 +33,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
 
   const initialValues: PipelineBuilderFormYamlValues = {
     editorType: EditorType.Form,
-    yamlData: '',
+    yamlData: sanitizeToYaml(initialPipelineFormData, ns, existingPipeline),
     formData: {
       ...initialPipelineFormData,
       ...(convertPipelineToBuilderForm(existingPipeline) || {}),

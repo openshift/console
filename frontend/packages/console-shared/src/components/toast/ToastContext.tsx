@@ -20,6 +20,8 @@ export type ToastOptions = {
     callback: () => void;
     // If `true`, executing this action will dismiss the toast.
     dismiss?: boolean;
+    // Sets the base component to render. defaults to button
+    component?: React.ElementType<any> | React.ComponentType<any>;
   }[];
   // If `true`, displays a close button.
   dismissible?: boolean;
@@ -28,6 +30,8 @@ export type ToastOptions = {
   timeout?: number | boolean;
   // Callback when the toast is removed.
   onRemove?: (id: string) => void;
+  // Callback to run when toast is dismissed with close button
+  onClose?: () => void;
 };
 
 export type ToastContextType = {

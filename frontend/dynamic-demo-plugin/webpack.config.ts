@@ -2,7 +2,9 @@
 
 import * as webpack from 'webpack';
 import * as path from 'path';
-import { ConsoleRemotePlugin } from '@console/dynamic-plugin-sdk/webpack';
+import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
+
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const config: webpack.Configuration = {
   mode: 'development',
@@ -31,10 +33,12 @@ const config: webpack.Configuration = {
       },
     ],
   },
-  plugins: [new ConsoleRemotePlugin()],
-  externals: {
-    '@console/dynamic-plugin-sdk/api': 'api',
-  },
+  plugins: [
+    new ConsoleRemotePlugin(),
+    new CopyWebpackPlugin({
+      patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
+    }),
+  ],
   devtool: 'source-map',
   optimization: {
     chunkIds: 'named',

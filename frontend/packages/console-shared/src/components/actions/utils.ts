@@ -25,26 +25,24 @@ export const createMenuOptions = (
   const groups = [topGroup, ...groupExtensions.map((group) => group.properties), bottomGroup];
 
   actions.forEach((action) => {
-    if (!action.disabled) {
-      if (action.path) {
-        const parts = action.path.split('/');
-        parts.forEach((part, index) => {
-          let subMenu = submenus[part];
-          const partGroup = groups.find((group) => group.id === part);
-          if (partGroup && !submenus[part]) {
-            subMenu = { ...partGroup, children: [] };
-            submenus[part] = subMenu;
-            if (index === 0) {
-              menuOptions.push(subMenu);
-            } else {
-              submenus[parts[index - 1]].children.push(subMenu);
-            }
+    if (action.path) {
+      const parts = action.path.split('/');
+      parts.forEach((part, index) => {
+        let subMenu = submenus[part];
+        const partGroup = groups.find((group) => group.id === part);
+        if (partGroup && !submenus[part]) {
+          subMenu = { ...partGroup, children: [] };
+          submenus[part] = subMenu;
+          if (index === 0) {
+            menuOptions.push(subMenu);
+          } else {
+            submenus[parts[index - 1]].children.push(subMenu);
           }
-        });
-        submenus[parts[parts.length - 1]].children.push(action);
-      } else {
-        menuOptions.push(action);
-      }
+        }
+      });
+      submenus[parts[parts.length - 1]].children.push(action);
+    } else {
+      menuOptions.push(action);
     }
   });
 

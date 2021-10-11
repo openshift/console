@@ -3,6 +3,7 @@ import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import MonitoringDashboardsPage from '@console/internal/components/monitoring/dashboards';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import {
   HorizontalNav,
@@ -14,9 +15,10 @@ import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
-import ConnectedMonitoringDashboard from './dashboard/MonitoringDashboard';
 import MonitoringEvents from './events/MonitoringEvents';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
+
+import './MonitoringPage.scss';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
@@ -45,7 +47,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
     {
       href: '',
       name: t('devconsole~Dashboard'),
-      component: ConnectedMonitoringDashboard,
+      component: MonitoringDashboardsPage,
     },
     {
       href: 'metrics',
@@ -68,10 +70,10 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
     },
   ];
   return activeNamespace ? (
-    <>
+    <div className="odc-monitoring-page">
       <PageHeading title={t('devconsole~Observe')} />
       <HorizontalNav pages={pages} match={match} noStatusBox />
-    </>
+    </div>
   ) : (
     <CreateProjectListPage title={t('devconsole~Observe')}>
       {(openProjectModal) => (

@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { sortable, IRow } from '@patternfly/react-table';
 import { Table } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
-
 import { WizardNodeState } from '../../reducer';
+import { SelectNodesTableFooter } from '../../select-nodes-table/select-nodes-table-footer';
 
 const tableColumnClasses = [
   classNames('pf-u-w-40-on-sm'),
@@ -81,7 +81,9 @@ export const SelectedNodesTable: React.FC<SelectedNodesTableProps> = ({ data }) 
         data={data}
         Rows={getRows}
         virtualize={false}
+        loaded
       />
+      {!!data.length && <SelectNodesTableFooter nodes={data} />}
     </>
   );
 };

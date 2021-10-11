@@ -2,9 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { NavExpandable, NavGroup } from '@patternfly/react-core';
+import { Perspective, isPerspective, NavItem, isNavItem } from '@console/dynamic-plugin-sdk';
+import { withExtensions } from '@console/plugin-sdk';
 
-import { withExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { NavItem, isNavItem } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { withActivePerspective } from '@console/shared';
 import { RootState } from '../../redux';

@@ -7,12 +7,8 @@ import { Dropdown } from '@console/internal/components/utils';
 import { NetworkPolicyPort } from './network-policy-model';
 
 export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps> = (props) => {
-  const { direction, ports, onChange } = props;
+  const { ports, onChange } = props;
   const { t } = useTranslation();
-  const [allPorts, setAllPorts] = React.useState(ports.length === 0);
-  React.useEffect(() => {
-    setAllPorts(ports.length === 0);
-  }, [ports.length]);
 
   const onSingleChange = (port: NetworkPolicyPort, index: number) => {
     onChange([...ports.slice(0, index), port, ...ports.slice(index + 1)]);
@@ -22,37 +18,18 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
     onChange([...ports.slice(0, index), ...ports.slice(index + 1)]);
   };
 
-  const dropdownItems = {
-    all: <>{t('public~All ports')}</>,
-    some: <>{t('public~Certain ports')}</>,
-  };
-  const selectedKey = allPorts ? 'all' : 'some';
-
   return (
     <>
-      <div className="form-group co-create-networkpolicy__ports-type">
-        <label>
-          {direction === 'ingress' ? t('public~Allow traffic to') : t('public~Allow traffic from')}
-        </label>
-        <Dropdown
-          dropDownClassName="dropdown--full-width"
-          items={dropdownItems}
-          onChange={(key) => {
-            const isAllPorts = key === 'all';
-            setAllPorts(isAllPorts);
-            if (isAllPorts) {
-              onChange([]);
-            } else {
-              onChange([{ key: _.uniqueId('port-'), port: '', protocol: 'TCP' }]);
-            }
-          }}
-          selectedKey={selectedKey}
-          title={dropdownItems[selectedKey]}
-        />
-      </div>
-      {!allPorts && (
+      {
         <div className="form-group co-create-networkpolicy__ports-list">
-          <label>{t('public~Ports')}</label>
+          <label>{t('console-app~Ports')}</label>
+          <div className="help-block" id="ingress-peers-help">
+            <p>
+              {t(
+                'console-app~Add ports to restrict traffic through them. If no ports are provided, your policy will make all ports accessible to traffic.',
+              )}
+            </p>
+          </div>
           {ports.map((port, idx) => {
             const key = `port-${idx}`;
             return (
@@ -80,7 +57,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   value={port.port}
                 />
                 <Button
-                  aria-label={t('public~Remove port')}
+                  aria-label={t('console-app~Remove port')}
                   className="co-create-networkpolicy__remove-port"
                   onClick={() => onRemove(idx)}
                   type="button"
@@ -101,17 +78,16 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
               variant="link"
             >
               <PlusCircleIcon className="co-icon-space-r" />
-              {t('public~Add port')}
+              {t('console-app~Add port')}
             </Button>
           </div>
         </div>
-      )}
+      }
     </>
   );
 };
 
 type NetworkPolicyPortsProps = {
-  direction: 'ingress' | 'egress';
   ports: NetworkPolicyPort[];
   onChange: (ports: NetworkPolicyPort[]) => void;
 };

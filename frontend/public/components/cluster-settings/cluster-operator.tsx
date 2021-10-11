@@ -27,11 +27,16 @@ import {
   navFactory,
   EmptyBox,
   Kebab,
+  LinkifyExternal,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
 } from '../utils';
-import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import RelatedObjectsPage from './related-objects';
 import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings';
 
@@ -45,6 +50,7 @@ const getIcon = (status: OperatorStatus) => {
     [OperatorStatus.Progressing]: <SyncAltIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
+    [OperatorStatus.Unavailable]: <RedExclamationCircleIcon />,
     [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
 };
@@ -82,8 +88,15 @@ const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ o
         <OperatorStatusIconAndLabel status={status} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{operatorVersion || '-'}</TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word', 'co-pre-line')}>
-        {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
+      <TableData
+        className={classNames(
+          tableColumnClasses[3],
+          'co-break-word',
+          'co-line-clamp',
+          'co-pre-line',
+        )}
+      >
+        <LinkifyExternal>{message || '-'}</LinkifyExternal>
       </TableData>
     </>
   );
@@ -243,7 +256,9 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
                 <OperatorStatusIconAndLabel status={status} />
               </dd>
               <dt>{t('public~Message')}</dt>
-              <dd className="co-pre-line">{message || '-'}</dd>
+              <dd className="co-pre-line">
+                <LinkifyExternal>{message || '-'}</LinkifyExternal>
+              </dd>
             </dl>
           </div>
         </div>

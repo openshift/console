@@ -10,11 +10,14 @@ export const PODS = 'Pods';
 export const BY_USED = 'By Used Capacity';
 export const BY_REQUESTED = 'By Requested Capacity';
 export const OCS_OPERATOR = 'ocs-operator';
+export const ODF_OPERATOR = 'odf-operator';
 export const LSO_OPERATOR = 'local-storage-operator';
+export const NOOBAA_OPERATOR = 'noobaa-operator';
 export const OCS_EXTERNAL_CR_NAME = 'ocs-external-storagecluster';
 export const OCS_INTERNAL_CR_NAME = 'ocs-storagecluster';
 export const NO_PROVISIONER = 'kubernetes.io/no-provisioner';
 export const OCS_SUPPORT_ANNOTATION = 'features.ocs.openshift.io/enabled';
+export const ODF_VENDOR_ANNOTATION = 'vendors.odf.openshift.io/kind';
 export const OCS_DEVICE_SET_REPLICA = 3;
 export const OCS_DEVICE_SET_ARBITER_REPLICA = 4;
 export const OCS_DEVICE_SET_FLEXIBLE_REPLICA = 1;
@@ -38,3 +41,4 @@ export enum StoreType {
   BS = 'BackingStore',
   NS = 'NamespaceStore',
 }
+export const ODF_MODEL_FLAG = 'ODF_FLAG';

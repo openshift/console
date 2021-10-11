@@ -2,15 +2,16 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
-import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import {
-  ALL_APPLICATIONS_KEY,
+  WatchK8sResultsObject,
+  Perspective,
+  isPerspective,
   useActivePerspective,
-  usePostFormSubmitAction,
-} from '@console/shared/src';
+} from '@console/dynamic-plugin-sdk';
+import { history } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk';
+import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared/src';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
@@ -64,6 +65,9 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
       selected: imageName,
       tag: tag.name,
       tagObj: tag,
+    },
+    import: {
+      showEditImportStrategy: true,
     },
   };
 

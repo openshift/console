@@ -46,8 +46,8 @@ Then('release name displays as {string}', (name: string) => {
 Given('user is at Install Helm Chart page', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChart);
-  catalogPage.search('Nodejs Ex K v0.2.1');
-  catalogPage.selectHelmChartCard('Nodejs Ex K v0.2.1');
+  catalogPage.search('Nodejs');
+  catalogPage.selectHelmChartCard('Nodejs');
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
 
@@ -62,7 +62,7 @@ Then('Topology page have the helm chart workload {string}', (nodeName: string) =
 
 Given('user has installed helm chart', () => {
   navigateTo(devNavigationMenu.Topology);
-  topologyPage.verifyWorkloadInTopologyPage('nodejs-example');
+  topologyPage.verifyWorkloadInTopologyPage('nodejs-release');
 });
 
 Given('user is at the Helm page', () => {
@@ -163,9 +163,11 @@ Then('yaml view radio button is enabled', () => {
   cy.get('#form-radiobutton-editorType-yaml-field').should('not.be.checked');
 });
 
-Then('Ingress, Service, Image sections are displayed in form view', () => {
-  cy.get('#root_ingress_field-group').should('be.visible');
-  cy.get('#root_service_accordion-toggle').should('be.visible');
-  cy.get('#root_image_field-group').should('be.visible');
+Then('form sections are displayed in form view', () => {
+  // cy.get('#root_ingress_field-group').should('be.visible');
+  // cy.get('#root_service_accordion-toggle').should('be.visible');
+  // cy.get('#root_image_field-group').should('be.visible');
+  // Only field group IDs are available with new chart.
+  cy.get('#root_field-group').should('be.visible');
   cy.get(catalogPO.installHelmChart.cancel).click();
 });

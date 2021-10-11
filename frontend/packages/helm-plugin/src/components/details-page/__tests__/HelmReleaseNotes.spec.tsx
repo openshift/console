@@ -5,13 +5,9 @@ import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseNotes from '../notes/HelmReleaseNotes';
 import HelmReleaseNotesEmptyState from '../notes/HelmReleaseNotesEmptyState';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+  useResizeObserver: jest.fn(),
+}));
 
 describe('HelmReleaseNotes', () => {
   it('should render the SyncMarkdownView component when notes are available', () => {

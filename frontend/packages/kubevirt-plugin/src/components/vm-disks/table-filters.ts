@@ -1,5 +1,4 @@
-import * as _ from 'lodash';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { DiskType } from '../../constants/vm/storage';
 
 const typeReducer = (obj) => {
@@ -18,7 +17,7 @@ export const diskSourceFilter: RowFilter = {
   filter: (disks, obj) => {
     const diskType = typeReducer(obj);
     return (
-      disks.selected.size === 0 || disks.selected.has(diskType) || !_.includes(disks.all, diskType)
+      !disks.selected.length || disks.selected.includes(diskType) || disks.all?.includes(diskType)
     );
   },
 };

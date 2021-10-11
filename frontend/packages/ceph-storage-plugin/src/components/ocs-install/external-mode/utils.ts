@@ -23,7 +23,7 @@ export const isValidJSON = (fData: string): boolean => {
   }
 };
 
-export const createDownloadFile = (data: string): string =>
+export const createDownloadFile = (data: string = ''): string =>
   `data:application/octet-stream;charset=utf-8,${encodeURIComponent(Base64.decode(data))}`;
 
 export const checkError = (

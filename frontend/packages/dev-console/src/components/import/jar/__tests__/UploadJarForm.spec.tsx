@@ -11,13 +11,6 @@ import JarSection from '../section/JarSection';
 import UploadJarForm from '../UploadJarForm';
 
 let UploadJarFormProps: React.ComponentProps<typeof UploadJarForm>;
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
 
 describe('UploadJarForm', () => {
   beforeEach(() => {

@@ -36,10 +36,25 @@ export const useVmStatusResources = (namespace: string): VmStatusResourcesValue 
       namespace,
       isList: true,
     },
-    pods: {
+    kubevirtPods: {
       isList: true,
       kind: PodModel.kind,
       namespace,
+      selector: {
+        matchLabels: {
+          app: 'kubevirt',
+        },
+      },
+    },
+    cdiPods: {
+      isList: true,
+      kind: PodModel.kind,
+      namespace,
+      selector: {
+        matchLabels: {
+          app: 'containerized-data-importer',
+        },
+      },
     },
     pvcs: {
       kind: PersistentVolumeClaimModel.kind,
@@ -65,7 +80,7 @@ export const useVmStatusResources = (namespace: string): VmStatusResourcesValue 
       Object.keys(updatedResources).length > 0 &&
       Object.keys(updatedResources).every((key) => updatedResources[key].loaded)
     ) {
-      setPods(updatedResources.pods.data);
+      setPods([...updatedResources.kubevirtPods.data, ...updatedResources.cdiPods.data]);
       setMigrations(updatedResources.migrations.data);
       setDvs(updatedResources.dvs.data);
       setPvcs(updatedResources.pvcs.data);

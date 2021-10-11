@@ -3,14 +3,6 @@ import { shallow } from 'enzyme';
 import { Popover, Modal, Spotlight } from '@console/shared';
 import TourStepComponent from '../TourStepComponent';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 describe('TourStepComponent', () => {
   it('should render Modal if no selector is present', () => {
     const wrapper = shallow(<TourStepComponent heading="heading" content="content" />);

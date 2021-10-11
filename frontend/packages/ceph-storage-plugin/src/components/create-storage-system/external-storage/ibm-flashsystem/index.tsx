@@ -7,39 +7,55 @@ import {
   Button,
   Tooltip,
   ValidatedOptions,
+  Select,
+  SelectOption,
 } from '@patternfly/react-core';
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 import { SecretKind, apiVersionForModel } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
-import { isValidUrl } from '@console/shared';
 import { FlashSystemState, IBMFlashSystemKind } from './type';
 import { IBMFlashSystemModel } from './models';
 import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
+
+const VOLUME_MODES = ['thick', 'thin'];
+const isValidIP = (address) =>
+  /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+    address,
+  );
 
 export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<FlashSystemState>> = ({
   setFormState,
   formState,
 }) => {
   const { t } = useTranslation();
+  const [isOpen, setIsOpen] = React.useState(false);
   const [reveal, setReveal] = React.useState(false);
   const [endpointValid, setEndpointValid] = React.useState(ValidatedOptions.default);
 
   const onChange = (value: string) => {
     setFormState('endpoint', value);
-    value && isValidUrl(value)
+    value && isValidIP(value)
       ? setEndpointValid(ValidatedOptions.success)
       : setEndpointValid(ValidatedOptions.error);
+  };
+
+  const onToggle = () => setIsOpen(!isOpen);
+
+  const onModeSelect = (event, value) => {
+    event.preventDefault();
+    setFormState('volmode', value);
+    setIsOpen(!isOpen);
   };
 
   return (
     <>
       <FormGroup
-        label={t('ceph-storage-plugin~Endpoint')}
+        label={t('ceph-storage-plugin~IP address')}
         fieldId="endpoint-input"
         isRequired
         validated={endpointValid}
         helperText={t('ceph-storage-plugin~Rest API IP address of IBM FlashSystem.')}
-        helperTextInvalid={t('ceph-storage-plugin~The endpoint is not a valid URL')}
+        helperTextInvalid={t('ceph-storage-plugin~The endpoint is not a valid IP address')}
       >
         <TextInput
           id="endpoint-input"
@@ -89,6 +105,21 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           isRequired
         />
       </FormGroup>
+      <FormGroup label={t('ceph-storage-plugin~Volume mode')} fieldId="volume-mode-input">
+        <Select
+          onSelect={onModeSelect}
+          id="volume-mode-input"
+          selections={formState.volmode}
+          onToggle={onToggle}
+          isOpen={isOpen}
+          isDisabled={false}
+          placeholderText={VOLUME_MODES[0]}
+        >
+          {VOLUME_MODES.map((mode) => (
+            <SelectOption key={mode} value={mode} />
+          ))}
+        </Select>
+      </FormGroup>
     </>
   );
 };
@@ -121,7 +152,7 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
       defaultPool: {
         poolName: form.poolname,
         storageclassName: storageClassName,
-        spaceEfficiency: defaultVolumeMode,
+        spaceEfficiency: form.volmode ? form.volmode : defaultVolumeMode,
         fsType: defaultFilesystem,
         volumeNamePrefix: defaultVolumePrefix,
       },
@@ -135,7 +166,8 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
   const storageSecretTemplate: SecretKind = {
     apiVersion: apiVersionForModel(SecretModel),
     stringData: {
-      managementAddress: form.endpoint,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      management_address: form.endpoint,
       password: form.password,
       username: form.username,
     },
@@ -161,4 +193,8 @@ export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
 };
 
 export const flashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
-  !!state.endpoint && !!state.username && !!state.password && !!state.poolname;
+  !!state.endpoint &&
+  isValidIP(state.endpoint) &&
+  !!state.username &&
+  !!state.password &&
+  !!state.poolname;

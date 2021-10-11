@@ -15,14 +15,14 @@ Feature: Add in context from the Developer Catalog
         Scenario: Add to Project in Context options: T-10-TC01
              When user right clicks on graph
               And user clicks on Add to Project
-             Then user can see in context options Samples, From Git, Container Image, From Dockerfile, From Catalog, Database, Operator Backed, Helm Chart, Event Source, Channel
+             Then user can see in context options Samples, Import from Git, Container Image, From Catalog, Database, Operator Backed, Helm Chart, Event Source, Channel
 
 
         @regression @to-do
         Scenario: Add to Application in Context: T-10-TC02
              When user right clicks on Application Grouping "aut-knative-demos"
               And user clicks on Add to Application
-             Then user can see in context options From Git, Container Image, From Dockerfile, Event Source, Channel
+             Then user can see in context options Import from Git, Container Image, Event Source, Channel
 
 
         @regression @to-do

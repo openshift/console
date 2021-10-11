@@ -2,7 +2,7 @@ import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { serverlessInitialValues } from '../__mocks__/serverless-mock';
-import { GitImportFormData, Resources } from '../import-types';
+import { GitImportFormData, GitTypes, Resources } from '../import-types';
 
 export const mockPipelineTemplate: PipelineKind = {
   apiVersion: 'tekton.dev/v1alpha1',
@@ -156,7 +156,7 @@ export const defaultData: GitImportFormData = {
   },
   git: {
     url: 'https://github.com/sclorg/nodejs-ex.git',
-    type: 'github',
+    type: GitTypes.github,
     ref: '',
     dir: '/',
     showGitType: false,
@@ -667,7 +667,7 @@ export const defaultDevfileFormData: GitImportFormData = {
   },
   git: {
     url: '',
-    type: '',
+    type: GitTypes.invalid,
     ref: '',
     dir: '',
     showGitType: false,
@@ -679,7 +679,7 @@ export const defaultDevfileFormData: GitImportFormData = {
   },
   devfile: {
     devfileHasError: false,
-    devfilePath: './devfile.yaml',
+    devfilePath: 'devfile.yaml',
   },
 };
 
@@ -693,7 +693,7 @@ export const sampleDevfileFormData: GitImportFormData = {
   },
   git: {
     url: 'https://github.com/redhat-developer/devfile-sample',
-    type: 'github',
+    type: GitTypes.github,
     ref: 'master',
     dir: './',
     showGitType: false,
@@ -743,7 +743,7 @@ export const sampleDevfileFormData: GitImportFormData = {
   },
   devfile: {
     devfileHasError: false,
-    devfilePath: './devfile.yaml',
+    devfilePath: 'devfile.yaml',
     devfileContent: 'SKIPPED',
     devfileSuggestedResources: {
       imageStream: {

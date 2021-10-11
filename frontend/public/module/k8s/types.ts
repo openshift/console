@@ -431,6 +431,9 @@ export type NodeKind = {
       sizeBytes?: number;
     }[];
     phase?: string;
+    nodeInfo?: {
+      operatingSystem: string;
+    };
   };
 } & K8sResourceCommon;
 
@@ -610,6 +613,10 @@ export type MachineSpec = {
   providerSpec: {
     value?: {
       placement?: MachineAWSPlacement;
+      instanceType?: string;
+      vmSize?: string;
+      machineType?: string;
+      flavor?: string;
     };
   };
   versions: {
@@ -1060,7 +1067,7 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
 
 export type NetworkPolicyKind = K8sResourceCommon & {
   spec: {
-    podSelector: Selector;
+    podSelector?: Selector;
     ingress?: {
       from?: NetworkPolicyPeer[];
       ports?: NetworkPolicyPort[];

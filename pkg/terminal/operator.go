@@ -2,9 +2,10 @@ package terminal
 
 import (
 	"context"
-
-	"k8s.io/apimachinery/pkg/api/errors"
+	"errors"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -12,7 +13,7 @@ import (
 )
 
 var (
-	OperatorAPIResource = &schema.GroupVersionResource{
+	OperatorAPISubscriptionResource = &schema.GroupVersionResource{
 		Group:    "operators.coreos.com",
 		Version:  "v1alpha1",
 		Resource: "subscriptions",
@@ -27,7 +28,6 @@ var (
 const (
 	webhookName             = "controller.devfile.io"
 	webTerminalOperatorName = "web-terminal"
-	operatorsNamespace      = "openshift-operators"
 )
 
 // checkWebTerminalOperatorIsRunning checks if the workspace operator is running and webhooks are enabled,
@@ -44,7 +44,7 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 
 	_, err = client.AdmissionregistrationV1().MutatingWebhookConfigurations().Get(context.TODO(), webhookName, metav1.GetOptions{})
 	if err != nil {
-		if errors.IsNotFound(err) {
+		if k8sErrors.IsNotFound(err) {
 			return false, nil
 		}
 		return false, err
@@ -52,7 +52,7 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 
 	_, err = client.AdmissionregistrationV1().ValidatingWebhookConfigurations().Get(context.TODO(), webhookName, metav1.GetOptions{})
 	if err != nil {
-		if errors.IsNotFound(err) {
+		if k8sErrors.IsNotFound(err) {
 			return false, nil
 		}
 		return false, err
@@ -62,9 +62,23 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 
 // checkWebTerminalOperatorIsInstalled checks to see that a web-terminal-operator is installed on the cluster
 func checkWebTerminalOperatorIsInstalled() (bool, error) {
+
+	_, err := getWebTerminalSubscriptions()
+	if err != nil {
+		// Web Terminal subscription is not found but it's technically not a real error so we don't want to propogate it. Just say that the operator is not installed
+		if k8sErrors.IsNotFound(err) {
+			return false, nil
+		}
+
+		return false, err
+	}
+	return true, nil
+}
+
+func getWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	config.GroupVersion = OperatorGroupVersion
@@ -72,18 +86,24 @@ func checkWebTerminalOperatorIsInstalled() (bool, error) {
 
 	client, err := dynamic.NewForConfig(config)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-
-	_, err = client.Resource(*OperatorAPIResource).Namespace(operatorsNamespace).Get(context.TODO(), webTerminalOperatorName, metav1.GetOptions{})
+	subs, err := client.Resource(*OperatorAPISubscriptionResource).List(context.TODO(), metav1.ListOptions{
+		FieldSelector: "metadata.name=" + webTerminalOperatorName,
+	})
 	if err != nil {
-		// Web Terminal subscription is not found but it's technically not a real error so we don't want to propogate it. Just say that the operator is not installed
-		if errors.IsNotFound(err) {
-			return false, nil
-		}
+		return subs, err
+	}
+	return subs, err
+}
 
-		return false, err
+func getWebTerminalNamespace(subs *unstructured.UnstructuredList) (string, error) {
+	if len(subs.Items) > 1 {
+		return "", errors.New("found multiple subscriptions for web-terminal when only one should be found")
 	}
 
-	return true, nil
+	webTerminalSubscription := subs.Items[0]
+	namespace := webTerminalSubscription.GetNamespace()
+
+	return namespace, nil
 }

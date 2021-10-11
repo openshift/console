@@ -2,12 +2,9 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
-import {
-  useK8sWatchResources,
-  WatchK8sResults,
-  WatchK8sResultsObject,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { QUERY_PROPERTIES } from '../../../const';

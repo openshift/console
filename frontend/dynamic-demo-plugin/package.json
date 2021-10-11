@@ -3,23 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "clean": "rm -rf ./dist",
-    "build": "yarn clean && NODE_ENV=production yarn ts-node ./node_modules/.bin/webpack --mode=production",
-    "build-dev": "yarn clean && yarn ts-node ./node_modules/.bin/webpack --mode=development",
-    "http-server": "./http-server.sh ./dist",
-    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@console)/)/'"
-  },
-  "dependencies": {
-    "react": "17.0.1"
+    "clean": "rm -rf dist",
+    "build": "yarn clean && NODE_ENV=production yarn ts-node node_modules/.bin/webpack",
+    "build-dev": "yarn clean && yarn ts-node node_modules/.bin/webpack",
+    "build-plugin-sdk": "yarn --cwd .. build-plugin-sdk && rm -rf node_modules/@openshift-console && yarn install --check-files",
+    "http-server": "./http-server.sh dist",
+    "i18n": "i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@openshift-console)/)/'"
   },
   "devDependencies": {
-    "@console/dynamic-plugin-sdk": "link:../packages/console-dynamic-plugin-sdk/dist",
+    "@openshift-console/dynamic-plugin-sdk": "file:../packages/console-dynamic-plugin-sdk/dist/core",
+    "@openshift-console/dynamic-plugin-sdk-webpack": "file:../packages/console-dynamic-plugin-sdk/dist/webpack",
     "@types/react": "16.8.13",
+    "copy-webpack-plugin": "^6.4.1",
     "http-server": "0.12.x",
+    "i18next-parser": "^3.3.0",
     "ts-loader": "6.2.2",
     "ts-node": "5.0.1",
     "typescript": "3.8.3",
-    "webpack": "5.0.0-beta.16",
     "webpack-cli": "4.5.x"
   },
   "consolePlugin": {
@@ -31,10 +32,15 @@
       "barUtils": "./utils/bar",
       "telemetry": "./utils/telemetry",
       "extensionConsumer": "./components/ExtensionConsumer.tsx",
-      "utilityConsumer": "./components/UtilityConsumer.tsx"
+      "utilityConsumer": "./components/UtilityConsumer.tsx",
+      "navPage": "./components/Nav",
+      "listPage": "./components/ListPage"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
-    }
+    },
+    "disableStaticPlugins": [
+      "@console/demo-plugin"
+    ]
   }
 }
