@@ -198,12 +198,18 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     right: 0;
     top: 4.75rem; // --pf-c-page__header--MinHeight
 
+    .pf-c-modal-box {
+      --pf-c-modal-box__body--PaddingTop: 0 !important;
+      --pf-c-modal-box__body--PaddingRight: 0 !important;
+      --pf-c-modal-box__body--PaddingLeft: 0 !important;
+      --pf-c-modal-box__body--last-child--PaddingBottom: 0 !important;
+    }
+
     .pf-c-modal-box__body {
       // Required to position scroll shadows correctly on Chrome
       display: flex;
       flex-direction: column;
       margin: 0 !important;
-      padding: 0 !important;
     }
 
     .modal-body-inner-shadow-covers {
@@ -291,15 +297,13 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 }
 
-@media screen and (min-width: $screen-sm) {
-  .pf-c-modal-box.co-catalog-page__overlay {
-    width: 600px;
+.co-catalog-page__overlay.pf-c-modal-box {
+  @media screen and (min-width: $screen-sm) {
+    --pf-c-modal-box--Width: 600px;
   }
-}
 
-@media screen and (min-width: $screen-md) {
-  .pf-c-modal-box.co-catalog-page__overlay {
-    width: 900px;
+  @media screen and (min-width: $screen-md) {
+    --pf-c-modal-box--Width: 900px;
   }
 }
 

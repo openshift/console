@@ -7,13 +7,10 @@
 
 .ocs-preview-badge {
   &.pf-c-label {
-    background-color: #d93f00;
-    border-radius: var(--pf-global--BorderRadius--sm);
-    :before {
-      border-color: transparent;
-    }
-  }
-  .pf-c-label__content {
-    color: var(--pf-global--Color--light-100);
+    --pf-c-label--BackgroundColor: #d93f00;
+    --pf-c-label--BorderRadius: var(--pf-global--BorderRadius--sm);
+    --pf-c-label__content--before--BorderWidth: 0;
+    --pf-c-label__content--before--BorderColor: transparent;
+    --pf-c-label__content--Color: var(--pf-global--Color--light-100);
   }
 }

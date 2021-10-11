@@ -21,9 +21,10 @@
   // There's no way to set a class name on this element, so use the PF4 class.
   .pf-c-accordion__expanded-content-body {
     // Left align the content with the heading on the search page.
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    --pf-c-accordion__expanded-content-body--PaddingRight: 0 !important;
+    --pf-c-accordion__expanded-content-body--PaddingLeft: 0 !important;
   }
+
   .pf-c-accordion__expanded-content-body,
   .pf-c-accordion__toggle {
     &:before {

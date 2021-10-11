@@ -44,7 +44,8 @@
 
   &__layout-button {
     .pf-topology-control-bar__button.pf-c-button {
-      border-radius: 0;
+      --pf-c-button--BorderRadius: 0;
+
       margin-right: 0;
 
       &:focus {
@@ -68,13 +69,13 @@
 
     &:first-of-type {
       .pf-topology-control-bar__button.pf-c-button {
-        border-radius: var(--pf-global--BorderRadius--sm) 0 0 var(--pf-global--BorderRadius--sm);
+        --pf-c-button--BorderRadius: var(--pf-global--BorderRadius--sm) 0 0 var(--pf-global--BorderRadius--sm);
       }
     }
 
     &:last-of-type {
       .pf-topology-control-bar__button.pf-c-button {
-        border-radius: 0 var(--pf-global--BorderRadius--sm) var(--pf-global--BorderRadius--sm) 0;
+        --pf-c-button--BorderRadius: 0 var(--pf-global--BorderRadius--sm) var(--pf-global--BorderRadius--sm) 0;
       }
     }
 

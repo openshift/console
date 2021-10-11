@@ -21,8 +21,8 @@
   }
 }
 
-.kv-cloudint-advanced-tab-with-editor--validation-text .pf-c-form__helper-text.pf-m-success {
-  color: var(--pf-c-form__group-label-help--Color);
+.kv-cloudint-advanced-tab-with-editor--validation-text .pf-c-form {
+  --pf-c-form__helper-text--m-success--Color: var(--pf-c-form__group-label-help--Color);
 }
 
 .kv-cloudint-advanced-tab-with-editor--ssh-key-row.pf-l-split {
