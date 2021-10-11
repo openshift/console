@@ -370,9 +370,9 @@ export const getVMConditionsStatus = ({
       status: VMStatus.VMI_WAITING,
       message: VMI_WAITING_MESSAGE,
     }) ||
-    (getStatusPhase(vmi) === VMIPhase.Failed && { status: VMStatus.VMI_ERROR }) || {
+    (getStatusPhase(vmi) === VMIPhase.Failed && { status: VMStatus.VMI_ERROR }) ||
+    isBeingMigrated(vm, vmi, migrations) || {
       status: VMStatus.UNKNOWN,
-    } ||
-    isBeingMigrated(vm, vmi, migrations)
+    }
   );
 };
