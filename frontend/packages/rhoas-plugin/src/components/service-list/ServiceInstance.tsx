@@ -55,8 +55,12 @@ const ServiceInstance: React.FC<ServiceInstanceProps> = ({
     <Trans t={t} ns="rhoas-plugin">
       To make sure the instance exists and that you&lsquo;re authorized to access it, you can see
       your Kafka instances at{' '}
-      <a href="https://cloud.redhat.com/openshift/token" rel="noopener noreferrer" target="_blank">
-        https://cloud.redhat.com.
+      <a
+        href="https://console.redhat.com/openshift/token"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        https://console.redhat.com.
       </a>{' '}
       To discover more managed services, go to the{' '}
       <Button
