@@ -12,10 +12,18 @@ import {
 } from '@console/patternfly';
 import * as UIActions from '@console/internal/actions/ui';
 import store, { RootState } from '@console/internal/redux';
-import { Alert, PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
-import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
+import {
+  Alert,
+  PrometheusRulesResponse,
+  AlertSource,
+} from '@console/internal/components/monitoring/types';
+import {
+  getAlertsAndRules,
+  alertURL,
+  alertSource,
+} from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/ui';
-import { RedExclamationCircleIcon } from '@console/shared';
+import { RedExclamationCircleIcon, useUserSettings } from '@console/shared';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -53,6 +61,7 @@ import { ClusterVersionModel } from '../models';
 import { useAccessReview } from './utils/rbac';
 import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
+import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
 const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
@@ -201,18 +210,6 @@ export const refreshNotificationPollers = () => {
   _.invoke(pollers, 'notificationAlerts');
 };
 
-const getAlerts = (alertsResults: PrometheusRulesResponse): Alert[] =>
-  alertsResults
-    ? getAlertsAndRules(alertsResults.data)
-        .alerts.filter(
-          (a) =>
-            a.state === 'firing' &&
-            getAlertName(a) !== 'Watchdog' &&
-            getAlertName(a) !== 'UpdateAvailable',
-        )
-        .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
-    : [];
-
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
   isDesktop,
   toggleNotificationDrawer,
@@ -222,6 +219,11 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   children,
 }) => {
   const { t } = useTranslation();
+  const [hideUserWorkloadNotifications, , hideUserWorkloadNotificationsLoaded] = useUserSettings(
+    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
+    false,
+    true,
+  );
   React.useEffect(() => {
     const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
       store.dispatch(UIActions.monitoringLoading(key));
@@ -238,7 +240,29 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
-      poll(`${prometheusBaseURL}/${PrometheusEndpoint.RULES}`, 'notificationAlerts', getAlerts);
+      poll(
+        `${prometheusBaseURL}/${PrometheusEndpoint.RULES}`,
+        'notificationAlerts',
+        (alertsResults: PrometheusRulesResponse): Alert[] =>
+          alertsResults
+            ? getAlertsAndRules(alertsResults.data)
+                .alerts.filter((a) => {
+                  if (
+                    hideUserWorkloadNotificationsLoaded &&
+                    hideUserWorkloadNotifications &&
+                    alertSource(a) === AlertSource.User
+                  ) {
+                    return false;
+                  }
+                  return (
+                    a.state === 'firing' &&
+                    getAlertName(a) !== 'Watchdog' &&
+                    getAlertName(a) !== 'UpdateAvailable'
+                  );
+                })
+                .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
+            : [],
+      );
     } else {
       store.dispatch(
         UIActions.monitoringErrored(
@@ -269,7 +293,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     }
 
     return () => _.each(pollerTimeouts, clearTimeout);
-  }, [t]);
+  }, [hideUserWorkloadNotifications, hideUserWorkloadNotificationsLoaded, t]);
   const clusterVersion: ClusterVersionKind = useClusterVersion();
 
   const { data, loaded, loadError } = alerts || {};

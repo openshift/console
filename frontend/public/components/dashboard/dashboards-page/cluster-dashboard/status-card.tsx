@@ -33,7 +33,12 @@ import {
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
+import {
+  BlueArrowCircleUpIcon,
+  FLAGS,
+  getInfrastructurePlatform,
+  useUserSettings,
+} from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -45,12 +50,13 @@ import { DashboardItemProps, withDashboardResources } from '../../with-dashboard
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '../../../monitoring/utils';
+import { alertURL, alertSource } from '../../../monitoring/utils';
 import {
   ClusterVersionKind,
   referenceForModel,
   hasAvailableUpdates,
   K8sKind,
+  LabelSelector,
 } from '../../../../module/k8s';
 import { ClusterVersionModel } from '../../../../models';
 import { RootState } from '../../../../redux';
@@ -64,6 +70,8 @@ import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterDashboardContext } from './context';
 import { useAccessReview } from '../../../utils';
+import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
+import { AlertSource } from '@console/internal/components/monitoring/types';
 
 const filterSubsystems = (
   subsystems: (
@@ -102,6 +110,11 @@ const cvResource: WatchK8sResource = {
 export const DashboardAlerts = withDashboardResources<DashboardItemProps & DashboardAlertsProps>(
   ({ watchAlerts, stopWatchAlerts, notificationAlerts, labelSelector }) => {
     const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
+    const [hideUserWorkloadNotifications, , hideUserWorkloadNotificationsLoaded] = useUserSettings(
+      HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
+      false,
+      true,
+    );
     const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
       hasCVResource ? cvResource : ({} as WatchK8sResource),
     );
@@ -110,12 +123,7 @@ export const DashboardAlerts = withDashboardResources<DashboardItemProps & Dashb
       return stopWatchAlerts;
     }, [watchAlerts, stopWatchAlerts]);
 
-    const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
-      notificationAlerts || {};
-
     const UpdateIcon = React.useCallback(() => <BlueArrowCircleUpIcon />, []);
-
-    const items: React.ReactNode[] = [];
 
     const clusterVersionIsEditable =
       useAccessReview({
@@ -126,41 +134,47 @@ export const DashboardAlerts = withDashboardResources<DashboardItemProps & Dashb
       }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
     const { t } = useTranslation();
-    const isClusterDashboard = !labelSelector;
-    if (
+    const showClusterUpdate =
       hasCVResource &&
       cvLoaded &&
       hasAvailableUpdates(cv) &&
       clusterVersionIsEditable &&
-      isClusterDashboard
-    ) {
-      items.push(
-        <StatusItem
-          key="clusterUpdate"
-          Icon={UpdateIcon}
-          message={t('public~A cluster version update is available')}
-        >
-          <Link to="/settings/cluster?showVersions">{t('public~Update cluster')}</Link>
-        </StatusItem>,
-      );
-    }
+      !labelSelector;
 
-    if (alertsLoaded && !_.isEmpty(alerts)) {
-      const filteredAlerts = isClusterDashboard
-        ? alerts
-        : alerts.filter((alert) => {
-            return _.every(labelSelector, (labelValue, labelKey) => {
-              return alert?.labels?.[labelKey] === labelValue;
-            });
-          });
-      items.push(
-        ...filteredAlerts.map((alert) => (
-          <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
-        )),
-      );
-    }
+    const loaded = notificationAlerts?.loaded && hideUserWorkloadNotificationsLoaded;
+    const alerts = notificationAlerts?.data ?? [];
+    const filteredAlerts = React.useMemo(() => {
+      if (!loaded) {
+        return [];
+      }
+      return alerts.filter((alert) => {
+        if (hideUserWorkloadNotifications && alertSource(alert) === AlertSource.User) {
+          return false;
+        }
+        if (labelSelector) {
+          return new LabelSelector(labelSelector, true).matchesLabels(alert.labels ?? {});
+        }
+        return true;
+      });
+    }, [alerts, hideUserWorkloadNotifications, labelSelector, loaded]);
 
-    return <AlertsBody error={!_.isEmpty(alertsResponseError)}>{items}</AlertsBody>;
+    return (
+      <AlertsBody error={!_.isEmpty(notificationAlerts?.loadError)}>
+        {showClusterUpdate && (
+          <StatusItem
+            key="clusterUpdate"
+            Icon={UpdateIcon}
+            message={t('public~A cluster version update is available')}
+          >
+            <Link to="/settings/cluster?showVersions">{t('public~Update cluster')}</Link>
+          </StatusItem>
+        )}
+        {loaded &&
+          filteredAlerts.map((alert) => (
+            <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
+          ))}
+      </AlertsBody>
+    );
   },
 );
 

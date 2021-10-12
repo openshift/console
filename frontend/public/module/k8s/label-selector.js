@@ -109,14 +109,10 @@ export class LabelSelector {
     // Otherwise handle it as a map.
     return _.pickBy(resources, _.bind(this.matches, this));
   }
-  matches(resource) {
-    if (!resource) {
-      return false;
-    }
+  matchesLabels(labels) {
     if (this.isEmpty()) {
       return this._emptySelectsAll;
     }
-    const labels = resource.metadata.labels || {};
     for (const id in this._conjuncts) {
       const conjunct = this._conjuncts[id];
       switch (conjunct.operator) {
@@ -156,6 +152,13 @@ export class LabelSelector {
       }
     }
     return true;
+  }
+  matches(resource) {
+    if (!resource) {
+      return false;
+    }
+    const labels = resource.metadata.labels || {};
+    return this.matchesLabels(labels);
   }
   hasConjunct(conjunct) {
     return !!this._conjuncts[this._getIdForConjunct(conjunct)];
