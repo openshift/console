@@ -90,7 +90,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
             {direction === 'ingress' ? t('console-app~Ingress rule') : t('console-app~Egress rule')}
           </label>
           <div className="co-create-networkpolicy__rule-header-right">
-            <Button variant="link" onClick={onRemove}>
+            <Button variant="link" onClick={onRemove} data-test={`remove-${direction}-rule`}>
               {t('console-app~Remove')}
             </Button>
           </div>
@@ -150,6 +150,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
                         onClick={() => removePeer(idx)}
                         type="button"
                         variant="plain"
+                        data-test="remove-peer"
                       >
                         <TrashIcon />
                       </Button>
