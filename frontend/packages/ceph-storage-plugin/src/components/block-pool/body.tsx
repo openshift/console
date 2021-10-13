@@ -76,7 +76,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
     if (storageClusterLoaded && !storageClusterLoadError)
       dispatch({
         type: BlockPoolActionType.SET_FAILURE_DOMAIN,
-        payload: storageCluster.items[0].status?.failureDomain || '',
+        payload: storageCluster?.items[0]?.status?.failureDomain || '',
       });
   }, [storageCluster, storageClusterLoaded, storageClusterLoadError, dispatch]);
 
