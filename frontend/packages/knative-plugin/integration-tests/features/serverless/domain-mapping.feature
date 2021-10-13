@@ -17,7 +17,7 @@ Feature: Custom Domain Mapping Support
               And user enters Name as "<workload_name>"
               And user selects resource type as "Serverless Deployment"
               And user clicks on Show advanced Routing options
-              And user creates new custom domain mapping "<custom_domain>"
+              And user enters Domain mapping as "<custom_domain>"
               And user clicks on "Create <custom_domain>"
               And user clicks Create button
              Then user will be redirected to Topology page

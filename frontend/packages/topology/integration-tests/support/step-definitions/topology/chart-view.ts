@@ -57,6 +57,16 @@ Given('user has created a deployment workload named {string}', (componentName: s
   );
 });
 
+Given('user has created a deployment workload {string}', (componentName: string) => {
+  navigateTo(devNavigationMenu.Add);
+  createGitWorkload(
+    'https://github.com/sclorg/nodejs-ex.git',
+    componentName,
+    'Deployment',
+    'nodejs-ex-git-app',
+  );
+});
+
 Given('user has created a deployment config workload {string}', (componentName: string) => {
   navigateTo(devNavigationMenu.Add);
   createGitWorkload(

@@ -25,6 +25,8 @@ Feature: Event sources cards display
             Given user is at Add page
              Then user is able to see "Event Source" card on Add page
               And user is able to see "Operator Backed" card on Add page
+              And user is able to see "Channel" card on Add page
+              And user is able to see "Broker" card on Add page
 
 
         @regression
@@ -35,21 +37,13 @@ Feature: Event sources cards display
               And user is able to see knative Eventing card
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Kamelets in event source: KN-03-TC04
             Given user is at developer perspective
               And user is at Add page
              When user clicks on "Event Source" card
              Then user will be redirected  to "Event Sources" page
               And user is able to see "Kamelet Source" type
-
-
-        @regression
-        Scenario: knative eventing in operator backed: KN-03-TC05
-            Given user is at Add page
-             When user clicks on "Operator Backed" card
-             Then user will be redirected to "Developer Catalog" page
-              And user is able to see knative Eventing card
 
 
         @regression

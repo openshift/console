@@ -5,7 +5,7 @@ Feature: Visualisation of serverless fuctions
         Background:
             Given user is at developer perspective
               And user has installed Serverless Operator
-              And And user has created Knative Serving instance in knative-serving namespace
+              And user has created Knative Serving instance in knative-serving namespace
               And user has created or selected namespace "aut-serverless-function"
 
 

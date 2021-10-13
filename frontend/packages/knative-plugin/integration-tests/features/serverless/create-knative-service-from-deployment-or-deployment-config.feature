@@ -6,19 +6,22 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
             Given user has created or selected namespace "aut-deployment-knative"
 
 
-        @regression @to-do
+        @regression
         Scenario: Create serverless workload (ksvc) for existing Deployment from Action menu: KN-04-TC01
-            Given user has created deployment workload "nodejs-ex-git1"
-              And user is at Topology page
-             When user clicks on "nodejs-ex-git1" to open sidebar
-              And user selects "Make Serverless" option from Action menu
+            Given user is at Add page
+              And user has created git workload "dep-workload"
+              And workload "dep-worload" is present in topology page
+              And workload build is completed
+             When user clicks on "dep-workload" to open sidebar
+              And user selects option "Make Serverless" from Actions menu drop down
+              And user enters the Name as "sev-workload" in Make Serverless form
               And user clicks on Create button in Make Serverless form
-             Then user will be redirected to topology with knative workload "ksvc-nodejs-ex-git1"
+             Then user is able to see 2 workloads "dep-workload" and "ksvc-sev-workload"
 
 
         @regression @to-do
         Scenario: Create serverless workload (ksvc) for existing Deployment Config from context menu: KN-04-TC02
-            Given user has created deployment workload "nodejs-ex-git2"
+            Given user has created a deployment config workload "nodejs-ex-git2"
               And user is at Topology page
              When user right clicks on "nodejs-ex-git1" to open context menu
               And user selects Make Serverless option
@@ -28,7 +31,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
 
         @regression @to-do
         Scenario: Create serverless workload (ksvc) for existing Deployment from kebab menu of Deployments page: KN-04-TC03
-            Given user has created deployment workload "nodejs-ex-git1"
+            Given user has created a deployment workload "nodejs-ex-git1"
               And user is at Deployments page
              When user clicks on kebab button "nodejs-ex-git1" to open kebab menu
               And user selects Make Serverless option
@@ -74,4 +77,3 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
               And user selects "Edit Service" option from context menu
              Then user is able to see the value of "autoscaling.knative.dev/maxScale" and "autoscaling.knative.dev/minScale" as 6 and 3 percent respectively
               And user is able to see 3 Pods running in Resources tab of sidebar for knative workload "ksvc-nodejs-ex-git2"
-

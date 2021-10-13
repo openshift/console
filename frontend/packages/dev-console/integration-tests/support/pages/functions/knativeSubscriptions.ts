@@ -1,6 +1,6 @@
 import { operators } from '@console/dev-console/integration-tests/support/constants/global';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
-import { projectNameSpace } from '@console/dev-console/integration-tests/support/pages/app';
+import { app, projectNameSpace } from '@console/dev-console/integration-tests/support/pages/app';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { pageTitle } from '../../constants';
 
@@ -9,15 +9,13 @@ export const createKnativeServing = () => {
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
       cy.get(operatorsPO.installOperators.search)
-        .should('be.visible')
         .clear()
         .type(operators.ServerlessOperator);
     }
   });
-  cy.get(operatorsPO.installOperators.knativeServingLink)
-    .should('be.visible')
-    .click();
+  cy.get(operatorsPO.installOperators.knativeServingLink).click({ force: true });
   detailsPage.titleShouldContain(pageTitle.KnativeServings);
+  app.waitForLoad();
   cy.get('body').then(($body) => {
     if ($body.find('[role="grid"]').length > 0) {
       cy.log(`${pageTitle.KnativeServings} already subscribed`);
@@ -25,6 +23,11 @@ export const createKnativeServing = () => {
       cy.byTestID('item-create').click();
       detailsPage.titleShouldContain(pageTitle.CreateKnativeServing);
       cy.byTestID('create-dynamic-form').click();
+      cy.byLegacyTestID('details-actions').should('be.visible');
+      cy.contains(
+        'DependenciesInstalled, DeploymentsAvailable, InstallSucceeded, Ready, VersionMigrationEligible',
+        { timeout: 150000 },
+      ).should('be.visible');
     }
   });
 };
@@ -34,15 +37,13 @@ export const createKnativeEventing = () => {
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
       cy.get(operatorsPO.installOperators.search)
-        .should('be.visible')
         .clear()
         .type(operators.ServerlessOperator);
     }
   });
-  cy.get(operatorsPO.installOperators.knativeEventingLink)
-    .should('be.visible')
-    .click();
+  cy.get(operatorsPO.installOperators.knativeEventingLink).click({ force: true });
   detailsPage.titleShouldContain(pageTitle.KnativeEventings);
+  app.waitForLoad();
   cy.get('body').then(($body) => {
     if ($body.find('[role="grid"]').length > 0) {
       cy.log(`${pageTitle.KnativeEventings} already subscribed`);
@@ -50,6 +51,11 @@ export const createKnativeEventing = () => {
       cy.byTestID('item-create').click();
       detailsPage.titleShouldContain(pageTitle.CreateKnativeEventing);
       cy.byTestID('create-dynamic-form').click();
+      cy.byLegacyTestID('details-actions').should('be.visible');
+      cy.contains(
+        'DependenciesInstalled, DeploymentsAvailable, InstallSucceeded, Ready, VersionMigrationEligible',
+        { timeout: 150000 },
+      ).should('be.visible');
     }
   });
 };

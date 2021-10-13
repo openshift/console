@@ -1,16 +1,29 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { nodeActions } from '@console/dev-console/integration-tests/support/constants';
+import {
+  addOptions,
+  devNavigationMenu,
+  nodeActions,
+} from '@console/dev-console/integration-tests/support/constants';
+import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   deleteRevision,
   editLabels,
   editAnnotations,
   createGitWorkload,
+  navigateTo,
+  addPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
   topologyPage,
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
+
+let numOfAnnotationsBeforeAdd: number;
+
+Given('user is at Import from git page', () => {
+  addPage.selectCardFromOptions(addOptions.Git);
+});
 
 Given(
   'number of annotations are {string} present in revision side bar details of service {string}',
@@ -22,15 +35,63 @@ Given(
   },
 );
 
+Given(
+  'Revision of Knative service {string} consists of annotations in topology side bar',
+  (serviceName: string) => {
+    topologyPage.getRevisionNode(serviceName).click();
+    topologySidePane.verify();
+    topologySidePane.selectTab('Details');
+    cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {
+      const res = $el.text().split(' ');
+      numOfAnnotationsBeforeAdd = Number(res[0]);
+    });
+  },
+);
+
+Then('user is able to see Knative Revision', () => {
+  topologyPage.waitForKnativeRevision();
+});
+
+Given('Knative Revision is available in topology page', () => {
+  topologyPage.waitForKnativeRevision();
+});
+
+Then(
+  'number of annotations increased to {string} in revision side bar details of service {string}',
+  (numOfAnnotations: string, serviceName: string) => {
+    topologyPage.getRevisionNode(serviceName).click();
+    topologySidePane.verify();
+    topologySidePane.selectTab('Details');
+    topologySidePane.verifyNumberOfAnnotations(numOfAnnotations);
+  },
+);
+
+Then(
+  'number of annotations increases for revision of knative service {string} in topology side bar',
+  (serviceName: string) => {
+    topologyPage.getRevisionNode(serviceName).click();
+    topologySidePane.verify();
+    topologySidePane.selectTab('Details');
+    cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {
+      const res = $el.text().split(' ');
+      expect(res[0]).toBeGreaterThan(numOfAnnotationsBeforeAdd);
+    });
+  },
+);
+
 Given('Knative service with multiple revisions', () => {
-  createGitWorkload('https://github.com/sclorg/nodejs-ex.git', 'nodejs-ex-git-1', 'Knative');
+  navigateTo(devNavigationMenu.Add);
+  createGitWorkload('https://github.com/sclorg/nodejs-ex.git', 'nodejs-ex-git-z', 'Knative');
   // TODO: implement step
 });
 
 When(
   'user right clicks on the revision of knative service {string} to open the context menu',
   (serviceName: string) => {
-    topologyPage.getRevisionNode(serviceName).trigger('contextmenu', { force: true });
+    topologyPage
+      .getRevisionNode(serviceName)
+      .first()
+      .trigger('contextmenu', { force: true });
   },
 );
 
@@ -67,7 +128,7 @@ When(
 );
 
 When(
-  'removes the label {string} from existing labels list in {string} modal',
+  'user removes the label {string} from existing labels list in {string} modal',
   (labelName: string, modalHeader: string) => {
     modal.modalTitleShouldContain(modalHeader);
     editLabels.removeLabel(labelName);
@@ -87,11 +148,14 @@ When('user clicks cancel button on the {string} modal', (modalTitle: string) => 
   modal.cancel();
 });
 
+When('user clicks save button on the {string} modal', (modalTitle: string) => {
+  modal.modalTitleShouldContain(modalTitle);
+  modal.submit();
+});
+
 When('user clicks on Details tab', () => {
   topologyPage.revisionDetails.clickOnDetailsTab();
 });
-
-When('user modifies the Yaml file of the Revision details page', () => {});
 
 When('user clicks save button on Revision Yaml page', () => {
   topologyPage.revisionDetails.yaml.clickOnSave();
@@ -113,15 +177,14 @@ Then('save button is displayed', () => {
 });
 
 Then('save, cancel buttons are displayed', () => {
-  // modal.verifyCancelButtonIsDisplayed();
-  // modal.verifySaveButtonIsDisplayed();
-  modal.cancel();
+  cy.byTestID('confirm-action').should('be.visible');
+  cy.byLegacyTestID('modal-cancel-action').should('be.visible');
 });
 
 Then(
   'user can see the label {string} in the Details tab of the Sidebar of {string}',
   (label: string, serviceName: string) => {
-    cy.log(`knative revision of service ${serviceName}`);
+    topologyPage.search(serviceName);
     cy.byLegacyTestID('base-node-handler')
       .find('g.odc-resource-icon')
       .click({ force: true });
@@ -131,11 +194,30 @@ Then(
   },
 );
 
-Then('key, value columns are displayed with respecitve text fields', () => {
-  cy.get('input[placeholder="key"]')
+Then(
+  'user will not see the label {string} in the Details tab of the Sidebar of {string}',
+  (label: string, serviceName: string) => {
+    topologyPage.search(serviceName);
+    cy.byLegacyTestID('base-node-handler')
+      .find('g.odc-resource-icon')
+      .click({ force: true });
+    topologySidePane.verify();
+    topologySidePane.selectTab('Details');
+    const labelName = label.split('=');
+    const key = labelName[0];
+    cy.get(topologyPO.sidePane.detailsTab.labels).should('be.visible');
+    cy.get(topologyPO.sidePane.detailsTab.labels)
+      .find('a [data-test="label-key"]')
+      .contains(key)
+      .should('not.exist');
+  },
+);
+
+Then('key, value columns are displayed with respective text fields', () => {
+  cy.byTestID('pairs-list-name')
     .its('length')
     .should('be.gte', 1);
-  cy.get('input[placeholder="value"]')
+  cy.byTestID('pairs-list-value')
     .its('length')
     .should('be.gte', 1);
 });
@@ -194,3 +276,7 @@ Then(
     topologySidePane.verifyNumberOfAnnotations(numOfAnnotations);
   },
 );
+
+Then('modal with alert description {string} appears', (alertDescription: string) => {
+  cy.get('h4.pf-c-alert__title').should('contain.text', alertDescription);
+});
