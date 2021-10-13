@@ -1,5 +1,10 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  apiVersionForModel,
+  K8sResourceKind,
+  modelFor,
+  referenceFor,
+} from '@console/internal/module/k8s';
 import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
 import { OverviewItem } from '@console/shared/src';
 import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
@@ -72,7 +77,9 @@ export const getRhoasServiceBindingEdges = (
       if (bss) {
         const targetNode = rhoasNodes.find(
           (node) =>
-            node.data.resource.kind === bss.kind && node.data.resource.metadata.name === bss.name,
+            (bss.kind === node.data.resource.kind ||
+              bss.resource === modelFor(referenceFor(node.data.resource)).plural) &&
+            node.data.resource.metadata.name === bss.name,
         );
         if (targetNode) {
           const target = targetNode.data.resource.metadata.uid;
