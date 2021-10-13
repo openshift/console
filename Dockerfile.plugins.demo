@@ -3,7 +3,7 @@
 # See frontend/dynamic-demo-plugin/README.md for details.
 
 # Stage 0: build the demo plugin
-FROM quay.io/coreos/tectonic-console-builder:v22 AS build
+FROM quay.io/coreos/tectonic-console-builder:v23 AS build
 
 RUN mkdir -p /src/console
 COPY . /src/console
