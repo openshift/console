@@ -31,7 +31,8 @@
 
   &__view-switcher.pf-m-plain {
     @media (min-width: 768px) {
-      padding-bottom: 7px !important;
+      padding-bottom: 4px;
+      padding-right: 2px;
     }
   }
 

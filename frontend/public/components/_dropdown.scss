@@ -78,12 +78,6 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 
     .pf-m-plain {
       color: inherit;
-      padding: 4px 0 2px !important;
-
-      @media (min-width: $grid-float-breakpoint) {
-        padding-bottom: 10px !important;
-        padding-top: 11px !important;
-      }
 
       &:hover,
       &:focus {
@@ -98,16 +92,14 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   max-width: 60%;
 
   .pf-c-dropdown__toggle.pf-m-plain {
-    --pf-c-dropdown__toggle--FontSize: ($font-size-base + 1);
-    --pf-c-dropdown__toggle--PaddingTop: 2px !important;
-    --pf-c-dropdown__toggle--PaddingRight: 0;
-    --pf-c-dropdown__toggle--PaddingBottom: 2px !important;
+    font-size: ($font-size-base + 1);
+    --pf-c-dropdown__toggle--PaddingBottom: 7px;
     --pf-c-dropdown__toggle--PaddingLeft: 0;
+    --pf-c-dropdown__toggle--PaddingRight: 0;
 
     @media (min-width: $grid-float-breakpoint) {
-      --pf-c-dropdown__toggle--FontSize: ($font-size-base + 2);
-      --pf-c-dropdown__toggle--PaddingTop: 9px !important;
-      --pf-c-dropdown__toggle--PaddingBottom: 9px !important;
+      font-size: ($font-size-base + 2);
+      --pf-c-dropdown__toggle--PaddingBottom: 9px;
     }
 
     &:not(:disabled) {
