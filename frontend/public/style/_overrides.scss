@@ -30,13 +30,11 @@ form.pf-c-form {
 // PatternFly 4 overrides
 
 .pf-c-about-modal-box {
+  --pf-c-about-modal-box__brand-image--Height: auto !important; // allow logo to be taller
+
   &__brand {
     align-items: flex-start; // so logos don't stretch vertically
     min-width: 220px;
-  }
-
-  &__brand-image {
-    height: auto !important; // allow logo to be taller
   }
 }
 
@@ -88,11 +86,15 @@ form.pf-c-form {
 }
 
 .pf-c-button.pf-c-button--no-default-values {
+  --pf-c-button--PaddingTop: 0;
+  --pf-c-button--PaddingRight: 0;
+  --pf-c-button--PaddingBottom: 0;
+  --pf-c-button--PaddingLeft: 0;
+
   border: 0;
   font-size: unset;
   font-weight: unset;
   line-height: unset;
-  padding: 0;
   text-align: unset;
   white-space: normal;
 }
@@ -106,15 +108,11 @@ form.pf-c-form {
 }
 
 .pf-c-button.pf-m-link--align-left {
-  padding-left: 0;
+  --pf-c-button--PaddingLeft: 0;
 }
 
 .pf-c-button.pf-m-link--align-right {
-  padding-right: 0;
-}
-
-.pf-c-chip-group.pf-m-toolbar {
-  margin-bottom: var(--pf-global--spacer--xs);
+  --pf-c-button--PaddingRight: 0;
 }
 
 //set pf datalist item background to transparent
@@ -128,6 +126,7 @@ form.pf-c-form {
   --pf-global--FontSize--md: 1rem;
 }
 
+// Page
 .pf-c-page {
 
   &__header-brand-link {
@@ -135,9 +134,6 @@ form.pf-c-form {
   }
 
   &__header-tools {
-    @media (max-width: $grid-float-breakpoint-max) {
-      margin-right: 8px !important;
-    }
     .pf-c-dropdown__toggle,
     .pf-c-app-launcher__toggle {
       font-size: $pf-header-icon-fontsize !important;
@@ -190,13 +186,16 @@ form.pf-c-form {
     font-size: $font-size-base;
     height: auto;
   }
+
   .pf-l-stack {
     font-size: $font-size-base;
   }
+
   .pf-c-form-control.pf-m-success,
   .pf-c-form-control[aria-invalid='true'] {
     --pf-global--FontSize--md: #{$font-size-base};
   }
+
   .pf-c-form-control {
     &:-webkit-autofill {
       -webkit-animation-fill-mode: both;
@@ -224,6 +223,9 @@ form.pf-c-form {
     --pf-c-nav__list-link--PaddingRight: var(--pf-global--spacer--sm);
     --pf-c-nav__list-link--PaddinLeft: var(--pf-global--spacer--md);
     --pf-c-nav__list-link--after--Left: var(--pf-global--spacer--md);
+    --pf-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
+    --pf-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
+
     @media screen and (min-width: $grid-float-breakpoint) {
       --pf-c-nav__list-link--PaddingRight: var(--pf-global--spacer--md);
       --pf-c-nav__list-link--PaddinLeft: var(--pf-global--spacer--lg);
@@ -251,26 +253,48 @@ form.pf-c-form {
 }
 
 .pf-c-table {
-  table-layout: fixed;
-}
-
-.pf-c-table tr > * {
-  --pf-c-table--cell--FontSize: $font-size-base;
+  --pf-c-table--cell--FontSize: #{$font-size-base};
   --pf-c-table--cell--PaddingLeft: 12px;
   --pf-c-table--cell--PaddingRight: 12px;
   --pf-c-table--m-compact--cell--first-last-child--PaddingLeft: 12px;
   --pf-c-table--m-compact--cell--first-last-child--PaddingRight: 12px;
-  // fix bug where .pf-c-table__button::before overlays entire page
-  // caused by conflict with Bootstrap 3
-  // see https://github.com/twbs/bootstrap/blob/v3.4.1/less/tables.less#L24
-  // and https://github.com/patternfly/patternfly/blob/prerelease-v4.16.7/src/patternfly/components/Table/table.scss#L252-L253
-  position: relative !important;
+
+  tr > * {
+    --pf-c-table--cell--FontSize: $font-size-base;
+    --pf-c-table--cell--PaddingLeft: 12px;
+    --pf-c-table--cell--PaddingRight: 12px;
+    --pf-c-table--m-compact--cell--first-last-child--PaddingLeft: 12px;
+    --pf-c-table--m-compact--cell--first-last-child--PaddingRight: 12px;
+
+    // fix bug where .pf-c-table__button::before overlays entire page
+    // caused by conflict with Bootstrap 3
+    // see https://github.com/twbs/bootstrap/blob/v3.4.1/less/tables.less#L24
+    // and https://github.com/patternfly/patternfly/blob/prerelease-v4.16.7/src/patternfly/components/Table/table.scss#L252-L253
+    position: relative !important;
+  }
+
+  tr > th {
+    --pf-c-table--cell--FontSize: var(--pf-global--FontWeight--bold);
+  }
+
+  // required because our tables use table-layout:fixed
+  .pf-c-table__action {
+    --pf-c-table--cell--PaddingTop: var(--pf-global--spacer--sm) !important;
+    --pf-c-table--cell--PaddingRight: 0 !important;
+    --pf-c-table--cell--PaddingBottom: var(--pf-global--spacer--sm) !important;
+    --pf-c-table--cell--PaddingLeft: 0 !important;
+    --pf-c-table--cell--Width: 44px !important;
+    --pf-c-table--cell--MaxWidth: 44px !important;
+  }
+
+  table-layout: fixed;
 }
 
 .pf-c-table.pf-c-virtualized tr {
   display: table;
   table-layout: fixed;
   width: 100%;
+
   &:first-child::before {
     content: none;
     width: 0 !important;
@@ -291,13 +315,6 @@ form.pf-c-form {
   @media screen and (max-width: 768px) {
     width: 16.66% !important;
   }
-}
-
-// required because our tables use table-layout:fixed
-.pf-c-table__action {
-  max-width: 44px !important;
-  padding: 8px 0 !important;
-  width: 44px !important;
 }
 
 // FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the kebab menus' overflow.

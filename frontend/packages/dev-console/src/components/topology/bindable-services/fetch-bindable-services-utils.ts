@@ -17,9 +17,9 @@ export const fetchBindableServices = async (): Promise<BindableServiceGVK[]> => 
   try {
     const bindableService: BindableServicesKind = await k8sGet(
       BindableServicesModel,
-      'bindable-services',
+      'bindable-kinds',
     );
-    bindableServicesData.bindableServices = bindableService.spec;
+    bindableServicesData.bindableServices = bindableService.status ?? [];
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn('Error fetching bindable services', err);

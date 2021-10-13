@@ -36,6 +36,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           id="cidr"
           name="cidr"
           aria-describedby="ipblock-help"
+          data-test="ipblock-cidr-input"
           required
         />
         <div className="help-block">
@@ -64,6 +65,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 name={`exception-${idx}`}
                 id={`exception-${idx}`}
                 value={exc.value}
+                data-test="ipblock-exception-input"
               />
               <Button
                 aria-label={t('console-app~Remove exception')}
@@ -77,6 +79,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 }}
                 type="button"
                 variant="plain"
+                data-test="ipblock-remove-exception"
               >
                 <MinusCircleIcon />
               </Button>
@@ -91,6 +94,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
               }}
               type="button"
               variant="link"
+              data-test="ipblock-add-exception"
             >
               <PlusCircleIcon className="co-icon-space-r" />
               {t('console-app~Add exception')}

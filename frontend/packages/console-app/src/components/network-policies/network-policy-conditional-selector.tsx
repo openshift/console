@@ -18,13 +18,14 @@ type NetworkPolicyConditionalSelectorProps = {
   helpText: string;
   values: string[][];
   onChange: (pairs: string[][]) => void;
+  dataTest?: string;
 };
 
 export const NetworkPolicyConditionalSelector: React.FunctionComponent<NetworkPolicyConditionalSelectorProps> = (
   props,
 ) => {
   const { t } = useTranslation();
-  const { selectorType, helpText, values, onChange } = props;
+  const { selectorType, helpText, values, onChange, dataTest } = props;
   const [isVisible, setVisible] = React.useState(values.length > 0);
 
   const handleSelectorChange = (updated: { nameValuePairs: string[][] }) => {
@@ -75,6 +76,7 @@ export const NetworkPolicyConditionalSelector: React.FunctionComponent<NetworkPo
             onClick={() => setVisible(true)}
             type="button"
             variant="link"
+            data-test={dataTest ? `add-${dataTest}` : 'add-labels-selector'}
           >
             <PlusCircleIcon className="co-icon-space-r" />
             {addSelectorText}

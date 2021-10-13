@@ -63,11 +63,15 @@
 }
 
 .co-search-input.pf-c-form-control {
+  --pf-c-form-control--Width: 100%;
+  --pf-c-form-control--PaddingTop: 3px;
+  --pf-c-form-control--PaddingRight: 9px;
+  --pf-c-form-control--PaddingBottom: 3px;
+  --pf-c-form-control--PaddingLeft: 9px;
+
   align-items: center;
   display: flex;
   height: auto; // allow tags to wrap
-  padding: 3px 9px;
-  width: 100%;
 }
 
 .co-type-selector {

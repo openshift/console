@@ -7,7 +7,7 @@ import {
   VMI_ACTION,
 } from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
-import { detailsTab, createVMBtn, nameFilter, templateLink } from './selector';
+import { detailsTab, createVMBtn, nameFilter, templateLink, disksTab } from './selector';
 import { customizeBtn } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
@@ -141,7 +141,6 @@ export const vm = {
   },
   createFromCreateVMBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
-    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
     cy.get(nameFilter)
       .clear()
       .type(vmData.template.dvName);
@@ -158,8 +157,7 @@ export const vm = {
   },
   createFromActionsBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
-    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
-    cy.get(templateLink(vmData.template.metadataName)).click();
+    cy.get(templateLink(vmData.template.metadataName)).click({ force: true });
     detailViewAction(TEMPLATE_ACTION.Create);
     if (customize) {
       advanceWizardFlow(vmData);
@@ -167,4 +165,9 @@ export const vm = {
       wizardFlow(vmData);
     }
   },
+};
+
+export const waitForVMStatusLabel = (status: string, timeout?: number) => {
+  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
+  cy.contains(disksTab.currVMStatusLbl, status, { timeout: timeOut }).should('exist');
 };

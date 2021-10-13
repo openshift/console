@@ -1,8 +1,8 @@
 .AdvancedTab-tab-title {
   .pf-c-accordion__toggle-text {
     display: flex;
-    .pf-c-form__group-label-help {
-      margin-left: var(--pf-global--spacer--sm);
+    .pf-c-form {
+      --pf-c-form__group-label-help--MarginLeft: var(--pf-global--spacer--sm);
     }
   }
 }

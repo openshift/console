@@ -16,8 +16,9 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   height: 34.5px !important; // default form element height
   margin-left: -1px;
   min-width: auto !important;
-  .pf-c-dropdown__toggle-icon {
-    margin: 0 !important;
+  .pf-c-dropdown {
+    --pf-c-dropdown__toggle-icon--MarginRight: 0 !important;
+    --pf-c-dropdown__toggle-icon--MarginLeft: 0 !important;
   }
 }
 
@@ -77,12 +78,6 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 
     .pf-m-plain {
       color: inherit;
-      padding: 4px 0 2px !important;
-
-      @media (min-width: $grid-float-breakpoint) {
-        padding-bottom: 10px !important;
-        padding-top: 11px !important;
-      }
 
       &:hover,
       &:focus {
@@ -98,16 +93,17 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 
   .pf-c-dropdown__toggle.pf-m-plain {
     font-size: ($font-size-base + 1);
-    padding: 2px 0 !important;
-
-    &:not(:disabled) {
-      color: inherit;
-    }
+    --pf-c-dropdown__toggle--PaddingBottom: 7px;
+    --pf-c-dropdown__toggle--PaddingLeft: 0;
+    --pf-c-dropdown__toggle--PaddingRight: 0;
 
     @media (min-width: $grid-float-breakpoint) {
       font-size: ($font-size-base + 2);
-      padding-bottom: 9px !important;
-      padding-top: 9px !important;
+      --pf-c-dropdown__toggle--PaddingBottom: 9px;
+    }
+
+    &:not(:disabled) {
+      color: inherit;
     }
 
     &__titlePrefix {
@@ -217,7 +213,7 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 .pf-c-app-launcher__menu-item {
   &:focus,
   &:hover {
-    color: var(--pf-global--Color--dark-100);
+    --pf-c-app-launcher__menu-item--Color:: var(--pf-global--Color--dark-100);
   }
 }
 

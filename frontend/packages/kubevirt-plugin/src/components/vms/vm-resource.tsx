@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { NodeLink, ResourceLink, ResourceSummary } from '@console/internal/components/utils';
 import { Selector } from '@console/internal/components/utils/selector';
@@ -7,6 +8,8 @@ import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { ServiceKind } from '@console/knative-plugin/src/types';
 import { LABEL_USED_TEMPLATE_NAME, LABEL_USED_TEMPLATE_NAMESPACE } from '../../constants';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
+import useSSHCommand from '../../hooks/use-ssh-command';
+import useSSHService from '../../hooks/use-ssh-service';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
@@ -41,12 +44,14 @@ import evictionStrategyModal from '../modals/scheduling-modals/eviction-strategy
 import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
 import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
 import { vmStatusModal } from '../modals/vm-status-modal/vm-status-modal';
-import SSHDetailsPage from '../ssh-service/SSHDetailsPage/SSHDetailsPage';
+import SSHModal from '../ssh-service/SSHModal';
 import { VMStatus } from '../vm-status/vm-status';
 import VMDetailsItem from './VMDetailsItem';
 import VMDetailsItemTemplate from './VMDetailsItemTemplate';
 import VMEditWithPencil from './VMEditWithPencil';
 import VMIP from './VMIP';
+
+import './ssh-details.scss';
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
@@ -134,6 +139,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const ipAddrs = getVmiIpAddresses(vmi);
   const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
 
+  const { sshServices } = useSSHService(vm);
+  const { command, user } = useSSHCommand(vm);
+  const vmiReady = isVMIReady(vmi);
+  const sshServicesRunning = sshServices?.running;
+
   return (
     <dl className="co-m-pane__details">
       <VMDetailsItem
@@ -163,6 +173,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       <VMDetailsItem
         title={t('kubevirt-plugin~Boot Order')}
         canEdit={canEditWhileVMRunning}
+        dataTest="boot-order-details-item"
         editButtonId={prefixedID(id, 'boot-order-edit')}
         onEditClick={() => BootOrderModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'boot-order')}
@@ -171,15 +182,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
           isVMRunningOrExpectedRunning(vm, vmi) &&
           isBootOrderChanged(new VMWrapper(vm), new VMIWrapper(vmi))
         }
-        customEditButton={
-          <VMEditWithPencil
-            isEdit={canEditWhileVMRunning}
-            onEditClick={() => BootOrderModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
-          >
-            {t('kubevirt-plugin~Edit')}
-          </VMEditWithPencil>
-        }
-        editClassName="kv-vm-resource--boot-order"
       >
         <BootOrderSummary devices={devices} />
       </VMDetailsItem>
@@ -230,7 +232,47 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         title={t('kubevirt-plugin~User credentials')}
         idValue={prefixedID(id, 'authorized-ssh-key')}
       >
-        <SSHDetailsPage vm={vmiLike} isVMIReady={isVMIReady(vmi)} />
+        {vmiReady ? (
+          <>
+            <span data-test="details-item-user-credentials-user-name">
+              {t('kubevirt-plugin~user: {{user}}', { user })}
+            </span>
+            <ClipboardCopy
+              isReadOnly
+              data-test="SSHDetailsPage-command"
+              className="SSHDetailsPage-clipboard-command"
+            >
+              {sshServicesRunning ? command : `ssh ${user}@`}
+            </ClipboardCopy>
+            {!sshServicesRunning && (
+              <span className="kubevirt-menu-actions__secondary-title">
+                {t('kubevirt-plugin~Requires SSH Service')}
+              </span>
+            )}
+          </>
+        ) : (
+          <div className="text-secondary">{t('kubevirt-plugin~Virtual machine not running')}</div>
+        )}
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title={t('kubevirt-plugin~SSH Access')}
+        dataTest="ssh-access-details-item"
+        idValue={prefixedID(id, 'ssh-access')}
+        canEdit={vmiReady}
+        onEditClick={() => SSHModal({ vm })}
+      >
+        <span data-test="details-item-ssh-access-port">
+          {vmiReady ? (
+            sshServicesRunning ? (
+              t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
+            ) : (
+              t('kubevirt-plugin~SSH Service disabled')
+            )
+          ) : (
+            <div className="text-secondary">{t('kubevirt-plugin~Virtual machine not running')}</div>
+          )}
+        </span>
       </VMDetailsItem>
     </dl>
   );

@@ -46,6 +46,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
             )}
             values={namespaceSelector}
             onChange={handleNamespaceSelectorChange}
+            dataTest="peer-namespace-selector"
           />
         </div>
       )}
@@ -55,6 +56,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
           helpText={helpTextPodSelector}
           values={podSelector || []}
           onChange={handlePodSelectorChange}
+          dataTest="peer-pod-selector"
         />
       </div>
       <p>

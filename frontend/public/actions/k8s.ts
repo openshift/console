@@ -311,12 +311,17 @@ export const watchAPIServices = () => (dispatch, getState) => {
     )
     .catch(() => {
       const poller = () =>
-        coFetchJSON('api/kubernetes/apis').then((d) => {
-          if (d.groups.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
-            dispatch(getResources());
-          }
-          dispatch(setAPIGroups(d.groups.length));
-        });
+        coFetchJSON('api/kubernetes/apis')
+          .then((d) => {
+            if (d.groups.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
+              dispatch(getResources());
+            }
+            dispatch(setAPIGroups(d.groups.length));
+          })
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.warn('Could not fetch API groups', e);
+          });
 
       POLLs[apiGroups] = setInterval(poller, 30 * 1000);
       poller();

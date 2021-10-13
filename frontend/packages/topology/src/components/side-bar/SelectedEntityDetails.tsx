@@ -20,39 +20,40 @@ import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologySideBarContent from './TopologySideBarContent';
 
-export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
+export const isSidebarRenderable = (selectedEntity: GraphElement): boolean => {
+  if (isNode(selectedEntity) || isEdge(selectedEntity)) {
+    return true;
+  }
+  return false;
+};
+
+export const SelectedEntityDetails: React.FC<{ selectedEntity: GraphElement }> = ({
+  selectedEntity,
+}) => {
   if (!selectedEntity) {
     return null;
   }
 
   if (isNode(selectedEntity)) {
-    if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
-    if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
-    if (selectedEntity.getType() === TYPE_MANAGED_KAFKA_CONNECTION) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
-    if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
-    if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
-    if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
+    if (
+      [
+        TYPE_HELM_RELEASE,
+        TYPE_MANAGED_KAFKA_CONNECTION,
+        TYPE_HELM_WORKLOAD,
+        TYPE_EVENT_PUB_SUB,
+        TYPE_APPLICATION_GROUP,
+        TYPE_OPERATOR_BACKED_SERVICE,
+        TYPE_VIRTUAL_MACHINE,
+      ].includes(selectedEntity.getType())
+    ) {
       return <TopologySideBarContent element={selectedEntity} />;
     }
 
-    if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
     return <TopologyResourcePanel element={selectedEntity} />;
   }
 
   if (isEdge(selectedEntity)) {
-    if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB_LINK) {
+    if ([TYPE_EVENT_PUB_SUB_LINK, TYPE_SERVICE_BINDING].includes(selectedEntity.getType())) {
       return <TopologySideBarContent element={selectedEntity} />;
     }
     if (
@@ -62,9 +63,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
     ) {
       return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
     }
-    if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
+
     return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
   }
   return null;

@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-topology';
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { ModifyApplication } from '@console/topology/src/actions';
+import { ModifyApplication, contextMenuActions } from '@console/topology/src/actions';
 import {
   NodeComponentProps,
   withContextMenu,
@@ -23,8 +23,6 @@ import {
 } from '@console/topology/src/components/graph-view';
 import { withEditReviewAccess, getResource } from '@console/topology/src/utils';
 import { editSinkUri } from '../../actions/edit-sink-uri';
-import { getRevisionActions } from '../../actions/getRevisionActions';
-import { RevisionModel } from '../../models';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -63,9 +61,7 @@ export const knativeContextMenu = (element: Node) => {
   const model = modelFor(referenceFor(item));
 
   const actions = [];
-  if (model.kind === RevisionModel.kind) {
-    actions.push(...getRevisionActions());
-  } else if (element.getType() === TYPE_EVENT_PUB_SUB_LINK) {
+  if (element.getType() === TYPE_EVENT_PUB_SUB_LINK) {
     actions.push(...Kebab.getExtensionsActionsForKind(model), ...Kebab.factory.common);
   } else {
     actions.push(
@@ -121,7 +117,7 @@ export const getKnativeComponentFactory = (
         >(eventSourceSinkDropTargetSpec)(
           withEditReviewAccess('update')(
             withSelection({ controlled: true })(
-              withContextMenu(knativeContextMenu)(KnativeService),
+              withContextMenu(contextMenuActions)(KnativeService),
             ),
           ),
         ),
@@ -130,7 +126,7 @@ export const getKnativeComponentFactory = (
       return withEditReviewAccess('patch')(
         withDragNode(nodeDragSourceSpec(type))(
           withSelection({ controlled: true })(
-            withContextMenu(knativeContextMenu)(
+            withContextMenu(contextMenuActions)(
               withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
             ),
           ),
@@ -163,7 +159,7 @@ export const getKnativeComponentFactory = (
     case TYPE_KNATIVE_REVISION:
       return withDragNode(nodeDragSourceSpec(type, false))(
         withSelection({ controlled: true })(
-          withContextMenu(knativeContextMenu)(withNoDrop()(RevisionNode)),
+          withContextMenu(contextMenuActions)(withNoDrop()(RevisionNode)),
         ),
       );
     case TYPE_REVISION_TRAFFIC:
@@ -177,7 +173,7 @@ export const getKnativeComponentFactory = (
         withEditReviewAccess('patch')(
           withDragNode(nodeDragSourceSpec(type))(
             withSelection({ controlled: true })(
-              withContextMenu(knativeContextMenu)(
+              withContextMenu(contextMenuActions)(
                 withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
               ),
             ),

@@ -8,8 +8,8 @@
   overflow-x: hidden;
   overflow-y: auto;
 
-  .pf-c-empty-state__icon {
-    margin-bottom: 0 !important;
+  .pf-c-empty-state {
+    --pf-c-empty-state__icon--MarginBottom: 0 !important;
   }
 }
 
@@ -29,7 +29,7 @@
 }
 
 .co-status-card__alerts-icon.pf-c-empty-state__icon {
-  color: $pf-color-black-400;
+  --pf-c-empty-state__icon--Color: $pf-color-black-400;
 }
 
 .co-status-card__alert-item {

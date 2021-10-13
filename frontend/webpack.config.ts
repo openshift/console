@@ -1,6 +1,7 @@
 /* eslint-env node */
 import * as webpack from 'webpack';
 import * as path from 'path';
+import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
@@ -36,9 +37,15 @@ const extractCSS = new MiniCssExtractPlugin({
   // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
   ignoreOrder: true,
 });
+const getVendorModuleRegExp = (vendorModules: string[]) =>
+  new RegExp(`node_modules\\/(${vendorModules.map((m) => _.escapeRegExp(m)).join('|')})\\/`);
 const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-const sharedPluginTest = new RegExp(`node_modules\\/(${sharedPluginModules.join('|')})\\/`);
+const sharedPluginTest = getVendorModuleRegExp(sharedPluginModules);
+const sharedPatternFlyCoreTest = getVendorModuleRegExp([
+  '@patternfly/react-core',
+  '@patternfly/react-table',
+]);
 
 const config: Configuration = {
   entry: [
@@ -196,6 +203,12 @@ const config: Configuration = {
   optimization: {
     splitChunks: {
       chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: sharedPatternFlyCoreTest,
+          name: 'vendor-patternfly-core',
+        },
+      },
     },
     runtimeChunk: true,
   },

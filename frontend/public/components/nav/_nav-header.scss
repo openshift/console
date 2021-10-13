@@ -12,15 +12,14 @@
   }
 
   .pf-c-dropdown {
+    --pf-c-dropdown__menu-item--PaddingLeft: 7px;
+
     width: 100%;
     cursor: pointer;
 
-    &.pf-m-expanded .pf-c-dropdown__toggle {
-      background-color: var(--pf-global--BackgroundColor--dark-200);
+    &.pf-m-expanded {
+      --pf-c-dropdown__toggle--BackgroundColor: var(--pf-global--BackgroundColor--dark-200);
     }
-  }
-  .pf-c-dropdown__menu-item  {
-    padding-left: 7px;
   }
 
   .pf-c-dropdown__menu-item,

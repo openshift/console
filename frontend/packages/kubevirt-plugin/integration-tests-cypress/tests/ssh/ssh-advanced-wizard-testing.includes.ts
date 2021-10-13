@@ -36,7 +36,8 @@ export default ({ vmName }) =>
       cy.get('#ssh').click();
     });
 
-    it('checking expose service is checked', () => {
+    it('checking expose service is not checked by default', () => {
+      cy.get('#ssh-service-checkbox').click();
       cy.get('#ssh-service-checkbox').should('be.checked');
     });
 

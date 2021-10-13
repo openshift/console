@@ -320,8 +320,8 @@ $monitoring-line-height: 18px;
   margin-bottom: 15px;
   width: 100%;
 
-  .pf-c-check__input {
-    margin-top: 0;
+  .pf-c-check {
+    --pf-c-check__input--MarginTop: 0;
   }
 }
 

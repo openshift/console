@@ -8,7 +8,9 @@
     padding-top: var(--pf-global--spacer--sm);
     padding-bottom: var(--pf-global--spacer--sm);
     .pf-c-radio__input {
-      margin: 0;
+      --pf-c-radio__input--MarginTop: 0;
+      --pf-c-radio__input--MarginLeft: 0;
+      --pf-c-radio__input--MarginRight: 0;
     }
   }
   &__expand-groups-switcher {
@@ -35,12 +37,12 @@
       border-top: 1px solid var(--pf-global--BorderColor--300);
     }
     .pf-c-check__input {
-      margin-top: 0;
+      --pf-c-check__input--MarginTop: 0;
     }
   }
 
-  .pf-c-select__menu-group-title {
-    padding-bottom: 0;
+  .pf-c-select {
+    --pf-c-select__menu-group-title--PaddingBottom: 0;
   }
 
   &__expand-groups-label > .pf-c-select__menu-group-title {
