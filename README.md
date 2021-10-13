@@ -161,6 +161,8 @@ If you would like to disable hot reloading, set the environment variable `HOT_RE
 yarn run dev
 ```
 
+> NOTE: This still requires bridge to be running
+
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>. If you need to increase your watchers, it's common to see multiple errors beginning with `Error from chokidar`.
 
 ### Unit Tests
