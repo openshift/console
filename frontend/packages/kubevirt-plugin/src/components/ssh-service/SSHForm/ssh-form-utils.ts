@@ -7,6 +7,7 @@ import {
 } from '../../../constants/vm/constants';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMIKind, VMKind } from '../../../types';
+import { buildOwnerReference } from '../../../utils/index';
 
 export const AUTHORIZED_SSH_KEYS = 'authorizedsshkeys';
 
@@ -35,9 +36,10 @@ export const getCloudInitValues = (vm: VMKind | VMIKind, field: string) => {
 
 // This function should be in useSSHService hook, once advance wizard will be adjusted this can be moved.
 export const createOrDeleteSSHService = async (
-  { metadata }: VMKind | VMIKind,
+  virtualMachine: VMKind | VMIKind,
   enableSSHService: boolean,
 ) => {
+  const metadata = virtualMachine?.metadata;
   const createOrDelete = enableSSHService ? k8sCreate : k8sKill;
   try {
     await createOrDelete(ServiceModel, {
@@ -46,6 +48,7 @@ export const createOrDeleteSSHService = async (
       metadata: {
         name: `${metadata?.name}-ssh-service`,
         namespace: metadata?.namespace,
+        ownerReferences: [buildOwnerReference(virtualMachine, { blockOwnerDeletion: false })],
       },
       spec: {
         ports: [
