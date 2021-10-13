@@ -164,6 +164,20 @@
   {
     "type": "console.navigation/href",
     "properties": {
+      "id": "virtualizationoverview",
+      "section": "virtualization",
+      "perspective": "admin",
+      "name": "%kubevirt-plugin~Overview%",
+      "href": "/virtualization/overview",
+      "prefixNamespaced": false
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
       "id": "virtualizationtemplates",
       "section": "virtualization",
       "perspective": "admin",
@@ -339,6 +353,18 @@
       "path": ["/k8s/ns/:ns/virtualization", "/k8s/all-namespaces/virtualization"],
       "component": {
         "$codeRef": "VirtualizationPage.VirtualizationPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/virtualization/overview"],
+      "component": {
+        "$codeRef": "VirtualizationOverviewPage.VirtualizationOverviewPage"
       }
     },
     "flags": {
