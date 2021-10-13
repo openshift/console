@@ -63,7 +63,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
         <Trans ns="console-app">
           Show a preview of the{' '}
           <Button
-            data-test={`show-affected-pods-${props.direction}}`}
+            data-test={`show-affected-pods-${props.direction}`}
             ref={podsPreviewPopoverRef}
             variant="link"
             isInline
