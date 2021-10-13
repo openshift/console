@@ -60,7 +60,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
         />
       </div>
       <p>
-        <Trans ns="console-app">
+        <Trans ns="console-app" i18nKey="netpolicy_peers_preview_affected_pods">
           Show a preview of the{' '}
           <Button
             data-test={`show-affected-pods-${props.direction}`}
