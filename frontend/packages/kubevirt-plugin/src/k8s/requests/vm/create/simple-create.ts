@@ -200,19 +200,21 @@ export const prepareVM = async (
         disk: windowsToolsStorage(winToolsContainerNames(containerImagesNames)).disk,
         volume: windowsToolsStorage(winToolsContainerNames(containerImagesNames)).volume,
       });
-    } else if (!isEmpty(sshKey)) {
-      vmWrapper.updateVolume(
-        new VolumeWrapper()
-          .init({ name: CLOUDINIT_DISK })
-          .setType(VolumeType.CLOUD_INIT_CONFIG_DRIVE)
-          .setTypeData(
-            vmWrapper.getVolumes().find(({ name: volumeName }) => volumeName === CLOUDINIT_DISK)
-              ?.cloudInitNoCloud,
-          )
-          .asResource(),
-      );
-      vmWrapper.setSSHKey([`${AUTHORIZED_SSH_KEYS}-${name}`]);
     }
+  }
+
+  if (!isWindowsTemplate(template) && !isEmpty(sshKey) && enableSSHService) {
+    vmWrapper.updateVolume(
+      new VolumeWrapper()
+        .init({ name: CLOUDINIT_DISK })
+        .setType(VolumeType.CLOUD_INIT_CONFIG_DRIVE)
+        .setTypeData(
+          vmWrapper.getVolumes().find(({ name: volumeName }) => volumeName === CLOUDINIT_DISK)
+            ?.cloudInitNoCloud,
+        )
+        .asResource(),
+    );
+    vmWrapper.setSSHKey([`${AUTHORIZED_SSH_KEYS}-${name}`]);
   }
 
   const os = ignoreCaseSort(getTemplateOperatingSystems([template]), ['name'])[0];

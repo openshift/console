@@ -48,9 +48,13 @@ const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
     }
 
     if (volumeWrapper.getCloudInitNoCloud()) {
-      volumeWrapper.setCloudInitNoCloud({
-        userData: ['#cloud-config', volumeWrapper.getCloudInitNoCloud().userData].join('\n'),
-      });
+      const cloudConfigHeader = volumeWrapper
+        .getCloudInitNoCloud()
+        ?.userData?.includes('#cloud-config');
+      !cloudConfigHeader &&
+        volumeWrapper.setCloudInitNoCloud({
+          userData: ['#cloud-config', volumeWrapper.getCloudInitNoCloud().userData].join('\n'),
+        });
     }
 
     return {
