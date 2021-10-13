@@ -119,7 +119,6 @@ describe('Test VM Clone', () => {
       .should('exist')
       .click();
     tab.navigateToDetails();
-    waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
   });
 
