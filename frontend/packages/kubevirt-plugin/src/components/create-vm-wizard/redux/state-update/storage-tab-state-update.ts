@@ -319,7 +319,10 @@ const initialDefaultStorageClassUpdater = ({
   ) {
     return;
   }
-  const storageClassName = iGetVmSettingValue(state, id, VMSettingsField.DEFAULT_STORAGE_CLASS);
+
+  const storageClassName =
+    iGetCommonData(state, id, VMWizardProps.initialData)?.toJS()?.storageClass ||
+    iGetVmSettingValue(state, id, VMSettingsField.DEFAULT_STORAGE_CLASS);
 
   if (storageClassName) {
     const iProvisionSourceStorage = iGetProvisionSourceStorage(state, id);
