@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
-  ResolvedExtension,
-  useResolvedExtensions,
   CatalogItemFilter,
   CatalogItemProvider,
   CatalogItemType,
   isCatalogItemFilter,
   isCatalogItemProvider,
   isCatalogItemType,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions';
+import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk';
 
 const useCatalogExtensions = (

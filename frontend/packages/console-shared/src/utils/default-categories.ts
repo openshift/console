@@ -1,4 +1,4 @@
-import { CatalogCategory } from './types';
+import { CatalogCategory } from '../components/catalog/utils/types';
 
 export const defaultCatalogCategories: CatalogCategory[] = [
   {

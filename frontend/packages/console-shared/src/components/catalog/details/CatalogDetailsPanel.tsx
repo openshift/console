@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { ExternalLink, SectionHeading, Timestamp } from '@console/internal/components/utils';
 
 type CatalogDetailsPanelProps = {
@@ -18,9 +18,9 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
     creationTimestamp
   );
   const notAvailable = (
-    <span className="properties-side-panel-pf-property-label">{t('devconsole~N/A')}</span>
+    <span className="properties-side-panel-pf-property-label">{t('console-shared~N/A')}</span>
   );
-  const providerLabel = t('devconsole~Provider');
+  const providerLabel = t('console-shared~Provider');
   const customProvider = details?.properties?.some((property) => property.label === providerLabel);
 
   return (
@@ -39,24 +39,27 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
               {!customProvider && (
                 <PropertyItem label={providerLabel} value={provider || notAvailable} />
               )}
-              <PropertyItem label={t('devconsole~Created at')} value={created || notAvailable} />
               <PropertyItem
-                label={t('devconsole~Support')}
+                label={t('console-shared~Created at')}
+                value={created || notAvailable}
+              />
+              <PropertyItem
+                label={t('console-shared~Support')}
                 value={
                   supportUrl ? (
-                    <ExternalLink href={supportUrl} text={t('devconsole~Get support')} />
+                    <ExternalLink href={supportUrl} text={t('console-shared~Get support')} />
                   ) : (
                     notAvailable
                   )
                 }
               />
               <PropertyItem
-                label={t('devconsole~Documentation')}
+                label={t('console-shared~Documentation')}
                 value={
                   documentationUrl ? (
                     <ExternalLink
                       href={documentationUrl}
-                      text={t('devconsole~Refer documentation')}
+                      text={t('console-shared~Refer documentation')}
                     />
                   ) : (
                     notAvailable
@@ -68,7 +71,7 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
               <div className="co-catalog-page__overlay-description">
                 <Stack hasGutter>
                   {!details?.descriptions?.[0]?.label && (
-                    <SectionHeading text={t('devconsole~Description')} />
+                    <SectionHeading text={t('console-shared~Description')} />
                   )}
                   {!details?.descriptions?.length && description && <p>{description}</p>}
                   {details?.descriptions?.map((desc, index) => (

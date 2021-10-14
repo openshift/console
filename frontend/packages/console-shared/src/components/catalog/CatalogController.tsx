@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   PageHeading,
   skeletonCatalog,
@@ -11,17 +11,17 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { useQueryParams } from '@console/shared';
+import { useQueryParams } from '../../hooks';
 import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
-import { CatalogService } from './service/CatalogServiceProvider';
 import { getURLWithParams } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
 import {
   CatalogCategory,
   CatalogFilters,
   CatalogQueryParams,
+  CatalogService,
   CatalogStringMap,
   CatalogType,
 } from './utils/types';
@@ -95,7 +95,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     });
     const crumbs = [
       {
-        name: t('devconsole~Developer Catalog'),
+        name: t('console-shared~Developer Catalog'),
         path: `${pathname}?${params.toString()}`,
       },
     ];
@@ -181,7 +181,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
               data={items}
               loaded={loaded}
               loadError={loadError}
-              label={t('devconsole~Catalog items')}
+              label={t('console-shared~Catalog items')}
             >
               <CatalogView
                 catalogType={type}

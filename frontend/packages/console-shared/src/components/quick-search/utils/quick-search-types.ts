@@ -1,5 +1,5 @@
-import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import { CatalogItem, CatalogItemType, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { CatalogType } from '../../catalog';
 
 export type QuickSearchProvider = {
   catalogType: string;

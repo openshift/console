@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { keywordCompare } from './catalog-utils';
 import { CatalogFilter, CatalogFilterCounts, CatalogFilters } from './types';
 

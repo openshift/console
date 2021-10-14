@@ -9,7 +9,7 @@ import {
   BlueSyncIcon,
   GrayUnknownIcon,
   BlueArrowCircleUpIcon,
-} from '@console/shared/src/components/status/icons';
+} from '../../status/icons';
 
 export { HealthState };
 

@@ -2,10 +2,12 @@ import * as React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import CatalogServiceProvider, {
+import {
+  QuickSearchController,
+  QuickSearchProviders,
   CatalogService,
-} from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
-import { QuickSearchController, QuickSearchProviders } from '@console/shared';
+  CatalogServiceProvider,
+} from '@console/shared';
 import { useTransformedQuickStarts } from './topology-quick-search-utils';
 
 interface QuickSearchProps {

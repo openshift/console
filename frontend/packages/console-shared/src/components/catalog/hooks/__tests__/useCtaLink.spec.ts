@@ -1,7 +1,7 @@
-import { useQueryParams } from '@console/shared';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import useCtaLink from '../useCtaLink';
 
-jest.mock('@console/shared', () => ({
+jest.mock('../../../../hooks/useQueryParams', () => ({
   useQueryParams: jest.fn(),
 }));
 

@@ -1,3 +1,6 @@
+import { CatalogItem, CatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
+import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
+
 export enum CatalogQueryParams {
   TYPE = 'catalogType',
   CATEGORY = 'category',
@@ -45,4 +48,14 @@ export type CatalogSubcategory = {
   id: string;
   label: string;
   tags?: string[];
+};
+
+export type CatalogService = {
+  type: string;
+  items: CatalogItem[];
+  itemsMap: { [type: string]: CatalogItem[] };
+  loaded: boolean;
+  loadError: any;
+  searchCatalog: (query: string) => CatalogItem[];
+  catalogExtensions: ResolvedExtension<CatalogItemType>[];
 };

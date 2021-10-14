@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons';
-import CloseButton from '@console/shared/src/components/close-button';
+import CloseButton from '../close-button/CloseButton';
 import { ActionGroupWithIconsProps } from './form-utils-types';
 
 const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
