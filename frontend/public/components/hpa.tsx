@@ -332,7 +332,7 @@ const HorizontalPodAutoscalersList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label="Horizontal Pod Auto Scalers"
+      aria-label={t('public~HorizontalPodAutoScalers')}
       Header={HorizontalPodAutoscalersTableHeader}
       Row={HorizontalPodAutoscalersTableRow}
       virtualize

@@ -72,7 +72,7 @@ export const JobsOverview: React.SFC<JobsOverviewProps> = ({
 
   return (
     <>
-      <SidebarSectionHeading text="Jobs">
+      <SidebarSectionHeading text={t('public~Jobs')}>
         {_.size(jobs) > MAX_JOBS && (
           <Link className="sidebar__section-view-all" to={linkTo}>
             {t('public~View all ({{jobCount}})', { jobCount: _.size(jobs) })}
