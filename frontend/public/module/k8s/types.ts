@@ -6,12 +6,12 @@ import {
   K8sResourceCommon,
   K8sVerb,
   AccessReviewResourceAttributes,
-  Selector,
-  MatchLabels,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
+import { Selector, MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+export * from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export type PartialObjectMetadata = {
   apiVersion: string;

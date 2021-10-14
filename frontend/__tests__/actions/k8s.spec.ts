@@ -3,11 +3,11 @@ import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
 import * as k8sActions from '../../public/actions/k8s';
-import * as k8sResource from '../../public/module/k8s/resource';
+import * as k8sResource from '../../public/module/k8s';
 import { K8sResourceKind, K8sKind } from '../../public/module/k8s';
 import { PodModel, APIServiceModel } from '../../public/models';
 import { testResourceInstance } from '../../__mocks__/k8sResourcesMocks';
-import * as coFetch from '../../public/co-fetch';
+import * as coFetch from '@console/dynamic-plugin-sdk/src/utils/fetch';
 
 describe('watchAPIServices', () => {
   const { watchAPIServices } = k8sActions;
@@ -62,11 +62,12 @@ describe('watchAPIServices', () => {
     const getState = jasmine.createSpy('getState').and.returnValue({ k8s: ImmutableMap() });
     const dispatch = jasmine.createSpy('dispatch');
     spyOn(k8sResource, 'k8sList').and.returnValue(Promise.reject());
-
-    spyAndExpect(spyOn(coFetch, 'coFetchJSON'))(Promise.resolve({ groups: [] })).then(([path]) => {
-      expect(path).toEqual('api/kubernetes/apis');
-      done();
-    });
+    spyAndExpect(spyOn(coFetch, 'consoleFetchJSON'))(Promise.resolve({ groups: [] })).then(
+      ([path]) => {
+        expect(path).toEqual('api/kubernetes/apis');
+        done();
+      },
+    );
 
     watchAPIServices()(dispatch, getState);
   });

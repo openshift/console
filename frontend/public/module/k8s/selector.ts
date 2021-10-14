@@ -1,8 +1,5 @@
-import { createEquals, requirementFromString, requirementToString } from './selector-requirement';
-import { Selector, MatchExpression, MatchLabels } from './index';
-
-const isOldFormat = (selector: Selector | MatchLabels) =>
-  !selector.matchLabels && !selector.matchExpressions;
+import { requirementFromString } from './selector-requirement';
+import { MatchExpression } from './index';
 
 type Options = { undefinedWhenEmpty?: boolean; basic?: boolean };
 
@@ -35,30 +32,7 @@ export const fromRequirements = (requirements: MatchExpression[], options = {} a
 
 export const split = (str: string) => (str.trim() ? str.split(/,(?![^(]*\))/) : []); // [''] -> []
 
-export const toRequirements = (selector: Selector = {}) => {
-  const requirements = [];
-  const matchLabels = isOldFormat(selector) ? selector : selector.matchLabels;
-  const matchExpressions = selector.matchExpressions;
-
-  Object.keys(matchLabels || {})
-    .sort()
-    .forEach(function(k) {
-      requirements.push(createEquals(k, matchLabels[k]));
-    });
-
-  (matchExpressions || []).forEach(function(me) {
-    requirements.push(me);
-  });
-
-  return requirements;
-};
-
 export const selectorFromString = (str: string) => {
   const requirements = split(str || '').map(requirementFromString) as MatchExpression[];
   return fromRequirements(requirements);
-};
-
-export const selectorToString = (selector: Selector) => {
-  const requirements = toRequirements(selector);
-  return requirements.map(requirementToString).join(',');
 };

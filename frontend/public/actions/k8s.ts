@@ -8,11 +8,18 @@ import {
   getResources as getResources_,
   DiscoveryResources,
 } from '../module/k8s/get-resources';
-import { k8sList, k8sWatch, k8sGet } from '../module/k8s/resource';
+import {
+  k8sList,
+  k8sWatch,
+  k8sGet,
+  referenceForModel,
+  K8sResourceKind,
+  K8sKind,
+  fetchSwagger,
+} from '../module/k8s';
 import { makeReduxID } from '../components/utils/k8s-watcher';
 import { APIServiceModel } from '../models';
-import { coFetchJSON } from '../co-fetch';
-import { referenceForModel, K8sResourceKind, K8sKind, fetchSwagger } from '../module/k8s';
+import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 
 export enum ActionType {
   ReceivedResources = 'resources',
@@ -311,7 +318,7 @@ export const watchAPIServices = () => (dispatch, getState) => {
     )
     .catch(() => {
       const poller = () =>
-        coFetchJSON('api/kubernetes/apis')
+        consoleFetchJSON('api/kubernetes/apis')
           .then((d) => {
             if (d.groups.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
               dispatch(getResources());

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
-import { K8sKind } from '@console/dynamic-plugin-sdk/src';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   BuildConfigModel,
@@ -47,7 +47,7 @@ export const useServiceBindingActionProvider = (resource: K8sResourceKind) => {
   return [action, !inFlight, undefined];
 };
 
-const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => {
+const resourceAttributes = (model: K8sModel, namespace: string): AccessReviewResourceAttributes => {
   return {
     group: model.apiGroup || '',
     resource: model.plural,
