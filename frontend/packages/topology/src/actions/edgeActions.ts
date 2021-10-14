@@ -1,6 +1,6 @@
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import i18next from 'i18next';
-import { Action, K8sKind } from '@console/dynamic-plugin-sdk';
+import { Action, K8sModel } from '@console/dynamic-plugin-sdk';
 import { asAccessReview } from '@console/internal/components/utils';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -90,7 +90,7 @@ const getAvailableTargetForEdge = (edge: Edge, nodes: Node[]) => {
     .sort((n1, n2) => n1.getLabel().localeCompare(n2.getLabel()));
 };
 
-export const MoveConnectorAction = (kindObj: K8sKind, element: Edge): Action => {
+export const MoveConnectorAction = (kindObj: K8sModel, element: Edge): Action => {
   const resourceObj = getResource(element.getSource());
 
   const nodes = element
@@ -110,7 +110,7 @@ export const MoveConnectorAction = (kindObj: K8sKind, element: Edge): Action => 
   };
 };
 
-export const DeleteConnectorAction = (kindObj: K8sKind, element: Edge): Action => {
+export const DeleteConnectorAction = (kindObj: K8sModel, element: Edge): Action => {
   const resourceObj = getResource(element.getSource());
   return {
     id: 'delete-connector',

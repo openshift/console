@@ -23,6 +23,7 @@ import {
   UseK8sModels,
   UseActivePerspective,
 } from '../extensions/console-types';
+import { K8sGet, K8sCreate, K8sUpdate, K8sPatch, K8sDelete, K8sList } from './k8s-types';
 
 export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
   .useK8sWatchResource;
@@ -87,3 +88,15 @@ export const useK8sModel: UseK8sModel = require('@console/shared/src/hooks/useK8
   .useK8sModel;
 export const useK8sModels: UseK8sModels = require('@console/shared/src/hooks/useK8sModels')
   .useK8sModels;
+
+// Expose K8s CRUD utilities as below
+export const k8sGet: K8sGet = require('@console/dynamic-plugin-sdk/src/utils/k8s').k8sGetResource;
+export const k8sCreate: K8sCreate = require('@console/dynamic-plugin-sdk/src/utils/k8s')
+  .k8sCreateResource;
+export const k8sUpdate: K8sUpdate = require('@console/dynamic-plugin-sdk/src/utils/k8s')
+  .k8sUpdateResource;
+export const k8sPatch: K8sPatch = require('@console/dynamic-plugin-sdk/src/utils/k8s').k8sPatch;
+export const k8sDelete: K8sDelete = require('@console/dynamic-plugin-sdk/src/utils/k8s')
+  .k8sDeleteResource;
+export const k8sList: K8sList = require('@console/dynamic-plugin-sdk/src/utils/k8s')
+  .k8sListResource;

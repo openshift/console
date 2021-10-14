@@ -28,6 +28,7 @@ import {
   referenceForModel,
   k8sCreate,
   k8sUpdate,
+  k8sList,
   referenceFor,
   groupVersionFor,
 } from '../module/k8s';
@@ -35,7 +36,6 @@ import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { k8sList } from '../module/k8s/resource';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceKind, ConfigMapKind, SecretKind } from '@console/internal/module/k8s/types';
-import { k8sCreate, k8sPatch } from '@console/internal/module/k8s/resource';
+import { k8sCreate, k8sPatch } from '@console/internal/module/k8s';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import {
   CEPH_STORAGE_NAMESPACE,

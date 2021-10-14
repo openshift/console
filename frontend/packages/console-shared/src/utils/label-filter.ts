@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-import { toRequirements } from '@console/internal/module/k8s/selector';
-import { requirementToString } from '@console/internal/module/k8s/selector-requirement';
+import { toRequirements, requirementToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 export const getLabelsAsString = (obj: any, path: string = 'metadata.labels'): string[] => {
   const labels = _.get(obj, path);

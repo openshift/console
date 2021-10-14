@@ -30,7 +30,7 @@ export type ExtensionK8sKindVersionModel = {
   kind: string;
 };
 
-export type K8sKind = {
+export type K8sModel = {
   abbr: string;
   kind: string;
   label: string;
@@ -59,18 +59,35 @@ export type K8sKind = {
   legacyPluralURL?: boolean;
 };
 
-type MatchExpression = {
+/**
+ * @deprecated migrated to new type K8sModel, use K8sModel over K8sKind
+ */
+export type K8sKind = K8sModel;
+
+export enum Operator {
+  Exists = 'Exists',
+  DoesNotExist = 'DoesNotExist',
+  In = 'In',
+  NotIn = 'NotIn',
+  Equals = 'Equals',
+  NotEqual = 'NotEqual',
+  GreaterThan = 'GreaterThan',
+  LessThan = 'LessThan',
+  NotEquals = 'NotEquals',
+}
+
+export type MatchExpression = {
   key: string;
-  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
+  operator: Operator | string;
   values?: string[];
   value?: string;
 };
 
-type MatchLabels = {
+export type MatchLabels = {
   [key: string]: string;
 };
 
-type Selector = {
+export type Selector = {
   matchLabels?: MatchLabels;
   matchExpressions?: MatchExpression[];
 };
