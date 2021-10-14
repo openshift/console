@@ -40,8 +40,8 @@ const isValidDiskProperty = (disk: DiscoveredDisk, property: DiskMetadata['prope
 const isValidDeviceType = (disk: DiscoveredDisk, types: string[]) =>
   types.includes(deviceTypeDropdownItems[disk.type.toUpperCase()]);
 
-const addNodesOnAvailableDisks = (disks: DiskMetadata[], node: string) =>
-  disks?.reduce((availableDisks: DiscoveredDisk[], disk: DiscoveredDisk) => {
+const addNodesOnAvailableDisks = (disks: DiskMetadata[] = [], node: string) =>
+  disks.reduce((availableDisks: DiscoveredDisk[], disk: DiscoveredDisk) => {
     if (isAvailableDisk(disk)) {
       disk.node = node;
       return [disk, ...availableDisks];
@@ -53,7 +53,7 @@ const createDiscoveredDiskData = (results: LocalVolumeDiscoveryResultKind[]): Di
   results?.reduce((discoveredDisk: DiscoveredDisk[], lvdr) => {
     const lvdrDisks = lvdr?.status?.discoveredDevices;
     const lvdrNode = lvdr?.spec?.nodeName;
-    const availableDisks = addNodesOnAvailableDisks(lvdrDisks, lvdrNode);
+    const availableDisks = addNodesOnAvailableDisks(lvdrDisks, lvdrNode) || [];
     return [...availableDisks, ...discoveredDisk];
   }, []);
 
