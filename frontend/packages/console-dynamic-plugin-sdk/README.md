@@ -28,9 +28,10 @@ dynamic-demo-plugin/
 
 | Package Name | Description |
 | --- | --- |
-| `@openshift-console/dynamic-plugin-sdk` | Provides the plugin API, types and utilities used by dynamic plugins at runtime. |
+| `@openshift-console/dynamic-plugin-sdk` | Provides core APIs, types and utilities used by dynamic plugins at runtime. |
 | `@openshift-console/dynamic-plugin-sdk-webpack` | Provides webpack plugin `ConsoleRemotePlugin` used to build all dynamic plugin assets. |
 | `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code. |
+| `@openshift-console/dynamic-plugin-sdk-internal-kubevirt` | Internal package to support KubeVirt plugin migration. |
 
 ## `package.json`
 

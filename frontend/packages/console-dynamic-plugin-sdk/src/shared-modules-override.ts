@@ -15,6 +15,8 @@ export const overrideSharedModules = (entryModule: RemoteEntryModule) => {
       require('@console/dynamic-plugin-sdk/src/lib-core'),
     '@openshift-console/dynamic-plugin-sdk-internal': async () => () =>
       require('@console/dynamic-plugin-sdk/src/lib-internal'),
+    '@openshift-console/dynamic-plugin-sdk-internal-kubevirt': async () => () =>
+      require('@console/dynamic-plugin-sdk/src/lib-internal-kubevirt'),
     '@patternfly/react-core': async () => () => require('@patternfly/react-core'),
     '@patternfly/react-table': async () => () => require('@patternfly/react-table'),
     react: async () => () => require('react'),
