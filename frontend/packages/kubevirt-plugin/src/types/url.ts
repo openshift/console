@@ -5,6 +5,7 @@ export type VMWizardInitialData = {
   commonTemplateName?: string;
   userTemplateName?: string;
   userTemplateNs?: string;
+  storageClass?: string;
 };
 
 export type VMWizardBootSourceParams = {

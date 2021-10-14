@@ -2,7 +2,12 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
-import { getCorePackage, getInternalPackage, getWebpackPackage } from './package-definitions';
+import {
+  getCorePackage,
+  getInternalPackage,
+  getInternalKubevirtPackage,
+  getWebpackPackage,
+} from './package-definitions';
 import { resolvePath, relativePath } from './utils/path';
 
 const writePackageManifest = (manifest: readPkg.PackageJson, outDir: string) => {
@@ -27,6 +32,7 @@ const missingDepCallback = (name: string) => missingDepNames.add(name);
 const outPackages = [
   getCorePackage(sdkPackage, rootPackage, missingDepCallback),
   getInternalPackage(sdkPackage, rootPackage, missingDepCallback),
+  getInternalKubevirtPackage(sdkPackage, rootPackage, missingDepCallback),
   getWebpackPackage(sdkPackage, rootPackage, missingDepCallback),
 ];
 

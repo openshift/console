@@ -88,11 +88,9 @@ export const componentFactory = (
         ),
       );
     case TYPE_CONNECTS_TO:
-      return withEditReviewAccess('update')(
-        withTargetDrag<DragObjectWithType>(
-          edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, createConnection),
-        )(withContextMenu(connectToActions)(ConnectsTo)),
-      );
+      return withTargetDrag<DragObjectWithType>(
+        edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, createConnection),
+      )(withContextMenu(connectToActions)(ConnectsTo));
     case TYPE_AGGREGATE_EDGE:
       return AggregateEdge;
     case TYPE_TRAFFIC_CONNECTOR:

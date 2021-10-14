@@ -1,5 +1,5 @@
 export const topologyPO = {
-  switcher: '[data-test-id="topology-switcher-view"]',
+  switcher: 'button[data-test-id="topology-switcher-view"]',
   noWorkLoadsText: 'h2.co-hint-block__title',
   title: 'h1.ocs-page-layout__title',
   search: '[data-test-id="item-filter"]',
@@ -28,7 +28,7 @@ export const topologyPO = {
     deleteApplication: '[id="form-input-resourceName-field"]',
     connector: '[data-test-id="edge-handler"]',
     displayOptions: {
-      connenctivityMode: '[id="showGroups"]',
+      connectivityMode: '[id="showGroups"]',
       consumptionMode: '[id="hideGroups"]',
       expandSwitchToggle: '.pf-c-switch__input',
       applicationGroupingsDisabled: '.pf-c-check.pf-c-select__menu-item.pf-m-disabled',
@@ -53,8 +53,9 @@ export const topologyPO = {
     showPodCount: '[id$=show-pod-count]',
     dialog: '[role="dialog"]',
     title: '[role="dialog"] h1',
+    knativeServiceIcon: '[title="Service"]',
     tabs: '[role="dialog"] li button',
-    sectionTitle: '[role="dialog"] h2.sidebar__section-heading',
+    sectionTitle: 'h2',
     close: 'button[aria-label="Close"]',
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
@@ -66,8 +67,8 @@ export const topologyPO = {
     applicationGroupingsSidepane: 'overview__sidebar-pane resource-overview',
     resourcesTabApplicationGroupings: '.co-m-horizontal-nav__menu-item',
     detailsTab: {
-      labels: 'dt[data-test-selector$="Labels"]',
-      annotations: '[data-test-selector="details-item-label__Annotations"]',
+      labels: '[data-test="label-list"]',
+      annotations: '[data-test="edit-annotations"]',
       labelsEdit: '[data-test="Labels-details-item__edit-button"]',
     },
     resourcesTab: {

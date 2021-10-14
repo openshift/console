@@ -8,7 +8,7 @@
 # You can test the image using `./builder-run.sh`. For instance:
 #   $ ./builder-run.sh ./build-backend.sh
 
-FROM golang:1.13-stretch
+FROM golang:1.16-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 

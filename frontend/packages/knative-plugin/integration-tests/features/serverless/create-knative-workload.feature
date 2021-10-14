@@ -14,7 +14,7 @@ Feature: Create a workload of 'knative Service' type resource
               And Knative Service option is displayed under Resources section
 
 
-        @regression
+        @regression @to-do
         Scenario: knative resource type in docker file add flow: KN-05-TC02
             Given user is at Add page
              When user clicks on Import from Git
@@ -34,9 +34,9 @@ Feature: Create a workload of 'knative Service' type resource
         @smoke
         Scenario Outline: Create knative workload from From Git card on Add page: KN-05-TC04
             Given user is at Import from Git form
-             When user enters Git Repo URL as "<git_url>"
+             When user enters Git Repo url as "<git_url>"
               And user enters Name as "<workload_name>"
-              And user selects resource type as "Knative"
+              And user selects resource type as "Serverless Deployment"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page
@@ -51,7 +51,7 @@ Feature: Create a workload of 'knative Service' type resource
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
               And user enters workload name as "<workload_name>"
-              And user selects resource type as "Knative Service"
+              And user selects resource type as "Serverless Deployment"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page
@@ -61,7 +61,7 @@ Feature: Create a workload of 'knative Service' type resource
                   | openshift/hello-openshift | knative-ex-registry |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Create a workload from Docker file card on Add page: KN-05-TC06
             Given user is on Import from Git form
              When user enters Docker URL as "<docker_git_url>"
@@ -69,7 +69,7 @@ Feature: Create a workload of 'knative Service' type resource
               And user selects Import Strategy as Dockerfile
               And user enters Dockerfile path as "<dockerfile_path>"
               And user enters workload name as "<workload_name>"
-              And user selects resource type as "Knative Service"
+              And user selects resource type as "Serverless Deployment"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page
@@ -87,7 +87,7 @@ Feature: Create a workload of 'knative Service' type resource
               And user creates the application with the selected builder image
               And user enters S2I Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
               And user enters workload name as "knative-dev-catalog"
-              And user selects resource type as "Knative Service"
+              And user selects resource type as "Serverless Deployment"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "nodejs-ex-git" in topology page
@@ -98,7 +98,7 @@ Feature: Create a workload of 'knative Service' type resource
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
               And user enters Name as "dancer-ex-git" in General section
-              And user selects resource type as "Knative Service"
+              And user selects resource type as "Serverless Deployment"
               And user clicks "Scaling" link in Advanced Options section
               And user enters number of Min Pods as "1"
               And user enters number of Max Pods as "5"
@@ -119,7 +119,7 @@ Feature: Create a workload of 'knative Service' type resource
               And user drag and drop the file in JAR file section
               And user selects appropriate Build image version
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
-              And user selects resource type as "knative"
+              And user selects resource type as "Serverless Deployment"
               And user clicks on Create
              Then user will be redirected to Topology page
               And user can see a toast notification of JAR file uploading with link to build logs

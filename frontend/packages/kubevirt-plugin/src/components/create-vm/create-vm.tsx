@@ -309,6 +309,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
         template: state.template,
         name: state.name,
         startVM: state.startVM,
+        storageClass: bootState?.storageClass?.value,
         bootSource: dataSource
           ? {
               size:

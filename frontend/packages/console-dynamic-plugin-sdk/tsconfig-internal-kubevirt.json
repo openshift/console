@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist/internal-kubevirt/lib",
+    "declaration": true,
+    "lib": ["es2016", "es2020.promise", "dom", "dom.iterable", "es2019.array"]
+  },
+  "include": ["src/lib-internal-kubevirt.ts"]
+}

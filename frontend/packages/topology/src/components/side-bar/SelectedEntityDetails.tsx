@@ -14,7 +14,7 @@ import {
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
-import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
+import { TYPE_APPLICATION_GROUP, TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING } from '../../const';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
@@ -63,6 +63,12 @@ export const SelectedEntityDetails: React.FC<{ selectedEntity: GraphElement }> =
     ) {
       return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
     }
+
+    if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
+      return <TopologySideBarContent element={selectedEntity} />;
+    }
+    if (selectedEntity.getType() === TYPE_CONNECTS_TO)
+      return <TopologySideBarContent element={selectedEntity} />;
 
     return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
   }

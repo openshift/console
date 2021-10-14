@@ -1,3 +1,4 @@
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   nodeActions,
@@ -113,6 +114,12 @@ export const topologyActions = {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
+        break;
+      }
+      case 'Make Serverless':
+      case nodeActions.MakeServerless: {
+        cy.byTestActionID(action).click();
+        detailsPage.titleShouldContain(action);
         break;
       }
       case 'Delete Application':

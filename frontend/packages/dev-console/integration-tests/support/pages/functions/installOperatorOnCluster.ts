@@ -17,12 +17,13 @@ export const installOperator = (operatorName: operators) => {
       cy.get(operatorsPO.operatorHub.install).click();
       cy.get(operatorsPO.operatorHub.installingOperatorModal).should('be.visible');
       app.waitForLoad();
-      operatorsPage.navigateToInstallOperatorsPage();
-      operatorsPage.verifyInstalledOperator(operatorName);
+      cy.byTestID('success-icon').should('be.visible');
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
     }
+    operatorsPage.navigateToInstallOperatorsPage();
+    operatorsPage.verifyInstalledOperator(operatorName);
   });
 };
 

@@ -23,6 +23,7 @@ const commonManifestFields: Partial<readPkg.PackageJson> = {
   license: 'Apache-2.0',
   homepage:
     'https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk',
+  keywords: ['openshift', 'console', 'plugin'],
 };
 
 const commonFiles: GeneratedPackage['filesToCopy'] = {
@@ -87,6 +88,25 @@ export const getInternalPackage: GetPackageDefinition = (
     version: sdkPackage.version,
     type: 'module',
     main: 'lib/lib-internal.js',
+    ...commonManifestFields,
+    dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
+  },
+  filesToCopy: {
+    ...commonFiles,
+  },
+});
+
+export const getInternalKubevirtPackage: GetPackageDefinition = (
+  sdkPackage,
+  rootPackage,
+  missingDepCallback,
+) => ({
+  outDir: 'dist/internal-kubevirt',
+  manifest: {
+    name: '@openshift-console/dynamic-plugin-sdk-internal-kubevirt',
+    version: sdkPackage.version,
+    type: 'module',
+    main: 'lib/lib-internal-kubevirt.js',
     ...commonManifestFields,
     dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
   },
