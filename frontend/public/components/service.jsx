@@ -209,7 +209,7 @@ const Details = ({ obj: s }) => {
             <dt>{t('public~Hostname')}</dt>
             <dd>
               <div className="co-select-to-copy">
-                {s.metadata.name}.{s.metadata.namespace}.srv.cluster.local
+                {s.metadata.name}.{s.metadata.namespace}.svc.cluster.local
               </div>
               <div>{t('public~Accessible within the cluster only')}</div>
             </dd>
