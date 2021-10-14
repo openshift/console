@@ -4,7 +4,7 @@ import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
-import { useAccessReview } from '@console/internal/components/utils';
+import { LoadingInline, useAccessReview2 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FlexForm,
@@ -13,6 +13,7 @@ import {
   FormFooter,
   YAMLEditorField,
   UNASSIGNED_APPLICATIONS_KEY,
+  useFormikValidationFix,
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
@@ -42,7 +43,8 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
     setFieldValue,
   } = formikProps;
 
-  const canCreateBroker = useAccessReview({
+  useFormikValidationFix(values);
+  const [canCreateBroker, loadingAccessReview] = useAccessReview2({
     group: EventingBrokerModel.apiGroup,
     resource: EventingBrokerModel.plural,
     namespace,
@@ -119,29 +121,33 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
       onSave={handleSubmit}
     />
   );
+
+  const syncedEditor = canCreateBroker ? (
+    <SyncedEditorField
+      name="editorType"
+      formContext={{
+        name: 'formData',
+        editor: FormEditor,
+        sanitizeTo: convertYamlToForm,
+      }}
+      yamlContext={{
+        name: 'yamlData',
+        editor: yamlEditor,
+        sanitizeTo: sanitizeToYaml,
+      }}
+      lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+    />
+  ) : (
+    <Alert variant="default" title={t('knative-plugin~Broker cannot be created')} isInline>
+      {t('knative-plugin~You do not have write access in this project.')}
+    </Alert>
+  );
+
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormBody flexLayout>
-        {canCreateBroker ? (
-          <SyncedEditorField
-            name="editorType"
-            formContext={{
-              name: 'formData',
-              editor: FormEditor,
-              sanitizeTo: convertYamlToForm,
-            }}
-            yamlContext={{
-              name: 'yamlData',
-              editor: yamlEditor,
-              sanitizeTo: sanitizeToYaml,
-            }}
-            lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
-          />
-        ) : (
-          <Alert variant="default" title={t('knative-plugin~Broker cannot be created')} isInline>
-            {t('knative-plugin~You do not have write access in this project.')}
-          </Alert>
-        )}
+        {loadingAccessReview && <LoadingInline />}
+        {!loadingAccessReview && syncedEditor}
       </FormBody>
       <FormFooter
         handleReset={handleReset}
@@ -149,7 +155,8 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
         isSubmitting={isSubmitting}
         submitLabel={t('knative-plugin~Create')}
         disableSubmit={
-          (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
+          !canCreateBroker ||
+          (values.editorType === EditorType.YAML ? !dirty : !_.isEmpty(errors)) ||
           isSubmitting
         }
         resetLabel={t('knative-plugin~Cancel')}
