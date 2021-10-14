@@ -27,7 +27,8 @@
       "workload": "src/components/workload",
       "actions": "src/actions/provider.ts",
       "exportAppContext": "src/components/export-app/export-app-context.ts",
-      "applicationSidebar": "src/components/application-panel"
+      "applicationSidebar": "src/components/application-panel",
+      "vcSidebar": "src/components/visual-connector"
     }
   }
 }

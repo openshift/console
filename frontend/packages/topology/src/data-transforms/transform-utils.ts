@@ -1,4 +1,5 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -163,7 +164,7 @@ export const getTopologyEdgeItems = (
       edges.push({
         id: `${uid}_${targetNode}`,
         type: TYPE_CONNECTS_TO,
-        resource: dc,
+        label: i18next.t('topology~Visual connector'),
         source: uid,
         target: targetNode,
       });
