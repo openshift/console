@@ -37,6 +37,8 @@ import {
   OCS_INDEPENDENT_FLAG,
   OCS_CONVERGED_FLAG,
   OCS_FLAG,
+  ODF_MANAGED_FLAG,
+  detectManagedODF,
 } from './features';
 import { getAlertActionPath } from './utils/alert-action-path';
 import { OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from './constants';
@@ -98,6 +100,15 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Custom',
     properties: {
+      detect: detectManagedODF,
+    },
+    flags: {
+      required: [CEPH_FLAG],
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
       detect: detectRGW,
     },
     flags: {
@@ -119,7 +130,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_CONVERGED_FLAG],
-      disallowed: [OCS_INDEPENDENT_FLAG],
+      disallowed: [OCS_INDEPENDENT_FLAG, ODF_MANAGED_FLAG],
     },
   },
   {
@@ -310,6 +321,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_INDEPENDENT_FLAG],
+      disallowed: [ODF_MANAGED_FLAG],
     },
   },
   // Left Cards
