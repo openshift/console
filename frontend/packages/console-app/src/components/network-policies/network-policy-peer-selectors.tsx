@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
-export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorProps> = (props) => {
+export const NetworkPolicyPeerSelectors: React.FC<PeerSelectorProps> = (props) => {
   const { t } = useTranslation();
   const { policyNamespace, direction, onChange, podSelector, namespaceSelector } = props;
 
@@ -34,6 +34,9 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
           'console-app~If no pod selector is provided, traffic to all pods in this namespace will be allowed.',
         );
   }
+
+  const RuleName: React.FC<{}> = () =>
+    direction === 'ingress' ? t('console-app~ingress rule') : t('console-app~egress rule');
 
   return (
     <>
@@ -70,7 +73,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
           >
             affected pods
           </Button>{' '}
-          that this {props.direction} rule will apply to
+          that this <RuleName /> will apply to
         </Trans>
       </p>
       <NetworkPolicySelectorPreview
