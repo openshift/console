@@ -4,6 +4,8 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
+/* eslint-disable import/named */
+import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 
 import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 
@@ -55,6 +57,7 @@ const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ templ
 TemplateResourceDetails.displayName = 'TemplateResourceDetails';
 
 const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
+  const { t } = useTranslation();
   const annotations = template.metadata.annotations || {};
   const { description } = annotations;
   const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
@@ -100,12 +103,12 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
             <ul className="list-inline">
               {documentationURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={documentationURL} text="View documentation" />
+                  <ExternalLink href={documentationURL} text={t('public~View documentation')} />
                 </li>
               )}
               {supportURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={supportURL} text="Get support" />
+                  <ExternalLink href={supportURL} text={t('public~Get support')} />
                 </li>
               )}
             </ul>
@@ -123,8 +126,11 @@ const stateToProps = (state: RootState) => ({
   models: state.k8s.getIn(['RESOURCES', 'models']),
 });
 
-class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState> {
-  constructor(props: TemplateFormProps) {
+class TemplateForm_ extends React.Component<
+  TemplateFormProps & WithTranslation,
+  TemplateFormState
+> {
+  constructor(props: TemplateFormProps & WithTranslation) {
     super(props);
 
     const { preselectedNamespace: namespace = '' } = this.props;
@@ -137,14 +143,14 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
     };
   }
 
-  componentDidUpdate(prevProps: TemplateFormProps) {
+  componentDidUpdate(prevProps: TemplateFormProps & WithTranslation) {
     if (this.props.obj !== prevProps.obj) {
       const parameters = this.getParameterValues(this.props);
       this.setState({ parameters });
     }
   }
 
-  getParameterValues = (props: TemplateFormProps) => {
+  getParameterValues = (props: TemplateFormProps & WithTranslation) => {
     const templateParameters: TemplateParameter[] = props.obj.data.parameters || [];
     return templateParameters.reduce((acc, { name, value }: TemplateParameter) => {
       acc[name] = value;
@@ -229,12 +235,12 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
   };
 
   render() {
-    const { obj } = this.props;
+    const { obj, t } = this.props;
     if (obj.loadError) {
       return (
         <LoadError
           message={obj.loadError.message}
-          label="Template"
+          label={t('public~Template')}
           className="loading-box loading-box__errored"
         />
       );
@@ -256,7 +262,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
           <form className="co-instantiate-template-form" onSubmit={this.save}>
             <div className="form-group">
               <label className="control-label co-required" htmlFor="namespace">
-                Namespace
+                {t('public~Namespace')}
               </label>
               <NsDropdown
                 selectedKey={this.state.namespace}
@@ -312,10 +318,10 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
             >
               <ActionGroup className="pf-c-form">
                 <Button type="submit" variant="primary">
-                  Create
+                  {t('public~Create')}
                 </Button>
                 <Button type="button" variant="secondary" onClick={history.goBack}>
-                  Cancel
+                  {t('public~Cancel')}
                 </Button>
               </ActionGroup>
             </ButtonBar>
@@ -328,7 +334,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
 
 const TemplateForm = connect(stateToProps)(
   withExtensions<ExtensionsProps>({ perspectiveExtensions: isPerspective })(
-    withActivePerspective<TemplateFormProps>(TemplateForm_),
+    withActivePerspective<TemplateFormProps>(withTranslation()(TemplateForm_)),
   ),
 );
 
