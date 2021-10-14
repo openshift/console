@@ -52,11 +52,11 @@ export const ServiceToken: React.FC<ServiceTokenProps> = ({ namespace }: Service
           <Trans t={t} ns="rhoas-plugin">
             Enter your API token from{' '}
             <a
-              href="https://cloud.redhat.com/openshift/token"
+              href="https://console.redhat.com/openshift/token"
               rel="noopener noreferrer"
               target="_blank"
             >
-              https://cloud.redhat.com
+              https://console.redhat.com
             </a>
             , so we can check what services you have access to based on your subscription.
           </Trans>
