@@ -5,6 +5,7 @@ import {
   YellowExclamationTriangleIcon,
   BlueSyncIcon,
   GrayUnknownIcon,
+  BlueArrowCircleUpIcon,
 } from '@console/shared/src/components/status/icons';
 import { InProgressIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
@@ -17,6 +18,7 @@ export enum HealthState {
   UNKNOWN = 'UNKNOWN',
   UPDATING = 'UPDATING',
   PROGRESS = 'PROGRESS',
+  UPGRADABLE = 'UPGRADABLE',
   NOT_AVAILABLE = 'NOT_AVAILABLE',
 }
 
@@ -36,6 +38,8 @@ export const healthStateMessage = (state: keyof typeof HealthState, t: TFunction
       return t('dashboard~Degraded');
     case HealthState.LOADING:
       return t('dashboard~Loading');
+    case HealthState.UPGRADABLE:
+      return t('dashboard~Upgrade available');
     case HealthState.NOT_AVAILABLE:
       return t('dashboard~Not available');
     default:
@@ -63,6 +67,11 @@ export const healthStateMapping: { [key in HealthState]: HealthStateMappingValue
     priority: 3,
     health: HealthState.UPDATING,
     icon: <BlueSyncIcon title="Updating" />,
+  },
+  [HealthState.UPGRADABLE]: {
+    priority: 4,
+    health: HealthState.UPGRADABLE,
+    icon: <BlueArrowCircleUpIcon title="Upgrade available" />,
   },
   [HealthState.WARNING]: {
     priority: 4,
