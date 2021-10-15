@@ -32,7 +32,8 @@ const WDS_PORT = 8080;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({
-  filename: 'app-bundle.[contenthash].css',
+  filename:
+    NODE_ENV === 'production' ? 'app-bundle.[contenthash].css' : 'app-bundle.[name].[hash].css',
   // We follow BEM naming to scope CSS.
   // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
   ignoreOrder: true,
