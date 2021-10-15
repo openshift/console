@@ -147,9 +147,7 @@ $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
 
 .monitoring-dashboards__options {
   display: flex;
-  float: right;
   margin-right: -20px;
-  margin-top: -20px;
 }
 
 .monitoring-dashboards__panel {
@@ -280,7 +278,7 @@ $monitoring-line-height: 18px;
     align-items: baseline;
     display: flex;
     justify-content: space-between;
-    @media (min-width: $grid-float-breakpoint) {
+    @media (min-width: $pf-global--breakpoint--md) {
       padding-top: 26px;
     }
   }

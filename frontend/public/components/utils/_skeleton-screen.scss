@@ -91,7 +91,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
   display: flex;
   flex: 1;
   height: 100%;
-  margin: 0 ($grid-gutter-width / 2);
+  margin: 0 $pf-global-gutter;
   position: relative;
 }
 
@@ -162,7 +162,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 }
 
 .skeleton-detail-view {
-  padding: $grid-gutter-width;
+  padding: $pf-global-gutter--md;
   height: 100%;
   width: 100%;
 }

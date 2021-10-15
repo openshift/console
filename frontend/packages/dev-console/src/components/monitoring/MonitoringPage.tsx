@@ -18,8 +18,6 @@ import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
 import MonitoringEvents from './events/MonitoringEvents';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 
-import './MonitoringPage.scss';
-
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
 type MonitoringPageProps = {

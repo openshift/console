@@ -4,20 +4,24 @@
   height: 100%;
   flex: 1;
   flex-direction: column;
-  @media (min-width: $grid-float-breakpoint) {
-    margin-left: $grid-gutter-width;
-    margin-right: $grid-gutter-width;
-    padding-top: $grid-gutter-width;
+  @media (min-width: $pf-global--breakpoint--md) {
+    margin-left: $pf-global-gutter;
+    margin-right: $pf-global-gutter;
+    padding-top: $pf-global-gutter--md;
+  }
+  @media (min-width: $pf-global--breakpoint--xl) {
+    margin-left: $pf-global-gutter--md;
+    margin-right: $pf-global-gutter--md;
   }
 }
 
 .yaml-editor__buttons {
   background: white;
   border-top: 1px solid #ddd;
-  padding: 20px ($grid-gutter-width / 2);
+  padding: 20px $pf-global-gutter;
   margin-top: auto;
   z-index: 10;
-  @media (min-width: $grid-float-breakpoint) {
+  @media (min-width: $pf-global--breakpoint--md) {
     padding-left: 0;
     padding-right: 0;
   }
@@ -25,9 +29,9 @@
 
 .yaml-editor__header {
   border-bottom: 1px solid #ddd;
-  padding: 20px 15px;
-  @media(min-width: $screen-sm-min) {
-    padding-left: 31px; // left alignment with namespace selector text
+  padding: 20px $pf-global-gutter;
+  @media(min-width: $pf-global--breakpoint--xl) {
+    padding-left: $pf-global-gutter--md;
   }
 }
 
