@@ -11,9 +11,9 @@ const testOperator = {
 };
 
 const testOperand: TestOperandProps = {
-  name: 'CodeReady Workspaces Cluster',
+  name: 'CodeReady Workspaces instance Specification',
   kind: 'CheCluster',
-  tabName: 'CodeReady Workspaces Cluster',
+  tabName: 'CodeReady Workspaces instance Specification',
   exampleName: `codeready-workspaces`,
 };
 
