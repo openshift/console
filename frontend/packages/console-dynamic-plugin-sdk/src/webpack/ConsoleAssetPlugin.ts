@@ -18,14 +18,14 @@ export const loadSchema = (relativePath: string) => {
     path.resolve(pkgDir, 'generated/schema'),
   ].find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
 
-  return require(path.resolve(schemaPath, relativePath)).default;
+  return require(path.resolve(schemaPath, relativePath));
 };
 
 export const validateExtensionsFileSchema = (
   ext: ConsoleExtensionsJSON,
   description = extensionsFile,
 ) => {
-  const schema = loadSchema('console-extensions');
+  const schema = loadSchema('console-extensions.json');
   return new SchemaValidator(description).validate(schema, ext);
 };
 
