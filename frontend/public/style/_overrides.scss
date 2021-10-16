@@ -283,8 +283,9 @@ form.pf-c-form {
     --pf-c-table--cell--PaddingRight: 0 !important;
     --pf-c-table--cell--PaddingBottom: var(--pf-global--spacer--sm) !important;
     --pf-c-table--cell--PaddingLeft: 0 !important;
-    --pf-c-table--cell--Width: 44px !important;
-    --pf-c-table--cell--MaxWidth: 44px !important;
+    // Can not use PF vars --pf-c-table--cell--Width & --pf-c-table--cell--MaxWidth, because its selector specificity will be overridden by the default PF rule .pf-c-table tr > *:empty {width: auto}; for our empty <th>
+    max-width: 44px !important;
+    width: 44px !important;
   }
 
   table-layout: fixed;
