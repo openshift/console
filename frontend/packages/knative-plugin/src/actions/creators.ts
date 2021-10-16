@@ -6,8 +6,9 @@ import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants';
 import {
   setSinkPubsubModal,
   deleteRevisionModal,
-  setSinkSourceModal,
   setTrafficDistributionModal,
+  editSinkUriModal,
+  setSinkSourceModal,
 } from '../components/modals';
 import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLauncher';
 import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
@@ -127,5 +128,26 @@ export const deleteRevision = (model: K8sKind, revision: K8sResourceKind): Actio
     name: revision.metadata.name,
     namespace: revision.metadata.namespace,
     verb: 'delete',
+  },
+});
+
+export const editSinkUri = (
+  model: K8sKind,
+  source: K8sResourceKind,
+  resources: K8sResourceKind[],
+): Action => ({
+  id: 'edit-sink-uri',
+  label: i18next.t('knative-plugin~Edit URI'),
+  cta: () =>
+    editSinkUriModal({
+      source,
+      eventSourceList: resources,
+    }),
+  accessReview: {
+    group: model.apiGroup,
+    resource: model.plural,
+    name: resources[0].metadata.name,
+    namespace: resources[0].metadata.namespace,
+    verb: 'update',
   },
 });

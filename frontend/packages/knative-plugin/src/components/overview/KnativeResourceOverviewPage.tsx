@@ -10,7 +10,6 @@ import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/topology/src/actions';
 import TopologySideBarContent from '@console/topology/src/components/side-bar/TopologySideBarContent';
-import { editSinkUri } from '../../actions/edit-sink-uri';
 import {
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
@@ -27,7 +26,6 @@ import {
   isEventingPubSubLinkKind,
 } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
-import SinkUriResourcesTab from './SinkUriResourcesTab';
 
 interface StateProps {
   kindsInFlight?: boolean;
@@ -49,7 +47,7 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   const eventSourceModelrefs: string[] = getDynamicEventSourcesModelRefs();
 
   if (item?.obj?.kind === URI_KIND) {
-    return <SinkUriResourcesTab itemData={item} menuAction={editSinkUri} />;
+    return <TopologySideBarContent element={element} />;
   }
   if (kindsInFlight) {
     return !knativeModels ? null : <LoadingBox />;

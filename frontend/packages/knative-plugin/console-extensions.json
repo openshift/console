@@ -982,6 +982,16 @@
     "type": "console.action/provider",
     "properties": {
       "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useUriActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
       "provider": { "$codeRef": "actions.useEventSourcesActionsProviderForTopology" }
     },
     "flags": {
@@ -1006,6 +1016,16 @@
       "section": {
         "$codeRef": "knativeTopologySidebar.getKnativeSidepanelSinkSection"
       }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "knativeTopologySidebar.getKnativeURISinkResourceLink" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]

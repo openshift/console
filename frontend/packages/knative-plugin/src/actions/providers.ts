@@ -15,14 +15,15 @@ import {
   TYPE_EVENT_SOURCE_KAFKA,
   TYPE_EVENT_PUB_SUB,
   TYPE_KNATIVE_SERVICE,
+  TYPE_SINK_URI,
 } from '../topology/const';
-import { NodeType } from '../topology/topology-types';
 import { AddBrokerAction } from './add-broker';
 import { AddChannelAction } from './add-channel';
 import { AddEventSourceAction } from './add-event-source';
 import {
   addSubscriptionChannel,
   addTriggerBroker,
+  editSinkUri,
   moveSinkPubsub,
   deleteRevision,
   editKnativeService,
@@ -124,7 +125,7 @@ export const useAddToApplicationActionProvider = (element: GraphElement) => {
 
 export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
   const result = React.useMemo(() => {
-    if (!resource) return [[], true, undefined];
+    if (!resource || resource.kind === 'URI') return [[], true, undefined];
     const kindObj = modelFor(referenceFor(resource));
     return [
       [moveSinkSource(kindObj, resource), ...getCommonResourceActions(kindObj, resource)],
@@ -136,13 +137,11 @@ export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
 };
 
 export const useEventSourcesActionsProviderForTopology = (element: GraphElement) => {
-  const nodeType = element.getType();
   const resource = React.useMemo(() => {
-    if (nodeType !== NodeType.EventSource && nodeType !== NodeType.EventSourceKafka)
-      return undefined;
+    if (![TYPE_EVENT_SOURCE, TYPE_EVENT_SOURCE_KAFKA].includes(element.getType())) return undefined;
 
     return element.getData().resources.obj;
-  }, [nodeType, element]);
+  }, [element]);
   const result = useEventSourcesActionsProvider(resource);
   return result;
 };
@@ -172,6 +171,25 @@ export const useModifyApplicationActionProvider = (element: GraphElement) => {
 
   return React.useMemo(() => {
     if (!actions) return [[], true, undefined];
+    return [actions, true, undefined];
+  }, [actions]);
+};
+
+export const useUriActionsProvider = (element: GraphElement) => {
+  const actions = React.useMemo(() => {
+    if (element.getType() !== TYPE_SINK_URI) return undefined;
+    const { obj, eventSources } = element.getData().resources;
+    if (eventSources.length > 0) {
+      const sourceModel = modelFor(referenceFor(eventSources[0]));
+      return [editSinkUri(sourceModel, obj, eventSources)];
+    }
+    return null;
+  }, [element]);
+
+  return React.useMemo(() => {
+    if (!actions) {
+      return [[], true, undefined];
+    }
     return [actions, true, undefined];
   }, [actions]);
 };
