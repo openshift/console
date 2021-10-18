@@ -3,17 +3,18 @@ import { coFetch } from '@console/internal/co-fetch';
 import { pluginManifestFile } from '../constants';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { resolveURL } from '../utils/url';
-// eslint-disable-next-line
-const schema = require('../../generated/schema/plugin-manifest.json');
 
 export const validatePluginManifestSchema = async (
   manifest: ConsolePluginManifestJSON,
   manifestURL: string,
 ) => {
+  // eslint-disable-next-line
+  const schema = require('../../generated/schema/plugin-manifest.cjs').default;
+
   // Use dynamic import to avoid pulling ajv dependency tree into main vendors chunk
-  const SchemaValidator = await import(
-    '@console/dynamic-plugin-sdk/src/validation/SchemaValidator'
-  ).then((m) => m.SchemaValidator);
+  const SchemaValidator = await import('../validation/SchemaValidator').then(
+    (m) => m.SchemaValidator,
+  );
 
   const validator = new SchemaValidator(manifestURL);
   validator.validate(schema, manifest, 'manifest');
