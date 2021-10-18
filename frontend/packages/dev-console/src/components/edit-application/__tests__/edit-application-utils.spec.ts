@@ -7,7 +7,7 @@ import {
   getFlowType,
   ApplicationFlowType,
   getInitialValues,
-  getExternalImagelValues,
+  getExternalImageValues,
   getServerlessData,
   getKsvcRouteData,
   getFileUploadValues,
@@ -78,7 +78,7 @@ describe('Edit Application Utils', () => {
   });
 
   it('getExternalImagelValues should return image name in search term', () => {
-    const externalImageData = getExternalImagelValues(knativeService);
+    const externalImageData = getExternalImageValues(knativeService);
     expect(_.get(externalImageData, 'searchTerm')).toEqual('openshift/hello-openshift');
   });
 

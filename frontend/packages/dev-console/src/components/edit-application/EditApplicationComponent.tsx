@@ -28,7 +28,10 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
 
   const getAssociatedResource = (resourcesObj: WatchK8sResultsObject<K8sResourceKind[]>) => {
     const associatedRes = resourcesObj.data?.find(
-      (ob) => ob.metadata.name === appName || ob.metadata.name === appLabel,
+      (ob) =>
+        ob.metadata.name === appName ||
+        ob.metadata.name === appLabel ||
+        ob.metadata.labels['app.kubernetes.io/name'] === appLabel,
     );
     return {
       ...resourcesObj,

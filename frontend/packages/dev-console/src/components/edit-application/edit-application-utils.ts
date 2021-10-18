@@ -495,7 +495,7 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
   };
 };
 
-export const getExternalImagelValues = (appResource: K8sResourceKind) => {
+export const getExternalImageValues = (appResource: K8sResourceKind) => {
   const name = _.get(appResource, 'spec.template.spec.containers[0].image', null);
   if (_.isEmpty(appResource) || !name) {
     return deployImageInitialValues;
@@ -562,7 +562,7 @@ export const getInitialValues = (
     ) {
       if (editAppResourceData?.kind === ServiceModel.kind) {
         internalImageValues = {};
-        externalImageValues = getExternalImagelValues(editAppResourceData);
+        externalImageValues = getExternalImageValues(editAppResourceData);
       }
     }
   } else if (isFromJarUpload(getBuildSourceType(buildConfigData))) {
