@@ -45,6 +45,7 @@ import {
 } from './utils';
 import { ReplicaSetsPage } from './replicaset';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
@@ -139,6 +140,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
           : t('public~Not configured')}
       </DetailsItem>
       <RuntimeClass obj={deployment} />
+      <PodDisruptionBudgetField obj={deployment} />
     </dl>
   );
 };
@@ -146,6 +148,7 @@ DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
 const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }) => {
   const { t } = useTranslation();
+
   return (
     <>
       <div className="co-m-pane__body">

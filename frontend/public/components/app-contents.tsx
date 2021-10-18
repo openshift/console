@@ -682,7 +682,16 @@ const AppContents: React.FC<{}> = () => {
           )
         }
       />
-
+      <LazyRoute
+        path="/k8s/ns/:ns/:resourceRef/form"
+        exact
+        kind="PodDisruptionBudgets"
+        loader={() =>
+          import(
+            '@console/app/src/components/pdb/PDBFormPage' /* webpackChunkName: "PDBFormPage" */
+          ).then((m) => m.PDBFormPage)
+        }
+      />
       <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
       <Route path="/k8s/cluster/:plural/~new" exact component={CreateResource} />
       <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />

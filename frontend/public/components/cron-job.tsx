@@ -41,6 +41,7 @@ import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
 import { PodList, getFilters as getPodFilters } from './pod';
 import { JobsList } from './job';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 const { common } = Kebab.factory;
 export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
@@ -144,6 +145,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
                   ? t('public~{{count}} second', { count: job.spec.activeDeadlineSeconds })
                   : t('public~Not configured')}
               </DetailsItem>
+              <PodDisruptionBudgetField obj={cronjob} />
             </dl>
           </div>
         </div>

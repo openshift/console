@@ -18,7 +18,6 @@ import {
   ResourceLink,
   resourcePath,
   LabelList,
-  ResourceKebab,
   OwnerReferences,
   Timestamp,
   PodsComponent,
@@ -27,72 +26,14 @@ import {
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import {
-  DeploymentConfigModel,
-  DeploymentModel,
-  ReplicaSetModel,
-  ReplicationControllerModel,
-} from '../models';
-import { getOwnerNameByKind } from '@console/shared/src';
-import { rollbackModal } from './modals';
+  LazyActionMenu,
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+} from '@console/shared/src';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
-const { ModifyCount, AddStorage, common } = Kebab.factory;
-
-const INACTIVE_STATUSES = ['New', 'Pending', 'Running'];
-
-const RollbackAction = (kind, obj) => {
-  if (kind.kind === ReplicationControllerModel.kind) {
-    const deploymentPhase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
-    const dcName = getOwnerNameByKind(obj, DeploymentConfigModel);
-    return {
-      // t('public~Rollback')
-      labelKey: 'public~Rollback',
-      // disabled if the DC is not Active
-      isDisabled: INACTIVE_STATUSES.includes(deploymentPhase),
-      // Hidden if RC is active or does not belong to a deployment config
-      hidden: !deploymentPhase || obj?.status?.replicas > 0 || !dcName,
-      callback: () =>
-        rollbackModal({
-          resourceKind: kind,
-          resource: obj,
-        }),
-      accessReview: {
-        group: DeploymentConfigModel.apiGroup,
-        resource: DeploymentConfigModel.plural,
-        name: dcName,
-        namespace: obj?.metadata?.namespace,
-        verb: 'update',
-      },
-    };
-  }
-
-  const deploymentName = getOwnerNameByKind(obj, DeploymentModel);
-  return {
-    // t('public~Rollback')
-    labelKey: 'public~Rollback',
-    // Hidden if RS is active or does not belong to a deployment
-    hidden: obj?.status?.replicas > 0 || !deploymentName,
-    callback: () =>
-      rollbackModal({
-        resourceKind: kind,
-        resource: obj,
-      }),
-    accessReview: {
-      group: DeploymentModel.apiGroup,
-      resource: DeploymentModel.plural,
-      name: deploymentName,
-      namespace: obj?.metadata?.namespace,
-      verb: 'patch',
-    },
-  };
-};
-
-export const replicaSetMenuActions = [
-  RollbackAction,
-  ModifyCount,
-  AddStorage,
-  ...Kebab.getExtensionsActionsForKind(ReplicaSetModel),
-  ...common,
-];
+import { referenceFor, referenceForModel } from '../module/k8s';
 
 const Details = ({ obj: replicaSet }) => {
   const revision = _.get(replicaSet, [
@@ -120,6 +61,7 @@ const Details = ({ obj: replicaSet }) => {
             <dl className="co-m-pane__details">
               <ResourcePodCount resource={replicaSet} />
               <RuntimeClass obj={replicaSet} />
+              <PodDisruptionBudgetField obj={replicaSet} />
             </dl>
           </div>
         </div>
@@ -155,19 +97,35 @@ const environmentComponent = (props) => (
 const ReplicaSetPods = (props) => <PodsComponent {...props} showNodes />;
 
 const { details, editYaml, pods, envEditor, events } = navFactory;
-const ReplicaSetsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={replicaSetMenuActions}
-    pages={[
-      details(Details),
-      editYaml(),
-      pods(ReplicaSetPods),
-      envEditor(environmentComponent),
-      events(ResourceEventStream),
-    ]}
-  />
-);
+const ReplicaSetsDetailsPage = (props) => {
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
+  return (
+    <DetailsPage
+      {...props}
+      customActionMenu={customActionMenu}
+      pages={[
+        details(Details),
+        editYaml(),
+        pods(ReplicaSetPods),
+        envEditor(environmentComponent),
+        events(ResourceEventStream),
+      ]}
+    />
+  );
+};
 
 const kind = 'ReplicaSet';
 
@@ -183,6 +141,8 @@ const tableColumnClasses = [
 
 const ReplicaSetTableRow = ({ obj }) => {
   const { t } = useTranslation();
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -215,7 +175,7 @@ const ReplicaSetTableRow = ({ obj }) => {
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

@@ -113,7 +113,7 @@ import { useListPageFilter } from './factory/ListPage/filter-hook';
 import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
-
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
 const showMetrics =
@@ -758,6 +758,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
         </DetailsItem>
       )}
       <RuntimeClass obj={pod} path="spec.runtimeClassName" />
+      <PodDisruptionBudgetField obj={pod} />
     </dl>
   );
 };

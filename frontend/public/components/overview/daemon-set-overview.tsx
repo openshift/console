@@ -9,6 +9,7 @@ import { KebabAction, ResourceSummary, StatusBox } from '../utils';
 import { menuActions, DaemonSetDetailsList } from '../daemon-set';
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
+import { DaemonSetKind } from '../../module/k8s';
 
 const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({ item: { obj } }) => {
   const { namespace } = obj.metadata;
@@ -61,7 +62,7 @@ export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({ item, cus
 };
 
 type DaemonSetOverviewDetailsProps = {
-  item: OverviewItem;
+  item: OverviewItem<DaemonSetKind>;
 };
 
 type DaemonSetOverviewProps = {

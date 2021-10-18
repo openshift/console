@@ -31,7 +31,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     id: 'add-hpa',
     label: i18next.t('console-app~Add HorizontalPodAutoscaler'),
     cta: { href: hpaRoute(obj, kind) },
-    insertBefore: 'add-storage',
+    insertBefore: 'add-pdb',
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
@@ -43,7 +43,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     id: 'edit-hpa',
     label: i18next.t('console-app~Edit HorizontalPodAutoscaler'),
     cta: { href: hpaRoute(obj, kind) },
-    insertBefore: 'add-storage',
+    insertBefore: 'add-pdb',
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
@@ -58,7 +58,7 @@ export const HpaActionFactory: ResourceActionFactory = {
   ) => ({
     id: 'delete-hpa',
     label: i18next.t('console-app~Remove HorizontalPodAutoscaler'),
-    insertBefore: 'edit-resource-limits',
+    insertBefore: 'delete-pdb',
     cta: () => {
       deleteHPAModal({
         workload: obj,

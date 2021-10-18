@@ -259,6 +259,10 @@
   "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.": "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.",
   "Add page actions": "Add page actions",
   "Provides a list of all available actions on the Add page in the Developer perspective. The IDs must be added below customization addPage disabledActions to hide these actions.": "Provides a list of all available actions on the Add page in the Developer perspective. The IDs must be added below customization addPage disabledActions to hide these actions.",
+  "Set maxUnavaliable to 0": "Set maxUnavaliable to 0",
+  "An eviction is allowed if at most 0 pods selected by \"selector\" are unavailable after the eviction.": "An eviction is allowed if at most 0 pods selected by \"selector\" are unavailable after the eviction.",
+  "Set minAvailable to 25%": "Set minAvailable to 25%",
+  "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.": "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.",
   "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
   "Cannot be longer than {{characterCount}} characters.": "Cannot be longer than {{characterCount}} characters.",
   "Required": "Required"

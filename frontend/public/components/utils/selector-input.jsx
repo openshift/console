@@ -23,6 +23,11 @@ export class SelectorInput extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(prevProps.tags, this.props.tags)) {
+      this.setState({ tags: this.props.tags });
+    }
+  }
   static arrayify(obj) {
     return _.map(obj, (v, k) => (v ? `${k}=${v}` : k));
   }
@@ -36,6 +41,25 @@ export class SelectorInput extends React.Component {
     return result;
   }
 
+  static arrayObjectsToArrayStrings(obj) {
+    return _.map(obj, (v) => `${v.key} ${v.operator.toLowerCase()} (${v.values.join(',')})`);
+  }
+
+  static arrayToArrayOfObjects(arr) {
+    const result = [];
+    for (const item of arr) {
+      if (item.includes('(')) {
+        const [key, operator, values] = item.split(' ');
+        result.push({
+          key,
+          operator: _.capitalize(operator),
+          // eslint-disable-next-line no-useless-escape
+          values: values.replace(/[\(\)]/g, '').split(','),
+        });
+      }
+    }
+    return result;
+  }
   focus() {
     this.ref_ && this.ref_.focus();
   }
