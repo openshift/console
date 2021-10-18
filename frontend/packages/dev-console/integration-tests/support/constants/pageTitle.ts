@@ -12,7 +12,7 @@ export const pageTitle = {
   Add: 'Add',
   GitOPs: 'GitOps',
   Observe: 'Observe',
-  BuildConfigs: 'Build Configs',
+  BuildConfigs: 'BuildConfigs',
   Search: 'Search',
   HelmReleases: 'Helm Releases',
   Project: 'Project Details',

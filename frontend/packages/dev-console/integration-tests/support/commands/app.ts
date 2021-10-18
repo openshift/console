@@ -50,6 +50,7 @@ Cypress.Commands.add(
   'selectByAutoCompleteDropDownText',
   (selector: string, dropdownText: string) => {
     cy.get(selector).click();
+    cy.get('li').should('be.visible');
     cy.byLegacyTestID('dropdown-text-filter').type(dropdownText);
     cy.get(`[id*="${dropdownText}-link"]`).click({ force: true });
   },
@@ -122,7 +123,13 @@ Cypress.Commands.add('checkErrors', () => {
             });
         }
       });
-      cy.byLegacyTestID('reset-button').click({ force: true });
+      cy.get('body').then(($body3) => {
+        if ($body3.find('[data-test-id="cancel-button"]').length !== 0) {
+          cy.byLegacyTestID('cancel-button').click({ force: true });
+        } else {
+          cy.byLegacyTestID('reset-button').click({ force: true });
+        }
+      });
     } else if ($body.find('[data-test-id="modal-cancel-action"]').length !== 0) {
       cy.get('body').then(($body2) => {
         if ($body2.find(formPO.errorAlert).length !== 0) {

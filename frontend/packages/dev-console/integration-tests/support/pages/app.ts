@@ -4,7 +4,7 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
-import { devNavigationMenuPO, formPO, gitPO, yamlPO } from '../pageObjects';
+import { devNavigationMenuPO, formPO, gitPO, yamlPO, actionsMenu } from '../pageObjects';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -276,5 +276,42 @@ export const yamlEditor = {
 
   clickSave: () => {
     cy.byTestID('save-changes').click();
+  },
+};
+
+export const actionsDropdownMenu = {
+  verifyActionsMenu: () => cy.get(actionsMenu).should('be.visible'),
+  clickActionMenu: () => cy.get(actionsMenu).click(),
+  selectAction: (action: string) => {
+    actionsDropdownMenu.clickActionMenu();
+    cy.byTestActionID(action).click();
+  },
+};
+
+export const tableFunctions = {
+  verifyColumnValue: (columnName: string, columnValue: string) => {
+    cy.get('tr th').each(($el, index) => {
+      if ($el.text().includes(columnName) === true) {
+        cy.get('tbody tr')
+          .find('td')
+          .eq(index)
+          .then(($field) => {
+            expect($field.text()).toEqual(columnValue);
+          });
+      }
+    });
+  },
+
+  selectKebabMenu: (name: string) => {
+    cy.get('div[role="grid"]').within(() => {
+      cy.get('tr td:nth-child(1)').each(($el, index) => {
+        if ($el.text().includes(name) === true) {
+          cy.get('tbody tr')
+            .eq(index)
+            .find('[data-test-id="kebab-button"]')
+            .click({ force: true });
+        }
+      });
+    });
   },
 };

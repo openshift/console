@@ -1,13 +1,13 @@
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
-import { devNavigationMenu, addOptions } from '../../constants';
-import { formPO, topologyPO } from '../../pageObjects';
+import { devNavigationMenu, addOptions, resourceTypes } from '../../constants';
+import { topologyPO, formPO } from '../../pageObjects';
 import { addPage, gitPage } from '../add-flow';
 import { createForm, navigateTo } from '../app';
 
 export const createGitWorkload = (
   gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
   componentName: string = 'nodejs-ex-git',
-  resourceType: string = 'Deployment',
+  resourceType: string | resourceTypes = 'Deployment',
   appName: string = 'nodejs-ex-git-app',
   isPipelineSelected: boolean = false,
 ) => {

@@ -1,6 +1,9 @@
-import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
+import {
+  nodeActions,
+  resources,
+  sideBarTabs,
+} from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { app } from '@console/dev-console/integration-tests/support/pages';
 import { topologyActions } from './topology-actions-page';
 
 export const topologySidePane = {
@@ -19,12 +22,11 @@ export const topologySidePane = {
       .should('be.visible'),
   verifyActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).should('be.visible'),
   clickActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).click(),
-  selectTab: (tabName: string) => {
-    app.waitForLoad();
-    cy.get(topologyPO.sidePane.tabName)
+  selectTab: (tabName: string | sideBarTabs) =>
+    cy
+      .get(topologyPO.sidePane.tabName)
       .contains(tabName)
-      .click();
-  },
+      .click(),
   verifySection: (sectionTitle: string) => {
     cy.get(topologyPO.sidePane.dialog).within(() => {
       cy.get(topologyPO.sidePane.sectionTitle)
@@ -125,31 +127,31 @@ export const topologySidePane = {
     cy.byTestActionID('Delete Application').should('be.visible');
     cy.get(topologyPO.addToApplicationInContext).should('be.visible');
   },
-  selectResource: (opt: resources | string, namespace: string) => {
+  selectResource: (opt: resources | string, namespace: string, workloadName: string) => {
     switch (opt) {
       case 'Deployments':
       case resources.Deployments: {
-        cy.get(`[href="/k8s/ns/${namespace}/deployments/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/deployments/${workloadName}"]`).click();
         break;
       }
       case 'Build Configs':
       case resources.BuildConfigs: {
-        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/${workloadName}"]`).click();
         break;
       }
       case 'Services':
       case resources.Services: {
-        cy.get(`[href="/k8s/ns/${namespace}/services/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/services/${workloadName}"]`).click();
         break;
       }
       case 'Image Streams':
       case resources.ImageStreams: {
-        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/${workloadName}"]`).click();
         break;
       }
       case 'Routes':
       case resources.Routes: {
-        cy.get(`[href="/k8s/ns/${namespace}/routes/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/routes/${workloadName}"]`).click();
         break;
       }
       default: {

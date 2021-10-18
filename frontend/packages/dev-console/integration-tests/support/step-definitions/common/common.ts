@@ -41,6 +41,10 @@ Given('user is at Monitoring page', () => {
   navigateTo(devNavigationMenu.Observe);
 });
 
+Given('user is at Builds page', () => {
+  navigateTo(devNavigationMenu.Builds);
+});
+
 Given('user is at namespace {string}', (projectName: string) => {
   Cypress.env('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(projectName);

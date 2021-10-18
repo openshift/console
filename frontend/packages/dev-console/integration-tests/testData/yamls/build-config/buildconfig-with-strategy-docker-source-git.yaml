@@ -10,8 +10,7 @@ metadata:
     app.kubernetes.io/component: flask-app
     app.kubernetes.io/instance: flask-app
     app.kubernetes.io/name: flask-app
-  name: flask-app-12
-  namespace: aut-form-edit-build-config
+  name: flask-app-git
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null

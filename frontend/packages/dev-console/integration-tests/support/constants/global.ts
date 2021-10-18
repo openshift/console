@@ -37,11 +37,3 @@ export enum authenticationType {
   BasicAuthentication = 'Basic Authentication',
   SSHKey = 'SSHKey',
 }
-
-export enum resources {
-  Deployments = 'Deployments',
-  BuildConfigs = 'Build Configs',
-  Services = 'Services',
-  ImageStreams = 'Image Streams',
-  Routes = 'Routes',
-}

@@ -5,8 +5,7 @@ metadata:
     openshift.io/build-config.name: fruits-app-1
     openshift.io/build.number: '1'
     openshift.io/build.pod-name: fruits-app-1-1-build
-  name: fruits-app-1-1
-  namespace: aut-form-edit-build-config
+  name: flask-app-source
   ownerReferences:
     - apiVersion: build.openshift.io/v1
       kind: BuildConfig
