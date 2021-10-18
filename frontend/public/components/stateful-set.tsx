@@ -9,7 +9,7 @@ import {
   LazyActionMenu,
   usePrometheusGate,
 } from '@console/shared';
-import { K8sResourceKind, referenceForModel, referenceFor } from '../module/k8s';
+import { DeploymentKind, K8sResourceKind, referenceForModel, referenceFor } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
 
@@ -28,6 +28,7 @@ import {
 } from './utils';
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 const { AddStorage, common, ModifyCount } = Kebab.factory;
 export const menuActions: KebabAction[] = [
@@ -66,6 +67,7 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
               <RuntimeClass obj={ss} />
             </ResourceSummary>
           </div>
+          <PodDisruptionBudgetField obj={ss} />
         </div>
       </div>
       <div className="co-m-pane__body">
@@ -160,7 +162,7 @@ type EnvironmentTabProps = {
 };
 
 type StatefulSetDetailsProps = {
-  obj: K8sResourceKind;
+  obj: DeploymentKind;
 };
 
 type StatefulSetsPageProps = {

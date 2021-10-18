@@ -1094,3 +1094,60 @@ export type ConsolePluginKind = K8sResourceCommon & {
     };
   };
 };
+
+export type K8sPodControllerKind = {
+  spec?: {
+    replicas?: number;
+    template?: PodTemplate;
+    jobTemplate?: {
+      spec?: {
+        template: PodTemplate;
+      };
+    };
+  };
+} & K8sResourceCommon;
+
+export type DaemonSetKind = {
+  spec: {
+    minReadySeconds?: number;
+    revisionHistoryLimit?: number;
+    selector: Selector;
+    template: PodTemplate;
+    updateStrategy?: DeploymentUpdateStrategy;
+  };
+  status?: {
+    collisionCount?: number;
+    conditions?: DeploymentCondition[];
+    currentNumberScheduled: number;
+    desiredNumberScheduled: number;
+    numberAvailable?: number;
+    numberMisscheduled: number;
+    numberReady: number;
+    numberUnavailable: number;
+    observedGeneration: number;
+    updatedNumberScheduled: number;
+  };
+} & K8sResourceCommon;
+
+/**
+ * Not a real resource kind. A shared resource kind between resources that control pods.
+ * eg. Deployment, Statefulset, ReplicaSet, etc..
+ */
+export type ReplicationControllerKind = {
+  spec?: {
+    minReadySeconds?: number;
+    replicas?: number;
+    selector: Selector;
+    template: PodTemplate;
+  };
+  status?: {
+    availableReplicas?: number;
+    conditions?: DeploymentCondition[];
+    fullyLabeledReplicas?: number;
+    observedGeneratio?: number;
+    readyReplicas?: number;
+    replicas: number;
+  };
+} & K8sResourceCommon;
+
+export type ReplicaSetKind = {} & ReplicationControllerKind;

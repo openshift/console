@@ -2,6 +2,7 @@ import { TFunction } from 'i18next';
 import { Map as ImmutableMap } from 'immutable';
 import YAML from 'js-yaml';
 import * as _ from 'lodash';
+import { PodDisruptionBudgetModel } from '@console/app/src/models';
 import { AddAction, isAddAction } from '@console/dynamic-plugin-sdk';
 import { FirehoseResult } from '@console/internal/components/utils';
 import * as denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
@@ -346,6 +347,27 @@ const defaultSamples = (t: TFunction) =>
             });
           },
           targetResource: getTargetResource(ConsoleOperatorConfigModel),
+        },
+      ],
+    )
+    .setIn(
+      [referenceForModel(PodDisruptionBudgetModel)],
+      [
+        {
+          title: t('console-shared~Set maxUnavaliable to 0'),
+          description: t(
+            'console-shared~An eviction is allowed if at most 0 pods selected by "selector" are unavailable after the eviction.',
+          ),
+          id: 'pdb-max-unavailable',
+          targetResource: getTargetResource(PodDisruptionBudgetModel),
+        },
+        {
+          title: t('console-shared~Set minAvailable to 25%'),
+          description: t(
+            'console-shared~An eviction is allowed if at least 25% of pods selected by "selector" will still be available after the eviction.',
+          ),
+          id: 'pdb-min-available',
+          targetResource: getTargetResource(PodDisruptionBudgetModel),
         },
       ],
     );

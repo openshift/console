@@ -3,12 +3,12 @@ import { GraphElement } from '@patternfly/react-topology';
 import { DaemonSetDetailsList } from '@console/internal/components/daemon-set';
 import { ResourceSummary, StatusBox } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { DaemonSetKind } from '@console/internal/module/k8s';
 import { PodRing, usePodsWatcher } from '@console/shared';
 import { getResource } from '../../utils';
 
 type DaemonSetOverviewDetailsProps = {
-  ds: K8sResourceKind;
+  ds: DaemonSetKind;
 };
 
 const DaemonSetSideBarDetails: React.FC<DaemonSetOverviewDetailsProps> = ({ ds }) => {
@@ -38,7 +38,7 @@ const DaemonSetSideBarDetails: React.FC<DaemonSetOverviewDetailsProps> = ({ ds }
 };
 
 export const getDaemonSetSideBarDetails = (element: GraphElement) => {
-  const resource = getResource(element);
+  const resource = getResource<DaemonSetKind>(element);
   if (!resource || resource.kind !== DaemonSetModel.kind) return undefined;
   return <DaemonSetSideBarDetails ds={resource} />;
 };

@@ -47,6 +47,7 @@ import {
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -204,6 +205,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
         {triggers}
       </DetailsItem>
       <RuntimeClass obj={dc} />
+      <PodDisruptionBudgetField obj={dc} />
     </dl>
   );
 };

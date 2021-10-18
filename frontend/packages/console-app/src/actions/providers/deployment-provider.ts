@@ -1,19 +1,22 @@
 import * as React from 'react';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import { DeploymentKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { CommonActionFactory } from '../creators/common-factory';
 import { DeploymentActionFactory } from '../creators/deployment-factory';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
 import { useHPAActions } from '../creators/hpa-factory';
+import { usePDBActions } from '../creators/pdb-factory';
 
-export const useDeploymentActionsProvider = (resource: K8sResourceKind) => {
+export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [hpaActions, relatedHPAs] = useHPAActions(kindObj, resource);
+  const [pdbActions] = usePDBActions(kindObj, resource);
 
   const deploymentActions = React.useMemo(
     () => [
       ...(relatedHPAs?.length === 0 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
       ...hpaActions,
+      ...pdbActions,
       getHealthChecksAction(kindObj, resource),
       DeploymentActionFactory.PauseRollout(kindObj, resource),
       CommonActionFactory.AddStorage(kindObj, resource),
@@ -24,20 +27,22 @@ export const useDeploymentActionsProvider = (resource: K8sResourceKind) => {
       DeploymentActionFactory.EditDeployment(kindObj, resource),
       CommonActionFactory.Delete(kindObj, resource),
     ],
-    [hpaActions, kindObj, relatedHPAs, resource],
+    [hpaActions, pdbActions, kindObj, relatedHPAs, resource],
   );
 
   return [deploymentActions, !inFlight, undefined];
 };
 
-export const useDeploymentConfigActionsProvider = (resource: K8sResourceKind) => {
+export const useDeploymentConfigActionsProvider = (resource: DeploymentKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [hpaActions, relatedHPAs] = useHPAActions(kindObj, resource);
+  const [pdbActions] = usePDBActions(kindObj, resource);
 
   const deploymentConfigActions = React.useMemo(
     () => [
       ...(relatedHPAs?.length === 0 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
       ...hpaActions,
+      ...pdbActions,
       getHealthChecksAction(kindObj, resource),
       DeploymentActionFactory.StartDCRollout(kindObj, resource),
       DeploymentActionFactory.PauseRollout(kindObj, resource),
@@ -48,7 +53,7 @@ export const useDeploymentConfigActionsProvider = (resource: K8sResourceKind) =>
       DeploymentActionFactory.EditDeployment(kindObj, resource),
       CommonActionFactory.Delete(kindObj, resource),
     ],
-    [hpaActions, kindObj, relatedHPAs, resource],
+    [hpaActions, pdbActions, kindObj, relatedHPAs, resource],
   );
 
   return [deploymentConfigActions, !inFlight, undefined];

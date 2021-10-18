@@ -2,13 +2,17 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import { Status } from '@console/shared';
+import {
+  Status,
+  LazyActionMenu,
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+} from '@console/shared';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
-import { replicaSetMenuActions } from './replicaset';
 import {
   ContainerTable,
   navFactory,
@@ -19,49 +23,14 @@ import {
   Kebab,
   ResourceLink,
   resourcePath,
-  ResourceKebab,
-  asAccessReview,
   OwnerReferences,
   Timestamp,
   PodsComponent,
   RuntimeClass,
 } from './utils';
-
+import { referenceFor, referenceForModel } from '../module/k8s';
 import { VolumesTable } from './volumes-table';
-import { confirmModal } from './modals';
-import { k8sPatch } from '../module/k8s';
-
-const CancelAction = (kind, obj) => ({
-  // t('public~Cancel rollout')
-  labelKey: 'public~Cancel rollout',
-  hidden: !_.includes(
-    ['New', 'Pending', 'Running'],
-    obj?.metadata?.annotations?.['openshift.io/deployment.phase'],
-  ),
-  callback: () =>
-    confirmModal({
-      title: i18next.t('public~Cancel rollout'),
-      message: i18next.t('public~Are you sure you want to cancel this rollout?'),
-      btnText: i18next.t('public~Yes, cancel'),
-      cancelText: i18next.t("public~No, don't cancel"),
-      executeFn: () =>
-        k8sPatch(kind, obj, [
-          {
-            op: 'add',
-            path: '/metadata/annotations/openshift.io~1deployment.cancelled',
-            value: 'true',
-          },
-          {
-            op: 'add',
-            path: '/metadata/annotations/openshift.io~1deployment.status-reason',
-            value: 'cancelled by the user',
-          },
-        ]),
-    }),
-  accessReview: asAccessReview(kind, obj, 'patch'),
-});
-
-const menuActions = [CancelAction, ...replicaSetMenuActions];
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 const EnvironmentPage = (props) => (
   <AsyncComponent
@@ -129,6 +98,7 @@ export const ReplicationControllersDetailsPage = (props) => {
                 )}
                 <ResourcePodCount resource={replicationController} />
                 <RuntimeClass obj={replicationController} />
+                <PodDisruptionBudgetField obj={replicationController} />
               </dl>
             </div>
           </div>
@@ -144,13 +114,27 @@ export const ReplicationControllersDetailsPage = (props) => {
     );
   };
 
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
       getResourceStatus={(resource) =>
         resource?.metadata?.annotations?.['openshift.io/deployment.phase'] || null
       }
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={[
         details(Details),
         editYaml(),
@@ -177,6 +161,8 @@ const tableColumnClasses = [
 const ReplicationControllerTableRow = ({ obj }) => {
   const { t } = useTranslation();
   const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
 
   return (
     <>
@@ -210,7 +196,7 @@ const ReplicationControllerTableRow = ({ obj }) => {
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
