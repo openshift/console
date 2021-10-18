@@ -381,7 +381,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       value={nameInputText}
                       onChange={(value: string) => {
                         setNameInputText(value);
-                        value ? debounceApplyNameFilter(value) : applyNameFilter(value);
+                        debounceApplyNameFilter(value);
                       }}
                       placeholder={nameFilterPlaceholder ?? t('public~Search by name...')}
                     />
