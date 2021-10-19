@@ -50,7 +50,6 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
   const { t } = useTranslation();
   const { apiGroup, apiVersion, kind } = getGVK(obj.spec.kind);
   const systemKind = referenceForGroupVersionKind(apiGroup)(apiVersion)(kind);
-  const providerName = obj?.spec?.name;
   const systemName = obj?.metadata?.name;
   const { normalizedMetrics } = customData;
 
@@ -60,7 +59,7 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ODFSystemLink kind={systemKind} systemName={systemName} providerName={providerName} />
+        <ODFSystemLink kind={systemKind} systemName={systemName} providerName={systemName} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         <Status
