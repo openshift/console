@@ -17,6 +17,7 @@ approvers:
   - christianvogt
   - invincibleJai
   - jerolimov
+  - karthikjeeyar
   - rohitkrai03
 labels:
   - component/pipelines
