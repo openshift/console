@@ -74,6 +74,10 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
   const { t } = useTranslation();
   const [template] = templateItem.variants;
 
+  const gpusCount = template?.objects?.[0].spec?.template?.spec?.domain?.devices?.gpus?.length;
+  const hostDevicesCount =
+    template?.objects?.[0].spec?.template?.spec?.domain?.devices?.hostDevices?.length;
+
   const osName = getTemplateOperatingSystems(templateItem.variants)?.[0]?.name;
   const provider = getTemplateProvider(t, template, true);
   const storage = getTemplateSizeRequirementInBytes(template, sourceStatus);
@@ -107,12 +111,17 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
         <StackItem>
           <Stack>
             <StackItem>
-              <b>{t('kubevirt-plugin~Project ')}</b>
-              {template.metadata.namespace}
+              <b>{t('kubevirt-plugin~Project')}</b> {template.metadata.namespace}
             </StackItem>
             <StackItem>
-              <b>{t('kubevirt-plugin~Storage ')}</b>
-              {storageLable}
+              <b>{t('kubevirt-plugin~Storage')}</b> {storageLable}
+            </StackItem>
+            <StackItem>
+              <b>{t('kubevirt-plugin~Hardware Devices')}</b>{' '}
+              {!gpusCount && !hostDevicesCount && t('kubevirt-plugin~None')}
+              {gpusCount && t('kubevirt-plugin~{{gpusCount}} GPU', { gpusCount })}{' '}
+              {hostDevicesCount &&
+                t('kubevirt-plugin~{{hostDevicesCount}} Host device', { hostDevicesCount })}
             </StackItem>
           </Stack>
         </StackItem>
