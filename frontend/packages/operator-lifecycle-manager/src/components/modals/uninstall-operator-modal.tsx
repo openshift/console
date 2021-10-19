@@ -202,8 +202,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       <p>
         <Trans t={t} ns="olm">
           Operator <strong>{{ name }}</strong> will be removed from <strong>{{ namespace }}</strong>
-          . If your Operator configured off-cluster resources, these will continue to run and
-          require manual cleanup.
+          . Click on the checkbox below to also remove all Operands associated with this Operator.
+          If your Operator configured off-cluster resources, these will continue to run and require
+          manual cleanup.
         </Trans>
       </p>
       {removePlugins && (
@@ -222,9 +223,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     </>
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const operandsSection = operandsLoadedErrorMessage ? (
     <OperandsLoadedErrorAlert operandsLoadedErrorMessage={operandsLoadedErrorMessage} />
   ) : (
@@ -277,7 +275,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         {!isSubmitFinished ? (
           <>
             {instructions}
-            {/* TODO: uncomment when BZ 2012120 is fixed.  operandsSection */}
+            {operandsSection}
           </>
         ) : (
           results

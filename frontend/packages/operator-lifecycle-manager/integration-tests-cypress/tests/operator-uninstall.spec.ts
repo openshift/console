@@ -11,9 +11,9 @@ const testOperator = {
 };
 
 const testOperand: TestOperandProps = {
-  name: 'CodeReady Workspaces Cluster',
+  name: 'CodeReady Workspaces instance Specification',
   kind: 'CheCluster',
-  tabName: 'CodeReady Workspaces Cluster',
+  tabName: 'CodeReady Workspaces instance Specification',
   exampleName: `codeready-workspaces`,
   deleteURL: '/api/kubernetes/apis/org.eclipse.che/*/namespaces/*/checlusters/codeready-workspaces',
 };
@@ -35,7 +35,7 @@ const uninstallAndVerify = () => {
   cy.resourceShouldBeDeleted(testName, testOperand.kind, testOperand.exampleName);
 };
 
-xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
