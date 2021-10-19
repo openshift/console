@@ -69,8 +69,7 @@ import {
   toListObj,
 } from './selectors';
 import { EnvDisk, NameValuePairs, SOURCES } from './types';
-import { VMEnvironmentFooter } from './vm-environment-footer';
-
+import VMEnvironmentFooter from './VMEnvironmentFooter';
 import './vm-environment.scss';
 
 export const VMEnvironmentFirehose: React.FC<VMTabProps> = ({
