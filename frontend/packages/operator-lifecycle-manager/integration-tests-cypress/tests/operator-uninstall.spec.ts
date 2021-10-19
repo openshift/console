@@ -107,21 +107,15 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   });
 
   it(`attempts to uninstall the Operator and delete all Operand Instances, shows 'Error Deleting Operands' alert`, () => {
-    // invalidate the request so operator doesn't get uninstalled
-    cy.intercept('DELETE', '/api/kubernetes/apis/operators.coreos.com/*/namespaces/**', (req) => {
-      req.url = `${req.url}-foobar`;
-    }).as('deleteOperatorSubscriptionAndCSV');
-
     // invalidate the request so operand instance doesn't get deleted and error alert is shown
     cy.intercept('DELETE', testOperand.deleteURL, (req) => {
-      req.url = `${req.url}-foobar`;
+      req.destroy();
     }).as('deleteOperandInstance');
 
     cy.log('attempt uninstall the Operator and all Operand Instances');
     operator.uninstallModal.open(testOperator.name, testOperator.installedNamespace);
     operator.uninstallModal.checkDeleteAllOperands();
     modal.submit(true);
-    cy.wait('@deleteOperatorSubscriptionAndCSV');
     cy.wait('@deleteOperandInstance');
     alertExists('Error uninstalling Operator');
     alertExists('Error deleting Operands');

@@ -170,6 +170,7 @@
   "Message from Operator developer": "Message from Operator developer",
   "Operand instances": "Operand instances",
   "Delete all operand instances for this operator": "Delete all operand instances for this operator",
+  "Operator could not be uninstalled due to error deleting its Operands": "Operator could not be uninstalled due to error deleting its Operands",
   "Uninstall Operator?": "Uninstall Operator?",
   "Cannot load Operands": "Cannot load Operands",
   "There was an error loading operands for this operator. Operands will need to be deleted manually.": "There was an error loading operands for this operator. Operands will need to be deleted manually.",

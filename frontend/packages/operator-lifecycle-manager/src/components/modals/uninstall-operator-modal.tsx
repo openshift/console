@@ -136,27 +136,38 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
       : null;
 
-    const operatorUninstallPromises = [
-      k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
-      ...(subscription?.status?.installedCSV
-        ? [
-            k8sKill(
-              ClusterServiceVersionModel,
-              {
-                metadata: {
-                  name: subscription.status.installedCSV,
-                  namespace: subscription.metadata.namespace,
+    const handleOperatorUninstallPromises = () => {
+      const operatorUninstallPromises = [
+        k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
+        ...(subscription?.status?.installedCSV
+          ? [
+              k8sKill(
+                ClusterServiceVersionModel,
+                {
+                  metadata: {
+                    name: subscription.status.installedCSV,
+                    namespace: subscription.metadata.namespace,
+                  },
                 },
-              },
-              {},
-              deleteOptions,
-            ),
-          ]
-        : []),
-      ...(removePlugins
-        ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch])]
-        : []),
-    ];
+                {},
+                deleteOptions,
+              ),
+            ]
+          : []),
+        ...(removePlugins
+          ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch])]
+          : []),
+      ];
+
+      handleOperatorUninstallPromise(Promise.all(operatorUninstallPromises))
+        .then(() => {
+          setOperatorUninstallFinished(true);
+        })
+        .catch(() => {
+          setOperatorUninstallFinished(true);
+        });
+    };
+
     const operandDeletionPromises = deleteOperands
       ? operands.map((operand: K8sResourceCommon) => {
           const model = modelFor(referenceFor(operand));
@@ -175,18 +186,16 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         setOperandDeletionErrors(operandErrors);
         setOperandsDeleteInProgress(false);
         setOperandsDeleteFinished(true);
+        if (operandErrors.length === 0) {
+          handleOperatorUninstallPromises();
+        } else {
+          setOperatorUninstallFinished(true);
+        }
       });
     } else {
       setOperandsDeleteFinished(true);
+      handleOperatorUninstallPromises();
     }
-
-    handleOperatorUninstallPromise(Promise.all(operatorUninstallPromises))
-      .then(() => {
-        setOperatorUninstallFinished(true);
-      })
-      .catch(() => {
-        setOperatorUninstallFinished(true);
-      });
   };
 
   const name = csv?.spec?.displayName || subscription?.spec?.name;
@@ -258,7 +267,12 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const results = (
     <>
       <UninstallAlert
-        errorMessage={operatorUninstallErrorMessage}
+        errorMessage={
+          operatorUninstallErrorMessage ||
+          (operandDeletionErrors.length !== 0
+            ? t('olm~Operator could not be uninstalled due to error deleting its Operands')
+            : '')
+        }
         name={name}
         namespace={namespace}
       />
