@@ -58,7 +58,7 @@ export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => 
   const actions = React.useMemo(() => {
     let commonActions = [...Kebab.factory.common];
     if (
-      referenceForModel(NooBaaBucketClassModel).toLocaleUpperCase() ===
+      referenceForModel(NooBaaBucketClassModel).toLocaleLowerCase() ===
       props.match.params.resourceKind.toLocaleLowerCase()
     ) {
       const bucketClassActions = editBucketClass(t);
