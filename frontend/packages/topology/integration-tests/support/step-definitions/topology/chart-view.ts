@@ -108,7 +108,7 @@ When('user is at Topology page chart view', () => {
 });
 
 When('user clicks the filter by resource on top', () => {
-  cy.get(topologyPO.graph.filterByResource.filterByResourceDropDown)
+  cy.get(topologyPO.filterByResourceDropDown)
     .should('be.visible')
     .click();
 });

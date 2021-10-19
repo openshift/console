@@ -11,6 +11,10 @@ Feature: Topology chart area
         Scenario: Empty state of topology: T-06-TC01
              When user navigates to Topology page
              Then user sees Topology page with message "No resources found"
+              And user is able to see Start building your application, Add page links
+              And Display options dropdown, Filter by resource and Find by name fields are disabled
+              And Zoom in, Zoom out, Fit to Screen, Reset view, layout icons are disabled
+              And switch view is disabled
 
 
         @regression
@@ -33,7 +37,6 @@ Feature: Topology chart area
               And user has created a deployment config workload "nodejs-ex-git-2"
              When user navigates to Topology page
              Then user sees "nodejs-ex-git-1" and "nodejs-ex-git-2" workloads in topology chart area
-
 
 
         @regression @manual

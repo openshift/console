@@ -38,7 +38,12 @@ export const topologyPage = {
     cy.url().should('include', 'topology');
   },
   verifyTopologyGraphView: () => {
-    return cy.get(topologyPO.graph.emptyGraph);
+    // eslint-disable-next-line promise/catch-or-return
+    cy.url().then(($text) => {
+      $text.includes('graph')
+        ? cy.log(`user is at topology graph view`)
+        : cy.get(topologyPO.switcher).click({ force: true });
+    });
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
@@ -69,7 +74,7 @@ export const topologyPage = {
   verifyExpandDisabled: () =>
     cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).should('be.disabled'),
   verifyExpandOptionsDisabled: () =>
-    cy.get(topologyPO.graph.displayOptions.applicationGroupingsDisabled).should('be.visible'),
+    cy.get(topologyPO.graph.displayOptions.applicationGroupings).should('be.disabled'),
   uncheckExpandToggle: () => {
     cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).click({ force: true });
   },
@@ -130,13 +135,13 @@ export const topologyPage = {
   verifyHelmReleaseSidePaneTabs: () => {
     cy.get(topologyPO.sidePane.tabName)
       .eq(0)
-      .should('contain.text', sideBarTabs.details);
+      .should('contain.text', sideBarTabs.Details);
     cy.get(topologyPO.sidePane.tabName)
       .eq(1)
-      .should('contain.text', sideBarTabs.resources);
+      .should('contain.text', sideBarTabs.Resources);
     cy.get(topologyPO.sidePane.tabs)
       .eq(2)
-      .should('contain.text', sideBarTabs.releaseNotes);
+      .should('contain.text', sideBarTabs.ReleaseNotes);
   },
   getAppNode: (appName: string) => {
     return cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A');

@@ -58,3 +58,10 @@ export enum addToApplicationGroupings {
   EventSource = 'Event Source',
   Channel = 'Channel',
 }
+
+export enum sideBarTabs {
+  Details = 'Details',
+  Resources = 'Resources',
+  ReleaseNotes = 'Release notes',
+  Observe = 'Observe',
+}

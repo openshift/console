@@ -30,6 +30,7 @@ Feature: Workload Groupings in Topology
         Scenario: Uncheck the Expand: T-16-TC03
             Given user is at Topology page
              When user clicks on the Display dropdown
+              And user checks the Connectivity Mode
               And user unchecks the Expand
              Then user will see that the Expand options are disabled
 

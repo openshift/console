@@ -34,7 +34,7 @@ Given(
 );
 
 When('user clicks on Monitoring tab', () => {
-  topologySidePane.selectTab(sideBarTabs.observe);
+  topologySidePane.selectTab(sideBarTabs.Observe);
 });
 
 When('user selects {string} from Context Menu', (menuOption: string) => {
@@ -137,7 +137,7 @@ Then('user will be taken to Dashboard tab on the Monitoring page', () => {
 Then('user wont see Monitoring tab', () => {
   topologySidePane.verify();
   cy.get(topologyPO.sidePane.tabName)
-    .contains(sideBarTabs.observe)
+    .contains(sideBarTabs.Observe)
     .should('not.be.visible');
 });
 

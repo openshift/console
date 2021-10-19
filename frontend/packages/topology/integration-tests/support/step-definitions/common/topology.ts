@@ -7,12 +7,14 @@ import {
 } from '@console/dev-console/integration-tests/support/constants/global';
 import {
   createGitWorkload,
+  gitPage,
   topologyHelper,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
   perspective,
   projectNameSpace,
   navigateTo,
+  createForm,
 } from '@console/dev-console/integration-tests/support/pages/app';
 import { verifyAndInstallKnativeOperator } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
@@ -149,4 +151,45 @@ Then('user will see workload disappeared from topology', () => {
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();
+});
+
+Given('user is at Topology Graph view', () => {
+  topologyPage.verifyTopologyGraphView();
+});
+
+When('user clicks Start building your application', () => {
+  cy.get(topologyPO.emptyView.startBuildingYourApplicationLink).click();
+});
+
+When('user enters {string} builder image in Quick Search bar', (searchItem: string) => {
+  cy.get(topologyPO.quickSearch).type(searchItem);
+});
+
+When('user clicks Create Application on Quick Search Dialog', () => {
+  cy.get('.pf-c-spinner__tail-ball').should('not.exist');
+  cy.get('ul[aria-label="Quick search list"] li')
+    .contains('Builder Images', { timeout: 60000 })
+    .click();
+  cy.get('button')
+    .contains('Create Application')
+    .click();
+});
+
+When(
+  'user enters Git Repo URL as {string} in Create Source-to-Image Application',
+  (gitUrl: string) => {
+    cy.byLegacyTestID('git-form-input-url').type(gitUrl);
+  },
+);
+
+When('user clicks Create button on Create Source-to-Image Application page', () => {
+  createForm.clickCreate();
+});
+
+When('user enters Application Name as {string}', (appName: string) => {
+  gitPage.enterAppName(appName);
+});
+
+When('user enters Name as {string}', (name: string) => {
+  gitPage.enterWorkloadName(name);
 });
