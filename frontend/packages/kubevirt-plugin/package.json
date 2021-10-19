@@ -67,7 +67,8 @@
       "topology": "src/topology/topology-plugin.ts",
       "kubevirtFlags": "src/flags",
       "topologySidebar": "src/topology/vm-tab-sections.tsx",
-      "actions": "src/actions/provider.ts"
+      "actions": "src/actions/provider.ts",
+      "HardwareDevicesPage": "src/components/hardware-devices/Page/HardwareDevicesPage.tsx"
     }
   }
 }
