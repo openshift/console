@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { K8sKind } from '@console/dynamic-plugin-sdk/src';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared/src';
 import {
   VM_DETAIL_CONSOLES_HREF,
   VM_DETAIL_DETAILS_HREF,
@@ -19,7 +22,6 @@ import { getResource } from '../../utils';
 import VMIDetailsPageInfoMessage from '../info-messages/VMIDetailsPageInfoMessage';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
-import { vmiMenuActionsCreator } from './menu-actions';
 import VMConsoleDetailsPage from './vm-console/VMConsoleDetailsPage';
 import { VMDashboard } from './vm-dashboard';
 import { VMDetailsFirehose } from './vm-details';
@@ -84,6 +86,20 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
     getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
   ];
 
+  const actionMenu = (kindObjData: K8sKind, obj: K8sResourceKind) => {
+    const resourceKind = referenceForModel(kindObjData);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
@@ -91,7 +107,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineInstanceModel)}
       kindObj={VirtualMachineInstanceModel}
-      menuActions={vmiMenuActionsCreator}
+      customActionMenu={actionMenu}
       pages={pages}
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}
