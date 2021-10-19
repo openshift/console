@@ -2,16 +2,18 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared';
 import { Resources, RouteData } from '../import-types';
-import AdvancedRouteOptions from './AdvancedRouteOptions';
+import AdvancedRouteOptions from '../route/AdvancedRouteOptions';
+import PortInputField from '../route/PortInputField';
 
-interface RouteCheckboxProps {
+interface RouteSectionProps {
   route: RouteData;
   resources: Resources;
 }
 
-const RouteCheckbox: React.FC<RouteCheckboxProps> = ({ route, resources }) => {
+const RouteSection: React.FC<RouteSectionProps> = ({ route, resources }) => {
   const { t } = useTranslation();
-  const { disable, create } = route;
+  const { disable, create, defaultUnknownPort } = route;
+
   return (
     <>
       <CheckboxField
@@ -20,9 +22,10 @@ const RouteCheckbox: React.FC<RouteCheckboxProps> = ({ route, resources }) => {
         helpText={t('devconsole~Exposes your Application at a public URL')}
         isDisabled={disable}
       />
+      {create && <PortInputField defaultPort={defaultUnknownPort} />}
       <AdvancedRouteOptions canCreateRoute={create} resources={resources} />
     </>
   );
 };
 
-export default RouteCheckbox;
+export default RouteSection;

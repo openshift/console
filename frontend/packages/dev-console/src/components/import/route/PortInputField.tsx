@@ -1,74 +1,41 @@
 import * as React from 'react';
-import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/react-core';
-import { useField, useFormikContext, FormikValues } from 'formik';
+import { SelectVariant } from '@patternfly/react-core';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useFormikValidationFix, getFieldId } from '@console/shared';
+import { SelectInputField, SelectInputOption } from '@console/shared';
+import { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
 
-interface RouteInputFieldProps {
-  name: string;
-  label: string;
-  options: string[];
-  placeholderText: string;
-  helpText: string;
+interface PortInputFieldProps {
+  defaultPort: number;
 }
 
-const PortInputField: React.FC<RouteInputFieldProps> = ({
-  name,
-  label,
-  options,
-  placeholderText,
-  helpText,
-}) => {
-  const [field, { touched, error }] = useField<string>(name);
-  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const fieldId = getFieldId(name, 'select-input');
-  const isValid = !(touched && error);
-  const errorMessage = !isValid ? error : '';
-
+const PortInputField: React.FC<PortInputFieldProps> = ({ defaultPort }) => {
   const { t } = useTranslation();
-
-  useFormikValidationFix(field.value);
-
-  const onToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const onSelect = (_event, selection: string) => {
-    setFieldValue(name, selection);
-    setFieldTouched(name);
-    onToggle();
-  };
-
-  const onClearSelection = () => {
-    setFieldValue(name, '');
-    setFieldTouched(name);
-  };
+  const {
+    values: {
+      image: { ports },
+    },
+  } = useFormikContext<DeployImageFormData | GitImportFormData | UploadJarFormData>();
+  const portOptions: SelectInputOption[] = ports.map((port) => ({
+    value: port.containerPort.toString(),
+    disabled: false,
+  }));
+  const placeholderPort = ports[0]?.containerPort || defaultPort;
 
   return (
-    <FormGroup
-      fieldId={fieldId}
-      validated={isValid ? 'default' : 'error'}
-      label={label}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-    >
-      <Select
-        variant={SelectVariant.typeahead}
-        onToggle={onToggle}
-        onSelect={onSelect}
-        onClear={onClearSelection}
-        isOpen={isOpen}
-        selections={field.value}
-        placeholderText={placeholderText}
-        isCreatable
-        noResultsFoundText={t('devconsole~No results found')}
-      >
-        {options.map((val) => (
-          <SelectOption value={val} key={val} />
-        ))}
-      </Select>
-    </FormGroup>
+    <SelectInputField
+      data-test-id="target-port-field"
+      name="route.unknownTargetPort"
+      label={t('devconsole~Target port')}
+      ariaLabel={t('devconsole~Target port')}
+      placeholderText={placeholderPort.toString()}
+      helpText={t('devconsole~Target port for traffic.')}
+      options={portOptions}
+      variant={SelectVariant.typeahead}
+      isInputValuePersisted
+      noResultsFoundText={t('devconsole~No results found')}
+      toggleOnSelection
+    />
   );
 };
 

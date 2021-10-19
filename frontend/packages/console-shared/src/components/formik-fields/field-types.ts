@@ -1,4 +1,9 @@
-import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
+import {
+  ValidatedOptions,
+  TextInputTypes,
+  gridItemSpanValueShape,
+  SelectVariant,
+} from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
@@ -159,8 +164,13 @@ export interface SelectInputOption {
 }
 
 export interface SelectInputFieldProps extends FieldProps {
+  ariaLabel?: string;
   options: SelectInputOption[];
+  variant?: SelectVariant;
   placeholderText?: React.ReactNode;
   isCreatable?: boolean;
   hasOnCreateOption?: boolean;
+  isInputValuePersisted?: boolean;
+  noResultsFoundText?: string;
+  toggleOnSelection?: boolean;
 }
