@@ -18,6 +18,8 @@ export * from './V1DiskTarget';
 export * from './V1EmptyDiskSource';
 export * from './V1EphemeralVolumeSource';
 export * from './V1FloppyTarget';
+export * from './V1GPU';
+export * from './V1HostDevice';
 export * from './V1HostDisk';
 export * from './V1HotplugVolumeSource';
 export * from './V1HotplugVolumeStatus';
