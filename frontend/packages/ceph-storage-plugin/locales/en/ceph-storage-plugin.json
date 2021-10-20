@@ -154,6 +154,7 @@
   "Advanced Subscription": "Advanced Subscription",
   "Advanced": "Advanced",
   "Deployment type": "Deployment type",
+  "A default StorageClass is needed for deployment.": "A default StorageClass is needed for deployment.",
   "Storage platform": "Storage platform",
   "Select a storage platform you wish to connect": "Select a storage platform you wish to connect",
   "Select external system from list": "Select external system from list",
