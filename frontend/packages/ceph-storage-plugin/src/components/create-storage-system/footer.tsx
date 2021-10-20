@@ -45,14 +45,14 @@ import { createClusterKmsResources } from '../kms-config/utils';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../features';
 
 const validateBackingStorageStep = (backingStorage, sc) => {
-  const { type, externalStorage, deployment } = backingStorage;
+  const { type, externalStorage, isValidSC } = backingStorage;
   switch (type) {
     case BackingStorageType.EXISTING:
-      return !!sc.name || deployment === DeploymentType.MCG;
+      return !!sc.name && isValidSC;
     case BackingStorageType.EXTERNAL:
-      return !!externalStorage;
+      return !!externalStorage && isValidSC;
     case BackingStorageType.LOCAL_DEVICES:
-      return true;
+      return isValidSC;
     default:
       return false;
   }
