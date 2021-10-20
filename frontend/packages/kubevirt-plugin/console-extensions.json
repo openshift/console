@@ -634,5 +634,31 @@
         "$codeRef": "actions.useVmActionsProvider"
       }
     }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "hardwaredevices",
+      "section": "compute",
+      "name": "%kubevirt-plugin~Hardware Devices%",
+      "insertBefore": "baremetalhosts",
+      "href": "/hardwaredevices",
+      "prefixNamespaced": false
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/hardwaredevices"],
+      "component": {
+        "$codeRef": "HardwareDevicesPage.HardwareDevicesPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]
