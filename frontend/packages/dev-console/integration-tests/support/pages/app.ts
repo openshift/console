@@ -209,7 +209,7 @@ export const projectNameSpace = {
 
   selectProjectOrDoNothing: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
-    cy.byLegacyTestID('dropdown-text-filter').type(projectName);
+    cy.byTestID('dropdown-text-filter').type(projectName);
     cy.get('[role="listbox"]').then(($el) => {
       if ($el.find('li[role="option"]').length !== 0) {
         cy.get(`[id="${projectName}-link"]`).click();
