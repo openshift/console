@@ -110,6 +110,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
   const totalCapacityMetric = convertToBaseValue(obj?.status?.capacity?.storage);
   const totalCapcityHumanized = humanizeBinaryBytes(totalCapacityMetric);
   const usedCapacity = humanizeBinaryBytes(metrics);
+  const { t } = useTranslation();
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -132,7 +133,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
             title={obj.spec.volumeName}
           />
         ) : (
-          <div className="text-muted">No Persistent Volume</div>
+          <div className="text-muted">{t('public~No PersistentVolume')}</div>
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

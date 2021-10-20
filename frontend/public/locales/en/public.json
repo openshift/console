@@ -1176,6 +1176,8 @@
   "Show waiting pods with errors": "Show waiting pods with errors",
   "Waiting for the first build to run successfully. You may temporarily see \"ImagePullBackOff\" and \"ErrImagePull\" errors while waiting.": "Waiting for the first build to run successfully. You may temporarily see \"ImagePullBackOff\" and \"ErrImagePull\" errors while waiting.",
   "View all {{podSize}}": "View all {{podSize}}",
+  "Terminating": "Terminating",
+  "No PersistentVolume": "No PersistentVolume",
   "PersistentVolumeClaim details": "PersistentVolumeClaim details",
   "Label selector": "Label selector",
   "Requested capacity": "Requested capacity",
