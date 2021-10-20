@@ -1,4 +1,5 @@
 {
+  "Vulnerabilities": "安全漏洞",
   "Image Manifest Vulnerabilities details": "镜像清单安全漏洞",
   "{{total, number}} total": "{{total, number}} 总计",
   "Quay Security Scanner has detected {{total, number}} vulnerabilities.": "Quay Security Scanner 检测到 {{total, number}} 个漏洞。",
@@ -20,7 +21,6 @@
   "Security scan": "安全性扫描",
   "No vulnerabilities found": "未发现安全漏洞",
   "Severity": "严重性",
-  "Vulnerabilities": "安全漏洞",
   "Name": "名称",
   "Package": "软件包",
   "Current version": "当前版本",

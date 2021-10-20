@@ -55,10 +55,7 @@
   "URL": "URL",
   "Secret": "Secret",
   "No Secret": "没有 Secret",
-  "No data": "没有数据",
+  "Error moving event source kafka connector": "移动事件源 kafka 连接器时出错",
   "Cloud Service": "云服务",
-  "This resource represents service that exist outside your cluster": "此资源代表集群外存在的服务",
-  "Details": "详情",
-  "Resources": "资源",
-  "Error moving event source kafka connector": "移动事件源 kafka 连接器时出错"
+  "This resource represents service that exist outside your cluster": "此资源代表集群外存在的服务"
 }

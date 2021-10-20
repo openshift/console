@@ -1,4 +1,5 @@
 {
+  "Vulnerabilities": "취약점",
   "Image Manifest Vulnerabilities details": "이미지 매니페스트 취약점 정보",
   "{{total, number}} total": "총 {{total, number}}",
   "Quay Security Scanner has detected {{total, number}} vulnerabilities.": "Quay Security Scanner가 {{total, number}}개의 취약점을 감지했습니다.",
@@ -20,7 +21,6 @@
   "Security scan": "보안 스캔",
   "No vulnerabilities found": "취약점 없음",
   "Severity": "심각도",
-  "Vulnerabilities": "취약점",
   "Name": "이름",
   "Package": "패키지",
   "Current version": "현재 버전",

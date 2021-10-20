@@ -55,10 +55,7 @@
   "URL": "URL",
   "Secret": "シークレット",
   "No Secret": "シークレットなし",
-  "No data": "データなし",
+  "Error moving event source kafka connector": "イベントソースの kafka コネクターの移動に関するエラー",
   "Cloud Service": "クラウドサービス",
-  "This resource represents service that exist outside your cluster": "このリソースは、クラスター外にあるサービスを表します。",
-  "Details": "詳細",
-  "Resources": "リソース",
-  "Error moving event source kafka connector": "イベントソースの kafka コネクターの移動に関するエラー"
+  "This resource represents service that exist outside your cluster": "このリソースは、クラスター外にあるサービスを表します。"
 }
