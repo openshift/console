@@ -5,6 +5,7 @@ import {
   ChartThemeColor,
 } from '@patternfly/react-charts';
 import classNames from 'classnames';
+import i18next from 'i18next';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
@@ -28,7 +29,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   title,
   ariaChartLinkLabel,
   ariaChartTitle,
-  usedLabel = 'used',
+  usedLabel = i18next.t('public~used'),
   // Don't sort, Uses previously declared props
   label = data ? humanize(data.y).string : 'No Data',
   secondaryTitle = usedLabel,
