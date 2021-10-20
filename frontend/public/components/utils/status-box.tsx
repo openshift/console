@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { TimeoutError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
@@ -16,28 +16,37 @@ export const LoadError: React.FC<LoadErrorProps> = ({
   className,
   message,
   canRetry = true,
-}) => (
-  <Box className={className}>
-    <div className="pf-u-text-align-center cos-error-title">
-      Error Loading {label}
-      {_.isString(message) ? `: ${message}` : ''}
-    </div>
-    {canRetry && (
-      <div className="pf-u-text-align-center">
-        Please{' '}
-        <Button
-          type="button"
-          onClick={window.location.reload.bind(window.location)}
-          variant="link"
-          isInline
-        >
-          try again
-        </Button>
-        .
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Box className={className}>
+      <div className="pf-u-text-align-center cos-error-title">
+        {_.isString(message)
+          ? t('public~Error Loading {{label}}: {{message}}', {
+              label,
+              message,
+            })
+          : t('public~Error Loading {{label}}', { label })}
       </div>
-    )}
-  </Box>
-);
+      {canRetry && (
+        <div className="pf-u-text-align-center">
+          <Trans ns="public">
+            Please{' '}
+            <Button
+              type="button"
+              onClick={window.location.reload.bind(window.location)}
+              variant="link"
+              isInline
+            >
+              try again
+            </Button>
+            .
+          </Trans>
+        </div>
+      )}
+    </Box>
+  );
+};
 LoadError.displayName = 'LoadError';
 
 export const Loading: React.FC<LoadingProps> = ({ className }) => (
