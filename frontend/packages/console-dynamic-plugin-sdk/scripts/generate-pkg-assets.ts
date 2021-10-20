@@ -16,7 +16,7 @@ const writePackageManifest = (manifest: readPkg.PackageJson, outDir: string) => 
   console.log(chalk.green(relativePath(outPath)));
 };
 
-const copyFiles = (files: Record<any, string>) => {
+const copyFiles = (files: Record<string, string>) => {
   Object.entries(files).forEach(([src, dest]) => {
     fs.copySync(resolvePath(src), resolvePath(dest), { recursive: true });
     console.log(chalk.green(relativePath(dest)));

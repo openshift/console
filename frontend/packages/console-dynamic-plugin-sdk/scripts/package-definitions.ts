@@ -8,7 +8,7 @@ type GeneratedPackage = {
   /** Package manifest. Note: `version` is updated via the publish script. */
   manifest: readPkg.PackageJson;
   /** Additional files to copy to the package output directory. */
-  filesToCopy: Record<any, string>;
+  filesToCopy: Record<string, string>;
 };
 
 type MissingDependencyCallback = (name: string) => void;
