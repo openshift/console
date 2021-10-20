@@ -12,7 +12,7 @@ import {
   Status,
   getMachinePhase,
 } from '@console/shared';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
+import { RowNameLabelFilter, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
@@ -38,6 +38,7 @@ import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
+import { tableFilters } from './factory/table-filters';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
@@ -264,6 +265,13 @@ export const MachineList: React.FC<MachineListProps> = (props) => {
   );
 };
 
+const filters: RowNameLabelFilter[] = [
+  {
+    type: 'name',
+    filter: tableFilters.machine,
+  },
+];
+
 export const MachinePage: React.FC<MachinePageProps> = ({
   selector,
   namespace,
@@ -281,7 +289,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
     namespace,
   });
 
-  const [data, filteredData, onFilterChange] = useListPageFilter(machines);
+  const [data, filteredData, onFilterChange] = useListPageFilter(machines, filters);
 
   return (
     <>

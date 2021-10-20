@@ -421,6 +421,14 @@ type RowFilterBase<R> = {
   defaultSelected?: string[];
 };
 
+export type RowNameLabelFilter<R = any> = {
+  type: 'name' | 'label';
+  filter: (input: FilterValue, obj: R) => boolean;
+  filterGroupName?: string;
+  items?: RowFilterItem[];
+  defaultSelected?: string[];
+};
+
 export type RowMatchFilter<R = any> = RowFilterBase<R> & {
   isMatch: (obj: R, id: string) => boolean;
 };
@@ -429,7 +437,7 @@ export type RowReducerFilter<R = any> = RowFilterBase<R> & {
   reducer: (obj: R) => React.ReactText;
 };
 
-export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R>;
+export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R> | RowNameLabelFilter<R>;
 
 type FilterToolbarProps = {
   rowFilters?: RowFilter[];
