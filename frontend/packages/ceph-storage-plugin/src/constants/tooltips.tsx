@@ -4,7 +4,7 @@ import { Trans } from 'react-i18next';
 
 export const storageClassTooltip = (t: TFunction) =>
   t(
-    'ceph-storage-plugin~The infrastructure StorageClass used by OpenShift Container Storage to write its data and metadata.',
+    'ceph-storage-plugin~The StorageClass used by OpenShift Data Foundation to write its data and metadata.',
   );
 export const attachedDevicesStorageClassTooltip = (t: TFunction) =>
   t(
@@ -12,7 +12,7 @@ export const attachedDevicesStorageClassTooltip = (t: TFunction) =>
   );
 export const requestedCapacityTooltip = (t: TFunction) =>
   t(
-    'ceph-storage-plugin~The amount of capacity that would be dynamically allocated on the infrastructure StorageClass.',
+    'ceph-storage-plugin~The amount of capacity that would be dynamically allocated on the selected StorageClass.',
   );
 export const arbiterText = (t: TFunction) =>
   t(
