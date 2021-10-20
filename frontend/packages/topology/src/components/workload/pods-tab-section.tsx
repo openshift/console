@@ -13,7 +13,10 @@ import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
-const PodsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
+const PodsTabSection: React.FC<{ element: GraphElement; renderNull: () => null }> = ({
+  element,
+  renderNull,
+}) => {
   const [podAdapterExtension, podAdapterExtensionResolved] = useResolvedExtensions<PodAdapter>(
     isPodAdapter,
   );
@@ -45,9 +48,11 @@ const PodsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
         <PodsOverviewContent obj={podAdapter.resource} {...podsData} />
       )}
     </TopologySideBarTabSection>
-  ) : null;
+  ) : (
+    renderNull()
+  );
 };
 
-export const getPodsSideBarTabSection = (element: GraphElement) => {
-  return <PodsTabSection element={element} />;
+export const getPodsSideBarTabSection = (element: GraphElement, renderNull: () => null) => {
+  return <PodsTabSection element={element} renderNull={renderNull} />;
 };
