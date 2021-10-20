@@ -74,7 +74,7 @@ describe('test vm template source image', () => {
     virtualization.templates.testSource(template.name, ADD_SOURCE);
   });
 
-  it('ID(CNV-5649) upload image and delete', () => {
+  xit('ID(CNV-5649) upload image and delete', () => {
     cy.exec(
       `test -f ${Cypress.env(
         'UPLOAD_IMG',
