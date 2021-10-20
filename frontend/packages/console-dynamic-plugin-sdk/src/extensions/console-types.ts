@@ -1,6 +1,7 @@
+import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { TableGridBreakpoint, OnSelect, SortByDirection, ICell } from '@patternfly/react-table';
-import { RouteComponentProps } from 'react-router';
+import { match, RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -405,6 +406,75 @@ export type ResourceLinkProps = {
 
 export type UseK8sModel = (groupVersionKind?: GroupVersionKind) => [K8sModel, boolean];
 export type UseK8sModels = () => [{ [key: string]: K8sModel }, boolean];
+
+export type KebabOptionsCreatorProps = (
+  kindObj: K8sModel,
+  data: K8sResourceCommon,
+  extraResources?: { [prop: string]: K8sResourceCommon | K8sResourceCommon[] },
+  customData?: any,
+) => KebabOption[];
+
+export type PageComponentProps = {
+  filters?: any;
+  selected?: any;
+  match?: any;
+  obj?: K8sResourceCommon;
+  params?: any;
+  customData?: any;
+  showTitle?: boolean;
+  fieldSelector?: string;
+};
+
+export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
+  component?: React.ComponentType<PageComponentProps & D>;
+  badge?: React.ReactNode;
+  pageData?: D;
+  nameKey?: string;
+};
+
+export type DetailsPageProps = {
+  match: match<{ ns?: string; name?: string; plural?: string }>;
+  title?: React.ReactNode;
+  titleFunc?: (obj: K8sResourceCommon) => React.ReactNode;
+  menuActions?: Function[] | KebabOptionsCreatorProps;
+  buttonActions?: any[];
+  customActionMenu?:
+    | React.ReactNode
+    | ((kindObj: K8sModel, obj: K8sResourceCommon) => React.ReactNode); // Renders a custom action menu.
+  pages?: Page[];
+  pagesFor?: (obj: K8sResourceCommon) => Page[];
+  kind: K8sResourceKindReference;
+  kindObj?: K8sModel;
+  label?: string;
+  name?: string;
+  namespace?: string;
+  resources?: FirehoseResource[];
+  breadcrumbsFor?: (obj: K8sResourceCommon) => { name: string; path: string }[];
+  customData?: any;
+  badge?: React.ReactNode;
+  icon?: React.ComponentType<{ obj: K8sResourceCommon }>;
+  getResourceStatus?: (resource: K8sResourceCommon) => string;
+  children?: React.ReactNode;
+  customKind?: string;
+};
+
+export type KebabOption = {
+  hidden?: boolean;
+  label?: React.ReactNode;
+  labelKey?: string;
+  labelKind?: { [key: string]: string | string[] };
+  href?: string;
+  callback?: () => any;
+  accessReview?: AccessReviewResourceAttributes;
+  isDisabled?: boolean;
+  tooltip?: string;
+  tooltipKey?: string;
+  // a `/` separated string where each segment denotes a new sub menu entry
+  // Eg. `Menu 1/Menu 2/Menu 3`
+  path?: string;
+  pathKey?: string;
+  icon?: React.ReactNode;
+};
 
 export type PerspectiveType = string;
 

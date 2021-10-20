@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
 import { getBadgeFromType } from '@console/shared';
@@ -15,6 +14,7 @@ import {
   useResolvedExtensions,
   ResourceTabPage as DynamicResourceTabPage,
   isResourceTabPage as isDynamicResourceTabPage,
+  DetailsPageProps,
 } from '@console/dynamic-plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -22,14 +22,10 @@ import {
   HorizontalNav,
   PageHeading,
   FirehoseResource,
-  KebabOptionsCreator,
-  Page,
   AsyncComponent,
   PageComponentProps,
 } from '../utils';
 import {
-  K8sResourceKindReference,
-  K8sResourceKind,
   K8sKind,
   referenceForModel,
   referenceFor,
@@ -171,7 +167,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     </>
   );
 }, ErrorBoundaryFallback);
-
+/* TODO: remove - moved to console-types.ts
 export type DetailsPageProps = {
   match: match<any>;
   title?: string | JSX.Element;
@@ -197,5 +193,5 @@ export type DetailsPageProps = {
   children?: React.ReactNode;
   customKind?: string;
 };
-
+*/
 DetailsPage.displayName = 'DetailsPage';

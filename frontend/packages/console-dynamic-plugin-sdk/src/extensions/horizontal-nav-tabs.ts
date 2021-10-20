@@ -1,17 +1,6 @@
 import { ExtensionK8sKindVersionModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
-import { K8sResourceCommon } from './console-types';
-
-export type PageComponentProps<R extends K8sResourceCommon = K8sResourceCommon> = {
-  filters?: any;
-  selected?: any;
-  match?: any;
-  obj?: R;
-  params?: any;
-  customData?: any;
-  showTitle?: boolean;
-  fieldSelector?: string;
-};
+import { PageComponentProps } from './console-types';
 
 export type HorizontalNavTab = ExtensionDeclaration<
   'console.tab/horizontalNav',

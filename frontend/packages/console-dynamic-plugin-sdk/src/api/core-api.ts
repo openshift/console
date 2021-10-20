@@ -22,6 +22,8 @@ import {
   UseK8sModel,
   UseK8sModels,
   UseActivePerspective,
+  DetailsPageProps,
+  KebabOptionsCreatorProps,
 } from '../extensions/console-types';
 import { K8sGet, K8sCreate, K8sUpdate, K8sPatch, K8sDelete, K8sList } from './k8s-types';
 
@@ -84,6 +86,10 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
   .useListPageFilter;
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
   .ResourceLink;
+
+export const DetailsPage: React.FC<DetailsPageProps> = require('@console/internal/components/factory/details').DetailsPage;
+export const KebabOptionsCreator: React.FC<KebabOptionsCreatorProps> = require('@console/internal/components/factory/details').KebabOptionsCreator;
+
 export const useK8sModel: UseK8sModel = require('@console/shared/src/hooks/useK8sModel')
   .useK8sModel;
 export const useK8sModels: UseK8sModels = require('@console/shared/src/hooks/useK8sModels')
