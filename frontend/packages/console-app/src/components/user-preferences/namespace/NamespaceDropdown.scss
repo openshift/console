@@ -1,0 +1,16 @@
+.co-user-preference__namespace-menu-toggle {
+  padding: var(--pf-global--spacer--form-element) var(--pf-global--spacer--sm)
+    var(--pf-global--spacer--form-element) var(--pf-global--spacer--sm) !important;
+  &::before,
+  &::after {
+    border-width: var(--pf-global--BorderWidth--sm) !important;
+  }
+  .pf-c-menu-toggle__text {
+    font-size: var(--pf-global--FontSize--md);
+  }
+}
+
+.co-user-preference__namespace-menu__last-viewed {
+  padding-top: 0 !important;
+  margin-bottom: 0 !important;
+}
