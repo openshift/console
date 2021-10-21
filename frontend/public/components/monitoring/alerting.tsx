@@ -1375,7 +1375,7 @@ const MonitoringListPage: React.FC<ListPageProps & {
             )}
             variant="warning"
           >
-            {silencesLoadError.toString()}
+            {silencesLoadError.json?.error || silencesLoadError.message}
           </PFAlert>
         )}
         <div className="row">
