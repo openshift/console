@@ -1216,6 +1216,7 @@
   "Access modes": "Access modes",
   "Volume mode": "Volume mode",
   "StorageClass": "StorageClass",
+  "No claim": "No claim",
   "PersistentVolume details": "PersistentVolume details",
   "Reclaim policy": "Reclaim policy",
   "PersistentVolumeClaim": "PersistentVolumeClaim",
