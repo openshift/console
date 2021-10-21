@@ -177,12 +177,21 @@ const handleReviewAndCreateNext = async (
   const { encryption, kms } = state.securityAndNetwork;
   const isRhcs: boolean = externalStorage === OCSServiceModel.kind;
   const isMCG: boolean = deployment === DeploymentType.MCG;
+  /*
+   * We can use this "error" variable to block execution of setActionFlags and history.push
+   * in case there is any error in "Review and create" step of any system.
+   */
+  const error: boolean = !state.isDefaultScPresent;
 
   try {
     if (isMCG) {
-      await labelOCSNamespace();
-      if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
-      await createMCGStorageCluster(encryption.advanced);
+      if (!state.isDefaultScPresent) {
+        handleError('No default StorageClass', true);
+      } else {
+        await labelOCSNamespace();
+        if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
+        await createMCGStorageCluster(encryption.advanced);
+      }
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
       await labelOCSNamespace();
       await labelNodes(nodes);
@@ -221,9 +230,12 @@ const handleReviewAndCreateNext = async (
       // Create a new storage system for non RHCS external vendor if one is not present
       if (hasAnExternalSystem) await createStorageSystem(subSystemName, subSystemKind);
     }
+
     // These flags control the enablement of dashboards and other ODF UI components in console
-    setActionFlags(isMCG ? BackingStorageType.EXISTING : type, flagDispatcher, isRhcs);
-    history.push('/odf/systems');
+    if (!error) {
+      setActionFlags(isMCG ? BackingStorageType.EXISTING : type, flagDispatcher, isRhcs);
+      history.push('/odf/systems');
+    }
   } catch (err) {
     handleError(err.message, true);
   }

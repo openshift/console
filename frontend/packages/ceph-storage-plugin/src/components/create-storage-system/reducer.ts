@@ -32,6 +32,7 @@ export type WizardNodeState = {
 export const initialState: CreateStorageSystemState = {
   stepIdReached: 1,
   storageClass: { name: '', provisioner: '' },
+  isDefaultScPresent: false,
   nodes: [],
   backingStorage: {
     type: BackingStorageType.EXISTING,
@@ -78,6 +79,7 @@ export const initialState: CreateStorageSystemState = {
 type CreateStorageSystemState = {
   stepIdReached: number;
   storageClass: { name: string; provisioner?: string };
+  isDefaultScPresent: boolean;
   nodes: WizardNodeState[];
   backingStorage: {
     type: BackingStorageType;
@@ -134,6 +136,9 @@ export const reducer: WizardReducer = (prevState, action) => {
         name: action.payload.name,
         provisioner: action.payload?.provisioner,
       };
+      break;
+    case 'wizard/setIsDefaultScPresent':
+      newState.isDefaultScPresent = action.payload;
       break;
     case 'wizard/nodes':
       newState.nodes = action.payload;
@@ -240,6 +245,7 @@ export type CreateStorageSystemAction =
       type: 'backingStorage/setExternalStorage';
       payload: WizardState['backingStorage']['externalStorage'];
     }
+  | { type: 'wizard/setIsDefaultScPresent'; payload: WizardState['isDefaultScPresent'] }
   | { type: 'wizard/nodes'; payload: WizardState['nodes'] }
   | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] }
   | { type: 'capacityAndNodes/pvCount'; payload: WizardState['capacityAndNodes']['pvCount'] }

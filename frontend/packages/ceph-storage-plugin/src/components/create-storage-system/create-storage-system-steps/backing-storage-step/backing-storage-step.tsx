@@ -203,6 +203,25 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
     }
   }, [deployment, dispatch, sc, type]);
 
+  React.useEffect(() => {
+    /*
+     * For MCG Standalone mode, block the StorageSystem creation
+     * if no default storage class is present in the cluster.
+     */
+    if (scLoaded && !scLoadError && deployment === DeploymentType.MCG) {
+      const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
+      const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
+      const isDefaultScPresent = sc?.items.some((scConfig) => {
+        const annotations = scConfig?.metadata?.annotations;
+        return (
+          annotations?.[defaultClassAnnotation] === 'true' ||
+          annotations?.[betaDefaultStorageClassAnnotation] === 'true'
+        );
+      });
+      dispatch({ type: 'wizard/setIsDefaultScPresent', payload: isDefaultScPresent });
+    }
+  }, [dispatch, deployment, sc, scLoaded, scLoadError]);
+
   const showExternalStorageSelection =
     type === BackingStorageType.EXTERNAL && allowedExternalStorage.length;
   const showStorageClassSelection = !hasOCS && type === BackingStorageType.EXISTING;
