@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
+import { coFetchJSON } from '@console/internal/co-fetch';
 import { Checkbox } from '@console/internal/components/checkbox';
 import {
   createModalLauncher,
@@ -136,7 +137,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
       : null;
 
-    const handleOperatorUninstallPromises = () => {
+    const uninstallOperator = () => {
       const operatorUninstallPromises = [
         k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
         ...(subscription?.status?.installedCSV
@@ -168,14 +169,67 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         });
     };
 
-    const operandDeletionPromises = deleteOperands
-      ? operands.map((operand: K8sResourceCommon) => {
-          const model = modelFor(referenceFor(operand));
-          return k8sKill(model, operand, {}, deleteOptions);
-        })
-      : [];
-    if (operandDeletionPromises.length > 0) {
+    const setOperandErrorsTo = (
+      operators: K8sResourceCommon[],
+      errorMsg: string,
+    ): OperandError[] => {
+      return operators.reduce((acc: OperandError[], curr, i) => {
+        return acc.concat({
+          operand: operands[i],
+          errorMessage: errorMsg,
+        });
+      }, []);
+    };
+
+    const verifyDeletionOfOperands = async () => {
+      const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
+      const startTime = performance.now();
+      let endTime = performance.now();
+      let operandErrors: OperandError[] = [];
+      const timeout = 4 * 60000; // 4 minutes
+      while (true) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const curOperands = await coFetchJSON(url);
+          if (curOperands.items.length > 0) {
+            endTime = performance.now();
+            const duration = endTime - startTime;
+            if (duration > timeout) {
+              operandErrors = setOperandErrorsTo(
+                curOperands.items,
+                t('olm~timed out verifying operand deletion'),
+              );
+              break;
+            }
+          } else {
+            // all operands deleted!
+            break;
+          }
+        } catch (e) {
+          operandErrors = setOperandErrorsTo(
+            operands,
+            t('olm~error listing operand to verify deletion'),
+          );
+          break;
+        }
+      }
+      setOperandsDeleteInProgress(false);
+      setOperandsDeleteFinished(true);
+      if (operandErrors.length === 0) {
+        uninstallOperator();
+      } else {
+        // show operand deletion verification errors on results page
+        setOperandDeletionErrors(operandErrors);
+        setOperatorUninstallFinished(true);
+      }
+    };
+
+    if (deleteOperands) {
       setOperandsDeleteInProgress(true);
+      const operandDeletionPromises = operands.map((operand: K8sResourceCommon) => {
+        const model = modelFor(referenceFor(operand));
+        return k8sKill(model, operand, {}, deleteOptions);
+      });
       // eslint-disable-next-line promise/catch-or-return
       settleAllPromises(operandDeletionPromises).then(([, , results]) => {
         const operandErrors: OperandError[] = results.reduce((acc: OperandError[], curr, i) => {
@@ -184,17 +238,19 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             : acc;
         }, []);
         setOperandDeletionErrors(operandErrors);
-        setOperandsDeleteInProgress(false);
-        setOperandsDeleteFinished(true);
         if (operandErrors.length === 0) {
-          handleOperatorUninstallPromises();
+          verifyDeletionOfOperands();
         } else {
+          // show operand k8kill errors on results page
+          setOperandsDeleteInProgress(false);
+          setOperandsDeleteFinished(true);
           setOperatorUninstallFinished(true);
         }
       });
     } else {
+      // skip deleting operands
       setOperandsDeleteFinished(true);
-      handleOperatorUninstallPromises();
+      uninstallOperator();
     }
   };
 
@@ -287,10 +343,16 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       </ModalTitle>
       <ModalBody>
         {!isSubmitFinished ? (
-          <>
-            {instructions}
-            {operandsSection}
-          </>
+          !operandsDeleteInProgress ? (
+            <>
+              {instructions}
+              {operandsSection}
+            </>
+          ) : (
+            <div>
+              <h2>{t('olm~Deleting operand instances...')}</h2>
+            </div>
+          )
         ) : (
           results
         )}
@@ -300,6 +362,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         cancel={cancel}
         submitDanger={!isSubmitFinished} // if submit finished show a non-danger 'OK'
         submitText={t(isSubmitFinished ? 'olm~OK' : 'olm~Uninstall')}
+        submitDisabled={operandsDeleteInProgress}
       />
     </form>
   );
