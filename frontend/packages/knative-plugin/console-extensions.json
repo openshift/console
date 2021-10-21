@@ -91,6 +91,28 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "flag": "FLAG_KNATIVE_EVENTING_TRIGGER"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "flag": "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
         "group": "camel.apache.org",
         "version": "v1alpha1",
         "kind": "Kamelet"
@@ -98,7 +120,6 @@
       "flag": "FLAG_CAMEL_KAMELETS"
     }
   },
-
   {
     "type": "console.page/resource/list",
     "properties": {
@@ -108,6 +129,9 @@
         "kind": "Revision"
       },
       "component": { "$codeRef": "revisionsComponent.RevisionsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
     }
   },
   {
@@ -119,6 +143,9 @@
         "kind": "Service"
       },
       "component": { "$codeRef": "servicesComponent.ServicesPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
     }
   },
   {
@@ -130,6 +157,9 @@
         "kind": "Route"
       },
       "component": { "$codeRef": "routesComponent.RoutesPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_ROUTE"]
     }
   },
   {
@@ -141,6 +171,9 @@
         "kind": "Revision"
       },
       "component": { "$codeRef": "revisionsComponent.RevisionDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
     }
   },
   {
@@ -152,6 +185,9 @@
         "kind": "Route"
       },
       "component": { "$codeRef": "routesComponent.RouteDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_ROUTE"]
     }
   },
   {
@@ -163,6 +199,9 @@
         "kind": "Service"
       },
       "component": { "$codeRef": "servicesComponent.ServiceDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
     }
   },
   {
@@ -174,9 +213,11 @@
         "kind": "KnativeServing"
       },
       "component": { "$codeRef": "overviewComponent.KnativeServingDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
     }
   },
-
   {
     "type": "console.page/resource/list",
     "properties": {
@@ -186,9 +227,11 @@
         "kind": "Trigger"
       },
       "component": { "$codeRef": "eventingComponent.TriggerListPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_TRIGGER"]
     }
   },
-
   {
     "type": "console.page/resource/details",
     "properties": {
@@ -198,6 +241,9 @@
         "kind": "Trigger"
       },
       "component": { "$codeRef": "pubSubComponent.TriggerDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_TRIGGER"]
     }
   },
   {
@@ -209,6 +255,9 @@
         "kind": "Subscription"
       },
       "component": { "$codeRef": "eventingComponent.SubscriptionListPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"]
     }
   },
   {
@@ -220,6 +269,9 @@
         "kind": "Subscription"
       },
       "component": { "$codeRef": "pubSubComponent.SubscriptionDetailsPage" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"]
     }
   },
   {
@@ -308,6 +360,9 @@
       "component": {
         "$codeRef": "overviewComponent.ServingListPage"
       }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING"]
     }
   },
   {
@@ -331,6 +386,9 @@
       "component": {
         "$codeRef": "eventingComponent.EventingListPage"
       }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
     }
   },
   {
@@ -346,7 +404,6 @@
       "required": ["KNATIVE_SERVING_SERVICE"]
     }
   },
-
   {
     "type": "dev-console.add/action-group",
     "properties": {
@@ -354,6 +411,9 @@
       "name": "%knative-plugin~Eventing%",
       "insertBefore": "local-machine",
       "insertAfter": "container-images"
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
     }
   },
   {
@@ -459,13 +519,6 @@
     }
   },
   {
-    "type": "console.navigation/section",
-    "properties": {
-      "id": "serverless",
-      "name": "%knative-plugin~Serverless%"
-    }
-  },
-  {
     "type": "console.navigation/href",
     "properties": {
       "id": "serverlessserving",
@@ -509,6 +562,9 @@
       "template": {
         "$codeRef": "yamlTemplates.defaultYamlTemplate"
       }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
     }
   },
   {
@@ -571,6 +627,9 @@
     "properties": {
       "getTopologyFilters": { "$codeRef": "topology.getTopologyFilters" },
       "applyDisplayOptions": { "$codeRef": "topology.applyKnativeDisplayOptions" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
     }
   },
   {
