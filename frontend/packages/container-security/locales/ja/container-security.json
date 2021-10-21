@@ -1,4 +1,5 @@
 {
+  "Vulnerabilities": "脆弱性",
   "Image Manifest Vulnerabilities details": "イメージマニフェストの脆弱性の詳細",
   "{{total, number}} total": "合計 {{total, number}}",
   "Quay Security Scanner has detected {{total, number}} vulnerabilities.": "Quay セキュリティースキャナーが {{total, number}} 件の脆弱性を検出しました。",
@@ -20,7 +21,6 @@
   "Security scan": "セキュリティースキャン",
   "No vulnerabilities found": "脆弱性がありません",
   "Severity": "重大度",
-  "Vulnerabilities": "脆弱性",
   "Name": "名前",
   "Package": "パッケージ",
   "Current version": "現在のクラスター",
