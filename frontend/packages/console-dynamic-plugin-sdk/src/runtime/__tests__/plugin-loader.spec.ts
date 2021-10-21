@@ -1,6 +1,6 @@
 import { Simulate } from 'react-dom/test-utils';
-import { PluginStore } from '@console/plugin-sdk/src/store';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
+import { PluginStore } from '../../store';
 import { Extension } from '../../types';
 import {
   getPluginManifest,

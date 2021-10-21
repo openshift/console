@@ -122,3 +122,12 @@ export type UpdateExtensionProperties<
 export type ResolvedExtension<E extends Extension<P>, P = ExtensionProperties<E>> = LoadedExtension<
   UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>, P>
 >;
+
+/**
+ * From Console application perspective, a plugin is a list of extensions
+ * enhanced with additional data.
+ */
+export type ActivePlugin = {
+  name: string;
+  extensions: Extension[];
+};

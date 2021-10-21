@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 import { Store } from 'redux';
+import { PluginStore } from '@console/dynamic-plugin-sdk/src/store';
 import { RootState } from '@console/internal/redux';
-import { isExtensionInUse, PluginStore, DynamicPluginInfo } from '../store';
+import { isExtensionInUse, DynamicPluginInfo } from '../store';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 
 let subscriptionServiceInitialized = false;

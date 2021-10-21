@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 
 import * as _ from 'lodash';
-import { PluginStore } from '@console/plugin-sdk/src/store';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { overrideSharedModules } from '../shared-modules-override';
+import { PluginStore } from '../store';
 import { RemoteEntryModule } from '../types';
 import { resolveURL } from '../utils/url';
 import { fetchPluginManifest } from './plugin-manifest';

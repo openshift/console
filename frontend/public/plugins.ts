@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { PluginStore } from '@console/plugin-sdk/src/store';
+import { PluginStore } from '@console/dynamic-plugin-sdk/src/store';
 import { ActivePlugin } from '@console/plugin-sdk/src/typings';
 import { getURLSearchParams } from './components/utils/link';
 
