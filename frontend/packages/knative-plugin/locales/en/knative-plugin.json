@@ -10,7 +10,6 @@
   "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.": "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.",
   "**Event sources** are objects that link to an event producer and an event sink or consumer.": "**Event sources** are objects that link to an event producer and an event sink or consumer.",
   "Provider": "Provider",
-  "Serverless": "Serverless",
   "Serving": "Serving",
   "Create Service Binding": "Create Service Binding",
   "Subscriptions": "Subscriptions",
