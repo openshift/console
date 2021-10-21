@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { V1Network, V1NetworkInterface, VMIKind } from '../../types';
-import { V1Disk, V1Volume } from '../../types/api';
+import { V1Disk, V1GPU, V1HostDevice, V1Volume } from '../../types/api';
 
 export const getVMIDisks = (vmi: VMIKind, defaultValue: V1Disk[] = []): V1Disk[] =>
   vmi && vmi.spec && vmi.spec.domain && vmi.spec.domain.devices && vmi.spec.domain.devices.disks
@@ -18,6 +18,23 @@ export const getVMIInterfaces = (
   defaultValue: V1NetworkInterface[] = [],
 ): V1NetworkInterface[] =>
   _.has(vmi, 'spec.domain.devices.interfaces') ? vmi.spec.domain.devices.interfaces : defaultValue;
+
+export const getVMIGPUDevices = (vmi: VMIKind, defaultValue: V1GPU[] = []): V1GPU[] =>
+  vmi && vmi.spec && vmi.spec.domain && vmi.spec.domain.devices && vmi.spec.domain.devices.gpus
+    ? vmi.spec.domain.devices.gpus
+    : defaultValue;
+
+export const getVMIHostDevices = (
+  vmi: VMIKind,
+  defaultValue: V1HostDevice[] = [],
+): V1HostDevice[] =>
+  vmi &&
+  vmi.spec &&
+  vmi.spec.domain &&
+  vmi.spec.domain.devices &&
+  vmi.spec.domain.devices.hostDevices
+    ? vmi.spec.domain.devices.hostDevices
+    : defaultValue;
 
 export const getVMIConditionsByType = (
   vmi: VMIKind,

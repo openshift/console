@@ -18,6 +18,8 @@ import {
   getDataVolumeTemplates,
   getDevices,
   getDisks,
+  getGPUDevices,
+  getHostDevices,
   getInterfaces,
   getNetworks,
   getNodeSelector,
@@ -34,9 +36,9 @@ import {
 } from '../../../types';
 import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
 import {
-  findKeySuffixValue,
   buildOwnerReferenceForModel,
   compareOwnerReference,
+  findKeySuffixValue,
 } from '../../../utils';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { BootDevice, VMILikeMethods } from './types';
@@ -63,6 +65,16 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   getDataVolumeTemplates = (defaultValue = []) => getDataVolumeTemplates(this.data, defaultValue);
 
   getDevices = (defaultValue = {}) => getDevices(this.data, defaultValue);
+
+  getGPUDevices = (defaultValue = []) => getGPUDevices(this.data, defaultValue);
+
+  getHostDevices = (defaultValue = []) => getHostDevices(this.data, defaultValue);
+
+  getUsedHardwareDevicesNames = (defaultValue = []) => {
+    const gpuNames = getGPUDevices(this.data, defaultValue).map((item) => item.name);
+    const hostDevices = getHostDevices(this.data, defaultValue).map((item) => item.name);
+    return [gpuNames, hostDevices].filter(Boolean).flat();
+  };
 
   getNetworkInterfaces = (defaultValue = []) => getInterfaces(this.data, defaultValue);
 

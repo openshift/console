@@ -8,6 +8,8 @@ import { transformDevices } from '../../../selectors/vm/devices';
 import {
   getVMIAffinity,
   getVMIDisks,
+  getVMIGPUDevices,
+  getVMIHostDevices,
   getVMIInterfaces,
   getVMINetworks,
   getVMINodeSelector,
@@ -57,4 +59,8 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
   getTolerations = () => getVMITolerations(this.data);
 
   getAffinity = () => getVMIAffinity(this.data);
+
+  getHostDevices = (defaultValue = []) => getVMIHostDevices(this.data, defaultValue);
+
+  getGPUDevices = (defaultValue = []) => getVMIGPUDevices(this.data, defaultValue);
 }

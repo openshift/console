@@ -6,7 +6,7 @@ import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { V1Disk } from '../../types/api';
 import { BootableDeviceType } from '../../types/types';
 import { V1NetworkInterface } from '../../types/vm/index';
-import { getSimpleName, createBasicLookup } from '../../utils';
+import { createBasicLookup, getSimpleName } from '../../utils';
 import { getBootableDevicesInOrder, getTransformedDevices } from '../vm/devices';
 import { getVMIBootableDevicesInOrder, getVMIDevices } from '../vmi/devices';
 
@@ -29,6 +29,35 @@ export const isFlavorChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
     (vmMemory && !_.isEqual(vmMemory, vmiMemory)) ||
     (!_.isEmpty(vmCPU) && !_.isEqual(vmCPU, vmiCPU))
   );
+};
+
+export const changedGPUDevices = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
+  if (vm.isEmpty() || vmi.isEmpty()) {
+    return [];
+  }
+
+  const vmGPUs = vm.getGPUDevices();
+  const vmiGPUs = vmi.getGPUDevices();
+
+  return vmGPUs
+    ?.filter((gpu) => !vmiGPUs?.map((vmiGPU) => vmiGPU?.name).includes(gpu?.name))
+    ?.map((gpu) => gpu?.name);
+};
+
+export const changedHostDevices = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
+  if (vm.isEmpty() || vmi.isEmpty()) {
+    return [];
+  }
+
+  const vmHostDevices = vm.getHostDevices();
+  const vmiHostDevices = vmi.getHostDevices();
+
+  return vmHostDevices
+    ?.filter(
+      (hostDevice) =>
+        !vmiHostDevices?.map((vmiHostDevice) => vmiHostDevice?.name).includes(hostDevice?.name),
+    )
+    ?.map((hostDevice) => hostDevice?.name);
 };
 
 export const changedDisks = (

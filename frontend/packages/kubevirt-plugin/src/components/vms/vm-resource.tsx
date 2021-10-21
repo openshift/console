@@ -1,3 +1,5 @@
+import './ssh-details.scss';
+
 import * as React from 'react';
 import { ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -31,12 +33,14 @@ import { getVMINodeName, isVMIPaused } from '../../selectors/vmi';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../types';
+import { V1GPU, V1HostDevice } from '../../types/api';
 import { getBasicID, prefixedID } from '../../utils';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
 import { isGuestAgentInstalled } from '../../utils/guest-agent-utils';
 import { BootOrderSummary } from '../boot-order';
 import { descriptionModal, vmFlavorModal } from '../modals';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
+import { hardwareDevicesModal } from '../modals/hardware-devices/HardwareDevicesModal';
 import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
@@ -50,8 +54,6 @@ import VMDetailsItem from './VMDetailsItem';
 import VMDetailsItemTemplate from './VMDetailsItemTemplate';
 import VMEditWithPencil from './VMEditWithPencil';
 import VMIP from './VMIP';
-
-import './ssh-details.scss';
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
@@ -129,6 +131,8 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
     isGuestAgentInstalled(vmi),
     status,
   );
+  const vmWrapper = new VMWrapper(vm);
+  const vmiWrapper = new VMIWrapper(vmi);
 
   const canEditWhileVMRunning = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
 
@@ -143,6 +147,10 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const { command, user } = useSSHCommand(vm);
   const vmiReady = isVMIReady(vmi);
   const sshServicesRunning = sshServices?.running;
+
+  const gpuDevices: V1GPU[] = vmWrapper.getGPUDevices();
+  const hostDevices: V1HostDevice[] = vmWrapper.getHostDevices();
+  const usedNames: string[] = vmWrapper.getUsedHardwareDevicesNames();
 
   return (
     <dl className="co-m-pane__details">
@@ -178,9 +186,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         onEditClick={() => BootOrderModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'boot-order')}
         arePendingChanges={
-          isVM &&
-          isVMRunningOrExpectedRunning(vm, vmi) &&
-          isBootOrderChanged(new VMWrapper(vm), new VMIWrapper(vmi))
+          isVM && isVMRunningOrExpectedRunning(vm, vmi) && isBootOrderChanged(vmWrapper, vmiWrapper)
         }
       >
         <BootOrderSummary devices={devices} />
@@ -273,6 +279,49 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
             <div className="text-secondary">{t('kubevirt-plugin~Virtual machine not running')}</div>
           )}
         </span>
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title={t('kubevirt-plugin~Hardware devices')}
+        idValue={prefixedID(id, 'hardware-devices')}
+        editButtonId={prefixedID(id, 'hardware-devices-edit')}
+      >
+        <VMEditWithPencil
+          isEdit={isVM}
+          onEditClick={() =>
+            hardwareDevicesModal({
+              isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
+              vmLikeEntity: vm,
+              vmName: vm?.metadata?.name,
+              devices: gpuDevices,
+              isGPU: true,
+              usedNames,
+              vmiWrapper,
+            })
+          }
+        >
+          {t('kubevirt-plugin~{{gpusCount}} GPU devices', {
+            gpusCount: gpuDevices?.length || [].length,
+          })}
+        </VMEditWithPencil>
+        <br />
+        <VMEditWithPencil
+          isEdit={isVM}
+          onEditClick={() =>
+            hardwareDevicesModal({
+              isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
+              vmLikeEntity: vm,
+              vmName: vm?.metadata?.name,
+              devices: hostDevices,
+              usedNames,
+              vmiWrapper,
+            })
+          }
+        >
+          {t('kubevirt-plugin~{{hostDevicesCount}} Host devices', {
+            hostDevicesCount: hostDevices?.length || [].length,
+          })}
+        </VMEditWithPencil>
       </VMDetailsItem>
     </dl>
   );
