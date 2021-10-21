@@ -1607,6 +1607,7 @@
   "Create snapshot": "Create snapshot",
   "Clone PVC": "Clone PVC",
   "Restore as new PVC": "Restore as new PVC",
+  "Copied to clipboard": "Copied to clipboard",
   "Error loading {{desc}}": "Error loading {{desc}}",
   "No {{selection}} found": "No {{selection}} found",
   "Create {{resourceKindLabel}}": "Create {{resourceKindLabel}}",
