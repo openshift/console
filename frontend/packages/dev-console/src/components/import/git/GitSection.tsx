@@ -181,7 +181,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         setFieldValue('devfile.devfileHasError', true);
         return;
       }
-      if (!values.devfile?.devfileSourceUrl) {
+      if (importType !== 'devfile' && !values.devfile?.devfileSourceUrl) {
         setFieldValue('devfile.devfilePath', devfilePath);
         setFieldValue('docker.dockerfilePath', 'Dockerfile');
         const gitService = getGitService(
@@ -204,6 +204,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     },
     [
       gitUrlError,
+      importType,
       setFieldValue,
       values.devfile,
       values.git.dir,
@@ -227,10 +228,9 @@ const GitSection: React.FC<GitSectionProps> = ({
         setFieldValue('git.isUrlValidating', false);
         return;
       }
-
       const detectedGitType = detectGitType(url);
       const gitType = values.git.showGitType ? values.git.type : detectedGitType;
-      const gitRepoName = detectGitRepoName(url);
+      const gitRepoName = formType !== 'sample' && detectGitRepoName(url);
 
       // Updated detectedType only
       if (detectedGitType !== values.git.detectedType) {
@@ -292,14 +292,14 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
 
-      if (
-        (importType === 'devfile' && values.devfile?.devfileContent) ||
-        imageStreamName ||
-        values.formType === 'edit'
-      ) {
+      if (importType === 'devfile' || imageStreamName || values.formType === 'edit') {
         setValidated(ValidatedOptions.success);
         setFieldValue('git.validated', ValidatedOptions.success);
         setFieldValue('git.isUrlValidating', false);
+        importType === 'devfile' && setFieldValue('build.strategy', BuildStrategyType.Devfile);
+        importType === 'devfile' &&
+          !values.devfile?.devfileContent &&
+          setFieldValue('import.recommendedStrategy', importStrategies[0]);
         values.formType === 'edit' &&
           values.build.strategy === BuildStrategyType.Source &&
           handleBuilderImageRecommendation(
@@ -372,6 +372,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.name,
       values.application.selectedKey,
       values.build.strategy,
+      formType,
       nameTouched,
       importType,
       imageStreamName,
@@ -392,8 +393,8 @@ const GitSection: React.FC<GitSectionProps> = ({
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
     setFieldTouched('git.url', true);
-    debouncedHandleGitUrlChange(url, ref, dir);
-  }, [debouncedHandleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
+    handleGitUrlChange(url, ref, dir);
+  }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
     (!dirty || gitDirTouched) &&
@@ -506,7 +507,7 @@ const GitSection: React.FC<GitSectionProps> = ({
           )}
         </>
       )}
-      <AdvancedGitOptions formContextField={formContextField} />
+      {formType !== 'sample' && <AdvancedGitOptions formContextField={formContextField} />}
     </FormSection>
   );
 };
