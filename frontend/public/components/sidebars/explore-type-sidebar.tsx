@@ -136,8 +136,8 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                   <CamelCaseWrap value={name} />
                   &nbsp;
                   <small>
-                    <span className="co-break-word">{definitionType}</span>
-                    {required.has(name) && <> &ndash; required</>}
+                    <span className="co-break-word">{t(definitionType)}</span>
+                    {required.has(name) && <> &ndash; {t('public~required')}</>}
                   </small>
                 </h5>
                 {definition.description && (
