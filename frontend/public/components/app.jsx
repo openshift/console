@@ -9,6 +9,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
 import { withTranslation, useTranslation } from 'react-i18next';
+import { coFetchJSON } from '../co-fetch';
 
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
@@ -41,7 +42,10 @@ import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
-import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
+import {
+  useURLPoll,
+  URL_POLL_DEFAULT_DELAY,
+} from '@console/internal/components/utils/url-poll-hook';
 import { init as initI18n } from '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -299,43 +303,90 @@ const CaptureTelemetry = React.memo(() => {
 const PollConsoleUpdates = React.memo(() => {
   const toastContext = useToast();
   const { t } = useTranslation();
+
   const [isToastOpen, setToastOpen] = React.useState(false);
+  const [pluginsChanged, setPluginsChanged] = React.useState(false);
+  const [consoleChanged, setConsoleChanged] = React.useState(false);
+  const [isFetchingPluginEndpoints, setIsFetchingPluginEndpoints] = React.useState(false);
+  const [allPluginEndpointsReady, setAllPluginEndpointsReady] = React.useState(false);
   const [pluginsData, pluginsError] = useURLPoll(
     `${window.SERVER_FLAGS.basePath}api/check-updates`,
   );
-
   const prevPluginsDataRef = React.useRef();
   React.useEffect(() => {
     prevPluginsDataRef.current = pluginsData;
   });
   const prevPluginsData = prevPluginsDataRef.current;
+  const stateInitialized = _.isEmpty(pluginsError) && !_.isEmpty(prevPluginsData);
 
-  const pluginsStateInitialized = _.isEmpty(pluginsError) && !_.isEmpty(prevPluginsData);
-  const pluginsChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
-  const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
-
-  if (!isToastOpen && pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
-    toastContext.addToast({
-      variant: AlertVariant.warning,
-      title: t('public~Web console update is available'),
-      content: t(
-        'public~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
-      ),
-      timeout: false,
-      dismissible: true,
-      actions: [
-        {
-          dismiss: true,
-          label: t('public~Refresh web console'),
-          callback: () => window.location.reload(),
-        },
-      ],
-      onClose: () => setToastOpen(false),
-      onRemove: () => setToastOpen(false),
-    });
-    setToastOpen(true);
+  const pluginsListChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
+  if (stateInitialized && pluginsListChanged && !pluginsChanged) {
+    setPluginsChanged(true);
   }
 
+  if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
+    const pluginEndpointsReady = pluginsData?.plugins?.map((pluginName) => {
+      return coFetchJSON(
+        `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
+      );
+    });
+    Promise.all(pluginEndpointsReady)
+      .then(() => {
+        setAllPluginEndpointsReady(true);
+        setIsFetchingPluginEndpoints(false);
+      })
+      .catch(() => {
+        setAllPluginEndpointsReady(false);
+        setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+      });
+    setIsFetchingPluginEndpoints(true);
+  }
+
+  const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
+  if (stateInitialized && consoleCommitChanged && !consoleChanged) {
+    setConsoleChanged(true);
+  }
+
+  if (isToastOpen || !stateInitialized) {
+    return null;
+  }
+
+  if (!pluginsChanged && !consoleChanged) {
+    return null;
+  }
+
+  if (pluginsChanged && !allPluginEndpointsReady) {
+    return null;
+  }
+
+  const toastCallback = () => {
+    setToastOpen(false);
+    setPluginsChanged(false);
+    setConsoleChanged(false);
+    setAllPluginEndpointsReady(false);
+    setIsFetchingPluginEndpoints(false);
+  };
+
+  toastContext.addToast({
+    variant: AlertVariant.warning,
+    title: t('public~Web console update is available'),
+    content: t(
+      'public~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
+    ),
+    timeout: false,
+    dismissible: true,
+    actions: [
+      {
+        dismiss: true,
+        label: t('public~Refresh web console'),
+        callback: () => window.location.reload(),
+      },
+    ],
+    onClose: toastCallback,
+    onRemove: toastCallback,
+  });
+
+  setToastOpen(true);
   return null;
 });
 
