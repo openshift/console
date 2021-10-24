@@ -9,9 +9,10 @@ import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGri
 import { KUBEVIRT_QUICK_START_USER_SETTINGS_KEY } from './getting-started-card/const';
 import { GettingStartedContainerCard } from './getting-started-card/GettingStartedContainerCard';
 import { VirtOverviewDetailsCard } from './VirtOverviewDetailsCard';
+import { VirtOverviewStatusCard } from './VirtOverviewStatusCard';
 
 const leftCards = [{ Card: VirtOverviewDetailsCard }];
-const mainCards = [];
+const mainCards = [{ Card: VirtOverviewStatusCard }];
 const rightCards = [];
 
 export const WrappedVirtualizationOverviewPage: React.FC = () => {
