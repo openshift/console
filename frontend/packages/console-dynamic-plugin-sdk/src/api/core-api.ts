@@ -24,20 +24,22 @@ import {
   UseActivePerspective,
 } from '../extensions/console-types';
 
-export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
+import { safeRequire } from '../utils/require';
+
+export const useK8sWatchResource: UseK8sWatchResource = safeRequire('@console/internal/components/utils/k8s-watch-hook')
   .useK8sWatchResource;
-export const useK8sWatchResources: UseK8sWatchResources = require('@console/internal/components/utils/k8s-watch-hook')
+export const useK8sWatchResources: UseK8sWatchResources = safeRequire('@console/internal/components/utils/k8s-watch-hook')
   .useK8sWatchResources;
-export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
+export const useResolvedExtensions: UseResolvedExtensions = safeRequire('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;
-export const consoleFetch: ConsoleFetch = require('@console/dynamic-plugin-sdk/src/utils/fetch')
+export const consoleFetch: ConsoleFetch = safeRequire('@console/dynamic-plugin-sdk/src/utils/fetch')
   .consoleFetch;
-export const consoleFetchJSON: ConsoleFetchJSON = require('@console/dynamic-plugin-sdk/src/utils/fetch')
+export const consoleFetchJSON: ConsoleFetchJSON = safeRequire('@console/dynamic-plugin-sdk/src/utils/fetch')
   .consoleFetchJSON;
-export const consoleFetchText: ConsoleFetchText = require('@console/dynamic-plugin-sdk/src/utils/fetch')
+export const consoleFetchText: ConsoleFetchText = safeRequire('@console/dynamic-plugin-sdk/src/utils/fetch')
   .consoleFetchText;
 
-export const useActivePerspective: UseActivePerspective = require('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective')
+export const useActivePerspective: UseActivePerspective = safeRequire('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective')
   .default;
 
 /**
@@ -57,33 +59,33 @@ export const useActivePerspective: UseActivePerspective = require('@console/dyna
  * @param {NavPage[]} pages - An array of page objects
  * @param {object} match - match object provided by React Router
  */
-export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/internal/components/utils/horizontal-nav')
+export const HorizontalNav: React.FC<HorizontalNavProps> = safeRequire('@console/internal/components/utils/horizontal-nav')
   .HorizontalNavFacade;
-export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/components/factory/Table/VirtualizedTable')
+export const VirtualizedTable: VirtualizedTableFC = safeRequire('@console/internal/components/factory/Table/VirtualizedTable')
   .default;
-export const TableData: React.FC<TableDataProps> = require('@console/internal/components/factory/Table/VirtualizedTable')
+export const TableData: React.FC<TableDataProps> = safeRequire('@console/internal/components/factory/Table/VirtualizedTable')
   .TableData;
-export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')
+export const useActiveColumns: UseActiveColumns = safeRequire('@console/internal/components/factory/Table/active-columns-hook')
   .useActiveColumns;
-export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/internal/components/factory/ListPage/ListPageHeader')
+export const ListPageHeader: React.FC<ListPageHeaderProps> = safeRequire('@console/internal/components/factory/ListPage/ListPageHeader')
   .default;
-export const ListPageCreate: React.FC<ListPageCreateProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
+export const ListPageCreate: React.FC<ListPageCreateProps> = safeRequire('@console/internal/components/factory/ListPage/ListPageCreate')
   .default;
-export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
+export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = safeRequire('@console/internal/components/factory/ListPage/ListPageCreate')
   .ListPageCreateLink;
-export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
+export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = safeRequire('@console/internal/components/factory/ListPage/ListPageCreate')
   .ListPageCreateButton;
-export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
+export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = safeRequire('@console/internal/components/factory/ListPage/ListPageCreate')
   .ListPageCreateDropdown;
-export const ListPageBody: React.FC = require('@console/internal/components/factory/ListPage/ListPageBody')
+export const ListPageBody: React.FC = safeRequire('@console/internal/components/factory/ListPage/ListPageBody')
   .default;
-export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/internal/components/factory/ListPage/ListPageFilter')
+export const ListPageFilter: React.FC<ListPageFilterProps> = safeRequire('@console/internal/components/factory/ListPage/ListPageFilter')
   .default;
-export const useListPageFilter: UseListPageFilter = require('@console/internal/components/factory/ListPage/filter-hook')
+export const useListPageFilter: UseListPageFilter = safeRequire('@console/internal/components/factory/ListPage/filter-hook')
   .useListPageFilter;
-export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
+export const ResourceLink: React.FC<ResourceLinkProps> = safeRequire('@console/internal/components/utils/resource-link')
   .ResourceLink;
-export const useK8sModel: UseK8sModel = require('@console/shared/src/hooks/useK8sModel')
+export const useK8sModel: UseK8sModel = safeRequire('@console/shared/src/hooks/useK8sModel')
   .useK8sModel;
-export const useK8sModels: UseK8sModels = require('@console/shared/src/hooks/useK8sModels')
+export const useK8sModels: UseK8sModels = safeRequire('@console/shared/src/hooks/useK8sModels')
   .useK8sModels;
