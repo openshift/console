@@ -7,9 +7,19 @@ import {
   oneActiveUser,
   serialEmptyState,
   timeOfLogin,
+  vncEmptyState,
 } from '../../utils/const/string';
 import { selectActionFromDropdown } from '../../views/actions';
-import { emptyState, disconnectSerial, loginSerial, loginVNC } from '../../views/console';
+import {
+  connect,
+  ctrlAltDel,
+  emptyState,
+  disconnect,
+  disconnectSerial,
+  loginSerial,
+  loginVNC,
+  sendKey,
+} from '../../views/console';
 import { actionButtons, alertDescription, dashboardTab, modalCancel } from '../../views/selector';
 import { loggedInUser } from '../../views/selector-tabs';
 import { tab } from '../../views/tab';
@@ -36,15 +46,24 @@ describe('Test VM console tab', () => {
   it('ID(CNV-872) VNC console connects', () => {
     tab.navigateToConsole();
     loginVNC();
+    // disconnect VNC console
+    cy.byButtonText(disconnect).click({ force: true });
+    cy.get(emptyState).should('contain', vncEmptyState);
+    cy.byButtonText(connect).click();
     // after login VNC console, scroll up is flaky
     // so revisit VM tabs explicitly
-    cy.reload();
+    // cy.reload();
     if (Cypress.env('DOWNSTREAM')) {
       tab.navigateToDetails();
       cy.get(loggedInUser).should('not.contain', noActiveUser);
       cy.get(loggedInUser).should('contain', timeOfLogin);
+      tab.navigateToConsole();
+      // send key
+      cy.contains(sendKey).click();
+      cy.contains(ctrlAltDel).click();
+      tab.navigateToDetails();
+      cy.get(loggedInUser).should('contain', noActiveUser);
     }
-    // TODO: disconnect VNC console after bz1964789 is fixed
   });
 
   it('ID(CNV-3609) Serial console connects', () => {
@@ -70,6 +89,6 @@ describe('Test VM console tab', () => {
     // disconnect serial console
     disconnectSerial();
     cy.get(emptyState).should('contain', serialEmptyState);
-    cy.byButtonText('Connect').should('exist');
+    cy.byButtonText(connect).should('exist');
   });
 });
