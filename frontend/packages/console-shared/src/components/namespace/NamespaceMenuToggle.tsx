@@ -83,6 +83,7 @@ const NamespaceMenuToggle = (props: {
         position="left"
         appendTo={containerRef.current}
         isVisible={isOpen}
+        popperMatchesTriggerWidth={false}
       />
     </div>
   );
