@@ -1,15 +1,14 @@
 // Not in ssh.spec until this is fixed: https://github.com/cypress-io/eslint-plugin-cypress/issues/43
 import { VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
 import { detailsTab } from '../../views/selector';
+import { virtualization } from '../../views/virtualization';
 
 const AFTER_CREATE_WAIT_TIME = 3000;
 
 export default ({ vmName }) =>
   describe('ID (CNV-5970) Test SSH info in vm details page', () => {
     it('should navigate to vm details page', () => {
-      cy.get('[data-test=nav]')
-        .filter('[href$=virtualization]')
-        .then((link) => cy.visit(link.attr('href')));
+      virtualization.vms.visit();
       cy.byLegacyTestID(vmName).click();
       cy.byLegacyTestID('horizontal-link-Details').click();
 

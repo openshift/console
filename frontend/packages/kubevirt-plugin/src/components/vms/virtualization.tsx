@@ -1,30 +1,20 @@
 import * as React from 'react';
-import {
-  Dropdown,
-  DropdownGroup,
-  DropdownItem,
-  DropdownPosition,
-  DropdownSeparator,
-  DropdownToggle,
-} from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav } from '@console/internal/components/utils';
-import { FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../flags/const';
 import { VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import MigrationTool from './migration-tool/MigrationTool';
 import { VirtualMachinesPage } from './vm';
 import { VirtualMachinesPage as NewVirtualMachinesPage } from './vm-page-new';
-
 import './virtualization.scss';
 
 export const RedirectToVirtualizationPage: React.FC<RouteComponentProps<{ ns: string }>> = (
@@ -68,25 +58,9 @@ const vmMenuItems = (t: TFunction) => [
   },
 ];
 
-const templateMenuItems = (t: TFunction) => [
-  {
-    test: 'template-wizard',
-    wizardName: VMWizardName.WIZARD,
-    mode: VMWizardMode.TEMPLATE,
-    label: t('kubevirt-plugin~With Wizard'),
-  },
-  {
-    test: 'template-yaml',
-    wizardName: VMWizardName.YAML,
-    mode: VMWizardMode.TEMPLATE,
-    label: t('kubevirt-plugin~With YAML'),
-  },
-];
-
 export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => {
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
-  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
 
   const namespace = props.match.params.ns;
@@ -99,14 +73,6 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
       component: printableVmStatusFlag ? NewVirtualMachinesPage : VirtualMachinesPage,
     },
   ];
-
-  if (openshiftFlag) {
-    pages.push({
-      href: 'templates',
-      name: t('kubevirt-plugin~Templates'),
-      component: VirtualMachineTemplatesPage,
-    });
-  }
 
   const getMenuItem = React.useCallback(
     ({ test, wizardName, mode, label }) => (
@@ -132,11 +98,11 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   return (
     <>
       <Helmet>
-        <title>{t('kubevirt-plugin~Virtualization')}</title>
+        <title>{t('kubevirt-plugin~Virtual Machines')}</title>
       </Helmet>
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading" data-test-id="cluster-settings-page-heading">
-          {t('kubevirt-plugin~Virtualization')}
+          {t('kubevirt-plugin~Virtual Machines')}
           <div className="co-actions" data-test-id="details-actions">
             <MigrationTool />
             <Dropdown
@@ -148,28 +114,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
                 </DropdownToggle>
               }
               isOpen={isOpen}
-              dropdownItems={[
-                <DropdownGroup
-                  className="kv-dropdown-group"
-                  label={t('kubevirt-plugin~Virtual Machine')}
-                  key="vm"
-                >
-                  {vmMenuItems(t).map(getMenuItem)}
-                </DropdownGroup>,
-                <DropdownGroup
-                  className="kv-dropdown-group kv-dropdown-group--separator"
-                  key="separator"
-                >
-                  <DropdownSeparator />
-                </DropdownGroup>,
-                <DropdownGroup
-                  className="kv-dropdown-group"
-                  label={t('kubevirt-plugin~Template')}
-                  key="vm-template"
-                >
-                  {templateMenuItems(t).map(getMenuItem)}
-                </DropdownGroup>,
-              ]}
+              dropdownItems={[vmMenuItems(t).map(getMenuItem)]}
               isGrouped
               position={DropdownPosition.right}
             />
@@ -181,6 +126,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
         pages={pages}
         match={props.match}
         obj={obj}
+        hideNav
         customData={{ showTitle: false, noProjectsAvailable: props.noProjectsAvailable }}
       />
     </>

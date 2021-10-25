@@ -1092,6 +1092,7 @@
   "CronJobs": "CronJobs",
   "Jobs": "Jobs",
   "HorizontalPodAutoscalers": "HorizontalPodAutoscalers",
+  "Virtualization": "Virtualization",
   "Serverless": "Serverless",
   "Networking": "Networking",
   "Services": "Services",

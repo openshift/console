@@ -31,17 +31,17 @@ describe('Test vm creation', () => {
 
   it('ID(CNV-6732) [bz1942839] validate virtio-win-image of windows vm', () => {
     if (Cypress.env('DOWNSTREAM')) {
-      cy.exec("oc get cm -n openshift-cnv v2v-vmware -o jsonpath='{.data.virtio-win-image}'").then(
-        (result) => {
-          const image = result.stdout;
-          cy.exec(
-            `oc get vm ${vmData.name} -n ${testName} -o jsonpath='{.spec.template.spec.volumes}'`,
-          ).then((result1) => {
-            const image1 = result1.stdout;
-            expect(image1).toContain(image);
-          });
-        },
-      );
+      cy.exec(
+        "oc get cm -n kubevirt-hyperconverged v2v-vmware -o jsonpath='{.data.virtio-win-image}'",
+      ).then((result) => {
+        const image = result.stdout;
+        cy.exec(
+          `oc get vm ${vmData.name} -n ${testName} -o jsonpath='{.spec.template.spec.volumes}'`,
+        ).then((result1) => {
+          const image1 = result1.stdout;
+          expect(image1).toContain(image);
+        });
+      });
     }
   });
 });

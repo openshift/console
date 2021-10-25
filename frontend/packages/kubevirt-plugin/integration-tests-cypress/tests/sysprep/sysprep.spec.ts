@@ -1,5 +1,6 @@
 import { testName } from '../../support';
 import { ProvisionSource } from '../../utils/const/provisionSource';
+import { virtualization } from '../../views/virtualization';
 
 const vmName = `${testName}-vm-advanced-wizard`;
 
@@ -15,9 +16,7 @@ describe('ID (CNV-6821) Sysprep testing', () => {
   });
 
   it('should navigate to advanced wizard - advanced tab', () => {
-    cy.get('[data-test=nav]')
-      .filter('[href$=virtualization]')
-      .then((link) => cy.visit(link.attr('href')));
+    virtualization.vms.visit();
     cy.byLegacyTestID('item-create').click();
     cy.byLegacyTestID('vm-wizard').click();
     cy.get('.kv-select-template__tile')
@@ -69,9 +68,7 @@ describe('ID (CNV-6821) Sysprep testing', () => {
   });
 
   it('should check sysprep configmap is present', () => {
-    cy.get('.pf-c-nav__link.pf-c-nav__link')
-      .filter(':contains("ConfigMaps")')
-      .click();
+    cy.clickNavLink(['Workloads', 'ConfigMaps']);
     cy.byLegacyTestID(`sysprep-config-${vmName}`).should('be.visible');
   });
 });
