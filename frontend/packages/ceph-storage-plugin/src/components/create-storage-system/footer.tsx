@@ -130,41 +130,6 @@ export const setActionFlags = (
   }
 };
 
-const handleBackingStorageNext = async (
-  backingStorage: WizardState['backingStorage'],
-  handleError: (err: string, showError: boolean) => void,
-  moveToNextStep: () => void,
-  isSSPresent: boolean,
-) => {
-  const { externalStorage, type, deployment } = backingStorage;
-  const { model, displayName } = getExternalStorage(externalStorage) || {
-    model: { kind: '', apiVersion: '', apiGroup: '' },
-    displayName: '',
-  };
-  const isRhcs = externalStorage === OCSServiceModel.kind;
-
-  try {
-    /*
-     * Creating storage system for an external vendor other than RHCS.
-     * The created storage system will create a subscription for
-     * external vendor operator.
-     */
-    if (
-      type === BackingStorageType.EXTERNAL &&
-      !isRhcs &&
-      !isSSPresent &&
-      deployment !== DeploymentType.MCG
-    ) {
-      const subSystemName = getExternalSubSystemName(displayName);
-      const externalSystemKind = getStorageSystemKind(model);
-      await createStorageSystem(subSystemName, externalSystemKind);
-      moveToNextStep();
-    } else moveToNextStep();
-  } catch (err) {
-    handleError(err.message, true);
-  }
-};
-
 const handleReviewAndCreateNext = async (
   state: WizardState,
   hasOCS: boolean,
@@ -211,15 +176,21 @@ const handleReviewAndCreateNext = async (
         storageClass.name,
       );
 
-      await createExternalSubSystem(subSystemPayloads);
+      if (!isRhcs) {
+        await createStorageSystem(subSystemName, subSystemKind);
+      }
+
       await labelOCSNamespace();
       // Create storage cluster if one is not present except for external RHCS
       if (!hasOCS && !isRhcs) {
         await labelNodes(nodes);
         await createStorageCluster(state);
       }
-      // Create a new storage system for non RHCS external vendor if one is not present
-      if (hasAnExternalSystem) await createStorageSystem(subSystemName, subSystemKind);
+
+      if (getExternalSubSystemName(displayName) === 'ibm-flashsystem-storage') {
+        throw new Error('Not found.');
+      }
+      await createExternalSubSystem(subSystemPayloads);
     }
     // These flags control the enablement of dashboards and other ODF UI components in console
     setActionFlags(isMCG ? BackingStorageType.EXISTING : type, flagDispatcher, isRhcs);
@@ -268,16 +239,6 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
 
   const handleNext = async () => {
     switch (stepName) {
-      case StepsName(t)[Steps.BackingStorage]:
-        setRequestInProgress(true);
-        await handleBackingStorageNext(
-          state.backingStorage,
-          handleError,
-          moveToNextStep,
-          !!externalSystem,
-        );
-        setRequestInProgress(false);
-        break;
       case StepsName(t)[Steps.CreateLocalVolumeSet]:
         dispatch({
           type: 'wizard/setCreateLocalVolumeSet',
@@ -323,11 +284,11 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         <Button
           variant="secondary"
           onClick={onBack}
-          isDisabled={stepName === StepsName(t)[Steps.BackingStorage]}
+          isDisabled={requestInProgress || stepName === StepsName(t)[Steps.BackingStorage]}
         >
           {t('ceph-storage-plugin~Back')}
         </Button>
-        <Button variant="link" onClick={history.goBack}>
+        <Button variant="link" onClick={history.goBack} isDisabled={requestInProgress}>
           {t('ceph-storage-plugin~Cancel')}
         </Button>
       </WizardFooter>
