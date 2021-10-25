@@ -7,16 +7,16 @@ $font-size-base: 14px;
 }
 
 
-.co-namespace-dropdown__menu {
+.pf-c-menu.co-namespace-dropdown__menu {
   // Position is to ensure that the dropdown doesn't push content down when opened
   // Especially on the /topology/ns/[namespace]?view=graph page
   position: absolute;
 
   // This allows the menu to be longer than the menu toggle
   // Currently PatternFly does not support a min width on the menu component
-  min-width: 210px;
+  --pf-c-menu--MinWidth: 210px;
   @media (min-width: $grid-float-breakpoint) {
-    min-width: 325px;
+    --pf-c-menu--MinWidth: 325px;
   }
 }
 
