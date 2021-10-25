@@ -539,10 +539,9 @@ export const VmActionFactory = {
     };
   },
   Stop: (kindObj: K8sKind, vm: VMKind, { vmi, vmStatusBundle }: ActionArgs): Action => {
-    const isImporting = vmStatusBundle?.status?.isImporting();
     return {
       id: 'vm-action-stop',
-      disabled: isImporting,
+      disabled: vmStatusBundle?.status?.isImporting(),
       label: i18next.t('kubevirt-plugin~Stop Virtual Machine'),
       cta: () =>
         confirmVMIModal({
@@ -568,10 +567,15 @@ export const VmActionFactory = {
       accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
-  Restart: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
+  Restart: (kindObj: K8sKind, vm: VMKind, { vmi, vmStatusBundle }: ActionArgs): Action => {
     return {
       id: 'vm-action-restart',
       label: i18next.t('kubevirt-plugin~Restart Virtual Machine'),
+      disabled:
+        vmStatusBundle?.status?.isImporting() ||
+        vmStatusBundle?.status?.isMigrating() ||
+        !isVMExpectedRunning(vm, vmi) ||
+        !isVMCreated(vm),
       cta: () =>
         confirmVMIModal({
           vmi,
@@ -596,23 +600,11 @@ export const VmActionFactory = {
       accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
-  Unpause: (vmi: VMIKind): Action => {
-    return {
-      id: 'vm-action-unpause',
-      label: i18next.t('kubevirt-plugin~Unpause Virtual Machine'),
-      cta: () =>
-        confirmModal({
-          title: i18next.t('kubevirt-plugin~Unpause Virtual Machine'),
-          message: <ActionMessage obj={vmi} action={i18next.t('kubevirt-plugin~unpause')} />,
-          btnText: i18next.t('kubevirt-plugin~Unpause'),
-          executeFn: () => unpauseVMI(vmi),
-        }),
-    };
-  },
-  Pause: (vmi: VMIKind): Action => {
+  Pause: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
     return {
       id: 'vm-action-pause',
       label: i18next.t('kubevirt-plugin~Pause Virtual Machine'),
+      disabled: isVMIPaused(vmi),
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Pause Virtual Machine'),
@@ -622,7 +614,21 @@ export const VmActionFactory = {
         }),
     };
   },
-  Migrate: (vmi: VMIKind): Action => {
+  Unpause: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
+    return {
+      id: 'vm-action-unpause',
+      label: i18next.t('kubevirt-plugin~Unpause Virtual Machine'),
+      disabled: !isVMIPaused(vmi),
+      cta: () =>
+        confirmModal({
+          title: i18next.t('kubevirt-plugin~Unpause Virtual Machine'),
+          message: <ActionMessage obj={vmi} action={i18next.t('kubevirt-plugin~unpause')} />,
+          btnText: i18next.t('kubevirt-plugin~Unpause'),
+          executeFn: () => unpauseVMI(vmi),
+        }),
+    };
+  },
+  Migrate: (kindObj: K8sKind, vm: VMKind, { vmi, vmStatusBundle }: ActionArgs): Action => {
     const MigrateMessage: React.FC = () => {
       const name = getName(vmi);
       return (
@@ -635,6 +641,11 @@ export const VmActionFactory = {
     return {
       id: 'vm-action-migrate',
       label: i18next.t('kubevirt-plugin~Migrate Virtual Machine'),
+      disabled:
+        vmStatusBundle?.status?.isMigrating() ||
+        vmStatusBundle?.status?.isError() ||
+        vmStatusBundle?.status?.isInProgress() ||
+        !isVMRunningOrExpectedRunning(vm, vmi),
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Migrate Virtual Machine'),
@@ -644,7 +655,7 @@ export const VmActionFactory = {
         }),
     };
   },
-  CancelMigration: (vmStatusBundle: VMStatusBundle): Action => {
+  CancelMigration: (kindObj: K8sKind, vm: VMKind, { vmStatusBundle }: ActionArgs): Action => {
     const migration = vmStatusBundle?.migration;
     const CancelMigrationMessage: React.FC = () => {
       const name = getMigrationVMIName(migration);
@@ -660,6 +671,7 @@ export const VmActionFactory = {
     return {
       id: 'vm-action-cancel-migration',
       label: i18next.t('kubevirt-plugin~Cancel Virtual Machine Migration'),
+      disabled: !vmStatusBundle?.status?.isMigrating(),
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Cancel Virtual Machine Migration'),
@@ -671,30 +683,21 @@ export const VmActionFactory = {
         migration && asAccessReview(VirtualMachineInstanceMigrationModel, migration, 'delete'),
     };
   },
-  Clone: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
+  Clone: (kindObj: K8sKind, vm: VMKind, { vmi, vmStatusBundle }: ActionArgs): Action => {
     return {
       id: 'vm-action-clone',
       label: i18next.t('kubevirt-plugin~Clone Virtual Machine'),
+      disabled: vmStatusBundle?.status?.isImporting(),
       cta: () => cloneVMModal({ vm, vmi }),
       accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
-  OpenConsole: (vmi: VMIKind): Action => {
-    const OpenConsoleLabel: React.FC = () => {
-      const { t } = useTranslation();
-      return (
-        <>
-          {t('kubevirt-plugin~Open Console')}
-          <span className="kubevirt-menu-actions__icon-spacer">
-            <ExternalLinkAltIcon />
-          </span>
-        </>
-      );
-    };
-
+  OpenConsole: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
     return {
       id: 'vm-action-open-console',
-      label: <OpenConsoleLabel />,
+      label: i18next.t('kubevirt-plugin~Open Console'),
+      icon: <ExternalLinkAltIcon />,
+      disabled: !isVMRunningOrExpectedRunning(vm, vmi) && !isVMIPaused(vmi),
       cta: () =>
         window.open(
           `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,
@@ -703,50 +706,7 @@ export const VmActionFactory = {
         ),
     };
   },
-  CopySSHCommand: (vm: VMKind, vmStatusBundle: VMStatusBundle): Action => {
-    let sshCommand = '';
-    let isDisabled = false;
-    const CopySSHCommand: React.FC = () => {
-      const { sshServices } = useSSHService(vm);
-      const { command } = useSSHCommand(vm);
-      const [showTooltip, setShowToolTip] = React.useState(false);
-      const { t } = useTranslation();
-      sshCommand = command;
-      isDisabled = !sshServices?.running || !(vmStatusBundle?.status === VMStatus.RUNNING);
-      return (
-        <div
-          id="SSHMenuLabel"
-          onMouseEnter={() => setShowToolTip(true)}
-          onMouseLeave={() => setShowToolTip(false)}
-          className={cn({ 'CopySSHCommand-disabled': isDisabled })}
-        >
-          {t('kubevirt-plugin~Copy SSH Command')}
-          {isDisabled && (
-            <Tooltip
-              reference={() => document.getElementById('SSHMenuLabel')}
-              position="left"
-              trigger="manual"
-              isVisible={showTooltip}
-              content={t('kubevirt-plugin~Manage SSH access in the virtual machine details page')}
-            />
-          )}
-          <div className="kubevirt-menu-actions__secondary-title">
-            {isDisabled
-              ? t('kubevirt-plugin~Requires SSH Service')
-              : t('kubevirt-plugin~copy to clipboard')}
-          </div>
-        </div>
-      );
-    };
-
-    return {
-      id: 'vm-action-copy-ssh-command',
-      label: <CopySSHCommand />,
-      cta: () => !isDisabled && copy(sshCommand),
-      disabled: isDisabled,
-    };
-  },
-  Delete: (kindObj: K8sKind, vm: VMKind, vmi: VMIKind): Action => ({
+  Delete: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => ({
     id: 'vm-action-delete',
     label: i18next.t('kubevirt-plugin~Delete Virtual Machine'),
     cta: () =>

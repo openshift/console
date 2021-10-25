@@ -675,6 +675,19 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1",
+        "kind": "VirtualMachineInstance"
+      },
+      "provider": {
+        "$codeRef": "actions.useVmiActionsProvider"
+      }
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "hardwaredevices",
