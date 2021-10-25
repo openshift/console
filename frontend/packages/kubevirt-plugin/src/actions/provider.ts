@@ -7,8 +7,6 @@ import { VmActionFactory } from '../components/vms/menu-actions';
 import { useVMStatus } from '../hooks/use-vm-status';
 import { VirtualMachineInstanceModel } from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
-import { isVMRunningOrExpectedRunning } from '../selectors/vm/selectors';
-import { isVMIPaused } from '../selectors/vmi';
 import { VMIKind, VMKind } from '../types';
 
 export const useVmActionsProvider = (vm: VMKind) => {
@@ -24,35 +22,23 @@ export const useVmActionsProvider = (vm: VMKind) => {
   });
   const vmStatusBundle = useVMStatus(name, namespace);
 
-  const actions = React.useMemo(() => {
-    const start = !isVMRunningOrExpectedRunning(vm, vmi)
-      ? VmActionFactory.Start(k8sModel, vm, { vmi, vmStatusBundle })
-      : VmActionFactory.Stop(k8sModel, vm, { vmStatusBundle, vmi });
-
-    const migrate =
-      !vmStatusBundle || !vmStatusBundle?.status?.isMigrating()
-        ? VmActionFactory.Migrate(k8sModel, vm, { vmi })
-        : VmActionFactory.CancelMigration(k8sModel, vm, { vmStatusBundle });
-
-    const pause =
-      !vmi || !isVMIPaused(vmi)
-        ? VmActionFactory.Pause(k8sModel, vm, { vmi })
-        : VmActionFactory.Unpause(k8sModel, vm, { vmi });
-
-    return vmStatusBundle
-      ? [
-          start,
-          VmActionFactory.Restart(k8sModel, vm, { vmi }),
-          pause,
-          migrate,
-          VmActionFactory.Clone(k8sModel, vm, { vmi }),
-          VmActionFactory.OpenConsole(k8sModel, vm, { vmi }),
-          CommonActionFactory.ModifyLabels(k8sModel, vm),
-          CommonActionFactory.ModifyAnnotations(k8sModel, vm),
-          VmActionFactory.Delete(k8sModel, vm, { vmi }),
-        ]
-      : [];
-  }, [k8sModel, vm, vmStatusBundle, vmi]);
+  const actions = React.useMemo(
+    () =>
+      vmStatusBundle
+        ? [
+            VmActionFactory.Start(k8sModel, vm, { vmi, vmStatusBundle }),
+            VmActionFactory.Restart(k8sModel, vm, { vmi, vmStatusBundle }),
+            VmActionFactory.Pause(k8sModel, vm, { vmi, vmStatusBundle }),
+            VmActionFactory.Migrate(k8sModel, vm, { vmi, vmStatusBundle }),
+            VmActionFactory.Clone(k8sModel, vm, { vmi, vmStatusBundle }),
+            VmActionFactory.OpenConsole(k8sModel, vm, { vmi, vmStatusBundle }),
+            CommonActionFactory.ModifyLabels(k8sModel, vm),
+            CommonActionFactory.ModifyAnnotations(k8sModel, vm),
+            VmActionFactory.Delete(k8sModel, vm, { vmi }),
+          ]
+        : [],
+    [k8sModel, vm, vmStatusBundle, vmi],
+  );
   return React.useMemo(() => [actions, !inFlight, undefined], [actions, inFlight]);
 };
 
@@ -71,7 +57,7 @@ export const useVmiActionsProvider = (vm: VMKind) => {
   const actions = React.useMemo(() => {
     return vmStatusBundle
       ? [
-          VmActionFactory.OpenConsole(k8sModel, vm, { vmi }),
+          VmActionFactory.OpenConsole(k8sModel, vm, { vmi, vmStatusBundle }),
           CommonActionFactory.ModifyLabels(k8sModel, vm),
           CommonActionFactory.ModifyAnnotations(k8sModel, vm),
           VmActionFactory.Delete(k8sModel, vm, { vmi }),

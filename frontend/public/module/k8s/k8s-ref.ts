@@ -7,7 +7,7 @@ export const referenceForGroupVersionKind = (group: string) => (version: string)
 ) => [group, version, kind].join('~');
 
 export const referenceForModel = (model: K8sKind): GroupVersionKind =>
-  referenceForGroupVersionKind(model.apiGroup || 'core')(model.apiVersion)(model.kind);
+  model && referenceForGroupVersionKind(model.apiGroup || 'core')(model.apiVersion)(model.kind);
 
 export const apiVersionForModel = (model: K8sKind) =>
   _.isEmpty(model.apiGroup) ? model.apiVersion : `${model.apiGroup}/${model.apiVersion}`;
