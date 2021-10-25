@@ -1,0 +1,22 @@
+{
+  "Example info alert": "Example info alert",
+  "Example warning alert": "Example warning alert",
+  "Example hint": "Example hint",
+  "This page shows an example gallery view with cards": "This page shows an example gallery view with cards",
+  "Example card": "Example card",
+  "Card content goes here.": "Card content goes here.",
+  "Extensions of type Console.flag/Model": "Extensions of type Console.flag/Model",
+  "Group": "Group",
+  "Version": "Version",
+  "Kind": "Kind",
+  "Utilities from Dynamic Plugin SDK": "Utilities from Dynamic Plugin SDK",
+  "Utility: consoleFetchJSON": "Utility: consoleFetchJSON",
+  "Demo": "Demo",
+  "Demo Plugin": "Demo Plugin",
+  "Dynamic Nav 1": "Dynamic Nav 1",
+  "Dynamic Nav 2": "Dynamic Nav 2",
+  "Test Consumer": "Test Consumer",
+  "Test Utilities": "Test Utilities",
+  "Dynamic Page 1": "Dynamic Page 1",
+  "Dynamic Page 2": "Dynamic Page 2"
+}

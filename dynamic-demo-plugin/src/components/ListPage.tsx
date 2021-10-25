@@ -95,7 +95,7 @@ const ListPage = () => {
 
   return (
     <>
-      <ListPageHeader title="OpenShift pods list page">
+      <ListPageHeader title="OpenShift Pods List Page">
         <ListPageCreate groupVersionKind="Pod">Create Pod</ListPageCreate>
       </ListPageHeader>
       <ListPageBody>

@@ -100,5 +100,29 @@ conster Header: React.FC = () => {
 };
 ```
 
+For labels in `console-extensions.json`, you can use the format
+`%plugin__console-demo-plugin~My Label%`. Console will replace the value with
+the message for the current language from the `plugin__console-demo-plugin`
+namespace. For example:
+
+```json
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "admin-demo-section",
+      "perspective": "admin",
+      "name": "%plugin__console-demo-plugin~Demo Plugin%"
+    }
+  }
+```
+
+Note that you will need to include a comment in a TypeScript file like the
+following for [i18next-parser](https://github.com/i18next/i18next-parser) to
+add the message from `console-extensions.json` to your message catalog.
+
+```ts
+// t('plugin__console-demo-plugin~Demo Plugin')
+```
+
 Running `yarn i18n` updates the JSON files in the `locales` folder of the
 dynamic plugin when adding or changing messages.

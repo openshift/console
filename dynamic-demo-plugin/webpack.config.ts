@@ -20,7 +20,7 @@ const config: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /(\.jsx?)|(\.tsx?)$/,
+        test: /\.(jsx?|tsx?)$/,
         exclude: /node_modules/,
         use: [
           {
@@ -30,6 +30,17 @@ const config: webpack.Configuration = {
             },
           },
         ],
+      },
+      {
+        test: /\.(css)$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
+        loader: 'file-loader',
+        options: {
+          name: 'assets/[name].[ext]',
+        },
       },
     ],
   },
