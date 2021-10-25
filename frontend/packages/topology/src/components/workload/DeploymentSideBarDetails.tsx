@@ -3,10 +3,12 @@ import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DeploymentDetailsList } from '@console/internal/components/deployment';
 import {
+  LoadingBox,
   LoadingInline,
   ResourceSummary,
   WorkloadPausedAlert,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel } from '@console/internal/models';
 import { DeploymentKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
@@ -18,14 +20,32 @@ type DeploymentSideBarDetailsProps = {
 
 const DeploymentSideBarDetails: React.FC<DeploymentSideBarDetailsProps> = ({ deployment: d }) => {
   const { t } = useTranslation();
+  const deploymentClusterResource = {
+    kind: d.kind,
+    namespace: d.metadata.namespace,
+    name: d.metadata.name,
+  };
+  const [dep, isLoaded] = useK8sWatchResource<DeploymentKind>(deploymentClusterResource);
+
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
-      {d.spec.paused && <WorkloadPausedAlert obj={d} model={DeploymentModel} />}
+      {!isLoaded ? (
+        <LoadingBox />
+      ) : (
+        dep.spec.paused && <WorkloadPausedAlert obj={dep} model={DeploymentModel} />
+      )}
       <div className="resource-overview__pod-counts">
         <PodRingSet key={d.metadata.uid} obj={d} path="/spec/replicas" />
       </div>
       <div className="resource-overview__summary">
-        <ResourceSummary resource={d} showPodSelector showNodeSelector showTolerations>
+        <ResourceSummary
+          isLoaded={isLoaded}
+          resource={d}
+          newresource={dep}
+          showPodSelector
+          showNodeSelector
+          showTolerations
+        >
           <dt>{t('topology~Status')}</dt>
           <dd>
             {d.status.availableReplicas === d.status.updatedReplicas ? (

@@ -21,7 +21,7 @@ import {
 } from '../../module/k8s';
 import { configureClusterUpstreamModal, labelsModal } from '../modals';
 import { ClusterVersionModel } from '../../models';
-
+import { LoadingBox } from '@console/internal/components/utils';
 const editLabelsModal = (e, props) => {
   e.preventDefault();
   labelsModal(props);
@@ -50,7 +50,9 @@ const getTolerationsPath = (obj: K8sResourceKind): string => {
 export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   children,
   resource,
+  newresource,
   customPathName,
+  isLoaded,
   showPodSelector = false,
   showNodeSelector = false,
   showAnnotations = true,
@@ -74,7 +76,6 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
     namespace: metadata.namespace,
   });
   const canUpdate = canUpdateAccess && canUpdateResource;
-
   return (
     <dl data-test-id="resource-summary" className="co-m-pane__details">
       <DetailsItem
@@ -82,15 +83,19 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         obj={resource}
         path={customPathName || 'metadata.name'}
       />
-      {metadata.namespace && (
-        <DetailsItem label={t('public~Namespace')} obj={resource} path="metadata.namespace">
-          <ResourceLink
-            kind="Namespace"
-            name={metadata.namespace}
-            title={metadata.uid}
-            namespace={null}
-          />
-        </DetailsItem>
+      {!isLoaded ? (
+        <LoadingBox />
+      ) : (
+        metadata.namespace && (
+          <DetailsItem label={t('public~Namespace')} obj={newresource} path="metadata.namespace">
+            <ResourceLink
+              kind="Namespace"
+              name={newresource.metadata.namespace}
+              title={newresource.metadata.uid}
+              namespace={null}
+            />
+          </DetailsItem>
+        )
       )}
       <DetailsItem
         label={t('public~Labels')}
@@ -103,53 +108,75 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
       >
         <LabelList kind={reference} labels={metadata.labels} />
       </DetailsItem>
-      {showPodSelector && (
-        <DetailsItem label={t('public~Pod selector')} obj={resource} path={podSelector}>
-          <Selector
-            selector={_.get(resource, podSelector)}
-            namespace={_.get(resource, 'metadata.namespace')}
-          />
-        </DetailsItem>
+      {!isLoaded ? (
+        <LoadingBox />
+      ) : (
+        showPodSelector && (
+          <DetailsItem label={t('public~Pod selector')} obj={newresource} path={podSelector}>
+            <Selector
+              selector={_.get(newresource, podSelector)}
+              namespace={_.get(newresource, 'metadata.namespace')}
+            />
+          </DetailsItem>
+        )
       )}
-      {showNodeSelector && (
-        <DetailsItem label={t('public~Node selector')} obj={resource} path={nodeSelector}>
-          <Selector kind={t('public~Node')} selector={_.get(resource, nodeSelector)} />
-        </DetailsItem>
+      {!isLoaded ? (
+        <LoadingBox />
+      ) : (
+        showNodeSelector && (
+          <DetailsItem label={t('public~Node selector')} obj={newresource} path={nodeSelector}>
+            <Selector kind={t('public~Node')} selector={_.get(newresource, nodeSelector)} />
+          </DetailsItem>
+        )
       )}
-      {showTolerations && (
-        <DetailsItem label={t('public~Tolerations')} obj={resource} path={tolerationsPath}>
-          {canUpdate ? (
-            <Button
-              type="button"
-              isInline
-              onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
-              variant="link"
-            >
-              {t('public~{{count}} toleration', { count: _.size(tolerations) })}
-              <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-            </Button>
-          ) : (
-            t('public~{{count}} toleration', { count: _.size(tolerations) })
-          )}
-        </DetailsItem>
+      {!isLoaded ? (
+        <LoadingBox />
+      ) : (
+        showTolerations && (
+          <DetailsItem label={t('public~Tolerations')} obj={newresource} path={tolerationsPath}>
+            {canUpdate ? (
+              <Button
+                type="button"
+                isInline
+                onClick={Kebab.factory.ModifyTolerations(model, newresource).callback}
+                variant="link"
+              >
+                {t('public~{{count}} toleration', { count: _.size(tolerations) })}
+                <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+              </Button>
+            ) : (
+              t('public~{{count}} toleration', { count: _.size(tolerations) })
+            )}
+          </DetailsItem>
+        )
       )}
-      {showAnnotations && (
-        <DetailsItem label={t('public~Annotations')} obj={resource} path="metadata.annotations">
-          {canUpdate ? (
-            <Button
-              data-test="edit-annotations"
-              type="button"
-              isInline
-              onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}
-              variant="link"
-            >
-              {t('public~{{count}} annotation', { count: _.size(metadata.annotations) })}
-              <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-            </Button>
-          ) : (
-            t('public~{{count}} annotation', { count: _.size(metadata.annotations) })
-          )}
-        </DetailsItem>
+      {!isLoaded ? (
+        <LoadingBox />
+      ) : (
+        showAnnotations && (
+          <DetailsItem
+            label={t('public~Annotations')}
+            obj={newresource}
+            path="metadata.annotations"
+          >
+            {canUpdate ? (
+              <Button
+                data-test="edit-annotations"
+                type="button"
+                isInline
+                onClick={Kebab.factory.ModifyAnnotations(model, newresource).callback}
+                variant="link"
+              >
+                {t('public~{{count}} annotation', {
+                  count: _.size(newresource.metadata.annotations),
+                })}
+                <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+              </Button>
+            ) : (
+              t('public~{{count}} annotation', { count: _.size(newresource.metadata.annotations) })
+            )}
+          </DetailsItem>
+        )
       )}
       {children}
       <DetailsItem label={t('public~Created at')} obj={resource} path="metadata.creationTimestamp">
@@ -233,6 +260,8 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
 
 export type ResourceSummaryProps = {
   resource: K8sResourceKind;
+  newresource?: K8sResourceKind;
+  isLoaded?: boolean;
   showPodSelector?: boolean;
   showNodeSelector?: boolean;
   showAnnotations?: boolean;
