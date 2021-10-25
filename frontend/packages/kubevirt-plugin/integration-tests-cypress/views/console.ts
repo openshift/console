@@ -23,12 +23,24 @@ export const loginVNC = () => {
       const password = texts[2].trim();
       cy.get(consoleTypeSelector).click();
       cy.get(vncConsole).click();
+      cy.get(vncDisplay).should('be.visible');
+      // ~L.K.~ VNC console may late to be ready and responsive
+      // so each step is divided by implicit waits
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
+      cy.get(vncDisplay).click();
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
+      cy.get(vncDisplay).type('{enter}');
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(1000);
       cy.get(vncDisplay).type(`${username}{enter}`);
-      cy.get(consoleTypeSelector).click({ force: true });
-      cy.get(vncConsole).click();
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000);
       cy.get(vncDisplay).type(`${password}{enter}`);
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
+      cy.byButtonText(disconnect).click();
     });
 };
 

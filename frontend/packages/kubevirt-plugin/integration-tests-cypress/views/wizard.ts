@@ -1,3 +1,4 @@
+import { TEMPLATE_ACTIONS_TIMEOUT_SECS } from '../../integration-tests/tests/utils/constants/common';
 import { VirtualMachineData } from '../types/vm';
 import { TEMPLATE_SUPPORT } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
@@ -18,8 +19,9 @@ const fillBootSource = (
     .click({ force: true });
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
-  switch (provisionSource) {
-    case ProvisionSource.URL: {
+  switch (provisionSource.getValue()) {
+    case 'URL':
+    case 'URL_GA': {
       cy.get(wizardView.sourceURL).type(provisionSource.getSource());
       if (pvcSize) {
         cy.get(wizardView.pvcSize)
@@ -28,7 +30,7 @@ const fillBootSource = (
       }
       break;
     }
-    case ProvisionSource.CLONE_PVC: {
+    case 'Clone': {
       cy.get('body').then(($body) => {
         if ($body.find(wizardView.clonePVCNSDropdown).length) {
           cy.get(wizardView.clonePVCNSDropdown).click();
@@ -46,7 +48,7 @@ const fillBootSource = (
       });
       break;
     }
-    case ProvisionSource.REGISTRY: {
+    case 'Registry': {
       cy.get(wizardView.sourceRegistry)
         .clear()
         .type(provisionSource.getSource());
@@ -70,7 +72,9 @@ export const wizard = {
       cy.get(wizardView.vmWizard).click();
     },
     selectTemplate: (vmData: VirtualMachineData) => {
-      cy.get(wizardView.templateTitle)
+      cy.get(wizardView.templateTitle, {
+        timeout: 2 * TEMPLATE_ACTIONS_TIMEOUT_SECS,
+      })
         .contains(vmData.template.name)
         .should('exist')
         .click();
@@ -211,22 +215,34 @@ export const wizard = {
     fillAdvancedForm: (vmData: VirtualMachineData) => {
       const { cloudInit, sshEnable } = vmData;
       if (cloudInit !== undefined) {
-        cy.get(wizardView.cloudInit).click();
+        cy.get(wizardView.formView).then(($rdo) => {
+          if (!$rdo.is(':visible')) {
+            cy.get(wizardView.cloudInit).click();
+          }
+        });
         if (cloudInit.yamlView) {
           cy.get(wizardView.yamlView).click();
-          cy.get(wizardView.yamlEditor)
-            .clear()
-            .type(cloudInit.customScript);
+          if (cloudInit.customScript !== undefined) {
+            cy.get(wizardView.yamlEditor)
+              .clear()
+              .type(cloudInit.customScript);
+          }
         } else {
-          cy.get(wizardView.username)
-            .clear()
-            .type(cloudInit.userName);
-          cy.get(wizardView.password)
-            .clear()
-            .type(cloudInit.password);
-          cy.get(wizardView.hostname)
-            .clear()
-            .type(cloudInit.hostname);
+          if (cloudInit.userName !== undefined) {
+            cy.get(wizardView.username)
+              .clear()
+              .type(cloudInit.userName);
+          }
+          if (cloudInit.password !== undefined) {
+            cy.get(wizardView.password)
+              .clear()
+              .type(cloudInit.password);
+          }
+          if (cloudInit.hostname !== undefined) {
+            cy.get(wizardView.hostname)
+              .clear()
+              .type(cloudInit.hostname);
+          }
           if (cloudInit.sshKeys !== undefined) {
             cloudInit.sshKeys.forEach((key: string, index: number) => {
               cy.get(wizardView.sshKeys(index))
@@ -238,8 +254,14 @@ export const wizard = {
         }
       }
       if (sshEnable) {
-        cy.get(wizardView.ssh).click();
-        cy.get(wizardView.sshCheckbox).click();
+        cy.get(wizardView.sshCheckbox).then(($chk) => {
+          if (!$chk.is(':visible')) {
+            cy.get(wizardView.ssh).click();
+          }
+          if (!$chk.is(':checked')) {
+            cy.get(wizardView.sshCheckbox).click();
+          }
+        });
       }
       cy.get(wizardView.nextBtn).click();
     },

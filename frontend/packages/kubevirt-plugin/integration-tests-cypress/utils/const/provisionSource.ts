@@ -1,8 +1,14 @@
 import { ObjectEnum } from '../../../src/constants/object-enum';
-import { IMAGE_URL } from './index';
+import { IMAGE_URL, RHEL8_GA_URL } from './index';
 
 export class ProvisionSource extends ObjectEnum<string> {
   static readonly URL = new ProvisionSource('URL', 'Import via URL (creates PVC)', IMAGE_URL);
+
+  static readonly URL_GA = new ProvisionSource(
+    'URL_GA',
+    'Import via URL (creates PVC)',
+    RHEL8_GA_URL,
+  );
 
   static readonly REGISTRY = new ProvisionSource(
     'Registry',
