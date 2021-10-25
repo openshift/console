@@ -28,11 +28,8 @@ describe('ID(CNV-5654) test vm empty state', () => {
     cy.url().should('include', `~new-from-template?namespace=${testName}`);
   });
 
-  it('Empty state has link to templates tab', () => {
-    virtualization.vms.emptyState.clickTemplatesTab();
+  it('Empty state has action to create Template and right url', () => {
+    virtualization.templates.visit();
     cy.url().should('include', '/virtualization/templates');
-    cy.byLegacyTestID('horizontal-link-Templates')
-      .parent()
-      .should('have.class', 'co-m-horizontal-nav-item--active');
   });
 });

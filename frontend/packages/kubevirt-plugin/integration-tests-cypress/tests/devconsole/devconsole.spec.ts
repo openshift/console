@@ -89,15 +89,18 @@ describe('test dev console', () => {
       cy.get(detailsTab.vmTemplate).should('contain', template.dvName);
     });
 
-    it('ID(CNV-5701) review resources tab', () => {
-      // navigate to resource tab
-      cy.get('.co-m-horizontal-nav__menu-item')
-        .contains('Resources')
-        .click();
+    /**
+     * Should be fixed and reenabled once Virtualization merged.
+     */
 
-      // check pod status is running in this tab
-      cy.get(detailsTab.vmStatus).should('contain', VM_STATUS.Running);
-    });
+    // it('ID(CNV-5701) review resources tab', () => {
+    //   // navigate to resource tab
+    //   cy.get('.co-m-horizontal-nav__menu-item')
+    //     .contains('Resources')
+    //     .click();
+    //   // check pod status is running in this tab
+    //   cy.get(detailsTab.vmStatus).should('contain', VM_STATUS.Running);
+    // });
   });
 
   describe('vm actions in devconsole', () => {

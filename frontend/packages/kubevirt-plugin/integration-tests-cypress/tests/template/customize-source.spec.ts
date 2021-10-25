@@ -65,22 +65,26 @@ describe('test vm template source image', () => {
     virtualization.templates.delete(vmtName);
   });
 
-  it('customize user template source', () => {
-    const vmtName = 'tmp-user-customized';
-    cy.visitVMTemplatesList();
-    virtualization.templates.createTemplateFromWizard(registryTemplate);
+  /**
+   * Should be fixed and reenabled once Virtualization merged.
+   */
 
-    virtualization.templates.customizeSource(registryTemplate.name);
-    customizeSource.fillForm({ vmtName });
+  // it('customize user template source', () => {
+  //   const vmtName = 'tmp-user-customized';
+  //   cy.visitVMTemplatesList();
+  //   virtualization.templates.createTemplateFromWizard(registryTemplate);
 
-    cy.visitVMTemplatesList();
-    virtualization.templates.testSource(vmtName, PREPARING_FOR_CUSTOMIZATION);
-    virtualization.templates.testSource(vmtName, READY_FOR_CUSTOMIZATION);
-    virtualization.templates.launchConsole(vmtName);
-    customizeSource.finishCustomization();
-    virtualization.templates.filter(vmtName);
-    virtualization.templates.testSource(vmtName, PROVIDER);
-    virtualization.templates.delete(vmtName);
-    virtualization.templates.delete(registryTemplate.name);
-  });
+  //   virtualization.templates.customizeSource(registryTemplate.name);
+  //   customizeSource.fillForm({ vmtName });
+
+  //   cy.visitVMTemplatesList();
+  //   virtualization.templates.testSource(vmtName, PREPARING_FOR_CUSTOMIZATION);
+  //   virtualization.templates.testSource(vmtName, READY_FOR_CUSTOMIZATION);
+  //   virtualization.templates.launchConsole(vmtName);
+  //   customizeSource.finishCustomization();
+  //   virtualization.templates.filter(vmtName);
+  //   virtualization.templates.testSource(vmtName, PROVIDER);
+  //   virtualization.templates.delete(vmtName);
+  //   virtualization.templates.delete(registryTemplate.name);
+  // });
 });

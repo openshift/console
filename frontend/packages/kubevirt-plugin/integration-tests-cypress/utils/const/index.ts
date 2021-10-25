@@ -7,7 +7,9 @@ export const IMAGE_URL = Cypress.env('DOWNSTREAM')
   : 'https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img';
 
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
-export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
+export const KUBEVIRT_PROJECT_NAME = Cypress.env('DOWNSTREAM')
+  ? 'openshift-cnv'
+  : 'kubevirt-hyperconverged';
 export const EXPECT_LOGIN_SCRIPT_PATH = './utils/expect-login.sh';
 
 export const TEST_PROVIDER = 'test-provider';

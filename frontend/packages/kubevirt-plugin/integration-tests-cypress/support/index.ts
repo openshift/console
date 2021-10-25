@@ -74,10 +74,10 @@ Cypress.Commands.add('waitForResource', (resource: any) => {
 });
 
 Cypress.Commands.add('createDataVolume', (name: string, namespace: string) => {
-  cy.exec(
-    `kubectl get -o json -n ${KUBEVIRT_PROJECT_NAME} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
-  ).then((result) => {
-    const configMap = JSON.parse(result.stdout);
+  const execCommand = (project: string) =>
+    `kubectl get -o json -n ${project} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`;
+
+  const createDataVolume = (configMap) => {
     cy.fixture('data-volume').then((dv) => {
       dv.metadata.name = name;
       dv.metadata.namespace = namespace;
@@ -94,6 +94,10 @@ Cypress.Commands.add('createDataVolume', (name: string, namespace: string) => {
       cy.applyResource(dv);
       cy.waitForResource(dv);
     });
+  };
+
+  cy.exec(execCommand(KUBEVIRT_PROJECT_NAME)).then((result) => {
+    result?.stdout && createDataVolume(JSON.parse(result?.stdout));
   });
 });
 

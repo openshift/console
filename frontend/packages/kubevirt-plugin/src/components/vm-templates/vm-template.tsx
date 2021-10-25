@@ -6,7 +6,7 @@ import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { Flatten, ListPage, MultiListPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { CDI_APP_LABEL } from '../../constants';
+import { CDI_APP_LABEL, VMWizardName } from '../../constants';
 import {
   TEMPLATE_CUSTOMIZED_ANNOTATION,
   TEMPLATE_TYPE_BASE,
@@ -22,7 +22,6 @@ import { getLoadedData } from '../../utils';
 import { VirtualMachineTemplateBundle } from './table/types';
 import VMTemplateTable from './table/VMTemplateTable';
 import { filterTemplates } from './utils';
-
 import './vm-template.scss';
 
 // TODO
@@ -87,7 +86,7 @@ const flatten: Flatten<
 const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
-  const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
+  const { skipAccessReview, noProjectsAvailable, showTitle } = props?.customData || {};
   const namespace = props.match.params.ns;
 
   const resources = [
@@ -150,12 +149,32 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   const createAccessReview = skipAccessReview ? null : { model: TemplateModel, namespace };
   const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
 
+  const createProps = {
+    items: {
+      [VMWizardName.WIZARD]: t('kubevirt-plugin~With Wizard'),
+      [VMWizardName.YAML]: t('kubevirt-plugin~With YAML'),
+    },
+    createLink: (itemName: string) => {
+      const baseUrl = `/k8s/ns/${namespace || 'default'}/virtualization`;
+      switch (itemName) {
+        case VMWizardName.WIZARD:
+          return `${baseUrl}/~new-wizard?mode=template`;
+        case VMWizardName.YAML:
+          return `${baseUrl}/~new?mode=template`;
+        default:
+          return `${baseUrl}/~new-wizard?mode=template`;
+      }
+    },
+  };
+
   return (
     <div className="kv-template--list">
       <MultiListPage
         {...modifiedProps}
         createAccessReview={createAccessReview}
         createButtonText={t('kubevirt-plugin~Create')}
+        createProps={createProps}
+        canCreate
         title={t('kubevirt-plugin~Virtual Machine Templates')}
         showTitle={showTitle}
         ListComponent={VMTemplateTable}

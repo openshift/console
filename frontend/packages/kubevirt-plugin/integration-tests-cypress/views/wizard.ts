@@ -2,7 +2,7 @@ import { VirtualMachineData } from '../types/vm';
 import { TEMPLATE_SUPPORT } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
 import { addDisk, addNIC } from './dialog';
-import { modalCancel, modalTitle, modalConfirm, storageClass } from './selector';
+import { modalCancel, modalConfirm, modalTitle, storageClass } from './selector';
 import * as wizardView from './selector-wizard';
 
 const fillBootSource = (
@@ -65,7 +65,7 @@ const fillBootSource = (
 export const wizard = {
   vm: {
     open: () => {
-      cy.get(wizardView.create).click();
+      cy.get(wizardView.createVM).click();
       cy.get(wizardView.vmWizard).click();
     },
     selectTemplate: (vmData: VirtualMachineData) => {
@@ -261,8 +261,8 @@ export const wizard = {
   },
   template: {
     open: () => {
-      cy.byLegacyTestID('item-create').click();
-      cy.byLegacyTestID('template-wizard').click();
+      cy.byTestID('item-create').click();
+      cy.get('[data-test-dropdown-menu="wizard"]').click();
     },
     createTemplate: (
       name: string,

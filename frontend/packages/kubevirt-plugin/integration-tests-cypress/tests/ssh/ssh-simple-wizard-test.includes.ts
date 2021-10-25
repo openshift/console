@@ -1,12 +1,11 @@
 import sshFixure from '../../fixtures/ssh';
 import { ProvisionSource } from '../../utils/const/provisionSource';
+import { virtualization } from '../../views/virtualization';
 
 export default ({ vmName }) =>
   describe('ID (CNV-5970) Test creating a vm using simple wizard and adding an SSH key', () => {
     it('starting to create a vm', () => {
-      cy.get('[data-test=nav]')
-        .filter('[href$=virtualization]')
-        .then((link) => cy.visit(link.attr('href')));
+      virtualization.vms.visit();
       cy.byLegacyTestID('item-create').click();
       cy.byLegacyTestID('vm-wizard').click();
       cy.get('.kv-select-template__tile')

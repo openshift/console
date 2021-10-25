@@ -1,19 +1,16 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { NavList, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import { FLAGS, useActiveNamespace } from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
-import { featureReducerName } from '../../reducers/features';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { connect } from 'react-redux';
 import {
   NavItem as PluginNavItem,
   NavSection as PluginNavSection,
   Separator as PluginNavSeparator,
 } from '@console/dynamic-plugin-sdk/src';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-
+import { FLAGS, useActiveNamespace } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { NavItemSeparator, NavList } from '@patternfly/react-core';
 import {
   ChargebackReportModel,
   GroupModel,
@@ -24,13 +21,12 @@ import {
   MachineModel,
   MachineSetModel,
   UserModel,
-  VolumeSnapshotModel,
   VolumeSnapshotClassModel,
+  VolumeSnapshotModel,
 } from '../../models';
-
 import { referenceForModel } from '../../module/k8s';
-
-import { HrefLink, PluginNavItems, ResourceNSLink, ResourceClusterLink } from './items';
+import { featureReducerName } from '../../reducers/features';
+import { HrefLink, PluginNavItems, ResourceClusterLink, ResourceNSLink } from './items';
 import { NavSection } from './section';
 
 type SeparatorProps = {
@@ -178,8 +174,14 @@ const AdminNav: React.FC<AdminNavProps> = ({ pluginNavItems }) => {
         />
       </NavSection>
 
-      {/* Temporary addition of Knative Serverless section until extensibility allows for section ordering
+      {/* Temporary addition of Knative Serverless and Virtualization section until extensibility allows for section ordering
           and admin-nav gets contributed through extensions. */}
+      <NavSection
+        id="virtualization"
+        title={t('public~Virtualization')}
+        data-quickstart-id="qs-nav-virtualization"
+      />
+
       <NavSection
         id="serverless"
         title={t('public~Serverless')}
