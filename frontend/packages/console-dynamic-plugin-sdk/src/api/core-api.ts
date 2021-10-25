@@ -101,3 +101,10 @@ export const k8sDelete: K8sDelete = require('@console/dynamic-plugin-sdk/src/uti
   .k8sDeleteResource;
 export const k8sList: K8sList = require('@console/dynamic-plugin-sdk/src/utils/k8s')
   .k8sListResource;
+export {
+  getReference,
+  getReferenceForModel,
+  getAPIVersionForModel,
+  getGroupVersionKindForResource,
+  getGroupVersionKindForReference,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';

@@ -87,6 +87,8 @@ export type GroupVersionKind = string;
  */
 export type K8sResourceKindReference = GroupVersionKind | string;
 
+export type K8sGroupVersionKind = { group: string; version: string; kind: string };
+
 enum InventoryStatusGroup {
   WARN = 'WARN',
   ERROR = 'ERROR',

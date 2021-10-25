@@ -10,11 +10,12 @@ import {
   PageSection,
   Title,
 } from "@patternfly/react-core";
-import { k8sCreate, k8sDelete, k8sGet, k8sList, k8sPatch, K8sResourceCommon, k8sUpdate } from '@openshift-console/dynamic-plugin-sdk';
-import { DeploymentModel, mockDeploymetData } from './k8s-data';
+import { getGroupVersionKindForResource, getReference, k8sCreate, k8sDelete, k8sGet, k8sList, k8sPatch, K8sResourceCommon, k8sUpdate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
+import { mockDeploymetData } from './k8s-data';
 
 const K8sAPIConsumer: React.FC = () => {
   const { t } = useTranslation("plugin__console-demo-plugin");
+  const [k8sModel] = useK8sModel(getReference(getGroupVersionKindForResource(mockDeploymetData)));
   const [errData, setErrData] = React.useState<string>();
   const [k8sCreateData, setK8sCreateData] = React.useState<K8sResourceCommon>();
   const [k8sGetData, setK8sGetData] = React.useState<K8sResourceCommon>();
@@ -24,7 +25,7 @@ const K8sAPIConsumer: React.FC = () => {
   const [k8sDeleteData, setK8sDeleteData] = React.useState<K8sResourceCommon>();
 
   const k8sCreateClick = () => {
-    k8sCreate({model: DeploymentModel, data: mockDeploymetData}).then((response) => {
+    k8sCreate({model: k8sModel, data: mockDeploymetData}).then((response) => {
       setErrData('');
       setK8sCreateData(response);
     })
@@ -36,7 +37,7 @@ const K8sAPIConsumer: React.FC = () => {
   }
 
   const k8sGetClick = () => {
-    k8sGet({model: DeploymentModel, name: 'sampleapp', ns:'default'}).then((response) => {
+    k8sGet({model: k8sModel, name: 'sampleapp', ns:'default'}).then((response) => {
       setErrData('');
       setK8sGetData(response);
     })
@@ -57,7 +58,7 @@ const K8sAPIConsumer: React.FC = () => {
       },
     }];
     
-    k8sPatch({model: DeploymentModel, resource: mockDeploymetData, data: patchData}).then((response) => {
+    k8sPatch({model: k8sModel, resource: mockDeploymetData, data: patchData}).then((response) => {
       setErrData('');
       setK8sPatchData(response);
     })
@@ -79,7 +80,7 @@ const K8sAPIConsumer: React.FC = () => {
         },
       }
     };
-    k8sUpdate({model: DeploymentModel, data: updatedData}).then((response) => {
+    k8sUpdate({model: k8sModel, data: updatedData}).then((response) => {
       setErrData('');
       setK8sUpdateData(response);
     })
@@ -91,7 +92,7 @@ const K8sAPIConsumer: React.FC = () => {
   }
 
   const k8sListClick = () => {
-    k8sList({model: DeploymentModel, queryParams: {ns: 'default'}}).then((response) => {
+    k8sList({model: k8sModel, queryParams: {ns: 'default'}}).then((response) => {
       setErrData('');
       setK8sListData(response);
     })
@@ -103,7 +104,7 @@ const K8sAPIConsumer: React.FC = () => {
   }
 
   const k8sDeleteClick = () => {
-    k8sDelete({model: DeploymentModel, resource: mockDeploymetData}).then((response) => {
+    k8sDelete({model: k8sModel, resource: mockDeploymetData}).then((response) => {
       setErrData('');
       setK8sDeleteData(response);
     })
