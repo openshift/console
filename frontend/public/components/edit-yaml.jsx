@@ -702,6 +702,7 @@ export const EditYAML_ = connect(stateToProps)(
                               variant="primary"
                               id="save-changes"
                               data-test="save-changes"
+                              isDisabled={!this.state.initialized}
                               onClick={() => (allowMultiple ? this.saveAll() : this.save())}
                             >
                               {t('public~Create')}

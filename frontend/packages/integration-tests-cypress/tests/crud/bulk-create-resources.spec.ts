@@ -93,6 +93,7 @@ stringData:
   it('fail to import duplicate yaml definitions (local validation)', () => {
     cy.visit(`/k8s/ns/${namespace}/import`);
     yamlEditor.isImportLoaded();
+    yamlEditor.createButtonShouldBeEnabled();
     yamlEditor.setEditorContent(dupSecrets).then(() => {
       yamlEditor.clickSaveCreateButton();
       cy.get(errorMessage).should('exist');
@@ -102,6 +103,7 @@ stringData:
   it('fail to import missing namespaced resources (server validation)', () => {
     cy.visit(`/k8s/ns/${namespace}/import`);
     yamlEditor.isImportLoaded();
+    yamlEditor.createButtonShouldBeEnabled();
     yamlEditor.setEditorContent(missingNS).then(() => {
       yamlEditor.clickSaveCreateButton();
       cy.get(errorMessage).should('exist');
@@ -111,6 +113,7 @@ stringData:
   it('successfully import three yaml secret definitions', () => {
     cy.visit(`/k8s/ns/${namespace}/import`);
     yamlEditor.isImportLoaded();
+    yamlEditor.createButtonShouldBeEnabled();
     yamlEditor.setEditorContent(threeSecrets).then(() => {
       yamlEditor.clickSaveCreateButton();
       cy.get(errorMessage).should('not.exist');

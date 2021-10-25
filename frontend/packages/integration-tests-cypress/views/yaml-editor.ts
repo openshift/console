@@ -23,3 +23,5 @@ export const isImportLoaded = () => {
 export const clickSaveCreateButton = () => cy.byTestID('save-changes').click();
 export const clickCancelButton = () => cy.byTestID('cancel').click();
 export const clickReloadButton = () => cy.byTestID('reload-object').click();
+export const createButtonShouldBeEnabled = () =>
+  cy.byTestID('save-changes').should('not.be.disabled');
