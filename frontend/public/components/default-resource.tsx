@@ -70,6 +70,36 @@ export const DetailsForKind = (
     );
   };
 
+const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
+  const kind = referenceFor(obj) || customData.kind;
+  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common];
+  const { t } = useTranslation();
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink
+          kind={customData.kind}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+        />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        {obj.metadata.namespace ? (
+          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        ) : (
+          t('public~None')
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+      </TableData>
+    </>
+  );
+};
+
 export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) => {
   const { t } = useTranslation();
 
@@ -100,36 +130,6 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
         props: { className: tableColumnClasses[3] },
       },
     ];
-  };
-
-  const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
-    const kind = referenceFor(obj) || customData.kind;
-    const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common];
-
-    return (
-      <>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink
-            kind={customData.kind}
-            name={obj.metadata.name}
-            namespace={obj.metadata.namespace}
-          />
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-          {obj.metadata.namespace ? (
-            <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-          ) : (
-            t('public~None')
-          )}
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          <Timestamp timestamp={obj.metadata.creationTimestamp} />
-        </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-        </TableData>
-      </>
-    );
   };
 
   const getAriaLabel = (item) => {
