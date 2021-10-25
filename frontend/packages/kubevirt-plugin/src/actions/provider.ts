@@ -3,7 +3,7 @@ import { CommonActionFactory } from '@console/app/src/actions/creators/common-fa
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { VmActionFactory } from '../components/vms/menu-actions';
+import { VmActionFactory, VmiActionFactory } from '../components/vms/menu-actions';
 import { useVMStatus } from '../hooks/use-vm-status';
 import { VirtualMachineInstanceModel } from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
@@ -74,7 +74,7 @@ export const useVmiActionsProvider = (vm: VMKind) => {
           VmActionFactory.OpenConsole(k8sModel, vm, { vmi }),
           CommonActionFactory.ModifyLabels(k8sModel, vm),
           CommonActionFactory.ModifyAnnotations(k8sModel, vm),
-          VmActionFactory.Delete(k8sModel, vm, { vmi }),
+          VmiActionFactory.Delete(k8sModel, vmi),
         ]
       : [];
   }, [k8sModel, vm, vmStatusBundle, vmi]);

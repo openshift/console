@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { StackItem, Tooltip } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import {
+  DesktopIcon,
+  PlayIcon,
+  OffIcon,
+  PowerOffIcon,
+  PauseIcon,
+  UndoIcon,
+} from '@patternfly/react-icons';
 import cn from 'classnames';
 import * as copy from 'copy-to-clipboard';
 import i18next from 'i18next';
@@ -36,7 +43,7 @@ import {
   isVMExpectedRunning,
   isVMRunningOrExpectedRunning,
 } from '../../selectors/vm/selectors';
-import { isVMIPaused } from '../../selectors/vmi';
+import { isVMIPaused, isVMIRunning } from '../../selectors/vmi';
 import { getMigrationVMIName } from '../../selectors/vmi-migration';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
@@ -435,7 +442,7 @@ export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOpti
       <>
         {t('kubevirt-plugin~Open Console')}
         <span className="kubevirt-menu-actions__icon-spacer">
-          <ExternalLinkAltIcon />
+          <DesktopIcon />
         </span>
       </>
     );
@@ -523,6 +530,7 @@ export const VmActionFactory = {
       id: 'vm-action-start',
       disabled: vmStatusBundle?.status?.isMigrating() || isVMRunningOrExpectedRunning(vm, vmi),
       label: i18next.t('kubevirt-plugin~Start Virtual Machine'),
+      icon: <PowerOffIcon />,
       cta: () => {
         if (!vmStatusBundle?.status?.isImporting()) {
           startVM(vm);
@@ -543,6 +551,7 @@ export const VmActionFactory = {
       id: 'vm-action-stop',
       disabled: vmStatusBundle?.status?.isImporting(),
       label: i18next.t('kubevirt-plugin~Stop Virtual Machine'),
+      icon: <OffIcon />,
       cta: () =>
         confirmVMIModal({
           vmi,
@@ -576,6 +585,7 @@ export const VmActionFactory = {
         vmStatusBundle?.status?.isMigrating() ||
         !isVMExpectedRunning(vm, vmi) ||
         !isVMCreated(vm),
+      icon: <UndoIcon />,
       cta: () =>
         confirmVMIModal({
           vmi,
@@ -605,6 +615,7 @@ export const VmActionFactory = {
       id: 'vm-action-pause',
       label: i18next.t('kubevirt-plugin~Pause Virtual Machine'),
       disabled: isVMIPaused(vmi),
+      icon: <PauseIcon />,
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Pause Virtual Machine'),
@@ -619,6 +630,7 @@ export const VmActionFactory = {
       id: 'vm-action-unpause',
       label: i18next.t('kubevirt-plugin~Unpause Virtual Machine'),
       disabled: !isVMIPaused(vmi),
+      icon: <PlayIcon />,
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Unpause Virtual Machine'),
@@ -696,8 +708,8 @@ export const VmActionFactory = {
     return {
       id: 'vm-action-open-console',
       label: i18next.t('kubevirt-plugin~Open Console'),
-      icon: <ExternalLinkAltIcon />,
-      disabled: !isVMRunningOrExpectedRunning(vm, vmi) && !isVMIPaused(vmi),
+      icon: <DesktopIcon />,
+      disabled: !isVMIRunning(vmi) && !isVMIPaused(vmi),
       cta: () =>
         window.open(
           `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,

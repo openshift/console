@@ -26,7 +26,6 @@ import {
   FirehoseResult,
   history,
   Kebab,
-  KebabOption,
   ResourceLink,
   Timestamp,
 } from '@console/internal/components/utils';
@@ -37,7 +36,8 @@ import {
   PersistentVolumeClaimModel,
   PodModel,
 } from '@console/internal/models';
-import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { referenceFor, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { useNamespace } from '../../hooks/use-namespace';
@@ -70,7 +70,6 @@ import {
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VMStatus } from '../vm-status/vm-status';
-import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actions';
 import { vmStatusFilter } from './table-filters';
 import VMIP from './VMIP';
 
@@ -130,35 +129,19 @@ const PendingChanges: React.FC = () => {
 };
 
 const VMRow: React.FC<RowFunctionArgs<VMRowObjType>> = ({ obj }) => {
-  const { vm, vmi, vmImport } = obj;
-  const { name, namespace, node, creationTimestamp, uid, vmStatusBundle } = obj.metadata;
+  const { vm, vmi } = obj;
+  const { name, namespace, node, creationTimestamp, vmStatusBundle } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
 
-  let options: KebabOption[];
-  let model: K8sKind;
-
-  if (vmImport) {
-    model = VirtualMachineImportModel;
-    options = vmImportMenuActions.map((action) => action(model, vmImport));
-  } else if (vm) {
-    model = VirtualMachineModel;
-    options = vmMenuActions.map((action) =>
-      action(model, vm, {
-        vmStatusBundle,
-        vmi,
-      }),
-    );
-  } else if (vmi) {
-    model = VirtualMachineInstanceModel;
-    options = vmiMenuActions.map((action) => action(model, vmi));
-  }
+  const objReference = referenceFor(vm || vmi);
+  const context = { [objReference]: vm || vmi };
 
   const arePendingChanges = hasPendingChanges(vm, vmi);
 
   return (
     <>
       <TableData className={dimensify()}>
-        <ResourceLink kind={kubevirtReferenceForModel(model)} name={name} namespace={namespace} />
+        <ResourceLink kind={objReference} name={name} namespace={namespace} />
       </TableData>
       <TableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
@@ -182,7 +165,7 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType>> = ({ obj }) => {
       </TableData>
       <TableData className={dimensify()}>{vmi && <VMIP data={getVmiIpAddresses(vmi)} />}</TableData>
       <TableData className={dimensify(true)}>
-        <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
