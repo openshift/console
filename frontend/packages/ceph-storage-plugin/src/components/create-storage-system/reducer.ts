@@ -38,6 +38,7 @@ export const initialState: CreateStorageSystemState = {
     externalStorage: '',
     deployment: DeploymentType.FULL,
     isAdvancedOpen: false,
+    isValidSC: true,
   },
   capacityAndNodes: {
     enableArbiter: false,
@@ -84,6 +85,7 @@ type CreateStorageSystemState = {
     externalStorage: string;
     deployment: DeploymentType;
     isAdvancedOpen: boolean;
+    isValidSC: boolean;
   };
   createStorageClass: ExternalState;
   connectionDetails: ExternalState;
@@ -168,6 +170,9 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'backingStorage/setIsAdvancedOpen':
       newState.backingStorage.isAdvancedOpen = action.payload;
       break;
+    case 'backingStorage/setIsValidSC':
+      newState.backingStorage.isValidSC = action.payload;
+      break;
     case 'capacityAndNodes/capacity':
       newState.capacityAndNodes.capacity = action.payload;
       break;
@@ -239,6 +244,10 @@ export type CreateStorageSystemAction =
   | {
       type: 'backingStorage/setExternalStorage';
       payload: WizardState['backingStorage']['externalStorage'];
+    }
+  | {
+      type: 'backingStorage/setIsValidSC';
+      payload: WizardState['backingStorage']['isValidSC'];
     }
   | { type: 'wizard/nodes'; payload: WizardState['nodes'] }
   | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] }
