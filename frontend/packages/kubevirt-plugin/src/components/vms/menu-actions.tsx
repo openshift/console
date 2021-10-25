@@ -584,6 +584,7 @@ export const VmActionFactory = {
         vmStatusBundle?.status?.isImporting() ||
         vmStatusBundle?.status?.isMigrating() ||
         !isVMExpectedRunning(vm, vmi) ||
+        isVMIPaused(vmi) ||
         !isVMCreated(vm),
       icon: <UndoIcon />,
       cta: () =>
