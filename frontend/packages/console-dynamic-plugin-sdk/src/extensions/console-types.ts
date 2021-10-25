@@ -3,10 +3,11 @@ import { TableGridBreakpoint, OnSelect, SortByDirection, ICell } from '@patternf
 import { RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
-  K8sKind,
+  K8sModel,
   PrometheusLabels,
   PrometheusValue,
   ResolvedExtension,
+  Selector,
 } from '../api/common-types';
 import { Extension, ExtensionTypeGuard } from '../types';
 
@@ -71,22 +72,6 @@ export type AccessReviewResourceAttributes = {
   verb?: K8sVerb;
   name?: string;
   namespace?: string;
-};
-
-export type MatchExpression = {
-  key: string;
-  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
-  values?: string[];
-  value?: string;
-};
-
-export type MatchLabels = {
-  [key: string]: string;
-};
-
-export type Selector = {
-  matchLabels?: MatchLabels;
-  matchExpressions?: MatchExpression[];
 };
 
 /**
@@ -418,8 +403,8 @@ export type ResourceLinkProps = {
   onClick?: () => void;
 };
 
-export type UseK8sModel = (groupVersionKind?: GroupVersionKind) => [K8sKind, boolean];
-export type UseK8sModels = () => [{ [key: string]: K8sKind }, boolean];
+export type UseK8sModel = (groupVersionKind?: GroupVersionKind) => [K8sModel, boolean];
+export type UseK8sModels = () => [{ [key: string]: K8sModel }, boolean];
 
 export type PerspectiveType = string;
 
@@ -427,3 +412,37 @@ export type UseActivePerspective = () => [
   PerspectiveType,
   React.Dispatch<React.SetStateAction<PerspectiveType>>,
 ];
+
+export type QueryParams = {
+  watch?: string;
+  labelSelector?: string;
+  fieldSelector?: string;
+  resourceVersion?: string;
+  [key: string]: string;
+};
+
+export type Patch = {
+  op: string;
+  path: string;
+  value?: any;
+};
+
+export type Cause = {
+  field: string;
+  message: string;
+  reason: string;
+};
+
+export type Status = {
+  apiVersion: 'v1';
+  kind: 'Status';
+  details: {
+    causes: Cause[];
+    group: string;
+    kind: string;
+  };
+  message: string;
+  metadata: any;
+  reason: string;
+  status: string;
+};

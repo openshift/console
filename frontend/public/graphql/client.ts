@@ -5,7 +5,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 
-import { getK8sResourcePath } from '../module/k8s/resource';
+import { getK8sResourcePath } from '../module/k8s';
 import { K8sKind, K8sResourceCommon } from '../module/k8s/types';
 import { URLQuery } from './client.gql';
 import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/graphql-schema';

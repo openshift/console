@@ -1,12 +1,12 @@
 import i18next from 'i18next';
-import { Action, K8sKind } from '@console/dynamic-plugin-sdk/src';
+import { Action, K8sModel } from '@console/dynamic-plugin-sdk/src';
 import { deleteModal } from '@console/internal/components/modals';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { csvNameFromWindow } from '../components/operand/operand-link';
 import { ClusterServiceVersionModel } from '../models';
 
 export const CSVDefaultActions = {
-  Edit: (kindObj: K8sKind, resource: K8sResourceKind, csvName: string): Action => {
+  Edit: (kindObj: K8sModel, resource: K8sResourceKind, csvName: string): Action => {
     const reference = referenceFor(resource);
     return {
       id: 'edit-csv',
@@ -27,7 +27,7 @@ export const CSVDefaultActions = {
       },
     };
   },
-  Delete: (kindObj: K8sKind, resource: K8sResourceKind, csvName: string): Action => {
+  Delete: (kindObj: K8sModel, resource: K8sResourceKind, csvName: string): Action => {
     return {
       id: 'delete-csv',
       label: i18next.t('olm~Delete {{item}}', { item: kindObj.label }),

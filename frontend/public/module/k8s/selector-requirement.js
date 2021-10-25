@@ -1,12 +1,5 @@
 import * as _ from 'lodash-es';
-
-const toArray = (value) => (Array.isArray(value) ? value : [value]);
-
-export const createEquals = (key, value) => ({
-  key,
-  operator: 'Equals',
-  values: [value],
-});
+import { createEquals } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 export const requirementFromString = (string) => {
   string = string.trim();
@@ -105,40 +98,4 @@ export const requirementFromString = (string) => {
   }
 
   return; // falsy means parsing failure
-};
-
-export const requirementToString = (requirement) => {
-  if (requirement.operator === 'Equals') {
-    return `${requirement.key}=${requirement.values[0]}`;
-  }
-
-  if (requirement.operator === 'NotEquals') {
-    return `${requirement.key}!=${requirement.values[0]}`;
-  }
-
-  if (requirement.operator === 'Exists') {
-    return requirement.key;
-  }
-
-  if (requirement.operator === 'DoesNotExist') {
-    return `!${requirement.key}`;
-  }
-
-  if (requirement.operator === 'In') {
-    return `${requirement.key} in (${toArray(requirement.values).join(',')})`;
-  }
-
-  if (requirement.operator === 'NotIn') {
-    return `${requirement.key} notin (${toArray(requirement.values).join(',')})`;
-  }
-
-  if (requirement.operator === 'GreaterThan') {
-    return `${requirement.key} > ${requirement.values[0]}`;
-  }
-
-  if (requirement.operator === 'LessThan') {
-    return `${requirement.key} < ${requirement.values[0]}`;
-  }
-
-  return; // falsy means malformed requirement
 };

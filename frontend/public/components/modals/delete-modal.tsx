@@ -16,11 +16,10 @@ import {
   withHandlePromise,
   HandlePromiseProps,
 } from '../utils';
-import { k8sKill, referenceForOwnerRef, K8sKind } from '../../module/k8s/';
+import { k8sKill, k8sList, referenceForOwnerRef, K8sKind } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
-import { k8sList } from '../../module/k8s/resource';
 import { ResourceLink } from '../utils/resource-link';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum

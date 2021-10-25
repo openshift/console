@@ -8,7 +8,7 @@ import {
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
 } from '@console/shared';
-import { K8sKind } from '@console/dynamic-plugin-sdk';
+import { K8sModel } from '@console/dynamic-plugin-sdk';
 import { connectToModel } from '../../kinds';
 import { modelFor, referenceFor, referenceForModel } from '../../module/k8s';
 import { AsyncComponent, Kebab, KebabAction, ResourceSummary } from '../utils';
@@ -57,7 +57,7 @@ export const DefaultOverviewPage: React.FC<{ item: OverviewItem }> = ({ item }) 
 };
 
 const DefaultSideBar: React.FC<{
-  kindObj: K8sKind;
+  kindObj: K8sModel;
   item: OverviewItem;
   customActions?: KebabAction[];
 }> = ({ kindObj, item, customActions }) => {
