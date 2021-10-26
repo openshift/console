@@ -204,6 +204,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     );
   };
 
+  const [currentStep, setCurrentStep] = React.useState(1);
   const [stepsReached, setStepsReached] = React.useState(1);
 
   const StepPositionMap = Object.entries(CreateStepsBC).reduce((acc, cur, index) => {
@@ -211,12 +212,23 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     return acc;
   }, {});
 
+  const canJumpToHelper = (that) => {
+    const currentId = StepPositionMap[that.id];
+    if (currentId === currentStep && !that.enableNext) {
+      setStepsReached(currentId);
+    }
+    return stepsReached >= currentId;
+  };
+
   const steps: WizardStep[] = [
     {
       id: CreateStepsBC.GENERAL,
       name: t('ceph-storage-plugin~General'),
       component: <GeneralPage dispatch={dispatch} state={state} />,
       enableNext: validateBucketClassName(state.bucketClassName.trim()),
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
     {
       id: CreateStepsBC.PLACEMENT,
@@ -231,7 +243,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? !!state.tier1Policy
           : !!state.namespacePolicyType,
-      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.PLACEMENT],
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
     {
       id: CreateStepsBC.RESOURCES,
@@ -246,7 +260,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? backingStoreNextConditions()
           : namespaceStoreNextConditions(),
-      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.RESOURCES],
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
     {
       id: CreateStepsBC.REVIEW,
@@ -254,7 +270,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       component: <ReviewPage state={state} />,
       nextButtonText: t('ceph-storage-plugin~Create BucketClass'),
       enableNext: creationConditionsSatisfied(),
-      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.REVIEW],
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
   ];
 
@@ -295,10 +313,17 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           onSave={finalStep}
           onClose={() => history.goBack()}
           onNext={({ id }) => {
+            setCurrentStep(currentStep + 1);
             const idIndexPlusOne = StepPositionMap[id];
             const newStepHigherBound =
               stepsReached < idIndexPlusOne ? idIndexPlusOne : stepsReached;
             setStepsReached(newStepHigherBound);
+          }}
+          onBack={() => {
+            setCurrentStep(currentStep - 1);
+          }}
+          onGoToStep={(newStep) => {
+            setCurrentStep(StepPositionMap[newStep.id]);
           }}
         />
       </div>
