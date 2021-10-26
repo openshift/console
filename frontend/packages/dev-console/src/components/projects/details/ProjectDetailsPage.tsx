@@ -78,7 +78,6 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
       breadcrumbsFor={() => []}
       name={activeNamespace}
       kind={ProjectModel.kind}
-      kindObj={ProjectModel}
       menuActions={projectMenuActions}
       customData={{ activeNamespace, hideHeading: true }}
       pages={pages}

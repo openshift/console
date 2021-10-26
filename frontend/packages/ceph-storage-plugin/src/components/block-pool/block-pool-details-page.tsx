@@ -7,6 +7,7 @@ import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, ResourceIcon } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
 
 import { menuActionCreator } from './block-pool-menu-action';
 import { CephClusterKind } from '../../types';
@@ -61,14 +62,15 @@ const BlockPoolDetailsPage: React.FC<BlockPoolDetailsPagePros> = (props) => {
     },
   ];
 
+  const match: DetailsPageProps['match'] = { ...props.match, params: { name: poolName } };
+
   return (
     <DetailsPage
       {...props}
-      match={props.match}
+      match={match}
       name={poolName}
       namespace={CEPH_STORAGE_NAMESPACE}
       kind={kind}
-      kindObj={CephBlockPoolModel}
       menuActions={menuActionCreator}
       pagesFor={pagesFor}
       breadcrumbsFor={breadcrumbs}

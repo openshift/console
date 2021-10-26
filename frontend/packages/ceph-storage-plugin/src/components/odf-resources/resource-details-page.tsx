@@ -12,6 +12,7 @@ import {
 import { OperandDetails } from '@console/operator-lifecycle-manager/src/components/operand';
 import { referenceForModel, nameForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
   ClusterServiceVersionModel,
@@ -71,9 +72,14 @@ export const GenericDetailsPage: React.FC<GenericDetailsPageProps> = (props) => 
     return <LoadError label={props.match.params.resourceKind} />;
   }
 
+  const match: DetailsPageProps['match'] = {
+    ...props.match,
+    params: { name: props.match.params.resourceName },
+  };
+
   return !isLoading ? (
     <DetailsPage
-      match={props.match}
+      match={match}
       name={props.match.params.resourceName}
       kind={props.match.params.resourceKind}
       namespace={CEPH_STORAGE_NAMESPACE}

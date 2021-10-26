@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
@@ -9,10 +10,13 @@ import {
   ActionServiceProvider,
   useTabbedTableBreadcrumbsFor,
 } from '@console/shared';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
-const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { kindObj, match, kind } = props;
+const RouteDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { match, kind } = props;
+  const [model] = useK8sModel(kind);
+
   const pages = [navFactory.details(DetailsForKind(kind)), navFactory.editYaml()];
   const actionMenu = (kindObjData: K8sKind, obj: K8sResourceKind) => {
     const resourceKind = referenceForModel(kindObjData);
@@ -27,12 +31,7 @@ const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pr
       </ActionServiceProvider>
     );
   };
-  const breadcrumbs = useTabbedTableBreadcrumbsFor(
-    kindObj,
-    match,
-    'serving',
-    serverlessTab(kindObj.kind),
-  );
+  const breadcrumbs = useTabbedTableBreadcrumbsFor(model, match, 'serving', serverlessTab(kind));
 
   return (
     <DetailsPage

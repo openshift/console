@@ -15,6 +15,7 @@ import {
   ResourceTabPage as DynamicResourceTabPage,
   isResourceTabPage as isDynamicResourceTabPage,
   DetailsPageProps,
+  K8sModel,
 } from '@console/dynamic-plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -37,7 +38,7 @@ import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 const useBreadCrumbsForDetailPage = (
-  kindObj: K8sKind,
+  modelResource: K8sModel,
 ): ResolvedExtension<DetailPageBreadCrumbs> => {
   const [breadCrumbsExtension, breadCrumbsResolved] = useResolvedExtensions<DetailPageBreadCrumbs>(
     isDetailPageBreadCrumbs,
@@ -48,11 +49,11 @@ const useBreadCrumbsForDetailPage = (
         ? breadCrumbsExtension.find(({ properties: { getModels } }) => {
             const models = getModels();
             return Array.isArray(models)
-              ? models.findIndex((model: K8sKind) => model.kind === kindObj?.kind) !== -1
-              : models.kind === kindObj?.kind;
+              ? models.findIndex((model: K8sKind) => model.kind === modelResource?.kind) !== -1
+              : models.kind === modelResource?.kind;
           })
         : undefined,
-    [breadCrumbsResolved, breadCrumbsExtension, kindObj],
+    [breadCrumbsResolved, breadCrumbsExtension, modelResource],
   );
 };
 
@@ -60,7 +61,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   const resourceKeys = _.map(props.resources, 'prop');
   const [pluginBreadcrumbs, setPluginBreadcrumbs] = React.useState(undefined);
   const [model] = useK8sModel(props.kind);
-  const kindObj = props.kindObj ?? model;
+  // const kindObj = props.kindObj ?? model;
   const renderAsyncComponent = (page: ResourceTabPage, cProps: PageComponentProps) => (
     <AsyncComponent loader={page.properties.loader} {...cProps} />
   );
@@ -75,8 +76,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
       ...resourcePageExtensions
         .filter(
           (p) =>
-            referenceForModel(p.properties.model) ===
-            (kindObj ? referenceFor(kindObj) : props.kind),
+            referenceForModel(p.properties.model) === (model ? referenceFor(model) : props.kind),
         )
         .map((p) => ({
           href: p.properties.href,
@@ -88,12 +88,11 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           if (p.properties.model.version) {
             return (
               referenceForExtensionModel(p.properties.model) ===
-              (kindObj ? referenceFor(kindObj) : props.kind)
+              (model ? referenceFor(model) : props.kind)
             );
           }
           return (
-            p.properties.model.group === kindObj.apiGroup &&
-            p.properties.model.kind === kindObj.kind
+            p.properties.model.group === model.apiGroup && p.properties.model.kind === model.kind
           );
         })
         .map(({ properties: { href, name, component: Component } }) => ({
@@ -102,9 +101,9 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           component: (cProps) => <Component {...cProps} />,
         })),
     ],
-    [resourcePageExtensions, dynamicResourcePageExtensions, kindObj, props.kind],
+    [resourcePageExtensions, dynamicResourcePageExtensions, model, props.kind],
   );
-  const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kindObj);
+  const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(model);
   const onBreadcrumbsResolved = React.useCallback((breadcrumbs) => {
     setPluginBreadcrumbs(breadcrumbs || undefined);
   }, []);
@@ -118,14 +117,14 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           useBreadcrumbs={resolvedBreadcrumbExtension.properties.breadcrumbsProvider}
           onBreadcrumbsResolved={onBreadcrumbsResolved}
           urlMatch={props.match}
-          kind={kindObj}
+          kind={model}
         />
       )}
       <Firehose
         resources={[
           {
             kind: props.kind,
-            kindObj,
+            // kindObj,
             name: props.name,
             namespace: props.namespace,
             isList: false,
@@ -144,12 +143,12 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
             props.breadcrumbsFor ??
-            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, props.match) : undefined)
+            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(model, props.match) : undefined)
           }
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}
           customData={props.customData}
-          badge={props.badge || getBadgeFromType(kindObj?.badge)}
+          badge={props.badge || getBadgeFromType(model?.badge)}
           icon={props.icon}
         >
           {props.children}

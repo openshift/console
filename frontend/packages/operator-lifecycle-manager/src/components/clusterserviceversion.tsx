@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResource, DetailsPageProps } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -1254,6 +1254,19 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
     [canListSubscriptions],
   );
 
+  const getIcon: DetailsPageProps['icon'] = ({ obj }) => {
+    const { spec } = obj as ClusterServiceVersionKind;
+
+    return (
+      <ClusterServiceVersionLogo
+        displayName={spec?.displayName}
+        icon={spec?.icon?.[0]}
+        provider={spec?.provider}
+        version={spec?.version}
+      />
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
@@ -1270,14 +1283,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
         { kind: referenceForModel(CatalogSourceModel), isList: true, prop: 'catalogSources' },
         { kind: referenceForModel(InstallPlanModel), isList: true, prop: 'installPlans' },
       ]}
-      icon={({ obj }) => (
-        <ClusterServiceVersionLogo
-          displayName={_.get(obj.spec, 'displayName')}
-          icon={_.get(obj.spec, 'icon[0]')}
-          provider={_.get(obj.spec, 'provider')}
-          version={_.get(obj.spec, 'version')}
-        />
-      )}
+      icon={getIcon}
       namespace={props.match.params.ns}
       kind={referenceForModel(ClusterServiceVersionModel)}
       name={props.match.params.name}

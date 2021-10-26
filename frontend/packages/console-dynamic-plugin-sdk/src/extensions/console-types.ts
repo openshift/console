@@ -444,7 +444,7 @@ export type DetailsPageProps = {
   pages?: Page[];
   pagesFor?: (obj: K8sResourceCommon) => Page[];
   kind: K8sResourceKindReference;
-  kindObj?: K8sModel;
+  // k8sModel?: K8sModel;
   label?: string;
   name?: string;
   namespace?: string;

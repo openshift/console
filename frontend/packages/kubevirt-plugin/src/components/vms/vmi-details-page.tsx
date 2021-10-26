@@ -90,7 +90,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       name={name}
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineInstanceModel)}
-      kindObj={VirtualMachineInstanceModel}
+      // kindObj={VirtualMachineInstanceModel}
       menuActions={vmiMenuActionsCreator}
       pages={pages}
       resources={resources}

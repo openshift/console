@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPage } from '@console/internal/components/factory';
 import { KebabAction, navFactory, LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { PipelineModel } from '../../models';
 import { PipelineKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
@@ -27,9 +29,11 @@ import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
-  const { name, namespace, kindObj, match } = props;
+  const { name, namespace, kind, match } = props;
+
+  const [model] = useK8sModel(kind);
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
-  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(model, match);
   const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const pipelineOperator = usePipelineOperatorVersion(namespace);

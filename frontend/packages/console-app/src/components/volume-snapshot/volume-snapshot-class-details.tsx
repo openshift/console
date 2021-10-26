@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
 import { ResourceEventStream } from '@console/internal/components/events';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPage } from '@console/internal/components/factory';
 import {
   SectionHeading,
   ResourceSummary,

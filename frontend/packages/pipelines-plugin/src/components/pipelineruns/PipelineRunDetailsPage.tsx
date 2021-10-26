@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
+import { DetailsPage } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
@@ -14,11 +16,12 @@ import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
-  const { kindObj, match } = props;
+  const { kind, match } = props;
+  const [model] = useK8sModel(kind);
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(true),
   );
-  const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = usePipelinesBreadcrumbsFor(model, match);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (

@@ -21,7 +21,6 @@ describe('PipelineRunDetailsPage:', () => {
   beforeEach(() => {
     pipelineRunDetailsPageProps = {
       kind: PipelineRunModel.kind,
-      kindObj: PipelineRunModel,
       match: {
         isExact: true,
         path: `/k8s/ns/:ns/${referenceForModel(PipelineRunModel)}/events`,

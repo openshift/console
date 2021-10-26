@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
+import { DetailsPage } from '@console/internal/components/factory';
 import {
   navFactory,
   SectionHeading,

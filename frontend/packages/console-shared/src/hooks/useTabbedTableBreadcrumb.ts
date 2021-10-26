@@ -12,11 +12,9 @@ import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY } from '../constants/common';
 
-type Match = RMatch<{ url: string }>;
-
 export const useTabbedTableBreadcrumbsFor = (
   kindObj: K8sKind,
-  match: Match,
+  match: RMatch,
   navOption: string,
   subTab: string = null,
   customBreadcrumbName?: string,

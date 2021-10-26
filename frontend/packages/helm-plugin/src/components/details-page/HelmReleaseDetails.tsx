@@ -11,7 +11,6 @@ import {
   StatusBox,
   FirehoseResult,
 } from '@console/internal/components/utils';
-import { SecretModel } from '@console/internal/models';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, Status, ActionServiceProvider } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
@@ -90,7 +89,6 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
 
   return (
     <DetailsPage
-      kindObj={SecretModel}
       match={match}
       customActionMenu={customActionMenu}
       name={secretName}

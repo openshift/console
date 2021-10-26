@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
+import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRunEvents from './events/TaskRunEvents';
@@ -10,8 +12,10 @@ import TaskRunLog from './TaskRunLog';
 
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
-  const { kindObj, match } = props;
-  const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj, match);
+  const { kind, match } = props;
+  const [model] = useK8sModel(kind);
+
+  const breadcrumbsFor = useTasksBreadcrumbsFor(model, match);
   const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (

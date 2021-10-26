@@ -16,7 +16,6 @@ describe('TaskRunDetailsPage:', () => {
   beforeEach(() => {
     taskRunDetailsPageProps = {
       kind: TaskRunModel.kind,
-      kindObj: TaskRunModel,
       match: {
         isExact: true,
         path: `/k8s/ns/:ns/${referenceForModel(TaskRunModel)}/events`,

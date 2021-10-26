@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import { mount, ReactWrapper } from 'enzyme';
 
 import store from '@console/internal/redux';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory/details';
+import { DetailsPage } from '@console/internal/components/factory';
+import { DetailsPageProps } from '@console/dynamic-plugin-sdk';
 import { PodModel, ConfigMapModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';

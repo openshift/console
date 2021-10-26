@@ -163,7 +163,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       name={name}
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineModel)}
-      kindObj={VirtualMachineModel}
+      // kindObj={VirtualMachineModel}
       menuActions={vmMenuActionsCreator}
       pages={pages}
       resources={resources}

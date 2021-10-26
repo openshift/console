@@ -48,7 +48,6 @@ describe('PipelineDetailsPage:', () => {
   beforeEach(() => {
     PipelineDetailsPageProps = {
       kind: PipelineModel.kind,
-      kindObj: PipelineModel,
       match: {
         isExact: true,
         path: `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/${pipelineName}`,

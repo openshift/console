@@ -166,10 +166,10 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
   props,
 ) => {
   const { t } = useTranslation();
+
   return (
     <DetailsPage
       match={props.match}
-      kindObj={ImageManifestVulnModel}
       titleFunc={(obj: ImageManifestVuln) =>
         !_.isEmpty(obj) ? `${shortenImage(obj.spec.image)}@${shortenHash(obj.spec.manifest)}` : null
       }

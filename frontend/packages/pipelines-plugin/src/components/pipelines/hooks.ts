@@ -18,18 +18,16 @@ import { pipelinesTab } from '../../utils/pipeline-utils';
 import { DEFAULT_SAMPLES, TektonResourceLabel } from './const';
 import { metricQueries, PipelineQuery } from './pipeline-metrics/pipeline-metrics-utils';
 
-type Match = RMatch<{ url: string }>;
-
-export const usePipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
+export const usePipelinesBreadcrumbsFor = (kindObj: K8sKind, match: RMatch) =>
   useTabbedTableBreadcrumbsFor(kindObj, match, 'pipelines', pipelinesTab(kindObj));
 
-export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
+export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: RMatch) =>
   useTabbedTableBreadcrumbsFor(kindObj, match, 'tasks', pipelinesTab(kindObj));
 
-export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
+export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: RMatch) =>
   useTabbedTableBreadcrumbsFor(kindObj, match, 'triggers', pipelinesTab(kindObj));
 
-export const useDevPipelinesBreadcrumbsFor = (kindObj: K8sKind, match: Match) => {
+export const useDevPipelinesBreadcrumbsFor = (kindObj: K8sKind, match: RMatch) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const navOption = isAdminPerspective ? `pipelines` : 'dev-pipelines';
   return useTabbedTableBreadcrumbsFor(

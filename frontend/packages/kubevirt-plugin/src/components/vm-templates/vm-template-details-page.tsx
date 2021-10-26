@@ -102,7 +102,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
     <DetailsPage
       {...props}
       kind={TemplateModel.kind}
-      kindObj={TemplateModel}
+      // kindObj={TemplateModel}
       name={name}
       namespace={namespace}
       menuActions={menuActionsCreator}
