@@ -432,30 +432,19 @@ export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
   nameKey?: string;
 };
 
+/** Properties of a resource-details page. */
 export type DetailsPageProps = {
+  /** React-router match object */
   match: match<{ ns?: string; name?: string; plural?: string }>;
-  title?: React.ReactNode;
-  titleFunc?: (obj: K8sResourceCommon) => React.ReactNode;
-  menuActions?: Function[] | KebabOptionsCreatorProps;
-  buttonActions?: any[];
-  customActionMenu?:
-    | React.ReactNode
-    | ((kindObj: K8sModel, obj: K8sResourceCommon) => React.ReactNode); // Renders a custom action menu.
-  pages?: Page[];
-  pagesFor?: (obj: K8sResourceCommon) => Page[];
   kind: K8sResourceKindReference;
-  // k8sModel?: K8sModel;
-  label?: string;
+  /** Resource name for the details page */
   name?: string;
+  /** Namespace of the reource. */
   namespace?: string;
-  resources?: FirehoseResource[];
-  breadcrumbsFor?: (obj: K8sResourceCommon) => { name: string; path: string }[];
-  customData?: any;
-  badge?: React.ReactNode;
-  icon?: React.ComponentType<{ obj: K8sResourceCommon }>;
-  getResourceStatus?: (resource: K8sResourceCommon) => string;
-  children?: React.ReactNode;
-  customKind?: string;
+  /** Optional top-right corner actions */
+  menuActions?: Function[] | KebabOptionsCreatorProps;
+  /** Optional list of pages to be rendered. */
+  pages?: Page[];
 };
 
 export type KebabOption = {

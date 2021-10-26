@@ -15,11 +15,12 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import { WatchK8sResource, DetailsPageProps } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
   DetailsPage,
+  DetailsPageProps,
   Table,
   TableData,
   MultiListPage,

@@ -14,8 +14,9 @@ import {
   useResolvedExtensions,
   ResourceTabPage as DynamicResourceTabPage,
   isResourceTabPage as isDynamicResourceTabPage,
-  DetailsPageProps,
+  DetailsPageProps as DynamicDetailsPageProps,
   K8sModel,
+  Page,
 } from '@console/dynamic-plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -31,6 +32,7 @@ import {
   referenceForModel,
   referenceFor,
   referenceForExtensionModel,
+  K8sResourceKind,
 } from '../../module/k8s';
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
@@ -55,6 +57,26 @@ const useBreadCrumbsForDetailPage = (
         : undefined,
     [breadCrumbsResolved, breadCrumbsExtension, modelResource],
   );
+};
+
+export type DetailsPageProps = DynamicDetailsPageProps & {
+  // Following props can be migrated one-by-one into dynamic-sdk's DetailsPageProps
+  title?: string | JSX.Element;
+  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
+  buttonActions?: any[];
+  customActionMenu?:
+    | React.ReactNode
+    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
+  pagesFor?: (obj: K8sResourceKind) => Page[];
+  label?: string;
+  resources?: FirehoseResource[];
+  breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
+  customData?: any;
+  badge?: React.ReactNode;
+  icon?: React.ComponentType<{ obj: K8sResourceKind }>;
+  getResourceStatus?: (resource: K8sResourceKind) => string;
+  children?: React.ReactNode;
+  customKind?: string;
 };
 
 export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...props }) => {
@@ -166,31 +188,5 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     </>
   );
 }, ErrorBoundaryFallback);
-/* TODO: remove - moved to console-types.ts
-export type DetailsPageProps = {
-  match: match<any>;
-  title?: string | JSX.Element;
-  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
-  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
-  buttonActions?: any[];
-  customActionMenu?:
-    | React.ReactNode
-    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
-  pages?: Page[];
-  pagesFor?: (obj: K8sResourceKind) => Page[];
-  kind: K8sResourceKindReference;
-  kindObj?: K8sKind;
-  label?: string;
-  name?: string;
-  namespace?: string;
-  resources?: FirehoseResource[];
-  breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
-  customData?: any;
-  badge?: React.ReactNode;
-  icon?: React.ComponentType<{ obj: K8sResourceKind }>;
-  getResourceStatus?: (resource: K8sResourceKind) => string;
-  children?: React.ReactNode;
-  customKind?: string;
-};
-*/
+
 DetailsPage.displayName = 'DetailsPage';
