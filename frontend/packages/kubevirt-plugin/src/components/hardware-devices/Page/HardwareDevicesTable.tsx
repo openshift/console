@@ -1,53 +1,47 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, TextFilter } from '@console/internal/components/factory';
-import { useHyperconvergedCR } from '../../../hooks/use-hyperconverged-resource';
-import { deviceCounts, HWDHeader } from '../utils';
+import { dimensifyHeader } from '@console/shared/src/utils';
+import FilteredTable from '../../FilteredTable/FilteredTable';
 import HardwareDeviceRow from './HardwareDeviceRow';
 
-const HardwareDevicesTable: React.FC<any> = (props) => {
+const tableColumnClasses = ['', ''];
+
+const HardwareDevicesTable: React.FC<any> = ({ obj, deviceSelector, label, ...props }) => {
   const { t } = useTranslation();
 
-  const [hc, loaded] = useHyperconvergedCR();
-  const devices: any[] = props.isPCI
-    ? hc?.spec?.permittedHostDevices?.pciHostDevices
-    : hc?.spec?.permittedHostDevices?.mediatedDevices;
-  const devicesCount = deviceCounts(devices);
-  const flattenDevices = Object.keys(devicesCount);
+  const flattenDevices = React.useMemo(() => {
+    const counts = {};
 
-  const [textFilter, setTextFilter] = React.useState<string>('');
-  const hasFilter = textFilter?.length > 0;
-  const [filteredDevices, setFilteredDevices] = React.useState<any[]>(flattenDevices);
+    deviceSelector(obj)?.forEach((device) => {
+      counts[device.resourceName] = counts[device.resourceName] + 1 || 1;
+    });
 
-  React.useEffect(() => {
-    if (hasFilter) {
-      const filtered = flattenDevices?.filter((dev) => {
-        return dev.toLowerCase().includes(textFilter.toLowerCase());
-      });
-      setFilteredDevices(filtered);
-    } else {
-      setFilteredDevices(flattenDevices);
-    }
-  }, [flattenDevices, hasFilter, hc, textFilter]);
+    return Object.keys(counts).map((key) => ({ name: key, count: counts[key] }));
+  }, [deviceSelector, obj]);
+
+  const header = () =>
+    dimensifyHeader(
+      [
+        {
+          title: t('kubevirt-plugin~Resource name'),
+        },
+        {
+          title: t('kubevirt-plugin~Quantity'),
+        },
+      ],
+      tableColumnClasses,
+    );
 
   return (
     <div className="co-m-pane__body">
-      <div className="co-m-pane__filter-row">
-        <TextFilter value={textFilter} onChange={setTextFilter} />
-      </div>
-      <Table
+      <FilteredTable
         {...props}
-        Header={HWDHeader(t)}
+        Header={header}
         Row={HardwareDeviceRow}
-        loaded={loaded}
+        loaded
         virtualize
-        data={filteredDevices}
-        customData={devicesCount}
-        label={
-          props.isPCI
-            ? t('kubevirt-plugin~PCI host devices')
-            : t('kubevirt-plugin~mediated devices')
-        }
+        data={flattenDevices}
+        label={label}
       />
     </div>
   );
