@@ -306,6 +306,7 @@ describe('event-source-kafka', () => {
     const expectedEdges = [
       {
         id: '1317f615-9636-11e9-b134-06a61d886b689_1_85ffdf52-59f5-4120-b2cd-e90c991845e0',
+        label: 'Kafka connector',
         type: 'event-source-kafka-link',
         source: '1317f615-9636-11e9-b134-06a61d886b689_1',
         target: '85ffdf52-59f5-4120-b2cd-e90c991845e0',

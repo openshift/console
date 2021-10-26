@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import { GraphElement, Edge, isEdge } from '@patternfly/react-topology';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
@@ -7,6 +7,7 @@ import { Action } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { RevisionModel } from '../models';
@@ -16,6 +17,9 @@ import {
   TYPE_EVENT_PUB_SUB,
   TYPE_KNATIVE_SERVICE,
   TYPE_SINK_URI,
+  TYPE_EVENT_SOURCE_LINK,
+  TYPE_REVISION_TRAFFIC,
+  TYPE_KAFKA_CONNECTION_LINK,
 } from '../topology/const';
 import { AddBrokerAction } from './add-broker';
 import { AddChannelAction } from './add-channel';
@@ -186,6 +190,29 @@ export const useUriActionsProvider = (element: GraphElement) => {
     return null;
   }, [element]);
 
+  return React.useMemo(() => {
+    if (!actions) {
+      return [[], true, undefined];
+    }
+    return [actions, true, undefined];
+  }, [actions]);
+};
+
+export const useKnativeConnectorActionProvider = (element: Edge) => {
+  const actions = React.useMemo(() => {
+    const isEventSourceConnector = element.getType() === TYPE_EVENT_SOURCE_LINK;
+    if (isEdge(element) && element.getSource()?.getData()) {
+      const { resource } = element.getSource().getData();
+      const sourceModel = modelFor(referenceFor(resource));
+      if (isEventSourceConnector) {
+        return [moveSinkSource(sourceModel, resource)];
+      }
+      if ([TYPE_REVISION_TRAFFIC, TYPE_KAFKA_CONNECTION_LINK].includes(element.getType())) {
+        return [MoveConnectorAction(sourceModel, element)];
+      }
+    }
+    return null;
+  }, [element]);
   return React.useMemo(() => {
     if (!actions) {
       return [[], true, undefined];

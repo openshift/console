@@ -7,6 +7,9 @@ import { getResource } from '../../utils';
 
 export const getWorkloadResourceLink = (element: GraphElement) => {
   const resource = getResource(element);
+  if (!resource) {
+    return null;
+  }
   const kindReference = referenceFor(resource);
   return (
     <>

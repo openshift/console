@@ -23,7 +23,6 @@ import {
   getDynamicEventSourcesModelRefs,
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
-  isEventingPubSubLinkKind,
 } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 
@@ -77,16 +76,11 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
     },
   ];
 
-  const actions = [];
-  if (isEventingPubSubLinkKind(resourceModel.kind)) {
-    actions.push(...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common);
-  } else {
-    actions.push(
-      ModifyApplication,
-      ...Kebab.getExtensionsActionsForKind(resourceModel),
-      ...Kebab.factory.common,
-    );
-  }
+  const actions = [
+    ModifyApplication,
+    ...Kebab.getExtensionsActionsForKind(resourceModel),
+    ...Kebab.factory.common,
+  ];
 
   if (
     [ServiceModel.kind, RevisionModel.kind, CamelKameletBindingModel.kind].includes(

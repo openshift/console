@@ -1,3 +1,6 @@
+/**
+ * @deprecated This file needs to be removed after migrating all the connector side-panels to dynamic extensions
+ */
 import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import * as classNames from 'classnames';

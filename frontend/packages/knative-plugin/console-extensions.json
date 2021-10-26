@@ -1089,5 +1089,28 @@
     "flags": {
       "required": ["KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useKnativeConnectorActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-kn-connector-resource",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getKnativeConnectorSidepanelResourceSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
   }
 ]

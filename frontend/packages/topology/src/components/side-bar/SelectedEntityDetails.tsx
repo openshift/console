@@ -4,7 +4,6 @@ import {
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
 } from '@console/helm-plugin/src/topology/components/const';
-import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
 import {
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_EVENT_SOURCE_LINK,
@@ -53,22 +52,18 @@ export const SelectedEntityDetails: React.FC<{ selectedEntity: GraphElement }> =
   }
 
   if (isEdge(selectedEntity)) {
-    if ([TYPE_EVENT_PUB_SUB_LINK, TYPE_SERVICE_BINDING].includes(selectedEntity.getType())) {
-      return <TopologySideBarContent element={selectedEntity} />;
-    }
     if (
-      [TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK, TYPE_KAFKA_CONNECTION_LINK].includes(
-        selectedEntity.getType(),
-      )
+      [
+        TYPE_REVISION_TRAFFIC,
+        TYPE_EVENT_SOURCE_LINK,
+        TYPE_KAFKA_CONNECTION_LINK,
+        TYPE_SERVICE_BINDING,
+        TYPE_EVENT_PUB_SUB_LINK,
+        TYPE_CONNECTS_TO,
+      ].includes(selectedEntity.getType())
     ) {
-      return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
-    }
-
-    if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {
       return <TopologySideBarContent element={selectedEntity} />;
     }
-    if (selectedEntity.getType() === TYPE_CONNECTS_TO)
-      return <TopologySideBarContent element={selectedEntity} />;
 
     return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
   }

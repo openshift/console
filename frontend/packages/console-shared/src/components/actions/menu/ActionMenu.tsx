@@ -29,7 +29,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const menuOptions = options || actions;
+  const menuOptions = options.length > 0 ? options : actions;
 
   const hideMenu = () => {
     setIsOpen(false);
