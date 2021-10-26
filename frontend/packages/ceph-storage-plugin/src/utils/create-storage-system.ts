@@ -54,6 +54,7 @@ export const createWizardNodeState = (nodes: NodeKind[] = []): WizardNodeState[]
     const uid = getUID(node);
     const roles = getNodeRoles(node).sort();
     const labels = node?.metadata?.labels;
+    const taints = node?.spec?.taints;
     return {
       name,
       hostName,
@@ -63,6 +64,7 @@ export const createWizardNodeState = (nodes: NodeKind[] = []): WizardNodeState[]
       uid,
       roles,
       labels,
+      taints,
     };
   });
 

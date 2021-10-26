@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
+  Checkbox,
   Grid,
   GridItem,
   Form,
@@ -12,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize, useFlag } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SelectedNodesTable } from './selected-nodes-table';
 import { StretchCluster } from './stretch-cluster';
@@ -33,6 +34,7 @@ import {
   NodesPerZoneMap,
   getZonesFromNodesKind,
 } from '../../../../utils/create-storage-system';
+import { GUARDED_FEATURES } from '../../../../features';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-and-nodes';
 import { pvResource, nodeResource } from '../../../../resources';
@@ -40,10 +42,38 @@ import { ValidationMessage } from '../../../../utils/common-ocs-install-el';
 import { SelectNodesTable } from '../../select-nodes-table/select-nodes-table';
 import { ErrorHandler } from '../../error-handler';
 
+import './capacity-and-nodes.scss';
+
+const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ dispatch, enableTaint }) => {
+  const { t } = useTranslation();
+  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
+
+  return isTaintSupported ? (
+    <Checkbox
+      label={t('ceph-storage-plugin~Taint nodes')}
+      description={t(
+        'ceph-storage-plugin~Selected nodes will be dedicated to OpenShift Data Foundation use only',
+      )}
+      className="odf-capacity-and-nodes__taint-checkbox"
+      id="taint-nodes"
+      isChecked={enableTaint}
+      onChange={() => dispatch({ type: 'capacityAndNodes/enableTaint', payload: !enableTaint })}
+    />
+  ) : (
+    <></>
+  );
+};
+
+type EnableTaintNodesProps = {
+  dispatch: WizardDispatch;
+  enableTaint: WizardState['capacityAndNodes']['enableTaint'];
+};
+
 const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   dispatch,
   capacity,
   nodes,
+  enableTaint,
 }) => {
   const { t } = useTranslation();
 
@@ -102,6 +132,7 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
           <SelectNodesTable nodes={nodes} onRowSelected={onRowSelected} />
         </GridItem>
       </Grid>
+      <EnableTaintNodes dispatch={dispatch} enableTaint={enableTaint} />
     </>
   );
 };
@@ -110,12 +141,14 @@ type SelectCapacityAndNodesProps = {
   dispatch: WizardDispatch;
   capacity: WizardState['capacityAndNodes']['capacity'];
   nodes: WizardState['nodes'];
+  enableTaint: WizardState['capacityAndNodes']['enableTaint'];
 };
 
 const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   capacity,
   storageClassName,
   enableArbiter,
+  enableTaint,
   arbiterLocation,
   dispatch,
   nodes,
@@ -245,6 +278,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
             <SelectedNodesTable data={nodes} />
           </GridItem>
         </Grid>
+        <EnableTaintNodes dispatch={dispatch} enableTaint={enableTaint} />
       </>
     </ErrorHandler>
   );
@@ -253,6 +287,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
 type SelectedCapacityAndNodesProps = {
   capacity: WizardState['capacityAndNodes']['capacity'];
   enableArbiter: WizardState['capacityAndNodes']['enableArbiter'];
+  enableTaint: WizardState['capacityAndNodes']['enableTaint'];
   storageClassName: string;
   arbiterLocation: WizardState['capacityAndNodes']['arbiterLocation'];
   dispatch: WizardDispatch;
@@ -266,10 +301,9 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
   volumeSetName,
   nodes,
 }) => {
-  const { capacity, enableArbiter, arbiterLocation } = state;
+  const { capacity, enableArbiter, enableTaint, arbiterLocation } = state;
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
-
   const validations = capacityAndNodesValidate(nodes, enableArbiter, isNoProvisioner);
 
   return (
@@ -279,12 +313,18 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
           storageClassName={storageClass.name || volumeSetName}
           enableArbiter={enableArbiter}
           arbiterLocation={arbiterLocation}
+          enableTaint={enableTaint}
           dispatch={dispatch}
           nodes={nodes}
           capacity={capacity}
         />
       ) : (
-        <SelectCapacityAndNodes dispatch={dispatch} capacity={capacity} nodes={nodes} />
+        <SelectCapacityAndNodes
+          dispatch={dispatch}
+          enableTaint={enableTaint}
+          capacity={capacity}
+          nodes={nodes}
+        />
       )}
       {!!validations.length &&
         !!capacity &&
