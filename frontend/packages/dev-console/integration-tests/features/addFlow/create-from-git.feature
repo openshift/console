@@ -203,3 +203,13 @@ Feature: Create Application from git form
                   | git_url                                |
                   | https://github.com/sclorg/httpd-ex.git |
                   | https://github.com/sclorg/nginx-ex.git |
+
+        @regression
+        Scenario: Provide custom build environments for nodejs git import
+            Given user is at Import from Git form
+            When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex"
+            And user enters run command for "NPM_RUN" as "build2"
+            And user enters Name as "nodejs-env"
+            And user clicks Create button on Add page
+            Then user will be redirected to Topology page
+            And user is able to navigate to Build #1 for deployment "nodejs-env" and see environment variable "NPM_RUN" in Environment tab of details page

@@ -12,6 +12,7 @@ import {
   getPorts,
 } from '../../../utils/imagestream-utils';
 import { useSafeK8s } from '../../../utils/safe-k8s-hook';
+import BuilderImageEnvironments from './BuilderImageEnvironments';
 import ImageStreamInfo from './ImageStreamInfo';
 
 export interface BuilderImageTagSelectorProps {
@@ -79,6 +80,11 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
         />
       </div>
       {imageTag && showImageInfo && <ImageStreamInfo displayName={displayName} tag={imageTag} />}
+      <BuilderImageEnvironments
+        name="image.imageEnv"
+        imageStreamName={imageName}
+        imageStreamTag={selectedImageTag}
+      />
     </>
   );
 };

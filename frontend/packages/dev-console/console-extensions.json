@@ -187,6 +187,21 @@
     }
   },
   {
+    "type": "dev-console.import/environment",
+    "properties": {
+      "imageStreamName": "nodejs",
+      "imageStreamTags": ["16-ubi8", "14-ubi8", "14-ubi8-minimal", "12-ubi8", "latest"],
+      "environments": [
+        {
+          "key": "NPM_RUN",
+          "label": "%devconsole~Run command%",
+          "description": "%devconsole~Optional parameter for Node.js applications to define the npm run <command>.%",
+          "defaultValue": "start"
+        }
+      ]
+    }
+  },
+  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "BuilderImage",

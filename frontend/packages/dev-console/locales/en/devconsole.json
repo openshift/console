@@ -19,6 +19,8 @@
   "Browse the catalog to discover and deploy operator managed services": "Browse the catalog to discover and deploy operator managed services",
   "Upload JAR file": "Upload JAR file",
   "Upload a JAR file from your local desktop to OpenShift": "Upload a JAR file from your local desktop to OpenShift",
+  "Run command": "Run command",
+  "Optional parameter for Node.js applications to define the npm run <command>.": "Optional parameter for Node.js applications to define the npm run <command>.",
   "Builder Images": "Builder Images",
   "Browse for container images that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.": "Browse for container images that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.",
   "**Builder Images** are container images that build source code for a particular language or framework.": "**Builder Images** are container images that build source code for a particular language or framework.",

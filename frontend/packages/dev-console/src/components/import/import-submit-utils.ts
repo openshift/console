@@ -169,7 +169,7 @@ export const createOrUpdateBuildConfig = (
     application: { name: applicationName },
     git: { url: repository, type: gitType, ref = 'master', dir: contextDir, secret: secretName },
     docker: { dockerfilePath },
-    image: { tag: selectedTag },
+    image: { tag: selectedTag, imageEnv },
     build: { env, triggers, strategy: buildStrategy },
     labels: userLabels,
   } = formData;
@@ -182,6 +182,11 @@ export const createOrUpdateBuildConfig = (
   let buildStrategyData;
 
   let desiredContextDir = contextDir;
+  const customBuildEnvs = imageEnv
+    ? Object.keys(imageEnv)
+        .filter((k) => !!imageEnv[k])
+        .map((k) => ({ name: k, value: imageEnv[k] }))
+    : [];
 
   switch (buildStrategy) {
     case 'Devfile':
@@ -198,7 +203,7 @@ export const createOrUpdateBuildConfig = (
     default:
       buildStrategyData = {
         sourceStrategy: {
-          env,
+          env: [...env, ...customBuildEnvs],
           from: {
             kind: 'ImageStreamTag',
             name: `${imageStreamName}:${selectedTag}`,

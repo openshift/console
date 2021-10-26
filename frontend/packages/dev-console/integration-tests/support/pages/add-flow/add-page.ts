@@ -94,6 +94,13 @@ export const addPage = {
     }
   },
   verifyCard: (cardName: string) => cy.get(cardTitle).should('contain.text', cardName),
+  setBuildEnvField: (envKey: string, value: string) =>
+    cy
+      .get(`#form-input-image-imageEnv-${envKey}-field`)
+      .scrollIntoView()
+      .should('be.visible')
+      .clear()
+      .type(value),
 };
 
 export const verifyAddPage = {
