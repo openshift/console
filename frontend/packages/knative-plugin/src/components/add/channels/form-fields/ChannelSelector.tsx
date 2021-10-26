@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { DropdownField, DropdownFieldProps } from '@console/shared';
-import { EventingChannelModel } from '../../../../models';
+import { EVENTING_CHANNEL_KIND } from '../../../../const';
 import { getChannelKind } from '../../../../utils/create-channel-utils';
 
 type ChannelSelectorProps = {
@@ -20,13 +20,13 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
   const [selected] = useField('formData.type');
   const { t } = useTranslation();
   const filteredChannels = _.flatten(
-    _.partition(channels, (ref) => getChannelKind(ref) === EventingChannelModel.kind),
+    _.partition(channels, (ref) => getChannelKind(ref) === EVENTING_CHANNEL_KIND),
   );
 
   const channelData = filteredChannels.reduce((acc, channel) => {
     const channelName = getChannelKind(channel);
     acc[channel] =
-      channelName === EventingChannelModel.kind && defaultConfiguredChannel
+      channelName === EVENTING_CHANNEL_KIND && defaultConfiguredChannel
         ? t('knative-plugin~Default {{channelName}} ({{defaultConfiguredChannel}})', {
             channelName,
             defaultConfiguredChannel,
@@ -37,7 +37,7 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
 
   const getGenericChannel = React.useCallback((): string => {
     return (
-      filteredChannels.find((ch) => getChannelKind(ch) === EventingChannelModel.kind) ||
+      filteredChannels.find((ch) => getChannelKind(ch) === EVENTING_CHANNEL_KIND) ||
       filteredChannels[0]
     );
   }, [filteredChannels]);

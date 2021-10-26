@@ -24,7 +24,7 @@ import {
   AddChannelFormData,
   YamlFormSyncData,
 } from '../components/add/import-types';
-import { EventingIMCModel } from '../models';
+import { EVENTING_IMC_KIND } from '../const';
 import { loadYamlData } from './create-eventsources-utils';
 import { useChannelResourcesList } from './fetch-dynamic-eventsources-utils';
 
@@ -170,7 +170,7 @@ export const useDefaultChannelConfiguration = (namespace: string): [string, bool
     CHANNEL_CONFIGMAP_NAME,
     CHANNEL_CONFIGMAP_NAMESPACE,
   );
-  let defaultConfiguredChannel = EventingIMCModel.kind;
+  let defaultConfiguredChannel = EVENTING_IMC_KIND;
   if (configMap && defaultConfiguredChannelLoaded) {
     const cfg = safeLoad(configMap.data?.['default-ch-config']);
 

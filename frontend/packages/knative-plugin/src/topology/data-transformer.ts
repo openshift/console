@@ -2,7 +2,7 @@ import { Model } from '@patternfly/react-topology';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { addToTopologyDataModel } from '@console/topology/src/data-transforms/transform-utils';
 import { TopologyDataResources } from '@console/topology/src/topology-types';
-import { EventSourceKafkaModel } from '../models';
+import { EVENT_SOURCE_KAFKA_KIND } from '../const';
 import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
@@ -57,10 +57,10 @@ export const getKnativeTopologyDataModel = (
     eventSourceProps,
   );
   const knEventSourcesKafka: K8sResourceKind[] = allKnEventSources.filter(
-    (knEventSource) => knEventSource.kind === EventSourceKafkaModel.kind,
+    (knEventSource) => knEventSource.kind === EVENT_SOURCE_KAFKA_KIND,
   );
   const knEventSources: K8sResourceKind[] = allKnEventSources.filter(
-    (knEventSource) => knEventSource.kind !== EventSourceKafkaModel.kind,
+    (knEventSource) => knEventSource.kind !== EVENT_SOURCE_KAFKA_KIND,
   );
   const knRevResources: K8sResourceKind[] = resources?.revisions?.data ?? [];
   const knChannelResources: K8sResourceKind[] = getKnativeDynamicResources(

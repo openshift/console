@@ -9,9 +9,9 @@ import {
 import * as classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { EventingBrokerModel } from '@console/knative-plugin/src/models';
 import { BaseEdge } from '@console/topology/src/components/graph-view';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
+import { EventingBrokerModel } from '../../../models';
 import { EVENT_MARKER_RADIUS } from '../../const';
 
 import './EventingPubSubLink.scss';

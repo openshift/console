@@ -2,13 +2,11 @@ import { chart_color_cyan_400 as knativeServingColor } from '@patternfly/react-t
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import { K8sKind } from '@console/internal/module/k8s';
 import {
-  KNATIVE_EVENT_SOURCE_APIGROUP,
-  KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENTING_APIGROUP,
-  STRIMZI_KAFKA_APIGROUP,
   CAMEL_APIGROUP,
+  STRIMZI_KAFKA_APIGROUP,
 } from './const';
 
 const apiVersion = 'v1';
@@ -47,24 +45,6 @@ export const KnativeServingModel: K8sKind = {
   namespaced: true,
   crd: true,
   color: knativeServingColor.value,
-};
-
-export const KnativeEventingModel: K8sKind = {
-  apiGroup: 'operator.knative.dev',
-  apiVersion: 'v1alpha1',
-  kind: 'KnativeEventing',
-  label: 'KnativeEventing',
-  // t('knative-plugin~KnativeEventing')
-  labelKey: 'knative-plugin~KnativeEventing',
-  labelPlural: 'KnativeEventings',
-  // t('knative-plugin~KnativeEventings')
-  labelPluralKey: 'knative-plugin~KnativeEventings',
-  plural: 'knativeeventings',
-  id: 'knativeeventing',
-  abbr: 'KE',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
 };
 
 export const RevisionModel: K8sKind = {
@@ -139,132 +119,6 @@ export const DomainMappingModel: K8sKind = {
   color: knativeServingColor.value,
 };
 
-export const EventSourceCronJobModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
-  apiVersion: 'v1alpha1',
-  kind: 'CronJobSource',
-  label: 'CronJobSource',
-  // t('knative-plugin~CronJobSource')
-  labelKey: 'knative-plugin~CronJobSource',
-  labelPlural: 'CronJobSources',
-  // t('knative-plugin~CronJobSources')
-  labelPluralKey: 'knative-plugin~CronJobSources',
-  plural: 'cronjobsources',
-  id: 'cronjobsource',
-  abbr: 'CJS',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventSourcePingModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion,
-  kind: 'PingSource',
-  label: 'PingSource',
-  // t('knative-plugin~PingSource')
-  labelKey: 'knative-plugin~PingSource',
-  labelPlural: 'PingSources',
-  // t('knative-plugin~PingSources')
-  labelPluralKey: 'knative-plugin~PingSources',
-  plural: 'pingsources',
-  id: 'pingsource',
-  abbr: 'PS',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventSourceContainerModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion,
-  kind: 'ContainerSource',
-  label: 'ContainerSource',
-  // t('knative-plugin~ContainerSource')
-  labelKey: 'knative-plugin~ContainerSource',
-  labelPlural: 'ContainerSources',
-  // t('knative-plugin~ContainerSources')
-  labelPluralKey: 'knative-plugin~ContainerSources',
-  plural: 'containersources',
-  id: 'containersource',
-  abbr: 'CS',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventSourceApiServerModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion,
-  kind: 'ApiServerSource',
-  label: 'ApiServerSource',
-  // t('knative-plugin~ApiServerSource')
-  labelKey: 'knative-plugin~ApiServerSource',
-  labelPlural: 'ApiServerSources',
-  // t('knative-plugin~ApiServerSources')
-  labelPluralKey: 'knative-plugin~ApiServerSources',
-  plural: 'apiserversources',
-  id: 'apiserversource',
-  abbr: 'AS',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventSourceCamelModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1alpha1',
-  kind: 'CamelSource',
-  label: 'CamelSource',
-  // t('knative-plugin~CamelSource')
-  labelKey: 'knative-plugin~CamelSource',
-  labelPlural: 'CamelSources',
-  // t('knative-plugin~CamelSources')
-  labelPluralKey: 'knative-plugin~CamelSources',
-  plural: 'camelsources',
-  id: 'camelsource',
-  abbr: 'CS',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventSourceKafkaModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1beta1',
-  kind: 'KafkaSource',
-  label: 'KafkaSource',
-  // t('knative-plugin~KafkaSource')
-  labelKey: 'knative-plugin~KafkaSource',
-  labelPlural: 'KafkaSources',
-  // t('knative-plugin~KafkaSources')
-  labelPluralKey: 'knative-plugin~KafkaSources',
-  plural: 'kafkasources',
-  id: 'kafkasource',
-  abbr: 'KS',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventSourceSinkBindingModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion,
-  kind: 'SinkBinding',
-  label: 'SinkBinding',
-  // t('knative-plugin~SinkBinding')
-  labelKey: 'knative-plugin~SinkBinding',
-  labelPlural: 'SinkBindings',
-  // t('knative-plugin~SinkBindings')
-  labelPluralKey: 'knative-plugin~SinkBindings',
-  plural: 'sinkbindings',
-  id: 'sinkbindingsource',
-  abbr: 'SBS',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
 export const EventingSubscriptionModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
   apiVersion,
@@ -278,60 +132,6 @@ export const EventingSubscriptionModel: K8sKind = {
   plural: 'subscriptions',
   id: 'subscriptioneventing',
   abbr: 'S',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventingIMCModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
-  apiVersion,
-  kind: 'InMemoryChannel',
-  label: 'InMemoryChannel',
-  // t('knative-plugin~InMemoryChannel')
-  labelKey: 'knative-plugin~InMemoryChannel',
-  // t('knative-plugin~InMemoryChannels')
-  labelPluralKey: 'knative-plugin~InMemoryChannels',
-  labelPlural: 'InMemoryChannels',
-  plural: 'inmemorychannels',
-  id: 'inmemorychannel',
-  abbr: 'IMC',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventingChannelModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
-  apiVersion,
-  kind: 'Channel',
-  label: 'Channel',
-  // t('knative-plugin~Channel')
-  labelKey: 'knative-plugin~Channel',
-  labelPlural: 'Channels',
-  // t('knative-plugin~Channels')
-  labelPluralKey: 'knative-plugin~Channels',
-  plural: 'channels',
-  id: 'channel',
-  abbr: 'C',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const EventingKafkaChannelModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
-  apiVersion: 'v1beta1',
-  kind: 'KafkaChannel',
-  label: 'KafkaChannel',
-  // t('knative-plugin~KafkaChannel')
-  labelKey: 'knative-plugin~KafkaChannel',
-  labelPlural: 'KafkaChannels',
-  // t('knative-plugin~KafkaChannels')
-  labelPluralKey: 'knative-plugin~KafkaChannels',
-  plural: 'kafkachannels',
-  id: 'kafkaChannel',
-  abbr: 'KC',
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,
@@ -458,24 +258,6 @@ export const CamelKameletModel: K8sKind = {
   plural: 'kamelets',
   id: 'kamelet',
   abbr: 'K',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
-export const CamelIntegrationPlatformModel: K8sKind = {
-  apiGroup: CAMEL_APIGROUP,
-  apiVersion,
-  kind: 'IntegrationPlatform',
-  label: 'IntegrationPlatform',
-  // t('knative-plugin~IntegrationPlatform')
-  labelKey: 'knative-plugin~IntegrationPlatform',
-  labelPlural: 'IntegrationPlatforms',
-  // t('knative-plugin~IntegrationPlatforms')
-  labelPluralKey: 'knative-plugin~IntegrationPlatforms',
-  plural: 'integrationplatforms',
-  id: 'integrationplatform',
-  abbr: 'IP',
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,

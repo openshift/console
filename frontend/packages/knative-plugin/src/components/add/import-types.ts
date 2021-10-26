@@ -1,34 +1,30 @@
 import { TFunction } from 'i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
-  EventSourceApiServerModel,
-  EventSourceContainerModel,
-  EventSourceCronJobModel,
-  EventSourceKafkaModel,
-  EventSourcePingModel,
-  EventSourceSinkBindingModel,
-  EventingIMCModel,
-  EventingKafkaChannelModel,
-  CamelKameletBindingModel,
-} from '../../models';
+  EVENTING_KAFKA_CHANNEL_KIND,
+  EVENTING_IMC_KIND,
+  EVENT_SOURCE_SINK_BINDING_KIND,
+  EVENT_SOURCE_API_SERVER_KIND,
+  EVENT_SOURCE_CONTAINER_KIND,
+  EVENT_SOURCE_PING_KIND,
+  EVENT_SOURCE_CRONJOB_KIND,
+  EVENT_SOURCE_KAFKA_KIND,
+} from '../../const';
+import { CamelKameletBindingModel } from '../../models';
 
 export const EventSources = {
-  ApiServerSource: EventSourceApiServerModel.kind,
-  ContainerSource: EventSourceContainerModel.kind,
-  CronJobSource: EventSourceCronJobModel.kind,
-  KafkaSource: EventSourceKafkaModel.kind,
-  PingSource: EventSourcePingModel.kind,
-  SinkBinding: EventSourceSinkBindingModel.kind,
+  ApiServerSource: EVENT_SOURCE_API_SERVER_KIND,
+  ContainerSource: EVENT_SOURCE_CONTAINER_KIND,
+  CronJobSource: EVENT_SOURCE_CRONJOB_KIND,
+  KafkaSource: EVENT_SOURCE_KAFKA_KIND,
+  PingSource: EVENT_SOURCE_PING_KIND,
+  SinkBinding: EVENT_SOURCE_SINK_BINDING_KIND,
   KameletBinding: CamelKameletBindingModel.kind,
 };
 
-export const Channels = {
-  InMemoryChannel: EventingIMCModel.kind,
-  KafkaChannel: EventingKafkaChannelModel.kind,
-};
 export const defaultChannels = {
-  InMemoryChannel: EventingIMCModel,
-  KafkaChannel: EventingKafkaChannelModel,
+  InMemoryChannel: EVENTING_IMC_KIND,
+  KafkaChannel: EVENTING_KAFKA_CHANNEL_KIND,
 };
 export interface ProjectData {
   name: string;

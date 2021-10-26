@@ -1,14 +1,8 @@
 import { isEqual } from 'lodash';
 import * as coFetch from '@console/internal/co-fetch';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  EventSourceApiServerModel,
-  EventSourceSinkBindingModel,
-  EventSourceContainerModel,
-  EventSourcePingModel,
-  ServiceModel,
-  EventingIMCModel,
-} from '../../models';
+import { EVENTING_IMC_KIND } from '../../const';
+import { ServiceModel } from '../../models';
 import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
 import { mockEventSourcCRDData } from '../__mocks__/dynamic-event-source-crd-mock';
 import {
@@ -67,7 +61,7 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
 
   it('should return true for event source model', async () => {
     await fetchEventSourcesCrd();
-    expect(isDynamicEventResourceKind(referenceForModel(EventSourceContainerModel))).toBe(true);
+    expect(isDynamicEventResourceKind('sources.knative.dev~v1~ContainerSource')).toBe(true);
   });
 
   it('should return false for event source model', async () => {
@@ -78,10 +72,10 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
   it('should return refs for all event source models', async () => {
     await fetchEventSourcesCrd();
     const expectedRefs = [
-      referenceForModel(EventSourceContainerModel),
-      referenceForModel(EventSourceApiServerModel),
-      referenceForModel(EventSourceSinkBindingModel),
-      referenceForModel(EventSourcePingModel),
+      'sources.knative.dev~v1~ContainerSource',
+      'sources.knative.dev~v1~ApiServerSource',
+      'sources.knative.dev~v1~SinkBinding',
+      'sources.knative.dev~v1~PingSource',
     ];
     const modelRefs = getDynamicEventSourcesModelRefs();
     expectedRefs.forEach((ref) => {
@@ -91,7 +85,7 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
 
   it('should return model from the dynamic event sources', async () => {
     await fetchEventSourcesCrd();
-    const ref = referenceForModel(EventSourceContainerModel);
+    const ref = 'sources.knative.dev~v1~ContainerSource';
     const resultModel = getDynamicEventSourceModel(ref);
     expect(isEqual(referenceForModel(resultModel), ref)).toBe(true);
   });
@@ -134,7 +128,7 @@ describe('fetch-dynamic-eventsources: Channels', () => {
 
   it('should return true for IMC channel model', async () => {
     await fetchChannelsCrd();
-    expect(isEventingChannelResourceKind(referenceForModel(EventingIMCModel))).toBe(true);
+    expect(isEventingChannelResourceKind('messaging.knative.dev~v1~InMemoryChannel')).toBe(true);
   });
 
   it('should return false for ksvc model', async () => {
@@ -144,7 +138,7 @@ describe('fetch-dynamic-eventsources: Channels', () => {
 
   it('should return refs for all channel models', async () => {
     await fetchChannelsCrd();
-    const expectedRefs = [referenceForModel(EventingIMCModel)];
+    const expectedRefs = ['messaging.knative.dev~v1~InMemoryChannel'];
     const modelRefs = getDynamicChannelModelRefs();
     expectedRefs.forEach((ref) => {
       expect(modelRefs.includes(ref)).toBe(true);
@@ -175,8 +169,8 @@ describe('fetch-dynamic-eventsources: Channels', () => {
 
   it('should get model from reference', async () => {
     await fetchChannelsCrd();
-    const resultModel = getDynamicChannelModel(referenceForModel(EventingIMCModel));
-    expect(resultModel.kind).toEqual(EventingIMCModel.kind);
+    const resultModel = getDynamicChannelModel('messaging.knative.dev~v1~InMemoryChannel');
+    expect(resultModel.kind).toEqual(EVENTING_IMC_KIND);
   });
 
   it('should get model from reference', async () => {
