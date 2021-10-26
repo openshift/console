@@ -5,16 +5,16 @@ import { nav } from '../../../integration-tests-cypress/views/nav';
 import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
-  name: 'Red Hat Integration - Camel K',
-  operatorHubCardTestID: 'red-hat-camel-k-redhat-operators-openshift-marketplace',
+  name: 'Business Automation',
+  operatorHubCardTestID: 'businessautomation-operator-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
 
 const testOperand: TestOperandProps = {
-  name: 'Integration Platform',
-  kind: 'IntegrationPlatform',
-  tabName: 'Integration Platform',
-  exampleName: `example-camel-k`,
+  name: 'KieApp',
+  kind: 'KieApp',
+  tabName: 'KieApp',
+  exampleName: `example-kieappk`,
 };
 
 describe(`Installing "${testOperator.name}" operator in ${testOperator.installedNamespace}`, () => {
