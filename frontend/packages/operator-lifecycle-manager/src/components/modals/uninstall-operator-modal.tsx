@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Progress, ProgressSize } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
@@ -57,6 +57,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const [operatorUninstallFinished, setOperatorUninstallFinished] = React.useState(false);
   const [deleteOperands, setDeleteOperands] = React.useState(false);
   const [operandsDeleteInProgress, setOperandsDeleteInProgress] = React.useState(false);
+  const [numberOperandsRemaining, setNumberOperandsRemaining] = React.useState(0);
   const [operandsDeleteFinished, setOperandsDeleteFinished] = React.useState(false);
   const [operandDeletionErrors, setOperandDeletionErrors] = React.useState<OperandError[]>([]);
 
@@ -183,24 +184,13 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
 
     const verifyDeletionOfOperands = async () => {
       const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
-      const startTime = performance.now();
-      let endTime = performance.now();
       let operandErrors: OperandError[] = [];
-      const timeout = 4 * 60000; // 4 minutes
       while (true) {
         try {
           // eslint-disable-next-line no-await-in-loop
           const curOperands = await coFetchJSON(url);
           if (curOperands.items.length > 0) {
-            endTime = performance.now();
-            const duration = endTime - startTime;
-            if (duration > timeout) {
-              operandErrors = setOperandErrorsTo(
-                curOperands.items,
-                t('olm~timed out verifying operand deletion'),
-              );
-              break;
-            }
+            setNumberOperandsRemaining(curOperands.items.length);
           } else {
             // all operands deleted!
             break;
@@ -226,6 +216,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
 
     if (deleteOperands) {
       setOperandsDeleteInProgress(true);
+      setNumberOperandsRemaining(operands.length);
       const operandDeletionPromises = operands.map((operand: K8sResourceCommon) => {
         const model = modelFor(referenceFor(operand));
         return k8sKill(model, operand, {}, deleteOptions);
@@ -349,9 +340,10 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
               {operandsSection}
             </>
           ) : (
-            <div>
-              <h2>{t('olm~Deleting operand instances...')}</h2>
-            </div>
+            <OperandCleanupProgress
+              totalNumberOperands={operands.length}
+              numberOperandsRemaining={numberOperandsRemaining}
+            />
           )
         ) : (
           results
@@ -365,6 +357,36 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         submitDisabled={operandsDeleteInProgress}
       />
     </form>
+  );
+};
+
+const OperandCleanupProgress: React.FC<{
+  totalNumberOperands: number;
+  numberOperandsRemaining: number;
+}> = ({ totalNumberOperands, numberOperandsRemaining }) => {
+  const { t } = useTranslation();
+  const progressLabel = t('olm~Remaining Operands: {{remaining}} of {{total}} ', {
+    remaining: numberOperandsRemaining,
+    total: totalNumberOperands,
+  });
+  return (
+    <div>
+      <Progress
+        value={totalNumberOperands - numberOperandsRemaining}
+        max={totalNumberOperands}
+        valueText={progressLabel}
+        label={progressLabel}
+        title={t('olm~Cleaning up operand instances...')}
+        size={ProgressSize.lg}
+      />
+      <div className="co-alert--margin-top">
+        <p>
+          {t(
+            'olm~The operands have been marked for deletion and are being removed. Canceling this operation will leave the Operator installed though its operand instances will continue to be deleted.',
+          )}
+        </p>
+      </div>
+    </div>
   );
 };
 
