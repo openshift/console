@@ -298,4 +298,4 @@ export const k8sList = (
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
  * @return A promise that resolves to the response
  * * */
-export const k8sListResource = adapterFunc(k8sList, ['model', 'params', 'raw', 'requestInit']);
+export const k8sListResource = adapterFunc(k8sList, ['model', 'queryParams', 'raw', 'requestInit']);

@@ -95,7 +95,8 @@ export const k8sCreate: K8sCreate = require('@console/dynamic-plugin-sdk/src/uti
   .k8sCreateResource;
 export const k8sUpdate: K8sUpdate = require('@console/dynamic-plugin-sdk/src/utils/k8s')
   .k8sUpdateResource;
-export const k8sPatch: K8sPatch = require('@console/dynamic-plugin-sdk/src/utils/k8s').k8sPatch;
+export const k8sPatch: K8sPatch = require('@console/dynamic-plugin-sdk/src/utils/k8s')
+  .k8sPatchResource;
 export const k8sDelete: K8sDelete = require('@console/dynamic-plugin-sdk/src/utils/k8s')
   .k8sDeleteResource;
 export const k8sList: K8sList = require('@console/dynamic-plugin-sdk/src/utils/k8s')

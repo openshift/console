@@ -49,6 +49,7 @@
       "telemetry": "./utils/telemetry",
       "extensionConsumer": "./components/ExtensionConsumer.tsx",
       "utilityConsumer": "./components/UtilityConsumer.tsx",
+      "K8sAPIConsumer": "./components/K8sConsumer/K8sAPIConsumer.tsx",
       "navPage": "./components/Nav",
       "listPage": "./components/ListPage"
     },

@@ -39,14 +39,14 @@ export type K8sDelete = <R extends K8sResourceCommon>(options: {
   resource: R;
   path?: string;
   queryParams?: QueryParams;
-  requestInit: RequestInit;
-  json: Record<string, any>;
+  requestInit?: RequestInit;
+  json?: Record<string, any>;
 }) => Promise<Status>;
 
 export type K8sList = <R extends K8sResourceCommon>(options: {
   model: K8sModel;
   queryParams: { [key: string]: any };
-  requestInit: RequestInit;
+  requestInit?: RequestInit;
 }) => Promise<R[]>;
 
 export type GetK8sResourcePath = (model: K8sModel, options: Options) => string;
