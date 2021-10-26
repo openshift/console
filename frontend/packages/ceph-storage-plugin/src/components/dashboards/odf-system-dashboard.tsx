@@ -39,12 +39,17 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
       name: t('ceph-storage-plugin~Overview'),
       component: OCSOverview,
     },
-    {
-      href: referenceForModel(CephBlockPoolModel),
-      name: t('ceph-storage-plugin~BlockPools'),
-      component: () => <BlockPoolListPage namespace={CEPH_STORAGE_NAMESPACE} />,
-    },
   ];
+
+  React.useEffect(() => {
+    if (isCephAvailable) {
+      pages.push({
+        href: referenceForModel(CephBlockPoolModel),
+        name: t('ceph-storage-plugin~BlockPools'),
+        component: () => <BlockPoolListPage namespace={CEPH_STORAGE_NAMESPACE} />,
+      });
+    }
+  }, [isCephAvailable, pages, t]);
 
   const breadcrumbs = [
     {

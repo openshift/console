@@ -540,6 +540,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           )
         ).BackingStoreListPage,
     },
+    flags: {
+      required: [MCG_FLAG],
+    },
   },
   // Adding this Extension because dynamic endpoint is not avbl
   // Todo(bipuladh): Remove once SDK is mature enough to support list page
@@ -559,6 +562,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           )
         ).BucketClassListPage,
     },
+    flags: {
+      required: [MCG_FLAG],
+    },
   },
   // Adding this Extension because dynamic endpoint is not avbl
   // Todo(bipuladh): Remove once SDK is mature enough to support list page
@@ -577,6 +583,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
           )
         ).NamespaceStoreListPage,
+    },
+    flags: {
+      required: [MCG_FLAG],
     },
   },
 ];
