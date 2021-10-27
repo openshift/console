@@ -32,8 +32,9 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import CloseButton from '@console/shared/src/components/close-button';
 
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import CloseButton from '@console/shared/src/components/close-button';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
@@ -54,7 +55,7 @@ import {
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
-import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
+import { getPrometheusURL } from '../graphs/helpers';
 import {
   ActionsMenu,
   Dropdown,

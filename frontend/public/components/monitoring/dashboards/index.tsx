@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { RedExclamationCircleIcon } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
@@ -30,7 +31,7 @@ import {
 } from '../../../actions/observe';
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
-import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
+import { getPrometheusURL } from '../../graphs/helpers';
 import {
   getQueryArgument,
   history,

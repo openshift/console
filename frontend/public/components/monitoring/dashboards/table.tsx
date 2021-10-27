@@ -10,12 +10,13 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
 import { formatNumber } from '../format';
 import { ColumnStyle, Panel } from './types';
 import { PrometheusResponse } from '../../graphs';
-import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
+import { getPrometheusURL } from '../../graphs/helpers';
 import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
 import TablePagination from '../table-pagination';
 
