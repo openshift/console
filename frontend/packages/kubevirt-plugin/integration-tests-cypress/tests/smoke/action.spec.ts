@@ -114,7 +114,6 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-3693) Test VMI list view action', () => {
       vm.delete();
-      cy.byLegacyTestID(vmiData.name).should('not.exist');
     });
 
     it('ID(CNV-3699) Test VMI detail view action', () => {

@@ -71,6 +71,7 @@ wait_mcp_for_updated()
 # ----------------------------------------------------------------------------------------------------
 # Install HCO (kubevirt and helper operators)
 
+export HOC_GIT_BRANCH=v1.5.0-unstable
 export HOC_IMAGE_VER=1.5.0-unstable
 export HCO_SUBSCRIPTION_CHANNEL="1.5.0"
 
@@ -113,29 +114,43 @@ EOF
 
 # Wait for HCO cr to be created
 sleep 60
+hco_created="false"
 
 for i in {1..20}
 do
   echo "Attempt ${i}/20"
-  if oc create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/deploy/hco.cr.yaml -n kubevirt-hyperconverged; then
+  if oc create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/${HOC_GIT_BRANCH}/deploy/hco.cr.yaml -n kubevirt-hyperconverged; then
     echo "HCO cr is created"
+    hco_created="true"
     break
   fi
   sleep 30
 done
 
+if [[ "$hco_created" == "false" ]]; then
+  echo "Error: HCO failed to install!!"
+  exit 1
+fi
+
 # Wait for kubevirt virt-operator to be available
 sleep 60
+hco_available="false"
 
 for i in {1..20}
 do
   echo "Attempt ${i}/20"
   if oc -n kubevirt-hyperconverged wait deployment/virt-operator --for=condition=Available --timeout="10m"; then
     echo "virt-operator is Available"
+    hco_available="true"
     break
   fi
   sleep 30
 done
+
+if [[ "$hco_available" == "false" ]]; then
+  echo "Error: HCO is not avaliable!!"
+  exit 1
+fi
 
 # ----------------------------------------------------------------------------------------------------
 # Create storage class and storage namespace for testing
