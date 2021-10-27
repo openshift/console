@@ -21,6 +21,7 @@ const ResourceMetricsDashboardCard: React.FC<ResourceMetricsDashboardCardProps> 
     <DashboardCardBody>
       <QueryBrowser
         queries={props.queries}
+        namespace={props.namespace}
         disableZoom
         hideControls
         showLegend
@@ -38,32 +39,37 @@ export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> =
       <Grid hasGutter>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
-            title={t('public~Memory usage')}
+            namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.MEMORY]}
+            title={t('public~Memory usage')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
-            title={t('public~CPU usage')}
+            namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.CPU]}
+            title={t('public~CPU usage')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
-            title={t('public~Filesystem')}
+            namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.FILESYSTEM]}
+            title={t('public~Filesystem')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
-            title={t('public~Network in')}
+            namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.NETWORK_IN]}
+            title={t('public~Network in')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
-            title={t('public~Network out')}
+            namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.NETWORK_OUT]}
+            title={t('public~Network out')}
           />
         </GridItem>
       </Grid>
@@ -72,6 +78,7 @@ export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> =
 };
 
 type ResourceMetricsDashboardCardProps = {
+  namespace?: string;
   title: string;
   queries: string[];
 };

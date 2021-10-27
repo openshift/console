@@ -142,9 +142,9 @@ export const topWorkloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
-      `sum(irate(container_network_receive_bytes_total{namespace=~'<%= namespace %>'}[4h])
+      `sum(irate(container_network_receive_bytes_total{namespace='<%= namespace %>'}[4h])
           * on (namespace,pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{
-          namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
+          namespace='<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
 ];
