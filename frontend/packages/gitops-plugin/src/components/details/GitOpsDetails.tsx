@@ -46,6 +46,15 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
       link.metadata?.name === 'argocd' && link.spec?.location === 'ApplicationMenu',
   );
 
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (ref.current) {
+      document
+        .getElementById('odc-gitops-details-card-container')
+        .style.setProperty('--cardContainerWidth', `${ref.current.offsetWidth}px`);
+    }
+  }, []);
+
   // eslint-disable-next-line no-shadow
   const renderStatusLabel = (status: string) => {
     switch (status) {
@@ -81,7 +90,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
     '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/argocd-operator/icon?resourceVersion=argocd-operator.alpha.argocd-operator.v0.0.14';
 
   return (
-    <div className="odc-gitops-details">
+    <div className="odc-gitops-details" id="odc-gitops-details-card-container" ref={ref}>
       {oldAPI && (
         <>
           <Alert

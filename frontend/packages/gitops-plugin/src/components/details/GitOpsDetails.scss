@@ -1,10 +1,13 @@
+@import '../../../../../public/style/vars';
+
 .odc-gitops-details {
   padding: var(--pf-global--spacer--xl);
   height: 100%;
-  flex-wrap: nowrap;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   &__env-section {
     display: inline-table;
-    margin-right: 35px;
     min-height: 578px;
     max-height: 578px;
     &__header {
@@ -25,8 +28,8 @@
       margin: var(--pf-global--spacer--xs) 0px;
       outline: none;
     }
-    &__envname-and-status{
-      display:flex;
+    &__envname-and-status {
+      display: flex;
     }
     &__env {
       .pf-c-label__text {
@@ -37,7 +40,7 @@
       }
     }
     &__time {
-      margin: var(--pf-global--spacer--xs) 0px  var(--pf-global--spacer--xs) 0px;
+      margin: var(--pf-global--spacer--xs) 0px var(--pf-global--spacer--xs) 0px;
       display: flex;
       .co-icon-and-text__icon {
         display: none;
@@ -60,8 +63,12 @@
     }
     article {
       border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-      min-width: 323px;
-      max-width: 366px;
+      min-width: calc((var(--cardContainerWidth) - 134px) / 3);
+      max-width: calc((var(--cardContainerWidth) - 134px) / 3);
+      @media (min-width: $screen-lg-min) and (max-width: '1421px'), (max-width: '1137px') {
+        min-width: calc((var(--cardContainerWidth) - 114px) / 2);
+        max-width: calc((var(--cardContainerWidth) - 114px) / 2);
+      }
     }
     a {
       font-size: 12px;
@@ -95,6 +102,6 @@
     }
   }
   &__operator-upgrade-alert {
-    margin-bottom: var(--pf-global--spacer--xl)
+    margin-bottom: var(--pf-global--spacer--xl);
   }
 }
