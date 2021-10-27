@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { alertingSetRules } from '@console/internal/actions/observe';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
+import { ALERTMANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
   AlertStates,
   Rule,
@@ -68,28 +68,26 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
     setSilencing(true);
     silenceInProgress && silenceInProgress(true);
     coFetchJSON
-      .post(`${ALERT_MANAGER_TENANCY_BASE_PATH}/api/v2/silences`, payload)
+      .post(`${ALERTMANAGER_TENANCY_BASE_PATH}/api/v2/silences`, payload)
       .then(() => {
         // eslint-disable-next-line promise/no-nesting
-        return coFetchJSON(`${ALERT_MANAGER_TENANCY_BASE_PATH}/api/v2/silences`).then(
-          (silences) => {
-            refreshNotificationPollers();
-            rule.silencedBy = _.filter(
-              silences,
-              (s) => s.status.state === SilenceStates.Active && _.some(rule.alerts, isSilenced),
-            );
-            if (!_.isEmpty(rule.silencedBy)) {
-              _.each(rule.alerts, (a) => (a.state = AlertStates.Silenced));
-              rule.state = RuleStates.Silenced;
-            }
-            const ruleIndex = rules.findIndex((r) => r.id === rule.id);
-            const updatedRules = _.cloneDeep(rules);
-            updatedRules.splice(ruleIndex, 1, rule);
-            dispatch(alertingSetRules('devRules', updatedRules, 'dev'));
-            setSilencing(false);
-            silenceInProgress && silenceInProgress(false);
-          },
-        );
+        return coFetchJSON(`${ALERTMANAGER_TENANCY_BASE_PATH}/api/v2/silences`).then((silences) => {
+          refreshNotificationPollers();
+          rule.silencedBy = _.filter(
+            silences,
+            (s) => s.status.state === SilenceStates.Active && _.some(rule.alerts, isSilenced),
+          );
+          if (!_.isEmpty(rule.silencedBy)) {
+            _.each(rule.alerts, (a) => (a.state = AlertStates.Silenced));
+            rule.state = RuleStates.Silenced;
+          }
+          const ruleIndex = rules.findIndex((r) => r.id === rule.id);
+          const updatedRules = _.cloneDeep(rules);
+          updatedRules.splice(ruleIndex, 1, rule);
+          dispatch(alertingSetRules('devRules', updatedRules, 'dev'));
+          setSilencing(false);
+          silenceInProgress && silenceInProgress(false);
+        });
       })
       .catch((err) => {
         setSilencing(false);
