@@ -26,8 +26,8 @@ export const getSupportedVendors = (csv: ClusterServiceVersionKind): string[] =>
 export const getStorageSystemKind = ({ kind, apiVersion, apiGroup }) =>
   `${kind.toLowerCase()}.${apiGroup}/${apiVersion}`;
 
-export const getExternalSubSystemName = (name: string = '') =>
-  name.toLowerCase().replace(/\s/g, '-');
+export const getExternalSubSystemName = (name: string = '', storageClassName: string) =>
+  `${name.toLowerCase().replace(/\s/g, '-')}-${storageClassName}`.substring(0, 230);
 
 export const getExternalStorage = (id: WizardState['backingStorage']['externalStorage'] = '') =>
   SUPPORTED_EXTERNAL_STORAGE.find((p) => p.model.kind === id);
