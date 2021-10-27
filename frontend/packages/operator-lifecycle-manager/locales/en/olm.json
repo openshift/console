@@ -173,6 +173,7 @@
   "Delete all operand instances for this operator": "Delete all operand instances for this operator",
   "Operator could not be uninstalled due to error deleting its Operands": "Operator could not be uninstalled due to error deleting its Operands",
   "Uninstall Operator?": "Uninstall Operator?",
+  "Uninstalling the Operator...": "Uninstalling the Operator...",
   "Remaining Operands: {{remaining}} of {{total}} ": "Remaining Operands: {{remaining}} of {{total}} ",
   "Cleaning up operand instances...": "Cleaning up operand instances...",
   "The operands have been marked for deletion and are being removed. Canceling this operation will leave the Operator installed though its operand instances will continue to be deleted.": "The operands have been marked for deletion and are being removed. Canceling this operation will leave the Operator installed though its operand instances will continue to be deleted.",

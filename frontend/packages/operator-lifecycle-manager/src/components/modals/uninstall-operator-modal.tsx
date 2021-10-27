@@ -40,6 +40,7 @@ import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { getClusterServiceVersionPlugins } from '../../utils';
 import { OperandLink } from '../operand/operand-link';
+import Timeout = NodeJS.Timeout;
 
 export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   cancel,
@@ -54,6 +55,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     operatorUninstallInProgress,
     operatorUninstallErrorMessage,
   ] = usePromiseHandler();
+  const [showInstructions, setShowInstructions] = React.useState(true);
   const [operatorUninstallFinished, setOperatorUninstallFinished] = React.useState(false);
   const [deleteOperands, setDeleteOperands] = React.useState(false);
   const [operandsDeleteInProgress, setOperandsDeleteInProgress] = React.useState(false);
@@ -128,6 +130,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       closeAndRedirect();
       return;
     }
+
+    setShowInstructions(false);
+
     const deleteOptions = {
       kind: 'DeleteOptions',
       apiVersion: 'v1',
@@ -182,36 +187,40 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       }, []);
     };
 
-    const verifyDeletionOfOperands = async () => {
+    const verifyDeletionOfOperands = () => {
       const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
-      let operandErrors: OperandError[] = [];
-      while (true) {
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          const curOperands = await coFetchJSON(url);
-          if (curOperands.items.length > 0) {
-            setNumberOperandsRemaining(curOperands.items.length);
-          } else {
-            // all operands deleted!
-            break;
-          }
-        } catch (e) {
-          operandErrors = setOperandErrorsTo(
-            operands,
-            t('olm~error listing operand to verify deletion'),
-          );
-          break;
+      let operandVerificationErrors: OperandError[] = [];
+      let intervalID: Timeout;
+
+      const finishVerification = () => {
+        clearInterval(intervalID);
+        setOperandsDeleteInProgress(false);
+        setOperandsDeleteFinished(true);
+        if (operandVerificationErrors.length === 0) {
+          uninstallOperator();
+        } else {
+          // show operand deletion verification errors on results page
+          setOperandDeletionErrors(operandVerificationErrors);
+          setOperatorUninstallFinished(true);
         }
-      }
-      setOperandsDeleteInProgress(false);
-      setOperandsDeleteFinished(true);
-      if (operandErrors.length === 0) {
-        uninstallOperator();
-      } else {
-        // show operand deletion verification errors on results page
-        setOperandDeletionErrors(operandErrors);
-        setOperatorUninstallFinished(true);
-      }
+      };
+
+      intervalID = setInterval(() => {
+        coFetchJSON(url)
+          .then((curOperands) => {
+            setNumberOperandsRemaining(curOperands.items.length);
+            if (curOperands.items.length === 0) {
+              setTimeout(() => finishVerification(), 1000); // allow '0 Operands remaining' to display for a second
+            }
+          })
+          .catch(() => {
+            operandVerificationErrors = setOperandErrorsTo(
+              operands,
+              t('olm~error listing operand to verify deletion'),
+            );
+            finishVerification();
+          });
+      }, 2000); // every 2 seconds
     };
 
     if (deleteOperands) {
@@ -333,21 +342,24 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('olm~Uninstall Operator?')}
       </ModalTitle>
       <ModalBody>
-        {!isSubmitFinished ? (
-          !operandsDeleteInProgress ? (
-            <>
-              {instructions}
-              {operandsSection}
-            </>
-          ) : (
-            <OperandCleanupProgress
-              totalNumberOperands={operands.length}
-              numberOperandsRemaining={numberOperandsRemaining}
-            />
-          )
-        ) : (
-          results
+        {showInstructions && (
+          <>
+            {instructions}
+            {operandsSection}
+          </>
         )}
+        {operandsDeleteInProgress && (
+          <OperandCleanupProgress
+            totalNumberOperands={operands.length}
+            numberOperandsRemaining={numberOperandsRemaining}
+          />
+        )}
+        {operatorUninstallInProgress && (
+          <div>
+            <p>{t('olm~Uninstalling the Operator...')}</p>
+          </div>
+        )}
+        {isSubmitFinished && results}
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitInProgress}
