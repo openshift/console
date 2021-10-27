@@ -144,8 +144,6 @@
   "Kiali": "Kiali",
   "Create a binding connector": "바인딩 커넥터 만들기",
   "Operator groupings": "Operator 그룹",
-  "Operator details": "Operator 상세 정보",
-  "Managed by": "관리",
   "Error: no resource provided to update Application for.": "오류: 애플리케이션을 업데이트하기 위해 제공된 리소스가 없습니다.",
   "Error: invalid resource kind provided for updating Application.": "오류: 애플리케이션 업데이트에 잘못된 리소스 유형이 제공되었습니다.",
   "Unable to retrieve model for: {{kind}}": "{{kind}}의 모델을 검색할 수 없습니다.",
