@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
-import { ResourceIcon, resourcePath } from '@console/internal/components/utils';
+import { ResourceIcon } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 
@@ -16,15 +16,11 @@ export const csvNameFromWindow = () =>
 
 export const OperandLink: React.FC<OperandLinkProps> = (props) => {
   const { namespace, name } = props.obj.metadata;
-  // const csvName = props.csvName || csvNameFromWindow();
+  const csvName = props.csvName || csvNameFromWindow();
 
   const reference = referenceFor(props.obj);
-  // const to = namespace
-  //   ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${csvName}/${reference}/${name}`
-  //   : `/k8s/cluster/${reference}/${name}`;
-
   const to = namespace
-    ? resourcePath(referenceFor(props.obj), name, namespace)
+    ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${csvName}/${reference}/${name}`
     : `/k8s/cluster/${reference}/${name}`;
 
   const classes = classNames('co-resource-item', {

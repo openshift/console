@@ -32,6 +32,9 @@ import {
   modelFor,
   referenceForGroupVersionKind,
   K8sResourceCommon,
+  referenceForModel,
+  K8sKind,
+  referenceFor,
 } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
@@ -48,6 +51,28 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
   { kind: JobModel.kind, version: JobModel.apiVersion },
 ];
 
+const useProvidedAPIResourceModels = (providedAPI): K8sKind[] => {
+  // eslint-disable-next-line no-console
+  console.log('KKKD providedAPI', providedAPI?.resources);
+  return (providedAPI?.resources ?? DEFAULT_RESOURCES).map(({ name, kind, version }) => {
+    const group = name ? name.substring(name.indexOf('.') + 1) : '';
+    const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
+    const model = modelFor(reference);
+    /*
+    For providedAPI entry: 
+     {kind: 'ChronTab', name: '', version: 'v1'} // AKA a crd
+
+     model is undefined - which breaks things further down in the process.
+     
+     The modelFor method says to use `connectToModels` instead.
+
+    */
+    // eslint-disable-next-line no-console
+    console.log('KKKD starting loop - model', model);
+    return model;
+  });
+};
+
 const tableColumnClasses = [
   '',
   'pf-u-w-16-on-md',
@@ -58,12 +83,11 @@ const tableColumnClasses = [
 export const ResourceTableRow: React.FC<RowFunctionArgs<
   K8sResourceKind,
   {
-    linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
-    providedAPI: ProvidedAPI;
+    linkFor: (obj: K8sResourceKind) => JSX.Element;
   }
->> = ({ obj, customData: { linkFor, providedAPI } }) => (
+>> = ({ obj, customData: { linkFor } }) => (
   <>
-    <TableData className={tableColumnClasses[0]}>{linkFor(obj, providedAPI)}</TableData>
+    <TableData className={tableColumnClasses[0]}>{linkFor(obj)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
     <TableData className={tableColumnClasses[2]}>
       <Status status={obj?.status?.phase ?? 'Created'} />
@@ -120,6 +144,7 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
   );
 };
 
+// NOTE: This is us building the `ownerReferences` graph client-side
 export const flattenCsvResources = (
   parentObj: K8sResourceCommon,
 ): Flatten<{ [key: string]: K8sResourceCommon[] }, K8sResourceCommon[]> => (resources) => {
@@ -136,19 +161,53 @@ export const flattenCsvResources = (
   }, []);
 };
 
-// NOTE: This is us building the `ownerReferences` graph client-side
-// FIXME: Comparing `kind` is not enough to determine if an object is a custom resource
-export const linkForCsvResource = (
-  obj: K8sResourceKind,
-  providedAPI: ProvidedAPI,
-  csvName?: string,
-) =>
-  obj.metadata.namespace &&
-  (providedAPI?.resources ?? []).some(({ kind, name }) => name && kind === obj.kind) ? (
-    <OperandLink obj={obj} csvName={csvName} />
+export const linkForCsvResource = (obj: K8sResourceKind, models?: K8sKind[]) => {
+  const groupVersionKind = referenceFor(obj);
+
+  /* example data:
+Obj: {
+  apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+annotations:
+deployment.kubernetes.io/revision: "1"
+email: "support@stackrox.com"
+meta.helm.sh/release-name: "stackrox-central-services"
+meta.helm.sh/release-namespace: "kkd-test-project-1"
+owner: "stackrox"
+creationTimestamp: "2021-10-28T14:58:32Z"
+generation: 1
+labels: {app: 'scanner', app.kubernetes.io/component: 'scanner', app.kubernetes.io/instance: 'stackrox-central-services', app.kubernetes.io/managed-by: 'Helm', app.kubernetes.io/name: 'stackrox', …}
+managedFields: (2) [{…}, {…}]
+name: "scanner"
+namespace: "kkd-test-project-1"
+ownerReferences: [{…}]
+resourceVersion: "38154"
+uid: "623d8cd1-bee8-402f-8d4e-5b88b8deb15c"
+spec: {replicas: 3, selector: {…}, template: {…}, strategy: {…}, minReadySeconds: 15, …}
+status: {observedGeneration: 1, replicas: 3, updatedReplicas: 3, unavailableReplicas: 3, conditions: Array(2)}
+}
+
+groupVersionKind: apps~v1~Deployment
+
+Model: [{"label":"Deployment","labelKey":"public~Deployment","apiVersion":"v1","apiGroup":"apps","plural":"deployments","abbr":"D","namespaced":true,"propagationPolicy":"Foreground","kind":"Deployment","id":"deployment","labelPlural":"Deployments","labelPluralKey":"public~Deployments"}]
+  */
+  // eslint-disable-next-line no-console
+  console.log('KKKD Obj:', obj);
+  // eslint-disable-next-line no-console
+  console.log('KKKD groupVersionKind', groupVersionKind);
+  // eslint-disable-next-line no-console
+  console.log('KKKD models', models);
+
+  // proposed solution:
+  // return obj.metadata.namespace && models[groupVersionKind]?.crd ? (
+
+  return obj.metadata.namespace && models.some((model) => obj.kind === model.kind && model.crd) ? (
+    <OperandLink obj={obj} />
   ) : (
     <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
   );
+};
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const { t } = useTranslation();
@@ -157,25 +216,22 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
     props.match.params.plural,
   );
 
-  const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
-    ({ name, kind, version }): FirehoseResource => {
-      const group = name ? name.substring(name.indexOf('.') + 1) : '';
-      const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
-      const model = modelFor(reference);
+  const providedAPIResourceModels = useProvidedAPIResourceModels(providedAPI);
+  const firehoseResources = providedAPIResourceModels.map(
+    (model): FirehoseResource => {
       return {
-        kind: model && !model.crd ? kind : reference,
+        kind: model && !model.crd ? model.kind : referenceForModel(model),
         namespaced: model ? model.namespaced : true,
-        prop: kind,
+        prop: model.kind,
       };
     },
   );
 
   const customData = React.useMemo(
     () => ({
-      linkFor: linkForCsvResource,
-      providedAPI,
+      linkFor: (obj) => linkForCsvResource(obj, providedAPIResourceModels),
     }),
-    [providedAPI],
+    [providedAPIResourceModels],
   );
 
   return (
