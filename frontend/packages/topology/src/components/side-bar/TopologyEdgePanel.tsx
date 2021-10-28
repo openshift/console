@@ -1,5 +1,5 @@
 /**
- * @deprecated This file needs to be removed after migrating all the connector side-panels to dynamic extensions
+ * @deprecated This file needs to be removed after migrating the Traffic connector side-panel to dynamic extensions
  */
 import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
@@ -7,7 +7,7 @@ import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu } from '@console/internal/components/utils';
 import { edgeActions } from '../../actions/edgeActions';
-import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../../const';
+import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import TopologyEdgeResourcesPanel from './TopologyEdgeResourcesPanel';
 
 type TopologyEdgePanelProps = {
@@ -16,12 +16,6 @@ type TopologyEdgePanelProps = {
 
 const connectorTypeToTitleKey = (type: string): string => {
   switch (type) {
-    case TYPE_CONNECTS_TO:
-      // t('topology~Visual connector')
-      return 'topology~Visual connector';
-    case TYPE_SERVICE_BINDING:
-      // t('topology~Binding connector')
-      return 'topology~Binding connector';
     case TYPE_TRAFFIC_CONNECTOR:
       // t('topology~Traffic connector')
       return 'topology~Traffic connector';
