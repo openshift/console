@@ -243,6 +243,7 @@
   "Terminal": "Terminal",
   "Pods": "Pods",
   "Labels": "Labels",
+  "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} cores / {{totalCores}} cores",
   "Nodes": "Nodes",
   "Ready": "Ready",
   "Not Ready": "Not Ready",
