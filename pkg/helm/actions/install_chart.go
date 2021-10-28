@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"github.com/openshift/console/pkg/helm/metrics"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
@@ -40,5 +41,10 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	if err != nil {
 		return nil, err
 	}
+
+	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+		metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+	}
+
 	return release, nil
 }

@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/coreos/pkg/health"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/graphql/resolver"
@@ -470,6 +471,23 @@ func (s *Server) HTTPHandler() http.Handler {
 	})
 
 	// Helm Endpoints
+	metricsHandler := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Requests from prometheus-k8s have the access token in headers instead of cookies.
+			// This allows metric requests with proper tokens in either headers or cookies.
+			if r.URL.Path == "/metrics" {
+				openshiftSessionCookieName := "openshift-session-token"
+				openshiftSessionCookieValue := r.Header.Get("Authorization")
+				r.AddCookie(&http.Cookie{Name: openshiftSessionCookieName, Value: openshiftSessionCookieValue})
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+
+	handle("/metrics", metricsHandler(authHandler(func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+	})))
+
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
