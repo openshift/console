@@ -5,17 +5,17 @@ import { nav } from '../../../integration-tests-cypress/views/nav';
 import { operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
-  name: 'Red Hat CodeReady Workspaces',
-  operatorHubCardTestID: 'codeready-workspaces-redhat-operators-openshift-marketplace',
+  name: 'Business Automation',
+  operatorHubCardTestID: 'businessautomation-operator-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
 
 const testOperand: TestOperandProps = {
-  name: 'CodeReady Workspaces instance Specification',
-  kind: 'CheCluster',
-  tabName: 'CodeReady Workspaces instance Specification',
-  exampleName: `codeready-workspaces`,
-  deleteURL: '/api/kubernetes/apis/org.eclipse.che/*/namespaces/*/checlusters/codeready-workspaces',
+  name: 'KieApp',
+  kind: 'KieApp',
+  tabName: 'KieApp',
+  exampleName: `example-kieappk`,
+  deleteURL: '/api/kubernetes/apis/app.kiegroup.org/*/namespaces/*/kieapps/*',
 };
 
 const alertExists = (titleText: string) => {
