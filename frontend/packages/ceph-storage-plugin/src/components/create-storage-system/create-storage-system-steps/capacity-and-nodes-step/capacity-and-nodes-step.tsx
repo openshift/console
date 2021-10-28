@@ -38,6 +38,7 @@ import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-an
 import { pvResource, nodeResource } from '../../../../resources';
 import { ValidationMessage } from '../../../../utils/common-ocs-install-el';
 import { SelectNodesTable } from '../../select-nodes-table/select-nodes-table';
+import { ErrorHandler } from '../../error-handler';
 
 const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   dispatch,
@@ -179,64 +180,73 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   );
 
   return (
-    <>
-      <TextContent>
-        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Selected capacity')}</Text>
-      </TextContent>
-      <FormGroup
-        fieldId="available-raw-capacity"
-        label={t('ceph-storage-plugin~Available raw capacity')}
-      >
-        <Grid hasGutter>
-          <GridItem span={5}>
-            <TextInput
-              isReadOnly
-              value={humanizeBinaryBytes(capacity).string}
-              id="available-raw-capacity"
-            />
-            <TextContent>
-              <Text component={TextVariants.small}>
-                <Trans ns="ceph-storage-plugin">
-                  The available capacity is based on all attached disks associated with the selected{' '}
-                  {/* eslint-disable-next-line react/no-unescaped-entities */}
-                  StorageClass <b>{{ storageClassName }}</b>
-                </Trans>
-              </Text>
-            </TextContent>
-            <TextContent />
-          </GridItem>
-          <GridItem span={7} />
-        </Grid>
-      </FormGroup>
-      {hasStrechClusterEnabled && (
-        <StretchCluster
-          enableArbiter={enableArbiter}
-          arbiterLocation={arbiterLocation}
-          zones={zones}
-          onChecked={onArbiterChecked}
-          onSelect={onZonesSelect}
-        />
+    <ErrorHandler
+      error={pvLoadError}
+      loaded={pvLoaded && !!capacity}
+      loadingMessage={t(
+        'ceph-storage-plugin~PersistentVolumes are being provisioned on the selected nodes.',
       )}
-      <TextContent>
-        <Text id="selected-nodes" component={TextVariants.h3}>
-          {t('ceph-storage-plugin~Selected nodes')}
-        </Text>
-      </TextContent>
-      <Grid>
-        <GridItem span={11}>
-          <SelectNodesText
-            text={
-              enableArbiter
-                ? attachDevicesWithArbiter(t, storageClassName)
-                : attachDevices(t, storageClassName)
-            }
+      errorMessage={t('ceph-storage-plugin~Error while loading PersistentVolumes.')}
+    >
+      <>
+        <TextContent>
+          <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Selected capacity')}</Text>
+        </TextContent>
+        <FormGroup
+          fieldId="available-raw-capacity"
+          label={t('ceph-storage-plugin~Available raw capacity')}
+        >
+          <Grid hasGutter>
+            <GridItem span={5}>
+              <TextInput
+                isReadOnly
+                value={humanizeBinaryBytes(capacity).string}
+                id="available-raw-capacity"
+              />
+              <TextContent>
+                <Text component={TextVariants.small}>
+                  <Trans ns="ceph-storage-plugin">
+                    The available capacity is based on all attached disks associated with the
+                    selected {/* eslint-disable-next-line react/no-unescaped-entities */}
+                    StorageClass <b>{{ storageClassName }}</b>
+                  </Trans>
+                </Text>
+              </TextContent>
+              <TextContent />
+            </GridItem>
+            <GridItem span={7} />
+          </Grid>
+        </FormGroup>
+        {hasStrechClusterEnabled && (
+          <StretchCluster
+            enableArbiter={enableArbiter}
+            arbiterLocation={arbiterLocation}
+            zones={zones}
+            onChecked={onArbiterChecked}
+            onSelect={onZonesSelect}
           />
-        </GridItem>
-        <GridItem span={10}>
-          <SelectedNodesTable data={nodes} />
-        </GridItem>
-      </Grid>
-    </>
+        )}
+        <TextContent>
+          <Text id="selected-nodes" component={TextVariants.h3}>
+            {t('ceph-storage-plugin~Selected nodes')}
+          </Text>
+        </TextContent>
+        <Grid>
+          <GridItem span={11}>
+            <SelectNodesText
+              text={
+                enableArbiter
+                  ? attachDevicesWithArbiter(t, storageClassName)
+                  : attachDevices(t, storageClassName)
+              }
+            />
+          </GridItem>
+          <GridItem span={10}>
+            <SelectedNodesTable data={nodes} />
+          </GridItem>
+        </Grid>
+      </>
+    </ErrorHandler>
   );
 };
 
@@ -277,6 +287,7 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
         <SelectCapacityAndNodes dispatch={dispatch} capacity={capacity} nodes={nodes} />
       )}
       {!!validations.length &&
+        !!capacity &&
         validations.map((validation) => (
           <ValidationMessage key={validation} validation={validation} />
         ))}
