@@ -5,7 +5,7 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { NodeModel, SecretModel } from '@console/internal/models';
-import { K8sKind } from 'packages/console-dynamic-plugin-sdk/src';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src';
 import { WizardNodeState, WizardState } from './reducer';
 import { Payload } from './external-storage/types';
 import {
@@ -116,7 +116,7 @@ export const labelNodes = async (nodes: WizardNodeState[]) => {
       value: '',
     },
   ];
-  const requests: Promise<K8sKind>[] = [];
+  const requests: Promise<K8sModel>[] = [];
   nodes.forEach((node) => {
     if (!node.labels?.[cephStorageLabel])
       requests.push(k8sPatchByName(NodeModel, node.name, null, patch));
@@ -132,7 +132,7 @@ export const createExternalSubSystem = async (subSystemPayloads: Payload[]) => {
   try {
     await Promise.all(
       subSystemPayloads.map(async (payload) =>
-        k8sCreate(payload.model as K8sKind, payload.payload),
+        k8sCreate(payload.model as K8sModel, payload.payload),
       ),
     );
   } catch (err) {
