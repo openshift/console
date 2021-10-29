@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { FormGroup, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ValutConfigure } from './vault-config';
-import { IbmKmsConfigure } from './ibm-kms-config';
+import { HpcsConfigure } from './hpcs-config';
 import { EncryptionDispatch, KMSConfigureProps } from './providers';
-import { ODF_MODEL_FLAG } from '../../constants';
+import { isLengthUnity } from './utils';
+import { GUARDED_FEATURES } from '../../features';
 import { ProviderNames } from '../../types';
-
 import './kms-config.scss';
 
-export const KMSProviders = [
+const KMSProviders = [
   {
     name: 'Vault',
     value: ProviderNames.VAULT,
@@ -19,10 +19,10 @@ export const KMSProviders = [
   {
     name: 'Hyper Protect Crypto Services',
     value: ProviderNames.HPCS,
-    Component: IbmKmsConfigure,
+    Component: HpcsConfigure,
     allowedPlatforms: ['IBMCloud'],
   },
-];
+]; // add one more key, if need to disable any component based on the value of "isWizardFlow"
 
 const setKMSProvider = (dispatch: EncryptionDispatch) => (provider: ProviderNames) =>
   dispatch({
@@ -40,7 +40,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const isOdf = useFlag(ODF_MODEL_FLAG);
+  const isHpcsKmsSupported = useFlag(GUARDED_FEATURES.ODF_HPCS_KMS);
   // vault as default KMS
   const kmsProvider: ProviderNames = state.kms?.['kmsProvider'] || ProviderNames.VAULT;
   const allowedKMSProviders = KMSProviders.filter(
@@ -66,10 +66,10 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
           id="kms-provider"
           name="kms-provider-name"
           aria-label={t('ceph-storage-plugin~kms-provider-name')}
-          isDisabled={!isOdf}
+          isDisabled={!isHpcsKmsSupported || isLengthUnity(allowedKMSProviders)}
         >
           {allowedKMSProviders.map((provider) => (
-            <FormSelectOption value={provider.value} label={provider.name} />
+            <FormSelectOption value={provider.value} label={provider.name} key={provider.value} />
           ))}
         </FormSelect>
       </FormGroup>
