@@ -18,6 +18,7 @@
     flex-wrap: wrap;
 
     &__text {
+      flex: auto;
       margin-right: var(--pf-global--spacer--lg);
       margin-bottom: var(--pf-global--spacer--md);
     }
@@ -26,7 +27,7 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-  
+
       > * {
         margin-right: var(--pf-global--spacer--lg);
         margin-bottom: var(--pf-global--spacer--md);
