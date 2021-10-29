@@ -65,6 +65,7 @@ const menuActions = [
 ];
 
 export const PVCStatus = ({ pvc }) => {
+  const { t } = useTranslation();
   const [pvcStatusExtensions, resolved] = useResolvedExtensions(isPVCStatus);
   if (resolved && pvcStatusExtensions.length > 0) {
     const sortedByPriority = pvcStatusExtensions.sort(
@@ -76,11 +77,15 @@ export const PVCStatus = ({ pvc }) => {
     return PriorityStatusComponent ? (
       <PriorityStatusComponent pvc={pvc} />
     ) : (
-      <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
+      <Status
+        status={pvc.metadata.deletionTimestamp ? t('public~Terminating') : pvc.status.phase}
+      />
     );
   }
 
-  return <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />;
+  return (
+    <Status status={pvc.metadata.deletionTimestamp ? t('public~Terminating') : pvc.status.phase} />
+  );
 };
 
 const getQuery = (name) => {
@@ -110,6 +115,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
   const totalCapacityMetric = convertToBaseValue(obj?.status?.capacity?.storage);
   const totalCapcityHumanized = humanizeBinaryBytes(totalCapacityMetric);
   const usedCapacity = humanizeBinaryBytes(metrics);
+  const { t } = useTranslation();
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -132,7 +138,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
             title={obj.spec.volumeName}
           />
         ) : (
-          <div className="text-muted">No Persistent Volume</div>
+          <div className="text-muted">{t('public~No PersistentVolume')}</div>
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
@@ -208,8 +214,16 @@ const Details_ = ({ flags, obj: pvc }) => {
         {totalCapacityMetric && !loading && (
           <div className="co-pvc-donut">
             <ChartDonut
-              ariaDesc={availableMetrics ? 'Available versus Used Capacity' : 'Total Capacity'}
-              ariaTitle={availableMetrics ? 'Available versus Used Capacity' : 'Total Capacity'}
+              ariaDesc={
+                availableMetrics
+                  ? t('public~Available versus used capacity')
+                  : t('public~Total capacity')
+              }
+              ariaTitle={
+                availableMetrics
+                  ? t('public~Available versus used capacity')
+                  : t('public~Total capacity')
+              }
               height={130}
               width={130}
               size={130}
@@ -217,7 +231,7 @@ const Details_ = ({ flags, obj: pvc }) => {
               radius={radius}
               data={donutData}
               labels={({ datum }) => `${datum.y} ${totalCapacity.unit} ${datum.x}`}
-              subTitle={availableMetrics ? 'Available' : 'Total'}
+              subTitle={availableMetrics ? t('public~Available') : t('public~Total')}
               title={availableMetrics ? availableCapacityString : totalCapacityString}
               constrainToVisibleArea={true}
             />
@@ -291,8 +305,6 @@ const Details_ = ({ flags, obj: pvc }) => {
 };
 
 const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
-
-const allPhases = ['Pending', 'Bound', 'Lost'];
 
 export const PersistentVolumeClaimsList = (props) => {
   const { t } = useTranslation();
@@ -406,6 +418,8 @@ export const PersistentVolumeClaimsPage = (props) => {
           },
         };
 
+  const allPhases = ['Pending', 'Bound', 'Lost'];
+
   const filters = [
     {
       filterGroupName: t('public~Status'),
@@ -431,15 +445,20 @@ export const PersistentVolumeClaimsPage = (props) => {
   );
 };
 
-export const PersistentVolumeClaimsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    getResourceStatus={(pvc) => (pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase)}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(Details),
-      navFactory.editYaml(),
-      navFactory.events(ResourceEventStream),
-    ]}
-  />
-);
+export const PersistentVolumeClaimsDetailsPage = (props) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsPage
+      {...props}
+      getResourceStatus={(pvc) =>
+        pvc.metadata.deletionTimestamp ? t('public~Terminating') : pvc.status.phase
+      }
+      menuActions={menuActions}
+      pages={[
+        navFactory.details(Details),
+        navFactory.editYaml(),
+        navFactory.events(ResourceEventStream),
+      ]}
+    />
+  );
+};
