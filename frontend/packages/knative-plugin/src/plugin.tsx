@@ -52,11 +52,17 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/overview/OverviewDetailsKnativeResourcesTab' /* webpackChunkName: "knative-overview" */
         ).then((m) => m.default),
     },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_SERVICE],
+    },
   },
   {
     type: 'KebabActions',
     properties: {
       getKebabActionsForKind,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   {
@@ -154,6 +160,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       getModels: eventSourceModelsProviderForBreadcrumbs,
       breadcrumbsProvider: eventSourceBreadcrumbsProvider,
     },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
   },
   {
     type: 'DetailPageBreadCrumbs',
@@ -161,12 +170,18 @@ const plugin: Plugin<ConsumedExtensions> = [
       getModels: channelModelsProviderForBreadcrumbs,
       breadcrumbsProvider: channelBreadcrumbsProvider,
     },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
   },
   {
     type: 'DetailPageBreadCrumbs',
     properties: {
       getModels: brokerModelProviderForBreadcrumbs,
       breadcrumbsProvider: brokerBreadcrumbsProvider,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   ...topologyPlugin,
