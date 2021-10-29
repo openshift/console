@@ -101,10 +101,10 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
     (queryParams.get('view') as TopologyViewType) || topologyViewState || defaultViewType;
 
   React.useEffect(() => {
-    if (!queryParams.get('view')) {
+    if (!queryParams.get('view') && loaded) {
       setQueryArgument('view', topologyViewState || defaultViewType);
     }
-  }, [defaultViewType, topologyViewState, queryParams]);
+  }, [defaultViewType, topologyViewState, queryParams, loaded]);
 
   const onViewChange = React.useCallback(
     (newViewType: TopologyViewType) => {
