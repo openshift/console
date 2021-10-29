@@ -1,8 +1,8 @@
-import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceKind, ConfigMapKind, SecretKind } from '@console/internal/module/k8s/types';
 import { k8sCreate, k8sPatch } from '@console/internal/module/k8s';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
+import { EncryptionDispatch } from './providers';
 import {
   CEPH_STORAGE_NAMESPACE,
   MODES,
@@ -10,10 +10,7 @@ import {
   KMSSecretName,
   KMSConfigMapCSIName,
 } from '../../constants';
-import { Action } from '../ocs-install/attached-devices-mode/reducer';
-import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
-import { KMSConfig, KMSConfigMap } from '../../types';
-import { CreateStorageSystemAction } from '../create-storage-system/reducer';
+import { KMSConfigMap } from '../../types';
 
 export const parseURL = (url: string) => {
   try {
@@ -65,7 +62,7 @@ export const generateClientKeySecret = (clientKey: string) => ({
   },
 });
 
-export const createAdvancedKmsResources = (kms: KMSConfig) => {
+export const createAdvancedKmsResources = (kms) => {
   const advancedKmsResources: Promise<K8sResourceKind>[] = [];
 
   if (kms.caCert) advancedKmsResources.push(k8sCreate(SecretModel, kms.caCert));
@@ -75,7 +72,7 @@ export const createAdvancedKmsResources = (kms: KMSConfig) => {
   return advancedKmsResources;
 };
 
-export const createCsiKmsResources = (kms: KMSConfig, update: boolean = false) => {
+export const createCsiKmsResources = (kms, update = false) => {
   const parsedAddress = parseURL(kms.address.value);
   const csiConfigData: KMSConfigMap = {
     KMS_PROVIDER: 'vaulttokens',
@@ -127,7 +124,7 @@ export const createCsiKmsResources = (kms: KMSConfig, update: boolean = false) =
   return csiKmsResources;
 };
 
-export const createClusterKmsResources = (kms: KMSConfig) => {
+export const createClusterKmsResources = (kms) => {
   const parsedAddress = parseURL(kms.address.value);
 
   const tokenSecret: SecretKind = {
@@ -173,10 +170,6 @@ export const createClusterKmsResources = (kms: KMSConfig) => {
   return [...clusterKmsResources, ...createCsiKmsResources(kms)];
 };
 
-export type EncryptionDispatch = React.Dispatch<
-  Action | InternalClusterAction | CreateStorageSystemAction
->;
-
 export const setEncryptionDispatch = (
   keyType: any,
   mode: string,
@@ -201,13 +194,10 @@ export const getPort = (url: URL) => {
   return url.port;
 };
 
-export const scKmsConfigValidation = (kms: KMSConfig): boolean =>
+export const kmsConfigValidation = (kms): boolean =>
   kms.name?.valid &&
   kms.address?.valid &&
   kms.port?.valid &&
   kms.name.value !== '' &&
   kms.address.value !== '' &&
   kms.port.value !== '';
-
-export const kmsConfigValidation = (kms: KMSConfig): boolean =>
-  kms.token?.valid && kms.token.value !== '' && scKmsConfigValidation(kms);

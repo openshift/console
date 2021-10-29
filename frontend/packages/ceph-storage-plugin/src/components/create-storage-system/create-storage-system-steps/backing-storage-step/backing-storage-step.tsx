@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { InfrastructureModel, StorageClassModel } from '@console/internal/models';
+import { StorageClassModel } from '@console/internal/models';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import {
   ClusterServiceVersionKind,
@@ -131,6 +131,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
   storageClass,
   dispatch,
   storageSystems,
+  infraType,
   error,
   loaded,
   stepIdReached,
@@ -139,7 +140,6 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
   const [sc, scLoaded, scLoadError] = useK8sGet<ListKind<StorageClassResourceKind>>(
     StorageClassModel,
   );
-  const [infra, infraLoaded, infraLoadError] = useK8sGet<any>(InfrastructureModel, 'cluster');
   const isMCGStandalone = useFlag(GUARDED_FEATURES.ODF_MCG_STANDALONE);
   const [csvList, csvListLoaded, csvListLoadError] = useK8sGet<ListKind<ClusterServiceVersionKind>>(
     ClusterServiceVersionModel,
@@ -152,8 +152,6 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
 
   const odfCsv = getODFCsv(csvList?.items);
   const supportedODFVendors = getSupportedVendors(odfCsv);
-
-  const infraType = infra?.spec?.platformSpec?.type;
   const enableRhcs = RHCS_SUPPORTED_INFRA.includes(infraType);
 
   const allowedExternalStorage: ExternalStorage[] =
@@ -234,8 +232,8 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
 
   return (
     <ErrorHandler
-      error={error || scLoadError || infraLoadError || csvListLoadError}
-      loaded={loaded && scLoaded && infraLoaded && csvListLoaded}
+      error={error || scLoadError || csvListLoadError}
+      loaded={loaded && scLoaded && csvListLoaded}
     >
       <Form>
         <Radio
@@ -313,6 +311,7 @@ type BackingStorageProps = {
   storageSystems: StorageSystemKind[];
   storageClass: WizardState['storageClass'];
   stepIdReached: WizardState['stepIdReached'];
+  infraType: string;
   error: any;
   loaded: boolean;
 };

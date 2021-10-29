@@ -124,7 +124,7 @@ export type EncryptionType = {
   hasHandled: boolean;
 };
 
-export type KMSConfig = {
+export type VaultConfig = {
   name: {
     value: string;
     valid: boolean;
@@ -151,6 +151,39 @@ export type KMSConfig = {
   clientKeyFile: string;
   providerNamespace: string;
   hasHandled: boolean;
+};
+
+export type HpcsConfig = {
+  name: {
+    value: string;
+    valid: boolean;
+  };
+  instanceId: {
+    value: string;
+    valid: boolean;
+  };
+  apiKey: {
+    value: string;
+    valid: boolean;
+  };
+  rootKey: {
+    value: string;
+    valid: boolean;
+  };
+  baseUrl: string;
+  tokenUrl: string;
+  hasHandled: boolean;
+};
+
+export enum ProviderNames {
+  VAULT = 'vault',
+  HPCS = 'hpcs',
+}
+
+export type KMSConfig = {
+  [ProviderNames.VAULT]: VaultConfig;
+  [ProviderNames.HPCS]: HpcsConfig;
+  kmsProvider: ProviderNames;
 };
 
 export enum NetworkType {

@@ -194,6 +194,15 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'securityAndNetwork/setKms':
       newState.securityAndNetwork.kms = action.payload;
       break;
+    case 'securityAndNetwork/setVault':
+      newState.securityAndNetwork.kms.vault = action.payload;
+      break;
+    case 'securityAndNetwork/setHpcs':
+      newState.securityAndNetwork.kms.hpcs = action.payload;
+      break;
+    case 'securityAndNetwork/setKmsProvider':
+      newState.securityAndNetwork.kms.kmsProvider = action.payload;
+      break;
     case 'securityAndNetwork/setEncryption':
       newState.securityAndNetwork.encryption = action.payload;
       break;
@@ -273,6 +282,18 @@ export type CreateStorageSystemAction =
   | {
       type: 'securityAndNetwork/setKms';
       payload: WizardState['securityAndNetwork']['kms'];
+    }
+  | {
+      type: 'securityAndNetwork/setVault';
+      payload: WizardState['securityAndNetwork']['kms']['vault'];
+    }
+  | {
+      type: 'securityAndNetwork/setHpcs';
+      payload: WizardState['securityAndNetwork']['kms']['hpcs'];
+    }
+  | {
+      type: 'securityAndNetwork/setKmsProvider';
+      payload: WizardState['securityAndNetwork']['kms']['kmsProvider'];
     }
   | {
       type: 'securityAndNetwork/setEncryption';

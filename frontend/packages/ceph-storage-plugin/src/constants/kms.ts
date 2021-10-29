@@ -1,18 +1,11 @@
-import { KMSConfig } from '../types';
-
-export const KMSProviders = [
-  {
-    name: 'Vault',
-    value: 'vault',
-  },
-];
+import { VaultConfig, HpcsConfig, ProviderNames, KMSConfig } from '../types';
 
 export const KMSMaxFileUploadSize = 4000000;
 export const KMSConfigMapName = 'ocs-kms-connection-details';
 export const KMSConfigMapCSIName = 'csi-kms-connection-details';
 export const KMSSecretName = 'ocs-kms-token';
 
-export const KMSEmptyState: KMSConfig = Object.seal({
+export const VaultEmptyState: VaultConfig = Object.seal({
   name: {
     value: '',
     valid: true,
@@ -39,4 +32,32 @@ export const KMSEmptyState: KMSConfig = Object.seal({
   caCertFile: '',
   clientCertFile: '',
   clientKeyFile: '',
+});
+
+export const HpcsEmptyState: HpcsConfig = Object.seal({
+  name: {
+    value: '',
+    valid: true,
+  },
+  instanceId: {
+    value: '',
+    valid: true,
+  },
+  apiKey: {
+    value: '',
+    valid: true,
+  },
+  rootKey: {
+    value: '',
+    valid: true,
+  },
+  baseUrl: '',
+  tokenUrl: '',
+  hasHandled: true,
+});
+
+export const KMSEmptyState: KMSConfig = Object.seal({
+  [ProviderNames.VAULT]: VaultEmptyState,
+  [ProviderNames.HPCS]: HpcsEmptyState,
+  kmsProvider: ProviderNames.VAULT,
 });
