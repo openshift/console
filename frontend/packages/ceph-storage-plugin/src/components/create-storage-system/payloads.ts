@@ -50,11 +50,14 @@ export const createNoobaaKmsResources = async (kms: WizardState['securityAndNetw
       namespace: CEPH_STORAGE_NAMESPACE,
     },
     stringData: {
-      token: kms.token.value,
+      token: kms.vault.token.value,
     },
   };
   try {
-    await Promise.all([k8sCreate(SecretModel, tokenSecret), ...createAdvancedKmsResources(kms)]);
+    await Promise.all([
+      k8sCreate(SecretModel, tokenSecret),
+      ...createAdvancedKmsResources(kms.vault),
+    ]);
   } catch (err) {
     throw err;
   }
@@ -101,7 +104,7 @@ export const createStorageCluster = async (state: WizardState) => {
     isFlexibleScaling,
     publicNetwork,
     clusterNetwork,
-    kms.hasHandled && encryption.advanced,
+    kms.vault.hasHandled && encryption.advanced,
     arbiterLocation,
     enableArbiter,
     pvCount,

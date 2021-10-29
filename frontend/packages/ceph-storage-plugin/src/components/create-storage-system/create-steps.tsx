@@ -23,6 +23,7 @@ export const createSteps = (
   t: TFunction,
   state: WizardState,
   dispatch: WizardDispatch,
+  infraType: string,
   hasOCS: boolean,
 ): WizardStep[] => {
   const {
@@ -53,7 +54,9 @@ export const createSteps = (
     },
     securityAndNetwork: {
       name: StepsName(t)[Steps.SecurityAndNetwork],
-      component: <SecurityAndNetwork state={securityAndNetwork} dispatch={dispatch} />,
+      component: (
+        <SecurityAndNetwork state={securityAndNetwork} dispatch={dispatch} infraType={infraType} />
+      ),
     },
     reviewAndCreate: {
       name: StepsName(t)[Steps.ReviewAndCreate],
@@ -102,7 +105,15 @@ export const createSteps = (
         id: 2,
         name: StepsName(t)[Steps.Security],
         canJumpTo: stepIdReached >= 2,
-        component: <Security encryption={encryption} kms={kms} dispatch={dispatch} isMCG />,
+        component: (
+          <Security
+            encryption={encryption}
+            kms={kms}
+            dispatch={dispatch}
+            infraType={infraType}
+            isMCG
+          />
+        ),
       },
       {
         id: 3,

@@ -46,7 +46,7 @@ import { createBlockPoolModal } from '../modals/block-pool-modal/create-block-po
 import { POOL_STATE } from '../../constants/storage-pool-const';
 import { KMSConfigure } from '../kms-config/kms-config';
 import { reducer, initialState } from '../create-storage-system/reducer';
-import { createCsiKmsResources, scKmsConfigValidation } from '../kms-config/utils';
+import { createCsiKmsResources, kmsConfigValidation } from '../kms-config/utils';
 import './ocs-storage-class-form.scss';
 
 export const CephFsNameComponent: React.FC<ProvisionerProps> = ({
@@ -419,17 +419,17 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
     const allServiceNames = csiKmsDetails ? Object.keys(csiKmsDetails?.data) : [];
     if (
       (allServiceNames.length &&
-        allServiceNames.indexOf(state.securityAndNetwork.kms.name.value) === -1) ||
+        allServiceNames.indexOf(state.securityAndNetwork.kms.vault.name.value) === -1) ||
       !csiKmsDetails
     ) {
       try {
         const promises: Promise<K8sResourceKind>[] = createCsiKmsResources(
-          state.securityAndNetwork.kms,
+          state.securityAndNetwork.kms.vault,
           !!csiKmsDetails,
         );
         await Promise.all(promises).then(() => {
           setIsExistingKms(true);
-          setEncryptionId(state.securityAndNetwork.kms.name.value);
+          setEncryptionId(state.securityAndNetwork.kms.vault.name.value);
         });
         setErrorMessage('');
       } catch (error) {
@@ -438,7 +438,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
     } else {
       setErrorMessage(
         t('ceph-storage-plugin~KMS service {{value}} already exist', {
-          value: state.securityAndNetwork.kms.name.value,
+          value: state.securityAndNetwork.kms.vault.name.value,
         }),
       );
     }
@@ -480,6 +480,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
               <KMSConfigure
                 state={state.securityAndNetwork}
                 dispatch={dispatch}
+                infraType={'AWS'}
                 className="ocs-storage-class-encryption"
               />
               <div className="ocs-install-kms__save-button">
@@ -488,7 +489,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
                     <Button
                       variant="secondary"
                       onClick={updateKMS}
-                      isDisabled={!scKmsConfigValidation(state.securityAndNetwork.kms)}
+                      isDisabled={!kmsConfigValidation(state.securityAndNetwork.kms.vault)}
                       data-test="save-action"
                     >
                       {t('ceph-storage-plugin~Save')}
