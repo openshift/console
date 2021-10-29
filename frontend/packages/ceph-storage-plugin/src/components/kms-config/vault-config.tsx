@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import * as classNames from 'classnames';
 import {
   InputGroup,
@@ -15,9 +14,9 @@ import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-toke
 import { PencilAltIcon, EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { setEncryptionDispatch, parseURL, kmsConfigValidation } from './utils';
 import { KMSConfigureProps } from './providers';
-import { advancedKMSModal } from '../modals/advanced-kms-modal/advanced-kms-modal';
+import { advancedVaultModal } from '../modals/advanced-kms-modal/advanced-vault-modal';
 import { ActionType } from '../ocs-install/internal-mode/reducer';
-import { VaultConfig } from '../../types';
+import { VaultConfig, ProviderNames } from '../../types';
 import './kms-config.scss';
 
 export const ValutConfigure: React.FC<KMSConfigureProps> = ({
@@ -29,14 +28,14 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const kms: VaultConfig = state.kms?.['vault'] || state.kms;
+  const kms: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
   const kmsObj: VaultConfig = _.cloneDeep(kms);
 
   const [revealToken, setRevealToken] = React.useState(false);
 
   React.useEffect(() => {
     const hasHandled: boolean =
-      kms.token?.valid && kms.token.value !== '' && kmsConfigValidation(kms);
+      kms.token?.valid && kms.token?.value !== '' && kmsConfigValidation(kms, ProviderNames.VAULT);
     if (kms.hasHandled !== hasHandled) {
       mode
         ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, {
@@ -109,7 +108,7 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
       : t('ceph-storage-plugin~Please enter a valid port');
 
   const openAdvancedModal = () =>
-    advancedKMSModal({
+    advancedVaultModal({
       state,
       dispatch,
       mode,
@@ -124,20 +123,20 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
         label={t('ceph-storage-plugin~Service name')}
         className={`${className}__form-body`}
         helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
-        validated={isValid(kms.name.valid)}
+        validated={isValid(kms.name?.valid)}
         helperText={t(
           'ceph-storage-plugin~A unique name for the key management service within the project.',
         )}
         isRequired
       >
         <TextInput
-          value={kms.name.value}
+          value={kms.name?.value}
           onChange={setServiceName}
           type="text"
           id="kms-service-name"
           name="kms-service-name"
           isRequired
-          validated={isValid(kms.name.valid)}
+          validated={isValid(kms.name?.valid)}
           data-test="kms-service-name-text"
         />
       </FormGroup>
@@ -147,18 +146,18 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
           label={t('ceph-storage-plugin~Address')}
           className={classNames('ocs-install-kms__form-address', `${className}__form-body`)}
           helperTextInvalid={validateAddressMessage()}
-          validated={isValid(kms.address.valid)}
+          validated={isValid(kms.address?.valid)}
           isRequired
         >
           <TextInput
-            value={kms.address.value}
+            value={kms.address?.value}
             onChange={setAddress}
             className="ocs-install-kms__form-address--padding"
             type="url"
             id="kms-address"
             name="kms-address"
             isRequired
-            validated={isValid(kms.address.valid)}
+            validated={isValid(kms.address?.valid)}
             data-test="kms-address-text"
           />
         </FormGroup>
@@ -170,17 +169,17 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
             `${className}__form-body--small-padding`,
           )}
           helperTextInvalid={validatePortMessage()}
-          validated={isValid(kms.port.valid)}
+          validated={isValid(kms.port?.valid)}
           isRequired
         >
           <TextInput
-            value={kms.port.value}
+            value={kms.port?.value}
             onChange={setAddressPort}
             type="text"
             id="kms-address-port"
             name="kms-address-port"
             isRequired
-            validated={isValid(kms.port.valid)}
+            validated={isValid(kms.port?.valid)}
             data-test="kms-address-port-text"
           />
         </FormGroup>
@@ -191,18 +190,18 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
           label={t('ceph-storage-plugin~Token')}
           className={`${className}__form-body`}
           helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
-          validated={isValid(kms.token.valid)}
+          validated={isValid(kms.token?.valid)}
           isRequired
         >
           <InputGroup className="ocs-install-kms__form-token">
             <TextInput
-              value={kms.token.value}
+              value={kms.token?.value}
               onChange={setToken}
               type={revealToken ? 'text' : 'password'}
               id="kms-token"
               name="kms-token"
               isRequired
-              validated={isValid(kms.token.valid)}
+              validated={isValid(kms.token?.valid)}
             />
             <Tooltip
               content={

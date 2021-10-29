@@ -180,6 +180,12 @@ export enum ProviderNames {
   IBMROKS = 'ibmRoks',
 }
 
+export enum KmsImplementations {
+  VAULT = 'vault', // used by rook for token-based vault
+  VAULT_TOKENS = 'vaulttokens', // used by ceph-csi for token-based vault
+  IBM_KEY_PROTECT = 'ibmkeyprotect', // used by both rook & ceph-csi
+}
+
 export type KMSConfig = {
   [ProviderNames.VAULT]: VaultConfig;
   [ProviderNames.IBMROKS]: IbmKmsConfig;
@@ -196,7 +202,7 @@ export enum NADSelectorType {
   PUBLIC = 'PUBLIC',
 }
 
-export type KMSConfigMap = {
+export type VaultConfigMap = {
   KMS_PROVIDER: string;
   KMS_SERVICE_NAME: string;
   VAULT_ADDR: string; // address + port
@@ -210,6 +216,16 @@ export type KMSConfigMap = {
   VAULT_CLIENT_KEY_FILE?: string;
   VAULT_NAMESPACE: string;
   VAULT_TOKEN_NAME?: string;
+};
+
+// (ToDo: Sanjal) incorrect keys, change once confirmed
+export type IbmKmsConfigMap = {
+  KMS_PROVIDER: string;
+  KMS_SERVICE_NAME: string;
+  IBM_SERVICE_INSTANCE_ID: string;
+  IBM_KMS_KEY: string;
+  IBM_BASE_URL: string;
+  IBM_TOKEN_URL: string;
 };
 
 export type WatchCephResource = {

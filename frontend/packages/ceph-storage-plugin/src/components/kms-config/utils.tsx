@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind, ConfigMapKind, SecretKind } from '@console/internal/module/k8s/types';
 import { k8sCreate, k8sPatch } from '@console/internal/module/k8s';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
-import { EncryptionDispatch } from './providers';
+import { EncryptionDispatch, KMSConfigMap, KMSConfig } from './providers';
 import {
   CEPH_STORAGE_NAMESPACE,
   MODES,
@@ -10,7 +10,14 @@ import {
   KMSSecretName,
   KMSConfigMapCSIName,
 } from '../../constants';
-import { KMSConfigMap } from '../../types';
+import {
+  VaultConfigMap,
+  IbmKmsConfigMap,
+  ProviderNames,
+  KmsImplementations,
+  VaultConfig,
+  IbmKmsConfig,
+} from '../../types';
 
 export const parseURL = (url: string) => {
   try {
@@ -19,6 +26,8 @@ export const parseURL = (url: string) => {
     return null;
   }
 };
+
+export const isLengthUnity = (allowedProviders) => allowedProviders.length === 1;
 
 export const generateCASecret = (caCertificate: string) => ({
   apiVersion: SecretModel.apiVersion,
@@ -62,9 +71,55 @@ export const generateClientKeySecret = (clientKey: string) => ({
   },
 });
 
-export const createAdvancedKmsResources = (kms) => {
-  const advancedKmsResources: Promise<K8sResourceKind>[] = [];
+const generateCsiKmsConfigMap = (name: string, csiConfigData: KMSConfigMap) => ({
+  apiVersion: ConfigMapModel.apiVersion,
+  kind: ConfigMapModel.kind,
+  data: {
+    [`${name}`]: JSON.stringify(csiConfigData),
+  },
+  metadata: {
+    name: KMSConfigMapCSIName,
+    namespace: CEPH_STORAGE_NAMESPACE,
+  },
+});
 
+const generateOcsKmsConfigMap = (configData: KMSConfigMap) => ({
+  apiVersion: ConfigMapModel.apiVersion,
+  kind: ConfigMapModel.kind,
+  data: {
+    ...configData,
+  },
+  metadata: {
+    name: KMSConfigMapName,
+    namespace: CEPH_STORAGE_NAMESPACE,
+  },
+});
+
+const generateConfigMapPatch = (name: string, csiConfigData: KMSConfigMap) => {
+  return {
+    op: 'replace',
+    path: `/data/${name}`,
+    value: JSON.stringify(csiConfigData),
+  };
+};
+
+const generateIbmKmsSecret = (kms: IbmKmsConfig) => ({
+  apiVersion: SecretModel.apiVersion,
+  kind: SecretModel.kind,
+  metadata: {
+    name: `ibm-kms-key-${Math.random()
+      .toString(36)
+      .substring(7)}`,
+    namespace: CEPH_STORAGE_NAMESPACE,
+  },
+  stringData: {
+    apiKey: kms.apiKey.value,
+    rootKey: kms.rootKey.value,
+  },
+});
+
+const createAdvancedVaultResources = (kms: VaultConfig) => {
+  const advancedKmsResources: Promise<K8sResourceKind>[] = [];
   if (kms.caCert) advancedKmsResources.push(k8sCreate(SecretModel, kms.caCert));
   if (kms.clientCert) advancedKmsResources.push(k8sCreate(SecretModel, kms.clientCert));
   if (kms.clientKey) advancedKmsResources.push(k8sCreate(SecretModel, kms.clientKey));
@@ -72,10 +127,14 @@ export const createAdvancedKmsResources = (kms) => {
   return advancedKmsResources;
 };
 
-export const createCsiKmsResources = (kms, update = false) => {
+const createCsiVaultResources = (
+  kms: VaultConfig,
+  csiKmsResources: Promise<K8sResourceKind>[],
+  update: boolean,
+) => {
   const parsedAddress = parseURL(kms.address.value);
-  const csiConfigData: KMSConfigMap = {
-    KMS_PROVIDER: 'vaulttokens',
+  const csiConfigData: VaultConfigMap = {
+    KMS_PROVIDER: KmsImplementations.VAULT_TOKENS,
     KMS_SERVICE_NAME: kms.name.value,
     VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
     VAULT_BACKEND_PATH: kms.backend,
@@ -89,44 +148,58 @@ export const createCsiKmsResources = (kms, update = false) => {
     VAULT_CLIENT_CERT_FILE: kms.clientCertFile,
     VAULT_CLIENT_KEY_FILE: kms.clientKeyFile,
   };
+  const csiConfigObj: ConfigMapKind = generateCsiKmsConfigMap(kms.name.value, csiConfigData);
 
-  const csiConfigObj: ConfigMapKind = {
-    apiVersion: ConfigMapModel.apiVersion,
-    kind: ConfigMapModel.kind,
-    data: {
-      [`${kms.name.value}`]: JSON.stringify(csiConfigData),
-    },
-    metadata: {
-      name: KMSConfigMapCSIName,
-      namespace: CEPH_STORAGE_NAMESPACE,
-    },
-  };
-
-  const csiKmsResources: Promise<K8sResourceKind>[] =
-    /** kms.token.value === "" if we are calling this function from StorageClass KMS flow.
-     * Hence, we need to createAdvancedKmsResources, else it is already created if calling from OCS wizard flow.
-     */
-    kms.token.value ? [] : createAdvancedKmsResources(kms);
-
+  if (!kms.token.value) {
+    // not required, while setting up storage cluster.
+    // required, while creating new storage class.
+    csiKmsResources.push(...createAdvancedVaultResources(kms));
+  }
   if (update) {
-    const cmPatch = [
-      {
-        op: 'replace',
-        path: `/data/${kms.name.value}`,
-        value: JSON.stringify(csiConfigData),
-      },
-    ];
+    const cmPatch = [generateConfigMapPatch(kms.name.value, csiConfigData)];
     csiKmsResources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
   } else {
     csiKmsResources.push(k8sCreate(ConfigMapModel, csiConfigObj));
   }
-
-  return csiKmsResources;
 };
 
-export const createClusterKmsResources = (kms) => {
-  const parsedAddress = parseURL(kms.address.value);
+const createCsiIbmKmsResources = (
+  kms: IbmKmsConfig,
+  csiKmsResources: Promise<K8sResourceKind>[],
+  update: boolean,
+  secretName = '',
+) => {
+  let keySecret: SecretKind;
+  if (!secretName) {
+    // not required, while setting up storage cluster.
+    // required, while creating new storage class.
+    keySecret = generateIbmKmsSecret(kms);
+    csiKmsResources.push(k8sCreate(SecretModel, keySecret));
+  }
+  // (ToDo: Sanjal) incorrect keys, change once confirmed
+  const csiConfigData: IbmKmsConfigMap = {
+    KMS_PROVIDER: KmsImplementations.IBM_KEY_PROTECT,
+    KMS_SERVICE_NAME: kms.name.value,
+    IBM_SERVICE_INSTANCE_ID: kms.instanceId.value,
+    IBM_KMS_KEY: secretName || keySecret.metadata.name,
+    IBM_BASE_URL: kms.baseUrl,
+    IBM_TOKEN_URL: kms.tokenUrl,
+  };
+  const csiConfigObj: ConfigMapKind = generateCsiKmsConfigMap(kms.name.value, csiConfigData);
 
+  if (update) {
+    const cmPatch = [generateConfigMapPatch(kms.name.value, csiConfigData)];
+    csiKmsResources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
+  } else {
+    csiKmsResources.push(k8sCreate(ConfigMapModel, csiConfigObj));
+  }
+};
+
+const createClusterVaultResources = (
+  kms: VaultConfig,
+  clusterKmsResources: Promise<K8sResourceKind>[],
+) => {
+  const parsedAddress = parseURL(kms.address.value);
   const tokenSecret: SecretKind = {
     apiVersion: SecretModel.apiVersion,
     kind: SecretModel.kind,
@@ -138,9 +211,8 @@ export const createClusterKmsResources = (kms) => {
       token: kms.token.value,
     },
   };
-
-  const configData: KMSConfigMap = {
-    KMS_PROVIDER: 'vault',
+  const configData: VaultConfigMap = {
+    KMS_PROVIDER: KmsImplementations.VAULT,
     KMS_SERVICE_NAME: kms.name.value,
     VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
     VAULT_BACKEND_PATH: kms.backend,
@@ -150,24 +222,33 @@ export const createClusterKmsResources = (kms) => {
     VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
     VAULT_NAMESPACE: kms.providerNamespace,
   };
+  const configMapObj: ConfigMapKind = generateOcsKmsConfigMap(configData);
 
-  const configMapObj: ConfigMapKind = {
-    apiVersion: ConfigMapModel.apiVersion,
-    kind: ConfigMapModel.kind,
-    data: {
-      ...configData,
-    },
-    metadata: {
-      name: KMSConfigMapName,
-      namespace: CEPH_STORAGE_NAMESPACE,
-    },
-  };
-
-  const clusterKmsResources: Promise<K8sResourceKind>[] = createAdvancedKmsResources(kms);
+  clusterKmsResources.push(...createAdvancedVaultResources(kms));
   clusterKmsResources.push(k8sCreate(SecretModel, tokenSecret));
   clusterKmsResources.push(k8sCreate(ConfigMapModel, configMapObj));
+};
 
-  return [...clusterKmsResources, ...createCsiKmsResources(kms)];
+const createClusterIbmKmsResources = (
+  kms: IbmKmsConfig,
+  clusterKmsResources: Promise<K8sResourceKind>[],
+) => {
+  const keySecret: SecretKind = generateIbmKmsSecret(kms);
+  // (ToDo: Sanjal)incorrect keys, change once confirmed
+  const configData: IbmKmsConfigMap = {
+    KMS_PROVIDER: KmsImplementations.IBM_KEY_PROTECT,
+    KMS_SERVICE_NAME: kms.name.value,
+    IBM_SERVICE_INSTANCE_ID: kms.instanceId.value,
+    IBM_KMS_KEY: keySecret.metadata.name,
+    IBM_BASE_URL: kms.baseUrl,
+    IBM_TOKEN_URL: kms.tokenUrl,
+  };
+  const configMapObj: ConfigMapKind = generateOcsKmsConfigMap(configData);
+
+  clusterKmsResources.push(k8sCreate(SecretModel, keySecret));
+  clusterKmsResources.push(k8sCreate(ConfigMapModel, configMapObj));
+
+  return keySecret.metadata.name;
 };
 
 export const setEncryptionDispatch = (
@@ -194,10 +275,73 @@ export const getPort = (url: URL) => {
   return url.port;
 };
 
-export const kmsConfigValidation = (kms): boolean =>
-  kms.name?.valid &&
-  kms.address?.valid &&
-  kms.port?.valid &&
-  kms.name.value !== '' &&
-  kms.address.value !== '' &&
-  kms.port.value !== '';
+export const createCsiKmsResources = (
+  kms: KMSConfig,
+  update: boolean,
+  provider = ProviderNames.VAULT,
+) => {
+  const csiKmsResources: Promise<K8sResourceKind>[] = [];
+  switch (provider) {
+    case ProviderNames.VAULT: {
+      createCsiVaultResources(kms as VaultConfig, csiKmsResources, update);
+      break;
+    }
+    case ProviderNames.IBMROKS: {
+      createCsiIbmKmsResources(kms as IbmKmsConfig, csiKmsResources, update);
+      break;
+    }
+    default:
+  }
+
+  return csiKmsResources;
+};
+
+export const createClusterKmsResources = (kms: KMSConfig, provider = ProviderNames.VAULT) => {
+  const clusterKmsResources: Promise<K8sResourceKind>[] = [];
+  switch (provider) {
+    case ProviderNames.VAULT: {
+      createClusterVaultResources(kms as VaultConfig, clusterKmsResources);
+      createCsiVaultResources(kms as VaultConfig, clusterKmsResources, false);
+      break;
+    }
+    case ProviderNames.IBMROKS: {
+      const secretName = createClusterIbmKmsResources(kms as IbmKmsConfig, clusterKmsResources);
+      createCsiIbmKmsResources(kms as IbmKmsConfig, clusterKmsResources, false, secretName);
+      break;
+    }
+    default:
+  }
+
+  return [...clusterKmsResources];
+};
+
+export const kmsConfigValidation = (kms: KMSConfig, provider = ProviderNames.VAULT): boolean => {
+  switch (provider) {
+    case ProviderNames.VAULT: {
+      const kmsObj = kms as VaultConfig;
+      return (
+        kmsObj.name?.valid &&
+        kmsObj.address?.valid &&
+        kmsObj.port?.valid &&
+        kmsObj.name?.value !== '' &&
+        kmsObj.address?.value !== '' &&
+        kmsObj.port?.value !== ''
+      );
+    }
+    case ProviderNames.IBMROKS: {
+      const kmsObj = kms as IbmKmsConfig;
+      return (
+        kmsObj.name?.valid &&
+        kmsObj.instanceId?.valid &&
+        kmsObj.apiKey?.valid &&
+        kmsObj.rootKey?.valid &&
+        kmsObj.name?.value !== '' &&
+        kmsObj.instanceId?.value !== '' &&
+        kmsObj.apiKey?.value !== '' &&
+        kmsObj.rootKey?.value !== ''
+      );
+    }
+    default:
+      return false;
+  }
+};

@@ -5,14 +5,13 @@ import {
   k8sPatchByName,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { CustomResourceDefinitionModel, NodeModel, SecretModel } from '@console/internal/models';
+import { CustomResourceDefinitionModel, NodeModel } from '@console/internal/models';
 import { K8sModel } from '@console/dynamic-plugin-sdk';
 import { WizardNodeState, WizardState } from './reducer';
 import { Payload } from './external-storage/types';
 import {
   CEPH_STORAGE_NAMESPACE,
   defaultRequestSize,
-  KMSSecretName,
   NO_PROVISIONER,
   OCS_INTERNAL_CR_NAME,
 } from '../../constants';
@@ -22,7 +21,6 @@ import { capacityAndNodesValidate } from '../../utils/create-storage-system';
 import { ValidationType } from '../../utils/common-ocs-install-el';
 import { cephStorageLabel } from '../../selectors';
 import { StorageSystemKind } from '../../types';
-import { createAdvancedKmsResources } from '../kms-config/utils';
 
 export const createStorageSystem = async (subSystemName: string, subSystemKind: string) => {
   const payload: StorageSystemKind = {
@@ -39,28 +37,6 @@ export const createStorageSystem = async (subSystemName: string, subSystemKind: 
     },
   };
   return k8sCreate(StorageSystemModel, payload);
-};
-
-export const createNoobaaKmsResources = async (kms: WizardState['securityAndNetwork']['kms']) => {
-  const tokenSecret = {
-    apiVersion: SecretModel.apiVersion,
-    kind: SecretModel.kind,
-    metadata: {
-      name: KMSSecretName,
-      namespace: CEPH_STORAGE_NAMESPACE,
-    },
-    stringData: {
-      token: kms.vault.token.value,
-    },
-  };
-  try {
-    await Promise.all([
-      k8sCreate(SecretModel, tokenSecret),
-      ...createAdvancedKmsResources(kms.vault),
-    ]);
-  } catch (err) {
-    throw err;
-  }
 };
 
 export const createMCGStorageCluster = async (enableKms: boolean) => {
@@ -104,7 +80,7 @@ export const createStorageCluster = async (state: WizardState) => {
     isFlexibleScaling,
     publicNetwork,
     clusterNetwork,
-    kms.vault.hasHandled && encryption.advanced,
+    kms[kms.kmsProvider].hasHandled && encryption.advanced,
     arbiterLocation,
     enableArbiter,
     pvCount,

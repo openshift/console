@@ -17,12 +17,12 @@ import {
   generateClientSecret,
   generateClientKeySecret,
 } from '../../kms-config/utils';
+import { VaultConfig, ProviderNames } from '../../../types';
 import './advanced-kms-modal.scss';
-import { VaultConfig } from '../../../types';
 
-export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps) => {
+export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProps) => {
   const { close, cancel, errorMessage, inProgress, state, dispatch } = props;
-  const kms: VaultConfig = state.kms?.['vault'] || state.kms;
+  const kms: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
   const { t } = useTranslation();
   const [backendPath, setBackendPath] = React.useState(kms?.backend || '');
   const [tlsName, setTLSName] = React.useState(kms?.tls || '');
@@ -120,7 +120,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
   };
 
   return (
-    <Form onSubmit={submit} key="advanced-kms-modal">
+    <Form onSubmit={submit} key="advanced-vault-modal">
       <div className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>{t('ceph-storage-plugin~Key Management Service Advanced Settings')}</ModalTitle>
         <ModalBody>
@@ -244,4 +244,4 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
   );
 });
 
-export const advancedKMSModal = createModalLauncher(AdvancedKMSModal);
+export const advancedVaultModal = createModalLauncher(AdvancedVaultModal);

@@ -94,9 +94,9 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     case StepsName(t)[Steps.CapacityAndNodes]:
       return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.SecurityAndNetwork]:
-      return encryption.hasHandled && kms.vault.hasHandled && hasConfiguredNetwork;
+      return encryption.hasHandled && kms[kms.kmsProvider].hasHandled && hasConfiguredNetwork;
     case StepsName(t)[Steps.Security]:
-      return encryption.hasHandled && kms.vault.hasHandled;
+      return encryption.hasHandled && kms[kms.kmsProvider].hasHandled;
     case StepsName(t)[Steps.ReviewAndCreate]:
       return true;
     default:
@@ -145,12 +145,14 @@ const handleReviewAndCreateNext = async (
   try {
     if (isMCG) {
       await labelOCSNamespace();
-      if (encryption.advanced) await Promise.all(createClusterKmsResources(kms.vault));
+      if (encryption.advanced)
+        await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
       await createMCGStorageCluster(encryption.advanced);
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
       await labelOCSNamespace();
       await labelNodes(nodes);
-      if (encryption.advanced) await Promise.all(createClusterKmsResources(kms.vault));
+      if (encryption.advanced)
+        await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
       await createStorageSystem(OCS_INTERNAL_CR_NAME, STORAGE_CLUSTER_SYSTEM_KIND);
       await createStorageCluster(state);
     } else if (type === BackingStorageType.EXTERNAL) {
@@ -172,7 +174,8 @@ const handleReviewAndCreateNext = async (
       await createStorageSystem(subSystemName, subSystemKind);
       if (!hasOCS && !isRhcs) {
         await labelNodes(nodes);
-        if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
+        if (encryption.advanced)
+          await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
         await createStorageCluster(state);
       }
       if (!isRhcs) await waitforCRD(model);

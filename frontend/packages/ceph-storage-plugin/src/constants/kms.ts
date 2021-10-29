@@ -1,9 +1,33 @@
-import { VaultConfig, IbmKmsConfig, ProviderNames, KMSConfig } from '../types';
+import { VaultConfig, IbmKmsConfig, ProviderNames, KmsImplementations, KMSConfig } from '../types';
 
 export const KMSMaxFileUploadSize = 4000000;
 export const KMSConfigMapName = 'ocs-kms-connection-details';
 export const KMSConfigMapCSIName = 'csi-kms-connection-details';
 export const KMSSecretName = 'ocs-kms-token';
+export const KMS_PROVIDER = 'KMS_PROVIDER';
+
+/**
+ * Ceph-Csi supports multiple KMS implementations ('vaulttenantsa', 'aws-metadata' etc),
+ * all of them are not supported by UI (only 'vaulttokens' and 'ibmkeyprotect' supported right now).
+ * "supported" will have a list of all the UI supported implementations for a
+ * particular KMS provider (AWS, Vault, IBM etc).
+ */
+export const UISupportedProviders = {
+  [ProviderNames.VAULT]: {
+    group: 'Vault',
+    supported: [KmsImplementations.VAULT_TOKENS], // add 'vaulttenantsa' to the list, if supported in future
+  },
+  [ProviderNames.IBMROKS]: {
+    group: 'ROKS IBM Cloud',
+    supported: [KmsImplementations.IBM_KEY_PROTECT],
+    allowedPlatforms: ['AWS'], // should be 'IBMCloud',
+  },
+};
+
+export const DescriptionKey = {
+  [KmsImplementations.VAULT_TOKENS]: 'VAULT_ADDR',
+  [KmsImplementations.IBM_KEY_PROTECT]: 'IBM_SERVICE_INSTANCE_ID',
+};
 
 export const VaultEmptyState: VaultConfig = Object.seal({
   name: {
