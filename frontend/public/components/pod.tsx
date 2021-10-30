@@ -938,11 +938,11 @@ export const PodsPage: React.FC<PodPageProps> = ({
     fieldSelector,
   });
 
-  const [data, filteredData, onFilterChange] = useListPageFilter(pods, undefined, {
+  const filters = React.useMemo(() => getFilters(t), [t]);
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {
     name: { selected: [nameFilter] },
   });
-
-  const filters = React.useMemo(() => getFilters(t), [t]);
 
   return (
     userSettingsLoaded && (
