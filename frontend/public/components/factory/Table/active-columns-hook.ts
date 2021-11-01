@@ -6,17 +6,13 @@ import {
   useActiveNamespace,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
+import { UseActiveColumns } from '@console/dynamic-plugin-sdk';
 
-export const useActiveColumns = <D = any>({
+export const useActiveColumns: UseActiveColumns = ({
   columns,
   showNamespaceOverride,
   columnManagementID,
-}: {
-  columns: TableColumn<D>[];
-  showNamespaceOverride?: boolean;
-  columnManagementID?: string;
-}): [TableColumn<D>[], boolean] => {
+}) => {
   const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,

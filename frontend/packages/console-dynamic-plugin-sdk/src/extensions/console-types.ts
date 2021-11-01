@@ -291,8 +291,8 @@ export type UseActiveColumns = <D = any>({
   columnManagementID,
 }: {
   columns: TableColumn<D>[];
-  showNamespaceOverride: boolean;
-  columnManagementID: string;
+  showNamespaceOverride?: boolean;
+  columnManagementID?: string;
 }) => [TableColumn<D>[], boolean];
 
 export type ListPageHeaderProps = {
