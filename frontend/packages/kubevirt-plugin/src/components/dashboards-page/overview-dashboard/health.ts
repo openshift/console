@@ -4,10 +4,10 @@ import { URLHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import {
   DataVolumeModel,
-  VirtualMachineImportModel,
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
 } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 
 export const getKubevirtHealthState: URLHealthHandler<KubevirtHealthResponse> = (
   response,
@@ -33,29 +33,24 @@ type KubevirtHealthResponse = {
 export const additionalResources = {
   vmis: {
     isList: true,
-    kind: VirtualMachineInstanceModel.kind,
-  },
-  pods: {
-    isList: true,
-    kind: PodModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
   },
   migrations: {
     isList: true,
-    kind: VirtualMachineInstanceMigrationModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceMigrationModel),
+  },
+  dataVolumes: {
+    kind: kubevirtReferenceForModel(DataVolumeModel),
+    isList: true,
+    optional: true,
   },
   pvcs: {
     isList: true,
     kind: PersistentVolumeClaimModel.kind,
     optional: true,
   },
-  dataVolumes: {
-    kind: DataVolumeModel.kind,
+  pods: {
     isList: true,
-    optional: true,
-  },
-  vmImports: {
-    isList: true,
-    kind: VirtualMachineImportModel.kind,
-    optional: true,
+    kind: PodModel.kind,
   },
 };
