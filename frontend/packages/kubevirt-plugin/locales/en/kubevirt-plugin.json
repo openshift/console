@@ -408,6 +408,8 @@
   "Various types of hardware devices are assigned to virtual machines in the cluster": "Various types of hardware devices are assigned to virtual machines in the cluster",
   "Resource name": "Resource name",
   "Quantity": "Quantity",
+  "Name is Empty": "Name is Empty",
+  "Name is already taken by another device in this VM": "Name is already taken by another device in this VM",
   "`Virtual Machine Instance {{name}}`": "`Virtual Machine Instance {{name}}`",
   "Consider using a Virtual Machine that will provide additional management capabilities to a VirtualMachineInstance inside the cluster.": "Consider using a Virtual Machine that will provide additional management capabilities to a VirtualMachineInstance inside the cluster.",
   "key": "key",
