@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Select, SelectProps, SelectVariant } from '@patternfly/react-core';
 
-const SelectFilter: React.FC<SelectProps> = (props) => {
+const FilteredSelect: React.FC<SelectProps> = (props) => {
   const { isGrouped, children } = props;
   const options = children;
 
@@ -38,4 +38,4 @@ const SelectFilter: React.FC<SelectProps> = (props) => {
   );
 };
 
-export default SelectFilter;
+export default FilteredSelect;
