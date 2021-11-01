@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { TemplateModel } from '@console/internal/models';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { getVMLikeModel } from '../selectors/vm';
@@ -12,7 +14,10 @@ export const useUpToDateVMLikeEntity = <P extends VMGenericLikeEntityKind>(vmLik
   const resourceWatch = React.useMemo(() => {
     return {
       name: vmName,
-      kind: kubevirtReferenceForModel(model),
+      kind:
+        model.kind === VirtualMachineModel.kind || model.kind === VirtualMachineInstanceModel.kind
+          ? kubevirtReferenceForModel(model)
+          : TemplateModel.kind,
       namespace,
       isList: false,
     };
