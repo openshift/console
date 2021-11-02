@@ -26,15 +26,19 @@ const overrides = {
 };
 
 export const overrideSharedModules = (entryModule: RemoteEntryModule) => {
-  entryModule.init(
-    Object.keys(overrides).reduce((acc, override) => {
-      acc[override] = {
-        '*': {
-          get: overrides[override],
-          loaded: true,
-        },
-      };
-      return acc;
-    }, {}),
-  );
+  if (entryModule.init) {
+    entryModule.init(
+      Object.keys(overrides).reduce((acc, override) => {
+        acc[override] = {
+          '*': {
+            get: overrides[override],
+            loaded: true,
+          },
+        };
+        return acc;
+      }, {}),
+    );
+  } else {
+    entryModule.override(overrides);
+  }
 };
