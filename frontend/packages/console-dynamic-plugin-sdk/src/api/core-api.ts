@@ -21,7 +21,6 @@ import {
   ResourceLinkProps,
   UseK8sModel,
   UseK8sModels,
-  UseActivePerspective,
 } from '../extensions/console-types';
 import { K8sGet, K8sCreate, K8sUpdate, K8sPatch, K8sDelete, K8sList } from './k8s-types';
 
@@ -37,9 +36,6 @@ export const consoleFetchJSON: ConsoleFetchJSON = require('@console/dynamic-plug
   .consoleFetchJSON;
 export const consoleFetchText: ConsoleFetchText = require('@console/dynamic-plugin-sdk/src/utils/fetch')
   .consoleFetchText;
-
-export const useActivePerspective: UseActivePerspective = require('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective')
-  .default;
 
 /**
  * A component that creates a Navigation bar. It takes array of NavPage objects and renderes a NavBar.
@@ -101,3 +97,6 @@ export const k8sDelete: K8sDelete = require('@console/dynamic-plugin-sdk/src/uti
   .k8sDeleteResource;
 export const k8sList: K8sList = require('@console/dynamic-plugin-sdk/src/utils/k8s')
   .k8sListResource;
+
+// Openshift Console specific APIs
+export * from './core-api-console';
