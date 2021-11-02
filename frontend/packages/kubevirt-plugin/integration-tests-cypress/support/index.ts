@@ -28,6 +28,7 @@ declare global {
       selectProject(project: string): void;
       createNAD(namespace: string): void;
       waitForLoginPrompt(vmName: string, namespace: string): void;
+      visitNAD(): void;
     }
   }
 }
@@ -175,4 +176,8 @@ Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) =
     failOnNonZeroExit: false,
     timeout: 600000,
   });
+});
+
+Cypress.Commands.add('visitNAD', () => {
+  cy.clickNavLink(['Networking', 'NetworkAttachmentDefinitions']);
 });
