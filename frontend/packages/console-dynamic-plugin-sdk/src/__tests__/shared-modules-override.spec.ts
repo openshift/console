@@ -8,10 +8,10 @@ describe('overrideSharedModules', () => {
 
     overrideSharedModules(entryModule);
 
-    expect(entryModule.override.mock.calls.length).toBe(1);
+    expect(entryModule.init.mock.calls.length).toBe(1);
 
-    expect(new Set(sharedPluginModules)).toEqual(
-      new Set(Object.keys(entryModule.override.mock.calls[0][0])),
+    expect(new Set(Object.keys(sharedPluginModules))).toEqual(
+      new Set(Object.keys(entryModule.init.mock.calls[0][0])),
     );
   });
 });
