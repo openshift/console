@@ -66,7 +66,7 @@ describe('Test VM console tab', () => {
     }
   });
 
-  it('ID(CNV-3609) Serial console connects', () => {
+  xit('ID(CNV-3609) Serial console connects', () => {
     tab.navigateToConsole();
     loginSerial();
     cy.reload();
