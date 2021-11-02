@@ -466,8 +466,19 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
 
+	// we need to create another instance of `PluginsHandler` with shorter timeout,
+	// so calls for plugins that doesnt contain locales will fail sooner
+	i18nPluginsHandler := plugins.NewPluginsHandler(
+		&http.Client{
+			Timeout:   10 * time.Second,
+			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
+		},
+		s.EnabledConsolePlugins,
+		s.PublicDir,
+	)
+
 	handleFunc(localesEndpoint, func(w http.ResponseWriter, r *http.Request) {
-		pluginsHandler.HandleI18nResources(w, r)
+		i18nPluginsHandler.HandleI18nResources(w, r)
 	})
 
 	// Helm Endpoints
