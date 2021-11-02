@@ -21,8 +21,7 @@ export const FEDORA_EXAMPLE_CONTAINER = 'quay.io/kubevirt/fedora-cloud-container
 export const CENTOS_EXAMPLE_CONTAINER = 'quay.io/kubevirt/centos8-container-disk-images:latest';
 export const CENTOS_IMAGE_LINK = 'https://cloud.centos.org/centos/';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
-export const RHEL_IMAGE_LINK =
-  'https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.2/x86_64/product-software';
+export const RHEL_IMAGE_LINK = 'https://access.redhat.com/downloads/content/479/ver=/rhel---8/';
 export const WINDOWS_IMAGE_LINK = 'https://www.microsoft.com/en-us/software-download/windows10ISO';
 export const CLOUD_INIT_MISSING_USERNAME =
   'No username set, see operating system documentation for the default username.';
