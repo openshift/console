@@ -24,6 +24,8 @@ import { vm } from '../../views/vm';
 const key1 = 'key1';
 const value1 = 'value1';
 const getFirstNode = `kubectl get node -l kubevirt.io/schedulable=true | awk 'NR==2{print $1}'`;
+const getSecondNode = `kubectl get node -l kubevirt.io/schedulable=true | awk 'NR==3{print $1}'`;
+const getThirdNode = `kubectl get node -l kubevirt.io/schedulable=true | awk 'NR==4{print $1}'`;
 
 function labelNode(node: string, key: string, value: string) {
   cy.exec(`kubectl label --overwrite=true node ${node} ${key}=${value}`);
@@ -105,13 +107,23 @@ describe('Test VM scheduling policy', () => {
       cy.exec(getFirstNode).then((output) => {
         const node = output.stdout;
         taintNode(node, key1, value1);
-        cy.get(tolerations)
-          .find(detailsTab.vmEditWithPencil)
-          .click();
-        addLabel('toleration', key1, value1);
-        cy.get(tolerations).should('contain', '1 Toleration rule');
-        vm.start();
-        cy.byLegacyTestID(node).should('exist');
+        cy.exec(getSecondNode).then((output2) => {
+          const node2 = output2.stdout;
+          taintNode(node2, 'key2', 'value2');
+          cy.exec(getThirdNode).then((output3) => {
+            const node3 = output3.stdout;
+            taintNode(node3, 'key3', 'value3');
+            cy.get(tolerations)
+              .find(detailsTab.vmEditWithPencil)
+              .click();
+            addLabel('toleration', 'key3', 'value3');
+            cy.get(tolerations).should('contain', '1 Toleration rule');
+            vm.start();
+            cy.byLegacyTestID(node3).should('exist');
+            untaintNode(node3, 'key3');
+          });
+          untaintNode(node2, 'key2');
+        });
         untaintNode(node, key1);
       });
       vm.stop();

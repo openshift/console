@@ -7,7 +7,7 @@ import {
   VMI_ACTION,
 } from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
-import { detailsTab, createVMBtn, nameFilter, templateLink, disksTab } from './selector';
+import { createVMBtn, detailsTab, disksTab, row, templateLink } from './selector';
 import { customizeBtn } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
@@ -60,7 +60,6 @@ export const wizardFlow = (vmData: VirtualMachineData) => {
   }
   wizard.vm.fillReviewForm(vmData);
   if (vmData.startOnCreation) {
-    waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
   } else {
     waitForStatus(VM_STATUS.Stopped);
@@ -75,7 +74,6 @@ export const advanceWizardFlow = (vmData: VirtualMachineData) => {
   wizard.vm.fillAdvancedForm(vmData);
   wizard.vm.fillConfirmForm(vmData);
   if (vmData.startOnCreation) {
-    waitForStatus(VM_STATUS.Starting);
     waitForStatus(VM_STATUS.Running);
   } else {
     waitForStatus(VM_STATUS.Stopped);
@@ -141,13 +139,10 @@ export const vm = {
   },
   createFromCreateVMBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
-    cy.get(nameFilter)
-      .clear()
-      .type(vmData.template.dvName);
-    // wait for filter item
-    cy.contains('Add source').should('not.exist');
-    cy.get(createVMBtn)
-      .should('be.visible')
+    cy.contains(row, 'Add source').should('exist');
+    cy.contains(row, vmData.template.name).should('exist');
+    cy.contains(row, vmData.template.name)
+      .find(createVMBtn)
       .click();
     if (customize) {
       advanceWizardFlow(vmData);
@@ -157,6 +152,8 @@ export const vm = {
   },
   createFromActionsBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
+    cy.contains(row, 'Add source').should('exist');
+    cy.contains(row, vmData.template.name).should('exist');
     cy.get(templateLink(vmData.template.metadataName)).click({ force: true });
     detailViewAction(TEMPLATE_ACTION.Create);
     if (customize) {
