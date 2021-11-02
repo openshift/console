@@ -19,6 +19,7 @@ import {
   ResourceLink,
   ResourceStatus,
   resourcePathFromModel,
+  useAccessReview,
 } from '@console/internal/components/utils';
 import {
   k8sPatch,
@@ -45,7 +46,7 @@ import {
   InstallPlanKind,
   PackageManifestKind,
 } from '../types';
-import { InstallPlanPreview } from './install-plan';
+import { InstallPlanPreview, NeedInstallPlanPermissions } from './install-plan';
 import { ClusterServiceVersionLogo, iconFor, InstallPlanReview } from './index';
 
 const INITIALIZATION_RESOURCE_ANNOTATION = 'operatorframework.io/initialization-resource';
@@ -53,7 +54,7 @@ const getInitializationResource = (
   obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind,
 ) =>
   parseJSONAnnotation(obj?.metadata?.annotations, INITIALIZATION_RESOURCE_ANNOTATION, (e) =>
-    errorModal({ errorMsg: e.message }),
+    errorModal({ error: e.message }),
   );
 
 const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => {
@@ -107,6 +108,16 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
   approve,
 }) => {
   const { t } = useTranslation();
+
+  const canPatchInstallPlans = useAccessReview({
+    group: InstallPlanModel.apiGroup,
+    resource: InstallPlanModel.plural,
+    namespace,
+    verb: 'patch',
+  });
+
+  const installObjIsInstallPlan = installObj.kind === 'InstallPlan';
+
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
@@ -114,20 +125,28 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
       </h2>
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
         <InstallPlanReview installPlan={installObj} />
-        <Button variant="primary" onClick={approve}>
-          {t('olm~Approve')}
-        </Button>
-        <Link
-          to={`${resourcePathFromModel(
-            SubscriptionModel,
-            subscriptionObj?.metadata?.name,
-            namespace,
-          )}?showDelete=true`}
-        >
-          <Button className="co-clusterserviceversion__button" variant="secondary">
-            {t('olm~Deny')}
-          </Button>
-        </Link>
+        {(installObjIsInstallPlan && canPatchInstallPlans) ||
+          (!installObjIsInstallPlan && (
+            <>
+              <Button variant="primary" onClick={approve}>
+                {t('olm~Approve')}
+              </Button>
+              <Link
+                to={`${resourcePathFromModel(
+                  SubscriptionModel,
+                  subscriptionObj?.metadata?.name,
+                  namespace,
+                )}?showDelete=true`}
+              >
+                <Button className="co-clusterserviceversion__button" variant="secondary">
+                  {t('olm~Deny')}
+                </Button>
+              </Link>
+            </>
+          ))}
+        {!canPatchInstallPlans && installObjIsInstallPlan && (
+          <NeedInstallPlanPermissions installPlan={installObj as InstallPlanKind} />
+        )}
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
     </>
@@ -316,8 +335,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = (props) => {
     k8sPatch(InstallPlanModel, installObj, [
       { op: 'replace', path: '/spec/approved', value: true },
     ]).catch((error) => {
-      const errorMsg = error.message;
-      errorModal({ errorMsg });
+      errorModal({ error: error.toString() });
     });
   };
 
