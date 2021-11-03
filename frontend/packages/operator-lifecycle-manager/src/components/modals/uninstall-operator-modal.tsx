@@ -62,6 +62,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const [numberOperandsRemaining, setNumberOperandsRemaining] = React.useState(0);
   const [operandsDeleteFinished, setOperandsDeleteFinished] = React.useState(false);
   const [operandDeletionErrors, setOperandDeletionErrors] = React.useState<OperandError[]>([]);
+  const [intervalID, setIntervalID] = React.useState<Timeout>();
 
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
@@ -190,10 +191,11 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     const verifyDeletionOfOperands = () => {
       const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
       let operandVerificationErrors: OperandError[] = [];
-      let intervalID: Timeout;
+      let displayingVerificationResults = false;
+      let intervalId;
 
       const finishVerification = () => {
-        clearInterval(intervalID);
+        clearInterval(intervalId);
         setOperandsDeleteInProgress(false);
         setOperandsDeleteFinished(true);
         if (operandVerificationErrors.length === 0) {
@@ -205,11 +207,12 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         }
       };
 
-      intervalID = setInterval(() => {
+      intervalId = setInterval(() => {
         coFetchJSON(url)
           .then((curOperands) => {
             setNumberOperandsRemaining(curOperands.items.length);
-            if (curOperands.items.length === 0) {
+            if (curOperands.items.length === 0 && !displayingVerificationResults) {
+              displayingVerificationResults = true;
               setTimeout(() => finishVerification(), 1000); // allow '0 Operands remaining' to display for a second
             }
           })
@@ -221,6 +224,8 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             finishVerification();
           });
       }, 2000); // every 2 seconds
+
+      setIntervalID(intervalId); // for Cancel button to clear
     };
 
     if (deleteOperands) {
@@ -363,10 +368,15 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitInProgress}
-        cancel={cancel}
+        cancel={() => {
+          if (intervalID) {
+            clearInterval(intervalID);
+          }
+          cancel();
+        }}
         submitDanger={!isSubmitFinished} // if submit finished show a non-danger 'OK'
         submitText={t(isSubmitFinished ? 'olm~OK' : 'olm~Uninstall')}
-        submitDisabled={operandsDeleteInProgress}
+        submitDisabled={isSubmitInProgress}
       />
     </form>
   );
@@ -523,7 +533,7 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
     >
       <table className="pf-c-table pf-m-compact pf-m-border-rows">
         <thead>
-          <tr>
+          <tr key="operand-table-header-row">
             <th>{t('olm~Name')}</th>
             <th>{t('olm~Kind')}</th>
             <th>{t('olm~Namespace')}</th>
@@ -596,6 +606,7 @@ export type UninstallOperatorModalProps = {
   ) => Promise<any>;
   subscription: SubscriptionKind;
   csv?: ClusterServiceVersionKind;
+  blocking?: boolean;
 };
 
 type OperandsTableProps = {

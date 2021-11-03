@@ -149,6 +149,7 @@ const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): Keba
             k8sPatch,
             subscription: sub,
             csv,
+            blocking: true,
           }),
         accessReview: {
           group: SubscriptionModel.apiGroup,
