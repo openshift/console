@@ -26,7 +26,7 @@ import (
 func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 
 	var data devfileSamplesForm
-	registry := devfilePkg.DEVFILE_REGISTRY_PLACEHOLDER_URL
+	registry := devfilePkg.DEVFILE_REGISTRY_URL
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -47,7 +47,6 @@ func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(sampleIndex)
 }
@@ -68,7 +67,8 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Get devfile content and parse it using a library call in the future
 	devfileContentBytes := []byte(data.Devfile.DevfileContent)
-	devfileObj, err = devfile.ParseFromDataAndValidate(devfileContentBytes)
+	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes})
+	// devfileObj, err = devfile.ParseFromDataAndValidate(devfileContentBytes)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to parse devfile: %v", err)
 		klog.Error(errMsg)

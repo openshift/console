@@ -24,8 +24,7 @@ Since network is shared in the same pod, endpoint ports should be unique across 
     - Should not indirectly reference itself via a subcommand which is a composite command
     - Should reference a valid devfile command
 3. exec and apply command should: map to a valid container component
-4. vscodeLaunch & vscodeTask: URI needs to be in valid URI format
-5. `{build, run, test, debug}`, each kind of group can only have one default command associated with it. If there are multiple commands of the same kind without a default, a warning will be displayed.
+4. `{build, run, test, debug}`, each kind of group can only have one default command associated with it. If there are multiple commands of the same kind without a default, a warning will be displayed.
 
 ### Components:
 Common rules for all components types:
@@ -61,3 +60,7 @@ Common rules for all components types:
 ### projects
 - if more than one remote is configured, a checkout remote is mandatory
 - if checkout remote is mentioned, validate it against the starter project remote configured map
+
+### Architectures
+
+Architectures list support the following values - `amd64`, `arm64`, `ppc64le`, `s390x`. These values are determined by the .manifests[].platform["architecture"] field from an image's manifests and manually selected.

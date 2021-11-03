@@ -13,15 +13,14 @@ type Project struct {
 
 	// Map of implementation-dependant free-form YAML attributes.
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
 
 	// Path relative to the root of the projects to which this project should be cloned into. This is a unix-style relative path (i.e. uses forward slashes). The path is invalid if it is absolute or tries to escape the project root through the usage of '..'. If not specified, defaults to the project name.
 	// +optional
 	ClonePath string `json:"clonePath,omitempty"`
-
-	// Populate the project sparsely with selected directories.
-	// +optional
-	SparseCheckoutDirs []string `json:"sparseCheckoutDirs,omitempty"`
 
 	ProjectSource `json:",inline"`
 }
@@ -34,6 +33,9 @@ type StarterProject struct {
 
 	// Map of implementation-dependant free-form YAML attributes.
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
 
 	// Description of a starter project
@@ -51,12 +53,11 @@ type StarterProject struct {
 // Only one of the following project sources may be specified.
 // If none of the following policies is specified, the default one
 // is AllowConcurrent.
-// +kubebuilder:validation:Enum=Git;Github;Zip;Custom
+// +kubebuilder:validation:Enum=Git;Zip;Custom
 type ProjectSourceType string
 
 const (
 	GitProjectSourceType    ProjectSourceType = "Git"
-	GitHubProjectSourceType ProjectSourceType = "Github"
 	ZipProjectSourceType    ProjectSourceType = "Zip"
 	CustomProjectSourceType ProjectSourceType = "Custom"
 )
@@ -72,10 +73,6 @@ type ProjectSource struct {
 	// Project's Git source
 	// +optional
 	Git *GitProjectSource `json:"git,omitempty"`
-
-	// Project's GitHub source
-	// +optional
-	Github *GithubProjectSource `json:"github,omitempty"`
 
 	// Project's Zip source
 	// +optional
@@ -112,7 +109,8 @@ type GitLikeProjectSource struct {
 	// +optional
 	CheckoutFrom *CheckoutFrom `json:"checkoutFrom,omitempty"`
 
-	// The remotes map which should be initialized in the git project. Must have at least one remote configured
+	// The remotes map which should be initialized in the git project.
+	// Projects must have at least one remote configured while StarterProjects can only have at most one remote configured.
 	Remotes map[string]string `json:"remotes"`
 }
 
@@ -127,9 +125,5 @@ type CheckoutFrom struct {
 }
 
 type GitProjectSource struct {
-	GitLikeProjectSource `json:",inline"`
-}
-
-type GithubProjectSource struct {
 	GitLikeProjectSource `json:",inline"`
 }

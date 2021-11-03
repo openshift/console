@@ -26,7 +26,7 @@ describe('useDevfileSamples:', () => {
 
     expect(putMock).toHaveBeenCalledTimes(1);
     expect(putMock).toHaveBeenLastCalledWith('/api/devfile/samples', {
-      registry: 'sample-placeholder',
+      registry: 'https://registry.devfile.io',
     });
 
     expect(result.current).toEqual([[], false, undefined]);
@@ -44,7 +44,7 @@ describe('useDevfileSamples:', () => {
 
     expect(putMock).toHaveBeenCalledTimes(1);
     expect(putMock).toHaveBeenLastCalledWith('/api/devfile/samples', {
-      registry: 'sample-placeholder',
+      registry: 'https://registry.devfile.io',
     });
 
     expect(result.current).toEqual([[], false, undefined]);
