@@ -6,7 +6,7 @@ import { wizard } from '../../views/wizard';
 const TEMPLATE_NAME = 'foo';
 const TEMPLATE_NO_SUPPORT_NAME = 'foo-no-support';
 
-describe('test VM template support', () => {
+xdescribe('test VM template support', () => {
   before(() => {
     cy.visit('');
     cy.createProject(testName);

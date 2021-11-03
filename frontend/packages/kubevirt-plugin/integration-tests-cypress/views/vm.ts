@@ -11,8 +11,8 @@ import {
   detailsTab,
   createYAMLButton,
   createVMBtn,
-  nameFilter,
   resourceTitle,
+  row,
   templateLink,
 } from './selector';
 import { create, vmYAML, customizeBtn } from './selector-wizard';
@@ -149,14 +149,10 @@ export const vm = {
   },
   createFromCreateVMBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
-    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
-    cy.get(nameFilter)
-      .clear()
-      .type(vmData.template.dvName);
-    // wait for filter item
-    cy.contains('Add source').should('not.exist');
-    cy.get(createVMBtn)
-      .should('be.visible')
+    cy.contains(row, 'Add source').should('exist');
+    cy.contains(row, vmData.template.name).should('exist');
+    cy.contains(row, vmData.template.name)
+      .find(createVMBtn)
       .click();
     if (customize) {
       advanceWizardFlow(vmData);
@@ -166,8 +162,9 @@ export const vm = {
   },
   createFromActionsBtn: (vmData: VirtualMachineData, customize = false) => {
     virtualization.templates.visit();
-    cy.get(templateLink(vmData.template.metadataName)).should('be.visible');
-    cy.get(templateLink(vmData.template.metadataName)).click();
+    cy.contains(row, 'Add source').should('exist');
+    cy.contains(row, vmData.template.name).should('exist');
+    cy.get(templateLink(vmData.template.metadataName)).click({ force: true });
     detailViewAction(TEMPLATE_ACTION.Create);
     if (customize) {
       advanceWizardFlow(vmData);

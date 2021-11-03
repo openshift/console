@@ -81,5 +81,6 @@ export const supportLevel = '[data-test-id="details-Support"]';
 export const supportLevelTag = '[data-test="template-support"]';
 export const createVMBtn = 'button[data-test="create-from-template"]';
 export const templateLink = (name: string) => `[data-test-id="${name}"]`;
+export const row = '[data-test-rows="resource-row"]';
 
 export const resourceTitle = '[data-test-id="resource-title"]';

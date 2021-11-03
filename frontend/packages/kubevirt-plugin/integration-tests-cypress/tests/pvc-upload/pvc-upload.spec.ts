@@ -96,7 +96,7 @@ describe('kubevirt PVC upload', () => {
     });
   });
 
-  describe('test PVC upload via CLI', () => {
+  xdescribe('test PVC upload via CLI', () => {
     it('ID(CNV-5044) Verify boot source is available for template after upload via CLI', () => {
       cy.exec(
         `test -f ${Cypress.env(
