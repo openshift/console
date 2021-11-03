@@ -29,7 +29,7 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
   const isObjectServiceAvailable = useFlag(MCG_FLAG);
   const isCephAvailable = useFlag(CEPH_FLAG);
   const { systemName } = rest.match.params;
-  const dashboardTab = isCephAvailable === false && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
+  const dashboardTab = !isCephAvailable && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
   const defaultDashboard = React.useRef(dashboardTab);
 
   const pages: Page[] = [
