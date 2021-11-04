@@ -196,9 +196,9 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
           'co-m-horizontal-nav-item--active': matchURL?.isExact,
         });
         return (
-          <li className={klass} key={href}>
+          <li className={klass} key={href || path}>
             <Link
-              to={`${baseURL.replace(/\/$/, '')}/${href}`}
+              to={`${baseURL.replace(/\/$/, '')}/${href || path}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
             >
               {nameKey ? t(nameKey) : name}
@@ -335,18 +335,6 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   );
 }, _.isEqual);
 
-/*
- *Component consumed by the dynamic plugin SDK
- * Changes to the underlying component has to support props used in this facade
- */
-export const HorizontalNavFacade = withRouter<HorizontalNavFacadeProps & RouteComponentProps>(
-  ({ resource, pages, match }) => {
-    const obj = { data: resource, loaded: true };
-
-    return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
-  },
-);
-
 export type PodsComponentProps = {
   obj: K8sResourceKind;
   showNodes?: boolean;
@@ -395,4 +383,3 @@ export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resou
 };
 
 HorizontalNav.displayName = 'HorizontalNav';
-HorizontalNavFacade.displayName = 'HorizontalNavFacade';

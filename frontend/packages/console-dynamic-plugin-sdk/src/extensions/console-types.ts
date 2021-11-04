@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { TableGridBreakpoint, OnSelect, SortByDirection, ICell } from '@patternfly/react-table';
 import { RouteComponentProps } from 'react-router';
@@ -232,18 +233,31 @@ export type ConsoleFetchJSON<T = any> = {
 
 export type ConsoleFetchText = (...args: Parameters<ConsoleFetch>) => Promise<string>;
 
-/* Horizontal Nav Types */
-export type NavPage = {
+export type NavPage<R = any> = {
   href?: string;
+  /**
+   * @deprecated use href property instead.
+   */
   path?: string;
   name: string;
-  component: React.ComponentType<RouteComponentProps>;
+  component: React.ComponentType<RouteComponentProps & { obj?: R }>;
 };
 
-export type HorizontalNavProps = {
-  resource?: K8sResourceCommon;
-  pages: NavPage[];
+export type HorizontalNavContentProps<R> = {
+  pages: NavPage<R>[];
+  resource?: R;
+  loaded?: boolean;
+  loadError?: any;
+  noStatusBox?: boolean;
+  EmptyMsg?: React.ComponentType;
+  LoadingComponent?: React.ComponentType;
 };
+
+export type HorizontalNavProps<R = any> = HorizontalNavContentProps<R> & {
+  className?: string;
+};
+
+export type HorizontalNavFC = <R = any>(props: HorizontalNavProps<R>) => JSX.Element;
 
 export type TableColumn<D> = ICell & {
   title: string;

@@ -1,6 +1,7 @@
 import { RouteComponentProps } from 'react-router';
 import { ExtensionK8sGroupKindModel, ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { K8sResourceCommon } from './console-types';
 
 type ResourcePageProperties = {
   /** The model for which this resource page links to. */
@@ -43,12 +44,16 @@ export type ResourceDetailsPage = ExtensionDeclaration<
   ResourcePageProperties & {}
 >;
 
+export type ResourceTabPageComponentProps<R> = RouteComponentProps & {
+  obj: R;
+};
+
 /** Adds new resource tab page to Console router. */
-export type ResourceTabPage = ExtensionDeclaration<
+export type ResourceTabPage<R = K8sResourceCommon> = ExtensionDeclaration<
   'console.page/resource/tab',
   Omit<ResourcePageProperties, 'component'> & {
     /** The component to be rendered when the route matches. */
-    component: CodeRef<React.ComponentType<RouteComponentProps>>;
+    component: CodeRef<React.ComponentType<ResourceTabPageComponentProps<R>>>;
     /** The name of the tab. */
     name: string;
     /** The optional href for the tab link. If not provided, the first `path` is used. */

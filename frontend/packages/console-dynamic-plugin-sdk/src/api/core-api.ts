@@ -6,7 +6,7 @@ import {
   ConsoleFetch,
   ConsoleFetchJSON,
   ConsoleFetchText,
-  HorizontalNavProps,
+  HorizontalNavFC,
   UseResolvedExtensions,
   VirtualizedTableFC,
   TableDataProps,
@@ -45,21 +45,27 @@ export const useActivePerspective: UseActivePerspective = require('@console/dyna
  * A component that creates a Navigation bar. It takes array of NavPage objects and renderes a NavBar.
  * Routing is handled as part of the component.
  * @example
- * const HomePage: React.FC = (props) => {
+ * const HomePage: React.FC = () => {
  *     const page = {
  *       href: '/home',
  *       name: 'Home',
  *       component: () => <>Home</>
  *     }
- *     return <HorizontalNav match={props.match} pages={[page]} />
+ *     return <HorizontalNav pages={[page]} />
  * }
  *
- * @param {object=} resource - The resource associated with this Navigation, an object of K8sResourceCommon type
- * @param {NavPage[]} pages - An array of page objects
- * @param {object} match - match object provided by React Router
+ * @template R
+ * @param {NavPage[]} pages  - An array of page objects
+ * @param {R=} resource - The resource associated with this Navigation
+ * @param {boolean=} loaded - Indicates whether Navigation should render loading state
+ * @param {any=} loadError - Indicates whether Navigation should render error state
+ * @param {boolean=} noStatusBox - Navigation will not render loading/error/empty states if set to true
+ * @param {React.ComponentType=} EmptyMsg - Custom empty message
+ * @param {React.ComponentType=} LoadingComponent - Custom loading component
+ *
  */
-export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/internal/components/utils/horizontal-nav')
-  .HorizontalNavFacade;
+export const HorizontalNav: HorizontalNavFC = require('@console/internal/components/HorizontalNav/HorizontalNav')
+  .default;
 export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/components/factory/Table/VirtualizedTable')
   .default;
 export const TableData: React.FC<TableDataProps> = require('@console/internal/components/factory/Table/VirtualizedTable')
