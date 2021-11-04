@@ -1,5 +1,4 @@
 import {
-  K8sResourceKindReference,
   K8sGroupVersionKind,
   K8sResourceCommon,
   Patch,
@@ -58,14 +57,8 @@ export type K8sList = <R extends K8sResourceCommon>(options: {
 
 export type GetK8sResourcePath = (model: K8sModel, options: Options) => string;
 
-export type GetReference = (K8sGroupVersionKind: K8sGroupVersionKind) => K8sResourceKindReference;
-
-export type GetReferenceForModel = (model: K8sModel) => K8sResourceKindReference;
-
 export type GetAPIVersionForModel = (model: K8sModel) => string;
 
 export type GetGroupVersionKindForResource = (resource: K8sResourceCommon) => K8sGroupVersionKind;
 
-export type GetGroupVersionKindForReference = (
-  reference: K8sResourceKindReference,
-) => K8sGroupVersionKind;
+export type GetGroupVersionKindForModel = (model: K8sModel) => K8sGroupVersionKind;

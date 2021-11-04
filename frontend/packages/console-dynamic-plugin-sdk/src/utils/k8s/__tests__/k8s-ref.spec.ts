@@ -5,6 +5,8 @@ import {
   getGroupVersionKindForResource,
   getReference,
   getReferenceForModel,
+  transformGroupVersionKindToReference,
+  getGroupVersionKindForModel,
 } from '../k8s-ref';
 
 describe('k8s-Resource', () => {
@@ -61,7 +63,7 @@ describe('k8s-Resource', () => {
       apiVersion: 'v1',
       kind: 'Pod',
     });
-    expect(group).toEqual('core');
+    expect(group).toBeUndefined();
     expect(version).toEqual('v1');
     expect(kind).toEqual('Pod');
   });
@@ -73,5 +75,33 @@ describe('k8s-Resource', () => {
         kind: 'Dummy',
       }),
     ).toThrow('Provided resource has invalid apiVersion.');
+  });
+
+  it('should return Group, Version, and Kind for provided model', () => {
+    const { group, version, kind } = getGroupVersionKindForModel(DeploymentModel);
+    expect(group).toEqual('apps');
+    expect(version).toEqual('v1');
+    expect(kind).toEqual('Deployment');
+  });
+
+  it('should return Group, Version, and Kind for provided model which does not have apiGroup', () => {
+    const { group, version, kind } = getGroupVersionKindForModel(PodModel);
+    expect(group).toBeUndefined();
+    expect(version).toEqual('v1');
+    expect(kind).toEqual('Pod');
+  });
+
+  it('should return reference for provided group, version, and kind', () => {
+    const referenceData = transformGroupVersionKindToReference({
+      group: 'apps',
+      version: 'v1',
+      kind: 'Deployment',
+    });
+    expect(referenceData).toEqual('apps~v1~Deployment');
+  });
+
+  it('should return reference for provided reference', () => {
+    const referenceData = transformGroupVersionKindToReference('apps~v1~Deployment');
+    expect(referenceData).toEqual('apps~v1~Deployment');
   });
 });

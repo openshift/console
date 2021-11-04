@@ -10,12 +10,12 @@ import {
   PageSection,
   Title,
 } from "@patternfly/react-core";
-import { getGroupVersionKindForResource, getReference, k8sCreate, k8sDelete, k8sGet, k8sList, k8sPatch, K8sResourceCommon, k8sUpdate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
+import { getGroupVersionKindForResource, k8sCreate, k8sDelete, k8sGet, k8sList, k8sPatch, K8sResourceCommon, k8sUpdate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import { mockDeploymetData } from './k8s-data';
 
 const K8sAPIConsumer: React.FC = () => {
   const { t } = useTranslation("plugin__console-demo-plugin");
-  const [k8sModel] = useK8sModel(getReference(getGroupVersionKindForResource(mockDeploymetData)));
+  const [k8sModel] = useK8sModel(getGroupVersionKindForResource(mockDeploymetData));
   const [errData, setErrData] = React.useState<string>();
   const [k8sCreateData, setK8sCreateData] = React.useState<K8sResourceCommon>();
   const [k8sGetData, setK8sGetData] = React.useState<K8sResourceCommon>();
