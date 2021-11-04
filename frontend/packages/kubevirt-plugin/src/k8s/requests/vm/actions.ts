@@ -1,17 +1,13 @@
 import { coFetch } from '@console/internal/co-fetch';
 import { groupVersionFor, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
 import { getAPIVersion, getName, getNamespace } from '@console/shared/src';
-import { VirtualMachineModel } from '../../../models';
-import {
-  getKubevirtAvailableModel,
-  getKubevirtModelAvailableAPIVersion,
-  kubevirtReferenceForModel,
-} from '../../../models/kubevirtReferenceForModel';
+import { DataVolumeModel, VirtualMachineModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
 import { VMKind } from '../../../types/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { getBootPatch } from '../../patches/vm/vm-boot-patches';
-import { freeOwnedResources } from '../free-owned-resources';
 import { cancelVMImport } from '../vmimport';
 
 export enum VMActionType {
@@ -71,15 +67,16 @@ export const deleteVM = async (
   },
 ) => {
   if (ownedVolumeResources && !deleteOwnedVolumeResources) {
-    await freeOwnedResources(
-      ownedVolumeResources,
-      {
-        name: getName(vm),
-        kind: kubevirtReferenceForModel(VirtualMachineModel),
-        apiVersion: getKubevirtModelAvailableAPIVersion(VirtualMachineModel),
-      } as any,
-      false,
+    await k8sPatch(VirtualMachineModel, vm, [
+      new PatchBuilder('/spec/dataVolumeTemplates').remove().build(),
+    ]);
+
+    const promises = ownedVolumeResources?.map((ownedVolume) =>
+      k8sPatch(DataVolumeModel, ownedVolume?.resource, [
+        new PatchBuilder('/metadata/ownerReferences').remove().build(),
+      ]),
     );
+    await Promise.all(promises);
   }
 
   if (vmImport && deleteVMImport) {
