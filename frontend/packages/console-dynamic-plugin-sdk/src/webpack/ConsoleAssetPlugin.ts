@@ -64,18 +64,7 @@ export class ConsoleAssetPlugin {
   }
 
   apply(compiler: webpack.Compiler) {
-    const errors: string[] = [];
-
-    const addErrorsToCompilation = (compilation: webpack.Compilation) => {
-      errors.forEach((e) => {
-        // TODO(vojtech): revisit after bumping webpack 5 to latest stable version
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
-        compilation.errors.push(new Error(e));
-      });
-    };
-
-    compiler.hooks.afterCompile.tap(ConsoleAssetPlugin.name, (compilation) => {
+    compiler.hooks.shouldEmit.tap(ConsoleAssetPlugin.name, (compilation) => {
       const result = new ExtensionValidator(extensionsFile).validate(
         compilation,
         this.manifest.extensions,
@@ -83,13 +72,15 @@ export class ConsoleAssetPlugin {
       );
 
       if (result.hasErrors()) {
-        errors.push(result.formatErrors());
+        result.getErrors().forEach((e) => {
+          // TODO(vojtech): revisit after bumping webpack 5 to latest stable version
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
+          compilation.errors.push(new Error(e));
+        });
+        return false;
       }
-    });
-
-    compiler.hooks.shouldEmit.tap(ConsoleAssetPlugin.name, (compilation) => {
-      addErrorsToCompilation(compilation);
-      return errors.length === 0;
+      return true;
     });
 
     compiler.hooks.emit.tap(ConsoleAssetPlugin.name, (compilation) => {
