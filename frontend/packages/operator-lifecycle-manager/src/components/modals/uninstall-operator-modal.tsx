@@ -59,10 +59,12 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const [operatorUninstallFinished, setOperatorUninstallFinished] = React.useState(false);
   const [deleteOperands, setDeleteOperands] = React.useState(false);
   const [operandsDeleteInProgress, setOperandsDeleteInProgress] = React.useState(false);
-  const [numberOperandsRemaining, setNumberOperandsRemaining] = React.useState(0);
+  const [operandsRemaining, setOperandsRemaining] = React.useState(0);
   const [operandsDeleteFinished, setOperandsDeleteFinished] = React.useState(false);
   const [operandDeletionErrors, setOperandDeletionErrors] = React.useState<OperandError[]>([]);
-  const [intervalID, setIntervalID] = React.useState<Timeout>();
+  const [operandDeletionVerificationError, setOperandDeletionVerificationError] = React.useState(
+    false,
+  );
 
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
@@ -106,6 +108,88 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     subscriptionNamespace,
   );
 
+  const deleteOptions = {
+    kind: 'DeleteOptions',
+    apiVersion: 'v1',
+    propagationPolicy: 'Foreground',
+  };
+
+  const uninstallOperator = React.useCallback(() => {
+    const patch = removePlugins
+      ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
+      : null;
+
+    const operatorUninstallPromises = [
+      k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
+      ...(subscription?.status?.installedCSV
+        ? [
+            k8sKill(
+              ClusterServiceVersionModel,
+              {
+                metadata: {
+                  name: subscription.status.installedCSV,
+                  namespace: subscription.metadata.namespace,
+                },
+              },
+              {},
+              deleteOptions,
+            ),
+          ]
+        : []),
+      ...(removePlugins
+        ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch])]
+        : []),
+    ];
+
+    handleOperatorUninstallPromise(Promise.all(operatorUninstallPromises))
+      .then(() => {
+        setOperatorUninstallFinished(true);
+      })
+      .catch(() => {
+        setOperatorUninstallFinished(true);
+      });
+  }, [
+    consoleOperatorConfig,
+    deleteOptions,
+    enabledPlugins,
+    handleOperatorUninstallPromise,
+    k8sKill,
+    removePlugins,
+    subscription,
+  ]);
+
+  const finishVerification = React.useCallback(
+    (proceedToUninstallOperator: boolean) => {
+      setOperandsDeleteInProgress(false);
+      setOperandsDeleteFinished(true);
+      if (proceedToUninstallOperator) {
+        uninstallOperator();
+      } else {
+        setOperandDeletionVerificationError(true);
+        setOperatorUninstallFinished(true);
+      }
+    },
+    [uninstallOperator],
+  );
+
+  const pollOperands = React.useCallback((): Timeout => {
+    const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
+    const interval = setInterval(() => {
+      coFetchJSON(url)
+        .then((curOperands) => {
+          setOperandsRemaining(curOperands.items.length);
+          if (curOperands.items.length === 0) {
+            clearInterval(interval);
+            setTimeout(() => finishVerification(true), 1000); // allow '0 Operands remaining' to display for a second
+          }
+        })
+        .catch(() => {
+          finishVerification(false);
+        });
+    }, 2000); // every 2 seconds
+    return interval;
+  }, [finishVerification, subscriptionName, subscriptionNamespace]);
+
   const closeAndRedirect = React.useCallback(() => {
     close();
     // if url contains subscription name (ex: "codeready-workspaces") or installedCSV version (ex: "crwoperator.v2.9.0")
@@ -125,6 +209,18 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     }
   }, [closeAndRedirect, hasSubmitErrors, isSubmitFinished]);
 
+  React.useEffect(() => {
+    let intervalID;
+    if (operandsDeleteInProgress) {
+      intervalID = pollOperands();
+    }
+    return () => {
+      if (intervalID) {
+        clearInterval(intervalID);
+      }
+    };
+  }, [operandsDeleteInProgress, pollOperands]);
+
   const submit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (isSubmitFinished) {
@@ -134,103 +230,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
 
     setShowInstructions(false);
 
-    const deleteOptions = {
-      kind: 'DeleteOptions',
-      apiVersion: 'v1',
-      propagationPolicy: 'Foreground',
-    };
-
-    const patch = removePlugins
-      ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
-      : null;
-
-    const uninstallOperator = () => {
-      const operatorUninstallPromises = [
-        k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
-        ...(subscription?.status?.installedCSV
-          ? [
-              k8sKill(
-                ClusterServiceVersionModel,
-                {
-                  metadata: {
-                    name: subscription.status.installedCSV,
-                    namespace: subscription.metadata.namespace,
-                  },
-                },
-                {},
-                deleteOptions,
-              ),
-            ]
-          : []),
-        ...(removePlugins
-          ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch])]
-          : []),
-      ];
-
-      handleOperatorUninstallPromise(Promise.all(operatorUninstallPromises))
-        .then(() => {
-          setOperatorUninstallFinished(true);
-        })
-        .catch(() => {
-          setOperatorUninstallFinished(true);
-        });
-    };
-
-    const setOperandErrorsTo = (
-      operators: K8sResourceCommon[],
-      errorMsg: string,
-    ): OperandError[] => {
-      return operators.reduce((acc: OperandError[], curr, i) => {
-        return acc.concat({
-          operand: operands[i],
-          errorMessage: errorMsg,
-        });
-      }, []);
-    };
-
-    const verifyDeletionOfOperands = () => {
-      const url = `${window.SERVER_FLAGS.basePath}api/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
-      let operandVerificationErrors: OperandError[] = [];
-      let displayingVerificationResults = false;
-      let intervalId;
-
-      const finishVerification = () => {
-        clearInterval(intervalId);
-        setOperandsDeleteInProgress(false);
-        setOperandsDeleteFinished(true);
-        if (operandVerificationErrors.length === 0) {
-          uninstallOperator();
-        } else {
-          // show operand deletion verification errors on results page
-          setOperandDeletionErrors(operandVerificationErrors);
-          setOperatorUninstallFinished(true);
-        }
-      };
-
-      intervalId = setInterval(() => {
-        coFetchJSON(url)
-          .then((curOperands) => {
-            setNumberOperandsRemaining(curOperands.items.length);
-            if (curOperands.items.length === 0 && !displayingVerificationResults) {
-              displayingVerificationResults = true;
-              setTimeout(() => finishVerification(), 1000); // allow '0 Operands remaining' to display for a second
-            }
-          })
-          .catch(() => {
-            operandVerificationErrors = setOperandErrorsTo(
-              operands,
-              t('olm~error listing operand to verify deletion'),
-            );
-            finishVerification();
-          });
-      }, 2000); // every 2 seconds
-
-      setIntervalID(intervalId); // for Cancel button to clear
-    };
-
     if (deleteOperands) {
       setOperandsDeleteInProgress(true);
-      setNumberOperandsRemaining(operands.length);
+      setOperandsRemaining(operands.length);
       const operandDeletionPromises = operands.map((operand: K8sResourceCommon) => {
         const model = modelFor(referenceFor(operand));
         return k8sKill(model, operand, {}, deleteOptions);
@@ -242,11 +244,8 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             ? acc.concat({ operand: operands[i], errorMessage: curr.reason })
             : acc;
         }, []);
-        setOperandDeletionErrors(operandErrors);
-        if (operandErrors.length === 0) {
-          verifyDeletionOfOperands();
-        } else {
-          // show operand k8kill errors on results page
+        if (operandErrors.length) {
+          setOperandDeletionErrors(operandErrors);
           setOperandsDeleteInProgress(false);
           setOperandsDeleteFinished(true);
           setOperatorUninstallFinished(true);
@@ -321,6 +320,10 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       csvName={csvName}
       cancel={cancel}
     />
+  ) : operandDeletionVerificationError ? (
+    <OperandsLoadedErrorAlert
+      operandsLoadedErrorMessage={t('olm~error listing operand to verify deletion')}
+    />
   ) : (
     <OperandDeletionSuccessAlert name={name} namespace={namespace} />
   );
@@ -330,7 +333,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       <UninstallAlert
         errorMessage={
           operatorUninstallErrorMessage ||
-          (operandDeletionErrors.length !== 0
+          (operandDeletionErrors.length
             ? t('olm~Operator could not be uninstalled due to error deleting its Operands')
             : '')
         }
@@ -354,10 +357,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
           </>
         )}
         {operandsDeleteInProgress && (
-          <OperandCleanupProgress
-            totalNumberOperands={operands.length}
-            numberOperandsRemaining={numberOperandsRemaining}
-          />
+          <OperandDeleteProgress total={operands.length} remaining={operandsRemaining} />
         )}
         {operatorUninstallInProgress && (
           <div>
@@ -368,12 +368,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitInProgress}
-        cancel={() => {
-          if (intervalID) {
-            clearInterval(intervalID);
-          }
-          cancel();
-        }}
+        cancel={cancel}
         submitDanger={!isSubmitFinished} // if submit finished show a non-danger 'OK'
         submitText={t(isSubmitFinished ? 'olm~OK' : 'olm~Uninstall')}
         submitDisabled={isSubmitInProgress}
@@ -382,20 +377,20 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   );
 };
 
-const OperandCleanupProgress: React.FC<{
-  totalNumberOperands: number;
-  numberOperandsRemaining: number;
-}> = ({ totalNumberOperands, numberOperandsRemaining }) => {
+const OperandDeleteProgress: React.FC<{
+  total: number;
+  remaining: number;
+}> = ({ total, remaining }) => {
   const { t } = useTranslation();
   const progressLabel = t('olm~Remaining Operands: {{remaining}} of {{total}} ', {
-    remaining: numberOperandsRemaining,
-    total: totalNumberOperands,
+    remaining,
+    total,
   });
   return (
     <div>
       <Progress
-        value={totalNumberOperands - numberOperandsRemaining}
-        max={totalNumberOperands}
+        value={total - remaining}
+        max={total}
         valueText={progressLabel}
         label={progressLabel}
         title={t('olm~Cleaning up operand instances...')}
