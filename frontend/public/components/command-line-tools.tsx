@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 
 import { FLAGS } from '@console/shared';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
@@ -10,6 +11,7 @@ import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';
 
 export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const title = 'Command Line Tools';
   const data = _.sortBy(_.get(obj, 'data'), 'spec.displayName');
   const cliData = _.remove(data, (item) => item.metadata.name === 'oc-cli-downloads');
@@ -56,7 +58,10 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
         {window.SERVER_FLAGS.requestTokenURL && (
           <>
             <hr />
-            <ExternalLink href={window.SERVER_FLAGS.requestTokenURL} text="Copy Login Command" />
+            <ExternalLink
+              href={window.SERVER_FLAGS.requestTokenURL}
+              text={t('public~Copy login command')}
+            />
           </>
         )}
         {additionalCommandLineTools}

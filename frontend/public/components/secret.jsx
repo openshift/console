@@ -166,7 +166,7 @@ const SecretsList = (props) => {
   return (
     <Table
       {...props}
-      aria-label="Secrets"
+      aria-label={t('public~Secrets')}
       Header={SecretTableHeader}
       Row={SecretTableRow}
       virtualize
