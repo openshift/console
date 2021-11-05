@@ -5,6 +5,8 @@
   "This page shows an example gallery view with cards": "This page shows an example gallery view with cards",
   "Example card": "Example card",
   "Card content goes here.": "Card content goes here.",
+  "Dynamic Plugin Proxy Services example": "Dynamic Plugin Proxy Services example",
+  "Proxy: consoleFetchJSON": "Proxy: consoleFetchJSON",
   "Extensions of type Console.flag/Model": "Extensions of type Console.flag/Model",
   "Group": "Group",
   "Version": "Version",
