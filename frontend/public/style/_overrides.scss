@@ -210,7 +210,7 @@ form.pf-c-form {
 }
 
 .pf-c-page__sidebar {
-  @media screen and (min-width: $grid-float-breakpoint) {
+  @media screen and (min-width: $pf-global--breakpoint--xl) {
     --pf-c-page__sidebar--BoxShadow: none;
   }
 
@@ -226,7 +226,7 @@ form.pf-c-form {
     --pf-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
     --pf-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
 
-    @media screen and (min-width: $grid-float-breakpoint) {
+    @media screen and (min-width: $pf-global--breakpoint--xl) {
       --pf-c-nav__list-link--PaddingRight: var(--pf-global--spacer--md);
       --pf-c-nav__list-link--PaddinLeft: var(--pf-global--spacer--lg);
       --pf-c-nav__list-link--after--Left: var(--pf-global--spacer--lg);
