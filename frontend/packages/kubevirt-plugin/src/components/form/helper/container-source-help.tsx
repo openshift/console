@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { isUpstream } from '../../../utils/common';
+import { isUpstream } from '@console/internal/components/utils';
 import {
   CENTOS,
   CENTOS_EXAMPLE_CONTAINER,
