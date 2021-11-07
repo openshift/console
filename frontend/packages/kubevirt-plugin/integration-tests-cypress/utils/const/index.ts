@@ -43,6 +43,7 @@ export enum VM_ACTION {
   Stop = 'Stop Virtual Machine',
   Unpause = 'Unpause Virtual Machine',
   Pause = 'Pause Virtual Machine',
+  OpenConsole = 'Open Console',
 }
 
 export enum VMI_ACTION {
@@ -61,7 +62,7 @@ export enum VM_STATUS {
   Starting = 'Starting',
   Provisioning = 'Provisioning',
   Paused = 'Paused',
-  Migrating = 'Migration',
+  Migrating = 'Migrati',
   Stopping = 'Stopping',
   Running = 'Running',
   Cloning = 'Cloning',

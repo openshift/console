@@ -82,7 +82,7 @@ export const wizard = {
       });
     },
     fillBootSourceForm: (vmData: VirtualMachineData) => {
-      const { provisionSource, cdrom, pvcSize, pvcNS, pvcName } = vmData;
+      const { provisionSource, cdrom, pvcSize, pvcNS, pvcName, optimizeSP, accessMode } = vmData;
       fillBootSource(provisionSource, pvcName, pvcNS, pvcSize);
       if (cdrom) {
         cy.get(wizardView.cdrom).click();
@@ -96,6 +96,12 @@ export const wizard = {
           .contains(Cypress.env('STORAGE_CLASS'))
           .click();
         cy.contains('Access mode').should('exist');
+      }
+      if (optimizeSP === false) {
+        cy.get(wizardView.storageProfile).uncheck();
+        if (accessMode !== undefined) {
+          cy.get(wizardView.accessMode(accessMode)).check();
+        }
       }
       cy.get(wizardView.next).click();
     },

@@ -17,6 +17,8 @@ export const sourceURL = '#provision-source-url';
 export const sourceRegistry = '#provision-source-container';
 export const cdrom = 'input[id="cdrom"]';
 export const dropDownItemLink = '[data-test="dropdown-menu-item-link"]';
+export const storageProfile = '#apply-storage-provider';
+export const accessMode = (mode: string) => `input[value="${mode}"]`;
 
 // pvc selectors
 export const pvcSize = '#request-size-input';

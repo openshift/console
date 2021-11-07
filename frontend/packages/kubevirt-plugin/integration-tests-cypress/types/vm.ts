@@ -67,4 +67,6 @@ export type VirtualMachineData = {
   sshEnable?: boolean;
   startOnCreation?: boolean;
   sourceAvailable?: boolean;
+  optimizeSP?: boolean;
+  accessMode?: string;
 };

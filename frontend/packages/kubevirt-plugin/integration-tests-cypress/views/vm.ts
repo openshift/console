@@ -7,7 +7,14 @@ import {
   VMI_ACTION,
 } from '../utils/const/index';
 import { detailViewAction, listViewAction } from './actions';
-import { createVMBtn, detailsTab, disksTab, row, templateLink } from './selector';
+import {
+  detailsTab,
+  createVMBtn,
+  templateLink,
+  row,
+  resourceStatus,
+  detailsStatus,
+} from './selector';
 import { customizeBtn } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
@@ -165,6 +172,46 @@ export const vm = {
 };
 
 export const waitForVMStatusLabel = (status: string, timeout?: number) => {
-  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
-  cy.contains(disksTab.currVMStatusLbl, status, { timeout: timeOut }).should('exist');
+  cy.get('[data-test-id="perspective-switcher-toggle"]').then(($btn) => {
+    const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
+    const statusLabel = $btn.text() === 'Administrator' ? resourceStatus : detailsStatus;
+    switch (status) {
+      case VM_STATUS.Running: {
+        cy.get(statusLabel, {
+          timeout: VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP,
+        })
+          .contains(/^Running$/)
+          .should('exist');
+        // cy.contains(detailsTab.vmStatus, /^Running$/, ).should('exist');
+        // wait for vmi appear
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(3000);
+        break;
+      }
+      case VM_STATUS.Stopped: {
+        cy.get(statusLabel, {
+          timeout: VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP,
+        })
+          .contains(VM_STATUS.Stopped)
+          .should('exist');
+        break;
+      }
+      case VM_STATUS.Starting: {
+        cy.get(statusLabel, {
+          timeout: VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP,
+        })
+          .contains(VM_STATUS.Starting)
+          .should('exist');
+        break;
+      }
+      default: {
+        cy.get(statusLabel, {
+          timeout: timeOut,
+        })
+          .contains(status)
+          .should('exist');
+        break;
+      }
+    }
+  });
 };
