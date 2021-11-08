@@ -179,6 +179,7 @@ When(
   'user enters Git Repo URL as {string} in Create Source-to-Image Application',
   (gitUrl: string) => {
     cy.byLegacyTestID('git-form-input-url').type(gitUrl);
+    cy.get('#form-input-git-url-field-helper').should('have.text', 'Validated');
   },
 );
 
