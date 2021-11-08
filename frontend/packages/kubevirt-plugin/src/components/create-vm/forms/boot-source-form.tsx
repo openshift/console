@@ -62,9 +62,13 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
 
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
 
-  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
-    storageClassName || defaultSCName,
-  );
+  const [
+    spAccessMode,
+    spVolumeMode,
+    spLoaded,
+    isSPSettingProvided,
+    loadError,
+  ] = useStorageProfileSettings(storageClassName || defaultSCName);
 
   const [applySP, setApplySP] = React.useState<boolean>(true);
 
@@ -147,7 +151,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
             data-test="apply-storage-provider"
           />
         </FormRow>
-        {!spLoaded ? (
+        {!spLoaded && !loadError ? (
           <LoadingInline />
         ) : isSPSettingProvided && applySP ? (
           <FormRow fieldId="form-ds-sp-settings" data-test="sp-default-settings">
