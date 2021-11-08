@@ -2,7 +2,9 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   NotificationDrawer,
@@ -11,19 +13,15 @@ import {
   NotificationTypes,
 } from '@console/patternfly';
 import * as UIActions from '@console/internal/actions/ui';
-import store, { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux';
 import {
   Alert,
   PrometheusRulesResponse,
-  AlertSource,
+  AlertSeverity,
 } from '@console/internal/components/monitoring/types';
-import {
-  getAlertsAndRules,
-  alertURL,
-  alertSource,
-} from '@console/internal/components/monitoring/utils';
+import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/ui';
-import { RedExclamationCircleIcon, useUserSettings } from '@console/shared';
+import { RedExclamationCircleIcon } from '@console/shared';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -61,10 +59,10 @@ import { ClusterVersionModel } from '../models';
 import { useAccessReview } from './utils/rbac';
 import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
-import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
+import { LabelSelector } from '@console/internal/module/k8s/label-selector';
+import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 
-const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
-const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
+const criticalAlertLabelSelector = new LabelSelector({ severity: AlertSeverity.Critical });
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -100,6 +98,9 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
   );
 };
 
+// FIXME (jon): AlertmanagerReceiversNotConfigured action should be defined as an extension in the
+// console-app package. Also, rather than build a map on every call of this function, we might want
+// to hook this into redux.
 export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction>[]) => {
   const alertActions = new Map<
     string,
@@ -116,39 +117,6 @@ export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction
   );
   return alertActions;
 };
-
-const getAlertNotificationEntries = (
-  isLoaded: boolean,
-  alertData: Alert[],
-  toggleNotificationDrawer: () => void,
-  alertActionExtensions: ResolvedExtension<AlertAction>[],
-  isCritical: boolean,
-): React.ReactNode[] =>
-  isLoaded && !_.isEmpty(alertData)
-    ? alertData
-        .filter((a) => (isCritical ? criticalCompare(a) : otherAlertCompare(a)))
-        .map((alert, i) => {
-          const action = getAlertActions(alertActionExtensions).get(alert.rule.name);
-
-          return (
-            <NotificationEntry
-              key={`${i}_${alert.activeAt}`}
-              description={
-                <LinkifyExternal>
-                  {getAlertDescription(alert) || getAlertMessage(alert)}
-                </LinkifyExternal>
-              }
-              timestamp={getAlertTime(alert)}
-              type={NotificationTypes[getAlertSeverity(alert)]}
-              title={getAlertName(alert)}
-              toggleNotificationDrawer={toggleNotificationDrawer}
-              targetPath={alertURL(alert, alert.rule.id)}
-              actionText={action?.text}
-              alertAction={() => action.action(alert)}
-            />
-          );
-        })
-    : [];
 
 const getUpdateNotificationEntries = (
   cv: ClusterVersionKind,
@@ -215,23 +183,18 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   toggleNotificationDrawer,
   isDrawerExpanded,
   onDrawerChange,
-  alerts,
   children,
 }) => {
   const { t } = useTranslation();
-  const [hideUserWorkloadNotifications, , hideUserWorkloadNotificationsLoaded] = useUserSettings(
-    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
-    false,
-    true,
-  );
+  const dispatch = useDispatch();
   React.useEffect(() => {
     const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
-      store.dispatch(UIActions.monitoringLoading(key));
+      dispatch(UIActions.monitoringLoading(key));
       const notificationPoller = (): void => {
         coFetchJSON(url)
           .then((response) => dataHandler(response))
-          .then((data) => store.dispatch(UIActions.monitoringLoaded(key, data)))
-          .catch((e) => store.dispatch(UIActions.monitoringErrored(key, e)))
+          .then((data) => dispatch(UIActions.monitoringLoaded(key, data)))
+          .catch((e) => dispatch(UIActions.monitoringErrored(key, e)))
           .then(() => (pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000)));
       };
       pollers[key] = notificationPoller;
@@ -246,25 +209,17 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
         (alertsResults: PrometheusRulesResponse): Alert[] =>
           alertsResults
             ? getAlertsAndRules(alertsResults.data)
-                .alerts.filter((a) => {
-                  if (
-                    hideUserWorkloadNotificationsLoaded &&
-                    hideUserWorkloadNotifications &&
-                    alertSource(a) === AlertSource.User
-                  ) {
-                    return false;
-                  }
-                  return (
+                .alerts.filter(
+                  (a) =>
                     a.state === 'firing' &&
                     getAlertName(a) !== 'Watchdog' &&
-                    getAlertName(a) !== 'UpdateAvailable'
-                  );
-                })
+                    getAlertName(a) !== 'UpdateAvailable',
+                )
                 .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
             : [],
       );
     } else {
-      store.dispatch(
+      dispatch(
         UIActions.monitoringErrored(
           'notificationAlerts',
           new Error(t('public~prometheusBaseURL not set')),
@@ -287,23 +242,26 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
         return silences;
       });
     } else {
-      store.dispatch(
+      dispatch(
         UIActions.monitoringErrored('silences', new Error(t('public~alertManagerBaseURL not set'))),
       );
     }
 
     return () => _.each(pollerTimeouts, clearTimeout);
-  }, [hideUserWorkloadNotifications, hideUserWorkloadNotificationsLoaded, t]);
+  }, [dispatch, t]);
   const clusterVersion: ClusterVersionKind = useClusterVersion();
-
-  const { data, loaded, loadError } = alerts || {};
-  const alertIds = React.useMemo(() => data?.map((datum) => datum.rule.name) || [], [data]);
-  const [resolvedAlerts] = useResolvedExtensions<AlertAction>(
+  const [alerts, , loadError] = useNotificationAlerts();
+  const alertIds = React.useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
+  const [alertActionExtensions] = useResolvedExtensions<AlertAction>(
     React.useCallback(
       (e): e is AlertAction => isAlertAction(e) && alertIds.includes(e.properties.alert),
       [alertIds],
     ),
   );
+
+  const alertActionExtensionsMap = React.useMemo(() => getAlertActions(alertActionExtensions), [
+    alertActionExtensions,
+  ]);
 
   const clusterVersionIsEditable =
     useAccessReview({
@@ -312,37 +270,33 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       verb: 'patch',
       name: 'version',
     }) && window.SERVER_FLAGS.branding !== 'dedicated';
-
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
     clusterVersion,
     clusterVersionIsEditable,
     toggleNotificationDrawer,
   );
-  const criticalAlertList: React.ReactNode[] = getAlertNotificationEntries(
-    true,
-    data,
-    toggleNotificationDrawer,
-    resolvedAlerts,
-    true,
+
+  const [criticalAlerts, nonCriticalAlerts] = React.useMemo(
+    () =>
+      alerts.reduce<AlertAccumulator>(
+        ([criticalAlertAcc, nonCriticalAlertAcc], alert) => {
+          return criticalAlertLabelSelector.matchesLabels(alert.labels)
+            ? [[...criticalAlertAcc, alert], nonCriticalAlertAcc]
+            : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]];
+        },
+        [[], []],
+      ),
+    [alerts],
   );
-  const otherAlertList: React.ReactNode[] = getAlertNotificationEntries(
-    loaded,
-    data,
-    toggleNotificationDrawer,
-    resolvedAlerts,
-    false,
-  );
-  const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(
-    !_.isEmpty(criticalAlertList),
-  );
+
+  const hasCriticalAlerts = criticalAlerts.length > 0;
+  const hasNonCriticalAlerts = nonCriticalAlerts.length > 0;
+  const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(hasCriticalAlerts);
   const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState<boolean>(
     true,
   );
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(true);
   const prevDrawerToggleState = usePrevious(isDrawerExpanded);
-
-  const hasCriticalAlerts = criticalAlertList.length > 0;
-  const hasNonCriticalAlerts = otherAlertList.length > 0;
   React.useEffect(() => {
     if (hasCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
       toggleAlertExpanded(true);
@@ -361,35 +315,81 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     onDrawerChange();
   }, [isDrawerExpanded, onDrawerChange]);
 
-  const emptyState = !_.isEmpty(loadError) ? (
-    <AlertErrorState errorText={loadError.message} />
+  // Update alert count.
+  const alertCount = alerts?.length ?? 0;
+  React.useEffect(() => {
+    dispatch(UIActions.setAlertCount(alertCount));
+  }, [alertCount, dispatch]);
+
+  const emptyState = loadError ? (
+    <AlertErrorState errorText={loadError.toString()} />
   ) : (
     <AlertEmptyState drawerToggle={toggleNotificationDrawer} />
   );
 
-  const criticalAlerts = _.isEmpty(criticalAlertList) ? emptyState : criticalAlertList;
   const criticalAlertCategory: React.ReactElement = (
     <NotificationCategory
       key="critical-alerts"
       isExpanded={isAlertExpanded}
       label={t('public~Critical Alerts')}
-      count={criticalAlertList.length}
+      count={criticalAlerts.length}
       onExpandContents={toggleAlertExpanded}
     >
-      {criticalAlerts}
+      {criticalAlerts.length > 0
+        ? criticalAlerts.map((alert, i) => {
+            const action = alertActionExtensionsMap.get(alert.rule.name);
+            return (
+              <NotificationEntry
+                key={`${i}_${alert.activeAt}`}
+                description={
+                  <LinkifyExternal>
+                    {getAlertDescription(alert) || getAlertMessage(alert)}
+                  </LinkifyExternal>
+                }
+                timestamp={getAlertTime(alert)}
+                type={NotificationTypes[getAlertSeverity(alert)]}
+                title={getAlertName(alert)}
+                toggleNotificationDrawer={toggleNotificationDrawer}
+                targetPath={alertURL(alert, alert.rule.id)}
+                actionText={action?.text}
+                alertAction={() => action?.action?.(alert)}
+              />
+            );
+          })
+        : emptyState}
     </NotificationCategory>
   );
-  const nonCriticalAlertCategory: React.ReactElement = !_.isEmpty(otherAlertList) ? (
-    <NotificationCategory
-      key="other-alerts"
-      isExpanded={isNonCriticalAlertExpanded}
-      label={t('public~Other Alerts')}
-      count={otherAlertList.length}
-      onExpandContents={toggleNonCriticalAlertExpanded}
-    >
-      {otherAlertList}
-    </NotificationCategory>
-  ) : null;
+  const nonCriticalAlertCategory: React.ReactElement =
+    nonCriticalAlerts.length > 0 ? (
+      <NotificationCategory
+        key="other-alerts"
+        isExpanded={isNonCriticalAlertExpanded}
+        label={t('public~Other Alerts')}
+        count={nonCriticalAlerts.length}
+        onExpandContents={toggleNonCriticalAlertExpanded}
+      >
+        {nonCriticalAlerts.map((alert, i) => {
+          const action = alertActionExtensionsMap.get(alert.rule.name);
+          return (
+            <NotificationEntry
+              key={`${i}_${alert.activeAt}`}
+              description={
+                <LinkifyExternal>
+                  {getAlertDescription(alert) || getAlertMessage(alert)}
+                </LinkifyExternal>
+              }
+              timestamp={getAlertTime(alert)}
+              type={NotificationTypes[getAlertSeverity(alert)]}
+              title={getAlertName(alert)}
+              toggleNotificationDrawer={toggleNotificationDrawer}
+              targetPath={alertURL(alert, alert.rule.id)}
+              actionText={action?.text}
+              alertAction={() => action?.action?.(alert)}
+            />
+          );
+        })}
+      </NotificationCategory>
+    ) : null;
 
   const recommendationsCategory: React.ReactElement = !_.isEmpty(updateList) ? (
     <NotificationCategory
@@ -428,13 +428,7 @@ type NotificationPoll = (
 
 export type WithNotificationsProps = {
   isDrawerExpanded: boolean;
-  alerts?: {
-    data: Alert[];
-    loaded: boolean;
-    loadError?: {
-      message?: string;
-    };
-  };
+  alerts?: NotificationAlerts;
   silences?: any;
 };
 
@@ -448,8 +442,6 @@ export type ConnectedNotificationDrawerProps = {
 
 const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => ({
   isDrawerExpanded: !!UI.getIn(['notifications', 'isExpanded']),
-  alerts: UI.getIn(['monitoring', 'notificationAlerts']),
-  silences: UI.getIn(['monitoring', 'silences']),
 });
 
 type AlertErrorProps = {
@@ -459,6 +451,8 @@ type AlertErrorProps = {
 type AlertEmptyProps = {
   drawerToggle: (event: React.MouseEvent<HTMLElement>) => void;
 };
+
+type AlertAccumulator = [Alert[], Alert[]];
 
 const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
   toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,

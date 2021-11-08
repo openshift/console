@@ -364,6 +364,8 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['utilizationDuration', 'selectedKey'], action.payload.key);
     case ActionType.SetUtilizationDurationEndTime:
       return state.setIn(['utilizationDuration', 'endTime'], action.payload.endTime);
+    case ActionType.SetAlertCount:
+      return state.setIn(['monitoring', 'alertCount'], action.payload.alertCount);
     default:
       break;
   }
