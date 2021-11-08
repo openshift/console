@@ -85,7 +85,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   dataTest,
   onClick,
 }) => {
-  if (!kind) {
+  if (!kind && !groupVersionKind) {
     return null;
   }
   const kindReference = groupVersionKind ? getReference(groupVersionKind) : kind;
