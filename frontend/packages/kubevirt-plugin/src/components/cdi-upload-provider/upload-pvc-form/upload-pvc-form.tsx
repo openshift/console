@@ -147,9 +147,13 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const updatedStorageClass = storageClasses?.find((sc) => sc.metadata.name === storageClassName);
   const provisioner = updatedStorageClass?.provisioner || '';
   const [applySP, setApplySP] = React.useState<boolean>(true);
-  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
-    storageClassName || defaultSCName,
-  );
+  const [
+    spAccessMode,
+    spVolumeMode,
+    spLoaded,
+    isSPSettingProvided,
+    loadError,
+  ] = useStorageProfileSettings(storageClassName || defaultSCName);
 
   React.useEffect(() => {
     if (!storageClassName) {
@@ -506,7 +510,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           </SplitItem>
         </Split>
       </div>
-      {!spLoaded ? (
+      {!spLoaded && !loadError ? (
         <LoadingInline />
       ) : applySP && isSPSettingProvided ? (
         <div className="form-group" data-test="sp-default-settings">
