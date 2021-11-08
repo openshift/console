@@ -8,10 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid, {
-  GridPosition,
-  GridDashboardCard,
-} from '@console/shared/src/components/dashboard/DashboardGrid';
+import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { RestoreGettingStartedButton } from '@console/shared/src/components/getting-started';
 import {
   useExtensions,
@@ -25,6 +22,8 @@ import {
   DashboardsTab as DynamicDashboardsTab,
   isDashboardsCard as isDynamicDashboardsCard,
   isDashboardsTab as isDynamicDashboardsTab,
+  GridPosition,
+  OverviewGridCard,
 } from '@console/dynamic-plugin-sdk';
 import { RootState } from '../../../redux';
 import { USER_SETTINGS_KEY } from './cluster-dashboard/getting-started/constants';
@@ -33,7 +32,7 @@ export const getCardsOnPosition = (
   cards: DashboardsCard[],
   dynamicCards: DynamicDashboardsCard[],
   position: GridPosition,
-): GridDashboardCard[] => [
+): OverviewGridCard[] => [
   ...cards
     .filter((c) => c.properties.position === position)
     .map((c) => ({

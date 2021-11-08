@@ -1,11 +1,7 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { usePermissionsCardPermissions } from '../../../hooks/use-permissions-card-permissions';
 import { PermissionsCardPopover } from './PermissionsCardPopover';
 import { PermissionsCountItem } from './PermissionsCountItem';
@@ -23,11 +19,11 @@ export const VirtOverviewPermissionsCard: React.FC = () => {
   } = permissionsData;
 
   return (
-    <DashboardCard data-test-id="kv-overview-permissions-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('kubevirt-plugin~Permissions')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="kv-overview-permissions-card">
+      <CardHeader>
+        <CardTitle>{t('kubevirt-plugin~Permissions')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <div className="kv-permissions-card__status">
           <PermissionsCardPopover capabilitiesData={capabilitiesData}>
             {t('kubevirt-plugin~Access Control')}
@@ -49,7 +45,7 @@ export const VirtOverviewPermissionsCard: React.FC = () => {
             </FlexItem>
           </Flex>
         </div>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };

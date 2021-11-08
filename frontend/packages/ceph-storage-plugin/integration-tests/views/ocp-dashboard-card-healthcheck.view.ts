@@ -3,9 +3,7 @@ import { $ } from 'protractor';
 import { getPodData } from '../utils/helpers';
 import { OCP_HEALTH_ICON_COLORS } from '../utils/consts';
 
-export const mainHealthCardStatus = $(
-  '.co-dashboard-card__body--top-margin.co-status-card__health-body',
-);
+export const mainHealthCardStatus = $('.co-status-card__health-body');
 export const smallDivInside = mainHealthCardStatus.$$('.co-dashboard-icon').get(3);
 export const mainHealtGreenSvg = smallDivInside.$(`svg[fill="${OCP_HEALTH_ICON_COLORS.GREEN46}"]`);
 

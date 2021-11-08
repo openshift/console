@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   PrometheusMultilineUtilizationItem,
@@ -8,9 +9,6 @@ import {
   humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -72,11 +70,13 @@ export const VMUtilizationCard: React.FC = () => {
   ]);
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('kubevirt-plugin~Utilization')}</DashboardCardTitle>
-        <UtilizationDurationDropdown adjustDuration={adjustDuration} />
-      </DashboardCardHeader>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('kubevirt-plugin~Utilization')}</CardTitle>
+        <CardActions>
+          <UtilizationDurationDropdown adjustDuration={adjustDuration} />
+        </CardActions>
+      </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('kubevirt-plugin~CPU')}
@@ -110,7 +110,7 @@ export const VMUtilizationCard: React.FC = () => {
           isDisabled={!vmiIsRunning}
         />
       </UtilizationBody>
-    </DashboardCard>
+    </Card>
   );
 };
 

@@ -457,3 +457,27 @@ export type Status = {
   reason: string;
   status: string;
 };
+
+export type OverviewProps = {
+  className?: string;
+  children: React.ReactNode;
+};
+
+export enum GridPosition {
+  MAIN = 'MAIN',
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
+
+export type OverviewCardSpan = 4 | 6 | 12;
+
+export type OverviewGridCard = {
+  Card: React.ComponentType<any>;
+  span?: OverviewCardSpan;
+};
+
+export type OverviewGridProps = {
+  mainCards: OverviewGridCard[];
+  leftCards?: OverviewGridCard[];
+  rightCards?: OverviewGridCard[];
+};

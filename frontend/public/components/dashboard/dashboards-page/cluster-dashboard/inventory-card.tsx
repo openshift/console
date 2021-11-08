@@ -1,8 +1,5 @@
 import * as React from 'react';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import {
   ResourceInventoryItem,
   StatusGroupMapper,
@@ -148,11 +145,11 @@ export const InventoryCard = () => {
   const { t } = useTranslation();
 
   return (
-    <DashboardCard data-test-id="inventory-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Cluster inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="inventory-card">
+      <CardHeader>
+        <CardTitle>{t('public~Cluster inventory')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         {mergedItems.map((item) => (
           <ClusterInventoryItem
             key={item.properties.model.kind}
@@ -170,8 +167,8 @@ export const InventoryCard = () => {
             additionalResources={item.properties.additionalResources}
           />
         ))}
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

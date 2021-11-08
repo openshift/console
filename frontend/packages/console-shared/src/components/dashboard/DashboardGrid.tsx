@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens/dist/js/global_breakpoint_lg';
+import { OverviewGridCard, OverviewGridProps } from '@console/dynamic-plugin-sdk';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
-import { DashboardCardSpan } from '@console/plugin-sdk';
 
-export enum GridPosition {
-  MAIN = 'MAIN',
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-}
+import './dashboard.scss';
 
 const mapCardsToGrid = (
-  cards: GridDashboardCard[] = [],
+  cards: OverviewGridCard[] = [],
   keyPrefix: string,
   ignoreCardSpan: boolean = false,
 ): React.ReactNode[] =>
@@ -22,7 +18,7 @@ const mapCardsToGrid = (
     </GridItem>
   ));
 
-const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCards, rightCards }) => {
+const DashboardGrid: React.FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {
   const [containerRef, width] = useRefWidth();
   const smallGrid = !!containerRef.current && width <= parseInt(breakpointLG.value, 10);
 
@@ -71,14 +67,3 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCards, rig
 };
 
 export default DashboardGrid;
-
-export type GridDashboardCard = {
-  Card: React.ComponentType<any>;
-  span?: DashboardCardSpan;
-};
-
-type DashboardGridProps = {
-  mainCards: GridDashboardCard[];
-  leftCards?: GridDashboardCard[];
-  rightCards?: GridDashboardCard[];
-};

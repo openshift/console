@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -101,15 +98,13 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   };
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Storage Efficiency')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody className="co-dashboard-card__body--no-padding">
-        <EfficiencyItemBody {...compressionRatioProps} />
-        <EfficiencyItemBody {...savingsProps} />
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Storage Efficiency')}</CardTitle>
+      </CardHeader>
+      <EfficiencyItemBody {...compressionRatioProps} />
+      <EfficiencyItemBody {...savingsProps} />
+    </Card>
   );
 };
 

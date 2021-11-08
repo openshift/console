@@ -72,9 +72,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
                 title={involvedObject.uid}
               />
             </div>
-            <div className="co-dashboard-text--small co-recent-item__content-message">
-              {message}
-            </div>
+            <div className="co-recent-item__content-message">{message}</div>
           </div>
         </AccordionContent>
       </AccordionItem>

@@ -6,8 +6,12 @@
   display: flex;
   justify-content: space-between;
   line-height: 1.5rem;
-  padding: 1rem 0 0 0;
+  padding-bottom: 1rem;
   flex-wrap: wrap;
+}
+
+.co-inventory-card__item:last-child {
+  padding-bottom: 0rem;
 }
 
 .co-inventory-card__item-status {

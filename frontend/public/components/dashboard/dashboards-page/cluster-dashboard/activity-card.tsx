@@ -4,11 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { EventModel } from '../../../../models';
 import { FirehoseResource, FirehoseResult } from '../../../utils';
@@ -34,6 +30,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
+import { Link } from 'react-router-dom';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const viewEvents = '/k8s/all-namespaces/events';
@@ -197,18 +194,18 @@ const OngoingActivity = connect(mapStateToProps)(
 export const ActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
   return (
-    <DashboardCard gradient data-test-id="activity-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={viewEvents}>{t('public~View events')}</DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <ActivityBody className="co-overview-dashboard__activity-body">
-          <OngoingActivity />
-          <RecentEvent />
-        </ActivityBody>
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card data-test-id="activity-card" className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('public~Activity')}</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link to={viewEvents}>{t('public~View events')}</Link>
+        </CardActions>
+      </CardHeader>
+      <ActivityBody className="co-overview-dashboard__activity-body">
+        <OngoingActivity />
+        <RecentEvent />
+      </ActivityBody>
+    </Card>
   );
 });
 

@@ -9,7 +9,16 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { Button, Popover, Grid, GridItem } from '@patternfly/react-core';
+import {
+  Button,
+  Popover,
+  Grid,
+  GridItem,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+} from '@patternfly/react-core';
 import {
   Status,
   TableColumnsType,
@@ -84,10 +93,6 @@ import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 
 // Key translations for oauth login templates
 // t('public~Log in to your account')
@@ -524,11 +529,11 @@ const PodMetrics = requirePrometheus(({ obj }) => {
     <Dashboard className="resource-metrics-dashboard">
       <Grid hasGutter>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~Memory usage')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~Memory usage')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Area
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeBinaryBytes}
@@ -538,15 +543,15 @@ const PodMetrics = requirePrometheus(({ obj }) => {
                 limitQuery={`sum(kube_pod_resource_limit{resource='memory',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'})`}
                 requestedQuery={`sum(kube_pod_resource_request{resource='memory',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}) BY (pod, namespace)`}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~CPU usage')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~CPU usage')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Area
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeCpuCores}
@@ -555,15 +560,15 @@ const PodMetrics = requirePrometheus(({ obj }) => {
                 limitQuery={`sum(kube_pod_resource_limit{resource='cpu',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'})`}
                 requestedQuery={`sum(kube_pod_resource_request{resource='cpu',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}) BY (pod, namespace)`}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~Filesystem')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~Filesystem')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Area
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeBinaryBytes}
@@ -571,15 +576,15 @@ const PodMetrics = requirePrometheus(({ obj }) => {
                 namespace={obj.metadata.namespace}
                 query={`pod:container_fs_usage_bytes:sum{pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}`}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~Network in')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~Network in')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Stack
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
@@ -587,15 +592,15 @@ const PodMetrics = requirePrometheus(({ obj }) => {
                 query={`(sum(irate(container_network_receive_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
                 description={getNetworkName}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~Network out')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~Network out')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Stack
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
@@ -603,8 +608,8 @@ const PodMetrics = requirePrometheus(({ obj }) => {
                 query={`(sum(irate(container_network_transmit_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
                 description={getNetworkName}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
       </Grid>
     </Dashboard>

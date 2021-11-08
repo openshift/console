@@ -11,7 +11,7 @@ import {
   FirehoseResult,
 } from './console-types';
 import {
-  DashboardCardSpan,
+  CardSpan,
   GetOperatorsWithStatuses,
   K8sActivityProps,
   OperatorRowProps,
@@ -46,7 +46,7 @@ export type DashboardsCard = ExtensionDeclaration<
     /** Dashboard card component. */
     component: CodeRef<React.ComponentType>;
     /** Card's vertical span in the column. Ignored for small screens, defaults to 12. */
-    span?: DashboardCardSpan;
+    span?: CardSpan;
   }
 >;
 

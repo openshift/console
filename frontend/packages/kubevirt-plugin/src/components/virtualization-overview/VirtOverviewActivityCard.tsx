@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   K8sKind,
   PrometheusResponse,
@@ -33,11 +35,6 @@ import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
@@ -206,18 +203,18 @@ const OngoingActivity = connect(mapStateToProps)(
 export const VirtOverviewActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
   return (
-    <DashboardCard gradient data-test-id="kubevirt-activity-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={viewEvents}>{t('kubevirt-plugin~View events')}</DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <ActivityBody className="co-overview-dashboard__activity-body">
-          <OngoingActivity />
-          <RecentEvent />
-        </ActivityBody>
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card className="co-overview-card--gradient" data-test-id="kubevirt-activity-card">
+      <CardHeader>
+        <CardTitle>{t('public~Activity')}</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link to={viewEvents}>{t('kubevirt-plugin~View events')}</Link>
+        </CardActions>
+      </CardHeader>
+      <ActivityBody className="co-overview-dashboard__activity-body">
+        <OngoingActivity />
+        <RecentEvent />
+      </ActivityBody>
+    </Card>
   );
 });
 

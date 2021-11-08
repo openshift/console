@@ -16,6 +16,8 @@ import {
   ListPageFilterProps,
   UseListPageFilter,
   ResourceLinkProps,
+  OverviewProps,
+  OverviewGridProps,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -95,5 +97,8 @@ export {
 
 export const StatusPopupSection: React.FC<StatusPopupSectionProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
   .StatusPopupSection;
-export const StatusPopupItem: React.FC<StatusPopupItemProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
+export const StatusPopupItem: React.FC<StatusPopupItemProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup');
+export const Overview: React.FC<OverviewProps> = require('@console/shared/src/components/dashboard/Dashboard')
+  .default;
+export const OverviewGrid: React.FC<OverviewGridProps> = require('@console/shared/src/components/dashboard/DashboardGrid')
   .default;

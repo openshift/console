@@ -1,9 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardActions,
+  PopoverPosition,
+  Select,
+  SelectOption,
+  SelectVariant,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import UtilizationItem, {
   TopConsumerPopoverProp,
   MultilineUtilizationItem,
@@ -14,14 +23,7 @@ import UtilizationItem, {
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import {
-  Flex,
-  FlexItem,
-  PopoverPosition,
-  Select,
-  SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core';
+
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import {
   humanizeBinaryBytes,
@@ -227,6 +229,7 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
       selections={selectedNodes}
       isOpen={isOpen}
       placeholderText={t('public~Filter by Node type')}
+      isPlain
     >
       {sortedMCPs.map((mcp) => (
         <SelectOption key={mcp.metadata.name} value={mcp.metadata.name} />
@@ -430,20 +433,26 @@ export const UtilizationCard = () => {
 
   return (
     machineConfigPoolsLoaded && (
-      <DashboardCard data-test-id="utilization-card">
-        <DashboardCardHeader>
-          <DashboardCardTitle>{t('public~Cluster utilization')}</DashboardCardTitle>
-          <Flex>
-            <FlexItem>
-              <UtilizationCardNodeFilter
-                machineConfigPools={machineConfigPools}
-                onNodeSelect={onNodeSelect}
-                selectedNodes={selectedNodes}
-              />
-            </FlexItem>
-            <UtilizationDurationDropdown />
-          </Flex>
-        </DashboardCardHeader>
+      <Card data-test-id="utilization-card">
+        <CardHeader>
+          <CardTitle data-test="utilization-card__title">
+            {t('public~Cluster utilization')}
+          </CardTitle>
+          <CardActions>
+            <Split>
+              <SplitItem>
+                <UtilizationCardNodeFilter
+                  machineConfigPools={machineConfigPools}
+                  onNodeSelect={onNodeSelect}
+                  selectedNodes={selectedNodes}
+                />
+              </SplitItem>
+              <SplitItem>
+                <UtilizationDurationDropdown />
+              </SplitItem>
+            </Split>
+          </CardActions>
+        </CardHeader>
         <UtilizationBody>
           <PrometheusUtilizationItem
             title={t('public~CPU')}
@@ -483,7 +492,7 @@ export const UtilizationCard = () => {
             humanizeValue={humanizeNumber}
           />
         </UtilizationBody>
-      </DashboardCard>
+      </Card>
     )
   );
 };

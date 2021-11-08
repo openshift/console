@@ -363,10 +363,6 @@ export const Timestamp = React.lazy(() =>
   })),
 );
 
-export const DashboardCardLink = React.lazy(() =>
-  import('@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink'),
-);
-
 export const GenericStatus = React.lazy(() =>
   import('@console/shared/src/components/status/GenericStatus'),
 );

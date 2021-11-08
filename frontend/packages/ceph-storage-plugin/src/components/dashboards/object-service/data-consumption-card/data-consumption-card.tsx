@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { getName } from '@console/shared/src/selectors/common';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
@@ -83,16 +80,16 @@ const DataConsumptionCard: React.FC = () => {
   );
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>
           {t('ceph-storage-plugin~Performance')}
           <FieldLevelHelp>
             {t(
               'ceph-storage-plugin~Shows an overview of the data consumption per provider or account collected from the day of the entity creation.',
             )}
           </FieldLevelHelp>
-        </DashboardCardTitle>
+        </CardTitle>
         <DataConsumptionDropdown
           selectedService={serviceType}
           setSelectedService={setServiceType}
@@ -102,8 +99,8 @@ const DataConsumptionCard: React.FC = () => {
           setSelectedMetric={setMetric}
           isRgwSupported={RGW && !isOCS45}
         />
-      </DashboardCardHeader>
-      <DashboardCardBody className="co-dashboard-card__body--top-margin">
+      </CardHeader>
+      <CardBody>
         {serviceType === ServiceType.MCG ? (
           <DataConsumptionGraph
             prometheusResponse={data as PrometheusResponse[]}
@@ -120,8 +117,8 @@ const DataConsumptionCard: React.FC = () => {
             metricType={metric}
           />
         )}
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

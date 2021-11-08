@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { SecondaryStatus } from '../../status';
-import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
@@ -34,15 +34,19 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
           (icon || <HealthItemIcon state={state} dataTest={`${title}-health-item-icon`} />)
         )}
         <div>
-          <span className="co-dashboard-text--small co-status-card__health-item-text">
+          <span className="co-status-card__health-item-text">
             {React.Children.toArray(children).length && state !== HealthState.LOADING ? (
-              <DashboardCardPopupLink
-                linkTitle={title}
-                popupTitle={popupTitle}
-                className="co-status-card__popup"
+              <Popover
+                position={PopoverPosition.top}
+                headerContent={popupTitle}
+                bodyContent={children}
+                enableFlip
+                maxWidth="21rem"
               >
-                {children}
-              </DashboardCardPopupLink>
+                <Button variant="link" isInline className="co-status-card__popup">
+                  {title}
+                </Button>
+              </Popover>
             ) : (
               title
             )}

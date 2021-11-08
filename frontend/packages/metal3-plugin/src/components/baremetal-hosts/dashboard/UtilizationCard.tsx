@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   PrometheusUtilizationItem,
@@ -11,9 +12,6 @@ import {
 } from '@console/internal/components/utils';
 import { PodModel, ProjectModel } from '@console/internal/models';
 import { getMachineNodeName } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
@@ -124,11 +122,13 @@ const UtilizationCard: React.FC = () => {
   );
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('metal3-plugin~Utilization')}</DashboardCardTitle>
-        <UtilizationDurationDropdown />
-      </DashboardCardHeader>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('metal3-plugin~Utilization')}</CardTitle>
+        <CardActions>
+          <UtilizationDurationDropdown />
+        </CardActions>
+      </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('metal3-plugin~CPU')}
@@ -163,7 +163,7 @@ const UtilizationCard: React.FC = () => {
           humanizeValue={humanizePods}
         />
       </UtilizationBody>
-    </DashboardCard>
+    </Card>
   );
 };
 

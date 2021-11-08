@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import {
   DashboardItemProps,
@@ -96,16 +93,16 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
   const providerTypes = filterProviders(allProviders);
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Resource Providers')}</DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Resource Providers')}</CardTitle>
         <FieldLevelHelp>
           {t(
             "ceph-storage-plugin~A list of all Multicloud Object Gateway resources that are currently in use. Those resources are used to store data according to the buckets' policies and can be a cloud-based resource or a bare metal resource.",
           )}
         </FieldLevelHelp>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+      </CardHeader>
+      <CardBody>
         <ResourceProvidersBody
           isLoading={!error && !(providersTypesQueryResult && unhealthyProvidersTypesQueryResult)}
           hasProviders={!_.isEmpty(allProviders)}
@@ -121,8 +118,8 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
             />
           ))}
         </ResourceProvidersBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

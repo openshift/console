@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   DashboardItemProps,
@@ -9,9 +9,6 @@ import { FirehoseResource } from '@console/internal/components/utils/types';
 import { NodeModel, TemplateModel } from '@console/internal/models/index';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../../constants';
 import { VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
@@ -83,10 +80,10 @@ export const InventoryCard: React.FC<DashboardItemProps> = ({
   }, [watchK8sResource, stopWatchK8sResource]);
 
   return (
-    <DashboardCard data-test-id="kv-running-inventory-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('kubevirt-plugin~Inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
+    <Card data-test-id="kv-running-inventory-card">
+      <CardHeader>
+        <CardTitle>{t('kubevirt-plugin~Inventory')}</CardTitle>
+      </CardHeader>
       <div className="kv-inventory-card__body">
         <Grid>
           <GridItem span={4}>
@@ -124,7 +121,7 @@ export const InventoryCard: React.FC<DashboardItemProps> = ({
           </GridItem>
         </Grid>
       </div>
-    </DashboardCard>
+    </Card>
   );
 };
 

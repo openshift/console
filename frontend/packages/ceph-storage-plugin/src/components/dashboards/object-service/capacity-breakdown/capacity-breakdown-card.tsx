@@ -1,17 +1,23 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { Select, SelectGroup, SelectOption, SelectProps } from '@patternfly/react-core';
+import {
+  Select,
+  SelectGroup,
+  SelectOption,
+  SelectProps,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+} from '@patternfly/react-core';
 import {
   FieldLevelHelp,
   FirehoseResource,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+
 import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
@@ -194,16 +200,16 @@ const BreakdownCard: React.FC = () => {
   }
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>
           {t('ceph-storage-plugin~Capacity breakdown')}
           <FieldLevelHelp>
             {t(
               'ceph-storage-plugin~This card shows used capacity for different resources. The available capacity is based on cloud services therefore it cannot be shown.',
             )}
           </FieldLevelHelp>
-        </DashboardCardTitle>
+        </CardTitle>
         <div className="nb-capacity-breakdown-card__header">
           {isRGWSupported && (
             <Select
@@ -241,8 +247,8 @@ const BreakdownCard: React.FC = () => {
             {breakdownSelectItems}
           </Select>
         </div>
-      </DashboardCardHeader>
-      <DashboardCardBody className="nb-capacity-breakdown-card__body">
+      </CardHeader>
+      <CardBody className="nb-capacity-breakdown-card__body">
         <BreakdownCardBody
           isLoading={loading}
           hasLoadError={queriesLoadError}
@@ -254,8 +260,8 @@ const BreakdownCard: React.FC = () => {
           ocsVersion={ocsVersion}
           labelPadding={padding}
         />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

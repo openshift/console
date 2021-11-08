@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_danger_color_100 as globalDanger100 } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
   RedExclamationCircleIcon,
@@ -73,14 +70,14 @@ export const CapacityCard: React.FC<CapacityCardProps> = React.memo((props) => {
   ];
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>
           {t('ceph-storage-plugin~Raw capacity')}
           <FieldLevelHelp>{description}</FieldLevelHelp>
-        </DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody className="ceph-raw-usage__container">
+        </CardTitle>
+      </CardHeader>
+      <CardBody>
         {!loading && !loadError && (
           <>
             <div className="ceph-raw-usage__item ceph-raw-usage__legend">
@@ -121,13 +118,13 @@ export const CapacityCard: React.FC<CapacityCardProps> = React.memo((props) => {
         )}
         {loading && !loadError && <LoadingCardBody />}
         {loadError && <ErrorCardBody />}
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 });
 
 const LoadingCardBody: React.FC = () => (
-  <div className="ceph-raw-usage__container">
+  <div>
     <div className="ceph-raw-usage-loading__legend">
       <div className="ceph-raw-usage-loading-legend__item skeleton-activity" />
       <div className="ceph-raw-usage-loading-legend__item skeleton-activity" />
