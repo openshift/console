@@ -715,7 +715,17 @@ const MachineConfigPoolsResource: WatchK8sResource = {
 export const ClusterOperatorsLink: React.FC<ClusterOperatorsLinkProps> = ({
   children,
   queryString,
-}) => <Link to={`/settings/cluster/clusteroperators${queryString}`}>{children}</Link>;
+}) => (
+  <Link
+    to={
+      queryString
+        ? `/settings/cluster/clusteroperators${queryString}`
+        : '/settings/cluster/clusteroperators'
+    }
+  >
+    {children}
+  </Link>
+);
 
 export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
   desiredVersion,
