@@ -53,7 +53,8 @@ import {
   URLSource,
 } from '../../vm-templates/vm-template-source';
 import { BootSourceState } from './boot-source-form-reducer';
-import { FORM_ACTION_TYPE, FormAction, FormState } from './create-vm-form-reducer';
+import { FormAction, FormState, FORM_ACTION_TYPE } from './create-vm-form-reducer';
+import VirtualMachineHardware from './VirtualMachineHardware';
 
 import './create-vm-form.scss';
 
@@ -80,6 +81,11 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const { name, nameValidation, namespace, startVM, template } = state;
+  const hardwareDevices = template?.objects?.[0]?.spec?.template?.spec?.domain?.devices;
+  const gpus = hardwareDevices && hardwareDevices?.gpus?.map((dev) => dev?.deviceName);
+  const hostDevices =
+    hardwareDevices && hardwareDevices?.hostDevices?.map((dev) => dev?.deviceName);
+
   const [vms, loaded] = useK8sWatchResource<VMKind[]>({
     kind: kubevirtReferenceForModel(VirtualMachineModel),
     namespace,
@@ -272,6 +278,26 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
                 help={t(helpKeyResolver[VMSettingsField.WORKLOAD_PROFILE]())}
               >
                 {getWorkloadProfile(template) || t('kubevirt-plugin~Not available')}
+              </FormRow>
+            </SplitItem>
+            <SplitItem>
+              <FormRow fieldId="gpu-devices" title={t('kubevirt-plugin~GPU devices')}>
+                <VirtualMachineHardware
+                  devicesNames={gpus}
+                  title={t('kubevirt-plugin~GPU Devices ({{numberOfDevices}})', {
+                    numberOfDevices: gpus?.length,
+                  })}
+                />
+              </FormRow>
+            </SplitItem>
+            <SplitItem>
+              <FormRow fieldId="host-devices" title={t('kubevirt-plugin~Host devices')}>
+                <VirtualMachineHardware
+                  devicesNames={hostDevices}
+                  title={t('kubevirt-plugin~Host Devices ({{numberOfDevices}})', {
+                    numberOfDevices: hostDevices?.length,
+                  })}
+                />
               </FormRow>
             </SplitItem>
           </Split>
