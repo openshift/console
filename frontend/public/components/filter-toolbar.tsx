@@ -46,7 +46,7 @@ enum FilterType {
   LABEL = 'Label',
 }
 
-const filterTypeMap = Object.freeze({
+export const filterTypeMap = Object.freeze({
   [FilterType.LABEL]: 'labels',
   [FilterType.NAME]: 'name',
 });
