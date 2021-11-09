@@ -209,10 +209,17 @@ export const projectNameSpace = {
 
   selectProjectOrDoNothing: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
+    cy.byTestID('showSystemSwitch').check();
+    cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
     cy.byTestID('dropdown-text-filter').type(projectName);
-    cy.get('[role="listbox"]').then(($el) => {
-      if ($el.find('li[role="option"]').length !== 0) {
-        cy.get(`[id="${projectName}-link"]`).click();
+    cy.get('[data-test="namespace-dropdown-menu"]').then(($el) => {
+      if ($el.find('[data-test="dropdown-menu-item-link"]').length !== 0) {
+        cy.byTestID('namespace-dropdown-menu')
+          .find('[data-test="dropdown-menu-item-link"]')
+          .contains(projectName)
+          .click();
+      } else {
+        projectNameSpace.clickProjectDropdown();
       }
     });
   },
