@@ -27,6 +27,7 @@ declare global {
       ): Chainable<Element>;
       byTestSectionHeading(selector: string): Chainable<Element>;
       byTestOperandLink(selector: string): Chainable<Element>;
+      byItemID(selector: string): Chainable<Element>;
     }
   }
 }
@@ -76,3 +77,5 @@ Cypress.Commands.add('byTestSectionHeading', (selector: string) =>
 Cypress.Commands.add('byTestOperandLink', (selector: string) =>
   cy.get(`[data-test-operand-link="${selector}"]`),
 );
+
+Cypress.Commands.add('byItemID', (selector: string) => cy.get(`[data-item-id="${selector}"]`));

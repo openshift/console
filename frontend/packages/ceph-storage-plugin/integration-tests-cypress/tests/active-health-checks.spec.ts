@@ -20,7 +20,7 @@ const messages = {
 
 const checkHCPopover = () => {
   cy.byTestID('Storage Cluster-secondary-status', { timeout: 5 * MINUTE }).should('be.visible');
-  cy.byTestID('Storage Cluster-health-item')
+  cy.byItemID('Storage Cluster-health-item')
     .contains('Storage Cluster')
     .click();
 };
