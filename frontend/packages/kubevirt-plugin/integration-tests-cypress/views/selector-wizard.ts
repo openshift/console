@@ -17,6 +17,9 @@ export const sourceURL = '#provision-source-url';
 export const sourceRegistry = '#provision-source-container';
 export const cdrom = 'input[id="cdrom"]';
 export const dropDownItemLink = '[data-test="dropdown-menu-item-link"]';
+export const storageProfile = '#apply-storage-provider';
+export const accessMode = (mode: string) => `input[value="${mode}"]`;
+export const mountWGT = '#mount-windows-guest-tools-checkbox';
 
 // pvc selectors
 export const pvcSize = '#request-size-input';
@@ -65,3 +68,4 @@ export const deleteBtn = '[data-test-action="Delete"]';
 
 // review step
 export const bootSource = '#wizard-review-provision_source_type';
+export const reviewBtn = '#create-vm-wizard-reviewandcreate-btn';

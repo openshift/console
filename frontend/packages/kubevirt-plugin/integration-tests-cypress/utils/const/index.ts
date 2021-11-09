@@ -61,7 +61,7 @@ export enum VM_STATUS {
   Starting = 'Starting',
   Provisioning = 'Provisioning',
   Paused = 'Paused',
-  Migrating = 'Migration',
+  Migrating = 'Migrati',
   Stopping = 'Stopping',
   Running = 'Running',
   Cloning = 'Cloning',

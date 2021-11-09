@@ -1,8 +1,17 @@
 import { ObjectEnum } from '../../../src/constants/object-enum';
 import { IMAGE_URL } from './index';
 
+export const IMAGE_WIN10 =
+  'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/windows-images/win_10.qcow2';
+
 export class ProvisionSource extends ObjectEnum<string> {
   static readonly URL = new ProvisionSource('URL', 'Import via URL (creates PVC)', IMAGE_URL);
+
+  static readonly WIN10_URL = new ProvisionSource(
+    'URL',
+    'Import via URL (creates PVC)',
+    IMAGE_WIN10,
+  );
 
   static readonly REGISTRY = new ProvisionSource(
     'Registry',
