@@ -1,3 +1,4 @@
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pageTitle, operators, switchPerspective } from '../../constants';
 import { devNavigationMenuPO, operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';
@@ -9,6 +10,13 @@ export const installOperator = (operatorName: operators) => {
   operatorsPage.navigateToOperatorHubPage();
   operatorsPage.searchOperator(operatorName);
   operatorsPage.selectOperator(operatorName);
+  cy.get('body').then(($body) => {
+    if ($body.text().includes('Show community Operator')) {
+      cy.log('Installing community operator');
+      modal.submit();
+      modal.shouldBeClosed();
+    }
+  });
   operatorsPage.verifySidePane();
   cy.get(operatorsPO.alertDialog).then(($sidePane) => {
     if ($sidePane.find(operatorsPO.sidePane.install).length) {
@@ -110,4 +118,9 @@ export const verifyAndInstallPipelinesOperator = () => {
 export const verifyAndInstallKnativeOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.ServerlessOperator);
+};
+
+export const verifyAndInstallGitopsPrimerOperator = () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  verifyAndInstallOperator(operators.GitopsPrimer);
 };

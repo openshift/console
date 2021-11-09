@@ -16,7 +16,10 @@ import {
   navigateTo,
   createForm,
 } from '@console/dev-console/integration-tests/support/pages/app';
-import { verifyAndInstallKnativeOperator } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
+import {
+  verifyAndInstallGitopsPrimerOperator,
+  verifyAndInstallKnativeOperator,
+} from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
@@ -192,4 +195,8 @@ When('user enters Application Name as {string}', (appName: string) => {
 
 When('user enters Name as {string}', (name: string) => {
   gitPage.enterWorkloadName(name);
+});
+
+Given('user has installed Gitops primer Operator', () => {
+  verifyAndInstallGitopsPrimerOperator();
 });
