@@ -15,7 +15,14 @@ import {
   loadReferencedObject,
   resolveEncodedCodeRefs,
   resolveExtension,
+  isCodeRefError,
 } from '../coderef-resolver';
+
+const getErrorExecutableCodeRefMock = <T = any>(): jest.Mock<ReturnType<CodeRef<T>>> => {
+  const ref = jest.fn(() => Promise.reject(new Error()));
+  applyCodeRefSymbol<T>(ref);
+  return ref;
+};
 
 describe('applyCodeRefSymbol', () => {
   it('marks the given function with CodeRef symbol', () => {
@@ -288,5 +295,21 @@ describe('resolveExtension', () => {
 
     expect(await resolveExtension(extensions[0])).toBe(extensions[0]);
     expect(await resolveExtension(extensions[1])).toBe(extensions[1]);
+  });
+
+  it('continuously reject code refs which have failed to resolve', async () => {
+    const errorCodeRef = getErrorExecutableCodeRefMock();
+
+    const extension: Extension = {
+      type: 'Foo',
+      properties: { test: true, qux: errorCodeRef },
+    };
+
+    expect(isCodeRefError(errorCodeRef)).toBe(false);
+    expect(await resolveExtension(extension)).rejects.toBeTruthy();
+    expect(isCodeRefError(errorCodeRef)).toBeTruthy();
+    expect(errorCodeRef).toHaveBeenCalledTimes(1);
+    expect(await resolveExtension(extension)).rejects.toBeTruthy();
+    expect(errorCodeRef).toHaveBeenCalledTimes(1);
   });
 });
