@@ -53,8 +53,8 @@ const performPostInstallationSteps = (operator: operators): void => {
   switch (operator) {
     case operators.ServerlessOperator:
       cy.log(`Performing Serverless post installation steps`);
-      createKnativeEventing();
       createKnativeServing();
+      createKnativeEventing();
       break;
     case operators.RedHatCodereadyWorkspaces:
       cy.log(`Performing CRW post-installation steps`);
