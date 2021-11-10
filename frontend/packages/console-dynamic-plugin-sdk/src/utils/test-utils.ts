@@ -45,5 +45,6 @@ export type RemoteEntryModuleMock = Update<
   {
     get: jest.Mock<ReturnType<RemoteEntryModule['get']>>;
     init: jest.Mock<void>;
+    override?: jest.Mock<void>;
   }
 >;

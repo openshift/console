@@ -171,19 +171,19 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const overrideSharedModules = jest.fn();
+    const initSharedPluginModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => resolvedExtensions);
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
     getPluginEntryCallback(
       pluginStore,
-      overrideSharedModules,
+      initSharedPluginModules,
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
     expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(true);
-    expect(overrideSharedModules).toHaveBeenCalledWith(entryModule);
+    expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
 
     expect(resolveEncodedCodeRefs).toHaveBeenCalledWith(
       manifest.extensions,
@@ -202,17 +202,17 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const overrideSharedModules = jest.fn();
+    const initSharedPluginModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
     getPluginEntryCallback(
       pluginStore,
-      overrideSharedModules,
+      initSharedPluginModules,
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(0);
-    expect(overrideSharedModules).not.toHaveBeenCalled();
+    expect(initSharedPluginModules).not.toHaveBeenCalled();
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
   });
@@ -225,25 +225,25 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const overrideSharedModules = jest.fn();
+    const initSharedPluginModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
     getPluginEntryCallback(
       pluginStore,
-      overrideSharedModules,
+      initSharedPluginModules,
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
     getPluginEntryCallback(
       pluginStore,
-      overrideSharedModules,
+      initSharedPluginModules,
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(1);
-    expect(overrideSharedModules).toHaveBeenCalledTimes(1);
+    expect(initSharedPluginModules).toHaveBeenCalledTimes(1);
     expect(resolveEncodedCodeRefs).toHaveBeenCalledTimes(1);
     expect(addDynamicPlugin).toHaveBeenCalledTimes(1);
   });
@@ -256,7 +256,7 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const overrideSharedModules = jest.fn(() => {
+    const initSharedPluginModules = jest.fn(() => {
       throw new Error('boom');
     });
     const resolveEncodedCodeRefs = jest.fn(() => []);
@@ -265,12 +265,12 @@ describe('window.loadPluginEntry', () => {
 
     getPluginEntryCallback(
       pluginStore,
-      overrideSharedModules,
+      initSharedPluginModules,
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(1);
-    expect(overrideSharedModules).toHaveBeenCalledWith(entryModule);
+    expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
   });
