@@ -142,7 +142,7 @@ type CommandParentOverride struct {
 // +union
 type ComponentUnionParentOverride struct {
 
-	// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume;Plugin
+	// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume;Image;Plugin
 	// Type of component
 	//
 	// +unionDiscriminator
@@ -171,6 +171,10 @@ type ComponentUnionParentOverride struct {
 	// shared by several other components
 	// +optional
 	Volume *VolumeComponentParentOverride `json:"volume,omitempty"`
+
+	// Allows specifying the definition of an image for outer loop builds
+	// +optional
+	Image *ImageComponentParentOverride `json:"image,omitempty"`
 
 	// Allows importing a plugin.
 	//
@@ -262,6 +266,12 @@ type VolumeComponentParentOverride struct {
 	VolumeParentOverride        `json:",inline"`
 }
 
+// Component that allows the developer to build a runtime image for outerloop
+type ImageComponentParentOverride struct {
+	BaseComponentParentOverride `json:",inline"`
+	ImageParentOverride         `json:",inline"`
+}
+
 type PluginComponentParentOverride struct {
 	BaseComponentParentOverride   `json:",inline"`
 	ImportReferenceParentOverride `json:",inline"`
@@ -330,7 +340,7 @@ type ExecCommandParentOverride struct {
 	// If set to `true` the command won't be restarted and it is expected to handle file changes on its own.
 	//
 	// Default value is `false`
-	HotReloadCapable bool `json:"hotReloadCapable,omitempty"`
+	HotReloadCapable *bool `json:"hotReloadCapable,omitempty"`
 }
 
 type ApplyCommandParentOverride struct {
@@ -350,7 +360,7 @@ type CompositeCommandParentOverride struct {
 
 	// Indicates if the sub-commands should be executed concurrently
 	// +optional
-	Parallel bool `json:"parallel,omitempty"`
+	Parallel *bool `json:"parallel,omitempty"`
 }
 
 // DevWorkspace component: Anything that will bring additional features / tooling / behaviour / context
@@ -420,7 +430,7 @@ type ContainerParentOverride struct {
 	//
 	// Default value is `false`
 	// +optional
-	DedicatedPod bool `json:"dedicatedPod,omitempty"`
+	DedicatedPod *bool `json:"dedicatedPod,omitempty"`
 }
 
 type EndpointParentOverride struct {
@@ -471,7 +481,7 @@ type EndpointParentOverride struct {
 	// Describes whether the endpoint should be secured and protected by some
 	// authentication process. This requires a protocol of `https` or `wss`.
 	// +optional
-	Secure bool `json:"secure,omitempty"`
+	Secure *bool `json:"secure,omitempty"`
 
 	// Path of the endpoint URL
 	// +optional
@@ -507,7 +517,15 @@ type VolumeParentOverride struct {
 	// +optional
 	// Ephemeral volumes are not stored persistently across restarts. Defaults
 	// to false
-	Ephemeral bool `json:"ephemeral,omitempty"`
+	Ephemeral *bool `json:"ephemeral,omitempty"`
+}
+
+type ImageParentOverride struct {
+
+	//  +optional
+	// Name of the image for the resulting outerloop build
+	ImageName                string `json:"imageName,omitempty"`
+	ImageUnionParentOverride `json:",inline"`
 }
 
 type ImportReferenceParentOverride struct {
@@ -549,7 +567,7 @@ type GitLikeProjectSourceParentOverride struct {
 
 	//  +optional
 	// The remotes map which should be initialized in the git project.
-	// Projects must have at least one remote configured while StarterProjects can only have at most one remote configured.
+	// Projects must have at least one remote configured while StarterProjects & Image Component's Git source can only have at most one remote configured.
 	Remotes map[string]string `json:"remotes,omitempty"`
 }
 
@@ -614,6 +632,21 @@ type K8sLikeComponentLocationParentOverride struct {
 	// Inlined manifest
 	// +optional
 	Inlined string `json:"inlined,omitempty"`
+}
+
+// +union
+type ImageUnionParentOverride struct {
+
+	// +kubebuilder:validation:Enum=Dockerfile
+	// Type of image
+	//
+	// +unionDiscriminator
+	// +optional
+	ImageType ImageTypeParentOverride `json:"imageType,omitempty"`
+
+	// Allows specifying dockerfile type build
+	// +optional
+	Dockerfile *DockerfileImageParentOverride `json:"dockerfile,omitempty"`
 }
 
 // Location from where the an import reference is retrieved
@@ -706,6 +739,17 @@ type BaseCommandParentOverride struct {
 // Only one of the following component type may be specified.
 type K8sLikeComponentLocationTypeParentOverride string
 
+// ImageType describes the type of image.
+// Only one of the following image type may be specified.
+type ImageTypeParentOverride string
+
+// Dockerfile Image type to specify the outerloop build using a Dockerfile
+type DockerfileImageParentOverride struct {
+	BaseImageParentOverride     `json:",inline"`
+	DockerfileSrcParentOverride `json:",inline"`
+	DockerfileParentOverride    `json:",inline"`
+}
+
 // ImportReferenceType describes the type of location
 // from where the referenced template structure should be retrieved.
 // Only one of the following parent locations may be specified.
@@ -722,7 +766,7 @@ type KubernetesCustomResourceImportReferenceParentOverride struct {
 // +union
 type ComponentUnionPluginOverrideParentOverride struct {
 
-	// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume
+	// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume;Image
 	// Type of component
 	//
 	// +unionDiscriminator
@@ -751,6 +795,10 @@ type ComponentUnionPluginOverrideParentOverride struct {
 	// shared by several other components
 	// +optional
 	Volume *VolumeComponentPluginOverrideParentOverride `json:"volume,omitempty"`
+
+	// Allows specifying the definition of an image for outer loop builds
+	// +optional
+	Image *ImageComponentPluginOverrideParentOverride `json:"image,omitempty"`
 }
 
 // +union
@@ -794,7 +842,51 @@ type CommandGroupParentOverride struct {
 
 	// +optional
 	// Identifies the default command for a given group kind
-	IsDefault bool `json:"isDefault,omitempty"`
+	IsDefault *bool `json:"isDefault,omitempty"`
+}
+
+type BaseImageParentOverride struct {
+}
+
+// +union
+type DockerfileSrcParentOverride struct {
+
+	// +kubebuilder:validation:Enum=Uri;DevfileRegistry;Git
+	// Type of Dockerfile src
+	// +
+	// +unionDiscriminator
+	// +optional
+	SrcType DockerfileSrcTypeParentOverride `json:"srcType,omitempty"`
+
+	// URI Reference of a Dockerfile.
+	// It can be a full URL or a relative URI from the current devfile as the base URI.
+	// +optional
+	Uri string `json:"uri,omitempty"`
+
+	// Dockerfile's Devfile Registry source
+	// +optional
+	DevfileRegistry *DockerfileDevfileRegistrySourceParentOverride `json:"devfileRegistry,omitempty"`
+
+	// Dockerfile's Git source
+	// +optional
+	Git *DockerfileGitProjectSourceParentOverride `json:"git,omitempty"`
+}
+
+type DockerfileParentOverride struct {
+
+	// Path of source directory to establish build context. Defaults to ${PROJECT_ROOT} in the container
+	// +optional
+	BuildContext string `json:"buildContext,omitempty"`
+
+	// The arguments to supply to the dockerfile build.
+	// +optional
+	Args []string `json:"args,omitempty" patchStrategy:"replace"`
+
+	// Specify if a privileged builder pod is required.
+	//
+	// Default value is `false`
+	// +optional
+	RootRequired *bool `json:"rootRequired,omitempty"`
 }
 
 // ComponentType describes the type of component.
@@ -822,6 +914,12 @@ type OpenshiftComponentPluginOverrideParentOverride struct {
 type VolumeComponentPluginOverrideParentOverride struct {
 	BaseComponentPluginOverrideParentOverride `json:",inline"`
 	VolumePluginOverrideParentOverride        `json:",inline"`
+}
+
+// Component that allows the developer to build a runtime image for outerloop
+type ImageComponentPluginOverrideParentOverride struct {
+	BaseComponentPluginOverrideParentOverride `json:",inline"`
+	ImagePluginOverrideParentOverride         `json:",inline"`
 }
 
 // CommandType describes the type of command.
@@ -868,7 +966,7 @@ type ExecCommandPluginOverrideParentOverride struct {
 	// If set to `true` the command won't be restarted and it is expected to handle file changes on its own.
 	//
 	// Default value is `false`
-	HotReloadCapable bool `json:"hotReloadCapable,omitempty"`
+	HotReloadCapable *bool `json:"hotReloadCapable,omitempty"`
 }
 
 type ApplyCommandPluginOverrideParentOverride struct {
@@ -888,12 +986,43 @@ type CompositeCommandPluginOverrideParentOverride struct {
 
 	// Indicates if the sub-commands should be executed concurrently
 	// +optional
-	Parallel bool `json:"parallel,omitempty"`
+	Parallel *bool `json:"parallel,omitempty"`
 }
 
 // CommandGroupKind describes the kind of command group.
-// +kubebuilder:validation:Enum=build;run;test;debug
+// +kubebuilder:validation:Enum=build;run;test;debug;deploy
 type CommandGroupKindParentOverride string
+
+// DockerfileSrcType describes the type of
+// the src for the Dockerfile outerloop build.
+// Only one of the following location type may be specified.
+type DockerfileSrcTypeParentOverride string
+
+type DockerfileDevfileRegistrySourceParentOverride struct {
+
+	//  +optional
+	// Id in a devfile registry that contains a Dockerfile. The src in the OCI registry
+	// required for the Dockerfile build will be downloaded for building the image.
+	Id string `json:"id,omitempty"`
+
+	// Devfile Registry URL to pull the Dockerfile from when using the Devfile Registry as Dockerfile src.
+	// To ensure the Dockerfile gets resolved consistently in different environments,
+	// it is recommended to always specify the `devfileRegistryUrl` when `Id` is used.
+	// +optional
+	RegistryUrl string `json:"registryUrl,omitempty"`
+}
+
+type DockerfileGitProjectSourceParentOverride struct {
+
+	// Git src for the Dockerfile build. The src required for the Dockerfile build will need to be
+	// cloned for building the image.
+	GitProjectSourceParentOverride `json:",inline"`
+
+	// Location of the Dockerfile in the Git repository when using git as Dockerfile src.
+	// Defaults to Dockerfile.
+	// +optional
+	FileLocation string `json:"fileLocation,omitempty"`
+}
 
 // DevWorkspace component: Anything that will bring additional features / tooling / behaviour / context
 // to the devworkspace, in order to make working in it easier.
@@ -963,7 +1092,7 @@ type ContainerPluginOverrideParentOverride struct {
 	//
 	// Default value is `false`
 	// +optional
-	DedicatedPod bool `json:"dedicatedPod,omitempty"`
+	DedicatedPod *bool `json:"dedicatedPod,omitempty"`
 }
 
 type EndpointPluginOverrideParentOverride struct {
@@ -1014,7 +1143,7 @@ type EndpointPluginOverrideParentOverride struct {
 	// Describes whether the endpoint should be secured and protected by some
 	// authentication process. This requires a protocol of `https` or `wss`.
 	// +optional
-	Secure bool `json:"secure,omitempty"`
+	Secure *bool `json:"secure,omitempty"`
 
 	// Path of the endpoint URL
 	// +optional
@@ -1050,7 +1179,15 @@ type VolumePluginOverrideParentOverride struct {
 	// +optional
 	// Ephemeral volumes are not stored persistently across restarts. Defaults
 	// to false
-	Ephemeral bool `json:"ephemeral,omitempty"`
+	Ephemeral *bool `json:"ephemeral,omitempty"`
+}
+
+type ImagePluginOverrideParentOverride struct {
+
+	//  +optional
+	// Name of the image for the resulting outerloop build
+	ImageName                              string `json:"imageName,omitempty"`
+	ImageUnionPluginOverrideParentOverride `json:",inline"`
 }
 
 type LabeledCommandPluginOverrideParentOverride struct {
@@ -1114,6 +1251,21 @@ type K8sLikeComponentLocationPluginOverrideParentOverride struct {
 	Inlined string `json:"inlined,omitempty"`
 }
 
+// +union
+type ImageUnionPluginOverrideParentOverride struct {
+
+	// +kubebuilder:validation:Enum=Dockerfile
+	// Type of image
+	//
+	// +unionDiscriminator
+	// +optional
+	ImageType ImageTypePluginOverrideParentOverride `json:"imageType,omitempty"`
+
+	// Allows specifying dockerfile type build
+	// +optional
+	Dockerfile *DockerfileImagePluginOverrideParentOverride `json:"dockerfile,omitempty"`
+}
+
 type BaseCommandPluginOverrideParentOverride struct {
 
 	// +optional
@@ -1126,6 +1278,17 @@ type BaseCommandPluginOverrideParentOverride struct {
 // Only one of the following component type may be specified.
 type K8sLikeComponentLocationTypePluginOverrideParentOverride string
 
+// ImageType describes the type of image.
+// Only one of the following image type may be specified.
+type ImageTypePluginOverrideParentOverride string
+
+// Dockerfile Image type to specify the outerloop build using a Dockerfile
+type DockerfileImagePluginOverrideParentOverride struct {
+	BaseImagePluginOverrideParentOverride     `json:",inline"`
+	DockerfileSrcPluginOverrideParentOverride `json:",inline"`
+	DockerfilePluginOverrideParentOverride    `json:",inline"`
+}
+
 type CommandGroupPluginOverrideParentOverride struct {
 
 	//  +optional
@@ -1134,11 +1297,118 @@ type CommandGroupPluginOverrideParentOverride struct {
 
 	// +optional
 	// Identifies the default command for a given group kind
-	IsDefault bool `json:"isDefault,omitempty"`
+	IsDefault *bool `json:"isDefault,omitempty"`
+}
+
+type BaseImagePluginOverrideParentOverride struct {
+}
+
+// +union
+type DockerfileSrcPluginOverrideParentOverride struct {
+
+	// +kubebuilder:validation:Enum=Uri;DevfileRegistry;Git
+	// Type of Dockerfile src
+	// +
+	// +unionDiscriminator
+	// +optional
+	SrcType DockerfileSrcTypePluginOverrideParentOverride `json:"srcType,omitempty"`
+
+	// URI Reference of a Dockerfile.
+	// It can be a full URL or a relative URI from the current devfile as the base URI.
+	// +optional
+	Uri string `json:"uri,omitempty"`
+
+	// Dockerfile's Devfile Registry source
+	// +optional
+	DevfileRegistry *DockerfileDevfileRegistrySourcePluginOverrideParentOverride `json:"devfileRegistry,omitempty"`
+
+	// Dockerfile's Git source
+	// +optional
+	Git *DockerfileGitProjectSourcePluginOverrideParentOverride `json:"git,omitempty"`
+}
+
+type DockerfilePluginOverrideParentOverride struct {
+
+	// Path of source directory to establish build context. Defaults to ${PROJECT_ROOT} in the container
+	// +optional
+	BuildContext string `json:"buildContext,omitempty"`
+
+	// The arguments to supply to the dockerfile build.
+	// +optional
+	Args []string `json:"args,omitempty" patchStrategy:"replace"`
+
+	// Specify if a privileged builder pod is required.
+	//
+	// Default value is `false`
+	// +optional
+	RootRequired *bool `json:"rootRequired,omitempty"`
 }
 
 // CommandGroupKind describes the kind of command group.
-// +kubebuilder:validation:Enum=build;run;test;debug
+// +kubebuilder:validation:Enum=build;run;test;debug;deploy
 type CommandGroupKindPluginOverrideParentOverride string
+
+// DockerfileSrcType describes the type of
+// the src for the Dockerfile outerloop build.
+// Only one of the following location type may be specified.
+type DockerfileSrcTypePluginOverrideParentOverride string
+
+type DockerfileDevfileRegistrySourcePluginOverrideParentOverride struct {
+
+	//  +optional
+	// Id in a devfile registry that contains a Dockerfile. The src in the OCI registry
+	// required for the Dockerfile build will be downloaded for building the image.
+	Id string `json:"id,omitempty"`
+
+	// Devfile Registry URL to pull the Dockerfile from when using the Devfile Registry as Dockerfile src.
+	// To ensure the Dockerfile gets resolved consistently in different environments,
+	// it is recommended to always specify the `devfileRegistryUrl` when `Id` is used.
+	// +optional
+	RegistryUrl string `json:"registryUrl,omitempty"`
+}
+
+type DockerfileGitProjectSourcePluginOverrideParentOverride struct {
+
+	// Git src for the Dockerfile build. The src required for the Dockerfile build will need to be
+	// cloned for building the image.
+	GitProjectSourcePluginOverrideParentOverride `json:",inline"`
+
+	// Location of the Dockerfile in the Git repository when using git as Dockerfile src.
+	// Defaults to Dockerfile.
+	// +optional
+	FileLocation string `json:"fileLocation,omitempty"`
+}
+
+type GitProjectSourcePluginOverrideParentOverride struct {
+	GitLikeProjectSourcePluginOverrideParentOverride `json:",inline"`
+}
+
+type GitLikeProjectSourcePluginOverrideParentOverride struct {
+	CommonProjectSourcePluginOverrideParentOverride `json:",inline"`
+
+	// Defines from what the project should be checked out. Required if there are more than one remote configured
+	// +optional
+	CheckoutFrom *CheckoutFromPluginOverrideParentOverride `json:"checkoutFrom,omitempty"`
+
+	//  +optional
+	// The remotes map which should be initialized in the git project.
+	// Projects must have at least one remote configured while StarterProjects & Image Component's Git source can only have at most one remote configured.
+	Remotes map[string]string `json:"remotes,omitempty"`
+}
+
+type CommonProjectSourcePluginOverrideParentOverride struct {
+}
+
+type CheckoutFromPluginOverrideParentOverride struct {
+
+	// The revision to checkout from. Should be branch name, tag or commit id.
+	// Default branch is used if missing or specified revision is not found.
+	// +optional
+	Revision string `json:"revision,omitempty"`
+
+	// The remote name should be used as init. Required if there are more than one remote configured
+	// +optional
+	Remote string `json:"remote,omitempty"`
+}
 
 func (overrides ParentOverrides) isOverride() {}

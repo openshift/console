@@ -17,22 +17,8 @@ func ValidateStarterProjects(starterProjects []v1alpha2.StarterProject) (returne
 			continue
 		}
 
-		switch len(gitSource.Remotes) {
-		case 0:
-
-			newErr := resolveErrorMessageWithImportAttributes(&MissingStarterProjectRemoteError{projectName: starterProject.Name}, starterProject.Attributes)
-			returnedErr = multierror.Append(returnedErr, newErr)
-		case 1:
-			if gitSource.CheckoutFrom != nil && gitSource.CheckoutFrom.Remote != "" {
-				err := validateRemoteMap(gitSource.Remotes, gitSource.CheckoutFrom.Remote, starterProject.Name)
-				if err != nil {
-					newErr := resolveErrorMessageWithImportAttributes(err, starterProject.Attributes)
-					returnedErr = multierror.Append(returnedErr, newErr)
-				}
-			}
-		default: // len(gitSource.Remotes) >= 2
-
-			newErr := resolveErrorMessageWithImportAttributes(&MultipleStarterProjectRemoteError{projectName: starterProject.Name}, starterProject.Attributes)
+		if starterProjectErr := validateSingleRemoteGitSrc("starterProject", starterProject.Name, gitSource); starterProjectErr != nil {
+			newErr := resolveErrorMessageWithImportAttributes(starterProjectErr, starterProject.Attributes)
 			returnedErr = multierror.Append(returnedErr, newErr)
 		}
 	}
@@ -58,7 +44,7 @@ func ValidateProjects(projects []v1alpha2.Project) (returnedErr error) {
 			returnedErr = multierror.Append(returnedErr, newErr)
 		case 1:
 			if gitSource.CheckoutFrom != nil && gitSource.CheckoutFrom.Remote != "" {
-				if err := validateRemoteMap(gitSource.Remotes, gitSource.CheckoutFrom.Remote, project.Name); err != nil {
+				if err := validateRemoteMap(gitSource.Remotes, gitSource.CheckoutFrom.Remote, "project", project.Name); err != nil {
 					newErr := resolveErrorMessageWithImportAttributes(err, project.Attributes)
 					returnedErr = multierror.Append(returnedErr, newErr)
 				}
@@ -70,7 +56,7 @@ func ValidateProjects(projects []v1alpha2.Project) (returnedErr error) {
 				returnedErr = multierror.Append(returnedErr, newErr)
 				continue
 			}
-			if err := validateRemoteMap(gitSource.Remotes, gitSource.CheckoutFrom.Remote, project.Name); err != nil {
+			if err := validateRemoteMap(gitSource.Remotes, gitSource.CheckoutFrom.Remote, "project", project.Name); err != nil {
 				newErr := resolveErrorMessageWithImportAttributes(err, project.Attributes)
 				returnedErr = multierror.Append(returnedErr, newErr)
 			}
@@ -81,12 +67,28 @@ func ValidateProjects(projects []v1alpha2.Project) (returnedErr error) {
 }
 
 // validateRemoteMap checks if the checkout remote is present in the project remote map
-func validateRemoteMap(remotes map[string]string, checkoutRemote, projectName string) error {
+func validateRemoteMap(remotes map[string]string, checkoutRemote, objectType, objectName string) error {
 
 	if _, ok := remotes[checkoutRemote]; !ok {
 
-		return &InvalidProjectCheckoutRemoteError{projectName: projectName, checkoutRemote: checkoutRemote}
+		return &InvalidProjectCheckoutRemoteError{objectName: objectName, objectType: objectType, checkoutRemote: checkoutRemote}
 	}
 
 	return nil
+}
+
+// validateSingleRemoteGitSrc validates a git src for a single remote only
+func validateSingleRemoteGitSrc(objectType, objectName string, gitSource v1alpha2.GitLikeProjectSource) (err error) {
+	switch len(gitSource.Remotes) {
+	case 0:
+		err = &MissingRemoteError{objectType: objectType, objectName: objectName}
+	case 1:
+		if gitSource.CheckoutFrom != nil && gitSource.CheckoutFrom.Remote != "" {
+			err = validateRemoteMap(gitSource.Remotes, gitSource.CheckoutFrom.Remote, objectType, objectName)
+		}
+	default: // len(gitSource.Remotes) >= 2
+		err = &MultipleRemoteError{objectType: objectType, objectName: objectName}
+	}
+
+	return err
 }

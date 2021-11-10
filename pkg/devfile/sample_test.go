@@ -26,7 +26,7 @@ func TestGetRegistrySamples(t *testing.T) {
 	}{
 		{
 			name:     "Fetch the sample placeholder",
-			registry: DEVFILE_REGISTRY_URL,
+			registry: DEVFILE_STAGING_REGISTRY_URL,
 			wantSamples: []schema.Schema{
 				{
 					Name:        "nodejs-basic",

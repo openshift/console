@@ -18,23 +18,26 @@ const (
 )
 
 // CommandGroupKind describes the kind of command group.
-// +kubebuilder:validation:Enum=build;run;test;debug
+// +kubebuilder:validation:Enum=build;run;test;debug;deploy
 type CommandGroupKind string
 
 const (
-	BuildCommandGroupKind CommandGroupKind = "build"
-	RunCommandGroupKind   CommandGroupKind = "run"
-	TestCommandGroupKind  CommandGroupKind = "test"
-	DebugCommandGroupKind CommandGroupKind = "debug"
+	BuildCommandGroupKind  CommandGroupKind = "build"
+	RunCommandGroupKind    CommandGroupKind = "run"
+	TestCommandGroupKind   CommandGroupKind = "test"
+	DebugCommandGroupKind  CommandGroupKind = "debug"
+	DeployCommandGroupKind CommandGroupKind = "deploy"
 )
 
+// +devfile:getter:generate
 type CommandGroup struct {
 	// Kind of group the command is part of
 	Kind CommandGroupKind `json:"kind"`
 
 	// +optional
 	// Identifies the default command for a given group kind
-	IsDefault bool `json:"isDefault,omitempty"`
+	// +devfile:default:value=false
+	IsDefault *bool `json:"isDefault,omitempty"`
 }
 
 type BaseCommand struct {
@@ -106,6 +109,7 @@ type CommandUnion struct {
 	Custom *CustomCommand `json:"custom,omitempty"`
 }
 
+// +devfile:getter:generate
 type ExecCommand struct {
 	LabeledCommand `json:",inline"`
 
@@ -144,7 +148,8 @@ type ExecCommand struct {
 	// If set to `true` the command won't be restarted and it is expected to handle file changes on its own.
 	//
 	// Default value is `false`
-	HotReloadCapable bool `json:"hotReloadCapable,omitempty"`
+	// +devfile:default:value=false
+	HotReloadCapable *bool `json:"hotReloadCapable,omitempty"`
 }
 
 type ApplyCommand struct {
@@ -155,6 +160,7 @@ type ApplyCommand struct {
 	Component string `json:"component"`
 }
 
+// +devfile:getter:generate
 type CompositeCommand struct {
 	LabeledCommand `json:",inline"`
 
@@ -163,7 +169,8 @@ type CompositeCommand struct {
 
 	// Indicates if the sub-commands should be executed concurrently
 	// +optional
-	Parallel bool `json:"parallel,omitempty"`
+	// +devfile:default:value=false
+	Parallel *bool `json:"parallel,omitempty"`
 }
 
 type CustomCommand struct {

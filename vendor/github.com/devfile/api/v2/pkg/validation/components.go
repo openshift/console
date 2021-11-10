@@ -22,6 +22,7 @@ const (
 // 2. makes sure the volume components are unique
 // 3. checks the URI specified in openshift components and kubernetes components are with valid format
 // 4. makes sure the component name is unique
+// 5. makes sure the image dockerfile component git src has at most one remote
 func ValidateComponents(components []v1alpha2.Component) (returnedErr error) {
 
 	processedVolumes := make(map[string]bool)
@@ -98,6 +99,14 @@ func ValidateComponents(components []v1alpha2.Component) (returnedErr error) {
 			if len(err) > 0 {
 				for _, endpointErr := range err {
 					returnedErr = multierror.Append(returnedErr, resolveErrorMessageWithImportAttributes(endpointErr, component.Attributes))
+				}
+			}
+		case component.Image != nil:
+			var gitSource v1alpha2.GitLikeProjectSource
+			if component.Image.Dockerfile != nil && component.Image.Dockerfile.Git != nil {
+				gitSource = component.Image.Dockerfile.Git.GitLikeProjectSource
+				if err := validateSingleRemoteGitSrc("component", component.Name, gitSource); err != nil {
+					returnedErr = multierror.Append(returnedErr, resolveErrorMessageWithImportAttributes(err, component.Attributes))
 				}
 			}
 		case component.Plugin != nil:

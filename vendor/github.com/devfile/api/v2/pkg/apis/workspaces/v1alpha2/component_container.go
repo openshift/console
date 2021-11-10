@@ -7,6 +7,7 @@ type ContainerComponent struct {
 	Endpoints     []Endpoint `json:"endpoints,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
+// +devfile:getter:generate
 type Container struct {
 	Image string `json:"image"`
 
@@ -69,7 +70,20 @@ type Container struct {
 	//
 	// Default value is `false`
 	// +optional
-	DedicatedPod bool `json:"dedicatedPod,omitempty"`
+	// +devfile:default:value=false
+	DedicatedPod *bool `json:"dedicatedPod,omitempty"`
+}
+
+//GetMountSources returns the value of the boolean property.  If it's unset, the default value is true for all component types except plugins and components that set `dedicatedPod` to true.
+func (in *Container) GetMountSources() bool {
+	if in.MountSources != nil {
+		return *in.MountSources
+	} else {
+		if in.GetDedicatedPod() {
+			return false
+		}
+		return true
+	}
 }
 
 type EnvVar struct {

@@ -384,9 +384,30 @@ func GetVolumesAndVolumeMounts(devfileObj parser.DevfileObj, volumeParams Volume
 		return nil, err
 	}
 
+	options.ComponentOptions = common.ComponentOptions{
+		ComponentType: v1.VolumeComponentType,
+	}
+	volumeComponent, err := devfileObj.Data.GetComponents(options)
+	if err != nil {
+		return nil, err
+	}
+
 	var pvcVols []corev1.Volume
 	for volName, volInfo := range volumeParams.VolumeNameToVolumeInfo {
-		pvcVols = append(pvcVols, getPVC(volInfo.VolumeName, volInfo.PVCName))
+		emptyDirVolume := false
+		for _, volumeComp := range volumeComponent {
+			if volumeComp.Name == volName && *volumeComp.Volume.Ephemeral {
+				emptyDirVolume = true
+				break
+			}
+		}
+
+		// if `ephemeral=true`, a volume with emptyDir should be created
+		if emptyDirVolume {
+			pvcVols = append(pvcVols, getEmptyDirVol(volInfo.VolumeName))
+		} else {
+			pvcVols = append(pvcVols, getPVC(volInfo.VolumeName, volInfo.PVCName))
+		}
 
 		// containerNameToMountPaths is a map of the Devfile container name to their Devfile Volume Mount Paths for a given Volume Name
 		containerNameToMountPaths := make(map[string][]string)

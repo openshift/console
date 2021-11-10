@@ -2,6 +2,7 @@ package validation
 
 import (
 	"fmt"
+
 	"github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2"
 	attributesAPI "github.com/devfile/api/v2/pkg/attributes"
 )
@@ -120,22 +121,24 @@ func (e *MissingProjectRemoteError) Error() string {
 	return fmt.Sprintf("project %s should have at least one remote", e.projectName)
 }
 
-//MissingStarterProjectRemoteError returns an error if the git remotes object under a starterProject is empty
-type MissingStarterProjectRemoteError struct {
-	projectName string
+//MissingRemoteError returns an error if the git remotes object is empty
+type MissingRemoteError struct {
+	objectType string
+	objectName string
 }
 
-func (e *MissingStarterProjectRemoteError) Error() string {
-	return fmt.Sprintf("starterProject %s should have at least one remote", e.projectName)
+func (e *MissingRemoteError) Error() string {
+	return fmt.Sprintf("%s %s should have at least one remote", e.objectType, e.objectName)
 }
 
-//MultipleStarterProjectRemoteError returns an error if multiple git remotes are specified. There can only be one remote.
-type MultipleStarterProjectRemoteError struct {
-	projectName string
+//MultipleRemoteError returns an error if multiple git remotes are specified. There can only be one remote.
+type MultipleRemoteError struct {
+	objectType string
+	objectName string
 }
 
-func (e *MultipleStarterProjectRemoteError) Error() string {
-	return fmt.Sprintf("starterProject %s should have one remote only", e.projectName)
+func (e *MultipleRemoteError) Error() string {
+	return fmt.Sprintf("%s %s should have one remote only", e.objectType, e.objectName)
 }
 
 //MissingProjectCheckoutFromRemoteError returns an error if there are multiple git remotes but the checkoutFrom remote has not been specified
@@ -149,12 +152,13 @@ func (e *MissingProjectCheckoutFromRemoteError) Error() string {
 
 //InvalidProjectCheckoutRemoteError returns an error if there is an unmatched, checkoutFrom remote specified
 type InvalidProjectCheckoutRemoteError struct {
-	projectName    string
+	objectType     string
+	objectName     string
 	checkoutRemote string
 }
 
 func (e *InvalidProjectCheckoutRemoteError) Error() string {
-	return fmt.Sprintf("unable to find the checkout remote %s in the remotes for project %s", e.checkoutRemote, e.projectName)
+	return fmt.Sprintf("unable to find the checkout remote %s in the remotes for %s %s", e.checkoutRemote, e.objectType, e.objectName)
 }
 
 // resolveErrorMessageWithImportAttributes returns an updated error message

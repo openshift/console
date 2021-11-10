@@ -110,7 +110,7 @@ type GitLikeProjectSource struct {
 	CheckoutFrom *CheckoutFrom `json:"checkoutFrom,omitempty"`
 
 	// The remotes map which should be initialized in the git project.
-	// Projects must have at least one remote configured while StarterProjects can only have at most one remote configured.
+	// Projects must have at least one remote configured while StarterProjects & Image Component's Git source can only have at most one remote configured.
 	Remotes map[string]string `json:"remotes"`
 }
 
