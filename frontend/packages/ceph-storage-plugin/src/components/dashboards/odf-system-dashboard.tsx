@@ -32,14 +32,17 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
   const dashboardTab = !isCephAvailable && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
   const defaultDashboard = React.useRef(dashboardTab);
 
-  const pages: Page[] = [
-    {
-      path: 'overview/:dashboard',
-      href: `overview/${defaultDashboard.current}`,
-      name: t('ceph-storage-plugin~Overview'),
-      component: OCSOverview,
-    },
-  ];
+  const pages: Page[] = React.useMemo(
+    () => [
+      {
+        path: 'overview/:dashboard',
+        href: `overview/${defaultDashboard.current}`,
+        name: t('ceph-storage-plugin~Overview'),
+        component: OCSOverview,
+      },
+    ],
+    [t],
+  );
 
   React.useEffect(() => {
     if (isCephAvailable) {

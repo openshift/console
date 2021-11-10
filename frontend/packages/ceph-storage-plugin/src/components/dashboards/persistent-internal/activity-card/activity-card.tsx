@@ -56,6 +56,7 @@ const RecentEvent = withDashboardResources(
       .map(getName);
     const memoizedPVCNames = useDeepCompareMemoize(validPVC, true);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const ocsEventsFilter = React.useCallback(isPersistentStorageEvent(memoizedPVCNames), [
       memoizedPVCNames,
     ]);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';

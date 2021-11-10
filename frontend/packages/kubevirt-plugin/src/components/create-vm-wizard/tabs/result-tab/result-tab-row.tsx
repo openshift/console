@@ -18,7 +18,9 @@ export const ResultTabRow: React.FC<ResultTabRowProps> = ({
     <ExpandableSection
       toggleText={title || ''}
       className={classNames({
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'kubevirt-create-vm-modal___result-tab-row-container': alignMiddle,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'kubevirt-create-vm-modal___result-tab-row-container--error': isError,
       })}
     >

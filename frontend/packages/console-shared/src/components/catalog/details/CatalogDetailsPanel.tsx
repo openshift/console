@@ -75,6 +75,7 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
                   )}
                   {!details?.descriptions?.length && description && <p>{description}</p>}
                   {details?.descriptions?.map((desc, index) => (
+                    // eslint-disable-next-line react/no-array-index-key
                     <StackItem key={index}>
                       {desc.label && <SectionHeading text={desc.label} />}
                       {desc.value}

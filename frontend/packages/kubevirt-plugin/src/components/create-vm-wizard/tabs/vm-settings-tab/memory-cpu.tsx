@@ -17,12 +17,28 @@ import './vm-settings-tab.scss';
 
 export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
   ({ memoryField, cpuField, onChange }) => {
-    if (isFieldHidden(memoryField) && isFieldHidden(cpuField)) {
-      return null;
-    }
     const mem = iGetFieldValue(memoryField);
     const [size, unit] = stringValueUnitSplit(_.isString(mem) ? mem : '');
     const hasSize = size != null && !_.isNaN(size);
+
+    const onSizeChange = React.useCallback(
+      (value) =>
+        onChange(VMSettingsField.MEMORY, value == null ? unit : `${value}${unit || BinaryUnit.Gi}`),
+      [onChange, unit],
+    );
+
+    const onUnitChange = React.useCallback(
+      (value) => onChange(VMSettingsField.MEMORY, hasSize ? `${size}${value}` : value),
+      [hasSize, onChange, size],
+    );
+
+    const onIntegerChange = React.useCallback((value) => onChange(VMSettingsField.CPU, value), [
+      onChange,
+    ]);
+
+    if (isFieldHidden(memoryField) && isFieldHidden(cpuField)) {
+      return null;
+    }
 
     return (
       <Grid>
@@ -34,18 +50,8 @@ export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
                 size={hasSize ? size : ''}
                 unit={(unit as BinaryUnit) || BinaryUnit.Gi}
                 units={getReasonableUnits(unit)}
-                onSizeChanged={React.useCallback(
-                  (value) =>
-                    onChange(
-                      VMSettingsField.MEMORY,
-                      value == null ? unit : `${value}${unit || BinaryUnit.Gi}`,
-                    ),
-                  [onChange, unit],
-                )}
-                onUnitChanged={React.useCallback(
-                  (value) => onChange(VMSettingsField.MEMORY, hasSize ? `${size}${value}` : value),
-                  [hasSize, onChange, size],
-                )}
+                onSizeChanged={onSizeChange}
+                onUnitChanged={onUnitChange}
               />
             </FormField>
           </FormFieldMemoRow>
@@ -53,13 +59,7 @@ export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
         <GridItem span={6}>
           <FormFieldMemoRow field={cpuField} fieldType={FormFieldType.TEXT}>
             <FormField>
-              <Integer
-                isFullWidth
-                isPositive
-                onChange={React.useCallback((value) => onChange(VMSettingsField.CPU, value), [
-                  onChange,
-                ])}
-              />
+              <Integer isFullWidth isPositive onChange={onIntegerChange} />
             </FormField>
           </FormFieldMemoRow>
         </GridItem>
@@ -67,6 +67,7 @@ export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
     );
   },
 );
+MemoryCPU.displayName = 'MemoryCPU';
 
 type MemoryCPUProps = {
   memoryField: any;

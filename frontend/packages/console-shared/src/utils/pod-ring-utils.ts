@@ -101,8 +101,11 @@ const getTitleComponent = (
   reversed: boolean = false,
 ) => {
   const labelClasses = classNames('pf-chart-donut-title', {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     'pod-ring__center-text--reversed': reversed,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     'pod-ring__center-text': !reversed,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     'pod-ring__long-text': longTitle,
   });
   return React.createElement(ChartLabel, {

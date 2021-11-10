@@ -19,6 +19,7 @@ const FormBody: React.FC<FormBodyProps & React.HTMLProps<HTMLDivElement>> = ({
 }) => (
   <div
     {...props}
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     className={classNames('pf-c-form', { 'co-m-pane__body': !disablePaneBody }, className)}
     style={
       flexLayout

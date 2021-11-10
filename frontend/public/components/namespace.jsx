@@ -15,7 +15,7 @@ import {
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';

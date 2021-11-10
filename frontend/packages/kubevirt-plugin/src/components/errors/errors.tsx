@@ -31,7 +31,9 @@ export const Errors: React.FC<ErrorsProps> = ({ errors, endMargin }) => {
               variant={variant || AlertVariant.danger}
               title={title}
               className={classNames({
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'kubevirt-errors__error-group--item': idx !== arr.length - 1,
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'kubevirt-errors__error-group--end ': endMargin && idx === arr.length - 1,
               })}
             >

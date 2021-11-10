@@ -3179,7 +3179,6 @@ export const mockRepositories: RepositoryKind[] = [
     },
     spec: {
       branch: 'main',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       event_type: 'pull_request',
       namespace: 'karthik',
       url: 'https://github.com/karthikjeeyar/demo-app',

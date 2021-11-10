@@ -76,6 +76,7 @@ export const HardwareDevicesListRowAddDevice: React.FC<HardwareDevicesListRowAdd
     return temp?.map((group) => (
       <SelectGroup label={group?.label} key={group?.key}>
         {group?.options?.map((option, index) => (
+          // eslint-disable-next-line react/no-array-index-key
           <SelectOption key={index} value={option} />
         ))}
       </SelectGroup>

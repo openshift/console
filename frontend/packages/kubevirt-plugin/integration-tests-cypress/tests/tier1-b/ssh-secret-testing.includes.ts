@@ -1,13 +1,10 @@
 import sshFixure from '../../fixtures/ssh';
 
-// Not in ssh.spec until this is fixed: https://github.com/cypress-io/eslint-plugin-cypress/issues/43
-const AFTER_CREATE_WAIT_TIME = 3000;
-
 export default () =>
   describe('ID (CNV-5985) Test if ssh secret is present', () => {
     beforeEach(() => {
-      // eslint-disable-next-line
-      cy.wait(AFTER_CREATE_WAIT_TIME);
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
       cy.get('[data-test=nav]')
         .filter('[href$=secrets]')
         .then((link) => cy.visit(link.attr('href')));

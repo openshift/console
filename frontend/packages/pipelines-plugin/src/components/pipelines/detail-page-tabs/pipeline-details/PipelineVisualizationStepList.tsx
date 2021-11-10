@@ -63,6 +63,7 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
         return (
           <div
             className={classNames('odc-pipeline-visualization-step-list__step', {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
               'odc-pipeline-visualization-step-list__step--task-run': !isSpecOverview,
             })}
             key={name}

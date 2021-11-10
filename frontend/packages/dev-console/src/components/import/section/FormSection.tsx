@@ -33,6 +33,7 @@ const FormSection: React.FC<FormSectionProps> = ({
 }) => (
   <div
     className={cx('pf-c-form', {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       'co-m-pane__form': !fullWidth,
       'odc-form-section--extra-margin': extraMargin,
     })}

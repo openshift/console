@@ -79,6 +79,7 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
             });
       }, [mapperLoader]);
 
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       const additionalResourcesData = {};
       let additionalResourcesLoaded = true;
       let additionalResourcesLoadError = false;

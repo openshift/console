@@ -21,10 +21,8 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
     return fuzzyCaseInsensitive(textFilter, name);
   });
 
-  const hasSyncStatus: boolean =
-    appGroups?.some(
-      ({ sync_status }) => sync_status /* eslint-disable-line @typescript-eslint/camelcase */,
-    ) || false;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const hasSyncStatus: boolean = appGroups?.some(({ sync_status }) => sync_status) || false;
   return (
     <div className="odc-gitops-list">
       {!emptyStateMsg && appGroups ? (

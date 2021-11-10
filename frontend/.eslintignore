@@ -9,3 +9,4 @@ public/lib
 Godeps
 @types
 dynamic-demo-plugin
+!.eslintrc.js

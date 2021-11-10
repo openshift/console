@@ -66,6 +66,7 @@ export const normalizeHelmCharts = (
         const maintainers = chart.maintainers?.length > 0 && (
           <>
             {chart.maintainers?.map((maintainer, index) => (
+              // eslint-disable-next-line react/no-array-index-key
               <React.Fragment key={index}>
                 {maintainer.name}
                 <br />

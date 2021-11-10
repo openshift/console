@@ -4,7 +4,7 @@ import { Result } from 'axe-core';
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       logA11yViolations(violations: Result[], target: string): Chainable<Element>;
       testA11y(target: string, selector?: string): Chainable<Element>;
     }

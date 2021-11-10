@@ -132,7 +132,9 @@ const Topology: React.FC<TopologyProps &
   userSettingState: topologyLayoutData,
   setUserSettingState: setTopologyLayoutData,
 }) => {
-  const topologyLayoutDataJson = topologyLayoutData || {};
+  const topologyLayoutDataJson = React.useMemo(() => topologyLayoutData || {}, [
+    topologyLayoutData,
+  ]);
   const applicationRef = React.useRef<string>(null);
   const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
   const [dragHint, setDragHint] = React.useState<string>('');

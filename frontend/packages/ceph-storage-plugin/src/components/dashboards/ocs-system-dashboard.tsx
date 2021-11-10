@@ -144,21 +144,27 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
 
   const showInternalDashboard = !isIndependent && isCephAvailable;
 
-  const internalPage = {
-    href: !isOCS ? `overview/${BLOCK_FILE}` : BLOCK_FILE,
-    name: t('ceph-storage-plugin~Block and File'),
-    component: PersistentInternalDashboard,
-  };
-  const externalPage = {
-    href: !isOCS ? `overview/${BLOCK_FILE}` : BLOCK_FILE,
-    name: t('ceph-storage-plugin~Block and File'),
-    component: PersistentExternalDashboard,
-  };
-  const objectPage = {
-    href: !isOCS ? `overview/${OBJECT}` : OBJECT,
-    name: t('ceph-storage-plugin~Object'),
-    component: ObjectServiceDashboard,
-  };
+  const internalPage = React.useMemo(() => {
+    return {
+      href: !isOCS ? `overview/${BLOCK_FILE}` : BLOCK_FILE,
+      name: t('ceph-storage-plugin~Block and File'),
+      component: PersistentInternalDashboard,
+    };
+  }, [isOCS, t]);
+  const externalPage = React.useMemo(() => {
+    return {
+      href: !isOCS ? `overview/${BLOCK_FILE}` : BLOCK_FILE,
+      name: t('ceph-storage-plugin~Block and File'),
+      component: PersistentExternalDashboard,
+    };
+  }, [isOCS, t]);
+  const objectPage = React.useMemo(() => {
+    return {
+      href: !isOCS ? `overview/${OBJECT}` : OBJECT,
+      name: t('ceph-storage-plugin~Object'),
+      component: ObjectServiceDashboard,
+    };
+  }, [isOCS, t]);
 
   React.useEffect(() => {
     if (showInternalDashboard && !isPagePresent(pages, internalPage)) {

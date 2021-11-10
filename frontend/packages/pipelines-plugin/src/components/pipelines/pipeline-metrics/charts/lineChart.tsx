@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import * as React from 'react';
 import {
   Chart,

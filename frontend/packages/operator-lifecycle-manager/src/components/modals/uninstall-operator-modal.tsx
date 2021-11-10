@@ -1,22 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { Checkbox } from '@console/internal/components/checkbox';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import {
-  history,
-  ResourceLink,
-  resourceListPathFromModel,
-  StatusBox,
-} from '@console/internal/components/utils';
+import { history, resourceListPathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
@@ -54,7 +49,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     operatorUninstallErrorMessage,
   ] = usePromiseHandler();
   const [operatorUninstallFinished, setOperatorUninstallFinished] = React.useState(false);
-  const [deleteOperands, setDeleteOperands] = React.useState(false);
+  const [deleteOperands] = React.useState(false);
   const [operandsDeleteInProgress, setOperandsDeleteInProgress] = React.useState(false);
   const [operandsDeleteFinished, setOperandsDeleteFinished] = React.useState(false);
   const [operandDeletionErrors, setOperandDeletionErrors] = React.useState<OperandError[]>([]);
@@ -96,10 +91,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const hasSubmitErrors =
     operandDeletionErrors.length > 0 || operatorUninstallErrorMessage.length > 0;
 
-  const [operands, operandsLoaded, operandsLoadedErrorMessage] = useOperands(
-    subscriptionName,
-    subscriptionNamespace,
-  );
+  const [operands] = useOperands(subscriptionName, subscriptionNamespace);
 
   const closeAndRedirect = React.useCallback(() => {
     close();
@@ -222,30 +214,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     </>
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-ignore
-  // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const operandsSection = operandsLoadedErrorMessage ? (
-    <OperandsLoadedErrorAlert operandsLoadedErrorMessage={operandsLoadedErrorMessage} />
-  ) : (
-    (!operandsLoaded || operands.length > 0) && (
-      <span className="co-operator-uninstall__operands-section">
-        <h2>{t('olm~Operand instances')}</h2>
-        <OperandsTable
-          operands={operands}
-          loaded={operandsLoaded}
-          csvName={csvName}
-          cancel={cancel} // for breadcrumbs & cancel modal when clicking on operand links
-        />
-        <Checkbox
-          onChange={({ currentTarget }) => setDeleteOperands(currentTarget.checked)}
-          name="delete-all-operands"
-          label={t('olm~Delete all operand instances for this operator')}
-          checked={deleteOperands}
-        />
-      </span>
-    )
-  );
 
   const operandDeletionAlert = operandDeletionErrors.length ? (
     <OperandDeletionErrorAlert
@@ -290,22 +259,6 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         submitText={t(isSubmitFinished ? 'olm~OK' : 'olm~Uninstall')}
       />
     </form>
-  );
-};
-
-const OperandsLoadedErrorAlert: React.FC<{ operandsLoadedErrorMessage: string }> = ({
-  operandsLoadedErrorMessage,
-}) => {
-  const { t } = useTranslation();
-  return (
-    <Alert variant="warning" className="co-alert" title={t('olm~Cannot load Operands')} isInline>
-      <p>
-        {t(
-          'olm~There was an error loading operands for this operator. Operands will need to be deleted manually.',
-        )}
-        <div>{operandsLoadedErrorMessage}</div>
-      </p>
-    </Alert>
   );
 };
 
@@ -404,54 +357,6 @@ const UninstallAlert: React.FC<{ errorMessage: string; name: string; namespace: 
     <OperatorUninstallSuccessAlert name={name} namespace={namespace} />
   );
 
-const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName, cancel }) => {
-  const { t } = useTranslation();
-  return (
-    <StatusBox
-      skeleton={<div className="loading-skeleton--table" />}
-      data={operands}
-      loaded={loaded}
-    >
-      <table className="pf-c-table pf-m-compact pf-m-border-rows">
-        <thead>
-          <tr>
-            <th>{t('olm~Name')}</th>
-            <th>{t('olm~Kind')}</th>
-            <th>{t('olm~Namespace')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {operands
-            .sort((a, b) => a.metadata.name.localeCompare(b.metadata.name))
-            .map((operand) => (
-              <>
-                <tr key={operand.metadata.uid}>
-                  <td>
-                    <OperandLink obj={operand} csvName={csvName} onClick={cancel} />
-                  </td>
-                  <td className="co-break-word" data-test-operand-kind={operand.kind}>
-                    {operand.kind}
-                  </td>
-                  <td>
-                    {operand.metadata.namespace ? (
-                      <ResourceLink
-                        kind="Namespace"
-                        name={operand.metadata.namespace}
-                        onClick={cancel}
-                      />
-                    ) : (
-                      '-'
-                    )}
-                  </td>
-                </tr>
-              </>
-            ))}
-        </tbody>
-      </table>
-    </StatusBox>
-  );
-};
-
 const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvName, cancel }) => {
   const { t } = useTranslation();
   return (
@@ -487,13 +392,6 @@ export type UninstallOperatorModalProps = {
   ) => Promise<any>;
   subscription: SubscriptionKind;
   csv?: ClusterServiceVersionKind;
-};
-
-type OperandsTableProps = {
-  operands: K8sResourceCommon[];
-  loaded: boolean;
-  csvName: string;
-  cancel?: () => void;
 };
 
 type OperandError = { operand: K8sResourceCommon; errorMessage: string };

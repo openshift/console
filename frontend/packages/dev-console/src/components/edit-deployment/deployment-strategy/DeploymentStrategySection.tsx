@@ -63,12 +63,12 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
       setFieldValue('formData.deploymentStrategy', strategyData);
     },
     [
-      initialValues.formData.deploymentStrategy,
       resName,
       resNamespace,
       resourceType,
-      setFieldValue,
       deploymentStrategy,
+      initialValues.formData,
+      setFieldValue,
     ],
   );
 

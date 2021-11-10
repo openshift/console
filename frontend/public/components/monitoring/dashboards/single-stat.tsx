@@ -72,6 +72,7 @@ const SingleStat: React.FC<Props> = ({ panel, pollInterval, query, namespace }) 
   const [isLoading, setIsLoading] = React.useState(true);
   const [value, setValue] = React.useState<string>();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () =>

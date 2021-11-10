@@ -415,7 +415,7 @@ describe('Add Secret to Workloads', () => {
   describe('Add Secret to Workloads as Enviroment Variables', () => {
     it('Add Secret to Deployment as Env', async () => {
       await secretsView.addSecretToWorkloadAsEnv(resourceName, envPrefix);
-      await new Promise((resolve) =>
+      await new Promise<void>((resolve) =>
         (function checkForValues() {
           const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
           if (JSON.parse(output).status.observedGeneration === 2) {
@@ -448,7 +448,7 @@ describe('Add Secret to Workloads', () => {
   describe('Add Secret to Workloads as Volume', () => {
     it('Add Secret to Deployment as Vol', async () => {
       await secretsView.addSecretToWorkloadAsVol(resourceName, mountPath);
-      await new Promise((resolve) =>
+      await new Promise<void>((resolve) =>
         (function checkForValues() {
           const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
           if (JSON.parse(output).status.observedGeneration === 3) {

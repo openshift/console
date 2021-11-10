@@ -1,4 +1,4 @@
-var fs = require('fs');
+const fs = require('fs');
 
 module.exports = {
   root: true,
@@ -7,6 +7,7 @@ module.exports = {
     es6: true,
     jasmine: true,
     jest: true,
+    node: true,
   },
   extends: [
     'eslint:recommended',
@@ -17,17 +18,6 @@ module.exports = {
     'plugin:console/prettier',
   ],
   parser: '@typescript-eslint/parser',
-  parserOptions: {
-    project: './tsconfig.json',
-    comment: true,
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 2017,
-    extraFileExtensions: ['.json'],
-    sourceType: 'module',
-    tsconfigRootDir: './',
-  },
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql'],
   rules: {
     camelcase: [
@@ -54,13 +44,12 @@ module.exports = {
     'no-global-strict': 0,
     'no-irregular-whitespace': ['error'],
     'no-prototype-builtins': 0, // Disable with exlint v6 update.
-    'no-shadow': ['error'],
     'no-underscore-dangle': 0,
+    'no-redeclare': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
       { varsIgnorePattern: 'React', args: 'after-used' },
     ],
-    '@typescript-eslint/no-use-before-define': 2,
     'no-var': 2,
     'object-shorthand': ['error', 'properties'],
     'prefer-const': ['error', { destructuring: 'all' }],
@@ -96,5 +85,13 @@ module.exports = {
   },
   globals: {
     process: 'readonly',
+    React: true,
+    JSX: 'readonly',
+    NodeJS: 'readonly',
+    Subject: 'readonly',
+    Diff: 'readonly',
+    BlobPropertyBag: 'readonly',
+    VoidFunction: 'readonly',
+    RequestInit: 'readonly',
   },
 };

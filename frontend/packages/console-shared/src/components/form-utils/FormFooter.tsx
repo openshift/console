@@ -33,7 +33,9 @@ const FormFooter: React.FC<FormFooterProps> = ({
   return (
     <div
       className={cx('ocs-form-footer', {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'ocs-form-footer__sticky': sticky,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'ocs-form-footer__shadow':
           sticky && (shadowPosition === Shadows.both || shadowPosition === Shadows.bottom),
       })}

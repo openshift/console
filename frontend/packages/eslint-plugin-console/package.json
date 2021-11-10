@@ -9,8 +9,8 @@
     "prettier-check": "eslint --print-config ./lib/config/prettier.js | eslint-config-prettier-check"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "2.11.0",
-    "@typescript-eslint/parser": "2.11.0",
+    "@typescript-eslint/eslint-plugin": "4.x",
+    "@typescript-eslint/parser": "4.x",
     "eslint": "6.7.2",
     "eslint-config-airbnb": "18.0.1",
     "eslint-config-airbnb-base": "14.0.0",
@@ -24,7 +24,7 @@
     "eslint-plugin-prettier": "3.1.1",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-react": "7.17.0",
-    "eslint-plugin-react-hooks": "2.3.0",
+    "eslint-plugin-react-hooks": "4.3.0",
     "eslint-plugin-sort-class-members": "1.6.0",
     "merge": "1.2.1",
     "prettier": "1.19.1"

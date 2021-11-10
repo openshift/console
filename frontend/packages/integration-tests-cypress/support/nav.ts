@@ -1,7 +1,7 @@
 export {}; // needed in files which don't have an import to trigger ES6 module usage
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       clickNavLink(path: string[]): Chainable<Element>;
     }
   }

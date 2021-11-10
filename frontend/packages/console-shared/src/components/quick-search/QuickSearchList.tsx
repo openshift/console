@@ -102,6 +102,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               key={item.uid}
               tabIndex={-1}
               className={cx('ocs-quick-search-list__item', {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'ocs-quick-search-list__item--highlight': item.uid === selectedItemId,
               })}
               onDoubleClick={(e: React.SyntheticEvent) => {

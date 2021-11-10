@@ -42,10 +42,13 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   const buildSourceType = _.get(initialValues, 'build.source.type', undefined);
   const flowType = getFlowType(buildStrategy, buildSourceType);
   const validationSchema = getValidationSchema(buildStrategy, buildSourceType);
-  const imageStreamsData =
-    appResources.imageStreams && appResources.imageStreams.loaded
-      ? appResources.imageStreams.data
-      : [];
+  const imageStreamsData = React.useMemo(
+    () =>
+      appResources.imageStreams && appResources.imageStreams.loaded
+        ? appResources.imageStreams.data
+        : [],
+    [appResources.imageStreams],
+  );
 
   const [builderImages, setBuilderImages] = React.useState<NormalizedBuilderImages>(null);
 

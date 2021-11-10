@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { match } from 'react-router';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import {
@@ -101,7 +101,6 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
         namespace: ns,
       },
       stringData: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         external_cluster_details: fileData,
       },
       type: 'Opaque',

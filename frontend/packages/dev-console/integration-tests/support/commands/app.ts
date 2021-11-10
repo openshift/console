@@ -7,7 +7,7 @@ export {}; // needed in files which don't have an import to trigger ES6 module u
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       alertTitleShouldContain(title: string): Chainable<Element>;
       clickNavLink(path: [string, string]): Chainable<Element>;
       selectByDropDownText(selector: string, dropdownText: string): Chainable<Element>;

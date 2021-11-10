@@ -140,7 +140,6 @@ export const rhcsPayload: CreatePayload<RHCSState> = (systemName, state, model) 
           namespace: CEPH_STORAGE_NAMESPACE,
         },
         stringData: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           external_cluster_details: state.fileData,
         },
         type: 'Opaque',

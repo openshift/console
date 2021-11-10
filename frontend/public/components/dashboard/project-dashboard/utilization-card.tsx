@@ -36,6 +36,7 @@ export const UtilizationCard: React.FC = () => {
   const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
   const multilineQueries = React.useMemo(() => getMultilineQueries(projectName), [projectName]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const cpuPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
@@ -56,6 +57,7 @@ export const UtilizationCard: React.FC = () => {
     [projectName],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const memPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
@@ -76,6 +78,7 @@ export const UtilizationCard: React.FC = () => {
     [projectName],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const filesystemPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
@@ -96,6 +99,7 @@ export const UtilizationCard: React.FC = () => {
     [projectName],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const networkPopoverIn = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
@@ -116,6 +120,7 @@ export const UtilizationCard: React.FC = () => {
     [projectName],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const networkPopoverOut = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover

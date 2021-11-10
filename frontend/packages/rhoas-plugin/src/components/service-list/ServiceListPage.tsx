@@ -80,7 +80,9 @@ const ServiceListPage: React.FC = () => {
     optional: true,
   });
 
-  const remoteKafkaInstances = watchedKafkaRequest?.status?.userKafkas || [];
+  const remoteKafkaInstances = React.useMemo(() => watchedKafkaRequest?.status?.userKafkas || [], [
+    watchedKafkaRequest?.status?.userKafkas,
+  ]);
 
   const createKafkaConnectionFlow = React.useCallback(async () => {
     setSubmitting(true);

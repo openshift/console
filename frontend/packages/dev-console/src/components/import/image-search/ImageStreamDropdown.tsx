@@ -13,6 +13,7 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
   formContextField,
 }) => {
   const { t } = useTranslation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const imgCollection = {};
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();

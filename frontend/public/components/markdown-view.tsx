@@ -173,6 +173,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   const [frameHeight, setFrameHeight] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateDimensions = React.useCallback(
     _.debounce(() => {
       if (!frame?.contentWindow?.document?.body?.firstElementChild) {

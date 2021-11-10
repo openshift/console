@@ -189,6 +189,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         <SelectOption
           key={value}
           value={value}
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
         />
       );
@@ -289,6 +290,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
               <div className="log-window__scroll-pane">
                 <div
                   className={classnames('log-window__lines', {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     'log-window__lines--wrap': isWrapLines,
                   })}
                 >

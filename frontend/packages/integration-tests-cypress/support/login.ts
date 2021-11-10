@@ -3,7 +3,7 @@ import { masthead } from '../views/masthead';
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       login(providerName?: string, username?: string, password?: string): Chainable<Element>;
       logout(): Chainable<Element>;
     }

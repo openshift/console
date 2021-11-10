@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import {
@@ -101,7 +101,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   const labelFilterQueryArgumentKey = uniqueFilterName
     ? `${uniqueFilterName}-${labelFilter}`
     : labelFilter;
-  const params = new URLSearchParams(location.search);
+  const params = React.useMemo(() => new URLSearchParams(location.search), [location.search]);
   const labelFilters = params.get(labelFilterQueryArgumentKey)?.split(',') ?? [];
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
   const [isOpen, setOpen] = React.useState(false);

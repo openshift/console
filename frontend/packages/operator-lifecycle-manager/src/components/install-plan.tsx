@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { match, Link } from 'react-router-dom';

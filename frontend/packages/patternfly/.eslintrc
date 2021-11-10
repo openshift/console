@@ -45,13 +45,12 @@
     "no-else-return": ["error"],
     "no-global-strict": 0,
     "no-irregular-whitespace": ["error"],
-    "no-shadow": ["error"],
     "no-underscore-dangle": 0,
     "@typescript-eslint/no-unused-vars": [
       "error",
       { "varsIgnorePattern": "React", "args": "after-used" }
     ],
-    "@typescript-eslint/no-use-before-define": 2,
+    "@typescript-eslint/no-use-before-define": "off",
     "no-var": 2,
     "object-shorthand": ["error", "properties"],
     "prefer-const": ["error", { "destructuring": "all" }],
@@ -76,5 +75,8 @@
     "react": {
       "version": "detect"
     }
+  },
+  "globals": {
+    "JSX": true
   }
 }
