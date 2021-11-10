@@ -14,7 +14,6 @@ import {
 import { GitAltIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import { ExternalLink, Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
@@ -24,6 +23,7 @@ import {
   YellowExclamationTriangleIcon,
   GrayUnknownIcon,
 } from '@console/shared';
+import * as argoIcon from '../../images/argo.png';
 import { GitOpsEnvironment } from '../utils/gitops-types';
 import GitOpsResourcesSection from './GitOpsResourcesSection';
 import './GitOpsDetails.scss';
@@ -76,9 +76,6 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
   if (envs && envs.length > 0) {
     oldAPI = envs[0] && envs[0].deployments ? envs[0].deployments === null : true;
   }
-
-  const ArgoCDIcon =
-    '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/argocd-operator/icon?resourceVersion=argocd-operator.alpha.argocd-operator.v0.0.14';
 
   return (
     <div className="odc-gitops-details">
@@ -179,7 +176,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
                                   <span className="odc-gitops-details__env-section__argo-external-link">
                                     <img
                                       loading="lazy"
-                                      src={ArgoCDIcon}
+                                      src={argoIcon}
                                       alt="Argo CD"
                                       width="19px"
                                       height="24px"
