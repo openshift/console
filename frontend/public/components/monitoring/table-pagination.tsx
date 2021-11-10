@@ -1,11 +1,23 @@
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 const defaultPaginationOptions = [10, 20, 50, 100, 200, 500].map((n) => ({
   title: n.toString(),
   value: n,
 }));
+
+const LocalizedToggleTemplate = ({ firstIndex, lastIndex, itemCount, itemsTitle }) => {
+  const { t } = useTranslation();
+  return (
+    <Trans t={t} ns="public">
+      <b>
+        {{ firstIndex }} - {{ lastIndex }}
+      </b>{' '}
+      of <b>{{ itemCount }}</b> {{ itemsTitle }}
+    </Trans>
+  );
+};
 
 const TablePagination = ({
   itemCount,
@@ -32,6 +44,7 @@ const TablePagination = ({
       perPage={perPage}
       perPageOptions={paginationOptions}
       variant={PaginationVariant.bottom}
+      toggleTemplate={LocalizedToggleTemplate}
       titles={{
         items: '',
         page: '',
