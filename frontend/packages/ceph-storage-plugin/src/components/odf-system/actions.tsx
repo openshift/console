@@ -18,8 +18,8 @@ export const getGenericActions = () => [...Kebab.factory.common];
 
 export const getActionsForOCS = () => [addStorage, ...getGenericActions()];
 
-export const getActions = (kind: string) => {
-  if (referenceForModel(OCSServiceModel).toLowerCase() === kind.toLowerCase())
+export const getActions = (kind: string, isMCGOrExternal: boolean) => {
+  if (referenceForModel(OCSServiceModel).toLowerCase() === kind.toLowerCase() && !isMCGOrExternal)
     return getActionsForOCS();
   return getGenericActions();
 };

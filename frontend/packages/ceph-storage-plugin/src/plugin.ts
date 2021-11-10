@@ -37,6 +37,7 @@ import {
   ODF_MANAGED_FLAG,
   detectManagedODF,
   detectComponents,
+  MCG_STANDALONE,
 } from './features';
 import { ODF_MODEL_FLAG } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
@@ -491,6 +492,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             console.error('Error loading Add Capacity Modal', e);
           });
       },
+    },
+    flags: {
+      disallowed: [OCS_INDEPENDENT_FLAG, MCG_STANDALONE],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl
