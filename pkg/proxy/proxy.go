@@ -101,7 +101,9 @@ func CopyRequestHeaders(originalRequest, newRequest *http.Request) {
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	klog.Infof("PROXY: %#q\n", r.URL)
+	if klog.V(3) {
+		klog.Infof("PROXY: %#q\n", r.URL)
+	}
 
 	// Block scripts from running in proxied content for browsers that support Content-Security-Policy.
 	w.Header().Set("Content-Security-Policy", "sandbox;")
