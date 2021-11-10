@@ -58,7 +58,6 @@ type ConsumedExtensions =
   | ProjectDashboardInventoryItem
   | ResourceListPage;
 
-const apiObjectRef = referenceForModel(models.OCSServiceModel);
 const blockPoolRef = referenceForModel(models.CephBlockPoolModel);
 const storageSystemGvk = referenceForModel(models.StorageSystemModel);
 
@@ -159,30 +158,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/create-storage-system/create-storage-system' /* webpackChunkName: "create-storage-system" */
         ).then((m) => m.default),
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${apiObjectRef}/~new`,
-      loader: () =>
-        import('./components/ocs-install/install-page' /* webpackChunkName: "install-page" */).then(
-          (m) => m.default,
-        ),
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: `/k8s/ns/:ns/${referenceForModel(
-        ClusterServiceVersionModel,
-      )}/:appName/${apiObjectRef}/~new`,
-      loader: () =>
-        import('./components/ocs-install/install-page' /* webpackChunkName: "install-page" */).then(
-          (m) => m.default,
-        ),
     },
   },
   {

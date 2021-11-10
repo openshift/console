@@ -101,7 +101,7 @@ export const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
               <Button
                 href="#"
                 variant="secondary"
-                className="custom-input-btn nb-endpoints-form-entry-upload-btn__button"
+                className="nb-custom-input-btn nb-endpoints-form-entry-upload-btn__button"
                 aria-label={t('ceph-storage-plugin~Upload File')}
               >
                 {t('ceph-storage-plugin~Browse')}

@@ -2,32 +2,45 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { IRow, sortable } from '@patternfly/react-table';
 import {
   getName,
   getNodeRoles,
   getNodeCPUCapacity,
   getNodeAllocatableMemory,
+  hasLabel,
 } from '@console/shared';
+import { useSelectList } from '@console/shared/src/hooks/select-list';
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
-import { Table } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getConvertedUnits, getZone } from '../../../utils/install';
+import { Table } from '@console/internal/components/factory';
+import { IRow, sortable } from '@patternfly/react-table';
+import { getConvertedUnits, nodesWithoutTaints, getZone } from '../../../utils/install';
+import { cephStorageLabel } from '../../../selectors';
 import { GetRows, NodeTableProps } from '../../../types';
-import '../ocs-install.scss';
+import './select-nodes-table.scss';
 
 const tableColumnClasses = [
   classNames('pf-u-w-33-on-md', 'pf-u-w-50-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-u-w-inherit-on-md'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
   classNames('pf-u-w-inherit'),
 ];
 
-const getRows: GetRows = ({ componentProps }) => {
+// Same columns are used for attached devices mode tables
+
+const getRows: GetRows = (
+  { componentProps },
+  visibleRows,
+  setVisibleRows,
+  selectedNodes,
+  setSelectedNodes,
+) => {
   const { data } = componentProps;
 
-  const rows = data.map((node) => {
+  const filteredData = nodesWithoutTaints(data);
+
+  const rows = filteredData.map((node: NodeKind) => {
     const roles = getNodeRoles(node).sort();
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
@@ -36,7 +49,7 @@ const getRows: GetRows = ({ componentProps }) => {
         title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
       },
       {
-        title: roles.join(', ') || '-',
+        title: roles.join(', ') ?? '-',
       },
       {
         title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
@@ -50,31 +63,37 @@ const getRows: GetRows = ({ componentProps }) => {
     ];
     return {
       cells,
+      selected: selectedNodes
+        ? selectedNodes.has(node.metadata.uid)
+        : hasLabel(node, cephStorageLabel),
       props: {
         id: node.metadata.uid,
       },
     };
   });
 
+  const uids = new Set(filteredData.map((n) => n.metadata.uid));
+
+  if (!_.isEqual(uids, visibleRows)) {
+    setVisibleRows(uids);
+    if (!selectedNodes?.size && filteredData.length) {
+      const preSelected = filteredData.filter((row) => hasLabel(row, cephStorageLabel));
+      setSelectedNodes(preSelected);
+    }
+  }
+
   return rows;
 };
 
-const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
+const InternalNodeTable: React.FC<NodeTableProps> = (props) => {
   const { t } = useTranslation();
 
-  const { data, customData } = props;
-  const { filteredNodes, nodes = [], setNodes } = customData;
-  const tableData: NodeKind[] = data.filter(
-    (node: NodeKind) =>
-      filteredNodes.includes(getName(node)) ||
-      filteredNodes.includes(node.metadata.labels?.['kubernetes.io/hostname']),
-  );
-
-  React.useEffect(() => {
-    if (setNodes && !_.isEqual(tableData, nodes)) {
-      setNodes(tableData);
-    }
-  }, [tableData, setNodes, nodes, filteredNodes]);
+  const [visibleRows, setVisibleRows] = React.useState<Set<string>>(props.customData.nodes);
+  const {
+    onSelect,
+    selectedRows: selectedNodes,
+    updateSelectedRows: setSelectedNodes,
+  } = useSelectList<NodeKind>(props.data, visibleRows, props.customData.onRowSelected);
 
   const getColumns = () => [
     {
@@ -102,18 +121,20 @@ const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
   ];
 
   return (
-    <div className="ceph-ocs-install__select-nodes-table">
+    <div className="ceph-odf-install__select-nodes-table">
       <Table
-        {...props}
         aria-label={t('ceph-storage-plugin~Node Table')}
-        data-test-id="attached-devices-nodes-table"
-        data={tableData}
-        Rows={getRows}
+        data-test-id="select-nodes-table"
+        {...props}
+        Rows={(rowProps) =>
+          getRows(rowProps, visibleRows, setVisibleRows, selectedNodes, setSelectedNodes)
+        }
         Header={getColumns}
         virtualize={false}
+        onSelect={onSelect}
       />
     </div>
   );
 };
 
-export default AttachedDevicesNodeTable;
+export default InternalNodeTable;

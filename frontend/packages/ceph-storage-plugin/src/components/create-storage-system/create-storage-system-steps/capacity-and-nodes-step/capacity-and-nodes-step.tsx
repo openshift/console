@@ -5,6 +5,7 @@ import {
   GridItem,
   Form,
   FormGroup,
+  Label,
   Text,
   TextVariants,
   TextContent,
@@ -34,11 +35,29 @@ import {
   getZonesFromNodesKind,
 } from '../../../../utils/create-storage-system';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
-import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-and-nodes';
 import { pvResource, nodeResource } from '../../../../resources';
 import { ValidationMessage } from '../../../../utils/common-ocs-install-el';
 import { SelectNodesTable } from '../../select-nodes-table/select-nodes-table';
 import { ErrorHandler } from '../../error-handler';
+
+export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text }) => {
+  const { t } = useTranslation();
+  const label = 'cluster.ocs.openshift.io/openshift-storage=""';
+  return (
+    <TextContent>
+      <Text>{text}</Text>
+      <Text>
+        <Trans t={t} ns="ceph-storage-plugin">
+          If not labeled, the selected nodes are labeled <Label color="blue">{{ label }}</Label> to
+          make them target hosts for OpenShift Data Foundation
+          {/* eslint-disable react/no-unescaped-entities */}'s components.
+        </Trans>
+      </Text>
+    </TextContent>
+  );
+});
+
+type SelectNodesTextProps = { text: JSX.Element };
 
 const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   dispatch,

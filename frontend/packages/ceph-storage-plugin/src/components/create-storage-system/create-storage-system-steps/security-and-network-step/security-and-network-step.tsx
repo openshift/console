@@ -1,12 +1,13 @@
 import * as React from 'react';
+
 import { Form } from '@patternfly/react-core';
 import { useFlag, getNamespace, getName } from '@console/shared';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { Encryption } from './encryption';
+import { NetworkFormGroup } from './network-form-group';
 import { NetworkType, NADSelectorType } from '../../../../types';
 import { GUARDED_FEATURES } from '../../../../features';
 import { WizardDispatch, WizardState } from '../../reducer';
-import { NetworkFormGroup } from '../../../ocs-install/install-wizard/configure';
 
 export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, dispatch }) => {
   const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);

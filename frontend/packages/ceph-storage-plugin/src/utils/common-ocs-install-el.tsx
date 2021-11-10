@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { TechPreviewBadge } from '@console/shared';
 import { CreateStepsSC } from '../constants';
-import '../components/ocs-install/ocs-install.scss';
+import '../components/create-storage-system/create-storage-system.scss';
 import { EncryptionType } from '../types';
 
 export type Validation = {
@@ -43,7 +43,7 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
       return {
         variant: AlertVariant.warning,
         title: (
-          <div className="ceph-minimal-deployment-alert__header">
+          <div className="odf-minimal-deployment-alert__header">
             {t('ceph-storage-plugin~A minimal cluster deployment will be performed.')}
             <TechPreviewBadge />
           </div>

@@ -14,8 +14,9 @@ import {
 } from '@patternfly/react-core';
 
 import { arbiterText } from '../../../../constants';
+import { AdvancedSubscription } from '../../advanced-subscription/advanced-subscription';
 import { WizardState } from '../../reducer';
-import { EnableArbiterLabel } from '../../../ocs-install/install-wizard/capacity-and-nodes';
+import './capacity-and-nodes.scss';
 
 const HelperText: React.FC<{ enableArbiter: boolean }> = ({ enableArbiter }) => {
   const { t } = useTranslation();
@@ -39,6 +40,19 @@ const HelperText: React.FC<{ enableArbiter: boolean }> = ({ enableArbiter }) => 
         </Alert>
       )}
     </>
+  );
+};
+
+export const EnableArbiterLabel: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="odf-enable-arbiter-label">
+      <span className="odf-enable-arbiter-label__title--padding">
+        {t('ceph-storage-plugin~Enable arbiter')}
+      </span>
+      <AdvancedSubscription />
+    </div>
   );
 };
 

@@ -14,8 +14,6 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils/promise-component';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
-import { State } from '../../ocs-install/attached-devices-mode/reducer';
-import { InternalClusterState, ActionType } from '../../ocs-install/internal-mode/reducer';
 import { KMSMaxFileUploadSize } from '../../../constants';
 import {
   setEncryptionDispatch,
@@ -95,7 +93,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
       ? (kmsAdvanced.clientKey = generateClientKeySecret(clientKey))
       : (kmsAdvanced.clientKey = null);
     mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsAdvanced)
+      ? setEncryptionDispatch('SET_KMS_ENCRYPTION', mode, dispatch, kmsAdvanced)
       : dispatch({ type: 'securityAndNetwork/setKms', payload: kmsAdvanced });
     close();
   };
@@ -254,10 +252,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
 });
 
 export type AdvancedKMSModalProps = {
-  state:
-    | InternalClusterState
-    | State
-    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
+  state: Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
   dispatch: EncryptionDispatch;
   mode?: string;
 } & HandlePromiseProps &

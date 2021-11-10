@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { StorageClassResourceKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/';
 import { getName } from '@console/shared';
-import { calcPVsCapacity, getSCAvailablePVs } from '../../selectors';
-import '../modals/add-capacity-modal/add-capacity-modal.scss';
-import './pvs-available-capacity.scss';
+import { calcPVsCapacity, getSCAvailablePVs } from '../../../selectors';
+import './add-capacity-modal.scss';
 
 export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({
   replica,

@@ -18,10 +18,8 @@ import { PencilAltIcon, EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import { setEncryptionDispatch, parseURL, kmsConfigValidation, EncryptionDispatch } from './utils';
 import { advancedKMSModal } from '../modals/advanced-kms-modal/advanced-kms-modal';
-import { InternalClusterState, ActionType } from '../ocs-install/internal-mode/reducer';
 import { KMSProviders } from '../../constants';
 import { KMSConfig } from '../../types';
-import { State } from '../ocs-install/attached-devices-mode/reducer';
 import { WizardState } from '../create-storage-system/reducer';
 
 import './kms-config.scss';
@@ -45,7 +43,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
     const hasHandled: boolean = kmsConfigValidation(kms);
     if (kms.hasHandled !== hasHandled) {
       mode
-        ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, {
+        ? setEncryptionDispatch('SET_KMS_ENCRYPTION', mode, dispatch, {
             ...kms,
             hasHandled,
           })
@@ -63,7 +61,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
     kmsObj.name.value = name;
     kmsObj.name.valid = name !== '';
     mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      ? setEncryptionDispatch('SET_KMS_ENCRYPTION', mode, dispatch, kmsObj)
       : dispatch({
           type: 'securityAndNetwork/setKms',
           payload: kmsObj,
@@ -74,7 +72,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
     kmsObj.address.value = address;
     kmsObj.address.valid = address !== '' && parseURL(address.trim()) != null;
     mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      ? setEncryptionDispatch('SET_KMS_ENCRYPTION', mode, dispatch, kmsObj)
       : dispatch({
           type: 'securityAndNetwork/setKms',
           payload: kmsObj,
@@ -86,7 +84,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
     kmsObj.port.valid =
       port !== '' && !_.isNaN(Number(port)) && Number(port) > 0 && Number(port) < 65536;
     mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      ? setEncryptionDispatch('SET_KMS_ENCRYPTION', mode, dispatch, kmsObj)
       : dispatch({
           type: 'securityAndNetwork/setKms',
           payload: kmsObj,
@@ -97,7 +95,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
     kmsObj.token.value = token;
     kmsObj.token.valid = token !== '';
     mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      ? setEncryptionDispatch('SET_KMS_ENCRYPTION', mode, dispatch, kmsObj)
       : dispatch({
           type: 'securityAndNetwork/setKms',
           payload: kmsObj,
@@ -268,10 +266,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
 };
 
 type KMSConfigureProps = {
-  state:
-    | InternalClusterState
-    | State
-    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
+  state: Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
   dispatch: EncryptionDispatch;
   className: string;
   hideTitle?: boolean;

@@ -128,7 +128,7 @@ type CanGoToNextStep<S extends ExternalState> = (
 * The Component is required to only include the connection details e.g IP Address, username, password, etc related to the external storage. The Storage Class field is generic for all external Providers and is not required to be duplicated by any external vendor's Component.
 * The Component must use the [Patternfly's form components](https://www.patternfly.org/v4/components/form) e.g `FormGroup`, `TextInput`, `Radio` to make the design consistent with the rest of the wizard and OpenShift console.
 * All form components should be controlled forms i.e using `onChange` event handler to control the value of the input elements.
-* The component should externalize the strings for i18n by namespace: `ceph-storage-plugin~`  . [See usage](https://github.com/openshift/console/blob/master/frontend/packages/ceph-storage-plugin/src/components/ocs-install/existing-cluster-modal.tsx#L17).
+* The component should externalize the strings for i18n by namespace: `ceph-storage-plugin~`  . [See usage](https://github.com/openshift/console/blob/master/frontend/packages/ceph-storage-plugin/src/components/modals/block-pool-modal/create-block-pool-modal.tsx#L36).
 
 5. Define and export the `type` of Component's state in `./src/components/create-storage-system/external-storage/types.ts`
 

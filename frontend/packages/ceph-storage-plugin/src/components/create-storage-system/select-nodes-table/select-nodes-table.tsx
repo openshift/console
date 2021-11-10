@@ -4,8 +4,8 @@ import { NodeModel } from '@console/internal/models';
 import { ListPage } from '@console/internal/components/factory/list-page';
 import { NodeKind } from '@console/internal/module/k8s';
 import { SelectNodesTableFooter } from './select-nodes-table-footer';
+import InternalNodeTable from './node-list';
 import { WizardNodeState } from '../reducer';
-import InternalNodeTable from '../../ocs-install/node-list';
 import './select-nodes-table.scss';
 
 export const SelectNodesTable: React.FC<NodeSelectTableProps> = ({ nodes, onRowSelected }) => {

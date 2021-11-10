@@ -25,6 +25,7 @@ import { CAPACITY_INFO_QUERIES } from '@console/ceph-storage-plugin/src/queries'
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
+import { PVsAvailableCapacity } from './pvs-available-capacity';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
@@ -37,10 +38,10 @@ import {
   storageClassTooltip,
   defaultRequestSize,
 } from '../../../constants';
-import { filterSC, isArbiterSC, isValidTopology } from '../../../utils/install';
-import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
+import { filterSC, isArbiterSC, isValidTopology, getDeviceSetCount } from '../../../utils/install';
 import { pvResource, nodeResource } from '../../../resources';
-import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
+import { createDeviceSet } from '../../create-storage-system/payloads';
+
 import { DeviceSet, StorageSystemKind, StorageClusterKind } from '../../../types';
 import './add-capacity-modal.scss';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';

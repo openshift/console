@@ -10,13 +10,13 @@ import {
   WizardContext,
   WizardContextType,
 } from '@patternfly/react-core';
-import { history } from '@console/internal/components/utils';
+import { history, LoadingInline } from '@console/internal/components/utils';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
 import {
   LocalVolumeDiscoveryResult,
   LocalVolumeSetModel,
 } from '@console/local-storage-operator-plugin/src/models';
-import { useFlag } from '@console/shared/src';
+import { useFlag, ErrorAlert } from '@console/shared/src';
 import {
   k8sCreate,
   ListKind,
@@ -34,6 +34,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { LocalVolumeDiscoveryResultKind } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { NodeModel } from '@console/internal/models';
+
 import { LocalVolumeSetBody } from './body';
 import { SelectedCapacity } from './selected-capacity';
 import { createWizardNodeState } from '../../../../utils/create-storage-system';
@@ -48,7 +49,6 @@ import {
 import { ErrorHandler } from '../../error-handler';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { useFetchCsv } from '../../use-fetch-csv';
-import { RequestErrors } from '../../../ocs-install/install-wizard/review-and-create';
 import './create-local-volume-set-step.scss';
 import { nodesWithoutTaints } from '../../../../utils/install';
 
@@ -106,7 +106,7 @@ export const LSOInstallAlert = () => {
       <Trans t={t} ns="ceph-storage-plugin">
         Before we can create a StorageSystem, the Local Storage Operator needs to be installed. When
         installation is finished come back to OpenShift Data Foundation to create a StorageSystem.
-        <div className="ceph-ocs-install__lso-alert__button">
+        <div className="ceph-odf-install__lso-alert__button">
           <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
             Install
           </Button>
@@ -156,6 +156,15 @@ const getLvdrResource = (nodes: WizardNodeState[] = [], ns: string): WatchK8sRes
     },
   };
 };
+
+const RequestErrors: React.FC<RequestErrorsProps> = ({ errorMessage, inProgress }) => (
+  <>
+    {errorMessage && <ErrorAlert message={errorMessage} />}
+    {inProgress && <LoadingInline />}
+  </>
+);
+
+type RequestErrorsProps = { errorMessage: string; inProgress: boolean };
 
 export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   state,

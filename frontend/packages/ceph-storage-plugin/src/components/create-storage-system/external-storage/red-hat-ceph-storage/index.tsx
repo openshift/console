@@ -15,7 +15,7 @@ import {
   getIPFamily,
   isValidJSON,
   prettifyJSON,
-} from '../../../ocs-install/external-mode/utils';
+} from '../../../../utils/install';
 
 import './index.scss';
 import { ErrorHandler } from '../../error-handler';

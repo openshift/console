@@ -23,6 +23,7 @@ import {
   createStorageSystem,
   labelNodes,
   waitforCRD,
+  labelOCSNamespace,
 } from './payloads';
 import {
   BackingStorageType,
@@ -40,7 +41,6 @@ import {
 } from '../../utils/create-storage-system';
 import { MINIMUM_NODES, OCS_EXTERNAL_CR_NAME, OCS_INTERNAL_CR_NAME } from '../../constants';
 import { NetworkType } from '../../types';
-import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
 import { createClusterKmsResources } from '../kms-config/utils';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../features';
 

@@ -10,8 +10,6 @@ import {
   KMSSecretName,
   KMSConfigMapCSIName,
 } from '../../constants';
-import { Action } from '../ocs-install/attached-devices-mode/reducer';
-import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
 import { KMSConfig, KMSConfigMap } from '../../types';
 import { CreateStorageSystemAction } from '../create-storage-system/reducer';
 
@@ -173,9 +171,7 @@ export const createClusterKmsResources = (kms: KMSConfig) => {
   return [...clusterKmsResources, ...createCsiKmsResources(kms)];
 };
 
-export type EncryptionDispatch = React.Dispatch<
-  Action | InternalClusterAction | CreateStorageSystemAction
->;
+export type EncryptionDispatch = React.Dispatch<CreateStorageSystemAction>;
 
 export const setEncryptionDispatch = (
   keyType: any,

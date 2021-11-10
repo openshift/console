@@ -1,8 +1,24 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Title, pluralize } from '@patternfly/react-core';
+import {
+  Alert,
+  Title,
+  pluralize,
+  TextContent,
+  Text,
+  TextVariants,
+  Split,
+  SplitItem,
+  AlertVariant,
+} from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
+import {
+  getName,
+  GreenCheckCircleIcon,
+  YellowExclamationTriangleIcon,
+  BlueInfoCircleIcon,
+  RedExclamationCircleIcon,
+} from '@console/shared';
 import {
   convertTime,
   getTimeUnitString,
@@ -10,10 +26,68 @@ import {
 import { State } from '../state';
 import { StoreCard } from '../review-utils';
 import {
-  ReviewListBody,
-  ReviewListTitle,
-} from '../../ocs-install/install-wizard/review-and-create';
+  ValidationMessage,
+  VALIDATIONS,
+  ValidationType,
+} from '../../../utils/common-ocs-install-el';
 import { NamespacePolicyType, BucketClassType } from '../../../constants/bucket-class';
+import '../create-bc.scss';
+
+const REVIEW_ICON_MAP = {
+  [AlertVariant.success]: GreenCheckCircleIcon,
+  [AlertVariant.warning]: YellowExclamationTriangleIcon,
+  [AlertVariant.info]: BlueInfoCircleIcon,
+  [AlertVariant.danger]: RedExclamationCircleIcon,
+};
+
+export const ReviewListTitle: React.FC<ReviewListTitleProps> = ({ text }) => (
+  <dt>
+    <TextContent>
+      <Text component={TextVariants.h3}>{text}</Text>
+    </TextContent>
+  </dt>
+);
+
+type ReviewListTitleProps = { text: string };
+
+export const ReviewListBody: React.FC<ReviewListBodyProps> = ({
+  children,
+  validation,
+  hideIcon = false,
+  noValue = undefined,
+}) => {
+  const { t } = useTranslation();
+
+  const alert = VALIDATIONS(validation, t);
+  const Icon = noValue
+    ? REVIEW_ICON_MAP[AlertVariant.danger]
+    : REVIEW_ICON_MAP[alert?.variant || AlertVariant.success];
+
+  return (
+    <dd>
+      {alert?.variant || !hideIcon ? (
+        <Split>
+          <SplitItem>
+            <Icon />
+          </SplitItem>
+          <SplitItem isFilled>
+            {children}
+            {alert?.variant ? <ValidationMessage validation={validation} /> : null}
+          </SplitItem>
+        </Split>
+      ) : (
+        children
+      )}
+    </dd>
+  );
+};
+
+type ReviewListBodyProps = {
+  children: React.ReactNode;
+  hideIcon?: boolean;
+  noValue?: boolean;
+  validation?: ValidationType;
+};
 
 const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
   const {

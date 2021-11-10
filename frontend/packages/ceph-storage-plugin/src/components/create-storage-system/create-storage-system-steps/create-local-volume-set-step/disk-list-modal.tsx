@@ -76,7 +76,7 @@ export const DiskListModal: React.FC<DiskListModalProps> = ({ showDiskList, onCa
       title={t('ceph-storage-plugin~Selected Disks')}
       isOpen={showDiskList}
       onClose={onCancel}
-      className="ceph-ocs-install__filtered-modal"
+      className="odf-install__filtered-modal"
       actions={[
         <Button key="confirm" variant="primary" onClick={onCancel}>
           {t('ceph-storage-plugin~Close')}
