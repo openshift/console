@@ -7,16 +7,8 @@ import {
   getResourceQutoaQueries,
   NodeQueries,
 } from '@console/app/src/components/nodes/node-dashboard/queries';
-import {
-  CPUPopover,
-  PopoverProps,
-  MemoryPopover,
-} from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
-import {
-  humanizeCpuCores,
-  humanizeBinaryBytes,
-  Humanize,
-} from '@console/internal/components/utils';
+import { LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
+import { humanizeCpuCores, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { MachineModel } from '@console/internal/models';
 import {
@@ -27,10 +19,7 @@ import {
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
-import {
-  LIMIT_STATE,
-  LimitRequested,
-} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import {
   YellowResourcesAlmostFullIcon,
   RedResourcesFullIcon,
@@ -42,6 +31,12 @@ import {
 } from '@console/shared/src/selectors/node';
 import * as msg from './messages';
 import { getMachineHealth, HealthChecksPopup, machineHealthChecksResource } from './NodeHealth';
+import {
+  CPUPopover,
+  MemoryPopover,
+  NodeUtilizationContext,
+  PopoverProps,
+} from './utilization-popovers';
 
 const LimitLink: React.FC<LimitLinkProps> = ({
   humanize,
@@ -55,10 +50,10 @@ const LimitLink: React.FC<LimitLinkProps> = ({
 }) => {
   const { obj } = React.useContext(NodeDashboardContext);
   const nodeName = obj.metadata.name;
-  const nodeIp = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
+  const nodeIP = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
   const [queries, resourceQuotaQueries] = React.useMemo(
-    () => [getUtilizationQueries(nodeName, nodeIp), getResourceQutoaQueries(nodeName)],
-    [nodeIp, nodeName],
+    () => [getUtilizationQueries(nodeName, nodeIP), getResourceQutoaQueries(nodeName)],
+    [nodeIP, nodeName],
   );
   const [current, currentError, currentValue] = usePrometheusQuery(queries[currentKey], humanize);
   const [total, totalError, totalValue] = usePrometheusQuery(queries[totalKey], humanize);
@@ -74,19 +69,19 @@ const LimitLink: React.FC<LimitLinkProps> = ({
       : t('console-app~Not available');
 
   return (
-    <Popover
-      title={t('console-app~See breakdown')}
-      nodeName={nodeName}
-      nodeIp={nodeIp}
-      current={currentError ? t('console-app~Not available') : current.string}
-      total={totalError ? t('console-app~Not available') : total.string}
-      limit={limitError ? t('console-app~Not available') : limit.string}
-      requested={requestedError ? t('console-app~Not available') : requested.string}
-      available={available}
-      limitState={limitState}
-      requestedState={requestedState}
-      position={PopoverPosition.right}
-    />
+    <NodeUtilizationContext.Provider value={{ nodeName, nodeIP }}>
+      <Popover
+        title={t('console-app~See breakdown')}
+        current={currentError ? t('console-app~Not available') : current.string}
+        total={totalError ? t('console-app~Not available') : total.string}
+        limit={limitError ? t('console-app~Not available') : limit.string}
+        requested={requestedError ? t('console-app~Not available') : requested.string}
+        available={available}
+        limitState={limitState}
+        requestedState={requestedState}
+        position={PopoverPosition.right}
+      />
+    </NodeUtilizationContext.Provider>
   );
 };
 

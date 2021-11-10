@@ -5,6 +5,8 @@ import {
   HealthState,
   StatusGroupMapper,
   QueryParams,
+  TopConsumerPopoverProps,
+  LIMIT_STATE,
 } from '../extensions/console-types';
 import { K8sModel, Alert } from './common-types';
 
@@ -93,19 +95,6 @@ export type UtilizationBodyProps = {
   children: React.ReactNode;
 };
 
-type LIMIT_STATE = 'ERROR' | 'WARN' | 'OK';
-
-export type TopConsumerPopoverProp = {
-  current: string;
-  max?: string;
-  limit?: string;
-  available?: string;
-  requested?: string;
-  total?: string;
-  limitState?: LIMIT_STATE;
-  requestedState?: string;
-};
-
 export enum ByteDataTypes {
   BinaryBytes = 'binaryBytes',
   BinaryBytesWithoutB = 'binaryBytesWithoutB',
@@ -125,7 +114,7 @@ export type UtilizationItemProps = {
   error: boolean;
   max?: number;
   byteDataType?: ByteDataTypes;
-  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
   setLimitReqState?: (state: { limit: LIMIT_STATE; requested: LIMIT_STATE }) => void;
 };
 

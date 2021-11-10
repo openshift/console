@@ -496,3 +496,36 @@ export type InventoryItemStatusProps = {
   icon: React.ReactNode;
   linkTo?: string;
 };
+
+export type HumanizeResult = {
+  string: string;
+  value: number;
+  unit: string;
+};
+
+export type Humanize = (
+  value: string | number,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => HumanizeResult;
+
+export enum LIMIT_STATE {
+  'ERROR' = 'ERROR',
+  'WARN' = 'WARN',
+  'OK' = 'OK',
+}
+
+export type TopConsumerPopoverProps = {
+  current: string;
+  total?: string;
+  available?: string;
+  limit?: string;
+  limitState?: LIMIT_STATE;
+  requested?: string;
+  requestedState?: LIMIT_STATE;
+};
+
+export type QueryWithDescription = {
+  query: string;
+  desc: string;
+};

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective, LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import {
   withDashboardResources,
@@ -13,7 +13,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
+import { resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
@@ -23,7 +23,6 @@ import { getName, getNamespace } from '../../..';
 import { FLAGS } from '../../../constants';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
 import Status from '../status-card/StatusPopup';
-import { LIMIT_STATE } from './UtilizationItem';
 
 import './top-consumer-popover.scss';
 
