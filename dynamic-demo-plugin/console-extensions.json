@@ -76,6 +76,13 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-proxy-service",
+      "component": { "$codeRef": "exampleProxyPage.default" }
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "admin-dynamic-route-1",

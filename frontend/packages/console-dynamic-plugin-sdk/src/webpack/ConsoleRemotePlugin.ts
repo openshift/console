@@ -59,13 +59,10 @@ export class ConsoleRemotePlugin {
         library: { type: remoteEntryLibraryType, name: remoteEntryCallback },
         filename: remoteEntryFile,
         exposes: this.pkg.consolePlugin.exposedModules || {},
-        overridables: sharedPluginModules.filter((m) => {
-          // ContainerPlugin throws 'module not found' error if an overridable cannot be resolved.
-          // All shared plugin modules are mandatory *except* for Console internal API modules.
-          return !m.startsWith('@openshift-console/dynamic-plugin-sdk-internal')
-            ? true
-            : !!{ ...this.pkg.devDependencies, ...this.pkg.dependencies }[m];
-        }),
+      }).apply(compiler);
+
+      new webpack.sharing.SharePlugin({
+        shared: sharedPluginModules,
       }).apply(compiler);
 
       // Generate additional Console plugin assets

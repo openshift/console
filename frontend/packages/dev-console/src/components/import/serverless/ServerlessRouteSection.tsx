@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, SelectVariant } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -9,7 +9,6 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { DomainMappingModel } from '@console/knative-plugin/src';
 import { SelectInputField } from '@console/shared';
 import { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
-import PortInputField from '../route/PortInputField';
 import {
   getAllOtherDomainMappingInUse,
   getOtherKsvcFromDomainMapping,
@@ -24,8 +23,6 @@ const ServerlessRouteSection: React.FC = () => {
     values: {
       name,
       project: { name: namespace },
-      image: { ports },
-      route: { defaultUnknownPort },
       serverless,
     },
   } = useFormikContext<DeployImageFormData | GitImportFormData | UploadJarFormData>();
@@ -70,25 +67,17 @@ const ServerlessRouteSection: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, domainMappingLoaded, domainMappingLoadErr, name, setFieldValue]);
 
-  const placeholderPort = defaultUnknownPort;
-  const portOptions = ports.map((port) => port?.containerPort.toString());
   const domainsInUse = getAllOtherDomainMappingInUse(serverless.domainMapping, data, name) ?? [];
   return (
     <>
-      <PortInputField
-        data-test-id="serverless-route-section-port"
-        name="route.unknownTargetPort"
-        label={t('devconsole~Target port')}
-        placeholderText={placeholderPort.toString()}
-        helpText={t('devconsole~Target port for traffic.')}
-        options={portOptions}
-      />
       {domainMappingLoaded || domainMappingLoadErr ? (
         <>
           <SelectInputField
             data-test-id="domain-mapping-field"
             name="serverless.domainMapping"
             label={t('devconsole~Domain mapping')}
+            ariaLabel={t('devconsole~Domain mapping')}
+            variant={SelectVariant.typeaheadMulti}
             options={domainMappingResources}
             placeholderText={t('devconsole~Add domain')}
             helpText={t('devconsole~Enter custom domain to map to the Knative service')}

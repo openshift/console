@@ -11,11 +11,11 @@ dl.co-inline {
 }
 
 .co-m-pane__body {
-  margin: $grid-gutter-width 0 0;
-  padding: 0 ($grid-gutter-width / 2) $grid-gutter-width;
-  @media (min-width: $screen-sm-min) {
-    padding-left: $grid-gutter-width;
-    padding-right: $grid-gutter-width;
+  margin: $pf-global-gutter--md 0 0;
+  padding: 0 $pf-global-gutter $pf-global-gutter--md;
+  @media (min-width: $pf-global--breakpoint--xl) {
+    padding-left: $pf-global-gutter--md;
+    padding-right: $pf-global-gutter--md;
   }
   &--full-height{
     height: 100%;
@@ -29,21 +29,21 @@ dl.co-inline {
   + .co-m-pane__body {
     border-top: 1px solid $color-grey-background-border;
     margin-top: 0;
-    padding-top: $grid-gutter-width;
+    padding-top: $pf-global-gutter--md;
   }
 }
 
 .co-m-pane__createLink--no-title {
-  margin-bottom: $grid-gutter-width;
+  margin-bottom: $pf-global-gutter--md;
 }
 
 .co-m-pane__filter-bar,
 .co-m-pane__help-text {
-  margin: 20px ($grid-gutter-width / 2);
-  @media (min-width: $grid-float-breakpoint) {
-    margin-left: $grid-gutter-width;
-    margin-right: $grid-gutter-width;
-    margin-top: $grid-gutter-width;
+  margin: 20px $pf-global-gutter;
+  @media (min-width: $pf-global--breakpoint--md) {
+    margin-left: $pf-global-gutter--md;
+    margin-right: $pf-global-gutter--md;
+    margin-top: $pf-global-gutter--md;
   }
 }
 
@@ -85,11 +85,11 @@ dl.co-inline {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-bottom: $grid-gutter-width;
+  margin-bottom: $pf-global-gutter--md;
 }
 
 .co-m-pane__filter-row-action {
-  padding-top: ($grid-gutter-width / 2);
+  padding-top: $pf-global-gutter;
   @media (min-width: $screen-xs-min) {
     padding-top: 0;
   }
@@ -98,7 +98,7 @@ dl.co-inline {
 .co-m-pane__heading {
   display: flex;
   justify-content: space-between;
-  margin: 0 0 $grid-gutter-width;
+  margin: 0 0 $pf-global-gutter--md;
   &--baseline {
     align-items: baseline;
   }
@@ -107,7 +107,7 @@ dl.co-inline {
   }
   &--logo {
     align-items: center;
-    margin-bottom: ($grid-gutter-width / 2);
+    margin-bottom: $pf-global-gutter;
   }
 }
 
@@ -207,7 +207,7 @@ dl.co-inline {
 // Prevent iOS phones from zooming on form inputs
 @supports (-webkit-overflow-scrolling: touch) {
   // Target mobile Safari
-  @media (max-width: $grid-float-breakpoint-max) {
+  @media (max-width: $pf-global--breakpoint--sm-max) {
     // Target phones
     input,
     select,

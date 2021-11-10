@@ -48,10 +48,6 @@ export const INDEPENDENT_UTILIZATION_QUERIES = {
     'sum((kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
 };
 
-export const STORAGE_HEALTH_QUERIES = {
-  [StorageDashboardQuery.CEPH_STATUS_QUERY]: 'ceph_health_status',
-};
-
 export const DATA_RESILIENCY_QUERY = {
   [StorageDashboardQuery.RESILIENCY_PROGRESS]: '(ceph_pg_clean and ceph_pg_active)/ceph_pg_total',
 };

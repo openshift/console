@@ -144,8 +144,6 @@
   "Kiali": "Kiali",
   "Create a binding connector": "创建一个绑定连接器",
   "Operator groupings": "Operator 组",
-  "Operator details": "Operator 详情",
-  "Managed by": "管理由",
   "Error: no resource provided to update Application for.": "错误：未提供用于更新应用程序的资源。",
   "Error: invalid resource kind provided for updating Application.": "错误：为更新应用程序提供无效的资源类型。",
   "Unable to retrieve model for: {{kind}}": "无法为 {{kind}} 获取模型",

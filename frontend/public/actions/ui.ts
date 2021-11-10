@@ -67,6 +67,7 @@ export enum ActionType {
   SetUtilizationDuration = 'SetUtilizationDuration',
   SetUtilizationDurationSelectedKey = 'SetUtilizationDurationSelectedKey',
   SetUtilizationDurationEndTime = 'SetUtilizationDurationEndTime',
+  SetAlertCount = 'SetAlertCount',
 }
 
 type MetricValuesByName = {
@@ -392,6 +393,7 @@ export const setUtilizationDurationSelectedKey = (key) =>
   action(ActionType.SetUtilizationDurationSelectedKey, { key });
 export const setUtilizationDurationEndTime = (endTime) =>
   action(ActionType.SetUtilizationDurationEndTime, { endTime });
+export const setAlertCount = (alertCount) => action(ActionType.SetAlertCount, { alertCount });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -445,6 +447,7 @@ const uiActions = {
   setUtilizationDuration,
   setUtilizationDurationSelectedKey,
   setUtilizationDurationEndTime,
+  setAlertCount,
 };
 
 export type UIAction = Action<typeof uiActions>;

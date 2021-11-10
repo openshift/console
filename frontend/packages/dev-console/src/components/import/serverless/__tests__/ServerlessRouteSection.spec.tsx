@@ -4,7 +4,6 @@ import { useFormikContext } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SelectInputField } from '@console/shared';
-import PortInputField from '../../route/PortInputField';
 import ServerlessRouteSection from '../ServerlessRouteSection';
 import { domainMappings } from './serverless-utils.data';
 
@@ -58,12 +57,6 @@ describe(' ServerlessRouteSection', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     const component = shallow(<ServerlessRouteSection />);
     expect(component.isEmptyRender()).toBe(false);
-  });
-
-  it('Should render PortInputField', () => {
-    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
-    const component = shallow(<ServerlessRouteSection />);
-    expect(component.find(PortInputField).exists()).toBe(true);
   });
 
   it('Should render SelectInputField if domainMappingLoaded is true', () => {

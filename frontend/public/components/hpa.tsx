@@ -78,7 +78,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
     );
     const currentValue = targetUtilization
       ? getResourceUtilization(current)
-      : resource?.current?.averageValue;
+      : current?.resource?.current?.averageValue;
     const targetValue = targetUtilization ? `${targetUtilization}%` : resource.target.averageValue;
 
     return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
@@ -332,7 +332,7 @@ const HorizontalPodAutoscalersList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label="Horizontal Pod Auto Scalers"
+      aria-label={t('public~HorizontalPodAutoScalers')}
       Header={HorizontalPodAutoscalersTableHeader}
       Row={HorizontalPodAutoscalersTableRow}
       virtualize

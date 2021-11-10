@@ -485,18 +485,6 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     conditionsStatusDescriptors,
     otherStatusDescriptors,
   } = (statusDescriptors ?? []).reduce((acc, descriptor) => {
-    // exclude Conditions since they are included in their own section
-    if (descriptor.path === 'conditions') {
-      return acc;
-    }
-
-    if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
-      return {
-        ...acc,
-        podStatuses: [...(acc.podStatuses ?? []), descriptor],
-      };
-    }
-
     if (isMainStatusDescriptor(descriptor)) {
       return {
         ...acc,
@@ -504,10 +492,20 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
       };
     }
 
-    if (descriptor['x-descriptors']?.includes(StatusCapability.conditions)) {
+    if (
+      descriptor['x-descriptors']?.includes(StatusCapability.conditions) ||
+      descriptor.path === 'conditions'
+    ) {
       return {
         ...acc,
         conditionsStatusDescriptors: [...(acc.conditionsStatusDescriptors ?? []), descriptor],
+      };
+    }
+
+    if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
+      return {
+        ...acc,
+        podStatuses: [...(acc.podStatuses ?? []), descriptor],
       };
     }
 
@@ -574,12 +572,13 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
           </div>
         </div>
       )}
-      {_.isArray(status?.conditions) && (
-        <div className="co-m-pane__body" data-test="status.conditions">
-          <SectionHeading data-test="operand-conditions-heading" text={t('public~Conditions')} />
-          <Conditions conditions={status.conditions} />
-        </div>
-      )}
+      {Array.isArray(status?.conditions) &&
+        (conditionsStatusDescriptors ?? []).every(({ path }) => path !== 'conditions') && (
+          <div className="co-m-pane__body" data-test="status.conditions">
+            <SectionHeading data-test="operand-conditions-heading" text={t('public~Conditions')} />
+            <Conditions conditions={status.conditions} />
+          </div>
+        )}
       {conditionsStatusDescriptors?.length > 0 &&
         conditionsStatusDescriptors.map((descriptor) => (
           <DescriptorConditions descriptor={descriptor} schema={schema} obj={obj} />

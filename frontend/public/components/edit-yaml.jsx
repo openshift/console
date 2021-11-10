@@ -110,19 +110,23 @@ export const EditYAML_ = connect(stateToProps)(
           }
           return models.get(referenceFor(obj)) || models.get(obj.kind);
         }
-
-        createResources(objs, isDryRun) {
-          return objs.map((obj) => {
-            return k8sCreate(
-              this.getModel(obj),
-              obj,
-              isDryRun
-                ? {
-                    queryParams: { dryRun: 'All' },
-                  }
-                : {},
-            );
-          });
+        async createResources(objs) {
+          const results = [];
+          for (const obj of objs) {
+            try {
+              const result = await k8sCreate(this.getModel(obj), obj);
+              results.push({
+                status: 'fulfilled',
+                result,
+              });
+            } catch (error) {
+              results.push({
+                status: 'rejected',
+                reason: error.toString(),
+              });
+            }
+          }
+          return Promise.resolve(results);
         }
 
         handleError(error, success = null) {
@@ -314,28 +318,6 @@ export const EditYAML_ = connect(stateToProps)(
           });
         }
 
-        performDryRun(objs) {
-          this.setState({ success: null, errors: null, sending: true }, () => {
-            const requests = this.createResources(objs, true);
-            //catch these individually so we can report out all errors
-            requests.forEach((request, i) =>
-              request.catch((error) => this.handleErrors(objs[i], error?.message)),
-            );
-            Promise.all(requests)
-              .then(() => {
-                this.setState({
-                  errors: null,
-                  sending: false,
-                  resourceObjects: objs,
-                });
-                this.setDisplayResults(true);
-              })
-              .catch(() => {
-                //catch this error but do nothing since we show individual errors above
-              });
-          });
-        }
-
         setDisplayResults(value) {
           this.props.clearFileUpload();
           this.setState({ displayResults: value });
@@ -509,7 +491,12 @@ export const EditYAML_ = connect(stateToProps)(
                 );
                 return;
               }
-              this.performDryRun(objs);
+              this.setState({
+                errors: null,
+                sending: false,
+                resourceObjects: objs,
+              });
+              this.setDisplayResults(true);
             }
           });
         }

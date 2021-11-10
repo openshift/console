@@ -51,11 +51,11 @@ Good: t('public~Hello, it is now {{date}}', { date: new Date() })
     * Pseudolocalization adds brackets around the text and makes it longer so you can test components with different text lengths.
 * Make sure there are no missing key warnings in your browser's developer tools - missing keys will trigger errors in integration tests. The warning will show up as an error in the JavaScript console.
 * When displaying a resource kind, you can hard-code it directly in the internationalized text or use the predefined label on the model for the kind.
-    * `model.labelPlural` contains the key for the internationalized kind name and must be wrapped in its own `TFunction`. Not all kinds have this attribute, so it is necessary to check for it first as shown below:
+    * `model.labelPluralKey` contains the key for the internationalized kind name and must be wrapped in its own `TFunction`. Not all kinds have this attribute, so it is necessary to check for it first as shown below:
 ```
-model.labelPlural ? t(model.labelPlural) :  model.label
+model.labelPluralKey ? t(model.labelPluralKey) :  model.labelPlural
 ```
-* While i18next extracts translation keys in runtime, i18next-parser doesn't run the code, so it can't interpolate values in these expressions:
+* While i18next extracts translation keys in runtime, i18next-parser (the tool we use to generate JSON files) doesn't run the code, so it can't interpolate values in these expressions:
 
 ```
 t(key)

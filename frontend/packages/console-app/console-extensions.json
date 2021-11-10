@@ -236,5 +236,22 @@
         "component": { "$codeRef": "userPreferences.LanguageDropdown" }
       }
     }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.hideUserWorkloadNotifications",
+      "label": "%console-app~User workload notifications%",
+      "groupId": "notifications",
+      "description": "%console-app~Do not display notifications created by users for specific projects on the cluster overview page or notification drawer.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.hideUserWorkloadNotifications",
+        "label": "%console-app~Hide user workload notifications%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
+      }
+    }
   }
 ]

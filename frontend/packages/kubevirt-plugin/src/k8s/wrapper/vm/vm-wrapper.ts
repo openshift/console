@@ -18,6 +18,8 @@ import {
   getDataVolumeTemplates,
   getDevices,
   getDisks,
+  getGPUDevices,
+  getHostDevices,
   getInterfaces,
   getNetworks,
   getNodeSelector,
@@ -48,7 +50,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   }
 
   hasTemplateLabel = (label: string) => _.has(this.getTemplateLabels(null), label);
-
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);
@@ -56,52 +57,40 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   getEvictionStrategy = (): string => this.getVirtualMachineInstanceSpec()?.evictionStrategy;
   getMemory = () => this.getVirtualMachineInstanceSpec()?.domain?.resources?.requests?.memory;
   getCPU = (): CPURaw => this.getVirtualMachineInstanceSpec()?.domain?.cpu;
-
   getTemplateLabels = (defaultValue = {}) =>
     getLabels(_.get(this.data, 'spec.template'), defaultValue);
-
   getDataVolumeTemplates = (defaultValue = []) => getDataVolumeTemplates(this.data, defaultValue);
-
   getDevices = (defaultValue = {}) => getDevices(this.data, defaultValue);
-
+  getGPUDevices = (defaultValue = []) => getGPUDevices(this.data, defaultValue);
+  getHostDevices = (defaultValue = []) => getHostDevices(this.data, defaultValue);
+  getUsedHardwareDevicesNames = (defaultValue = []) => {
+    const gpuNames = getGPUDevices(this.data, defaultValue).map((item) => item.name);
+    const hostDevices = getHostDevices(this.data, defaultValue).map((item) => item.name);
+    return [gpuNames, hostDevices].filter(Boolean).flat();
+  };
   getNetworkInterfaces = (defaultValue = []) => getInterfaces(this.data, defaultValue);
-
   getDisks = (defaultValue = []) => getDisks(this.data, defaultValue);
   getCDROMs = () => this.getDisks().filter((device) => !!device.cdrom);
-
   getNetworks = (defaultValue = []) => getNetworks(this.data, defaultValue);
-
   getVolumes = (defaultValue = []) => getVolumes(this.data, defaultValue);
-
   getVolumesOfDisks = (disks: V1Disk[]): V1Volume[] => {
     const diskNames = disks.map((disk) => disk?.name);
     return this.getVolumes().filter((vol) => diskNames.includes(vol.name));
   };
-
   getLabeledDevices = () => transformDevices(this.getDisks(), this.getNetworkInterfaces());
-
   getNodeSelector = () => getNodeSelector(this.data);
-
   getTolerations = () => getTolerations(this.data);
-
   getVolumesByType = (volType: VolumeType): V1Volume[] =>
     this.getVolumes().filter((vol) => new VolumeWrapper(vol).getType() === volType);
-
   getConfigMaps = (): V1Volume[] => this.getVolumesByType(VolumeType.CONFIG_MAP);
-
   getSecrets = (): V1Volume[] => this.getVolumesByType(VolumeType.SECRET);
-
   getServiceAccounts = (): V1Volume[] => this.getVolumesByType(VolumeType.SERVICE_ACCOUNT);
-
   getDiskSerial = (diskName: string) => {
     const disk = this.getDisks().find((d) => d.name === diskName);
     return disk && Object.keys(disk).includes('serial') && disk.serial;
   };
-
   getAffinity = () => getAffinity(this.data);
-
   isDedicatedCPUPlacement = () => isDedicatedCPUPlacement(this.data);
-
   getVMImportOwnerReference = () => {
     return (this.getOwnerReferences() || []).find((reference) =>
       compareOwnerReference(
@@ -111,9 +100,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
       ),
     );
   };
-
   getCloudInitVolume = () => getCloudInitVolume(this.data);
-
   addTemplateLabel = (key: string, value: string) => {
     if (key) {
       this.ensurePath('spec.template.metadata.labels');
@@ -121,12 +108,10 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     }
     return this;
   };
-
   getBootDisk = (): V1Disk => {
     const disks = this.getDisks();
     return disks.find((d) => d.bootOrder === 1) || disks[0];
   };
-
   getBootDevice = (): BootDevice => {
     const devices = this.getDevices();
     if (devices.disks) {
@@ -169,7 +154,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     }
     return this;
   };
-
   setMemory = (value: string, suffix?: string) => {
     this.ensurePath('spec.template.spec.domain.resources.requests');
     this.data.spec.template.spec.domain.resources.requests.memory = suffix
@@ -177,7 +161,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
       : value;
     return this;
   };
-
   setCPU = (cpu: { sockets: number; cores: number; threads: number }) => {
     if (cpu) {
       this.ensurePath('spec.template.spec.domain.cpu', {});
@@ -191,20 +174,17 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     }
     return this;
   };
-
   setRunning = (isRunning?: boolean) => {
     this.ensurePath('spec');
     this.data.spec.running = !!isRunning;
     return this;
   };
-
   setNetworkInterfaces = (networks: V1NetworkInterface[]) => {
     this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.interfaces = _.compact(networks);
     this.ensureNetworksConsistency();
     return this;
   };
-
   setWizardNetworks = (networks: VMWizardNetwork[]) => {
     this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.interfaces = _.compact(
@@ -215,7 +195,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensureNetworksConsistency();
     return this;
   };
-
   setStorage = (
     storages: {
       disk: V1Disk;
@@ -232,7 +211,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensureStorageConsistency();
     return this;
   };
-
   prependStorage = ({
     disk,
     volume,
@@ -251,7 +229,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensureStorageConsistency();
     return this;
   };
-
   appendStorage = ({
     disk,
     volume,
@@ -268,7 +245,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensureStorageConsistency();
     return this;
   };
-
   removeStorage = (diskName: string) => {
     this.ensurePath('spec.template.spec.domain.devices', {});
     this.data.spec.template.spec.domain.devices.disks = this.getDisks().filter(
@@ -290,7 +266,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensureStorageConsistency();
     return this;
   };
-
   removeInterface = (interfaceName: string) => {
     this.ensurePath('spec.template.spec.domain.devices', {});
     this.data.spec.template.spec.domain.devices.interfaces = this.getNetworkInterfaces().filter(
@@ -298,7 +273,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     );
     return this;
   };
-
   updateVolume = (volume: V1Volume) => {
     this.data.spec.template.spec.volumes = this.getVolumes().map((vol) => {
       if (volume.name === vol.name) {
@@ -308,7 +282,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     });
     return this;
   };
-
   setWizardStorages = (storages: VMWizardStorage[]) => {
     this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.disks = _.compact(
@@ -321,19 +294,16 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensureStorageConsistency();
     return this;
   };
-
   setAutoAttachPodInterface = (autoAttach: boolean) => {
     this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.autoattachPodInterface = autoAttach;
     return this;
   };
-
   setHostname = (hostname: string) => {
     this.ensurePath('spec.template.spec');
     this.data.spec.template.spec.hostname = hostname;
     return this;
   };
-
   setSSHKey = (secretNames: string[]) => {
     this.ensurePath('spec.template.spec');
     const accessCredentialsKeys = secretNames.map((secretName) => ({
@@ -344,7 +314,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     }));
     this.data.spec.template.spec.accessCredentials = accessCredentialsKeys;
   };
-
   ensureDataVolumeTemplates = (): V1DataVolumeTemplateSpec[] =>
     this.ensurePath('spec.dataVolumeTemplates', []);
 

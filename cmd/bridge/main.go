@@ -118,6 +118,7 @@ func main() {
 
 	consolePluginsFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
+	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
@@ -238,6 +239,7 @@ func main() {
 		DevCatalogCategories:      *fDevCatalogCategories,
 		UserSettingsLocation:      *fUserSettingsLocation,
 		EnabledConsolePlugins:     consolePluginsMap,
+		PluginProxy:               *fPluginProxy,
 		QuickStarts:               *fQuickStarts,
 		AddPage:                   *fAddPage,
 		ProjectAccessClusterRoles: *fProjectAccessClusterRoles,

@@ -158,3 +158,22 @@ Feature: Create Pipeline from Add Options
                   | git_url                                | builder_image | message                                                                         |
                   | https://github.com/sclorg/httpd-ex.git | httpd         | There are no pipeline templates available for Httpd and Deployment combination. |
                   | https://github.com/sclorg/nginx-ex.git | Nginx         | There are no pipeline templates available for Nginx and Deployment combination. |
+
+
+        @regression @to-do @odc-6372
+        Scenario Outline: Pick a pipeline from git : P-01-TC11
+            Given user has created a custom pipeline from yaml "<pipeline_yaml>" in "openshift" namespace
+              And user is at Import from Git form
+             When user enters Git Repo URL as "<git_url>"
+              And user enters Name as "<pipeline_name>" in General section
+              And user selects resource type as "<resource>"
+              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects "<custom_pipeline_name>" pipeline from the pipeline dropdown menu
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "<pipeline_name>" in topology page
+
+        Examples:
+                  | pipeline_yaml                              | custom_pipeline_name         | git_url                                 | pipeline_name | resource          |
+                  | testData/customNodeDeployment.yaml         | s2i-nodejs-custom-deployment | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-1   | Deployment        |
+                  | testData/customPythonDeploymentConfig.yaml | s2i-python-custom            | https://github.com/sclorg/django-ex.git | django-ex-1   | Deployment Config |

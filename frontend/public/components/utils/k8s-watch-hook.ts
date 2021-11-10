@@ -11,6 +11,7 @@ import {
   UseK8sWatchResource,
   UseK8sWatchResources,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 
 import { makeQuery, makeReduxID } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
@@ -73,8 +74,12 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
   const resource = useDeepCompareMemoize(initResource, true);
   const modelsLoaded = useModelsLoaded();
 
+  const kindReference = resource?.groupVersionKind
+    ? getReference(resource.groupVersionKind)
+    : resource?.kind;
+
   const k8sModel = useSelector<RootState, K8sKind>(({ k8s }) =>
-    resource ? k8s.getIn(['RESOURCES', 'models', resource.kind]) : null,
+    kindReference ? k8s.getIn(['RESOURCES', 'models', kindReference]) : null,
   );
 
   const reduxID = React.useMemo(() => getIDAndDispatch(resource, k8sModel), [k8sModel, resource]);
@@ -146,7 +151,11 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     () =>
       modelsLoaded
         ? Object.keys(resources).reduce((ids, key) => {
-            const resourceModel = k8sModels.get(resources[key].kind);
+            const kindReference = resources[key]?.groupVersionKind
+              ? getReference(resources[key].groupVersionKind)
+              : resources[key].kind;
+
+            const resourceModel = k8sModels.get(kindReference);
             if (!resourceModel) {
               ids[key] = {
                 noModel: true,

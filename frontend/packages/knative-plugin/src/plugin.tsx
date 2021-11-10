@@ -10,7 +10,7 @@ import {
   HorizontalNavTab,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
-import { FLAG_KNATIVE_SERVING_SERVICE } from './const';
+import { FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_SERVING_SERVICE } from './const';
 import * as models from './models';
 import {
   eventSourceBreadcrumbsProvider,
@@ -58,6 +58,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       getKebabActionsForKind,
     },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
   },
   {
     type: 'KebabActions',
@@ -74,6 +77,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       getModels: eventSourceModelsProviderForBreadcrumbs,
       breadcrumbsProvider: eventSourceBreadcrumbsProvider,
     },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
   },
   {
     type: 'DetailPageBreadCrumbs',
@@ -81,12 +87,18 @@ const plugin: Plugin<ConsumedExtensions> = [
       getModels: channelModelsProviderForBreadcrumbs,
       breadcrumbsProvider: channelBreadcrumbsProvider,
     },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
   },
   {
     type: 'DetailPageBreadCrumbs',
     properties: {
       getModels: brokerModelProviderForBreadcrumbs,
       breadcrumbsProvider: brokerBreadcrumbsProvider,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   ...topologyPlugin,

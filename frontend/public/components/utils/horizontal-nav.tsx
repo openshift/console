@@ -2,7 +2,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { History, Location } from 'history';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
+/* eslint-disable import/named */
+import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import {
   Route,
   Switch,
@@ -43,15 +45,17 @@ export const viewYamlComponent = (props) => (
   />
 );
 
-export class PodsComponent extends React.PureComponent<PodsComponentProps> {
+class PodsComponentWithTranslation extends React.PureComponent<
+  PodsComponentProps & WithTranslation
+> {
   render() {
     const {
       metadata: { namespace },
       spec: { selector },
     } = this.props.obj;
-    const { showNodes } = this.props;
+    const { showNodes, t } = this.props;
     if (_.isEmpty(selector)) {
-      return <EmptyBox label="Pods" />;
+      return <EmptyBox label={t('public~Pods')} />;
     }
 
     // Hide the create button to avoid confusion when showing pods for an object.
@@ -68,6 +72,8 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
     );
   }
 }
+
+export const PodsComponent = withTranslation()(PodsComponentWithTranslation);
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
@@ -350,6 +356,7 @@ export const HorizontalNavFacade = withRouter<HorizontalNavFacadeProps & RouteCo
 export type PodsComponentProps = {
   obj: K8sResourceKind;
   showNodes?: boolean;
+  t: TFunction;
 };
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = {

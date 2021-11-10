@@ -53,14 +53,17 @@ export type RemoteEntryModule = {
    */
   get: <T extends {}>(moduleName: string) => Promise<() => T>;
 
+  init: (modules: any) => void;
+
   /**
+   * For webpack 5.0.0-beta.16
    * Override module(s) that were flagged by the container as "overridable".
    *
    * All modules exposed through the container will use the given replacement modules
    * instead of the container-local modules. If an override doesn't exist, all modules
    * of the container will use the container-local module implementation.
    */
-  override: (modules: { [moduleName: string]: () => Promise<() => any> }) => void;
+  override?: (modules: { [moduleName: string]: () => Promise<() => any> }) => void;
 };
 
 /**
