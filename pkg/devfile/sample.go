@@ -9,6 +9,7 @@ import (
 
 const DEVFILE_REGISTRY_URL = "https://registry.devfile.io"
 const DEVFILE_STAGING_REGISTRY_URL = "https://registry.stage.devfile.io"
+const ODC_TELEMETRY_CLIENT_NAME = "odcsample"
 
 // GetRegistrySamples returns the list of samples, more specifically
 // it gets the content of the index (index.json) of the specified registry.
@@ -16,7 +17,7 @@ const DEVFILE_STAGING_REGISTRY_URL = "https://registry.stage.devfile.io"
 func GetRegistrySamples(registry string) ([]byte, error) {
 	if registry == DEVFILE_REGISTRY_URL || registry == DEVFILE_STAGING_REGISTRY_URL{
 		// set registryOption with `user=odcsample` for registry telemetry tracking
-		registryOption := registryLibrary.RegistryOptions{User: "odcsample"}
+		registryOption := registryLibrary.RegistryOptions{User: ODC_TELEMETRY_CLIENT_NAME}
 
 		devfileIndex, err := registryLibrary.GetRegistryIndex(registry, registryOption, indexSchema.SampleDevfileType)
 		if err != nil {
