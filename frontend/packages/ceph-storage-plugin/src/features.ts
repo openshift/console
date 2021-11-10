@@ -38,6 +38,8 @@ export const CEPH_FLAG = 'CEPH';
 // Based on the existence of StorageCluster
 export const OCS_FLAG = 'OCS';
 
+export const MCG_STANDALONE = 'MCG_STANDALONE';
+
 export enum GUARDED_FEATURES {
   // Flag names to be prefixed with "OCS_" so as to seperate from console flags
   OCS_MULTUS = 'OCS_MULTUS',
@@ -136,6 +138,12 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
       dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
       dispatch(setFlag(OCS_FLAG, true));
+      dispatch(
+        setFlag(
+          MCG_STANDALONE,
+          storageCluster?.spec?.multiCloudGateway?.reconcileStrategy === 'standalone',
+        ),
+      );
     }
   } catch (error) {
     dispatch(setFlag(OCS_FLAG, false));
