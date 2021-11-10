@@ -225,7 +225,9 @@ export const NamespaceIncludesManualApproval: React.FC<NamespaceIncludesManualAp
 const InstallPlanCSVNames: React.FC<InstallPlanReviewProps> = ({ installPlan }) =>
   installPlan?.spec.clusterServiceVersionNames
     .sort()
+    // eslint-disable-next-line react/no-array-index-key
     .map((CSVName, i) => <strong key={`${CSVName}-${i}`}>{CSVName}</strong>)
+    // eslint-disable-next-line react/no-array-index-key
     .map((CSVName, i) => (i > 0 ? <span key={`${CSVName}-${i}`}>, {CSVName}</span> : CSVName));
 
 export const InstallPlanReview: React.FC<InstallPlanReviewProps> = ({ installPlan }) => (

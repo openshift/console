@@ -1,5 +1,5 @@
+/* eslint-disable no-await-in-loop */
 import { k8sCreate, k8sGet, k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
-/* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import { CDI_BIND_REQUESTED_ANNOTATION } from '../../../components/cdi-upload-provider/consts';
 import { DataVolumeModel, UploadTokenRequestModel } from '../../../models';
 import {

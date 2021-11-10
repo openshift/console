@@ -31,6 +31,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
     const { id, label, subcategories, numItems } = category;
     const active = id === selectedCategory;
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const tabClasses = cx('text-capitalize', { 'co-catalog-tab__empty': !numItems });
 
     return (

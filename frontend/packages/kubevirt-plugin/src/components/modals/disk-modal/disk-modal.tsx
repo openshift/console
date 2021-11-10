@@ -117,7 +117,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || new DiskWrapper();
   const volume = props.volume || new VolumeWrapper();
-  const dataVolume = props.dataVolume || new DataVolumeWrapper();
+  const dataVolume = React.useMemo(() => {
+    return props.dataVolume || new DataVolumeWrapper();
+  }, [props.dataVolume]);
   const tValidations = templateValidations || new TemplateValidations();
   const [autoDetach, setAutoDetach] = React.useState(false);
 

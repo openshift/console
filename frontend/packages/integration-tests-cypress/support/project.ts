@@ -4,7 +4,7 @@ import { modal } from '../views/modal';
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       createProject(name: string): Chainable<Element>;
       deleteProject(name: string): Chainable<Element>;
     }

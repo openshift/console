@@ -116,6 +116,7 @@ const Footer: React.FC<FooterProps> = ({
   return (
     <div
       className={classNames({
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'kv-create-vm__footer': isSelectTemplate,
       })}
     >

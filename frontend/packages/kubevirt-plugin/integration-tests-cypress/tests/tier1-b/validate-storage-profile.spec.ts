@@ -17,7 +17,7 @@ const vmData: VirtualMachineData = {
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       createStorageClass(): void;
       deleteStorageClass(): void;
       deleteStorageProfile(): void;

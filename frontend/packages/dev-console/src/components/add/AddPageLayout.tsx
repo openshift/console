@@ -68,6 +68,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
             <RestoreGettingStartedButton userSettingsKey={GETTING_STARTED_USER_SETTINGS_KEY} />
             <div
               className={cx('odc-add-page-layout__hint-block__details-switch', {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'odc-add-page-layout__hint-block__details-switch__loading-state': !extensionsLoaded,
               })}
               data-test="details-switch"

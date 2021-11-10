@@ -298,6 +298,7 @@ const EditRule = connect(stateToProps, { getResources: k8sActions.getResources }
     }
 
     render() {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const { t } = useTranslation();
       const { name, namespace, namespacedSet, safeResources, adminResources, rule } = this.props;
       const { verbControl, resourceControl, nonResourceURLs, APIGroups, role } = this.state;

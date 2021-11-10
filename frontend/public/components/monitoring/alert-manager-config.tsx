@@ -335,7 +335,10 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
   const { receiver: defaultReceiverName, routes } = route;
   const { t } = useTranslation();
 
-  const routingLabelsByReceivers = _.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes, {});
+  const routingLabelsByReceivers = React.useMemo(
+    () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes, {})),
+    [routes],
+  );
   const EmptyMsg = () => (
     <MsgBox title={t('public~No Receivers match filter {{filterValue}}', { filterValue })} />
   );

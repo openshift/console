@@ -3,7 +3,7 @@ import { createTemplate, createVM, templateYAML, vmYAML } from '../views/selecto
 
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       loaded(): Chainable<Element>;
       visitVMsList(): Chainable<Element>;
       visitVMTemplatesList(): Chainable<Element>;

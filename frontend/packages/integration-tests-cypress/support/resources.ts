@@ -4,7 +4,7 @@ import { K8sResourceKindReference } from '@console/internal/module/k8s';
 export {};
 declare global {
   namespace Cypress {
-    interface Chainable<Subject> {
+    interface Chainable {
       resourceShouldBeDeleted(
         namespace: string,
         resource: K8sResourceKindReference | string,

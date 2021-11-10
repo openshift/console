@@ -8,6 +8,7 @@ interface PageBodyProps {
 
 const PageBody: React.FC<PageBodyProps> = ({ children, flexLayout }) => (
   <div
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     className={classnames('co-m-pane__body', { 'co-m-page__body': flexLayout })}
     style={{ paddingBottom: 0 }}
   >

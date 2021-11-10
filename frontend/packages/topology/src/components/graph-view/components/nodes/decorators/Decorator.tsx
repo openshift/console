@@ -67,8 +67,6 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   );
   if (href) {
     return external ? (
-      /*
-      // @ts-ignore */
       // eslint-disable-next-line jsx-a11y/anchor-is-valid
       <a
         className="odc-decorator__link"

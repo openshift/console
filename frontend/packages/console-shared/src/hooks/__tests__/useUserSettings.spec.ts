@@ -1,6 +1,6 @@
 import { act } from 'react-dom/test-utils';
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

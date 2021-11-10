@@ -29,7 +29,7 @@ import {
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -213,6 +213,7 @@ const MetricsDropdown: React.FC<{}> = () => {
   const [items, setItems] = React.useState<MetricsDropdownItems>();
   const [error, setError] = React.useState<PrometheusAPIError>();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   React.useEffect(() => {
@@ -601,6 +602,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     observe.getIn(['queryBrowser', 'queries', index, 'series']),
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {

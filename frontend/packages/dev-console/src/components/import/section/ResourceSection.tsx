@@ -31,7 +31,7 @@ const createHelpText = (k8sModel: K8sKind, helpText: string) => {
 const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
-  const invalidTypes = field.value || [];
+  const invalidTypes = React.useMemo(() => field.value || [], [field.value]);
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,

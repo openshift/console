@@ -16,12 +16,14 @@ const FilterTable: React.FC<FilterTableProps> = ({
   paddingLeft = false,
 }) => {
   const filterRow = (key: string, value: string) => {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const className = cx({ 'kn-filter-table__row--bordered': bordered });
     return {
       cells: [
         {
           title: key,
           props: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             className: cx(className, { 'kn-filter-table__padding--left': paddingLeft }),
           },
         },

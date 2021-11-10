@@ -41,7 +41,7 @@ describe('file-upload-utils', () => {
   });
 
   it('should return true for jar file', () => {
-    const file: File = {
+    const file = {
       name: 'spring-boot-artifacts.jar',
       type: 'application/x-java-archive',
       lastModified: 15464,
@@ -55,7 +55,7 @@ describe('file-upload-utils', () => {
   });
 
   it('should return true for yaml file', () => {
-    const file: File = {
+    const file = {
       name: 'sleep-1-minute-pipeline.yaml',
       size: 220,
       type: 'application/x-yaml',
@@ -69,7 +69,7 @@ describe('file-upload-utils', () => {
   });
 
   it('should return true for JAR file', () => {
-    const file: File = {
+    const file = {
       name: 'spring-boot-artifacts.JAR',
       type: 'application/x-java-archive',
       lastModified: 15464,
@@ -83,7 +83,7 @@ describe('file-upload-utils', () => {
   });
 
   it('should return false for zip file', () => {
-    const file: File = {
+    const file = {
       name: 'sleep-1-minute-pipeline.zip',
       size: 220,
       type: 'application/x-zip',
@@ -97,7 +97,7 @@ describe('file-upload-utils', () => {
   });
 
   it('should return false for xyz type file', () => {
-    const file: File = {
+    const file = {
       name: 'sleep-1-minute-pipeline.jar.xyz',
       size: 220,
       type: 'application/x-jar',
@@ -111,7 +111,7 @@ describe('file-upload-utils', () => {
   });
 
   it('should return false for file with no extension', () => {
-    const file: File = {
+    const file = {
       name: 'jar',
       size: 220,
       type: '',

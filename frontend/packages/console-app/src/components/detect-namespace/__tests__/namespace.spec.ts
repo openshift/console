@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { act } from 'react-dom/test-utils';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';

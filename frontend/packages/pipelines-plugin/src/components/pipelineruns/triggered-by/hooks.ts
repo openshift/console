@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
 // FIXME react-redux types are 6.x while react-redux is 7.x
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';

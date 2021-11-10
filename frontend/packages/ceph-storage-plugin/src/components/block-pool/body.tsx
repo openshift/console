@@ -81,7 +81,9 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
   }, [storageCluster, storageClusterLoaded, storageClusterLoadError, dispatch]);
 
   // Volume Type
-  const deviceClasses = cephCluster?.status?.storage?.deviceClasses ?? [];
+  const deviceClasses = React.useMemo(() => {
+    return cephCluster?.status?.storage?.deviceClasses ?? [];
+  }, [cephCluster?.status?.storage?.deviceClasses]);
 
   const setVolumeType = React.useCallback(
     (volumeType: string) =>

@@ -185,7 +185,7 @@ export const getPoolKindObj = (state: BlockPoolState): StoragePoolKind => ({
     deviceClass: state.volumeType || '',
     failureDomain: state.failureDomain,
     parameters: {
-      compression_mode: state.isCompressed ? COMPRESSION_ON : 'none', // eslint-disable-line @typescript-eslint/camelcase
+      compression_mode: state.isCompressed ? COMPRESSION_ON : 'none',
     },
     replicated: {
       size: Number(state.replicaSize),

@@ -21,6 +21,7 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({
     <>
       <div
         className={classNames({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'kv-validation-cell__cell--row-flex-direction': !!additionalLabel,
         })}
       >
@@ -32,10 +33,12 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({
       {validation && (
         <div
           className={classNames({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'kv-validation-cell__cell--error': [
               ValidationErrorType.Error,
               ValidationErrorType.TrivialError,
             ].includes(validation.type),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'kv-validation-cell__cell--warning': validation.type === ValidationErrorType.Warn,
           })}
         >

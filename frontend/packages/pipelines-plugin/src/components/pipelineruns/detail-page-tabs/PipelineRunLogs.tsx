@@ -42,6 +42,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
     this.setState({ activeItem });
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.obj !== nextProps.obj) {
       const { obj, activeTask } = this.props;

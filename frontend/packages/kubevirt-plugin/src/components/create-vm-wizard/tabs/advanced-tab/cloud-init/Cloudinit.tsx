@@ -2,7 +2,7 @@ import * as React from 'react';
 import yamlParser from 'js-yaml';
 import { isEmpty, isEqual } from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import useCloudinitValidations from '../../../../../hooks/use-cloudinit-validations';

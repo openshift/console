@@ -1,4 +1,3 @@
-/* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import * as _ from 'lodash';
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';

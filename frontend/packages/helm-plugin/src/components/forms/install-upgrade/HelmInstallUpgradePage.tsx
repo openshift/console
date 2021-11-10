@@ -178,7 +178,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     const payload = {
       namespace,
       name: releaseName,
-      ...(chartURL !== 'null' || undefined ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/camelcase
+      ...(chartURL !== 'null' || undefined ? { chart_url: chartURL } : {}),
       ...(valuesObj ? { values: valuesObj } : {}),
     };
 

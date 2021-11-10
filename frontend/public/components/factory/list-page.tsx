@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { connect, useDispatch } from 'react-redux';
 import { Link, match as RMatch } from 'react-router-dom';
@@ -260,6 +260,7 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
       this.updateURL(filterName, options);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillMount() {
       const params = new URLSearchParams(window.location.search);
       params.forEach((v, k) => this.applyFilter(k, v));

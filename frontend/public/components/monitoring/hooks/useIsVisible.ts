@@ -11,6 +11,7 @@ export const useIsVisible = (ref) => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const observer = new IntersectionObserver(callback);
 
   React.useEffect(() => {

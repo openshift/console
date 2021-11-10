@@ -285,6 +285,7 @@ export const UtilizationCard = () => {
     () => [getUtilizationQueries(nodeType), getMultilineQueries(nodeType)],
     [nodeType],
   );
+
   return (
     machineConfigPoolsLoaded && (
       <Card data-test-id="utilization-card">

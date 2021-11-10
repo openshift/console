@@ -10,7 +10,7 @@ type MonitoringAlertColumn = {
   props?: { [className: string]: string };
 };
 
-export const MonitoringAlertColumn = (t: TFunction): MonitoringAlertColumn[] => [
+export default (t: TFunction): MonitoringAlertColumn[] => [
   {
     title: t('devconsole~Name'),
     cellFormatters: [expandable],

@@ -110,6 +110,7 @@ export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLo
           <GridItem
             span={6}
             className={classNames({
+              // eslint-disable-next-line @typescript-eslint/naming-convention
               'kv-inventory-card__statuses-grid--left-col': numStatuses >= 2,
             })}
           >

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { SecretModel, ServiceAccountModel } from '@console/internal/models';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { getVmwareField } from '../../../../components/create-vm-wizard/selectors/provider/vmware/selectors';
@@ -29,7 +30,6 @@ import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
 import { ServiceAccountWrappper } from '../../../wrapper/k8s/service-account-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
-/* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import { CreateVMParams } from '../../vm/create/types';
 import { ImporterResult } from '../../vm/types';
 import { getVmwareConfigMap } from '../v2vvmware-configmap';

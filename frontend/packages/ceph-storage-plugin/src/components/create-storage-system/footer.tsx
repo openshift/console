@@ -1,5 +1,5 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';

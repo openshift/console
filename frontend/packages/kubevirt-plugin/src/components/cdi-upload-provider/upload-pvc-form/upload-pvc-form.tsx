@@ -686,6 +686,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
       </Helmet>
       <div
         className={cx('co-m-pane__body co-m-pane__form', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'kv--create-upload__hide': isSubmitting,
         })}
       >

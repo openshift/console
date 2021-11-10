@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';

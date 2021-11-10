@@ -2,7 +2,6 @@ import { FirehoseResourcesResult } from '@console/internal/components/utils/type
 import { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
 import { HelmRelease, HelmChartMetaData, HelmChartEntries } from '../../types/helm-types';
 
-/* eslint-disable @typescript-eslint/camelcase */
 export const mockHelmReleases: HelmRelease[] = [
   {
     name: 'ghost-test',

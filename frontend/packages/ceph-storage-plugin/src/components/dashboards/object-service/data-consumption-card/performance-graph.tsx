@@ -67,7 +67,9 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
         <PrometheusGraph
           ref={containerRef}
           className={classNames({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'nb-perf__graph--short': metricType === Metrics.LATENCY,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'nb-perf__graph--long': metricType === Metrics.BANDWIDTH,
           })}
         >

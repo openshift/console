@@ -39,6 +39,7 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) =>
         return (
           <li
             className={classNames('properties-side-panel-pf-property-value__capability-level', {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
               'properties-side-panel-pf-property-value__capability-level--active': active,
             })}
             key={level}

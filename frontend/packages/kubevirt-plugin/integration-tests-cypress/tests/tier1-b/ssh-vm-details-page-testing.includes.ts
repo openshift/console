@@ -3,8 +3,6 @@ import { VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
 import { detailsTab } from '../../views/selector';
 import { virtualization } from '../../views/virtualization';
 
-const AFTER_CREATE_WAIT_TIME = 3000;
-
 export default ({ vmName }) =>
   describe('ID (CNV-5970) Test SSH info in vm details page', () => {
     it('should navigate to vm details page', () => {
@@ -78,8 +76,8 @@ export default ({ vmName }) =>
     });
 
     it('should navigate to services page', () => {
-      // eslint-disable-next-line
-      cy.wait(AFTER_CREATE_WAIT_TIME);
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
       cy.get('[data-test=nav]')
         .filter('[href$=services]')
         .then((link) => cy.visit(link.attr('href')));

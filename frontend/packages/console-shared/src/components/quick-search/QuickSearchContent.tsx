@@ -41,6 +41,7 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
     <Split className="ocs-quick-search-content">
       <SplitItem
         className={cx('ocs-quick-search-content__list', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'ocs-quick-search-content__list--overflow': catalogItems.length >= limitItemCount,
         })}
       >

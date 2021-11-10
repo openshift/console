@@ -11,7 +11,6 @@ export const mockRepository: RepositoryKind = {
     resourceVersion: '171973',
     uid: 'd1ec5cd2-a55b-413c-afae-8b3f25e0723b',
   },
-  // eslint-disable-next-line @typescript-eslint/camelcase
   pipelinerun_status: [
     {
       completionTime: '2021-07-13T09:19:30Z',
@@ -88,7 +87,6 @@ export const mockRepository: RepositoryKind = {
   ],
   spec: {
     branch: 'main',
-    // eslint-disable-next-line @typescript-eslint/camelcase
     event_type: 'pull_request',
     namespace: 'karthik',
     url: 'https://github.com/karthikjeeyar/demo-app',
