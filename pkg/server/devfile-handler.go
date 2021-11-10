@@ -112,7 +112,6 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	dockerRelativeSrcContext := imageComponents[0].Image.Dockerfile.BuildContext
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get the dockefile context location, dockerfile buildcontext is not defined by image component %v", imageComponents[0].Name)
@@ -219,7 +218,7 @@ func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOption
 	}
 
 	svcPort := corev1.ServicePort{
-		Name:       fmt.Sprintf("http-%v",imagePort),
+		Name:       fmt.Sprintf("http-%v", imagePort),
 		Port:       int32(portNumber),
 		TargetPort: intstr.FromString(imagePort),
 	}
@@ -231,8 +230,8 @@ func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOption
 func getRouteForDockerImage(data devfileForm, imagePort string) routev1.Route {
 
 	routeParams := generator.RouteParams{
-			TypeMeta: generator.GetTypeMeta("Route", "route.openshift.io/v1"),
-			RouteSpecParams: generator.RouteSpecParams{
+		TypeMeta: generator.GetTypeMeta("Route", "route.openshift.io/v1"),
+		RouteSpecParams: generator.RouteSpecParams{
 			ServiceName: data.Name,
 			PortNumber:  intstr.FromString(imagePort),
 			Path:        "/",
@@ -240,5 +239,5 @@ func getRouteForDockerImage(data devfileForm, imagePort string) routev1.Route {
 		},
 	}
 
-return  *generator.GetRoute(routeParams)
+	return *generator.GetRoute(routeParams)
 }
