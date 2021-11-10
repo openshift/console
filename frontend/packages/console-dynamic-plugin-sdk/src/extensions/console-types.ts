@@ -346,7 +346,7 @@ type RowFilterBase<R> = {
   filterGroupName: string;
   type: string;
   items: RowFilterItem[];
-  filter: (input: FilterValue, obj: R) => boolean;
+  filter?: (input: FilterValue, obj: R) => boolean;
   defaultSelected?: string[];
 };
 

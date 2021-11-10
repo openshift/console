@@ -40,8 +40,7 @@ import {
 } from '@console/shared';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
-import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
-import { RowFilter } from '../filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../../actions/ui';
 import {
   alertingRuleSource,
@@ -446,7 +445,7 @@ export const Table: React.FC<TableProps> = ({
     defaultSortOrder,
     staticFilters,
     filters,
-    rowFilters: rowFilters as RowFilterExt[],
+    rowFilters: rowFilters as RowFilter[],
     propData,
     loaded,
     isPinned,

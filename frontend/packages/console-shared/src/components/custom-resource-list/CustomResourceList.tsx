@@ -3,8 +3,9 @@ import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { Table, RowFunctionArgs, TableProps } from '@console/internal/components/factory';
-import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
+import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
 
 interface CustomResourceListProps {

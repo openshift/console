@@ -18,7 +18,7 @@ import {
   OutlinedBellIcon,
 } from '@patternfly/react-icons';
 
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective, RowFilter } from '@console/dynamic-plugin-sdk';
 import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
@@ -47,7 +47,8 @@ import {
 import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
-import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import { FilterToolbar } from '../filter-toolbar';
+
 import { confirmModal } from '../modals';
 import { PrometheusLabels } from '../graphs';
 import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';

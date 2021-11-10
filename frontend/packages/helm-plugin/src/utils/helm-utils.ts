@@ -2,9 +2,9 @@ import * as fuzzy from 'fuzzysearch';
 import { TFunction } from 'i18next';
 import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { Flatten } from '@console/internal/components/factory/list-page';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { toTitleCase } from '@console/shared';
 import {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import {
   StateCounts,
   Severity,

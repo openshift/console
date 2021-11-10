@@ -12,9 +12,8 @@ import {
   AlertSeverity,
   SilenceStates,
 } from '@console/dynamic-plugin-sdk/src/api/common-types';
-
+import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { RowFunctionArgs } from '../factory';
-import { RowFilter } from '../filter-toolbar';
 
 export {
   SilenceStates,

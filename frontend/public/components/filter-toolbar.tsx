@@ -20,7 +20,10 @@ import {
 } from '@patternfly/react-core';
 import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import {
-  RowFilterItem,
+  // RowFilterItem,
+  RowReducerFilter,
+  RowMatchFilter,
+  RowFilter,
   ColumnLayout,
   OnFilterChange,
   FilterValue,
@@ -114,7 +117,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   const generatedRowFilters = useDeepCompareMemoize(
     (rowFilters ?? []).map((rowFilter) => ({
       ...rowFilter,
-      items: rowFilter.items.map((item) => ({
+      items: (rowFilter.items || []).map((item) => ({
         ...item,
         count: (rowFilter as RowMatchFilter).isMatch
           ? _.filter(data, (d) => (rowFilter as RowMatchFilter).isMatch(d, item.id)).length
@@ -170,7 +173,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   // Map row filters to select groups
   const dropdownItems = generatedRowFilters.map((rowFilter) => (
-    <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
+    <SelectGroup key={rowFilter.filterGroupName || ''} label={rowFilter.filterGroupName || ''}>
       {rowFilter.items?.map?.((item) =>
         item.hideIfEmpty && (item.count === 0 || item.count === '0') ? (
           <></>
@@ -412,32 +415,6 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     </Toolbar>
   );
 };
-
-type RowFilterBase<R> = {
-  filterGroupName: string;
-  type: string;
-  items: RowFilterItem[];
-  filter?: (input: FilterValue, obj: R) => boolean;
-  defaultSelected?: string[];
-};
-
-export type RowNameLabelFilter<R = any> = {
-  type: 'name' | 'label';
-  filter: (input: FilterValue, obj: R) => boolean;
-  filterGroupName?: string;
-  items?: RowFilterItem[];
-  defaultSelected?: string[];
-};
-
-export type RowMatchFilter<R = any> = RowFilterBase<R> & {
-  isMatch: (obj: R, id: string) => boolean;
-};
-
-export type RowReducerFilter<R = any> = RowFilterBase<R> & {
-  reducer: (obj: R) => React.ReactText;
-};
-
-export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R> | RowNameLabelFilter<R>;
 
 type FilterToolbarProps = {
   rowFilters?: RowFilter[];
