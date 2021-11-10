@@ -22,7 +22,7 @@ export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName }) =
           RHEL download page
         </a>
       </strong>{' '}
-      (requires login) and copy the download link URL of the KVM guest image
+      (requires login) and copy the download link URL of the KVM guest image (expires quickly)
     </Trans>
   ) : baseImageName?.includes('win') ? (
     <Trans t={t} ns="kubevirt-plugin">
