@@ -63,7 +63,7 @@ export class ConsoleRemotePlugin {
       logger.warn(`output.publicPath is defined, but will be overridden to ${publicPath}`);
     }
 
-    // Configure base path for loading all plugin assets
+    // Perform post-compiler-initialization actions
     compiler.hooks.initialize.tap(ConsoleRemotePlugin.name, () => {
       compiler.options.output.publicPath = publicPath;
     });

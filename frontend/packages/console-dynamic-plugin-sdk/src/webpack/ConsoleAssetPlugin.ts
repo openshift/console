@@ -81,10 +81,23 @@ export class ConsoleAssetPlugin {
         () => {
           compilation.updateAsset(remoteEntryFile, (source) => {
             const newSource = new webpack.sources.ReplaceSource(source);
-            newSource.insert(
-              this.remoteEntryCallback.length + 1,
-              `'${this.pkg.consolePlugin.name}@${this.pkg.consolePlugin.version}', `,
-            );
+
+            const fromIndex = source
+              .source()
+              .toString()
+              .indexOf(`${this.remoteEntryCallback}(`);
+
+            if (fromIndex < 0) {
+              const error = new webpack.WebpackError(`Missing call to ${this.remoteEntryCallback}`);
+              error.file = remoteEntryFile;
+              compilation.errors.push(error);
+            } else {
+              newSource.insert(
+                fromIndex + this.remoteEntryCallback.length + 1,
+                `'${this.pkg.consolePlugin.name}@${this.pkg.consolePlugin.version}', `,
+              );
+            }
+
             return newSource;
           });
         },
@@ -100,10 +113,10 @@ export class ConsoleAssetPlugin {
         );
 
         if (result.hasErrors()) {
-          const webpackError = new webpack.WebpackError('ExtensionValidator has reported errors');
-          webpackError.details = result.formatErrors();
-          webpackError.file = extensionsFile;
-          compilation.errors.push(webpackError);
+          const error = new webpack.WebpackError('ExtensionValidator has reported errors');
+          error.details = result.formatErrors();
+          error.file = extensionsFile;
+          compilation.errors.push(error);
         }
       });
     }
