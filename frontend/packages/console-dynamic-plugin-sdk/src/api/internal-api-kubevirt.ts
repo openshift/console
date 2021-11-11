@@ -5,6 +5,7 @@
 /* eslint-disable global-require */
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   AccessReviewResourceAttributes,
   Action,
@@ -88,9 +89,11 @@ export const {
   };
 } = require('@console/internal/module/k8s/openapi-to-json-schema');
 
-export const withDashboardResources: (
-  WrappedComponent: React.ComponentType,
-) => React.ComponentClass = require('@console/internal/components/dashboard/with-dashboard-resources')
+export const withDashboardResources: <P extends DashboardItemProps>(
+  WrappedComponent: React.ComponentType<P>,
+) => React.ComponentClass<
+  P
+> = require('@console/internal/components/dashboard/with-dashboard-resources')
   .withDashboardResources;
 
 export const {
@@ -120,7 +123,7 @@ export const useAllowEdgeCreation: () => boolean = require('@console/topology/sr
 export const useDisplayFilters: () => DisplayFilters = require('@console/topology/src/filters/useDisplayFilters')
   .useDisplayFilters;
 
-export const useSearchFilter: () => (
+export const useSearchFilter: (
   text: string,
 ) => [boolean, string] = require('@console/topology/src/filters/useSearchFilter').useSearchFilter;
 
@@ -139,6 +142,7 @@ export const {
   RedExclamationCircleIcon,
   SuccessStatus,
   WarningStatus,
+  InfoStatus,
   YellowExclamationTriangleIcon,
 }: {
   BlueInfoCircleIcon: React.FC<ColoredIconProps>;
@@ -149,6 +153,7 @@ export const {
   ProgressStatus: React.FC<StatusComponentProps>;
   SuccessStatus: React.FC<StatusComponentProps>;
   WarningStatus: React.FC<StatusComponentProps>;
+  InfoStatus: React.FC<StatusComponentProps>;
   StatusIconAndText: React.FC<
     StatusComponentProps & {
       icon?: React.ReactElement;
@@ -184,7 +189,7 @@ export const {
   createProjectModal,
 }: {
   createProjectModal: (
-    props: ModalComponentProps & CreateModalLauncherProps,
+    props: ModalComponentProps & CreateModalLauncherProps & { onSubmit: (newProject: any) => void },
   ) => {
     result: Promise<{}>;
   };
@@ -205,8 +210,10 @@ export const {
   ) => [boolean, boolean];
 } = require('@console/internal/components/utils/index');
 export const {
+  modelFor,
   modelForGroupKind,
 }: {
+  modelFor: (ref: K8sResourceKindReference) => K8sModel;
   modelForGroupKind: (group: string, kind: string) => K8sModel;
 } = require('@console/internal/module/k8s/k8s-models');
 export const {
@@ -289,11 +296,7 @@ export const TopologyListViewNode = React.lazy(() =>
   import('@console/topology/src/components/list-view/TopologyListViewNode'),
 );
 
-export const Kebab = React.lazy(() =>
-  import('@console/internal/components/utils').then((m) => ({
-    default: m.Kebab,
-  })),
-);
+export const Kebab: any = require('@console/internal/components/utils').Kebab;
 
 export const ResourceIcon = React.lazy(() =>
   import('@console/internal/components/utils').then((m) => ({
@@ -433,17 +436,10 @@ export const EnvFromEditor = React.lazy(() =>
   })),
 );
 
-export const PrometheusMultilineUtilizationItem = React.lazy(() =>
-  import(
-    '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card'
-  ).then((m) => ({ default: m.PrometheusMultilineUtilizationItem })),
-);
-
-export const PrometheusUtilizationItem = React.lazy(() =>
-  import(
-    '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card'
-  ).then((m) => ({ default: m.PrometheusUtilizationItem })),
-);
+export {
+  PrometheusUtilizationItem,
+  PrometheusMultilineUtilizationItem,
+} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 
 export const RecentEventsBodyContent = React.lazy(() =>
   import('@console/shared/src/components/dashboard/activity-card/ActivityBody').then((m) => ({
