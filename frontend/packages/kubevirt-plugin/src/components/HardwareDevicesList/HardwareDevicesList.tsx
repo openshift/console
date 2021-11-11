@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EmptyState, GridItem, Split, SplitItem, Text, TextVariants } from '@patternfly/react-core';
+import { GridItem, Split, SplitItem, Text, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import AddButton from '../AddButton/AddButton';
 import { HardwareDevicesListRow, HardwareDevicesListRowProps } from './HardwareDevicesListRow';
@@ -7,6 +7,8 @@ import {
   HardwareDevicesListRowAddDevice,
   HardwareDevicesListRowAddDeviceProps,
 } from './HardwareDevicesListRowAddDevice';
+
+import './hardware-devices.scss';
 
 export type HardwareDevice = {
   // Common denominator of V1GPU and V1HostDevice
@@ -20,6 +22,7 @@ export type HardwareDevicesListProps = {
   addDeviceText?: string;
   onAttachHandler?: () => void;
   showAddDeviceRow?: boolean;
+  emptyState?: React.ReactNode;
 } & HardwareDevicesListRowProps &
   HardwareDevicesListRowAddDeviceProps;
 
@@ -33,21 +36,21 @@ const HardwareDevicesList: React.FC<HardwareDevicesListProps> = ({
   onValidateName,
   onResetValidateName,
   deviceName,
-  noDevicesFoundText = 'No devices found',
+  emptyState = 'No devices found',
   addDeviceText,
   onAttachHandler,
   onDeviceNameChange,
-  isUserForbidden,
+  isDisabled,
 }) => {
   const { t } = useTranslation();
   const showEmptyState = !(devices?.length > 0 || showAddDeviceRow);
 
   const headers = (
     <>
-      <GridItem span={5}>
+      <GridItem className="kv-hardware__name" span={5}>
         <Text component={TextVariants.h4}>{t('kubevirt-plugin~Name')}</Text>
       </GridItem>
-      <GridItem span={6}>
+      <GridItem className="kv-hardware__device" span={5}>
         <Text component={TextVariants.h4}>{t('kubevirt-plugin~Device name')}</Text>
       </GridItem>
     </>
@@ -57,7 +60,7 @@ const HardwareDevicesList: React.FC<HardwareDevicesListProps> = ({
     <Split>
       <SplitItem>
         <AddButton
-          isDisabled={showAddDeviceRow || isUserForbidden}
+          isDisabled={showAddDeviceRow || isDisabled}
           onClick={onAttachHandler}
           btnText={addDeviceText}
         />
@@ -68,7 +71,7 @@ const HardwareDevicesList: React.FC<HardwareDevicesListProps> = ({
   return (
     <>
       {showEmptyState ? (
-        <EmptyState>{noDevicesFoundText}</EmptyState>
+        emptyState
       ) : (
         <>
           {headers}
@@ -77,7 +80,7 @@ const HardwareDevicesList: React.FC<HardwareDevicesListProps> = ({
               name={device?.name}
               deviceName={device?.deviceName}
               onDetachHandler={() => onDetachHandler(device?.name)}
-              isUserForbidden={isUserForbidden}
+              isDisabled={isDisabled}
             />
           ))}
           {showAddDeviceRow && (
