@@ -42,7 +42,7 @@ oc apply -f oc-manifest.yaml
 ```
 
 Note that the `Service` exposing the HTTP server is annotated to have a signed
-[service serving certificate](https://docs.openshift.com/container-platform/4.6/security/certificates/service-serving-certificate.html)
+[service serving certificate](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/security_and_compliance/configuring-certificates#add-service-serving)
 generated and mounted into the image. This allows us to run the server with HTTP/TLS enabled, using
 a trusted CA certificate.
 
@@ -80,7 +80,7 @@ An example proxy request path from plugin to `helm-charts` service,
 in `helm` namespace to list ten helm releases:
 `/api/proxy/namespace/helm/service/helm-charts:8443/releases?limit=10`
 
-Proxied request will use [service CA bundle](https://docs.openshift.com/container-platform/4.8/security/certificate_types_descriptions/service-ca-certificates.html) by default. The service must use HTTPS.
+Proxied request will use [service CA bundle](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/security_and_compliance/certificate-types-and-descriptions#cert-types-service-ca-certificates) by default. The service must use HTTPS.
 If the service uses a custom service CA, the `caCertificate` field
 must contain the certificate bundle. In case the service proxy request
 needs to contain logged-in user's OpenShift access token, the `authorize`

@@ -27,13 +27,13 @@ export const CLOUD_INIT_MISSING_USERNAME =
   'No username set, see operating system documentation for the default username.';
 export const CLOUD_INIT_DOC_LINK = 'https://cloudinit.readthedocs.io/en/latest/index.html';
 export const STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK =
-  'https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/virtual_disks/virt-features-for-storage.html';
+  'https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/virtualization/virtual-machines#virt-features-for-storage';
 export const STORAGE_CLASS_SUPPORTED_RHV_LINK =
   'https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/importing_vms/virt-importing-rhv-vm.html';
 export const STORAGE_CLASS_SUPPORTED_VMWARE_LINK =
   'https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html';
 export const NODE_PORTS_LINK =
-  'https://docs.openshift.com/container-platform/4.8/networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-nodeport.html#nw-using-nodeport_configuring-ingress-cluster-traffic-nodeport';
+  'https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/networking/configuring-ingress-cluster-traffic#nw-using-nodeport_configuring-ingress-cluster-traffic-nodeport';
 
 export const PREALLOCATION_DATA_VOLUME_LINK =
-  'https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/virtual_disks/virt-using-preallocation-for-datavolumes.html';
+  'https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/virtualization/virtual-machines#virt-using-preallocation-for-datavolumes';
