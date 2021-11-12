@@ -218,7 +218,7 @@
   "Discovering disks on all hosts. This may take a few minutes.": "Discovering disks on all hosts. This may take a few minutes.",
   "Minimum Node Requirement": "Minimum Node Requirement",
   "A minimum of 3 nodes are required for the initial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.": "A minimum of 3 nodes are required for the initial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.",
-  "After the LocalVolumeSet is created you won't be able to go back to this step.": "After the LocalVolumeSet is created you won't be able to go back to this step.",
+  "After the LocalVolumeSet is created you won't be able to edit it.": "After the LocalVolumeSet is created you won't be able to edit it.",
   "Note:": "Note:",
   "Create LocalVolumeSet": "Create LocalVolumeSet",
   "Yes": "Yes",
