@@ -12,4 +12,7 @@ export const sharedPluginModules = [
   'react-i18next',
   'react-router',
   'react-router-dom',
+  'react-redux',
+  'redux',
+  'redux-thunk',
 ];

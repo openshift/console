@@ -26,7 +26,8 @@ import {
   MachineModel,
   PrometheusModel,
 } from '../models';
-import { referenceForModel, referenceForGroupVersionKind } from '../module/k8s';
+import { referenceForGroupVersionKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s/k8s-ref';
 import { RootState } from '../redux';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
