@@ -40,7 +40,7 @@ const getKeys = (keyMap) => {
 
 export const NameKeyDropdownPair = ({
   name,
-  key,
+  keyValue,
   configMaps,
   secrets,
   serviceAccounts,
@@ -74,7 +74,7 @@ export const NameKeyDropdownPair = ({
   const saItems = {};
   const nameAutocompleteFilter = (text, item) => fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text, item) => fuzzy(text, item);
-  const keyTitle = _.isEmpty(key) ? t('public~Select a key') : key;
+  const keyTitle = _.isEmpty(keyValue) ? t('public~Select a key') : keyValue;
   const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';
   const secretRefProperty = isKeyRef ? 'secretKeyRef' : 'secretRef';
   const serviceAccountRefProperty = isKeyRef ? 'serviceAccountKeyRef' : 'serviceAccountRef';
@@ -142,7 +142,7 @@ export const NameKeyDropdownPair = ({
           autocompleteFilter={keyAutocompleteFilter}
           autocompletePlaceholder={t('public~Key')}
           items={itemKeys}
-          selectedKey={key}
+          selectedKey={keyValue}
           title={keyTitle}
           onChange={(val) => onChange({ [refProperty]: { name, key: val } })}
         />
@@ -193,7 +193,7 @@ const ConfigMapSecretKeyRef = ({
   }
   return (
     <NameKeyDropdownPair
-      key={key}
+      keyValue={key}
       name={name}
       configMaps={configMaps}
       secrets={secrets}
@@ -240,7 +240,7 @@ const ConfigMapSecretRef = ({
   }
   return (
     <NameKeyDropdownPair
-      key={key}
+      keyValue={key}
       name={name}
       configMaps={configMaps}
       secrets={secrets}
