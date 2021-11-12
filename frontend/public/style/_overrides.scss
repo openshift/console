@@ -310,14 +310,6 @@ form.pf-c-form {
   }
 }
 
-.pf-c-table__check {
-  width: 8.333% !important;
-
-  @media screen and (max-width: 768px) {
-    width: 16.66% !important;
-  }
-}
-
 // FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the kebab menus' overflow.
 .pf-c-window-scroller.ReactVirtualized__VirtualGrid,
 .pf-c-window-scroller .ReactVirtualized__VirtualGrid,
