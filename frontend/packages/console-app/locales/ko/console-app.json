@@ -241,6 +241,7 @@
   "Terminal": "터미널",
   "Pods": "Pod",
   "Labels": "라벨",
+  "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} 코어 / {{totalCores}} 코어",
   "Nodes": "노드",
   "Ready": "준비 상태",
   "Not Ready": "준비 안됨",
