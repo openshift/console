@@ -163,7 +163,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
         })
       : SUPPORTED_EXTERNAL_STORAGE;
 
-  const { type, externalStorage, deployment, isAdvancedOpen } = state;
+  const { type, externalStorage, deployment, isAdvancedOpen, isValidSC } = state;
 
   React.useEffect(() => {
     /*
@@ -295,7 +295,9 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
             dispatch={dispatch}
             deployment={deployment}
             isAdvancedOpen={isAdvancedOpen}
-            hasOCS={hasOCS}
+            isDisabled={hasOCS}
+            scList={sc?.items}
+            isValidSC={isValidSC}
             currentStep={stepIdReached}
           />
         )}
