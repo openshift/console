@@ -95,11 +95,7 @@ const evaluateTemplate = (
         return false;
       }
       const replacement =
-        v.value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY
-          ? // Build a regex that tests for all options. After escaping regex characters, we also
-            // escape '\' characters so that they are seen as literal '\'s by the PromQL parser.
-            `(${v.options.map((s) => _.escapeRegExp(s).replace(/\\/g, '\\\\')).join('|')})`
-          : v.value || '';
+        v.value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? '.+' : v.value || '';
       result = result.replace(re, replacement);
     }
   });
