@@ -5,8 +5,14 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import { PageHeading } from '@console/internal/components/utils';
 import { RestoreGettingStartedButton } from '@console/shared';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { KUBEVIRT_QUICK_START_USER_SETTINGS_KEY } from './getting-started-card/const';
 import { GettingStartedContainerCard } from './getting-started-card/GettingStartedContainerCard';
+import { VirtOverviewDetailsCard } from './VirtOverviewDetailsCard';
+
+const leftCards = [{ Card: VirtOverviewDetailsCard }];
+const mainCards = [];
+const rightCards = [];
 
 export const WrappedVirtualizationOverviewPage: React.FC = () => {
   const { t } = useTranslation();
@@ -23,6 +29,7 @@ export const WrappedVirtualizationOverviewPage: React.FC = () => {
       <PageHeading title={title} detail badge={badge} />
       <Dashboard>
         <GettingStartedContainerCard />
+        <DashboardGrid leftCards={leftCards} mainCards={mainCards} rightCards={rightCards} />
       </Dashboard>
     </>
   );
