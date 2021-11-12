@@ -313,7 +313,7 @@ const overviewQueries = {
     `
       sum(
         (
-          1 - rate(node_cpu_seconds_total{mode="idle"}[2m])
+          1 - sum without (mode) (rate(node_cpu_seconds_total{mode=~"idle|iowait|steal"}[2m]))
           *
           on(namespace, pod) group_left(node) node_namespace_pod:kube_pod_info:{pod=~"node-exporter.+"}
         )
