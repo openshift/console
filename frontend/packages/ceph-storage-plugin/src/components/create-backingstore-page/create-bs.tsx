@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/utils';
 import { apiVersionForModel, k8sCreate, referenceForModel } from '@console/internal/module/k8s';
 import { ModalComponentProps } from '@console/internal/components/factory';
-import { getName } from '@console/shared';
+import { getName, useFlag } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
 import { history } from '@console/internal/components/utils/router';
 import { CEPH_STORAGE_NAMESPACE } from '@console/ceph-storage-plugin/src/constants';
@@ -22,6 +22,7 @@ import {
   NOOBAA_TYPE_MAP,
   PROVIDERS_NOOBAA_MAP,
   BUCKET_LABEL_NOOBAA_MAP,
+  ODF_MODEL_FLAG,
 } from '../../constants';
 import { getExternalProviders, getProviders, secretPayloadCreator } from '../../utils/noobaa-utils';
 import { Payload } from '../../types';
@@ -43,6 +44,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     providerDataReducer,
     initialState,
   );
+  const isODF = useFlag(ODF_MODEL_FLAG);
 
   const handleBsNameTextInputChange = (strVal: string) => {
     if (strVal.length <= 43) {
@@ -59,7 +61,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     handlePromise,
     isPage,
     appName,
-    namespace,
+    namespace = CEPH_STORAGE_NAMESPACE,
   } = props;
 
   const onSubmit = (event) => {
@@ -134,12 +136,13 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     promises.push(k8sCreate(NooBaaBackingStoreModel, bsPayload));
     return handlePromise(Promise.all(promises), (resource) => {
       const lastIndex = resource.length - 1;
+      const resourcePath = `${referenceForModel(NooBaaBackingStoreModel)}/${getName(
+        resource[lastIndex],
+      )}`;
       if (isPage)
-        history.push(
-          `/k8s/ns/${namespace}/clusterserviceversions/${appName}/${referenceForModel(
-            NooBaaBackingStoreModel,
-          )}/${getName(resource[lastIndex])}`,
-        );
+        isODF
+          ? history.push(`/odf/resource/${resourcePath}`)
+          : history.push(`/k8s/ns/${namespace}/clusterserviceversions/${appName}/${resourcePath}`);
       else close();
     });
   };
