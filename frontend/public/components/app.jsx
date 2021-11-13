@@ -20,7 +20,7 @@ import { Navigation } from './nav';
 import { history, AsyncComponent, LoadingBox } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
-import { receivedResources, watchAPIServices } from '../actions/k8s';
+import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
 // cloud shell imports must come later than features
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
@@ -397,8 +397,6 @@ const PollConsoleUpdates = React.memo(() => {
 });
 
 graphQLReady.onReady(() => {
-  const startDiscovery = () => store.dispatch(watchAPIServices());
-
   // Load cached API resources from localStorage to speed up page load.
   getCachedResources()
     .then((resources) => {
@@ -406,9 +404,9 @@ graphQLReady.onReady(() => {
         store.dispatch(receivedResources(resources));
       }
       // Still perform discovery to refresh the cache.
-      startDiscovery();
+      store.dispatch(startAPIDiscovery());
     })
-    .catch(startDiscovery);
+    .catch(() => store.dispatch(startAPIDiscovery()));
 
   store.dispatch(detectFeatures());
 
