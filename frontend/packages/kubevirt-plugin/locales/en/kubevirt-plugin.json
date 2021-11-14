@@ -667,6 +667,7 @@
   "Service name": "Service name",
   "OpenShift Virtualization version": "OpenShift Virtualization version",
   "Update Channel": "Update Channel",
+  "View alerts": "View alerts",
   "Virtualization Overview": "Virtualization Overview",
   "Windows tools: {{container}}": "Windows tools: {{container}}",
   "Container: {{container}}": "Container: {{container}}",
