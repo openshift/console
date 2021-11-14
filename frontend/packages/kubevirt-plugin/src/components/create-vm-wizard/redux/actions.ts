@@ -15,6 +15,7 @@ import {
   VMWizardNetwork,
   VMWizardStorage,
   VMWizardTab,
+  HardwareDevicesField,
 } from '../types';
 import { getTabInitialState } from './initial-state/initial-state';
 import { vmWizardInternalActions } from './internal-actions';
@@ -68,6 +69,10 @@ export const vmWizardActions: VMWizardActions = {
   [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) =>
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value)),
+    ),
+  [ActionType.SetVmHardwareFieldValue]: (id, key: HardwareDevicesField, value: any) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(vmWizardInternalActions[InternalActionType.SetVmHardwareFieldValue](id, key, value)),
     ),
   [ActionType.SetImportProvidersFieldValue]: (id, key: ImportProvidersField, value: any) =>
     withUpdateAndValidateState(id, (dispatch) =>

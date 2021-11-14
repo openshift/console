@@ -5,6 +5,7 @@ import {
   ChangedCommonData,
   ChangedCommonDataProp,
   CloudInitField,
+  HardwareDevicesField,
   ImportProvidersField,
   OvirtProviderField,
   SettingsFieldType,
@@ -35,6 +36,7 @@ export enum ActionType {
   RemoveStorage = 'KubevirtVMWizardExternalRemoveStorage',
   UpdateStorage = 'KubevirtVMWizardExternalUpdateStorage',
   SetResults = 'KubevirtVMWizardExternalSetResults',
+  SetVmHardwareFieldValue = 'KubevirtVMWizardExternalSetVmHardwareFieldValue',
 }
 
 // should not be called directly from outside redux code (e.g. stateUpdate)
@@ -70,6 +72,7 @@ export enum InternalActionType {
   SetNetworks = 'KubevirtVMWizardSetNetworks',
   SetStorages = 'KubevirtVMWizardSetStorages',
   SetResults = 'KubevirtVMWizardSetResults',
+  SetVmHardwareFieldValue = 'KubevirtVMWizardSetVmHardwareFieldValue',
 }
 
 export type WizardInternalAction = {
@@ -87,6 +90,7 @@ export type WizardInternalAction = {
     key?:
       | VMSettingsField
       | CloudInitField
+      | HardwareDevicesField
       | VMWareProviderField
       | OvirtProviderField
       | ImportProvidersField;
