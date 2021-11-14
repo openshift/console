@@ -1,3 +1,5 @@
+import * as urls from '../../../src/utils/strings';
+
 export const OS_IMAGES_NS = Cypress.env('DOWNSTREAM')
   ? 'openshift-virtualization-os-images'
   : 'kubevirt-os-images';
@@ -127,6 +129,8 @@ export const TEMPLATE = {
     metadataName: 'rhel6-server-small',
     os: 'Red Hat Enterprise Linux 6.0 or higher',
     supportLevel: 'Full',
+    exampleImgUrl: urls.RHEL_IMAGE_LINK,
+    exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
   RHEL7: {
     name: 'Red Hat Enterprise Linux 7.0+ VM',
@@ -134,6 +138,8 @@ export const TEMPLATE = {
     metadataName: 'rhel7-server-small',
     os: 'Red Hat Enterprise Linux 7.0 or higher',
     supportLevel: 'Full',
+    exampleImgUrl: urls.RHEL_IMAGE_LINK,
+    exampleRegUrl: urls.RHEL7_EXAMPLE_CONTAINER,
   },
   RHEL8: {
     name: 'Red Hat Enterprise Linux 8.0+ VM',
@@ -141,6 +147,8 @@ export const TEMPLATE = {
     metadataName: 'rhel8-server-small',
     os: 'Red Hat Enterprise Linux 8.0 or higher',
     supportLevel: 'Full',
+    exampleImgUrl: urls.RHEL_IMAGE_LINK,
+    exampleRegUrl: urls.RHEL8_EXAMPLE_CONTAINER,
   },
   RHEL9: {
     name: 'Red Hat Enterprise Linux 9.0 Alpha VM',
@@ -148,6 +156,8 @@ export const TEMPLATE = {
     metadataName: 'rhel9-server-small',
     os: 'Red Hat Enterprise Linux 9.0 or higher',
     supportLevel: 'Limited',
+    exampleImgUrl: urls.RHEL_IMAGE_LINK,
+    exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
   FEDORA: {
     name: 'Fedora 32+ VM',
@@ -155,6 +165,8 @@ export const TEMPLATE = {
     metadataName: 'fedora-server-small',
     os: 'Fedora 32 or higher',
     supportLevel: 'Community',
+    exampleImgUrl: urls.FEDORA_IMAGE_LINK,
+    exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
   CENTOS7: {
     name: 'CentOS 7.0+ VM',
@@ -162,6 +174,17 @@ export const TEMPLATE = {
     metadataName: 'centos7-server-small',
     os: 'CentOS 7 or higher',
     supportLevel: 'Community',
+    exampleImgUrl: urls.CENTOS_IMAGE_LINK,
+    exampleRegUrl: urls.CENTOS7_EXAMPLE_CONTAINER,
+  },
+  CENTOS8: {
+    name: 'CentOS 8.0+ VM',
+    dvName: 'centos8',
+    metadataName: 'centos8-server-small',
+    os: 'CentOS 8 or higher',
+    supportLevel: 'Community',
+    exampleImgUrl: urls.CENTOS_IMAGE_LINK,
+    exampleRegUrl: urls.CENTOS8_EXAMPLE_CONTAINER,
   },
   WIN10: {
     name: 'Microsoft Windows 10 VM',
@@ -169,6 +192,8 @@ export const TEMPLATE = {
     metadataName: 'windows10-desktop-medium',
     os: 'Microsoft Windows 10',
     supportLevel: 'Full',
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleRegUrl: '',
   },
   WIN2K12R2: {
     name: 'Microsoft Windows Server 2012 R2 VM',
@@ -176,6 +201,26 @@ export const TEMPLATE = {
     metadataName: 'windows2k12r2-server-medium',
     os: 'Microsoft Windows Server 2012 R2',
     supportLevel: 'Full',
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleRegUrl: '',
+  },
+  WIN2K16: {
+    name: 'Microsoft Windows Server 2016 VM',
+    dvName: 'win2k16',
+    metadataName: 'windows2k16-server-medium',
+    os: 'Microsoft Windows Server 2016',
+    supportLevel: 'Full',
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleRegUrl: '',
+  },
+  WIN2K19: {
+    name: 'Microsoft Windows Server 2019 VM',
+    dvName: 'win2k19',
+    metadataName: 'windows2k19-server-medium',
+    os: 'Microsoft Windows Server 2019',
+    supportLevel: 'Full',
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleRegUrl: '',
   },
   DEFAULT: {
     name: 'vm-template-example',
@@ -183,5 +228,7 @@ export const TEMPLATE = {
     metadataName: 'vm-template-example',
     os: 'Red Hat Enterprise Linux 8.0 or higher',
     supportLevel: 'Full',
+    exampleImgUrl: urls.RHEL_IMAGE_LINK,
+    exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
 };
