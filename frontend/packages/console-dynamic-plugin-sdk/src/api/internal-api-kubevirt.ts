@@ -15,11 +15,16 @@ import {
 import { K8sResourceCommon } from '../extensions/console-types';
 import { DisplayFilters, TopologyDataResources } from '../extensions/topology-types';
 import { K8sModel, MatchLabels, Selector as SelectorKind } from './common-types';
+import { TimestampProps } from '@console/internal/components/utils';
+import { RootState } from '@console/internal/redux';
+import { AnyAction, Store } from 'redux';
 
 export { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
-export { editApplicationModal } from '@console/topology/src/components/modals';
 export { ActivityItem } from './internal-api';
 export { default as ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
+
+export const InternalReduxStore: Store<RootState, AnyAction> = require('@console/internal/redux')
+  .default;
 
 export const {
   navFactory,
@@ -167,7 +172,8 @@ export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = require('@consol
 
 export const StorageClassDropdown: (
   props: any,
-) => JSX.Element = require('@console/internal/components/utils/storage-class-dropdown');
+) => JSX.Element = require('@console/internal/components/utils/storage-class-dropdown')
+  .StorageClassDropdown;
 
 export const {
   createModal,
@@ -352,11 +358,10 @@ export const Selector = React.lazy(() =>
   })),
 );
 
-export const Timestamp = React.lazy(() =>
-  import('@console/internal/components/utils').then((m) => ({
-    default: m.Timestamp,
-  })),
-);
+export const Timestamp: React.ComponentClass<Omit<
+  TimestampProps,
+  'now'
+>> = require('@console/internal/components/utils').Timestamp;
 
 export const DashboardCardLink = React.lazy(() =>
   import('@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink'),
