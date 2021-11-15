@@ -168,6 +168,7 @@ const config: Configuration = {
             options: {
               sourceMap: true,
               sassOptions: {
+                quietDeps: true,
                 outputStyle: 'compressed',
               },
             },
