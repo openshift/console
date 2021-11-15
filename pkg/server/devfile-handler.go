@@ -25,19 +25,12 @@ import (
 
 func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 
-	var data devfileSamplesForm
-	registry := devfilePkg.DEVFILE_REGISTRY_PLACEHOLDER_URL
-
-	err := json.NewDecoder(r.Body).Decode(&data)
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to decode response: %v", err)
+	registry := r.URL.Query().Get("registry")
+	if registry == "" {
+		errMsg := "The registry parameter is missing"
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
-	}
-
-	if data.Registry != "" {
-		registry = data.Registry
 	}
 
 	sampleIndex, err := devfilePkg.GetRegistrySamples(registry)

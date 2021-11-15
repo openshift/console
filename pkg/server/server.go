@@ -53,7 +53,7 @@ const (
 	helmChartRepoProxyEndpoint       = "/api/helm/charts/"
 	gitopsEndpoint                   = "/api/gitops/"
 	devfileEndpoint                  = "/api/devfile/"
-	devfileSamplesEndpoint           = "/api/devfile/samples/"
+	devfileSamplesEndpoint           = "/api/devfile/samples"
 	pluginAssetsEndpoint             = "/api/plugins/"
 	localesEndpoint                  = "/locales/resource.json"
 	updatesEndpoint                  = "/api/check-updates"
