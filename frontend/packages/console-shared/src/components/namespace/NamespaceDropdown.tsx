@@ -328,6 +328,7 @@ const NamespaceMenu: React.FC<{
       }}
       activeItemId={selected}
       data-test="namespace-dropdown-menu"
+      isScrollable
     >
       {/*
         //@ts-ignore */}
