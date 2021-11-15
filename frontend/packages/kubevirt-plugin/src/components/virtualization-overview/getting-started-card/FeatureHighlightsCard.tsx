@@ -22,7 +22,7 @@ export const FeatureHighlightsCard: React.FC = () => {
   const moreLink: GettingStartedLink = {
     id: 'openshift-virtualization-feature-highlights',
     title: t('kubevirt-plugin~Visit the blog'),
-    href: 'https://www.openshift.com/blog',
+    href: 'https://cloud.redhat.com/learn/topics/virtualization/',
     external: true,
   };
 

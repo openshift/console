@@ -14,23 +14,21 @@ export const RecommendedOperatorsCard: React.FC = () => {
   const moreLink: GettingStartedLink = {
     id: 'openshift-virtualization-recommended-operators',
     title: t('kubevirt-plugin~Learn more about Operators'),
-    href: 'https://www.openshift.com/blog',
+    href: '/operatorhub/all-namespaces',
     external: true,
   };
 
   const links: GettingStartedLink[] = [
     {
-      id: 'item1',
+      id: 'openshift-virtualization-ocs',
       title: t('kubevirt-plugin~OpenShift Container Storage'),
-      href:
-        'https://console-openshift-console.apps.uit01.cnv-qe.rhcloud.com/operatorhub/all-namespaces?keyword=OCS',
+      href: '/operatorhub/all-namespaces?keyword=OCS',
       external: true,
     },
     {
-      id: 'item2',
+      id: 'openshift-virtualization-mtv',
       title: t('kubevirt-plugin~Migration Toolkit for Virtualization'),
-      href:
-        'https://console-openshift-console.apps.uit01.cnv-qe.rhcloud.com/operatorhub/all-namespaces?keyword=MTV',
+      href: '/operatorhub/all-namespaces?keyword=MTV',
       external: true,
     },
   ];
