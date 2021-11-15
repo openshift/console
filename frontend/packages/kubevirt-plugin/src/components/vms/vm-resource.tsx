@@ -37,7 +37,8 @@ import { isGuestAgentInstalled } from '../../utils/guest-agent-utils';
 import { BootOrderSummary } from '../boot-order';
 import { descriptionModal, vmFlavorModal } from '../modals';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
-import { hardwareDevicesModal } from '../modals/hardware-devices/HardwareDevicesModal';
+import { gpuDevicesModal } from '../modals/hardware-devices/GPUDeviceModal';
+import { hostDevicesModal } from '../modals/hardware-devices/HostDevicesModal';
 import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
@@ -287,11 +288,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         <VMEditWithPencil
           isEdit={isVM}
           onEditClick={() =>
-            hardwareDevicesModal({
+            gpuDevicesModal({
+              vm: vmWrapper.asResource(),
+              vmDevices: vmWrapper.getGPUDevices(),
+              vmiDevices: vmiWrapper.getGPUDevices(),
               isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
-              isGPU: true,
-              vmWrapper,
-              vmiWrapper,
             })
           }
         >
@@ -303,10 +304,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         <VMEditWithPencil
           isEdit={isVM}
           onEditClick={() =>
-            hardwareDevicesModal({
+            hostDevicesModal({
+              vm: vmWrapper.asResource(),
+              vmDevices: vmWrapper.getHostDevices(),
+              vmiDevices: vmiWrapper.getHostDevices(),
               isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
-              vmWrapper,
-              vmiWrapper,
             })
           }
         >

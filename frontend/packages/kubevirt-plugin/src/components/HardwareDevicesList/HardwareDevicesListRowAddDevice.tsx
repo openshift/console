@@ -89,9 +89,8 @@ export const HardwareDevicesListRowAddDevice: React.FC<HardwareDevicesListRowAdd
 
   return (
     <>
-      <GridItem span={5}>
+      <GridItem className="kv-hardware__row kv-hardware__name" span={5}>
         <TextInput
-          className="kv-label__key"
           isRequired
           value={name}
           autoFocus
@@ -101,7 +100,7 @@ export const HardwareDevicesListRowAddDevice: React.FC<HardwareDevicesListRowAdd
           onFocus={onResetValidateName}
         />
       </GridItem>
-      <GridItem span={6}>
+      <GridItem className="kv-hardware__row kv-hardware__device" span={5}>
         <FilteredSelect
           placeholderText={t('kubevirt-plugin~Select Hardware device')}
           inlineFilterPlaceholderText={t('kubevirt-plugin~Filter by resource name..')}
@@ -114,7 +113,7 @@ export const HardwareDevicesListRowAddDevice: React.FC<HardwareDevicesListRowAdd
           {resourcesGroups}
         </FilteredSelect>
       </GridItem>
-      <GridItem span={1}>
+      <GridItem className="kv-hardware__row kv-hardware__remove-button" span={1}>
         <Button onClick={onCancelAttachHandler} variant="link">
           <MinusCircleIcon />
         </Button>

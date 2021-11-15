@@ -6,25 +6,25 @@ export type HardwareDevicesListRowProps = {
   name?: string;
   deviceName?: string;
   onDetachHandler?: (id?: any) => void;
-  isUserForbidden?: boolean;
+  isDisabled?: boolean;
 };
 
 export const HardwareDevicesListRow: React.FC<HardwareDevicesListRowProps> = ({
   name,
   deviceName,
   onDetachHandler,
-  isUserForbidden,
+  isDisabled,
 }) => {
   return (
     <>
-      <GridItem span={5}>
-        <TextInput className="kv-label__key" value={name} isReadOnly />
+      <GridItem className="kv-hardware__row kv-hardware__name" span={5}>
+        <TextInput value={name} isReadOnly />
       </GridItem>
-      <GridItem span={6}>
-        <TextInput className="kv-label__value" isReadOnly value={deviceName} />
+      <GridItem className="kv-hardware__row kv-hardware__device" span={5}>
+        <TextInput isReadOnly value={deviceName} />
       </GridItem>
-      {!isUserForbidden && (
-        <GridItem span={1}>
+      {!isDisabled && (
+        <GridItem className="kv-hardware__row kv-hardware__remove-button" span={1}>
           <Button onClick={onDetachHandler} variant="link">
             <MinusCircleIcon />
           </Button>
