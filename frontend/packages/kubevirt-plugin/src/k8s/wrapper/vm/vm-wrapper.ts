@@ -34,7 +34,7 @@ import {
   VMISpec,
   VMKind,
 } from '../../../types';
-import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
+import { V1alpha1DataVolume, V1Disk, V1GPU, V1HostDevice, V1Volume } from '../../../types/api';
 import {
   findKeySuffixValue,
   buildOwnerReferenceForModel,
@@ -313,6 +313,16 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
       },
     }));
     this.data.spec.template.spec.accessCredentials = accessCredentialsKeys;
+  };
+  setGPUDevices = (gpus: V1GPU) => {
+    this.ensurePath('spec.template.spec.domain.devices');
+    this.data.spec.template.spec.domain.devices.gpus = gpus;
+    return this;
+  };
+  setHostDevices = (hostDevices: V1HostDevice) => {
+    this.ensurePath('spec.template.spec.domain.devices');
+    this.data.spec.template.spec.domain.devices.hostDevices = hostDevices;
+    return this;
   };
   ensureDataVolumeTemplates = (): V1DataVolumeTemplateSpec[] =>
     this.ensurePath('spec.dataVolumeTemplates', []);

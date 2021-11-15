@@ -12,6 +12,7 @@ export const READY = 'Ready';
 export const CLOUD = 'cloud';
 export const SSH = 'ssh';
 export const SYSPREP = 'sysprep';
+export const HARDWARE = 'hardware';
 
 export const RHEL = 'rhel';
 export const CENTOS = 'centos';
