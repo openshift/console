@@ -19,6 +19,7 @@ type Props = {
   showLegend?: boolean;
   units: string;
   onZoomHandle?: (timeRange: number, endTime: number) => void;
+  namespace?: string;
 };
 
 const Graph: React.FC<Props> = ({
@@ -29,6 +30,7 @@ const Graph: React.FC<Props> = ({
   showLegend,
   units,
   onZoomHandle,
+  namespace,
 }) => {
   const dispatch = useDispatch();
   const [activePerspective] = useActivePerspective();
@@ -61,6 +63,7 @@ const Graph: React.FC<Props> = ({
       showLegend={showLegend}
       timespan={timespan}
       units={units}
+      namespace={namespace}
     />
   );
 };
