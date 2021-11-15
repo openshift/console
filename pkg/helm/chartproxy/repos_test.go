@@ -41,6 +41,7 @@ func TestHelmRepoGetter_List(t *testing.T) {
 		HelmChartRepoCRSInCluster int
 		expectedRepoName          []string
 		apiErrors                 []apiError
+		namespace                 string
 	}{
 		{
 			name:                      "return 2 repos found in cluster",
@@ -84,7 +85,7 @@ func TestHelmRepoGetter_List(t *testing.T) {
 				})
 			}
 			repoGetter := NewRepoGetter(client, nil)
-			repos, err := repoGetter.List()
+			repos, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -107,6 +108,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 		helmCRS          []*unstructured.Unstructured
 		expectedRepoName []string
 		apiErrors        []apiError
+		namespace        string
 	}{
 		{
 			name: "skip repo that refer non-existent config map",
@@ -250,7 +252,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 				})
 			}
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List()
+			repos, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -382,6 +384,7 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 		helmCRS       []*unstructured.Unstructured
 		expectedRepos map[string]bool
 		apiErrors     []apiError
+		namespace     string
 	}{
 		{
 			name: "return only enabled helm repos",
@@ -464,7 +467,7 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 			client := fake.K8sDynamicClientFromCRs(tt.helmCRS...)
 			coreClient := k8sfake.NewSimpleClientset()
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List()
+			repos, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}

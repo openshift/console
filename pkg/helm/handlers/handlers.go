@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,6 +10,8 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
 
@@ -283,7 +286,44 @@ func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r
 		}
 	}
 
-	indexFile, err := proxy.IndexFile(onlyCompatible)
+	namespace := ""
+	namespaceParam := r.URL.Query().Get("namespace")
+	if namespaceParam != "" {
+		// set default to empty if not provided in the query param
+		config, err := rest.InClusterConfig()
+		if err != nil {
+			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not resolve in-cluster config"})
+			return
+		}
+
+		clientset, err := kubernetes.NewForConfig(config)
+		if err != nil {
+			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not resolve in-cluster Clientset"})
+			return
+		}
+
+		namespaces, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not list in-cluster namespaces"})
+			return
+		}
+
+		found := false
+		for _, ns := range namespaces.Items {
+			if ns.String() == namespaceParam {
+				found = true
+				break
+			}
+		}
+		if !found {
+			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Invalid namespace, received: %s", namespaceParam)})
+			return
+		}
+
+		namespace = namespaceParam
+	}
+
+	indexFile, err := proxy.IndexFile(onlyCompatible, namespace)
 
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get index file: %v", err)})

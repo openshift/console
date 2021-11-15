@@ -148,11 +148,15 @@ type fakeProxy struct {
 	error
 	onlyCompatible bool
 	testContext    *testing.T
+	namespace      string
 }
 
-func (p fakeProxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
+func (p fakeProxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFile, error) {
 	if onlyCompatible != p.onlyCompatible {
 		p.testContext.Errorf("Expected compatible flag is %t received %t", p.onlyCompatible, onlyCompatible)
+	}
+	if namespace != p.namespace {
+		p.testContext.Errorf("Expected namespace is %s received %s", p.namespace, namespace)
 	}
 	return p.repo, p.error
 }

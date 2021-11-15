@@ -9,8 +9,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"sigs.k8s.io/yaml"
 	"strings"
+
+	"sigs.k8s.io/yaml"
 
 	"helm.sh/helm/v3/pkg/repo"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,10 +25,15 @@ import (
 )
 
 var (
-	helmChartRepositoryGVK = schema.GroupVersionResource{
+	helmChartRepositoryClusterGVK = schema.GroupVersionResource{
 		Group:    "helm.openshift.io",
 		Version:  "v1beta1",
 		Resource: "helmchartrepositories",
+	}
+	helmChartRepositoryNamespaceGVK = schema.GroupVersionResource{
+		Group:    "helm.openshift.io",
+		Version:  "v1",
+		Resource: "projecthelmchartrepository",
 	}
 )
 
@@ -37,6 +43,7 @@ const (
 
 type helmRepo struct {
 	Name       string
+	Namespace  string
 	URL        *url.URL
 	Disabled   bool
 	httpClient func() (*http.Client, error)
@@ -99,7 +106,7 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 }
 
 type HelmRepoGetter interface {
-	List() ([]*helmRepo, error)
+	List(namespace string) ([]*helmRepo, error)
 }
 
 type helmRepoGetter struct {
@@ -197,14 +204,15 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 	return h, nil
 }
 
-func (b *helmRepoGetter) List() ([]*helmRepo, error) {
+func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, error) {
 	var helmRepos []*helmRepo
-	repos, err := b.Client.Resource(helmChartRepositoryGVK).List(context.TODO(), v1.ListOptions{})
+
+	clusterRepos, err := b.Client.Resource(helmChartRepositoryClusterGVK).List(context.TODO(), v1.ListOptions{})
 	if err != nil {
-		klog.Errorf("Error listing helm chart repositories: %v \nempty repository list will be used", err)
+		klog.Errorf("Error listing cluster helm chart repositories: %v \nempty repository list will be used", err)
 		return helmRepos, nil
 	}
-	for _, item := range repos.Items {
+	for _, item := range clusterRepos.Items {
 		helmConfig, err := b.unmarshallConfig(item)
 		if err != nil {
 			klog.Errorf("Error unmarshalling repo %v: %v", item, err)
@@ -212,6 +220,23 @@ func (b *helmRepoGetter) List() ([]*helmRepo, error) {
 		}
 		helmRepos = append(helmRepos, helmConfig)
 	}
+
+	if namespace != "" {
+		namespaceRepos, err := b.Client.Resource(helmChartRepositoryNamespaceGVK).Namespace(namespace).List(context.TODO(), v1.ListOptions{})
+		if err != nil {
+			klog.Errorf("Error listing namespace helm chart repositories: %v \nempty repository list will be used", err)
+			return helmRepos, nil
+		}
+		for _, item := range namespaceRepos.Items {
+			helmConfig, err := b.unmarshallConfig(item)
+			if err != nil {
+				klog.Errorf("Error unmarshalling repo %v: %v", item, err)
+				continue
+			}
+			helmRepos = append(helmRepos, helmConfig)
+		}
+	}
+
 	return helmRepos, nil
 }
 

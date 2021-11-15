@@ -32,6 +32,7 @@ func TestProxy_IndexFile(t *testing.T) {
 		helmCRS        []*unstructured.Unstructured
 		repoNames      []string
 		onlyCompatible bool
+		namespace      string
 	}{
 		{
 			name:       "returned index file for configured helm repo",
@@ -153,7 +154,7 @@ func TestProxy_IndexFile(t *testing.T) {
 				dynamicClient = fake.K8sDynamicClientWithRepoNames(tt.repoNames, indexFileContents...)
 			}
 			for _, helmcr := range tt.helmCRS {
-				_, err := dynamicClient.Resource(helmChartRepositoryGVK).Create(context.TODO(), helmcr, v1.CreateOptions{})
+				_, err := dynamicClient.Resource(helmChartRepositoryClusterGVK).Create(context.TODO(), helmcr, v1.CreateOptions{})
 				if err != nil {
 					t.Error(err)
 				}
@@ -170,7 +171,7 @@ func TestProxy_IndexFile(t *testing.T) {
 				t.Error(err)
 			}
 
-			indexFile, err := p.IndexFile(tt.onlyCompatible)
+			indexFile, err := p.IndexFile(tt.onlyCompatible, tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
