@@ -84,13 +84,13 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	imageComponents, err := devfileObj.Data.GetComponents(filterOptions) //For Dev Preview, if there is more than one image component err out
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the image component from devfile with attribute 'tool: console-import': %v", err)
+		errMsg := fmt.Sprintf("Failed to get the image component from devfile: %v", err)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
 	if len(imageComponents) != 1 {
-		errMsg := fmt.Sprintf("Console Devfile Import Dev Preview, supports only one image component with attribute 'tool: console-import', now only has %v", len(imageComponents))
+		errMsg := fmt.Sprintf("Console Devfile Import Dev Preview, supports only one image component, now has %v", len(imageComponents))
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
@@ -113,7 +113,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dockerRelativeSrcContext := imageComponents[0].Image.Dockerfile.BuildContext
-	if err != nil {
+	if dockerRelativeSrcContext == "" {
 		errMsg := fmt.Sprintf("Failed to get the dockefile context location, dockerfile buildcontext is not defined by image component %v", imageComponents[0].Name)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
