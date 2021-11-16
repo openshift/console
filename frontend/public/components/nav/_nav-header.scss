@@ -2,7 +2,7 @@
   border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
   padding: 0.6rem var(--pf-global--spacer--sm);
 
-  @media screen and (min-width: $grid-float-breakpoint) {
+  @media screen and (min-width: $pf-global--breakpoint--xl) {
     padding-left: var(--pf-global--spacer--md);
     padding-right: var(--pf-global--spacer--md);
   }

@@ -15,6 +15,7 @@ import {
 } from '../../module/k8s';
 import { connectToFlags } from '../../reducers/connectToFlags';
 import { FlagsObject } from '../../reducers/features';
+import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 
 const unknownKinds = new Set();
 
@@ -46,7 +47,7 @@ export const resourcePathFromModel = (model: K8sKind, name?: string, namespace?:
   return url;
 };
 
-export const resourceListPathFromModel = (model: K8sKind, namespace: string) =>
+export const resourceListPathFromModel = (model: K8sKind, namespace?: string) =>
   resourcePathFromModel(model, null, namespace);
 
 /**
@@ -74,6 +75,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   displayName,
   inline = false,
   kind,
+  groupVersionKind,
   linkTo = true,
   name,
   namespace,
@@ -83,10 +85,11 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   dataTest,
   onClick,
 }) => {
-  if (!kind) {
+  if (!kind && !groupVersionKind) {
     return null;
   }
-  const path = resourcePath(kind, name, namespace);
+  const kindReference = groupVersionKind ? getReference(groupVersionKind) : kind;
+  const path = resourcePath(kindReference, name, namespace);
   const value = displayName ? displayName : name;
   const classes = classNames('co-resource-item', className, {
     'co-resource-item--inline': inline,
@@ -94,7 +97,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
 
   return (
     <span className={classes}>
-      {!hideIcon && <ResourceIcon kind={kind} />}
+      {!hideIcon && <ResourceIcon kind={kindReference} />}
       {path && linkTo ? (
         <Link
           to={path}

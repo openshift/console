@@ -16,7 +16,7 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import { Conditions } from '@console/internal/components/conditions';
+import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
   DetailsPage,
@@ -46,6 +46,7 @@ import {
   KebabOption,
   resourceObjPath,
   KebabAction,
+  isUpstream,
   openshiftHelpBase,
   Page,
 } from '@console/internal/components/utils';
@@ -717,16 +718,15 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
   const { t } = useTranslation();
   const title = t('olm~Installed Operators');
+  const olmLink = isUpstream()
+    ? `${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`
+    : `${openshiftHelpBase}html/operators/understanding-operators#olm-what-operators-are`;
   const helpText = (
     <Trans ns="olm">
       Installed Operators are represented by ClusterServiceVersions within this Namespace. For more
       information, see the{' '}
-      <ExternalLink
-        href={`${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`}
-      >
-        Understanding Operators documentation
-      </ExternalLink>
-      . Or create an Operator and ClusterServiceVersion using the{' '}
+      <ExternalLink href={olmLink}>Understanding Operators documentation</ExternalLink>. Or create
+      an Operator and ClusterServiceVersion using the{' '}
       <ExternalLink href="https://sdk.operatorframework.io/">Operator SDK</ExternalLink>.
     </Trans>
   );
@@ -1151,6 +1151,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
             type: c.phase,
             status: 'True',
           }))}
+          type={ConditionTypes.ClusterServiceVersion}
         />
       </div>
     </>

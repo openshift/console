@@ -15,7 +15,7 @@ import (
 )
 
 // openShiftAuth implements OpenShift Authentication as defined in:
-// https://docs.openshift.com/container-platform/3.9/architecture/additional_concepts/authentication.html
+// https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/understanding-authentication
 type openShiftAuth struct {
 	cookiePath    string
 	secureCookies bool
@@ -45,7 +45,7 @@ func validateAbsURL(value string) error {
 
 func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint, *openShiftAuth, error) {
 	// Use metadata discovery to determine the OAuth2 token and authorization URL.
-	// https://docs.openshift.com/container-platform/3.9/architecture/additional_concepts/authentication.html#oauth-server-metadata
+	// https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/configuring-internal-oauth#oauth-server-metadata_configuring-internal-oauth
 	wellKnownURL := strings.TrimSuffix(c.issuerURL, "/") + "/.well-known/oauth-authorization-server"
 
 	req, err := http.NewRequest(http.MethodGet, wellKnownURL, nil)

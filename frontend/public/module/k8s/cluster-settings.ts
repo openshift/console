@@ -223,7 +223,7 @@ export const showReleaseNotes = (): boolean => {
   return window.SERVER_FLAGS.branding === 'ocp';
 };
 
-// example link: https://docs.openshift.com/container-platform/4.2/release_notes/ocp-4-2-release-notes.html#ocp-4-2-4
+// example link: https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/release_notes/ocp-4-9-release-notes#ocp-4-9-4
 export const getReleaseNotesLink = (version: string): string => {
   if (!showReleaseNotes()) {
     return null;
@@ -239,7 +239,7 @@ export const getReleaseNotesLink = (version: string): string => {
     return null;
   }
 
-  return `https://docs.openshift.com/container-platform/${major}.${minor}/release_notes/ocp-${major}-${minor}-release-notes.html#ocp-${major}-${minor}-${patch}`;
+  return `https://access.redhat.com/documentation/en-us/openshift_container_platform/${major}.${minor}/html/release_notes/ocp-${major}-${minor}-release-notes#ocp-${major}-${minor}-${patch}`;
 };
 
 export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;

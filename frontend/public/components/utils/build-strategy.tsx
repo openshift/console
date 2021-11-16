@@ -67,7 +67,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
         </DetailsItem>
       )}
       {devfile && (
-        <DetailsItem label="Devfile" obj={resource} path="spec.source.devfile">
+        <DetailsItem label={t('public~Devfile')} obj={resource} path="spec.source.devfile">
           <pre>{devfile}</pre>
         </DetailsItem>
       )}

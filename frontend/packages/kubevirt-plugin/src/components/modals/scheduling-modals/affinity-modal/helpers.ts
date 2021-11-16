@@ -32,11 +32,11 @@ export const defaultNewAffinity = {
 } as AffinityRowData;
 
 export const columnClasses = [
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
-  Kebab.columnClass,
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-c-table__action', Kebab.columnClass),
 ];
 
 const setIDsToEntity = (entity: any[]) => entity?.map((elm, i) => ({ ...elm, id: i }));

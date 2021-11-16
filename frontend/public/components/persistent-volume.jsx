@@ -37,6 +37,7 @@ const tableColumnClasses = [
 const kind = 'PersistentVolume';
 
 const PVTableRow = ({ obj }) => {
+  const { t } = useTranslation();
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -54,7 +55,7 @@ const PVTableRow = ({ obj }) => {
             title={obj.spec.claimRef.name}
           />
         ) : (
-          <div className="text-muted">No Claim</div>
+          <div className="text-muted">{t('public~No claim')}</div>
         )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>

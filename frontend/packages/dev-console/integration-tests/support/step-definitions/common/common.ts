@@ -4,7 +4,7 @@ import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
-import { perspective, projectNameSpace, navigateTo } from '../../pages';
+import { perspective, projectNameSpace, navigateTo, app } from '../../pages';
 
 Given('user has logged in as a basic user', () => {
   cy.logout();
@@ -12,6 +12,7 @@ Given('user has logged in as a basic user', () => {
   const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
   const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
   cy.login(idp, username, password);
+  app.waitForLoad();
   guidedTour.close();
 });
 

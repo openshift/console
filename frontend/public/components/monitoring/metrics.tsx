@@ -244,7 +244,9 @@ const MetricsDropdown: React.FC<{}> = () => {
   let title: React.ReactNode = t('public~Insert metric at cursor');
   if (error !== undefined) {
     const message =
-      error?.response?.status === 403 ? 'Access restricted.' : 'Failed to load metrics list.';
+      error?.response?.status === 403
+        ? t('public~Access restricted.')
+        : t('public~Failed to load metrics list.');
     title = (
       <span>
         <RedExclamationCircleIcon /> {message}
@@ -255,7 +257,7 @@ const MetricsDropdown: React.FC<{}> = () => {
   } else if (_.isEmpty(items)) {
     title = (
       <span>
-        <YellowExclamationTriangleIcon /> No metrics found.
+        <YellowExclamationTriangleIcon /> {t('public~No metrics found.')}
       </span>
     );
   }
@@ -274,7 +276,8 @@ const MetricsDropdown: React.FC<{}> = () => {
 };
 
 const ExpandButton = ({ isExpanded, onClick }) => {
-  const title = `${isExpanded ? 'Hide' : 'Show'} Table`;
+  const { t } = useTranslation();
+  const title = isExpanded ? t('public~Hide table') : t('public~Show table');
   return (
     <Button
       aria-label={title}
@@ -293,6 +296,7 @@ const ExpandButton = ({ isExpanded, onClick }) => {
 };
 
 const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
+  const { t } = useTranslation();
   const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ UI }: RootState) => {
     const disabledSeries = UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
@@ -322,7 +326,7 @@ const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
   if (isSeriesEmpty) {
     return <div className="query-browser__series-btn-wrap"></div>;
   }
-  const title = `${isDisabled ? 'Show' : 'Hide'} series`;
+  const title = isDisabled ? t('public~Show series') : t('public~Hide series');
 
   return (
     <div className="query-browser__series-btn-wrap">
@@ -626,7 +630,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   if (error) {
     return (
       <div className="query-browser__table-message">
-        <Error error={error} title="Error loading values" />
+        <Error error={error} title={t('public~Error loading values')} />
       </div>
     );
   }
@@ -702,7 +706,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
       rowMapper = ({ metric, value }) => [
         buttonCell(metric),
         ..._.map(allLabelKeys, (k) => metric[k]),
-        _.get(value, '[1]', { title: <span className="text-muted">None</span> }),
+        _.get(value, '[1]', { title: <span className="text-muted">{t('public~None')}</span> }),
       ];
     }
 
@@ -729,7 +733,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     <>
       <div className="query-browser__table-wrapper">
         <Table
-          aria-label="query results table"
+          aria-label={t('public~query results table')}
           cells={columns}
           gridBreakPoint={TableGridBreakpoint.none}
           onSort={onSort}

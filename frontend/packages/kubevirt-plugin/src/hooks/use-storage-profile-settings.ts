@@ -19,7 +19,7 @@ export const useStorageProfileSettings = (
 
   const [sp, spLoaded, loadError] = useK8sWatchResource<StorageProfile>(spWatchResource);
 
-  if (!sp?.status?.claimPropertySets && spLoaded) {
+  if ((!sp?.status?.claimPropertySets && spLoaded) || loadError) {
     return [AccessMode.READ_WRITE_ONCE, VolumeMode.FILESYSTEM, spLoaded, false, loadError];
   }
 

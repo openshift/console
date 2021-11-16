@@ -27,5 +27,3 @@ export const omitEmpty = (obj, justUndefined = false) => {
 
 export const isSetEqual = (set: Set<any>, otherSet: Set<any>) =>
   set.size === otherSet.size && [...set].every((s) => otherSet.has(s));
-
-export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';

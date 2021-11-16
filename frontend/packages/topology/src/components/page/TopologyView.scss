@@ -38,7 +38,6 @@
 
   &__layout-group {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     margin: 0 var(--pf-global--spacer--sm);
   }
@@ -106,6 +105,9 @@
   .pf-topology-side-bar {
     display: flex;
     flex-direction: column;
+  }
+  .pf-topology-side-bar-resizable {
+    flex: 1 1 0;
   }
   .pf-topology-side-bar__body {
     display: flex;

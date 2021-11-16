@@ -26,7 +26,7 @@
 
 .co-form-section__label {
   font-size: 14px;
-  margin-bottom: ($grid-gutter-width / 2);
+  margin-bottom: $pf-global-gutter;
 }
 
 .co-form-section__separator {
@@ -81,7 +81,7 @@
 
 .pf-c-form__checkbox-row {
   display: grid;
-  row-gap: ($grid-gutter-width / 2);
+  row-gap: $pf-global-gutter;
 }
 
 .pf-c-form__group--no-top-margin {

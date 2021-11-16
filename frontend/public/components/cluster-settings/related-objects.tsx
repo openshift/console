@@ -51,7 +51,10 @@ const Row: React.FC<RowFunctionArgs> = ({ obj, customData: { findModel } }) => {
   );
 };
 
-const EmptyMessage = () => <EmptyBox label="Related Objects" />;
+const EmptyMessage = () => {
+  const { t } = useTranslation();
+  return <EmptyBox label={t('public~Related objects')} />;
+};
 
 const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
   const { findModel } = useModelFinder();

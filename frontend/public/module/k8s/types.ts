@@ -6,12 +6,12 @@ import {
   K8sResourceCommon,
   K8sVerb,
   AccessReviewResourceAttributes,
-  Selector,
-  MatchLabels,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
+import { Selector, MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+export * from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export type PartialObjectMetadata = {
   apiVersion: string;
@@ -28,6 +28,13 @@ export enum K8sResourceConditionStatus {
 export type K8sResourceCondition = {
   type: string;
   status: keyof typeof K8sResourceConditionStatus;
+  lastTransitionTime?: string;
+  reason?: string;
+  message?: string;
+};
+
+export type ClusterServiceVersionCondition = {
+  phase: string;
   lastTransitionTime?: string;
   reason?: string;
   message?: string;

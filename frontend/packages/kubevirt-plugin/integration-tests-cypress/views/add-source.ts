@@ -1,6 +1,7 @@
 import { TEST_PROVIDER } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
 import { storageClass } from './selector';
+import { dropDownItemLink } from './selector-wizard';
 
 export const provisionSourceInputs = {
   [ProvisionSource.URL.getValue()]: '#provision-source-url',
@@ -46,7 +47,7 @@ export const addSource = {
           .click(),
       );
       cy.get(storageClass.dropdown).click();
-      cy.get(storageClass.selectMenu)
+      cy.get(dropDownItemLink)
         .contains(Cypress.env('STORAGE_CLASS'))
         .click();
       cy.contains('Access mode').should('exist');

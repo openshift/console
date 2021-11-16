@@ -136,6 +136,7 @@ const RulesRow = ({ rule, namespace }) => {
 };
 
 const RulesRows = (props) => {
+  const { t } = useTranslation();
   const rules = [];
 
   if (_.has(props.spec, 'rules')) {
@@ -168,7 +169,7 @@ const RulesRows = (props) => {
     return <div className="co-m-table-grid__body"> {rows} </div>;
   }
 
-  return <EmptyBox label="Rules" />;
+  return <EmptyBox label={t('public~Rules')} />;
 };
 
 const Details = ({ obj: ingress }) => {

@@ -2,6 +2,7 @@ import { DeviceType } from '../../../constants/vm';
 import { FirehoseResourceEnhanced } from '../../../types/custom';
 import {
   CloudInitField,
+  HardwareDevicesField,
   ImportProvidersField,
   VMImportProvider,
   VMSettingsField,
@@ -289,5 +290,13 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
       isPending,
     },
     type: InternalActionType.SetResults,
+  }),
+  [InternalActionType.SetVmHardwareFieldValue]: (id, key: HardwareDevicesField, value: any) => ({
+    payload: {
+      id,
+      key,
+      value,
+    },
+    type: InternalActionType.SetVmHardwareFieldValue,
   }),
 };

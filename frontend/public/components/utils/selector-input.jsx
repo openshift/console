@@ -3,12 +3,13 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as TagsInput from 'react-tagsinput';
 
-import * as k8sSelector from '../../module/k8s/selector';
+import { split, selectorFromString } from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 // Helpers for cleaning up tags by running them through the selector parser
-const cleanSelectorStr = (tag) => k8sSelector.selectorToString(k8sSelector.selectorFromString(tag));
-const cleanTags = (tags) => k8sSelector.split(cleanSelectorStr(tags.join(',')));
+const cleanSelectorStr = (tag) => selectorToString(selectorFromString(tag));
+const cleanTags = (tags) => split(cleanSelectorStr(tags.join(',')));
 
 export class SelectorInput extends React.Component {
   constructor(props) {

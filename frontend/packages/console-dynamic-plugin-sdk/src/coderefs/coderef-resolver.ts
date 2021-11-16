@@ -30,6 +30,14 @@ export const isExecutableCodeRef = (obj): obj is CodeRef =>
   _.isEqual(Object.getOwnPropertySymbols(obj), [codeRefSymbol]) &&
   obj[codeRefSymbol] === true;
 
+const codeRefErrorSymbol = Symbol('error');
+export const isCodeRefError = (ref: CodeRef) => !!ref[codeRefErrorSymbol];
+export const getCodeRefError = (ref: CodeRef) => ref[codeRefErrorSymbol];
+export const setCodeRefError = (ref: CodeRef, e: any) => {
+  ref[codeRefErrorSymbol] = e;
+  return ref;
+};
+
 /**
  * Parse the `EncodedCodeRef` value into `[moduleName, exportName]` tuple.
  *
@@ -115,10 +123,18 @@ export const resolveExtension = async <
   const valueResolutions: Promise<void>[] = [];
 
   deepForOwn<CodeRef>(extension.properties, isExecutableCodeRef, (ref, key, obj) => {
+    if (isCodeRefError(ref)) {
+      throw getCodeRefError(ref);
+    }
     valueResolutions.push(
-      ref().then((resolvedValue) => {
-        obj[key] = resolvedValue;
-      }),
+      ref()
+        .then((resolvedValue) => {
+          obj[key] = resolvedValue;
+        })
+        .catch((e) => {
+          setCodeRefError(ref, e ?? true);
+          return e;
+        }),
     );
   });
 

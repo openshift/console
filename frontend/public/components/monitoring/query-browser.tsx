@@ -125,7 +125,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
     return (
       <>
         <TextInput
-          aria-label="graph timespan"
+          aria-label={t('public~graph timespan')}
           className="query-browser__span-text"
           validated={isValid ? 'default' : 'error'}
           onChange={(v) => setSpan(v, true)}
@@ -133,7 +133,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
           value={text}
         />
         <Dropdown
-          ariaLabel="graph timespan"
+          ariaLabel={t('public~graph timespan')}
           buttonClassName="dropdown-button--icon-only"
           items={dropdownItems}
           menuClassName="query-browser__span-dropdown-menu"

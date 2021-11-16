@@ -16,6 +16,7 @@ export const selectMenu = '.pf-c-select__menu';
 export const sourceURL = '#provision-source-url';
 export const sourceRegistry = '#provision-source-container';
 export const cdrom = 'input[id="cdrom"]';
+export const dropDownItemLink = '[data-test="dropdown-menu-item-link"]';
 
 // pvc selectors
 export const pvcSize = '#request-size-input';

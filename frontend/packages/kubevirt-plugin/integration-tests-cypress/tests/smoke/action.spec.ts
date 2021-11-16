@@ -82,6 +82,13 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-1794) Unpauses VM', () => {
       vm.pause();
+      cy.waitForResource({
+        kind: 'VirtualMachine',
+        metadata: {
+          name: vmData.name,
+          namespace: vmData.namespace,
+        },
+      });
       vm.unpause();
     });
 
@@ -110,6 +117,13 @@ describe('Test VM/VMI actions', () => {
       cy.applyResource(vmiFixture);
       cy.visitVMsList();
       waitForStatus(VM_STATUS.Running);
+      cy.waitForResource({
+        kind: 'VirtualMachineInstance',
+        metadata: {
+          name: vmiData.name,
+          namespace: vmiData.namespace,
+        },
+      });
     });
 
     it('ID(CNV-3693) Test VMI list view action', () => {

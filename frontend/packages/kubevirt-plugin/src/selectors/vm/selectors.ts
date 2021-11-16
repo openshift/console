@@ -17,7 +17,7 @@ import {
   VMIKind,
   VMKind,
 } from '../../types';
-import { V1Disk, V1Volume } from '../../types/api';
+import { V1Disk, V1GPU, V1HostDevice, V1Volume } from '../../types/api';
 import { Devices } from '../../types/vm/devices';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { createBasicLookup, findKeySuffixValue, getSimpleName } from '../../utils';
@@ -55,6 +55,12 @@ export const getDevices = (vm: VMKind, defaultValue: Devices = {}): Devices =>
   vm?.spec?.template?.spec?.domain?.devices
     ? _.pick(vm.spec.template.spec.domain.devices, ['disks', 'interfaces'])
     : defaultValue;
+
+export const getGPUDevices = (vm: VMKind, defaultValue: V1GPU[] = []): V1GPU[] =>
+  vm?.spec?.template?.spec?.domain?.devices?.gpus || defaultValue;
+
+export const getHostDevices = (vm: VMKind, defaultValue: V1HostDevice[] = []): V1HostDevice[] =>
+  vm?.spec?.template?.spec?.domain?.devices?.hostDevices || defaultValue;
 
 export const getNetworks = (vm: VMKind, defaultValue: V1Network[] = []): V1Network[] =>
   _.get(vm, 'spec.template.spec.networks') == null ? defaultValue : vm.spec.template.spec.networks;

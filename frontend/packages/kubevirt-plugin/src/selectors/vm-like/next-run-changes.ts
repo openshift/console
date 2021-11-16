@@ -31,6 +31,35 @@ export const isFlavorChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
   );
 };
 
+export const changedGPUDevices = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
+  if (vm.isEmpty() || vmi.isEmpty()) {
+    return [];
+  }
+
+  const vmGPUs = vm.getGPUDevices();
+  const vmiGPUs = vmi.getGPUDevices();
+
+  return vmGPUs
+    ?.filter((gpu) => !vmiGPUs?.map((vmiGPU) => vmiGPU?.name).includes(gpu?.name))
+    ?.map((gpu) => gpu?.name);
+};
+
+export const changedHostDevices = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
+  if (vm.isEmpty() || vmi.isEmpty()) {
+    return [];
+  }
+
+  const vmHostDevices = vm.getHostDevices();
+  const vmiHostDevices = vmi.getHostDevices();
+
+  return vmHostDevices
+    ?.filter(
+      (hostDevice) =>
+        !vmiHostDevices?.map((vmiHostDevice) => vmiHostDevice?.name).includes(hostDevice?.name),
+    )
+    ?.map((hostDevice) => hostDevice?.name);
+};
+
 export const changedDisks = (
   vm: VMWrapper,
   vmi: VMIWrapper,

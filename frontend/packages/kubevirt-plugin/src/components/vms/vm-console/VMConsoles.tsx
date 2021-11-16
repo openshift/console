@@ -32,22 +32,30 @@ import SerialConsoleConnector from './connectors/SerialConsoleConnector';
 import VncConsoleConnector from './connectors/VncConsoleConnector';
 import DesktopViewerSelector from './DesktopViewerSelector';
 
-const VMIsDown: React.FC = () => (
-  <div className="co-m-pane__body">
-    <div className="kubevirt-vm-consoles__loading">
-      This Virtual Machine is down. Please start it to access its console.
+const VMIsDown: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-pane__body">
+      <div className="kubevirt-vm-consoles__loading">
+        {t('kubevirt-plugin~This Virtual Machine is down. Please start it to access its console.')}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const VMIsStarting: React.FC = () => (
-  <div className="co-m-pane__body">
-    <div className="kubevirt-vm-consoles__loading">
-      <LoadingInline />
-      This Virtual Machine is starting up. The console will be available soon.
+const VMIsStarting: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-pane__body">
+      <div className="kubevirt-vm-consoles__loading">
+        <LoadingInline />
+        {t(
+          'kubevirt-plugin~This Virtual Machine is starting up. The console will be available soon.',
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const VMNotReady: React.FC = () => {
   const { t } = useTranslation();
@@ -198,7 +206,13 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
         </StackItem>
       )}
       <StackItem>
-        <AccessConsoles preselectedType={consoleType?.toPatternflyLabel()}>
+        <AccessConsoles
+          preselectedType={consoleType?.toPatternflyLabel()}
+          textSelectConsoleType={t('kubevirt-plugin~Select console type')}
+          textSerialConsole={t('kubevirt-plugin~Serial console')}
+          textVncConsole={t('kubevirt-plugin~VNC console')}
+          textDesktopViewerConsole={t('kubevirt-plugin~Desktop viewer')}
+        >
           {showSerialOption && <SerialConsoleConnector vmi={vmi} setConsoleType={setConsoleType} />}
           {showVNCOption && <VncConsoleConnector vmi={vmi} setConsoleType={setConsoleType} />}
           {isWindows(vm) && (

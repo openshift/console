@@ -99,11 +99,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
-  padding-top: ($grid-gutter-width / 2);
+  padding-top: $pf-global-gutter;
 
   &--with-sidebar {
-    margin: 0 ($grid-gutter-width / 2);
-    padding-bottom: ($grid-gutter-width / 2);
+    margin: 0 $pf-global-gutter;
+    padding-bottom: $pf-global-gutter;
   }
 
   &__btn-group__group-by {
@@ -118,10 +118,10 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__description {
     margin-top: -10px;
-    padding: 0 ($grid-gutter-width / 2) 10px;
-    @media (min-width: $grid-float-breakpoint) {
-      padding-left: $grid-gutter-width;
-      padding-right: $grid-gutter-width;
+    padding: 0 $pf-global-gutter 10px;
+    @media (min-width: $pf-global--breakpoint--xl) {
+      padding-left: $pf-global-gutter--md;
+      padding-right: $pf-global-gutter--md;
     }
   }
 
@@ -147,12 +147,16 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__header {
-    margin: 0 $grid-gutter-width 0 0;
+    margin: 0 $pf-global-gutter--md 0 0;
   }
 
   &__heading {
     font-size: 16px;
-    margin: 0 0 20px 30px;
+    margin: 0 $pf-global-gutter $pf-global-gutter;
+    @media (min-width: $pf-global--breakpoint--xl) {
+      margin-left: $pf-global-gutter--md;
+      margin-right: $pf-global-gutter--md;
+    }
   }
 
   &__hint {
@@ -161,7 +165,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__input {
     display: inline-flex !important;
-    margin: 0 0 20px 30px;
+    margin: 0 $pf-global-gutter $pf-global-gutter--md;
+    @media (min-width: $pf-global--breakpoint--xl) {
+      margin-left: $pf-global-gutter--md;
+      margin-right: $pf-global-gutter--md;
+    }
     width: auto !important;
   }
 
@@ -198,18 +206,15 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     right: 0;
     top: 4.75rem; // --pf-c-page__header--MinHeight
 
-    .pf-c-modal-box {
-      --pf-c-modal-box__body--PaddingTop: 0 !important;
-      --pf-c-modal-box__body--PaddingRight: 0 !important;
-      --pf-c-modal-box__body--PaddingLeft: 0 !important;
-      --pf-c-modal-box__body--last-child--PaddingBottom: 0 !important;
-    }
-
     .pf-c-modal-box__body {
       // Required to position scroll shadows correctly on Chrome
       display: flex;
       flex-direction: column;
       margin: 0 !important;
+      --pf-c-modal-box__body--PaddingTop: 0 !important;
+      --pf-c-modal-box__body--PaddingRight: 0 !important;
+      --pf-c-modal-box__body--PaddingLeft: 0 !important;
+      --pf-c-modal-box__body--last-child--PaddingBottom: 0 !important;
     }
 
     .modal-body-inner-shadow-covers {
@@ -293,7 +298,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__tabs {
     flex: 0 0 220px;
-    margin: 0 ($grid-gutter-width / 2) 0 0;
+    margin: 0 $pf-global-gutter 0 0;
   }
 }
 

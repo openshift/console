@@ -45,3 +45,8 @@
 .co-create-networkpolicy__rule-header .pf-m-secondary .pf-c-dropdown__toggle-icon {
   margin-right: 0;
 }
+
+.co-create-networkpolicy__selector-preview button.pf-c-tree-view__node[role="treeitem"],
+.co-create-networkpolicy__selector-preview button.pf-c-tree-view__node[role="treeitem"] > .pf-c-tree-view__node-container {
+  cursor: default;
+}

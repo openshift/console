@@ -46,6 +46,11 @@ export const networkTypeParams: NetworkTypeParamsList = {
       hintText: 'Ex: 100',
       type: ELEMENT_TYPES.TEXT,
     },
+    macspoofchk: {
+      name: 'MAC Spoof Check',
+      type: ELEMENT_TYPES.CHECKBOX,
+      initValue: true,
+    },
   },
 };
 
@@ -62,5 +67,9 @@ export type NetworkTypeParameter = {
   required?: boolean;
   type: string;
   hintText?: string;
+  initValue?: any;
   values?: { [key: string]: string };
+  validation?: (params: {
+    [key: string]: { value: any; validationMsg: string | null };
+  }) => string | null;
 };

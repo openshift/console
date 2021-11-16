@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Button } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
+import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
-export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorProps> = (props) => {
+export const NetworkPolicyPeerSelectors: React.FC<PeerSelectorProps> = (props) => {
   const { t } = useTranslation();
-  const { direction, onChange, podSelector, namespaceSelector } = props;
+  const { policyNamespace, direction, onChange, podSelector, namespaceSelector } = props;
 
   const handlePodSelectorChange = (updated: string[][]) => {
     onChange(updated, namespaceSelector);
@@ -13,7 +15,7 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
   const handleNamespaceSelectorChange = (updated: string[][]) => {
     onChange(podSelector, updated);
   };
-
+  const podsPreviewPopoverRef = React.useRef();
   let helpTextPodSelector;
   if (direction === 'ingress') {
     helpTextPodSelector = namespaceSelector
@@ -32,6 +34,9 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
           'console-app~If no pod selector is provided, traffic to all pods in this namespace will be allowed.',
         );
   }
+
+  const RuleName: React.FC<{}> = () =>
+    direction === 'ingress' ? t('console-app~ingress rule') : t('console-app~egress rule');
 
   return (
     <>
@@ -57,11 +62,33 @@ export const NetworkPolicyPeerSelectors: React.FunctionComponent<PeerSelectorPro
           dataTest="peer-pod-selector"
         />
       </div>
+      <p>
+        <Trans ns="console-app" i18nKey="netpolicy_peers_preview_affected_pods">
+          Show a preview of the{' '}
+          <Button
+            data-test={`show-affected-pods-${props.direction}`}
+            ref={podsPreviewPopoverRef}
+            variant="link"
+            isInline
+          >
+            affected pods
+          </Button>{' '}
+          that this <RuleName /> will apply to
+        </Trans>
+      </p>
+      <NetworkPolicySelectorPreview
+        policyNamespace={policyNamespace}
+        podSelector={podSelector}
+        namespaceSelector={namespaceSelector}
+        popoverRef={podsPreviewPopoverRef}
+        dataTest={`pods-preview-${props.direction}`}
+      />
     </>
   );
 };
 
 type PeerSelectorProps = {
+  policyNamespace: string;
   podSelector: string[][];
   namespaceSelector?: string[][];
   direction: 'ingress' | 'egress';

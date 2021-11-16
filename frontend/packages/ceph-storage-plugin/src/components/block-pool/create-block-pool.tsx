@@ -7,7 +7,7 @@ import { useDeepCompareMemoize } from '@console/shared';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { BreadCrumbs, history } from '@console/internal/components/utils';
 import { Button } from '@patternfly/react-core';
-import { k8sCreate } from '@console/internal/module/k8s/resource';
+import { k8sCreate } from '@console/internal/module/k8s';
 import { Modal } from '@console/shared/src/components/modal';
 
 import { BlockPoolBody } from './body';

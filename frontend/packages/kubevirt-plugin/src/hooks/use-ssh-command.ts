@@ -1,12 +1,10 @@
-import { useMemo } from 'react';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { RouteModel } from '@console/internal/models';
-import { ListKind, RouteKind } from '@console/internal/module/k8s';
+import { InfrastructureModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { getInfrastructureAPIURL } from '@console/shared/src';
 import { getCloudInitValues } from '../components/ssh-service/SSHForm/ssh-form-utils';
 import { VMIKind, VMKind } from '../types';
 import useSSHService from './use-ssh-service';
-
-const DEFAULT = 'default';
 
 export type useSSHCommandResult = {
   command: string;
@@ -18,24 +16,27 @@ export type useSSHCommandResult = {
 
 const useSSHCommand = (vm: VMKind | VMIKind): useSSHCommandResult => {
   const { sshServices } = useSSHService(vm);
-  const [allRoutes, isRoutesLoaded, loadingRoutesError] = useK8sGet<ListKind<RouteKind>>(
-    RouteModel,
-    null,
-    'openshift-console',
+  const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
+    InfrastructureModel,
+    'cluster',
   );
+  const infrastuctureApiUrl =
+    infrastructureLoaded && !infrastructureError && getInfrastructureAPIURL(infrastructure);
+  const apiHostname = infrastuctureApiUrl && new URL(infrastuctureApiUrl).hostname;
+  const consoleHostname = window.location.hostname; // fallback to console hostname
 
-  // Temp fix for routes
-  const result = useMemo(() => {
-    const route = allRoutes?.items?.[0]?.spec?.host?.replace(/.*apps/, 'api');
-    const user = getCloudInitValues(vm, 'user') || DEFAULT;
+  const user = getCloudInitValues(vm, 'user');
+  const command = `ssh ${user && `${user}@`}${apiHostname || consoleHostname} -p ${
+    sshServices?.port
+  }`;
 
-    const command = `ssh ${user !== DEFAULT ? user : `<${DEFAULT}>`}@${route} -p ${
-      sshServices?.port
-    }`;
-    return { command, user, port: sshServices?.port, isRoutesLoaded, loadingRoutesError };
-  }, [allRoutes, isRoutesLoaded, loadingRoutesError, sshServices, vm]);
-
-  return result;
+  return {
+    command,
+    user,
+    port: sshServices?.port,
+    isRoutesLoaded: infrastructureLoaded,
+    loadingRoutesError: infrastructureError,
+  };
 };
 
 export default useSSHCommand;

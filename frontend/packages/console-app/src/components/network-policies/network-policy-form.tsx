@@ -11,7 +11,7 @@ import {
   AlertVariant,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Checkbox } from '@console/internal/components/checkbox';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
@@ -37,6 +37,7 @@ import {
   checkNetworkPolicyValidity,
 } from './network-policy-model';
 import { NetworkPolicyRuleConfigPanel } from './network-policy-rule-config';
+import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
 const emptyRule = (): NetworkPolicyRule => {
   return {
@@ -63,6 +64,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
   const [error, setError] = React.useState('');
   const [showSDNAlert, setShowSDNAlert] = React.useState(true);
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
+  const podsPreviewPopoverRef = React.useRef();
 
   if (isNetworkPolicyConversionError(networkPolicy)) {
     // Note, this case is not expected to happen. Validity of the network policy for form should have been checked prior to showing this form.
@@ -249,6 +251,26 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             onChange={handleMainPodSelectorChange}
             dataTest="main-pod-selector"
           />
+          <p>
+            <Trans ns="console-app">
+              Show a preview of the{' '}
+              <Button
+                data-test="show-affected-pods"
+                ref={podsPreviewPopoverRef}
+                variant="link"
+                isInline
+              >
+                affected pods
+              </Button>{' '}
+              that this policy will apply to
+            </Trans>
+          </p>
+          <NetworkPolicySelectorPreview
+            policyNamespace={networkPolicy.namespace}
+            podSelector={networkPolicy.podSelector}
+            popoverRef={podsPreviewPopoverRef}
+            dataTest="policy-pods-preview"
+          />
         </div>
         <div className="form-group co-create-networkpolicy__type">
           <Title headingLevel="h2">{t('console-app~Policy type')}</Title>
@@ -309,6 +331,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             {networkPolicy.ingress.rules.map((rule, idx) => (
               <NetworkPolicyRuleConfigPanel
                 key={rule.key}
+                policyNamespace={networkPolicy.namespace}
                 direction="ingress"
                 rule={rule}
                 onChange={(r) => {
@@ -355,6 +378,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
               {networkPolicy.egress.rules.map((rule, idx) => (
                 <NetworkPolicyRuleConfigPanel
                   key={rule.key}
+                  policyNamespace={networkPolicy.namespace}
                   direction="egress"
                   rule={rule}
                   onChange={(r) => {

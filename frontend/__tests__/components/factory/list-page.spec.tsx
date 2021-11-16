@@ -9,6 +9,14 @@ import {
 } from '../../../public/components/factory/list-page';
 import { Firehose, PageHeading } from '../../../public/components/utils';
 
+jest.mock('react-redux', () => {
+  const ActualReactRedux = require.requireActual('react-redux');
+  return {
+    ...ActualReactRedux,
+    useDispatch: jest.fn(),
+  };
+});
+
 describe(TextFilter.displayName, () => {
   let wrapper: ReactWrapper;
   let placeholder: string;

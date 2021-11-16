@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink, isUpstream } from '@console/internal/components/utils';
 import { SUPPORT_URL } from '../../constants/vm-templates';
-import { isUpstream } from '../../utils/common';
 
 const VMTemplateSupport: React.FC<VMTemplateSupportProps> = ({ details }) => {
   const { t } = useTranslation();

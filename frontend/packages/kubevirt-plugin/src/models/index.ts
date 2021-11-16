@@ -231,3 +231,16 @@ export const HyperConvergedModel = {
   crd: true,
   plural: 'hyperconvergeds',
 };
+
+export const NetworkAddonsConfigModel: K8sKind = {
+  label: 'NetworkAddonsConfig',
+  labelPlural: 'NetworkAddonsConfigs',
+  apiVersion: 'v1',
+  apiGroup: 'networkaddonsoperator.network.kubevirt.io',
+  plural: 'networkaddonsconfigs',
+  abbr: 'NAC',
+  namespaced: true,
+  kind: 'NetworkAddonsConfig',
+  id: 'networkaddonsconfig',
+  crd: true,
+};

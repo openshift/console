@@ -86,3 +86,9 @@ spec:
     namespace: console-demo-plugin
     port: 9001
     basePath: '/'
+  proxy:
+    services:
+      - name: thanos-querier
+        namespace: openshift-monitoring
+        port: 9091
+        authorize: true

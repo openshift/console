@@ -1,6 +1,6 @@
 .co-search {
   padding-bottom: 30px;
-  @media (max-width: $grid-float-breakpoint-max) {
+  @media (max-width: $pf-global--breakpoint--sm-max) {
     .pf-c-input-group {
       display: block;
       .pf-c-dropdown__toggle {

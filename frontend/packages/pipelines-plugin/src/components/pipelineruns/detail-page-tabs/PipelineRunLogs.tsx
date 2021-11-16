@@ -10,8 +10,10 @@ import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { ColoredStatusIcon } from '../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
+import { ErrorDetailsWithStaticLog } from '../logs/log-snippet-types';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
+import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
@@ -85,6 +87,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
     const { activeItem } = this.state;
     const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
     const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
+    const logDetails = getPLRLogSnippet(obj) as ErrorDetailsWithStaticLog;
 
     const taskCount = taskRuns.length;
     const downloadAllCallback =
@@ -163,6 +166,11 @@ class PipelineRunLogsWithTranslation extends React.Component<
                   obj,
                   ['status', 'conditions', 0, 'message'],
                   t('pipelines-plugin~No logs found'),
+                )}
+                {logDetails && (
+                  <div className="odc-pipeline-run-logs__logsnippet">
+                    {logDetails.staticMessage}
+                  </div>
                 )}
               </div>
             </div>

@@ -76,6 +76,13 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-proxy-service",
+      "component": { "$codeRef": "exampleProxyPage.default" }
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "admin-dynamic-route-1",
@@ -233,6 +240,26 @@
     "properties": {
       "path": "/demo-list-page",
       "component": { "$codeRef": "listPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-k8s-api",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "K8s API",
+      "href": "/test-k8sapi"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-k8sapi",
+      "component": { "$codeRef": "K8sAPIConsumer.default" }
     }
   }
 ]

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind } from '../module/k8s';
 import { SectionHeading, ResourceLink } from './utils';
@@ -8,6 +9,8 @@ import { MaskedData } from './configmap-and-secret-data';
 export const ServiceCatalogParametersSecrets: React.SFC<ServiceCatalogParametersSecretsProps> = ({
   obj: obj,
 }) => {
+  const { t } = useTranslation();
+
   const rows = _.map(obj.spec.parametersFrom, ({ secretKeyRef }) => (
     <div className="row" key={secretKeyRef.name}>
       <div className="col-xs-6">
@@ -19,7 +22,7 @@ export const ServiceCatalogParametersSecrets: React.SFC<ServiceCatalogParameters
 
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Parameters Secrets" />
+      <SectionHeading text={t('public~Parameters Secrets')} />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
           <div className="col-xs-6">Secret</div>
@@ -33,19 +36,22 @@ export const ServiceCatalogParametersSecrets: React.SFC<ServiceCatalogParameters
 
 export const ServiceCatalogParameters: React.SFC<ServiceCatalogParametersProps> = ({
   parameters,
-}) => (
-  <div className="co-m-pane__body">
-    <SectionHeading text="Parameters" />
-    <dl className="co-m-resource__details">
-      {_.map(parameters, (v, k) => (
-        <React.Fragment key={k}>
-          <dt>{k}</dt>
-          <dd>{v === '<redacted>' ? <MaskedData /> : v}</dd>
-        </React.Fragment>
-      ))}
-    </dl>
-  </div>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-pane__body">
+      <SectionHeading text={t('public~Parameters')} />
+      <dl className="co-m-resource__details">
+        {_.map(parameters, (v, k) => (
+          <React.Fragment key={k}>
+            <dt>{k}</dt>
+            <dd>{v === '<redacted>' ? <MaskedData /> : v}</dd>
+          </React.Fragment>
+        ))}
+      </dl>
+    </div>
+  );
+};
 
 export type ServiceCatalogParametersSecretsProps = {
   obj: K8sResourceKind;

@@ -1,6 +1,7 @@
 import { Disk, Network } from '../types/vm';
 import { ProvisionSource } from '../utils/const/provisionSource';
-import { diskDialog, nicDialog, menuItemMain, disksTab } from './selector';
+import { diskDialog, nicDialog, menuItemMain, modalCancel, disksTab } from './selector';
+import { dropDownItemLink } from './selector-wizard';
 
 export const addNIC = (nic: Network) => {
   cy.get(nicDialog.addNIC).click();
@@ -80,7 +81,10 @@ export const addDisk = (disk: Disk) => {
     cy.get('body').then(($body) => {
       if ($body.find(diskDialog.storageClass).length) {
         cy.get(diskDialog.storageClass).click();
-        cy.get(`#${Cypress.env('STORAGE_CLASS')}-link`).click({ force: true });
+        cy.get(dropDownItemLink)
+          .contains(Cypress.env('STORAGE_CLASS'))
+          .click();
+        cy.contains('Access mode').should('exist');
       }
     });
   }
@@ -99,6 +103,7 @@ export const addDisk = (disk: Disk) => {
   }
 
   cy.get(diskDialog.add).click();
+  cy.get(modalCancel).should('not.exist');
   cy.byDataID(disk.name).should('exist');
 };
 

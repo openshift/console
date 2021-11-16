@@ -32,11 +32,11 @@ import {
   TypedResourceBadgeCell,
 } from './cells';
 
-interface DispatchProps {
+type DispatchProps = {
   onSelectTab?: (name: string) => void;
-}
+};
 
-interface TopologyListViewNodeProps {
+type TopologyListViewNodeProps = {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
@@ -49,7 +49,7 @@ interface TopologyListViewNodeProps {
   groupResourcesCell?: React.ReactNode;
   hideAlerts?: boolean;
   noPods?: boolean;
-}
+};
 
 const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> = ({
   item,
