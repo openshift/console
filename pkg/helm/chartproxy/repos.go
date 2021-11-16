@@ -33,7 +33,7 @@ var (
 	helmChartRepositoryNamespaceGVK = schema.GroupVersionResource{
 		Group:    "helm.openshift.io",
 		Version:  "v1",
-		Resource: "projecthelmchartrepository",
+		Resource: "projecthelmchartrepositories",
 	}
 )
 

@@ -25,14 +25,15 @@ func (v MockKubeVersion) GetKubeVersion() string {
 
 func TestProxy_IndexFile(t *testing.T) {
 	tests := []struct {
-		name           string
-		indexFiles     []string
-		mergedFile     string
-		kubeVersion    string
-		helmCRS        []*unstructured.Unstructured
-		repoNames      []string
-		onlyCompatible bool
-		namespace      string
+		name             string
+		indexFiles       []string
+		mergedFile       string
+		kubeVersion      string
+		helmClusterCRS   []*unstructured.Unstructured
+		helmNamespaceCRS []*unstructured.Unstructured
+		repoNames        []string
+		onlyCompatible   bool
+		namespace        string
 	}{
 		{
 			name:       "returned index file for configured helm repo",
@@ -118,7 +119,7 @@ func TestProxy_IndexFile(t *testing.T) {
 			name:       "returned merged index file for all accessible helm repos",
 			indexFiles: []string{"testdata/azureRepoIndex.yaml"},
 			mergedFile: "testdata/mergedAzureRepoIndex.yaml",
-			helmCRS: []*unstructured.Unstructured{
+			helmClusterCRS: []*unstructured.Unstructured{
 				{
 					Object: map[string]interface{}{
 						"apiVersion": "helm.openshift.io/v1beta1",
@@ -135,6 +136,24 @@ func TestProxy_IndexFile(t *testing.T) {
 					},
 				},
 			},
+			helmNamespaceCRS: []*unstructured.Unstructured{
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "helm.openshift.io/v1",
+						"kind":       "ProjectHelmChartRepository",
+						"metadata": map[string]interface{}{
+							"namespace": "test-namespace",
+							"name":      "repo2",
+						},
+						"spec": map[string]interface{}{
+							"connectionConfig": map[string]interface{}{
+								"url": "http://foo.com/baz",
+							},
+						},
+					},
+				},
+			},
+			namespace: "test-namespace",
 		},
 	}
 
@@ -149,12 +168,18 @@ func TestProxy_IndexFile(t *testing.T) {
 				indexFileContents = append(indexFileContents, string(content))
 			}
 
-			dynamicClient := fake.K8sDynamicClient(indexFileContents...)
+			dynamicClient := fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", "", indexFileContents...)
 			if len(tt.repoNames) == len(indexFileContents) {
-				dynamicClient = fake.K8sDynamicClientWithRepoNames(tt.repoNames, indexFileContents...)
+				dynamicClient = fake.K8sDynamicClientWithRepoNames("helm.openshift.io/v1beta1", "HelmChartRepository", "", tt.repoNames, indexFileContents...)
 			}
-			for _, helmcr := range tt.helmCRS {
+			for _, helmcr := range tt.helmClusterCRS {
 				_, err := dynamicClient.Resource(helmChartRepositoryClusterGVK).Create(context.TODO(), helmcr, v1.CreateOptions{})
+				if err != nil {
+					t.Error(err)
+				}
+			}
+			for _, helmcr := range tt.helmNamespaceCRS {
+				_, err := dynamicClient.Resource(helmChartRepositoryNamespaceGVK).Namespace(tt.namespace).Create(context.TODO(), helmcr, v1.CreateOptions{})
 				if err != nil {
 					t.Error(err)
 				}

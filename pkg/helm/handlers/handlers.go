@@ -44,6 +44,10 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		}, kubeversionGetter)
 	}
 
+	config, _ := rest.InClusterConfig()
+	clientset, _ := kubernetes.NewForConfig(config)
+	h.clientset = clientset
+
 	return h
 }
 
@@ -51,6 +55,7 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 type helmHandlers struct {
 	ApiServerHost string
 	Transport     http.RoundTripper
+	clientset     kubernetes.Interface
 
 	// helm action configurator
 	getActionConfigurations func(string, string, string, *http.RoundTripper) *action.Configuration
@@ -290,19 +295,7 @@ func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r
 	namespaceParam := r.URL.Query().Get("namespace")
 	if namespaceParam != "" {
 		// set default to empty if not provided in the query param
-		config, err := rest.InClusterConfig()
-		if err != nil {
-			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not resolve in-cluster config"})
-			return
-		}
-
-		clientset, err := kubernetes.NewForConfig(config)
-		if err != nil {
-			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not resolve in-cluster Clientset"})
-			return
-		}
-
-		namespaces, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+		namespaces, err := h.clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
 			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not list in-cluster namespaces"})
 			return
@@ -310,7 +303,7 @@ func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r
 
 		found := false
 		for _, ns := range namespaces.Items {
-			if ns.String() == namespaceParam {
+			if ns.Name == namespaceParam {
 				found = true
 				break
 			}
