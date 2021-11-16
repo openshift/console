@@ -8,9 +8,9 @@ export const deleteAction = '[data-test-action="Delete Network Attachment Defini
 export const confirmBtn = '[data-test="confirm-action"]';
 export const heading = '[data-test-section-heading="NetworkAttachmentDefinition details"]';
 export const createBtn = '#save-changes';
+export const macSpoofCHK = '#network-type-params-macspoofchk-checkbox';
 
-export const createNAD = (name: string, bridge: string) => {
-  cy.visitNAD();
+export const createNAD = (name: string, bridge: string, uncheckmacspoof?: boolean) => {
   cy.byTestID('item-create').click();
   cy.get(nameID)
     .type(name)
@@ -18,12 +18,14 @@ export const createNAD = (name: string, bridge: string) => {
   cy.get(type).click();
   cy.get(cnvBridgeLink).click();
   cy.get(bridgeName).type(bridge);
+  if (uncheckmacspoof) {
+    cy.get(macSpoofCHK).click();
+  }
   cy.get(createBtn).click();
   cy.get(heading).should('exist');
 };
 
 export const deleteNAD = (name: string) => {
-  cy.visitNAD();
   cy.contains(row, name)
     .find(kebabBtn)
     .click();
