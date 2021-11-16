@@ -601,6 +601,7 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
     () => getOperandActions(props.match.params.plural, actionExtensions),
     [props.match.params.plural, actionExtensions],
   );
+
   return model ? (
     <DetailsPage
       match={props.match}
@@ -623,6 +624,7 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
         },
       ]}
       menuActions={menuActions}
+      createRedirect
       breadcrumbsFor={() => [
         {
           name: t('olm~Installed Operators'),
@@ -643,7 +645,7 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
         )),
         navFactory.editYaml(),
         {
-          name: 'Resources',
+          name: t('olm~Resources'),
           href: 'resources',
           component: ResourcesTab,
         },
