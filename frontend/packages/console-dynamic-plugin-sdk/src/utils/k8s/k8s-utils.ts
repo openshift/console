@@ -1,7 +1,9 @@
 import * as _ from 'lodash';
 import { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
 import { Options } from '../../api/internal-types';
+import { QueryParams } from '../../extensions/console-types';
 import { k8sBasePath } from './k8s';
+import { WSFactory, WSOptions } from './ws-factory';
 
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }: K8sModel): string => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
@@ -110,4 +112,57 @@ export const toRequirements = (selector: Selector = {}): MatchExpression[] => {
 export const selectorToString = (selector: Selector): string => {
   const requirements = toRequirements(selector);
   return requirements.map(requirementToString).join(',');
+};
+
+export const k8sWatch = (
+  kind: K8sModel,
+  query: {
+    labelSelector?: Selector;
+    resourceVersion?: string;
+    ns?: string;
+    fieldSelector?: string;
+  } = {},
+  wsOptions: {
+    [key: string]: any;
+  } = {},
+) => {
+  const queryParams: QueryParams = { watch: 'true' };
+  const opts: {
+    queryParams: QueryParams;
+    ns?: string;
+  } = { queryParams };
+  const wsOptionsUpdated = Object.assign(
+    {
+      host: 'auto',
+      reconnect: true,
+      jsonParse: true,
+      bufferFlushInterval: 500,
+      bufferMax: 1000,
+    },
+    wsOptions,
+  );
+
+  const { labelSelector } = query;
+  if (labelSelector) {
+    const encodedSelector = encodeURIComponent(selectorToString(labelSelector));
+    if (encodedSelector) {
+      queryParams.labelSelector = encodedSelector;
+    }
+  }
+
+  if (query.fieldSelector) {
+    queryParams.fieldSelector = encodeURIComponent(query.fieldSelector);
+  }
+
+  if (query.ns) {
+    opts.ns = query.ns;
+  }
+
+  if (query.resourceVersion) {
+    queryParams.resourceVersion = encodeURIComponent(query.resourceVersion);
+  }
+
+  const path = resourceURL(kind, opts);
+  wsOptionsUpdated.path = path;
+  return new WSFactory(path, wsOptionsUpdated as WSOptions);
 };

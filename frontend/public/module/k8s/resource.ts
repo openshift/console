@@ -1,13 +1,13 @@
-import { K8sResourceCommon, QueryParams, Selector } from '@console/dynamic-plugin-sdk/src';
+import { K8sResourceCommon, QueryParams } from '@console/dynamic-plugin-sdk/src';
 import {
   k8sPatch,
   k8sKill,
   k8sList,
   resourceURL,
-  selectorToString,
+  k8sWatch,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sKind, Patch } from './types';
-import { WSFactory, WSOptions } from '../ws-factory';
+// import { WSFactory, WSOptions } from '../ws-factory';
 
 export type Options = {
   ns?: string;
@@ -51,59 +51,6 @@ export const k8sListPartialMetadata = (
         'application/json;as=PartialObjectMetadataList;v=v1beta1;g=meta.k8s.io,application/json',
     },
   });
-};
-
-export const k8sWatch = (
-  kind: K8sKind,
-  query: {
-    labelSelector?: Selector;
-    resourceVersion?: string;
-    ns?: string;
-    fieldSelector?: string;
-  } = {},
-  wsOptions: {
-    [key: string]: any;
-  } = {},
-) => {
-  const queryParams: QueryParams = { watch: 'true' };
-  const opts: {
-    queryParams: QueryParams;
-    ns?: string;
-  } = { queryParams };
-  wsOptions = Object.assign(
-    {
-      host: 'auto',
-      reconnect: true,
-      jsonParse: true,
-      bufferFlushInterval: 500,
-      bufferMax: 1000,
-    },
-    wsOptions,
-  );
-
-  const labelSelector = query.labelSelector;
-  if (labelSelector) {
-    const encodedSelector = encodeURIComponent(selectorToString(labelSelector));
-    if (encodedSelector) {
-      queryParams.labelSelector = encodedSelector;
-    }
-  }
-
-  if (query.fieldSelector) {
-    queryParams.fieldSelector = encodeURIComponent(query.fieldSelector);
-  }
-
-  if (query.ns) {
-    opts.ns = query.ns;
-  }
-
-  if (query.resourceVersion) {
-    queryParams.resourceVersion = encodeURIComponent(query.resourceVersion);
-  }
-
-  const path = resourceURL(kind, opts);
-  wsOptions.path = path;
-  return new WSFactory(path, wsOptions as WSOptions);
 };
 
 /**

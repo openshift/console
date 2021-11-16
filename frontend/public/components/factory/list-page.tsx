@@ -12,7 +12,7 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import { useDocumentListener, KEYBOARD_SHORTCUTS, useDeepCompareMemoize } from '@console/shared';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 
-import { filterList } from '../../actions/k8s';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { K8sKind, K8sResourceCommon, referenceForModel, Selector } from '../../module/k8s';

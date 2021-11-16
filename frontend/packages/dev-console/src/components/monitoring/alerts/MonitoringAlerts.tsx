@@ -150,7 +150,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
 const mapStateToProps = (state: RootState): StateProps => {
   return {
     rules: state.UI.getIn(['monitoring', 'devRules']),
-    filters: state.k8s.getIn([reduxID, 'filters']),
+    filters: state.sdkK8s.getIn([reduxID, 'filters']),
     listSorts: state.UI.getIn(['listSorts', reduxID]),
   };
 };
