@@ -6,7 +6,7 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionPhase,
 } from '@console/operator-lifecycle-manager';
-import { PIPELINE_GA_VERSION } from '../const';
+import { PIPELINE_GA_VERSION, TRIGGERS_GA_VERSION } from '../const';
 
 export const getPipelineOperatorVersion = async (namespace: string): Promise<SemVer | null> => {
   const allCSVs: ClusterServiceVersionKind[] = await k8sList(ClusterServiceVersionModel, {
@@ -43,4 +43,9 @@ export const usePipelineOperatorVersion = (namespace: string): SemVer | null => 
 export const isGAVersionInstalled = (operator: SemVer): boolean => {
   if (!operator) return false;
   return gte(operator.version, PIPELINE_GA_VERSION);
+};
+
+export const isTriggersGAVersion = (operator: SemVer): boolean => {
+  if (!operator) return false;
+  return gte(operator.version, TRIGGERS_GA_VERSION);
 };
