@@ -9,7 +9,8 @@ import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
 import useV2VConfigMap from '../../../../hooks/use-v2v-config-map';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
-import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
+import { selectVM } from '../../../../selectors/vm-template/basic';
+import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormPFSelect } from '../../../form/form-pf-select';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { FormFieldMemoRow } from '../../form/form-field-row';
@@ -102,9 +103,9 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   );
 
   React.useEffect(() => {
-    if (!isDevicesInitialized) {
-      const templateDevices = toShallowJS(iUserTemplate)?.data?.objects?.[0]?.spec?.template?.spec
-        ?.domain?.devices;
+    const template = iUserTemplate?.toJS();
+    if (!isDevicesInitialized && template?.loaded) {
+      const templateDevices = selectVM(template.data)?.spec?.template?.spec?.domain?.devices;
       onHardwareFieldChange(HardwareDevicesField.GPUS, templateDevices?.gpus);
       onHardwareFieldChange(HardwareDevicesField.HOST_DEVICES, templateDevices?.hostDevices);
       onHardwareFieldChange(HardwareDevicesField.IS_DEVICES_INITIALIZED, true);
