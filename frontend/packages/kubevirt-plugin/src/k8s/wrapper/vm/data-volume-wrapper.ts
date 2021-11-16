@@ -86,19 +86,19 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
   };
 
-  setSize = (value: string | number, unit = 'Gi') => {
+  setPVCSize = (value: string | number, unit = 'Gi') => {
     this.ensurePath('spec.pvc.resources.requests');
     (this.data.spec.pvc.resources.requests as any).storage = `${value}${unit}`;
     return this;
   };
 
-  setRawSize = (value: string) => {
+  setPVCRawSize = (value: string) => {
     this.ensurePath('spec.pvc.resources.requests');
     (this.data.spec.pvc.resources.requests as any).storage = value;
     return this;
   };
 
-  setStorageClassName = (storageClassName: string) => {
+  setPVCStorageClassName = (storageClassName: string) => {
     this.ensurePath('spec.pvc');
     this.data.spec.pvc.storageClassName = storageClassName;
     return this;
@@ -110,16 +110,47 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return this;
   };
 
-  setAccessModes = (accessModes: AccessMode[]) => {
+  setPVCAccessModes = (accessModes: AccessMode[]) => {
     this.ensurePath('spec.pvc');
     this.data.spec.pvc.accessModes =
       accessModes && accessModes.map((a) => a?.getValue()).filter((a) => a); // allow null and undefined
     return this;
   };
 
-  setVolumeMode = (volumeMode: VolumeMode) => {
+  setPVCVolumeMode = (volumeMode: VolumeMode) => {
     this.ensurePath('spec.pvc');
     this.data.spec.pvc.volumeMode = volumeMode && volumeMode.getValue(); // allow null and undefined
+    return this;
+  };
+
+  setSize = (value: string | number, unit = 'Gi') => {
+    this.ensurePath('spec.storage.resources.requests');
+    (this.data.spec.storage.resources.requests as any).storage = `${value}${unit}`;
+    return this;
+  };
+
+  setRawSize = (value: string) => {
+    this.ensurePath('spec.storage.resources.requests');
+    (this.data.spec.storage.resources.requests as any).storage = value;
+    return this;
+  };
+
+  setStorageClassName = (storageClassName: string) => {
+    this.ensurePath('spec.storage');
+    this.data.spec.storage.storageClassName = storageClassName;
+    return this;
+  };
+
+  setAccessModes = (accessModes: AccessMode[]) => {
+    this.ensurePath('spec.storage');
+    this.data.spec.storage.accessModes =
+      accessModes && accessModes.map((a) => a?.getValue()).filter((a) => a); // allow null and undefined
+    return this;
+  };
+
+  setVolumeMode = (volumeMode: VolumeMode) => {
+    this.ensurePath('spec.storage');
+    this.data.spec.storage.volumeMode = volumeMode && volumeMode.getValue(); // allow null and undefined
     return this;
   };
 
@@ -148,6 +179,19 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   };
 
   mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
+    super.mergeWith(...dataVolumeWrappers);
+    this.clearIfEmpty('spec.storage.storageClassName');
+    this.clearIfEmpty('spec.storage.accessModes');
+    this.clearIfEmpty('spec.storage.volumeMode');
+    const accessModes = this.getAccessModesEnum();
+    if (accessModes?.length > 1) {
+      // API currently allows only one mode
+      this.setAccessModes([accessModes[0]]);
+    }
+    return this;
+  }
+
+  mergeWithPVC(...dataVolumeWrappers: DataVolumeWrapper[]) {
     super.mergeWith(...dataVolumeWrappers);
     this.clearIfEmpty('spec.pvc.storageClassName');
     this.clearIfEmpty('spec.pvc.accessModes');

@@ -20,6 +20,7 @@ type CloneFrom = {
 export const cloneVM = async (
   { vm, vmi, persistentVolumeClaims, dataVolumes }: CloneFrom,
   cloneTo: CloneTo,
+  pvcs,
 ) => {
   if (isVMExpectedRunning(vm, vmi)) {
     await stopVM(vm);
@@ -27,7 +28,7 @@ export const cloneVM = async (
 
   const vmClone = new VMClone(vm, cloneTo)
     .withClonedPVCs(persistentVolumeClaims)
-    .withClonedDataVolumes(dataVolumes)
+    .withClonedDataVolumes(dataVolumes, pvcs)
     .build();
 
   return k8sCreate(getKubevirtAvailableModel(VirtualMachineModel), vmClone);

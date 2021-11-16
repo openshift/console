@@ -1,10 +1,7 @@
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import {
-  BinaryUnit,
-  stringValueUnitSplit,
-  toIECUnit,
-} from '../../../components/form/size-unit-utils';
+import { BinaryUnit, toIECUnit } from '../../../components/form/size-unit-utils';
 import { AccessMode, VolumeMode } from '../../../constants/vm/storage';
 import {
   getPvcAccessModes,
@@ -43,10 +40,11 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
   getStorageClassName = () => getPvcStorageClassName(this.data as any);
 
   getSize = (): { value: number; unit: string } => {
-    const parts = stringValueUnitSplit(getPvcStorageSize(this.data as any) || '');
+    const storageInBytes = convertToBaseValue(getPvcStorageSize(this.data as any));
+    const { value, unit } = humanizeBinaryBytes(storageInBytes);
     return {
-      value: parts[0],
-      unit: parts[1],
+      value,
+      unit,
     };
   };
 
