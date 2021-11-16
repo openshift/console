@@ -4,16 +4,26 @@ import { FormikProps, FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
-import { FormFooter, FlexForm, useFormikValidationFix, FormBody } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  FormFooter,
+  FlexForm,
+  useFormikValidationFix,
+  FormBody,
+  YAMLEditorField,
+  SyncedEditorField,
+} from '@console/shared';
+import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {
   isDefaultChannel,
   getChannelKind,
   getChannelData,
   useDefaultChannelConfiguration,
+  getCatalogChannelData,
+  channelYamltoFormData,
 } from '../../../utils/create-channel-utils';
-import { ChannelListProps } from '../import-types';
+import { AddChannelFormData, ChannelListProps, YamlFormSyncData } from '../import-types';
 import ChannelSelector from './form-fields/ChannelSelector';
-import ChannelYamlEditor from './form-fields/ChannelYamlEditor';
 import FormViewSection from './sections/FormViewSection';
 
 interface OwnProps {
@@ -31,6 +41,7 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   namespace,
   channels,
 }) => {
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.channelForm.editor.lastView';
   const {
     values,
     setFieldValue,
@@ -44,31 +55,44 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   const [defaultConfiguredChannel, defaultConfiguredChannelLoaded] = useDefaultChannelConfiguration(
     namespace,
   );
-  const channelHasFormView = values.type && isDefaultChannel(getChannelKind(values.type));
-  const channelKind = getChannelKind(values.type);
+  // const channelHasFormView = values.type && isDefaultChannel(getChannelKind(values.type));
+  const channelKind = getChannelKind(values.formData.type);
   const onTypeChange = React.useCallback(
     (item: string) => {
       setErrors({});
       setStatus({});
       const kind = getChannelKind(item);
       if (isDefaultChannel(kind)) {
-        const nameData = `data.${kind.toLowerCase()}`;
+        const nameData = `formData.data.${kind.toLowerCase()}`;
         const sourceData = getChannelData(kind.toLowerCase());
         setFieldValue(nameData, sourceData);
         setFieldTouched(nameData, true);
-        setFieldValue('yamlData', '');
-        setFieldTouched('yamlData', true);
       }
 
-      setFieldValue('type', item);
-      setFieldTouched('type', true);
+      setFieldValue('formData.type', item);
+      setFieldTouched('formData.type', true);
 
-      setFieldValue('name', _.kebabCase(`${kind}`));
-      setFieldTouched('name', true);
+      setFieldValue('formData.name', _.kebabCase(`${kind}`));
+      setFieldTouched('formData.name', true);
       validateForm();
     },
     [setErrors, setStatus, setFieldValue, setFieldTouched, validateForm],
   );
+
+  const sanitizeToYaml = () => {
+    return safeJSToYAML(
+      getCatalogChannelData(values as YamlFormSyncData<AddChannelFormData>),
+      'yamlData',
+      {
+        skipInvalid: true,
+        noRefs: true,
+      },
+    );
+  };
+
+  const yamlEditor = <YAMLEditorField name="yamlData" showSamples onSave={handleSubmit} />;
+
+  const formEditor = <FormViewSection namespace={namespace} kind={channelKind} />;
 
   return (
     <FlexForm onSubmit={handleSubmit}>
@@ -84,8 +108,17 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
                 onChange={onTypeChange}
                 defaultConfiguredChannel={defaultConfiguredChannel}
               />
-              {channelHasFormView && <FormViewSection namespace={namespace} kind={channelKind} />}
-              {!channelHasFormView && <ChannelYamlEditor />}
+              <SyncedEditorField
+                name="editorType"
+                formContext={{
+                  name: 'formData',
+                  editor: formEditor,
+                  sanitizeTo: (formData: K8sResourceKind) =>
+                    channelYamltoFormData(formData, values.formData),
+                }}
+                yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
+                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+              />
             </>
           )}
         {channels && channels.loaded && _.isEmpty(channels.channelList) && (

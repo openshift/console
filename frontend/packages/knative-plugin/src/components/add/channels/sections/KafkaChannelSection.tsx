@@ -8,14 +8,14 @@ const KafkaChannelSection: React.FC = () => {
   return (
     <FormSection extraMargin>
       <NumberSpinnerField
-        name="data.kafkachannel.numPartitions"
+        name="formData.data.kafkachannel.numPartitions"
         label={t('knative-plugin~Number of Partitions')}
         helpText={t(
           'knative-plugin~The number of partitions of a Kafka topic. By default is, set to 1.',
         )}
       />
       <NumberSpinnerField
-        name="data.kafkachannel.replicationFactor"
+        name="formData.data.kafkachannel.replicationFactor"
         label={t('knative-plugin~Replication factor')}
         helpText={t(
           'knative-plugin~The Replication factor of a Kafka topic. By default is, set to 1.',

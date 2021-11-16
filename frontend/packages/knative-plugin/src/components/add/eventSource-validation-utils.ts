@@ -185,16 +185,23 @@ export const eventSourceValidationSchema = (t: TFunction) =>
   });
 
 export const addChannelValidationSchema = (t: TFunction) =>
-  yup.lazy((formData) => {
-    if (isDefaultChannel(getChannelKind(formData.type))) {
-      return yup.object().shape({
-        application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
-        data: sourceDataSpecSchema(t),
-        type: yup.string(),
-      });
-    }
-    return yup.object().shape({
-      yamlData: yup.string(),
-    });
+  yup.object().shape({
+    editorType: yup.string(),
+    formData: yup.object().when('editorType', {
+      is: EditorType.Form,
+      then: yup.lazy((formData) => {
+        if (isDefaultChannel(getChannelKind(formData.type))) {
+          return yup.object().shape({
+            application: applicationNameValidationSchema,
+            name: nameValidationSchema(t),
+            data: sourceDataSpecSchema(t),
+            type: yup.string(),
+          });
+        }
+        return yup.object().shape({
+          yamlData: yup.string(),
+        });
+      }),
+    }),
+    yamlData: yup.string(),
   });

@@ -1,6 +1,6 @@
 import { referenceFor } from '@console/internal/module/k8s';
 import { EventingKafkaChannelModel, EventingIMCModel } from '../../models';
-import { getCreateChannelResource } from '../create-channel-utils';
+import { getCreateChannelData } from '../create-channel-utils';
 import { getDefaultChannelData } from './knative-serving-data';
 
 describe('Create channel Utils', () => {
@@ -19,20 +19,7 @@ describe('Create channel Utils', () => {
         apiVersion: EventingIMCModel.apiVersion,
       }),
     };
-    const formData = getCreateChannelResource(yamlIncludedResource);
+    const formData = getCreateChannelData(yamlIncludedResource);
     expect(formData.kind).not.toBe(EventingIMCModel.kind);
-  });
-
-  it('should return the data based on yaml section for the unknown channels', () => {
-    const channelResource = getDefaultChannelData('NatsChannel');
-    const yamlIncludedResource = {
-      ...channelResource,
-      yamlData: JSON.stringify({
-        kind: 'NatsChannel',
-        apiVersion: 'v1alpha1',
-      }),
-    };
-    const formData = getCreateChannelResource(yamlIncludedResource);
-    expect(formData.kind).toBe('NatsChannel');
   });
 });
