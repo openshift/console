@@ -13,6 +13,7 @@ import {
   OnSelect,
   TableProps as PfTableProps,
 } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
   AutoSizer,
@@ -580,36 +581,38 @@ export const Table: React.FC<TableProps> = ({
   const children = mock ? (
     <EmptyBox label={label} />
   ) : (
-    <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
-      <PfTable
-        cells={columns}
-        rows={
-          virtualize
-            ? []
-            : Rows({
-                componentProps,
-                selectedResourcesForKind,
-                customData,
-              })
-        }
-        gridBreakPoint={gridBreakPoint}
-        onSort={onSort}
-        onSelect={onSelect}
-        sortBy={sortBy}
-        className="pf-m-compact pf-m-border-rows"
-        role={virtualize ? 'presentation' : 'grid'}
-        aria-label={virtualize ? null : ariaLabel}
-      >
-        <TableHeader role="rowgroup" />
-        {!virtualize && <TableBody />}
-      </PfTable>
-      {virtualize &&
-        (scrollNode ? (
-          renderVirtualizedTable(scrollNode)
-        ) : (
-          <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
-        ))}
-    </TableWrapper>
+    <div className={classNames({ 'pf-c-scrollablegrid': virtualize })}>
+      <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
+        <PfTable
+          cells={columns}
+          rows={
+            virtualize
+              ? []
+              : Rows({
+                  componentProps,
+                  selectedResourcesForKind,
+                  customData,
+                })
+          }
+          gridBreakPoint={gridBreakPoint}
+          onSort={onSort}
+          onSelect={onSelect}
+          sortBy={sortBy}
+          className="pf-m-compact pf-m-border-rows"
+          role={virtualize ? 'presentation' : 'grid'}
+          aria-label={virtualize ? null : ariaLabel}
+        >
+          <TableHeader role="rowgroup" />
+          {!virtualize && <TableBody />}
+        </PfTable>
+        {virtualize &&
+          (scrollNode ? (
+            renderVirtualizedTable(scrollNode)
+          ) : (
+            <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
+          ))}
+      </TableWrapper>
+    </div>
   );
   return (
     <div className="co-m-table-grid co-m-table-grid--bordered">

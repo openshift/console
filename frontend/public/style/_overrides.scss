@@ -21,6 +21,13 @@ form.pf-c-form {
   }
 }
 
+.co-toolbar-no-padding.pf-c-toolbar {
+  --pf-c-toolbar__content--PaddingLeft: 0;
+  --pf-c-toolbar__content--PaddingRight: 0;
+  --pf-c-toolbar--PaddingTop: 0;
+  --pf-c-toolbar--RowGap: var(--pf-global--spacer--md);
+}
+
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
 // bug occurs only if the suggestions overlay has been enabled
 .monaco-aria-container {
@@ -153,14 +160,6 @@ form.pf-c-form {
     display: flex;
     flex-direction: column;
   }
-
-  // `.pf-c-page` specificity required
-  .pf-c-toolbar {
-    --pf-c-toolbar--PaddingTop: 0;
-    --pf-c-toolbar__content--PaddingLeft: 0;
-    --pf-c-toolbar__content--PaddingRight: 0;
-    --pf-c-toolbar--RowGap: var(--pf-global--spacer--md);
-  }
 }
 
 @-webkit-keyframes autofill-success {
@@ -246,75 +245,11 @@ form.pf-c-form {
   }
 }
 
-// pf table overrides
-
-.pf-c-table tr > th {
-  font-weight: var(--pf-global--FontWeight--bold);
-}
-
+// Reset our tables to our base font-size
 .pf-c-table {
-  --pf-c-table--cell--FontSize: #{$font-size-base};
-  --pf-c-table--cell--PaddingLeft: 12px;
-  --pf-c-table--cell--PaddingRight: 12px;
-  --pf-c-table--m-compact--cell--first-last-child--PaddingLeft: 12px;
-  --pf-c-table--m-compact--cell--first-last-child--PaddingRight: 12px;
-
   tr > * {
     --pf-c-table--cell--FontSize: $font-size-base;
-    --pf-c-table--cell--PaddingLeft: 12px;
-    --pf-c-table--cell--PaddingRight: 12px;
-    --pf-c-table--m-compact--cell--first-last-child--PaddingLeft: 12px;
-    --pf-c-table--m-compact--cell--first-last-child--PaddingRight: 12px;
-
-    // fix bug where .pf-c-table__button::before overlays entire page
-    // caused by conflict with Bootstrap 3
-    // see https://github.com/twbs/bootstrap/blob/v3.4.1/less/tables.less#L24
-    // and https://github.com/patternfly/patternfly/blob/prerelease-v4.16.7/src/patternfly/components/Table/table.scss#L252-L253
-    position: relative !important;
   }
-
-  tr > th {
-    --pf-c-table--cell--FontSize: var(--pf-global--FontWeight--bold);
-  }
-
-  // required because our tables use table-layout:fixed
-  .pf-c-table__action {
-    --pf-c-table--cell--PaddingTop: var(--pf-global--spacer--sm) !important;
-    --pf-c-table--cell--PaddingRight: 0 !important;
-    --pf-c-table--cell--PaddingBottom: var(--pf-global--spacer--sm) !important;
-    --pf-c-table--cell--PaddingLeft: 0 !important;
-    // Can not use PF vars --pf-c-table--cell--Width & --pf-c-table--cell--MaxWidth, because its selector specificity will be overridden by the default PF rule .pf-c-table tr > *:empty {width: auto}; for our empty <th>
-    max-width: 44px !important;
-    width: 44px !important;
-  }
-
-  table-layout: fixed;
-}
-
-.pf-c-table.pf-c-virtualized tr {
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-
-  &:first-child::before {
-    content: none;
-    width: 0 !important;
-  }
-}
-
-// override .co-m-table-grid [class*='col-'], .co-m-table-grid .row
-.pf-c-table.pf-m-compact,
-.pf-c-table.pf-c-virtualized {
-  tr > td {
-    vertical-align: top;
-  }
-}
-
-// FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the kebab menus' overflow.
-.pf-c-window-scroller.ReactVirtualized__VirtualGrid,
-.pf-c-window-scroller .ReactVirtualized__VirtualGrid,
-.pf-c-window-scroller .ReactVirtualized__VirtualGrid__innerScrollContainer {
-  overflow: visible !important;
 }
 
 .table {
@@ -348,10 +283,6 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
   pointer-events: auto;
 }
 
-.pf-c-select__menu {
-  list-style-type: none;
-}
-
 #modal-container .pf-c-backdrop {
   position: absolute !important;
 }
@@ -368,6 +299,7 @@ ul {
 ul.pf-c-alert-group,
 ul.pf-c-nav__list,
 ul.pf-c-options-menu__menu,
+ul.pf-c-select__menu,
 ul.pf-c-simple-list__list,
 ul.pf-c-tree-view__list {
   list-style: none !important;
