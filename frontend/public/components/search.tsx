@@ -223,7 +223,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       </Helmet>
       <PageHeading detail={true} title={t('public~Search')}>
         <Toolbar
-          className="pf-c-toolbar--align-left"
+          className="co-toolbar-no-padding"
           id="search-toolbar"
           clearAllFilters={clearAll}
           collapseListedFiltersBreakpoint="xl"

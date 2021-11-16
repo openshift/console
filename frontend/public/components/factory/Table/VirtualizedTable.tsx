@@ -188,7 +188,12 @@ const VirtualizedTable: VirtualizedTableFC = ({
         NoDataEmptyMsg={NoDataEmptyMsg}
         EmptyMsg={EmptyMsg}
       >
-        <div role="grid" aria-label={ariaLabel} aria-rowcount={data?.length}>
+        <div
+          className="co-virtualized-table"
+          role="grid"
+          aria-label={ariaLabel}
+          aria-rowcount={data?.length}
+        >
           <PfTable
             cells={columns}
             rows={[]}

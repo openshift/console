@@ -276,7 +276,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   return (
     <Toolbar
-      className="pf-c-toolbar--align-left"
+      className="co-toolbar-no-padding"
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}
