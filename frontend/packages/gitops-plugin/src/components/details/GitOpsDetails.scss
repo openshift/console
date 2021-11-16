@@ -3,9 +3,21 @@
 .odc-gitops-details {
   padding: var(--pf-global--spacer--xl);
   height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-column-gap: var(--pf-global--spacer--xl);
+  grid-template-columns: repeat(var(--cardRepeatingLenthPerRow), 1fr);
+
+  @media (max-width: '765px') {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  @media (min-width: '765px') and (max-width: '1135px'),
+    (min-width: '1200px') and (max-width: '1425px') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: '1135px') and (max-width: '1200px') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   &__env-section {
     display: inline-table;
     min-height: 578px;
@@ -63,12 +75,6 @@
     }
     article {
       border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-      min-width: calc((var(--cardContainerWidth) - 134px) / 3);
-      max-width: calc((var(--cardContainerWidth) - 134px) / 3);
-      @media (min-width: $screen-lg-min) and (max-width: '1421px'), (max-width: '1137px') {
-        min-width: calc((var(--cardContainerWidth) - 114px) / 2);
-        max-width: calc((var(--cardContainerWidth) - 114px) / 2);
-      }
     }
     a {
       font-size: 12px;

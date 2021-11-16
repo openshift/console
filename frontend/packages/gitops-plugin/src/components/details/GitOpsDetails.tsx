@@ -47,13 +47,22 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
   );
 
   const ref = React.useRef(null);
+  const [windowWidth, setWindowWidth] = React.useState(0);
+  const resizeWindow = () => {
+    setWindowWidth(window.innerWidth);
+  };
   React.useEffect(() => {
     if (ref.current) {
       document
         .getElementById('odc-gitops-details-card-container')
-        .style.setProperty('--cardContainerWidth', `${ref.current.offsetWidth}px`);
+        .style.setProperty(
+          '--cardRepeatingLenthPerRow',
+          `${Math.floor((ref.current.offsetWidth - 64) / 365)}`,
+        );
     }
-  }, []);
+    window.addEventListener('resize', resizeWindow);
+    return () => window.removeEventListener('resize', resizeWindow);
+  }, [windowWidth]);
 
   // eslint-disable-next-line no-shadow
   const renderStatusLabel = (status: string) => {
