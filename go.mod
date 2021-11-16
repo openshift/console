@@ -5,10 +5,10 @@ go 1.16
 require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-	github.com/devfile/api/v2 v2.0.0-20211021164004-dabee4e633ed
+	github.com/devfile/api/v2 v2.0.0-20220105201057-dd1d65d4d91f
 	github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f
-	github.com/devfile/registry-support/index/generator v0.0.0-20211012185733-0a73f866043f
-	github.com/devfile/registry-support/registry-library v0.0.0-20211026200306-cab748834109
+	github.com/devfile/registry-support/index/generator v0.0.0-20220110165901-db88e581adf8
+	github.com/devfile/registry-support/registry-library v0.0.0-20220110165901-db88e581adf8
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
@@ -19,14 +19,13 @@ require (
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
 	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
+	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
 	gopkg.in/yaml.v2 v2.4.0
-	helm.sh/helm/v3 v3.6.2
+	helm.sh/helm/v3 v3.7.1
 	k8s.io/api v0.22.1
-	k8s.io/apiextensions-apiserver v0.21.3
+	k8s.io/apiextensions-apiserver v0.22.1
 	k8s.io/apimachinery v0.22.1
-	k8s.io/cli-runtime v0.21.0
+	k8s.io/cli-runtime v0.22.1
 	k8s.io/client-go v0.22.1
 	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.9.0

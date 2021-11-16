@@ -30,12 +30,12 @@ import (
 	"text/tabwriter"
 	"time"
 
-	orasctx "github.com/deislabs/oras/pkg/context"
+	orasctx "oras.land/oras-go/pkg/context"
 
 	"github.com/containerd/containerd/remotes/docker"
-	"github.com/deislabs/oras/pkg/content"
-	"github.com/deislabs/oras/pkg/oras"
 	indexSchema "github.com/devfile/registry-support/index/generator/schema"
+	"oras.land/oras-go/pkg/content"
+	"oras.land/oras-go/pkg/oras"
 )
 
 const (
@@ -62,9 +62,19 @@ type Registry struct {
 	err              error
 }
 
+//TelemetryData structure to pass in client telemetry information
+type TelemetryData struct {
+	// The User and Locale fields will be passed in by the clients if telemetry opt-in is enabled
+	User   string
+	Locale string
+	// the generic client name will be passed in regardless of opt-in/out choice.  The value
+	// will be assigned to the UserId field for opt-outs
+	Client string
+}
+
 type RegistryOptions struct {
 	SkipTLSVerify bool
-	User          string
+	Telemetry     TelemetryData
 	Filter        RegistryFilter
 }
 
@@ -127,9 +137,9 @@ func GetRegistryIndex(registryURL string, options RegistryOptions, devfileTypes 
 	if err != nil {
 		return nil, err
 	}
-	if options.User != "" {
-		req.Header.Add("User", options.User)
-	}
+
+	setHeaders(&req.Header, options)
+
 	httpClient := &http.Client{
 		Transport: &http.Transport{
 			ResponseHeaderTimeout: responseHeaderTimeout,
@@ -238,9 +248,8 @@ func PullStackByMediaTypesFromRegistry(registry string, stack string, allowedMed
 		},
 	}
 	headers := make(http.Header)
-	if options.User != "" {
-		headers.Add("User", options.User)
-	}
+	setHeaders(&headers, options)
+
 	resolver := docker.NewResolver(docker.ResolverOptions{Headers: headers, PlainHTTP: plainHTTP, Client: httpClient})
 	ref := path.Join(urlObj.Host, stackIndex.Links["self"])
 	fileStore := content.NewFileStore(destDir)
@@ -320,4 +329,18 @@ func decompress(targetDir string, tarFile string) error {
 	}
 
 	return nil
+}
+
+//setHeaders sets the request headers
+func setHeaders(headers *http.Header, options RegistryOptions) {
+	t := options.Telemetry
+	if t.User != "" {
+		headers.Add("User", t.User)
+	}
+	if t.Client != "" {
+		headers.Add("Client", t.Client)
+	}
+	if t.Locale != "" {
+		headers.Add("Locale", t.Locale)
+	}
 }

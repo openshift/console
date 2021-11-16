@@ -16,8 +16,8 @@ const ODC_TELEMETRY_CLIENT_NAME = "openshift-console"
 // This is based on https://github.com/devfile/registry-support/blob/master/registry-library/library/library.go#L61
 func GetRegistrySamples(registry string) ([]byte, error) {
 	if registry == DEVFILE_REGISTRY_URL || registry == DEVFILE_STAGING_REGISTRY_URL {
-		// set registryOption with `user=openshift-console` for registry telemetry tracking
-		registryOption := registryLibrary.RegistryOptions{User: ODC_TELEMETRY_CLIENT_NAME}
+		// set registryOption with `user=openshift-console` and `client=openshift-console` for registry telemetry tracking
+		registryOption := registryLibrary.RegistryOptions{Telemetry: registryLibrary.TelemetryData{User: ODC_TELEMETRY_CLIENT_NAME, Client: ODC_TELEMETRY_CLIENT_NAME}}
 
 		devfileIndex, err := registryLibrary.GetRegistryIndex(registry, registryOption, indexSchema.SampleDevfileType)
 		if err != nil {
