@@ -2,7 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { NavExpandable, NavGroup } from '@patternfly/react-core';
-import { Perspective, isPerspective, NavItem, isNavItem } from '@console/dynamic-plugin-sdk';
+import {
+  Perspective,
+  isPerspective,
+  NavItem,
+  isNavItemOrSeparator,
+  isSeparator,
+  Separator,
+} from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
 
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
@@ -12,6 +19,7 @@ import { featureReducerName, flagPending, FeatureState } from '../../reducers/fe
 import { stripBasePath } from '../utils';
 import { stripNS, createLink } from './items';
 import { sortExtensionItems } from './navSortUtils';
+import { Separator as SeparatorComponent } from './admin-nav';
 
 const navSectionStateToProps = (
   state: RootState,
@@ -61,7 +69,7 @@ const mergePluginChild = (
 
 export const NavSection = connect(navSectionStateToProps)(
   withExtensions<NavSectionExtensionProps>({
-    navItemExtensions: isNavItem,
+    navItemExtensions: isNavItemOrSeparator,
     perspectiveExtensions: isPerspective,
   })(
     withActivePerspective(
@@ -136,7 +144,7 @@ export const NavSection = connect(navSectionStateToProps)(
           this.setState({ isOpen: expandState });
         };
 
-        getNavItemExtensions = (perspective: string, title: string, id: string) => {
+        getNavItemExtensions = (perspective: string, id: string) => {
           const { navItemExtensions, perspectiveExtensions } = this.props;
 
           const defaultPerspective = _.find(perspectiveExtensions, (p) => p.properties.default);
@@ -183,12 +191,20 @@ export const NavSection = connect(navSectionStateToProps)(
         };
 
         getChildren() {
-          const { id, title, children, activePerspective: perspective } = this.props;
+          const { id, children, activePerspective: perspective } = this.props;
           const Children = React.Children.map(children, this.mapChild) || [];
-          const childItems = sortExtensionItems(this.getNavItemExtensions(perspective, title, id));
+          const childItems = sortExtensionItems<NavItem | Separator>(
+            this.getNavItemExtensions(perspective, id),
+          );
 
           childItems.forEach((item) => {
-            const pluginChild = this.mapChild(createLink(item));
+            const pluginChild = this.mapChild(
+              isSeparator(item) ? (
+                <SeparatorComponent name={`separator-${item.properties.id}`} />
+              ) : (
+                createLink(item)
+              ),
+            );
             if (pluginChild) {
               mergePluginChild(
                 Children,
@@ -263,7 +279,7 @@ type NavSectionStateProps = {
 };
 
 type NavSectionExtensionProps = {
-  navItemExtensions: LoadedExtension<NavItem>[];
+  navItemExtensions: LoadedExtension<NavItem | Separator>[];
   perspectiveExtensions: Perspective[];
 };
 
