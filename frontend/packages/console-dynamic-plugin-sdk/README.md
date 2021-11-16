@@ -196,10 +196,11 @@ list of plugin names (disable specific plugins) or an empty string (disable all 
 
 ## Publishing SDK packages
 
-To see the latest published version of the given package:
+To see the latest published version of the given package and fetch its contents:
 
 ```sh
-yarn info <package-name> dist-tags --json | jq .data.latest
+npm view <package-name> dist-tags.latest
+./get-published-package.sh <package-name>
 ```
 
 Before publishing, it's recommended to log into your npm user account:
