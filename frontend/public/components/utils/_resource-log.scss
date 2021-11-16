@@ -1,6 +1,8 @@
 .resource-log {
   height: 100%;
   width: 100%;
+  display: grid;
+  grid-template-rows: max-content auto;
 }
 
 .resource-log--fullscreen {
@@ -9,4 +11,12 @@
     padding-left: 10px;
     padding-right: 10px;
   }
+  .resource-log__log-viewer-wrapper {
+    overflow: auto;
+  }
+}
+
+.resource-log__alert-wrapper {
+  display: grid;
+  grid-template-rows: max-content;
 }

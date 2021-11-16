@@ -151,7 +151,7 @@ export const getDownloadAllLogsCallback = (
       });
       return [...acc, ...promises];
     }, []);
-    const buffer = new LineBuffer(null);
+    const buffer = new LineBuffer();
     return Promise.all(allRequests).then((allLogs) => {
       buffer.ingest(allLogs.join(''));
       const blob = buffer.getBlob({

@@ -1904,6 +1904,19 @@
     tippy.js "5.1.2"
     tslib "^2.0.0"
 
+"@patternfly/react-core@^4.184.2":
+  version "4.184.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-4.184.2.tgz#36bd01853ca54709905cede680b893d3ce4b4f0a"
+  integrity sha512-2tisB7pkcgY/FworSmxeNtC7jv+1Mk3uZTqvnM/IqS5mHTotbRhQbamw8zmhaEXS9Li3lYMrCSrUxW+fj0IpqA==
+  dependencies:
+    "@patternfly/react-icons" "^4.35.2"
+    "@patternfly/react-styles" "^4.34.2"
+    "@patternfly/react-tokens" "^4.36.2"
+    focus-trap "6.2.2"
+    react-dropzone "9.0.0"
+    tippy.js "5.1.2"
+    tslib "^2.0.0"
+
 "@patternfly/react-icons@^4.11.4":
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.11.4.tgz#8fae0bf215e39e382661a089a1d43f3ccb7fdeef"
@@ -1919,6 +1932,22 @@
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.26.4.tgz#3cd6c2d8405027e25b847e24d8a000d4af88537a"
   integrity sha512-h1NJixtNVK+nYxLON3HOO0xguA9qXQ5rkGUo4TZJ/kRehFCJMH8PPeebdOAKgAo38NjS2/06+atNKjDRl6zYcA==
 
+"@patternfly/react-icons@^4.35.2":
+  version "4.35.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.35.2.tgz#c6061059c2110e8883b2ef87c63d9906387dfcaf"
+  integrity sha512-Mwp/SDh9J2fxNga2FxHopS6vYF9RJ3LQothNNxvaj32gPhsGe2kENZ7dES2w31P1uBGRnZ+g6aO2wc9QCgfIDg==
+
+"@patternfly/react-log-viewer@4.29.2":
+  version "4.29.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-log-viewer/-/react-log-viewer-4.29.2.tgz#c9e6c06a1021d374780ddcadd1e869e2a8b20195"
+  integrity sha512-E0EU2kcUDaWskbHlOVq8/IBkilTe8VOG4Ed6rXlX3qtM3dfeyQ83pTcN7lzeCcrWvHVLg/ow1o2ywc56+pM5sA==
+  dependencies:
+    "@patternfly/react-core" "^4.184.2"
+    "@patternfly/react-icons" "^4.35.2"
+    "@patternfly/react-styles" "^4.34.2"
+    memoize-one "^5.1.0"
+    resize-observer-polyfill "^1.5.1"
+
 "@patternfly/react-styles@^4.11.4":
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-4.11.4.tgz#6b2a5cfd43bdd139179c5298677760d41db67b5e"
@@ -1933,6 +1962,11 @@
   version "4.25.4"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-4.25.4.tgz#e49c9b290d1e48a12e9d62f3e57079fccf758392"
   integrity sha512-GHFLzsvyimymkGTTyTW8HZDlhYbGpCqw/69Se1EHCaZnbTYluiJMRI6YfNTRC5ZvYF+x4GMAG5AjwQ5LfbZ/xg==
+
+"@patternfly/react-styles@^4.34.2":
+  version "4.34.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-4.34.2.tgz#b4a7348d415184844396e2e9036a46cef2e6adf6"
+  integrity sha512-OjHgfJV7CdtQq9GI6KiLPd8c8Zj9mfOcXjM96xlMacH3ufJ7O2JMpv0WBHRBOGh/ORiUh/IGlp0Qoq1smEFUlQ==
 
 "@patternfly/react-table@4.44.4":
   version "4.44.4"
@@ -1960,6 +1994,11 @@
   version "4.13.3"
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-4.13.3.tgz#63b1fbe353d2ccdd309ae488e281709deb21a454"
   integrity sha512-rYBpgiEd6TdKBb6NPqcLdRg4KbqMBOl4uYMLoodFGnk7j8/OpMWXdhkkmfi+CvASAVPeHa9BwjUAYSJzqgkeNA==
+
+"@patternfly/react-tokens@^4.36.2":
+  version "4.36.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-4.36.2.tgz#12edc45002a3b76ae36656621f9d22569a1edbc5"
+  integrity sha512-CEM8WrVsHrKQxYGbyx5WoF+DVycDzIn/WTlLiz9AEcN2AM7DPuR/8J6Yl1D0vX4lqnLRVLNnZdro/4MPileohA==
 
 "@patternfly/react-topology@4.22.4":
   version "4.22.4"
@@ -12605,6 +12644,11 @@ memfs@^3.2.2:
   dependencies:
     fs-monkey "1.0.3"
 
+memoize-one@^5.1.0:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
+  integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
+
 memory-fs@^0.4.0, memory-fs@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/memory-fs/-/memory-fs-0.4.1.tgz#3a9a20b8462523e447cfbc7e8bb80ed667bfc552"
@@ -15753,7 +15797,7 @@ reselect@4.x:
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.0.0.tgz#f2529830e5d3d0e021408b246a206ef4ea4437f7"
   integrity sha512-qUgANli03jjAyGlnbYVAV5vvnOmJnODyABz51RdBN7M4WaVu8mecZWgyQNkG8Yqe3KRGRt0l4K4B3XVEULC4CA==
 
-resize-observer-polyfill@^1.5.0:
+resize-observer-polyfill@^1.5.0, resize-observer-polyfill@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
   integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==

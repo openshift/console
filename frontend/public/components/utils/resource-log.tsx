@@ -10,6 +10,7 @@ import {
   SelectVariant,
   Tooltip,
 } from '@patternfly/react-core';
+import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
@@ -18,11 +19,12 @@ import {
   ExpandIcon,
   DownloadIcon,
   OutlinedWindowRestoreIcon,
+  OutlinedPlayCircleIcon,
 } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { FLAGS, LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
-import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
+import { LoadingInline, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
@@ -44,8 +46,6 @@ export const LOG_SOURCE_WAITING = 'waiting';
 
 const LOG_TYPE_CURRENT = 'current';
 const LOG_TYPE_PREVIOUS = 'previous';
-
-const DEFAULT_BUFFER_SIZE = 1000;
 
 // Messages to display for corresponding log status
 const streamStatusMessages = {
@@ -92,6 +92,30 @@ const getResourceLogURL = (
       ...(previous && { previous: `${previous}` }),
     },
   });
+};
+
+const HeaderBanner = ({ lines }) => {
+  const { t } = useTranslation();
+  const count = lines[lines.length - 1] || lines.length === 0 ? lines.length : lines.length - 1;
+  const headerText = t('public~{{count}} line', { count });
+  return <>{headerText}</>;
+};
+
+const FooterButton = ({ setStatus, linesBehind, className }) => {
+  const { t } = useTranslation();
+  const resumeText =
+    linesBehind > 0
+      ? t('public~Resume stream and show {{count}} new line', { count: linesBehind })
+      : t('public~Resume stream');
+  const handleClick = () => {
+    setStatus(STREAM_ACTIVE);
+  };
+  return (
+    <Button className={className} onClick={handleClick} isBlock>
+      <OutlinedPlayCircleIcon />
+      &nbsp;{resumeText}
+    </Button>
+  );
 };
 
 // Component for log stream controls
@@ -193,6 +217,16 @@ export const LogControls: React.FC<LogControlsProps> = ({
         {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
 
         <div className="co-toolbar__item">{logTypeSelect(!hasPreviousLog)}</div>
+        <div className="co-toolbar__item">
+          <LogViewerSearch
+            onFocus={() => {
+              if (status === STREAM_ACTIVE) {
+                toggleStreaming();
+              }
+            }}
+            placeholder="Search"
+          />
+        </div>
       </div>
       <div className="co-toolbar__group co-toolbar__group--right">
         {!_.isEmpty(podLogLinks) &&
@@ -278,16 +312,16 @@ export const LogControls: React.FC<LogControlsProps> = ({
 
 // Resource agnostic log component
 export const ResourceLog: React.FC<ResourceLogProps> = ({
-  bufferSize = DEFAULT_BUFFER_SIZE,
   containerName,
   dropdown,
   resource,
   resourceStatus,
 }) => {
   const { t } = useTranslation();
-  const buffer = React.useRef(new LineBuffer(bufferSize)); // TODO Make this a hook
+  const buffer = React.useRef(new LineBuffer()); // TODO Make this a hook
   const ws = React.useRef<any>(); // TODO Make this a hook
   const resourceLogRef = React.useRef();
+  const logViewerRef = React.useRef(null);
   const externalLogLinkFlag = useFlag(FLAGS.CONSOLE_EXTERNAL_LOG_LINK);
   const [error, setError] = React.useState(false);
   const [hasTruncated, setHasTruncated] = React.useState(false);
@@ -299,20 +333,36 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [namespaceUID, setNamespaceUID] = React.useState('');
   const [podLogLinks, setPodLogLinks] = React.useState();
+  const [content, setContent] = React.useState('');
 
   const [logType, setLogType] = React.useState<LogTypeStatus>(LOG_TYPE_CURRENT);
   const [hasPreviousLogs, setPreviousLogs] = React.useState(false);
 
   const previousResourceStatus = usePrevious(resourceStatus);
   const previousTotalLineCount = usePrevious(totalLineCount);
-  const bufferFull = lines.length === bufferSize;
   const linkURL = getResourceLogURL(resource, containerName);
-  const watchURL = getResourceLogURL(resource, containerName, bufferSize, true, logType);
+  const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
   const [wrapLines, setWrapLines] = useUserSettings<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
     true,
   );
+
+  const timeoutIdRef = React.useRef(null);
+  const countRef = React.useRef(0);
+
+  React.useEffect(() => {
+    if ((status === STREAM_ACTIVE || status === STREAM_EOF) && lines.length > 0) {
+      setContent(lines.join('\n'));
+      // setTimeout here to wait until the content is updated in the log viewer
+      // so that make sure scroll to the real bottom
+      setTimeout(() => {
+        if (logViewerRef && logViewerRef.current) {
+          logViewerRef.current.scrollToBottom();
+        }
+      }, 1);
+    }
+  }, [status, lines]);
 
   // Update lines behind while stream is paused, reset when unpaused
   React.useEffect(() => {
@@ -321,11 +371,11 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     }
 
     if (status === STREAM_PAUSED) {
-      setLinesBehind((currentLinesBehind) =>
-        Math.min(currentLinesBehind + (totalLineCount - previousTotalLineCount), bufferSize),
+      setLinesBehind(
+        (currentLinesBehind) => currentLinesBehind + (totalLineCount - previousTotalLineCount),
       );
     }
-  }, [status, totalLineCount, previousTotalLineCount, bufferSize]);
+  }, [status, totalLineCount, previousTotalLineCount]);
 
   // Set back to viewing current log when switching containers
   React.useEffect(() => {
@@ -361,10 +411,20 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     // Handler for websocket onmessage event
     const onMessage = (msg) => {
       if (msg) {
+        clearTimeout(timeoutIdRef.current);
         const text = Base64.decode(msg);
-        setTotalLineCount((currentLineCount) => currentLineCount + buffer.current.ingest(text));
-        setLines([...buffer.current.getLines(), buffer.current.getTail()]);
-        setHasTruncated(buffer.current.getHasTruncated());
+        countRef.current += buffer.current.ingest(text);
+        // Set a timeout here to render more logs together when initializing
+        timeoutIdRef.current = setTimeout(() => {
+          setTotalLineCount((currentLineCount) => currentLineCount + countRef.current);
+          countRef.current = 0;
+          setLines(
+            buffer.current.getTail() === ''
+              ? [...buffer.current.getLines()]
+              : [...buffer.current.getLines(), buffer.current.getTail()],
+          );
+          setHasTruncated(buffer.current.getHasTruncated());
+        }, 10);
       }
     };
     setError(false);
@@ -372,6 +432,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     setLines([]);
     setTotalLineCount(0);
     setLinesBehind(0);
+    setContent('');
     setStale(false);
     setStatus(STREAM_LOADING);
     ws.current?.destroy();
@@ -407,7 +468,6 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     setStatus((currentStatus) => (currentStatus === STREAM_ACTIVE ? STREAM_PAUSED : STREAM_ACTIVE));
   };
 
-  //
   React.useEffect(() => {
     if (externalLogLinkFlag && resource.kind === 'Pod') {
       Promise.all([
@@ -453,82 +513,115 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     }
   }, [previousResourceStatus, resourceStatus]);
 
+  const onScroll = ({ scrollOffsetToBottom, scrollDirection, scrollUpdateWasRequested }) => {
+    if (!scrollUpdateWasRequested && status !== STREAM_EOF) {
+      if (scrollOffsetToBottom === 0) {
+        setStatus(STREAM_ACTIVE);
+      } else if (scrollDirection === 'backward') {
+        setStatus(STREAM_PAUSED);
+      }
+    }
+  };
+
+  const logControls = (
+    <LogControls
+      currentLogURL={linkURL}
+      dropdown={dropdown}
+      isFullscreen={isFullscreen}
+      status={status}
+      toggleFullscreen={toggleFullscreen}
+      toggleStreaming={toggleStreaming}
+      resource={resource}
+      containerName={containerName}
+      podLogLinks={podLogLinks}
+      namespaceUID={namespaceUID}
+      toggleWrapLines={setWrapLines}
+      isWrapLines={wrapLines}
+      hasPreviousLog={hasPreviousLogs}
+      changeLogType={setLogType}
+      logType={logType}
+      showLogTypeSelect={resource.kind === 'Pod'}
+    />
+  );
+
   return (
     <>
       <div
         ref={resourceLogRef}
         className={classNames('resource-log', { 'resource-log--fullscreen': isFullscreen })}
       >
-        <LogControls
-          currentLogURL={linkURL}
-          dropdown={dropdown}
-          isFullscreen={isFullscreen}
-          status={status}
-          toggleFullscreen={toggleFullscreen}
-          toggleStreaming={toggleStreaming}
-          resource={resource}
-          containerName={containerName}
-          podLogLinks={podLogLinks}
-          namespaceUID={namespaceUID}
-          toggleWrapLines={setWrapLines}
-          isWrapLines={wrapLines}
-          hasPreviousLog={hasPreviousLogs}
-          changeLogType={setLogType}
-          logType={logType}
-          showLogTypeSelect={resource.kind === 'Pod'}
-        />
-        {error && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="danger"
-            title={t('public~An error occurred while retrieving the requested logs.')}
-            actionLinks={
-              <AlertActionLink onClick={() => setError(false)}>{t('public~Retry')}</AlertActionLink>
+        <div className={classNames('resource-log__alert-wrapper')}>
+          {error && (
+            <Alert
+              isInline
+              className="co-alert co-alert--margin-bottom-sm"
+              variant="danger"
+              title={t('public~An error occurred while retrieving the requested logs.')}
+              actionLinks={
+                <AlertActionLink onClick={() => setError(false)}>
+                  {t('public~Retry')}
+                </AlertActionLink>
+              }
+            />
+          )}
+          {stale && (
+            <Alert
+              isInline
+              className="co-alert co-alert--margin-bottom-sm"
+              variant="info"
+              title={t('public~The logs for this {{resourceKind}} may be stale.', {
+                resourceKind: resource.kind,
+              })}
+              actionLinks={
+                <AlertActionLink onClick={() => setStale(false)}>
+                  {t('public~Refresh')}
+                </AlertActionLink>
+              }
+            />
+          )}
+          {hasTruncated && (
+            <Alert
+              isInline
+              className="co-alert co-alert--margin-bottom-sm"
+              variant="warning"
+              title={t('public~Some lines have been abridged because they are exceptionally long.')}
+            >
+              <Trans ns="public" t={t}>
+                To view unabridged log content, you can either{' '}
+                <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+                <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
+                  download it
+                </a>
+                .
+              </Trans>
+            </Alert>
+          )}
+        </div>
+        <div className={classNames('resource-log__log-viewer-wrapper')}>
+          <LogViewer
+            header={
+              <div className="log-window__header">
+                <HeaderBanner lines={lines} />
+              </div>
             }
-          />
-        )}
-        {stale && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="info"
-            title={t('public~The logs for this {{resourceKind}} may be stale.', {
-              resourceKind: resource.kind,
-            })}
-            actionLinks={
-              <AlertActionLink onClick={() => setStale(false)}>
-                {t('public~Refresh')}
-              </AlertActionLink>
+            theme="dark"
+            data={content}
+            ref={logViewerRef}
+            height="100%"
+            isTextWrapped={wrapLines}
+            toolbar={logControls}
+            footer={
+              <FooterButton
+                className={classNames('log-window__footer', {
+                  'log-window__footer--hidden': status !== STREAM_PAUSED,
+                })}
+                setStatus={setStatus}
+                linesBehind={linesBehind}
+              />
             }
+            onScroll={onScroll}
           />
-        )}
-        {hasTruncated && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="warning"
-            title={t('public~Some lines have been abridged because they are exceptionally long.')}
-          >
-            <Trans ns="public" t={t}>
-              To view unabridged log content, you can either{' '}
-              <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
-              <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
-                download it
-              </a>
-              .
-            </Trans>
-          </Alert>
-        )}
-        <LogWindow
-          bufferFull={bufferFull}
-          isFullscreen={isFullscreen}
-          lines={lines}
-          linesBehind={linesBehind}
-          status={status}
-          updateStatus={setStatus}
-          wrapLines={wrapLines}
-        />
+        </div>
       </div>
     </>
   );
@@ -554,7 +647,6 @@ type LogControlsProps = {
 };
 
 type ResourceLogProps = {
-  bufferSize?: number;
   containerName?: string;
   dropdown?: React.ReactNode;
   resource: any;

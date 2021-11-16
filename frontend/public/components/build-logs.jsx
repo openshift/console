@@ -65,7 +65,7 @@ export class BuildLogs extends React.Component {
     const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
 
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body co-m-pane__body--full-height">
         {isPipeline ? (
           <PipelineLogMessage build={build} />
         ) : (

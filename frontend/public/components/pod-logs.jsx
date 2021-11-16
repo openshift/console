@@ -97,7 +97,7 @@ export class PodLogs extends React.Component {
     );
 
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body co-m-pane__body--full-height">
         <ResourceLog
           containerName={currentContainer ? currentContainer.name : ''}
           dropdown={containerDropdown}
