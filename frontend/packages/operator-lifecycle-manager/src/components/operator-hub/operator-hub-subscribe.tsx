@@ -77,6 +77,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const [approval, setApproval] = React.useState(InstallPlanApproval.Automatic);
   const [cannotResolve, setCannotResolve] = React.useState(false);
   const [suggestedNamespaceExists, setSuggestedNamespaceExists] = React.useState(false);
+  const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = React.useState(
+    true,
+  );
   const [
     useSuggestedNSForSingleInstallMode,
     setUseSuggestedNSForSingleInstallMode,
@@ -179,16 +182,25 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const isSuggestedNamespaceSelected =
     suggestedNamespace && suggestedNamespace === selectedTargetNamespace;
+  const showSuggestedNamespaceDetails =
+    !suggestedNamespaceExistsInFlight && isSuggestedNamespaceSelected;
   const selectedApproval = approval || InstallPlanApproval.Automatic;
 
   React.useEffect(() => {
     if (!suggestedNamespace) {
+      setSuggestedNamespaceExistsInFlight(false);
       return;
     }
     setTargetNamespace(suggestedNamespace);
     k8sGet(NamespaceModel, suggestedNamespace)
-      .then(() => setSuggestedNamespaceExists(true))
-      .catch(() => setSuggestedNamespaceExists(false));
+      .then(() => {
+        setSuggestedNamespaceExists(true);
+        setSuggestedNamespaceExistsInFlight(false);
+      })
+      .catch(() => {
+        setSuggestedNamespaceExists(false);
+        setSuggestedNamespaceExistsInFlight(false);
+      });
   }, [suggestedNamespace]);
 
   React.useEffect(() => {
@@ -505,7 +517,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     ? `${openshiftHelpBase}monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`
     : `${openshiftHelpBase}html/monitoring/configuring-the-monitoring-stack#maintenance-and-support_configuring-the-monitoring-stack`;
 
-  const suggestedNamespaceDetails = isSuggestedNamespaceSelected && (
+  const suggestedNamespaceDetails = showSuggestedNamespaceDetails && (
     <>
       <Alert
         isInline
