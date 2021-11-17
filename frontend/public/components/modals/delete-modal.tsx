@@ -119,6 +119,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
                   kind={referenceForOwnerRef(owner)}
                   name={owner.name}
                   namespace={resource.metadata.namespace}
+                  onClick={props.cancel}
                 />{' '}
                 and any modifications may be overwritten. Edit the managing resource to preserve
                 changes.
