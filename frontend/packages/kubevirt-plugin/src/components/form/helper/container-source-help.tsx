@@ -2,11 +2,18 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { isUpstream } from '@console/internal/components/utils';
 import {
-  CENTOS,
-  CENTOS_EXAMPLE_CONTAINER,
+  CENTOS7,
+  CENTOS8,
+  CENTOS7_EXAMPLE_CONTAINER,
+  CENTOS8_EXAMPLE_CONTAINER,
   FEDORA_EXAMPLE_CONTAINER,
-  RHEL,
-  RHEL_EXAMPLE_CONTAINER,
+  RHEL7,
+  RHEL8,
+  RHEL7_EXAMPLE_CONTAINER,
+  RHEL8_EXAMPLE_CONTAINER,
+  WIN2k,
+  WIN10,
+  NO_LABEL,
 } from '../../../utils/strings';
 
 type ContainerSourceHelpProps = {
@@ -17,8 +24,12 @@ export const ContainerSourceHelp: React.FC<ContainerSourceHelpProps> = ({ imageN
 
   const labelImage = () => {
     const os = {
-      [RHEL]: RHEL_EXAMPLE_CONTAINER,
-      [CENTOS]: CENTOS_EXAMPLE_CONTAINER,
+      [RHEL7]: RHEL7_EXAMPLE_CONTAINER,
+      [RHEL8]: RHEL8_EXAMPLE_CONTAINER,
+      [CENTOS7]: CENTOS7_EXAMPLE_CONTAINER,
+      [CENTOS8]: CENTOS8_EXAMPLE_CONTAINER,
+      [WIN2k]: NO_LABEL,
+      [WIN10]: NO_LABEL,
     };
 
     const label =
@@ -31,7 +42,7 @@ export const ContainerSourceHelp: React.FC<ContainerSourceHelpProps> = ({ imageN
 
   return (
     <div className="pf-c-form__helper-text" aria-live="polite" data-test="ContainerSourceHelp">
-      {t('kubevirt-plugin~Example: {{container}}', { container })}
+      {container !== NO_LABEL && t('kubevirt-plugin~Example: {{container}}', { container })}
     </div>
   );
 };
