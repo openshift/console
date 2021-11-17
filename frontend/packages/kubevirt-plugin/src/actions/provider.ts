@@ -3,7 +3,7 @@ import { CommonActionFactory } from '@console/app/src/actions/creators/common-fa
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { VmActionFactory } from '../components/vms/menu-actions';
+import { VmActionFactory, VmiActionFactory } from '../components/vms/menu-actions';
 import { useVMStatus } from '../hooks/use-vm-status';
 import { VirtualMachineInstanceModel } from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
@@ -25,9 +25,10 @@ export const useVmActionsProvider = (vm: VMKind) => {
   const vmStatusBundle = useVMStatus(name, namespace);
 
   const actions = React.useMemo(() => {
-    const start = !isVMRunningOrExpectedRunning(vm, vmi)
-      ? VmActionFactory.Start(k8sModel, vm, { vmi, vmStatusBundle })
-      : VmActionFactory.Stop(k8sModel, vm, { vmStatusBundle, vmi });
+    const start =
+      !isVMRunningOrExpectedRunning(vm, vmi) || isVMIPaused(vmi)
+        ? VmActionFactory.Start(k8sModel, vm, { vmi, vmStatusBundle })
+        : VmActionFactory.Stop(k8sModel, vm, { vmStatusBundle, vmi });
 
     const migrate =
       !vmStatusBundle || !vmStatusBundle?.status?.isMigrating()
@@ -44,9 +45,11 @@ export const useVmActionsProvider = (vm: VMKind) => {
           start,
           VmActionFactory.Restart(k8sModel, vm, { vmi }),
           pause,
-          migrate,
           VmActionFactory.Clone(k8sModel, vm, { vmi }),
+          migrate,
           VmActionFactory.OpenConsole(k8sModel, vm, { vmi }),
+          // disabled until https://issues.redhat.com/browse/CNV-9746 is implemented
+          // VmActionFactory.CopySSH(k8sModel, vm, { vmi }),
           CommonActionFactory.ModifyLabels(k8sModel, vm),
           CommonActionFactory.ModifyAnnotations(k8sModel, vm),
           VmActionFactory.Delete(k8sModel, vm, { vmi }),
@@ -71,10 +74,10 @@ export const useVmiActionsProvider = (vm: VMKind) => {
   const actions = React.useMemo(() => {
     return vmStatusBundle
       ? [
-          VmActionFactory.OpenConsole(k8sModel, vm, { vmi }),
+          ...(vmi ? [VmActionFactory.OpenConsole(k8sModel, vm, { vmi })] : []),
           CommonActionFactory.ModifyLabels(k8sModel, vm),
           CommonActionFactory.ModifyAnnotations(k8sModel, vm),
-          VmActionFactory.Delete(k8sModel, vm, { vmi }),
+          ...(vmi ? [VmiActionFactory.Delete(k8sModel, vmi)] : []),
         ]
       : [];
   }, [k8sModel, vm, vmStatusBundle, vmi]);

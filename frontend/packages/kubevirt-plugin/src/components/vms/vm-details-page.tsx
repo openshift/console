@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import { referenceFor } from '@console/internal/module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import {
   VM_DETAIL_CONSOLES_HREF,
@@ -31,7 +34,6 @@ import { getResource } from '../../utils';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
 import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
-import { vmMenuActionsCreator } from './menu-actions';
 import { PendingChangesWarningFirehose } from './pending-changes-warning';
 import VMConsoleDetailsPage from './vm-console/VMConsoleDetailsPage';
 import { VMDashboard } from './vm-dashboard';
@@ -164,7 +166,11 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineModel)}
       kindObj={VirtualMachineModel}
-      menuActions={vmMenuActionsCreator}
+      customActionMenu={(kindObj, obj) => {
+        const objReference = referenceFor(obj);
+        const context = { [objReference]: obj };
+        return <LazyActionMenu variant={ActionMenuVariant.DROPDOWN} context={context} />;
+      }}
       pages={pages}
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}

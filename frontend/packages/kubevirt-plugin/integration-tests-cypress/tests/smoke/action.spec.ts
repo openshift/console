@@ -50,7 +50,7 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-765) Unpauses VM', () => {
       vm.pause();
-      vm.unpause();
+      vm.resume();
     });
 
     it('ID(CNV-4015) Stops VM', () => {
@@ -89,7 +89,7 @@ describe('Test VM/VMI actions', () => {
           namespace: vmData.namespace,
         },
       });
-      vm.unpause();
+      vm.resume();
     });
 
     it('ID(CNV-4019) Unpauses VM via modal dialog', () => {

@@ -121,9 +121,9 @@ export const vm = {
     });
     cy.byTestID('create-vm-empty').should('be.visible');
   },
-  unpause: () => {
+  resume: () => {
     waitForStatus(VM_STATUS.Paused);
-    action(VM_ACTION.Unpause);
+    action(VM_ACTION.Resume);
     waitForStatus(VM_STATUS.Running);
   },
   migrate: (waitForComplete = true) => {

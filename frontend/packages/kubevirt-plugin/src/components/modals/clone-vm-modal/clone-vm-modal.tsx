@@ -232,7 +232,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
         warningMessage={vmRunningWarning}
         inProgress={inProgress}
         isDisabled={!isValid || inProgress}
-        submitButtonText={t('kubevirt-plugin~Clone Virtual Machine')}
+        submitButtonText={t('kubevirt-plugin~Clone')}
         onSubmit={submit}
         onCancel={onCancelClick}
       />
