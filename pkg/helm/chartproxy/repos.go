@@ -138,6 +138,11 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 		return nil, err
 	}
 
+	h.Namespace, _, err = unstructured.NestedString(repo.Object, "metadata", "namespace")
+	if err != nil {
+		return nil, err
+	}
+
 	caReference, _, err := unstructured.NestedString(repo.Object, "spec", "connectionConfig", "ca", "name")
 	if err != nil {
 		return nil, err

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -13,13 +12,9 @@ import (
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/repo"
-	apicorev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/dynamic"
-	dynamicfake "k8s.io/client-go/dynamic/fake"
-	"k8s.io/client-go/kubernetes"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
+	"k8s.io/client-go/dynamic/fake"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
@@ -143,18 +138,7 @@ func fakeHelmGetChartRepos(indexFile *repo.IndexFile, err error) func(c dynamic.
 
 func fakeDynamicClient(err error) func(conf *rest.Config) (dynamic.Interface, error) {
 	return func(conf *rest.Config) (dynamic.Interface, error) {
-		return dynamicfake.NewSimpleDynamicClient(runtime.NewScheme()), err
-	}
-}
-
-func fakeCreateNamespace(t *testing.T, clienset kubernetes.Interface, ns string) {
-	_, err := clienset.CoreV1().Namespaces().Create(context.TODO(), &apicorev1.Namespace{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: ns,
-		},
-	}, metav1.CreateOptions{})
-	if err != nil {
-		t.Errorf("Failed to create test namespace: %v", err)
+		return fake.NewSimpleDynamicClient(runtime.NewScheme()), err
 	}
 }
 
@@ -846,7 +830,6 @@ func TestHelmHandlers_Index(t *testing.T) {
 				Token: "foo",
 			}
 			handler := helmHandlers{
-				clientset: k8sfake.NewSimpleClientset(),
 				newProxy: func(token string) (proxy chartproxy.Proxy, err error) {
 					if token != user.Token {
 						t.Errorf("Expected token %s but got %s", user.Token, token)
@@ -860,7 +843,7 @@ func TestHelmHandlers_Index(t *testing.T) {
 					}, tt.proxyNewError
 				},
 			}
-			fakeCreateNamespace(t, handler.clientset, tt.namespace)
+
 			handler.HandleIndexFile(user, response, request)
 
 			if tt.expectedResponse == "" && tt.indexFile != nil {

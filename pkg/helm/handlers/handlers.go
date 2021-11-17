@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,8 +9,6 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
 
@@ -44,10 +41,6 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		}, kubeversionGetter)
 	}
 
-	config, _ := rest.InClusterConfig()
-	clientset, _ := kubernetes.NewForConfig(config)
-	h.clientset = clientset
-
 	return h
 }
 
@@ -55,7 +48,6 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 type helmHandlers struct {
 	ApiServerHost string
 	Transport     http.RoundTripper
-	clientset     kubernetes.Interface
 
 	// helm action configurator
 	getActionConfigurations func(string, string, string, *http.RoundTripper) *action.Configuration
@@ -291,32 +283,7 @@ func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r
 		}
 	}
 
-	namespace := ""
-	namespaceParam := r.URL.Query().Get("namespace")
-	if namespaceParam != "" {
-		// set default to empty if not provided in the query param
-		namespaces, err := h.clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
-		if err != nil {
-			serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not list in-cluster namespaces"})
-			return
-		}
-
-		found := false
-		for _, ns := range namespaces.Items {
-			if ns.Name == namespaceParam {
-				found = true
-				break
-			}
-		}
-		if !found {
-			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Invalid namespace, received: %s", namespaceParam)})
-			return
-		}
-
-		namespace = namespaceParam
-	}
-
-	indexFile, err := proxy.IndexFile(onlyCompatible, namespace)
+	indexFile, err := proxy.IndexFile(onlyCompatible, r.URL.Query().Get("namespace"))
 
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get index file: %v", err)})
