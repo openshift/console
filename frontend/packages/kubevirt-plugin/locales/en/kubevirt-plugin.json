@@ -644,7 +644,7 @@
   "Please wait until it is complete before creating from it": "Please wait until it is complete before creating from it",
   "Cloning": "Cloning",
   "Missing authorized key": "Missing authorized key",
-  "An authorized key is not detected. SSH access is enabled with the password.": "An authorized key is not detected. SSH access is enabled with the password.",
+  "An authorized key is not detected. Please ensure that the virtual machine is configured to accept password authentication.": "An authorized key is not detected. Please ensure that the virtual machine is configured to accept password authentication.",
   "Node port": "Node port",
   "SSH access is using a node port. Node port requires additional port resources.": "SSH access is using a node port. Node port requires additional port resources.",
   "Expose SSH access for <1></1> {vmName}": "Expose SSH access for <1></1> {vmName}",
