@@ -688,18 +688,18 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 
   const customData = React.useMemo(
     () => ({
-      catalogSources: catalogSources.data,
-      subscriptions: subscriptions.data,
+      catalogSources: catalogSources?.data ?? [],
+      subscriptions: subscriptions?.data ?? [],
       activeNamespace,
     }),
-    [activeNamespace, catalogSources.data, subscriptions.data],
+    [activeNamespace, catalogSources, subscriptions],
   );
 
   return (
     <Table
       data={filterOperators(data, allNamespaceActive)}
       {...rest}
-      aria-label="Installed Operators"
+      aria-label={t('olm~Installed Operators')}
       Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
       Row={InstalledOperatorTableRow}
       EmptyMsg={CSVListEmptyMsg}
