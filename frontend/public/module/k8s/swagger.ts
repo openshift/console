@@ -25,7 +25,9 @@ let swaggerDefinitions: SwaggerDefinitions;
 export const getSwaggerDefinitions = (): SwaggerDefinitions => swaggerDefinitions;
 
 export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
-  // Remove any old definitions from `localSotrage`. We rely on the browser cache now.
+  // eslint-disable-next-line no-console
+  console.warn('xxx fetchSwagger');
+  // Remove any old definitions from `localStorage`. We rely on the browser cache now.
   // TODO: We should be able to remove this in a future release.
   localStorage.removeItem(SWAGGER_LOCAL_STORAGE_KEY);
   try {

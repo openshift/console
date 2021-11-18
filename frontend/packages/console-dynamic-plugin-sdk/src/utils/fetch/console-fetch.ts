@@ -91,6 +91,12 @@ const consoleFetchCommon = async (
   if (!text) {
     return isPlainText ? '' : {};
   }
+
+  if (url === 'api/kubernetes/openapi/v2') {
+    // eslint-disable-next-line no-console
+    console.warn(`xxx fetched ${text.length} bytes`);
+  }
+
   return isPlainText || !response.ok ? text : JSON.parse(text);
 };
 

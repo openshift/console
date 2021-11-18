@@ -8,9 +8,8 @@ import {
 } from './const';
 
 export const detectKubevirtVirtualMachines = async (setFeatureFlag: SetFeatureFlag) => {
-  let hasV1APIVersion = false;
-  let hasV1Alpha3APIVersion = false;
-  let hasPrintableStatus = false;
+  // eslint-disable-next-line no-console
+  console.warn('xxx detectKubevirtVirtualMachines call fetchSwagger now and every 10 seconds');
   let id = null;
 
   // Get swagger schema
@@ -18,14 +17,14 @@ export const detectKubevirtVirtualMachines = async (setFeatureFlag: SetFeatureFl
     fetchSwagger()
       .then((yamlOpenAPI) => {
         // Check for known apiVersions
-        hasV1APIVersion = !!yamlOpenAPI['io.kubevirt.v1.VirtualMachine'];
-        hasV1Alpha3APIVersion = !!yamlOpenAPI['io.kubevirt.v1alpha3.VirtualMachine'];
+        const hasV1APIVersion = !!yamlOpenAPI['io.kubevirt.v1.VirtualMachine'];
+        const hasV1Alpha3APIVersion = !!yamlOpenAPI['io.kubevirt.v1alpha3.VirtualMachine'];
 
-        // Check for shchema features
-        if (hasV1APIVersion) {
-          hasPrintableStatus = !!yamlOpenAPI['io.kubevirt.v1.VirtualMachine']?.properties?.status
-            ?.properties?.printableStatus;
-        }
+        // Check for schema features
+        const hasPrintableStatus =
+          hasV1APIVersion &&
+          !!yamlOpenAPI['io.kubevirt.v1.VirtualMachine']?.properties?.status?.properties
+            ?.printableStatus;
 
         setFeatureFlag(FLAG_KUBEVIRT, hasV1APIVersion || hasV1Alpha3APIVersion);
         setFeatureFlag(FLAG_KUBEVIRT_HAS_V1_API, hasV1APIVersion);
@@ -38,5 +37,9 @@ export const detectKubevirtVirtualMachines = async (setFeatureFlag: SetFeatureFl
   };
 
   updateKubevirtFlags();
-  id = setInterval(updateKubevirtFlags, 10 * 1000);
+  id = setInterval(() => {
+    // eslint-disable-next-line no-console
+    console.warn('xxx detectKubevirtVirtualMachines run fetchSwagger every 10 seconds');
+    updateKubevirtFlags();
+  }, 10 * 1000);
 };

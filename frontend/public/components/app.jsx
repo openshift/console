@@ -397,6 +397,8 @@ const PollConsoleUpdates = React.memo(() => {
 });
 
 graphQLReady.onReady(() => {
+  // eslint-disable-next-line no-console
+  console.warn('xxx graphQLReady calls also fetchSwagger now and then every 5 minutes');
   // Load cached API resources from localStorage to speed up page load.
   getCachedResources()
     .then((resources) => {
@@ -416,7 +418,11 @@ graphQLReady.onReady(() => {
   // Fetch swagger definitions immediately upon application start
   fetchSwagger();
   // then poll swagger definitions every 5 minutes to ensure they stay up to date
-  setInterval(fetchSwagger, 5 * 60 * 1000);
+  setInterval(() => {
+    // eslint-disable-next-line no-console
+    console.warn('xxx graphQLReady calls also fetchSwagger after 5 minutes passed');
+    fetchSwagger();
+  }, 5 * 60 * 1000);
 
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;

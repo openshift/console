@@ -65,6 +65,8 @@ export const receivedResources = (resources: DiscoveryResources) =>
   action(ActionType.ReceivedResources, { resources });
 
 export const getResources = () => (dispatch: Dispatch) => {
+  // eslint-disable-next-line no-console
+  console.warn('xxx getResources will fetchSwagger in 10 seconds...');
   dispatch(getResourcesInFlight());
   getResources_()
     .then((resources) => {
@@ -75,6 +77,8 @@ export const getResources = () => (dispatch: Dispatch) => {
     // eslint-disable-next-line no-console
     .catch((err) => console.error(err))
     .finally(() => {
+      // eslint-disable-next-line no-console
+      console.warn('xxx getResources now run fetchSwagger after 10 seconds passed');
       setTimeout(fetchSwagger, 10000);
     });
 };
