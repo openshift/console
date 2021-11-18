@@ -58,13 +58,13 @@ const EventSource: React.FC<EventSourceProps> = ({
   const svgAnchorRef = useSvgAnchor();
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const { data, resources, resource } = element.getData();
+  const [filtered] = useSearchFilter(element.getLabel(), resource?.metadata?.labels);
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
-  const { data, resources } = element.getData();
   const allowEdgeCreation = useAllowEdgeCreation();
   const isKafkaConnectionLinkPresent =
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
