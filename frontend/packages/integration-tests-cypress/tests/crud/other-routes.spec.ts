@@ -136,6 +136,11 @@ describe('Visiting other routes', () => {
   });
 });
 
+cy.on('uncaught:exception', (e) => {
+  console.error(`uncaught exception caught in cypress: ${e.message}`);
+  return false;
+});
+
 describe('Test perspective query parameters', () => {
   before(() => {
     cy.login();
