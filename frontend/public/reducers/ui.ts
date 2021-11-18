@@ -12,6 +12,7 @@ import {
   MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
 } from '../components/monitoring/dashboards/types';
+import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 
 export type UIState = ImmutableMap<string, any>;
 
@@ -117,15 +118,6 @@ export default (state: UIState, action: UIAction): UIState => {
       }
       return state.set('activeNamespace', ns);
     }
-    case ActionType.BeginImpersonate:
-      return state.set('impersonate', {
-        kind: action.payload.kind,
-        name: action.payload.name,
-        subprotocols: action.payload.subprotocols,
-      });
-
-    case ActionType.EndImpersonate:
-      return state.delete('impersonate');
 
     case ActionType.SortList:
       return state.mergeIn(
@@ -138,9 +130,6 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.SetClusterID:
       return state.set('clusterID', action.payload.clusterID);
-
-    case ActionType.SetUser:
-      return state.set('user', action.payload.user);
 
     case ActionType.MonitoringDashboardsPatchVariable:
       return state.mergeIn(
@@ -376,14 +365,13 @@ export const createProjectMessageStateToProps = ({ UI }: RootState) => {
   return { createProjectMessage: UI.get('createProjectMessage') as string };
 };
 
-export const userStateToProps = ({ UI }: RootState) => {
-  return { user: UI.get('user') };
+export const userStateToProps = (state: RootState) => {
+  return { user: getUser(state) };
 };
 
-export const impersonateStateToProps = ({ UI }: RootState) => {
-  return { impersonate: UI.get('impersonate') };
+export const impersonateStateToProps = (state: RootState) => {
+  return { impersonate: getImpersonate(state) };
 };
-
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
 
 export const getActiveApplication = ({ UI }: RootState): string => UI.get('activeApplication');

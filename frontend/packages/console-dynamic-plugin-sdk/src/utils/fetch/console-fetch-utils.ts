@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { authSvc } from '@console/internal/module/auth';
+import { getImpersonate } from '../../app/core/reducers';
 import storeHandler from '../../app/storeHandler';
 import { RetryError, HttpError } from '../error/http-error';
 
@@ -106,7 +107,7 @@ export const getImpersonateHeaders = (): ImpersonateHeaders => {
   const store = storeHandler.getStore();
   if (!store) return undefined;
 
-  const { kind, name } = store.getState().UI.get('impersonate', {});
+  const { kind, name } = getImpersonate(store.getState()) || {};
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
     const headers = {

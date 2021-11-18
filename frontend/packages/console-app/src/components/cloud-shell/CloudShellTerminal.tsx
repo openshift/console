@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { getUser } from '@console/dynamic-plugin-sdk';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
@@ -223,7 +224,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
 export const InternalCloudShellTerminal = CloudShellTerminal;
 
 const stateToProps = (state: RootState): StateProps => ({
-  user: state.UI.get('user'),
+  user: getUser(state),
 });
 
 export default connect<StateProps, null, Props>(stateToProps)(

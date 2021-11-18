@@ -3,6 +3,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
+import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -38,13 +39,13 @@ export const useUserSettings = <T>(
   defaultValue?: T,
   sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
-  const impersonate = useSelector((state: RootState) => !!state.UI.get('impersonate'));
+  const impersonate = useSelector((state: RootState) => !!getImpersonate(state));
   const keyRef = React.useRef<string>(key);
   const defaultValueRef = React.useRef<T>(defaultValue);
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
   const userUid = useSelector(
     (state: RootState) =>
-      state.UI.get('impersonate')?.name ?? state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
+      getImpersonate(state)?.name ?? getUser(state)?.metadata?.uid ?? 'kubeadmin',
   );
 
   const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(

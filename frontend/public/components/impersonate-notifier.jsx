@@ -2,11 +2,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import * as UIActions from '../actions/ui';
 import { modelFor } from '../module/k8s';
 
-export const ImpersonateNotifier = connect(({ UI }) => ({ impersonate: UI.get('impersonate') }), {
+export const ImpersonateNotifier = connect((state) => ({ impersonate: getImpersonate(state) }), {
   stopImpersonate: UIActions.stopImpersonate,
 })(({ stopImpersonate, impersonate }) => {
   const { t } = useTranslation();

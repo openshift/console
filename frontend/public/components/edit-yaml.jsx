@@ -19,7 +19,7 @@ import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorS
 import '@console/shared/src/components/editor/theme';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { isYAMLTemplate } from '@console/dynamic-plugin-sdk';
+import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
@@ -47,10 +47,10 @@ const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'defa
   return sampleObj;
 };
 
-const stateToProps = ({ k8s, UI }) => ({
-  activeNamespace: UI.get('activeNamespace'),
-  impersonate: UI.get('impersonate'),
-  models: k8s.getIn(['RESOURCES', 'models']),
+const stateToProps = (state) => ({
+  activeNamespace: state.UI.get('activeNamespace'),
+  impersonate: getImpersonate(state),
+  models: state.k8s.getIn(['RESOURCES', 'models']),
 });
 
 const WithYamlTemplates = (Component) =>
