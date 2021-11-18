@@ -109,7 +109,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   );
   const [startsAt, setStartsAt] = React.useState(defaults.startsAt ?? formatDate(now));
 
-  const user = useSelector(({ UI }: RootState) => UI.get('user'));
+  const user = useSelector(({ core }: RootState) => core.user);
 
   React.useEffect(() => {
     if (_.isEmpty(createdBy)) {

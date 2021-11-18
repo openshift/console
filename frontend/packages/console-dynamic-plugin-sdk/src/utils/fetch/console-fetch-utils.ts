@@ -106,7 +106,7 @@ export const getImpersonateHeaders = (): ImpersonateHeaders => {
   const store = storeHandler.getStore();
   if (!store) return undefined;
 
-  const { kind, name } = store.getState().UI.get('impersonate', {});
+  const { kind, name } = store.getState().core.impersonate || {};
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
     const headers = {

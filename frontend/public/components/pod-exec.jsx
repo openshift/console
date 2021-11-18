@@ -78,7 +78,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
         current && current.onConnectionClosed(`connecting to ${activeContainer}`);
       }
 
-      const impersonate = store.getState().UI.get('impersonate', {});
+      const impersonate = store.getState().core.impersonate || {};
       const subprotocols = (impersonate.subprotocols || []).concat('base64.channel.k8s.io');
 
       let previous;

@@ -81,7 +81,7 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  username: state.UI.get('user')?.metadata?.name || '',
+  username: state.core.user?.metadata?.name || '',
   activeNamespace: state.UI.get('activeNamespace'),
 });
 

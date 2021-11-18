@@ -38,13 +38,13 @@ export const useUserSettings = <T>(
   defaultValue?: T,
   sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
-  const impersonate = useSelector((state: RootState) => !!state.UI.get('impersonate'));
+  const impersonate = useSelector((state: RootState) => !!state.core.impersonate);
   const keyRef = React.useRef<string>(key);
   const defaultValueRef = React.useRef<T>(defaultValue);
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
   const userUid = useSelector(
     (state: RootState) =>
-      state.UI.get('impersonate')?.name ?? state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
+      state.core.impersonate?.name ?? state.core.user?.metadata?.uid ?? 'kubeadmin',
   );
 
   const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(

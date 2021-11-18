@@ -47,9 +47,9 @@ const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'defa
   return sampleObj;
 };
 
-const stateToProps = ({ k8s, UI }) => ({
+const stateToProps = ({ k8s, UI, core }) => ({
   activeNamespace: UI.get('activeNamespace'),
-  impersonate: UI.get('impersonate'),
+  impersonate: core.impersonate,
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 

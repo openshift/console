@@ -118,7 +118,7 @@ export const watchK8sObject = (
     return;
   }
 
-  const { subprotocols } = getState().UI.get('impersonate', {});
+  const { subprotocols } = getState().core.impersonate || {};
 
   WS[id] = k8sWatch(k8sType, query, { subprotocols }).onbulkmessage((events) =>
     events.forEach((e) => dispatch(modifyObject(id, e.object))),
@@ -233,7 +233,7 @@ export const watchK8sList = (
         return;
       }
 
-      const { subprotocols } = getState().UI.get('impersonate', {});
+      const { subprotocols } = getState().core.impersonate || {};
       WS[id] = k8sWatch(
         k8skind,
         { ...query, resourceVersion },

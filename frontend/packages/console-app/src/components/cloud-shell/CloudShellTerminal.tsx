@@ -223,7 +223,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
 export const InternalCloudShellTerminal = CloudShellTerminal;
 
 const stateToProps = (state: RootState): StateProps => ({
-  user: state.UI.get('user'),
+  user: state.core.user,
 });
 
 export default connect<StateProps, null, Props>(stateToProps)(

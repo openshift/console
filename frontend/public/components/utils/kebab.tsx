@@ -39,6 +39,7 @@ import {
   DeploymentModel,
   VolumeSnapshotModel,
 } from '../../models';
+import { ImpersonateKind } from '@console/dynamic-plugin-sdk/src/app/redux-types';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -106,7 +107,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
     </button>
   );
 };
-const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string }) => {
+const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: ImpersonateKind }) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
   return <KebabItem_ {...props} isAllowed={isAllowed} />;

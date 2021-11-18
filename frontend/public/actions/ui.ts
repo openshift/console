@@ -14,9 +14,13 @@ import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage, setUser } from './common';
+import { setClusterID, setCreateProjectMessage } from './common';
 import { Rule } from '../components/monitoring/types';
 import { subsClient } from '../graphql/client';
+import {
+  beginImpersonate,
+  endImpersonate,
+} from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
 
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
@@ -50,10 +54,7 @@ export enum ActionType {
   QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
   QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
   SetClusterID = 'setClusterID',
-  SetUser = 'setUser',
   SortList = 'sortList',
-  BeginImpersonate = 'beginImpersonate',
-  EndImpersonate = 'endImpersonate',
   UpdateOverviewMetrics = 'updateOverviewMetrics',
   UpdateOverviewResources = 'updateOverviewResources',
   UpdateOverviewSelectedGroup = 'updateOverviewSelectedGroup',
@@ -124,7 +125,7 @@ export const getNamespacedResources = () => {
 };
 
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
-export const getActiveUserName = (): string => store.getState().UI.get('user')?.metadata?.name;
+export const getActiveUserName = (): string => store.getState().core.user?.metadata?.name;
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'namespace']);
@@ -216,9 +217,6 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
-export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
-  action(ActionType.BeginImpersonate, { kind, name, subprotocols });
-export const endImpersonate = () => action(ActionType.EndImpersonate);
 export const startImpersonate = (kind: string, name: string) => async (dispatch, getState) => {
   let textEncoder;
   try {
@@ -232,7 +230,7 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
     textEncoder = await import('text-encoding').then((module) => new module.TextEncoder('utf-8'));
   }
 
-  const imp = getState().UI.get('impersonate', {});
+  const imp = getState().core.impersonate || {};
   if ((imp.name && imp.name !== name) || (imp.kin && imp.kind !== kind)) {
     // eslint-disable-next-line no-console
     console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
@@ -400,12 +398,9 @@ const uiActions = {
   setCurrentLocation,
   setActiveApplication,
   setActiveNamespace,
-  beginImpersonate,
-  endImpersonate,
   sortList,
   setCreateProjectMessage,
   setClusterID,
-  setUser,
   selectOverviewItem,
   selectOverviewDetailsTab,
   updateOverviewMetrics,

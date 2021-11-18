@@ -270,7 +270,7 @@ const CaptureTelemetry = React.memo(() => {
   const fireTelemetryEvent = useTelemetry();
 
   // notify of identity change
-  const user = useSelector(({ UI }) => UI.get('user'));
+  const user = useSelector(({ core }) => core.user || {});
   React.useEffect(() => {
     if (user.metadata?.uid || user.metadata?.name) {
       fireTelemetryEvent('identify', { user });

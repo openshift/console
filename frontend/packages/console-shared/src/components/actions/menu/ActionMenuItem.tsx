@@ -10,6 +10,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { ImpersonateKind } from '@console/dynamic-plugin-sdk/src/app/redux-types';
 import { useAccessReview, history } from '@console/internal/components/utils';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 
@@ -82,7 +83,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
 };
 
 const AccessReviewActionItem = connect(impersonateStateToProps)(
-  (props: ActionMenuItemProps & { impersonate: string }) => {
+  (props: ActionMenuItemProps & { impersonate: ImpersonateKind }) => {
     const { action, impersonate } = props;
     const isAllowed = useAccessReview(action.accessReview, impersonate);
     return <ActionItem {...props} isAllowed={isAllowed} />;

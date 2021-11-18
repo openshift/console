@@ -1,24 +1,16 @@
 import { CoreState } from '../../../redux-types';
-import { setUser, setNamespace, beginImpersonate, endImpersonate } from '../../actions/core';
+import { setUser, beginImpersonate, endImpersonate } from '../../actions/core';
 import coreReducer from '../core';
 import reducerTest from './utils/reducerTest';
 
 describe('Core Reducer', () => {
-  const state: CoreState = {
-    activeNamespace: 'sample-app',
-  };
-
-  it('set namespace', () => {
-    reducerTest(coreReducer, state, setNamespace('my-app')).expectVal({
-      activeNamespace: 'my-app',
-    });
-  });
+  const state: CoreState = {};
 
   it('set user', () => {
     const mockUser = {
       apiVersion: 'user.openshift.io/v1',
       kind: 'User',
-      groups: ['system:authenticated'],
+      identities: [],
       metadata: {
         name: 'kube:admin',
       },

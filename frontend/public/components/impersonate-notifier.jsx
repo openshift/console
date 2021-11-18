@@ -6,7 +6,7 @@ import { Button } from '@patternfly/react-core';
 import * as UIActions from '../actions/ui';
 import { modelFor } from '../module/k8s';
 
-export const ImpersonateNotifier = connect(({ UI }) => ({ impersonate: UI.get('impersonate') }), {
+export const ImpersonateNotifier = connect(({ core }) => ({ impersonate: core.impersonate }), {
   stopImpersonate: UIActions.stopImpersonate,
 })(({ stopImpersonate, impersonate }) => {
   const { t } = useTranslation();

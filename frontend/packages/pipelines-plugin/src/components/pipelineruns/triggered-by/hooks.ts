@@ -15,7 +15,7 @@ const mergeAnnotationsWithResource = (annotations: AnnotationMap, resource: K8sR
 };
 
 export const useUserAnnotationForManualStart = (): AnnotationMap => {
-  const user = useSelector((state) => state.UI.get('user'));
+  const user = useSelector((state) => state.core.user);
 
   if (!user?.metadata?.name) {
     return {};

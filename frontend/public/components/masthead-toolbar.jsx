@@ -721,7 +721,7 @@ class MastheadToolbarContents_ extends React.Component {
 const mastheadToolbarStateToProps = (state) => ({
   activeNamespace: state.UI.get('activeNamespace'),
   clusterID: state.UI.get('clusterID'),
-  user: state.UI.get('user'),
+  user: state.core.user,
   alertCount: state.UI.getIn(['monitoring', 'alertCount']),
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });

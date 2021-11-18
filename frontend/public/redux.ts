@@ -6,6 +6,8 @@ import { featureReducer, featureReducerName, FeatureState } from './reducers/fea
 import k8sReducers, { K8sState } from './reducers/k8s';
 import UIReducers, { UIState } from './reducers/ui';
 import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
+import coreReducer from '@console/dynamic-plugin-sdk/src/app/core/reducers/core';
+import { CoreState } from '@console/dynamic-plugin-sdk/src/app/redux-types';
 
 const composeEnhancers =
   (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
@@ -18,6 +20,7 @@ export type RootState = {
   plugins?: {
     [namespace: string]: any;
   };
+  core: CoreState;
 };
 
 const baseReducers = Object.freeze({
@@ -25,6 +28,7 @@ const baseReducers = Object.freeze({
   UI: UIReducers,
   [featureReducerName]: featureReducer,
   dashboards: dashboardsReducer,
+  core: coreReducer,
 });
 
 const store = createStore(
