@@ -49,6 +49,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
     cancel,
     isVMRunningOrExpectedRunning,
     snapshots,
+    hotplugVolumeSnapshotStatuses,
   } = props;
   const { t } = useTranslation();
   const vmName = getName(vmLikeEntity);
@@ -57,7 +58,10 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
   const [approveUnsupported, setApproveUnsupported] = React.useState(false);
   const asId = prefixedID.bind(null, 'snapshot');
 
-  const volumeSnapshotStatuses = getVolumeSnapshotStatuses(asVM(vmLikeEntity)) || [];
+  const volumeSnapshotStatuses =
+    getVolumeSnapshotStatuses(asVM(vmLikeEntity))
+      .concat(hotplugVolumeSnapshotStatuses)
+      .filter(Boolean) || [];
   const supportedVolumes = volumeSnapshotStatuses.filter((status) => status?.enabled);
   const hasSupportedVolumes = supportedVolumes.length > 0;
   const unsupportedVolumes = volumeSnapshotStatuses.filter((status) => !status?.enabled);
@@ -172,5 +176,6 @@ export type SnapshotsModalProps = {
   vmLikeEntity: VMLikeEntityKind;
   isVMRunningOrExpectedRunning: boolean;
   snapshots: VMSnapshot[];
+  hotplugVolumeSnapshotStatuses?: any[];
 } & ModalComponentProps &
   HandlePromiseProps;

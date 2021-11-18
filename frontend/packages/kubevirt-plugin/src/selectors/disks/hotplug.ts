@@ -8,13 +8,13 @@ export const getHotplugDiskNames = (vmi: VMIKind) => {
 
 export const getAutoRemovedOrPersistentDiskName = (
   vm: VMKind,
-  hotplugDiskNames: string[],
+  vmi: VMIKind,
   isAutoRemove: boolean,
 ) => {
   const persistentDiskNames = vm?.spec?.template?.spec?.domain?.devices?.disks?.map(
-    (pDisk) => pDisk.name,
+    (pDisk) => pDisk?.name,
   );
-  return hotplugDiskNames?.filter((disk) =>
+  return getHotplugDiskNames(vmi)?.filter((disk) =>
     isAutoRemove ? !persistentDiskNames?.includes(disk) : persistentDiskNames?.includes(disk),
   );
 };
@@ -24,6 +24,13 @@ export const isHotplugDisk = (vmi: VMIKind, diskName: string) => {
 };
 
 export const isAutoRemovedHotplugDisk = (vm: VMKind, vmi: VMIKind, diskName: string) => {
-  const hotplugDiskNames = getHotplugDiskNames(vmi);
-  return getAutoRemovedOrPersistentDiskName(vm, hotplugDiskNames, true)?.includes(diskName);
+  return getAutoRemovedOrPersistentDiskName(vm, vmi, true)?.includes(diskName);
+};
+
+export const getVMIHotplugVolumeSnapshotStatuses = (vm: VMKind, vmi: VMIKind) => {
+  return getAutoRemovedOrPersistentDiskName(vm, vmi, true)?.map((diskName) => ({
+    enabled: false,
+    name: diskName,
+    reason: 'Volume snapshots are not supported for auto-detach hotplug volumes.',
+  }));
 };
