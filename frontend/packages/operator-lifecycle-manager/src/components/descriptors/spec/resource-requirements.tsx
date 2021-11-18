@@ -145,7 +145,10 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
         type,
         kind: obj.kind,
       });
-      const title = `${obj.kind} Resource ${_.capitalize(type)}`;
+      const title = t('olm~{{kind}} Resource {{type}}', {
+        kind: obj.kind,
+        type: _.capitalize(type),
+      });
 
       return modal({ title, description, obj, model, type, path });
     };
@@ -158,7 +161,11 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
         onClick={onClick}
         variant="link"
       >
-        {`CPU: ${cpu || none}, Memory: ${memory || none}, Storage: ${storage || none}`}
+        {t('olm~CPU: {{cpu}}, Memory: {{memory}}, Storage: {{storage}}', {
+          cpu: cpu || none,
+          memory: memory || none,
+          storage: storage || none,
+        })}
         <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
       </Button>
     );
