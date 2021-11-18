@@ -8,7 +8,7 @@ import { ReadableResourcesNames } from '@console/dev-console/src/components/impo
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
-import { CheckboxField } from '@console/shared';
+import { CheckboxField, DropdownField } from '@console/shared';
 import { CLUSTER_PIPELINE_NS, PIPELINE_RUNTIME_LABEL } from '../../../const';
 import { PipelineModel } from '../../../models';
 import { PipelineKind } from '../../../types';
@@ -42,6 +42,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
   const { t } = useTranslation();
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const [pipelineTemplates, setPipelineTemplates] = React.useState([]);
   const pipelineStorageRef = React.useRef<{ [image: string]: PipelineKind[] }>({});
 
   const {
@@ -51,6 +52,12 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
 
   const isDockerStrategy = build.strategy === 'Docker';
   const isPipelineAttached = !_.isEmpty(existingPipeline);
+
+  const getPipelineNames = (pipelines: PipelineKind[]): string =>
+    pipelines
+      .map((pl) => pl.metadata?.name)
+      .sort()
+      .join(',');
 
   React.useEffect(() => {
     let ignore = false;
@@ -76,17 +83,39 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       }
 
       const imagePipelines: PipelineKind[] = pipelineStorageRef.current[image.selected] || [];
-      const resourceSpecificPipeline = imagePipelines.find(
+      const resourceSpecificPipelines = imagePipelines.filter(
         (pl) => pl.metadata?.labels?.[labelType] === resources,
       );
-      const pipelineTemplate =
-        resourceSpecificPipeline || imagePipelines.find((pl) => !pl.metadata?.labels?.[labelType]);
+      const candidatePipelines = [
+        ...resourceSpecificPipelines,
+        ...imagePipelines.filter((pl) => !pl.metadata?.labels?.[labelType]),
+      ];
 
-      if (pipelineTemplate) {
+      if (getPipelineNames(pipelineTemplates) !== getPipelineNames(candidatePipelines)) {
+        setPipelineTemplates(candidatePipelines);
+      }
+      const pipelineTemplate = candidatePipelines[0];
+
+      if (isPipelineAttached) {
+        setFieldValue('pipeline.template', existingPipeline);
+        setFieldValue('pipeline.templateSelected', existingPipeline.metadata.name);
+        setNoTemplateForRuntime(false);
+      } else if (
+        pipeline.templateSelected &&
+        pipelineTemplates.some((pl) => pl.metadata.name === pipeline.templateSelected)
+      ) {
+        setFieldValue(
+          'pipeline.template',
+          pipelineTemplates.find((pl) => pl.metadata.name === pipeline.templateSelected),
+        );
+        setNoTemplateForRuntime(false);
+      } else if (pipelineTemplate) {
         setFieldValue('pipeline.template', pipelineTemplate);
+        setFieldValue('pipeline.templateSelected', pipelineTemplate.metadata.name);
         setNoTemplateForRuntime(false);
       } else {
         setFieldValue('pipeline.template', null);
+        setFieldValue('pipeline.templateSelected', '');
         setNoTemplateForRuntime(true);
       }
     };
@@ -96,7 +125,28 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     return () => {
       ignore = true;
     };
-  }, [resources, image.selected, isDockerStrategy, setFieldValue]);
+  }, [
+    resources,
+    image.selected,
+    isDockerStrategy,
+    setFieldValue,
+    pipeline.templateSelected,
+    pipelineTemplates,
+    isPipelineAttached,
+    existingPipeline,
+  ]);
+
+  const pipelineTemplateItems = React.useMemo(() => {
+    const items = {};
+    for (const img of pipelineTemplates) {
+      const { name } = img.metadata;
+      items[name] = name;
+    }
+    if (pipeline.templateSelected) {
+      items[pipeline.templateSelected] = pipeline.templateSelected;
+    }
+    return items;
+  }, [pipeline.templateSelected, pipelineTemplates]);
 
   if (noTemplateForRuntime) {
     const builderImageTitle =
@@ -118,6 +168,15 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
         name="pipeline.enabled"
         isDisabled={isPipelineAttached}
       />
+      {pipeline.enabled && (
+        <DropdownField
+          name="pipeline.templateSelected"
+          title={pipelineTemplateItems[pipeline.templateSelected]}
+          items={pipelineTemplateItems}
+          disabled={isPipelineAttached}
+          fullWidth
+        />
+      )}
       <ExpandableSection
         toggleText={`${isExpanded ? t('pipelines-plugin~Hide') : t('pipelines-plugin~Show')} ${t(
           'pipelines-plugin~pipeline visualization',

@@ -14,7 +14,7 @@ $drag-column-width: 28px;
   background: transparent;
   border: 0;
   display: flex;
-  padding-left: $grid-gutter-width / 2 !important;
+  padding-left: $pf-global-gutter !important;
 }
 
 .pairs-list__action-icon--reorder {

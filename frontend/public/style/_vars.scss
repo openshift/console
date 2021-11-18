@@ -3,8 +3,8 @@
 // Root path where you plan to host console.
 $consoleWebDistPath: './';
 
-// PatternFly color variables -- imported here so they can be used throughout
-@import '~@patternfly/patternfly/sass-utilities/colors';
+// PatternFly variables -- imported here so they can be used throughout
+@import '~@patternfly/patternfly/sass-utilities/all';
 
 // Enable use within shared components and packages
 @import "../style/ancillary/bootstrap-variables";
@@ -23,6 +23,16 @@ $table-border-color: $pf-color-black-200;
   --pf-global--FontSize--md: 14px; // Numerical value required, same as $font-size-base
   --pf-global--FontSize--sm: 13px;
 }
+
+// == Declare max breakpoints from PatternFly variables
+$pf-global--breakpoint--xs-max: ($pf-global--breakpoint--xs - 1);
+$pf-global--breakpoint--sm-max: ($pf-global--breakpoint--sm - 1);
+$pf-global--breakpoint--md-max: ($pf-global--breakpoint--md - 1);
+$pf-global--breakpoint--lg-max: ($pf-global--breakpoint--lg - 1);
+
+// Can not use --pf-global--gutter --pf-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
+$pf-global-gutter: 1rem; // Matches --pf-global--gutter
+$pf-global-gutter--md: 1.5rem; // Matches --pf-global--gutter--md
 
 
 // == Custom variables

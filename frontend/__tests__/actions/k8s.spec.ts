@@ -5,71 +5,49 @@ import * as _ from 'lodash-es';
 import * as k8sActions from '../../public/actions/k8s';
 import * as k8sResource from '../../public/module/k8s';
 import { K8sResourceKind, K8sKind } from '../../public/module/k8s';
-import { PodModel, APIServiceModel } from '../../public/models';
+import { PodModel, CustomResourceDefinitionModel } from '../../public/models';
 import { testResourceInstance } from '../../__mocks__/k8sResourcesMocks';
-import * as coFetch from '@console/dynamic-plugin-sdk/src/utils/fetch';
+import { makeReduxID } from '../../public/components/utils';
 
-describe('watchAPIServices', () => {
-  const { watchAPIServices } = k8sActions;
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  checkAccess: jest
+    .fn()
+    .mockReturnValueOnce(Promise.resolve({ status: { allowed: false } }))
+    .mockReturnValue(Promise.resolve({ status: { allowed: true } })),
+}));
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
-    new Promise((resolve) =>
-      spy.and.callFake((...args) => {
-        resolve(args);
-        return returnValue;
-      }),
+describe('startAPIDiscovery', () => {
+  it('falls back to polling if user cannot list CRDs', async () => {
+    const dispatch = jest.fn();
+    jest.useFakeTimers();
+    jest.spyOn(console, 'log');
+    jest.spyOn(k8sActions, 'getResources').mockImplementation(() => {});
+    await k8sActions.startAPIDiscovery()(dispatch);
+    expect(k8sActions.getResources).toHaveBeenCalledTimes(1);
+    expect(window.setTimeout).toHaveBeenCalledTimes(1);
+    expect(window.setTimeout).toHaveBeenCalledWith(
+      expect.any(Function),
+      k8sActions.API_DISCOVERY_POLL_INTERVAL,
     );
-
-  it('does nothing if already watching `APIServices`', (done) => {
-    const getState = jasmine
-      .createSpy('getState')
-      .and.returnValue({ k8s: ImmutableMap().set('apiservices', []) });
-    const dispatch = jasmine.createSpy('dispatch').and.callFake((action) => {
-      fail(`Should not dispatch action: ${JSON.stringify(action)}`);
-    });
-
-    watchAPIServices()(dispatch, getState);
-    done();
+    // eslint-disable-next-line no-console
+    expect(console.log).toHaveBeenLastCalledWith('API discovery method: Polling');
   });
 
-  it('dispatches `getResourcesInFlight` action before listing `APIServices`', (done) => {
-    const getState = jasmine.createSpy('getState').and.returnValue({ k8s: ImmutableMap() });
-    const dispatch = jasmine.createSpy('dispatch');
-    spyOn(k8sActions, 'watchK8sList').and.returnValue({});
-
-    spyAndExpect(spyOn(k8sResource, 'k8sList'))(Promise.resolve({})).then(() => {
-      expect(dispatch.calls.argsFor(0)[0].type).toEqual(k8sActions.ActionType.GetResourcesInFlight);
-      done();
-    });
-
-    watchAPIServices()(dispatch, getState);
-  });
-
-  it('attempts to list `APIServices`', (done) => {
-    const getState = jasmine.createSpy('getState').and.returnValue({ k8s: ImmutableMap() });
-    const dispatch = jasmine.createSpy('dispatch');
-    spyOn(k8sActions, 'watchK8sList');
-
-    spyAndExpect(spyOn(k8sResource, 'k8sList'))(Promise.resolve({})).then(([model]) => {
-      expect(model).toEqual(APIServiceModel);
-      done();
-    });
-
-    watchAPIServices()(dispatch, getState);
-  });
-
-  it('falls back to polling Kubernetes `/apis` endpoint if cannot list `APIServices`', (done) => {
-    const getState = jasmine.createSpy('getState').and.returnValue({ k8s: ImmutableMap() });
-    const dispatch = jasmine.createSpy('dispatch');
-    spyOn(k8sResource, 'k8sList').and.returnValue(Promise.reject());
-    spyAndExpect(spyOn(coFetch, 'consoleFetchJSON'))(Promise.resolve({ groups: [] })).then(
-      ([path]) => {
-        expect(path).toEqual('api/kubernetes/apis');
-        done();
-      },
+  it('uses watchK8sList when user can list CRDs', async () => {
+    const crdReduxID = makeReduxID(CustomResourceDefinitionModel, {});
+    const dispatch = jest.fn();
+    jest.spyOn(console, 'log');
+    jest.spyOn(k8sActions, 'watchK8sList').mockImplementation(() => {});
+    await k8sActions.startAPIDiscovery()(dispatch);
+    expect(k8sActions.watchK8sList).toHaveBeenCalledTimes(1);
+    expect(k8sActions.watchK8sList).toHaveBeenCalledWith(
+      crdReduxID,
+      {},
+      CustomResourceDefinitionModel,
+      expect.any(Function),
     );
-
-    watchAPIServices()(dispatch, getState);
+    // eslint-disable-next-line no-console
+    expect(console.log).toHaveBeenLastCalledWith('API discovery method: Watching');
   });
 });
 

@@ -66,7 +66,6 @@ export const getCorePackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk',
     version: sdkPackage.version,
-    type: 'module',
     main: 'lib/lib-core.js',
     ...commonManifestFields,
     dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
@@ -86,7 +85,6 @@ export const getInternalPackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk-internal',
     version: sdkPackage.version,
-    type: 'module',
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
     dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
@@ -105,7 +103,6 @@ export const getInternalKubevirtPackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk-internal-kubevirt',
     version: sdkPackage.version,
-    type: 'module',
     main: 'lib/lib-internal-kubevirt.js',
     ...commonManifestFields,
     dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
@@ -124,7 +121,6 @@ export const getWebpackPackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk-webpack',
     version: sdkPackage.version,
-    type: 'commonjs',
     main: 'lib/lib-webpack.js',
     ...commonManifestFields,
     dependencies: {

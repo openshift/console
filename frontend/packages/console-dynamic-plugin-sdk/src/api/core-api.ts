@@ -98,5 +98,11 @@ export const k8sDelete: K8sDelete = require('@console/dynamic-plugin-sdk/src/uti
 export const k8sList: K8sList = require('@console/dynamic-plugin-sdk/src/utils/k8s')
   .k8sListResource;
 
+export {
+  getAPIVersionForModel,
+  getGroupVersionKindForResource,
+  getGroupVersionKindForModel,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+
 // Openshift Console specific APIs
 export * from './core-api-console';

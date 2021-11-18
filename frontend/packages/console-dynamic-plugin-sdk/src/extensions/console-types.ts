@@ -75,6 +75,8 @@ export type AccessReviewResourceAttributes = {
 };
 
 /**
+ * @deprecated Use K8sGroupVersionKind type instead. Support for type K8sResourceKindReference will be removed in a future release.
+ * @see K8sGroupVersionKind
  * GroupVersionKind unambiguously identifies a kind.
  * https://godoc.org/k8s.io/apimachinery/pkg/runtime/schema#GroupVersionKind
  * TODO: Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
@@ -86,6 +88,8 @@ export type GroupVersionKind = string;
  * Maintains backwards-compatibility with references using the `kind` string field.
  */
 export type K8sResourceKindReference = GroupVersionKind | string;
+
+export type K8sGroupVersionKind = { group?: string; version: string; kind: string };
 
 enum InventoryStatusGroup {
   WARN = 'WARN',
@@ -141,7 +145,9 @@ export type PrometheusResponse = {
 };
 
 export type WatchK8sResource = {
-  kind: K8sResourceKindReference;
+  /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
+  kind?: K8sResourceKindReference;
+  groupVersionKind?: K8sGroupVersionKind;
   name?: string;
   namespace?: string;
   isList?: boolean;
@@ -390,7 +396,9 @@ export type UseListPageFilter = <D, R>(
 ) => [D[], D[], OnFilterChange];
 
 export type ResourceLinkProps = {
-  kind: GroupVersionKind;
+  /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
+  kind?: K8sResourceKindReference;
+  groupVersionKind?: K8sGroupVersionKind;
   className?: string;
   displayName?: string;
   inline?: boolean;
@@ -403,7 +411,10 @@ export type ResourceLinkProps = {
   onClick?: () => void;
 };
 
-export type UseK8sModel = (groupVersionKind?: GroupVersionKind) => [K8sModel, boolean];
+export type UseK8sModel = (
+  // Use K8sGroupVersionKind type instead of K8sResourceKindReference. Support for type K8sResourceKindReference will be removed in a future release.
+  groupVersionKind?: K8sResourceKindReference | K8sGroupVersionKind,
+) => [K8sModel, boolean];
 export type UseK8sModels = () => [{ [key: string]: K8sModel }, boolean];
 
 export type PerspectiveType = string;

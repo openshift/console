@@ -3,9 +3,9 @@
 .co-dashboard-body {
   background-color: $pf-color-black-200;
   flex: 1 0 auto;
-  padding: ($grid-gutter-width / 2);
-  @media(min-width: $grid-float-breakpoint) {
-    padding: $grid-gutter-width;
+  padding: $pf-global-gutter;
+  @media(min-width: $pf-global--breakpoint--xl) {
+    padding: $pf-global-gutter--md;
   }
 }
 

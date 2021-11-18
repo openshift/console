@@ -101,4 +101,11 @@ export const queryBrowserTheme = {
       },
     },
   },
+  line: {
+    style: {
+      data: {
+        opacity: 0.75,
+      },
+    },
+  },
 };

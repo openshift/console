@@ -1,3 +1,6 @@
+@import '../../../../../../public/style/vars';
+
+
 .pipeline-metrics-dashboard {
   background: var(--pf-global--palette--black-150);
   &__body {
@@ -6,11 +9,11 @@
     margin-top: 0;
   }
   &__body-content {
-    margin-top: var(--pf-global--spacer--lg);
+    margin-top: $pf-global-gutter--md;
   }
   &__toolbar {
     margin-bottom: 0 !important;
-    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--xl) 0;
+    padding: var(--pf-global--spacer--md) $pf-global-gutter--md 0;
   }
 }
 .pipeline-metrics-empty-state {

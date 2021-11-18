@@ -28,6 +28,7 @@ declare global {
       selectProject(project: string): void;
       createNAD(namespace: string): void;
       waitForLoginPrompt(vmName: string, namespace: string): void;
+      visitNAD(): void;
     }
   }
 }
@@ -43,14 +44,14 @@ Cypress.Commands.add('deleteResource', (kind: string, name: string, namespace?: 
   }
 
   cy.exec(
-    `kubectl delete --ignore-not-found=true -n ${namespace} --cascade ${kind} ${name} --wait=true --timeout=120s`,
+    `kubectl delete --ignore-not-found=true -n ${namespace} --cascade ${kind} ${name} --wait=true --timeout=120s || true`,
     { timeout: 120000 },
   );
 
   if (kind === K8S_KIND.VM) {
     // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
     cy.exec(
-      `kubectl delete --ignore-not-found=true -n ${namespace} vmi ${name} --wait=true --timeout=120s`,
+      `kubectl delete --ignore-not-found=true -n ${namespace} vmi ${name} --wait=true --timeout=120s || true`,
       { timeout: 120000 },
     );
   }
@@ -68,7 +69,7 @@ Cypress.Commands.add('waitForResource', (resource: any) => {
   const { kind } = resource;
   const { name } = resource.metadata;
   const ns = resource.metadata.namespace;
-  cy.exec(`kubectl wait --for condition=Ready ${kind} ${name} -n ${ns} --timeout=600s`, {
+  cy.exec(`kubectl wait --for condition=Ready ${kind} ${name} -n ${ns} --timeout=600s || true`, {
     timeout: 600000,
   });
 });
@@ -175,4 +176,8 @@ Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) =
     failOnNonZeroExit: false,
     timeout: 600000,
   });
+});
+
+Cypress.Commands.add('visitNAD', () => {
+  cy.clickNavLink(['Networking', 'NetworkAttachmentDefinitions']);
 });

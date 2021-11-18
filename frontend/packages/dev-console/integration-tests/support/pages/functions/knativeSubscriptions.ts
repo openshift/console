@@ -14,6 +14,11 @@ export const createKnativeServing = () => {
     }
   });
   cy.get(operatorsPO.installOperators.knativeServingLink).click({ force: true });
+  cy.get('body').then(($body) => {
+    if ($body.text().includes('Page Not Found')) {
+      cy.reload();
+    }
+  });
   detailsPage.titleShouldContain(pageTitle.KnativeServings);
   app.waitForLoad();
   cy.get('body').then(($body) => {
@@ -42,6 +47,11 @@ export const createKnativeEventing = () => {
     }
   });
   cy.get(operatorsPO.installOperators.knativeEventingLink).click({ force: true });
+  cy.get('body').then(($body) => {
+    if ($body.text().includes('Page Not Found')) {
+      cy.reload();
+    }
+  });
   detailsPage.titleShouldContain(pageTitle.KnativeEventings);
   app.waitForLoad();
   cy.get('body').then(($body) => {

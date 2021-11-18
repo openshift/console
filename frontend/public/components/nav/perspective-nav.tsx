@@ -85,7 +85,7 @@ const PerspectiveNav: React.FC<{}> = () => {
               <Button
                 className="oc-nav-pinned-item__unpin-button"
                 variant="link"
-                aria-label="Unpin"
+                aria-label={t('public~Unpin')}
                 onClick={(e) => unPin(e, resource)}
               >
                 <MinusCircleIcon className="oc-nav-pinned-item__icon" />

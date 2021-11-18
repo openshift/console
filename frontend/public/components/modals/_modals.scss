@@ -93,13 +93,21 @@
 .modal-dialog {
   margin: 10px;
   margin-bottom: 0;
+  max-width: calc(100% - var(--pf-global--spacer--xl));
   outline: 0;
   position: relative;
-  width: auto;
-
+  width: 100%;
   @media (min-width: $pf-global--breakpoint--md) {
     margin: 30px auto;
-    width: 600px;
+    &:not(.modal-lg) {
+      max-width: 600px;
+    }
+  }
+  @media (min-width: $pf-global--breakpoint--xl) {
+    &.modal-lg {
+      // Manually set to match --pf-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-c-modal-box
+      max-width: 70rem;
+    }
   }
 
   @media(max-width: $screen-xs-max) and (orientation: portrait) {

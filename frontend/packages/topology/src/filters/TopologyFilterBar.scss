@@ -2,11 +2,11 @@
 
 .odc-topology-filter-bar {
   background-color: var(--pf-chart-global--Fill--Color--white);
-  padding: 6px ($grid-gutter-width / 2);
+  padding: 6px $pf-global-gutter;
 
-  @media (min-width: $grid-float-breakpoint) {
-    padding-left: $grid-gutter-width;
-    padding-right: $grid-gutter-width;
+  @media (min-width: $pf-global--breakpoint--xl) {
+    padding-left: $pf-global-gutter--md;
+    padding-right: $pf-global-gutter--md;
   }
 
   &__kiali-link {

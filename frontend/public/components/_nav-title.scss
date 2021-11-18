@@ -18,11 +18,11 @@
 }
 
 .co-m-nav-title {
-  margin-top: $grid-gutter-width;
-  padding: 0 ($grid-gutter-width / 2) 0;
-  @media (min-width: $grid-float-breakpoint) {
-    padding-left: $grid-gutter-width;
-    padding-right: $grid-gutter-width;
+  margin-top: $pf-global-gutter--md;
+  padding: 0 $pf-global-gutter 0;
+  @media (min-width: $pf-global--breakpoint--xl) {
+    padding-left: $pf-global-gutter--md;
+    padding-right: $pf-global-gutter--md;
   }
   &--row {
     @media (max-width: $screen-xs-max) {

@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { constants, VncConsole } from '@patternfly/react-console';
+import { useTranslation } from 'react-i18next';
 import { ConsoleType } from '../../../../constants/vm/console-type';
 import { getVMIApiPath, getVMISubresourcePath } from '../../../../selectors/vmi';
 import { VMIKind } from '../../../../types';
 import { isConnectionEncrypted } from '../../../../utils/url';
 
 const VncConsoleConnector: React.FC<VncConsoleConnectorProps> = ({ vmi, setConsoleType }) => {
+  const { t } = useTranslation();
+
   React.useEffect(() => {
     setConsoleType(ConsoleType.VNC);
   }, [setConsoleType]);
@@ -18,6 +21,12 @@ const VncConsoleConnector: React.FC<VncConsoleConnectorProps> = ({ vmi, setConso
       port={window.location.port || (isConnectionEncrypted() ? '443' : '80')}
       // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
       path={`${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/vnc`}
+      textConnect={t('kubevirt-plugin~Connect')}
+      textConnecting={t('kubevirt-plugin~Connecting')}
+      textCtrlAltDel={t('kubevirt-plugin~Ctrl+Alt+Del')}
+      textDisconnect={t('kubevirt-plugin~Disconnect')}
+      textDisconnected={t('kubevirt-plugin~Click Connect to open the VNC console.')}
+      textSendShortcut={t('kubevirt-plugin~Send Key')}
     />
   );
 };

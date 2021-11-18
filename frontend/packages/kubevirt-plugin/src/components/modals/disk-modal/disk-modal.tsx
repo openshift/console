@@ -132,9 +132,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     combinedDisk.getStorageClassName() || '',
   );
 
-  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
-    storageClassName,
-  );
+  const [
+    spAccessMode,
+    spVolumeMode,
+    spLoaded,
+    isSPSettingProvided,
+    loadError,
+  ] = useStorageProfileSettings(storageClassName);
 
   const [applySP, setApplySP] = React.useState<boolean>(true);
 
@@ -694,7 +698,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       data-test="apply-storage-provider"
                     />
                   </StackItem>
-                  {!spLoaded ? (
+                  {!spLoaded && !loadError ? (
                     <LoadingInline />
                   ) : isSPSettingProvided && applySP ? (
                     <StackItem data-test="sp-default-settings">

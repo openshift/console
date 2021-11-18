@@ -1,21 +1,21 @@
 # This image is used for testing OpenShift Console dynamic plugin capabilities.
 #
-# See frontend/dynamic-demo-plugin/README.md for details.
+# See dynamic-demo-plugin/README.md for details.
 
 # Stage 0: build the demo plugin
 # Manually pre-build the demo plugin:
 # cd frontend
 # yarn install
-# cd dynamic-demo-plugin
+# cd ../dynamic-demo-plugin
 # yarn install
 # yarn build
 
 # Stage 1: build the target image
 FROM node:10
 
-COPY ./frontend/dynamic-demo-plugin/dist /opt/console-demo-plugin/static
-COPY ./frontend/dynamic-demo-plugin/node_modules /opt/console-demo-plugin/node_modules
-COPY ./frontend/dynamic-demo-plugin/http-server.sh /opt/console-demo-plugin/http-server.sh
+COPY ./dynamic-demo-plugin/dist /opt/console-demo-plugin/static
+COPY ./dynamic-demo-plugin/node_modules /opt/console-demo-plugin/node_modules
+COPY ./dynamic-demo-plugin/http-server.sh /opt/console-demo-plugin/http-server.sh
 
 LABEL io.k8s.display-name="OpenShift Console Demo Plugin" \
       io.k8s.description="Sample OpenShift Console dynamic plugin used for testing purposes." \

@@ -1,11 +1,12 @@
 import {
   apiVersionForModel,
   k8sCreate,
+  k8sGet,
   k8sPatchByName,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { NodeModel, SecretModel } from '@console/internal/models';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src';
+import { CustomResourceDefinitionModel, NodeModel, SecretModel } from '@console/internal/models';
+import { K8sModel } from '@console/dynamic-plugin-sdk';
 import { WizardNodeState, WizardState } from './reducer';
 import { Payload } from './external-storage/types';
 import {
@@ -138,4 +139,38 @@ export const createExternalSubSystem = async (subSystemPayloads: Payload[]) => {
   } catch (err) {
     throw err;
   }
+};
+
+/**
+ * The crd status field should be available to proceed with CR creation.
+ */
+const isCRDAvailable = (crd: K8sResourceKind, plural: string) =>
+  crd?.status?.acceptedNames?.plural === plural;
+
+export const waitforCRD = async (model, maxAttempts = 30) => {
+  const crdName = [model.plural, model.apiGroup].join('.');
+  const POLLING_INTERVAL = 5000;
+  let attempts = 0;
+  /**
+   * This will poll the CRD for an interval of 5s.
+   * This times out after 150s.
+   */
+  const pollCRD = async (resolve, reject) => {
+    try {
+      attempts++;
+      const crd = await k8sGet(CustomResourceDefinitionModel, crdName);
+      return isCRDAvailable(crd, model.plural)
+        ? resolve()
+        : setTimeout(pollCRD, POLLING_INTERVAL, resolve, reject);
+    } catch (err) {
+      if (err?.response?.status === 404) {
+        if (attempts === maxAttempts)
+          return reject(new Error(`CustomResourceDefintion '${crdName}' not found.`));
+        return setTimeout(pollCRD, POLLING_INTERVAL, resolve, reject);
+      }
+      return reject(err);
+    }
+  };
+
+  return new Promise(pollCRD);
 };

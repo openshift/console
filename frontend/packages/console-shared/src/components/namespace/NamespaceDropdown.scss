@@ -1,5 +1,4 @@
-$grid-float-breakpoint: 768px;
-$font-size-base: 14px;
+@import '../../../../../public/style/vars';
 
 .co-namespace-dropdown {
     margin-right: 20px;
@@ -15,7 +14,7 @@ $font-size-base: 14px;
   // This allows the menu to be longer than the menu toggle
   // Currently PatternFly does not support a min width on the menu component
   --pf-c-menu--MinWidth: 210px;
-  @media (min-width: $grid-float-breakpoint) {
+  @media (min-width: $pf-global--breakpoint--md) {
     --pf-c-menu--MinWidth: 325px;
   }
 }
@@ -29,7 +28,7 @@ $font-size-base: 14px;
   padding: 2px 0 !important;
   width: 100%;
 
-  @media (min-width: $grid-float-breakpoint) {
+  @media (min-width: $pf-global--breakpoint--md) {
     font-size: ($font-size-base + 2) !important;
     padding-bottom: 9px !important;
     padding-top: 9px !important;
@@ -47,15 +46,6 @@ $font-size-base: 14px;
   &:disabled {
     background: none;
     color: var(--pf-global--disabled-color--200);
-  }
-
-  .pf-c-menu-toggle__text {
-    // This allows the menu toggle button to have the label truncate
-    // This is currently not an option in the PatternFly menu toggle component
-    // Tracked in https://github.com/patternfly/patternfly-react/issues/6058
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 

@@ -42,7 +42,7 @@ const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map((m) => _.escapeRegExp(m)).join('|')})\\/`);
 const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-const sharedPluginTest = getVendorModuleRegExp(sharedPluginModules);
+const sharedPluginTest = getVendorModuleRegExp(Object.keys(sharedPluginModules));
 const sharedPatternFlyCoreTest = getVendorModuleRegExp([
   '@patternfly/react-core',
   '@patternfly/react-table',
