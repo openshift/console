@@ -27,10 +27,7 @@ import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { VirtualMachineImportModel, VirtualMachineInstanceMigrationModel } from '../../models';
 import { getName, getNamespace } from '../../selectors';
-import {
-  getAutoRemovedOrPersistentDiskName,
-  getHotplugDiskNames,
-} from '../../selectors/disks/hotplug';
+import { getAutoRemovedOrPersistentDiskName } from '../../selectors/disks/hotplug';
 import {
   isVMCreated,
   isVMExpectedRunning,
@@ -187,11 +184,7 @@ const menuActionStop = (
           <ActionMessage obj={vm} actionKey="kubevirt-plugin~stop">
             <StackItem>
               <RemovalDiskAlert
-                hotplugDiskNames={getAutoRemovedOrPersistentDiskName(
-                  vm,
-                  getHotplugDiskNames(vmi),
-                  true,
-                )}
+                hotplugDiskNames={getAutoRemovedOrPersistentDiskName(vm, vmi, true)}
               />
             </StackItem>
           </ActionMessage>
@@ -232,11 +225,7 @@ const menuActionRestart = (
           <ActionMessage obj={vm} actionKey="kubevirt-plugin~restart">
             <StackItem>
               <RemovalDiskAlert
-                hotplugDiskNames={getAutoRemovedOrPersistentDiskName(
-                  vm,
-                  getHotplugDiskNames(vmi),
-                  true,
-                )}
+                hotplugDiskNames={getAutoRemovedOrPersistentDiskName(vm, vmi, true)}
               />
             </StackItem>
           </ActionMessage>
@@ -552,11 +541,7 @@ export const VmActionFactory = {
             <ActionMessage obj={vm} action={i18next.t('kubevirt-plugin~stop')}>
               <StackItem>
                 <RemovalDiskAlert
-                  hotplugDiskNames={getAutoRemovedOrPersistentDiskName(
-                    vm,
-                    getHotplugDiskNames(vmi),
-                    true,
-                  )}
+                  hotplugDiskNames={getAutoRemovedOrPersistentDiskName(vm, vmi, true)}
                 />
               </StackItem>
             </ActionMessage>
@@ -585,11 +570,7 @@ export const VmActionFactory = {
             <ActionMessage obj={vm} action={i18next.t('kubevirt-plugin~restart')}>
               <StackItem>
                 <RemovalDiskAlert
-                  hotplugDiskNames={getAutoRemovedOrPersistentDiskName(
-                    vm,
-                    getHotplugDiskNames(vmi),
-                    true,
-                  )}
+                  hotplugDiskNames={getAutoRemovedOrPersistentDiskName(vm, vmi, true)}
                 />
               </StackItem>
             </ActionMessage>
