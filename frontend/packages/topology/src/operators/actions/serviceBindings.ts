@@ -13,6 +13,7 @@ import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 export const createServiceBinding = (
   source: K8sResourceKind,
   target: K8sResourceKind,
+  serviceBindingName?: string,
 ): Promise<K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject();
@@ -24,7 +25,9 @@ export const createServiceBinding = (
   const { namespace, name: sourceName } = source.metadata;
   const sourceGroup = _.split(source.apiVersion, '/');
   const targetGroup = _.split(target.apiVersion, '/');
-  const sbrName = `${sourceName}-${sourceModel.abbr.toLowerCase()}-${targetName}-${targetModel.abbr.toLowerCase()}`;
+  const sbrName =
+    serviceBindingName ||
+    `${sourceName}-${sourceModel.abbr.toLowerCase()}-${targetName}-${targetModel.abbr.toLowerCase()}`;
 
   const serviceBinding = {
     apiVersion: apiVersionForModel(ServiceBindingModel),

@@ -10,6 +10,7 @@ import {
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
+import { CreateServiceBinding } from '@console/app/src/actions/create-service-binding';
 import {
   AddHorizontalPodAutoScaler,
   DeleteHorizontalPodAutoScaler,
@@ -82,6 +83,7 @@ export const menuActions = [
   AddHorizontalPodAutoScaler,
   EditHorizontalPodAutoScaler,
   AddStorage,
+  CreateServiceBinding,
   UpdateStrategy,
   DeleteHorizontalPodAutoScaler,
   EditResourceLimits,
