@@ -52,7 +52,7 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
   const dataSSHKeys = React.useMemo(() => new CloudInitDataHelper({ userData: data }), [data]);
   const { tempSSHKey } = useSSHKeys();
   const authKeysData = React.useMemo(
-    () => dataSSHKeys.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || [tempSSHKey || ''],
+    () => [dataSSHKeys.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || tempSSHKey || ''],
     [dataSSHKeys, tempSSHKey],
   );
 
@@ -99,16 +99,18 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
 
   const onChange = React.useCallback(
     (yamlData, yamlAsJSData) => {
+      const sshKeysData = yamlAsJSData?.ssh_authorized_keys;
+      const sshKeysDataArray = Array.isArray(sshKeysData) ? sshKeysData : [sshKeysData];
       yamlAsJSData && setYamlAsJS(yamlAsJSData);
       yamlData &&
         setYaml(
           yamlParser.dump({
             ...yamlParser.load(yamlData),
             /* eslint-disable-next-line @typescript-eslint/camelcase */
-            ssh_authorized_keys: yamlAsJSData?.ssh_authorized_keys || authKeys,
+            ssh_authorized_keys: sshKeysDataArray || authKeys,
           }),
         );
-      setAuthKeys(yamlAsJSData?.ssh_authorized_keys);
+      setAuthKeys(sshKeysDataArray);
     },
     [setYaml, setYamlAsJS, authKeys],
   );
