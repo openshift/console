@@ -12,6 +12,7 @@ export * from './template';
 export * from './swagger';
 export * from './event';
 export * from './types';
+export * from './k8s-ref';
 export {
   k8sGet,
   k8sCreate,

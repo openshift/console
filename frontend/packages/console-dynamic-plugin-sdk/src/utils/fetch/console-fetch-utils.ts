@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { authSvc } from '@console/internal/module/auth';
+import storeHandler from '../../app/storeHandler';
 import { RetryError, HttpError } from '../error/http-error';
-import { InternalReduxStore } from '../redux';
 
 const cookiePrefix = 'csrf-token=';
 export const getCSRFToken = () =>
@@ -103,8 +103,10 @@ type ImpersonateHeaders = {
   'Impersonate-User': string;
 };
 export const getImpersonateHeaders = (): ImpersonateHeaders => {
-  if (!InternalReduxStore) return undefined;
-  const { kind, name } = InternalReduxStore.getState().UI.get('impersonate', {});
+  const store = storeHandler.getStore();
+  if (!store) return undefined;
+
+  const { kind, name } = store.getState().UI.get('impersonate', {});
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
     const headers = {
