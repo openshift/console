@@ -102,7 +102,8 @@ const deleteClusterExamples = () => {
   detailsPage.isLoaded();
 };
 
-describe('Roles and RoleBindings', () => {
+// disabling until https://bugzilla.redhat.com/show_bug.cgi?id=2024932 is fixed
+xdescribe('Roles and RoleBindings', () => {
   before(() => {
     cy.login();
     cy.createProject(testName);
