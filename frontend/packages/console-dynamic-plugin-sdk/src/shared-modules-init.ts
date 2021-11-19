@@ -17,6 +17,9 @@ const modules: SharedModuleResolution = {
   'react-i18next': async () => () => require('react-i18next'),
   'react-router': async () => () => require('react-router'),
   'react-router-dom': async () => () => require('react-router-dom'),
+  'react-redux': async () => () => require('react-redux'),
+  redux: async () => () => require('redux'),
+  'redux-thunk': async () => () => require('redux-thunk'),
 };
 
 const sharedScope = Object.keys(modules).reduce(

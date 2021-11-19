@@ -3,7 +3,7 @@ import * as semver from 'semver';
 import i18next from 'i18next';
 
 import { ClusterVersionModel } from '../../models';
-import { referenceForModel } from './k8s';
+import { referenceForModel } from './k8s-ref';
 import {
   ClusterVersionKind,
   ClusterUpdate,

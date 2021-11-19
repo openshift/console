@@ -127,7 +127,6 @@ export const getOperandActions = (
         deleteModal({
           kind,
           resource: obj,
-          namespace: obj.metadata.namespace,
           redirectTo: `/k8s/ns/${obj.metadata.namespace}/${
             ClusterServiceVersionModel.plural
           }/${csvName || csvNameFromWindow()}/${referenceFor(obj)}`,

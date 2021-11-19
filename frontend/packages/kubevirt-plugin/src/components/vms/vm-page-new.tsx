@@ -153,7 +153,7 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = (
         {status ? (
           <GenericStatus
             title={printableStatus}
-            Icon={getVMStatusIcon(status === VMStatus.PAUSED, status, arePendingChanges)}
+            Icon={getVMStatusIcon(status, arePendingChanges)}
           />
         ) : (
           '-'

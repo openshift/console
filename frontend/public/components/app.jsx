@@ -34,6 +34,7 @@ import {
   isContextProvider,
   isReduxReducer,
   isStandaloneRoutePage,
+  AppInitSDK,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
@@ -464,11 +465,13 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
-        <CaptureTelemetry />
-        <ToastProvider>
-          <PollConsoleUpdates />
-          <AppRouter />
-        </ToastProvider>
+        <AppInitSDK>
+          <CaptureTelemetry />
+          <ToastProvider>
+            <PollConsoleUpdates />
+            <AppRouter />
+          </ToastProvider>
+        </AppInitSDK>
       </Provider>
     </React.Suspense>,
     document.getElementById('app'),

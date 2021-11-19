@@ -82,7 +82,7 @@ export const LazyVMStatus: React.FC<LazyVMStatusProps> = ({
     links.push({ to: `${getPodLink(pod)}/logs`, message: VIEW_POD_LOGS });
   }
 
-  const Icon = status && getVMStatusIcon(isPaused, status, arePendingChanges);
+  const Icon = status && getVMStatusIcon(status, arePendingChanges);
 
   return (
     <>

@@ -7,7 +7,6 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { VMStatus as VMStatusEnum } from '../../../constants/vm/vm-status';
 import { getVMStatusIcon } from '../../vm-status/vm-status';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { VMEventsStatusCard } from '../../vms/VMEventsStatusCard';
@@ -22,9 +21,7 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
   const { vm, vmi, vmStatusBundle } = vmDashboardContext;
 
   const status = vmStatusBundle?.status;
-  const isPaused = status === VMStatusEnum.PAUSED;
-
-  const StatusIcon = getVMStatusIcon(isPaused, status, false);
+  const StatusIcon = getVMStatusIcon(status, false);
 
   return (
     <DashboardCard gradient>
