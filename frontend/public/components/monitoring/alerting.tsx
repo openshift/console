@@ -923,8 +923,9 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   );
   const rule = _.find(rules, { id: _.get(match, 'params.id') });
 
-  const { loaded, loadError }: Alerts = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', isDevPerspective ? 'devAlerts' : 'alerts']),
+  const { loaded, loadError }: Alerts = useSelector(
+    ({ UI }: RootState) =>
+      UI.getIn(['monitoring', isDevPerspective ? 'devAlerts' : 'alerts']) || {},
   );
 
   const formatSeriesTitle = (alertLabels) => {
