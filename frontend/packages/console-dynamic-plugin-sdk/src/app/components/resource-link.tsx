@@ -6,10 +6,10 @@ import * as classNames from 'classnames';
 import { FLAGS } from '@console/shared/src/constants';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon } from './resource-icon';
+import  { K8sKind } from '../../extensions/console-types';
 import {
   modelFor,
   referenceForModel,
-  K8sKind,
   K8sResourceKindReference,
   K8sResourceKind,
 } from '../../module/k8s';

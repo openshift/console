@@ -3,10 +3,8 @@ import DevPreviewBadge from './DevPreviewBadge';
 import { InlineDevPreviewBadge, InlineTechPreviewBadge } from './InlineBadge';
 import TechPreviewBadge from './TechPreviewBadge';
 
-export enum BadgeType {
-  DEV = 'Dev Preview',
-  TECH = 'Tech Preview',
-}
+import { BadgeType } from '@console/dynamic-plugin-sdk/src/extensions/console-types'
+export { BadgeType } from '@console/dynamic-plugin-sdk/src/extensions/console-types'
 
 export const getBadgeFromType = (badge: BadgeType): React.ReactElement => {
   switch (badge) {
