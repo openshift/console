@@ -25,7 +25,7 @@ func TestGetRegistrySamples(t *testing.T) {
 		wantErr     bool
 	}{
 		{
-			name:     "Fetch the sample placeholder",
+			name:     "Fetch the sample",
 			registry: DEVFILE_STAGING_REGISTRY_URL,
 			wantSamples: []schema.Schema{
 				{
@@ -37,6 +37,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					Type:        schema.SampleDevfileType,
 					ProjectType: "nodejs",
 					Language:    "nodejs",
+					Provider:    "Red Hat",
 					Git: &schema.Git{
 						Remotes: map[string]string{
 							"origin": "https://github.com/nodeshift-starters/devfile-sample.git",
@@ -52,6 +53,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					Type:        schema.SampleDevfileType,
 					ProjectType: "quarkus",
 					Language:    "java",
+					Provider:    "Red Hat",
 					Git: &schema.Git{
 						Remotes: map[string]string{
 							"origin": "https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git",
@@ -67,6 +69,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					Type:        schema.SampleDevfileType,
 					ProjectType: "springboot",
 					Language:    "java",
+					Provider:    "Red Hat",
 					Git: &schema.Git{
 						Remotes: map[string]string{
 							"origin": "https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git",
@@ -82,6 +85,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					Type:        schema.SampleDevfileType,
 					ProjectType: "python",
 					Language:    "python",
+					Provider:    "Red Hat",
 					Git: &schema.Git{
 						Remotes: map[string]string{
 							"origin": "https://github.com/devfile-samples/devfile-sample-python-basic.git",
