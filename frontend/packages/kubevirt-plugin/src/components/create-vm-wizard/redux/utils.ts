@@ -1,5 +1,6 @@
 import { VMWizardTab } from '../types';
 import { finalizeImportProviderStateUpdate } from './finalize-state-update/import-provider-finalize-state-update';
+import { updateAdvancedTabState } from './state-update/advanced-tab-state-update';
 import { updateImportProvidersState } from './state-update/import-provider-tab-state-update';
 import { updateStorageTabState } from './state-update/storage-tab-state-update';
 import { updateVmSettingsState } from './state-update/vm-settings-tab-state-update';
@@ -27,6 +28,7 @@ const updaterResolver = {
   [VMWizardTab.IMPORT_PROVIDERS]: updateImportProvidersState,
   [VMWizardTab.VM_SETTINGS]: updateVmSettingsState,
   [VMWizardTab.STORAGE]: updateStorageTabState,
+  [VMWizardTab.ADVANCED]: updateAdvancedTabState,
 };
 
 const validateTabResolver = {
