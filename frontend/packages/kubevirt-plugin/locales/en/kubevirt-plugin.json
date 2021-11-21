@@ -669,6 +669,7 @@
   "Ease operational complexity with virtualization by using Operators.": "Ease operational complexity with virtualization by using Operators.",
   "VM statuses": "VM statuses",
   "No virtual machines found": "No virtual machines found",
+  "View events": "View events",
   "Service name": "Service name",
   "OpenShift Virtualization version": "OpenShift Virtualization version",
   "Update Channel": "Update Channel",
