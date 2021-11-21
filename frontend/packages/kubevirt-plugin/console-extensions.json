@@ -6,6 +6,17 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "KUBEVIRT_CDI",
+      "model": {
+        "group": "cdi.kubevirt.io",
+        "version": "v1beta1",
+        "kind": "CDIConfig"
+      }
+    }
+  },
+  {
     "type": "console.page/route/standalone",
     "properties": {
       "exact": false,
