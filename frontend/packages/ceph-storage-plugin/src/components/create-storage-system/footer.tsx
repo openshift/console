@@ -172,6 +172,7 @@ const handleReviewAndCreateNext = async (
       await createStorageSystem(subSystemName, subSystemKind);
       if (!hasOCS && !isRhcs) {
         await labelNodes(nodes);
+        if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
         await createStorageCluster(state);
       }
       if (!isRhcs) await waitforCRD(model);
