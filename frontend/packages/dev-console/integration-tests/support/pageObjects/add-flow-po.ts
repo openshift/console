@@ -42,6 +42,7 @@ export const gitPO = {
   pipeline: {
     infoMessage: '[aria-label="Info Alert"]',
     addPipeline: '#form-checkbox-pipeline-enabled-field',
+    pipelineDropdown: '#form-dropdown-pipeline-templateSelected-field',
   },
   resources: {
     deployment: '#form-radiobutton-resources-kubernetes-field',

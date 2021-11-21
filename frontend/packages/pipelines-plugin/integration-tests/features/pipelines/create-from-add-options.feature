@@ -160,20 +160,38 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nginx-ex.git | Nginx         | There are no pipeline templates available for Nginx and Deployment combination. |
 
 
-        @regression @to-do @odc-6372
-        Scenario Outline: Pick a pipeline from git : P-01-TC11
-            Given user has created a custom pipeline from yaml "<pipeline_yaml>" in "openshift" namespace
+        @regression @odc-6372
+        Scenario Outline: Pipeline dropdown in add from git : P-01-TC11
+            Given user is at Import from Git form
+             When user enters Git Repo url in builder image as "<git_url>"
+              And user enters Name as "<application_name>" in General section
+              And user selects resource type as "<resource>"
+              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects "<pipeline_name>" pipeline from the pipeline dropdown menu
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "<application_name>" in topology page
+
+        Examples:
+                  | pipeline_name         | git_url                                 | application_name | resource          |
+                  | s2i-nodejs-deployment | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-1      | Deployment        |
+                  | s2i-python            | https://github.com/sclorg/django-ex.git | django-ex-1      | Deployment Config |
+
+
+        @regression @manual @odc-6372
+        Scenario Outline: Pick a pipeline from git : P-01-TC12
+            Given user has created a custom pipeline from yaml "<pipeline_yaml>" in namespace "openshift"
               And user is at Import from Git form
-             When user enters Git Repo URL as "<git_url>"
-              And user enters Name as "<pipeline_name>" in General section
+             When user enters Git Repo url in builder image as "<git_url>"
+              And user enters Name as "<application_name>" in General section
               And user selects resource type as "<resource>"
               And user selects Add Pipeline checkbox in Pipelines section
               And user selects "<custom_pipeline_name>" pipeline from the pipeline dropdown menu
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user is able to see workload "<pipeline_name>" in topology page
+              And user is able to see workload "<application_name>" in topology page
 
         Examples:
-                  | pipeline_yaml                              | custom_pipeline_name         | git_url                                 | pipeline_name | resource          |
-                  | testData/customNodeDeployment.yaml         | s2i-nodejs-custom-deployment | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-1   | Deployment        |
-                  | testData/customPythonDeploymentConfig.yaml | s2i-python-custom            | https://github.com/sclorg/django-ex.git | django-ex-1   | Deployment Config |
+                  | pipeline_yaml                              | custom_pipeline_name         | git_url                                 | application_name | resource          |
+                  | testData/customNodeDeployment.yaml         | s2i-nodejs-custom-deployment | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-1      | Deployment        |
+                  | testData/customPythonDeploymentConfig.yaml | s2i-python-custom            | https://github.com/sclorg/django-ex.git | django-ex-1      | Deployment Config |

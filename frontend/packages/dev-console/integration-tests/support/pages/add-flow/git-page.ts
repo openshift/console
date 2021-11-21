@@ -27,6 +27,14 @@ export const gitPage = {
       .scrollIntoView()
       .should('be.visible');
   },
+  selectPipeline: (pipelineName: string) => {
+    cy.get(gitPO.pipeline.pipelineDropdown)
+      .scrollIntoView()
+      .click();
+    cy.get(`#${pipelineName}-link`)
+      .should('be.visible')
+      .click();
+  },
   enterAppName: (appName: string) => {
     cy.get('body').then(($body) => {
       if ($body.find('#form-input-application-name-field').length !== 0) {

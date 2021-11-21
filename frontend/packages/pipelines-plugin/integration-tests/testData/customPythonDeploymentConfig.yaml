@@ -3,12 +3,14 @@ kind: Pipeline
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: >
-      {"apiVersion":"tekton.dev/v1beta1","kind":"Pipeline","metadata":{"annotations":{"operator.tekton.dev/preserve-namespace":"true"},"labels":{"pipeline.openshift.io/runtime":"python","pipeline.openshift.io/type":"openshift"},"name":"s2i-python","namespace":"openshift","ownerReferences":[{"apiVersion":"operator.tekton.dev/v1alpha1","blockOwnerDeletion":true,"controller":true,"kind":"TektonAddon","name":"addon","uid":"3de62a04-ff64-4554-9cc2-48a013ba80e2"}]},"spec":{"params":[{"name":"APP_NAME","type":"string"},{"name":"GIT_REPO","type":"string"},{"name":"GIT_REVISION","type":"string"},{"name":"IMAGE_NAME","type":"string"},{"default":".","name":"PATH_CONTEXT","type":"string"},{"default":"3.8-ubi8","name":"VERSION","type":"string"}],"tasks":[{"name":"fetch-repository","params":[{"name":"url","value":"$(params.GIT_REPO)"},{"name":"revision","value":"$(params.GIT_REVISION)"},{"name":"subdirectory","value":""},{"name":"deleteExisting","value":"true"}],"taskRef":{"kind":"ClusterTask","name":"git-clone"},"workspaces":[{"name":"output","workspace":"workspace"}]},{"name":"build","params":[{"name":"IMAGE","value":"$(params.IMAGE_NAME)"},{"name":"TLSVERIFY","value":"false"},{"name":"PATH_CONTEXT","value":"$(params.PATH_CONTEXT)"},{"name":"VERSION","value":"$(params.VERSION)"}],"runAfter":["fetch-repository"],"taskRef":{"kind":"ClusterTask","name":"s2i-python"},"workspaces":[{"name":"source","workspace":"workspace"}]},{"name":"deploy","params":[{"name":"SCRIPT","value":"oc
+      {"apiVersion":"tekton.dev/v1beta1","kind":"Pipeline","metadata":{"annotations":{"operator.tekton.dev/preserve-namespace":"true"},"labels":{"pipeline.openshift.io/runtime":"python","pipeline.openshift.io/type":"openshift"},"name":"s2i-python","namespace":"openshift","ownerReferences":[{"apiVersion":"operator.tekton.dev/v1alpha1","blockOwnerDeletion":true,"controller":true,"kind":"TektonAddon","name":"addon","uid":"3e3d6bd4-1405-4943-914b-9ef6fef29745"}]},"spec":{"params":[{"name":"APP_NAME","type":"string"},{"name":"GIT_REPO","type":"string"},{"name":"GIT_REVISION","type":"string"},{"name":"IMAGE_NAME","type":"string"},{"default":".","name":"PATH_CONTEXT","type":"string"},{"default":"3.8-ubi8","name":"VERSION","type":"string"}],"tasks":[{"name":"fetch-repository","params":[{"name":"url","value":"$(params.GIT_REPO)"},{"name":"revision","value":"$(params.GIT_REVISION)"},{"name":"subdirectory","value":""},{"name":"deleteExisting","value":"true"}],"taskRef":{"kind":"ClusterTask","name":"git-clone"},"workspaces":[{"name":"output","workspace":"workspace"}]},{"name":"build","params":[{"name":"IMAGE","value":"$(params.IMAGE_NAME)"},{"name":"TLSVERIFY","value":"false"},{"name":"PATH_CONTEXT","value":"$(params.PATH_CONTEXT)"},{"name":"VERSION","value":"$(params.VERSION)"}],"runAfter":["fetch-repository"],"taskRef":{"kind":"ClusterTask","name":"s2i-python"},"workspaces":[{"name":"source","workspace":"workspace"}]},{"name":"deploy","params":[{"name":"SCRIPT","value":"oc
       rollout status
       dc/$(params.APP_NAME)"}],"runAfter":["build"],"taskRef":{"kind":"ClusterTask","name":"openshift-client"}}],"workspaces":[{"name":"workspace"}]}}
     operator.tekton.dev/preserve-namespace: 'true'
-  resourceVersion: '179960'
+  resourceVersion: '34095'
   name: s2i-python-custom
+  uid: 9b810e1c-13a4-4430-9a9e-2c280f4125b6
+  creationTimestamp: '2021-11-21T18:28:57Z'
   generation: 1
   managedFields:
     - apiVersion: tekton.dev/v1beta1
@@ -25,7 +27,7 @@ metadata:
             'f:pipeline.openshift.io/type': {}
           'f:ownerReferences':
             .: {}
-            'k:{"uid":"3de62a04-ff64-4554-9cc2-48a013ba80e2"}': {}
+            'k:{"uid":"3e3d6bd4-1405-4943-914b-9ef6fef29745"}': {}
         'f:spec':
           .: {}
           'f:params': {}
@@ -33,7 +35,7 @@ metadata:
           'f:workspaces': {}
       manager: manifestival
       operation: Update
-      time: '2021-10-29T07:50:47Z'
+      time: '2021-11-21T18:29:13Z'
   namespace: openshift
   ownerReferences:
     - apiVersion: operator.tekton.dev/v1alpha1
@@ -41,7 +43,7 @@ metadata:
       controller: true
       kind: TektonAddon
       name: addon
-      uid: 3de62a04-ff64-4554-9cc2-48a013ba80e2
+      uid: 3e3d6bd4-1405-4943-914b-9ef6fef29745
   labels:
     pipeline.openshift.io/runtime: python
     pipeline.openshift.io/type: openshift
