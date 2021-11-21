@@ -75,7 +75,12 @@ export const getResources = () => (dispatch: Dispatch) => {
     // eslint-disable-next-line no-console
     .catch((err) => console.error(err))
     .finally(() => {
-      setTimeout(fetchSwagger, 10000);
+      setTimeout(() => {
+        fetchSwagger().catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error('Could not fetch OpenAPI yaml after fetching all resources.', e);
+        });
+      }, 10000);
     });
 };
 
