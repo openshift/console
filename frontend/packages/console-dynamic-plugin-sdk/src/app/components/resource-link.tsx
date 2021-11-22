@@ -6,13 +6,13 @@ import * as classNames from 'classnames';
 import { FLAGS } from '@console/shared/src/constants';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon } from './resource-icon';
-import  { K8sKind } from '../../extensions/console-types';
+import  { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../../extensions/console-types';
+
+import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+
 import {
   modelFor,
-  referenceForModel,
-  K8sResourceKindReference,
-  K8sResourceKind,
-} from '../../module/k8s';
+} from '../../utils/k8s';
 import { connectToFlags } from '../../reducers/connectToFlags';
 import { FlagsObject } from '../../reducers/features';
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -33,7 +33,7 @@ export const resourcePathFromModel = (model: K8sKind, name?: string, namespace?:
   }
 
   if (crd) {
-    url += referenceForModel(model);
+    url += getReferenceForModel(model);
   } else if (plural) {
     url += plural;
   }

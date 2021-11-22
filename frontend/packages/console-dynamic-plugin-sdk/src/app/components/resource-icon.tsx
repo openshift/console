@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKindReference } from '../../module/k8s';
-import { modelFor } from '../../module/k8s/k8s-models';
-import { kindToAbbr } from '../../module/k8s/get-resources';
+import { K8sResourceKindReference } from '../../extensions/console-types';
+import { modelFor } from '../../utils/k8s';
+import { kindToAbbr } from '../../utils/k8s';
 
 const MEMO = {};
 

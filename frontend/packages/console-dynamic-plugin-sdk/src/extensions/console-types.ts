@@ -8,6 +8,7 @@ import {
   PrometheusValue,
   ResolvedExtension,
   Selector,
+  MatchLabels,
 } from '../api/common-types';
 import { Extension, ExtensionTypeGuard } from '../types';
 
@@ -490,4 +491,15 @@ export type K8sKind = {
   // This should not be set for new models, but is needed to avoid breaking
   // existing links as we transition to using the API group in URL paths.
   legacyPluralURL?: boolean;
+};
+
+// Generic, unknown kind. Avoid when possible since it allows any key in spec
+// or status, weakening type checking.
+export type K8sResourceKind = K8sResourceCommon & {
+  spec?: {
+    selector?: Selector | MatchLabels;
+    [key: string]: any;
+  };
+  status?: { [key: string]: any };
+  data?: { [key: string]: any };
 };

@@ -1,14 +1,15 @@
 import { JSONSchema7 } from 'json-schema';
-import { BadgeType, NodeAddress } from '@console/shared';
+import { NodeAddress } from '@console/shared';
 import {
   ObjectReference,
   ObjectMetadata,
   K8sResourceCommon,
   K8sVerb,
   AccessReviewResourceAttributes,
+  K8sResourceKind,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
-import { Selector, MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 export * from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -56,17 +57,6 @@ export type Toleration = {
   operator: TolerationOperator;
   tolerationSeconds?: number;
   value?: string;
-};
-
-// Generic, unknown kind. Avoid when possible since it allows any key in spec
-// or status, weakening type checking.
-export type K8sResourceKind = K8sResourceCommon & {
-  spec?: {
-    selector?: Selector | MatchLabels;
-    [key: string]: any;
-  };
-  status?: { [key: string]: any };
-  data?: { [key: string]: any };
 };
 
 export type VolumeMount = {
