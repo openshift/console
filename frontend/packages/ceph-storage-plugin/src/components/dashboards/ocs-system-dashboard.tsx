@@ -173,7 +173,7 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
   }, [pages, showInternalDashboard, isIndependent, internalPage, externalPage]);
 
   React.useEffect(() => {
-    if (isObjectServiceAvailable && !isPagePresent(pages, objectPage)) {
+    if (!isObjectServiceAvailable && !isPagePresent(pages, objectPage)) {
       const tempPages = [...pages, objectPage];
       const sortedPages = tempPages.sort(sortPages);
       setPages(sortedPages);
