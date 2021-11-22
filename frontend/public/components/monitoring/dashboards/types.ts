@@ -91,3 +91,7 @@ export type Board = {
   };
   name: string;
 };
+
+export type TimeDropdownsProps = {
+  namespace?: string;
+};
