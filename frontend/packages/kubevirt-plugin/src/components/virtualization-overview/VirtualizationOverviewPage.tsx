@@ -8,12 +8,14 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { KUBEVIRT_QUICK_START_USER_SETTINGS_KEY } from './getting-started-card/const';
 import { GettingStartedContainerCard } from './getting-started-card/GettingStartedContainerCard';
+import { VirtOverviewInventoryCard } from './inventory-card/VirtOverviewInventoryCard';
+import { VirtOverviewActivityCard } from './VirtOverviewActivityCard';
 import { VirtOverviewDetailsCard } from './VirtOverviewDetailsCard';
 import { VirtOverviewStatusCard } from './VirtOverviewStatusCard';
 
 const leftCards = [{ Card: VirtOverviewDetailsCard }];
-const mainCards = [{ Card: VirtOverviewStatusCard }];
-const rightCards = [];
+const mainCards = [{ Card: VirtOverviewStatusCard }, { Card: VirtOverviewInventoryCard }];
+const rightCards = [{ Card: VirtOverviewActivityCard }];
 
 export const WrappedVirtualizationOverviewPage: React.FC = () => {
   const { t } = useTranslation();

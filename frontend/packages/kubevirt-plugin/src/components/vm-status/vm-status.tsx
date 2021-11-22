@@ -199,13 +199,12 @@ export const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
   )}/${VM_DETAIL_EVENTS_HREF}`;
 
 export const getVMStatusIcon = (
-  isPaused: boolean,
   status: VMStatusEnum,
   arePendingChanges: boolean,
 ): React.ComponentClass | React.FC => {
   let icon: React.ComponentClass | React.FC = UnknownIcon;
 
-  if (isPaused) {
+  if (status === VMStatusEnum.PAUSED) {
     icon = PausedIcon;
   } else if (status === VMStatusEnum.RUNNING) {
     icon = SyncAltIcon;
@@ -257,7 +256,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({
     links.push({ to: `${getPodLink(pod)}/logs`, message: VIEW_POD_LOGS });
   }
 
-  const Icon = getVMStatusIcon(isPaused, status, arePendingChanges);
+  const Icon = getVMStatusIcon(status, arePendingChanges);
 
   return (
     <GenericStatus title={title} Icon={Icon} popoverTitle={popoverTitle}>

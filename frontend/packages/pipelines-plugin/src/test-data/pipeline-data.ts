@@ -102,6 +102,7 @@ const pipelineSpec: PipelineSpecData = {
         taskRef: { name: 'noop-task' },
       },
     ],
+    finally: [],
   },
   [PipelineExampleNames.CLUSTER_PIPELINE]: {
     tasks: [

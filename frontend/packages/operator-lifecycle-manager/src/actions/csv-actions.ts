@@ -33,9 +33,8 @@ export const CSVDefaultActions = {
       label: i18next.t('olm~Delete {{item}}', { item: kindObj.label }),
       cta: () => {
         deleteModal({
-          kindObj,
+          kind: kindObj,
           resource,
-          namespace: resource.metadata.namespace,
           redirectTo: `/k8s/ns/${resource.metadata.namespace}/${
             ClusterServiceVersionModel.plural
           }/${csvName || csvNameFromWindow()}/${referenceFor(resource)}`,

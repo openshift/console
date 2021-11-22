@@ -17,7 +17,7 @@ dl.co-inline {
     padding-left: $pf-global-gutter--md;
     padding-right: $pf-global-gutter--md;
   }
-  &--full-height{
+  &--full-height {
     height: 100%;
   }
   &--no-top-margin {
@@ -273,6 +273,24 @@ dl.co-inline {
 // Enable break word within co-m-table-grid
 .co-external-link--block {
   display: block;
+}
+
+.co-external-link-with-copy {
+  display: inline-block;
+  padding-right: $co-external-link-padding-right;
+  &__icon {
+    color: var(--pf-global--link--Color);
+    cursor: pointer;
+    &:hover {
+      color: var(--pf-global--Color--300);
+    }
+  }
+  &__externallinkicon {
+    padding-left: var(--pf-global--spacer--xs);
+  }
+  &__copyicon {
+    margin-left: var(--pf-global--spacer--md);
+  }
 }
 
 .co-goto-arrow::after {

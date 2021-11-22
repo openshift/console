@@ -54,6 +54,7 @@ import { VMIKind, VMKind } from '../../../types';
 import { V1AddVolumeOptions } from '../../../types/api';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import {
+  buildOwnerReference,
   getDialogUIError,
   getLoadedData,
   getSequenceName,
@@ -265,7 +266,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
       .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null)
       .setPreallocationDisk(enablePreallocation)
-      .setNamespace(vmNamespace);
+      .setNamespace(vmNamespace)
+      .addOwnerReferences(buildOwnerReference(vm));
   }
 
   let resultPersistentVolumeClaim: PersistentVolumeClaimWrapper;

@@ -56,7 +56,7 @@ export const checkSSHKeys = (
   errorCatcher: ErrorCatcher,
   t: Function,
 ) => {
-  ((obj?.ssh_authorized_keys as string[]) || []).map(
+  [obj?.ssh_authorized_keys].map(
     (key: string, index: number) =>
       key && errorCatcher.removeError(['ssh_authorized_keys', index.toString()]),
   );
