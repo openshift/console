@@ -4,7 +4,7 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
-import { devNavigationMenuPO, formPO, gitPO, yamlPO } from '../pageObjects';
+import { devNavigationMenuPO, formPO, gitPO, topologyPO, yamlPO } from '../pageObjects';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -76,6 +76,11 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.get(devNavigationMenuPO.topology).click();
       cy.url().should('include', 'topology');
       app.waitForLoad();
+      cy.url().then(($url) => {
+        if ($url.includes('view=list')) {
+          cy.get(topologyPO.switcher).click({ force: true });
+        }
+      });
       // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
       // cy.testA11y('Topology Page in dev perspective');
       break;

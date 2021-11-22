@@ -45,4 +45,5 @@ export const pageTitle = {
   UploadJarFile: 'Upload JAR file',
   KnativeServings: 'KnativeServings',
   KnativeEventings: 'KnativeEventings',
+  CreateRepository: 'Create Repository',
 };

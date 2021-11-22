@@ -72,6 +72,10 @@ Then('user is able to see the pipelineRuns with status as Running', () => {
   pipelineRunDetailsPage.fieldDetails('Status', 'Running');
 });
 
+Then('user is able to see the pipelineRuns with status as Succeeded', () => {
+  pipelineRunDetailsPage.fieldDetails('Status', 'Succeeded');
+});
+
 Then('pipeline run details for {string} display in Pipelines page', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(pipelineName);
@@ -155,6 +159,39 @@ When('user selects the Pipeline Run for {string}', (pipelineName: string) => {
 When('user selects Rerun option from kebab menu of {string}', (pipelineName: string) => {
   pipelineRunsPage.selectKebabMenu(pipelineName);
   cy.byTestActionID(pipelineActions.Rerun).click();
+});
+
+let numOfPipelineRunsBeforeDeletion: number;
+let numOfPipelineRunsAfterDeletion: number;
+
+When(
+  'user selects Delete PipelineRun option from kebab menu of {string}',
+  (pipelineName: string) => {
+    cy.get(pipelineRunsPO.pipelineRunsTable.table)
+      .find('tr')
+      .then(($ele) => {
+        numOfPipelineRunsBeforeDeletion = $ele.length;
+      });
+    pipelineRunsPage.selectKebabMenu(pipelineName);
+    cy.byTestActionID(pipelineActions.DeletePipelineRun).click({ force: true });
+  },
+);
+
+Then('pipeline run is deleted from pipeline runs page', () => {
+  // Reload is added, because pipeline run is not getting deleted immediately
+  cy.reload();
+  cy.get(pipelineRunsPO.pipelineRunsTable.table)
+    .find('tr')
+    .then(($ele) => {
+      numOfPipelineRunsAfterDeletion = $ele.length;
+      expect(numOfPipelineRunsAfterDeletion).toBeLessThan(numOfPipelineRunsBeforeDeletion);
+    });
+});
+
+When('user clicks Delete button present in Delete PipelineRun modal', () => {
+  modal.modalTitleShouldContain('Delete PipelineRun?');
+  modal.submit(true);
+  modal.shouldBeClosed();
 });
 
 Given('user is at the Pipeline Run Details page of pipeline {string}', (pipelineName: string) => {
@@ -271,15 +308,10 @@ When('user starts the pipeline from start pipeline modal', () => {
   pipelineRunDetailsPage.verifyTitle();
 });
 
-Then(
-  'Last Run status of the {string} displays as {string} in topology page',
-  (name: string, status: string) => {
-    topologyPage.search(name);
-    topologyPage.clickOnNode(name);
-    topologySidePane.verify();
-    topologyPage.verifyPipelineRunStatus(status);
-  },
-);
+Then('Last Run status of the workload displays as {string} in topology page', (status: string) => {
+  topologySidePane.verify();
+  topologyPage.verifyPipelineRunStatus(status);
+});
 
 When('user clicks Actions menu on the top right corner of the page', () => {
   actionsDropdownMenu.clickActionMenu();
@@ -305,6 +337,12 @@ Then(
     cy.byTestActionID(option2).should('be.visible');
   },
 );
+
+Then('Actions menu contains options {string}, {string}', (option1: string, option2: string) => {
+  actionsDropdownMenu.clickActionMenu();
+  cy.byTestActionID(option1).should('be.visible');
+  cy.byTestActionID(option2).should('be.visible');
+});
 
 Then('user is able to see pipeline run in topology side bar', () => {
   topologySidePane.verifyPipelineRuns();

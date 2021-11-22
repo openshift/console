@@ -32,7 +32,7 @@ export const pipelineBuilderSidePane = {
     pipelineBuilderSidePane.verifyDialog();
     cy.get(pipelineBuilderPO.formView.sidePane.parameterRevisionHelper).should(
       'contain.text',
-      pipelineBuilderText.formView.sidePane.ParamterRevisionHelper,
+      pipelineBuilderText.formView.sidePane.ParameterRevisionHelper,
     );
     cy.get(pipelineBuilderPO.formView.sidePane.parameterRevision).type(revision);
   },
@@ -58,8 +58,8 @@ export const pipelineBuilderPage = {
       .type(pipelineName);
   },
   AddTask: (taskName: string = 'kn') => {
-    cy.get('input.ocs-quick-search-bar__input').type(taskName);
-    cy.get('button.ocs-quick-search-details__form-button').click();
+    cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
+    cy.byTestID('task-cta').click();
   },
   selectTask: (taskName: string = 'kn') => {
     cy.get('body').then(($body) => {

@@ -1,5 +1,6 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
+import { pipelineDetailsTabs } from '../../constants';
 import {
   clusterTriggerBindingDetailsPO,
   eventListenerDetailsPO,
@@ -37,34 +38,40 @@ export const pipelineDetailsPage = {
 
   selectTriggerTemplateLink: () => cy.get(pipelineDetailsPO.details.triggerTemplateLink).click(),
 
-  selectTab: (tabName: string) => {
+  selectTab: (tabName: string | pipelineDetailsTabs) => {
     cy.log(`Selecting the ${tabName} tab`);
     switch (tabName) {
+      case pipelineDetailsTabs.Details:
       case 'Details': {
         cy.get(pipelineDetailsPO.detailsTab).click();
         cy.get(pipelineDetailsPO.details.sectionTitle).should('be.visible');
         break;
       }
+      case pipelineDetailsTabs.YAML:
       case 'YAML': {
         cy.get(pipelineDetailsPO.yamlTab).click();
         cy.get(pipelineDetailsPO.yaml.yamlEditor).should('be.visible');
         break;
       }
+      case pipelineDetailsTabs.PipelineRuns:
       case 'Pipeline Runs': {
         cy.get(pipelineDetailsPO.pipelineRunsTab).click();
         cy.url().should('include', 'Runs');
         break;
       }
+      case pipelineDetailsTabs.Parameters:
       case 'Parameters': {
         cy.get(pipelineDetailsPO.parametersTab).click();
         cy.url().should('include', 'Parameters');
         break;
       }
+      case pipelineDetailsTabs.Resources:
       case 'Resources': {
         cy.get(pipelineDetailsPO.resourcesTab).click();
         cy.url().should('include', 'resources');
         break;
       }
+      case pipelineDetailsTabs.Metrics:
       case 'Metrics': {
         cy.get(pipelineDetailsPO.metricsTab).click();
         cy.url().should('include', 'metrics');
@@ -94,7 +101,7 @@ export const triggerTemplateDetailsPage = {
     cy.get(triggerTemplateDetailsPO.yamlTab).should('be.visible');
   },
   verifyFields: () => {
-    cy.get('[data-test-id="resource-summary"]').within(() => {
+    cy.byLegacyTestID('resource-summary').within(() => {
       cy.get(triggerTemplateDetailsPO.details.fieldNames.name).should('be.visible');
       cy.get(triggerTemplateDetailsPO.details.fieldNames.namespace).should('be.visible');
       cy.get(triggerTemplateDetailsPO.details.fieldNames.labels).should('be.visible');
@@ -122,7 +129,7 @@ export const eventListenerDetailsPage = {
     cy.get(triggerTemplateDetailsPO.yamlTab).should('be.visible');
   },
   verifyFields: () => {
-    cy.get('[data-test-id="resource-summary"]').within(() => {
+    cy.byLegacyTestID('resource-summary').within(() => {
       cy.get(triggerTemplateDetailsPO.details.fieldNames.name).should('be.visible');
       cy.get(triggerTemplateDetailsPO.details.fieldNames.namespace).should('be.visible');
       cy.get(triggerTemplateDetailsPO.details.fieldNames.labels).should('be.visible');
@@ -152,7 +159,7 @@ export const clusterTriggerBindingDetailsPage = {
     cy.get(triggerTemplateDetailsPO.yamlTab).should('be.visible');
   },
   verifyFields: () => {
-    cy.get('[data-test-id="resource-summary"]').within(() => {
+    cy.byLegacyTestID('resource-summary').within(() => {
       cy.get(triggerTemplateDetailsPO.details.fieldNames.name).should('be.visible');
       cy.get(triggerTemplateDetailsPO.details.fieldNames.labels).should('be.visible');
       cy.get(triggerTemplateDetailsPO.details.fieldNames.annotations).should('be.visible');
