@@ -139,7 +139,7 @@ func TestProxy_IndexFile(t *testing.T) {
 			helmNamespaceCRS: []*unstructured.Unstructured{
 				{
 					Object: map[string]interface{}{
-						"apiVersion": "helm.openshift.io/v1",
+						"apiVersion": "helm.openshift.io/v1beta1",
 						"kind":       "ProjectHelmChartRepository",
 						"metadata": map[string]interface{}{
 							"namespace": "test-namespace",

@@ -29,7 +29,7 @@ func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Uns
 func newScheme() *runtime.Scheme {
 	scheme := runtime.NewScheme()
 	scheme.AddKnownTypeWithName(schema.GroupVersionKind{Group: "helm.openshift.io", Version: "v1beta1", Kind: "HelmChartRepositoryList"}, &unstructured.UnstructuredList{})
-	scheme.AddKnownTypeWithName(schema.GroupVersionKind{Group: "helm.openshift.io", Version: "v1", Kind: "ProjectHelmChartRepositoryList"}, &unstructured.UnstructuredList{})
+	scheme.AddKnownTypeWithName(schema.GroupVersionKind{Group: "helm.openshift.io", Version: "v1beta1", Kind: "ProjectHelmChartRepositoryList"}, &unstructured.UnstructuredList{})
 	return scheme
 }
 
@@ -69,7 +69,7 @@ func K8sDynamicClientMultipleNamespace(ns string, indexFilesCluster []string, in
 	}
 
 	for i, indexFile := range indexFilesNamespace {
-		fakeCr := fakeHelmCR("helm.openshift.io/v1", "ProjectHelmChartRepository", ns, "sample-namespace-repo-"+strconv.Itoa(i+1), indexFile)
+		fakeCr := fakeHelmCR("helm.openshift.io/v1beta1", "ProjectHelmChartRepository", ns, "sample-namespace-repo-"+strconv.Itoa(i+1), indexFile)
 		objs = append(objs, fakeCr)
 	}
 
