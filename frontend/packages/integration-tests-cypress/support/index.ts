@@ -41,6 +41,20 @@ after(() => {
   });
 });
 
+Cypress.on('uncaught:exception', (err, runnable, promise) => {
+  // when the exception originated from an unhandled promise
+  // rejection, the promise is provided as a third argument
+  // you can turn off failing the test in this case
+  cy.task('logError', `---> Uncaught Exception: ${err}`);
+  if (promise) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    cy.task('logError', `---> Unhandled Promise Rejection:${promise.reason} ${promise.stackTrace}`);
+  }
+  // we still want to ensure there are no other unexpected
+  // errors, so we let them fail the test
+});
+
 export const checkErrors = () =>
   cy.window().then((win) => {
     assert.isTrue(!win.windowError, win.windowError);
