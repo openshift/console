@@ -50,8 +50,8 @@
       "section": "virtualization",
       "perspective": "admin",
       "name": "%kubevirt-plugin~Overview%",
-      "href": "/virtualization/overview",
-      "prefixNamespaced": false
+      "href": "/virtualizationoverview",
+      "prefixNamespaced": true
     },
     "flags": {
       "required": ["KUBEVIRT"]
@@ -210,7 +210,8 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/virtualization/overview"],
+      "exact": true,
+      "path": ["/k8s/ns/:ns/virtualizationoverview", "/k8s/all-namespaces/virtualizationoverview"],
       "component": {
         "$codeRef": "VirtualizationOverviewPage.VirtualizationOverviewPage"
       }

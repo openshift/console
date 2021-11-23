@@ -49,7 +49,7 @@ export const VirtOverviewDetailsCard: React.FC = () => {
               {catalogSourceMissing ? (
                 <SourceMissingStatus />
               ) : (
-                <SubscriptionStatus subscription={kubevirtSub} />
+                kubevirtSub && <SubscriptionStatus subscription={kubevirtSub} />
               )}
             </div>
           </DetailItem>

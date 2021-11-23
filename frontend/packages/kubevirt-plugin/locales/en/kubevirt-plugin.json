@@ -681,6 +681,7 @@
   "Update Channel": "Update Channel",
   "View alerts": "View alerts",
   "Virtualization Overview": "Virtualization Overview",
+  "No access to virtual machines": "No access to virtual machines",
   "Windows tools: {{container}}": "Windows tools: {{container}}",
   "Container: {{container}}": "Container: {{container}}",
   "PVC: {{ pvc }}": "PVC: {{ pvc }}",

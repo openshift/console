@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {
+  Alert,
+  AlertVariant,
   EmptyState,
   EmptyStateIcon,
   Flex,
@@ -12,7 +14,7 @@ import { VirtualMachineIcon } from '@patternfly/react-icons';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared';
+import { useActiveNamespace, useFlag } from '@console/shared';
 import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../../flags/const';
 import { isVM, isVMI } from '../../../selectors/check-type';
 import { getVMStatus } from '../../../statuses/vm/vm-status';
@@ -44,6 +46,10 @@ const LoadingComponent: React.FC = () => (
       </Flex>
     </GridItem>
   </Grid>
+);
+
+const ErrorComponent: React.FC<{ error: any }> = ({ error }) => (
+  <Alert isInline variant={AlertVariant.danger} title={error?.message} />
 );
 
 const EmptyVMStatusState: React.FC = () => {
@@ -102,11 +108,13 @@ const getVmStatusCounts = (vms, statusResources, printableVmStatusFlag) => {
 export type VmStatusesSectionProps = {
   vms: K8sResourceKind[];
   vmsLoaded: boolean;
+  error?: any;
 };
 
-export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLoaded }) => {
+export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLoaded, error }) => {
+  const [namespace] = useActiveNamespace();
   const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
-  const statusResources = useVmStatusResources(undefined);
+  const statusResources = useVmStatusResources(namespace);
   const statusCounts = getVmStatusCounts(vms, statusResources, printableVmStatusFlag);
 
   const statusItems = [];
@@ -114,7 +122,7 @@ export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLo
     const status = key as string;
     const count = value as number;
     statusItems.push(
-      <FlexItem>
+      <FlexItem key={status}>
         <VMStatusInventoryItem status={status} count={count} />
       </FlexItem>,
     );
@@ -122,10 +130,10 @@ export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLo
 
   const numStatuses = statusItems.length;
   const leftColumnStatusItems = statusItems.splice(Math.floor(statusItems.length / 2));
-
   return (
     <>
-      {!vmsLoaded && <LoadingComponent />}
+      {!vmsLoaded && !error && <LoadingComponent />}
+      {error && <ErrorComponent error={error} />}
       {numStatuses === 0 && vmsLoaded && <EmptyVMStatusState />}
       {numStatuses > 0 && vmsLoaded && (
         <Grid hasGutter className="kv-inventory-card__statuses-grid">

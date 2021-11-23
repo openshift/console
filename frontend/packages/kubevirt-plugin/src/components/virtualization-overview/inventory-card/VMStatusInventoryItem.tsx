@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { OffIcon, PausedIcon, SyncAltIcon, InProgressIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import {
+  RedExclamationCircleIcon,
+  useActiveNamespace,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
+import { VirtualMachineModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 
 import './vm-status-inventory-item.scss';
 
@@ -34,8 +41,13 @@ export type VMStatusInventoryItemProps = {
 };
 
 export const VMStatusInventoryItem: React.FC<VMStatusInventoryItemProps> = ({ status, count }) => {
+  const [namespace] = useActiveNamespace();
   const Icon = getVMStatusIcon(status);
-  const to = `/k8s/all-namespaces/virtualization?rowFilter-vm-status=${status}`;
+  const to = `${resourcePathFromModel(
+    getKubevirtAvailableModel(VirtualMachineModel),
+    null,
+    namespace,
+  )}?rowFilter-vm-status=${status}`;
 
   return (
     <div className="co-inventory-card__status">

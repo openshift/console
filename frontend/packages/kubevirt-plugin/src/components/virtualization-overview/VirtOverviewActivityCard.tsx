@@ -29,6 +29,7 @@ import {
   isDashboardsOverviewResourceActivity,
   isDashboardsOverviewPrometheusActivity,
 } from '@console/plugin-sdk';
+import { useActiveNamespace } from '@console/shared';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
@@ -41,17 +42,17 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
-const viewEvents = '/k8s/all-namespaces/events';
 const eventTypes = [VirtualMachineModel.kind, VirtualMachineInstanceModel.kind, 'HyperConverged'];
 
 const RecentEvent = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource, resources }) => {
+    const [namespace] = useActiveNamespace();
     React.useEffect(() => {
-      watchK8sResource(eventsResource);
+      watchK8sResource({ ...eventsResource, namespace });
       return () => {
         stopWatchK8sResource(eventsResource);
       };
-    }, [watchK8sResource, stopWatchK8sResource]);
+    }, [watchK8sResource, stopWatchK8sResource, namespace]);
 
     const events = resources?.events?.loaded ? (resources.events.data as EventKind[]) : [];
     const filteredEvents = events.filter((e) => eventTypes.includes(e.involvedObject.kind));
@@ -60,7 +61,9 @@ const RecentEvent = withDashboardResources(
       data: filteredEvents,
     };
 
-    return <RecentEventsBody events={wrappedFilteredEvents} moreLink={viewEvents} />;
+    return (
+      <RecentEventsBody events={wrappedFilteredEvents} moreLink={`/k8s/ns/${namespace}/events`} />
+    );
   },
 );
 
@@ -79,6 +82,8 @@ const OngoingActivity = connect(mapStateToProps)(
       prometheusResults,
       models,
     }: DashboardItemProps & OngoingActivityProps) => {
+      const [namespace] = useActiveNamespace();
+
       const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
         isDashboardsOverviewResourceActivity,
       );
@@ -103,7 +108,7 @@ const OngoingActivity = connect(mapStateToProps)(
 
       React.useEffect(() => {
         resourceActivities.forEach((a, index) => {
-          watchK8sResource(uniqueResource(a.properties.k8sResource, index));
+          watchK8sResource(uniqueResource({ ...a.properties.k8sResource, namespace }, index));
         });
         [...prometheusActivities, ...dynamicPrometheusActivities].forEach((a) =>
           a.properties.queries.forEach((q) => watchPrometheus(q)),
@@ -117,6 +122,7 @@ const OngoingActivity = connect(mapStateToProps)(
           );
         };
       }, [
+        namespace,
         watchK8sResource,
         stopWatchK8sResource,
         watchPrometheus,
@@ -205,11 +211,14 @@ const OngoingActivity = connect(mapStateToProps)(
 
 export const VirtOverviewActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
+  const [namespace] = useActiveNamespace();
   return (
     <DashboardCard gradient data-test-id="kubevirt-activity-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('public~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={viewEvents}>{t('kubevirt-plugin~View events')}</DashboardCardLink>
+        <DashboardCardLink to={`/k8s/ns/${namespace}/events`}>
+          {t('kubevirt-plugin~View events')}
+        </DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody className="co-overview-dashboard__activity-body">
