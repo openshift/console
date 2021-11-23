@@ -323,3 +323,11 @@ Feature: Pipeline Runs
              When user hovers over the diamond before the skipped Conditional task
              Then user can see tooltip with "When expression was not met" mentioned on it
               And user can see grey color associated with the diamond to represent condition not met
+
+
+        @regression @manual @odc-6303
+        Scenario: Show failed PipelineRun log snippet on the log page: P-07-TC33
+            Given pipeline is present on Pipeline Details page
+             When user selects "Start" option from kebab menu for pipeline "pipeline-two"
+              And user navigates to pipelineRun logs tab
+             Then user is able to see "Log snippet" for failure
