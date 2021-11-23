@@ -511,7 +511,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: mockModels.StorageSystemMockModel,
       page: {
-        name: '%ceph-storage-plugin~Storage Systems%',
+        name: '%ceph-storage-plugin~Storage System%',
         href: 'systems',
       },
       loader: async () =>
