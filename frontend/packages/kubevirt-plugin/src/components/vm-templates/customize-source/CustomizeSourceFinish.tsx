@@ -146,9 +146,9 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
               <ItemStatus
                 error={!!disksError}
                 success={disksSuccess}
-                errorMsg={t('kubevirt-plugin~Error patching template disks')}
-                successMsg={t('kubevirt-plugin~Template disks patched')}
-                progressMsg={t('kubevirt-plugin~Patching template disks')}
+                errorMsg={t('kubevirt-plugin~Error modifying template disks')}
+                successMsg={t('kubevirt-plugin~Template disks modified')}
+                progressMsg={t('kubevirt-plugin~Modifying template disks')}
               />
               <ItemStatus
                 error={!!vmError}
