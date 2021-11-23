@@ -1,4 +1,4 @@
-import { CloudInitField, CommonData } from '../../types';
+import { CloudInitField, CommonData, HardwareDevicesField } from '../../types';
 import { InitialStepStateGetter } from './types';
 
 export const getAdvancedTabInitialData: InitialStepStateGetter = (data: CommonData) => ({
@@ -8,6 +8,15 @@ export const getAdvancedTabInitialData: InitialStepStateGetter = (data: CommonDa
     },
     [CloudInitField.AUTH_KEYS]: {
       value: [],
+    },
+    [HardwareDevicesField.GPUS]: {
+      value: [],
+    },
+    [HardwareDevicesField.HOST_DEVICES]: {
+      value: [],
+    },
+    [HardwareDevicesField.IS_DEVICES_INITIALIZED]: {
+      value: false,
     },
   },
   error: null,

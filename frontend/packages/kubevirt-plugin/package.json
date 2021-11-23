@@ -68,7 +68,8 @@
       "kubevirtFlags": "src/flags",
       "topologySidebar": "src/topology/vm-tab-sections.tsx",
       "actions": "src/actions/provider.ts",
-      "HardwareDevicesPage": "src/components/hardware-devices/Page/HardwareDevicesPage.tsx"
+      "HardwareDevicesPage": "src/components/hardware-devices/Page/HardwareDevicesPage.tsx",
+      "VirtualizationOverviewPage": "src/components/virtualization-overview/VirtualizationOverviewPage.tsx"
     }
   }
 }

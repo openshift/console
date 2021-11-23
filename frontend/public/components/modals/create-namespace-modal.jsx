@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Popover, Button } from '@patternfly/react-core';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
-import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
+import { ExternalLink, isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
 
 import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
@@ -135,6 +135,10 @@ const CreateNamespaceModalWithTranslation = connect(
         );
       };
 
+      const projectsLink = isUpstream()
+        ? `${openshiftHelpBase}applications/projects/working-with-projects.html`
+        : `${openshiftHelpBase}html/building_applications/projects#working-with-projects`;
+
       return (
         <form
           onSubmit={this._submit.bind(this)}
@@ -153,9 +157,7 @@ const CreateNamespaceModalWithTranslation = connect(
                   )}
                 </p>
                 <p>
-                  <ExternalLink
-                    href={`${openshiftHelpBase}applications/projects/working-with-projects.html`}
-                  >
+                  <ExternalLink href={projectsLink}>
                     {t('public~Learn more about working with projects')}
                   </ExternalLink>
                 </p>

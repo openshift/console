@@ -1,0 +1,42 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
+.kv-inventory-card__body {
+  padding: 0;
+}
+
+.kv-inventory-card__item-text {
+  color: var(--pf-global--Color--200);
+  font-size: var(--pf-global--FontSize--sm);
+}
+
+.kv-inventory-card__item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.kv-inventory-card__item-section {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.kv-inventory-card__item >*:nth-child(even) {
+  align-items: center;
+  padding: 0 var(--pf-global--spacer--lg) 0 var(--pf-global--spacer--md);
+}
+
+.kv-inventory-card__item >*:nth-child(odd) {
+  align-items: flex-start;
+  padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
+}
+
+.kv-inventory-card__item--border-right {
+  border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+}
+
+.kv-inventory-card__section-header {
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+}

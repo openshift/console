@@ -53,7 +53,7 @@ const parseSharedModuleDeps = (
 ) =>
   parseDeps(
     pkg,
-    Object.keys(sharedPluginModules).filter((m) => !m.startsWith('@openshift-console/')),
+    sharedPluginModules.filter((m) => !m.startsWith('@openshift-console/')),
     missingDepCallback,
   );
 

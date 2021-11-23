@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -rf dist generated",
     "build": "yarn clean && yarn validate && yarn compile && yarn generate",
-    "compile": "for ext in '' '-internal' '-internal-kubevirt' '-webpack' ; do yarn tsc -p tsconfig${ext}.json ; done",
+    "compile": "for ext in '' '-internal' '-internal-kubevirt' '-webpack' ; do yarn tsc -p tsconfig${ext}.json || exit $? ; done",
     "generate": "yarn generate-schema && yarn generate-doc && yarn generate-pkg-assets",
     "generate-schema": "yarn ts-node scripts/generate-schema.ts",
     "generate-doc": "yarn ts-node scripts/generate-doc.ts",
@@ -22,7 +22,7 @@
     "fs-extra": "9.x",
     "ts-json-schema-generator": "0.91.0",
     "tsutils": "3.x",
-    "typescript": "~4.2.3",
-    "webpack": "^5.53.0"
+    "typescript": "4.2.x",
+    "webpack": "^5.62.1"
   }
 }

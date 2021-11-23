@@ -704,7 +704,7 @@ const AppContents: React.FC<{}> = () => {
               path="/k8s/ns/:ns/pods/:podName/containers/:name"
               loader={() => import('./container').then((m) => m.ContainersDetailsPage)}
             />
-            <Route path="/k8s/ns/:ns/:plural/~new" exact component={CreateResource} />
+            <Route path="/k8s/ns/:ns/:plural/~new" component={CreateResource} />
             <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
 

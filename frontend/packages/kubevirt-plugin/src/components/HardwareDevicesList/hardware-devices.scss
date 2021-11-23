@@ -1,0 +1,16 @@
+.kv-hardware__remove-button
+.kv-hardware__device {
+    margin-left: var(--pf-global--spacer--md);
+}
+
+.kv-hardware__name {
+    margin-right: var(--pf-global--spacer--md);
+}
+
+.kv-hardware__row {
+    margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.kv-hardware__form {
+    max-width: 70vh;
+}

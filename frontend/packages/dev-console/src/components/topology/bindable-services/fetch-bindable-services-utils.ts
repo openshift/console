@@ -1,4 +1,4 @@
-import { k8sGet } from '@console/internal/module/k8s';
+import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { BindableServicesModel } from './models';
 import { BindableServiceGVK, BindableServicesKind } from './types';
 

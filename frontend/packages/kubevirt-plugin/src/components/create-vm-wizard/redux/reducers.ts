@@ -208,6 +208,11 @@ export default (state, action: WizardInternalAction) => {
         [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key, 'value'],
         fromJS(payload.value),
       );
+    case InternalActionType.SetVmHardwareFieldValue:
+      return state.setIn(
+        [dialogID, 'tabs', VMWizardTab.ADVANCED, 'value', payload.key, 'value'],
+        fromJS(payload.value),
+      );
     case InternalActionType.SetImportProvidersFieldValue:
       return state.setIn(
         [dialogID, 'tabs', VMWizardTab.IMPORT_PROVIDERS, 'value', payload.key, 'value'],

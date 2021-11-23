@@ -9,7 +9,6 @@ import {
 import { contextMenuActions } from '@console/topology/src/actions/contextMenuActions';
 import {
   WorkloadNode,
-  noRegroupWorkloadContextMenu,
   createConnectorCallback,
   NodeComponentProps,
   nodeDragSourceSpec,
@@ -45,7 +44,7 @@ export const getHelmComponentFactory = (
           withEditReviewAccess('patch')(
             withDragNode(nodeDragSourceSpec(type, false))(
               withSelection({ controlled: true })(
-                withContextMenu(noRegroupWorkloadContextMenu)(WorkloadNode),
+                withContextMenu(contextMenuActions)(WorkloadNode),
               ),
             ),
           ),

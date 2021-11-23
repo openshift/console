@@ -95,11 +95,7 @@ const evaluateTemplate = (
         return false;
       }
       const replacement =
-        v.value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY
-          ? // Build a regex that tests for all options. After escaping regex characters, we also
-            // escape '\' characters so that they are seen as literal '\'s by the PromQL parser.
-            `(${v.options.map((s) => _.escapeRegExp(s).replace(/\\/g, '\\\\')).join('|')})`
-          : v.value || '';
+        v.value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? '.+' : v.value || '';
       result = result.replace(re, replacement);
     }
   });
@@ -153,13 +149,17 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       placeholderText={items[selectedKey]}
     >
       {_.map(filteredItems, (v, k) => (
-        <OptionComponent key={k} itemKey={k} value={v} />
+        <OptionComponent key={k} itemKey={k} />
       ))}
     </Select>
   );
 };
 
-const VariableOption = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
+const VariableOption = ({ itemKey }) => (
+  <SelectOption key={itemKey} value={itemKey}>
+    {itemKey === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? 'All' : itemKey}
+  </SelectOption>
+);
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   const { t } = useTranslation();
@@ -752,7 +752,7 @@ type Variable = {
 type FilterSelectProps = {
   items: { [key: string]: string };
   onChange: (v: string) => void;
-  OptionComponent: React.FC<{ itemKey: string; value: string }>;
+  OptionComponent: React.FC<{ itemKey: string }>;
   selectedKey: string;
 };
 

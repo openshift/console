@@ -481,7 +481,7 @@ func main() {
 
 		if *fUserAuth == "openshift" {
 			// Scopes come from OpenShift documentation
-			// https://docs.openshift.com/container-platform/3.9/architecture/additional_concepts/authentication.html#service-accounts-as-oauth-clients
+			// https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/using-service-accounts-as-oauth-client
 			//
 			// TODO(ericchiang): Support other scopes like view only permissions.
 			scopes = []string{"user:full"}

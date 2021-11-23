@@ -144,3 +144,6 @@ export const iGetTemplateGuestToolsDisk = (tmp: ITemplate) =>
   iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'volumes'])?.find((v) =>
     isWinToolsImage(iGetIn(v, ['containerDisk', 'image'])),
   );
+
+export const iGetCommonTemplateNetworkInterfaceDevices = (tmp: ITemplate) =>
+  iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'domain', 'devices', 'interfaces']);

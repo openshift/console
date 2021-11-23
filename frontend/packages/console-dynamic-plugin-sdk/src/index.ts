@@ -6,3 +6,6 @@ export * from './api/common-types';
 export * from './extensions';
 
 export * from './perspective';
+
+// App init context
+export * from './app';

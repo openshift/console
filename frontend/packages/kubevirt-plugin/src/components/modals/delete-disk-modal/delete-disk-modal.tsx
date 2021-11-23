@@ -65,7 +65,9 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
     e.preventDefault();
 
     if (isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi)) {
-      const promise = removeHotplugPersistent(asVM(vmLikeEntity), removeHotplugRequest);
+      const promise = removeHotplugPersistent(asVM(vmLikeEntity), removeHotplugRequest).then(() =>
+        freeOwnedResources(ownedResources, vmLikeReference, deleteReferencedResource),
+      );
 
       return handlePromise(promise, close);
     }

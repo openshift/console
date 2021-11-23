@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
+import { ExternalLink, isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import {
@@ -31,6 +31,10 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
 
   const isWaitingOrDisabled = _isWaitingOrDisabled(metrics);
   const isError = _isError(metrics);
+
+  const insightsLink = isUpstream()
+    ? `${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`
+    : `${openshiftHelpBase}html/support/remote-health-monitoring-with-connected-clusters#using-insights-to-identify-issues-with-your-cluster`;
 
   const riskKeys = {
     // t('insights-plugin~low')
@@ -122,10 +126,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
           </div>
         )}
         {(isWaitingOrDisabled || isError) && (
-          <ExternalLink
-            href={`${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`}
-            text={t('insights-plugin~More about Insights')}
-          />
+          <ExternalLink href={insightsLink} text={t('insights-plugin~More about Insights')} />
         )}
       </div>
     </div>

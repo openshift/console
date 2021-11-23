@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as webpack from 'webpack';
-import { ReplaceSource } from 'webpack-sources';
 import { remoteEntryFile } from '../constants';
 import { ConsolePackageJSON } from '../schema/plugin-package';
 import { sharedPluginModules } from '../shared-modules';
@@ -36,9 +35,16 @@ export const validatePackageFileSchema = (
   return validator.result;
 };
 
-const remoteEntryLibraryType = 'jsonp';
-const remoteEntryCallback = 'window.loadPluginEntry';
-
+/**
+ * Generates Console dynamic plugin remote container and related assets.
+ *
+ * All modules shared between the Console application and its dynamic plugins are treated as singletons.
+ * Plugins won't bring their own fallback version of shared modules; Console is responsible for providing
+ * all shared modules to all of its plugins.
+ *
+ * If you're facing issues related to `ExtensionValidator`, pass `CONSOLE_PLUGIN_SKIP_EXT_VALIDATOR=true`
+ * env. variable to your webpack command.
+ */
 export class ConsoleRemotePlugin {
   private readonly pkg: ConsolePackageJSON;
 
@@ -48,63 +54,55 @@ export class ConsoleRemotePlugin {
   }
 
   apply(compiler: webpack.Compiler) {
-    if (!compiler.options.output.enabledLibraryTypes.includes(remoteEntryLibraryType)) {
-      compiler.options.output.enabledLibraryTypes.push(remoteEntryLibraryType);
+    const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
+    const publicPath = `/api/plugins/${this.pkg.consolePlugin.name}/`;
+    const remoteEntryCallback = 'window.loadPluginEntry';
+
+    // Validate webpack options
+    if (compiler.options.output.publicPath !== undefined) {
+      logger.warn(`output.publicPath is defined, but will be overridden to ${publicPath}`);
     }
 
-    // Apply relevant webpack plugins
-    compiler.hooks.afterPlugins.tap(ConsoleRemotePlugin.name, () => {
-      new webpack.container.ContainerPlugin({
-        name: this.pkg.consolePlugin.name,
-        library: { type: remoteEntryLibraryType, name: remoteEntryCallback },
-        filename: remoteEntryFile,
-        exposes: this.pkg.consolePlugin.exposedModules || {},
-      }).apply(compiler);
-
-      new webpack.sharing.SharePlugin({
-        shared: sharedPluginModules,
-      }).apply(compiler);
-
-      // Generate additional Console plugin assets
-      new ConsoleAssetPlugin(this.pkg).apply(compiler);
-
-      // Ignore require calls for modules that reside in Console monorepo packages
-      new webpack.IgnorePlugin({
-        resourceRegExp: /^@console\//,
-        contextRegExp: /node_modules\/@openshift-console\/dynamic-plugin-sdk/,
-      }).apply(compiler);
+    // Perform post-compiler-initialization actions
+    compiler.hooks.initialize.tap(ConsoleRemotePlugin.name, () => {
+      compiler.options.output.publicPath = publicPath;
     });
 
-    // Post-process generated remote entry source
-    // TODO(vojtech): fix 'webpack-sources' type incompatibility when updating to latest webpack 5
-    compiler.hooks.emit.tap(ConsoleRemotePlugin.name, (compilation) => {
-      compilation.updateAsset(remoteEntryFile, (source) => {
-        const newSource = new ReplaceSource(source as any);
-        newSource.insert(
-          remoteEntryCallback.length + 1,
-          `'${this.pkg.consolePlugin.name}@${this.pkg.consolePlugin.version}',`,
-        );
-        return newSource;
-      });
-    });
+    // Generate webpack federated module container assets
+    new webpack.container.ModuleFederationPlugin({
+      name: this.pkg.consolePlugin.name,
+      library: {
+        type: 'jsonp',
+        name: remoteEntryCallback,
+      },
+      filename: remoteEntryFile,
+      exposes: _.mapValues(
+        this.pkg.consolePlugin.exposedModules || {},
+        (moduleRequest, moduleName) => ({
+          import: moduleRequest,
+          name: `exposed-${moduleName}`,
+        }),
+      ),
+      shared: sharedPluginModules.reduce(
+        (acc, moduleRequest) => ({
+          ...acc,
+          // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
+          [moduleRequest]: {
+            // Allow only a single version of the shared module at runtime
+            singleton: true,
+            // Prevent plugins from using a fallback version of the shared module
+            import: false,
+          },
+        }),
+        {},
+      ),
+    }).apply(compiler);
 
-    // Skip processing entry option if it's missing or empty
-    // TODO(vojtech): latest webpack 5 allows `entry: {}` so use that & remove following code
-    if (_.isPlainObject(compiler.options.entry) && _.isEmpty(compiler.options.entry)) {
-      compiler.hooks.entryOption.tap(ConsoleRemotePlugin.name, () => {
-        return true;
-      });
-    }
-
-    // Set default publicPath if output.publicPath option is missing or empty
-    // TODO(vojtech): mainTemplate is deprecated in latest webpack 5, adapt code accordingly
-    if (_.isEmpty(compiler.options.output.publicPath)) {
-      compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
-        compilation.mainTemplate.hooks.requireExtensions.tap(ConsoleRemotePlugin.name, () => {
-          const pluginBaseURL = `/api/plugins/${this.pkg.consolePlugin.name}/`;
-          return `${webpack.RuntimeGlobals.publicPath} = "${pluginBaseURL}";`;
-        });
-      });
-    }
+    // Generate and/or post-process Console plugin assets
+    new ConsoleAssetPlugin(
+      this.pkg,
+      remoteEntryCallback,
+      process.env.CONSOLE_PLUGIN_SKIP_EXT_VALIDATOR === 'true',
+    ).apply(compiler);
   }
 }

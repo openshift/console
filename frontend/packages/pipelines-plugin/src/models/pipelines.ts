@@ -145,7 +145,6 @@ export const TriggerBindingModel: K8sKind = {
   id: 'triggerbinding',
   labelPlural: 'TriggerBindings',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -164,7 +163,6 @@ export const ClusterTriggerBindingModel: K8sKind = {
   id: 'clustertriggerbinding',
   labelPlural: 'ClusterTriggerBindings',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -183,7 +181,6 @@ export const TriggerTemplateModel: K8sKind = {
   id: 'triggertemplate',
   labelPlural: 'TriggerTemplates',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -202,7 +199,6 @@ export const EventListenerModel: K8sKind = {
   id: 'eventlistener',
   labelPlural: 'EventListeners',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 

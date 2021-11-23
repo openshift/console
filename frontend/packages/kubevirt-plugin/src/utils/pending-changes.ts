@@ -1,6 +1,7 @@
 import { vmFlavorModal } from '../components/modals';
 import { BootOrderModal } from '../components/modals/boot-order-modal';
-import { hardwareDevicesModal } from '../components/modals/hardware-devices/HardwareDevicesModal';
+import { gpuDevicesModal } from '../components/modals/hardware-devices/GPUDeviceModal';
+import { hostDevicesModal } from '../components/modals/hardware-devices/HostDevicesModal';
 import { IsPendingChange, PendingChanges, VMTabEnum, VMTabURLEnum } from '../components/vms/types';
 import { VMIPhase } from '../constants/vmi/phase';
 import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
@@ -59,10 +60,11 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       isPendingChange: modifiedHostDevices.length > 0,
       execAction: () => {
         redirectToTab(getVMTabURL(vm, VMTabURLEnum.details));
-        hardwareDevicesModal({
+        hostDevicesModal({
+          vm,
+          vmDevices: vmWrapper.getHostDevices(),
+          vmiDevices: vmiWrapper.getHostDevices(),
           isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
-          vmWrapper,
-          vmiWrapper,
         });
       },
       resourceNames: modifiedHostDevices,
@@ -72,11 +74,11 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       isPendingChange: modifiedGPUDevices.length > 0,
       execAction: () => {
         redirectToTab(getVMTabURL(vm, VMTabURLEnum.details));
-        hardwareDevicesModal({
+        gpuDevicesModal({
+          vm,
+          vmDevices: vmWrapper.getGPUDevices(),
+          vmiDevices: vmiWrapper.getGPUDevices(),
           isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
-          isGPU: true,
-          vmWrapper,
-          vmiWrapper,
         });
       },
       resourceNames: modifiedGPUDevices,

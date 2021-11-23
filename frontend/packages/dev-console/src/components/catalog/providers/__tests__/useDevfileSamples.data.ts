@@ -73,6 +73,7 @@ export const expectedCatalogItems: CatalogItem[] = [
         '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
     },
     icon: { url: 'trimmed' },
+    provider: 'Red Hat',
   },
   {
     uid: 'code-with-quarkus',
@@ -86,6 +87,7 @@ export const expectedCatalogItems: CatalogItem[] = [
         '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
     },
     icon: { url: 'trimmed' },
+    provider: 'Red Hat',
   },
   {
     uid: 'java-springboot-basic',
@@ -99,6 +101,7 @@ export const expectedCatalogItems: CatalogItem[] = [
         '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
     },
     icon: { url: 'trimmed' },
+    provider: 'Red Hat',
   },
   {
     uid: 'python-basic',
@@ -112,5 +115,6 @@ export const expectedCatalogItems: CatalogItem[] = [
         '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
     },
     icon: { url: 'trimmed' },
+    provider: 'Red Hat',
   },
 ];
