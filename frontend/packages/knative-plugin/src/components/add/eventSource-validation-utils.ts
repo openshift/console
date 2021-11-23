@@ -6,7 +6,6 @@ import {
 } from '@console/dev-console/src/components/import/validation-schema';
 import { isValidUrl, nameValidationSchema } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
 import { EventSources, SinkType } from './import-types';
 
 export const sinkTypeUriValidation = (t: TFunction) =>
@@ -189,18 +188,12 @@ export const addChannelValidationSchema = (t: TFunction) =>
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
       is: EditorType.Form,
-      then: yup.lazy((formData) => {
-        if (isDefaultChannel(getChannelKind(formData.type))) {
-          return yup.object().shape({
-            application: applicationNameValidationSchema,
-            name: nameValidationSchema(t),
-            data: sourceDataSpecSchema(t),
-            type: yup.string(),
-          });
-        }
-        return yup.object().shape({
-          yamlData: yup.string(),
-        });
+      then: yup.object().shape({
+        project: projectNameValidationSchema,
+        application: applicationNameValidationSchema,
+        name: nameValidationSchema(t),
+        data: yup.object(),
+        type: yup.string(),
       }),
     }),
     yamlData: yup.string(),

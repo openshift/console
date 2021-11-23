@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { FormikProps, FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +21,7 @@ import {
   useDefaultChannelConfiguration,
   getCatalogChannelData,
   channelYamltoFormData,
+  getCreateChannelData,
 } from '../../../utils/create-channel-utils';
 import { AddChannelFormData, ChannelListProps, YamlFormSyncData } from '../import-types';
 import ChannelSelector from './form-fields/ChannelSelector';
@@ -55,28 +56,37 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   const [defaultConfiguredChannel, defaultConfiguredChannelLoaded] = useDefaultChannelConfiguration(
     namespace,
   );
-  // const channelHasFormView = values.type && isDefaultChannel(getChannelKind(values.type));
   const channelKind = getChannelKind(values.formData.type);
   const onTypeChange = React.useCallback(
     (item: string) => {
       setErrors({});
       setStatus({});
       const kind = getChannelKind(item);
+      let formData: AddChannelFormData;
       if (isDefaultChannel(kind)) {
         const nameData = `formData.data.${kind.toLowerCase()}`;
         const sourceData = getChannelData(kind.toLowerCase());
         setFieldValue(nameData, sourceData);
         setFieldTouched(nameData, true);
+        formData = { ...values.formData, data: { [kind.toLowerCase()]: sourceData } };
       }
 
       setFieldValue('formData.type', item);
       setFieldTouched('formData.type', true);
-
       setFieldValue('formData.name', _.kebabCase(`${kind}`));
       setFieldTouched('formData.name', true);
+      formData = { ...values.formData, ...formData, type: item, name: _.kebabCase(`${kind}`) };
+      setFieldValue(
+        'yamlData',
+        safeJSToYAML(getCreateChannelData(formData), 'yamlData', {
+          skipInvalid: true,
+          noRefs: true,
+        }),
+      );
+      setFieldTouched('yamlData', true);
       validateForm();
     },
-    [setErrors, setStatus, setFieldValue, setFieldTouched, validateForm],
+    [setErrors, setStatus, setFieldValue, setFieldTouched, values.formData, validateForm],
   );
 
   const sanitizeToYaml = () => {
@@ -92,7 +102,23 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
 
   const yamlEditor = <YAMLEditorField name="yamlData" showSamples onSave={handleSubmit} />;
 
-  const formEditor = <FormViewSection namespace={namespace} kind={channelKind} />;
+  const formEditor = (
+    <>
+      {values.showCanUseYAMLMessage && (
+        <Alert
+          actionClose={
+            <AlertActionCloseButton onClose={() => setFieldValue('showCanUseYAMLMessage', false)} />
+          }
+          isInline
+          title={t(
+            'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control of object creation.',
+          )}
+          variant="info"
+        />
+      )}
+      <FormViewSection namespace={namespace} kind={channelKind} />{' '}
+    </>
+  );
 
   return (
     <FlexForm onSubmit={handleSubmit}>
