@@ -63,7 +63,6 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
             state={state}
             hasOCS={hasOCS}
             dispatch={dispatch}
-            storageSystems={ssList?.items}
             disableNext={!ssLoaded || !!ssLoadError}
           />
         }
