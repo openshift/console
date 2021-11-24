@@ -36,10 +36,10 @@ export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName }) =
     </Trans>
   ) : baseImageName?.includes('centos') ? (
     <Trans t={t} ns="kubevirt-plugin">
-      Example: For Centos, visit the{' '}
+      Example: For CentOS, visit the{' '}
       <strong>
         <a href={CENTOS_IMAGE_LINK} rel="noopener noreferrer" target="_blank">
-          Centos cloud image list
+          CentOS cloud image list
         </a>
       </strong>{' '}
       and copy the download link URL for the cloud base image
