@@ -1,5 +1,12 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { switchPerspective, devNavigationMenu, pageTitle, addOptions } from '../../constants';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import {
+  switchPerspective,
+  devNavigationMenu,
+  pageTitle,
+  addOptions,
+  resources,
+} from '../../constants';
 import { topologyPO } from '../../pageObjects';
 import {
   gitPage,
@@ -10,6 +17,8 @@ import {
   topologyHelper,
   perspective,
   navigateTo,
+  topologySidePane,
+  app,
 } from '../../pages';
 
 Given('user is at Add page', () => {
@@ -88,3 +97,20 @@ Then('user can see {string} card on the Add page', (cardName: string) => {
 When('user selects {string} card from add page', (cardName: string) => {
   addPage.selectCardFromOptions(cardName);
 });
+
+When('user enters run command for {string} as {string}', (envKey: string, value: string) => {
+  addPage.setBuildEnvField(envKey, value);
+});
+
+Then(
+  'user is able to navigate to Build #1 for deployment {string} and see environment variable {string} in Environment tab of details page',
+  (name: string, env: string) => {
+    topologyPage.clickOnNode(name);
+    topologySidePane.selectTab('Resources');
+    topologySidePane.selectResource(resources.Builds, 'aut-addflow-git', `${name}-1`);
+    app.waitForLoad();
+    detailsPage.selectTab('Environment');
+    app.waitForLoad();
+    cy.get(`input[data-test="pairs-list-name"][value="${env}"]`).should('exist');
+  },
+);

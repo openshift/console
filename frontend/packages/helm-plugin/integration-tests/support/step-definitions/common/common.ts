@@ -92,7 +92,7 @@ When('user switches to the {string} tab', (tab: string) => {
 });
 
 When('user clicks on the link for the {string} of helm release', (resource: string) => {
-  topologySidePane.selectResource(resource, Cypress.env('NAMESPACE'));
+  topologySidePane.selectResource(resource, Cypress.env('NAMESPACE'), 'nodejs-release');
 });
 
 Given('user is at Add page', () => {

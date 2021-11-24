@@ -125,31 +125,36 @@ export const topologySidePane = {
     cy.byTestActionID('Delete Application').should('be.visible');
     cy.get(topologyPO.addToApplicationInContext).should('be.visible');
   },
-  selectResource: (opt: resources | string, namespace: string) => {
+  selectResource: (opt: resources | string, namespace: string, name: string) => {
     switch (opt) {
       case 'Deployments':
       case resources.Deployments: {
-        cy.get(`[href="/k8s/ns/${namespace}/deployments/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/deployments/${name}"]`).click();
         break;
       }
       case 'Build Configs':
       case resources.BuildConfigs: {
-        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/${name}"]`).click();
+        break;
+      }
+      case 'Builds':
+      case resources.Builds: {
+        cy.get(`[href="/k8s/ns/${namespace}/builds/${name}]`).click();
         break;
       }
       case 'Services':
       case resources.Services: {
-        cy.get(`[href="/k8s/ns/${namespace}/services/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/services/${name}"]`).click();
         break;
       }
       case 'Image Streams':
       case resources.ImageStreams: {
-        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/${name}"]`).click();
         break;
       }
       case 'Routes':
       case resources.Routes: {
-        cy.get(`[href="/k8s/ns/${namespace}/routes/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/routes/${name}"]`).click();
         break;
       }
       default: {
