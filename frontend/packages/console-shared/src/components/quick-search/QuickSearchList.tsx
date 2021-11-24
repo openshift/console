@@ -123,7 +123,12 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                       wrapModifier="truncate"
                       key={`${item.uid}-name`}
                     >
-                      <span className="ocs-quick-search-list__item-name">{item.name}</span>
+                      <span
+                        className="ocs-quick-search-list__item-name"
+                        data-test={`item-name-${item.name}-${itemType}`}
+                      >
+                        {item.name}
+                      </span>
                       <Split style={{ alignItems: 'center' }} hasGutter>
                         <SplitItem>
                           <Label>{itemType}</Label>

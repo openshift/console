@@ -327,7 +327,12 @@ Feature: Pipeline Runs
 
         @regression @manual @odc-6303
         Scenario: Show failed PipelineRun log snippet on the log page: P-07-TC33
-            Given pipeline is present on Pipeline Details page
-             When user selects "Start" option from kebab menu for pipeline "pipeline-two"
+        # petclinic-pipeline-all.yaml can be found here in /testData/petclinic-pipeline-all.yaml
+            Given pipeline is 'petclinic-pipeline-all.yaml' present on Pipeline Details page
+             When user selects "Start" option from kebab menu
+              And user selects 'maven-cache-pvc' PVC for maven-cache workspace
+              And user selects 'maven-settings' ConfigMap for maven-settings workspace
+              And user selects 'app-source-pvc' PVC for app-source workspace
+              And user clicks on Start button
               And user navigates to pipelineRun logs tab
-             Then user is able to see "Log snippet" for failure
+             Then user is able to see log snippet for failure of "build-image" task

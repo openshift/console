@@ -1,5 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { addOptions, buildConfigOptions, messages, resources } from '../../constants';
+import { gitPO } from '../../pageObjects';
 import {
   gitPage,
   addPage,
@@ -246,3 +247,14 @@ Then(
     // cy.get(gitPO.advancedOptions.routing.labelsRouteDetails).should('contain', labelName);
   },
 );
+Then('user is able to see Secure Route checkbox is checked', () => {
+  cy.get(gitPO.advancedOptions.routing.secureRoute).should('be.checked');
+});
+
+Then('user is able to see {string} value is selected in TLS termination', (value: string) => {
+  cy.get(gitPO.advancedOptions.routing.tlsTermination).should('have.text', value);
+});
+
+Then('user is able to see {string} value is selected in Insecure traffic', (value: string) => {
+  cy.get(gitPO.advancedOptions.routing.insecureTraffic).should('have.text', value);
+});
