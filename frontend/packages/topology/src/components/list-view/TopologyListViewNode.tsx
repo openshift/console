@@ -22,7 +22,7 @@ import {
   shouldHideMonitoringAlertDecorator,
 } from '@console/shared';
 import { useSearchFilter } from '../../filters';
-import { getResourceKind } from '../../utils/topology-utils';
+import { getResource, getResourceKind } from '../../utils/topology-utils';
 import {
   AlertsCell,
   GroupResourcesCell,
@@ -68,7 +68,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
   children,
 }) => {
   const { t } = useTranslation();
-  const [filtered] = useSearchFilter(item.getLabel());
+  const [filtered] = useSearchFilter(item.getLabel(), getResource(item)?.metadata?.labels);
   if (!item.isVisible) {
     return null;
   }
