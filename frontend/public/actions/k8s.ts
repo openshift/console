@@ -265,8 +265,7 @@ export const watchK8sList = (
         // eslint-disable-next-line no-console
         console.log('WS closed abnormally - starting polling loop over!');
         const ws = WS[id];
-        const timedOut = true;
-        ws && ws.destroy(timedOut);
+        ws && ws.destroy();
       })
       .ondestroy((timedOut) => {
         if (!timedOut) {

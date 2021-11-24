@@ -7,7 +7,7 @@ import {
   selectorToString,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sKind, Patch } from './types';
-import { WSFactory } from '../ws-factory';
+import { WSFactory, WSOptions } from '../ws-factory';
 
 export type Options = {
   ns?: string;
@@ -103,7 +103,7 @@ export const k8sWatch = (
 
   const path = resourceURL(kind, opts);
   wsOptions.path = path;
-  return new WSFactory(path, wsOptions);
+  return new WSFactory(path, wsOptions as WSOptions);
 };
 
 /**
