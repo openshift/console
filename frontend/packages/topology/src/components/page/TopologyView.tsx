@@ -32,6 +32,7 @@ import { RootState } from '@console/internal/redux';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY } from '../../const';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
 import {
   isTopologyCreateConnector,
@@ -167,16 +168,24 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const labelParams = queryParams.get(TOPOLOGY_LABELS_FILTER_KEY);
   const fileTypes = supportedFileExtensions.map((ex) => `.${ex}`).toString();
 
-  const onSelect = React.useCallback((entity?: GraphElement) => {
-    // set empty selection when selecting the graph
-    const selEntity = isGraph(entity) ? undefined : entity;
-    setSelectedEntity(selEntity);
-    if (!selEntity) {
-      removeQueryArgument('selectId');
-    } else {
-      setQueryArgument('selectId', selEntity.getId());
-    }
-  }, []);
+  const onSelect = React.useCallback(
+    (entity?: GraphElement) => {
+      // set empty selection when selecting the graph
+      const selEntity = isGraph(entity) ? undefined : entity;
+      setSelectedEntity(selEntity);
+      if (!selEntity) {
+        removeQueryArgument('selectId');
+        sessionStorage.removeItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY);
+      } else {
+        setQueryArgument('selectId', selEntity.getId());
+        sessionStorage.setItem(
+          LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
+          JSON.stringify({ [namespace]: selEntity.getId() }),
+        );
+      }
+    },
+    [namespace],
+  );
 
   const graphData: GraphData = React.useMemo(
     () => ({
