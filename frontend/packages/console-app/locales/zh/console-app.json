@@ -241,6 +241,7 @@
   "Terminal": "终端",
   "Pods": "Pod",
   "Labels": "标签",
+  "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} 内核/ {{totalCores}} 内核",
   "Nodes": "节点",
   "Ready": "就绪",
   "Not Ready": "未就绪",
