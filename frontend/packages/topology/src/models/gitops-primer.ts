@@ -10,5 +10,5 @@ export const ExportModel: K8sKind = {
   apiGroup: 'primer.gitops.io',
   apiVersion: 'v1alpha1',
   namespaced: true,
-  crd: false,
+  crd: true,
 };
