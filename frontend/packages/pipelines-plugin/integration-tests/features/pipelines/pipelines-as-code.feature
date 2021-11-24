@@ -4,67 +4,59 @@ Feature: Perform Actions on repository
 
         Background:
             Given user has created or selected namespace "aut-pipelines"
-              And user has installed pipelines as code
+              And user is at pipelines page
 
 
-        @pre-condition @to-do
+        @pre-condition
         Scenario Outline: Repositories page: P-11-TC01
-            Given user is at repositories page
+            Given user has installed pipelines as code
+              And user is at repositories page
              When user clicks on Create Repository button
-             Then user will be redirected to Repositories yaml view page
-             Then user creates repository using YAML editor from "<repository_yaml>"
-             Then user will be redirected to Reporsitory details page with header name "<repository_name>"
+              And user creates repository using YAML editor from "<repository_yaml>"
+             Then user will be redirected to Repository details page with header name "<repository_name>"
 
         Examples:
                   | repository_yaml                                 | repository_name |
                   | testData/repository-crd-testdata/test-repo.yaml | test-repo       |
 
 
-        @smoke @to-do
+        @smoke
         Scenario Outline: Reporsitory details display in repository page: P-11-TC02
-            Given repository "<repository_name>" is present on Repositories page
+            Given repository "<repository_name>" is present in Repositories tab of Pipelines page
              When user clicks on the repository "<repository_name>" on Repositories page
              Then user will be redirected to Repository details page with header "<repository_name>"
               And user is able to see Details, YAML, Pipeline Runs tabs
               And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository, Branch and Event type
-              And Actions dropdown display in the top right corner of the page
+              And Actions menu display with options Edit labels, Edit annotations, Edit repository, Delete repository
 
         Examples:
                   | repository_name |
                   | test-repo       |
 
 
-        @smoke @to-do
+        @smoke
         Scenario Outline: Repositories page display on newly created repository: P-11-TC03
-            Given repository "<repository_name>" is present on Repositories page
-             When user searches repositoy "<repository_name>" in repositories page
+            Given repository "<repository_name>" is present on the Repositories page
+             When user searches repository "<repository_name>" in repositories page
              Then repositories table displayed with column names Name, Event type, Last run, Task status, Last run status, Last run time, Last run duration
-              And clolumn Name display with value "<repository_name>"
-              And columnsLast run, Task status, Last run status, Last run time, Last run duration with values display "-"
-              And Create button is enabled
+              And column Name display with value "<repository_name>"
+              And columns Last run, Task status, Last run status, Last run time, Last run duration with values display "-"
               And kebab menu button is displayed
         Examples:
                   | repository_name |
                   | test-repo       |
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Kebab menu options of newly created repository in Repositories page: P-11-TC04
-            Given repository "test-repository" is present on Repositories page
-             When user searches repository "test-repo" in repsitories page
+            Given repository "test-repo" is present on the Repositories page
+             When user searches repository "test-repo" in repositories page
               And user clicks on kebab menu of the repository "test-repo"
              Then kebab menu displays with options Edit labels, Edit annotations, Edit repository, Delete repository
 
 
-        @smoke @to-do
-        Scenario: Actions menu of newly created repository in Repository details page: P-11-TC05
-            Given user is at repositories details page with newly created repository "test-repo"
-             When user clicks Actions menu in the repository details page
-             Then Actions menu display with options Edit labels, Edit annotations, Edit repository, Delete repository
-
-
-        @regression @to-do
-        Scenario Outline: Edit repository from Repository details page: P-11-TC06
+        @regression
+        Scenario Outline: Edit repository from Repository details page: P-11-TC05
             Given repository "<repository_name>" is present on the Repositories page
              When user searches repository "<repository_name>" in repositories page
               And user clicks repository "<repository_name>" from searched results on Repositories page
@@ -78,28 +70,29 @@ Feature: Perform Actions on repository
                   | test-repo       |
 
 
-        @regression @to-do
+        @regression
         Scenario: Edit label of repository: P-11-TC07
             Given repository "test-repo" is present on the Repositories page
              When user searches repository "test-repo" in repositories page
               And user clicks repository "test-repo" from searched results on Repositories page
-              And user clicks on Edit button of the labels section
+              And user selects option "Edit labels" from Actions menu drop down
               And adds the label "check=label"
-              And clicks on the Save button
+              And user clicks on the Save button
              Then label "check=label" should be present in the labels section
 
 
-        @regression @to-do
+        @regression
         Scenario: Edit annotations of repository: P-11-TC08
             Given repository "test-repo" is present on the Repositories page
              When user searches repository "test-repo" in repositories page
               And user clicks repository "test-repo" from searched results on Repositories page
-              And user clicks on Edit button of the annotations section
+              And user selects option "Edit annotations" from Actions menu drop down
               And user adds key "check" and value "annotations"
               And user clicks on the Save button
              Then annotation section contains the value "1 annotation"
 
 
+        # test data needs to be created using before execuitng below 2 scenarios : https://docs.google.com/document/d/1nUFtwtuZooDhOGg1YrjXn0zrOhZDrJ4h1oE6h35Noao/edit#
         @regression @to-do
         Scenario Outline: Pipeline Run Details page for the repository: P-11-TC09
             Given pipeline run is displayed for "<repository_name>"
@@ -126,15 +119,15 @@ Feature: Perform Actions on repository
              Then user should see commit message in tooltip
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: Delete the repository from the Repository details page: P-11-TC11
-            Given repository "<repository_name>" is present on Repositories page
+            Given repository "<repository_name>" is present on the Repositories page
              When user searches repository "<repository_name>" in repositories page
               And user clicks repository "<repository_name>" from searched results on Repositories page
               And user selects option "Delete Repository" from Actions menu drop down
               And user clicks Delete button on Delete Repository modal
              Then user will be redirected to Repositories page
-              And "<repository_name>" is not displayed on Pipelines page
+              And "<repository_name>" is not displayed on Repositories page
 
         Examples:
                   | repository_name |

@@ -217,10 +217,8 @@ Then(
     pipelinesPage.selectKebabMenu(pipelineName);
     cy.byLegacyTestID('action-items')
       .find('li')
-      .should('have.length', 6)
-      .then(() => {
-        cy.log(`${option} is not available`);
-      });
+      .contains(option)
+      .should('not.exist');
   },
 );
 
