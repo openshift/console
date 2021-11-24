@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import { Dispatch } from 'react-redux';
 import { ActionType as Action, action } from 'typesafe-actions';
-import { FilterValue } from '@console/dynamic-plugin-sdk';
+import { FilterValue, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 
 import {
@@ -118,7 +118,7 @@ export const watchK8sObject = (
     return;
   }
 
-  const { subprotocols } = getState().UI.get('impersonate', {});
+  const { subprotocols } = getImpersonate(getState()) || {};
 
   WS[id] = k8sWatch(k8sType, query, { subprotocols }).onbulkmessage((events) =>
     events.forEach((e) => dispatch(modifyObject(id, e.object))),
@@ -233,7 +233,7 @@ export const watchK8sList = (
         return;
       }
 
-      const { subprotocols } = getState().UI.get('impersonate', {});
+      const { subprotocols } = getImpersonate(getState()) || {};
       WS[id] = k8sWatch(
         k8skind,
         { ...query, resourceVersion },

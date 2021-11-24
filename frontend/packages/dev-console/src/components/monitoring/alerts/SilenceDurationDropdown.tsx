@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
+import { getUser } from '@console/dynamic-plugin-sdk';
 import { monitoringSetRules } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
@@ -39,7 +40,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [silencing, setSilencing] = React.useState(false);
-  const createdBy = useSelector((state: RootState) => state.UI.get('user')?.metadata?.name);
+  const createdBy = useSelector((state: RootState) => getUser(state)?.metadata?.name);
   const rules = useSelector((state: RootState) => state.UI.getIn(['monitoring', 'devRules']));
   const ruleMatchers = _.map(rule?.labels, (value, key) => ({ isRegex: false, name: key, value }));
   const dispatch = useDispatch();

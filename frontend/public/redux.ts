@@ -1,7 +1,12 @@
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
 import * as _ from 'lodash-es';
 import thunk from 'redux-thunk';
-import { ResolvedExtension, ReduxReducer } from '@console/dynamic-plugin-sdk';
+import {
+  ResolvedExtension,
+  ReduxReducer,
+  SDKReducers,
+  SDKStoreState,
+} from '@console/dynamic-plugin-sdk';
 import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
 import k8sReducers, { K8sState } from './reducers/k8s';
 import UIReducers, { UIState } from './reducers/ui';
@@ -18,13 +23,14 @@ export type RootState = {
   plugins?: {
     [namespace: string]: any;
   };
-};
+} & SDKStoreState;
 
 const baseReducers = Object.freeze({
   k8s: k8sReducers, // data
   UI: UIReducers,
   [featureReducerName]: featureReducer,
   dashboards: dashboardsReducer,
+  ...SDKReducers,
 });
 
 const store = createStore(

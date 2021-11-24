@@ -66,7 +66,7 @@ describe('useUserSettings', () => {
     updateConfigMapMock.mockClear();
     useSelectorMock.mockClear();
     useSelectorMock.mockImplementation((selector) =>
-      selector({ UI: new Map([['user', { metadata: { uid: 'foo' } }]]) }),
+      selector({ sdkCore: { user: { metadata: { uid: 'foo' } } } }),
     );
   });
 
@@ -531,10 +531,10 @@ describe('useUserSettings', () => {
   it('should use session storage when impersonating', () => {
     useSelectorMock.mockImplementation((selector) =>
       selector({
-        UI: new Map([
-          ['user', { metadata: { uid: 'foo' } }],
-          ['impersonate', { name: 'imposter' }],
-        ]),
+        sdkCore: {
+          user: { metadata: { uid: 'foo' } },
+          impersonate: { name: 'imposter' },
+        },
       }),
     );
 

@@ -35,6 +35,7 @@ import {
   isReduxReducer,
   isStandaloneRoutePage,
   AppInitSDK,
+  getUser,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
@@ -270,7 +271,7 @@ const CaptureTelemetry = React.memo(() => {
   const fireTelemetryEvent = useTelemetry();
 
   // notify of identity change
-  const user = useSelector(({ UI }) => UI.get('user'));
+  const user = useSelector(getUser);
   React.useEffect(() => {
     if (user.metadata?.uid || user.metadata?.name) {
       fireTelemetryEvent('identify', { user });

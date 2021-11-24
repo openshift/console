@@ -10,24 +10,11 @@ import { ActionType, CoreAction } from '../actions/core';
  * @see CoreAction
  * @return The the updated state.
  * * */
-const coreReducer = (
-  state: CoreState = {
-    activeNamespace: '',
-  },
+export const coreReducer = (
+  state: CoreState = { user: { identities: [] } },
   action: CoreAction,
 ): CoreState => {
   switch (action.type) {
-    case ActionType.SetNamespace:
-      if (!action.payload.namespace) {
-        // eslint-disable-next-line no-console
-        console.warn('setNamespace: Not setting to falsy!');
-        return state;
-      }
-      return {
-        ...state,
-        activeNamespace: action.payload.namespace,
-      };
-
     case ActionType.BeginImpersonate:
       return {
         ...state,
@@ -61,5 +48,3 @@ const coreReducer = (
       return state;
   }
 };
-
-export default coreReducer;

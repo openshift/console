@@ -3,6 +3,7 @@ import { merge } from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
+import { getUser } from '@console/dynamic-plugin-sdk';
 import { KebabAction, Kebab } from '@console/internal/components/utils';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { PipelineRunKind } from '../../../types';
@@ -15,7 +16,7 @@ const mergeAnnotationsWithResource = (annotations: AnnotationMap, resource: K8sR
 };
 
 export const useUserAnnotationForManualStart = (): AnnotationMap => {
-  const user = useSelector((state) => state.UI.get('user'));
+  const user = useSelector(getUser);
 
   if (!user?.metadata?.name) {
     return {};

@@ -7,6 +7,7 @@ import { Trans, useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
+import { getUser } from '@console/dynamic-plugin-sdk';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { coFetchJSON } from '../../co-fetch';
@@ -109,7 +110,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   );
   const [startsAt, setStartsAt] = React.useState(defaults.startsAt ?? formatDate(now));
 
-  const user = useSelector(({ UI }: RootState) => UI.get('user'));
+  const user = useSelector(getUser);
 
   React.useEffect(() => {
     if (_.isEmpty(createdBy)) {

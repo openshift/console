@@ -25,6 +25,7 @@ import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import { getUser } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, featureReducerName } from '../reducers/features';
@@ -721,7 +722,7 @@ class MastheadToolbarContents_ extends React.Component {
 const mastheadToolbarStateToProps = (state) => ({
   activeNamespace: state.UI.get('activeNamespace'),
   clusterID: state.UI.get('clusterID'),
-  user: state.UI.get('user'),
+  user: getUser(state),
   alertCount: state.UI.getIn(['monitoring', 'alertCount']),
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });

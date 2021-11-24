@@ -4,8 +4,8 @@ import * as React from 'react';
 import { useStore } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore, compose, Store } from 'redux';
 import thunk from 'redux-thunk';
-import { baseReducers } from './redux';
-import { RootState } from './redux-types';
+import { SDKReducers } from './redux';
+import { SDKStoreState } from './redux-types';
 import storeHandler from './storeHandler';
 
 const composeEnhancers =
@@ -22,7 +22,7 @@ const composeEnhancers =
  * }
  * ```
  */
-export const useReduxStore = (): { store: Store<RootState>; storeContextPresent: boolean } => {
+export const useReduxStore = (): { store: Store<SDKStoreState>; storeContextPresent: boolean } => {
   const storeContext = useStore();
   const [storeContextPresent, setStoreContextPresent] = React.useState(false);
   const store = React.useMemo(() => {
@@ -35,7 +35,7 @@ export const useReduxStore = (): { store: Store<RootState>; storeContextPresent:
       console.log('Creating the SDK redux store');
       setStoreContextPresent(false);
       const storeInstance = createStore(
-        combineReducers<RootState>(baseReducers),
+        combineReducers<SDKStoreState>(SDKReducers),
         {},
         composeEnhancers(applyMiddleware(thunk)),
       );
