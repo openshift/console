@@ -17,6 +17,7 @@ import {
   Kebab,
   MsgBox,
   HintBlock,
+  useAccessReview,
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
@@ -40,6 +41,12 @@ import { referenceForStepResource } from '.';
 import Spy = jasmine.Spy;
 
 const i18nNS = 'public';
+
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  useAccessReview: jest.fn(),
+}));
+
+const useAccessReviewMock = useAccessReview as jest.Mock;
 
 describe('InstallPlanTableRow', () => {
   let obj: InstallPlanKind;
@@ -265,6 +272,7 @@ describe('InstallPlanPreview', () => {
   });
 
   it('renders button to approve install plan if requires approval', () => {
+    useAccessReviewMock.mockReturnValue(true);
     const wrapper = shallow(
       <InstallPlanPreview
         obj={{
@@ -288,11 +296,23 @@ describe('InstallPlanPreview', () => {
     ).toEqual('Approve');
   });
 
-  it('calls `k8sUpdate` to set `approved: true` when button is clicked', (done) => {
-    spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve(testInstallPlan))
+  it('calls `k8sPatch` to set `approved: true` when button is clicked', (done) => {
+    jest.spyOn(k8s, 'k8sPatch').mockImplementation((model, data) => Promise.resolve(data));
+
+    spyAndExpect(spyOn(k8s, 'k8sPatch'))(Promise.resolve(testInstallPlan))
       .then(([model, installPlan]) => {
         expect(model).toEqual(InstallPlanModel);
-        expect(installPlan.spec.approved).toBe(true);
+        expect(jest.spyOn(k8s, 'k8sPatch')).toHaveBeenLastCalledWith(
+          InstallPlanModel,
+          installPlan,
+          [
+            {
+              op: 'replace',
+              path: '/spec/approved',
+              value: true,
+            },
+          ],
+        );
         done();
       })
       .catch((err) => fail(err));
@@ -309,6 +329,7 @@ describe('InstallPlanPreview', () => {
         }}
       />,
     );
+
     wrapper
       .find(HintBlock)
       .shallow()
