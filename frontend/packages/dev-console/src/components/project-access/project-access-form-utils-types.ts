@@ -6,10 +6,6 @@ export enum Verb {
   Patch = 'Patch',
 }
 
-export type ProjectAccessRoles = {
-  availableClusterRoles: string[];
-};
-
 export interface UserRoleBinding {
   roleBindingName?: string;
   user: string;

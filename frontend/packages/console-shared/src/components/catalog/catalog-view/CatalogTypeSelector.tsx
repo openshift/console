@@ -34,7 +34,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
   return (
     <>
       <Title headingLevel="h4" style={{ marginLeft: '14px' }}>
-        {t('devconsole~Type')}
+        {t('console-shared~Type')}
         <FieldLevelHelp>{typeDescriptions}</FieldLevelHelp>
       </Title>
       <VerticalTabs data-test="catalog-types">

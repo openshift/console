@@ -39,15 +39,15 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
     const inputRef = React.useRef<HTMLDivElement>();
 
     const catalogSortItems = {
-      [CatalogSortOrder.ASC]: t('devconsole~A-Z'),
-      [CatalogSortOrder.DESC]: t('devconsole~Z-A'),
+      [CatalogSortOrder.ASC]: t('console-shared~A-Z'),
+      [CatalogSortOrder.DESC]: t('console-shared~Z-A'),
     };
 
     const showGrouping = !_.isEmpty(groupings);
 
     const catalogGroupItems = {
       ...groupings,
-      [NO_GROUPING]: t('devconsole~None'),
+      [NO_GROUPING]: t('console-shared~None'),
     };
 
     React.useImperativeHandle(toolbarRef, () => {
@@ -66,11 +66,11 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               className="co-catalog-page__input"
               data-test="search-catalog"
               type="text"
-              placeholder={t('devconsole~Filter by keyword...')}
+              placeholder={t('console-shared~Filter by keyword...')}
               value={searchKeyword}
               onChange={onSearchKeywordChange}
               onClear={() => onSearchKeywordChange('')}
-              aria-label={t('devconsole~Filter by keyword...')}
+              aria-label={t('console-shared~Filter by keyword...')}
             />
             <Dropdown
               className="co-catalog-page__sort"
@@ -84,13 +84,13 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 menuClassName="dropdown-menu--text-wrap"
                 items={catalogGroupItems}
                 onChange={onGroupingChange}
-                titlePrefix={t('devconsole~Group by')}
+                titlePrefix={t('console-shared~Group by')}
                 title={catalogGroupItems[activeGrouping]}
               />
             )}
           </div>
           <div className="co-catalog-page__num-items">
-            {t('devconsole~{{totalItems}} items', { totalItems })}
+            {t('console-shared~{{totalItems}} items', { totalItems })}
           </div>
         </div>
       </div>

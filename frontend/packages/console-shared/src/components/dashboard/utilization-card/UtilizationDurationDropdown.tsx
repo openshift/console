@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { Dropdown } from '@console/internal/components/utils';
-import { DurationKeys, DURATION_VALUES, useUtilizationDuration } from '@console/shared';
+import { DurationKeys, DURATION_VALUES } from '../../../constants/duration';
+import { useUtilizationDuration } from '../../../hooks';
 
 export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = ({
   adjustDuration,

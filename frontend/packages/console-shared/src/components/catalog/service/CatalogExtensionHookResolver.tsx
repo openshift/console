@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { ExtensionHook } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
-  CatalogItem,
-  ExtensionHook,
   CatalogExtensionHookOptions,
-} from '@console/dynamic-plugin-sdk';
+  CatalogItem,
+} from '@console/dynamic-plugin-sdk/src/extensions';
 
 type CatalogExtensionHookResolverProps = {
   id: string;

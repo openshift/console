@@ -1,9 +1,5 @@
 import { AlertSeverity } from '@console/internal/components/monitoring/types';
-import {
-  mockAlerts,
-  mockAlerts2,
-  expectedFiringAlerts,
-} from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
+import { mockAlerts, mockAlerts2, expectedFiringAlerts } from '../__mocks__/alerts-and-rules-data';
 import {
   getSeverityAlertType,
   getFiringAlerts,

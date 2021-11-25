@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModalOpen } from '@console/internal/components/modals';
-import { useQueryParams } from '@console/shared';
+import { useQueryParams } from '../../../hooks/useQueryParams';
 import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';
 import {
   categorize,
@@ -144,8 +144,8 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   }, []);
 
   const catalogCategories = React.useMemo<CatalogCategory[]>(() => {
-    const allCategory = { id: ALL_CATEGORY, label: t('devconsole~All items') };
-    const otherCategory = { id: OTHER_CATEGORY, label: t('devconsole~Other') };
+    const allCategory = { id: ALL_CATEGORY, label: t('console-shared~All items') };
+    const otherCategory = { id: OTHER_CATEGORY, label: t('console-shared~Other') };
     return [allCategory, ...(categories ?? []), otherCategory];
   }, [categories, t]);
 

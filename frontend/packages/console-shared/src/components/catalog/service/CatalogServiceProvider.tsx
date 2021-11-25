@@ -1,24 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import {
-  ResolvedExtension,
   CatalogExtensionHookOptions,
   CatalogItem,
-  CatalogItemType,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
+import { CatalogService } from '../utils';
 import { keywordCompare } from '../utils/catalog-utils';
 import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
-
-export type CatalogService = {
-  type: string;
-  items: CatalogItem[];
-  itemsMap: { [type: string]: CatalogItem[] };
-  loaded: boolean;
-  loadError: any;
-  searchCatalog: (query: string) => CatalogItem[];
-  catalogExtensions: ResolvedExtension<CatalogItemType>[];
-};
 
 type CatalogServiceProviderProps = {
   namespace: string;

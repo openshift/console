@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ResizeDirection } from 're-resizable';
 import { Rnd } from 'react-rnd';
-import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getQueryArgument,
@@ -9,7 +8,8 @@ import {
   setQueryArgument,
   history,
 } from '@console/internal/components/utils';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useTelemetry } from '../../hooks/useTelemetry';
+import { CatalogType } from '../catalog';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
 import { DetailsRendererFunction } from './QuickSearchDetails';

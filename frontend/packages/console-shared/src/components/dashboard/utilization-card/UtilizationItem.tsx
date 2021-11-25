@@ -10,8 +10,8 @@ import {
 } from '@console/internal/components/graphs/area';
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import { Humanize } from '@console/internal/components/utils/types';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { useUtilizationDuration } from '@console/shared/src/hooks';
+import { ByteDataTypes } from '../../../graph-helper/data-utils';
+import { useUtilizationDuration } from '../../../hooks';
 import {
   YellowExclamationTriangleIcon,
   RedExclamationCircleIcon,

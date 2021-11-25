@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import * as utils from '@console/internal/components/utils';
-import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
+import { sampleDeployments } from '../../../utils/__tests__/test-resource-data';
 import HealthChecksAlert from '../HealthChecksAlert';
 
 jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({

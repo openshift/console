@@ -2,13 +2,15 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { useQueryParams } from '@console/shared';
+import {
+  useQueryParams,
+  CatalogQueryParams,
+  CatalogServiceProvider,
+  useCatalogCategories,
+  CatalogController,
+} from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
-import CatalogController from './CatalogController';
-import useCatalogCategories from './hooks/useCatalogCategories';
-import CatalogServiceProvider from './service/CatalogServiceProvider';
-import { CatalogQueryParams } from './utils/types';
 
 type CatalogPageProps = RouteComponentProps<{
   ns?: string;

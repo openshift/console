@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { VirtualizedGrid } from '@console/shared';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import { VirtualizedGrid } from '../../virtualized-grid';
 
 type CatalogGridProps = {
   items: CatalogItem[] | { [key: string]: CatalogItem[] };

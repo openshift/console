@@ -2,8 +2,8 @@ import * as React from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { Modal } from '@console/shared';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import { Modal } from '../../modal';
 import CatalogBadges from '../CatalogBadges';
 import useCtaLink from '../hooks/useCtaLink';
 import { getIconProps } from '../utils/catalog-utils';
@@ -25,7 +25,7 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
   const { name, title, badges } = item;
 
   const provider = item.provider
-    ? t('devconsole~Provided by {{provider}}', { provider: item.provider })
+    ? t('console-shared~Provided by {{provider}}', { provider: item.provider })
     : null;
 
   const vendor = (

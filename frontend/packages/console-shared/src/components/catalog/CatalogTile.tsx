@@ -6,9 +6,9 @@ import {
 import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { history } from '@console/internal/components/utils';
-import { isModifiedEvent } from '@console/shared';
+import { isModifiedEvent } from '../../utils';
 import CatalogBadges from './CatalogBadges';
 import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
@@ -26,7 +26,7 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
   const { t } = useTranslation();
   const { name, title, provider, description, type, badges } = item;
 
-  const vendor = provider ? t('devconsole~Provided by {{provider}}', { provider }) : null;
+  const vendor = provider ? t('console-shared~Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
 
   const typeBadges = [

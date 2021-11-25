@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { UtilizationBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
-import { useUtilizationDuration } from '@console/shared';
+import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';
 
 import './utilization-card.scss';
 

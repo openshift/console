@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { useActiveNamespace } from '@console/shared/src';
+import { useActiveNamespace, CatalogServiceProvider } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
-import CatalogServiceProvider from '../../catalog/service/CatalogServiceProvider';
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 
@@ -10,7 +9,7 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('../../catalog/service/CatalogServiceProvider', () => ({
+jest.mock('@console/shared/src/components/catalog/service/CatalogServiceProvider', () => ({
   default: jest.fn(),
 }));
 

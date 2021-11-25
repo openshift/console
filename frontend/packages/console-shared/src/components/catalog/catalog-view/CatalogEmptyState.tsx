@@ -21,16 +21,16 @@ const CatalogEmptyState: React.FC<CatalogEmptyStateProps> = ({ onClear }) => {
     <EmptyState variant={EmptyStateVariant.full}>
       <EmptyStateIcon icon={SearchIcon} />
       <Title headingLevel="h2" size="lg">
-        {t('devconsole~No results found')}
+        {t('console-shared~No results found')}
       </Title>
       <EmptyStateBody>
         {t(
-          'devconsole~No results match the filter criteria. Remove filters or clear all filters to show results.',
+          'console-shared~No results match the filter criteria. Remove filters or clear all filters to show results.',
         )}
       </EmptyStateBody>
       <EmptyStateSecondaryActions>
         <Button variant="link" onClick={onClear} data-test-id="catalog-clear-filters">
-          {t('devconsole~Clear all filters')}
+          {t('console-shared~Clear all filters')}
         </Button>
       </EmptyStateSecondaryActions>
     </EmptyState>

@@ -1,4 +1,4 @@
-import { CatalogService } from '../../catalog/service/CatalogServiceProvider';
+import { CatalogService } from '@console/shared';
 
 export const loadingCatalogService: CatalogService = {
   type: '',

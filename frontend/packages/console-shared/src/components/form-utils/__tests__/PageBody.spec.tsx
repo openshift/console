@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { InputField } from '@console/shared';
+import InputField from '../../formik-fields/InputField';
 import PageBody from '../PageBody';
 
 describe('Page Body', () => {
