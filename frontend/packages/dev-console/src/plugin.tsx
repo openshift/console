@@ -19,7 +19,6 @@ import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils
 import { getGuidedTour } from './components/guided-tour';
 import { getBindableServiceResources } from './components/topology/bindable-services/bindable-service-resources';
 import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
-import { getKebabActionsForKind } from './utils/kebab-actions';
 
 const getBindableServicesTopologyDataModel = () =>
   import(
@@ -358,12 +357,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import('./components/SearchPage' /* webpackChunkName: "dev-console-search" */))
           .default,
-    },
-  },
-  {
-    type: 'KebabActions',
-    properties: {
-      getKebabActionsForKind,
     },
   },
   {
