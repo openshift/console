@@ -23,6 +23,7 @@ import {
   createStorageSystem,
   labelNodes,
   waitforCRD,
+  taintNodes,
 } from './payloads';
 import {
   BackingStorageType,
@@ -138,7 +139,7 @@ const handleReviewAndCreateNext = async (
   handleError: (err: string, showError: boolean) => void,
   flagDispatcher: any,
 ) => {
-  const { connectionDetails, createStorageClass, storageClass, nodes } = state;
+  const { connectionDetails, createStorageClass, storageClass, nodes, capacityAndNodes } = state;
   const { externalStorage, deployment, type } = state.backingStorage;
   const { encryption, kms } = state.securityAndNetwork;
   const isRhcs: boolean = externalStorage === OCSServiceModel.kind;
@@ -152,6 +153,7 @@ const handleReviewAndCreateNext = async (
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
       await labelOCSNamespace();
       await labelNodes(nodes);
+      if (capacityAndNodes.enableTaint) await taintNodes(nodes);
       if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
       await createStorageSystem(OCS_INTERNAL_CR_NAME, STORAGE_CLUSTER_SYSTEM_KIND);
       await createStorageCluster(state);
@@ -175,6 +177,7 @@ const handleReviewAndCreateNext = async (
       if (!hasOCS && !isRhcs) {
         await labelNodes(nodes);
         if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
+        if (capacityAndNodes.enableTaint) await taintNodes(nodes);
         await createStorageCluster(state);
       }
       if (!isRhcs) await waitforCRD(model);

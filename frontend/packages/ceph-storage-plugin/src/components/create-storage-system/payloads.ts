@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   apiVersionForModel,
   k8sCreate,
@@ -10,6 +11,7 @@ import { K8sModel } from '@console/dynamic-plugin-sdk';
 import { WizardNodeState, WizardState } from './reducer';
 import { Payload } from './external-storage/types';
 import {
+  ocsTaint,
   CEPH_STORAGE_NAMESPACE,
   defaultRequestSize,
   KMSSecretName,
@@ -127,6 +129,24 @@ export const labelNodes = async (nodes: WizardNodeState[]) => {
   } catch (err) {
     throw err;
   }
+};
+
+export const taintNodes = async (nodes: WizardNodeState[]) => {
+  const patch = [
+    {
+      op: 'add',
+      path: '/spec/taints',
+      value: [ocsTaint],
+    },
+  ];
+  const requests: Promise<K8sModel>[] = [];
+  nodes.forEach((node) => {
+    const isAlreadyTainted = node.taints?.some((taint) => _.isEqual(taint, ocsTaint));
+    if (!isAlreadyTainted) {
+      requests.push(k8sPatchByName(NodeModel, node.name, null, patch));
+    }
+  });
+  await Promise.all(requests);
 };
 
 export const createExternalSubSystem = async (subSystemPayloads: Payload[]) => {

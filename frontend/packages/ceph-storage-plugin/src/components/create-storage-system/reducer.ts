@@ -26,6 +26,7 @@ export type WizardNodeState = {
   uid: string;
   roles: string[];
   labels: NodeKind['metadata']['labels'];
+  taints: NodeKind['spec']['taints'];
 };
 
 /* State of CreateStorageSystem */
@@ -42,6 +43,7 @@ export const initialState: CreateStorageSystemState = {
   },
   capacityAndNodes: {
     enableArbiter: false,
+    enableTaint: false,
     arbiterLocation: '',
     capacity: null,
     pvCount: 0,
@@ -91,6 +93,7 @@ type CreateStorageSystemState = {
   connectionDetails: ExternalState;
   capacityAndNodes: {
     enableArbiter: boolean;
+    enableTaint: boolean;
     arbiterLocation: string;
     // @TODO: Remove union types and use "number" as type.
     // Requires refactoring osd size dropdown.
@@ -185,6 +188,9 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'capacityAndNodes/enableArbiter':
       newState.capacityAndNodes.enableArbiter = action.payload;
       break;
+    case 'capacityAndNodes/enableTaint':
+      newState.capacityAndNodes.enableTaint = action.payload;
+      break;
     case 'securityAndNetwork/setKms':
       newState.securityAndNetwork.kms = action.payload;
       break;
@@ -259,6 +265,10 @@ export type CreateStorageSystemAction =
   | {
       type: 'capacityAndNodes/enableArbiter';
       payload: WizardState['capacityAndNodes']['enableArbiter'];
+    }
+  | {
+      type: 'capacityAndNodes/enableTaint';
+      payload: WizardState['capacityAndNodes']['enableTaint'];
     }
   | {
       type: 'securityAndNetwork/setKms';
