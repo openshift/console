@@ -19,7 +19,7 @@ import {
   generateClientKeySecret,
   setEncryptionDispatch,
 } from '../../kms-config/utils';
-import { VaultConfig, ProviderNames } from '../../../types';
+import { VaultConfig, ProviderNames, VaultAuthMethods } from '../../../types';
 import './advanced-kms-modal.scss';
 
 export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProps) => {
@@ -28,6 +28,9 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
 
   const { t } = useTranslation();
   const [backendPath, setBackendPath] = React.useState(kms?.backend || '');
+  const [authPath, setAuthPath] = React.useState(kms?.providerAuthPath || '');
+  const [authNamespace, setAuthNamespace] = React.useState(kms?.providerAuthNamespace || '');
+
   const [tlsName, setTLSName] = React.useState(kms?.tls || '');
   const [caCertificate, setCACertificate] = React.useState(
     kms?.caCert?.stringData['ca.cert'] || '',
@@ -74,6 +77,8 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
     const kmsAdvanced = {
       ...kms,
       backend: backendPath,
+      providerAuthNamespace: authNamespace,
+      providerAuthPath: authPath,
       tls: tlsName,
       providerNamespace: providerNS,
       caCertFile: caCertificateFile,
@@ -126,7 +131,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
 
   return (
     <Form onSubmit={submit} key="advanced-vault-modal">
-      <div className="modal-content modal-content--no-inner-scroll">
+      <div className="modal-content modal-content">
         <ModalTitle>{t('ceph-storage-plugin~Key Management Service Advanced Settings')}</ModalTitle>
         <ModalBody>
           <FormGroup
@@ -144,6 +149,39 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
               data-test="kms-service-backend-path"
             />
           </FormGroup>
+          {kms.authMethod === VaultAuthMethods.KUBERNETES && state.encryption.storageClass && (
+            <>
+              <FormGroup
+                fieldId="kms-auth-path"
+                label={t('ceph-storage-plugin~Authentication Path')}
+                className="ceph-advanced-kms__form-body"
+              >
+                <TextInput
+                  value={authPath}
+                  onChange={setAuthPath}
+                  type="text"
+                  id="kms-service-auth-path"
+                  name="kms-service-auth-path"
+                  data-test="kms-service-auth-path"
+                />
+              </FormGroup>
+
+              <FormGroup
+                fieldId="kms-auth-namespace"
+                label={t('ceph-storage-plugin~Authentication Namespace')}
+                className="ceph-advanced-kms__form-body"
+              >
+                <TextInput
+                  value={authNamespace}
+                  onChange={setAuthNamespace}
+                  type="text"
+                  id="kms-service-auth-namespace"
+                  name="kms-service-auth-namespace"
+                  data-test="kms-service-auth-namespace"
+                />
+              </FormGroup>
+            </>
+          )}
 
           <FormGroup
             fieldId="kms-service-tls"

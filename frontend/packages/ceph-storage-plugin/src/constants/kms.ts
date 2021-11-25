@@ -3,7 +3,7 @@ import { VaultConfig, HpcsConfig, ProviderNames, KmsImplementations, KMSConfig }
 export const KMSMaxFileUploadSize = 4000000;
 export const KMSConfigMapName = 'ocs-kms-connection-details';
 export const KMSConfigMapCSIName = 'csi-kms-connection-details';
-export const KMSSecretName = 'ocs-kms-token';
+export const KMSVaultTokenSecretName = 'ocs-kms-token';
 export const KMS_PROVIDER = 'KMS_PROVIDER';
 
 /**
@@ -12,10 +12,10 @@ export const KMS_PROVIDER = 'KMS_PROVIDER';
  * "supported" will have a list of all the UI supported implementations for a
  * particular KMS provider (AWS, Vault, IBM etc).
  */
-export const UISupportedProviders = {
+export const SupportedProviders = {
   [ProviderNames.VAULT]: {
     group: 'Vault',
-    supported: [KmsImplementations.VAULT_TOKENS], // add 'vaulttenantsa' to the list, if supported in future
+    supported: [KmsImplementations.VAULT_TOKENS, KmsImplementations.VAULT_TENANT_SA],
   },
   [ProviderNames.HPCS]: {
     group: 'Hyper Protect Crypto Services',
@@ -26,6 +26,7 @@ export const UISupportedProviders = {
 
 export const DescriptionKey = {
   [KmsImplementations.VAULT_TOKENS]: 'VAULT_ADDR',
+  [KmsImplementations.VAULT_TENANT_SA]: 'VAULT_ADDR',
   [KmsImplementations.IBM_KEY_PROTECT]: 'IBM_SERVICE_INSTANCE_ID',
 };
 
@@ -34,7 +35,7 @@ export const VaultEmptyState: VaultConfig = Object.seal({
     value: '',
     valid: true,
   },
-  token: {
+  authValue: {
     value: '',
     valid: true,
   },
@@ -46,12 +47,15 @@ export const VaultEmptyState: VaultConfig = Object.seal({
     value: '',
     valid: true,
   },
+  authMethod: null,
   backend: '',
   caCert: null,
   tls: '',
   clientCert: null,
   clientKey: null,
   providerNamespace: '',
+  providerAuthNamespace: '',
+  providerAuthPath: '',
   hasHandled: true,
   caCertFile: '',
   clientCertFile: '',
@@ -83,5 +87,5 @@ export const HpcsEmptyState: HpcsConfig = Object.seal({
 export const KMSEmptyState: KMSConfig = Object.seal({
   [ProviderNames.VAULT]: VaultEmptyState,
   [ProviderNames.HPCS]: HpcsEmptyState,
-  kmsProvider: ProviderNames.VAULT,
+  provider: ProviderNames.VAULT,
 });

@@ -52,6 +52,7 @@ export enum GUARDED_FEATURES {
   OCS_NAMESPACE_STORE = 'OCS_NAMESPACE_STORE',
   ODF_MCG_STANDALONE = 'ODF_MCG_STANDALONE',
   ODF_HPCS_KMS = 'ODF_HPCS_KMS',
+  ODF_VAULT_SA_KMS = 'ODF_VAULT_SA_KMS',
 }
 
 const OCS_FEATURE_FLAGS = {
@@ -66,6 +67,7 @@ const OCS_FEATURE_FLAGS = {
   [GUARDED_FEATURES.OCS_NAMESPACE_STORE]: 'namespace-store',
   [GUARDED_FEATURES.ODF_MCG_STANDALONE]: 'mcg-standalone',
   [GUARDED_FEATURES.ODF_HPCS_KMS]: 'hpcs-kms',
+  [GUARDED_FEATURES.ODF_VAULT_SA_KMS]: 'vault-sa-kms',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {

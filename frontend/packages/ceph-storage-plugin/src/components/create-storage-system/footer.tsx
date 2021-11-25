@@ -96,9 +96,9 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     case StepsName(t)[Steps.CapacityAndNodes]:
       return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.SecurityAndNetwork]:
-      return encryption.hasHandled && kms[kms.kmsProvider].hasHandled && hasConfiguredNetwork;
+      return encryption.hasHandled && kms[kms.provider].hasHandled && hasConfiguredNetwork;
     case StepsName(t)[Steps.Security]:
-      return encryption.hasHandled && kms[kms.kmsProvider].hasHandled;
+      return encryption.hasHandled && kms[kms.provider].hasHandled;
     case StepsName(t)[Steps.ReviewAndCreate]:
       return true;
     default:
@@ -145,13 +145,13 @@ const handleReviewAndCreateNext = async (
     await labelOCSNamespace();
     if (isMCG) {
       if (encryption.advanced)
-        await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
+        await Promise.all(createClusterKmsResources(kms[kms.provider], kms.provider));
       await createStorageCluster(state);
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
       await labelNodes(nodes);
       if (capacityAndNodes.enableTaint) await taintNodes(nodes);
       if (encryption.advanced)
-        await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
+        await Promise.all(createClusterKmsResources(kms[kms.provider], kms.provider));
       await createStorageSystem(OCS_INTERNAL_CR_NAME, STORAGE_CLUSTER_SYSTEM_KIND);
       await createStorageCluster(state);
     } else if (type === BackingStorageType.EXTERNAL) {
@@ -174,7 +174,7 @@ const handleReviewAndCreateNext = async (
         await labelNodes(nodes);
         if (capacityAndNodes.enableTaint) await taintNodes(nodes);
         if (encryption.advanced)
-          await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
+          await Promise.all(createClusterKmsResources(kms[kms.provider], kms.provider));
         await createStorageCluster(state);
       }
       if (!isRhcs) await waitforCRD(model);

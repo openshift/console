@@ -42,7 +42,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
 
   const isHpcsKmsSupported = useFlag(GUARDED_FEATURES.ODF_HPCS_KMS);
   // vault as default KMS
-  const kmsProvider: ProviderNames = state.kms?.['kmsProvider'] || ProviderNames.VAULT;
+  const kmsProvider: ProviderNames = state.kms?.['provider'] || ProviderNames.VAULT;
   const allowedKMSProviders = KMSProviders.filter(
     (provider) => !provider.allowedPlatforms || provider?.allowedPlatforms.includes(infraType),
   );
