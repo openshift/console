@@ -1,5 +1,6 @@
 import { TFunction } from 'i18next';
 import * as yup from 'yup';
+import { nameRegex } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 
 export const hpaValidationSchema = (t: TFunction) =>
@@ -11,7 +12,7 @@ export const hpaValidationSchema = (t: TFunction) =>
         metadata: yup.object({
           name: yup
             .string()
-            .matches(/^([a-z]([-a-z0-9]*[a-z0-9])?)*$/, {
+            .matches(nameRegex, {
               message: t(
                 'devconsole~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
               ),
