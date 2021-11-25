@@ -91,9 +91,13 @@ const CloudinitForm: React.FC<CloudinitFormProps> = ({
                   )}
                   icon={<MinusCircleIcon />}
                   variant={ButtonVariant.link}
-                  isDisabled={idx === 0}
                   onClick={() => {
-                    setAuthKeys((keys) => keys.filter((__, index) => index !== Number(uiIDX)));
+                    setAuthKeys((keys) => {
+                      if (idx === 0) {
+                        return ['', ...keys.slice(1)];
+                      }
+                      return keys.filter((__, index) => index !== Number(uiIDX));
+                    });
                   }}
                 />
               </SplitItem>
