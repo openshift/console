@@ -1,5 +1,10 @@
-.odf-backing-storage__selection--width {
-    width: 22rem;
+.odf-backing-storage__selection {
+    &--width {
+        width: 22rem;
+    }
+    &--spacer {
+        margin-right: var(--pf-global--spacer--md);
+    }
 }
 
 .odf-backing-storage__deployment-type {
