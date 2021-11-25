@@ -10,6 +10,7 @@ import { VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../selectors';
 import { isVMI } from '../../selectors/check-type';
+import { getVMIHotplugVolumeSnapshotStatuses } from '../../selectors/disks/hotplug';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { asVM } from '../../selectors/vm/vm';
@@ -131,6 +132,10 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
                       vmi,
                     ),
                     snapshots,
+                    hotplugVolumeSnapshotStatuses: getVMIHotplugVolumeSnapshotStatuses(
+                      asVM(vmLikeEntity),
+                      vmi,
+                    ),
                   }).result,
                 )
               }
