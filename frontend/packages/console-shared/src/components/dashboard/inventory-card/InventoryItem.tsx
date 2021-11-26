@@ -23,6 +23,11 @@ import {
   isDashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
+import InventoryItemNew, {
+  InventoryItemStatus,
+  InventoryItemBody,
+  InventoryItemLoading,
+} from './InventoryCard';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';
 
@@ -94,7 +99,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
             id={title}
             className="co-inventory-card__accordion-toggle"
           >
-            <div className="co-inventory-card__item">
+            <InventoryItemNew>
               <div
                 className="co-inventory-card__item-title"
                 data-test={!TitleComponent ? dataTest : null}
@@ -111,7 +116,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
                   )}
                 </div>
               )}
-            </div>
+            </InventoryItemNew>
           </AccordionToggle>
           <AccordionContent isHidden={!expanded} className="co-inventory-card__accordion-body">
             <ExpandedComponent />
@@ -119,24 +124,16 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
         </AccordionItem>
       </Accordion>
     ) : (
-      <div className="co-inventory-card__item">
+      <InventoryItemNew>
         <div
           className="co-inventory-card__item-title"
           data-test={!TitleComponent ? dataTest : null}
         >
-          {isLoading && !error && <div className="skeleton-inventory" />}
+          {isLoading && !error && <InventoryItemLoading />}
           {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
         </div>
-        {(error || !isLoading) && (
-          <div className="co-inventory-card__item-status">
-            {error ? (
-              <div className="text-secondary">{t('console-shared~Not available')}</div>
-            ) : (
-              children
-            )}
-          </div>
-        )}
-      </div>
+        <InventoryItemBody error={error}>{children}</InventoryItemBody>
+      </InventoryItemNew>
     );
   },
 );
@@ -162,12 +159,7 @@ export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
 
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.UNKNOWN];
 
-  return (
-    <div className="co-inventory-card__status">
-      <span className="co-inventory-card__status-text">{count}</span>
-      <span className="co-dashboard-icon co-icon-space-l">{groupIcon}</span>
-    </div>
-  );
+  return <InventoryItemStatus count={count} icon={groupIcon} />;
 };
 
 const StatusLink: React.FC<StatusLinkProps> = ({
@@ -204,14 +196,7 @@ const StatusLink: React.FC<StatusLinkProps> = ({
   const to =
     filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
 
-  return (
-    <div className="co-inventory-card__status">
-      <Link to={to} className="co-inventory-card__status-link">
-        <span className="co-inventory-card__status-text">{count}</span>
-        <span className="co-dashboard-icon co-icon-space-l">{groupIcon}</span>
-      </Link>
-    </div>
-  );
+  return <InventoryItemStatus count={count} icon={groupIcon} linkTo={to} />;
 };
 
 const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({

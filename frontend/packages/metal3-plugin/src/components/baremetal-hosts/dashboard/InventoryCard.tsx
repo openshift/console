@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -82,24 +82,34 @@ const InventoryCard: React.FC = () => {
         <CardTitle>{t('metal3-plugin~Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
-        <PodInventoryItem />
-        <InventoryItem
-          title={t('metal3-plugin~Disk')}
-          isLoading={!obj}
-          count={getHostStorage(obj).length}
-          TitleComponent={DiskTitleComponent}
-        />
-        <InventoryItem
-          title={t('metal3-plugin~NIC')}
-          isLoading={!obj}
-          count={getHostNICs(obj).length}
-          TitleComponent={NICTitleComponent}
-        />
-        <InventoryItem
-          title={t('metal3-plugin~CPU')}
-          isLoading={!obj}
-          count={getHostCPU(obj).count}
-        />
+        <Stack hasGutter>
+          <StackItem>
+            <PodInventoryItem />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~Disk')}
+              isLoading={!obj}
+              count={getHostStorage(obj).length}
+              TitleComponent={DiskTitleComponent}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~NIC')}
+              isLoading={!obj}
+              count={getHostNICs(obj).length}
+              TitleComponent={NICTitleComponent}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~CPU')}
+              isLoading={!obj}
+              count={getHostCPU(obj).count}
+            />
+          </StackItem>
+        </Stack>
       </CardBody>
     </Card>
   );

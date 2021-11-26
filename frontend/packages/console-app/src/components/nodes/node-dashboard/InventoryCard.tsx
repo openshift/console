@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -50,18 +50,24 @@ const InventoryCard: React.FC = () => {
         <CardTitle>{t('console-app~Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
-        <NodeInventoryItem
-          nodeName={obj.metadata.name}
-          model={PodModel}
-          mapper={getPodStatusGroups}
-        />
-        <InventoryItem
-          isLoading={!obj}
-          title={t('console-app~Image')}
-          titlePlural={t('console-app~Images')}
-          count={obj.status?.images?.length}
-          error={!obj.status?.images}
-        />
+        <Stack hasGutter>
+          <StackItem>
+            <NodeInventoryItem
+              nodeName={obj.metadata.name}
+              model={PodModel}
+              mapper={getPodStatusGroups}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              isLoading={!obj}
+              title={t('console-app~Image')}
+              titlePlural={t('console-app~Images')}
+              count={obj.status?.images?.length}
+              error={!obj.status?.images}
+            />
+          </StackItem>
+        </Stack>
       </CardBody>
     </Card>
   );

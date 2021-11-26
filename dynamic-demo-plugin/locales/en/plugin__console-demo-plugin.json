@@ -1,4 +1,7 @@
 {
+  "{{count}} Worker Node": "{{count}} Worker Node",
+  "{{count}} Worker Node_plural": "{{count}} Worker Nodes",
+  "Worker Nodes": "Worker Nodes",
   "Example info alert": "Example info alert",
   "Example warning alert": "Example warning alert",
   "Example hint": "Example hint",

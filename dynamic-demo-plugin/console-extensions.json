@@ -261,5 +261,11 @@
       "path": "/test-k8sapi",
       "component": { "$codeRef": "K8sAPIConsumer.default" }
     }
+  },
+  {
+    "type": "console.cluster-overview/inventory-item",
+    "properties": {
+      "component": { "$codeRef": "clusterInventoryOverview.default" }
+    }
   }
 ]

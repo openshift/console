@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -107,59 +107,69 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         {isLoading ? (
           <LoadingInline />
         ) : (
-          <>
+          <Stack hasGutter>
             {nicCount > 0 && (
-              <InventoryItem
-                isLoading={isLoading}
-                title={t('kubevirt-plugin~NIC', { count: nicCount })}
-                titlePlural={t('kubevirt-plugin~NIC', { count: nicCount })}
-                count={nicCount}
-                TitleComponent={NicsTitle}
-                key="nic-inventory-item"
-              />
+              <StackItem>
+                <InventoryItem
+                  isLoading={isLoading}
+                  title={t('kubevirt-plugin~NIC', { count: nicCount })}
+                  titlePlural={t('kubevirt-plugin~NIC', { count: nicCount })}
+                  count={nicCount}
+                  TitleComponent={NicsTitle}
+                  key="nic-inventory-item"
+                />
+              </StackItem>
             )}
             {diskCount > 0 && (
-              <InventoryItem
-                isLoading={isLoading}
-                title={t('kubevirt-plugin~Disk', { count: diskCount })}
-                titlePlural={t('kubevirt-plugin~Disk', { count: diskCount })}
-                count={diskCount}
-                TitleComponent={DisksTitle}
-                key="disk-inventory-item"
-              />
+              <StackItem>
+                <InventoryItem
+                  isLoading={isLoading}
+                  title={t('kubevirt-plugin~Disk', { count: diskCount })}
+                  titlePlural={t('kubevirt-plugin~Disk', { count: diskCount })}
+                  count={diskCount}
+                  TitleComponent={DisksTitle}
+                  key="disk-inventory-item"
+                />
+              </StackItem>
             )}
             {cdromCount > 0 && (
-              <InventoryItem
-                isLoading={isLoading}
-                title={t('kubevirt-plugin~CD-ROM', { count: cdromCount })}
-                titlePlural={t('kubevirt-plugin~CD-ROM', { count: cdromCount })}
-                count={cdromCount}
-                TitleComponent={CDROMTitle}
-                key="cdrom-inventory-item"
-              />
+              <StackItem>
+                <InventoryItem
+                  isLoading={isLoading}
+                  title={t('kubevirt-plugin~CD-ROM', { count: cdromCount })}
+                  titlePlural={t('kubevirt-plugin~CD-ROM', { count: cdromCount })}
+                  count={cdromCount}
+                  TitleComponent={CDROMTitle}
+                  key="cdrom-inventory-item"
+                />
+              </StackItem>
             )}
             {lunCount > 0 && (
-              <InventoryItem
-                isLoading={isLoading}
-                title={t('kubevirt-plugin~LUN', { count: lunCount })}
-                titlePlural={t('kubevirt-plugin~LUN', { count: lunCount })}
-                count={lunCount}
-                TitleComponent={LUNTitle}
-                key="lun-inventory-item"
-              />
+              <StackItem>
+                <InventoryItem
+                  isLoading={isLoading}
+                  title={t('kubevirt-plugin~LUN', { count: lunCount })}
+                  titlePlural={t('kubevirt-plugin~LUN', { count: lunCount })}
+                  count={lunCount}
+                  TitleComponent={LUNTitle}
+                  key="lun-inventory-item"
+                />
+              </StackItem>
             )}
             {filteredSnapshots?.length > 0 && (
-              <InventoryItem
-                isLoading={isLoading || !snapshotsLoaded}
-                error={snapshotsError}
-                title={t('kubevirt-plugin~Snapshot', { count: filteredSnapshots.length })}
-                titlePlural={t('kubevirt-plugin~Snapshot', { count: filteredSnapshots.length })}
-                count={filteredSnapshots.length}
-                TitleComponent={SnapshotsTitle}
-                key="snapshots-inventory-item"
-              />
+              <StackItem>
+                <InventoryItem
+                  isLoading={isLoading || !snapshotsLoaded}
+                  error={snapshotsError}
+                  title={t('kubevirt-plugin~Snapshot', { count: filteredSnapshots.length })}
+                  titlePlural={t('kubevirt-plugin~Snapshot', { count: filteredSnapshots.length })}
+                  count={filteredSnapshots.length}
+                  TitleComponent={SnapshotsTitle}
+                  key="snapshots-inventory-item"
+                />
+              </StackItem>
             )}
-          </>
+          </Stack>
         )}
       </CardBody>
     </Card>
