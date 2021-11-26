@@ -26,13 +26,13 @@ export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName }) =
     </Trans>
   ) : baseImageName?.includes('win') ? (
     <Trans t={t} ns="kubevirt-plugin">
-      Example: For Windows, visit the{' '}
+      Example: For Windows, get a link to the{' '}
       <strong>
         <a href={WINDOWS_IMAGE_LINK} rel="noopener noreferrer" target="_blank">
-          Windows 10 cloud image
+          installation iso of Windows 10
         </a>
       </strong>{' '}
-      and copy the download link URL for the cloud base image
+      and copy the download link URL
     </Trans>
   ) : baseImageName?.includes('centos') ? (
     <Trans t={t} ns="kubevirt-plugin">
