@@ -761,6 +761,7 @@
   "Remove favorite": "Remove favorite",
   "Favorite template": "Favorite template",
   "View full details": "View full details",
+  "You do not have permissions to create Virtual Machine. Contact your system administrator for more information.": "You do not have permissions to create Virtual Machine. Contact your system administrator for more information.",
   "Template details": "Template details",
   "Create VM": "Create VM",
   "Boot source is ready for customization or currently being customized.": "Boot source is ready for customization or currently being customized.",
