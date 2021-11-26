@@ -3,7 +3,7 @@ import { Extension, ExtensionDeclaration } from '../types';
 
 /** Customize the display of models by overriding values retrieved and generated through API discovery. */
 export type ModelMetadata = ExtensionDeclaration<
-  'console.resource-metadata',
+  'console.model-metadata',
   {
     /** The model to customize. May specify only a group, or optional version and kind. */
     model: ExtensionK8sGroupModel;
@@ -23,4 +23,4 @@ export type ModelMetadata = ExtensionDeclaration<
 // Type guards
 
 export const isModelMetadata = (e: Extension): e is ModelMetadata =>
-  e.type === 'console.resource-metadata';
+  e.type === 'console.model-metadata';

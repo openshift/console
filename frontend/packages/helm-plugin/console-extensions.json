@@ -1,6 +1,6 @@
 [
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "helm.openshift.io",
