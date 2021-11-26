@@ -16,8 +16,6 @@ import {
   ListPageFilterProps,
   UseListPageFilter,
   ResourceLinkProps,
-  UseK8sModel,
-  UseK8sModels,
 } from '../extensions/console-types';
 
 export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
@@ -70,10 +68,8 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
   .useListPageFilter;
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
   .ResourceLink;
-export const useK8sModel: UseK8sModel = require('@console/shared/src/hooks/useK8sModel')
-  .useK8sModel;
-export const useK8sModels: UseK8sModels = require('@console/shared/src/hooks/useK8sModels')
-  .useK8sModels;
+
+export { useK8sModel, useK8sModels } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 
 export {
   consoleFetch,
