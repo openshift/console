@@ -75,7 +75,7 @@ export const createStorageCluster = async (state: WizardState) => {
   const payload = getOCSRequestData(
     storageClass,
     storage,
-    encryption.clusterWide,
+    encryption,
     isMinimal,
     isFlexibleScaling,
     publicNetwork,

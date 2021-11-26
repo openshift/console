@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import { withHandlePromise } from '@console/internal/components/utils/promise-component';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
-import { KMSMaxFileUploadSize } from '../../../constants';
+import { KMS_MAX_FILE_UPLOAD_SIZE } from '../../../constants';
 import { AdvancedKMSModalProps } from '../../kms-config/providers';
 import {
   generateCASecret,
@@ -187,7 +187,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
               filenamePlaceholder={t('ceph-storage-plugin~Upload a .PEM file here...')}
               dropzoneProps={{
                 accept: '.pem',
-                maxSize: KMSMaxFileUploadSize,
+                maxSize: KMS_MAX_FILE_UPLOAD_SIZE,
                 onDropRejected: () => setError(KMSFileSizeErrorMsg),
               }}
             />
@@ -207,7 +207,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
               filenamePlaceholder={t('ceph-storage-plugin~Upload a .PEM file here...')}
               dropzoneProps={{
                 accept: '.pem',
-                maxSize: KMSMaxFileUploadSize,
+                maxSize: KMS_MAX_FILE_UPLOAD_SIZE,
                 onDropRejected: () => setError(KMSFileSizeErrorMsg),
               }}
             />
@@ -227,7 +227,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
               filenamePlaceholder={t('ceph-storage-plugin~Upload a .PEM file here...')}
               dropzoneProps={{
                 accept: '.pem',
-                maxSize: KMSMaxFileUploadSize,
+                maxSize: KMS_MAX_FILE_UPLOAD_SIZE,
                 onDropRejected: () => setError(KMSFileSizeErrorMsg),
               }}
             />

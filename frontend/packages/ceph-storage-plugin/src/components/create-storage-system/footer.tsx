@@ -146,13 +146,17 @@ const handleReviewAndCreateNext = async (
     if (isMCG) {
       await labelOCSNamespace();
       if (encryption.advanced)
-        await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
+        await Promise.all(
+          createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider, encryption),
+        );
       await createMCGStorageCluster(encryption.advanced);
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
       await labelOCSNamespace();
       await labelNodes(nodes);
       if (encryption.advanced)
-        await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
+        await Promise.all(
+          createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider, encryption),
+        );
       await createStorageSystem(OCS_INTERNAL_CR_NAME, STORAGE_CLUSTER_SYSTEM_KIND);
       await createStorageCluster(state);
     } else if (type === BackingStorageType.EXTERNAL) {
@@ -175,7 +179,9 @@ const handleReviewAndCreateNext = async (
       if (!hasOCS && !isRhcs) {
         await labelNodes(nodes);
         if (encryption.advanced)
-          await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
+          await Promise.all(
+            createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider, encryption),
+          );
         await createStorageCluster(state);
       }
       if (!isRhcs) await waitforCRD(model);

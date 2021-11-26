@@ -1,9 +1,10 @@
 import { VaultConfig, IbmKmsConfig, ProviderNames, KmsImplementations, KMSConfig } from '../types';
 
-export const KMSMaxFileUploadSize = 4000000;
-export const KMSConfigMapName = 'ocs-kms-connection-details';
-export const KMSConfigMapCSIName = 'csi-kms-connection-details';
-export const KMSSecretName = 'ocs-kms-token';
+export const KMS_MAX_FILE_UPLOAD_SIZE = 4000000;
+export const KMS_CONFIG_MAP_NAME = 'ocs-kms-connection-details';
+export const KMS_CONFIG_MAP_CSI_NAME = 'csi-kms-connection-details';
+export const KMS_VAULT_OCS_SECRET_NAME = 'ocs-kms-token';
+export const KMS_VAULT_CSI_SECRET_NAME = 'ceph-csi-kms-token';
 export const KMS_PROVIDER = 'KMS_PROVIDER';
 
 /**

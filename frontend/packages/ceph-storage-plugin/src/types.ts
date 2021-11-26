@@ -296,6 +296,8 @@ export type StorageClusterKind = K8sResourceCommon & {
     resources: StorageClusterResource;
     encryption?: {
       enable: boolean;
+      clusterWide: boolean;
+      storageClassWide: boolean;
       kms?: {
         enable: boolean;
       };

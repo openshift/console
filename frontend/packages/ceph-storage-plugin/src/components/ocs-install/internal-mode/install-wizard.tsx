@@ -44,7 +44,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
   const storageCluster: StorageClusterKind = getOCSRequestData(
     { name: storageClass?.metadata?.name, provisioner: storageClass?.provisioner },
     capacity,
-    encryption.clusterWide,
+    encryption,
     enableMinimal,
     enableFlexibleScaling,
     publicNetwork,
@@ -53,7 +53,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
   );
   const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
   if (encryption.advanced && kms.hasHandled) {
-    promises.push(...createClusterKmsResources(kms, ProviderNames.VAULT));
+    promises.push(...createClusterKmsResources(kms, ProviderNames.VAULT, encryption));
   }
   if (enableTaint) {
     promises.push(...taintNodes(nodes));

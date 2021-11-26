@@ -39,7 +39,7 @@ import {
   KMS_PROVIDER,
   CLUSTER_STATUS,
   CEPH_STORAGE_NAMESPACE,
-  KMSConfigMapCSIName,
+  KMS_CONFIG_MAP_CSI_NAME,
   UISupportedProviders,
   DescriptionKey,
 } from '../../constants';
@@ -454,7 +454,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
     namespaced: true,
     isList: false,
     namespace: CEPH_STORAGE_NAMESPACE,
-    name: KMSConfigMapCSIName,
+    name: KMS_CONFIG_MAP_CSI_NAME,
   };
   const [infra, infraLoaded, infraLoadError] = useK8sGet<any>(InfrastructureModel, 'cluster');
   const [csiConfigMap, csiConfigMapLoaded, csiConfigMapLoadError] = useK8sWatchResource<
