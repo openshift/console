@@ -44,7 +44,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
   const storageCluster: StorageClusterKind = getOCSRequestData(
     { name: storageClass?.metadata?.name, provisioner: storageClass?.provisioner },
     capacity,
-    encryption.clusterWide,
+    encryption,
     enableMinimal,
     enableFlexibleScaling,
     publicNetwork,

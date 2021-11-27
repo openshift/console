@@ -376,7 +376,10 @@ export type StorageClusterKind = K8sResourceCommon & {
       arbiterLocation: string;
     };
     encryption?: {
+      /** @deprecated - enable is deprecated from 4.10 */
       enable: boolean;
+      clusterWide: boolean;
+      storageClass: boolean;
       kms?: {
         enable: boolean;
       };

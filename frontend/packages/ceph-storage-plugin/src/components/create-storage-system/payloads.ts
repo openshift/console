@@ -61,9 +61,7 @@ export const createStorageCluster = async (state: WizardState) => {
   const payload = getOCSRequestData(
     storageClass,
     storage,
-    // MCG requires clusterwide encryption to be true for kms configuration to take into affect
-    // https://github.com/red-hat-storage/ocs-operator/blob/main/controllers/storagecluster/noobaa_system_reconciler.go#L182
-    isMCG ? encryption.advanced : encryption.clusterWide,
+    encryption,
     isMinimal,
     isFlexibleScaling,
     publicNetwork,

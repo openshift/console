@@ -17,6 +17,7 @@ import {
   StorageClusterResource,
   DeviceSet,
   ResourceConstraints,
+  EncryptionType,
 } from '../../types';
 import { WizardState } from '../create-storage-system/reducer';
 
@@ -124,7 +125,7 @@ export const createDeviceSet = (
 export const getOCSRequestData = (
   storageClass: WizardState['storageClass'],
   storage: string,
-  encrypted: boolean,
+  encryption: EncryptionType,
   isMinimal: boolean,
   flexibleScaling = false,
   publicNetwork?: string,
@@ -209,9 +210,11 @@ export const getOCSRequestData = (
     };
   }
 
-  if (encrypted) {
+  if (encryption) {
     requestData.spec.encryption = {
-      enable: encrypted,
+      enable: encryption.clusterWide,
+      clusterWide: encryption.clusterWide,
+      storageClass: encryption.storageClass,
       kms: {
         enable: kmsEnable,
       },

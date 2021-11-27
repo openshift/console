@@ -9,6 +9,7 @@ import {
   KMSConfigMapName,
   KMSVaultTokenSecretName,
   KMSConfigMapCSIName,
+  KMSVaultCSISecretName,
 } from '../../constants';
 import {
   VaultConfigMap,
@@ -76,7 +77,7 @@ export const generateClientKeySecret = (clientKey: string) => ({
 });
 
 const convertCsiKeysToCamelCase = (csiConfigData: KMSConfigMap) => {
-  // ceph-csi supports only camelcase config keys for vault SA.
+  // ceph-csi uses only camelcase in configMap keys.
   const res = Object.keys(csiConfigData).reduce(
     (obj, key) => Object.assign(obj, { [KmsCsiConfigKeysMapping[key]]: csiConfigData[key] }),
     {},
@@ -170,6 +171,7 @@ const createCsiVaultResources = (
   kms: VaultConfig,
   csiKmsResources: Promise<K8sResourceKind>[],
   update: boolean,
+  createAdvancedVaultResource: boolean = true,
 ) => {
   const parsedAddress = parseURL(kms.address.value);
   let csiConfigData: VaultConfigMap = {
@@ -190,8 +192,18 @@ const createCsiVaultResources = (
 
   switch (kms.authMethod) {
     case VaultAuthMethods.TOKEN:
-      // encryption using vault token
-      csiConfigData.KMS_PROVIDER = KmsImplementations.VAULT_TOKENS;
+      csiConfigData = {
+        ...csiConfigData,
+        VAULT_TOKEN_NAME: KMSVaultCSISecretName,
+      };
+      // token creation on ceph-csi deployment namespace from installation flow
+      if (kms.authValue.value) {
+        const tokenSecret: SecretKind = getKmsVaultSecret(
+          kms.authValue.value,
+          KMSVaultCSISecretName,
+        );
+        csiKmsResources.push(k8sCreate(SecretModel, tokenSecret));
+      }
       break;
     case VaultAuthMethods.KUBERNETES:
       // encryption using tenant serviceAccount
@@ -207,9 +219,8 @@ const createCsiVaultResources = (
 
   const csiConfigObj: ConfigMapKind = generateCsiKmsConfigMap(kms.name.value, csiConfigData);
 
-  if (!kms.authValue.value) {
-    // not required, while setting up storage cluster.
-    // required, while creating new storage class.
+  // skip if cluster-wide already taken care
+  if (createAdvancedVaultResource) {
     csiKmsResources.push(...createAdvancedVaultResources(kms));
   }
   if (update) {
@@ -362,12 +373,20 @@ export const createClusterKmsResources = (kms: KMSConfig, provider = ProviderNam
   switch (provider) {
     case ProviderNames.VAULT: {
       const vaultConfig = kms as VaultConfig;
-      VaultAuthMethodMapping[vaultConfig.authMethod].supportedEncryptionType.includes(
-        KmsEncryptionLevel.CLUSTER_WIDE,
-      ) && createClusterVaultResources(kms as VaultConfig, clusterKmsResources);
-      VaultAuthMethodMapping[vaultConfig.authMethod].supportedEncryptionType.includes(
-        KmsEncryptionLevel.STORAGE_CLASS,
-      ) && createCsiVaultResources(kms as VaultConfig, clusterKmsResources, false);
+      const clusterWideSupported: boolean = VaultAuthMethodMapping[
+        vaultConfig.authMethod
+      ].supportedEncryptionType.includes(KmsEncryptionLevel.CLUSTER_WIDE);
+      const storageClassSupported: boolean = VaultAuthMethodMapping[
+        vaultConfig.authMethod
+      ].supportedEncryptionType.includes(KmsEncryptionLevel.STORAGE_CLASS);
+      clusterWideSupported && createClusterVaultResources(kms as VaultConfig, clusterKmsResources);
+      storageClassSupported &&
+        createCsiVaultResources(
+          kms as VaultConfig,
+          clusterKmsResources,
+          false,
+          !clusterWideSupported,
+        );
       break;
     }
     case ProviderNames.HPCS: {
