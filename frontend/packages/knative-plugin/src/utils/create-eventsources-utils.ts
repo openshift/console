@@ -27,6 +27,7 @@ import {
   EventSourceSyncFormData,
   SinkType,
   EventSourceMetaData,
+  YamlFormSyncData,
 } from '../components/add/import-types';
 import { CAMEL_K_PROVIDER_ANNOTATION } from '../const';
 import { CamelKameletModel } from '../models';
@@ -110,7 +111,9 @@ export const getKafkaSourceResource = (formData: any): K8sResourceKind => {
   return baseResource;
 };
 
-export const loadYamlData = (formData: EventSourceSyncFormData) => {
+export const loadYamlData = <D extends { project?: { name: string } }>(
+  formData: YamlFormSyncData<D>,
+) => {
   const {
     formData: {
       project: { name: namespace },

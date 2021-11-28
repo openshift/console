@@ -15,12 +15,17 @@ import {
   isGroupVersionKind,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
+import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import {
   defaultChannels,
   ChannelListProps,
   AddChannelFormData,
+  YamlFormSyncData,
 } from '../components/add/import-types';
-import { EventingIMCModel, EventingKafkaChannelModel } from '../models';
+import { EventingIMCModel } from '../models';
+import { loadYamlData } from './create-eventsources-utils';
 import { useChannelResourcesList } from './fetch-dynamic-eventsources-utils';
 
 export const isDefaultChannel = (channel: string): boolean =>
@@ -75,6 +80,36 @@ export const useChannelList = (namespace: string): ChannelListProps => {
   return accessData;
 };
 
+export const channelYamltoFormData = (
+  newFormData: K8sResourceKind,
+  formDataValues: AddChannelFormData,
+): AddChannelFormData => {
+  const specData = newFormData.spec;
+  const appGroupName = newFormData.metadata?.labels?.['app.kubernetes.io/part-of'];
+  const formData = {
+    ...formDataValues,
+    application: {
+      ...formDataValues.application,
+      ...(appGroupName &&
+        appGroupName !== formDataValues.application.name && {
+          name: appGroupName,
+          selectedKey: formDataValues.application.selectedKey ? CREATE_APPLICATION_KEY : '',
+        }),
+      ...(!appGroupName && {
+        name: '',
+        selectedKey: UNASSIGNED_APPLICATIONS_KEY,
+      }),
+    },
+    name: newFormData.metadata?.name,
+    data: {
+      [getChannelKind(formDataValues.type).toLowerCase()]: {
+        ...specData,
+      },
+    },
+  };
+  return formData;
+};
+
 export const getCreateChannelData = (formData: AddChannelFormData): K8sResourceKind => {
   const {
     type,
@@ -108,14 +143,12 @@ export const getCreateChannelData = (formData: AddChannelFormData): K8sResourceK
   return eventSourceResource;
 };
 
-export const getCreateChannelResource = (formData: AddChannelFormData) => {
-  switch (getChannelKind(formData.type)) {
-    case EventingIMCModel.kind:
-    case EventingKafkaChannelModel.kind:
-      return getCreateChannelData(formData);
-    default:
-      return safeLoad(formData.yamlData);
+export const getCatalogChannelData = (sourceFormData: YamlFormSyncData<AddChannelFormData>) => {
+  if (sourceFormData.editorType === EditorType.YAML) {
+    return loadYamlData<AddChannelFormData>(sourceFormData);
   }
+  const { formData } = sourceFormData;
+  return getCreateChannelData(formData);
 };
 
 export const getChannelData = (kind: string) => {

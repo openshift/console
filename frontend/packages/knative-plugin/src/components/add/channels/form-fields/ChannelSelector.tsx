@@ -17,7 +17,7 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
   onChange,
   defaultConfiguredChannel,
 }) => {
-  const [selected] = useField('type');
+  const [selected] = useField('formData.type');
   const { t } = useTranslation();
   const filteredChannels = _.flatten(
     _.partition(channels, (ref) => getChannelKind(ref) === EventingChannelModel.kind),
@@ -52,7 +52,7 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
   return (
     <FormSection extraMargin>
       <DropdownField
-        name="type"
+        name="formData.type"
         label={t('knative-plugin~Type')}
         items={channelData}
         title={t('knative-plugin~Type')}
