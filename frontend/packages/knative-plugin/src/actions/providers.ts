@@ -70,7 +70,6 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
     return [
       setTrafficDistribution(kindObj, resource),
       getHealthChecksAction(kindObj, resource),
-      DeploymentActionFactory.CreateServiceBinding(kindObj, resource),
       editKnativeService(kindObj, resource),
       DeploymentActionFactory.EditResourceLimits(kindObj, resource),
       ...getCommonResourceActions(kindObj, resource),

@@ -17,7 +17,6 @@ import {
   EditHorizontalPodAutoScaler,
   hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
-import { CreateServiceBinding } from '@console/app/src/actions/create-service-binding';
 import {
   k8sCreate,
   K8sKind,
@@ -109,7 +108,6 @@ export const menuActions: KebabAction[] = [
   AddHorizontalPodAutoScaler,
   EditHorizontalPodAutoScaler,
   AddStorage,
-  CreateServiceBinding,
   DeleteHorizontalPodAutoScaler,
   EditResourceLimits,
   ...getExtensionsKebabActionsForKind(DeploymentConfigModel),

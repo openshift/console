@@ -83,7 +83,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       <NodeShadows />
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <Tooltip
-          content={t('topology~Create a binding connector')}
+          content={t('topology~Create Service Binding')}
           trigger="manual"
           isVisible={dropTarget && canDrop}
           animationDuration={0}

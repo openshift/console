@@ -13,6 +13,7 @@ import {
   ComponentFactory,
 } from '@patternfly/react-topology';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
+import { contextMenuActions } from '../../../actions';
 import { edgeActions } from '../../../actions/edgeActions';
 import {
   TYPE_WORKLOAD,
@@ -37,12 +38,7 @@ import {
 import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
 import GraphComponent from './GraphComponent';
 import { Application } from './groups';
-import {
-  workloadContextMenu,
-  groupContextMenu,
-  graphContextMenu,
-  createMenuItems,
-} from './nodeContextMenu';
+import { groupContextMenu, graphContextMenu, createMenuItems } from './nodeContextMenu';
 import { WorkloadNode } from './nodes';
 
 import './ContextMenu.scss';
@@ -77,7 +73,7 @@ export const componentFactory: ComponentFactory = (kind, type) => {
           withEditReviewAccess('patch')(
             withDragNode(nodeDragSourceSpec(type))(
               withSelection({ controlled: true })(
-                withContextMenu(workloadContextMenu)(WorkloadNode),
+                withContextMenu(contextMenuActions)(WorkloadNode),
               ),
             ),
           ),

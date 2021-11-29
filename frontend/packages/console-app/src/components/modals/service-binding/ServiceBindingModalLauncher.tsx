@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { createModalLauncher } from '@console/internal/components/factory/modal';
+import { history, getQueryArgument } from '@console/internal/components/utils';
 import { K8sKind, k8sList, K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '@console/topology/src/models';
 import { createServiceBinding } from '@console/topology/src/operators/actions/serviceBindings';
@@ -16,6 +16,11 @@ type CreateServiceBindingModalProps = CreateServiceBindingFormProps & {
   model: K8sKind;
   resource: K8sResourceKind;
   close?: () => void;
+};
+
+type CreateServiceBindingFormType = {
+  name: string;
+  bindableService: K8sResourceKind;
 };
 
 const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (props) => {
@@ -34,23 +39,25 @@ const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (pro
         model,
       );
     }
-    if (_.isEmpty(existingServiceBinding)) {
+    if (Object.keys(existingServiceBinding ?? {}).length === 0) {
       try {
         await createServiceBinding(resource, values.bindableService, values.name);
         props.close();
+        getQueryArgument('view') === null &&
+          history.push(`/topology/ns/${resource.metadata.namespace}`);
       } catch (errorMessage) {
         actions.setStatus({ submitError: errorMessage.message });
       }
     } else {
       actions.setStatus({
         submitError: t(
-          'console-app~Service binding already exists. Select another service to create a binding with.',
+          'console-app~Service binding already exists. Select a different service to connect to.',
         ),
       });
     }
   };
 
-  const initialValues = {
+  const initialValues: CreateServiceBindingFormType = {
     name: '',
     bindableService: {},
   };
@@ -58,7 +65,7 @@ const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (pro
     <Formik
       initialValues={initialValues}
       initialStatus={{ error: '' }}
-      validationSchema={serviceBindingValidationSchema}
+      validationSchema={serviceBindingValidationSchema(t)}
       onSubmit={handleSubmit}
     >
       {(formikProps) => <CreateServiceBindingForm {...formikProps} {...props} />}

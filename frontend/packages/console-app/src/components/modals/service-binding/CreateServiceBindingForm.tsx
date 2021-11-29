@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextInputTypes, Title } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import {
   ModalTitle,
@@ -35,7 +35,7 @@ const CreateServiceBindingForm: React.FC<FormikProps<FormikValues> &
       <ModalTitle>{t('console-app~Create Service Binding')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
-          <Trans ns="console-app">Select a service you want to create a binding with</Trans>
+          {t('console-app~Select a service you want to bind.')}
         </Title>
         <FormSection fullWidth>
           <InputField

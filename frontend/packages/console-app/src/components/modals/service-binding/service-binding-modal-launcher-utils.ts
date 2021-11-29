@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 type BindingApplicationResource = {
@@ -32,5 +31,5 @@ export const checkExistingServiceBinding = (
   bindings.find(
     (binding) =>
       sourceApplicationExists(binding.spec.application, resource, model) &&
-      !_.isEmpty(targetServiceExists(binding.spec.services, bindableService)),
+      Object.keys(targetServiceExists(binding.spec.services, bindableService) ?? {}).length !== 0,
   );
