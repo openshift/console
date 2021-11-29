@@ -50,6 +50,7 @@ const FinishCustomizationModal: React.FC<FinishCustomizationModalProps> = ({
               )}
               onChange={setConfirmed}
               isChecked={confirmed}
+              data-checked-state={confirmed}
               className="kv-finish-modal__checkbox"
             />
             <ExternalLink href={SEAL_BOOT_SOURCE_URL}>

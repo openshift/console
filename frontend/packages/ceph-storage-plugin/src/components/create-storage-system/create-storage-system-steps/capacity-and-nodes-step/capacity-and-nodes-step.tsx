@@ -56,6 +56,7 @@ const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ dispatch, enableTai
       )}
       className="odf-capacity-and-nodes__taint-checkbox"
       id="taint-nodes"
+      data-checked-state={enableTaint}
       isChecked={enableTaint}
       onChange={() => dispatch({ type: 'capacityAndNodes/enableTaint', payload: !enableTaint })}
     />

@@ -334,6 +334,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
           <FormRow fieldId="start-vm">
             <Checkbox
               isChecked={startVM}
+              data-checked-state={startVM}
               onChange={(value) => dispatch({ type: FORM_ACTION_TYPE.START_VM, payload: value })}
               label={t('kubevirt-plugin~Start this virtual machine after creation')}
               id="start-vm"

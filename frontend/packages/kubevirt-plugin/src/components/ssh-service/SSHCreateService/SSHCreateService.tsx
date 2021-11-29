@@ -29,6 +29,7 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
           className="kv-ssh-service-checkbox--main"
           label={<SSHCreateServicePopup vmName={vmName} hidePopup={hidePopup} />}
           isChecked={enableSSHService}
+          data-checked-state={enableSSHService}
           onChange={(checked) => {
             setEnableSSHService(checked);
           }}

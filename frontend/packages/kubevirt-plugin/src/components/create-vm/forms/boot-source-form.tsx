@@ -145,6 +145,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
               'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
             )}
             isChecked={applySP}
+            data-checked-state={applySP}
             onChange={() => setApplySP(!applySP)}
             isDisabled={!isSPSettingProvided}
             label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
@@ -365,6 +366,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
       <FormRow fieldId="form-ds-cdrom">
         <Checkbox
           isChecked={state.cdRom?.value}
+          data-checked-state={state.cdRom?.value}
           onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CD_ROM, payload })}
           isDisabled={disabled}
           label={

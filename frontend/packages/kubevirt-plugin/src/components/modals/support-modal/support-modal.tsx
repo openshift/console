@@ -82,6 +82,7 @@ const SupportModal: React.FC<SupportModalProps> = ({
               label={t('kubevirt-plugin~Do not show this message again')}
               onChange={setDoNotShow}
               isChecked={doNotShow}
+              data-checked-state={doNotShow}
             />
           </StackItem>
         </Stack>

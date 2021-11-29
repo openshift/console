@@ -41,6 +41,7 @@ const UserPreferenceCheckboxField: React.FC<UserPreferenceCheckboxFieldProps> = 
       id={id}
       label={label}
       isChecked={currentUserPreferenceValue === trueValue}
+      data-checked-state={currentUserPreferenceValue === trueValue}
       onChange={onChange}
       data-test={`checkbox ${id}`}
     />

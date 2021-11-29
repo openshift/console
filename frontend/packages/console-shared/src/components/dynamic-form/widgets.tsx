@@ -75,6 +75,7 @@ export const CheckboxWidget: React.FC<WidgetProps> = ({ value = false, id, label
       id={id}
       key={id}
       isChecked={value}
+      data-checked-state={value}
       label={label}
       onChange={(checked) => onChange(checked)}
     />

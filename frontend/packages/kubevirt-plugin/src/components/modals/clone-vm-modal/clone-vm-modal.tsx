@@ -199,6 +199,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
               label={t('kubevirt-plugin~Start virtual machine on clone')}
               id={asId('start')}
               isChecked={startVM}
+              data-checked-state={startVM}
               onChange={setStartVM}
               className="kubevirt-clone-vm-modal__start_vm_checkbox"
             />

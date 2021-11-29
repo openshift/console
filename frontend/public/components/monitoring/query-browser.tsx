@@ -870,6 +870,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               <Checkbox
                 id="stacked"
                 isChecked={isStacked}
+                data-checked-state={isStacked}
                 label={t('public~Stacked')}
                 onChange={(v) => setIsStacked(v)}
               />
