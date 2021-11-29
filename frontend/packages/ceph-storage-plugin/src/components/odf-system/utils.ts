@@ -4,7 +4,7 @@ import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
-import { PrometheusResponse } from '@console/internal/module/k8s';
+import { PrometheusResponse } from '@console/dynamic-plugin-sdk/src/api/prometheus-types';
 import { StorageSystemKind } from '../../types';
 import {
   humanizeIOPS,

@@ -1,6 +1,7 @@
 // Plugin APIs and types
 export * from './api/useResolvedExtensions';
 export * from './api/common-types';
+export * from './api/prometheus-types';
 
 // Extension types
 export * from './extensions';

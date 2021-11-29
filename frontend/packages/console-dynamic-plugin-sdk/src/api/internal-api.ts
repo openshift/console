@@ -19,7 +19,6 @@ import {
   UtilizationBodyProps,
   UtilizationDurationDropdownProps,
   UseUtilizationDuration,
-  UsePrometheusPoll,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -62,5 +61,3 @@ export const useUtilizationDuration: UseUtilizationDuration = require('@console/
   .useUtilizationDuration;
 export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown')
   .UtilizationDurationDropdown;
-export const usePrometheusPoll: UsePrometheusPoll = require('@console/internal/components/graphs/prometheus-poll-hook')
-  .usePrometheusPoll;

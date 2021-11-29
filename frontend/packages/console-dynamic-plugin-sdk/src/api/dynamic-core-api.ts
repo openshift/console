@@ -91,3 +91,5 @@ export {
   getGroupVersionKindForResource,
   getGroupVersionKindForModel,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+
+export { usePrometheusPoll } from '../utils/prometheus/hooks/usePrometheusPoll';

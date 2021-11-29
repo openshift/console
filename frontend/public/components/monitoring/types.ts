@@ -11,7 +11,7 @@ import {
   AlertStates,
   AlertSeverity,
   SilenceStates,
-} from '@console/dynamic-plugin-sdk/src/api/common-types';
+} from '@console/dynamic-plugin-sdk/src/api/prometheus-types';
 
 import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';

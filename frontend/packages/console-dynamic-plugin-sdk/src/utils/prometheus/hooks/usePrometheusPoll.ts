@@ -1,7 +1,10 @@
-import { useURLPoll } from '../utils/url-poll-hook';
-import { getPrometheusURL } from './helpers';
-import { DEFAULT_PROMETHEUS_SAMPLES, DEFAULT_PROMETHEUS_TIMESPAN, PrometheusResponse } from '.';
-import { UsePrometheusPoll } from '@console/dynamic-plugin-sdk/src/api/prometheus-types';
+import { UsePrometheusPoll, PrometheusResponse } from '../../../api/prometheus-types';
+import { useURLPoll } from '../../fetch/hooks/useURLPoll';
+import {
+  getPrometheusURL,
+  DEFAULT_PROMETHEUS_SAMPLES,
+  DEFAULT_PROMETHEUS_TIMESPAN,
+} from '../utils';
 
 export const usePrometheusPoll: UsePrometheusPoll = ({
   delay,

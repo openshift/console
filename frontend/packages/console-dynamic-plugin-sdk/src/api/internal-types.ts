@@ -2,12 +2,12 @@ import { CardProps, CardBodyProps } from '@patternfly/react-core';
 import {
   K8sResourceCommon,
   FirehoseResult,
-  PrometheusResponse,
   HealthState,
   StatusGroupMapper,
   QueryParams,
 } from '../extensions/console-types';
-import { K8sModel, Alert } from './common-types';
+import { K8sModel } from './common-types';
+import { Alert, PrometheusResponse } from './prometheus-types';
 
 type WithClassNameProps<R = {}> = R & {
   className?: string;
@@ -207,26 +207,6 @@ type UtilizationDurationState = {
 export type UseUtilizationDuration = (
   adjustDuration?: (duration: number) => number,
 ) => UtilizationDurationState;
-
-export enum PrometheusEndpoint {
-  LABEL = 'api/v1/label',
-  RULES = 'api/v1/rules',
-  QUERY = 'api/v1/query',
-  QUERY_RANGE = 'api/v1/query_range',
-}
-
-type PrometheusPollProps = {
-  delay?: number;
-  endpoint: PrometheusEndpoint;
-  endTime?: number;
-  namespace?: string;
-  query: string;
-  samples?: number;
-  timeout?: string;
-  timespan?: number;
-};
-
-export type UsePrometheusPoll = (props: PrometheusPollProps) => [PrometheusResponse, any, boolean];
 
 export type Options = {
   ns?: string;

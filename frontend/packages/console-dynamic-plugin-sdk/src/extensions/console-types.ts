@@ -4,8 +4,6 @@ import { RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
-  PrometheusLabels,
-  PrometheusValue,
   ResolvedExtension,
   Selector,
 } from '../api/common-types';
@@ -123,26 +121,6 @@ export enum HealthState {
   UPGRADABLE = 'UPGRADABLE',
   NOT_AVAILABLE = 'NOT_AVAILABLE',
 }
-
-// Only covers range and instant vector responses for now.
-export type PrometheusResult = {
-  metric: PrometheusLabels;
-  values?: PrometheusValue[];
-  value?: PrometheusValue;
-};
-
-export type PrometheusData = {
-  resultType: 'matrix' | 'vector' | 'scalar' | 'string';
-  result: PrometheusResult[];
-};
-
-export type PrometheusResponse = {
-  status: string;
-  data: PrometheusData;
-  errorType?: string;
-  error?: string;
-  warnings?: string[];
-};
 
 export type WatchK8sResource = {
   /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */

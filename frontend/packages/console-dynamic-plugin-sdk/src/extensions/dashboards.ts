@@ -1,8 +1,8 @@
 import { K8sModel } from '../api/common-types';
+import { PrometheusResponse } from '../api/prometheus-types';
 import { Extension, ExtensionDeclaration, CodeRef, ResolvedExtension } from '../types';
 import {
   K8sResourceCommon,
-  PrometheusResponse,
   ResourcesObject,
   StatusGroupMapper,
   WatchK8sResources,

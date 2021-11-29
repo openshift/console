@@ -9,7 +9,7 @@ import {
   ModelKind,
   GraphElement,
 } from '@patternfly/react-topology';
-import { PrometheusAlert } from '../api/common-types';
+import { PrometheusAlert } from '../api/prometheus-types';
 import { K8sResourceCommon, K8sResourceKindReference, WatchK8sResults } from './console-types';
 
 export type Point = [number, number];

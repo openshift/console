@@ -1,8 +1,8 @@
 import { TFunction } from 'i18next';
+import { PrometheusResponse } from '../api/prometheus-types';
 import {
   HealthState,
   K8sResourceCommon,
-  PrometheusResponse,
   ResourcesObject,
   WatchK8sResults,
   FirehoseResourcesResult,
