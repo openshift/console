@@ -371,7 +371,6 @@ export const getVMConditionsStatus = ({
   const launcherPod = findVMIPod(vmi, pods);
 
   return (
-    isOff(vm, vmi) ||
     isVMError(vm) ||
     isError(vm, vmi, launcherPod) ||
     isBeingImported(vm, pods, pvcs, dataVolumes) ||

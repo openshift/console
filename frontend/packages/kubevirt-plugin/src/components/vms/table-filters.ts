@@ -5,6 +5,7 @@ import {
   VM_STATUS_SIMPLE_LABELS,
 } from '../../constants/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { VMKind } from '../../types/vm';
 
 export const vmStatusFilter: RowFilter = {
   filterGroupName: 'Status',
@@ -27,20 +28,22 @@ export const vmStatusFilter: RowFilter = {
   },
 };
 
-export const vmStatusFilterNew: RowFilter = {
-  filterGroupName: 'Status',
-  type: 'vm-status',
-  reducer: (obj) => getVmStatusLabelFromPrintable(obj?.metadata?.status),
-  items: VM_STATUS_SIMPLE_LABELS.map((status) => ({
-    id: status,
-    title: status,
-  })),
-  filter: (statuses, obj) => {
-    const status = getVmStatusLabelFromPrintable(obj?.metadata?.status);
-    return (
-      statuses.selected?.length === 0 ||
-      statuses.selected?.includes(status) ||
-      !_.includes(statuses?.all, status)
-    );
+export const vmTableFilters: RowFilter<VMKind>[] = [
+  {
+    filterGroupName: 'Status',
+    type: 'vm-status',
+    reducer: (obj) => getVmStatusLabelFromPrintable(obj?.status?.printableStatus),
+    filter: (statuses, obj) => {
+      const status = getVmStatusLabelFromPrintable(obj?.status?.printableStatus);
+      return (
+        statuses.selected?.length === 0 ||
+        statuses.selected?.includes(status) ||
+        !statuses?.all?.find((s) => s === status)
+      );
+    },
+    items: VM_STATUS_SIMPLE_LABELS.map((status) => ({
+      id: status,
+      title: status,
+    })),
   },
-};
+];

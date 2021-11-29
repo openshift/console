@@ -41,6 +41,7 @@ export enum VMStatusSimpleLabel {
   Running = 'Running',
   Stopped = 'Stopped',
   Deleting = 'Deleting',
+  Unknown = 'Unknown',
 }
 
 export enum VMPrintableStatusSimpleLabel {
