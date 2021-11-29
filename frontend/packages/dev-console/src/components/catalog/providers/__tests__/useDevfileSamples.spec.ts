@@ -23,7 +23,7 @@ describe('useDevfileSamples:', () => {
     const { result } = testHook(() => useDevfileSamples({}));
 
     expect(getMock).toHaveBeenCalledTimes(1);
-    expect(getMock).toHaveBeenLastCalledWith('/api/devfile/samples?registry=sample-placeholder');
+    expect(getMock).toHaveBeenLastCalledWith('/api/devfile/samples/?registry=sample-placeholder');
 
     expect(result.current).toEqual([[], false, undefined]);
 
@@ -39,7 +39,7 @@ describe('useDevfileSamples:', () => {
     const { result } = testHook(() => useDevfileSamples({}));
 
     expect(getMock).toHaveBeenCalledTimes(1);
-    expect(getMock).toHaveBeenLastCalledWith('/api/devfile/samples?registry=sample-placeholder');
+    expect(getMock).toHaveBeenLastCalledWith('/api/devfile/samples/?registry=sample-placeholder');
 
     expect(result.current).toEqual([[], false, undefined]);
 
