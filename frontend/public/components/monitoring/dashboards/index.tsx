@@ -452,8 +452,10 @@ const getPanelClassModifier = (panel: Panel): string => {
   }
 };
 
-// Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
-const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
+// Matches Prometheus labels surrounded by {{ }} in the graph legend label templates.
+// The regex pattern is inspired from https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels
+// with additional matchers to consider leading and trailing spaces.
+const legendTemplateOptions = { interpolate: /{{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/g };
 
 const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   const namespace = React.useContext(NamespaceContext);
