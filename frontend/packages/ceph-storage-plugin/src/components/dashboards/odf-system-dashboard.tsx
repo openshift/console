@@ -8,11 +8,13 @@ import {
 } from '@console/internal/components/dashboard/dashboards-page/dashboards';
 import { Page, HorizontalNav, LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 // eslint-disable-next-line import/no-named-default
-import { default as OCSOverview, BLOCK_FILE } from './ocs-system-dashboard';
+import { default as OCSOverview, BLOCK_FILE, OBJECT } from './ocs-system-dashboard';
 import { BlockPoolListPage } from '../block-pool/block-pool-list-page';
 import { CEPH_STORAGE_NAMESPACE } from '../../constants';
 import { CephBlockPoolModel } from '../../models';
+import { MCG_FLAG, CEPH_FLAG } from '../../features';
 
 type ODFSystemDashboardPageProps = Omit<DashboardsPageProps, 'match'> & {
   match: Match<{ systemName: string }>;
@@ -24,11 +26,16 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
   ...rest
 }) => {
   const { t } = useTranslation();
+  const isObjectServiceAvailable = useFlag(MCG_FLAG);
+  const isCephAvailable = useFlag(CEPH_FLAG);
   const { systemName } = rest.match.params;
+  const dashboardTab = !isCephAvailable && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
+  const defaultDashboard = React.useRef(dashboardTab);
+
   const pages: Page[] = [
     {
       path: 'overview/:dashboard',
-      href: 'overview/block-file',
+      href: `overview/${defaultDashboard.current}`,
       name: t('ceph-storage-plugin~Overview'),
       component: OCSOverview,
     },
@@ -56,11 +63,15 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
 
   React.useEffect(() => {
     if (location.pathname.endsWith(systemName)) {
-      rest.history.push(`${location.pathname}/overview/${BLOCK_FILE}`);
+      rest.history.push(`${location.pathname}/overview/${defaultDashboard.current}`);
     } else if (location.pathname.endsWith('overview')) {
-      rest.history.push(`${location.pathname}/${BLOCK_FILE}`);
+      rest.history.push(`${location.pathname}/${defaultDashboard.current}`);
+    } else if (defaultDashboard.current !== dashboardTab) {
+      const pathname = location.pathname.substring(0, location.pathname.lastIndexOf('/overview'));
+      rest.history.push(`${pathname}/overview/${dashboardTab}`);
+      defaultDashboard.current = dashboardTab;
     }
-  }, [rest.history, location.pathname, systemName]);
+  }, [rest.history, location.pathname, systemName, dashboardTab]);
 
   return kindsInFlight && k8sModels.size === 0 ? (
     <LoadingBox />

@@ -48,7 +48,7 @@ const isPagePresent = (pages: Page[], page: Page): boolean =>
   pages.some((p) => page.href === p.href);
 
 export const BLOCK_FILE = 'block-file';
-const OBJECT = 'object';
+export const OBJECT = 'object';
 
 const sortPages = (a: Page, b: Page): number => {
   if (a.href === BLOCK_FILE || a.href === `overview/${BLOCK_FILE}`) return -1;
