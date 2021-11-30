@@ -51,8 +51,8 @@ Cypress.Commands.add('deleteResource', (kind: string, name: string, namespace?: 
   if (kind === K8S_KIND.VM) {
     // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
     cy.exec(
-      `kubectl delete --ignore-not-found=true -n ${namespace} vmi ${name} --wait=true --timeout=120s || true`,
-      { timeout: 120000 },
+      `kubectl delete --ignore-not-found=true -n ${namespace} vmi ${name} --wait=true --timeout=240s || true`,
+      { timeout: 240000 },
     );
   }
 });

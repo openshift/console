@@ -1,5 +1,8 @@
+import { VM_STATUS } from '../../utils/const';
 import { ProvisionSource } from '../../utils/const/provisionSource';
+import { tab } from '../../views/tab';
 import { virtualization } from '../../views/virtualization';
+import { waitForStatus } from '../../views/vm';
 
 export default ({ vmName }) =>
   describe('ID (CNV-5971) Test if ssh service is present in advanced wizard', () => {
@@ -44,6 +47,13 @@ export default ({ vmName }) =>
       cy.get('#create-vm-wizard-reviewandcreate-btn').click();
       cy.get('#create-vm-wizard-submit-btn').click();
       cy.byLegacyTestID('kubevirt-wizard-success-result').should('be.visible');
+      // we first need to wait for the VM to run in order for the service to be available
+      virtualization.vms.visit();
+      cy.byLegacyTestID(`${vmName}-advanced-wizard`)
+        .should('exist')
+        .click();
+      tab.navigateToDetails();
+      waitForStatus(VM_STATUS.Running);
     });
 
     it('should navigate to services', () => {

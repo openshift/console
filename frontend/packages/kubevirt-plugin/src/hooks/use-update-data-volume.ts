@@ -36,10 +36,10 @@ export const useUpdateStorages = (reduxID) => {
 
   const [pvc] = useK8sWatchResource<PersistentVolumeClaimKind>(sourcePvc);
 
-  if (pvc && rootDisk && rootDisk.dataVolume.spec.pvc.volumeMode !== pvc?.spec?.volumeMode) {
-    rootDisk.dataVolume.spec.pvc.volumeMode = pvc?.spec?.volumeMode;
-    rootDisk.dataVolume.spec.pvc.accessModes = pvc?.spec?.accessModes;
-    rootDisk.dataVolume.spec.pvc.storageClassName = pvc?.spec?.storageClassName;
+  if (pvc && rootDisk && rootDisk.dataVolume?.spec?.storage?.volumeMode !== pvc?.spec?.volumeMode) {
+    rootDisk.dataVolume.spec.storage.volumeMode = pvc?.spec?.volumeMode;
+    rootDisk.dataVolume.spec.storage.accessModes = pvc?.spec?.accessModes;
+    rootDisk.dataVolume.spec.storage.storageClassName = pvc?.spec?.storageClassName;
 
     updateStorage(rootDisk);
   }

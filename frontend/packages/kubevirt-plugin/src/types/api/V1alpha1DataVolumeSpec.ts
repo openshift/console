@@ -12,6 +12,7 @@
  */
 
 import { V1alpha1DataVolumeSource } from './V1alpha1DataVolumeSource';
+import { V1beta1StorageSpec } from './V1beta1StorageSpec';
 import { V1PersistentVolumeClaimSpec } from './V1PersistentVolumeClaimSpec';
 
 /**
@@ -32,11 +33,17 @@ export interface V1alpha1DataVolumeSpec {
    * @type {V1PersistentVolumeClaimSpec}
    * @memberof V1alpha1DataVolumeSpec
    */
-  pvc: V1PersistentVolumeClaimSpec;
+  pvc?: V1PersistentVolumeClaimSpec;
   /**
    *
    * @type {V1alpha1DataVolumeSource}
    * @memberof V1alpha1DataVolumeSpec
    */
   source: V1alpha1DataVolumeSource;
+  /**
+   *
+   * @type {V1beta1StorageSpec}
+   * @memberof V1alpha1DataVolumeSpec
+   */
+  storage?: V1beta1StorageSpec;
 }
