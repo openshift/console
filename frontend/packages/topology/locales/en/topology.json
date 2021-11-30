@@ -31,6 +31,8 @@
   "Cancel Export": "Cancel Export",
   "Restart Export": "Restart Export",
   "OK": "OK",
+  "View Logs": "View Logs",
+  "Logs not available yet": "Logs not available yet",
   "Error moving connection": "Error moving connection",
   "Error creating connection": "Error creating connection",
   "Add resources": "Add resources",
