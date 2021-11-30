@@ -299,7 +299,7 @@
   "What does each state mean?": "各状態の意味",
   " <1>Starting replay:</1> Initiating image (PV) replication process. ": " <1>再生の開始:</1> イメージ (PV) レプリケーションプロセスを開始します。 ",
   " <1>Replaying:</1> Image (PV) replication is ongoing or idle between clusters. ": " <1>再生:</1> イメージ (PV) のレプリケーションは、クラスター間で処理中またはアイドル状態になります。 ",
-  " <1>Stopping replay:</1> Image (PV) replication process is shutting down. ": "<1>再生の停止:</1> イメージ (PV) レプリケーションプロセスをシャットダウンします。",
+  " <1>Stopping replay:</1> Image (PV) replication process is shutting down. ": " <1>再生の停止:</1> イメージ (PV) レプリケーションプロセスをシャットダウンします。",
   " <1>Stopped:</1> Image (PV) replication process has shut down. ": " <1>停止中:</1> イメージ (PV) のレプリケーションプロセスがシャットダウンされました。 ",
   " <1>Error:</1> Image (PV) replication process stopped due to an error. ": " <1>エラー:</1> エラーが原因で、イメージ (PV) レプリケーションプロセスが停止しました。 ",
   " <1>Unknown:</1> Unable to determine image (PV) state due to an error. Check your network connection and remote cluster mirroring daemon. ": " <1>不明:</1> エラーにより、イメージ (PV) の状態を判別できませんでした。ネットワーク接続およびリモートクラスターミラーリングデーモンを確認してください。 ",

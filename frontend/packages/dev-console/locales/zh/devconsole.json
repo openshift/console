@@ -568,7 +568,7 @@
   "Average Container bandwidth by Pod: received": "Pod 的平均容器带宽：接收",
   "Average Container bandwidth by Pod: transmitted": "Pod 的平均容器带宽：传输",
   "Successfully updated the project access.": "成功更新了项目访问。",
-  "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in <1>Roles</1> and <4>Role Bindings</4>. For more information, see the <7>role-based access control documentation</7> .": "通过项目访问，您可以添加或删除用户对项目的访问权限。基于角色的访问控制的高级管理可以使用<1>角色</1>和<4>角色绑定</4>。如需更多信息，请参阅<7>基于角色的访问控制文档</7>。",
+  "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in <1>Roles</1> and <4>Role Bindings</4>. For more information, see the <7>role-based access control documentation</7>.": "通过项目访问，您可以添加或删除用户对项目的访问权限。基于角色的访问控制的高级管理可以使用<1>角色</1>和<4>角色绑定</4>。如需更多信息，请参阅<7>基于角色的访问控制文档</7>。",
   "Add access": "添加访问",
   "Role": "角色",
   "Select a role": "选择一个角色",
