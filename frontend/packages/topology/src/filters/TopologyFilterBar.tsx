@@ -158,6 +158,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
                   nameFilterInput={searchQuery}
                   labelFilterInput={labelFilterInput}
                   data={resources}
+                  isDisabled={isDisabled}
                 />
               </ToolbarFilter>
             </ToolbarFilter>

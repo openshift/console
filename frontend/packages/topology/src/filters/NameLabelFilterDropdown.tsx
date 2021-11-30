@@ -8,6 +8,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NameLabelFilterValues } from './filter-utils';
 
 type NameLabelFilterDropdownProps = {
+  isDisabled: boolean;
   data: K8sResourceKind[];
   onChange: (type: string, value: string, endOfString: boolean) => void;
   nameFilterInput: string;
@@ -15,7 +16,7 @@ type NameLabelFilterDropdownProps = {
 };
 
 const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) => {
-  const { data, onChange, nameFilterInput, labelFilterInput } = props;
+  const { data, onChange, nameFilterInput, labelFilterInput, isDisabled } = props;
 
   const [isOpen, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(NameLabelFilterValues.Name);
@@ -45,7 +46,12 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
       <Dropdown
         onSelect={onSelect}
         toggle={
-          <DropdownToggle id="toggle-id" onToggle={onToggle} toggleIndicator={CaretDownIcon}>
+          <DropdownToggle
+            isDisabled={isDisabled}
+            id="toggle-id"
+            onToggle={onToggle}
+            toggleIndicator={CaretDownIcon}
+          >
             <>
               <FilterIcon className="span--icon__right-margin" /> {t(selected)}
             </>
@@ -73,6 +79,8 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
           placeholder={t('topology~Find by name...')}
           value={nameFilterInput}
           aria-labelledby="toggle-id"
+          isDisabled={isDisabled}
+          autoFocus
         />
       )}
     </div>
