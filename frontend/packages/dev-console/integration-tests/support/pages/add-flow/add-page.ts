@@ -30,7 +30,7 @@ export const addPage = {
       case 'From Catalog':
       case addOptions.DeveloperCatalog:
         cy.byTestID('item dev-catalog').click();
-        app.waitForDocumentLoad();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         cy.testA11y(pageTitle.DeveloperCatalog);
         break;
