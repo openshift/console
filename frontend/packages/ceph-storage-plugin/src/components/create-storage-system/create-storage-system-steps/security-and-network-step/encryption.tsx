@@ -58,6 +58,7 @@ const EncryptionLevel: React.FC<EncryptionLevelProps> = ({ encryption, dispatch 
         id="cluster-wide-encryption"
         className="odf-security-encryption"
         isChecked={encryption.clusterWide}
+        data-checked-state={encryption.clusterWide}
         label={<span>{t('ceph-storage-plugin~Cluster-wide encryption')}</span>}
         description={t('ceph-storage-plugin~Encryption for the entire cluster (block and file)')}
         onChange={handleClusterWideEncryption}
@@ -66,6 +67,7 @@ const EncryptionLevel: React.FC<EncryptionLevelProps> = ({ encryption, dispatch 
         id="storage-class-encryption"
         className="odf-security-encryption"
         isChecked={encryption.storageClass}
+        data-checked-state={encryption.storageClass}
         label={<EncryptionLabel label={t('ceph-storage-plugin~StorageClass encryption')} />}
         description={t(
           'ceph-storage-plugin~An encryption key will be generated for each persistent volume (block) created using an encryption enabled StorageClass.',
@@ -114,6 +116,7 @@ const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, i
       <Checkbox
         id="kms-connection"
         isChecked={encryption.advanced}
+        data-checked-state={encryption.advanced}
         label={t('ceph-storage-plugin~Connect to an external key management service')}
         onChange={handleOnChange}
         isDisabled={encryption.storageClass || !encryption.hasHandled}
@@ -203,6 +206,7 @@ export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatc
           data-test="encryption-checkbox"
           id="configure-encryption"
           isChecked={isMCG || encryptionChecked}
+          data-checked-state={isMCG || encryptionChecked}
           isDisabled={isMCG}
           label={encryptionLabel}
           description={description}

@@ -433,6 +433,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
                   <Checkbox
                     label="Inject cloud-init"
                     isChecked={injectCloudInit}
+                    data-checked-state={injectCloudInit}
                     onChange={(payload) =>
                       formDispatch({
                         type: FORM_ACTION_TYPE.INJECT_CLOUD_INIT,
