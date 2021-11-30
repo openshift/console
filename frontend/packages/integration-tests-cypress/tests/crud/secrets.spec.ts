@@ -16,7 +16,7 @@ const populateSecretForm = (name: string, key: string, fileName: string) => {
   cy.byTestID('file-input').attachFile(fileName);
 };
 
-xdescribe('Create key/value secrets', () => {
+describe('Create key/value secrets', () => {
   const binarySecretName = `${testName}binarysecretname`;
   const asciiSecretName = `${testName}asciisecretname`;
   const unicodeSecretName = `${testName}unicodesecretname`;
