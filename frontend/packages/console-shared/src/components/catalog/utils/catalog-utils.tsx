@@ -1,4 +1,4 @@
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import { CatalogItem, CatalogItemDetails } from '@console/dynamic-plugin-sdk/src/extensions';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { history } from '@console/internal/components/utils';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
@@ -77,4 +77,11 @@ export const getCatalogTypeCounts = (
   });
 
   return catalogTypeCounts;
+};
+
+export const customPropertyPresent = (
+  catalogItemDetails: CatalogItemDetails,
+  proppertyName: string,
+): boolean => {
+  return catalogItemDetails?.properties?.some((property) => property.label === proppertyName);
 };
