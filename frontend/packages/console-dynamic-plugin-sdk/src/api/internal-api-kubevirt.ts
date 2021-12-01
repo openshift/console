@@ -15,11 +15,16 @@ import {
 import { K8sResourceCommon } from '../extensions/console-types';
 import { DisplayFilters, TopologyDataResources } from '../extensions/topology-types';
 import { K8sModel, MatchLabels, Selector as SelectorKind } from './common-types';
+import { RootState } from '@console/internal/redux';
+import { AnyAction, Store } from 'redux';
 
 export { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
 export { editApplicationModal } from '@console/topology/src/components/modals';
 export { ActivityItem } from './internal-api';
 export { default as ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
+
+export const InternalReduxStore: Store<RootState, AnyAction> = require('@console/internal/redux')
+  .default;
 
 export const {
   navFactory,
