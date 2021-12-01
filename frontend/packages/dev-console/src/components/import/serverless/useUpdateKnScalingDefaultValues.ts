@@ -5,6 +5,7 @@ import { useGetAutoscalerConfig } from './useGetAutoscalerConfig';
 export const setKnScalingDefaultValue = (initialValues, knScalingConfig) => {
   const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } =
     knScalingConfig && getAutoscaleWindow(knScalingConfig['stable-window'] ?? '');
+  // TODO: we should not mutate initial values at all.
   initialValues.serverless.scaling.concurrencytarget =
     knScalingConfig['container-concurrency-target-default'] || '';
   initialValues.serverless.scaling.concurrencyutilization =
@@ -19,6 +20,7 @@ export const setKnScalingDefaultValue = (initialValues, knScalingConfig) => {
 
 export const useUpdateKnScalingDefaultValues = (initialValues) => {
   const knScalingConfig = useGetAutoscalerConfig();
+  // TODO: We should not expect that overridding the formik initialValues in a hook works fine.
   const [initialValuesState, setInitialValuesState] = React.useState(initialValues);
   React.useEffect(() => {
     if (knScalingConfig) {

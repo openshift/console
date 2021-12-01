@@ -23,6 +23,20 @@ const getErrorExecutableCodeRefMock = <T = any>(): jest.Mock<ReturnType<CodeRef<
   return ref;
 };
 
+const originalConsole = { ...console };
+const consoleMock = jest.fn();
+
+beforeEach(() => {
+  jest.resetAllMocks();
+  // eslint-disable-next-line no-console
+  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = consoleMock));
+});
+
+afterEach(() => {
+  // eslint-disable-next-line no-console
+  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = originalConsole[key]));
+});
+
 describe('applyCodeRefSymbol', () => {
   it('marks the given function with CodeRef symbol', () => {
     const ref: CodeRef = () => Promise.resolve('qux');
@@ -125,6 +139,9 @@ describe('loadReferencedObject', () => {
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).not.toHaveBeenCalled();
         expect(moduleFactory).not.toHaveBeenCalled();
+        expect(consoleMock).toHaveBeenCalledWith(
+          "Malformed code reference '' of plugin Test@1.2.3",
+        );
       },
     );
   });
@@ -143,6 +160,10 @@ describe('loadReferencedObject', () => {
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).not.toHaveBeenCalled();
+        expect(consoleMock).toHaveBeenCalledWith(
+          "Failed to load module 'foo' of plugin Test@1.2.3",
+          expect.any(Error),
+        );
       },
     );
 
@@ -159,6 +180,10 @@ describe('loadReferencedObject', () => {
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).toHaveBeenCalledWith();
+        expect(consoleMock).toHaveBeenCalledWith(
+          "Failed to load module 'foo' of plugin Test@1.2.3",
+          expect.any(Error),
+        );
       },
     );
   });
@@ -173,6 +198,9 @@ describe('loadReferencedObject', () => {
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).toHaveBeenCalledWith();
+        expect(consoleMock).toHaveBeenCalledWith(
+          "Missing module export 'foo.bar' of plugin Test@1.2.3",
+        );
       },
     );
   });
@@ -305,10 +333,12 @@ describe('resolveExtension', () => {
     };
 
     expect(isCodeRefError(errorCodeRef)).toBe(false);
-    expect(await resolveExtension(extension)).rejects.toBeTruthy();
-    expect(isCodeRefError(errorCodeRef)).toBeTruthy();
+    await resolveExtension(extension);
+    expect(isCodeRefError(errorCodeRef)).toBe(true);
     expect(errorCodeRef).toHaveBeenCalledTimes(1);
-    expect(await resolveExtension(extension)).rejects.toBeTruthy();
+
+    await resolveExtension(extension);
+    expect(isCodeRefError(errorCodeRef)).toBe(true);
     expect(errorCodeRef).toHaveBeenCalledTimes(1);
   });
 });
