@@ -103,6 +103,13 @@ When(
   },
 );
 
+When('user edits the application {string}', (name: string) => {
+  topologyPage.rightClickOnNode(name);
+  cy.byTestActionID(`Edit ${name}`)
+    .should('be.visible')
+    .click();
+});
+
 When(
   'user right clicks on the Service {string} to open the Context Menu',
   (serviceName: string) => {
@@ -128,6 +135,10 @@ When('user clicks on Save button', () => {
 
 When('user right clicks on the {string} to open the Context Menu', (nodeName: string) => {
   topologyPage.rightClickOnNode(nodeName);
+});
+
+When('user starts a new build', () => {
+  topologyPage.startBuild();
 });
 
 Then('user will be taken to Dashboard tab on the Monitoring page', () => {

@@ -1,6 +1,6 @@
 import { Extension, ExtensionDeclaration } from '../types';
 
-type ImageEnvironment = {
+export type ImageEnvironment = {
   /** Environment variable key */
   key: string;
   /** The input field's label */
