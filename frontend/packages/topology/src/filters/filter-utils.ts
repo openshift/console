@@ -13,6 +13,14 @@ import {
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
 
 export const TOPOLOGY_SEARCH_FILTER_KEY = 'searchQuery';
+export const TOPOLOGY_LABELS_FILTER_KEY = 'labels';
+
+export enum NameLabelFilterValues {
+  // t('topology~Name')
+  Name = 'Name',
+  // t('topology~Label')
+  Label = 'Label',
+}
 
 export const onSearchChange = (searchQuery: string): void => {
   if (searchQuery.length > 0) {
@@ -20,6 +28,18 @@ export const onSearchChange = (searchQuery: string): void => {
   } else {
     removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
   }
+};
+
+export const clearNameFilter = () => {
+  onSearchChange('');
+};
+export const clearLabelFilter = () => {
+  removeQueryArgument(TOPOLOGY_LABELS_FILTER_KEY);
+};
+
+export const clearAll = () => {
+  clearNameFilter();
+  clearLabelFilter();
 };
 
 export const getSupportedTopologyFilters = (state: RootState): string[] => {
@@ -32,7 +52,10 @@ export const getSupportedTopologyKinds = (state: RootState): { [key: string]: nu
   return topology ? topology.get('supportedKinds') : {};
 };
 
-export const getTopologySearchQuery = () => getQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY) ?? '';
+export const getTopologySearchQuery = () =>
+  getQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY) ??
+  getQueryArgument(TOPOLOGY_LABELS_FILTER_KEY) ??
+  '';
 
 export const getFilterById = (id: string, filters: DisplayFilters): TopologyDisplayOption => {
   if (!filters) {

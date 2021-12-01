@@ -29,7 +29,7 @@ import {
   useSearchFilter,
   SHOW_LABELS_FILTER_ID,
 } from '../../filters';
-import { getResourceKind } from '../../utils/topology-utils';
+import { getResource, getResourceKind } from '../../utils/topology-utils';
 
 type OperatorBackedServiceGroupProps = {
   element: Node;
@@ -56,7 +56,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
   const ownerReferenceKind = referenceFor({ kind: data.operatorKind, apiVersion: data.apiVersion });
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover || innerHover;

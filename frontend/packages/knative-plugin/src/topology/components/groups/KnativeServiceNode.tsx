@@ -24,6 +24,7 @@ import {
   GroupNodeAnchor,
 } from '@console/topology/src/components/graph-view';
 import { useSearchFilter, useAllowEdgeCreation } from '@console/topology/src/filters';
+import { getResource } from '@console/topology/src/utils';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 
 type KnativeServiceNodeProps = {
@@ -60,7 +61,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   const dragProps = React.useMemo(() => ({ element }), [element]);
   const [{ dragging }, dragNodeRef] = useDragNode(dragSpec, dragProps);
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const allowEdgeCreation = useAllowEdgeCreation();
   const { kind } = element.getData().data;
   const { groupResources } = element.getData();

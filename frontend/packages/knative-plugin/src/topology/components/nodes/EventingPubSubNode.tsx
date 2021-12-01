@@ -80,13 +80,13 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
 
   const { t } = useTranslation();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const { data, resource } = element.getData();
+  const [filtered] = useSearchFilter(element.getLabel(), resource?.metadata?.labels);
   const displayFilters = useDisplayFilters();
   const allowEdgeCreation = useAllowEdgeCreation();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
-  const { data } = element.getData();
 
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel =

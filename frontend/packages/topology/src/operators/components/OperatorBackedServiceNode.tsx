@@ -23,6 +23,7 @@ import {
   GroupNodeAnchor,
 } from '../../components/graph-view';
 import { useSearchFilter } from '../../filters/useSearchFilter';
+import { getResource } from '../../utils/topology-utils';
 
 type OperatorBackedServiceNodeProps = {
   element: Node;
@@ -44,7 +45,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const kind = 'Operator';
   const { groupResources } = element.getData();
   const [groupSize, groupRef] = useSize([groupResources]);
