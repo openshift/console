@@ -2,8 +2,11 @@ import * as _ from 'lodash-es';
 import { plural } from 'pluralize';
 
 import { K8sKind, K8sVerb } from '../../module/k8s';
+import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { fetchURL } from '../../graphql/client';
+import { pluginStore } from '../../plugins';
 
 const ADMIN_RESOURCES = new Set([
   'roles',
@@ -102,6 +105,43 @@ export const pluralizeKind = (kind: string): string => {
   return pluralized;
 };
 
+export const getModelExtensionMetadata = (
+  extensions: LoadedExtension<ModelMetadata>[],
+  group: string,
+  version?: string,
+  kind?: string,
+) => {
+  const groupVersionKindMetadata = extensions
+    .filter(
+      ({ properties }) =>
+        properties.model.group === group &&
+        properties.model.kind === kind &&
+        properties.model.version === version,
+    )
+    .map((e) => e.properties);
+  const groupKindMetadata = extensions
+    .filter(
+      ({ properties }) =>
+        properties.model.version == null &&
+        properties.model.group === group &&
+        properties.model.kind === kind,
+    )
+    .map((e) => e.properties);
+  const groupMetadata = extensions
+    .filter(
+      ({ properties }) =>
+        properties.model.kind == null &&
+        properties.model.version == null &&
+        properties.model.group === group,
+    )
+    .map((e) => e.properties);
+
+  return _.omit(
+    Object.assign({}, ...groupMetadata, ...groupKindMetadata, ...groupVersionKindMetadata),
+    ['model'],
+  );
+};
+
 export const getResources = () =>
   fetchURL('/apis').then((res) => {
     const groupVersionMap = res.groups.reduce(
@@ -137,6 +177,9 @@ export const getResources = () =>
       const adminResources = [];
 
       const defineModels = (list: APIResourceList): K8sKind[] => {
+        const metadataExtensions = pluginStore
+          .getExtensionsInUse()
+          .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
         const groupVersionParts = list.groupVersion.split('/');
         const apiGroup = groupVersionParts.length > 1 ? groupVersionParts[0] : null;
         const apiVersion = groupVersionParts.length > 1 ? groupVersionParts[1] : list.groupVersion;
@@ -157,6 +200,7 @@ export const getResources = () =>
               path: name,
               id: singularName,
               crd: true,
+              ...getModelExtensionMetadata(metadataExtensions, apiGroup, apiVersion, kind),
             };
           });
       };

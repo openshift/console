@@ -13,11 +13,11 @@ const DefaultChannelSection: React.FC<DefaultChannelSectionProps> = ({ namespace
   const { t } = useTranslation();
   return (
     <FormSection extraMargin>
-      <ApplicationSelector namespace={namespace} />
+      <ApplicationSelector namespace={namespace} subPath="formData" />
       <InputField
         type={TextInputTypes.text}
         data-test-id="channel-name"
-        name="name"
+        name="formData.name"
         label={t('knative-plugin~Name')}
         helpText={t('knative-plugin~A unique name for the component/channel')}
         required

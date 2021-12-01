@@ -232,6 +232,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
           label={t('public~Wrap lines')}
           id="wrapLogLines"
           isChecked={isWrapLines}
+          data-checked-state={isWrapLines}
           onChange={(checked: boolean) => {
             toggleWrapLines(checked);
           }}

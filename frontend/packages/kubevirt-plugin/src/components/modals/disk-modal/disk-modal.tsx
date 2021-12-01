@@ -621,6 +621,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               )}
               isDisabled={!isVMRunning}
               isChecked={autoDetach}
+              data-checked-state={autoDetach}
               onChange={() => setAutoDetach(!autoDetach)}
             />
           </FormRow>
@@ -694,6 +695,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                         'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
                       )}
                       isChecked={applySP}
+                      data-checked-state={applySP}
                       onChange={() => setApplySP(!applySP)}
                       isDisabled={!isSPSettingProvided}
                       label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
@@ -752,6 +754,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   }
                   isDisabled={!source.requiresBlankDisk()}
                   isChecked={enablePreallocation}
+                  data-checked-state={enablePreallocation}
                   label={t('kubevirt-plugin~Enable preallocation')}
                   onChange={() => onTogglePreallocation()}
                 />

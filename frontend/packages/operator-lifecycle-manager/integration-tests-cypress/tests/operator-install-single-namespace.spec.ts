@@ -17,7 +17,7 @@ const testOperand: TestOperandProps = {
   exampleName: `example-kieappk`,
 };
 
-xdescribe(`Installing "${testOperator.name}" operator in ${testOperator.installedNamespace}`, () => {
+describe(`Installing "${testOperator.name}" operator in ${testOperator.installedNamespace}`, () => {
   before(() => {
     cy.login();
     cy.visit('/');

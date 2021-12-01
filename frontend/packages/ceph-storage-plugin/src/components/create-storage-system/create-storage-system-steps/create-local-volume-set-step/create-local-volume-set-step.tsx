@@ -326,9 +326,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   const description = (
     <>
       <span>
-        {t(
-          "ceph-storage-plugin~After the LocalVolumeSet is created you won't be able to go back to this step.",
-        )}
+        {t("ceph-storage-plugin~After the LocalVolumeSet is created you won't be able to edit it.")}
       </span>
       {isArbiterSupported && (
         <p className="pf-u-pt-sm">

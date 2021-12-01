@@ -82,13 +82,13 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   const { kind, osImage, vmStatusBundle } = vmData;
   const displayFilters = useDisplayFilters();
   const allowEdgeCreation = useAllowEdgeCreation();
-  const [filtered] = useSearchFilter(element.getLabel());
   const iconRadius = Math.min(width, height) * 0.25;
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;
   const tipContent = `Create a visual connector`;
   const resourceObj = getResource(element);
   const resourceModel = modelFor(referenceFor(resourceObj));
+  const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
   const editAccess = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'patch',

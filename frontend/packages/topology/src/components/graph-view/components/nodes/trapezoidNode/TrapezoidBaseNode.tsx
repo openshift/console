@@ -87,7 +87,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;

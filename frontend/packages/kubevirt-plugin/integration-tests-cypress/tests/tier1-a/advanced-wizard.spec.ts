@@ -24,7 +24,7 @@ const registryVM: VirtualMachineData = {
   name: `registry-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-870): create VM from container image',
   namespace: testName,
-  template: TEMPLATE.WIN10,
+  template: TEMPLATE.RHEL8,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

@@ -285,6 +285,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
             <Checkbox
               id="storage-class-encryption"
               isChecked={checked}
+              data-checked-state={checked}
               label={<StorageClassEncryptionLabel />}
               aria-label={t('ceph-storage-plugin~StorageClass encryption')}
               onChange={setChecked}

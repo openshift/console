@@ -25,6 +25,7 @@ import {
   useSearchFilter,
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
+import { getResource } from '@console/topology/src/utils';
 
 type HelmReleaseGroupProps = {
   element: Node;
@@ -47,7 +48,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(noRegroupDragSourceSpec);
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover || innerHover;

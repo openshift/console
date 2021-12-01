@@ -100,6 +100,7 @@ type ListPageWrapperProps<L = any, C = any> = {
   reduxIDs?: string[];
   textFilter?: string;
   nameFilterPlaceholder?: string;
+  namespace?: string;
   labelFilterPlaceholder?: string;
   label?: string;
   staticFilters?: { key: string; value: string }[];
@@ -590,6 +591,7 @@ export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
           nameFilterPlaceholder={nameFilterPlaceholder}
           labelFilterPlaceholder={labelFilterPlaceholder}
           nameFilter={nameFilter}
+          namespace={namespace}
         />
       </Firehose>
     </FireMan>
