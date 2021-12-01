@@ -1,4 +1,8 @@
 import * as React from 'react';
+import {
+  StatusPopupSectionProps,
+  StatusPopupItemProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/dashboard-types';
 
 import './status-popup.scss';
 
@@ -8,7 +12,7 @@ export const StatusPopupSection: React.FC<StatusPopupSectionProps> = ({
   children,
 }) => (
   <>
-    <div className="co-status-popup__row co-status-popup__section">
+    <div className="co-status-popup__row">
       <div className="co-status-popup__text--bold">{firstColumn}</div>
       {secondColumn && <div className="text-secondary">{secondColumn}</div>}
     </div>
@@ -16,33 +20,16 @@ export const StatusPopupSection: React.FC<StatusPopupSectionProps> = ({
   </>
 );
 
-const Status: React.FC<StatusProps> = ({ value, icon, children }) => (
+const Status: React.FC<StatusPopupItemProps> = ({ value, icon, children }) => (
   <div className="co-status-popup__row">
     {children}
-    {value ? (
+    {(value || icon) && (
       <div className="co-status-popup__status">
-        <div className="text-secondary">{value}</div>
-        <div className="co-status-popup__icon">{icon}</div>
+        {value && <div className="text-secondary">{value}</div>}
+        {icon && <div className="co-status-popup__icon">{icon}</div>}
       </div>
-    ) : (
-      icon && (
-        <div className="co-status-popup__status">
-          <div className="co-status-popup__icon">{icon}</div>
-        </div>
-      )
     )}
   </div>
 );
-
-type StatusProps = {
-  children: React.ReactNode;
-  value?: string;
-  icon?: React.ReactNode;
-};
-
-type StatusPopupSectionProps = {
-  firstColumn: string;
-  secondColumn?: string;
-};
 
 export default Status;

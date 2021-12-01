@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { TFunction } from 'i18next';
 import {
   HealthState,
@@ -64,3 +65,14 @@ export type URLHealthHandler<
   R,
   T extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[]
 > = (response: R, error: any, additionalResource?: FirehoseResult<T>) => SubsystemHealth;
+
+export type StatusPopupItemProps = {
+  children: React.ReactNode;
+  value?: string;
+  icon?: React.ReactNode;
+};
+
+export type StatusPopupSectionProps = {
+  firstColumn: React.ReactNode;
+  secondColumn?: React.ReactNode;
+};
