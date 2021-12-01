@@ -199,8 +199,11 @@ describe('Project Dashboard', () => {
     it('shows Resource Quotas', async () => {
       expect(projectDashboardView.resourceQuotasCard.isDisplayed()).toBe(true);
       expect(
-        await projectDashboardView.resourceQuotasCard.$('.co-dashboard-card__body').getText(),
-      ).toEqual('No resource quotas');
+        await projectDashboardView.resourceQuotasCard
+          .$('.co-dashboard-card__body')
+          .$('.co-dashboard-card__body--top-margin')
+          .getText(),
+      ).toEqual('No ResourceQuotas');
       createResource(resourceQuota);
       addLeakableResource(leakedResources, resourceQuota);
 

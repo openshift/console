@@ -37,7 +37,7 @@
   "There are no ongoing activities.": "There are no ongoing activities.",
   "Ongoing": "Ongoing",
   "Not available": "Not available",
-  "No resource quotas": "No resource quotas",
+  "No ResourceQuotas": "No ResourceQuotas",
   "View details": "View details",
   "Alerts could not be loaded.": "Alerts could not be loaded.",
   "({{operatorStatusLength}} installed)": "({{operatorStatusLength}} installed)",
