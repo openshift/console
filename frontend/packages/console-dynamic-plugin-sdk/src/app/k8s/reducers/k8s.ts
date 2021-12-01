@@ -2,6 +2,7 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { K8sState } from '../../redux-types';
 import { ActionType, K8sAction } from '../actions/k8s';
+import { getK8sDataById } from './k8sSelector';
 
 const getQN: (obj) => string = (obj) => {
   const { name, namespace } = obj.metadata;
@@ -99,7 +100,7 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
       );
 
     case ActionType.StartWatchK8sList:
-      if (state.getIn([action.payload.id, 'data'])) {
+      if (getK8sDataById(state, action.payload.id)) {
         return state;
       }
 
@@ -120,7 +121,7 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
 
     case ActionType.ModifyObject: {
       const { k8sObjects, id } = action.payload;
-      let currentJS = state.getIn([id, 'data'], {});
+      let currentJS = getK8sDataById(state, id) || {};
       // getIn can return JS object or Immutable object
       if (currentJS.toJSON) {
         currentJS = currentJS.toJSON();
@@ -141,7 +142,7 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
       return state.delete(action.payload.id);
 
     case ActionType.Errored:
-      if (!state.getIn([action.payload.id, 'data'])) {
+      if (!getK8sDataById(state, action.payload.id)) {
         return state;
       }
       /* Don't overwrite data or loaded state if there was an error. Better to
@@ -150,7 +151,7 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
       return state.setIn([action.payload.id, 'loadError'], action.payload.k8sObjects);
 
     case ActionType.Loaded:
-      if (!state.getIn([action.payload.id, 'data'])) {
+      if (!getK8sDataById(state, action.payload.id)) {
         return state;
       }
       // eslint-disable-next-line no-console
@@ -159,11 +160,11 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
       state = state.mergeDeep({
         [action.payload.id]: { loaded: true, loadError: '' },
       });
-      newList = loadList(state.getIn([action.payload.id, 'data']), action.payload.k8sObjects);
+      newList = loadList(getK8sDataById(state, action.payload.id), action.payload.k8sObjects);
       break;
 
     case ActionType.UpdateListFromWS:
-      newList = state.getIn([action.payload.id, 'data']);
+      newList = getK8sDataById(state, action.payload.id);
       // k8sObjects is an array of k8s WS Events
       for (const { type, object } of action.payload.k8sObjects) {
         switch (type) {
@@ -184,17 +185,16 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
       break;
 
     case ActionType.BulkAddToList:
-      if (!state.getIn([action.payload.id, 'data'])) {
+      if (!getK8sDataById(state, action.payload.id)) {
         return state;
       }
-      newList = state
-        .getIn([action.payload.id, 'data'])
-        .merge(
-          action.payload.k8sObjects.reduce(
-            (map, obj) => map.set(getQN(obj), fromJS(obj)),
-            ImmutableMap(),
-          ),
-        );
+      newList = getK8sDataById(state, action.payload.id);
+      newList = newList.merge(
+        action.payload.k8sObjects.reduce(
+          (map, obj) => map.set(getQN(obj), fromJS(obj)),
+          ImmutableMap(),
+        ),
+      );
       break;
     case ActionType.FilterList:
       return state.setIn([action.payload.id, 'filters', action.payload.name], action.payload.value);
