@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Node, Graph, isGraph } from '@patternfly/react-topology';
-import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { ActionServiceProvider } from '@console/shared';
+import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { createContextMenuItems } from '../../../actions/contextMenuActions';
 
 export const isWorkloadRegroupable = (node: Node): boolean =>
