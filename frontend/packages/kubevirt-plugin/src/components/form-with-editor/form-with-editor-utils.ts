@@ -89,7 +89,7 @@ export const formModifier = (
             break;
           default: {
             Object.assign(props, {
-              value: isArray ? value?.[child?.props?.accessKey] : value || '',
+              value: (isArray ? value?.[child?.props?.accessKey] : value) || '',
               isDisabled: alert,
               onChange: onChangeValue,
             });
