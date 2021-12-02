@@ -1,7 +1,7 @@
+import { gitImportRepos } from '../../../testData/git-import/repos';
 import { gitAdvancedOptions, buildConfigOptions, builderImages, messages } from '../../constants';
 import { gitPO } from '../../pageObjects';
 import { app } from '../app';
-import { gitImportRepos } from '../../../testData/git-import/repos';
 
 export const gitPage = {
   unselectRoute: () => cy.get(gitPO.advancedOptions.createRoute).uncheck(),
@@ -18,35 +18,39 @@ export const gitPage = {
   },
   enterGitUrl: (gitUrl: string) => {
     const shortUrl = gitUrl.endsWith('.git') ? gitUrl.substring(0, gitUrl.length - 4) : gitUrl;
-    const repository = gitImportRepos.find(repo => repo.url === shortUrl);
-    
+    const repository = gitImportRepos.find((repo) => repo.url === shortUrl);
+
     // mock the github requests for the frequently used repositories to avoid rate limits
     if (repository) {
       const urlSegments = repository.url.split('/');
       const organization = urlSegments[urlSegments.length - 2];
       const name = urlSegments[urlSegments.length - 1];
-      const apiBaseUrl = `https://api.github.com/repos/${organization}/${name}`
+      const apiBaseUrl = `https://api.github.com/repos/${organization}/${name}`;
 
-      cy.readFile(`testData/git-import/${repository.folder}/repo.json`).then(repoResponse => {
+      cy.readFile(`testData/git-import/${repository.folder}/repo.json`).then((repoResponse) => {
         cy.intercept('GET', apiBaseUrl, {
           statusCode: 200,
-          body: repoResponse
+          body: repoResponse,
         }).as('getRepo');
       });
-      
-      cy.readFile(`testData/git-import/${repository.folder}/contents.json`).then(contentsResponse => {
-        cy.intercept('GET', `${apiBaseUrl}/contents/`, {
-          statusCode: 200,
-          body: contentsResponse
-        }).as('getContents');
-      });
 
-      cy.task('readFileIfExists', `testData/git-import/${repository.folder}/package.json`).then(packageResponse => {
-        cy.intercept('GET', `${apiBaseUrl}/contents//package.json`, {
-          statusCode: packageResponse ? 200 : 404,
-          body: packageResponse
-        }).as('getPackage');
-      });
+      cy.readFile(`testData/git-import/${repository.folder}/contents.json`).then(
+        (contentsResponse) => {
+          cy.intercept('GET', `${apiBaseUrl}/contents/`, {
+            statusCode: 200,
+            body: contentsResponse,
+          }).as('getContents');
+        },
+      );
+
+      cy.task('readFileIfExists', `testData/git-import/${repository.folder}/package.json`).then(
+        (packageResponse) => {
+          cy.intercept('GET', `${apiBaseUrl}/contents//package.json`, {
+            statusCode: packageResponse ? 200 : 404,
+            body: packageResponse,
+          }).as('getPackage');
+        },
+      );
     }
 
     cy.get(gitPO.gitRepoUrl)
