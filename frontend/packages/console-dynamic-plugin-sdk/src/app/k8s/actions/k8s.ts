@@ -58,7 +58,6 @@ const REF_COUNTS = {};
 const nop = () => {};
 const paginationLimit = 250;
 
-// eslint-disable-next-line consistent-return
 export const stopK8sWatch = (id: string) => (dispatch) => {
   REF_COUNTS[id] -= 1;
   if (REF_COUNTS[id] > 0) {
@@ -74,7 +73,7 @@ export const stopK8sWatch = (id: string) => (dispatch) => {
   clearInterval(poller);
   delete POLLs[id];
   delete REF_COUNTS[id];
-  dispatch(stopWatchK8s(id));
+  return dispatch(stopWatchK8s(id));
 };
 
 export const watchK8sList = (
@@ -82,7 +81,6 @@ export const watchK8sList = (
   query: { [key: string]: string },
   k8skind: K8sModel,
   extraAction?,
-  // eslint-disable-next-line consistent-return
 ) => (dispatch, getState) => {
   // Only one watch per unique list ID
   if (id in REF_COUNTS) {
@@ -97,7 +95,7 @@ export const watchK8sList = (
     // the list may not still be around...
     if (!REF_COUNTS[id]) {
       // let .then handle the cleanup
-      return;
+      return null;
     }
 
     const response = await k8sList(
@@ -111,7 +109,7 @@ export const watchK8sList = (
     );
 
     if (!REF_COUNTS[id]) {
-      return;
+      return null;
     }
 
     if (!continueToken) {
@@ -121,10 +119,8 @@ export const watchK8sList = (
     }
 
     if (response.metadata.continue) {
-      // eslint-disable-next-line consistent-return
       return incrementallyLoad(response.metadata.continue);
     }
-    // eslint-disable-next-line consistent-return
     return response.metadata.resourceVersion;
   };
   /**
@@ -220,7 +216,7 @@ export const watchK8sList = (
         [updateListFromWS, extraAction].forEach((f) => f && dispatch(f(id, events))),
       );
   };
-  pollAndWatch();
+  return pollAndWatch();
 };
 
 export const watchK8sObject = (
@@ -229,13 +225,12 @@ export const watchK8sObject = (
   namespace: string,
   query: { [key: string]: string },
   k8sType: K8sModel,
-  // eslint-disable-next-line consistent-return
 ) => (dispatch, getState) => {
   if (id in REF_COUNTS) {
     REF_COUNTS[id] += 1;
     return nop;
   }
-  dispatch(startWatchK8sObject(id));
+  const watch = dispatch(startWatchK8sObject(id));
   REF_COUNTS[id] = 1;
 
   if (query.name) {
@@ -260,8 +255,7 @@ export const watchK8sObject = (
   if (!_.get(k8sType, 'verbs', ['watch']).includes('watch')) {
     // eslint-disable-next-line no-console
     console.warn(`${getReferenceForModel(k8sType)} does not support watching`);
-    // eslint-disable-next-line consistent-return
-    return;
+    return nop;
   }
 
   const { subprotocols } = getImpersonate(getState()) || {};
@@ -269,6 +263,7 @@ export const watchK8sObject = (
   WS[id] = k8sWatch(k8sType, query, { subprotocols }).onbulkmessage((events) =>
     events.forEach((e) => dispatch(modifyObject(id, e.object))),
   );
+  return watch;
 };
 
 const k8sActions = {
