@@ -81,7 +81,8 @@ const ActionMenuToggle: React.FC<ActionMenuToggleProps> = ({
       aria-haspopup="true"
       data-test-id={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
       onClick={handleToggleClick}
-      {...(isKebabVariant ? { onFocus: onToggleHover, onMouseEnter: onToggleHover } : {})}
+      onFocus={onToggleHover}
+      onMouseOver={onToggleHover}
     >
       {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
     </MenuToggle>

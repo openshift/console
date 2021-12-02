@@ -21,7 +21,8 @@ import {
 } from '@console/topology/src/components/graph-view';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { getResource, withEditReviewAccess } from '@console/topology/src/utils';
-import { vmMenuActions } from '../../components/vms/menu-actions';
+import { VmActionFactory } from '../../components/vms/menu-actions';
+import { VMKind } from '../../types';
 import { VMNodeData } from '../types';
 import { TYPE_VIRTUAL_MACHINE } from './const';
 import { VmNode } from './nodes/VmNode';
@@ -40,8 +41,8 @@ export const vmActions = (
   const model = modelFor(referenceFor(contextMenuResource));
   return [
     ModifyApplication(model, contextMenuResource),
-    ...vmMenuActions.map((action) => {
-      return action(model, contextMenuResource, {
+    ...Object.values(VmActionFactory).map((action) => {
+      return action(model, contextMenuResource as VMKind, {
         vmi,
         vmStatusBundle,
       });

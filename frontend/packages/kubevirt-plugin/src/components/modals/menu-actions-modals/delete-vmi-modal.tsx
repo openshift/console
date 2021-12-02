@@ -45,7 +45,7 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
     namespace,
     getVMIVolumes(vmiUpToDate, null),
   );
-  const isInProgress = inProgress || !isOwnedVolumeResourcesLoaded;
+  const isInProgress = inProgress || !isOwnedVolumeResourcesLoaded || !name || !namespace;
   const numOfAllResources = ownedVolumeResources.length;
 
   const submit = (e) => {
