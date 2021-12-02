@@ -155,11 +155,11 @@ const Footer: React.FC<FooterProps> = ({
   );
 };
 
-export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
+export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match, location }) => {
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location && location.search);
   const initData = parseVMWizardInitialData(searchParams);
-  const [namespace, setNamespace] = React.useState(searchParams.get('namespace'));
+  const [namespace, setNamespace] = React.useState(match?.params?.ns);
   const [state, dispatch] = React.useReducer(formReducer, initFormState(namespace));
   const [isCreating, setCreating] = React.useState(false);
   const [created, setCreated] = React.useState(false);

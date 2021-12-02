@@ -37,6 +37,7 @@ import {
   TEMPLATE_TYPE_VM,
   VM_CUSTOMIZE_LABEL,
 } from '../../../constants';
+import { VIRTUALIZATION_BASE_URL } from '../../../constants/url-params';
 import { TemplateSupport } from '../../../constants/vm-templates/support';
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants/vm/constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
@@ -61,7 +62,6 @@ import { ProjectDropdown } from '../../form/project-dropdown';
 import { preventDefault } from '../../form/utils';
 import { filterTemplates } from '../utils';
 import { FORM_ACTION_TYPE, formReducer, initFormState } from './customize-source-form-reducer';
-
 import './customize-source.scss';
 
 const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
@@ -232,7 +232,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
       const vmParams = new URLSearchParams();
       vmParams.append('vm', vm.metadata.name);
       vmParams.append('vmNs', namespace);
-      history.push(`/virtualization/customize-source?${vmParams.toString()}`);
+      history.push(`/${VIRTUALIZATION_BASE_URL}/customize-source?${vmParams.toString()}`);
     } catch (err) {
       setCreatingVM(false);
       setVMError(err.message);

@@ -102,6 +102,11 @@ export const wizard = {
     },
     fillReviewForm: (vmData: VirtualMachineData) => {
       const { namespace, name, flavor, sshEnable, startOnCreation } = vmData;
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-test-id="modal-title"]').length) {
+          cy.get('#confirm-action').click();
+        }
+      });
       cy.contains(wizardTitle).should('exist');
       if (namespace !== undefined) {
         cy.get(wizardView.projectDropdown).click();

@@ -34,7 +34,6 @@ import {
   VMWizardTab,
   VMWizardTabsMetadata,
 } from './types';
-
 import './create-vm-wizard-footer.scss';
 
 type WizardContext = {
@@ -127,7 +126,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             <Prompt
               key="prompt"
               message={(location) => {
-                if (location.pathname.endsWith('/~new-wizard')) {
+                if (location.pathname.endsWith('/customize')) {
                   return false; // do not allow routing inside the wizard (used mainly by sorting)
                 }
                 if (isLastStep || isWizardEmpty) {

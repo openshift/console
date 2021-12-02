@@ -3,6 +3,7 @@ import { history } from '@console/internal/components/utils/router';
 import { TemplateKind } from '@console/internal/module/k8s';
 import customizeSourceModal from '../components/modals/template-customization/CustomizeSourceModal';
 import { TEMPLATE_CUSTOMIZE_SOURCE } from '../constants';
+import { VIRTUALIZATION_BASE_URL } from '../constants/url-params';
 import { useLocalStorage } from './use-local-storage';
 import { useNamespace } from './use-namespace';
 
@@ -18,7 +19,7 @@ export const useCustomizeSourceModal = (): CustomizeSourceFunction => {
         params.append('template', template.metadata.name);
         params.append('templateNs', template.metadata.namespace);
         params.append('ns', namespace || template.metadata.namespace);
-        history.push(`/virtualization/new-customize-source?${params.toString()}`);
+        history.push(`/${VIRTUALIZATION_BASE_URL}/customize-source/~new?${params.toString()}`);
       };
       if (showCustomizeModal === 'false') {
         openCustomizePage();

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel, TemplateModel } from '@console/internal/models';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
 import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
@@ -19,7 +20,6 @@ import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
 import RowActions from './RowActions';
 import { VMTemplateRowProps } from './types';
 import { tableColumnClasses } from './utils';
-
 import './vm-template-table.scss';
 
 const VMTemplateRow: React.FC<RowFunctionArgs<TemplateItem, VMTemplateRowProps>> = ({
@@ -49,7 +49,7 @@ const VMTemplateRow: React.FC<RowFunctionArgs<TemplateItem, VMTemplateRowProps>>
       <TableData className={dimensify()}>
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         <Link
-          to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+          to={`/k8s/ns/${template.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${template.metadata.name}`}
           data-test-id={template.metadata.name}
           className="co-resource-item__resource-name"
         >

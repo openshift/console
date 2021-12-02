@@ -21,7 +21,7 @@ Cypress.Commands.add('loaded', () => {
 });
 
 Cypress.Commands.add('visitVMsList', () => {
-  cy.clickNavLink(['Virtualization', 'Virtual Machines']);
+  cy.clickNavLink(['Virtualization', 'VirtualMachines']);
 });
 
 Cypress.Commands.add('visitVMTemplatesList', () => {
@@ -35,7 +35,7 @@ Cypress.Commands.add('filterByName', (name: string) => {
 });
 
 Cypress.Commands.add('createDefaultVM', () => {
-  cy.clickNavLink(['Virtualization', 'Virtual Machines']);
+  cy.clickNavLink(['Virtualization', 'VirtualMachines']);
   cy.get(createVM).click();
   cy.get(vmYAML).click();
   cy.get(createYAMLButton).click();
