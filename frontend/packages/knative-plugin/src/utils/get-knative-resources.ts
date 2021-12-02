@@ -152,6 +152,20 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
   return knativeResource;
 };
 
+export const k8sServices = (namespace: string, limit?: number): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: 'Service',
+      namespace,
+      prop: 'services',
+      optional: true,
+      ...(limit && { limit }),
+    },
+  ];
+  return knativeResource;
+};
+
 export const knativeServingResourcesServices = (
   namespace: string,
   limit?: number,
@@ -372,6 +386,12 @@ export const getTrafficByRevision = (revName: string, service: K8sResourceKind) 
     ...trafficPercent,
     percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
   };
+};
+
+export const getSinkableResources = (namespace: string): FirehoseResource[] => {
+  return namespace
+    ? [...k8sServices(namespace), ...knativeServingResourcesServices(namespace)]
+    : [];
 };
 
 export const getKnativeResources = (namespace: string) => {

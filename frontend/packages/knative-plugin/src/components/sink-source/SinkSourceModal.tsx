@@ -8,7 +8,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { SinkUriResourcesGroup } from '../add/event-sources/SinkSection';
+import SinkUriResourcesGroup from '../add/event-sources/form-fields/SinkUriResourcesGroup';
 
 export interface SinkSourceModalProps {
   resourceName: string;

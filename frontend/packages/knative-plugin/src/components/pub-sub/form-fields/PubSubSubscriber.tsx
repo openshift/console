@@ -4,8 +4,9 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { referenceFor } from '@console/internal/module/k8s';
 import { ResourceDropdownField, getFieldId } from '@console/shared';
-import { knativeServingResourcesServices } from '../../../utils/get-knative-resources';
+import { getSinkableResources } from '../../../utils/get-knative-resources';
 
 const PubSubSubscriber: React.FC = () => {
   const { t } = useTranslation();
@@ -43,7 +44,6 @@ const PubSubSubscriber: React.FC = () => {
     setResourceAlert(_.isEmpty(resourceList));
   };
 
-  const dropdownResources = knativeServingResourcesServices(values.metadata.namespace);
   return (
     <FormGroup
       fieldId={getFieldId('pubsub', 'subscriber')}
@@ -62,7 +62,7 @@ const PubSubSubscriber: React.FC = () => {
       )}
       <ResourceDropdownField
         name="spec.subscriber.ref.name"
-        resources={dropdownResources}
+        resources={getSinkableResources(values.metadata.namespace)}
         dataSelector={['metadata', 'name']}
         fullWidth
         required
@@ -70,6 +70,9 @@ const PubSubSubscriber: React.FC = () => {
         showBadge
         autocompleteFilter={autocompleteFilter}
         onChange={onSubscriberChange}
+        customResourceKey={(key: string, resource: any) => {
+          return key ? `${referenceFor(resource)}-${key}` : undefined;
+        }}
         autoSelect
         disabled={resourceAlert}
         onLoad={handleOnLoad}

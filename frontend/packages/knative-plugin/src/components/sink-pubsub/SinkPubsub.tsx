@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
-import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
+import { getSinkableResources } from '../../utils/get-knative-resources';
 import SinkPubsubModal from './SinkPubsubModal';
 
 export interface SinkPubsubProps {
@@ -29,7 +29,7 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, resourceType, cancel, c
       name: sinkName,
     },
   };
-  const resourcesDropdownField = knativeServingResourcesServices(namespace);
+
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const updatePayload = {
       ...source,
@@ -59,7 +59,7 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, resourceType, cancel, c
         <SinkPubsubModal
           {...formikProps}
           resourceName={name}
-          resourceDropdown={resourcesDropdownField}
+          resourceDropdown={getSinkableResources(namespace)}
           labelTitle={t('knative-plugin~Move {{kind}}', { kind: resourceType })}
           cancel={cancel}
         />
