@@ -16,7 +16,7 @@ Feature: Create the different workloads from Add page
               And user will see "Samples" option
               And user will see Import YAML, Upload JAR file under From Local Machine section
 
-        @broken-test
+
         Scenario Outline: Deploy Application using Catalog Template "<template_type>": A-01-TC02
             Given user is at Developer Catalog page
               And user is at Templates page
@@ -35,7 +35,7 @@ Feature: Create the different workloads from Add page
                   | Middleware    | Apache HTTP Server                    | httpd-example             |
                   | Other         | Nginx HTTP server and a reverse proxy | nginx-example             |
 
-        @broken-test
+
         Scenario Outline: Deploy <image> image with Runtime icon from external registry: A-02-TC02
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
@@ -51,7 +51,7 @@ Feature: Create the different workloads from Add page
                   | image  | image_name                | runtime_icon | name         |
                   | secure | openshift/hello-openshift | fedora       | hello-secure |
 
-        @broken-test
+
         Scenario Outline: Deploy image with Runtime icon from internal registry: A-02-TC03
             Given user is at Deploy Image page
              When user selects Image stream tag from internal registry
@@ -70,7 +70,7 @@ Feature: Create the different workloads from Add page
                   | image_stream | runtime_icon | name           |
                   | golang       | fedora       | hello-internal |
 
-        @broken-test
+
         Scenario: Edit Runtime Icon while Editing Image: A-02-TC05
             Given user has deployed container Image "openshift/hello-openshift" from external registry
               And user is at Topology page
@@ -82,7 +82,7 @@ Feature: Create the different workloads from Add page
              Then user will be redirected to Topology page
               And user will see the deployment image "hello-openshift" icon updated to "ansible" Icon
 
-        @broken-test
+
         Scenario: Create the Database from Add page: A-03-TC01
              When user clicks Database card
               And user selects "MariaDB" database on Developer Catalog
@@ -91,7 +91,7 @@ Feature: Create the different workloads from Add page
              Then user will be redirected to Topology page
               And user is able to see workload "mariadb" in topology page
 
-        @broken-test
+
         Scenario: Deploy git workload with devfile from topology page: A-04-TC01
             Given user is at the Topology page
              When user right clicks on topology empty graph
@@ -102,7 +102,7 @@ Feature: Create the different workloads from Add page
              Then user will be redirected to Topology page
               And user is able to see workload "node-bulletin-board-1" in topology page
 
-        @broken-test
+
         Scenario Outline: Create a workload from Docker file with "<resource_type>" as resource type: A-05-TC02
             Given user is on Import from Git form
              When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"
@@ -116,14 +116,15 @@ Feature: Create the different workloads from Add page
                   | resource_type | name       |
                   | Deployment    | dockerfile |
 
-        @broken-test
+
         Scenario: Create a workload from YAML file: A-07-TC01
             Given user is at Import YAML page
              When user enters the "testData/add-flow/git-dc.yaml" file data to YAML Editor
               And user clicks create button on YAML page
               And user navigates to Topology page
              Then user is able to see workload "shell-app" in topology page
-        @broken-test
+
+
         Scenario: Upload Jar file page details: A-10-TC01
             Given user is at Add page
              When user clicks on the Upload JAR file card
