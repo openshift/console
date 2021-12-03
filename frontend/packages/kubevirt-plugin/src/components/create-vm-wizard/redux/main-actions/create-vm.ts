@@ -94,5 +94,8 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
         vmWizardInternalActions[InternalActionType.SetResults](id, tabState, isValid, false, false),
       );
     })
-    .catch((e) => console.error(e)); // eslint-disable-line no-console
+    .catch((e) =>
+      // eslint-disable-next-line no-console
+      console.error(`Error while create a ${isCreateTemplate ? 'VM template' : 'VM'}`, e),
+    );
 };

@@ -80,7 +80,7 @@ export async function getDetailActionDropdownOptions(): Promise<string[]> {
         })
         .catch((error) => {
           // eslint-disable-next-line no-console
-          console.error(error);
+          console.error('Could not getText for detail action dropdown option', error);
         });
     });
 

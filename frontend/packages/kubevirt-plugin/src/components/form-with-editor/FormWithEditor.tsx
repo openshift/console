@@ -76,7 +76,7 @@ const FormWithEditor: React.FC<FormWithEditorProps> = ({
       setIsYamlValid && setIsYamlValid(true);
     } catch (e) {
       setIsYamlValid && setIsYamlValid(false);
-      console.log(e?.message); // eslint-disable-line no-console
+      console.log('Failed to parse YAML or handle onChange', e?.message); // eslint-disable-line no-console
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, setIsYamlValid]);

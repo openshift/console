@@ -71,6 +71,6 @@ export const createOrDeleteSSHService = async (
     });
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.log(e.message);
+    console.log(`Failed to ${enableSSHService ? 'create' : 'delete'} SSH service:`, e.message);
   }
 };

@@ -92,7 +92,7 @@ export const useUserSettings = <T>(
           await createConfigMap();
         } catch (err) {
           // eslint-disable-next-line no-console
-          console.error(err);
+          console.error('Could not create ConfigMap for user settings:', err);
           setFallbackLocalStorage(true);
         }
       })();

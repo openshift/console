@@ -273,7 +273,7 @@ export const getDomainMappingResources = (
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
-      console.log(err);
+      console.log('Failed to get domain mapping resources', err);
       return domainMappingResources;
     });
 };

@@ -421,7 +421,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/bucket-class/modals/edit-backingstore-modal')
           .then((m) => m.default({ bucketClass: obj, modalClassName: 'nb-modal' }))
           // eslint-disable-next-line no-console
-          .catch((e) => console.error(e)),
+          .catch((e) => console.error('BucketClassEditModal could not be loaded', e)),
     },
     flags: {
       required: [MCG_FLAG],

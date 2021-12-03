@@ -39,6 +39,6 @@ export const createSysprepConfigMap = async (vm: VMKind, data: SysprepData) => {
     });
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.log(e.message);
+    console.log('Failed to create sysprep ConfigMap', e.message);
   }
 };

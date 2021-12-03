@@ -38,7 +38,7 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
   try {
     ipam = JSON.parse(_.get(typeParamsData, 'ipam.value', {}));
   } catch (e) {
-    console.error(e); // eslint-disable-line no-console
+    console.error('Could not parse ipam.value JSON', e); // eslint-disable-line no-console
   }
 
   if (networkType === 'cnv-bridge') {
@@ -107,7 +107,7 @@ const createNetAttachDef = (
     .catch((err) => {
       setError(err);
       setLoading(false);
-      console.error(err); // eslint-disable-line no-console
+      console.error('Error while create a NetworkAttachmentDefinitionModel', err); // eslint-disable-line no-console
     });
 };
 

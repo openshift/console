@@ -27,7 +27,7 @@ export const useEventSourceModelsWithAccess = (
           setAccessModelData({ loaded: true, eventSourceModelsList: modelsWithAccess });
         })
         // eslint-disable-next-line no-console
-        .catch((err) => console.warn(err.message));
+        .catch((err) => console.warn('Failed to get event source models', err.message));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded]);

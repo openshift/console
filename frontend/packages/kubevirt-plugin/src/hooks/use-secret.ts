@@ -49,7 +49,7 @@ const useSecret = ({ secretName, namespace }: useSecretArgs) => {
         });
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.log(e.message);
+        console.log(`Failed to create or update secret ${secretName}`, e.message);
       }
     },
     [secret, secretName],

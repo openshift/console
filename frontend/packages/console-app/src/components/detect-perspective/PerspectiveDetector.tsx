@@ -79,7 +79,7 @@ const PerspectiveDetector: React.FC<PerspectiveDetectorProps> = ({ setActivePers
           })
           .catch((e) => {
             // eslint-disable-next-line no-console
-            console.error(e);
+            console.error('Perspective detection failed', e);
           });
       } else {
         resolveCount++;

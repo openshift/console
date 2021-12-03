@@ -26,7 +26,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     });
     // Log the error so something shows up in the JS console when `DefaultFallback` is used.
     // eslint-disable-next-line no-console
-    console.error(error);
+    console.error('Catched error in a child component:', error, errorInfo);
   }
 
   render() {

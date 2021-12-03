@@ -10,7 +10,7 @@ export const createConfigMap = async (): Promise<ConfigMapKind> => {
     return response.json();
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error(err);
+    console.error('Could not create user settings ConfigMap', err);
     throw err;
   }
 };
@@ -43,7 +43,7 @@ export const updateConfigMap = async (
     return response.json();
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error(err);
+    console.error('Could not update (patch) user settings ConfigMap', err);
     throw err;
   }
 };

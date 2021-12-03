@@ -506,7 +506,7 @@ export const managePipelineResources = async (
       await createPipelineRunForImportFlow(managedPipeline);
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.log(error);
+      console.log('Failed to create PipelineRun for import flow', error);
       setPipelineNotStarted(managedPipeline.metadata.name, managedPipeline.metadata.namespace);
     }
   }

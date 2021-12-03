@@ -158,7 +158,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         setInitialFormData(valuesJSON);
       })
       .catch((err) => {
-        console.error(err); // eslint-disable-line no-console
+        console.error(`Could not fetch helm chart with chart URL ${chartURL}:`, err); // eslint-disable-line no-console
       });
   };
 
