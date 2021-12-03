@@ -14,6 +14,7 @@ import {
   VM_DETAIL_DISKS_HREF,
   VM_DETAIL_NETWORKS_HREF,
 } from '../../constants';
+import { VIRTUALMACHINES_BASE_URL } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
@@ -44,11 +45,11 @@ import { VMEvents } from './vm-events';
 export const breadcrumbsForVMPage = (t: TFunction, match: any) => () => [
   {
     name: t('kubevirt-plugin~Virtualization'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~Virtual Machines'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),
