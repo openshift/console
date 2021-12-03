@@ -20,6 +20,7 @@ export const topologyHelper = {
         cy.log('You are on Topology page - Graph view');
       }
     });
+    cy.get(topologyPO.graph.reset).click();
     cy.get(topologyPO.highlightNode).should('be.visible');
     app.waitForDocumentLoad();
   },
