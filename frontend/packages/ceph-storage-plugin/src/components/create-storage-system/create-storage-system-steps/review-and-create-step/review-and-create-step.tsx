@@ -45,8 +45,11 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
   const { encryption, kms, networkType } = securityAndNetwork;
   const { deployment, externalStorage, type } = backingStorage;
 
+  // NooBaa standalone deployment
   const isMCG = deployment === DeploymentType.MCG;
+  // External Red Hat Ceph Storage deployment
   const isRhcs = !_.isEmpty(connectionDetails);
+  // External IBM deployment without ODF
   const isStandaloneExternal = hasOCS && !_.isEmpty(createStorageClass);
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
@@ -77,19 +80,21 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
   return (
     <>
       <ReviewItem title={t('ceph-storage-plugin~Backing storage')}>
-        {!isMCG && !isRhcs && (
+        {!isRhcs && !isStandaloneExternal && (
           <ListItem>
-            {t('ceph-storage-plugin~StorageClass: {{name}}', {
+            {t('ceph-storage-plugin~Deployment type: {{deployment}}', {
+              deployment,
+            })}
+          </ListItem>
+        )}
+        {!isRhcs && (
+          <ListItem>
+            {t('ceph-storage-plugin~Backing storage type: {{name}}', {
               name: storageClass.name || createLocalVolumeSet.volumeSetName,
             })}
           </ListItem>
         )}
-        <ListItem>
-          {t('ceph-storage-plugin~Deployment type: {{deployment}}', {
-            deployment,
-          })}
-        </ListItem>
-        {!isMCG && type === BackingStorageType.EXTERNAL && (
+        {type === BackingStorageType.EXTERNAL && (
           <ListItem>
             {t('ceph-storage-plugin~External storage platform: {{storagePlatform}}', {
               storagePlatform,

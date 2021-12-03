@@ -15,7 +15,6 @@ import {
   CEPH_STORAGE_NAMESPACE,
   defaultRequestSize,
   NO_PROVISIONER,
-  OCS_INTERNAL_CR_NAME,
 } from '../../constants';
 import { OCSServiceModel, StorageSystemModel } from '../../models';
 import { getOCSRequestData } from '../ocs-install/ocs-request-data';
@@ -23,6 +22,7 @@ import { capacityAndNodesValidate } from '../../utils/create-storage-system';
 import { ValidationType } from '../../utils/common-ocs-install-el';
 import { cephStorageLabel } from '../../selectors';
 import { StorageSystemKind } from '../../types';
+import { DeploymentType } from '../../constants/create-storage-system';
 
 export const createStorageSystem = async (subSystemName: string, subSystemKind: string) => {
   const payload: StorageSystemKind = {
@@ -41,26 +41,8 @@ export const createStorageSystem = async (subSystemName: string, subSystemKind: 
   return k8sCreate(StorageSystemModel, payload);
 };
 
-export const createMCGStorageCluster = async (enableKms: boolean) => {
-  const storageClusterPayload: K8sResourceKind = {
-    apiVersion: apiVersionForModel(OCSServiceModel),
-    kind: OCSServiceModel.kind,
-    metadata: { name: OCS_INTERNAL_CR_NAME, namespace: CEPH_STORAGE_NAMESPACE },
-    spec: {
-      multiCloudGateway: {
-        reconcileStrategy: 'standalone',
-      },
-      encryption: {
-        enable: enableKms,
-        kms: { enable: enableKms },
-      },
-    },
-  };
-  return k8sCreate(OCSServiceModel, storageClusterPayload);
-};
-
 export const createStorageCluster = async (state: WizardState) => {
-  const { storageClass, capacityAndNodes, securityAndNetwork, nodes } = state;
+  const { storageClass, capacityAndNodes, securityAndNetwork, nodes, backingStorage } = state;
   const { capacity, enableArbiter, arbiterLocation, pvCount } = capacityAndNodes;
   const { encryption, publicNetwork, clusterNetwork, kms } = securityAndNetwork;
 
@@ -74,10 +56,14 @@ export const createStorageCluster = async (state: WizardState) => {
 
   const isFlexibleScaling = validations.includes(ValidationType.ATTACHED_DEVICES_FLEXIBLE_SCALING);
 
+  const isMCG = backingStorage.deployment === DeploymentType.MCG;
+
   const payload = getOCSRequestData(
     storageClass,
     storage,
-    encryption.clusterWide,
+    // MCG requires clusterwide encryption to be true for kms configuration to take into affect
+    // https://github.com/red-hat-storage/ocs-operator/blob/main/controllers/storagecluster/noobaa_system_reconciler.go#L182
+    isMCG ? encryption.advanced : encryption.clusterWide,
     isMinimal,
     isFlexibleScaling,
     publicNetwork,
@@ -86,6 +72,7 @@ export const createStorageCluster = async (state: WizardState) => {
     arbiterLocation,
     enableArbiter,
     pvCount,
+    isMCG,
   );
   return k8sCreate(OCSServiceModel, payload);
 };
