@@ -12,11 +12,7 @@ export type DevfileInfoProps = {
 const DevfileInfo: React.FC<DevfileInfoProps> = ({ devfileSample }) => {
   const { t } = useTranslation();
   const { icon, iconClass, displayName, description, git, tags } = devfileSample;
-  const iconUrl = iconClass
-    ? getImageForIconClass(iconClass)
-    : icon
-    ? `data:image/png;base64,${icon}`
-    : '';
+  const iconUrl = iconClass ? getImageForIconClass(iconClass) : icon || '';
   const sampleRepo = git?.remotes ? Object.values(git.remotes)[0] : '';
 
   return (

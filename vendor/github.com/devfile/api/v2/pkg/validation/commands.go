@@ -5,27 +5,28 @@ import (
 	"strings"
 
 	"github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2"
+	"github.com/hashicorp/go-multierror"
 )
 
 // ValidateCommands validates the devfile commands and checks:
 // 1. there are no duplicate command ids
 // 2. the command type is not invalid
 // 3. if a command is part of a command group, there is a single default command
-func ValidateCommands(commands []v1alpha2.Command, components []v1alpha2.Component) (err error) {
+func ValidateCommands(commands []v1alpha2.Command, components []v1alpha2.Component) (returnedErr error) {
 	groupKindCommandMap := make(map[v1alpha2.CommandGroupKind][]v1alpha2.Command)
 	commandMap := getCommandsMap(commands)
 
-	err = v1alpha2.CheckDuplicateKeys(commands)
+	err := v1alpha2.CheckDuplicateKeys(commands)
 	if err != nil {
-		return err
+		returnedErr = multierror.Append(returnedErr, err)
 	}
 
 	for _, command := range commands {
 		// parentCommands is a map to keep a track of all the parent commands when validating the composite command's subcommands recursively
 		parentCommands := make(map[string]string)
-		err = validateCommand(command, parentCommands, commandMap, components)
+		err := validateCommand(command, parentCommands, commandMap, components)
 		if err != nil {
-			return err
+			returnedErr = multierror.Append(returnedErr, resolveErrorMessageWithImportAttributes(err, command.Attributes))
 		}
 
 		commandGroup := getGroup(command)
@@ -34,54 +35,42 @@ func ValidateCommands(commands []v1alpha2.Command, components []v1alpha2.Compone
 		}
 	}
 
-	groupErrors := ""
 	for groupKind, commands := range groupKindCommandMap {
-		if err = validateGroup(commands); err != nil {
-			groupErrors += fmt.Sprintf("\ncommand group %s error - %s", groupKind, err.Error())
+		if err := validateGroup(commands, groupKind); err != nil {
+			returnedErr = multierror.Append(returnedErr, err)
 		}
 	}
 
-	if len(groupErrors) > 0 {
-		err = fmt.Errorf("%s", groupErrors)
-	}
-
-	return err
+	return returnedErr
 }
 
 // validateCommand validates a given devfile command where parentCommands is a map to track all the parent commands when validating
 // the composite command's subcommands recursively and devfileCommands is a map of command id to the devfile command
-func validateCommand(command v1alpha2.Command, parentCommands map[string]string, devfileCommands map[string]v1alpha2.Command, components []v1alpha2.Component) (err error) {
+func validateCommand(command v1alpha2.Command, parentCommands map[string]string, devfileCommands map[string]v1alpha2.Command, components []v1alpha2.Component) error {
 
 	switch {
 	case command.Composite != nil:
 		return validateCompositeCommand(&command, parentCommands, devfileCommands, components)
 	case command.Exec != nil || command.Apply != nil:
 		return validateCommandComponent(command, components)
-	case command.VscodeLaunch != nil:
-		if command.VscodeLaunch.Uri != "" {
-			return ValidateURI(command.VscodeLaunch.Uri)
-		}
-	case command.VscodeTask != nil:
-		if command.VscodeTask.Uri != "" {
-			return ValidateURI(command.VscodeTask.Uri)
-		}
 	default:
-		err = fmt.Errorf("command %s type is invalid", command.Id)
+		return &InvalidCommandTypeError{commandId: command.Id}
 	}
 
-	return err
 }
 
 // validateGroup validates commands belonging to a specific group kind. If there are multiple commands belonging to the same group:
 // 1. without any default, err out
 // 2. with more than one default, err out
-func validateGroup(commands []v1alpha2.Command) error {
+func validateGroup(commands []v1alpha2.Command, groupKind v1alpha2.CommandGroupKind) error {
 	defaultCommandCount := 0
-
+	var defaultCommands []v1alpha2.Command
 	if len(commands) > 1 {
 		for _, command := range commands {
-			if getGroup(command).IsDefault {
+			defaultVal := getGroup(command).IsDefault
+			if defaultVal != nil && *defaultVal {
 				defaultCommandCount++
+				defaultCommands = append(defaultCommands, command)
 			}
 		}
 	} else {
@@ -89,9 +78,20 @@ func validateGroup(commands []v1alpha2.Command) error {
 	}
 
 	if defaultCommandCount == 0 {
-		return fmt.Errorf("there should be exactly one default command, currently there is no default command")
+		return &MissingDefaultCmdWarning{groupKind: groupKind}
 	} else if defaultCommandCount > 1 {
-		return fmt.Errorf("there should be exactly one default command, currently there is more than one default command")
+		var commandsReferenceList []string
+		for _, command := range defaultCommands {
+			commandsReferenceList = append(commandsReferenceList,
+				resolveErrorMessageWithImportAttributes(fmt.Errorf("command: %s", command.Id), command.Attributes).Error())
+		}
+		commandsReference := strings.Join(commandsReferenceList, "; ")
+		// example: there should be exactly one default command, currently there are multiple commands;
+		// command: <id1>; command: <id2>, imported from uri: http://127.0.0.1:8080, in parent overrides from main devfile"
+		return &MultipleDefaultCmdError{
+			groupKind:         groupKind,
+			commandsReference: commandsReference,
+		}
 	}
 
 	return nil
@@ -106,10 +106,6 @@ func getGroup(command v1alpha2.Command) *v1alpha2.CommandGroup {
 		return command.Exec.Group
 	case command.Apply != nil:
 		return command.Apply.Group
-	case command.VscodeLaunch != nil:
-		return command.VscodeLaunch.Group
-	case command.VscodeTask != nil:
-		return command.VscodeTask.Group
 	case command.Custom != nil:
 		return command.Custom.Group
 
@@ -132,13 +128,20 @@ func validateCommandComponent(command v1alpha2.Command, components []v1alpha2.Co
 		commandComponent = command.Apply.Component
 	}
 
-	// must map to a container component
+	// exec command must map to a container component
+	// apply command must map to a container/kubernetes/openshift/image component
 	for _, component := range components {
-		if component.Container != nil && commandComponent == component.Name {
-			return nil
+		if commandComponent == component.Name {
+			if component.Container != nil {
+				return nil
+			}
+			if command.Apply != nil && (component.Image != nil || component.Kubernetes != nil || component.Openshift != nil) {
+				return nil
+			}
+			break
 		}
 	}
-	return &InvalidCommandError{commandId: command.Id, reason: "command does not map to a container component"}
+	return &InvalidCommandError{commandId: command.Id, reason: "command does not map to a valid component"}
 }
 
 // validateCompositeCommand checks that the specified composite command is valid. The command:
