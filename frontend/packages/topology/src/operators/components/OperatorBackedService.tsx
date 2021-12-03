@@ -9,8 +9,11 @@ import {
   CREATE_CONNECTOR_DROP_TYPE,
   isEdge,
   useDndDrop,
+  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { connect } from 'react-redux';
+import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import {
   canDropEdgeOnNode,
@@ -18,7 +21,7 @@ import {
   NodeComponentProps,
   nodesEdgeIsDragging,
 } from '../../components/graph-view/components';
-import { getServiceBindingStatus } from '../../utils/topology-utils';
+import { getServiceBindingStatus, getResource } from '../../utils/topology-utils';
 import OperatorBackedServiceGroup from './OperatorBackedServiceGroup';
 import OperatorBackedServiceNode from './OperatorBackedServiceNode';
 
@@ -64,6 +67,7 @@ type OperatorBackedServiceProps = {
   element: Node;
 } & WithSelectionProps &
   WithDndDropProps &
+  WithContextMenuProps &
   StateProps;
 
 const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
@@ -72,12 +76,35 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
 }) => {
   const spec = React.useMemo(() => obsDropTargetSpec(serviceBinding), [serviceBinding]);
   const [dndDropProps, dndDropRef] = useDndDrop(spec, rest as any);
+  const resourceObj = getResource(rest.element);
+  const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : null;
+  const editAccess = useAccessReview({
+    group: resourceModel?.apiGroup,
+    verb: 'patch',
+    resource: resourceModel?.plural,
+    name: resourceObj?.metadata.name,
+    namespace: resourceObj?.metadata.namespace,
+  });
 
   if (rest.element.isCollapsed()) {
-    return <OperatorBackedServiceNode {...rest} dndDropRef={dndDropRef} {...dndDropProps} />;
+    return (
+      <OperatorBackedServiceNode
+        {...rest}
+        dndDropRef={dndDropRef}
+        editAccess={editAccess}
+        {...dndDropProps}
+      />
+    );
   }
 
-  return <OperatorBackedServiceGroup {...rest} dndDropRef={dndDropRef} {...dndDropProps} />;
+  return (
+    <OperatorBackedServiceGroup
+      {...rest}
+      dndDropRef={dndDropRef}
+      editAccess={editAccess}
+      {...dndDropProps}
+    />
+  );
 };
 
 const mapStateToProps = (state: RootState): StateProps => {

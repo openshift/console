@@ -41,9 +41,11 @@ export const createContextMenuItems = (actions: MenuOption[]) => {
 
 export const contextMenuActions = (element: Node): React.ReactElement[] => {
   const resource = getResource(element);
+  const { csvName } = element.getData()?.data ?? {};
   const context = {
     'topology-actions': element,
     ...(resource ? { [referenceFor(resource)]: resource } : {}),
+    ...(csvName ? { 'csv-actions': { csvName, resource } } : {}),
   };
   return [
     <ActionServiceProvider key="topology" context={context}>

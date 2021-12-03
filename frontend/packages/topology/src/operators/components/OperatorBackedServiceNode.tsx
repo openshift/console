@@ -11,6 +11,7 @@ import {
   useDragNode,
   createSvgIdUrl,
   useSize,
+  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +31,9 @@ type OperatorBackedServiceNodeProps = {
   droppable?: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
+  editAccess: boolean;
 } & WithSelectionProps &
+  WithContextMenuProps &
   WithDndDropProps;
 
 const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
@@ -40,6 +43,9 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   dndDropRef,
   canDrop,
   dropTarget,
+  onContextMenu,
+  contextMenuOpen,
+  editAccess,
 }) => {
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
@@ -69,6 +75,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
       <g
         ref={refs}
         onClick={onSelect}
+        onContextMenu={editAccess ? onContextMenu : null}
         className={classNames('odc-operator-backed-service', {
           'is-dragging': dragging,
           'is-highlight': canDrop,
@@ -79,10 +86,12 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
       >
         <NodeShadows />
         <rect
-          key={hover || dragging ? 'rect-hover' : 'rect'}
+          key={hover || contextMenuOpen || dragging ? 'rect-hover' : 'rect'}
           className="odc-operator-backed-service__bg"
           filter={createSvgIdUrl(
-            hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+            hover || contextMenuOpen || dragging
+              ? NODE_SHADOW_FILTER_ID_HOVER
+              : NODE_SHADOW_FILTER_ID,
           )}
           x={0}
           y={0}
