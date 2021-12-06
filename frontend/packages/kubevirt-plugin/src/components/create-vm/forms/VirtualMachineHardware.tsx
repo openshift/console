@@ -14,7 +14,7 @@ const VirtualMachineHardware: React.FC<VirtualMachineHardwareProps> = ({
   title = 'Devices',
 }) => {
   const { t } = useTranslation();
-  if (!devicesNames) {
+  if (!devicesNames?.length) {
     return t('kubevirt-plugin~None');
   }
 
