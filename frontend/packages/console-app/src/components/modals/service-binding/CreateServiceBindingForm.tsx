@@ -15,7 +15,6 @@ import BindableServices from './BindableServices';
 
 export type CreateServiceBindingFormProps = {
   resource: K8sResourceKind;
-  initialApplication: string;
   cancel?: () => void;
 };
 
@@ -35,7 +34,7 @@ const CreateServiceBindingForm: React.FC<FormikProps<FormikValues> &
       <ModalTitle>{t('console-app~Create Service Binding')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
-          {t('console-app~Select a service you want to bind.')}
+          {t('console-app~Select a service to connect to.')}
         </Title>
         <FormSection fullWidth>
           <InputField
@@ -48,7 +47,7 @@ const CreateServiceBindingForm: React.FC<FormikProps<FormikValues> &
         </FormSection>
       </ModalBody>
       <ModalSubmitFooter
-        submitText={t('console-app~Save')}
+        submitText={t('console-app~Create')}
         submitDisabled={!dirty || isSubmitting || !_.isEmpty(errors)}
         cancel={cancel}
         inProgress={isSubmitting}

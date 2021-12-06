@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { createModalLauncher } from '@console/internal/components/factory/modal';
 import { history, getQueryArgument } from '@console/internal/components/utils';
 import { K8sKind, k8sList, K8sResourceKind } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk';
 import { ServiceBindingModel } from '@console/topology/src/models';
 import { createServiceBinding } from '@console/topology/src/operators/actions/serviceBindings';
+import { useValuesForPerspectiveContext } from '../../detect-perspective/useValuesForPerspectiveContext';
 import CreateServiceBindingForm, {
   CreateServiceBindingFormProps,
 } from './CreateServiceBindingForm';
@@ -23,9 +26,21 @@ type CreateServiceBindingFormType = {
   bindableService: K8sResourceKind;
 };
 
+const handleRedirect = async (
+  project: string,
+  perspective: string,
+  perspectiveExtensions: Perspective[],
+) => {
+  const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
+  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
+  history.push(redirectURL);
+};
+
 const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (props) => {
   const { resource, model } = props;
   const { t } = useTranslation();
+  const [activePerspective] = useValuesForPerspectiveContext();
+  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const handleSubmit = async (values, actions) => {
     const bindings: K8sResourceKind[] = await k8sList(ServiceBindingModel, {
       ns: resource.metadata.namespace,
@@ -44,7 +59,7 @@ const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (pro
         await createServiceBinding(resource, values.bindableService, values.name);
         props.close();
         getQueryArgument('view') === null &&
-          history.push(`/topology/ns/${resource.metadata.namespace}`);
+          handleRedirect(resource.metadata.namespace, activePerspective, perspectiveExtensions);
       } catch (errorMessage) {
         actions.setStatus({ submitError: errorMessage.message });
       }

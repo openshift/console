@@ -4,16 +4,22 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { getBindableServiceResources } from '@console/dev-console/src/components/topology/bindable-services/bindable-service-resources';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  ClusterServiceVersionKind,
+  ClusterServiceVersionModel,
+} from '@console/operator-lifecycle-manager/src';
 import { ResourceDropdownField, getFieldId } from '@console/shared';
+import { getBindableResources } from './bindable-services-utils';
 
-export const bindableResources = (namespace: string) => {
-  const bindableRes = _.omit(getBindableServiceResources(namespace), 'serviceBindingRequests');
-
-  const res = Object.keys(bindableRes).map((key) => bindableRes[key]);
-  return res;
+export type OwnedResourceType = {
+  displayName: string;
+  kind: string;
+  name: string;
+  version: string;
 };
 
 type BindableServiceProps = {
@@ -25,7 +31,18 @@ const BindableServices: React.FC<BindableServiceProps> = ({ resource }) => {
   const { setFieldValue, setFieldTouched, setStatus } = useFormikContext<FormikValues>();
   const [resourceAlert, setResourceAlert] = React.useState(false);
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
-
+  const { group, version, kind } = getGroupVersionKindForModel(ClusterServiceVersionModel);
+  const watchedResources = {
+    csvs: {
+      isList: true,
+      kind: referenceForGroupVersionKind(group)(version)(kind),
+      namespace: resource.metadata.namespace,
+      optional: true,
+    },
+  };
+  const csvResources = useK8sWatchResources<{ csvs: ClusterServiceVersionKind[] }>(
+    watchedResources,
+  );
   const onServiceChange = React.useCallback(
     (selectedValue, name, obj) => {
       if (!_.isEmpty(obj)) {
@@ -45,7 +62,10 @@ const BindableServices: React.FC<BindableServiceProps> = ({ resource }) => {
     setResourceAlert(_.isEmpty(resourceList));
   };
 
-  const dropdownResources = bindableResources(resource.metadata.namespace);
+  const dropdownResources = React.useMemo(
+    () => getBindableResources(resource.metadata.namespace, csvResources?.csvs),
+    [csvResources, resource.metadata.namespace],
+  );
   return (
     <FormGroup
       fieldId={getFieldId('bindable-service', 'dropdown')}
