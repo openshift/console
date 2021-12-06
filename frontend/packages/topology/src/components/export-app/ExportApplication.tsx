@@ -125,8 +125,11 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
         setExportAppToast(exportAppToastConfig);
         await createExportCR();
       }
-    } catch {
-      await createExportCR();
+    } catch (error) {
+      createExportCR().catch((createError) =>
+        // eslint-disable-next-line no-console
+        console.warn('Could not createExportCR:', createError),
+      );
     }
   };
 

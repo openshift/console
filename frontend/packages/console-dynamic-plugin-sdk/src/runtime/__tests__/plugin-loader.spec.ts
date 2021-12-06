@@ -27,11 +27,19 @@ const fetchPluginManifest = jest.spyOn(pluginManifestModule, 'fetchPluginManifes
 const loadDynamicPluginMock = jest.spyOn(pluginLoaderModule, 'loadDynamicPlugin');
 const loadPluginFromURLMock = jest.spyOn(pluginLoaderModule, 'loadPluginFromURL');
 
+const originalConsole = { ...console };
+const consoleMock = jest.fn();
+
 beforeEach(() => {
-  [fetchPluginManifest, loadDynamicPluginMock, loadPluginFromURLMock].forEach((mock) =>
-    mock.mockReset(),
-  );
+  jest.resetAllMocks();
   resetStateAndEnvForTestPurposes();
+  // eslint-disable-next-line no-console
+  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = consoleMock));
+});
+
+afterEach(() => {
+  // eslint-disable-next-line no-console
+  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = originalConsole[key]));
 });
 
 describe('getPluginID', () => {
@@ -75,10 +83,12 @@ describe('loadDynamicPlugin', () => {
     const manifest2 = getPluginManifest('Test', '2.3.4');
     loadDynamicPlugin('http://example.com/test1/', manifest1);
 
-    expect.assertions(6);
     try {
       await loadDynamicPlugin('http://example.com/test2/', manifest2);
-    } catch (e) {
+      fail('Expected that loadDynamicPlugin fails and throw an error');
+    } catch (error) {
+      expect(error).toEqual(new Error('Attempt to reload plugin Test@1.2.3 with Test@2.3.4'));
+
       const { pluginMap } = getStateForTestPurposes();
       expect(pluginMap.size).toBe(1);
       expect(pluginMap.get('Test@1.2.3').manifest).toBe(manifest1);
@@ -88,6 +98,11 @@ describe('loadDynamicPlugin', () => {
       expect(allScripts.length).toBe(1);
       expect(allScripts[0].id).toBe(getScriptElementID(manifest1));
       expect(allScripts[0].src).toBe('http://example.com/test1/plugin-entry.js');
+
+      expect(consoleMock).toHaveBeenCalledTimes(1);
+      expect(consoleMock).toHaveBeenCalledWith(
+        'Loading entry script for plugin Test@1.2.3 from http://example.com/test1/plugin-entry.js',
+      );
     }
   });
 
@@ -103,7 +118,7 @@ describe('loadDynamicPlugin', () => {
     expect(await promise).toBe('Test@1.2.3');
   });
 
-  it('throws an error if the script was loaded successfully but the entry callback was not fired', async (done) => {
+  it('throws an error if the script was loaded successfully but the entry callback was not fired', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     const promise = loadDynamicPlugin('http://example.com/test/', manifest);
 
@@ -111,12 +126,19 @@ describe('loadDynamicPlugin', () => {
 
     try {
       await promise;
-    } catch (e) {
-      done();
+      fail('Expected that loadDynamicPlugin fails and throw an error');
+    } catch (error) {
+      expect(error).toEqual(
+        new Error('Entry script for plugin Test@1.2.3 loaded without callback'),
+      );
+      expect(consoleMock).toHaveBeenCalledTimes(1);
+      expect(consoleMock).toHaveBeenCalledWith(
+        'Loading entry script for plugin Test@1.2.3 from http://example.com/test/plugin-entry.js',
+      );
     }
   });
 
-  it('throws an error if the script was not loaded successfully', async (done) => {
+  it('throws an error if the script was not loaded successfully', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     const promise = loadDynamicPlugin('http://example.com/test/', manifest);
 
@@ -124,8 +146,15 @@ describe('loadDynamicPlugin', () => {
 
     try {
       await promise;
-    } catch (e) {
-      done();
+      fail('Expected that loadDynamicPlugin fails and throw an error');
+    } catch (error) {
+      expect(error).toEqual(
+        new Error('Entry script for plugin Test@1.2.3 loaded without callback'),
+      );
+      expect(consoleMock).toHaveBeenCalledTimes(1);
+      expect(consoleMock).toHaveBeenCalledWith(
+        'Loading entry script for plugin Test@1.2.3 from http://example.com/test/plugin-entry.js',
+      );
     }
   });
 });
@@ -273,6 +302,12 @@ describe('window.loadPluginEntry', () => {
     expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
+
+    expect(consoleMock).toHaveBeenCalledTimes(1);
+    expect(consoleMock).toHaveBeenCalledWith(
+      'Failed to initialize shared modules for plugin Test@1.2.3',
+      new Error('boom'),
+    );
   });
 });
 
@@ -330,5 +365,11 @@ describe('loadAndEnablePlugin', () => {
 
     expect(setDynamicPluginEnabled).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledWith();
+
+    expect(consoleMock).toHaveBeenCalledTimes(1);
+    expect(consoleMock).toHaveBeenCalledWith(
+      'Error while loading plugin from /api/plugins/Test/',
+      new Error('boom'),
+    );
   });
 });
