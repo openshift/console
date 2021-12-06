@@ -65,8 +65,8 @@ const MetricsQueryInput: React.FC = () => {
   }, [dispatch, metric, query, namespace, changeKey, t]);
 
   React.useEffect(() => {
-    const q = queries?.query;
-    const text = queries?.text;
+    const q = queries?.query?.trim();
+    const text = queries?.text?.trim();
     if (text && text.localeCompare(q) !== 0) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
