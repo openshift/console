@@ -138,7 +138,7 @@ export const useSelectedDevfileSample = () => {
 
   React.useEffect(() => {
     let mounted = true;
-    coFetchJSON('/api/devfile/samples/?registry=sample-placeholder')
+    coFetchJSON('/api/devfile/samples/?registry=registry.devfile.io')
       .then((samples: DevfileSample[]) => {
         if (mounted) setDevfileSamples(samples);
       })

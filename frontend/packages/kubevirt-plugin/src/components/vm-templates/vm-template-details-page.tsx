@@ -12,6 +12,10 @@ import {
   PodKind,
   TemplateKind,
 } from '@console/internal/module/k8s/types';
+import {
+  VIRTUALMACHINES_BASE_URL,
+  VIRTUALMACHINES_TEMPLATES_BASE_URL,
+} from '../../constants/url-params';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../hooks/use-support-modal';
@@ -28,11 +32,11 @@ import { VMTemplateDetails } from './vm-template-details';
 export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatch) => () => [
   {
     name: t('kubevirt-plugin~Virtualization'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~Templates'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization/templates`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),

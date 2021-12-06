@@ -64,7 +64,7 @@ describe('ID (CNV-6821) Sysprep testing', () => {
       .filter(':contains("virtual machine")')
       .click();
     cy.byLegacyTestID('horizontal-link-Disks').click();
-    cy.get('[data-id=sysprep').should('be.visible');
+    cy.get('[data-id=sysprep]', { timeout: 300000 }).should('be.visible');
   });
 
   it('should check sysprep configmap is present', () => {

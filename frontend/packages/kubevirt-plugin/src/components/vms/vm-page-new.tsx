@@ -30,7 +30,7 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel, NodeModel } from '@console/internal/models';
-import { K8sKind } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
@@ -58,10 +58,10 @@ import {
   dimensifyRow,
   getBasicID,
   getLoadedData,
+  getVMActionContext,
 } from '../../utils';
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { LazyVmRowKebab } from '../vm-status/lazy-vm-row-kebab';
 import { LazyVMStatus } from '../vm-status/lazy-vm-status';
 import { useVmStatusResources, VmStatusResourcesValue } from '../vm-status/use-vm-status-resources';
 import { getVMStatusIcon } from '../vm-status/vm-status';
@@ -127,19 +127,14 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = (
   customData: vmStatusResources,
 }) => {
   const { vm, vmi } = obj;
-  const { name, namespace, creationTimestamp, uid, node } = obj.metadata;
+  const { name, namespace, creationTimestamp, node } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
   const arePendingChanges = hasPendingChanges(vm, vmi);
   const printableStatus = obj?.metadata?.status;
   const status: VMStatus = printableToVMStatus?.[printableStatus];
 
-  let model: K8sKind;
-
-  if (vm) {
-    model = VirtualMachineModel;
-  } else if (vmi) {
-    model = VirtualMachineInstanceModel;
-  }
+  const model = (vm && VirtualMachineModel) || (vmi && VirtualMachineInstanceModel);
+  const context = getVMActionContext(vm || vmi);
 
   return (
     <>
@@ -177,13 +172,7 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = (
       </TableData>
       <TableData className={dimensify()}>{vmi && <VMIP data={getVmiIpAddresses(vmi)} />}</TableData>
       <TableData className={dimensify(true)}>
-        <LazyVmRowKebab
-          key={`kebab-for-${uid}`}
-          id={`kebab-for-${uid}`}
-          vm={vm}
-          vmi={vmi}
-          vmStatusResources={vmStatusResources}
-        />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

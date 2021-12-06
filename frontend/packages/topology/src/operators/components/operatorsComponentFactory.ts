@@ -2,6 +2,7 @@ import * as React from 'react';
 import { GraphElement, withSelection } from '@patternfly/react-topology';
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { contextMenuActions } from '../../actions';
 import {
   withContextMenu,
   withNoDrop,
@@ -30,7 +31,9 @@ export const getOperatorsComponentFactory = (
 ): React.ComponentType<{ element: GraphElement }> | undefined => {
   switch (type) {
     case TYPE_OPERATOR_BACKED_SERVICE:
-      return withSelection({ controlled: true })(withNoDrop()(OperatorBackedService));
+      return withSelection({ controlled: true })(
+        withContextMenu(contextMenuActions)(withNoDrop()(OperatorBackedService)),
+      );
     case TYPE_SERVICE_BINDING:
       return withContextMenu(serviceBindingActions)(ServiceBinding);
     default:

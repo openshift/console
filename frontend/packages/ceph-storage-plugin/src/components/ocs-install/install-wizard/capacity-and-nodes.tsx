@@ -109,6 +109,7 @@ export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({
       className="ocs-enable-taint"
       id="taint-nodes"
       isChecked={enableTaint}
+      data-checked-state={enableTaint}
       onChange={setEnableTaint}
     />
   );
@@ -176,6 +177,7 @@ export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = (
         aria-label={t('ceph-storage-plugin~Enable arbiter')}
         id="arbiter-cluster"
         isChecked={stretchClusterChecked}
+        data-checked-state={stretchClusterChecked}
         label={<EnableArbiterLabel />}
         description={t(
           'ceph-storage-plugin~To support high availability when two data centers can be used, enable arbiter to get the valid quorum between two data centers.',

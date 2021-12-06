@@ -11,7 +11,7 @@ export const getRow = (templateName: string, within: VoidFunction) =>
 
 export const virtualization = {
   vms: {
-    visit: () => cy.clickNavLink(['Virtualization', 'Virtual Machines']),
+    visit: () => cy.clickNavLink(['Virtualization', 'VirtualMachines']),
     emptyState: {
       clickQuickStarts: () => cy.byTestID('vm-quickstart').click(),
       clickCreate: () => cy.byTestID('create-vm-empty').click(),

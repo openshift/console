@@ -23,8 +23,8 @@ export const useStorageProfileSettings = (
     return [AccessMode.READ_WRITE_ONCE, VolumeMode.FILESYSTEM, spLoaded, false, loadError];
   }
 
-  const accessMode = AccessMode.fromString(sp?.status?.claimPropertySets?.[0].accessModes?.[0]);
-  const volumeMode = VolumeMode.fromString(sp?.status?.claimPropertySets?.[0].volumeMode);
+  const accessMode = AccessMode.fromString(sp?.status?.claimPropertySets?.[0]?.accessModes?.[0]);
+  const volumeMode = VolumeMode.fromString(sp?.status?.claimPropertySets?.[0]?.volumeMode);
 
   return [accessMode, volumeMode, spLoaded, true, loadError];
 };

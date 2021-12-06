@@ -12,6 +12,14 @@ Cypress.Cookies.defaults({
   preserve: ['openshift-session-token', 'csrf-token'],
 });
 
+Cypress.on('uncaught:exception', (err) => {
+  if (err.message.includes('> Unauthorized')) {
+    console.error('Cypress caught "> Unauthorized exception", continuing tests', err);
+    return false; // test continues
+  }
+  return true; // test fails
+});
+
 Cypress.Commands.overwrite('log', (originalFn, message) => {
   cy.task('log', `      ${message}`, { log: false }); // log:false means do not log task in runner GUI
   originalFn(message); // calls original cy.log(message)

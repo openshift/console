@@ -331,6 +331,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
             className="kv--create-upload__golden-switch"
             label={t('kubevirt-plugin~Attach this data to a Virtual Machine operating system')}
             isChecked={isGolden}
+            data-checked-state={isGolden}
             onChange={handleGoldenCheckbox}
             isDisabled={isLoading}
           />
@@ -386,6 +387,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                   id="golden-os-checkbox-pvc-size-template"
                   className="kv--create-upload__golden-switch"
                   isChecked={pvcSizeFromTemplate}
+                  data-checked-state={pvcSizeFromTemplate}
                   label={t('kubevirt-plugin~Use template size PVC')}
                   onChange={handlePvcSizeTemplate}
                 />
@@ -393,6 +395,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                   id="golden-os-checkbox-pvc-size-template"
                   className="kv--create-upload__golden-switch"
                   isChecked={!!mountAsCDROM}
+                  data-checked-state={!!mountAsCDROM}
                   label={t('kubevirt-plugin~This is a CD-ROM boot source')}
                   onChange={handleCDROMChange}
                 />
@@ -480,6 +483,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                     'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
                   )}
                   isChecked={applySP}
+                  data-checked-state={applySP}
                   onChange={() => setApplySP(!applySP)}
                   isDisabled={!isSPSettingProvided}
                   label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}

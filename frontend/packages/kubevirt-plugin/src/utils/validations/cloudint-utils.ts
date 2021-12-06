@@ -52,15 +52,15 @@ export const checkHostname = (
 };
 
 export const checkSSHKeys = (
-  obj: { [key: string]: string | string[] },
+  obj: { [key: string]: string[] },
   errorCatcher: ErrorCatcher,
   t: Function,
 ) => {
-  [obj?.ssh_authorized_keys].map(
-    (key: string, index: number) =>
-      key && errorCatcher.removeError(['ssh_authorized_keys', index.toString()]),
-  );
   if (obj?.ssh_authorized_keys) {
+    obj?.ssh_authorized_keys?.map(
+      (key: string, index: number) =>
+        key && errorCatcher.removeError(['ssh_authorized_keys', index.toString()]),
+    );
     const brokenSSHKeys =
       Array.isArray(obj?.ssh_authorized_keys) &&
       obj?.ssh_authorized_keys

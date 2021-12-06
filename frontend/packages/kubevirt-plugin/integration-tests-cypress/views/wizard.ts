@@ -1,3 +1,4 @@
+// eslint-disable no-empty
 import { VirtualMachineData } from '../types/vm';
 import { TEMPLATE_SUPPORT } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
@@ -101,6 +102,11 @@ export const wizard = {
     },
     fillReviewForm: (vmData: VirtualMachineData) => {
       const { namespace, name, flavor, sshEnable, startOnCreation } = vmData;
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-test-id="modal-title"]').length) {
+          cy.get('#confirm-action').click();
+        }
+      });
       cy.contains(wizardTitle).should('exist');
       if (namespace !== undefined) {
         cy.get(wizardView.projectDropdown).click();

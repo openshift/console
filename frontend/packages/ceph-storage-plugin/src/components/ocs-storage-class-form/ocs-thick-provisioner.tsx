@@ -27,6 +27,7 @@ export const ThickProvision: React.FC<ProvisionerProps> = ({ parameterKey, onPar
           id="ocs-sc-thickprovision-checkbox"
           data-test="ocs-sc-thickprovision-checkbox"
           isChecked={checked}
+          data-checked-state={checked}
           label={t('ceph-storage-plugin~Enable Thick Provisioning')}
           onChange={setChecked}
         />

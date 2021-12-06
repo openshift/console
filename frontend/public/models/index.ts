@@ -724,6 +724,23 @@ export const ClusterResourceQuotaModel: K8sKind = {
   crd: true,
 };
 
+export const AppliedClusterResourceQuotaModel: K8sKind = {
+  label: 'AppliedClusterResourceQuota',
+  // t('public~AppliedClusterResourceQuota')
+  labelKey: 'public~AppliedClusterResourceQuota',
+  apiGroup: 'quota.openshift.io',
+  apiVersion: 'v1',
+  plural: 'appliedclusterresourcequotas',
+  abbr: 'ACRQ',
+  namespaced: true,
+  kind: 'AppliedClusterResourceQuota',
+  id: 'appliedclusterresourcequota',
+  labelPlural: 'AppliedClusterResourceQuotas',
+  // t('public~AppliedClusterResourceQuotas')
+  labelPluralKey: 'public~AppliedClusterResourceQuotas',
+  crd: true,
+};
+
 export const NetworkPolicyModel: K8sKind = {
   label: 'NetworkPolicy',
   // t('public~NetworkPolicy')

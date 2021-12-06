@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { humanizeBinaryBytes, useAccessReview2 } from '@console/internal/components/utils';
 import { K8sVerb, TemplateKind } from '@console/internal/module/k8s';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import { VirtualMachineModel } from '../../../models';
 import {
@@ -21,7 +22,6 @@ import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { permissionsErrorModal } from '../../modals/permissions-error-modal/permissions-error-modal';
 import { createVMAction } from '../utils';
 import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
-
 import './vm-template-table.scss';
 
 type VMTemplateDetailsBodyProps = {
@@ -69,7 +69,7 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
       {!disableFullDetails && (
         <StackItem>
           <Link
-            to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+            to={`/k8s/ns/${template.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${template.metadata.name}`}
             data-test-id={template.metadata.name}
             className="co-resource-item__resource-name"
           >

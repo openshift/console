@@ -6,23 +6,27 @@ jest.mock('../filter-utils', () => ({
 }));
 
 let mockCurrentSearchQuery = '';
+let mockLabelsQuery = '';
 
 jest.mock('@console/shared', () => {
   const ActualShared = require.requireActual('@console/shared');
   return {
     ...ActualShared,
-    useQueryParams: () => new Map().set('searchQuery', mockCurrentSearchQuery),
+    useQueryParams: () =>
+      new Map().set('searchQuery', mockCurrentSearchQuery).set('labels', mockLabelsQuery),
   };
 });
 
 const testUseSearchFilter = (
   text: string | null | undefined,
   searchQuery: string | undefined,
+  labels?: { [key: string]: string },
+  labelsQuery?: string,
 ): ReturnType<typeof useSearchFilter> => {
   mockCurrentSearchQuery = searchQuery;
-
+  mockLabelsQuery = labelsQuery;
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useSearchFilter(text);
+  return useSearchFilter(text, labels);
 };
 
 describe('useSearchFilter', () => {
@@ -51,6 +55,32 @@ describe('useSearchFilter', () => {
     testHook(() => {
       expect(testUseSearchFilter('testing', 'TEST')[0]).toBe(true);
       expect(testUseSearchFilter('testing', 'EI')[0]).toBe(true);
+    });
+  });
+
+  it('should match labels to labels query even if the name filter does not match', () => {
+    testHook(() => {
+      expect(testUseSearchFilter(null, 'test', { foo: 'bar' }, 'foo=bar')[0]).toBe(true);
+      expect(
+        testUseSearchFilter(null, 'test', { foo: 'bar', bar: 'baz' }, 'foo=bar,bar=baz')[0],
+      ).toBe(true);
+    });
+  });
+
+  it('should match text to search query even if the labels filter does not match', () => {
+    testHook(() => {
+      expect(testUseSearchFilter('test', 'test', { foo: 'bar' }, 'foo=')[0]).toBe(true);
+      expect(testUseSearchFilter('search', 'search', {}, 'foo=bar')[0]).toBe(true);
+    });
+  });
+
+  it('should not match labels to labels query', () => {
+    testHook(() => {
+      expect(testUseSearchFilter(null, null, { foo: 'test' }, 'foo=bar,bar=baz')[0]).toBe(false);
+      expect(testUseSearchFilter(null, null, { foo: 'bar' }, '')[0]).toBe(false);
+      expect(testUseSearchFilter(null, null, { foo: 'bar' }, null)[0]).toBe(false);
+      expect(testUseSearchFilter(null, null, {}, null)[0]).toBe(false);
+      expect(testUseSearchFilter(null, null, { foo: 'bar' }, 'foo=bar,bar=baz')[0]).toBe(false);
     });
   });
 

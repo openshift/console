@@ -7,6 +7,10 @@ import { ListPage, MultiListPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { CDI_APP_LABEL, VMWizardName } from '../../constants';
 import {
+  customizeWizardBaseURLBuilder,
+  VIRTUALMACHINES_TEMPLATES_BASE_URL,
+} from '../../constants/url-params';
+import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
@@ -122,14 +126,16 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       [VMWizardName.YAML]: t('kubevirt-plugin~With YAML'),
     },
     createLink: (itemName: string) => {
-      const baseUrl = `/k8s/ns/${namespace || 'default'}/virtualization`;
+      const baseUrlWizard = customizeWizardBaseURLBuilder(namespace);
+      const baseURLYaml = `/k8s/ns/${namespace || 'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`;
+
       switch (itemName) {
         case VMWizardName.WIZARD:
-          return `${baseUrl}/~new-wizard?mode=template`;
+          return `${baseUrlWizard}?mode=template`;
         case VMWizardName.YAML:
-          return `${baseUrl}/~new?mode=template`;
+          return `${baseURLYaml}/~new?mode=template`;
         default:
-          return `${baseUrl}/~new-wizard?mode=template`;
+          return `${baseUrlWizard}?mode=template`;
       }
     },
   };

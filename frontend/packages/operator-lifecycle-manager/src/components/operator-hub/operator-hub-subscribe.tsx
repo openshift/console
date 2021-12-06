@@ -546,6 +546,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             label={t('olm~Enable Operator recommended cluster monitoring on this Namespace')}
             onChange={setEnableMonitoring}
             isChecked={enableMonitoring}
+            data-checked-state={enableMonitoring}
           />
           {props.packageManifest.data[0].metadata.labels['opsrc-provider'] !== 'redhat' && (
             <Alert

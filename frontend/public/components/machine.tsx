@@ -38,6 +38,7 @@ import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
+import { tableFilters } from './factory/table-filters';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
@@ -281,7 +282,10 @@ export const MachinePage: React.FC<MachinePageProps> = ({
     namespace,
   });
 
-  const [data, filteredData, onFilterChange] = useListPageFilter(machines);
+  // FIXME - there isn't a type for a simple filter like this nor is there an easy way to add this type
+  const machineFilter = [{ type: 'name', filter: tableFilters.machine }];
+  //@ts-ignore
+  const [data, filteredData, onFilterChange] = useListPageFilter(machines, machineFilter);
 
   return (
     <>

@@ -10,6 +10,7 @@ import {
   K8sResourceKind,
   MatchExpression,
   OwnerReference,
+  referenceFor,
   TemplateKind,
 } from '@console/internal/module/k8s';
 import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER, VM_TEMPLATE_NAME_PARAMETER } from '../constants';
@@ -24,6 +25,7 @@ import {
 import { ValidationObject, asValidationObject, ValidationErrorType } from '../selectors/types';
 // eslint-disable-next-line import/order
 import { getTemplateName } from '../selectors/vm-template/basic';
+import { VMIKind, VMKind } from '../types/vm';
 
 export type EntityMap<A> = { [propertyName: string]: A };
 export type K8sEntityMap<A extends K8sResourceKind> = EntityMap<A>;
@@ -515,3 +517,7 @@ export const assureEndsWith = (sentence: string, appendix: string) => {
 
   return `${sentence}${appendix}`;
 };
+
+export const getVMActionContext = (vmiLike: VMIKind | VMKind) => ({
+  [referenceFor(vmiLike)]: vmiLike,
+});

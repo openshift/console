@@ -7,6 +7,7 @@ export * from './V1alpha1DataVolumeSourceRegistry';
 export * from './V1alpha1DataVolumeSourceS3';
 export * from './V1alpha1DataVolumeSpec';
 export * from './V1alpha1DataVolumeStatus';
+export * from './V1beta1StorageSpec';
 export * from './V1CDRomTarget';
 export * from './V1CloudInitConfigDriveSource';
 export * from './V1CloudInitNoCloudSource';

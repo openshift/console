@@ -25,11 +25,11 @@ describe('ID(CNV-5654) test vm empty state', () => {
 
   it('Empty state has action to create VM', () => {
     virtualization.vms.emptyState.clickCreate();
-    cy.url().should('include', `~new-from-template?namespace=${testName}`);
+    cy.url().should('include', `~new/wizard?namespace=${testName}`);
   });
 
   it('Empty state has action to create Template and right url', () => {
     virtualization.templates.visit();
-    cy.url().should('include', '/virtualization/templates');
+    cy.url().should('include', '/virtualmachinetemplates');
   });
 });

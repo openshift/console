@@ -568,7 +568,7 @@
   "Average Container bandwidth by Pod: received": "Pod 別のコンテナーの平均帯域幅: 受信",
   "Average Container bandwidth by Pod: transmitted": "Pod 別のコンテナーの平均帯域幅: 送信",
   "Successfully updated the project access.": "パイプラインアクセスの更新に成功しました。",
-  "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in <1>Roles</1> and <4>Role Bindings</4>. For more information, see the <7>role-based access control documentation</7> .": "プロジェクトのアクセスにより、プロジェクトへのユーザーのアクセスを追加または削除できます。ロールベースのアクセス制御のより詳細な管理については、<1>Roles</1> および <4>Role Bindings</4> に表示されます。詳細は <7>ロールベースのアクセス制御についてのドキュメント</7>を参照してください。",
+  "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in <1>Roles</1> and <4>Role Bindings</4>. For more information, see the <7>role-based access control documentation</7>.": "プロジェクトのアクセスにより、プロジェクトへのユーザーのアクセスを追加または削除できます。ロールベースのアクセス制御のより詳細な管理については、<1>Roles</1> および <4>Role Bindings</4> に表示されます。詳細は <7>ロールベースのアクセス制御についてのドキュメント</7>を参照してください。",
   "Add access": "アクセスの追加",
   "Role": "ロール",
   "Select a role": "ロールの選択",

@@ -5,7 +5,9 @@ import { CheckboxFieldProps } from './field-types';
 import ToggleableFieldBase from './ToggleableFieldBase';
 
 const CheckboxField: React.FC<CheckboxFieldProps> = (baseProps) => (
-  <ToggleableFieldBase {...baseProps}>{(props) => <Checkbox {...props} />}</ToggleableFieldBase>
+  <ToggleableFieldBase {...baseProps}>
+    {(props) => <Checkbox {...props} data-checked-state={props.isChecked} />}
+  </ToggleableFieldBase>
 );
 
 export default CheckboxField;

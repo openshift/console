@@ -108,10 +108,10 @@ export const tableFilters: FilterMap = {
   'role-binding-roleRef-kind': (kind, binding) => binding.roleRef.kind === kind.selected?.[0],
 
   // Filter role bindings by user name
-  'role-binding-user': (userName, { subject }) => subject.name === userName.selected?.[0],
+  'role-binding-user': (userName, { subject }) => subject.name === userName,
 
   // Filter role bindings by group name
-  'role-binding-group': (groupName, { subject }) => subject.name === groupName.selected?.[0],
+  'role-binding-group': (groupName, { subject }) => subject.name === groupName,
 
   labels: (values, obj) => {
     if (!values.all) {

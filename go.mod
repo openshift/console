@@ -5,9 +5,11 @@ go 1.16
 require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-	github.com/devfile/api/v2 v2.0.0-20210211160219-33a78aec06af
-	github.com/devfile/library v1.0.0-alpha.2
-	github.com/devfile/registry-support/index/generator v0.0.0-20210505173027-d06fe2bb3ee8
+	github.com/devfile/api/v2 v2.0.0-20211021164004-dabee4e633ed
+	github.com/devfile/library v1.2.1-0.20211104222135-49d635cb492f
+	github.com/devfile/registry-support/index/generator v0.0.0-20211012185733-0a73f866043f
+	github.com/devfile/registry-support/registry-library v0.0.0-20211026200306-cab748834109
+	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
 	github.com/openshift/api v0.0.0-20211103080632-8981c8822dfa
@@ -22,13 +24,13 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.6.2
 	k8s.io/api v0.22.1
-	k8s.io/apiextensions-apiserver v0.21.1
+	k8s.io/apiextensions-apiserver v0.21.3
 	k8s.io/apimachinery v0.22.1
 	k8s.io/cli-runtime v0.21.0
 	k8s.io/client-go v0.22.1
 	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.9.0
-	sigs.k8s.io/controller-runtime v0.9.0
+	sigs.k8s.io/controller-runtime v0.9.5
 	sigs.k8s.io/yaml v1.2.0
 )
 
