@@ -5,10 +5,7 @@ export const V2VVMWARE_DEPLOYMENT_NAME = 'v2v-vmware';
 export const CONVERSION_BASE_NAME = 'kubevirt-v2v-conversion';
 export const CONVERSION_GENERATE_NAME = `${CONVERSION_BASE_NAME}-`;
 
-export const VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMES = [
-  'v2v-vmware',
-  'virtio-win',
-];
+export const VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMES = ['v2v-vmware', 'virtio-win'];
 // Different releases, different locations. Respect the order when resolving. Otherwise the configMap name/namespace is considered as well-known.
 export const VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES = [
   'openshift-cnv',

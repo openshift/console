@@ -14,11 +14,7 @@ export const getVmwareConfigMap = async () => {
     for (const configMapName of VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMES) {
       try {
         // eslint-disable-next-line no-await-in-loop
-        const configMap = await k8sGet(
-          ConfigMapModel,
-          configMapName,
-          namespace,
-        );
+        const configMap = await k8sGet(ConfigMapModel, configMapName, namespace);
 
         if (configMap) {
           return configMap;
