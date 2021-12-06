@@ -1,0 +1,18 @@
+{
+    "name": "package.json",
+    "path": "package.json",
+    "sha": "c3188637a910a7867cbcb592c37125a83fadf117",
+    "size": 817,
+    "url": "https://api.github.com/repos/sclorg/nodejs-ex/contents/package.json?ref=master",
+    "html_url": "https://github.com/sclorg/nodejs-ex/blob/master/package.json",
+    "git_url": "https://api.github.com/repos/sclorg/nodejs-ex/git/blobs/c3188637a910a7867cbcb592c37125a83fadf117",
+    "download_url": "https://raw.githubusercontent.com/sclorg/nodejs-ex/master/package.json",
+    "type": "file",
+    "content": "ewogICJuYW1lIjogIm5vZGVqcy1leCIsCiAgInZlcnNpb24iOiAiMC4wLjEi\nLAogICJkZXNjcmlwdGlvbiI6ICJOb2RlLmpzIHNhbXBsZSBhcHAgZm9yIE9w\nZW5TaGlmdCAzIiwKICAibWFpbiI6ICJzZXJ2ZXIuanMiLAogICJkZXBlbmRl\nbmNpZXMiOiB7CiAgICAiY2hhaSI6ICJeMy41LjAiLAogICAgImNoYWktaHR0\ncCI6ICJeMi4wLjEiLAogICAgImVqcyI6ICJeMi40LjEiLAogICAgImV4cHJl\nc3MiOiAiXjQuMTMuNCIsCiAgICAibW9jaGEiOiAiXjIuNC41IiwKICAgICJt\nb25nb2RiIjogIl4yLjEuMTYiLAogICAgIm1vcmdhbiI6ICJeMS43LjAiLAog\nICAgIm9iamVjdC1hc3NpZ24iOiI0LjEuMCIKICB9LAogICJlbmdpbmUiOiB7\nCiAgICAibm9kZSI6ICIqIiwKICAgICJucG0iOiAiKiIKICB9LAogICJzY3Jp\ncHRzIjogewogICAgInN0YXJ0IjogIm5vZGUgc2VydmVyLmpzIiwKICAgICJ0\nZXN0IjogIklQPTAuMC4wLjAgUE9SVD0zMDMwIG1vY2hhIC0tdGltZW91dCA1\nMDAwIHRlc3RzLypfdGVzdC5qcyIKICB9LAogICJyZXBvc2l0b3J5Ijogewog\nICAgInR5cGUiOiAiZ2l0IiwKICAgICJ1cmwiOiAiaHR0cDovL2dpdGh1Yi5j\nb20vc2Nsb3JnL25vZGVqcy1leC5naXQiCiAgfSwKICAiYXV0aG9yIjogIlN0\nZXZlIFNwZWljaGVyIDxzc3BlaWNoZUBnbWFpbC5jb20+IiwKICAibGljZW5z\nZSI6ICJDQy1CWS0xLjAiLAogICJidWdzIjogewogICAgInVybCI6ICJodHRw\nOi8vZ2l0aHViLmNvbS9zY2xvcmcvbm9kZWpzLWV4L2lzc3VlcyIKICB9LAog\nICJob21lcGFnZSI6ICJodHRwOi8vZ2l0aHViLmNvbS9zY2xvcmcvbm9kZWpz\nLWV4Igp9Cg==\n",
+    "encoding": "base64",
+    "_links": {
+      "self": "https://api.github.com/repos/sclorg/nodejs-ex/contents/package.json?ref=master",
+      "git": "https://api.github.com/repos/sclorg/nodejs-ex/git/blobs/c3188637a910a7867cbcb592c37125a83fadf117",
+      "html": "https://github.com/sclorg/nodejs-ex/blob/master/package.json"
+    }
+  }
