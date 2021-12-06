@@ -12,7 +12,7 @@ export enum VMWizardURLParams {
   VIEW = 'view',
 }
 
-const baseURLBuilder = (namespace: string | undefined) =>
+const baseURLBuilder = (namespace = 'default') =>
   resourceListPathFromModel(getKubevirtAvailableModel(VirtualMachineModel), namespace).concat(
     '/~new',
   );
