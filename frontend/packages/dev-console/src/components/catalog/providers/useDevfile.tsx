@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ExternalLink } from '@console/internal/components/utils';
 import { APIError } from '@console/shared';
@@ -60,7 +60,7 @@ const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, an
 
   React.useEffect(() => {
     let mounted = true;
-    coFetchJSON('/api/devfile/samples?registry=https://registry.devfile.io')
+    coFetchJSON('/api/devfile/samples/?registry=https://registry.devfile.io')
       .then((resp) => {
         if (mounted) setDevfileSamples(resp);
       })
