@@ -27,7 +27,6 @@ export const getNodeClientCSRs = (csrs: CertificateSigningRequestKind[] = []): C
     csrs,
     'system:serviceaccount:openshift-machine-config-operator:node-bootstrapper',
   )
-    .filter(isCSRPending)
     .map((csr) => {
       const request = Base64.decode(csr.spec.request);
       const req = request.replace(/(-----(BEGIN|END) CERTIFICATE REQUEST-----|\n)/g, '');
@@ -38,22 +37,31 @@ export const getNodeClientCSRs = (csrs: CertificateSigningRequestKind[] = []): C
       return {
         metadata: {
           name: commonName.value.valueBlock.value.replace('system:node:', ''),
+          creationTimestamp: csr.metadata.creationTimestamp,
         },
         csr,
         status: { status: 'Discovered' },
       };
-    });
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.metadata.creationTimestamp).getTime() -
+        new Date(a.metadata.creationTimestamp).getTime(),
+    );
 
   const groupped = _.groupBy<CSRBundle>(nodeCSRs, (csr) => csr.metadata.name);
 
-  return Object.keys(groupped).map((key) => {
+  return Object.keys(groupped).reduce((acc, key) => {
     const { csr, status } = groupped[key][0];
-    return {
-      metadata: { name: key },
-      status,
-      csr,
-    };
-  });
+    if (isCSRPending(csr)) {
+      acc.push({
+        metadata: { name: key },
+        status,
+        csr,
+      });
+    }
+    return acc;
+  }, []);
 };
 
 export const getNodeServerCSR = (
