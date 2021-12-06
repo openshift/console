@@ -69,6 +69,7 @@ const updateCSR = (
           lastUpdateTime: new Date().toISOString(),
           message: `This CSR was ${type.toLowerCase()} via OpenShift Console`,
           reason: 'OpenShiftConsoleCSRApprove',
+          status: 'True',
           type,
         },
         ...(csr.status?.conditions || []),
