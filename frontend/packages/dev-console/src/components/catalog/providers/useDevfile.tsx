@@ -11,7 +11,6 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
   const normalizedDevfileSamples = devfileSamples?.map((sample) => {
     const { name: uid, displayName, description, tags, git, icon } = sample;
     const gitRepoUrl = Object.values(git.remotes)[0];
-    const iconUrl = icon ? `data:image/png;base64,${icon}` : '';
     const href = `/import?importType=devfile&devfileName=${uid}&gitRepo=${gitRepoUrl}`;
     const createLabel = t('devconsole~Create Application');
     const type = 'Devfile';
@@ -41,7 +40,7 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
         label: createLabel,
         href,
       },
-      icon: { url: iconUrl },
+      icon: { url: icon },
       details: {
         properties: detailsProperties,
         descriptions: detailsDescriptions,
@@ -62,7 +61,7 @@ const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, an
   React.useEffect(() => {
     let mounted = true;
     const payload = {
-      registry: 'sample-placeholder',
+      registry: 'https://registry.devfile.io',
     };
     coFetchJSON
       .put('/api/devfile/samples', payload)

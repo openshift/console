@@ -1,8 +1,6 @@
 package v1alpha2
 
-import (
-	attributes "github.com/devfile/api/v2/pkg/attributes"
-)
+import "github.com/devfile/api/v2/pkg/attributes"
 
 // EndpointProtocol defines the application and transport protocols of the traffic that will go through this endpoint.
 // Only one of the following protocols may be specified: http, ws, tcp, udp.
@@ -37,15 +35,16 @@ const (
 	// Endpoint will be exposed on the public network, typically through
 	// a K8S ingress or an OpenShift route
 	PublicEndpointExposure EndpointExposure = "public"
-	// Endpoint will be exposed internally outside of the main workspace POD,
+	// Endpoint will be exposed internally outside of the main devworkspace POD,
 	// typically by K8S services, to be consumed by other elements running
 	// on the same cloud internal network.
 	InternalEndpointExposure EndpointExposure = "internal"
 	// Endpoint will not be exposed and will only be accessible
-	// inside the main workspace POD, on a local address.
+	// inside the main devworkspace POD, on a local address.
 	NoneEndpointExposure EndpointExposure = "none"
 )
 
+// +devfile:getter:generate
 type Endpoint struct {
 	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	// +kubebuilder:validation:MaxLength=63
@@ -58,12 +57,12 @@ type Endpoint struct {
 	// - `public` means that the endpoint will be exposed on the public network, typically through
 	// a K8S ingress or an OpenShift route.
 	//
-	// - `internal` means that the endpoint will be exposed internally outside of the main workspace POD,
+	// - `internal` means that the endpoint will be exposed internally outside of the main devworkspace POD,
 	// typically by K8S services, to be consumed by other elements running
 	// on the same cloud internal network.
 	//
 	// - `none` means that the endpoint will not be exposed and will only be accessible
-	// inside the main workspace POD, on a local address.
+	// inside the main devworkspace POD, on a local address.
 	//
 	// Default value is `public`
 	// +optional
@@ -94,7 +93,8 @@ type Endpoint struct {
 	// Describes whether the endpoint should be secured and protected by some
 	// authentication process. This requires a protocol of `https` or `wss`.
 	// +optional
-	Secure bool `json:"secure,omitempty"`
+	// +devfile:default:value=false
+	Secure *bool `json:"secure,omitempty"`
 
 	// Path of the endpoint URL
 	// +optional
@@ -108,5 +108,8 @@ type Endpoint struct {
 	//
 	// - type: "terminal" / "ide" / "ide-dev",
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
 }

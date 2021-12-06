@@ -15,7 +15,7 @@ Feature: Create Application from Devfile
               And user is at the Topology page
              When user right clicks on topology empty graph
               And user selects "Import from Git" option from Add to Project context menu
-              And user enters Git Repo URL as "https://github.com/redhat-developer/devfile-sample" in Import from Git form
+              And user enters Git Repo URL as "https://github.com/nodeshift-starters/devfile-sample" in Import from Git form
               And user enters workload name as "node-bulletin-board-1" in Name
               And user clicks Create button
              Then user will be redirected to Topology page

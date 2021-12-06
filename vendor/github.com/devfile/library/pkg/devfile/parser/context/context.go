@@ -3,13 +3,14 @@ package parser
 import (
 	"fmt"
 	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/devfile/library/pkg/testingutil/filesystem"
 	"github.com/devfile/library/pkg/util"
 	"k8s.io/klog"
 )
-
-var URIMap = make(map[string]bool)
 
 // DevfileCtx stores context info regarding devfile
 type DevfileCtx struct {
@@ -51,6 +52,15 @@ func NewURLDevfileCtx(url string) DevfileCtx {
 	}
 }
 
+// NewByteContentDevfileCtx set devfile content from byte data and returns a new DevfileCtx type object and error
+func NewByteContentDevfileCtx(data []byte) (d DevfileCtx, err error) {
+	err = d.SetDevfileContentFromBytes(data)
+	if err != nil {
+		return DevfileCtx{}, err
+	}
+	return d, nil
+}
+
 // populateDevfile checks the API version is supported and returns the JSON schema for the given devfile API Version
 func (d *DevfileCtx) populateDevfile() (err error) {
 
@@ -65,15 +75,21 @@ func (d *DevfileCtx) populateDevfile() (err error) {
 
 // Populate fills the DevfileCtx struct with relevant context info
 func (d *DevfileCtx) Populate() (err error) {
-
+	if !strings.HasSuffix(d.relPath, ".yaml") {
+		if _, err := os.Stat(filepath.Join(d.relPath, "devfile.yaml")); os.IsNotExist(err) {
+			if _, err := os.Stat(filepath.Join(d.relPath, ".devfile.yaml")); os.IsNotExist(err) {
+				return fmt.Errorf("the provided path is not a valid yaml filepath, and devfile.yaml or .devfile.yaml not found in the provided path : %s", d.relPath)
+			} else {
+				d.relPath = filepath.Join(d.relPath, ".devfile.yaml")
+			}
+		} else {
+			d.relPath = filepath.Join(d.relPath, "devfile.yaml")
+		}
+	}
 	if err := d.SetAbsPath(); err != nil {
 		return err
 	}
 	klog.V(4).Infof("absolute devfile path: '%s'", d.absPath)
-	if URIMap[d.absPath] {
-		return fmt.Errorf("URI %v is recursively referenced", d.absPath)
-	}
-	URIMap[d.absPath] = true
 	// Read and save devfile content
 	if err := d.SetDevfileContent(); err != nil {
 		return err
@@ -83,15 +99,10 @@ func (d *DevfileCtx) Populate() (err error) {
 
 // PopulateFromURL fills the DevfileCtx struct with relevant context info
 func (d *DevfileCtx) PopulateFromURL() (err error) {
-
 	_, err = url.ParseRequestURI(d.url)
 	if err != nil {
 		return err
 	}
-	if URIMap[d.url] {
-		return fmt.Errorf("URI %v is recursively referenced", d.url)
-	}
-	URIMap[d.url] = true
 	// Read and save devfile content
 	if err := d.SetDevfileContent(); err != nil {
 		return err

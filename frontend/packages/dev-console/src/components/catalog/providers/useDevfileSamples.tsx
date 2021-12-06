@@ -12,7 +12,6 @@ const normalizeDevfileSamples = (devfileSamples: DevfileSample[], t: TFunction):
     const gitRepoUrl = Object.values(git.remotes)[0];
     const label = t('devconsole~Create Devfile Sample');
     const href = `/import?importType=devfile&formType=sample&devfileName=${uid}&gitRepo=${gitRepoUrl}`;
-    const iconUrl = icon ? `data:image/png;base64,${icon}` : '';
 
     const item: CatalogItem = {
       uid,
@@ -24,7 +23,7 @@ const normalizeDevfileSamples = (devfileSamples: DevfileSample[], t: TFunction):
         label,
         href,
       },
-      icon: { url: iconUrl },
+      icon: { url: icon },
     };
 
     return item;
@@ -41,7 +40,7 @@ const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], bool
   React.useEffect(() => {
     let mounted = true;
     const payload = {
-      registry: 'sample-placeholder',
+      registry: 'https://registry.devfile.io',
     };
     coFetchJSON
       .put('/api/devfile/samples', payload)

@@ -139,7 +139,7 @@ export const useSelectedDevfileSample = () => {
   React.useEffect(() => {
     let mounted = true;
     const payload = {
-      registry: 'sample-placeholder',
+      registry: 'https://registry.devfile.io',
     };
     coFetchJSON
       .put('/api/devfile/samples', payload)
