@@ -207,14 +207,6 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   overflow-y: auto;
 }
 
-// TEMP fix until https://github.com/patternfly/patternfly-next/issues/1543 is fixed upstream
-.pf-c-app-launcher__menu-item {
-  &:focus,
-  &:hover {
-    --pf-c-app-launcher__menu-item--Color:: var(--pf-global--Color--dark-100);
-  }
-}
-
 .pf-c-dropdown .co-m-resource-icon {
   margin-left: 2px;
 }
