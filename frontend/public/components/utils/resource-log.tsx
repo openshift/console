@@ -25,14 +25,14 @@ import {
   OutlinedWindowRestoreIcon,
   OutlinedPlayCircleIcon,
 } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { FLAGS, LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
 import { LoadingInline, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
-import * as screenfull from 'screenfull';
+import screenfull from 'screenfull';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
 import { RootState } from '../../redux';
@@ -334,7 +334,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
           <DownloadIcon className="co-icon-space-r" />
           {t('public~Download')}
         </a>
-        {screenfull.enabled && (
+        {screenfull && screenfull.enabled && (
           <>
             <span aria-hidden="true" className="co-action-divider hidden-xs">
               |
@@ -510,7 +510,10 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   // Toggle currently displayed log content to/from fullscreen
   const toggleFullscreen = () => {
-    resourceLogRef.current && screenfull.enabled && screenfull.toggle(resourceLogRef.current);
+    resourceLogRef.current &&
+      screenfull &&
+      screenfull.enabled &&
+      screenfull.toggle(resourceLogRef.current);
   };
 
   // Toggle streaming/paused status
@@ -536,9 +539,9 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   // Only run once, initialize screenfull
   React.useEffect(() => {
-    if (screenfull.enabled) {
+    if (screenfull && screenfull.enabled) {
       screenfull.on('change', () => {
-        setIsFullscreen(screenfull.isFullscreen);
+        setIsFullscreen(screenfull && screenfull.isFullscreen);
       });
       screenfull.on('error', () => {
         setIsFullscreen(false);
@@ -546,9 +549,9 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     }
 
     return () => {
-      if (screenfull.enabled) {
-        screenfull.off('change');
-        screenfull.off('error');
+      if (screenfull && screenfull.enabled) {
+        screenfull.off('change', () => toggleFullscreen());
+        screenfull.off('error', () => toggleFullscreen());
       }
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -598,7 +601,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     <>
       <div
         ref={resourceLogRef}
-        className={classNames('resource-log', { 'resource-log--fullscreen': isFullscreen })}
+        className={classnames('resource-log', { 'resource-log--fullscreen': isFullscreen })}
       >
         <div className={classNames('resource-log__alert-wrapper')}>
           {error && (

@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
+/* eslint-disable import/named */
 import { TFunction } from 'i18next';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
@@ -79,7 +80,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineConfigReference} name={obj.metadata.name} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
         {_.get(
           obj,
           [
@@ -93,7 +94,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[2]}>
         {_.get(obj, 'spec.config.ignition.version') || '-'}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         {_.get(obj, 'spec.osImageURL') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

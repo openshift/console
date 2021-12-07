@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
+/* eslint-disable import/named */
 import { Link, LinkProps } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { NavItem, NavItemSeparator } from '@patternfly/react-core';
@@ -96,8 +97,8 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
     // onClick is now handled globally by the Nav's onSelect,
     // however onClick can still be passed if desired in certain cases
 
-    const itemClasses = classNames(className, { 'pf-m-current': isActive });
-    const linkClasses = classNames('pf-c-nav__link', { 'pf-m-current': isActive });
+    const itemClasses = classnames(className, { 'pf-m-current': isActive });
+    const linkClasses = classnames('pf-c-nav__link', { 'pf-m-current': isActive });
     return (
       <NavItem className={itemClasses} isActive={isActive}>
         <Link

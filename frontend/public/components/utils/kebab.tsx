@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
@@ -92,7 +92,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
     }
   };
   const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
-  const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
+  const classes = classnames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
   return (
     <button
       className={classes}
@@ -246,7 +246,7 @@ export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({
   focusItem,
 }) => (
   <ul
-    className={classNames('pf-c-dropdown__menu pf-m-align-right', className)}
+    className={classnames('pf-c-dropdown__menu pf-m-align-right', className)}
     data-test-id="action-items"
   >
     {_.map(options, (o, index) => (
@@ -542,7 +542,7 @@ class KebabWithTranslation extends React.Component<
 
     return (
       <div
-        className={classNames({
+        className={classnames({
           'pf-c-dropdown': true,
           'pf-m-expanded': this.state.active,
         })}

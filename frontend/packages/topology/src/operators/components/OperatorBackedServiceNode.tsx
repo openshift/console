@@ -13,7 +13,7 @@ import {
   useSize,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   noRegroupDragSourceSpec,
@@ -76,7 +76,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
         ref={refs}
         onClick={onSelect}
         onContextMenu={editAccess ? onContextMenu : null}
-        className={classNames('odc-operator-backed-service', {
+        className={classnames('odc-operator-backed-service', {
           'is-dragging': dragging,
           'is-highlight': canDrop,
           'is-selected': selected,

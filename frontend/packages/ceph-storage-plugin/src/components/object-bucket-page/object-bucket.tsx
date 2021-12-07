@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Status } from '@console/shared';
 import {
   DetailsPage,
@@ -43,7 +43,7 @@ const OBTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1])}>
+      <TableData className={classnames(tableColumnClasses[1])}>
         <OBStatus ob={obj} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

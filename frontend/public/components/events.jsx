@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -95,7 +95,7 @@ const Inner = withTranslation()(
         const lastTime = getLastTime(event);
         const count = series ? series.count : event.count;
         return (
-          <div className={classNames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
+          <div className={classnames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
             <div className="co-sysevent__icon-box">
               <i className="co-sysevent-icon" title={tooltipMsg} />
               <div className="co-sysevent__icon-line" />
@@ -520,7 +520,7 @@ class EventStream extends React.Component {
       statusBtnTxt = <span>{t('public~Event stream is paused.')}</span>;
     }
 
-    const klass = classNames('co-sysevent-stream__timeline', {
+    const klass = classnames('co-sysevent-stream__timeline', {
       'co-sysevent-stream__timeline--empty': !allCount || !count,
     });
     const messageCount =

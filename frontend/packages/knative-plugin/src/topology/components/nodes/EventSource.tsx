@@ -14,7 +14,7 @@ import {
   WithCreateConnectorProps,
   Edge,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
@@ -89,7 +89,7 @@ const EventSource: React.FC<EventSourceProps> = ({
 
   return (
     <g
-      className={classNames('odc-event-source', {
+      className={classnames('odc-event-source', {
         'is-filtered': filtered,
         'is-dragging': dragging || edgeDragging,
         'is-selected': selected,

@@ -1,9 +1,10 @@
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { connect, useDispatch } from 'react-redux';
+/* eslint-disable import/named */
 import { Link, match as RMatch } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -64,10 +65,10 @@ export const TextFilter: React.FC<TextFilterProps> = (props) => {
   const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
 
   return (
-    <div className={classNames('has-feedback', parentClassName)}>
+    <div className={classnames('has-feedback', parentClassName)}>
       <TextInput
         {...otherInputProps}
-        className={classNames('co-text-filter', className)}
+        className={classnames('co-text-filter', className)}
         data-test-id="item-filter"
         aria-label={placeholderText}
         placeholder={placeholderText}
@@ -305,7 +306,7 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
                 buttonClassName="pf-m-primary"
                 id="item-create"
                 dataTest="item-create"
-                menuClassName={classNames({ 'pf-m-align-right-on-md': title })}
+                menuClassName={classnames({ 'pf-m-align-right-on-md': title })}
                 title={createButtonText}
                 noSelection
                 items={createProps.items}
@@ -340,10 +341,10 @@ export const FireMan = connect<{}, { filterList: typeof filterList }, FireManPro
           <PageHeading
             title={title}
             badge={title ? badge : null}
-            className={classNames({ 'co-m-nav-title--row': createLink })}
+            className={classnames({ 'co-m-nav-title--row': createLink })}
           >
             {createLink && (
-              <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
+              <div className={classnames({ 'co-m-pane__createLink--no-title': !title })}>
                 {createLink}
               </div>
             )}

@@ -14,7 +14,7 @@ import {
   createSvgIdUrl,
   EllipseAnchor,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { calculateRadius } from '@console/shared';
 import {
@@ -70,7 +70,7 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
       animationDuration={0}
     >
       <g
-        className={classNames('odc-sink-uri', {
+        className={classnames('odc-sink-uri', {
           'is-dragging': dragging,
           'is-highlight': canDrop || edgeDragging,
         })}
@@ -80,7 +80,7 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
       >
         <NodeShadows />
         <g
-          className={classNames('odc-sink-uri', {
+          className={classnames('odc-sink-uri', {
             'is-dragging': dragging,
             'is-highlight': canDrop || edgeDragging,
             'is-selected': selected,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils';
 import { Shadows, useScrollShadows, useScrollContainer } from '../../hooks';
@@ -32,7 +32,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   const shadowPosition = useScrollShadows(sticky ? scrollContainer : null);
   return (
     <div
-      className={cx('ocs-form-footer', {
+      className={classnames('ocs-form-footer', {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'ocs-form-footer__sticky': sticky,
         // eslint-disable-next-line @typescript-eslint/naming-convention

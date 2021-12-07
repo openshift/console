@@ -11,7 +11,7 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
@@ -130,7 +130,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
     }
   }
 
-  const className = classNames('odc-topology-list-view__item-row', { 'is-filtered': filtered });
+  const className = classnames('odc-topology-list-view__item-row', { 'is-filtered': filtered });
   return (
     <DataListItem
       key={item.getId()}

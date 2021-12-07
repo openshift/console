@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 import './result-tab-row.scss';
 
@@ -17,7 +17,7 @@ export const ResultTabRow: React.FC<ResultTabRowProps> = ({
   return (
     <ExpandableSection
       toggleText={title || ''}
-      className={classNames({
+      className={classnames({
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'kubevirt-create-vm-modal___result-tab-row-container': alignMiddle,
         // eslint-disable-next-line @typescript-eslint/naming-convention

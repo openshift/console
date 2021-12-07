@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DefaultCreateConnector, Point } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import './CreateConnector.scss';
@@ -36,7 +36,7 @@ const CreateConnector: React.FC<CreateConnectorProps> = ({
     };
   }, [endPoint.x, endPoint.y, dragging]);
 
-  const classes = classNames('odc-create-connector', { 'is-dragging': dragging });
+  const classes = classnames('odc-create-connector', { 'is-dragging': dragging });
   return (
     <DefaultCreateConnector
       className={classes}

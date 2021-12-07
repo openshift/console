@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import { ResourceIcon } from './utils';
@@ -124,7 +124,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       onFilter={onCustomFilter}
       hasInlineFilter
       customBadgeText={selected.length}
-      className={classNames('co-type-selector', className)}
+      className={classnames('co-type-selector', className)}
       maxHeight="60vh"
     >
       {items}

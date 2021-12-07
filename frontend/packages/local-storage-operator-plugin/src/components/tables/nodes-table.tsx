@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text } from '@patternfly/react-core';
 import { sortable, IRow } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
@@ -24,11 +24,11 @@ import { NodesTableRowsFunction, NodesTableCustomData } from './types';
 import './nodes-table.scss';
 
 const tableColumnClasses = [
-  classNames('pf-u-w-40-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classnames('pf-u-w-40-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
 ];
 
 const getRows: NodesTableRowsFunction = (

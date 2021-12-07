@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'redux';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { FormGroup, TextInput, TextContent } from '@patternfly/react-core';
 import {
   createModalLauncher,
@@ -61,7 +61,7 @@ const RawCapacity: React.FC<RawCapacityProps> = ({ t, osdSizeWithoutUnit, replic
         <TextInput
           isDisabled
           id="request-size"
-          className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
+          className={classnames('pf-c-form-control', 'ceph-add-capacity__input')}
           type="number"
           name="requestSize"
           value={osdSizeWithoutUnit}

@@ -73,9 +73,9 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
 
   render() {
     const { Component } = this.state;
-    const { LoadingComponent = LoadingBox, forwardRef } = this.props;
+    const { LoadingComponent = LoadingBox } = this.props;
     const rest = _.omit(this.props, 'loader');
-    return Component != null ? <Component ref={forwardRef} {...rest} /> : <LoadingComponent />;
+    return Component != null ? <Component {...rest} /> : <LoadingComponent />;
   }
 }
 

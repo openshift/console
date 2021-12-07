@@ -16,7 +16,7 @@ import {
   useCombineRefs,
   WithCreateConnectorProps,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   NodeShadows,
@@ -136,7 +136,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
         ref={hoverRef}
         onClick={onSelect}
         onContextMenu={onContextMenu}
-        className={classNames('odc-knative-service', {
+        className={classnames('odc-knative-service', {
           'is-dragging': dragging || labelDragging,
           'is-highlight': canDrop || edgeDragging,
           'is-filtered': filtered,
@@ -150,7 +150,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
         >
           <g
             ref={nodeRefs}
-            className={classNames('odc-knative-service', {
+            className={classnames('odc-knative-service', {
               'is-selected': selected,
               'is-dragging': dragging || labelDragging,
               'is-highlight': canDrop || edgeDragging,

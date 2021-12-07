@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DropdownMenu } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { history, KebabItem, KebabOption } from '@console/internal/components/utils';
 import './PopupKebabMenu.scss';
@@ -133,7 +133,7 @@ export class PopupKebabMenu extends React.Component<PopupKebabMenuProps, PopopKe
     const { className, kebabOptions } = this.props;
     const { menuTop, menuLeft } = this.state;
     const visibleOptions = _.reject(kebabOptions, (o) => _.get(o, 'hidden', false));
-    const classes = classNames('ocs-popup-kebab-menu', className);
+    const classes = classnames('ocs-popup-kebab-menu', className);
 
     return (
       <div className="pf-c-page ocs-popup-kebab-menu__container">

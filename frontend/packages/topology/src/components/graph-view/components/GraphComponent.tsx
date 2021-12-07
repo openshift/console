@@ -3,7 +3,7 @@ import {
   GraphComponent as BaseGraphComponent,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 type GraphComponentProps = React.ComponentProps<typeof BaseGraphComponent> & {
   dragEditInProgress?: boolean;
@@ -16,7 +16,7 @@ const VALID_DROP_CLASS = 'odc-m-valid-drop-target';
 
 const GraphComponent: React.FC<GraphComponentProps> = (props) => {
   const { dragEditInProgress, hasDropTarget, dragCreate } = props;
-  const graphClasses = classNames('odc-graph', { 'odc-m-drag-create': dragCreate });
+  const graphClasses = classnames('odc-graph', { 'odc-m-drag-create': dragCreate });
 
   React.useEffect(() => {
     const addClassList = [];

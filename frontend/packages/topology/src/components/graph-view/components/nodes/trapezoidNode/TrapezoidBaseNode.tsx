@@ -13,7 +13,7 @@ import {
   createSvgIdUrl,
   useSvgAnchor,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
@@ -114,7 +114,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
       position="top"
     >
       <g
-        className={classNames('trapezoid-base-node', className, {
+        className={classnames('trapezoid-base-node', className, {
           'is-hover': hover || contextMenuOpen,
           'is-highlight': canDrop,
           'is-dragging': dragging || edgeDragging,

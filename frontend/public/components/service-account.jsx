@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { safeDump } from 'js-yaml';
+import { dump } from 'js-yaml';
 import { Base64 } from 'js-base64';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
@@ -84,8 +84,8 @@ const KubeConfigify = (kind, sa) => ({
             },
           ],
         };
-        const dump = safeDump(config);
-        const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
+        const safeDump = dump(config);
+        const blob = new Blob([safeDump], { type: 'text/yaml;charset=utf-8' });
         saveAs(blob, `kube-config-sa-${name}-${clusterName}`);
       })
       .catch((err) => {
@@ -128,7 +128,7 @@ const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
         <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
         <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}

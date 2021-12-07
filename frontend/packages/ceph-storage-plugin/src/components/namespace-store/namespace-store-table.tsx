@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { compose } from 'redux';
 import { IRow, sortable } from '@patternfly/react-table';
@@ -22,9 +22,9 @@ import './namespace-store-table.scss';
 
 const tableColumnClasses = [
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
 ];
 
 const getRows: GetRows = (rowProps, selectedItems) => {

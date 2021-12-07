@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ValidationErrorType, ValidationObject } from '../../selectors';
 
@@ -20,7 +20,7 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({
   return (
     <>
       <div
-        className={classNames({
+        className={classnames({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           'kv-validation-cell__cell--row-flex-direction': !!additionalLabel,
         })}
@@ -32,7 +32,7 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({
       </div>
       {validation && (
         <div
-          className={classNames({
+          className={classnames({
             // eslint-disable-next-line @typescript-eslint/naming-convention
             'kv-validation-cell__cell--error': [
               ValidationErrorType.Error,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Dropdown } from '@console/internal/components/utils';
 import { InputGroup, TextInput, ValidatedOptions } from '@patternfly/react-core';
 import { TimeUnits } from '../constants/bucket-class';
@@ -30,7 +30,7 @@ export const TimeDurationDropdown: React.FC<TimeDurationDropdownProps> = ({
   return (
     <InputGroup>
       <TextInput
-        className={classNames('pf-c-form-control', inputClassName)}
+        className={classnames('pf-c-form-control', inputClassName)}
         type="number"
         onChange={onValueChange}
         placeholder={placeholder}

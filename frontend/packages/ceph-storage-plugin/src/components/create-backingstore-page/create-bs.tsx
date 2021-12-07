@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import * as React from 'react';
 import { ActionGroup, Button, FormGroup, Form, TextInput, Tooltip } from '@patternfly/react-core';
@@ -148,7 +148,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
   };
 
   return (
-    <Form className={classNames('nb-endpoints-form', className)} onSubmit={onSubmit}>
+    <Form className={classnames('nb-endpoints-form', className)} onSubmit={onSubmit}>
       <FormGroup
         label={t('ceph-storage-plugin~BackingStore Name')}
         fieldId="backingstore-name"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
@@ -77,7 +77,7 @@ export const ExternalLink: React.FC<ExternalLinkProps> = ({
   stopPropagation,
 }) => (
   <a
-    className={classNames('co-external-link', additionalClassName)}
+    className={classnames('co-external-link', additionalClassName)}
     href={href}
     target="_blank"
     rel="noopener noreferrer"
@@ -107,7 +107,7 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   ];
 
   return (
-    <div className={classNames(additionalClassName)}>
+    <div className={classnames(additionalClassName)}>
       <a href={link} target="_blank" rel="noopener noreferrer" data-test-id={dataTestID}>
         {text ?? link}
       </a>

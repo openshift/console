@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TextInput } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import {
   INPUT_CTRL_COMBINATIONS_KEYS,
   INPUT_NAVIGATION_KEYS,
@@ -150,7 +150,7 @@ export const Integer: React.FC<IntegerProps> = ({
       value={value}
       defaultValue={defaultValue}
       onChange={onChange}
-      className={classNames(className, {
+      className={classnames(className, {
         'kubevirt-integer-component': isFullWidth,
       })}
       isDisabled={isDisabled}

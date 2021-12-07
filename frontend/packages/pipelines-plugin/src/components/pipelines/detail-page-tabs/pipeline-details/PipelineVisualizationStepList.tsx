@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
 import { StepStatus } from './pipeline-step-utils';
@@ -62,7 +62,7 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
       {steps.map(({ duration, name, runStatus: status }) => {
         return (
           <div
-            className={classNames('odc-pipeline-visualization-step-list__step', {
+            className={classnames('odc-pipeline-visualization-step-list__step', {
               // eslint-disable-next-line @typescript-eslint/naming-convention
               'odc-pipeline-visualization-step-list__step--task-run': !isSpecOverview,
             })}

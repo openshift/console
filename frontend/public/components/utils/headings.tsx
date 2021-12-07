@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -125,7 +125,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
   return (
     <div
-      className={classNames(
+      className={classnames(
         'co-m-nav-title',
         { 'co-m-nav-title--detail': detail },
         { 'co-m-nav-title--logo': props.icon },
@@ -146,7 +146,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       )}
       {showHeading && (
         <h1
-          className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}
+          className={classnames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}
         >
           {props.icon ? (
             <props.icon obj={data} />
@@ -202,7 +202,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
 }) => (
   <h2 className="co-section-heading" style={style} data-test-section-heading={text} id={id}>
     <span
-      className={classNames({
+      className={classnames({
         'co-required': required,
       })}
     >

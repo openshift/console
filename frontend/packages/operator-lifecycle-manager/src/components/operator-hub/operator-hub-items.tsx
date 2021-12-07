@@ -8,7 +8,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -532,7 +532,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 )}
                 {!detailsItem.installed ? (
                   <Link
-                    className={classNames(
+                    className={classnames(
                       'pf-c-button',
                       { 'pf-m-secondary': remoteWorkflowUrl },
                       { 'pf-m-primary': !remoteWorkflowUrl },

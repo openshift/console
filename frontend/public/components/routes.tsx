@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -157,9 +157,9 @@ const tableColumnClasses = [
   '',
   '',
   // Status is less important than Location, so hide it earlier, but maintain its position for consistency with other tables
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-16-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -172,7 +172,7 @@ const RouteTableRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj: route }) => 
         <ResourceLink kind={kind} name={route.metadata.name} namespace={route.metadata.namespace} />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
         <ResourceLink kind="Namespace" name={route.metadata.namespace} />
@@ -180,7 +180,7 @@ const RouteTableRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj: route }) => 
       <TableData className={tableColumnClasses[2]}>
         <RouteStatus obj={route} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         <RouteLocation obj={route} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>

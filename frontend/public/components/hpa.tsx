@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -254,7 +254,7 @@ const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind
         />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
@@ -262,7 +262,7 @@ const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind
       <TableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         <ResourceLink
           kind={obj.spec.scaleTargetRef.kind}
           name={obj.spec.scaleTargetRef.name}

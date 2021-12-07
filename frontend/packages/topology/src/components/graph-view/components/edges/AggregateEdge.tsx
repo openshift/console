@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Edge, Layer, useHover, EdgeConnectorArrow, observer } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 import './AggregateEdge.scss';
 
@@ -19,7 +19,7 @@ const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element }) => {
       <g
         ref={hoverRef}
         data-test-id="edge-handler"
-        className={classNames('odc-base-edge odc-aggregate-edge', {
+        className={classnames('odc-base-edge odc-aggregate-edge', {
           'is-hover': hover,
         })}
       >

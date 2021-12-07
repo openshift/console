@@ -11,7 +11,7 @@ import {
   observer,
   useCombineRefs,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
@@ -60,7 +60,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
       ref={hoverRef}
       onClick={onSelect}
       onContextMenu={editAccess ? onContextMenu : null}
-      className={classNames('odc-helm-release', {
+      className={classnames('odc-helm-release', {
         'is-dragging': dragging || labelDragging,
         'is-filtered': filtered,
       })}
@@ -69,7 +69,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <g
           ref={nodeRefs}
-          className={classNames('odc-helm-release', {
+          className={classnames('odc-helm-release', {
             'is-selected': selected,
             'is-dragging': dragging || labelDragging,
             'is-filtered': filtered,

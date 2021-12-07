@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
@@ -51,7 +51,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
   const url = dataVolumeWrapper.getURL();
 
   return (
-    <dl className={classNames('kubevirt-create-vm-modal__review-tab__data-list', className)}>
+    <dl className={classnames('kubevirt-create-vm-modal__review-tab__data-list', className)}>
       <FormFieldReviewMemoRow field={getField(VMSettingsField.NAME, iVMSettings)} />
 
       <FormFieldReviewMemoRow field={getField(VMSettingsField.DESCRIPTION, iVMSettings)} />

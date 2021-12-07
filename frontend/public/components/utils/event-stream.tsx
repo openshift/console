@@ -8,7 +8,7 @@ import {
   CellMeasurerCache,
 } from 'react-virtualized';
 import { CSSTransition } from 'react-transition-group';
-import classNames from 'classnames';
+import classnames from 'classnames';
 
 import { EventKind } from '../../module/k8s';
 import { WithScrollContainer } from './dom-utils';
@@ -50,7 +50,7 @@ class SysEvent extends React.Component<SysEventProps> {
     }
 
     return (
-      <div className={classNames('co-sysevent--transition', className)} style={style} role="row">
+      <div className={classnames('co-sysevent--transition', className)} style={style} role="row">
         <CSSTransition
           mountOnEnter={true}
           appear={shouldAnimate}

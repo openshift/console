@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FlagsObject } from '../reducers/features';
 import { BlueInfoCircleIcon, FLAGS } from '@console/shared';
@@ -42,12 +42,12 @@ const NetworkPolicyTableRow: React.FC<RowFunctionArgs<NetworkPolicyKind>> = ({ o
         <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
         <ResourceLink kind={'Namespace'} name={np.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[2], 'co-break-word')}>
         {_.isEmpty(np.spec.podSelector) ? (
           <Link
             to={`/search/ns/${np.metadata.namespace}?kind=Pod`}

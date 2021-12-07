@@ -6,7 +6,7 @@ import {
   WithTargetDragProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { BaseEdge } from '@console/topology/src/components/graph-view';
@@ -43,7 +43,7 @@ const EventingPubSubLink: React.FC<EventingPubSubLinkProps> = ({
     namespace: edgeObj.metadata.namespace,
   });
   const markerPoint = element.getEndPoint();
-  const edgeClasses = classNames('odc-eventing-pubsub-link', { 'odc-m-editable': editAccess });
+  const edgeClasses = classnames('odc-eventing-pubsub-link', { 'odc-m-editable': editAccess });
 
   let filterMarker: JSX.Element;
   if (edgeHasFilter) {

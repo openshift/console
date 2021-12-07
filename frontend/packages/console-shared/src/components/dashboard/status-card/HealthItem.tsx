@@ -20,7 +20,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
 
     return (
       <div
-        className={classNames('co-status-card__health-item', className)}
+        className={classnames('co-status-card__health-item', className)}
         data-item-id={`${title}-health-item`}
       >
         {state === HealthState.LOADING ? (

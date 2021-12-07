@@ -3,7 +3,7 @@ import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/re
 import { FieldProps, UiSchema } from '@rjsf/core';
 import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
 import { getUiOptions } from '@rjsf/core/dist/cjs/utils';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';

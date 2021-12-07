@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 export const MirroringCardItem: React.FC<MirroringCardItemProps> = React.memo(

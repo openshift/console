@@ -8,7 +8,7 @@ import {
   useSelection,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';
@@ -60,7 +60,7 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
       <g
         ref={hoverRef}
         data-test-id="edge-handler"
-        className={classNames(className, 'odc-base-edge', {
+        className={classnames(className, 'odc-base-edge', {
           'is-dragging': dragging,
           'is-hover': hover,
           'is-selected': selected,

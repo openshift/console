@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -297,10 +297,10 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   const MachineConfigPoolTableRow: React.FC<RowFunctionArgs<MachineConfigPoolKind>> = ({ obj }) => {
     return (
       <>
-        <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+        <TableData className={classnames(tableColumnClasses[0], 'co-break-word')}>
           <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} />
         </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
           {_.get(obj, 'status.configuration.name') ? (
             <ResourceLink
               kind={machineConfigReference}
@@ -320,7 +320,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
         <TableData className={tableColumnClasses[4]}>
           {obj.spec?.paused ? t('public~True') : t('public~False')}
         </TableData>
-        <TableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
+        <TableData className={classnames(tableColumnClasses[5], 'co-truncate')}>
           {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
         </TableData>
         <TableData className={tableColumnClasses[6]}>

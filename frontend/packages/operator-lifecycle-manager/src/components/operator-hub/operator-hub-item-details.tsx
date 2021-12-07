@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { CheckCircleIcon } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -38,7 +38,7 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) =>
         const active = capabilityLevelIndex >= i;
         return (
           <li
-            className={classNames('properties-side-panel-pf-property-value__capability-level', {
+            className={classnames('properties-side-panel-pf-property-value__capability-level', {
               // eslint-disable-next-line @typescript-eslint/naming-convention
               'properties-side-panel-pf-property-value__capability-level--active': active,
             })}

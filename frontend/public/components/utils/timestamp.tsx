@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { GlobeAmericasIcon } from '@patternfly/react-icons';
 
 import * as dateTime from './datetime';
@@ -48,7 +48,7 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
   }
 
   return (
-    <div className={classNames('co-timestamp co-icon-and-text', props.className)}>
+    <div className={classnames('co-timestamp co-icon-and-text', props.className)}>
       <GlobeAmericasIcon className="co-icon-and-text__icon" />
       <Tooltip
         content={[

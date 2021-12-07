@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import './HorizontalStackedBars.scss';
 
 export type StackedValue = {
@@ -25,7 +25,7 @@ const HorizontalStackedBars: React.FC<HorizontalStackedBarsProps> = ({
 }) => {
   return (
     <div
-      className={classNames('odc-horizontal-stacked-bars', { 'is-inline': inline })}
+      className={classnames('odc-horizontal-stacked-bars', { 'is-inline': inline })}
       style={{ height, width, ['--bar-gap' as any]: barGap && `${barGap}px` }}
     >
       <div className="odc-horizontal-stacked-bars__bars">

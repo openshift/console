@@ -56,7 +56,7 @@ export const getOwnedResources = <T extends K8sResourceKind>(
   });
 };
 
-const getDeploymentPhase = (rc: K8sResourceKind): DEPLOYMENT_PHASE =>
+const getDeploymentPhase = (rc: K8sResourceKind) =>
   _.get(rc, ['metadata', 'annotations', DEPLOYMENT_PHASE_ANNOTATION]);
 
 export const getOwnerNameByKind = (obj: K8sResourceCommon, kind: K8sKind): string => {
@@ -75,7 +75,7 @@ const isDeploymentInProgressOrCompleted = (resource: K8sResourceKind): boolean =
       DEPLOYMENT_PHASE.pending,
       DEPLOYMENT_PHASE.running,
       DEPLOYMENT_PHASE.complete,
-    ].indexOf(getDeploymentPhase(resource)) > -1
+    ].indexOf(DEPLOYMENT_PHASE[getDeploymentPhase(resource)]) > -1
   );
 };
 

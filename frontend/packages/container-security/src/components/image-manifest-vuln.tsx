@@ -3,7 +3,7 @@ import { ChartDonut } from '@patternfly/react-charts';
 import { EmptyState, EmptyStateVariant, Title, Tooltip } from '@patternfly/react-core';
 import { SecurityIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -192,12 +192,12 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
 
 const tableColumnClasses = [
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-md'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
 ];
 
 export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVuln>> = ({

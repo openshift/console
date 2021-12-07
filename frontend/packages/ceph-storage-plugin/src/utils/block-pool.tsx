@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import { TFunction } from 'i18next';
@@ -220,47 +220,47 @@ export const BlockPoolColumnInfo = (t: TFunction) => ({
    * sm: name
    */
   name: {
-    classes: classNames('pf-u-w-16-on-2xl'),
+    classes: classnames('pf-u-w-16-on-2xl'),
     id: 'name',
     title: t('ceph-storage-plugin~Name'),
   },
   status: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-u-w-8-on-2xl'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-u-w-8-on-2xl'),
     id: 'status',
     title: t('ceph-storage-plugin~Status'),
   },
   storageclasses: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
     id: 'storageclasses',
     title: t('ceph-storage-plugin~StorageClasses'),
   },
   replicas: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-8-on-2xl'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-8-on-2xl'),
     id: 'replicas',
     title: t('ceph-storage-plugin~Replicas'),
   },
   usedcapacity: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-2xl'),
     id: 'usedcapacity',
     title: t('ceph-storage-plugin~Used capacity'),
   },
   mirroringstatus: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
     id: 'mirroringstatus',
     title: t('ceph-storage-plugin~Mirroring status'),
   },
   overallImagehealth: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-2xl'),
     id: 'overallImagehealth',
     title: t('ceph-storage-plugin~Overall image health'),
   },
   compressionstatus: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
     id: 'compressionstatus',
     title: t('ceph-storage-plugin~Compression status'),
   },
   compressionsavings: {
-    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    classes: classnames('pf-m-hidden', 'pf-m-visible-on-2xl'),
     id: 'compressionsavings',
     title: t('ceph-storage-plugin~Compression savings'),
   },

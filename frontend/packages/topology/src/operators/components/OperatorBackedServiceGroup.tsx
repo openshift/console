@@ -14,7 +14,7 @@ import {
   RectAnchor,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
@@ -74,7 +74,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       ref={hoverRef}
       onClick={onSelect}
       onContextMenu={editAccess ? onContextMenu : null}
-      className={classNames('odc-operator-backed-service', {
+      className={classnames('odc-operator-backed-service', {
         'is-dragging': dragging || labelDragging,
         'is-filtered': filtered,
         'is-highlight': canDrop,
@@ -91,7 +91,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
         >
           <g
             ref={nodeRefs}
-            className={classNames('odc-operator-backed-service', {
+            className={classnames('odc-operator-backed-service', {
               'is-selected': selected,
               'is-highlight': canDrop,
               'is-dragging': dragging || labelDragging,

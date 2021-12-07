@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { getURLWithParams } from '../utils/catalog-utils';
 import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';
@@ -32,7 +32,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
     const active = id === selectedCategory;
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const tabClasses = cx('text-capitalize', { 'co-catalog-tab__empty': !numItems });
+    const tabClasses = classnames('text-capitalize', { 'co-catalog-tab__empty': !numItems });
 
     return (
       <VerticalTabsTab

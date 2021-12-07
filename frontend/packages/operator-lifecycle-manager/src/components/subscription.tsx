@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match, Link } from 'react-router-dom';
@@ -220,7 +220,7 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       <TableData className={tableColumnClasses[2]}>
         <SubscriptionStatus subscription={obj} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
         {obj.spec.channel || 'default'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

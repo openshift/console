@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Badge } from '@patternfly/react-core';
 
 const NotificationCategory: React.FC<NotificationCategoryProps> = ({
@@ -10,7 +10,7 @@ const NotificationCategory: React.FC<NotificationCategoryProps> = ({
   onExpandContents,
 }) => (
   <section
-    className={classNames('query-pf-c-notification-drawer__group', {
+    className={classnames('query-pf-c-notification-drawer__group', {
       'pf-m-expanded': isExpanded,
     })}
   >
@@ -25,7 +25,7 @@ const NotificationCategory: React.FC<NotificationCategoryProps> = ({
       </div>
       <span className="pf-c-notification-drawer__group-toggle-icon">
         <i
-          className={classNames({
+          className={classnames({
             'fas fa-angle-down': isExpanded,
             'fas fa-angle-right': !isExpanded,
           })}

@@ -9,7 +9,7 @@ import {
   WizardContextType,
 } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
@@ -115,7 +115,7 @@ const Footer: React.FC<FooterProps> = ({
   }
   return (
     <div
-      className={classNames({
+      className={classnames({
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'kv-create-vm__footer': isSelectTemplate,
       })}

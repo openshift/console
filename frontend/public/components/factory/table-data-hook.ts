@@ -12,11 +12,7 @@ import { RootState } from '../../redux';
 import { tableFilters } from './table-filters';
 import { Filter } from './table';
 
-export const getFilteredRows = <D = any>(
-  filters: Filter[],
-  rowFilters: RowFilter[],
-  objects: D[],
-) => {
+export const getFilteredRows = (filters: Filter[], rowFilters: RowFilter[], objects: any[]) => {
   if (_.isEmpty(filters)) {
     return objects;
   }
@@ -87,12 +83,10 @@ export const useTableData = ({
     initCustomData,
   ]);
 
+  const compareFunction = (oldSortState, newSortState) => oldSortState === newSortState;
+
   const tableSelectorCreator = React.useMemo(
-    () =>
-      createSelectorCreator(
-        defaultMemoize as any,
-        (oldSortState, newSortState) => oldSortState === newSortState,
-      ),
+    () => createSelectorCreator(defaultMemoize, compareFunction),
     [],
   );
 

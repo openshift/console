@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
@@ -74,7 +74,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
       isRequired,
       t,
     } = this.props;
-    const klass = classNames('co-file-dropzone-container', {
+    const klass = classnames('co-file-dropzone-container', {
       'co-file-dropzone--drop-over': isOver,
     });
     return connectDropTarget(
@@ -87,7 +87,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
 
         <div className="form-group">
           <label
-            className={classNames('control-label', { 'co-required': isRequired })}
+            className={classnames('control-label', { 'co-required': isRequired })}
             htmlFor={id}
           >
             {this.props.label}

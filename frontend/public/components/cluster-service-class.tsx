@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
@@ -79,7 +79,7 @@ const ClusterServiceClassTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = 
         </Link>
       </TableData>
       <TableData className={tableColumnClasses[1]}>{serviceClass.spec.externalName}</TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[2], 'co-break-word')}>
         <ResourceLink
           kind={referenceForModel(ClusterServiceBrokerModel)}
           name={serviceClass.spec.clusterServiceBrokerName}

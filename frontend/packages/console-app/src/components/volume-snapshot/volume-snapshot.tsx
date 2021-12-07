@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
@@ -36,12 +36,12 @@ const menuActions = [RestorePVC, ...common];
 const tableColumnClasses = [
   '', // Name
   '', // Namespace
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // Status
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // Size
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // PVC
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Snapshot Content
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Snapshot Class
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Created At
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'), // Status
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'), // Size
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'), // PVC
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Snapshot Content
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Snapshot Class
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Created At
   Kebab.columnClass,
 ];
 

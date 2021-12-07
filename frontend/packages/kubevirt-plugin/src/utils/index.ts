@@ -302,7 +302,7 @@ export const alignWithDNS1123 = (str) => {
     .split('');
 
   const firstValidCharIndex = chars.findIndex((c) => c.match(alphanumericRegex));
-  const lastValidCharIndex = _.findLastIndex(chars, (c: string) => c.match(alphanumericRegex));
+  const lastValidCharIndex = _.findLastIndex(chars, (c: string) => /[a-zA-Z0-9]/.test(c));
 
   if (firstValidCharIndex < 0) {
     return '';

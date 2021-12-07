@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { compose } from 'redux';
 import { Title, Flex, FlexItem, Button, FormGroup, Form, Alert } from '@patternfly/react-core';
@@ -31,9 +31,9 @@ import './_backingstore-table.scss';
 
 const tableColumnClasses = [
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
 ];
 
 const getRows: GetRows = (rowProps, selectedItems) => {
@@ -178,7 +178,7 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
   return (
     <>
       <Form
-        className={classNames('nb-bc-step-page-form', {
+        className={classnames('nb-bc-step-page-form', {
           'nb-bc-step-page-form--margin': !!tier2Policy,
         })}
       >

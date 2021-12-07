@@ -7,7 +7,7 @@ import {
   ButtonVariant,
   Spinner,
 } from '@patternfly/react-core';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import './modal-footer.scss';
@@ -95,7 +95,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   }, []);
   return (
     <footer
-      className={classNames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
+      className={classnames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
     >
       {warningMessage && isSimpleError && (
         <ModalSimpleMessage message={warningMessage} variant="warning" />

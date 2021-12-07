@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
@@ -50,7 +50,7 @@ const ClusterServicePlanTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = (
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>{servicePlan.spec.externalName}</TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[2], 'co-break-word')}>
         <ResourceLink
           kind={referenceForModel(ClusterServiceBrokerModel)}
           name={servicePlan.spec.clusterServiceBrokerName}

@@ -558,9 +558,9 @@ export type AlertmanagerReceiver = {
 };
 
 export type AlertmanagerConfig = {
-  global: { [key: string]: string };
-  route: AlertmanagerRoute;
-  receivers: AlertmanagerReceiver[];
+  global?: { [key: string]: string };
+  route?: AlertmanagerRoute;
+  receivers?: AlertmanagerReceiver[];
 };
 
 type RoutingLabelProps = {

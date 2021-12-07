@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
 import { errorModal } from '@console/internal/components/modals/error-modal';
@@ -84,7 +84,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   return (
     <div ref={fullscreenRef} className="odc-multi-stream-logs">
       <Flex
-        className={classNames({
+        className={classnames({
           'odc-multi-stream-logs--fullscreen': isFullscreen,
         })}
       >

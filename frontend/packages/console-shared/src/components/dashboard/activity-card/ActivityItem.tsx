@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { ActivityItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export const ActivityProgress: React.FC<ActivityProgressProps> = ({
@@ -22,7 +22,7 @@ export const ActivityProgress: React.FC<ActivityProgressProps> = ({
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ children, className }) => (
   <>
-    <div className={classNames('co-activity-item', className)}>
+    <div className={classnames('co-activity-item', className)}>
       <InProgressIcon className="co-dashboard-icon co-activity-item__icon" />
       {children}
     </div>

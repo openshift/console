@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash-es';
 import {
   ActionGroup,
@@ -16,6 +16,7 @@ import {
   ChartLineIcon,
   CompressIcon,
 } from '@patternfly/react-icons';
+/* eslint-disable import/named */
 import {
   ISortBy,
   sortable,
@@ -336,7 +337,7 @@ const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
     <div className="query-browser__series-btn-wrap">
       <Button
         aria-label={title}
-        className={classNames('query-browser__series-btn', {
+        className={classnames('query-browser__series-btn', {
           'query-browser__series-btn--disabled': isDisabled,
         })}
         onClick={toggleSeries}
@@ -793,7 +794,7 @@ const Query: React.FC<{ index: number }> = ({ index }) => {
 
   return (
     <div
-      className={classNames('query-browser__table', {
+      className={classnames('query-browser__table', {
         'query-browser__table--expanded': isExpanded,
       })}
     >

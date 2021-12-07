@@ -4,7 +4,7 @@ import {
   ChartDonutUtilization,
   ChartThemeColor,
 } from '@patternfly/react-charts';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
@@ -48,7 +48,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
     x ? `${x} ${usedLabelText}` : `${y} ${remainderLabel || t('available')}`;
   return (
     <PrometheusGraph
-      className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
+      className={classnames('graph-wrapper--title-center graph-wrapper--gauge', className)}
       ref={ref}
       title={title}
     >

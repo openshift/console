@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
@@ -96,11 +96,11 @@ const getQuery = (name) => {
 const tableColumnClasses = [
   '', // name
   '', // namespace
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // status
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // used capacity
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'), // status
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // used capacity
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
   Kebab.columnClass,
 ];
 
@@ -122,7 +122,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
         <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
         <ResourceLink kind="Namespace" name={namespace} title={namespace} />
@@ -145,7 +145,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
         {totalCapacityMetric ? totalCapcityHumanized.string : '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>{metrics ? usedCapacity.string : '-'}</TableData>
-      <TableData className={classNames(tableColumnClasses[6])}>
+      <TableData className={classnames(tableColumnClasses[6])}>
         {obj?.spec?.storageClassName ? (
           <ResourceLink
             kind="StorageClass"

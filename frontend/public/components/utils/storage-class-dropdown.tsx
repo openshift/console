@@ -6,7 +6,7 @@ import { WithTranslation, withTranslation } from 'react-i18next';
 
 import { Firehose, LoadingInline, Dropdown, ResourceName, ResourceIcon } from '.';
 import { isDefaultClass } from '../storage-class';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 /* Component StorageClassDropdown - creates a dropdown list of storage classes */
 
@@ -159,7 +159,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
         {loaded && itemsAvailableToShow && (
           <div>
             <label
-              className={classNames('control-label', this.props.hideClassName, {
+              className={classnames('control-label', this.props.hideClassName, {
                 'co-required': this.props.required,
               })}
               htmlFor={id}

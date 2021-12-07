@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import {
   Breadcrumb,

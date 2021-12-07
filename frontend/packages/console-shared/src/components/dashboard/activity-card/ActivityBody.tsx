@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Accordion, Button } from '@patternfly/react-core';
 import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -213,7 +213,7 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
 };
 
 const ActivityBody: React.FC<ActivityBodyProps> = ({ children, className }) => (
-  <div className={classNames('co-activity-card__body', className)} id="activity-body">
+  <div className={classnames('co-activity-card__body', className)} id="activity-body">
     {children}
   </div>
 );

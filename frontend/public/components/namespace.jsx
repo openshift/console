@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -653,6 +653,41 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
           <span className="co-resource-item">
             <ResourceLink kind="Project" name={project.metadata.name} />
           </span>
+<<<<<<< HEAD
+=======
+        </TableData>
+        <TableData
+          className={namespaceColumnInfo.status.classes}
+          columns={columns}
+          columnID={namespaceColumnInfo.status.id}
+        >
+          <Status status={project.status.phase} />
+        </TableData>
+        <TableData
+          className={classnames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+          columns={columns}
+          columnID={namespaceColumnInfo.requester.id}
+        >
+          {requester || <span className="text-muted">{t('public~No requester')}</span>}
+        </TableData>
+        {showMetrics && (
+          <>
+            <TableData
+              className={namespaceColumnInfo.memory.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.memory.id}
+            >
+              {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+            </TableData>
+            <TableData
+              className={namespaceColumnInfo.cpu.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.cpu.id}
+            >
+              {cores ? t('public~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
+            </TableData>
+          </>
+>>>>>>> Fix new TS build errors
         )}
       </TableData>
       <TableData
@@ -1004,7 +1039,7 @@ export const NamespaceSummary = ({ ns }) => {
         <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
           <dt>{t('public~Display name')}</dt>
           <dd
-            className={classNames({
+            className={classnames({
               'text-muted': !displayName,
             })}
           >
@@ -1013,7 +1048,7 @@ export const NamespaceSummary = ({ ns }) => {
           <dt>{t('public~Description')}</dt>
           <dd>
             <p
-              className={classNames({
+              className={classnames({
                 'text-muted': !description,
                 'co-pre-wrap': description,
                 'co-namespace-summary__description': description,

@@ -7,7 +7,7 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { showKind, useDisplayFilters, useSearchFilter } from '../../filters';
 import { ApplicationModel } from '../../models';
@@ -69,7 +69,7 @@ const TopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> = ({
       </DataListCell>,
     );
   }
-  const className = classNames('odc-topology-list-view__application-row', {
+  const className = classnames('odc-topology-list-view__application-row', {
     'is-filtered': filtered,
   });
   return (

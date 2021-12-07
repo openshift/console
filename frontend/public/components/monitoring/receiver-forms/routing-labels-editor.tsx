@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { MinusCircleIcon, PlusCircleIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { Button, Tooltip } from '@patternfly/react-core';
@@ -145,7 +145,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
               <div className="row">
                 <div className="col-xs-6 pairs-list__name-field">
                   <div
-                    className={classNames('form-group', {
+                    className={classnames('form-group', {
                       'has-error': hasLabelNameError,
                     })}
                   >
@@ -210,7 +210,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
         );
       })}
       <div
-        className={classNames(
+        className={classnames(
           'form-group',
           {
             'has-error': formValues.routeLabelDuplicateNamesError,

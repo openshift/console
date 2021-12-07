@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import {
   getName,
   getNodeRoles,
@@ -20,11 +20,11 @@ import { GetRows, NodeTableProps } from '../../types';
 import './ocs-install.scss';
 
 const tableColumnClasses = [
-  classNames('pf-u-w-33-on-md', 'pf-u-w-50-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
-  classNames('pf-u-w-inherit'),
+  classnames('pf-u-w-33-on-md', 'pf-u-w-50-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
+  classnames('pf-u-w-inherit'),
 ];
 
 // Same columns are used for attached devices mode tables

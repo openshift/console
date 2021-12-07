@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
+/* eslint-disable import/named */
 import { History, Location } from 'history';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
@@ -194,36 +195,38 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => {
-  const { t } = useTranslation();
-  basePath = basePath.replace(/\/$/, '');
+export const NavBar = withRouter<NavBarProps, React.FunctionComponent<NavBarProps>>(
+  ({ pages, baseURL, basePath }) => {
+    const { t } = useTranslation();
+    basePath = basePath.replace(/\/$/, '');
 
-  const tabs = (
-    <>
-      {pages.map(({ name, nameKey, href, path }) => {
-        const matchURL = matchPath(location.pathname, {
-          path: `${basePath}/${path || href}`,
-          exact: true,
-        });
-        const klass = classNames('co-m-horizontal-nav__menu-item', {
-          'co-m-horizontal-nav-item--active': matchURL?.isExact,
-        });
-        return (
-          <li className={klass} key={href}>
-            <Link
-              to={`${baseURL.replace(/\/$/, '')}/${href}`}
-              data-test-id={`horizontal-link-${nameKey || name}`}
-            >
-              {nameKey ? t(nameKey) : name}
-            </Link>
-          </li>
-        );
-      })}
-    </>
-  );
+    const tabs = (
+      <>
+        {pages.map(({ name, nameKey, href, path }) => {
+          const matchURL = matchPath(location.pathname, {
+            path: `${basePath}/${path || href}`,
+            exact: true,
+          });
+          const klass = classnames('co-m-horizontal-nav__menu-item', {
+            'co-m-horizontal-nav-item--active': matchURL?.isExact,
+          });
+          return (
+            <li className={klass} key={href}>
+              <Link
+                to={`${baseURL.replace(/\/$/, '')}/${href}`}
+                data-test-id={`horizontal-link-${nameKey || name}`}
+              >
+                {nameKey ? t(nameKey) : name}
+              </Link>
+            </li>
+          );
+        })}
+      </>
+    );
 
-  return <ul className="co-m-horizontal-nav__menu">{tabs}</ul>;
-});
+    return <ul className="co-m-horizontal-nav__menu">{tabs}</ul>;
+  },
+);
 NavBar.displayName = 'NavBar';
 
 export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
@@ -341,7 +344,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   }
 
   return (
-    <div className={classNames('co-m-page__body', props.className)}>
+    <div className={classnames('co-m-page__body', props.className)}>
       <div className="co-m-horizontal-nav">
         {!props.hideNav && (
           <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />
@@ -356,13 +359,14 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
  *Component consumed by the dynamic plugin SDK
  * Changes to the underlying component has to support props used in this facade
  */
-export const HorizontalNavFacade = withRouter<HorizontalNavFacadeProps & RouteComponentProps>(
-  ({ resource, pages, match }) => {
-    const obj = { data: resource, loaded: true };
+export const HorizontalNavFacade = withRouter<
+  HorizontalNavFacadeProps & RouteComponentProps,
+  React.FunctionComponent<HorizontalNavFacadeProps & RouteComponentProps>
+>(({ resource, pages, match }) => {
+  const obj = { data: resource, loaded: true };
 
-    return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
-  },
-);
+  return <HorizontalNav obj={obj} pages={pages} match={match} noStatusBox />;
+});
 
 export type PodsComponentProps = {
   obj: K8sResourceKind;

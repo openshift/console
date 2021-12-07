@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import './CloseButton.scss';
 
@@ -22,7 +22,7 @@ const CloseButton: React.FC<CloseButtonProps> = ({
   return (
     <Button
       aria-label={ariaLabel || t('public~Close')}
-      className={classNames('co-close-button', additionalClassName)}
+      className={classnames('co-close-button', additionalClassName)}
       data-test-id={dataTestID}
       onClick={onClick}
       variant="plain"

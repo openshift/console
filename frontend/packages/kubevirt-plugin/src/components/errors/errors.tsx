@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, AlertVariant, ExpandableSection } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import './errors.scss';
@@ -30,7 +30,7 @@ export const Errors: React.FC<ErrorsProps> = ({ errors, endMargin }) => {
               key={key || idx}
               variant={variant || AlertVariant.danger}
               title={title}
-              className={classNames({
+              className={classnames({
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'kubevirt-errors__error-group--item': idx !== arr.length - 1,
                 // eslint-disable-next-line @typescript-eslint/naming-convention

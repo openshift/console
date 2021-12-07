@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -67,7 +67,7 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = ({ obj, clas
   const csv = data && owner ? matchOwnerAndCSV(owner, data) : undefined;
 
   return owner && csv ? (
-    <div className={classNames('co-m-pane__heading-owner', className)}>
+    <div className={classnames('co-m-pane__heading-owner', className)}>
       {t('public~Managed by')}{' '}
       <ManagedByOperatorResourceLink
         className="co-resource-item"

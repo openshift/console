@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import {
@@ -250,7 +250,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
           y={center.y - TOOLTIP_MAX_HEIGHT / 2}
         >
           <div
-            className={classNames('query-browser__tooltip-wrap', {
+            className={classnames('query-browser__tooltip-wrap', {
               'query-browser__tooltip-wrap--left': isOnLeft,
             })}
           >
@@ -860,7 +860,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   return (
     <div
-      className={classNames('query-browser__wrapper', wrapperClassName, {
+      className={classnames('query-browser__wrapper', wrapperClassName, {
         'graph-empty-state': isGraphDataEmpty,
         'graph-empty-state__loaded': isGraphDataEmpty && !updating,
       })}
@@ -900,7 +900,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             />
           )}
           <div
-            className={classNames('graph-wrapper graph-wrapper--query-browser', {
+            className={classnames('graph-wrapper graph-wrapper--query-browser', {
               'graph-wrapper--query-browser--with-legend': showLegend && !!formatSeriesTitle,
             })}
           >

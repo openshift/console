@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { FLAGS } from '@console/shared/src/constants';
@@ -227,16 +227,16 @@ const RoleBindingsTableRow = ({ obj: binding }) => {
           className="co-resource-item__resource-name"
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
         <RoleLink binding={binding} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[2], 'co-break-word')}>
         {binding.subject.kind}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         {binding.subject.name}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[4], 'co-break-word')}>
         {binding.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
         ) : (

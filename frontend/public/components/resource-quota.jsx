@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   OutlinedCircleIcon,
@@ -604,7 +604,7 @@ const Details = ({ obj: rq, match }) => {
             <div className="col-sm-4 col-xs-6">{t('public~Resource type')}</div>
             <div className="col-sm-2 hidden-xs">{t('public~Capacity')}</div>
             <div
-              className={classNames(
+              className={classnames(
                 { 'col-sm-2 col-xs-2': isACRQ },
                 { 'col-sm-3 col-xs-3': !isACRQ },
               )}
@@ -613,7 +613,7 @@ const Details = ({ obj: rq, match }) => {
             </div>
             {isACRQ && <div className="col-sm-2 col-xs-2">{t('public~Total used')}</div>}
             <div
-              className={classNames(
+              className={classnames(
                 { 'col-sm-2 col-xs-2': isACRQ },
                 { 'col-sm-3 col-xs-3': !isACRQ },
               )}
@@ -651,7 +651,7 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
         />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
         {rq.metadata.namespace ? (
@@ -660,13 +660,13 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
           t('public~None')
         )}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[2], 'co-break-word')}>
         <LabelList
           kind={appliedClusterQuotaReference}
           labels={rq.spec?.selector?.labels?.matchLabels}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
@@ -696,13 +696,13 @@ const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
           className="co-resource-item__resource-name"
         />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(acrqTableColumnClasses[1], 'co-break-word')}>
         <LabelList
           kind={appliedClusterQuotaReference}
           labels={rq.spec?.selector?.labels?.matchLabels}
         />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(acrqTableColumnClasses[2], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
       <TableData className={acrqTableColumnClasses[3]}>

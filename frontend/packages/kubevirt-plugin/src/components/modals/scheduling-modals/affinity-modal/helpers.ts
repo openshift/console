@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { Kebab } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
@@ -32,11 +32,11 @@ export const defaultNewAffinity = {
 } as AffinityRowData;
 
 export const columnClasses = [
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-c-table__action', Kebab.columnClass),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-c-table__action', Kebab.columnClass),
 ];
 
 const setIDsToEntity = (entity: any[]) => entity?.map((elm, i) => ({ ...elm, id: i }));

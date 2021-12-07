@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { TableData, Table, ListPage, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
@@ -10,8 +10,8 @@ import { getAnnotations } from '@console/shared';
 
 const tableColumnClasses = [
   '', // name
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'), // Driver
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'), // Deletion Policy
+  classnames('pf-m-hidden', 'pf-m-visible-on-md'), // Driver
+  classnames('pf-m-hidden', 'pf-m-visible-on-md'), // Deletion Policy
   Kebab.columnClass,
 ];
 const defaultSnapshotClassAnnotation: string = 'snapshot.storage.kubernetes.io/is-default-class';

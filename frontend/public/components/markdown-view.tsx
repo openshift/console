@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
@@ -156,7 +156,7 @@ const InlineMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
 }) => {
   const id = React.useMemo(() => _.uniqueId('markdown'), []);
   return (
-    <div className={cx('co-markdown-view', { ['is-empty']: isEmpty })} id={id}>
+    <div className={classnames('co-markdown-view', { ['is-empty']: isEmpty })} id={id}>
       <div dangerouslySetInnerHTML={{ __html: markup }} />
       <RenderExtension renderExtension={renderExtension} selector={`#${id}`} markup={markup} />
     </div>

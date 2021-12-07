@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as React from 'react';
@@ -50,13 +50,13 @@ const OBCTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2])}>
+      <TableData className={classnames(tableColumnClasses[2])}>
         <OBCStatus obc={obj} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3])}>
+      <TableData className={classnames(tableColumnClasses[3])}>
         {isBound(obj) ? (
           <ResourceLink kind="Secret" name={obj.metadata.name} namespace={obj.metadata.namespace} />
         ) : (

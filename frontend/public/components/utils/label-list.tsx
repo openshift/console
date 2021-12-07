@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { withTranslation, WithTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ import { K8sResourceKindReference, kindForReference } from '../../module/k8s';
 
 export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
   const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
-  const klass = classNames('co-m-label', { 'co-m-label--expand': expand });
+  const klass = classnames('co-m-label', { 'co-m-label--expand': expand });
 
   return (
     <Link className={`co-text-${kindForReference(kind.toLowerCase())}`} to={href}>

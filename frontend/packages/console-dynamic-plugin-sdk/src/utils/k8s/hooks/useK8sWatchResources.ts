@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
@@ -118,17 +118,23 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     };
   }, [dispatch, reduxIDs]);
 
+  const compareFunction = (
+    oldK8s: ImmutableMap<string, K8sModel>,
+    newK8s: ImmutableMap<string, K8sModel>,
+  ) =>
+    Object.keys(reduxIDs || {})
+      .filter((k) => !reduxIDs[k].noModel)
+      .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id));
+
   const resourceK8sSelectorCreator = React.useMemo(
     () =>
       createSelectorCreator(
         // specifying createSelectorCreator<ImmutableMap<string, K8sKind>> throws type error
-        defaultMemoize as any,
-        (oldK8s: ImmutableMap<string, K8sModel>, newK8s: ImmutableMap<string, K8sModel>) =>
-          Object.keys(reduxIDs || {})
-            .filter((k) => !reduxIDs[k].noModel)
-            .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id)),
+        defaultMemoize,
+        compareFunction,
       ),
-    [reduxIDs],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [reduxIDs, compareFunction],
   );
 
   const resourceK8sSelector = React.useMemo(

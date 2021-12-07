@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert, AlertVariant } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -67,7 +67,7 @@ const DeploymentProgressing: React.FC<DeploymentProgressingProps> = ({
   return (
     <span id={id} className="co-icon-and-text">
       {React.cloneElement(icon, {
-        className: classNames(
+        className: classnames(
           'fa-spin co-icon-and-text__icon co-icon-flex-child',
           icon.props.className,
         ),

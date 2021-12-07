@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import {
@@ -11,7 +11,7 @@ import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 export const Box: React.FC<BoxProps> = ({ children, className }) => (
-  <div className={classNames('cos-status-box', className)}>{children}</div>
+  <div className={classnames('cos-status-box', className)}>{children}</div>
 );
 
 export const LoadError: React.FC<LoadErrorProps> = ({
@@ -54,7 +54,7 @@ LoadError.displayName = 'LoadError';
 
 export const Loading: React.FC<LoadingProps> = ({ className }) => (
   <div
-    className={classNames('co-m-loader co-an-fade-in-out', className)}
+    className={classnames('co-m-loader co-an-fade-in-out', className)}
     data-test="loading-indicator"
   >
     <div className="co-m-loader-dot__one" />
@@ -68,7 +68,7 @@ export const LoadingInline: React.FC<{}> = () => <Loading className="co-m-loader
 LoadingInline.displayName = 'LoadingInline';
 
 export const LoadingBox: React.FC<LoadingBoxProps> = ({ className, message }) => (
-  <Box className={classNames('cos-status-box--loading', className)}>
+  <Box className={classnames('cos-status-box--loading', className)}>
     <Loading />
     {message && <div className="cos-status-box__loading-message">{message}</div>}
   </Box>

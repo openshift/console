@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 import { K8sResourceKind, TemplateKind, PartialObjectMetadata } from '../../module/k8s';
 import * as threeScaleImg from '../../imgs/logos/3scale.svg';
@@ -258,7 +258,7 @@ export const ClusterServiceClassIcon: React.FC<ClusterServiceClassIconProps> = (
     <span className="co-catalog-item-icon" aria-hidden>
       {imageUrl ? (
         <img
-          className={classNames(
+          className={classnames(
             'co-catalog-item-icon__img',
             iconSize && `co-catalog-item-icon__img--${iconSize}`,
           )}
@@ -267,7 +267,7 @@ export const ClusterServiceClassIcon: React.FC<ClusterServiceClassIconProps> = (
         />
       ) : (
         <span
-          className={classNames(
+          className={classnames(
             'co-catalog-item-icon__icon',
             iconSize && `co-catalog-item-icon__icon--${iconSize}`,
             normalizeIconClass(iconClass),
@@ -292,7 +292,7 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
     <span className="co-catalog-item-icon" aria-hidden>
       {iconClassImg ? (
         <img
-          className={classNames(
+          className={classnames(
             'co-catalog-item-icon__img',
             iconSize && `co-catalog-item-icon__img--${iconSize}`,
           )}
@@ -301,7 +301,7 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
         />
       ) : (
         <span
-          className={classNames(
+          className={classnames(
             'co-catalog-item-icon__icon',
             iconSize && `co-catalog-item-icon__icon--${iconSize}`,
             normalizeIconClass(iconClass),

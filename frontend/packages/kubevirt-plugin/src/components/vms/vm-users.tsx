@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { RowFunctionArgs, Table, TableData } from '@console/internal/components/factory';
@@ -47,7 +47,7 @@ const UsersTableRow: React.FC<RowFunctionArgs> = ({ obj: user }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>{user?.metadata?.userName}</TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
         {user?.metadata?.domain}
       </TableData>
       <TableData className={tableColumnClasses[2]}>

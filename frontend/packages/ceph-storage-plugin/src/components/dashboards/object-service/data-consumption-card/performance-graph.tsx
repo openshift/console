@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -66,7 +66,7 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
         </div>
         <PrometheusGraph
           ref={containerRef}
-          className={classNames({
+          className={classnames({
             // eslint-disable-next-line @typescript-eslint/naming-convention
             'nb-perf__graph--short': metricType === Metrics.LATENCY,
             // eslint-disable-next-line @typescript-eslint/naming-convention

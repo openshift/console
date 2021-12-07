@@ -22,7 +22,7 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import { createProjectModal } from '@console/internal/components/modals';

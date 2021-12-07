@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChartLabel } from '@patternfly/react-charts';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import i18next, { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
@@ -100,7 +100,7 @@ const getTitleComponent = (
   longSubtitle: boolean = false,
   reversed: boolean = false,
 ) => {
-  const labelClasses = classNames('pf-chart-donut-title', {
+  const labelClasses = classnames('pf-chart-donut-title', {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     'pod-ring__center-text--reversed': reversed,
     // eslint-disable-next-line @typescript-eslint/naming-convention

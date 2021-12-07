@@ -12,7 +12,7 @@ import {
   useCombineRefs,
   useSize,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
@@ -60,7 +60,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
       ref={refs}
       onClick={onSelect}
       onContextMenu={editAccess ? onContextMenu : null}
-      className={classNames('odc-helm-release', {
+      className={classnames('odc-helm-release', {
         'is-dragging': dragging,
         'is-selected': selected,
         'is-filtered': filtered,

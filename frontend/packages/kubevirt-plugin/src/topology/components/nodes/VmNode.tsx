@@ -16,7 +16,7 @@ import {
   WithDragNodeProps,
   WithSelectionProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
@@ -182,7 +182,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
         animationDuration={0}
       >
         <g
-          className={classNames('odc-base-node kubevirt-vm-node', statusClass, {
+          className={classnames('odc-base-node kubevirt-vm-node', statusClass, {
             'is-hover': hover || contextMenuOpen,
             'is-highlight': canDrop,
             'is-dragging': dragging || edgeDragging,

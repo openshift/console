@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { sortable, wrappable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
@@ -119,10 +119,10 @@ const isPackageServer = (obj) =>
 
 const nameColumnClass = '';
 const namespaceColumnClass = '';
-const managedNamespacesColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-sm');
-const statusColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-lg');
-const lastUpdatedColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-2xl');
-const providedAPIsColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-xl');
+const managedNamespacesColumnClass = classnames('pf-m-hidden', 'pf-m-visible-on-sm');
+const statusColumnClass = classnames('pf-m-hidden', 'pf-m-visible-on-lg');
+const lastUpdatedColumnClass = classnames('pf-m-hidden', 'pf-m-visible-on-2xl');
+const providedAPIsColumnClass = classnames('pf-m-hidden', 'pf-m-visible-on-xl');
 
 const editSubscription = (sub: SubscriptionKind): KebabOption =>
   !_.isNil(sub)

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, TextArea, TextInput } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '@console/internal/components/utils';
 import { ELEMENT_TYPES, networkTypeParams, NetworkTypeParams } from '../../constants';
@@ -65,7 +65,7 @@ const NetworkTypeOptions = (props) => {
         children = (
           <div className="kv-nad-form-field--spacer">
             <label
-              className={classNames('control-label', {
+              className={classnames('control-label', {
                 'co-required': parameter.required,
               })}
               id={`network-type-params-${key}-label`}
@@ -126,7 +126,7 @@ const NetworkTypeOptions = (props) => {
         children = (
           <div className="kv-nad-form-field--spacer">
             <label
-              className={classNames('control-label', { 'co-required': parameter.required })}
+              className={classnames('control-label', { 'co-required': parameter.required })}
               id={`network-type-params-${key}-label`}
             >
               {name}
@@ -159,7 +159,7 @@ const NetworkTypeOptions = (props) => {
         children = (
           <div className="kv-nad-form-field--spacer">
             <label
-              className={classNames('control-label', {
+              className={classnames('control-label', {
                 'co-required': parameter.required,
               })}
               id={`network-type-params-${key}-label`}

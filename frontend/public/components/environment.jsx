@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Trans, withTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
@@ -552,7 +552,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
             <div className="co-toolbar__item">{containerDropdown}</div>
           </div>
         )}
-        <div className={classNames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
+        <div className={classnames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
           {!currentEnvVars.isCreate && (
             <h3 className="co-section-heading-tertiary">
               {t('public~Single values (env)')}
@@ -614,7 +614,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     );
 
     return (
-      <div className={classNames({ 'co-m-pane__body': !currentEnvVars.isCreate })}>
+      <div className={classnames({ 'co-m-pane__body': !currentEnvVars.isCreate })}>
         {containerVars}
         {!currentEnvVars.isCreate && (
           <div className="co-m-pane__body-group">

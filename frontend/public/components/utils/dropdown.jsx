@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
@@ -146,7 +146,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
       prefix = (
         <a
           href="#"
-          className={classNames('bookmarker', { hover, focus: selected })}
+          className={classnames('bookmarker', { hover, focus: selected })}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -169,7 +169,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
       suffix = (
         <a
           href="#"
-          className={classNames('bookmarker', { hover, focus: selected })}
+          className={classnames('bookmarker', { hover, focus: selected })}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -181,20 +181,20 @@ class DropDownRowWithTranslation extends React.PureComponent {
               : t('public~Add favorite {{content}}', { content: contentString })
           }
         >
-          <StarIcon className={classNames({ favorite: isFavorite })} />
+          <StarIcon className={classnames({ favorite: isFavorite })} />
         </a>
       );
     }
 
     return (
-      <li role="option" className={classNames(className)} key={itemKey}>
+      <li role="option" className={classnames(className)} key={itemKey}>
         {prefix}
         <a
           href="#"
           ref={this.link}
           id={`${itemKey}-link`}
           data-test="dropdown-menu-item-link"
-          className={classNames('pf-c-dropdown__menu-item', {
+          className={classnames('pf-c-dropdown__menu-item', {
             'next-to-bookmark': !!prefix,
             hover,
             focus: selected,
@@ -338,7 +338,7 @@ class Dropdown_ extends DropdownMixin {
         <>
           {actionItems.map((ai) => (
             <DropDownRow
-              className={classNames({ active: ai.actionKey === selectedKey && !noSelection })}
+              className={classnames({ active: ai.actionKey === selectedKey && !noSelection })}
               key={`${ai.actionKey}-${ai.actionTitle}`}
               itemKey={ai.actionKey}
               content={ai.actionTitle}
@@ -384,7 +384,7 @@ class Dropdown_ extends DropdownMixin {
     const addItem = (key, content) => {
       const selected = key === selectedKey && !this.props.noSelection;
       const hover = key === keyboardHoverKey;
-      const klass = classNames({ active: selected });
+      const klass = classnames({ active: selected });
       if (storageKey && bookmarks && bookmarks[key]) {
         bookMarkRows.push(
           <DropDownRow
@@ -440,7 +440,7 @@ class Dropdown_ extends DropdownMixin {
       return (
         <div className={className} ref={this.dropdownElement} style={this.props.style}>
           <div
-            className={classNames(
+            className={classnames(
               'pf-c-dropdown',
               { 'pf-m-expanded': this.state.active },
               dropDownClassName,
@@ -452,7 +452,7 @@ class Dropdown_ extends DropdownMixin {
               onClick={this.toggle}
               onKeyDown={this.onKeyDown}
               type="button"
-              className={classNames('pf-c-dropdown__toggle', buttonClassName)}
+              className={classnames('pf-c-dropdown__toggle', buttonClassName)}
               id={this.props.id}
               aria-describedby={describedBy}
               disabled={disabled}
@@ -470,7 +470,7 @@ class Dropdown_ extends DropdownMixin {
               <ul
                 role="listbox"
                 ref={this.dropdownList}
-                className={classNames(
+                className={classnames(
                   'dropdown-menu__autocomplete-filter',
                   'pf-c-dropdown__menu',
                   menuClassName,
@@ -512,7 +512,7 @@ class Dropdown_ extends DropdownMixin {
     return (
       <div className={className} ref={this.dropdownElement} style={this.props.style}>
         <div
-          className={classNames(
+          className={classnames(
             { 'pf-c-dropdown': true, 'pf-m-expanded': this.state.active },
             dropDownClassName,
           )}
@@ -521,7 +521,7 @@ class Dropdown_ extends DropdownMixin {
             aria-label={ariaLabel}
             aria-haspopup="true"
             aria-expanded={this.state.active}
-            className={classNames('pf-c-dropdown__toggle', buttonClassName)}
+            className={classnames('pf-c-dropdown__toggle', buttonClassName)}
             data-test-id="dropdown-button"
             onClick={this.toggle}
             onKeyDown={this.onKeyDown}
@@ -540,7 +540,7 @@ class Dropdown_ extends DropdownMixin {
           {active && (
             <ul
               ref={this.dropdownList}
-              className={classNames('pf-c-dropdown__menu', menuClassName)}
+              className={classnames('pf-c-dropdown__menu', menuClassName)}
             >
               {rows}
             </ul>
@@ -650,7 +650,7 @@ class ActionsMenuDropdown_ extends DropdownMixin {
     return (
       <div
         ref={this.dropdownElement}
-        className={classNames({
+        className={classnames({
           'co-actions-menu pf-c-dropdown': true,
           'pf-m-expanded': this.state.active,
         })}

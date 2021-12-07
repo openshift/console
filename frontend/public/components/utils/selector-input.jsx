@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as TagsInput from 'react-tagsinput';
 
 import { split, selectorFromString } from '../../module/k8s/selector';
@@ -95,7 +95,7 @@ export class SelectorInput extends React.Component {
 
     const inputProps = {
       autoFocus: this.props.autoFocus,
-      className: classNames('input', { 'invalid-tag': !isInputValid }),
+      className: classnames('input', { 'invalid-tag': !isInputValid }),
       onChange: this.handleInputChange.bind(this),
       placeholder: _.isEmpty(tags) ? this.props.placeholder || 'app=frontend' : '',
       spellCheck: 'false',
@@ -107,7 +107,7 @@ export class SelectorInput extends React.Component {
 
     const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => {
       return (
-        <span className={classNames('tag-item', this.props.labelClassName)} key={key}>
+        <span className={classnames('tag-item', this.props.labelClassName)} key={key}>
           <span className="tag-item__content">{getTagDisplayValue(tag)}</span>
           &nbsp;
           <a className="remove-button" onClick={() => onRemove(key)}>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal as PfModal, ModalProps as PfModalProps } from '@patternfly/react-core';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import './Modal.scss';
 
 type ModalProps = {
@@ -11,7 +11,7 @@ type ModalProps = {
 const Modal: React.FC<ModalProps> = ({ isFullScreen = false, className, ...props }) => (
   <PfModal
     {...props}
-    className={cx('ocs-modal', className)}
+    className={classnames('ocs-modal', className)}
     appendTo={() => (isFullScreen ? document.body : document.querySelector('#modal-container'))}
   />
 );

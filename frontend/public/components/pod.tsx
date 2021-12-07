@@ -6,8 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+/* eslint-disable import/named */
 import { TFunction } from 'i18next';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash-es';
 import {
   Button,
@@ -183,12 +184,12 @@ const podColumnInfo = Object.freeze({
     title: 'public~Status',
   },
   ready: {
-    classes: classNames('pf-m-nowrap', 'pf-u-w-10-on-lg', 'pf-u-w-8-on-xl'),
+    classes: classnames('pf-m-nowrap', 'pf-u-w-10-on-lg', 'pf-u-w-8-on-xl'),
     id: 'ready',
     title: 'public~Ready',
   },
   restarts: {
-    classes: classNames('pf-m-nowrap', 'pf-u-w-8-on-2xl'),
+    classes: classnames('pf-m-nowrap', 'pf-u-w-8-on-2xl'),
     id: 'restarts',
     title: 'public~Restarts',
   },
@@ -203,17 +204,17 @@ const podColumnInfo = Object.freeze({
     title: 'public~Node',
   },
   memory: {
-    classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
+    classes: classnames({ 'pf-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
     title: 'public~Memory',
   },
   cpu: {
-    classes: classNames({ 'pf-u-w-10-on-2xl': showMetrics }),
+    classes: classnames({ 'pf-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
     title: 'public~CPU',
   },
   created: {
-    classes: classNames('pf-u-w-10-on-2xl'),
+    classes: classnames('pf-u-w-10-on-2xl'),
     id: 'created',
     title: 'public~Created',
   },
@@ -364,7 +365,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         <ResourceLink kind={kind} name={name} namespace={namespace} />
       </TableData>
       <TableData
-        className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
+        className={classnames(podColumnInfo.namespace.classes, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
         id={podColumnInfo.namespace.id}
       >

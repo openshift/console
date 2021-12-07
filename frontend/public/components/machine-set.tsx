@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
@@ -124,10 +124,10 @@ export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploym
 const tableColumnInfo = [
   { className: '', id: 'name' },
   { className: '', id: 'namespace' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'machines' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'instanceType' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'cpu' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'memory' },
+  { className: classnames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'machines' },
+  { className: classnames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'instanceType' },
+  { className: classnames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'cpu' },
+  { className: classnames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'memory' },
   { className: Kebab.columnClass, id: '' },
 ];
 
@@ -402,7 +402,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
         </TableData>
         <TableData
           {...tableColumnInfo[1]}
-          className={classNames(tableColumnInfo[1].className, 'co-break-word')}
+          className={classnames(tableColumnInfo[1].className, 'co-break-word')}
         >
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         </TableData>

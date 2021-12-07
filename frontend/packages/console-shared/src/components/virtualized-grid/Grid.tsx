@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { Item, GridChildrenProps } from './types';
 import { CellMeasurementContext } from './utils';
@@ -31,7 +31,7 @@ const Grid: React.FC<GridProps> = ({ height, width, scrollTop, items, children }
     <GridComponent
       containerRole="row"
       autoHeight
-      className={classNames('ocs-grid', className)}
+      className={classnames('ocs-grid', className)}
       tabIndex={null}
       height={height ?? 0}
       width={width}

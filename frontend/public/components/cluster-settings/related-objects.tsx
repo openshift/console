@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import '@patternfly/patternfly/patternfly-addons.css';
 import { useTranslation } from 'react-i18next';
@@ -14,8 +14,8 @@ import { ResourceLink, EmptyBox } from '../utils';
 
 const tableColumnClasses = [
   '', // Name
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'), // Resource
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'), // Group
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'), // Resource
+  classnames('pf-m-hidden', 'pf-m-visible-on-md'), // Group
   '', // NS
 ];
 

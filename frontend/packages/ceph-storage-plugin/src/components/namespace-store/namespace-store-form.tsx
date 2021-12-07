@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import * as React from 'react';
 import { ActionGroup, Button, FormGroup, Form, TextInput, Tooltip } from '@patternfly/react-core';
@@ -127,7 +127,7 @@ const NamespaceStoreForm: React.FC<NamespaceStoreFormProps> = withHandlePromise<
 
   return (
     <Form
-      className={classNames('nb-endpoints-form', 'co-m-pane__body', className)}
+      className={classnames('nb-endpoints-form', 'co-m-pane__body', className)}
       onSubmit={onSubmit}
       noValidate={false}
     >

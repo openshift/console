@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import './breakdown-card.scss';
 
 export const TotalCapacityBody: React.FC<TotalCapacityBodyProps> = ({
@@ -8,7 +8,7 @@ export const TotalCapacityBody: React.FC<TotalCapacityBodyProps> = ({
   className,
 }) => {
   return (
-    <p className={classNames('capacity-breakdown-card__capacity-body', className)}>
+    <p className={classnames('capacity-breakdown-card__capacity-body', className)}>
       {capacity} {suffix}
     </p>
   );

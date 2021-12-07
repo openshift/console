@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+/* eslint-disable import/named */
 import { Link, withRouter, RouteComponentProps, match } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
 
 import {
@@ -244,10 +245,10 @@ ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -308,13 +309,13 @@ const ServiceInstancesTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ 
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <StatusWithIcon obj={obj} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         {clusterServiceClassRefName ? (
           <ResourceLink
             kind={referenceForModel(ClusterServiceClassModel)}
@@ -326,10 +327,10 @@ const ServiceInstancesTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ 
           obj.spec.clusterServiceClassExternalName
         )}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[4], 'co-break-word')}>
         {planExternalName(obj) || '-'}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
+      <TableData className={classnames(tableColumnClasses[5], 'co-truncate')}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>

@@ -13,7 +13,7 @@ import {
   WithCreateConnectorProps,
   useSize,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   NodeShadows,
@@ -89,7 +89,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
       ref={refs}
       onContextMenu={onContextMenu}
       onClick={onSelect}
-      className={classNames('odc-knative-service', {
+      className={classnames('odc-knative-service', {
         'is-dragging': dragging,
         'is-highlight': canDrop || edgeDragging,
         'is-selected': selected,

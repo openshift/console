@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
@@ -30,7 +30,7 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
       return;
     }
     try {
-      safeLoad(yaml);
+      load(yaml);
     } catch (e) {
       setErrorMsg(`Error parsing Alertmanager YAML: ${e}`);
       setSuccessMsg('');

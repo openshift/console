@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import * as Modal from 'react-modal';
 import { Router } from 'react-router-dom';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +48,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
             isOpen={true}
             contentLabel={i18next.t('public~Modal')}
             onRequestClose={_handleClose}
-            className={classNames('modal-dialog', props.modalClassName)}
+            className={classnames('modal-dialog', props.modalClassName)}
             overlayClassName="co-overlay"
             shouldCloseOnOverlayClick={!props.blocking}
             parentSelector={() => document.getElementById('modal-container')}

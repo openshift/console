@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
@@ -73,7 +73,7 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
   const { t } = useTranslation();
   return (
     <>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
           {isDefaultClass(obj) && (
             <span className="small text-muted co-resource-item__help-text">
@@ -82,7 +82,7 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
           )}
         </ResourceLink>
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
         {obj.provisioner}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>

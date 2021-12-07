@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Flex, FlexItem, Grid, GridItem, TitleSizes } from '@patternfly/react-core';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared';
 import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../../flags/const';
@@ -109,7 +109,7 @@ export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLo
         <Grid hasGutter className="kv-inventory-card__statuses-grid">
           <GridItem
             span={6}
-            className={classNames({
+            className={classnames({
               // eslint-disable-next-line @typescript-eslint/naming-convention
               'kv-inventory-card__statuses-grid--left-col': numStatuses >= 2,
             })}

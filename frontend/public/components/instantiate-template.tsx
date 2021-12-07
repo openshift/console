@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
@@ -80,7 +80,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
             />
           ) : (
             <span
-              className={classNames(
+              className={classnames(
                 'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
                 normalizeIconClass(iconClass),
               )}
@@ -286,7 +286,7 @@ class TemplateForm_ extends React.Component<
                 return (
                   <div className="form-group" key={name}>
                     <label
-                      className={classNames('control-label', { 'co-required': requiredInput })}
+                      className={classnames('control-label', { 'co-required': requiredInput })}
                       htmlFor={name}
                     >
                       {displayName || name}

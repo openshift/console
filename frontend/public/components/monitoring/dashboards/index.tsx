@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { RedExclamationCircleIcon } from '@console/shared';
@@ -542,7 +542,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
     >
       <PFCard
-        className={classNames('monitoring-dashboards__card', {
+        className={classnames('monitoring-dashboards__card', {
           'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
         })}
         data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}

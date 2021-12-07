@@ -9,7 +9,7 @@ import {
   defaultControlButtonsOptions,
   Visualization,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { COLA_FORCE_LAYOUT, COLA_LAYOUT } from './layouts/layoutFactory';
 
@@ -60,7 +60,7 @@ const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization,
           <Tooltip content={t('topology~Layout 1')}>
             <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
-                className={classNames('pf-topology-control-bar__button', {
+                className={classnames('pf-topology-control-bar__button', {
                   'pf-m-active': layout === COLA_LAYOUT,
                 })}
                 variant="tertiary"
@@ -81,7 +81,7 @@ const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization,
           <Tooltip content={t('topology~Layout 2')}>
             <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
-                className={classNames('pf-topology-control-bar__button', {
+                className={classnames('pf-topology-control-bar__button', {
                   'pf-m-active': layout === COLA_FORCE_LAYOUT,
                 })}
                 variant="tertiary"

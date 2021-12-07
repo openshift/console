@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Button } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ class TogglePlayWithTranslation extends React.Component {
   }
 
   render() {
-    const klass = classNames(
+    const klass = classnames(
       'co-toggle-play fa',
       this.props.className,
       this.props.active ? 'co-toggle-play--active' : 'co-toggle-play--inactive',

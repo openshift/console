@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+/* eslint-disable import/named */
 import { match } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Alert } from '@patternfly/react-core';
 
 import { serviceCatalogStatus, referenceForModel, K8sResourceKind } from '../module/k8s';
@@ -115,9 +116,9 @@ ServiceBindingDetailsPage.displayName = 'ServiceBindingDetailsPage';
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -171,13 +172,13 @@ const ServiceBindingsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ o
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[2], 'co-break-word')}>
         <StatusWithIcon obj={obj} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         <ResourceLink
           kind={referenceForModel(ServiceInstanceModel)}
           name={obj.spec.instanceRef.name}
@@ -185,7 +186,7 @@ const ServiceBindingsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ o
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[4], 'co-break-word')}>
         {secretLink(obj)}
       </TableData>
       <TableData className={tableColumnClasses[5]}>

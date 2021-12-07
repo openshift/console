@@ -226,7 +226,7 @@ const getAnnotatedTriggers = (obj: K8sResourceKind) => {
   }
 };
 
-const getDeploymentPhase = (rc: K8sResourceKind): DEPLOYMENT_PHASE =>
+const getDeploymentPhase = (rc: K8sResourceKind) =>
   _.get(rc, ['metadata', 'annotations', DEPLOYMENT_PHASE_ANNOTATION]);
 
 // Only show an alert once if multiple pods have the same error for the same owner.
@@ -358,7 +358,7 @@ const isDeploymentInProgressOrCompleted = (resource: K8sResourceKind): boolean =
       DEPLOYMENT_PHASE.pending,
       DEPLOYMENT_PHASE.running,
       DEPLOYMENT_PHASE.complete,
-    ].indexOf(getDeploymentPhase(resource)) > -1
+    ].indexOf(DEPLOYMENT_PHASE[getDeploymentPhase(resource)]) > -1
   );
 };
 
@@ -471,7 +471,8 @@ export const getActiveReplicaSets = (
   const ownedRS = getOwnedResources(deployment, replicaSets?.data);
   return _.filter(
     ownedRS,
-    (rs) => _.get(rs, 'status.replicas') || getDeploymentRevision(rs) === currentRevision,
+    (rs) =>
+      _.get(rs, 'status.replicas') !== undefined || getDeploymentRevision(rs) === currentRevision,
   );
 };
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { TableData, ListPage, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import {
@@ -21,11 +21,11 @@ import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const tableColumnClasses = [
   '', // Name
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // Status
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // Size
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Volume Snapshot
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Snapshot Class
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Created At
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'), // Status
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'), // Size
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Volume Snapshot
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Snapshot Class
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Created At
   Kebab.columnClass,
 ];
 

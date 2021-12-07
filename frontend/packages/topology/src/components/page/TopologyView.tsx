@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
 import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -375,7 +375,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
                   >
                     {canDrop && isOver && (
                       <div
-                        className={classNames(
+                        className={classnames(
                           'co-file-dropzone-container',
                           'co-file-dropzone--drop-over',
                           'odc-topology__dropzone',

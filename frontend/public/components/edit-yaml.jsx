@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
+import classnames from 'classnames';
+import { load, loadAll, dump } from 'js-yaml';
 import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
 import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
@@ -40,7 +40,7 @@ import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
 
 const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'default') => {
-  const sampleObj = safeLoad(yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]));
+  const sampleObj = load(yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]));
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
   }
@@ -259,7 +259,7 @@ export const EditYAML_ = connect(stateToProps)(
               yaml = allowMultiple ? this.appendYAMLString(obj) : obj;
             } else {
               try {
-                yaml = safeDump(obj);
+                yaml = dump(obj);
                 this.checkEditAccess(obj);
               } catch (e) {
                 yaml = t('public~Error getting YAML: {{e}}', { e });
@@ -385,7 +385,7 @@ export const EditYAML_ = connect(stateToProps)(
           }
 
           try {
-            obj = safeLoad(this.getEditor().getValue());
+            obj = load(this.getEditor().getValue());
           } catch (e) {
             this.handleError(t('public~Error parsing YAML: {{e}}', { e }));
             return;
@@ -461,7 +461,7 @@ export const EditYAML_ = connect(stateToProps)(
           let hasErrors = false;
           this.setState({ errors: null }, () => {
             try {
-              objs = safeLoadAll(this.getEditor().getValue()).filter((obj) => obj);
+              objs = loadAll(this.getEditor().getValue()).filter((obj) => obj);
             } catch (e) {
               this.handleError(t('public~Error parsing YAML: {{e}}', { e }));
               return;
@@ -567,7 +567,7 @@ export const EditYAML_ = connect(stateToProps)(
             t,
             models,
           } = this.props;
-          const klass = classNames('co-file-dropzone-container', {
+          const klass = classnames('co-file-dropzone-container', {
             'co-file-dropzone--drop-over': isOver,
           });
 
@@ -651,7 +651,7 @@ export const EditYAML_ = connect(stateToProps)(
                 <div className="co-p-has-sidebar">
                   <div className="co-p-has-sidebar__body">
                     <div
-                      className={classNames('yaml-editor', customClass)}
+                      className={classnames('yaml-editor', customClass)}
                       ref={(r) => (this.editor = r)}
                     >
                       <YAMLEditor

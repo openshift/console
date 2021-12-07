@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 type FormBodyProps = {
   children: React.ReactNode;
@@ -20,7 +20,7 @@ const FormBody: React.FC<FormBodyProps & React.HTMLProps<HTMLDivElement>> = ({
   <div
     {...props}
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    className={classNames('pf-c-form', { 'co-m-pane__body': !disablePaneBody }, className)}
+    className={classnames('pf-c-form', { 'co-m-pane__body': !disablePaneBody }, className)}
     style={
       flexLayout
         ? { display: 'flex', flex: 1, flexDirection: 'column', paddingBottom: 0, ...(style ?? {}) }

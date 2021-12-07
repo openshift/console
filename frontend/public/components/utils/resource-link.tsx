@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 import { FLAGS } from '@console/shared/src/constants';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
@@ -91,7 +91,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   const kindReference = groupVersionKind ? getReference(groupVersionKind) : kind;
   const path = resourcePath(kindReference, name, namespace);
   const value = displayName ? displayName : name;
-  const classes = classNames('co-resource-item', className, {
+  const classes = classnames('co-resource-item', className, {
     'co-resource-item--inline': inline,
   });
 

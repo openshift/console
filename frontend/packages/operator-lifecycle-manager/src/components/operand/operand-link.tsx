@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
@@ -22,7 +22,7 @@ export const OperandLink: React.FC<OperandLinkProps> = (props) => {
   const to = namespace
     ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${csvName}/${reference}/${name}`
     : `/k8s/cluster/${reference}/${name}`;
-  const classes = classNames('co-resource-item', {
+  const classes = classnames('co-resource-item', {
     'co-resource-item--inline': props.inline,
   });
 

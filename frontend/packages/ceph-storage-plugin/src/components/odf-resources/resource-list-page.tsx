@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   Kebab,
@@ -35,9 +35,9 @@ import { editBucketClass } from '../bucket-class/modals/edit-backingstore-modal'
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'),
   Kebab.columnClass,
 ];
 
@@ -56,7 +56,7 @@ const Row: React.FC<RowFunctionArgs<K8sResourceCommon, CustomRowData>> = ({
         <ODFResourceLink kind={resourceKind} name={obj?.metadata?.name} />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
         data-test-operand-kind={obj.kind}
       >
         {obj.kind}

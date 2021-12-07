@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu } from '@console/internal/components/utils';
 import { edgeActions } from '../../actions/edgeActions';
@@ -44,7 +44,7 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
         </h1>
       </div>
       <ul
-        className={classNames(
+        className={classnames(
           'co-m-horizontal-nav__menu',
           'co-m-horizontal-nav__menu--within-sidebar',
           'co-m-horizontal-nav__menu--within-overview-sidebar',

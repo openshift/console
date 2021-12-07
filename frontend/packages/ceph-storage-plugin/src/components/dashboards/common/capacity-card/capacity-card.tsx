@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
@@ -155,7 +155,7 @@ const ChartLegend: React.FC<ChartLegendProps> = ({
     <div className="ceph-raw-card-legend__container">
       <div className="ceph-raw-card-legend__index-block">
         <div className="ceph-raw-card-legend__color-square" style={{ backgroundColor: fill }} />
-        <div className={classNames('ceph-raw-card-legend__title', titleClassName)}>{title}</div>
+        <div className={classnames('ceph-raw-card-legend__title', titleClassName)}>{title}</div>
       </div>
       <div className="ceph-raw-card-legend__value-block">
         <div className="ceph-raw-card-legend__text">{text}</div>

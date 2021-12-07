@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import {
   sortable,
   SortByDirection,
@@ -265,7 +265,7 @@ export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsLi
             />
           </span>
         </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <TableData className={classnames(tableColumnClasses[1], 'co-break-word')}>
           {crd.spec.group}
         </TableData>
         <TableData className={tableColumnClasses[2]}>{getLatestVersionForCRD(crd)}</TableData>

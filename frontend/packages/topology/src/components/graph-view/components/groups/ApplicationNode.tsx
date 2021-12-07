@@ -12,7 +12,7 @@ import {
   createSvgIdUrl,
   useSize,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useSearchFilter } from '../../../../filters/useSearchFilter';
 import { ApplicationModel } from '../../../../models';
 import { NodeShadows, NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
@@ -59,7 +59,7 @@ const ApplicationNode: React.FC<ApplicationGroupProps> = ({
       ref={refs}
       onContextMenu={onContextMenu}
       onClick={onSelect}
-      className={classNames('odc-application-group', {
+      className={classnames('odc-application-group', {
         'is-highlight': canDrop,
         'is-dragging': dragging,
         'is-selected': selected,

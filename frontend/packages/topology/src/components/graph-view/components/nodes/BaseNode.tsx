@@ -13,7 +13,7 @@ import {
   observer,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
@@ -104,7 +104,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
 
   return (
     <g
-      className={classNames('odc-base-node', className, {
+      className={classnames('odc-base-node', className, {
         'is-hover': hover || contextMenuOpen,
         'is-highlight': canDrop,
         'is-dragging': dragging || edgeDragging,

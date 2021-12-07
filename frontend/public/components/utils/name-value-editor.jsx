@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
 import { Button, Tooltip } from '@patternfly/react-core';
@@ -497,7 +497,7 @@ const PairElement_ = DragSource(
         return connectDropTarget(
           connectDragPreview(
             <div
-              className={classNames(
+              className={classnames(
                 'row',
                 isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row',
               )}
@@ -550,7 +550,7 @@ const PairElement_ = DragSource(
                     <Button
                       type="button"
                       data-test="delete-button"
-                      className={classNames({
+                      className={classnames({
                         'pairs-list__span-btns': allowSorting,
                       })}
                       onClick={this._onRemove}
@@ -644,7 +644,7 @@ const EnvFromPairElement_ = DragSource(
         return connectDropTarget(
           connectDragPreview(
             <div
-              className={classNames(
+              className={classnames(
                 'row',
                 isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row',
               )}

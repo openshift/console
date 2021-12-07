@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as semver from 'semver';
 import { Helmet } from 'react-helmet';
 import {
@@ -416,7 +416,7 @@ const ChannelHeader: React.FC<{}> = () => {
 const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
   return (
     <div
-      className={classNames('co-channel', {
+      className={classnames('co-channel', {
         'co-channel--end-of-life': endOfLife,
       })}
     >
@@ -427,14 +427,14 @@ const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
 
 const ChannelLine: React.FC<ChannelLineProps> = ({ children, start }) => {
   return (
-    <li className={classNames('co-channel-line', { 'co-channel-start': start })}>{children}</li>
+    <li className={classnames('co-channel-line', { 'co-channel-start': start })}>{children}</li>
   );
 };
 
 export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
-      className={classNames('co-channel-name', {
+      className={classnames('co-channel-name', {
         'co-channel-name--current': current,
       })}
     >
@@ -446,7 +446,7 @@ export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) =
 const ChannelPath: React.FC<ChannelPathProps> = ({ children, current }) => {
   return (
     <ul
-      className={classNames('co-channel-path', {
+      className={classnames('co-channel-path', {
         'co-channel-path--current': current,
       })}
     >
@@ -462,7 +462,7 @@ export const ChannelVersion: React.FC<ChannelVersionProps> = ({
 }) => {
   return (
     <span
-      className={classNames('co-channel-version', {
+      className={classnames('co-channel-version', {
         'co-channel-version--current': current,
         'co-channel-version--update-blocked': updateBlocked,
       })}
@@ -516,7 +516,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
     >
       <Button
         variant="secondary"
-        className={classNames('co-channel-version-dot', {
+        className={classnames('co-channel-version-dot', {
           'co-channel-version-dot--current': current,
           'co-channel-version-dot--update-blocked': updateBlocked,
         })}
@@ -524,7 +524,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
     </Popover>
   ) : (
     <div
-      className={classNames('co-channel-version-dot', {
+      className={classnames('co-channel-version-dot', {
         'co-channel-version-dot--current': current,
         'co-channel-version-dot--update-blocked': updateBlocked,
       })}
@@ -539,7 +539,7 @@ const UpdatesBar: React.FC<UpdatesBarProps> = ({ children }) => {
 export const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
-      className={classNames('co-cluster-settings__updates-group', {
+      className={classnames('co-cluster-settings__updates-group', {
         'co-cluster-settings__updates-group--divided': divided,
       })}
     >

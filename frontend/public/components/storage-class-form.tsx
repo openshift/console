@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -28,6 +28,7 @@ import {
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';
+/* eslint-disable import/named */
 import { i18n, TFunction } from 'i18next';
 
 enum Provisioner {
@@ -891,7 +892,7 @@ class StorageClassFormWithTranslation extends React.Component<
       const children = parameter.values ? (
         <>
           <label
-            className={classNames('control-label', { 'co-required': this.paramIsRequired(key) })}
+            className={classnames('control-label', { 'co-required': this.paramIsRequired(key) })}
             htmlFor={paramId}
           >
             {_.get(parameter, 'name', key)}
@@ -926,7 +927,7 @@ class StorageClassFormWithTranslation extends React.Component<
           ) : (
             <>
               <label
-                className={classNames('control-label', {
+                className={classnames('control-label', {
                   'co-required': this.paramIsRequired(key),
                 })}
                 htmlFor={paramId}
@@ -949,7 +950,7 @@ class StorageClassFormWithTranslation extends React.Component<
       return (
         <div
           key={key}
-          className={classNames('form-group', {
+          className={classnames('form-group', {
             'has-error': _.get(this.state.newStorageClass.parameters, `${key}.validationMsg`, null),
           })}
         >
@@ -1016,7 +1017,7 @@ class StorageClassFormWithTranslation extends React.Component<
           </div>
         </h1>
         <form data-test-id="storage-class-form">
-          <div className={classNames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
+          <div className={classnames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
             <label className="control-label co-required" htmlFor="storage-class-name">
               {t('public~Name')}
             </label>

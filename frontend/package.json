@@ -163,7 +163,7 @@
     "i18next-http-backend": "^1.0.21",
     "immutable": "3.x",
     "js-base64": "^2.5.1",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^4.1.0",
     "json-schema": "^0.3.0",
     "lodash-es": "^4.17.21",
     "monaco-languageclient": "^0.13.0",

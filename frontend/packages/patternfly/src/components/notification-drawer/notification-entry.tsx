@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -94,7 +94,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
   };
   return (
     <li
-      className={classNames(
+      className={classnames(
         `pf-c-notification-drawer__list-item pf-m-hoverable`,
         type === NotificationTypes.update ? 'pf-m-default' : `pf-m-${type}`,
         {

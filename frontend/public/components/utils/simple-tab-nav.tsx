@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash-es';
 import { withTranslation } from 'react-i18next';
 
@@ -15,7 +15,7 @@ class SimpleTab extends React.PureComponent<SimpleTabProps> {
 
   render() {
     const { active, title } = this.props;
-    const className = classNames('co-m-horizontal-nav__menu-item', {
+    const className = classnames('co-m-horizontal-nav__menu-item', {
       'co-m-horizontal-nav-item--active': active,
     });
     return (
@@ -63,7 +63,7 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
 
     return (
       <>
-        <ul className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
+        <ul className={classnames('co-m-horizontal-nav__menu', additionalClassNames)}>
           {_.map(tabs, (tab) => (
             <SimpleTab
               key={tab.name}

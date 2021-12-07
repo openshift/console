@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
 import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
-import { safeLoad, safeDump } from 'js-yaml';
+/* eslint-disable import/named */
+import { load, dump } from 'js-yaml';
 
 import { k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { AlertmanagerConfig } from './alert-manager-config';
@@ -44,7 +45,7 @@ export const getAlertmanagerConfig = (
 ): { config: AlertmanagerConfig; errorMessage?: string } => {
   const parsedAlertManagerYAML = getAlertmanagerYAML(secret);
   try {
-    const config = safeLoad(parsedAlertManagerYAML.yaml);
+    const config = load(parsedAlertManagerYAML.yaml);
     return { config, errorMessage: parsedAlertManagerYAML.errorMessage };
   } catch (e) {
     return { config: null, errorMessage: `Error loading alertmanager.yaml: ${e}` };
@@ -55,7 +56,7 @@ export const patchAlertmanagerConfig = (
   secret: K8sResourceKind,
   yaml: object | string,
 ): Promise<any> => {
-  const yamlString = _.isObject(yaml) ? safeDump(yaml) : yaml;
+  const yamlString = _.isObject(yaml) ? dump(yaml) : yaml;
   const yamlEncodedString = Base64.encode(yamlString);
   const patch = [{ op: 'replace', path: '/data/alertmanager.yaml', value: yamlEncodedString }];
   return k8sPatch(SecretModel, secret, patch);

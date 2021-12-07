@@ -4,8 +4,8 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
-import { safeLoad } from 'js-yaml';
-import * as classNames from 'classnames';
+import { load } from 'js-yaml';
+import classnames from 'classnames';
 
 import { BlueInfoCircleIcon, APIError } from '@console/shared';
 import { ButtonBar } from '../../utils/button-bar';
@@ -417,7 +417,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
           <ReceiverInfoTip type={InitialReceivers.Watchdog} />
         )}
         <div
-          className={classNames('form-group', {
+          className={classnames('form-group', {
             'has-error': receiverNameAlreadyExist,
           })}
         >
@@ -513,7 +513,7 @@ export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
   dispatchFormChange,
   tooltip,
 }) => {
-  const saveAsDefaultLabelClass = classNames('checkbox', { 'co-no-bold': disabled });
+  const saveAsDefaultLabelClass = classnames('checkbox', { 'co-no-bold': disabled });
   return (
     <label className={saveAsDefaultLabelClass} htmlFor={formField}>
       <input
@@ -581,7 +581,7 @@ const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, 
           setLoadError({ message: 'alertmanager.v2.status.config.original not found.' });
         } else {
           try {
-            const { global } = safeLoad(originalAlertmanagerConfigJSON);
+            const { global } = load(originalAlertmanagerConfigJSON);
             setAlertmanagerGlobals(global);
             setLoaded(true);
           } catch (error) {

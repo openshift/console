@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert } from '@patternfly/react-core';
 import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
@@ -89,7 +89,7 @@ const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ o
       </TableData>
       <TableData className={tableColumnClasses[2]}>{operatorVersion || '-'}</TableData>
       <TableData
-        className={classNames(
+        className={classnames(
           tableColumnClasses[3],
           'co-break-word',
           'co-line-clamp',

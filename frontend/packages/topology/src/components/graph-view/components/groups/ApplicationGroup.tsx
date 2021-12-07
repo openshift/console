@@ -16,7 +16,7 @@ import {
   createSvgIdUrl,
   hullPath,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { polygonHull } from 'd3-polygon';
 import * as _ from 'lodash';
 import {
@@ -132,7 +132,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
       ref={labelHoverRef}
       onContextMenu={onContextMenu}
       onClick={onSelect}
-      className={classNames('odc-application-group', {
+      className={classnames('odc-application-group', {
         'is-dragging': dragging,
         'is-highlight': canDrop,
         'is-filtered': filtered,
@@ -144,7 +144,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
           ref={refs}
           onContextMenu={onContextMenu}
           onClick={onSelect}
-          className={classNames('odc-application-group', {
+          className={classnames('odc-application-group', {
             'is-dragging': dragging,
             'is-highlight': canDrop,
             'is-selected': selected,

@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import i18next from 'i18next';
 import * as _ from 'lodash-es';
 import { Alert as PFAlert, Button, Popover, Split, SplitItem } from '@patternfly/react-core';
@@ -145,7 +145,7 @@ const SilenceKebab = ({ silence }) => <Kebab options={silenceMenuActions(silence
 
 const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ className, resource }) => (
   <span
-    className={classNames(
+    className={classnames(
       `co-m-resource-icon co-m-resource-${resource.kind.toLowerCase()}`,
       className,
     )}
@@ -507,7 +507,7 @@ const SilenceTableRow: React.FC<RowFunctionArgs<Silence>> = ({ obj }) => {
       <TableData className={tableSilenceClasses[1]}>
         <SeverityCounts alerts={firingAlerts} />
       </TableData>
-      <TableData className={classNames(tableSilenceClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableSilenceClasses[2], 'co-break-word')}>
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && (
           <StateTimestamp text={i18next.t('public~Starts')} timestamp={startsAt} />
@@ -1670,7 +1670,7 @@ const AlertmanagerConfig = () => {
 
 const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active, children }) => (
   <li
-    className={classNames('co-m-horizontal-nav__menu-item', {
+    className={classnames('co-m-horizontal-nav__menu-item', {
       'co-m-horizontal-nav-item--active': active,
     })}
   >
@@ -1693,7 +1693,7 @@ const AlertingPage: React.FC<{ match: any }> = ({ match }) => {
   return (
     <>
       <div
-        className={classNames('co-m-nav-title', 'co-m-nav-title--detail', {
+        className={classnames('co-m-nav-title', 'co-m-nav-title--detail', {
           'co-m-nav-title--breadcrumbs': isAlertmanager,
         })}
       >

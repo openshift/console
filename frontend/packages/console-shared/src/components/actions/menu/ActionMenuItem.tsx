@@ -6,7 +6,7 @@ import {
   DropdownItemProps,
   MenuItemProps,
 } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Action, ImpersonateKind } from '@console/dynamic-plugin-sdk';
@@ -32,7 +32,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   const { label, icon, disabled, cta } = action;
   const { href, external } = cta as { href: string; external?: boolean };
   const isDisabled = !isAllowed || disabled;
-  const classes = classNames({ 'pf-m-disabled': isDisabled });
+  const classes = classnames({ 'pf-m-disabled': isDisabled });
 
   const handleClick = React.useCallback(
     (event) => {

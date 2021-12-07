@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -9,7 +9,7 @@ import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s'
 import { getQueryArgument, setQueryArgument } from './utils';
 
 export const CheckBox = ({ title, active, number, toggle }) => {
-  const klass = classNames('row-filter__box', {
+  const klass = classnames('row-filter__box', {
     'row-filter__box--active': active,
     'row-filter__box--empty': !number,
   });

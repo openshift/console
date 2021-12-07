@@ -7,7 +7,7 @@ import {
   observer,
   EdgeConnectorArrow,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';
@@ -32,7 +32,7 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, childre
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-  const edgeClasses = classNames('odc-connects-to', { 'odc-m-editable': editAccess });
+  const edgeClasses = classnames('odc-connects-to', { 'odc-m-editable': editAccess });
 
   return (
     <BaseEdge className={edgeClasses} element={element} {...others}>

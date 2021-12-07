@@ -15,7 +15,7 @@ import {
   WithCreateConnectorProps,
   RectAnchor,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -123,7 +123,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
       animationDuration={0}
     >
       <g
-        className={classNames('odc-eventing-pubsub', {
+        className={classnames('odc-eventing-pubsub', {
           'is-dragging': dragging,
           'is-highlight': canDrop || edgeDragging,
           'is-selected': selected,

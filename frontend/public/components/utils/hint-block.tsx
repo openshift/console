@@ -1,8 +1,8 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import classnames from 'classnames';
 
 export const HintBlock: React.FC<HintBlockProps> = ({ title, children, className }) => {
-  const classes = classNames('co-hint-block', className);
+  const classes = classnames('co-hint-block', className);
 
   return (
     <div className={classes}>
