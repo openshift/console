@@ -89,7 +89,7 @@
       "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
     },
     "transform": {
-      "^.+\\.(ts|tsx|js|jsx)$": "./node_modules/ts-jest/preprocessor.js",
+      "^.+\\.(ts|tsx|js|jsx)$": "ts-jest",
       "^.+\\.(gql|graphql)$": "jest-transform-graphql"
     },
     "transformIgnorePatterns": [
@@ -100,6 +100,7 @@
       "<rootDir>/.*/integration-tests-cypress"
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
+    "testEnvironment": "jsdom",
     "testURL": "http://localhost",
     "setupFiles": [
       "./__mocks__/localStorage.ts",
@@ -284,8 +285,8 @@
     "jasmine-console-reporter": "2.x",
     "jasmine-core": "2.x",
     "jasmine-reporters": "2.x",
-    "jest": "21.x",
-    "jest-cli": "21.x",
+    "jest": "^27.4.3",
+    "jest-cli": "^27.4.3",
     "jest-junit": "^11.1.0",
     "jest-resolve": "^26.4.0",
     "jest-transform-graphql": "^2.1.0",
@@ -312,7 +313,7 @@
     "sass-loader": "^10.1.1",
     "style-loader": "^2.0.0",
     "thread-loader": "^3.0.4",
-    "ts-jest": "21.x",
+    "ts-jest": "27.1.0",
     "ts-loader": "~8.3.0",
     "ts-node": "10.x",
     "typescript": "^4.2.4",
