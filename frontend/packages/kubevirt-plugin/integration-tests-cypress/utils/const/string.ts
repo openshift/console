@@ -20,3 +20,8 @@ export const noUserLoggedIn = 'No users logged in';
 export const oneActiveUser = '1 user';
 export const timeOfLogin = 'Time of login';
 export const serialEmptyState = 'Click Connect to open serial console.';
+export const vncEmptyState = 'Click Connect to open the VNC console.';
+
+export const clearFilters = 'Clear all filters';
+
+export const wizardTitle = 'Create Virtual Machine from template';

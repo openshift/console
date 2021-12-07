@@ -11,15 +11,19 @@ import MonitoringTab from '../monitoring/overview/MonitoringTab';
 
 export const getObserveSideBarTabSection = (element: GraphElement) => {
   const resource = getResource(element);
+  if (!resource) {
+    return undefined;
+  }
   if (
+    !resource ||
     ![
       DeploymentConfigModel.kind,
       DeploymentModel.kind,
       StatefulSetModel.kind,
       DaemonSetModel.kind,
-    ].includes(resource.kind)
+    ].includes(resource?.kind)
   )
     return undefined;
   const { resources } = element.getData();
-  return <MonitoringTab item={resources} />;
+  return resources ? <MonitoringTab item={resources} /> : undefined;
 };

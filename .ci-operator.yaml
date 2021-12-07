@@ -1,4 +1,4 @@
 build_root_image:
   name: release
   namespace: openshift
-  tag: tectonic-console-builder-v22
+  tag: tectonic-console-builder-v23

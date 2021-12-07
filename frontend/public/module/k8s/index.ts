@@ -12,3 +12,14 @@ export * from './template';
 export * from './swagger';
 export * from './event';
 export * from './types';
+export * from './k8s-ref';
+export {
+  k8sGet,
+  k8sCreate,
+  k8sUpdate,
+  k8sPatch,
+  k8sKill,
+  k8sList,
+  getK8sResourcePath,
+  resourceURL,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s';

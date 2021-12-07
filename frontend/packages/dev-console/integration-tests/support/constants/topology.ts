@@ -36,6 +36,7 @@ export enum nodeActions {
   DeleteInMemoryChannel = 'Delete InMemoryChannel',
   EditRevision = 'Edit Revision',
   DeleteRevision = 'Delete Revision',
+  MakeServerless = 'Make Serverless',
 }
 
 export enum applicationGroupingsActions {
@@ -56,4 +57,11 @@ export enum addToApplicationGroupings {
   UploadJarfile = 'Upload JAR file',
   EventSource = 'Event Source',
   Channel = 'Channel',
+}
+
+export enum sideBarTabs {
+  Details = 'Details',
+  Resources = 'Resources',
+  ReleaseNotes = 'Release notes',
+  Observe = 'Observe',
 }

@@ -26,6 +26,7 @@ export type WizardNodeState = {
   uid: string;
   roles: string[];
   labels: NodeKind['metadata']['labels'];
+  taints: NodeKind['spec']['taints'];
 };
 
 /* State of CreateStorageSystem */
@@ -38,9 +39,11 @@ export const initialState: CreateStorageSystemState = {
     externalStorage: '',
     deployment: DeploymentType.FULL,
     isAdvancedOpen: false,
+    isValidSC: true,
   },
   capacityAndNodes: {
     enableArbiter: false,
+    enableTaint: false,
     arbiterLocation: '',
     capacity: null,
     pvCount: 0,
@@ -84,11 +87,13 @@ type CreateStorageSystemState = {
     externalStorage: string;
     deployment: DeploymentType;
     isAdvancedOpen: boolean;
+    isValidSC: boolean;
   };
   createStorageClass: ExternalState;
   connectionDetails: ExternalState;
   capacityAndNodes: {
     enableArbiter: boolean;
+    enableTaint: boolean;
     arbiterLocation: string;
     // @TODO: Remove union types and use "number" as type.
     // Requires refactoring osd size dropdown.
@@ -168,6 +173,9 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'backingStorage/setIsAdvancedOpen':
       newState.backingStorage.isAdvancedOpen = action.payload;
       break;
+    case 'backingStorage/setIsValidSC':
+      newState.backingStorage.isValidSC = action.payload;
+      break;
     case 'capacityAndNodes/capacity':
       newState.capacityAndNodes.capacity = action.payload;
       break;
@@ -179,6 +187,9 @@ export const reducer: WizardReducer = (prevState, action) => {
       break;
     case 'capacityAndNodes/enableArbiter':
       newState.capacityAndNodes.enableArbiter = action.payload;
+      break;
+    case 'capacityAndNodes/enableTaint':
+      newState.capacityAndNodes.enableTaint = action.payload;
       break;
     case 'securityAndNetwork/setKms':
       newState.securityAndNetwork.kms = action.payload;
@@ -240,6 +251,10 @@ export type CreateStorageSystemAction =
       type: 'backingStorage/setExternalStorage';
       payload: WizardState['backingStorage']['externalStorage'];
     }
+  | {
+      type: 'backingStorage/setIsValidSC';
+      payload: WizardState['backingStorage']['isValidSC'];
+    }
   | { type: 'wizard/nodes'; payload: WizardState['nodes'] }
   | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] }
   | { type: 'capacityAndNodes/pvCount'; payload: WizardState['capacityAndNodes']['pvCount'] }
@@ -250,6 +265,10 @@ export type CreateStorageSystemAction =
   | {
       type: 'capacityAndNodes/enableArbiter';
       payload: WizardState['capacityAndNodes']['enableArbiter'];
+    }
+  | {
+      type: 'capacityAndNodes/enableTaint';
+      payload: WizardState['capacityAndNodes']['enableTaint'];
     }
   | {
       type: 'securityAndNetwork/setKms';

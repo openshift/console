@@ -12,7 +12,7 @@ export const BY_REQUESTED = 'By Requested Capacity';
 export const OCS_OPERATOR = 'ocs-operator';
 export const ODF_OPERATOR = 'odf-operator';
 export const LSO_OPERATOR = 'local-storage-operator';
-export const NOOBAA_OPERATOR = 'noobaa-operator';
+export const NOOBAA_OPERATOR = 'mcg-operator';
 export const OCS_EXTERNAL_CR_NAME = 'ocs-external-storagecluster';
 export const OCS_INTERNAL_CR_NAME = 'ocs-storagecluster';
 export const NO_PROVISIONER = 'kubernetes.io/no-provisioner';
@@ -41,4 +41,4 @@ export enum StoreType {
   BS = 'BackingStore',
   NS = 'NamespaceStore',
 }
-export const ODF_MODEL_FLAG = 'ODF_FLAG';
+export const ODF_MODEL_FLAG = 'ODF_MODEL';

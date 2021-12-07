@@ -23,7 +23,7 @@ Feature: Kafka Event Source
 
 
         @regression @to-do
-        Scenario: Create Kafka source with exisitng multiple BootStrapServers and Topics: KF-02-TC02
+        Scenario: Create Kafka source with existing multiple BootStrapServers and Topics: KF-02-TC02
             Given user has created knative revision with knative service "nodejs-ex-git-2"
               And user is at Event Sources page
              When user creates a BootStrapServer

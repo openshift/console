@@ -93,7 +93,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   );
   useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5 + EVENT_MARKER_RADIUS), []));
 
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const displayFilters = useDisplayFilters();
   const allowEdgeCreation = useAllowEdgeCreation();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);

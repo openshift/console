@@ -58,6 +58,8 @@ export enum IsPendingChange {
   env = 'Environment',
   nics = 'Network Interfaces',
   disks = 'Disks',
+  hostDevices = 'Host Devices',
+  gpuDevices = 'GPU Devices',
 }
 
 export enum VMTabURLEnum {

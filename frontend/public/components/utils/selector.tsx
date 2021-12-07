@@ -5,7 +5,7 @@ import { SearchIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { Selector as SelectorKind } from '../../module/k8s';
-import { selectorToString } from '../../module/k8s/selector';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 const Requirement: React.FC<RequirementProps> = ({ kind, requirements, namespace = '' }) => {
   // Strip off any trailing '=' characters for valueless selectors

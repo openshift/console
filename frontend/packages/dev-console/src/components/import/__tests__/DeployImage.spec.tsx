@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Radio } from '@patternfly/react-core';
 import { mount, ReactWrapper } from 'enzyme';
+import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import { PageHeading, ButtonBar } from '@console/internal/components/utils/';
 import store from '@console/internal/redux';
@@ -12,23 +13,29 @@ import DeployImagePage from '../DeployImagePage';
 import ImageSearchSection from '../image-search/ImageSearchSection';
 import ResourceSection from '../section/ResourceSection';
 
-jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
-  return {
-    usePostFormSubmitAction: () => () => {},
-  };
-});
+jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
+  usePostFormSubmitAction: () => () => {},
+}));
 
-jest.mock('@console/shared/src/hooks/useResizeObserver', () => {
-  return {
-    useResizeObserver: () => {},
-  };
-});
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
+  useResizeObserver: () => {},
+}));
+
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  // Called in ResourceSection to check knative ServicePlugin permissions
+  useAccessReview: () => false,
+}));
+
+jest.mock('../serverless/useUpdateKnScalingDefaultValues', () => ({
+  // Called in DeployImage
+  useUpdateKnScalingDefaultValues: (initialValues) => initialValues,
+}));
 
 describe('DeployImage Page Test', () => {
   type DeployImagePageProps = React.ComponentProps<typeof DeployImagePage>;
   let deployImagePageProps: DeployImagePageProps;
   let deployImagePageWrapper: ReactWrapper;
-  beforeAll(() => {
+  beforeEach(() => {
     deployImagePageProps = {
       history: null,
       location: {
@@ -63,7 +70,7 @@ describe('Deploy Image Test', () => {
   type DeployImageProps = React.ComponentProps<typeof DeployImage>;
   let deployImageProps: DeployImageProps;
   let deployImageWrapper: ReactWrapper;
-  beforeAll(() => {
+  beforeEach(async () => {
     deployImageProps = {
       projects: {
         data: [],
@@ -73,6 +80,11 @@ describe('Deploy Image Test', () => {
     };
     deployImageWrapper = mount(<DeployImage {...deployImageProps} />, {
       wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+    // Workaround for error: "Warning: An update to Formik inside a test was not wrapped in act(...)."
+    // Wait for an initial rerender because the shared InputFields forces an rerendering via useFormikValidationFix
+    await act(async () => {
+      deployImageWrapper.render();
     });
   });
 

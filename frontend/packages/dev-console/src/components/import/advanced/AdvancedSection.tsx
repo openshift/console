@@ -6,12 +6,12 @@ import HealthChecks from '../../health-checks/HealthChecks';
 import ProgressiveList from '../../progressive-list/ProgressiveList';
 import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
 import { Resources } from '../import-types';
-import RouteCheckbox from '../route/RouteCheckbox';
 import FormSection from '../section/FormSection';
 import BuildConfigSection from './BuildConfigSection';
 import DeploymentConfigSection from './DeploymentConfigSection';
 import LabelSection from './LabelSection';
 import ResourceLimitSection from './ResourceLimitSection';
+import RouteSection from './RouteSection';
 import ScalingSection from './ScalingSection';
 import ServerlessScalingSection from './ServerlessScalingSection';
 
@@ -28,8 +28,8 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
   };
 
   return (
-    <FormSection title={t('devconsole~Advanced options')} fullWidth>
-      <RouteCheckbox route={values.route} resources={values.resources} />
+    <FormSection title={t('devconsole~Advanced options')}>
+      <RouteSection route={values.route} resources={values.resources} />
       <ProgressiveList
         text={t('devconsole~Click on the names to access advanced options for')}
         visibleItems={visibleItems}

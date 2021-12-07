@@ -54,7 +54,11 @@ export const podsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
   const resource = getResource(element);
+  if (!resource) {
+    return undefined;
+  }
   if (
+    !resource ||
     ![
       DeploymentConfigModel.kind,
       DeploymentModel.kind,
@@ -72,7 +76,11 @@ export const buildsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<BuildConfigData> | undefined => {
   const resource = getResource(element);
+  if (!resource) {
+    return undefined;
+  }
   if (
+    !resource ||
     ![
       DeploymentConfigModel.kind,
       DeploymentModel.kind,
@@ -89,7 +97,11 @@ export const networkAdapterForWorkloads = (
   element: GraphElement,
 ): NetworkAdapterType | undefined => {
   const resource = getResource(element);
+  if (!resource) {
+    return undefined;
+  }
   if (
+    !resource ||
     ![
       DeploymentConfigModel.kind,
       DeploymentModel.kind,
@@ -145,6 +157,6 @@ export const podsAdapterForCronJobWorkload = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
   const resource = getResource(element);
-  if (resource.kind !== CronJobModel.kind) return undefined;
+  if (!resource || resource.kind !== CronJobModel.kind) return undefined;
   return { resource, provider: usePodsAdapterForCronJobWorkloads };
 };

@@ -9,6 +9,8 @@ import {
   SelectProps,
   SelectVariant,
 } from '@patternfly/react-core';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { isDefaultClass } from '@console/internal/components/storage-class';
 import { DeploymentType } from '../../../../constants/create-storage-system';
 import { WizardDispatch, WizardState } from '../../reducer';
 import './backing-storage-step.scss';
@@ -19,7 +21,9 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
   deployment,
   isAdvancedOpen,
   dispatch,
-  hasOCS,
+  isDisabled,
+  scList,
+  isValidSC,
   currentStep,
 }) => {
   const { t } = useTranslation();
@@ -33,11 +37,18 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
        */
       dispatch({ type: 'wizard/setInitialState' });
     }
+    const defaultSC = scList.find(isDefaultClass);
+    dispatch({
+      type: 'backingStorage/setIsValidSC',
+      // 'value' on SelectProps['onSelect'] is string hence not matching with payload which is of "DeploymentType"
+      payload: value === DeploymentType.MCG ? !!defaultSC : true,
+    });
     dispatch({
       type: 'backingStorage/setDeployment',
       // 'value' on SelectProps['onSelect'] is string hence not matching with payload which is of "DeploymentType"
       payload: value as DeploymentType,
     });
+    setIsSelectOpen(false);
   };
 
   const handleToggling: SelectProps['onToggle'] = (isExpanded: boolean) =>
@@ -55,7 +66,14 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
       onToggle={handleExpanadableToggling}
       isExpanded={isAdvancedOpen}
     >
-      <FormGroup label={t('ceph-storage-plugin~Deployment type')} fieldId="deployment-type">
+      <FormGroup
+        label={t('ceph-storage-plugin~Deployment type')}
+        fieldId="deployment-type"
+        validated={isValidSC ? 'default' : 'error'}
+        helperTextInvalid={t(
+          'ceph-storage-plugin~A default StorageClass is needed for deployment.',
+        )}
+      >
         <Select
           className="odf-backing-storage__selection--width"
           variant={SelectVariant.single}
@@ -63,7 +81,7 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
           onSelect={handleSelection}
           selections={deployment}
           isOpen={isSelectOpen}
-          isDisabled={hasOCS}
+          isDisabled={isDisabled}
         >
           {selectOptions}
         </Select>
@@ -76,6 +94,8 @@ type AdvancedSelectionProps = {
   dispatch: WizardDispatch;
   deployment: WizardState['backingStorage']['deployment'];
   isAdvancedOpen: WizardState['backingStorage']['isAdvancedOpen'];
-  hasOCS: boolean;
+  isValidSC: WizardState['backingStorage']['isValidSC'];
+  scList: StorageClassResourceKind[];
   currentStep: number;
+  isDisabled: boolean;
 };

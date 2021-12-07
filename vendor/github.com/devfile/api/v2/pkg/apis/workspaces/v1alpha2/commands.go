@@ -7,36 +7,37 @@ import (
 
 // CommandType describes the type of command.
 // Only one of the following command type may be specified.
-// +kubebuilder:validation:Enum=Exec;Apply;VscodeTask;VscodeLaunch;Composite;Custom
+// +kubebuilder:validation:Enum=Exec;Apply;Composite;Custom
 type CommandType string
 
 const (
-	ExecCommandType         CommandType = "Exec"
-	ApplyCommandType        CommandType = "Apply"
-	VscodeTaskCommandType   CommandType = "VscodeTask"
-	VscodeLaunchCommandType CommandType = "VscodeLaunch"
-	CompositeCommandType    CommandType = "Composite"
-	CustomCommandType       CommandType = "Custom"
+	ExecCommandType      CommandType = "Exec"
+	ApplyCommandType     CommandType = "Apply"
+	CompositeCommandType CommandType = "Composite"
+	CustomCommandType    CommandType = "Custom"
 )
 
 // CommandGroupKind describes the kind of command group.
-// +kubebuilder:validation:Enum=build;run;test;debug
+// +kubebuilder:validation:Enum=build;run;test;debug;deploy
 type CommandGroupKind string
 
 const (
-	BuildCommandGroupKind CommandGroupKind = "build"
-	RunCommandGroupKind   CommandGroupKind = "run"
-	TestCommandGroupKind  CommandGroupKind = "test"
-	DebugCommandGroupKind CommandGroupKind = "debug"
+	BuildCommandGroupKind  CommandGroupKind = "build"
+	RunCommandGroupKind    CommandGroupKind = "run"
+	TestCommandGroupKind   CommandGroupKind = "test"
+	DebugCommandGroupKind  CommandGroupKind = "debug"
+	DeployCommandGroupKind CommandGroupKind = "deploy"
 )
 
+// +devfile:getter:generate
 type CommandGroup struct {
 	// Kind of group the command is part of
 	Kind CommandGroupKind `json:"kind"`
 
 	// +optional
 	// Identifies the default command for a given group kind
-	IsDefault bool `json:"isDefault,omitempty"`
+	// +devfile:default:value=false
+	IsDefault *bool `json:"isDefault,omitempty"`
 }
 
 type BaseCommand struct {
@@ -63,13 +64,16 @@ type Command struct {
 	Id string `json:"id"`
 	// Map of implementation-dependant free-form YAML attributes.
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes   attributes.Attributes `json:"attributes,omitempty"`
 	CommandUnion `json:",inline"`
 }
 
 // +union
 type CommandUnion struct {
-	// Type of workspace command
+	// Type of devworkspace command
 	// +unionDiscriminator
 	// +optional
 	CommandType CommandType `json:"commandType,omitempty"`
@@ -79,26 +83,18 @@ type CommandUnion struct {
 	Exec *ExecCommand `json:"exec,omitempty"`
 
 	// Command that consists in applying a given component definition,
-	// typically bound to a workspace event.
+	// typically bound to a devworkspace event.
 	//
 	// For example, when an `apply` command is bound to a `preStart` event,
 	// and references a `container` component, it will start the container as a
-	// K8S initContainer in the workspace POD, unless the component has its
+	// K8S initContainer in the devworkspace POD, unless the component has its
 	// `dedicatedPod` field set to `true`.
 	//
 	// When no `apply` command exist for a given component,
-	// it is assumed the component will be applied at workspace start
+	// it is assumed the component will be applied at devworkspace start
 	// by default.
 	// +optional
 	Apply *ApplyCommand `json:"apply,omitempty"`
-
-	// Command providing the definition of a VsCode Task
-	// +optional
-	VscodeTask *VscodeConfigurationCommand `json:"vscodeTask,omitempty"`
-
-	// Command providing the definition of a VsCode launch action
-	// +optional
-	VscodeLaunch *VscodeConfigurationCommand `json:"vscodeLaunch,omitempty"`
 
 	// Composite command that allows executing several sub-commands
 	// either sequentially or concurrently
@@ -113,6 +109,7 @@ type CommandUnion struct {
 	Custom *CustomCommand `json:"custom,omitempty"`
 }
 
+// +devfile:getter:generate
 type ExecCommand struct {
 	LabeledCommand `json:",inline"`
 
@@ -151,7 +148,8 @@ type ExecCommand struct {
 	// If set to `true` the command won't be restarted and it is expected to handle file changes on its own.
 	//
 	// Default value is `false`
-	HotReloadCapable bool `json:"hotReloadCapable,omitempty"`
+	// +devfile:default:value=false
+	HotReloadCapable *bool `json:"hotReloadCapable,omitempty"`
 }
 
 type ApplyCommand struct {
@@ -162,6 +160,7 @@ type ApplyCommand struct {
 	Component string `json:"component"`
 }
 
+// +devfile:getter:generate
 type CompositeCommand struct {
 	LabeledCommand `json:",inline"`
 
@@ -170,41 +169,8 @@ type CompositeCommand struct {
 
 	// Indicates if the sub-commands should be executed concurrently
 	// +optional
-	Parallel bool `json:"parallel,omitempty"`
-}
-
-// VscodeConfigurationCommandLocationType describes the type of
-// the location the configuration is fetched from.
-// Only one of the following component type may be specified.
-// +kubebuilder:validation:Enum=Uri;Inlined
-type VscodeConfigurationCommandLocationType string
-
-const (
-	UriVscodeConfigurationCommandLocationType     VscodeConfigurationCommandLocationType = "Uri"
-	InlinedVscodeConfigurationCommandLocationType VscodeConfigurationCommandLocationType = "Inlined"
-)
-
-// +union
-type VscodeConfigurationCommandLocation struct {
-	// Type of Vscode configuration command location
-	// +
-	// +unionDiscriminator
-	// +optional
-	LocationType VscodeConfigurationCommandLocationType `json:"locationType,omitempty"`
-
-	// Location as an absolute of relative URI
-	// the VsCode configuration will be fetched from
-	// +optional
-	Uri string `json:"uri,omitempty"`
-
-	// Inlined content of the VsCode configuration
-	// +optional
-	Inlined string `json:"inlined,omitempty"`
-}
-
-type VscodeConfigurationCommand struct {
-	BaseCommand                        `json:",inline"`
-	VscodeConfigurationCommandLocation `json:",inline"`
+	// +devfile:default:value=false
+	Parallel *bool `json:"parallel,omitempty"`
 }
 
 type CustomCommand struct {

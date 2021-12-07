@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { isUpstream } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { createSupportModal } from '../components/modals/support-modal/support-modal';
 import { TEMPLATE_WARN_SUPPORT } from '../constants';
 import { getTemplateSupport, isCommonTemplate } from '../selectors/vm-template/basic';
-import { isUpstream } from '../utils/common';
 import { useLocalStorage } from './use-local-storage';
 
 export type SupportModalFunction = (template: TemplateKind, onConfirm: VoidFunction) => void;

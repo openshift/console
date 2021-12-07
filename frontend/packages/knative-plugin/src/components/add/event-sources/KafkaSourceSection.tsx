@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import { SelectVariant, TextInputTypes } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -105,6 +105,8 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, namespac
         data-test-id="kafkasource-bootstrapservers-field"
         name={`formData.data.${EventSources.KafkaSource}.bootstrapServers`}
         label={t('knative-plugin~Bootstrap servers')}
+        ariaLabel={t('knative-plugin~Bootstrap servers')}
+        variant={SelectVariant.typeaheadMulti}
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
         helpText={t('knative-plugin~The address of the Kafka broker')}
@@ -116,6 +118,8 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, namespac
         data-test-id="kafkasource-topics-field"
         name={`formData.data.${EventSources.KafkaSource}.topics`}
         label={t('knative-plugin~Topics')}
+        ariaLabel={t('knative-plugin~Topics')}
+        variant={SelectVariant.typeaheadMulti}
         options={kafkaTopics}
         placeholderText={ktPlaceholder}
         helpText={t('knative-plugin~Virtual groups across Kafka brokers')}

@@ -187,6 +187,21 @@
     }
   },
   {
+    "type": "dev-console.import/environment",
+    "properties": {
+      "imageStreamName": "nodejs",
+      "imageStreamTags": ["16-ubi8", "14-ubi8", "14-ubi8-minimal", "12-ubi8", "latest"],
+      "environments": [
+        {
+          "key": "NPM_RUN",
+          "label": "%devconsole~Run command%",
+          "description": "%devconsole~Optional parameter for Node.js applications to define the npm run <command>.%",
+          "defaultValue": "start"
+        }
+      ]
+    }
+  },
+  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "BuilderImage",
@@ -444,6 +459,28 @@
     }
   },
   {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyGraphActionProvider" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyApplicationActionProvider" }
+    }
+  },
+  {
+    "type": "console.action/group",
+    "properties": {
+      "id": "add-to-project",
+      "label": "%devconsole~Add to Project%",
+      "submenu": true
+    }
+  },
+  {
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
@@ -544,6 +581,15 @@
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.action/group",
+    "properties": {
+      "id": "add-to-application",
+      "label": "%devconsole~Add to Application%",
+      "submenu": true,
+      "insertAfter": ["delete-application"]
     }
   }
 ]

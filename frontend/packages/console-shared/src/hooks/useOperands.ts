@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { coFetchJSON } from '@console/internal/co-fetch';
+import { consoleFetchJSON as coFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 
 export const useOperands = (

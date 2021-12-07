@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { useTranslation } from 'react-i18next';
-import { useFlag } from '@console/shared/src';
+import { useFlag, DevPreviewBadge } from '@console/shared/src';
 import {
   Form,
   FormGroup,
@@ -19,7 +19,7 @@ import {
   ClusterServiceVersionModel,
 } from '@console/operator-lifecycle-manager/src';
 import { AdvancedSection } from './advanced-section';
-import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
+import { SUPPORTED_EXTERNAL_STORAGE, isStorageProviderDevPreview } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
 import {
   getODFCsv,
@@ -76,13 +76,14 @@ const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
         aria-label={t('ceph-storage-plugin~Select external system from list')}
         value={selectedStorage}
         id="storage-platform-name"
-        className="odf-backing-storage__selection--width"
+        className="odf-backing-storage__selection--width  odf-backing-storage__selection--spacer"
         onChange={handleSelection}
       >
         {selectOptions.map(({ displayName, model: { kind } }) => (
           <FormSelectOption key={kind} value={kind} label={displayName} />
         ))}
       </FormSelect>
+      {isStorageProviderDevPreview(selectedStorage) && <DevPreviewBadge />}
     </FormGroup>
   );
 };
@@ -163,7 +164,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
         })
       : SUPPORTED_EXTERNAL_STORAGE;
 
-  const { type, externalStorage, deployment, isAdvancedOpen } = state;
+  const { type, externalStorage, deployment, isAdvancedOpen, isValidSC } = state;
 
   React.useEffect(() => {
     /*
@@ -240,7 +241,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
         <Radio
           label={t('ceph-storage-plugin~Use an existing StorageClass')}
           description={t(
-            'ceph-storage-plugin~OpenShift Data Foundation will use an existing infrastructure StorageClass provided by your hosting platform.',
+            'ceph-storage-plugin~OpenShift Data Foundation will use an existing StorageClass available on your hosting platform.',
           )}
           name={RADIO_GROUP_NAME}
           value={BackingStorageType.EXISTING}
@@ -258,7 +259,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
         <Radio
           label={t('ceph-storage-plugin~Create a new StorageClass using local storage devices')}
           description={t(
-            'ceph-storage-plugin~OpenShift Data Foundation will use an infrastructure StorageClass provided by the Local Storage Operator (LSO) on top of your attached drives. This option is available on any platform with devices attached to nodes.',
+            'ceph-storage-plugin~OpenShift Data Foundation will use a StorageClass provided by the Local Storage Operator (LSO) on top of your attached drives. This option is available on any platform with devices attached to nodes.',
           )}
           name={RADIO_GROUP_NAME}
           value={BackingStorageType.LOCAL_DEVICES}
@@ -295,7 +296,9 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
             dispatch={dispatch}
             deployment={deployment}
             isAdvancedOpen={isAdvancedOpen}
-            hasOCS={hasOCS}
+            isDisabled={hasOCS}
+            scList={sc?.items}
+            isValidSC={isValidSC}
             currentStep={stepIdReached}
           />
         )}

@@ -10,7 +10,7 @@ import {
   HorizontalNavTab,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
-import { FLAG_KNATIVE_SERVING_SERVICE, FLAG_KNATIVE_EVENTING } from './const';
+import { FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_SERVING_SERVICE } from './const';
 import * as models from './models';
 import {
   eventSourceBreadcrumbsProvider,
@@ -58,6 +58,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       getKebabActionsForKind,
     },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
   },
   {
     type: 'KebabActions',
@@ -69,90 +72,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'HorizontalNavTab',
-    properties: {
-      model: models.EventingBrokerModel,
-      page: {
-        // t('knative-plugin~Triggers')
-        name: '%knative-plugin~Triggers%',
-        href: 'triggers',
-      },
-      loader: async () =>
-        (
-          await import(
-            './components/eventing/BrokerTriggerTab' /* webpackChunkName: "knative-broker-triggers-list" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      model: models.EventingChannelModel,
-      page: {
-        // t('knative-plugin~Subscriptions')
-        name: '%knative-plugin~Subscriptions%',
-        href: 'subscriptions',
-      },
-      loader: async () =>
-        (
-          await import(
-            './components/eventing/ChannelSubscriptionTab' /* webpackChunkName: "knative-channel-subscription-list" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      model: models.EventingKafkaChannelModel,
-      page: {
-        // t('knative-plugin~Subscriptions')
-        name: '%knative-plugin~Subscriptions%',
-        href: 'subscriptions',
-      },
-      loader: async () =>
-        (
-          await import(
-            './components/eventing/ChannelSubscriptionTab' /* webpackChunkName: "knative-channel-subscription-list" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      model: models.EventingIMCModel,
-      page: {
-        // t('knative-plugin~Subscriptions')
-        name: '%knative-plugin~Subscriptions%',
-        href: 'subscriptions',
-      },
-      loader: async () =>
-        (
-          await import(
-            './components/eventing/ChannelSubscriptionTab' /* webpackChunkName: "knative-channel-subscription-list" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
     type: 'DetailPageBreadCrumbs',
     properties: {
       getModels: eventSourceModelsProviderForBreadcrumbs,
       breadcrumbsProvider: eventSourceBreadcrumbsProvider,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   {
@@ -161,12 +87,18 @@ const plugin: Plugin<ConsumedExtensions> = [
       getModels: channelModelsProviderForBreadcrumbs,
       breadcrumbsProvider: channelBreadcrumbsProvider,
     },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
   },
   {
     type: 'DetailPageBreadCrumbs',
     properties: {
       getModels: brokerModelProviderForBreadcrumbs,
       breadcrumbsProvider: brokerBreadcrumbsProvider,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   ...topologyPlugin,

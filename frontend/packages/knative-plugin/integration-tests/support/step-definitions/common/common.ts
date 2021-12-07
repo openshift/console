@@ -127,7 +127,6 @@ Given(
 
 Then('modal with {string} appears', (header: string) => {
   modal.modalTitleShouldContain(header);
-  modal.cancel();
 });
 
 Given('user has installed OpenShift Serverless Operator', () => {

@@ -8,12 +8,13 @@ export const validatePluginManifestSchema = async (
   manifest: ConsolePluginManifestJSON,
   manifestURL: string,
 ) => {
-  const schema = (await import('../../generated/schema/plugin-manifest')).default;
+  // eslint-disable-next-line
+  const schema = require('../../generated/schema/plugin-manifest.cjs').default;
 
   // Use dynamic import to avoid pulling ajv dependency tree into main vendors chunk
-  const SchemaValidator = await import(
-    '@console/dynamic-plugin-sdk/src/validation/SchemaValidator'
-  ).then((m) => m.SchemaValidator);
+  const SchemaValidator = await import('../validation/SchemaValidator').then(
+    (m) => m.SchemaValidator,
+  );
 
   const validator = new SchemaValidator(manifestURL);
   validator.validate(schema, manifest, 'manifest');

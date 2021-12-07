@@ -1,2 +1,6 @@
+reviewers:
+  - rebeccaalpert
+approvers:
+  - jotak
 labels:
   - kind/i18n

@@ -15,7 +15,7 @@ import { TFunction } from 'i18next';
 import { RadioInput } from '../radio';
 import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
 import { TextInput } from '@patternfly/react-core';
-import { openshiftHelpBase } from '@console/internal/components/utils';
+import { isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
 
 export const ConfigureClusterUpstreamModal = withHandlePromise(
   (props: ConfigureClusterUpstreamModalProps) => {
@@ -44,6 +44,10 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     };
     const { t } = useTranslation();
 
+    const updateLink = isUpstream()
+      ? `${openshiftHelpBase}updating/installing-update-service.html`
+      : `${openshiftHelpBase}html/updating_clusters/installing-update-service`;
+
     return (
       <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
@@ -55,7 +59,7 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
           </p>
           <p>
             <ExternalLink
-              href={`${openshiftHelpBase}updating/installing-update-service.html`}
+              href={updateLink}
               text={t('public~Learn more about OpenShift local update services.')}
             />
           </p>

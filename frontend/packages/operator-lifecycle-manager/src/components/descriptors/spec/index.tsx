@@ -231,6 +231,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
           id={descriptor.path}
           style={{ marginLeft: '10px' }}
           isChecked={checked}
+          data-checked-state={checked}
           label={label}
           onChange={(val) => {
             setChecked(val);

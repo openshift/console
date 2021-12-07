@@ -6,11 +6,242 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "KUBEVIRT_CDI",
+      "model": {
+        "group": "cdi.kubevirt.io",
+        "version": "v1beta1",
+        "kind": "CDIConfig"
+      }
+    }
+  },
+  {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine",
+        "version": "v1"
+      },
+      "component": {
+        "$codeRef": "VirtualizationWizardNavigator"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT_HAS_v1_API"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "virtualization",
+      "name": "%kubevirt-plugin~Virtualization%",
+      "insertAfter": "workloads"
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "virtualizationoverview",
+      "section": "virtualization",
+      "perspective": "admin",
+      "name": "%kubevirt-plugin~Overview%",
+      "href": "/virtualization/overview",
+      "prefixNamespaced": false
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine",
+        "version": "v1"
+      },
+      "component": { "$codeRef": "VirtualizationPage.VirtualizationPage" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT_HAS_v1_API"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine",
+        "version": "v1alpha3"
+      },
+      "component": { "$codeRef": "VirtualizationPage.VirtualizationPage" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT_HAS_v1alpha3_API"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "virtualmachines",
+      "section": "virtualization",
+      "name": "%kubevirt-plugin~VirtualMachines%",
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine",
+        "version": "v1"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT_HAS_v1_API"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "virtualmachines",
+      "section": "virtualization",
+      "name": "%kubevirt-plugin~VirtualMachines%",
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine",
+        "version": "v1alpha3"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT_HAS_v1alpha3_API"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine"
+      },
+      "component": { "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "virtualmachinetemplates",
+      "section": "virtualization",
+      "perspective": "admin",
+      "name": "%kubevirt-plugin~Templates%",
+      "href": "/virtualmachinetemplates",
+      "prefixNamespaced": true
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/virtualmachinetemplates/~new"],
+      "component": {
+        "$codeRef": "VMCreateYAML.VMCreateYAML"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
     "type": "console.page/route/standalone",
     "properties": {
       "exact": false,
       "path": "/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole",
       "component": { "$codeRef": "standaloneConsole" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route/standalone",
+    "properties": {
+      "exact": false,
+      "path": "/standalone/k8s/ns/:ns/virtualmachineinstances/:name/console",
+      "component": { "$codeRef": "standaloneConsole.VMConsolePage" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/k8s/ns/:ns/virtualmachinetemplates/:name"],
+      "component": {
+        "$codeRef": "VMTemplateDetailsPage.VMTemplateDetailsPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/ns/:ns/virtualmachinetemplates",
+        "/k8s/all-namespaces/virtualmachinetemplates"
+      ],
+      "component": {
+        "$codeRef": "VirtualMachineTemplatesPage.VirtualMachineTemplatesPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/virtualization/overview"],
+      "component": {
+        "$codeRef": "VirtualizationOverviewPage.VirtualizationOverviewPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/persistentvolumeclaims/~new/data"],
+      "component": {
+        "$codeRef": "UploadPVCPage.UploadPVCPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachineInstance"
+      },
+      "component": {
+        "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
+      }
     },
     "flags": {
       "required": ["KUBEVIRT"]
@@ -34,9 +265,9 @@
     "type": "console.catalog/item-type",
     "properties": {
       "type": "VmTemplate",
-      "title": "%kubevirt-plugin~Virtual Machines%",
+      "title": "%kubevirt-plugin~VirtualMachines%",
       "catalogDescription": "%kubevirt-plugin~Quickly create a virtual machine from a template.%",
-      "typeDescription": "%kubevirt-plugin~**Virtual Machines** are templates for quickly creating a virtual machine.%",
+      "typeDescription": "%kubevirt-plugin~**Virtual Machines** have templates for quickly creating a virtual machine.%",
       "filters": [
         {
           "label": "%kubevirt-plugin~Template Providers%",
@@ -91,21 +322,10 @@
     }
   },
   {
-    "type": "console.page/route/standalone",
-    "properties": {
-      "exact": false,
-      "path": "/standalone/k8s/ns/:ns/virtualmachineinstances/:name/console",
-      "component": { "$codeRef": "standaloneConsole.VMConsolePage" }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
     "type": "console.pvc/create-prop",
     "properties": {
       "label": "%kubevirt-plugin~With Data upload form%",
-      "path": "~new/upload-form"
+      "path": "~new/data"
     },
     "flags": {
       "required": ["KUBEVIRT"]
@@ -151,187 +371,6 @@
     }
   },
   {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "virtualization",
-      "section": "workloads",
-      "name": "%kubevirt-plugin~Virtualization%",
-      "insertBefore": "deployments",
-      "href": "/virtualization",
-      "prefixNamespaced": true
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/ns/:ns/persistentvolumeclaims/~new/upload-form"],
-      "component": {
-        "$codeRef": "UploadPVCPage.UploadPVCPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/ns/:ns/virtualization/~new"],
-      "component": {
-        "$codeRef": "VMCreateYAML.VMCreateYAML"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/ns/:ns/virtualization/~new-wizard"],
-      "component": {
-        "$codeRef": "CreateVMWizardPage.CreateVMWizardPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/virtualization/~new-from-template"],
-      "component": {
-        "$codeRef": "CreateVM.CreateVM"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachines/:name"],
-      "component": {
-        "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/resource/details",
-    "properties": {
-      "model": {
-        "group": "kubevirt.io",
-        "kind": "VirtualMachine"
-      },
-      "component": { "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage" }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachineinstances/:name"],
-      "component": {
-        "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/resource/details",
-    "properties": {
-      "model": {
-        "group": "kubevirt.io",
-        "kind": "VirtualMachineInstance"
-      },
-      "component": {
-        "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "path": ["/k8s/ns/:ns/virtualization", "/k8s/all-namespaces/virtualization"],
-      "component": {
-        "$codeRef": "VirtualizationPage.VirtualizationPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/ns/:ns/virtualmachines", "/k8s/all-namespaces/virtualmachines"],
-      "component": {
-        "$codeRef": "VirtualizationPage.RedirectToVirtualizationPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/ns/:ns/vmtemplates", "/k8s/all-namespaces/vmtemplates"],
-      "component": {
-        "$codeRef": "VirtualizationPage.RedirectToVirtualizationTemplatePage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "path": ["/k8s/ns/:ns/vmtemplates/:name"],
-      "component": {
-        "$codeRef": "VMTemplateDetailsPage.VMTemplateDetailsPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/k8s/ns/:ns/vmtemplates", "/k8s/all-namespaces/vmtemplates"],
-      "component": {
-        "$codeRef": "VirtualMachineTemplatesPage.VirtualMachineTemplatesPage"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
     "type": "console.page/resource/details",
     "properties": {
       "model": {
@@ -361,7 +400,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/virtualization/new-customize-source"],
+      "path": ["/virtualization/customize-source/~new"],
       "component": {
         "$codeRef": "CustomizeSourceForm"
       }
@@ -565,7 +604,6 @@
           }
         }
       },
-      "workloadKeys": ["virtualmachines"],
       "getDataModel": {
         "$codeRef": "topology.getDataModel"
       },
@@ -633,6 +671,45 @@
       "provider": {
         "$codeRef": "actions.useVmActionsProvider"
       }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1",
+        "kind": "VirtualMachineInstance"
+      },
+      "provider": {
+        "$codeRef": "actions.useVmiActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "hardwaredevices",
+      "section": "compute",
+      "name": "%kubevirt-plugin~Hardware Devices%",
+      "insertBefore": "baremetalhosts",
+      "href": "/hardwaredevices",
+      "prefixNamespaced": false
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/hardwaredevices"],
+      "component": {
+        "$codeRef": "HardwareDevicesPage.HardwareDevicesPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
     }
   }
 ]

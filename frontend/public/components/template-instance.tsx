@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 
 import { Status } from '@console/shared';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
@@ -26,34 +27,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const TemplateInstanceTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Status',
-      sortFunc: 'getTemplateInstanceStatus',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-TemplateInstanceTableHeader.displayName = 'TemplateInstanceTableHeader';
-
 const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> = ({ obj }) => {
   return (
     <>
@@ -77,42 +50,78 @@ const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> 
   );
 };
 
-export const TemplateInstanceList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Template Instances"
-    Header={TemplateInstanceTableHeader}
-    Row={TemplateInstanceTableRow}
-    virtualize
-  />
-);
+export const TemplateInstanceList: React.SFC = (props) => {
+  const { t } = useTranslation();
+
+  const TemplateInstanceTableHeader = () => {
+    return [
+      {
+        title: t('public~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('public~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('public~Status'),
+        sortFunc: 'getTemplateInstanceStatus',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('public~TemplateInstances')}
+      Header={TemplateInstanceTableHeader}
+      Row={TemplateInstanceTableRow}
+      virtualize
+    />
+  );
+};
 
 const allStatuses = ['Ready', 'Not Ready', 'Failed'];
 
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'template-instance-status',
-    reducer: getTemplateInstanceStatus,
-    items: _.map(allStatuses, (status) => ({
-      id: status,
-      title: status,
-    })),
-  },
-];
+export const TemplateInstancePage: React.SFC<TemplateInstancePageProps> = (props) => {
+  const { t } = useTranslation();
 
-export const TemplateInstancePage: React.SFC<TemplateInstancePageProps> = (props) => (
-  <ListPage
-    {...props}
-    title="Template Instances"
-    kind="TemplateInstance"
-    ListComponent={TemplateInstanceList}
-    canCreate={false}
-    rowFilters={filters}
-  />
-);
+  const filters = [
+    {
+      filterGroupName: t('public~Status'),
+      type: 'template-instance-status',
+      reducer: getTemplateInstanceStatus,
+      items: _.map(allStatuses, (status) => ({
+        id: status,
+        title: status,
+      })),
+    },
+  ];
+
+  return (
+    <ListPage
+      {...props}
+      title={t('public~TemplateInstances')}
+      kind="TemplateInstance"
+      ListComponent={TemplateInstanceList}
+      canCreate={false}
+      rowFilters={filters}
+    />
+  );
+};
 
 const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const status = getTemplateInstanceStatus(obj);
   const secretName = _.get(obj, 'spec.secret.name');
   const requester = _.get(obj, 'spec.requester.username');
@@ -121,7 +130,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Template Instance Details" />
+        <SectionHeading text={t('public~TemplateInstance details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
@@ -129,13 +138,13 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <dt>Status</dt>
+                <dt>{t('public~Status')}</dt>
                 <dd>
                   <Status status={status} />
                 </dd>
                 {secretName && (
                   <>
-                    <dt>Parameters</dt>
+                    <dt>{t('public~Parameters')}</dt>
                     <dd>
                       <ResourceLink
                         kind="Secret"
@@ -145,7 +154,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
                     </dd>
                   </>
                 )}
-                <dt>Requester</dt>
+                <dt>{t('public~Requester')}</dt>
                 <dd>{requester || '-'}</dd>
               </dl>
             </div>
@@ -153,15 +162,15 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Objects" />
+        <SectionHeading text={t('public~Objects')} />
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">
-            <div className="col-sm-6">Name</div>
-            <div className="col-sm-6">Namespace</div>
+            <div className="col-sm-6">{t('public~Name')}</div>
+            <div className="col-sm-6">{t('public~Namespace')}</div>
           </div>
           <div className="co-m-table-grid__body">
             {_.isEmpty(objects) ? (
-              <EmptyBox label="Objects" />
+              <EmptyBox label={t('public~Objects')} />
             ) : (
               _.map(objects, ({ ref }, i) => (
                 <div className="row co-resource-list__item" key={i}>
@@ -182,7 +191,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
       </div>
     </>

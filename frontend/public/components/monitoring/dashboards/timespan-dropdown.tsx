@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 
 import {
   monitoringDashboardsSetEndTime,
@@ -16,12 +15,14 @@ import { getQueryArgument, removeQueryArgument, setQueryArgument } from '../../u
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import { useBoolean } from '../hooks/useBoolean';
 import customTimeRangeModal from './custom-time-range-modal';
+import { TimeDropdownsProps } from './types';
+import { getActivePerspective } from './monitoring-dashboard-utils';
 
 const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
 
-const TimespanDropdown: React.FC = () => {
+const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const { t } = useTranslation();
-  const [activePerspective] = useActivePerspective();
+  const activePerspective = getActivePerspective(namespace);
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
 
   const timespan = useSelector(({ UI }: RootState) =>

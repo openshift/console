@@ -19,3 +19,7 @@ cypress-a11y-report.json
 /frontend/gui_test_screenshots
 /frontend/package-lock.json
 /frontend/po-files
+/dynamic-demo-plugin/**/node_modules
+/dynamic-demo-plugin/**/npm-debug.log
+/dynamic-demo-plugin/**/yarn-error.log
+/dynamic-demo-plugin/**/dist

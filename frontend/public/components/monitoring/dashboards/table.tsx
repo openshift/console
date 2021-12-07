@@ -55,7 +55,7 @@ const paginationOptions = [5, 10, 20, 50, 100].map((n) => ({
   value: n,
 }));
 
-const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
+const Table: React.FC<Props> = ({ panel, pollInterval, queries, namespace }) => {
   const [error, setError] = React.useState();
   const [isLoading, setLoading] = React.useState(true);
   const [data, setData] = React.useState();
@@ -71,7 +71,7 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
   const tick = () => {
     Promise.all(
       queries.map((q) =>
-        safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, query: q })),
+        safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, query: q, namespace })),
       ),
     )
       .then((responses: PrometheusResponse[]) => {
@@ -191,6 +191,7 @@ type Props = {
   panel: Panel;
   pollInterval: number;
   queries: string[];
+  namespace?: string;
 };
 
 export default Table;

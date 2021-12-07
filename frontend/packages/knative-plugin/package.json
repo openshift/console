@@ -21,7 +21,7 @@
       ]
     },
     "exposedModules": {
-      "actions": "src/actions",
+      "actions": "src/actions/providers.ts",
       "icons": "src/utils/icons.ts",
       "catalog": "src/catalog",
       "yamlTemplates": "src/yaml-templates.ts",
@@ -34,8 +34,8 @@
       "knativeComponent": "src/components",
       "eventingComponent": "src/components/eventing",
       "knatifyComponent": "src/components/knatify",
-      "topology": "src/topology",
-      "knativeTopologySidebar": "src/topology/sidebar"
+      "knativeTopologySidebar": "src/topology/sidebar",
+      "topology": "src/topology"
     }
   }
 }

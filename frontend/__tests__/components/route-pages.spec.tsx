@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 
-import { RouteLocation, RouteStatus } from '../../public/components/routes';
-import { ExternalLink } from '../../public/components/utils';
+import { RouteLinkAndCopy, RouteLocation, RouteStatus } from '../../public/components/routes';
+import { ExternalLinkWithCopy } from '../../public/components/utils';
 import { RouteKind } from '../../public/module/k8s';
 
 describe(RouteLocation.displayName, () => {
@@ -42,8 +42,9 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find(ExternalLink).exists()).toBe(true);
-    expect(wrapper.find(ExternalLink).props().href).toContain('https:');
+    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain('https:');
   });
 
   it('renders a http link when no TLS Settings', () => {
@@ -79,8 +80,9 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find(ExternalLink).exists()).toBe(true);
-    expect(wrapper.find(ExternalLink).props().href).toContain('http:');
+    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain('http:');
   });
 
   it('renders oldest admitted ingress', () => {
@@ -127,8 +129,11 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find(ExternalLink).exists()).toBe(true);
-    expect(wrapper.find(ExternalLink).props().href).toContain('http://www.example.com');
+    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain(
+      'http://www.example.com',
+    );
   });
 
   it('renders additional path in url', () => {
@@ -165,8 +170,9 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find(ExternalLink).exists()).toBe(true);
-    expect(wrapper.find(ExternalLink).props().href).toContain('\\mypath');
+    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain('\\mypath');
   });
 
   it('renders Subdomain', () => {
@@ -202,7 +208,7 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find(ExternalLink).exists()).toBe(false);
+    expect(wrapper.find(RouteLinkAndCopy).exists()).toBe(false);
     expect(wrapper.find('div').text()).toEqual('*.example.com');
   });
 

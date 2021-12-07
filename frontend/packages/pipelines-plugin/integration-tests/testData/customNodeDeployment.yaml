@@ -1,0 +1,111 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"tekton.dev/v1beta1","kind":"Pipeline","metadata":{"annotations":{"operator.tekton.dev/preserve-namespace":"true"},"labels":{"pipeline.openshift.io/runtime":"nodejs","pipeline.openshift.io/type":"kubernetes"},"name":"s2i-nodejs-deployment","namespace":"openshift","ownerReferences":[{"apiVersion":"operator.tekton.dev/v1alpha1","blockOwnerDeletion":true,"controller":true,"kind":"TektonAddon","name":"addon","uid":"3e3d6bd4-1405-4943-914b-9ef6fef29745"}]},"spec":{"params":[{"name":"APP_NAME","type":"string"},{"name":"GIT_REPO","type":"string"},{"name":"GIT_REVISION","type":"string"},{"name":"IMAGE_NAME","type":"string"},{"default":".","name":"PATH_CONTEXT","type":"string"},{"default":"14-ubi8","name":"VERSION","type":"string"}],"tasks":[{"name":"fetch-repository","params":[{"name":"url","value":"$(params.GIT_REPO)"},{"name":"revision","value":"$(params.GIT_REVISION)"},{"name":"subdirectory","value":""},{"name":"deleteExisting","value":"true"}],"taskRef":{"kind":"ClusterTask","name":"git-clone"},"workspaces":[{"name":"output","workspace":"workspace"}]},{"name":"build","params":[{"name":"IMAGE","value":"$(params.IMAGE_NAME)"},{"name":"TLSVERIFY","value":"false"},{"name":"PATH_CONTEXT","value":"$(params.PATH_CONTEXT)"},{"name":"VERSION","value":"$(params.VERSION)"}],"runAfter":["fetch-repository"],"taskRef":{"kind":"ClusterTask","name":"s2i-nodejs"},"workspaces":[{"name":"source","workspace":"workspace"}]},{"name":"deploy","params":[{"name":"SCRIPT","value":"oc
+      rollout status
+      deploy/$(params.APP_NAME)"}],"runAfter":["build"],"taskRef":{"kind":"ClusterTask","name":"openshift-client"}}],"workspaces":[{"name":"workspace"}]}}
+    operator.tekton.dev/preserve-namespace: 'true'
+  resourceVersion: '34093'
+  name: s2i-nodejs-custom-deployment
+  uid: 36011897-4ddb-4b39-9a31-ebbd346e7d26
+  creationTimestamp: '2021-11-21T18:28:57Z'
+  generation: 1
+  managedFields:
+    - apiVersion: tekton.dev/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:kubectl.kubernetes.io/last-applied-configuration': {}
+            'f:operator.tekton.dev/preserve-namespace': {}
+          'f:labels':
+            .: {}
+            'f:pipeline.openshift.io/runtime': {}
+            'f:pipeline.openshift.io/type': {}
+          'f:ownerReferences':
+            .: {}
+            'k:{"uid":"3e3d6bd4-1405-4943-914b-9ef6fef29745"}': {}
+        'f:spec':
+          .: {}
+          'f:params': {}
+          'f:tasks': {}
+          'f:workspaces': {}
+      manager: manifestival
+      operation: Update
+      time: '2021-11-21T18:29:13Z'
+  namespace: openshift
+  ownerReferences:
+    - apiVersion: operator.tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: TektonAddon
+      name: addon
+      uid: 3e3d6bd4-1405-4943-914b-9ef6fef29745
+  labels:
+    pipeline.openshift.io/runtime: nodejs
+    pipeline.openshift.io/type: kubernetes
+spec:
+  params:
+    - name: APP_NAME
+      type: string
+    - name: GIT_REPO
+      type: string
+    - name: GIT_REVISION
+      type: string
+    - name: IMAGE_NAME
+      type: string
+    - default: .
+      name: PATH_CONTEXT
+      type: string
+    - default: 14-ubi8
+      name: VERSION
+      type: string
+  tasks:
+    - name: fetch-repository
+      params:
+        - name: url
+          value: $(params.GIT_REPO)
+        - name: revision
+          value: $(params.GIT_REVISION)
+        - name: subdirectory
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: workspace
+    - name: build
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE_NAME)
+        - name: TLSVERIFY
+          value: 'false'
+        - name: PATH_CONTEXT
+          value: $(params.PATH_CONTEXT)
+        - name: VERSION
+          value: $(params.VERSION)
+      runAfter:
+        - fetch-repository
+      taskRef:
+        kind: ClusterTask
+        name: s2i-nodejs
+      workspaces:
+        - name: source
+          workspace: workspace
+    - name: deploy
+      params:
+        - name: SCRIPT
+          value: oc rollout status deploy/$(params.APP_NAME)
+      runAfter:
+        - build
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+  workspaces:
+    - name: workspace

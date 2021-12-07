@@ -148,7 +148,7 @@ $color-dark-border: #ddd;
   width: 50%;
 }
 
-@media(min-width: $grid-float-breakpoint) {
+@media(min-width: $pf-global--breakpoint--xl) {
   .co-sysevent {
     flex-wrap: nowrap;
     margin-left: -40px;
@@ -166,7 +166,7 @@ $color-dark-border: #ddd;
 
   .co-sysevent-stream {
     padding-top: 50px;
-    padding-left: 10px;
+    padding-left: 5px;
   }
 
   .co-sysevent-stream__timeline {

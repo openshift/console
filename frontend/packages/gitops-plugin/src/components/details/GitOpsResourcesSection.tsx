@@ -8,7 +8,11 @@ import {
   CardBody,
   Tooltip,
 } from '@patternfly/react-core';
-import { HeartBrokenIcon } from '@patternfly/react-icons';
+import { HeartBrokenIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import {
+  global_danger_color_100 as RedColor,
+  global_warning_color_100 as YellowColor,
+} from '@patternfly/react-tokens';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { GitOpsEnvironmentService, GitOpsHealthResources } from '../utils/gitops-types';
@@ -50,42 +54,67 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({
     ? deployments.reduce(getUnhealthyResources(), [])
     : [];
   const degradedSecrets: string[] = secrets ? secrets.reduce(getUnhealthyResources(), []) : [];
-  const degradedRoutes: string[] = routes ? routes.reduce(getNonSyncedResources(), []) : [];
-  const degradedRoleBindings: string[] = roleBindings
+  const degradedRoutes: string[] = routes ? routes.reduce(getUnhealthyResources(), []) : [];
+
+  const nonSyncedSyncServices: string[] = services
+    ? services.reduce(getNonSyncedResources(), [])
+    : [];
+  const nonSyncedDeployments: string[] = deployments
+    ? deployments.reduce(getNonSyncedResources(), [])
+    : [];
+  const nonSyncedSecrets: string[] = secrets ? secrets.reduce(getNonSyncedResources(), []) : [];
+  const nonSyncedRoutes: string[] = routes ? routes.reduce(getNonSyncedResources(), []) : [];
+  const nonSyncedRoleBindings: string[] = roleBindings
     ? roleBindings.reduce(getNonSyncedResources(), [])
     : [];
-  const degradedClusterRoles: string[] = clusterRoles
+  const nonSyncedClusterRoles: string[] = clusterRoles
     ? clusterRoles.reduce(getNonSyncedResources(), [])
     : [];
-  const degradedClusterRoleBindings: string[] = clusterRoleBindings
+  const nonSyncedClusterRoleBindings: string[] = clusterRoleBindings
     ? clusterRoleBindings.reduce(getNonSyncedResources(), [])
     : [];
 
   const renderResource = (
     resources: GitOpsHealthResources[] | GitOpsEnvironmentService[],
-    degradedResources: string[],
+    degradedResources: string[] | null,
+    nonSyncedResources: string[],
   ) => {
     return (
-      <Tooltip
-        content={t('gitops-plugin~{{x}} of {{total}} degraded', {
-          x: degradedResources.length.toString(),
-          total: resources ? resources.length.toString() : '0',
-        })}
-      >
-        <StackItem>
-          {degradedResources.length > 0 ? (
-            <>
-              {degradedResources.length}
-              <HeartBrokenIcon
-                color="#C9190B"
-                style={{ marginLeft: 'var(--pf-global--spacer--sm)' }}
-              />
-            </>
-          ) : (
-            <>&nbsp;</>
-          )}
-        </StackItem>
-      </Tooltip>
+      <Split hasGutter>
+        {degradedResources?.length > 0 && (
+          <Tooltip
+            content={t('gitops-plugin~{{x}} of {{total}} Unhealthy', {
+              x: degradedResources.length.toString(),
+              total: resources?.length.toString() ?? '0',
+            })}
+          >
+            <SplitItem>
+              <>
+                {degradedResources.length}
+                &nbsp;
+                <HeartBrokenIcon color={RedColor.value} className="co-icon-space-r" />
+              </>
+            </SplitItem>
+          </Tooltip>
+        )}
+        {nonSyncedResources.length > 0 && (
+          <Tooltip
+            content={t('gitops-plugin~{{x}} of {{total}} OutOfSync', {
+              x: nonSyncedResources.length.toString(),
+              total: resources?.length.toString() ?? '0',
+            })}
+          >
+            <SplitItem>
+              <>
+                {nonSyncedResources.length}
+                &nbsp;
+                <ExclamationTriangleIcon color={YellowColor.value} className="co-icon-space-r" />
+              </>
+            </SplitItem>
+          </Tooltip>
+        )}
+        {degradedResources?.length === 0 && nonSyncedResources.length === 0 && <>&nbsp;</>}
+      </Split>
     );
   };
   return (
@@ -94,7 +123,7 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({
         <Card>
           <h3 className="odc-gitops-resources__title co-nowrap">{t('gitops-plugin~Resources')}</h3>
           <CardBody>
-            <Split style={{ justifyContent: 'space-between' }}>
+            <Split hasGutter>
               <span className="odc-gitops-resources__list">
                 <SplitItem>
                   <Stack style={{ marginRight: 'var(--pf-global--spacer--sm)' }}>
@@ -138,13 +167,13 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({
               </span>
               <SplitItem>
                 <Stack style={{ alignItems: 'flex-end' }}>
-                  {renderResource(deployments, degradedDeployments)}
-                  {renderResource(secrets, degradedSecrets)}
-                  {renderResource(services, degradedServices)}
-                  {renderResource(routes, degradedRoutes)}
-                  {renderResource(roleBindings, degradedRoleBindings)}
-                  {renderResource(clusterRoles, degradedClusterRoles)}
-                  {renderResource(clusterRoleBindings, degradedClusterRoleBindings)}
+                  {renderResource(deployments, degradedDeployments, nonSyncedDeployments)}
+                  {renderResource(secrets, degradedSecrets, nonSyncedSecrets)}
+                  {renderResource(services, degradedServices, nonSyncedSyncServices)}
+                  {renderResource(routes, degradedRoutes, nonSyncedRoutes)}
+                  {renderResource(roleBindings, null, nonSyncedRoleBindings)}
+                  {renderResource(clusterRoles, null, nonSyncedClusterRoles)}
+                  {renderResource(clusterRoleBindings, null, nonSyncedClusterRoleBindings)}
                 </Stack>
               </SplitItem>
             </Split>

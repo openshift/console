@@ -6,8 +6,10 @@ import {
   AccordionToggle,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CLOUD, SSH, SYSPREP } from '../../../../utils/strings';
+import { CLOUD, SSH, SYSPREP, HARDWARE } from '../../../../utils/strings';
 import Cloudinit from './cloud-init/Cloudinit';
+import { GPUDevices } from './hardware-devices/GPUDevices';
+import { HostDevices } from './hardware-devices/HostDevices';
 import SSHAdvancedTab from './ssh/SSHAdvancedTab';
 import Sysprep from './sysprep/Sysprep';
 
@@ -65,6 +67,21 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({ wizardReduxID, isWindowsTempl
         </AccordionToggle>
         <AccordionContent isHidden={expanded !== SSH}>
           <SSHAdvancedTab />
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem>
+        <AccordionToggle
+          className="AdvancedTab-tab-title"
+          onClick={() => onToggle(HARDWARE)}
+          isExpanded={expanded === HARDWARE}
+          id={HARDWARE}
+        >
+          {t('kubevirt-plugin~Hardware devices')}
+        </AccordionToggle>
+        <AccordionContent isHidden={expanded !== HARDWARE}>
+          <GPUDevices wizardReduxID={wizardReduxID} />
+          <br />
+          <HostDevices wizardReduxID={wizardReduxID} />
         </AccordionContent>
       </AccordionItem>
     </Accordion>

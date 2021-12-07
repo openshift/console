@@ -3,6 +3,7 @@ package parser
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/devfile/library/pkg/devfile/parser/data"
 	"github.com/pkg/errors"
@@ -19,35 +20,29 @@ func (d *DevfileCtx) SetDevfileAPIVersion() error {
 		return errors.Wrapf(err, "failed to decode devfile json")
 	}
 
-	var apiVer string
-
-	// Get "apiVersion" value from map for devfile V1
-	apiVersion, okApi := r["apiVersion"]
-
 	// Get "schemaVersion" value from map for devfile V2
 	schemaVersion, okSchema := r["schemaVersion"]
+	var devfilePath string
+	if d.GetAbsPath() != "" {
+		devfilePath = d.GetAbsPath()
+	} else if d.GetURL() != "" {
+		devfilePath = d.GetURL()
+	}
 
-	if okApi {
-		apiVer = apiVersion.(string)
-		// apiVersion cannot be empty
-		if apiVer == "" {
-			return fmt.Errorf("apiVersion in devfile cannot be empty")
-		}
-
-	} else if okSchema {
-		apiVer = schemaVersion.(string)
+	if okSchema {
 		// SchemaVersion cannot be empty
 		if schemaVersion.(string) == "" {
-			return fmt.Errorf("schemaVersion in devfile cannot be empty")
+			return fmt.Errorf("schemaVersion in devfile: %s cannot be empty", devfilePath)
 		}
 	} else {
-		return fmt.Errorf("apiVersion or schemaVersion not present in devfile")
-
+		return fmt.Errorf("schemaVersion not present in devfile: %s", devfilePath)
 	}
 
 	// Successful
-	d.apiVersion = apiVer
-	klog.V(4).Infof("devfile apiVersion: '%s'", d.apiVersion)
+	// split by `-` and get the first substring as schema version, schemaVersion without `-` won't get affected
+	// e.g. 2.2.0-latest => 2.2.0, 2.2.0 => 2.2.0
+	d.apiVersion = strings.Split(schemaVersion.(string), "-")[0]
+	klog.V(4).Infof("devfile schemaVersion: '%s'", d.apiVersion)
 	return nil
 }
 

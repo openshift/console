@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu, MenuContent, MenuGroup, MenuItem, MenuList, Divider } from '@patternfly/react-core';
 import { Action } from '@console/dynamic-plugin-sdk';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '../../../utils/order-extensions';
 import { GroupedMenuOption, MenuOption, MenuOptionType } from '../types';
 import { getMenuOptionType } from '../utils';
 import ActionMenuItem from './ActionMenuItem';

@@ -72,8 +72,8 @@ typeConfigs.forEach((tc) => {
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(`${outPath}.json`, schemaString);
-  fs.writeFileSync(`${outPath}.js`, `export default ${schemaString};`);
+  fs.writeFileSync(`${outPath}.cjs`, `exports.default = ${schemaString};`);
 
   console.log(chalk.green(relativePath(`${outPath}.json`)));
-  console.log(chalk.green(relativePath(`${outPath}.js`)));
+  console.log(chalk.green(relativePath(`${outPath}.cjs`)));
 });

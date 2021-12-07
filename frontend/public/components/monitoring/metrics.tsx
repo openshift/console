@@ -1,6 +1,5 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { List as ImmutableList } from 'immutable';
 import {
   ActionGroup,
   Button,
@@ -32,13 +31,26 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CloseButton from '@console/shared/src/components/close-button';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
-import * as UIActions from '../../actions/ui';
+import {
+  monitoringToggleGraphs,
+  queryBrowserAddQuery,
+  queryBrowserDeleteAllQueries,
+  queryBrowserDeleteQuery,
+  queryBrowserInsertText,
+  queryBrowserPatchQuery,
+  queryBrowserRunQueries,
+  queryBrowserSetAllExpanded,
+  queryBrowserSetMetrics,
+  queryBrowserSetPollInterval,
+  queryBrowserToggleIsEnabled,
+  queryBrowserToggleSeries,
+} from '../../actions/ui';
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
@@ -54,7 +66,7 @@ import {
 } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
 import IntervalDropdown from './poll-interval-dropdown';
-import { colors, Error, QueryObj, QueryBrowser } from './query-browser';
+import { colors, Error, QueryBrowser } from './query-browser';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
 
@@ -137,22 +149,18 @@ const prometheusFunctions = [
 // Stores information about the currently focused query input
 let focusedQuery;
 
-const queryDispatchToProps = (dispatch, { index }) => ({
-  deleteQuery: () => dispatch(UIActions.queryBrowserDeleteQuery(index)),
-  patchQuery: (v: QueryObj) => dispatch(UIActions.queryBrowserPatchQuery(index, v)),
-  toggleIsEnabled: () => dispatch(UIActions.queryBrowserToggleIsEnabled(index)),
-});
-
-const MetricsActionsMenu_: React.FC<MetricsActionsMenuProps> = ({
-  addQuery,
-  deleteAll,
-  isAllExpanded,
-  setAllExpanded,
-}) => {
+const MetricsActionsMenu: React.FC<{}> = () => {
   const { t } = useTranslation();
 
+  const isAllExpanded = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
+  );
+
+  const dispatch = useDispatch();
+  const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery()), [dispatch]);
+
   const doDelete = () => {
-    deleteAll();
+    dispatch(queryBrowserDeleteAllQueries());
     focusedQuery = undefined;
   };
 
@@ -162,7 +170,7 @@ const MetricsActionsMenu_: React.FC<MetricsActionsMenuProps> = ({
       label: isAllExpanded
         ? t('public~Collapse all query tables')
         : t('public~Expand all query tables'),
-      callback: () => setAllExpanded(!isAllExpanded),
+      callback: () => dispatch(queryBrowserSetAllExpanded(!isAllExpanded)),
     },
     { label: t('public~Delete all queries'), callback: doDelete },
   ];
@@ -173,23 +181,14 @@ const MetricsActionsMenu_: React.FC<MetricsActionsMenuProps> = ({
     </div>
   );
 };
-const MetricsActionsMenu = connect(
-  ({ UI }: RootState) => ({
-    isAllExpanded: UI.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
-  }),
-  {
-    addQuery: UIActions.queryBrowserAddQuery,
-    deleteAll: UIActions.queryBrowserDeleteAllQueries,
-    setAllExpanded: UIActions.queryBrowserSetAllExpanded,
-  },
-)(MetricsActionsMenu_);
 
-const graphStateToProps = ({ UI }: RootState) => ({
-  hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),
-});
-
-const ToggleGraph_ = ({ hideGraphs, toggle }) => {
+export const ToggleGraph: React.FC<{}> = () => {
   const { t } = useTranslation();
+
+  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
+
+  const dispatch = useDispatch();
+  const toggle = React.useCallback(() => dispatch(monitoringToggleGraphs()), [dispatch]);
 
   const icon = hideGraphs ? <ChartLineIcon /> : <CompressIcon />;
 
@@ -204,12 +203,11 @@ const ToggleGraph_ = ({ hideGraphs, toggle }) => {
     </Button>
   );
 };
-export const ToggleGraph = connect(graphStateToProps, { toggle: UIActions.monitoringToggleGraphs })(
-  ToggleGraph_,
-);
 
-const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetrics }) => {
+const MetricsDropdown: React.FC<{}> = () => {
   const { t } = useTranslation();
+
+  const dispatch = useDispatch();
 
   const [items, setItems] = React.useState<MetricsDropdownItems>();
   const [error, setError] = React.useState<PrometheusAPIError>();
@@ -221,19 +219,19 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
       .then((response) => {
         const metrics = response?.data;
         setItems(_.zipObject(metrics, metrics));
-        setMetrics(metrics);
+        dispatch(queryBrowserSetMetrics(metrics));
       })
       .catch((err) => {
         if (err.name !== 'AbortError') {
           setError(err);
         }
       });
-  }, [safeFetch, setMetrics]);
+  }, [dispatch, safeFetch]);
 
   const onChange = (metric: string) => {
     // Replace the currently selected text with the metric
     const { index = 0, selection = {}, target = undefined } = focusedQuery || {};
-    insertText(index, metric, selection.start, selection.end);
+    dispatch(queryBrowserInsertText(index, metric, selection.start, selection.end));
 
     if (target) {
       target.focus();
@@ -246,7 +244,9 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
   let title: React.ReactNode = t('public~Insert metric at cursor');
   if (error !== undefined) {
     const message =
-      error?.response?.status === 403 ? 'Access restricted.' : 'Failed to load metrics list.';
+      error?.response?.status === 403
+        ? t('public~Access restricted.')
+        : t('public~Failed to load metrics list.');
     title = (
       <span>
         <RedExclamationCircleIcon /> {message}
@@ -257,7 +257,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
   } else if (_.isEmpty(items)) {
     title = (
       <span>
-        <YellowExclamationTriangleIcon /> No metrics found.
+        <YellowExclamationTriangleIcon /> {t('public~No metrics found.')}
       </span>
     );
   }
@@ -274,13 +274,10 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({ insertText, setMetri
     />
   );
 };
-const MetricsDropdown = connect(null, {
-  insertText: UIActions.queryBrowserInsertText,
-  setMetrics: UIActions.queryBrowserSetMetrics,
-})(MetricsDropdown_);
 
 const ExpandButton = ({ isExpanded, onClick }) => {
-  const title = `${isExpanded ? 'Hide' : 'Show'} Table`;
+  const { t } = useTranslation();
+  const title = isExpanded ? t('public~Hide table') : t('public~Show table');
   return (
     <Button
       aria-label={title}
@@ -298,35 +295,38 @@ const ExpandButton = ({ isExpanded, onClick }) => {
   );
 };
 
-const seriesButtonStateToProps = ({ UI }: RootState, { index, labels }) => {
-  const disabledSeries = UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
-  const isDisabled = _.some(disabledSeries, (s) => _.isEqual(s, labels));
-  if (!isDisabled) {
+const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
+  const { t } = useTranslation();
+  const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ UI }: RootState) => {
+    const disabledSeries = UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
+    if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
+      return [null, true, false];
+    }
+
     const series = UI.getIn(['queryBrowser', 'queries', index, 'series']);
     if (_.isEmpty(series)) {
-      return { colorIndex: null, isDisabled, isSeriesEmpty: true };
+      return [null, false, true];
     }
+
     const colorOffset = UI.getIn(['queryBrowser', 'queries'])
       .take(index)
       .filter((q) => q.get('isEnabled'))
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
     const seriesIndex = _.findIndex(series, (s) => _.isEqual(s, labels));
-    const colorIndex = (colorOffset + seriesIndex) % colors.length;
-    return { colorIndex, isDisabled };
-  }
-  return { colorIndex: null, isDisabled };
-};
+    return [(colorOffset + seriesIndex) % colors.length, false, false];
+  });
 
-const SeriesButton_: React.FC<SeriesButtonProps> = ({
-  colorIndex,
-  isDisabled,
-  isSeriesEmpty = false,
-  toggleSeries,
-}) => {
+  const dispatch = useDispatch();
+  const toggleSeries = React.useCallback(() => dispatch(queryBrowserToggleSeries(index, labels)), [
+    dispatch,
+    index,
+    labels,
+  ]);
+
   if (isSeriesEmpty) {
     return <div className="query-browser__series-btn-wrap"></div>;
   }
-  const title = `${isDisabled ? 'Show' : 'Hide'} series`;
+  const title = isDisabled ? t('public~Show series') : t('public~Hide series');
 
   return (
     <div className="query-browser__series-btn-wrap">
@@ -344,14 +344,6 @@ const SeriesButton_: React.FC<SeriesButtonProps> = ({
     </div>
   );
 };
-const SeriesButton = connect(seriesButtonStateToProps, (dispatch, { index, labels }) => ({
-  toggleSeries: () => dispatch(UIActions.queryBrowserToggleSeries(index, labels)),
-}))(SeriesButton_);
-
-const queryInputStateToProps = ({ UI }: RootState, { index }) => ({
-  metrics: UI.getIn(['queryBrowser', 'metrics']),
-  text: UI.getIn(['queryBrowser', 'queries', index, 'text']),
-});
 
 // Highlight characters in `text` based on the search string `token`
 const HighlightMatches: React.FC<{ text: string; token: string }> = ({ text, token }) => {
@@ -374,16 +366,18 @@ const HighlightMatches: React.FC<{ text: string; token: string }> = ({ text, tok
   return <>{text}</>;
 };
 
-const QueryInput_: React.FC<QueryInputProps> = ({
-  index,
-  metrics,
-  patchQuery,
-  runQueries,
-  text = '',
-}) => {
+export const QueryInput: React.FC<QueryInputProps> = ({ index }) => {
   const { t } = useTranslation();
 
   const [token, setToken] = React.useState('');
+
+  const metrics = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'metrics']));
+
+  const text = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'text'], ''),
+  );
+
+  const dispatch = useDispatch();
 
   const inputRef = React.useRef(null);
 
@@ -399,7 +393,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   }, 200);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    patchQuery({ text: e.target.value });
+    dispatch(queryBrowserPatchQuery(index, { text: e.target.value }));
     updateToken();
   };
 
@@ -407,7 +401,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
     // Enter+Shift inserts newlines, Enter alone runs the query
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      runQueries();
+      dispatch(queryBrowserRunQueries());
       setToken('');
     }
   };
@@ -432,7 +426,11 @@ const QueryInput_: React.FC<QueryInputProps> = ({
       re,
       e.currentTarget.dataset.autocomplete,
     );
-    patchQuery({ text: newTextBeforeCursor + text.substring(inputRef.current.selectionEnd) });
+    dispatch(
+      queryBrowserPatchQuery(index, {
+        text: newTextBeforeCursor + text.substring(inputRef.current.selectionEnd),
+      }),
+    );
 
     // Move cursor to just after the text we inserted (use _.defer() so this is called after the textarea value is set)
     const cursorPosition = newTextBeforeCursor.length;
@@ -443,7 +441,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   };
 
   const onClear = () => {
-    patchQuery({ text: '' });
+    dispatch(queryBrowserPatchQuery(index, { text: '' }));
     inputRef.current.focus();
   };
 
@@ -521,30 +519,40 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   );
 };
 
-const queryInputDispatchToProps = (dispatch, props) =>
-  Object.assign(
-    { runQueries: () => dispatch(UIActions.queryBrowserRunQueries()) },
-    queryDispatchToProps(dispatch, props),
-  );
-
-export const QueryInput = connect(queryInputStateToProps, queryInputDispatchToProps)(QueryInput_);
-
-const QueryKebab_: React.FC<QueryKebabProps> = ({
-  deleteQuery,
-  isDisabledSeriesEmpty,
-  isEnabled,
-  patchQuery,
-  series,
-  toggleIsEnabled,
-}) => {
+const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
 
-  const toggleAllSeries = () => patchQuery({ disabledSeries: isDisabledSeriesEmpty ? series : [] });
+  const isDisabledSeriesEmpty = useSelector(({ UI }: RootState) =>
+    _.isEmpty(UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
+  );
+  const isEnabled = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  );
+  const series = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'series']),
+  );
 
-  const doDelete = () => {
-    deleteQuery();
+  const dispatch = useDispatch();
+
+  const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled(index)), [
+    dispatch,
+    index,
+  ]);
+
+  const toggleAllSeries = React.useCallback(
+    () =>
+      dispatch(
+        queryBrowserPatchQuery(index, {
+          disabledSeries: isDisabledSeriesEmpty ? series : [],
+        }),
+      ),
+    [dispatch, index, isDisabledSeriesEmpty, series],
+  );
+
+  const doDelete = React.useCallback(() => {
+    dispatch(queryBrowserDeleteQuery(index));
     focusedQuery = undefined;
-  };
+  }, [dispatch, index]);
 
   return (
     <Kebab
@@ -562,34 +570,8 @@ const QueryKebab_: React.FC<QueryKebabProps> = ({
     />
   );
 };
-const QueryKebab = connect(
-  ({ UI }: RootState, { index }) => ({
-    isDisabledSeriesEmpty: _.isEmpty(
-      UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']),
-    ),
-    isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-    series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
-  }),
-  queryDispatchToProps,
-)(QueryKebab_);
 
-const queryTableStateToProps = ({ UI }: RootState, { index }) => ({
-  isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-  isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
-  pollInterval: UI.getIn(['queryBrowser', 'pollInterval']),
-  query: UI.getIn(['queryBrowser', 'queries', index, 'query']),
-  series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
-});
-
-const QueryTable_: React.FC<QueryTableProps> = ({
-  index,
-  isEnabled,
-  isExpanded,
-  namespace,
-  pollInterval = 15 * 1000,
-  query,
-  series,
-}) => {
+export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   const { t } = useTranslation();
 
   const [data, setData] = React.useState<PrometheusData>();
@@ -597,6 +579,22 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>();
+
+  const isEnabled = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  );
+  const isExpanded = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+  );
+  const pollInterval = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'pollInterval'], 15 * 1000),
+  );
+  const query = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'query']),
+  );
+  const series = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'series']),
+  );
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
@@ -632,7 +630,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   if (error) {
     return (
       <div className="query-browser__table-message">
-        <Error error={error} title="Error loading values" />
+        <Error error={error} title={t('public~Error loading values')} />
       </div>
     );
   }
@@ -708,7 +706,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
       rowMapper = ({ metric, value }) => [
         buttonCell(metric),
         ..._.map(allLabelKeys, (k) => metric[k]),
-        _.get(value, '[1]', { title: <span className="text-muted">None</span> }),
+        _.get(value, '[1]', { title: <span className="text-muted">{t('public~None')}</span> }),
       ];
     }
 
@@ -735,7 +733,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     <>
       <div className="query-browser__table-wrapper">
         <Table
-          aria-label="query results table"
+          aria-label={t('public~query results table')}
           cells={columns}
           gridBreakPoint={TableGridBreakpoint.none}
           onSort={onSort}
@@ -757,22 +755,32 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     </>
   );
 };
-export const QueryTable = connect(queryTableStateToProps, queryDispatchToProps)(QueryTable_);
 
-const Query_: React.FC<QueryProps> = ({
-  id,
-  index,
-  isExpanded,
-  isEnabled,
-  patchQuery,
-  toggleIsEnabled,
-}) => {
+const Query: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
+
+  const id = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'queries', index, 'id']));
+  const isEnabled = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  );
+  const isExpanded = useSelector(({ UI }: RootState) =>
+    UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+  );
+
+  const dispatch = useDispatch();
+
+  const toggleIsEnabled = React.useCallback(() => dispatch(queryBrowserToggleIsEnabled(index)), [
+    dispatch,
+    index,
+  ]);
+
+  const toggleIsExpanded = React.useCallback(
+    () => dispatch(queryBrowserPatchQuery(index, { isExpanded: !isExpanded })),
+    [dispatch, index, isExpanded],
+  );
 
   const switchKey = `${id}-${isEnabled}`;
   const switchLabel = isEnabled ? t('public~Disable query') : t('public~Enable query');
-
-  const toggleIsExpanded = () => patchQuery({ isExpanded: !isExpanded });
 
   return (
     <div
@@ -800,21 +808,14 @@ const Query_: React.FC<QueryProps> = ({
     </div>
   );
 };
-const Query = connect(
-  ({ UI }: RootState, { index }) => ({
-    id: UI.getIn(['queryBrowser', 'queries', index, 'id']),
-    isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
-    isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
-  }),
-  queryDispatchToProps,
-)(Query_);
 
-const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
-  hideGraphs,
-  patchQuery,
-  queriesList,
-}) => {
+const QueryBrowserWrapper: React.FC<{}> = () => {
   const { t } = useTranslation();
+
+  const dispatch = useDispatch();
+
+  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
+  const queriesList = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'queries']));
 
   const queries = queriesList.toJS();
 
@@ -823,9 +824,16 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     const searchParams = getURLSearchParams();
     for (let i = 0; _.has(searchParams, `query${i}`); ++i) {
       const query = searchParams[`query${i}`];
-      patchQuery(i, { isEnabled: true, isExpanded: true, query, text: query });
+      dispatch(
+        queryBrowserPatchQuery(i, {
+          isEnabled: true,
+          isExpanded: true,
+          query,
+          text: query,
+        }),
+      );
     }
-  }, [patchQuery]);
+  }, [dispatch]);
 
   /* eslint-disable react-hooks/exhaustive-deps */
   // Use React.useMemo() to prevent these two arrays being recreated on every render, which would trigger unnecessary
@@ -855,7 +863,7 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     const focusedIndex = focusedQuery?.index ?? 0;
     const index = queries[focusedIndex] ? focusedIndex : 0;
     const text = 'sort_desc(sum(sum_over_time(ALERTS{alertstate="firing"}[24h])) by (alertname))';
-    patchQuery(index, { isEnabled: true, query: text, text });
+    dispatch(queryBrowserPatchQuery(index, { isEnabled: true, query: text, text }));
   };
 
   if (queryStrings.join('') === '') {
@@ -886,16 +894,12 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     />
   );
 };
-const QueryBrowserWrapper = connect(
-  ({ UI }: RootState) => ({
-    hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),
-    queriesList: UI.getIn(['queryBrowser', 'queries']),
-  }),
-  { patchQuery: UIActions.queryBrowserPatchQuery },
-)(QueryBrowserWrapper_);
 
-const AddQueryButton_ = ({ addQuery }) => {
+const AddQueryButton: React.FC<{}> = () => {
   const { t } = useTranslation();
+
+  const dispatch = useDispatch();
+  const addQuery = React.useCallback(() => dispatch(queryBrowserAddQuery()), [dispatch]);
 
   return (
     <Button
@@ -908,10 +912,12 @@ const AddQueryButton_ = ({ addQuery }) => {
     </Button>
   );
 };
-const AddQueryButton = connect(null, { addQuery: UIActions.queryBrowserAddQuery })(AddQueryButton_);
 
-const RunQueriesButton_ = ({ runQueries }) => {
+const RunQueriesButton: React.FC<{}> = () => {
   const { t } = useTranslation();
+
+  const dispatch = useDispatch();
+  const runQueries = React.useCallback(() => dispatch(queryBrowserRunQueries()), [dispatch]);
 
   return (
     <Button onClick={runQueries} type="submit" variant="primary">
@@ -919,38 +925,37 @@ const RunQueriesButton_ = ({ runQueries }) => {
     </Button>
   );
 };
-const RunQueriesButton = connect(null, { runQueries: UIActions.queryBrowserRunQueries })(
-  RunQueriesButton_,
-);
 
-const QueriesList_ = ({ count }) => (
-  <>
-    {_.range(count).map((i) => (
-      <Query index={i} key={i} />
-    ))}
-  </>
-);
-const QueriesList = connect(({ UI }: RootState) => ({
-  count: UI.getIn(['queryBrowser', 'queries']).size,
-}))(QueriesList_);
+const QueriesList: React.FC<{}> = () => {
+  const count = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'queries']).size);
+
+  return (
+    <>
+      {_.range(count).map((i) => (
+        <Query index={i} key={i} />
+      ))}
+    </>
+  );
+};
 
 const PollIntervalDropdown = () => {
   const interval = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'pollInterval']));
 
   const dispatch = useDispatch();
-  const setInterval = React.useCallback(
-    (v: number) => dispatch(UIActions.queryBrowserSetPollInterval(v)),
-    [dispatch],
-  );
+  const setInterval = React.useCallback((v: number) => dispatch(queryBrowserSetPollInterval(v)), [
+    dispatch,
+  ]);
 
   return <IntervalDropdown interval={interval} setInterval={setInterval} />;
 };
 
-const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
+const QueryBrowserPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
 
+  const dispatch = useDispatch();
+
   // Clear queries on unmount
-  React.useEffect(() => deleteAll, [deleteAll]);
+  React.useEffect(() => () => dispatch(queryBrowserDeleteAllQueries()), [dispatch]);
 
   return (
     <>
@@ -993,75 +998,23 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
     </>
   );
 };
-export const QueryBrowserPage = withFallback(
-  connect(null, { deleteAll: UIActions.queryBrowserDeleteAllQueries })(QueryBrowserPage_),
-);
-
-type MetricsActionsMenuProps = {
-  addQuery: () => never;
-  deleteAll: () => never;
-  isAllExpanded: boolean;
-  setAllExpanded: (isExpanded: boolean) => never;
-};
+export const QueryBrowserPage = withFallback(QueryBrowserPage_);
 
 type MetricsDropdownItems = {
   [key: string]: string;
 };
 
-type MetricsDropdownProps = {
-  insertText: (index: number, newText: string, replaceFrom: number, replaceTo: number) => never;
-  setMetrics: (metrics: string[]) => never;
-};
-
-type QueryBrowserPageProps = {
-  deleteAll: () => never;
-};
-
-type QueryBrowserWrapperProps = {
-  hideGraphs: boolean;
-  patchQuery: (index: number, patch: QueryObj) => any;
-  queriesList: ImmutableList<QueryObj>;
-};
-
 type QueryInputProps = {
   index: number;
-  metrics: string[];
-  patchQuery: (patch: QueryObj) => void;
-  runQueries: () => never;
-  text?: string;
-};
-
-type QueryKebabProps = {
-  deleteQuery: () => never;
-  isDisabledSeriesEmpty: boolean;
-  isEnabled: boolean;
-  patchQuery: (patch: QueryObj) => void;
-  series: PrometheusLabels[];
-  toggleIsEnabled: () => never;
-};
-
-type QueryProps = {
-  id: string;
-  index: number;
-  isEnabled: boolean;
-  isExpanded: boolean;
-  patchQuery: (patch: QueryObj) => void;
-  toggleIsEnabled: () => never;
+  namespace?: string;
 };
 
 type QueryTableProps = {
   index: number;
-  isEnabled: boolean;
-  isExpanded: boolean;
   namespace?: string;
-  pollInterval: number;
-  query: string;
-  series: PrometheusLabels[];
 };
 
 type SeriesButtonProps = {
-  colorIndex: number;
-  isSeriesEmpty?: boolean;
-  isDisabled: boolean;
-  toggleSeries: () => never;
+  index: number;
+  labels: PrometheusLabels;
 };

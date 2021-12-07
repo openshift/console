@@ -52,6 +52,7 @@ export const SecretAnnotationType = {
 };
 
 export const PIPELINE_GA_VERSION = '1.4.0';
+export const TRIGGERS_GA_VERSION = '1.6.0';
 export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
 export const PIPELINE_RUN_AUTO_START_FAILED = `bridge/pipeline-run-auto-start-failed`;
 

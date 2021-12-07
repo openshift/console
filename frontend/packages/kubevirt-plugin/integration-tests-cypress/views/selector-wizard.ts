@@ -1,7 +1,8 @@
-export const create = '[data-test-id="item-create"]';
+export const createTemplate = '[data-test="item-create"]';
+export const createVM = '[data-test-id="item-create"]';
 export const vmWizard = '[data-test-id="vm-wizard"]';
 export const vmYAML = '[data-test-id="vm-yaml"]';
-export const templateYAML = '[data-test-id="template-yaml"]';
+export const templateYAML = '[data-test-dropdown-menu="yaml"]';
 export const next = 'button[data-test-id="wizard-next"]';
 export const cancelBtn = 'button[id="create-vm-wizard-cancel-btn"]';
 export const customizeBtn = 'button[data-test-id="wizard-customize"]';
@@ -15,6 +16,7 @@ export const selectMenu = '.pf-c-select__menu';
 export const sourceURL = '#provision-source-url';
 export const sourceRegistry = '#provision-source-container';
 export const cdrom = 'input[id="cdrom"]';
+export const dropDownItemLink = '[data-test="dropdown-menu-item-link"]';
 
 // pvc selectors
 export const pvcSize = '#request-size-input';

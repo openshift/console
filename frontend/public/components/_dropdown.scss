@@ -1,5 +1,3 @@
-@import '~@patternfly/patternfly/sass-utilities/scss-variables';
-
 $color-bookmarker--hover: $pf-color-black-500;
 $color-bookmarker: $pf-color-black-400;
 $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
@@ -16,8 +14,9 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   height: 34.5px !important; // default form element height
   margin-left: -1px;
   min-width: auto !important;
-  .pf-c-dropdown__toggle-icon {
-    margin: 0 !important;
+  .pf-c-dropdown {
+    --pf-c-dropdown__toggle-icon--MarginRight: 0 !important;
+    --pf-c-dropdown__toggle-icon--MarginLeft: 0 !important;
   }
 }
 
@@ -63,12 +62,12 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 
 .co-namespace-bar {
   border-bottom: 1px solid $color-grey-background-border;
-  padding: 0 15px;
+  padding: 0 $pf-global-gutter;
   white-space: nowrap;
 
-  @media (min-width: $grid-float-breakpoint) {
-    padding-left: 30px;
-    padding-right: 30px;
+  @media (min-width: $pf-global--breakpoint--xl) {
+    padding-left: $pf-global-gutter--md;
+    padding-right: $pf-global-gutter--md;
   }
 
   &__items {
@@ -77,12 +76,6 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 
     .pf-m-plain {
       color: inherit;
-      padding: 4px 0 2px !important;
-
-      @media (min-width: $grid-float-breakpoint) {
-        padding-bottom: 10px !important;
-        padding-top: 11px !important;
-      }
 
       &:hover,
       &:focus {
@@ -98,16 +91,17 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 
   .pf-c-dropdown__toggle.pf-m-plain {
     font-size: ($font-size-base + 1);
-    padding: 2px 0 !important;
+    --pf-c-dropdown__toggle--PaddingBottom: 7px;
+    --pf-c-dropdown__toggle--PaddingLeft: 0;
+    --pf-c-dropdown__toggle--PaddingRight: 0;
+
+    @media (min-width: $pf-global--breakpoint--md) {
+      font-size: ($font-size-base + 2);
+      --pf-c-dropdown__toggle--PaddingBottom: 9px;
+    }
 
     &:not(:disabled) {
       color: inherit;
-    }
-
-    @media (min-width: $grid-float-breakpoint) {
-      font-size: ($font-size-base + 2);
-      padding-bottom: 9px !important;
-      padding-top: 9px !important;
     }
 
     &__titlePrefix {
@@ -160,7 +154,7 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   max-width: 100%;
   min-width: 210px;
 
-  @media (min-width: $grid-float-breakpoint) {
+  @media (min-width: $pf-global--breakpoint--md) {
     min-width: 325px;
   }
 
@@ -211,14 +205,6 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   max-height: 60vh;
   overflow-x: hidden;
   overflow-y: auto;
-}
-
-// TEMP fix until https://github.com/patternfly/patternfly-next/issues/1543 is fixed upstream
-.pf-c-app-launcher__menu-item {
-  &:focus,
-  &:hover {
-    color: var(--pf-global--Color--dark-100);
-  }
 }
 
 .pf-c-dropdown .co-m-resource-icon {

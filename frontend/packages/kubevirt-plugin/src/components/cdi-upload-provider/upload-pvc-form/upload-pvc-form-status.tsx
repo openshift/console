@@ -172,6 +172,7 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
               <Checkbox
                 id="approve-checkbox"
                 isChecked={shouldKillDv}
+                data-checked-state={shouldKillDv}
                 aria-label="kill datavolume checkbox"
                 label={`Delete Data Volume: ${pvcName}`}
                 onChange={(v) => setShouldKillDv(v)}

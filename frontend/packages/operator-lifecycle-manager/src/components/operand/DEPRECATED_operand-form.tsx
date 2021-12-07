@@ -859,6 +859,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           id={id}
           style={{ marginLeft: '10px' }}
           isChecked={(_.isNil(currentValue) ? false : currentValue) as boolean}
+          data-checked-state={(_.isNil(currentValue) ? false : currentValue) as boolean}
           label={displayName}
           required={required}
           onChange={(value) => handleFormDataUpdate(path, value)}

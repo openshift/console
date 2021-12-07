@@ -10,7 +10,6 @@ import {
   referenceForModel,
   getLatestVersionForCRD,
 } from '@console/internal/module/k8s';
-import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
 
 interface EventSourcetData {
   loaded: boolean;
@@ -301,8 +300,4 @@ export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
     (model: K8sKind) => referenceForModel(model) === resourceRef,
   );
   return index !== -1;
-};
-
-export const isEventingPubSubLinkKind = (kind: string) => {
-  return [EventingSubscriptionModel.kind, EventingTriggerModel.kind].includes(kind);
 };

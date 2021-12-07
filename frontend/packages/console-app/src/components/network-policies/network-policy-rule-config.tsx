@@ -62,7 +62,7 @@ const emptyPeer = (type: NetworkPolicyPeerType): NetworkPolicyPeer => {
 
 export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigProps> = (props) => {
   const { t } = useTranslation();
-  const { direction, onChange, onRemove, rule } = props;
+  const { policyNamespace, direction, onChange, onRemove, rule } = props;
   const peersHelp =
     direction === 'ingress'
       ? t(
@@ -90,7 +90,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
             {direction === 'ingress' ? t('console-app~Ingress rule') : t('console-app~Egress rule')}
           </label>
           <div className="co-create-networkpolicy__rule-header-right">
-            <Button variant="link" onClick={onRemove}>
+            <Button variant="link" onClick={onRemove} data-test={`remove-${direction}-rule`}>
               {t('console-app~Remove')}
             </Button>
           </div>
@@ -122,6 +122,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
             />
           ) : (
             <NetworkPolicyPeerSelectors
+              policyNamespace={policyNamespace}
               direction={direction}
               namespaceSelector={peer.namespaceSelector}
               podSelector={peer.podSelector || []}
@@ -150,6 +151,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
                         onClick={() => removePeer(idx)}
                         type="button"
                         variant="plain"
+                        data-test="remove-peer"
                       >
                         <TrashIcon />
                       </Button>
@@ -164,7 +166,6 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
           );
         })}
         <NetworkPolicyPorts
-          direction={direction}
           ports={rule.ports}
           onChange={(ports) => {
             rule.ports = ports;
@@ -177,6 +178,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
 };
 
 type RuleConfigProps = {
+  policyNamespace: string;
   direction: 'ingress' | 'egress';
   rule: NetworkPolicyRule;
   onChange: (rule: NetworkPolicyRule) => void;

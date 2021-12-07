@@ -90,7 +90,13 @@ describe('smoke tests', () => {
 
   describe('visit vm/vmi tabs', () => {
     before(() => {
-      cy.visit(`/k8s/ns/${testName}/virtualmachineinstances/${vmData.name}`);
+      cy.byLegacyTestID('horizontal-link-Overview').click();
+      cy.get('[title="VirtualMachineInstance"]')
+        .contains('VMI')
+        .click();
+      cy.byLegacyTestID(vmData.name)
+        .contains(vmData.name)
+        .click();
     });
 
     it('vm/vmi overview tab is loaded', () => {

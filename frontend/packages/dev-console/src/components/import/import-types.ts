@@ -146,6 +146,7 @@ export interface ImageData {
   tag: string;
   tagObj: object;
   ports: ContainerPort[];
+  imageEnv?: { [key: string]: string };
 }
 
 export interface ImageStreamImageData {

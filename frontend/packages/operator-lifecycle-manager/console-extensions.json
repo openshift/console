@@ -64,5 +64,35 @@
         "$codeRef": "topology.getManagedByOperatorLinkSideBarTabSection"
       }
     }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "topologySidebar.getOperatorBackedPanelResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "operator-backed-panel-tab-section-details",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "topologySidebar.getOperatorBackedPanelDetailsSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "operator-backed-panel-tab-section-resource",
+      "tab": "topology-side-bar-tab-resource",
+      "section": { "$codeRef": "topologySidebar.getOperatorBackedPanelResourceSection" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "csv-actions",
+      "provider": { "$codeRef": "actions.useDefaultCSVActions" }
+    }
   }
 ]

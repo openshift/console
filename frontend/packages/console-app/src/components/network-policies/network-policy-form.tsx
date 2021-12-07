@@ -11,7 +11,7 @@ import {
   AlertVariant,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Checkbox } from '@console/internal/components/checkbox';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
@@ -37,6 +37,7 @@ import {
   checkNetworkPolicyValidity,
 } from './network-policy-model';
 import { NetworkPolicyRuleConfigPanel } from './network-policy-rule-config';
+import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
 
 const emptyRule = (): NetworkPolicyRule => {
   return {
@@ -63,6 +64,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
   const [error, setError] = React.useState('');
   const [showSDNAlert, setShowSDNAlert] = React.useState(true);
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
+  const podsPreviewPopoverRef = React.useRef();
 
   if (isNetworkPolicyConversionError(networkPolicy)) {
     // Note, this case is not expected to happen. Validity of the network policy for form should have been checked prior to showing this form.
@@ -247,6 +249,27 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             )}
             values={networkPolicy.podSelector}
             onChange={handleMainPodSelectorChange}
+            dataTest="main-pod-selector"
+          />
+          <p>
+            <Trans ns="console-app">
+              Show a preview of the{' '}
+              <Button
+                data-test="show-affected-pods"
+                ref={podsPreviewPopoverRef}
+                variant="link"
+                isInline
+              >
+                affected pods
+              </Button>{' '}
+              that this policy will apply to
+            </Trans>
+          </p>
+          <NetworkPolicySelectorPreview
+            policyNamespace={networkPolicy.namespace}
+            podSelector={networkPolicy.podSelector}
+            popoverRef={podsPreviewPopoverRef}
+            dataTest="policy-pods-preview"
           />
         </div>
         <div className="form-group co-create-networkpolicy__type">
@@ -284,16 +307,20 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             header={
               <FormFieldGroupHeader
                 titleText={{ text: t('console-app~Ingress'), id: 'ingress-header' }}
+                titleDescription={t(
+                  'console-app~Add ingress rules to be applied to your selected pods. Traffic is allowed from pods if it matches at least one rule.',
+                )}
                 actions={
                   <>
                     <Button
                       variant="link"
                       isDisabled={networkPolicy.ingress.rules.length === 0}
                       onClick={removeAllIngress}
+                      data-test="remove-all-ingress"
                     >
                       {t('console-app~Remove all')}
                     </Button>
-                    <Button variant="secondary" onClick={addIngressRule}>
+                    <Button data-test="add-ingress" variant="secondary" onClick={addIngressRule}>
                       {t('console-app~Add ingress rule')}
                     </Button>
                   </>
@@ -301,16 +328,10 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
               />
             }
           >
-            <div className="help-block" id="ingress-help">
-              <p>
-                {t(
-                  'console-app~List of ingress rules to be applied to the selected pods. Traffic is allowed from a source if it matches at least one rule.',
-                )}
-              </p>
-            </div>
             {networkPolicy.ingress.rules.map((rule, idx) => (
               <NetworkPolicyRuleConfigPanel
                 key={rule.key}
+                policyNamespace={networkPolicy.namespace}
                 direction="ingress"
                 rule={rule}
                 onChange={(r) => {
@@ -333,16 +354,20 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
               header={
                 <FormFieldGroupHeader
                   titleText={{ text: t('console-app~Egress'), id: 'egress-header' }}
+                  titleDescription={t(
+                    'console-app~Add egress rules to be applied to your selected pods. Traffic is allowed to pods if it matches at least one rule.',
+                  )}
                   actions={
                     <>
                       <Button
                         variant="link"
                         isDisabled={networkPolicy.egress.rules.length === 0}
                         onClick={removeAllEgress}
+                        data-test="remove-all-egress"
                       >
                         {t('console-app~Remove all')}
                       </Button>
-                      <Button variant="secondary" onClick={addEgressRule}>
+                      <Button data-test="add-egress" variant="secondary" onClick={addEgressRule}>
                         {t('console-app~Add egress rule')}
                       </Button>
                     </>
@@ -350,16 +375,10 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
                 />
               }
             >
-              <div className="help-block" id="egress-help">
-                <p>
-                  {t(
-                    'console-app~List of egress rules to be applied to the selected pods. Traffic is allowed to a destination if it matches at least one rule.',
-                  )}
-                </p>
-              </div>
               {networkPolicy.egress.rules.map((rule, idx) => (
                 <NetworkPolicyRuleConfigPanel
                   key={rule.key}
+                  policyNamespace={networkPolicy.namespace}
                   direction="egress"
                   rule={rule}
                   onChange={(r) => {

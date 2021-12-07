@@ -1,10 +1,18 @@
 .nb-bs-table {
-  .pf-c-toolbar__content {
-    padding-left: 0;
+  .pf-c-toolbar {
+    --pf-c-toolbar__content--PaddingLeft: 0;
   }
 
   .pf-c-table {
     border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  
+    &__check {
+      width: 8.333% !important;
+  
+    @media screen and (max-width: 768px) {
+      width: 16.66% !important;
+    }
+    }
   }
 
   .co-m-pane__body {

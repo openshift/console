@@ -11,16 +11,16 @@ export enum TAB {
 }
 
 export enum VM_ACTION {
-  Cancel = 'Cancel Virtual Machine Migration',
-  Clone = 'Clone Virtual Machine',
-  Delete = 'Delete Virtual Machine',
+  Cancel = 'Cancel Migration',
+  Clone = 'Clone',
+  Delete = 'Delete',
   EditAnnotations = 'Edit Annotations',
   EditLabels = 'Edit Labels',
-  Migrate = 'Migrate Virtual Machine',
-  Restart = 'Restart Virtual Machine',
-  Start = 'Start Virtual Machine',
-  Stop = 'Stop Virtual Machine',
-  Unpause = 'Unpause Virtual Machine',
+  Migrate = 'Migrate',
+  Restart = 'Restart',
+  Start = 'Start',
+  Stop = 'Stop',
+  Unpause = 'Unpause',
 }
 
 export enum VMI_ACTION {

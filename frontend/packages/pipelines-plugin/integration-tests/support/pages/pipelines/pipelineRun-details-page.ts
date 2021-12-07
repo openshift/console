@@ -115,14 +115,12 @@ export const pipelineRunsPage = {
   search: (pipelineRunName: string) => cy.byLegacyTestID('item-filter').type(pipelineRunName),
   selectKebabMenu: (pipelineRunName: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('exist');
-    cy.get(pipelineRunsPO.pipelineRunsTable.pipelineRunName).each(($el, index) => {
-      const text = $el.text();
-      if (text.includes(pipelineRunName)) {
-        cy.get('tbody tr')
-          .eq(index)
-          .find('td:nth-child(6) button')
-          .click();
-      }
+    cy.log(pipelineRunName);
+    cy.get(pipelineRunsPO.pipelineRunsTable.pipelineRunName).then(() => {
+      cy.get('tbody tr')
+        .first()
+        .find('td:nth-child(6) button')
+        .click({ force: true });
     });
   },
   verifyPipelineRunsTableDisplay: () =>

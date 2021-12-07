@@ -17,12 +17,13 @@ export const installOperator = (operatorName: operators) => {
       cy.get(operatorsPO.operatorHub.install).click();
       cy.get(operatorsPO.operatorHub.installingOperatorModal).should('be.visible');
       app.waitForLoad();
-      operatorsPage.navigateToInstallOperatorsPage();
-      operatorsPage.verifyInstalledOperator(operatorName);
+      cy.byTestID('success-icon').should('be.visible');
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
     }
+    operatorsPage.navigateToInstallOperatorsPage();
+    operatorsPage.verifyInstalledOperator(operatorName);
   });
 };
 
@@ -52,8 +53,8 @@ const performPostInstallationSteps = (operator: operators): void => {
   switch (operator) {
     case operators.ServerlessOperator:
       cy.log(`Performing Serverless post installation steps`);
-      createKnativeEventing();
       createKnativeServing();
+      createKnativeEventing();
       break;
     case operators.RedHatCodereadyWorkspaces:
       cy.log(`Performing CRW post-installation steps`);

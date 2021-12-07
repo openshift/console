@@ -3,6 +3,8 @@ import { Map as ImmutableMap } from 'immutable';
 import { Board, MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY } from './types';
 import { getQueryArgument } from '../../utils';
 
+export const getActivePerspective = (namespace: string): string => (namespace ? 'dev' : 'admin');
+
 export const getAllVariables = (boards: Board[], newBoardName: string, namespace: string) => {
   const data = _.find(boards, { name: newBoardName })?.data;
 

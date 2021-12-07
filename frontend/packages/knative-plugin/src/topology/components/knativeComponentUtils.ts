@@ -1,5 +1,6 @@
 import {
   GraphElement,
+  Graph,
   Edge,
   Node,
   DropTargetSpec,
@@ -8,6 +9,8 @@ import {
   CREATE_CONNECTOR_DROP_TYPE,
   CREATE_CONNECTOR_OPERATION,
   DragSpecOperationType,
+  DragEvent,
+  isGraph,
 } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import { errorModal } from '@console/internal/components/modals';
@@ -264,4 +267,28 @@ export const eventSourceTargetSpec: DropTargetSpec<
   collect: (monitor, props) => ({
     edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),
+};
+
+export const kafkaSourceCreateConnectorCallback = (
+  source: Node,
+  target: Node | Graph,
+  _event: DragEvent,
+  dropHints: string[] | undefined,
+): Promise<React.ReactElement[] | null> => {
+  const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
+  if (source === target || isGraph(target) || !createConnectors) {
+    return null;
+  }
+  const relationshipProviders = target.getGraph()?.getData()?.relationshipProviderExtensions;
+  const curRelProvider = relationshipProviders?.find(({ uid }) => dropHints.includes(uid));
+  if (curRelProvider) {
+    return curRelProvider.properties.create(source, target);
+  }
+
+  const creator = createConnectors.find((getter) => !!getter(dropHints, source, target));
+  if (creator) {
+    return creator(dropHints, source, target)(source, target);
+  }
+
+  return null;
 };

@@ -58,6 +58,7 @@ const Checkbox = ({ value, checked, onChange }) => (
         type="checkbox"
         onChange={({ target: { checked: newChecked } }) => onChange(value, newChecked)}
         checked={!!checked}
+        data-checked-state={!!checked}
       />
       &nbsp;&nbsp;{value}
     </label>

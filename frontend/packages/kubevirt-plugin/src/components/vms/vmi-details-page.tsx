@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
+import { referenceFor } from '@console/internal/module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import {
   VM_DETAIL_CONSOLES_HREF,
   VM_DETAIL_DETAILS_HREF,
@@ -19,7 +22,6 @@ import { getResource } from '../../utils';
 import VMIDetailsPageInfoMessage from '../info-messages/VMIDetailsPageInfoMessage';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
-import { vmiMenuActionsCreator } from './menu-actions';
 import VMConsoleDetailsPage from './vm-console/VMConsoleDetailsPage';
 import { VMDashboard } from './vm-dashboard';
 import { VMDetailsFirehose } from './vm-details';
@@ -91,7 +93,11 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineInstanceModel)}
       kindObj={VirtualMachineInstanceModel}
-      menuActions={vmiMenuActionsCreator}
+      customActionMenu={(kindObj, obj) => {
+        const objReference = referenceFor(obj);
+        const context = { [objReference]: obj };
+        return <LazyActionMenu variant={ActionMenuVariant.DROPDOWN} context={context} />;
+      }}
       pages={pages}
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}

@@ -53,7 +53,7 @@ tags-input .tags {
 
 .modal-body tags-input .tags {
   background-color: rgba(255, 255, 255, 0.5); // enable scroll-shadows to be seen
-  margin-bottom: ($grid-gutter-width / 2);
+  margin-bottom: $pf-global-gutter;
   min-height: 120px;
 
   .tag-item {
@@ -111,7 +111,7 @@ tags-input .tags .input {
   // Since iOS phone text input size is larger, remove border and margin and increase line-height
   @supports (-webkit-overflow-scrolling: touch) {
     // Target mobile Safari
-    @media (max-width: $grid-float-breakpoint-max) {
+    @media (max-width: $pf-global--breakpoint--sm-max) {
       // Target phones
       border: 0;
       line-height: 24px;

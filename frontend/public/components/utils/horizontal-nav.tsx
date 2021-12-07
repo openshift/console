@@ -2,7 +2,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { History, Location } from 'history';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
+/* eslint-disable import/named */
+import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import {
   Route,
   Switch,
@@ -12,10 +14,15 @@ import {
   matchPath,
   RouteComponentProps,
 } from 'react-router-dom';
-import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
+import {
+  useResolvedExtensions,
+  HorizontalNavTab as DynamicHorizontalNavTab,
+  isHorizontalNavTab as DynamicIsHorizontalNavTab,
+  ExtensionK8sGroupModel,
+} from '@console/dynamic-plugin-sdk';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
-import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
+import { referenceForModel, referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
 import { ErrorBoundaryFallback } from '../error';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
@@ -25,6 +32,7 @@ import {
   HorizontalNavProps as HorizontalNavFacadeProps,
   NavPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk/src';
 
 const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -37,15 +45,17 @@ export const viewYamlComponent = (props) => (
   />
 );
 
-export class PodsComponent extends React.PureComponent<PodsComponentProps> {
+class PodsComponentWithTranslation extends React.PureComponent<
+  PodsComponentProps & WithTranslation
+> {
   render() {
     const {
       metadata: { namespace },
       spec: { selector },
     } = this.props.obj;
-    const { showNodes } = this.props;
+    const { showNodes, t } = this.props;
     if (_.isEmpty(selector)) {
-      return <EmptyBox label="Pods" />;
+      return <EmptyBox label={t('public~Pods')} />;
     }
 
     // Hide the create button to avoid confusion when showing pods for an object.
@@ -62,6 +72,8 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
     );
   }
 }
+
+export const PodsComponent = withTranslation()(PodsComponentWithTranslation);
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
@@ -190,7 +202,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
           'co-m-horizontal-nav-item--active': matchURL?.isExact,
         });
         return (
-          <li className={klass} key={nameKey || name}>
+          <li className={klass} key={href}>
             <Link
               to={`${baseURL.replace(/\/$/, '')}/${href}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
@@ -258,6 +270,9 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   );
 
   const objReference = props.obj?.data ? referenceFor(props.obj.data) : '';
+  const [dynamicNavTabExtensions, navTabExtentionsResolved] = useResolvedExtensions<
+    DynamicHorizontalNavTab
+  >(DynamicIsHorizontalNavTab);
   const navTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab);
 
   const pluginPages = React.useMemo(
@@ -273,7 +288,28 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     [navTabExtensions, objReference],
   );
 
-  const pages = (props.pages || props.pagesFor(props.obj?.data)).concat(pluginPages);
+  const dynamicPluginPages = React.useMemo(
+    () =>
+      navTabExtentionsResolved
+        ? dynamicNavTabExtensions
+            .filter(
+              (tab) =>
+                referenceForExtensionModel(tab.properties.model as ExtensionK8sGroupModel) ===
+                objReference,
+            )
+            .map((tab) => ({
+              ...tab.properties.page,
+              component: tab.properties.component,
+            }))
+        : [],
+    [dynamicNavTabExtensions, navTabExtentionsResolved, objReference],
+  );
+
+  const pages: Page[] = [
+    ...(props.pages || props.pagesFor(props.obj?.data)),
+    ...pluginPages,
+    ...dynamicPluginPages,
+  ];
 
   const routes = pages.map((p) => {
     const path = `${props.match.path}/${p.path || p.href}`;
@@ -320,6 +356,7 @@ export const HorizontalNavFacade = withRouter<HorizontalNavFacadeProps & RouteCo
 export type PodsComponentProps = {
   obj: K8sResourceKind;
   showNodes?: boolean;
+  t: TFunction;
 };
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = {

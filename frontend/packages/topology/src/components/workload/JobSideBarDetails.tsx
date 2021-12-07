@@ -47,6 +47,6 @@ const JobSideBarDetails: React.FC<JobSideBarDetailsProps> = ({ job }) => {
 
 export const getJobSideBarDetails = (element: GraphElement) => {
   const resource = getResource<JobKind>(element);
-  if (resource.kind !== JobModel.kind) return undefined;
+  if (!resource || resource.kind !== JobModel.kind) return undefined;
   return <JobSideBarDetails job={resource} />;
 };

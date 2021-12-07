@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64';
 import { withTranslation } from 'react-i18next';
 import { ExpandIcon } from '@patternfly/react-icons';
 import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
@@ -79,7 +80,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
         current && current.onConnectionClosed(`connecting to ${activeContainer}`);
       }
 
-      const impersonate = store.getState().UI.get('impersonate', {});
+      const impersonate = getImpersonate(store.getState()) || {};
       const subprotocols = (impersonate.subprotocols || []).concat('base64.channel.k8s.io');
 
       let previous;

@@ -57,6 +57,16 @@ Given('user has created a deployment workload named {string}', (componentName: s
   );
 });
 
+Given('user has created a deployment workload {string}', (componentName: string) => {
+  navigateTo(devNavigationMenu.Add);
+  createGitWorkload(
+    'https://github.com/sclorg/nodejs-ex.git',
+    componentName,
+    'Deployment',
+    'nodejs-ex-git-app',
+  );
+});
+
 Given('user has created a deployment config workload {string}', (componentName: string) => {
   navigateTo(devNavigationMenu.Add);
   createGitWorkload(
@@ -98,7 +108,7 @@ When('user is at Topology page chart view', () => {
 });
 
 When('user clicks the filter by resource on top', () => {
-  cy.get(topologyPO.graph.filterByResource.filterByResourceDropDown)
+  cy.get(topologyPO.filterByResourceDropDown)
     .should('be.visible')
     .click();
 });

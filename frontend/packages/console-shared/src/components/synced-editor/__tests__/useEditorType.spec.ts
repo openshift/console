@@ -3,8 +3,8 @@ import {
   PREFERRED_CREATE_EDIT_METHOD_USER_SETTING_VALUE_LATEST,
   usePreferredCreateEditMethod,
 } from '@console/app/src/components/user-preferences/synced-editor';
-import { useUserSettings } from '@console/shared';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
+import { useUserSettings } from '../../../hooks/useUserSettings';
 import { EditorType } from '../editor-toggle';
 import { useEditorType } from '../useEditorType';
 

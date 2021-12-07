@@ -72,7 +72,7 @@ export const VIRTIO_WIN_IMAGE = 'virtio-win-image';
 
 export const PENDING_RESTART_LABEL = '(pending restart)';
 export const getPVCUploadURL = (pvcNamespace: string): string =>
-  `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/upload-form`;
+  `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/data`;
 
 export const ROOT_DISK_NAME = 'rootdisk';
 export const ROOT_DISK_INSTALL_NAME = 'install';

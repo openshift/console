@@ -25,11 +25,12 @@
   }
 
   .pf-c-app-launcher__menu-item-external-icon {
+    --pf-c-app-launcher__menu-item-external-icon--Color: var(--pf-global--icon--Color--light);
+
     opacity: 1;
-    color: var(--pf-global--icon--Color--light);
   }
 }
 
-.pf-c-page__header-tools-item .pf-c-notification-badge.pf-m-read:hover {
-  background-color: transparent;
+.pf-c-page__header-tools-item .pf-c-notification-badge {
+  --pf-c-notification-badge--m-unread--hover--after--BackgroundColor: transparent;
 }

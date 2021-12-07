@@ -12,8 +12,7 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils/promise-component';
-import { k8sCreate } from '@console/internal/module/k8s/resource';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { k8sCreate, referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 

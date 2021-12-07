@@ -8,6 +8,10 @@ export const vncDisplay =
   'div[style="display: flex; width: 100%; height: 100%; overflow: auto; background: rgb(40, 40, 40);"]';
 export const serialDisplay = '.xterm-accessibility';
 export const emptyState = '.pf-c-empty-state__body';
+export const disconnect = 'Disconnect';
+export const connect = 'Connect';
+export const sendKey = 'Send Key';
+export const ctrlAltDel = 'Ctrl+Alt+Del';
 
 export const loginVNC = () => {
   cy.get(credentials).click();

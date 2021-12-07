@@ -285,6 +285,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
             <Checkbox
               id="storage-class-encryption"
               isChecked={checked}
+              data-checked-state={checked}
               label={<StorageClassEncryptionLabel />}
               aria-label={t('ceph-storage-plugin~StorageClass encryption')}
               onChange={setChecked}
@@ -356,6 +357,7 @@ const ExistingKMSDropDown: React.FC<ExistingKMSDropDownProps> = ({
 
 export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
   parameterKey,
+  parameterValue,
   onParamChange,
 }) => {
   const { t } = useTranslation();
@@ -364,7 +366,11 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
   const [isExistingKms, setIsExistingKms] = React.useState<boolean>(true);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [progress, setInProgress] = React.useState<boolean>(false);
-  const [serviceName, setServiceName] = React.useState<string>('');
+  /** Initializing with parameterValue for the case where user selects a connection from the dropdown,
+   *  but, then un-checks the encryption checkbox, and checks it back again. Now, the dropdown will
+   *  show the last selected connection name in the "ExistingKMSDropDown".
+   */
+  const [serviceName, setServiceName] = React.useState<string>(parameterValue);
 
   const csiCMWatchResource: WatchK8sResource = {
     kind: ConfigMapModel.kind,

@@ -1,6 +1,9 @@
 package plugins
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,7 +15,9 @@ import (
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/proxy"
+	"github.com/openshift/console/pkg/serverconfig"
 	"github.com/openshift/console/pkg/serverutils"
+	oscrypto "github.com/openshift/library-go/pkg/crypto"
 )
 
 type PluginsHandler struct {
@@ -21,12 +26,68 @@ type PluginsHandler struct {
 	PublicDir          string
 }
 
+type PluginsProxyServiceHandler struct {
+	ConsoleEndpoint string
+	ProxyConfig     *proxy.Config
+	Authorize       bool
+}
+
+func NewPluginsProxyServiceHandler(consoleEndpoint string, serviceEndpoint *url.URL, tlsClientConfig *tls.Config, authorize bool) *PluginsProxyServiceHandler {
+	return &PluginsProxyServiceHandler{
+		ConsoleEndpoint: consoleEndpoint,
+		ProxyConfig: &proxy.Config{
+			TLSClientConfig: tlsClientConfig,
+			HeaderBlacklist: proxy.HeaderBlacklist,
+			Endpoint:        serviceEndpoint,
+		},
+		Authorize: authorize,
+	}
+}
+
 func NewPluginsHandler(client *http.Client, pluginsEndpointMap map[string]string, publicDir string) *PluginsHandler {
 	return &PluginsHandler{
 		Client:             client,
 		PluginsEndpointMap: pluginsEndpointMap,
 		PublicDir:          publicDir,
 	}
+}
+
+func ParsePluginProxyConfig(proxyConfig string) (*serverconfig.Proxy, error) {
+	pluginProxy := &serverconfig.Proxy{}
+	err := json.Unmarshal([]byte(proxyConfig), pluginProxy)
+	if err != nil {
+		errMsg := fmt.Sprintf("Error unmarshaling ConsoleConfig proxy field: %v", err)
+		klog.Error(errMsg)
+		return nil, fmt.Errorf(errMsg)
+	}
+	return pluginProxy, nil
+}
+
+func GetPluginProxyServiceHandlers(proxyConfig *serverconfig.Proxy, defaultTLSConfig *tls.Config, pluginProxyEndpoint string) ([]*PluginsProxyServiceHandler, error) {
+	var proxyServiceHandlers []*PluginsProxyServiceHandler
+	for _, service := range proxyConfig.Services {
+		pluginProxyTLS := defaultTLSConfig.Clone()
+		// if case custom CA cert is defined use it instead of the default one
+		if len(service.CACertificate) != 0 {
+			customCA := x509.NewCertPool()
+			pluginProxyTLS = oscrypto.SecureTLSConfig(&tls.Config{
+				RootCAs: customCA,
+			})
+			if !pluginProxyTLS.RootCAs.AppendCertsFromPEM([]byte(service.CACertificate)) {
+				errMsg := fmt.Sprintf("Error parsing CA cert for %s service", service.Endpoint)
+				klog.Error(errMsg)
+				return nil, fmt.Errorf(errMsg)
+			}
+		}
+		serviceEndpoint, err := url.Parse(service.Endpoint)
+		if err != nil {
+			errMsg := fmt.Sprintf("Error parsing %q service endpoint", service.Endpoint)
+			klog.Error(errMsg)
+			return nil, fmt.Errorf(errMsg)
+		}
+		proxyServiceHandlers = append(proxyServiceHandlers, NewPluginsProxyServiceHandler(service.ConsoleAPIPath, serviceEndpoint, pluginProxyTLS, service.Authorize))
+	}
+	return proxyServiceHandlers, nil
 }
 
 func (p *PluginsHandler) HandleI18nResources(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +149,7 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 }
 
 func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, orignalRequest *http.Request) {
-	newRequest, err := http.NewRequest("Get", requestURL.String(), nil)
+	newRequest, err := http.NewRequest("GET", requestURL.String(), nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to create GET request for %q plugin: %v", pluginName, err)
 		klog.Error(errMsg)

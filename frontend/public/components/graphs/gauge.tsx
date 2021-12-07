@@ -5,6 +5,7 @@ import {
   ChartThemeColor,
 } from '@patternfly/react-charts';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
@@ -22,22 +23,29 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   invert = false,
   loading,
   query = '',
-  remainderLabel = 'available',
+  remainderLabel,
   themeColor = ChartThemeColor.green,
   thresholds = DEFAULT_THRESHOLDS,
   title,
   ariaChartLinkLabel,
   ariaChartTitle,
-  usedLabel = 'used',
+  usedLabel,
   // Don't sort, Uses previously declared props
-  label = data ? humanize(data.y).string : 'No Data',
-  secondaryTitle = usedLabel,
+  label,
+  secondaryTitle,
   className,
 }) => {
+  const { t } = useTranslation();
   const [ref, width] = useRefWidth();
   const ready = !error && !loading;
-  const status = loading ? 'Loading' : error;
-  const labels = ({ datum: { x, y } }) => (x ? `${x} ${usedLabel}` : `${y} ${remainderLabel}`);
+
+  const status = loading ? t('Loading') : error;
+  const usedLabelText = usedLabel || t('public~used');
+  const secondaryTitleText = secondaryTitle || usedLabelText;
+  const labelText = label || data ? humanize(data.y).string : t('No data');
+
+  const labels = ({ datum: { x, y } }) =>
+    x ? `${x} ${usedLabelText}` : `${y} ${remainderLabel || t('available')}`;
   return (
     <PrometheusGraph
       className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
@@ -58,10 +66,10 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
             data={ready ? data : { y: 0 }}
             invert={invert}
             padding={0}
-            subTitle={ready ? secondaryTitle : ''}
+            subTitle={ready ? secondaryTitleText : ''}
             themeColor={themeColor}
             thresholds={thresholds}
-            title={status || label}
+            title={status || labelText}
           />
         </ChartDonutThreshold>
       </PrometheusGraphLink>
@@ -81,6 +89,8 @@ export const Gauge: React.FC<GaugeProps> = ({
   title,
   usedLabel,
 }) => {
+  const { t } = useTranslation();
+
   const [response, error, loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
     namespace,
@@ -93,7 +103,7 @@ export const Gauge: React.FC<GaugeProps> = ({
   return (
     <GaugeChart
       data={data}
-      error={!!error && 'No Data'}
+      error={!!error && t('No data')}
       invert={invert}
       label={data.x}
       loading={loading}

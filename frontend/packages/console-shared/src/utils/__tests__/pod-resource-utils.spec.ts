@@ -1,13 +1,5 @@
 import * as _ from 'lodash';
 import {
-  sampleCronJobs,
-  sampleDaemonSets,
-  sampleDeploymentConfigs,
-  sampleDeployments,
-  sampleStatefulSets,
-  MockResources,
-} from '@console/shared/src/utils/__tests__/test-resource-data';
-import {
   getPodsForDeploymentConfig,
   getPodsForDeployment,
   getPodsForStatefulSet,
@@ -19,6 +11,14 @@ import {
   getPodsForDaemonSets,
   getPodsForCronJobs,
 } from '../pod-resource-utils';
+import {
+  sampleCronJobs,
+  sampleDaemonSets,
+  sampleDeploymentConfigs,
+  sampleDeployments,
+  sampleStatefulSets,
+  MockResources,
+} from './test-resource-data';
 
 let mockResources;
 

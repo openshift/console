@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-
 import {
   CustomResourceDefinitionKind,
   GroupVersionKind,

@@ -14,12 +14,13 @@ import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/
 import { iGetStorages } from '../../selectors/immutable/storage';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { getEnableSSHService, getSysprepData } from '../../selectors/immutable/wizard-selectors';
+import { iGetHardwareField } from '../../tabs/advanced-tab/hardware-devices/selectors';
 import {
   AUTOUNATTEND,
   createSysprepConfigMap,
   UNATTEND,
 } from '../../tabs/advanced-tab/sysprep/utils/sysprep-utils';
-import { VMWizardNetwork, VMWizardProps, VMWizardStorage } from '../../types';
+import { HardwareDevicesField, VMWizardNetwork, VMWizardProps, VMWizardStorage } from '../../types';
 import { ImportProvidersSettings, VMSettings } from '../initial-state/types';
 import { vmWizardInternalActions } from '../internal-actions';
 import { InternalActionType } from '../types';
@@ -54,6 +55,9 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
   const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
 
+  const gpus = iGetHardwareField(state, id, HardwareDevicesField.GPUS)?.toJS();
+  const hostDevices = iGetHardwareField(state, id, HardwareDevicesField.HOST_DEVICES)?.toJS();
+
   const params = {
     enhancedK8sMethods,
     importProviders,
@@ -67,6 +71,8 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
     isTemplate: isCreateTemplate,
     isProviderImport,
     sysprepData,
+    gpus,
+    hostDevices,
   };
 
   const create = isCreateTemplate ? createVMTemplate : _createVM;
@@ -77,7 +83,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
     )
     .then(({ isValid, ...tabState }: ResultsWrapper) => {
       const vm = tabState.requestResults[0]?.content?.data;
-      if (enableSSHService) {
+      if (vm && enableSSHService) {
         createOrDeleteSSHService(vm, enableSSHService);
       }
       if (sysprepData?.[AUTOUNATTEND] || sysprepData?.[UNATTEND]) {

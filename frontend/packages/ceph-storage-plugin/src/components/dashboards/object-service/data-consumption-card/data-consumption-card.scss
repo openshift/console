@@ -18,8 +18,8 @@
     margin-right: var(--pf-global--spacer--xs);
   }
   /* Override Options Menu item style to make it similar to Select Menu */
-  .pf-c-options-menu__menu-item {
-    padding-left: 0;
+  .pf-c-options-menu {
+    --pf-c-options-menu__menu-item--PaddingLeft: 0;
   }
 }
 

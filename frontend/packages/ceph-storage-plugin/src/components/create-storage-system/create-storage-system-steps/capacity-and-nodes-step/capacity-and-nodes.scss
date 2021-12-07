@@ -4,3 +4,7 @@
         padding: 0;
     } 
 }
+
+.odf-capacity-and-nodes__taint-checkbox {
+    margin-top: calc(var(--pf-global--spacer--md) * -1);
+}

@@ -1,2 +1,2 @@
 export * from './extensions';
-export * from './api/api';
+export * from './api/core-api';

@@ -1,6 +1,9 @@
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { VirtualMachineModel } from '../models';
+import {
+  VIRTUALMACHINES_BASE_URL,
+  VIRTUALMACHINES_TEMPLATES_BASE_URL,
+} from '../constants/url-params';
 import { getName, getNamespace } from '../selectors';
 
 export const getSequence = (from, to) => Array.from({ length: to - from + 1 }, (v, i) => i + from);
@@ -42,10 +45,10 @@ export const wrapWithProgress = (setProgress: (inProgress: boolean) => void) => 
 
 export const getVMLikeModelListPath = (isCreateTemplate: boolean, namespace: string) =>
   isCreateTemplate
-    ? `/k8s/ns/${namespace}/virtualization/templates`
-    : `/k8s/ns/${namespace}/virtualization`;
+    ? `/k8s/ns/${namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`
+    : `/k8s/ns/${namespace}/${VIRTUALMACHINES_BASE_URL}`;
 
 export const getVMLikeModelDetailPath = (isTemplate: boolean, namespace: string, name: string) =>
   isTemplate
-    ? `/k8s/ns/${namespace}/vmtemplates/${name}`
-    : `/k8s/ns/${namespace}/${VirtualMachineModel.plural}/${name}`;
+    ? `/k8s/ns/${namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${name}`
+    : `/k8s/ns/${namespace}/${VIRTUALMACHINES_BASE_URL}/${name}`;

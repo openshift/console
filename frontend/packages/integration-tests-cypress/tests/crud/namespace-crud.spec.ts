@@ -8,6 +8,8 @@ import { nav } from '../../views/nav';
 describe('Namespace', () => {
   before(() => {
     cy.login();
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
   });
 

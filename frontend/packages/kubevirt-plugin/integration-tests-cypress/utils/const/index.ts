@@ -7,7 +7,9 @@ export const IMAGE_URL = Cypress.env('DOWNSTREAM')
   : 'https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img';
 
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
-export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
+export const KUBEVIRT_PROJECT_NAME = Cypress.env('DOWNSTREAM')
+  ? 'openshift-cnv'
+  : 'kubevirt-hyperconverged';
 export const EXPECT_LOGIN_SCRIPT_PATH = './utils/expect-login.sh';
 
 export const TEST_PROVIDER = 'test-provider';
@@ -31,16 +33,16 @@ export enum DEFAULT_VALUES {
 // VM Actions
 export enum VM_ACTION {
   Cancel = 'Cancel Virtual Machine Migration',
-  Clone = 'Clone Virtual Machine',
+  Clone = 'Clone',
   Delete = 'Delete Virtual Machine',
   EditAnnotations = 'Edit Annotations',
   EditLabels = 'Edit Labels',
-  Migrate = 'Migrate Virtual Machine',
-  Restart = 'Restart Virtual Machine',
-  Start = 'Start Virtual Machine',
-  Stop = 'Stop Virtual Machine',
-  Unpause = 'Unpause Virtual Machine',
-  Pause = 'Pause Virtual Machine',
+  Migrate = 'Migrate Node to Node',
+  Restart = 'Restart',
+  Start = 'Start',
+  Stop = 'Stop',
+  Resume = 'Resume',
+  Pause = 'Pause',
 }
 
 export enum VMI_ACTION {
@@ -90,6 +92,23 @@ export enum DISK_INTERFACE {
 export enum DISK_DRIVE {
   Disk = 'Disk',
   CDROM = 'CD-ROM',
+}
+
+export enum NIC_MODEL {
+  virtio = 'virtio',
+  e1000e = 'e1000e',
+}
+
+export enum NIC_TYPE {
+  Bridge = 'Bridge',
+  SR_IOV = 'SR-IOV',
+}
+
+export enum EXAMPLE_VM_NIC {
+  Name = 'default',
+  Model = 'virtio',
+  Type = 'masquerade',
+  Network = 'Pod Networking',
 }
 
 export enum K8S_KIND {

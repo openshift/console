@@ -2,9 +2,11 @@ import * as React from 'react';
 import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { humanizeBinaryBytes, useAccessReview2 } from '@console/internal/components/utils';
+import { K8sVerb, TemplateKind } from '@console/internal/module/k8s';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
 import { useSupportModal } from '../../../hooks/use-support-modal';
+import { VirtualMachineModel } from '../../../models';
 import {
   getTemplateMemory,
   getTemplateSizeRequirementInBytes,
@@ -17,9 +19,9 @@ import {
   getWorkloadProfile,
 } from '../../../selectors/vm/selectors';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
+import { permissionsErrorModal } from '../../modals/permissions-error-modal/permissions-error-modal';
 import { createVMAction } from '../utils';
 import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
-
 import './vm-template-table.scss';
 
 type VMTemplateDetailsBodyProps = {
@@ -67,7 +69,7 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
       {!disableFullDetails && (
         <StackItem>
           <Link
-            to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+            to={`/k8s/ns/${template.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${template.metadata.name}`}
             data-test-id={template.metadata.name}
             className="co-resource-item__resource-name"
           >
@@ -93,7 +95,23 @@ const RowActions: React.FC<RowActionsProps> = ({
   disableCreate,
 }) => {
   const { t } = useTranslation();
+  const [createVmAllowed] = useAccessReview2({
+    namespace,
+    resource: VirtualMachineModel.plural,
+    verb: 'create' as K8sVerb,
+  });
   const withSupportModal = useSupportModal();
+  const createVm = () => {
+    createVmAllowed
+      ? withSupportModal(template, () => createVMAction(template, sourceStatus, namespace))
+      : permissionsErrorModal({
+          title: t('kubevirt-plugin~Create Virtual Machine from template'),
+          errorMsg: t(
+            'kubevirt-plugin~You do not have permissions to create Virtual Machine. Contact your system administrator for more information.',
+          ),
+        });
+  };
+
   return (
     <>
       <Popover
@@ -118,9 +136,7 @@ const RowActions: React.FC<RowActionsProps> = ({
       <Button
         isDisabled={disableCreate}
         data-test="create-from-template"
-        onClick={() =>
-          withSupportModal(template, () => createVMAction(template, sourceStatus, namespace))
-        }
+        onClick={createVm}
         variant="secondary"
         className="kubevirt-vm-template-details"
       >

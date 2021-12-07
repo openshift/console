@@ -26,7 +26,8 @@ import {
   MachineModel,
   PrometheusModel,
 } from '../models';
-import { referenceForModel, referenceForGroupVersionKind } from '../module/k8s';
+import { referenceForGroupVersionKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s/k8s-ref';
 import { RootState } from '../redux';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
@@ -61,7 +62,7 @@ const addToCRDs = (ref: string, flag: string) => {
 };
 
 pluginStore
-  .getAllExtensions()
+  .getExtensionsInUse()
   .filter(isModelFeatureFlag)
   .forEach((ff) => {
     addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);

@@ -35,17 +35,17 @@ export const addSubscription = {
 export const editAnnotations = {
   add: () => cy.byTestID('add-button').click(),
   enterKey: (key: string) => {
-    cy.get('input[placeholder="key"]')
+    cy.byTestID('pairs-list-name')
       .last()
       .type(key);
   },
   enterValue: (value: string) =>
     cy
-      .get('input[placeholder="value"]')
+      .byTestID('pairs-list-value')
       .last()
       .type(value),
   removeAnnotation: (annotationKey: string) => {
-    cy.get(`div.row input[placeholder="key"]`).each(($el, index) => {
+    cy.byTestID('pairs-list-name').each(($el, index) => {
       if ($el.prop('value').includes(annotationKey)) {
         cy.get('button[data-test="delete-button"]')
           .eq(index)
@@ -56,11 +56,7 @@ export const editAnnotations = {
 };
 
 export const setTrafficDistribution = {
-  add: () =>
-    cy
-      .get('form [type="button"]')
-      .contains('Add')
-      .click(),
+  add: () => cy.byTestID('add-action').click(),
   enterSplit: (split: string) =>
     cy
       .get('[id$="percent-field"]')
@@ -74,15 +70,22 @@ export const setTrafficDistribution = {
 };
 
 export const editApplicationGrouping = {
+  clickCreateApplication: () => {
+    cy.byTestDropDownMenu('#CREATE_APPLICATION_KEY#').click();
+  },
   selectApplication: (appName: string) => {
     cy.get('#form-dropdown-application-name-field').click();
     cy.get(`[id="${appName}-link"]`).click();
   },
   createApplication: (appName: string) => {
     cy.get('#form-dropdown-application-name-field').click();
+    editApplicationGrouping.clickCreateApplication();
     cy.byLegacyTestID('application-form-app-input')
       .clear()
       .type(appName);
+  },
+  enterApplicationName: (appName: string) => {
+    cy.byLegacyTestID('application-form-app-input').type(appName);
   },
 };
 

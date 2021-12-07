@@ -29,6 +29,7 @@ export const ReviewItem = ({ children, title }) => (
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS }) => {
   const { t } = useTranslation();
   const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
+  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
 
   const {
     storageClass,
@@ -40,7 +41,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
     createStorageClass,
     nodes,
   } = state;
-  const { capacity, arbiterLocation, enableArbiter } = capacityAndNodes;
+  const { capacity, arbiterLocation, enableTaint, enableArbiter } = capacityAndNodes;
   const { encryption, kms, networkType } = securityAndNetwork;
   const { deployment, externalStorage, type } = backingStorage;
 
@@ -58,6 +59,10 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
   const storagePlatform = externalStorage && getExternalStorage(externalStorage).displayName;
 
   const encryptionStatus = hasEncryption
+    ? t('ceph-storage-plugin~Enabled')
+    : t('ceph-storage-plugin~Disabled');
+
+  const ocsTaintsStatus = enableTaint
     ? t('ceph-storage-plugin~Enabled')
     : t('ceph-storage-plugin~Disabled');
 
@@ -119,6 +124,13 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
             <ListItem>
               {t('ceph-storage-plugin~Arbiter zone: {{zone}}', {
                 zone: arbiterLocation,
+              })}
+            </ListItem>
+          )}
+          {isTaintSupported && (
+            <ListItem>
+              {t('ceph-storage-plugin~Taint nodes: {{ocsTaintsStatus}}', {
+                ocsTaintsStatus,
               })}
             </ListItem>
           )}

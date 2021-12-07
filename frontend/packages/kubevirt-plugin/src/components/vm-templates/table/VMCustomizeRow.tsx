@@ -14,6 +14,7 @@ import { NamespaceModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { PendingStatus } from '@console/shared';
 import { SuccessStatus } from '@console/shared/src/components/status/statuses';
+import { VIRTUALIZATION_BASE_URL } from '../../../constants/url-params';
 import { getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { isVMIRunning } from '../../../selectors/vmi';
 import { VMIKind, VMKind } from '../../../types';
@@ -26,7 +27,6 @@ import CustomizeVMTStatus from './CustomizeVMTStatus';
 import RowActions from './RowActions';
 import { VMTemplateRowProps } from './types';
 import { tableColumnClasses } from './utils';
-
 import './vm-template-table.scss';
 
 type VMCustomizeStatusProps = {
@@ -75,7 +75,7 @@ const VMCustomizeStatus: React.FC<VMCustomizeStatusProps> = ({
                   const params = new URLSearchParams();
                   params.append('vm', vm.metadata.name);
                   params.append('vmNs', vm.metadata.namespace);
-                  history.push(`/virtualization/customize-source?${params.toString()}`);
+                  history.push(`/${VIRTUALIZATION_BASE_URL}/customize-source?${params.toString()}`);
                 }}
               >
                 {t('kubevirt-plugin~Launch console')}

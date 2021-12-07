@@ -148,6 +148,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
           label={t('metal3-plugin~Power off immediately')}
           onChange={setForceOff}
           isChecked={forceOff}
+          data-checked-state={forceOff}
         />
         <div className="text-secondary">{helpText}</div>
       </StackItem>

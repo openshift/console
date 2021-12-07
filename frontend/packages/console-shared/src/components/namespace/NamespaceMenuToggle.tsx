@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { MenuToggle, Popper } from '@patternfly/react-core';
+import * as cx from 'classnames';
 
 const NamespaceMenuToggle = (props: {
   disabled: boolean;
@@ -9,8 +10,9 @@ const NamespaceMenuToggle = (props: {
   shortCut?: string;
   title: string;
   onToggle: (state: boolean) => void;
+  className?: string;
 }) => {
-  const { menu, isOpen, shortCut, title, onToggle, disabled, menuRef } = props;
+  const { menu, isOpen, shortCut, title, onToggle, disabled, menuRef, className } = props;
 
   const toggleRef = React.useRef(null);
   const containerRef = React.useRef(null);
@@ -68,7 +70,7 @@ const NamespaceMenuToggle = (props: {
       onClick={() => onToggle(!isOpen)}
       isExpanded={isOpen}
       disabled={disabled}
-      className="co-namespace-dropdown__menu-toggle"
+      className={cx('co-namespace-dropdown__menu-toggle', className)}
     >
       {title}
     </MenuToggle>
@@ -83,6 +85,8 @@ const NamespaceMenuToggle = (props: {
         position="left"
         appendTo={containerRef.current}
         isVisible={isOpen}
+        popperMatchesTriggerWidth={false}
+        enableFlip={false}
       />
     </div>
   );

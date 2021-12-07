@@ -46,7 +46,7 @@ enum FilterType {
   LABEL = 'Label',
 }
 
-const filterTypeMap = Object.freeze({
+export const filterTypeMap = Object.freeze({
   [FilterType.LABEL]: 'labels',
   [FilterType.NAME]: 'name',
 });
@@ -381,7 +381,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       value={nameInputText}
                       onChange={(value: string) => {
                         setNameInputText(value);
-                        value ? debounceApplyNameFilter(value) : applyNameFilter(value);
+                        debounceApplyNameFilter(value);
                       }}
                       placeholder={nameFilterPlaceholder ?? t('public~Search by name...')}
                     />

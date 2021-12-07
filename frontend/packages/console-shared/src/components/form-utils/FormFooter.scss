@@ -1,9 +1,9 @@
 @import '../../../../../public/style/vars';
 
 .ocs-form-footer {
-  padding: var(--pf-global--spacer--md) ($grid-gutter-width/2);
-  @media (min-width: $screen-sm-min) {
-    padding: var(--pf-global--spacer--md) ($grid-gutter-width);
+  padding: var(--pf-global--spacer--md) $pf-global-gutter;
+  @media (min-width: $pf-global--breakpoint--xl) {
+    padding: var(--pf-global--spacer--md) $pf-global-gutter--md;
   }
   &__sticky {
     position: sticky;

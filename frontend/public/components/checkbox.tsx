@@ -10,6 +10,7 @@ export const Checkbox: React.SFC<CheckboxProps> = ({ name, label, checked, onCha
           name={name}
           onChange={onChange}
           checked={checked}
+          data-checked-state={checked}
           type="checkbox"
         />
         {label}

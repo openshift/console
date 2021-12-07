@@ -27,6 +27,9 @@
     height: 100%;
     padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md);
   }
+  &__logsnippet {
+    margin-top: var(--pf-global--spacer--sm);
+  }
   &__tasklist {
     max-width: 30%;
     min-width: 208px;

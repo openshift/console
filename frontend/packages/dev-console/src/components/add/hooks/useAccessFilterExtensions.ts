@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import {
   AddAccessReviewResults,
@@ -13,16 +14,24 @@ export const useAccessFilterExtensions = (
     namespace,
     addActionExtensions,
   );
-  const loaded: boolean = !Object.values(accessReviewResults).some(
-    (reviewStatus) => reviewStatus === AccessReviewStatus.LOADING,
+  const loaded = React.useMemo(
+    () =>
+      !Object.values(accessReviewResults).some(
+        (reviewStatus) => reviewStatus === AccessReviewStatus.LOADING,
+      ),
+    [accessReviewResults],
   );
 
-  return loaded
-    ? [
-        addActionExtensions.filter(
-          ({ properties: { id } }) => accessReviewResults[id] === AccessReviewStatus.ALLOWED,
-        ),
-        loaded,
-      ]
-    : [[], loaded];
+  return React.useMemo(
+    () =>
+      loaded
+        ? [
+            addActionExtensions.filter(
+              ({ properties: { id } }) => accessReviewResults[id] === AccessReviewStatus.ALLOWED,
+            ),
+            loaded,
+          ]
+        : [[], loaded],
+    [loaded, addActionExtensions, accessReviewResults],
+  );
 };

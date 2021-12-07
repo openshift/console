@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import useSSHKeys from '../../../hooks/use-ssh-keys';
 import SSHCreateServiceMessage from './SSHCreateServiceMessage';
 import SSHCreateServicePopup from './SSHCreateServicePopup';
-
 import './ssh-service.scss';
 
 type SSHCreateServiceProps = {
@@ -30,6 +29,7 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
           className="kv-ssh-service-checkbox--main"
           label={<SSHCreateServicePopup vmName={vmName} hidePopup={hidePopup} />}
           isChecked={enableSSHService}
+          data-checked-state={enableSSHService}
           onChange={(checked) => {
             setEnableSSHService(checked);
           }}
@@ -44,7 +44,7 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
             title={t('kubevirt-plugin~Missing authorized key')}
           >
             {t(
-              `kubevirt-plugin~An authorized key is not detected. SSH access is enabled with the password.`,
+              `kubevirt-plugin~An authorized key is not detected. Please ensure that the virtual machine is configured to accept password authentication.`,
             )}
           </Alert>
         </StackItem>

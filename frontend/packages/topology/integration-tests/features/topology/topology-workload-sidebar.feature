@@ -3,7 +3,8 @@ Feature: Sidebar in topology
               As a user, I want to check sidebar of workloads
 
         Background:
-            Given user has created or selected namespace "aut-topology-sidebar"
+            Given user has installed OpenShift Serverless Operator
+              And user has created or selected namespace "aut-topology-sidebar"
               And user is at Add page
 
 

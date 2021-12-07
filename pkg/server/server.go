@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/coreos/pkg/health"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
@@ -58,6 +59,7 @@ const (
 	devfileEndpoint                  = "/api/devfile/"
 	devfileSamplesEndpoint           = "/api/devfile/samples/"
 	pluginAssetsEndpoint             = "/api/plugins/"
+	pluginProxyEndpoint              = "/api/proxy/"
 	localesEndpoint                  = "/locales/resource.json"
 	updatesEndpoint                  = "/api/check-updates"
 	operandsListEndpoint             = "/api/list-operands/"
@@ -127,6 +129,7 @@ type Server struct {
 	InactivityTimeout    int
 	// Map that contains list of enabled plugins and their endpoints.
 	EnabledConsolePlugins map[string]string
+	PluginProxy           string
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClients                       map[string]*http.Client
 	ThanosProxyConfig                *proxy.Config
@@ -494,13 +497,70 @@ func (s *Server) HTTPHandler() http.Handler {
 		}),
 	))
 
+	if len(s.PluginProxy) != 0 {
+		proxyConfig, err := plugins.ParsePluginProxyConfig(s.PluginProxy)
+		if err != nil {
+			klog.Fatalf("Error parsing plugin proxy config: %s", err)
+			os.Exit(1)
+		}
+		proxyServiceHandlers, err := plugins.GetPluginProxyServiceHandlers(proxyConfig, s.PluginsProxyTLSConfig, pluginProxyEndpoint)
+		if err != nil {
+			klog.Fatalf("Error getting plugin proxy handlers: %s", err)
+			os.Exit(1)
+		}
+		if len(proxyServiceHandlers) != 0 {
+			klog.Infoln("The following console endpoints are now proxied to these services:")
+		}
+		for _, proxyServiceHandler := range proxyServiceHandlers {
+			klog.Infof(" - %s -> %s\n", proxyServiceHandler.ConsoleEndpoint, proxyServiceHandler.ProxyConfig.Endpoint)
+			serviceProxy := proxy.NewProxy(proxyServiceHandler.ProxyConfig)
+			handle(proxyServiceHandler.ConsoleEndpoint, http.StripPrefix(
+				proxy.SingleJoiningSlash(s.BaseURL.Path, proxyServiceHandler.ConsoleEndpoint),
+				authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+					if proxyServiceHandler.Authorize {
+						r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+					}
+					serviceProxy.ServeHTTP(w, r)
+				})),
+			)
+		}
+	}
+
 	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
 
+	// we need to create another instance of `PluginsHandler` with shorter timeout,
+	// so calls for plugins that doesnt contain locales will fail sooner
+	i18nPluginsHandler := plugins.NewPluginsHandler(
+		&http.Client{
+			Timeout:   10 * time.Second,
+			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
+		},
+		s.EnabledConsolePlugins,
+		s.PublicDir,
+	)
+
 	handleFunc(localesEndpoint, func(w http.ResponseWriter, r *http.Request) {
-		pluginsHandler.HandleI18nResources(w, r)
+		i18nPluginsHandler.HandleI18nResources(w, r)
 	})
 
 	// Helm Endpoints
+	metricsHandler := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Requests from prometheus-k8s have the access token in headers instead of cookies.
+			// This allows metric requests with proper tokens in either headers or cookies.
+			if r.URL.Path == "/metrics" {
+				openshiftSessionCookieName := "openshift-session-token"
+				openshiftSessionCookieValue := r.Header.Get("Authorization")
+				r.AddCookie(&http.Cookie{Name: openshiftSessionCookieName, Value: openshiftSessionCookieValue})
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+
+	handle("/metrics", metricsHandler(authHandler(func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+	})))
+
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))

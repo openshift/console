@@ -75,7 +75,7 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
 
     const vmTemplateObjPath = (o: K8sResourceKind) =>
       resourcePathFromModel(
-        { ...TemplateModel, plural: 'vmtemplates' },
+        { ...TemplateModel, plural: 'virtualmachinetemplates' },
         getName(o),
         getNamespace(o),
       );

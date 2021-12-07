@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+
 import { ListPage, Table, TableData } from './factory';
 import { Kebab, LabelList, ResourceKebab, ResourceLink, Selector } from './utils';
 import { PrometheusModel } from '../models';
@@ -54,55 +56,58 @@ const PrometheusTableRow = ({ obj: instance }) => {
   );
 };
 
-const PrometheusTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Version',
-      sortField: 'spec.version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Service Monitor Selector',
-      sortField: 'spec.serviceMonitorSelector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-PrometheusTableHeader.displayName = 'PrometheusTableHeader';
+const PrometheusInstancesList = (props) => {
+  const { t } = useTranslation();
 
-const PrometheusInstancesList = (props) => (
-  <Table
-    {...props}
-    aria-label="Promethesuses"
-    Header={PrometheusTableHeader}
-    Row={PrometheusTableRow}
-    virtualize
-  />
-);
+  const PrometheusTableHeader = () => {
+    return [
+      {
+        title: t('public~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('public~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('public~Labels'),
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('public~Version'),
+        sortField: 'spec.version',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('public~Service monitor selector'),
+        sortField: 'spec.serviceMonitorSelector',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('public~Promethesuses')}
+      Header={PrometheusTableHeader}
+      Row={PrometheusTableRow}
+      virtualize
+    />
+  );
+};
 
 export const PrometheusInstancesPage = (props) => (
   <ListPage

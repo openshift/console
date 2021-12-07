@@ -11,20 +11,18 @@ export const getRow = (templateName: string, within: VoidFunction) =>
 
 export const virtualization = {
   vms: {
-    visit: () => cy.clickNavLink(['Workloads', 'Virtualization']),
+    visit: () => cy.clickNavLink(['Virtualization', 'VirtualMachines']),
     emptyState: {
       clickQuickStarts: () => cy.byTestID('vm-quickstart').click(),
       clickCreate: () => cy.byTestID('create-vm-empty').click(),
-      clickTemplatesTab: () => cy.byTestID('vm-empty-templates').click(),
     },
     testStatus: (vmName: string, status: string, timeout: number = 60000) =>
       getRow(vmName, () => cy.byTestID('status-text', { timeout }).should('have.text', status)),
   },
   templates: {
     visit: () => {
-      cy.clickNavLink(['Workloads', 'Virtualization']);
-      cy.byLegacyTestID('item-create').should('exist');
-      cy.byLegacyTestID('horizontal-link-Templates').click();
+      cy.clickNavLink(['Virtualization', 'Templates']);
+      cy.byTestID('item-create').should('exist');
     },
     addSource: (templateName: string) =>
       getRow(templateName, () =>
@@ -52,12 +50,13 @@ export const virtualization = {
         cy.byTestID('template-support-parent').should('not.exist');
       }
     },
-    testSource: (templateName: string, sourceStatus: string, timeout = 600000) =>
+    testSource: (templateName: string, sourceStatus: string, timeOut = 300000) =>
       getRow(templateName, () =>
-        cy.byTestID('template-source', { timeout }).should('contain', sourceStatus),
+        cy.byTestID('template-source', { timeout: timeOut }).should('contain', sourceStatus),
       ),
-    deleteSource: (templateName: string) => {
-      cy.get(`[data-test-template-name="${templateName}"] > button`).click();
+    deleteSource: (statusText: string) => {
+      cy.contains('[data-test="status-text"]', statusText).should('be.visible');
+      cy.contains('[data-test="status-text"]', statusText).click();
       cy.byTestID('delete-template-source').click();
       cy.byTestID('confirm-action').click();
     },
@@ -88,8 +87,7 @@ export const virtualization = {
       wizard.vm.fillConfirmForm(data);
     },
     delete: (templateName: string) => {
-      cy.clickNavLink(['Workloads', 'Virtualization']);
-      cy.byLegacyTestID('horizontal-link-Templates').click();
+      cy.clickNavLink(['Virtualization', 'Templates']);
       getRow(templateName, () => cy.byLegacyTestID('kebab-button').click());
       cy.contains(TEMPLATE_ACTION.Delete).click();
       cy.byTestID('confirm-action').click();

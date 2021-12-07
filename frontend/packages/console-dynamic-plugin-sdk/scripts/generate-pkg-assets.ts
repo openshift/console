@@ -2,7 +2,13 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
-import { getCorePackage, getInternalPackage, getWebpackPackage } from './package-definitions';
+import {
+  getCorePackage,
+  getInternalPackage,
+  getInternalKubevirtPackage,
+  getHostAppPackage,
+  getWebpackPackage,
+} from './package-definitions';
 import { resolvePath, relativePath } from './utils/path';
 
 const writePackageManifest = (manifest: readPkg.PackageJson, outDir: string) => {
@@ -11,7 +17,7 @@ const writePackageManifest = (manifest: readPkg.PackageJson, outDir: string) => 
   console.log(chalk.green(relativePath(outPath)));
 };
 
-const copyFiles = (files: Record<any, string>) => {
+const copyFiles = (files: Record<string, string>) => {
   Object.entries(files).forEach(([src, dest]) => {
     fs.copySync(resolvePath(src), resolvePath(dest), { recursive: true });
     console.log(chalk.green(relativePath(dest)));
@@ -27,6 +33,8 @@ const missingDepCallback = (name: string) => missingDepNames.add(name);
 const outPackages = [
   getCorePackage(sdkPackage, rootPackage, missingDepCallback),
   getInternalPackage(sdkPackage, rootPackage, missingDepCallback),
+  getInternalKubevirtPackage(sdkPackage, rootPackage, missingDepCallback),
+  getHostAppPackage(sdkPackage, rootPackage, missingDepCallback),
   getWebpackPackage(sdkPackage, rootPackage, missingDepCallback),
 ];
 

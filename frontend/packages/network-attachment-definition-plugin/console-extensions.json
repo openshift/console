@@ -10,7 +10,7 @@
     "properties": {
       "id": "networkattachmentdefinitions",
       "section": "networking",
-      "name": "Network Attachment Definitions",
+      "name": "NetworkAttachmentDefinitions",
       "model": {
         "group": "k8s.cni.cncf.io",
         "kind": "NetworkAttachmentDefinition",

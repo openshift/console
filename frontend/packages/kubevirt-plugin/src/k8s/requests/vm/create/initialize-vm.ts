@@ -48,9 +48,13 @@ const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
     }
 
     if (volumeWrapper.getCloudInitNoCloud()) {
-      volumeWrapper.setCloudInitNoCloud({
-        userData: ['#cloud-config', volumeWrapper.getCloudInitNoCloud().userData].join('\n'),
-      });
+      const cloudConfigHeader = volumeWrapper
+        .getCloudInitNoCloud()
+        ?.userData?.includes('#cloud-config');
+      !cloudConfigHeader &&
+        volumeWrapper.setCloudInitNoCloud({
+          userData: ['#cloud-config', volumeWrapper.getCloudInitNoCloud().userData].join('\n'),
+        });
     }
 
     return {
@@ -84,7 +88,7 @@ const initializeNetworks = ({ networks, vmSettings }: CreateVMParams, vm: VMWrap
 };
 
 export const initializeVM = (params: CreateVMParams, vm: VMWrapper) => {
-  const { vmSettings, storages, isTemplate } = params;
+  const { vmSettings, storages, isTemplate, gpus, hostDevices } = params;
   const settings = asSimpleSettings(vmSettings);
   const isRunning = settings[VMSettingsField.START_VM];
 
@@ -93,6 +97,8 @@ export const initializeVM = (params: CreateVMParams, vm: VMWrapper) => {
     vm.setMemory(settings[VMSettingsField.MEMORY]);
   }
 
+  vm.setGPUDevices(gpus);
+  vm.setHostDevices(hostDevices);
   vm.setRunning(!isTemplate && isRunning);
 
   const cloudInitVolume = storages.map((s) => s.volume).find(getVolumeCloudInitNoCloud);

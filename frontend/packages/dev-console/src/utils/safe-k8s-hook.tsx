@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { k8sGet, Options } from '@console/internal/module/k8s/resource';
+import { k8sGet, Options } from '@console/internal/module/k8s';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s/types';
 
 export const useSafeK8s = () => {

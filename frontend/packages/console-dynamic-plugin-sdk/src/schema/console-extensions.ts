@@ -17,6 +17,8 @@ import {
 } from '../extensions/dashboards';
 import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
 import { FileUpload } from '../extensions/file-upload';
+import { HorizontalNavTab } from '../extensions/horizontal-nav-tabs';
+import { ImportEnvironment } from '../extensions/import-environments';
 import {
   HrefNavItem,
   ResourceNSNavItem,
@@ -63,6 +65,7 @@ export type SupportedExtension =
   | YAMLTemplate
   | AddAction
   | AddActionGroup
+  | ImportEnvironment
   | ClusterGlobalConfig
   | HrefNavItem
   | ResourceNSNavItem
@@ -100,7 +103,8 @@ export type SupportedExtension =
   | CreateResource
   | UserPreferenceGroup
   | UserPreferenceItem
-  | Perspective;
+  | Perspective
+  | HorizontalNavTab;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

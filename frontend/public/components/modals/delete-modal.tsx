@@ -3,28 +3,21 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 
-import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalComponentProps,
-} from '../factory/modal';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import {
   history,
   resourceListPathFromModel,
   withHandlePromise,
   HandlePromiseProps,
 } from '../utils';
-import { k8sKill, referenceForOwnerRef, K8sKind } from '../../module/k8s/';
+import { k8sKill, k8sList, referenceForOwnerRef, K8sKind } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
-import { k8sList } from '../../module/k8s/resource';
 import { ResourceLink } from '../utils/resource-link';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
-const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
+const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
   const [isChecked, setIsChecked] = React.useState(true);
   const [owner, setOwner] = React.useState(null);
 
@@ -35,7 +28,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
     const { kind, resource } = props;
 
     //https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
-    const propagationPolicy = isChecked ? kind.propagationPolicy : 'Orphan';
+    const propagationPolicy = isChecked && kind ? kind.propagationPolicy : 'Orphan';
     const json = propagationPolicy
       ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
       : null;
@@ -76,7 +69,9 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('public~Delete {{kind}}?', { kind: kind.labelKey ? t(kind.labelKey) : kind.label })}
+        {t('public~Delete {{kind}}?', {
+          kind: kind ? (kind.labelKey ? t(kind.labelKey) : kind.label) : '',
+        })}
       </ModalTitle>
       <ModalBody className="modal-body">
         {message}
@@ -120,6 +115,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
                   kind={referenceForOwnerRef(owner)}
                   name={owner.name}
                   namespace={resource.metadata.namespace}
+                  onClick={props.cancel}
                 />{' '}
                 and any modifications may be overwritten. Edit the managing resource to preserve
                 changes.
@@ -146,9 +142,7 @@ export type DeleteModalProps = {
   resource: any;
   close?: () => void;
   redirectTo?: any;
-  message: JSX.Element;
+  message?: JSX.Element;
   cancel?: () => void;
   btnText?: string;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
-} & ModalComponentProps &
-  HandlePromiseProps;
+};

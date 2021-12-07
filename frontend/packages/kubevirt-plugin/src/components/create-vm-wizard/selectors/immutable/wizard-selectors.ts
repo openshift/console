@@ -50,6 +50,9 @@ export const isLastStepErrorFatal = (state, wizardID: string) =>
 export const getEnableSSHService = (state): boolean =>
   state?.plugins?.kubevirt?.authorizedSSHKeys?.enableSSHService;
 
+export const getSSHTempKey = (state): string =>
+  state?.plugins?.kubevirt?.authorizedSSHKeys?.tempSSHKey;
+
 export const getSysprepData = (state): SysprepData => state?.plugins?.kubevirt?.sysprep;
 
 export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata => {

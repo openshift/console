@@ -7,11 +7,13 @@ export const getPluginManifest = (
   name: string,
   version: string,
   extensions: Extension[] = [],
+  disableStaticPlugins?: string[],
 ): ConsolePluginManifestJSON => ({
   name,
   version,
   extensions: extensions as SupportedExtension[],
   dependencies: { '@console/pluginAPI': '*' },
+  disableStaticPlugins,
 });
 
 export const getExecutableCodeRefMock = <T = any>(
@@ -30,7 +32,7 @@ export const getEntryModuleMocks = (requestedModule: {}): [
 
   const entryModule = {
     get: jest.fn(async () => moduleFactory),
-    override: jest.fn<void>(),
+    init: jest.fn<void>(),
   };
 
   return [moduleFactory, entryModule];
@@ -42,6 +44,7 @@ export type RemoteEntryModuleMock = Update<
   RemoteEntryModule,
   {
     get: jest.Mock<ReturnType<RemoteEntryModule['get']>>;
-    override: jest.Mock<void>;
+    init: jest.Mock<void>;
+    override?: jest.Mock<void>;
   }
 >;

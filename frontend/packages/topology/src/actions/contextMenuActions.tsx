@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Node, ContextSubMenuItem, ContextMenuItem } from '@patternfly/react-topology';
 import { Action } from '@console/dynamic-plugin-sdk/src';
+import { referenceFor } from '@console/internal/module/k8s';
 import {
   ActionServiceProvider,
   getMenuOptionType,
@@ -10,6 +11,7 @@ import {
   orderExtensionBasedOnInsertBeforeAndAfter,
 } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
+import { getResource } from '../utils';
 
 export const createContextMenuItems = (actions: MenuOption[]) => {
   const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(actions);
@@ -38,8 +40,15 @@ export const createContextMenuItems = (actions: MenuOption[]) => {
 };
 
 export const contextMenuActions = (element: Node): React.ReactElement[] => {
+  const resource = getResource(element);
+  const { csvName } = element.getData()?.data ?? {};
+  const context = {
+    'topology-actions': element,
+    ...(resource ? { [referenceFor(resource)]: resource } : {}),
+    ...(csvName ? { 'csv-actions': { csvName, resource } } : {}),
+  };
   return [
-    <ActionServiceProvider key="topology" context={{ 'topology-actions': element }}>
+    <ActionServiceProvider key="topology" context={context}>
       {({ options, loaded }) => loaded && createContextMenuItems(options)}
     </ActionServiceProvider>,
   ];

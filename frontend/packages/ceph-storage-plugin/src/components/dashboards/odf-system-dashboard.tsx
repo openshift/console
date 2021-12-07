@@ -29,7 +29,7 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
   const isObjectServiceAvailable = useFlag(MCG_FLAG);
   const isCephAvailable = useFlag(CEPH_FLAG);
   const { systemName } = rest.match.params;
-  const dashboardTab = isCephAvailable === false && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
+  const dashboardTab = !isCephAvailable && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
   const defaultDashboard = React.useRef(dashboardTab);
 
   const pages: Page[] = [
@@ -39,12 +39,17 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
       name: t('ceph-storage-plugin~Overview'),
       component: OCSOverview,
     },
-    {
-      href: referenceForModel(CephBlockPoolModel),
-      name: t('ceph-storage-plugin~BlockPools'),
-      component: () => <BlockPoolListPage namespace={CEPH_STORAGE_NAMESPACE} />,
-    },
   ];
+
+  React.useEffect(() => {
+    if (isCephAvailable) {
+      pages.push({
+        href: referenceForModel(CephBlockPoolModel),
+        name: t('ceph-storage-plugin~BlockPools'),
+        component: () => <BlockPoolListPage namespace={CEPH_STORAGE_NAMESPACE} />,
+      });
+    }
+  }, [isCephAvailable, pages, t]);
 
   const breadcrumbs = [
     {

@@ -1,4 +1,6 @@
-import { Edge, Node } from '@patternfly/react-topology';
+import { Edge, isNode, Node } from '@patternfly/react-topology';
+import i18next from 'i18next';
+import { Action, K8sModel } from '@console/dynamic-plugin-sdk';
 import { asAccessReview } from '@console/internal/components/utils';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -17,6 +19,9 @@ import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '
 import { removeConnection } from '../utils';
 import { getResource } from '../utils/topology-utils';
 
+/**
+ * @deprecated migrated to use new Action extension, use MoveConnectorAction
+ */
 const moveConnection = (edge: Edge, availableTargets: Node[]) => {
   const resourceObj = getResource(edge.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
@@ -32,6 +37,9 @@ const moveConnection = (edge: Edge, availableTargets: Node[]) => {
   };
 };
 
+/**
+ * @deprecated migrated to use new Action extension, use DeleteConnectorAction
+ */
 const deleteConnection = (edge: Edge) => {
   const resourceObj = getResource(edge.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
@@ -45,14 +53,13 @@ const deleteConnection = (edge: Edge) => {
   };
 };
 
-export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
-  const actions: KebabOption[] = [];
+const getAvailableTargetForEdge = (edge: Edge, nodes: Node[]) => {
   const currentTargets = edge
     .getSource()
     .getSourceEdges()
     .map((e) => e.getTarget().getId());
 
-  const availableTargets = nodes
+  return nodes
     .filter((n) => {
       if (n.getId() === edge.getSource().getId()) {
         return false;
@@ -81,7 +88,43 @@ export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
       }
     })
     .sort((n1, n2) => n1.getLabel().localeCompare(n2.getLabel()));
+};
 
+export const MoveConnectorAction = (kindObj: K8sModel, element: Edge): Action => {
+  const resourceObj = getResource(element.getSource());
+
+  const nodes = element
+    .getController()
+    .getElements()
+    .filter((e) => isNode(e) && !e.isGroup()) as Node[];
+  const availableTargets = getAvailableTargetForEdge(element, nodes);
+
+  return {
+    id: 'move-visual-connector',
+    label: i18next.t('topology~Move connector'),
+    cta: () => {
+      moveConnectionModal({ edge: element, availableTargets });
+    },
+    disabled: availableTargets.length <= 1,
+    accessReview: asAccessReview(kindObj, resourceObj, 'delete'),
+  };
+};
+
+export const DeleteConnectorAction = (kindObj: K8sModel, element: Edge): Action => {
+  const resourceObj = getResource(element.getSource());
+  return {
+    id: 'delete-connector',
+    label: i18next.t('topology~Delete connector'),
+    cta: () => {
+      removeConnection(element);
+    },
+    accessReview: asAccessReview(kindObj, resourceObj, 'delete'),
+  };
+};
+
+export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
+  const actions: KebabOption[] = [];
+  const availableTargets = getAvailableTargetForEdge(edge, nodes);
   actions.push(moveConnection(edge, availableTargets));
 
   switch (edge.getType()) {

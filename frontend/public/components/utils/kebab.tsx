@@ -2,8 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
+/* eslint-disable import/named */
+import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
+import i18next, { TFunction } from 'i18next';
 import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
@@ -38,6 +39,7 @@ import {
   DeploymentModel,
   VolumeSnapshotModel,
 } from '../../models';
+import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -89,7 +91,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
       onEscape();
     }
   };
-  const disabled = !isAllowed || option.isDisabled;
+  const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
   const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
   return (
     <button
@@ -105,7 +107,9 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
     </button>
   );
 };
-const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string }) => {
+export const KebabItemAccessReview_ = (
+  props: KebabItemProps & { impersonate: ImpersonateKind },
+) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
   return <KebabItem_ {...props} isAllowed={isAllowed} />;
@@ -461,9 +465,11 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   );
 });
 
-export class Kebab extends React.Component<any, { active: boolean }> {
+class KebabWithTranslation extends React.Component<
+  KebabProps & WithTranslation,
+  { active: boolean }
+> {
   static factory: KebabFactory = kebabFactory;
-  static getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
   // public static columnClass: string = 'pf-c-table__action';
   public static columnClass: string = 'dropdown-kebab-pf pf-c-table__action';
@@ -527,7 +533,7 @@ export class Kebab extends React.Component<any, { active: boolean }> {
   getDivReference = () => this.divElement.current;
 
   render() {
-    const { options, isDisabled } = this.props;
+    const { options, isDisabled, t } = this.props;
 
     const menuOptions = kebabOptionsToMenu(options);
 
@@ -543,7 +549,7 @@ export class Kebab extends React.Component<any, { active: boolean }> {
           type="button"
           aria-expanded={this.state.active}
           aria-haspopup="true"
-          aria-label="Actions"
+          aria-label={t('public~Actions')}
           className="pf-c-dropdown__toggle pf-m-plain"
           data-test-id="kebab-button"
           disabled={isDisabled}
@@ -582,6 +588,15 @@ export class Kebab extends React.Component<any, { active: boolean }> {
     );
   }
 }
+
+function restoreStaticProperties(Kebab) {
+  Kebab.factory = KebabWithTranslation.factory;
+  Kebab.getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
+  Kebab.columnClass = KebabWithTranslation.columnClass;
+  return Kebab;
+}
+
+export const Kebab = restoreStaticProperties(withTranslation()(KebabWithTranslation));
 
 export type KebabOption = {
   hidden?: boolean;
@@ -624,6 +639,14 @@ type KebabSubMenu = {
 };
 
 export type KebabMenuOption = KebabSubMenu | KebabOption;
+
+type KebabProps = {
+  factory: any;
+  t: TFunction;
+  options: KebabOption[];
+  isDisabled?: boolean;
+  columnClass?: string;
+};
 
 type KebabItemProps = {
   option: KebabOption;

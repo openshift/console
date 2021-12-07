@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { Trans, withTranslation } from 'react-i18next';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
 import {
@@ -285,11 +286,11 @@ class CurrentEnvVars {
 }
 
 /** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean, useLoadingInline?: boolean}) => {model: K8sKind}} */
-const stateToProps = ({ k8s, UI }, { obj }) => ({
+const stateToProps = (state, { obj }) => ({
   model:
-    k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
-    k8s.getIn(['RESOURCES', 'models', obj.kind]),
-  impersonate: UI.get('impersonate'),
+    state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
+    state.k8s.getIn(['RESOURCES', 'models', obj.kind]),
+  impersonate: getImpersonate(state),
 });
 
 export class UnconnectedEnvironmentPage extends PromiseComponent {

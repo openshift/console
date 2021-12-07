@@ -4,7 +4,7 @@ import { act } from 'react-dom/test-utils';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { k8sGet } from '@console/internal/module/k8s';
+import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
@@ -26,7 +26,7 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: jest.fn(),
 }));
 
-jest.mock('@console/internal/module/k8s/resource', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
   k8sGet: jest.fn(),
 }));
 

@@ -1,13 +1,15 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect, useDispatch } from 'react-redux';
 import { Link, match as RMatch } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
+import { useDocumentListener, KEYBOARD_SHORTCUTS, useDeepCompareMemoize } from '@console/shared';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 
 import { filterList } from '../../actions/k8s';
@@ -98,11 +100,13 @@ type ListPageWrapperProps<L = any, C = any> = {
   reduxIDs?: string[];
   textFilter?: string;
   nameFilterPlaceholder?: string;
+  namespace?: string;
   labelFilterPlaceholder?: string;
   label?: string;
   staticFilters?: { key: string; value: string }[];
   customData?: C;
   hideColumnManagement?: boolean;
+  nameFilter?: string;
 };
 
 export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
@@ -119,7 +123,17 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
     columnLayout,
     name,
     resources,
+    nameFilter,
   } = props;
+  const dispatch = useDispatch();
+  const memoizedIds = useDeepCompareMemoize(reduxIDs);
+
+  React.useEffect(() => {
+    if (nameFilter) {
+      memoizedIds.forEach((id) => dispatch(filterList(id, 'name', { selected: [nameFilter] })));
+    }
+  }, [dispatch, nameFilter, memoizedIds]);
+
   const data = flatten ? flatten(resources) : [];
   const Filter = (
     <FilterToolbar
@@ -430,7 +444,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       filters,
       kind,
       limit,
-      name: name || nameFilter,
+      name,
       namespaced,
       selector,
       prop: kind,
@@ -473,6 +487,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       hideNameLabelFilters={hideNameLabelFilters}
       hideColumnManagement={hideColumnManagement}
       columnLayout={columnLayout}
+      nameFilter={nameFilter}
     />
   );
 }, ErrorBoundaryFallback);
@@ -513,6 +528,7 @@ type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   helpText?: React.ReactNode;
   resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
   staticFilters?: { key: string; value: string }[];
+  nameFilter?: string;
 };
 
 export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
@@ -542,6 +558,7 @@ export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
     hideNameLabelFilters,
     hideColumnManagement,
     columnLayout,
+    nameFilter,
   } = props;
 
   const { t } = useTranslation();
@@ -582,6 +599,8 @@ export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
           columnLayout={columnLayout}
           nameFilterPlaceholder={nameFilterPlaceholder}
           labelFilterPlaceholder={labelFilterPlaceholder}
+          nameFilter={nameFilter}
+          namespace={namespace}
         />
       </Firehose>
     </FireMan>

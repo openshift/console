@@ -4,7 +4,11 @@ import * as classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useDispatch } from 'react-redux';
 import { match } from 'react-router-dom';
+import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { ResourceEventStream } from '@console/internal/components/events';
@@ -70,6 +74,9 @@ import { Resources } from '../k8s-resource';
 import ModelStatusBox from '../model-status-box';
 import { csvNameFromWindow, OperandLink } from './operand-link';
 
+/**
+ * @depricated these actions has been converted to Action extension, src/actions/csv-actions.ts
+ */
 export const getOperandActions = (
   ref: K8sResourceKindReference,
   actionExtensions: ClusterServiceVersionAction[],
@@ -120,7 +127,6 @@ export const getOperandActions = (
         deleteModal({
           kind,
           resource: obj,
-          namespace: obj.metadata.namespace,
           redirectTo: `/k8s/ns/${obj.metadata.namespace}/${
             ClusterServiceVersionModel.plural
           }/${csvName || csvNameFromWindow()}/${referenceFor(obj)}`,
@@ -330,12 +336,11 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const { t } = useTranslation();
   const { obj } = props;
   const [models, inFlight] = useK8sModels();
-  if (inFlight) {
-    return null;
-  }
-  const providedAPIs = providedAPIsForCSV(obj);
+  const dispatch = useDispatch();
+  const [apiRefreshed, setAPIRefreshed] = React.useState(false);
 
-  // Exclude provided APIs that do not have a model
+  // Map APIs provided by this CSV to Firehose resources. Exclude APIs that do not have a model.
+  const providedAPIs = providedAPIsForCSV(obj);
   const firehoseResources = providedAPIs.reduce((resourceAccumulator, api) => {
     const reference = referenceForProvidedAPI(api);
     const model = models?.[reference];
@@ -351,6 +356,19 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
       : resourceAccumulator;
   }, []);
 
+  // Refresh API definitions if at least one API is missing a model and definitions have not already been refreshed.
+  const apiMightBeOutdated = !inFlight && firehoseResources.length < providedAPIs.length;
+  React.useEffect(() => {
+    if (!apiRefreshed && apiMightBeOutdated) {
+      dispatch(getResources());
+      setAPIRefreshed(true);
+    }
+  }, [apiMightBeOutdated, apiRefreshed, dispatch]);
+
+  if (inFlight) {
+    return null;
+  }
+
   const EmptyMsg = () => (
     <MsgBox
       title={t('olm~No provided APIs defined')}
@@ -360,18 +378,32 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const createLink = (name: string) =>
     `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
       obj.metadata.name
-    }/${referenceForProvidedAPI(_.find(providedAPIs, { name }))}/~new`;
+    }/${referenceForProvidedAPI(
+      _.find(providedAPIs, {
+        name,
+      }),
+    )}/~new`;
   const createProps =
     providedAPIs.length > 1
       ? {
-          items: providedAPIs.reduce((acc, api) => ({ ...acc, [api.name]: api.displayName }), {}),
+          items: providedAPIs.reduce(
+            (acc, api) => ({
+              ...acc,
+              [api.name]: api.displayName,
+            }),
+            {},
+          ),
           createLink,
         }
-      : { to: providedAPIs.length === 1 ? createLink(providedAPIs[0].name) : null };
+      : {
+          to: providedAPIs.length === 1 ? createLink(providedAPIs[0].name) : null,
+        };
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>
     ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata.uid === uid).length > 0);
-  const flatten: Flatten<{ [key: string]: K8sResourceCommon[] }> = (resources) =>
+  const flatten: Flatten<{
+    [key: string]: K8sResourceCommon[];
+  }> = (resources) =>
     _.flatMap(resources, (resource) => _.map(resource.data, (item) => item)).filter(
       ({ kind, metadata }, i, allResources) =>
         providedAPIs.filter((item) => item.kind === kind).length > 0 ||
@@ -420,9 +452,20 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
   const { namespace, kind, csv } = props;
   const to = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`;
+  const [model, inFlight] = useK8sModel(kind);
+  const [apiRefreshed, setAPIRefreshed] = React.useState(false);
+  const dispatch = useDispatch();
 
-  const [model] = useK8sModel(kind);
-  return (
+  // Refresh API definitions if model is missing and the definitions have not already been refreshed.
+  const apiMightBeOutdated = !inFlight && !model;
+  React.useEffect(() => {
+    if (!apiRefreshed && apiMightBeOutdated) {
+      dispatch(getResources());
+      setAPIRefreshed(true);
+    }
+  }, [dispatch, apiRefreshed, apiMightBeOutdated]);
+
+  return inFlight ? null : (
     <ModelStatusBox groupVersionKind={kind}>
       <ListPage
         kind={kind}
@@ -482,18 +525,6 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     conditionsStatusDescriptors,
     otherStatusDescriptors,
   } = (statusDescriptors ?? []).reduce((acc, descriptor) => {
-    // exclude Conditions since they are included in their own section
-    if (descriptor.path === 'conditions') {
-      return acc;
-    }
-
-    if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
-      return {
-        ...acc,
-        podStatuses: [...(acc.podStatuses ?? []), descriptor],
-      };
-    }
-
     if (isMainStatusDescriptor(descriptor)) {
       return {
         ...acc,
@@ -501,10 +532,20 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
       };
     }
 
-    if (descriptor['x-descriptors']?.includes(StatusCapability.conditions)) {
+    if (
+      descriptor['x-descriptors']?.includes(StatusCapability.conditions) ||
+      descriptor.path === 'conditions'
+    ) {
       return {
         ...acc,
         conditionsStatusDescriptors: [...(acc.conditionsStatusDescriptors ?? []), descriptor],
+      };
+    }
+
+    if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
+      return {
+        ...acc,
+        podStatuses: [...(acc.podStatuses ?? []), descriptor],
       };
     }
 
@@ -571,12 +612,13 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
           </div>
         </div>
       )}
-      {_.isArray(status?.conditions) && (
-        <div className="co-m-pane__body" data-test="status.conditions">
-          <SectionHeading data-test="operand-conditions-heading" text={t('public~Conditions')} />
-          <Conditions conditions={status.conditions} />
-        </div>
-      )}
+      {Array.isArray(status?.conditions) &&
+        (conditionsStatusDescriptors ?? []).every(({ path }) => path !== 'conditions') && (
+          <div className="co-m-pane__body" data-test="status.conditions">
+            <SectionHeading data-test="operand-conditions-heading" text={t('public~Conditions')} />
+            <Conditions conditions={status.conditions} />
+          </div>
+        )}
       {conditionsStatusDescriptors?.length > 0 &&
         conditionsStatusDescriptors.map((descriptor) => (
           <DescriptorConditions descriptor={descriptor} schema={schema} obj={obj} />

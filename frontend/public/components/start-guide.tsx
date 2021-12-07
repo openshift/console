@@ -41,7 +41,7 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
         <p>
           <Trans t={t} ns="public">
             To learn more, visit the OpenShift{' '}
-            <ExternalLink href={openshiftHelpBase} text="documentation" />.
+            <ExternalLink href={openshiftHelpBase}>documentation</ExternalLink>.
           </Trans>
         </p>
         <p>

@@ -131,6 +131,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
           data-test="encryption-checkbox"
           id="enable-encryption"
           isChecked={encryptionChecked}
+          data-checked-state={encryptionChecked}
           label={t('ceph-storage-plugin~Enable Encryption')}
           description={t(
             'ceph-storage-plugin~Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted.',
@@ -150,6 +151,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               <Checkbox
                 id="cluster-wide-encryption"
                 isChecked={encryption.clusterWide}
+                data-checked-state={encryption.clusterWide}
                 label={
                   <span className="ocs-install-encryption__pv-title--padding">
                     {t('ceph-storage-plugin~Cluster-wide encryption')}
@@ -165,6 +167,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               <Checkbox
                 id="storage-class-encryption"
                 isChecked={encryption.storageClass}
+                data-checked-state={encryption.storageClass}
                 label={<StorageClassEncryptionLabel />}
                 aria-label={t('ceph-storage-plugin~StorageClass encryption')}
                 description={t(
@@ -184,6 +187,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               <Checkbox
                 id="advanced-encryption"
                 isChecked={encryption.advanced}
+                data-checked-state={encryption.advanced}
                 label={t('ceph-storage-plugin~Connect to an external key management service')}
                 onChange={toggleAdvancedEncryption}
                 isDisabled={encryption.storageClass || !encryption.hasHandled}

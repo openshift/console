@@ -11,6 +11,7 @@ import {
   FieldLevelHelp,
   Firehose,
   history,
+  isUpstream,
   NsDropdown,
   openshiftHelpBase,
   BreadCrumbs,
@@ -76,6 +77,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const [approval, setApproval] = React.useState(InstallPlanApproval.Automatic);
   const [cannotResolve, setCannotResolve] = React.useState(false);
   const [suggestedNamespaceExists, setSuggestedNamespaceExists] = React.useState(false);
+  const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = React.useState(
+    true,
+  );
   const [
     useSuggestedNSForSingleInstallMode,
     setUseSuggestedNSForSingleInstallMode,
@@ -178,16 +182,25 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const isSuggestedNamespaceSelected =
     suggestedNamespace && suggestedNamespace === selectedTargetNamespace;
+  const showSuggestedNamespaceDetails =
+    !suggestedNamespaceExistsInFlight && isSuggestedNamespaceSelected;
   const selectedApproval = approval || InstallPlanApproval.Automatic;
 
   React.useEffect(() => {
     if (!suggestedNamespace) {
+      setSuggestedNamespaceExistsInFlight(false);
       return;
     }
     setTargetNamespace(suggestedNamespace);
     k8sGet(NamespaceModel, suggestedNamespace)
-      .then(() => setSuggestedNamespaceExists(true))
-      .catch(() => setSuggestedNamespaceExists(false));
+      .then(() => {
+        setSuggestedNamespaceExists(true);
+        setSuggestedNamespaceExistsInFlight(false);
+      })
+      .catch(() => {
+        setSuggestedNamespaceExists(false);
+        setSuggestedNamespaceExistsInFlight(false);
+      });
   }, [suggestedNamespace]);
 
   React.useEffect(() => {
@@ -500,7 +513,11 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const showMonitoringCheckbox =
     operatorRequestsMonitoring && _.startsWith(selectedTargetNamespace, 'openshift-');
 
-  const suggestedNamespaceDetails = isSuggestedNamespaceSelected && (
+  const monitoringLink = isUpstream()
+    ? `${openshiftHelpBase}monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`
+    : `${openshiftHelpBase}html/monitoring/configuring-the-monitoring-stack#maintenance-and-support_configuring-the-monitoring-stack`;
+
+  const suggestedNamespaceDetails = showSuggestedNamespaceDetails && (
     <>
       <Alert
         isInline
@@ -529,6 +546,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             label={t('olm~Enable Operator recommended cluster monitoring on this Namespace')}
             onChange={setEnableMonitoring}
             isChecked={enableMonitoring}
+            data-checked-state={enableMonitoring}
           />
           {props.packageManifest.data[0].metadata.labels['opsrc-provider'] !== 'redhat' && (
             <Alert
@@ -542,12 +560,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat
                 operators can lead to malicious metrics data overriding existing cluster metrics.
                 For more information, see the{' '}
-                <ExternalLink
-                  href={`${openshiftHelpBase}monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`}
-                >
-                  cluster monitoring documentation
-                </ExternalLink>
-                .
+                <ExternalLink href={monitoringLink}>cluster monitoring documentation</ExternalLink>.
               </Trans>
             </Alert>
           )}

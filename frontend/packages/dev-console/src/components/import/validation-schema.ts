@@ -314,7 +314,6 @@ export const dockerValidationSchema = (t: TFunction) =>
       containerPort: yup
         .number()
         .test(isInteger(t('devconsole~Container port should be an integer'))),
-      dockerfileHasError: yup.boolean().oneOf([false]),
       dockerfilePath: yup.string().required(t('devconsole~Required')),
     }),
   });

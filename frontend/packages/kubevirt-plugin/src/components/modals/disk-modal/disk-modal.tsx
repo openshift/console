@@ -54,6 +54,7 @@ import { VMIKind, VMKind } from '../../../types';
 import { V1AddVolumeOptions } from '../../../types/api';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import {
+  buildOwnerReference,
   getDialogUIError,
   getLoadedData,
   getSequenceName,
@@ -132,9 +133,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     combinedDisk.getStorageClassName() || '',
   );
 
-  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
-    storageClassName,
-  );
+  const [
+    spAccessMode,
+    spVolumeMode,
+    spLoaded,
+    isSPSettingProvided,
+    loadError,
+  ] = useStorageProfileSettings(storageClassName);
 
   const [applySP, setApplySP] = React.useState<boolean>(true);
 
@@ -261,7 +266,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
       .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null)
       .setPreallocationDisk(enablePreallocation)
-      .setNamespace(vmNamespace);
+      .setNamespace(vmNamespace)
+      .addOwnerReferences(buildOwnerReference(vm));
   }
 
   let resultPersistentVolumeClaim: PersistentVolumeClaimWrapper;
@@ -615,6 +621,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               )}
               isDisabled={!isVMRunning}
               isChecked={autoDetach}
+              data-checked-state={autoDetach}
               onChange={() => setAutoDetach(!autoDetach)}
             />
           </FormRow>
@@ -688,13 +695,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                         'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
                       )}
                       isChecked={applySP}
+                      data-checked-state={applySP}
                       onChange={() => setApplySP(!applySP)}
                       isDisabled={!isSPSettingProvided}
                       label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
                       data-test="apply-storage-provider"
                     />
                   </StackItem>
-                  {!spLoaded ? (
+                  {!spLoaded && !loadError ? (
                     <LoadingInline />
                   ) : isSPSettingProvided && applySP ? (
                     <StackItem data-test="sp-default-settings">
@@ -746,6 +754,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   }
                   isDisabled={!source.requiresBlankDisk()}
                   isChecked={enablePreallocation}
+                  data-checked-state={enablePreallocation}
                   label={t('kubevirt-plugin~Enable preallocation')}
                   onChange={() => onTogglePreallocation()}
                 />

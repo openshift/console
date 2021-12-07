@@ -219,3 +219,28 @@ export const ForkliftControllerModel = {
   crd: true,
   plural: 'forkliftcontrollers',
 };
+
+export const HyperConvergedModel = {
+  kind: 'HyperConverged',
+  label: 'HyperConverged',
+  labelPlural: 'HyperConvergeds',
+  apiGroup: 'hco.kubevirt.io',
+  apiVersion: 'v1beta1',
+  abbr: 'HC',
+  namespaced: true,
+  crd: true,
+  plural: 'hyperconvergeds',
+};
+
+export const NetworkAddonsConfigModel: K8sKind = {
+  label: 'NetworkAddonsConfig',
+  labelPlural: 'NetworkAddonsConfigs',
+  apiVersion: 'v1',
+  apiGroup: 'networkaddonsoperator.network.kubevirt.io',
+  plural: 'networkaddonsconfigs',
+  abbr: 'NAC',
+  namespaced: true,
+  kind: 'NetworkAddonsConfig',
+  id: 'networkaddonsconfig',
+  crd: true,
+};

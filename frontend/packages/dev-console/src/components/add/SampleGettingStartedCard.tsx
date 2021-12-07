@@ -2,15 +2,13 @@ import * as React from 'react';
 import { CatalogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src';
+import { ALL_NAMESPACES_KEY, CatalogServiceProvider } from '@console/shared';
 import {
   GettingStartedLink,
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { fromSamples } from '../../actions/add-resources';
 import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
-import CatalogServiceProvider from '../catalog/service/CatalogServiceProvider';
 
 interface SampleGettingStartedCardProps {
   featured?: string[];
@@ -47,7 +45,7 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
   const [activeNamespace] = useActiveNamespace();
 
   const disabledAddActions = getDisabledAddActions();
-  if (disabledAddActions?.includes(fromSamples.id)) {
+  if (disabledAddActions?.includes('import-from-samples')) {
     return null;
   }
 

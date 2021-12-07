@@ -8,6 +8,8 @@ import {
   ResourceActionProvider,
   useResolvedExtensions,
   ExtensionK8sGroupModel,
+  isActionFilter,
+  ActionFilter,
 } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import ActionsHookResolver from './ActionsHookResolver';
@@ -39,6 +41,11 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({
     [contextId],
   );
 
+  const filterGuard = React.useCallback(
+    (e): e is ActionFilter => isActionFilter(e) && e.properties.contextId === contextId,
+    [contextId],
+  );
+
   const resourceProviderGuard = React.useCallback(
     (e): e is ResourceActionProvider =>
       isResourceActionProvider(e) &&
@@ -50,20 +57,31 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({
     providerGuard,
   );
 
+  const [filterExtensions, filterExtensionsResolved] = useResolvedExtensions<ActionFilter>(
+    filterGuard,
+  );
+
   const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
     ResourceActionProvider
   >(resourceProviderGuard);
 
   const allProviderExtensions = [...providerExtensions, ...resourceProviderExtensions];
   const allProviderExtensionsResolved =
-    providerExtensionsResolved && resourceProviderExtensionsResolved;
+    providerExtensionsResolved && resourceProviderExtensionsResolved && filterExtensionsResolved;
 
   const actionsLoaded =
     allProviderExtensionsResolved &&
     (allProviderExtensions.length === 0 ||
       allProviderExtensions.every(({ uid }) => actionsMap[uid]));
 
-  const actions: Action[] = React.useMemo(() => _.flatten(Object.values(actionsMap)), [actionsMap]);
+  const actions: Action[] = React.useMemo(() => {
+    const flattenedActions = _.flatten(Object.values(actionsMap));
+    return filterExtensions?.length > 0
+      ? flattenedActions.filter((a) =>
+          filterExtensions.some((ext) => ext.properties.filter(scope, a)),
+        )
+      : flattenedActions;
+  }, [actionsMap, filterExtensions, scope]);
 
   React.useEffect(() => {
     if (actionsLoaded) onActionsLoaded?.(actions);

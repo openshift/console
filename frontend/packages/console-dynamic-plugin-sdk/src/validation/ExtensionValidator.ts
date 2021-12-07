@@ -1,9 +1,8 @@
 import * as _ from 'lodash';
 import * as webpack from 'webpack';
 import { isEncodedCodeRef, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
-import { SupportedExtension } from '../schema/console-extensions';
 import { ConsolePluginMetadata } from '../schema/plugin-package';
-import { EncodedCodeRef } from '../types';
+import { Extension, EncodedCodeRef } from '../types';
 import { deepForOwn } from '../utils/object';
 import { ValidationResult } from './ValidationResult';
 
@@ -14,7 +13,7 @@ type ExtensionCodeRefData = {
 
 type ExposedPluginModules = ConsolePluginMetadata['exposedModules'];
 
-export const collectCodeRefData = (extensions: SupportedExtension[]) =>
+export const collectCodeRefData = (extensions: Extension[]) =>
   extensions.reduce((acc, e, index) => {
     const data: ExtensionCodeRefData = { index, propToCodeRefValue: {} };
 
@@ -53,7 +52,7 @@ export class ExtensionValidator {
 
   validate(
     compilation: webpack.Compilation,
-    extensions: SupportedExtension[],
+    extensions: Extension[],
     exposedModules: ExposedPluginModules,
     dataVar: string = 'extensions',
   ) {

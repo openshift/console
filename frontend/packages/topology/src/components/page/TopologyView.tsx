@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
 import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
@@ -41,7 +41,13 @@ import {
   TopologyDecoratorProvider,
   TopologyDisplayFilters,
 } from '../../extensions/topology';
-import { getTopologySearchQuery, useAppliedDisplayFilters, useDisplayFilters } from '../../filters';
+import {
+  getTopologySearchQuery,
+  TOPOLOGY_LABELS_FILTER_KEY,
+  TOPOLOGY_SEARCH_FILTER_KEY,
+  useAppliedDisplayFilters,
+  useDisplayFilters,
+} from '../../filters';
 import { FilterContext } from '../../filters/FilterProvider';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
 import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../redux/action';
@@ -55,7 +61,7 @@ import {
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
 import TopologyQuickSearch from '../quick-search/TopologyQuickSearch';
-import { getSelectedEntityDetails } from '../side-bar/getSelectedEntityDetails';
+import { isSidebarRenderable, SelectedEntityDetails } from '../side-bar/SelectedEntityDetails';
 import TopologySideBar from '../side-bar/TopologySideBar';
 import TopologyEmptyState from './TopologyEmptyState';
 
@@ -157,7 +163,8 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     FileUploadContext,
   );
 
-  const searchParams = queryParams.get('searchQuery');
+  const searchParams = queryParams.get(TOPOLOGY_SEARCH_FILTER_KEY);
+  const labelParams = queryParams.get(TOPOLOGY_LABELS_FILTER_KEY);
   const fileTypes = supportedFileExtensions.map((ex) => `.${ex}`).toString();
 
   const onSelect = React.useCallback((entity?: GraphElement) => {
@@ -302,7 +309,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     } else {
       document.body.classList.remove(FILTER_ACTIVE_CLASS);
     }
-  }, [searchParams]);
+  }, [searchParams, labelParams]);
 
   const viewContent = React.useMemo(
     () =>
@@ -325,15 +332,11 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [filteredModel, namespace, onSelect, viewType],
   );
 
-  const topologySideBarDetails = getSelectedEntityDetails(selectedEntity);
+  const isSidebarAvailable = isSidebarRenderable(selectedEntity);
 
   if (!filteredModel) {
     return null;
   }
-
-  const containerClasses = classNames('pf-topology-container pf-topology-container__with-sidebar', {
-    'pf-topology-container__with-sidebar--open': topologySideBarDetails,
-  });
 
   const topologyViewComponent = (
     <div className="odc-topology">
@@ -346,34 +349,43 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
             isDisabled={!model.nodes?.length}
           />
         </StackItem>
-        <StackItem isFilled className={containerClasses}>
+        <StackItem isFilled className="pf-topology-container">
           <div className="co-file-dropzone co-file-dropzone__flex">
-            <div
-              ref={setViewContainer}
-              className="pf-topology-content ocs-quick-search-modal__no-backdrop"
-            >
-              {canDrop && isOver && (
-                <div
-                  className={classNames(
-                    'co-file-dropzone-container',
-                    'co-file-dropzone--drop-over',
-                    'odc-topology__dropzone',
-                  )}
-                >
-                  <span className="co-file-dropzone__drop-text odc-topology__dropzone-text">
-                    {t('topology~Drop file ({{fileTypes}}) here', { fileTypes })}
-                  </span>
-                </div>
-              )}
-              {viewContent}
-              {!model.nodes?.length ? (
-                <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpenAndFireEvent} />
-              ) : null}
-            </div>
+            <Drawer isExpanded={isSidebarAvailable} isInline>
+              <DrawerContent
+                panelContent={
+                  <TopologySideBar onClose={() => onSelect()}>
+                    <SelectedEntityDetails selectedEntity={selectedEntity} />
+                  </TopologySideBar>
+                }
+              >
+                <DrawerContentBody>
+                  <div
+                    ref={setViewContainer}
+                    className="pf-topology-content ocs-quick-search-modal__no-backdrop"
+                  >
+                    {canDrop && isOver && (
+                      <div
+                        className={classNames(
+                          'co-file-dropzone-container',
+                          'co-file-dropzone--drop-over',
+                          'odc-topology__dropzone',
+                        )}
+                      >
+                        <span className="co-file-dropzone__drop-text odc-topology__dropzone-text">
+                          {t('topology~Drop file ({{fileTypes}}) here', { fileTypes })}
+                        </span>
+                      </div>
+                    )}
+                    {viewContent}
+                    {!model.nodes?.length ? (
+                      <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpenAndFireEvent} />
+                    ) : null}
+                  </div>
+                </DrawerContentBody>
+              </DrawerContent>
+            </Drawer>
           </div>
-          <TopologySideBar show={!!topologySideBarDetails} onClose={() => onSelect()}>
-            {topologySideBarDetails}
-          </TopologySideBar>
         </StackItem>
         <TopologyQuickSearch
           namespace={namespace}

@@ -19,7 +19,7 @@ import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorS
 import '@console/shared/src/components/editor/theme';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { isYAMLTemplate } from '@console/dynamic-plugin-sdk';
+import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
@@ -28,6 +28,7 @@ import {
   referenceForModel,
   k8sCreate,
   k8sUpdate,
+  k8sList,
   referenceFor,
   groupVersionFor,
 } from '../module/k8s';
@@ -35,7 +36,6 @@ import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { k8sList } from '../module/k8s/resource';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
 
@@ -47,10 +47,10 @@ const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'defa
   return sampleObj;
 };
 
-const stateToProps = ({ k8s, UI }) => ({
-  activeNamespace: UI.get('activeNamespace'),
-  impersonate: UI.get('impersonate'),
-  models: k8s.getIn(['RESOURCES', 'models']),
+const stateToProps = (state) => ({
+  activeNamespace: state.UI.get('activeNamespace'),
+  impersonate: getImpersonate(state),
+  models: state.k8s.getIn(['RESOURCES', 'models']),
 });
 
 const WithYamlTemplates = (Component) =>
@@ -110,19 +110,23 @@ export const EditYAML_ = connect(stateToProps)(
           }
           return models.get(referenceFor(obj)) || models.get(obj.kind);
         }
-
-        createResources(objs, isDryRun) {
-          return objs.map((obj) => {
-            return k8sCreate(
-              this.getModel(obj),
-              obj,
-              isDryRun
-                ? {
-                    queryParams: { dryRun: 'All' },
-                  }
-                : {},
-            );
-          });
+        async createResources(objs) {
+          const results = [];
+          for (const obj of objs) {
+            try {
+              const result = await k8sCreate(this.getModel(obj), obj);
+              results.push({
+                status: 'fulfilled',
+                result,
+              });
+            } catch (error) {
+              results.push({
+                status: 'rejected',
+                reason: error.toString(),
+              });
+            }
+          }
+          return Promise.resolve(results);
         }
 
         handleError(error, success = null) {
@@ -314,28 +318,6 @@ export const EditYAML_ = connect(stateToProps)(
           });
         }
 
-        performDryRun(objs) {
-          this.setState({ success: null, errors: null, sending: true }, () => {
-            const requests = this.createResources(objs, true);
-            //catch these individually so we can report out all errors
-            requests.forEach((request, i) =>
-              request.catch((error) => this.handleErrors(objs[i], error?.message)),
-            );
-            Promise.all(requests)
-              .then(() => {
-                this.setState({
-                  errors: null,
-                  sending: false,
-                  resourceObjects: objs,
-                });
-                this.setDisplayResults(true);
-              })
-              .catch(() => {
-                //catch this error but do nothing since we show individual errors above
-              });
-          });
-        }
-
         setDisplayResults(value) {
           this.props.clearFileUpload();
           this.setState({ displayResults: value });
@@ -509,7 +491,12 @@ export const EditYAML_ = connect(stateToProps)(
                 );
                 return;
               }
-              this.performDryRun(objs);
+              this.setState({
+                errors: null,
+                sending: false,
+                resourceObjects: objs,
+              });
+              this.setDisplayResults(true);
             }
           });
         }

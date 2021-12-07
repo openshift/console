@@ -3,8 +3,11 @@ import { Skeleton, Switch, Tooltip } from '@patternfly/react-core';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
+import { getQueryArgument } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
 import { PageLayout, useActiveNamespace, RestoreGettingStartedButton } from '@console/shared';
+import TopologyQuickSearch from '@console/topology/src/components/quick-search/TopologyQuickSearch';
+import TopologyQuickSearchButton from '@console/topology/src/components/quick-search/TopologyQuickSearchButton';
 import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
 import { useAddActionExtensions } from '../../utils/useAddActionExtensions';
 import AddCardSection from './AddCardSection';
@@ -22,6 +25,13 @@ type AddPageLayoutProps = {
 const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additionalHint }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
+  const [viewContainer, setViewContainer] = React.useState<HTMLElement>(null);
+  const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
+    typeof getQueryArgument('catalogSearch') === 'string',
+  );
+  const setIsQuickSearchOpenAndFireEvent = React.useCallback((open: boolean) => {
+    setIsQuickSearchOpen(open);
+  }, []);
   const addActionGroupExtensions = useExtensions<AddActionGroup>(isAddActionGroup);
   const [
     addActionExtensions,
@@ -45,16 +55,15 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
     !allAddActionsDisabled && extensionsLoaded && filteredAddActionExtensions?.length === 0;
 
   const getHint = (): React.ReactNode => {
-    const hintText: string = t(
-      'devconsole~Select a way to create an Application, component or service from one of the options.',
-    );
     const switchText: string = showDetails
       ? t('devconsole~Details on')
       : t('devconsole~Details off');
     return (
       <>
         <div className="odc-add-page-layout__hint-block">
-          <div className="odc-add-page-layout__hint-block__text">{hintText}</div>
+          <div className="odc-add-page-layout__hint-block__text">
+            <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
+          </div>
           <div className="odc-add-page-layout__hint-block__actions">
             <RestoreGettingStartedButton userSettingsKey={GETTING_STARTED_USER_SETTINGS_KEY} />
             <div
@@ -92,6 +101,12 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
               </span>
             </div>
           </div>
+          <TopologyQuickSearch
+            namespace={activeNamespace}
+            viewContainer={viewContainer}
+            isOpen={isQuickSearchOpen}
+            setIsOpen={setIsQuickSearchOpenAndFireEvent}
+          />
         </div>
         {additionalHint && (
           <div className="odc-add-page-layout__additional-hint-block">{additionalHint}</div>
@@ -101,7 +116,11 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
   };
 
   return (
-    <div className="odc-add-page-layout" data-test="add-page">
+    <div
+      className="odc-add-page-layout ocs-quick-search-modal__no-backdrop"
+      data-test="add-page"
+      ref={setViewContainer}
+    >
       <PageLayout title={title} hint={getHint()}>
         <GettingStartedSection />
         <AddCardSection

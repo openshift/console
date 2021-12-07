@@ -8,6 +8,9 @@
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts"
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "containerSecurityComponent": "src/components"
+    }
   }
 }

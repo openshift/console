@@ -1,12 +1,9 @@
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { getActiveNamespace } from '../../reducers/ui';
 
-import { RootState } from '../../redux';
 import { PrometheusLabels } from '../graphs';
 import {
   Alert,
-  Alerts,
   AlertSeverity,
   AlertSource,
   AlertStates,
@@ -15,7 +12,6 @@ import {
   PrometheusRulesResponse,
   Rule,
   Silence,
-  Silences,
   SilenceStates,
 } from './types';
 
@@ -72,25 +68,6 @@ export const getAlertsAndRules = (
   const alerts = _.flatMap(rules, (rule) => rule.alerts.map((a) => ({ rule, ...a })));
 
   return { alerts, rules };
-};
-
-export const alertsToProps = ({ UI }, perspective?: string) =>
-  UI.getIn(['monitoring', perspective === 'dev' ? 'devAlerts' : 'alerts']) || {};
-
-export const rulesToProps = (state: RootState, perspective?: string) => {
-  const data = state.UI.getIn(['monitoring', perspective === 'dev' ? 'devRules' : 'rules']);
-  const { loaded, loadError }: Alerts = alertsToProps(state, perspective);
-  return { data, loaded, loadError };
-};
-
-export const silencesToProps = ({ UI }) => UI.getIn(['monitoring', 'silences']) || {};
-
-export const silenceParamToProps = (state: RootState, { match }) => {
-  const namespace = getActiveNamespace(state);
-  const { data: silences, loaded, loadError }: Silences = silencesToProps(state);
-  const { loaded: alertsLoaded }: Alerts = alertsToProps(state);
-  const silence = _.find(silences, { id: _.get(match, 'params.id') });
-  return { alertsLoaded, loaded, loadError, namespace, silence, silences };
 };
 
 export const alertState = (a: Alert): AlertStates => a?.state;

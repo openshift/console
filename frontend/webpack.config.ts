@@ -1,13 +1,14 @@
 /* eslint-env node */
 import * as webpack from 'webpack';
 import * as path from 'path';
+import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import { getSharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
@@ -31,14 +32,21 @@ const WDS_PORT = 8080;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({
-  filename: 'app-bundle.[contenthash].css',
+  filename:
+    NODE_ENV === 'production' ? 'app-bundle.[contenthash].css' : 'app-bundle.[name].[hash].css',
   // We follow BEM naming to scope CSS.
   // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
   ignoreOrder: true,
 });
+const getVendorModuleRegExp = (vendorModules: string[]) =>
+  new RegExp(`node_modules\\/(${vendorModules.map((m) => _.escapeRegExp(m)).join('|')})\\/`);
 const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-const sharedPluginTest = new RegExp(`node_modules\\/(${getSharedPluginModules().join('|')})\\/`);
+const sharedPluginTest = getVendorModuleRegExp(Object.keys(sharedPluginModules));
+const sharedPatternFlyCoreTest = getVendorModuleRegExp([
+  '@patternfly/react-core',
+  '@patternfly/react-table',
+]);
 
 const config: Configuration = {
   entry: [
@@ -196,12 +204,18 @@ const config: Configuration = {
   optimization: {
     splitChunks: {
       chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: sharedPatternFlyCoreTest,
+          name: 'vendor-patternfly-core',
+        },
+      },
     },
     runtimeChunk: true,
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
-    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
+    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, memoryLimit: 4096 }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',

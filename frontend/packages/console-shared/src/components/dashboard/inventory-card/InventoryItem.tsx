@@ -233,6 +233,8 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
 export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   kind,
   TitleComponent,
+  title,
+  titlePlural,
   resources = [],
   additionalResources,
   isLoading,
@@ -292,8 +294,9 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
     [mapper, groups, resources],
   );
 
-  const titleLabel = kind.labelKey ? t(kind.labelKey) : kind.label;
-  const titlePluralLabel = kind.labelPluralKey ? t(kind.labelPluralKey) : kind.labelPlural;
+  const titleLabel = title || (kind.labelKey ? t(kind.labelKey) : kind.label);
+  const titlePluralLabel =
+    titlePlural || (kind.labelPluralKey ? t(kind.labelPluralKey) : kind.labelPlural);
 
   return (
     <InventoryItem

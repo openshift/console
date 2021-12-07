@@ -7,7 +7,7 @@ import { useDeepCompareMemoize } from '@console/shared';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { BreadCrumbs, history } from '@console/internal/components/utils';
 import { Button } from '@patternfly/react-core';
-import { k8sCreate } from '@console/internal/module/k8s/resource';
+import { k8sCreate } from '@console/internal/module/k8s';
 import { Modal } from '@console/shared/src/components/modal';
 
 import { BlockPoolBody } from './body';
@@ -66,7 +66,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
       dispatch({
         type: BlockPoolActionType.SET_ERROR_MESSAGE,
         payload: t(
-          "ceph-storage-plugin~OpenShift Container Storage's StorageCluster is not available. Try again after the StorageCluster is ready to use.",
+          "ceph-storage-plugin~OpenShift Data Foundation's StorageCluster is not available. Try again after the StorageCluster is ready to use.",
         ),
       });
   };

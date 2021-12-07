@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { CircleIcon, SquareIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKindReference } from '../module/k8s';
 import { ResourceLink } from './utils/resource-link';
@@ -65,8 +66,9 @@ export const ImageStreamTimeline: React.FC<ImageStreamTimelineProps> = ({
   imageStreamName,
   imageStreamNamespace,
 }) => {
+  const { t } = useTranslation();
   if (!_.some(imageStreamTags, 'items')) {
-    return <EmptyBox label="Images" />;
+    return <EmptyBox label={t('public~Images')} />;
   }
   const tagsArray: TagMeta[] = _.flatten(
     _.map(imageStreamTags, ({ tag, items }) => {

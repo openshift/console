@@ -95,7 +95,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               isRequired
               name="catalog-source-name"
               onChange={setName}
-              placeholder="e.g. custom-catalog-source"
+              placeholder={t('olm~e.g. custom-catalog-source')}
               type="text"
               value={name}
               data-test="catalog-source-name"
@@ -106,7 +106,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               id="catalog-source-display-name"
               name="caltalog-source-display-name"
               onChange={setDisplayName}
-              placeholder="e.g. Custom catalog source"
+              placeholder={t('olm~e.g. Custom catalog source')}
               type="text"
               value={displayName}
             />
@@ -117,7 +117,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               isRequired
               name="catalog-source-publisher"
               onChange={setPublisher}
-              placeholder="e.g. John Doe"
+              placeholder={t('olm~e.g. John Doe')}
               type="text"
               value={publisher}
             />
@@ -135,7 +135,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               id="catalog-source-image"
               name="catalog-source-image"
               onChange={setImage}
-              placeholder="e.g. quay.io/johndoe/catalog-registry:latest"
+              placeholder={t('olm~e.g. quay.io/johndoe/catalog-registry:latest')}
               value={image}
               data-test="catalog-source-image"
             />

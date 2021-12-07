@@ -5,8 +5,9 @@ import {
   PrometheusResponse,
   HealthState,
   StatusGroupMapper,
+  QueryParams,
 } from '../extensions/console-types';
-import { K8sKind, Alert } from './common-types';
+import { K8sModel, Alert } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
   className?: string;
@@ -83,12 +84,14 @@ export type ResourceInventoryItemProps = {
   resources: K8sResourceCommon[];
   additionalResources?: { [key: string]: [] };
   mapper?: StatusGroupMapper;
-  kind: K8sKind;
+  kind: K8sModel;
   isLoading: boolean;
   namespace?: string;
   error: boolean;
   showLink?: boolean;
   TitleComponent?: React.ComponentType<{}>;
+  title?: string;
+  titlePlural?: string;
   ExpandedComponent?: React.ComponentType<{}>;
   basePath?: string;
   dataTest?: string;
@@ -224,3 +227,11 @@ type PrometheusPollProps = {
 };
 
 export type UsePrometheusPoll = (props: PrometheusPollProps) => [PrometheusResponse, any, boolean];
+
+export type Options = {
+  ns?: string;
+  name?: string;
+  path?: string;
+  queryParams?: QueryParams;
+  cluster?: string;
+};

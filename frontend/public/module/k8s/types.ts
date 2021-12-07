@@ -6,12 +6,12 @@ import {
   K8sResourceCommon,
   K8sVerb,
   AccessReviewResourceAttributes,
-  Selector,
-  MatchLabels,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
+import { Selector, MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+export * from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export type PartialObjectMetadata = {
   apiVersion: string;
@@ -28,6 +28,13 @@ export enum K8sResourceConditionStatus {
 export type K8sResourceCondition = {
   type: string;
   status: keyof typeof K8sResourceConditionStatus;
+  lastTransitionTime?: string;
+  reason?: string;
+  message?: string;
+};
+
+export type ClusterServiceVersionCondition = {
+  phase: string;
   lastTransitionTime?: string;
   reason?: string;
   message?: string;
@@ -55,7 +62,6 @@ export type Toleration = {
 // or status, weakening type checking.
 export type K8sResourceKind = K8sResourceCommon & {
   spec?: {
-    selector?: Selector | MatchLabels;
     [key: string]: any;
   };
   status?: { [key: string]: any };
@@ -316,6 +322,29 @@ export type DeploymentKind = {
     replicas?: number;
     unavailableReplicas?: number;
     updatedReplicas?: number;
+  };
+} & K8sResourceCommon;
+
+export type AppliedClusterResourceQuotaKind = {
+  spec?: {
+    selector?: {
+      labels?: Selector;
+      annotations?: MatchLabels;
+    };
+    quota?: {
+      hard?: { [key: string]: number };
+      scopes?: string[];
+      scopeSelector?: {
+        matchExpressions?: { scopeName: string; operator: string; values?: string[] }[];
+      };
+    };
+  };
+  status?: {
+    namespaces?: {
+      namespace: string;
+      status: { used?: { [key: string]: number }; hard?: { [key: string]: number } };
+    }[];
+    total?: { hard?: { [key: string]: number }; used?: { [key: string]: number } };
   };
 } & K8sResourceCommon;
 

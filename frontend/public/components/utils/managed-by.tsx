@@ -10,9 +10,9 @@ import {
   referenceForOwnerRef,
   OwnerReference,
   modelFor,
+  k8sList,
 } from '../../module/k8s';
 import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
-import { k8sList } from '../../module/k8s/resource';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { ResourceLink } from '.';

@@ -22,6 +22,7 @@ import {
   noRegroupDragSourceSpec,
 } from '@console/topology/src/components/graph-view';
 import { useSearchFilter } from '@console/topology/src/filters/useSearchFilter';
+import { getResource } from '@console/topology/src/utils';
 
 type HelmReleaseNodeProps = {
   element: Node;
@@ -42,7 +43,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
-  const [filtered] = useSearchFilter(element.getLabel());
+  const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const { groupResources } = element.getData();
   const [groupSize, groupRef] = useSize([groupResources]);
   const width = groupSize ? groupSize.width : 0;

@@ -40,5 +40,5 @@ Then('user is redirected to Codeready Workspaces Dashboard', () => {
 
   cy.url().should('equal', `${crwUrl}/dashboard/#/create-workspace?tab=quick-add`);
   cy.get('.pf-c-spinner__tail-ball').should('not.exist');
-  cy.get('.pf-c-title').should('have.text', 'Quick Add');
+  cy.get('.pf-c-title').should('have.text', 'Create Workspace');
 });

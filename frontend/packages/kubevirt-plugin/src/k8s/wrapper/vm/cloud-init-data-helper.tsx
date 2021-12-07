@@ -111,7 +111,7 @@ export class CloudInitDataHelper {
 
   hasKey = (key: string) => this.cloudConfigData && _.has(this.cloudConfigData, key);
 
-  set = (key: string, value: string) => {
+  set = (key: string, value: string | string[]) => {
     if (key && !this.otherFormatData) {
       if (!this.cloudConfigData) {
         this.cloudConfigData = {};

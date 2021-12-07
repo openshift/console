@@ -88,7 +88,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   const subscriptionLoaded = _.get(subscription, 'loaded');
   const serviceVersion = !isODF ? getOCSVersion(subscription) : getODFVersion(subscription);
 
-  const serviceName = !isODF
+  const serviceName = isODF
     ? t('ceph-storage-plugin~OpenShift Data Foundation')
     : t('ceph-storage-plugin~OpenShift Container Storage');
 

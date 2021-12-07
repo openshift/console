@@ -23,15 +23,15 @@ $color-row-filter-border--active: $pf-color-blue-300;
   background-color: var(--pf-global--BackgroundColor--100);
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: $grid-gutter-width;
+  margin-bottom: $pf-global--spacer--xl;
   // use pseudo element for border so .row-filter__box-es can overlaps
   &::before {
     border: 1px solid $color-row-filter-border;
-    bottom: ($grid-gutter-width - 1);
+    bottom: calc(var(--pf-global--spacer--xl) - 1px);
     content: '';
-    left: ($grid-gutter-width / 2);
+    left: $pf-global-gutter;
     position: absolute;
-    right: ($grid-gutter-width / 2);
+    right: $pf-global-gutter;
     top: 0;
   }
 }

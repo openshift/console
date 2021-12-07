@@ -3,12 +3,14 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
-import { Flatten, ListPage, MultiListPage } from '@console/internal/components/factory';
+import { ListPage, MultiListPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
-import { TemplateKind } from '@console/internal/module/k8s';
-import { CDI_APP_LABEL } from '../../constants';
+import { CDI_APP_LABEL, VMWizardName } from '../../constants';
 import {
-  TEMPLATE_CUSTOMIZED_ANNOTATION,
+  customizeWizardBaseURLBuilder,
+  VIRTUALMACHINES_TEMPLATES_BASE_URL,
+} from '../../constants/url-params';
+import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
@@ -17,12 +19,9 @@ import {
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getTemplateProviderType, templateProviders } from '../../selectors/vm-template/basic';
-import { VMKind } from '../../types';
-import { getLoadedData } from '../../utils';
 import { VirtualMachineTemplateBundle } from './table/types';
 import VMTemplateTable from './table/VMTemplateTable';
-import { filterTemplates } from './utils';
-
+import { flattenTemplates } from './utils';
 import './vm-template.scss';
 
 // TODO
@@ -55,39 +54,10 @@ const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [
   },
 ];
 
-const flatten: Flatten<
-  { vmTemplates: TemplateKind[]; vmCommonTemplates: TemplateKind[]; vms: VMKind[] },
-  VirtualMachineTemplateBundle[]
-> = ({ vmTemplates, vmCommonTemplates, vms }) => {
-  const user = getLoadedData<TemplateKind[]>(vmTemplates, []);
-  const common = getLoadedData<TemplateKind[]>(vmCommonTemplates, []);
-  return [
-    ...getLoadedData<VMKind[]>(vms, []).map((vm) => {
-      let template: TemplateKind;
-      try {
-        template = JSON.parse(vm.metadata.annotations[TEMPLATE_CUSTOMIZED_ANNOTATION]);
-      } catch {
-        return null;
-      }
-      return {
-        customizeTemplate: {
-          vm,
-          template,
-        },
-        metadata: vm.metadata,
-      };
-    }),
-    ...filterTemplates([...user, ...common]).map((template) => ({
-      template,
-      metadata: template.variants[0].metadata,
-    })),
-  ].filter((template) => template);
-};
-
 const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
-  const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
+  const { skipAccessReview, noProjectsAvailable, showTitle } = props?.customData || {};
   const namespace = props.match.params.ns;
 
   const resources = [
@@ -150,17 +120,39 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   const createAccessReview = skipAccessReview ? null : { model: TemplateModel, namespace };
   const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
 
+  const createProps = {
+    items: {
+      [VMWizardName.WIZARD]: t('kubevirt-plugin~With Wizard'),
+      [VMWizardName.YAML]: t('kubevirt-plugin~With YAML'),
+    },
+    createLink: (itemName: string) => {
+      const baseUrlWizard = customizeWizardBaseURLBuilder(namespace);
+      const baseURLYaml = `/k8s/ns/${namespace || 'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`;
+
+      switch (itemName) {
+        case VMWizardName.WIZARD:
+          return `${baseUrlWizard}?mode=template`;
+        case VMWizardName.YAML:
+          return `${baseURLYaml}/~new?mode=template`;
+        default:
+          return `${baseUrlWizard}?mode=template`;
+      }
+    },
+  };
+
   return (
     <div className="kv-template--list">
       <MultiListPage
         {...modifiedProps}
         createAccessReview={createAccessReview}
         createButtonText={t('kubevirt-plugin~Create')}
+        createProps={createProps}
+        canCreate
         title={t('kubevirt-plugin~Virtual Machine Templates')}
         showTitle={showTitle}
         ListComponent={VMTemplateTable}
         resources={resources}
-        flatten={flatten}
+        flatten={flattenTemplates}
         label={t('kubevirt-plugin~Virtual Machine Templates')}
         rowFilters={filters(t)}
       />
