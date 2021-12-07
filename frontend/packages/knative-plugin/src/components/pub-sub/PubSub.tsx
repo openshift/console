@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared/src/utils';
 import { EventingBrokerModel, EventingTriggerModel, EventingSubscriptionModel } from '../../models';
+import { craftResourceKey, sanitizeResourceName } from './pub-sub-utils';
 import { pubsubValidationSchema } from './pubsub-validation-utils';
 import PubSubModal from './PubSubModal';
 
@@ -59,13 +60,14 @@ const PubSub: React.FC<PubSubProps> = ({
         ref: {
           apiVersion: targetApiVersion,
           kind: targetKind,
-          name: targetName,
+          name: craftResourceKey(targetName, target),
         },
       },
     },
   };
+
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    return k8sCreate(getResourceModel(), values)
+    return k8sCreate(getResourceModel(), sanitizeResourceName(values))
       .then(() => {
         action.setStatus({ subscriberAvailable: true, error: '' });
         close();
