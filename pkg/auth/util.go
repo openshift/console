@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"time"
+
+	"github.com/openshift/console/pkg/serverutils"
 )
 
 type nowFunc func() time.Time
@@ -25,4 +27,11 @@ func randomString(length int) string {
 		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
 	}
 	return base64.StdEncoding.EncodeToString(bytes)
+}
+
+func GetCookieName(clusterName string) string {
+	if clusterName == serverutils.LocalClusterName {
+		return openshiftAccessTokenCookieName
+	}
+	return openshiftAccessTokenCookieName + "-" + clusterName
 }

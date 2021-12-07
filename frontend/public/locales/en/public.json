@@ -1115,7 +1115,7 @@
   "CustomResourceDefinitions": "CustomResourceDefinitions",
   "Remove from navigation?": "Remove from navigation?",
   "Are you sure you want to remove <1>{{label}}</1> from navigation?": "Are you sure you want to remove <1>{{label}}</1> from navigation?",
-  "Advanced Cluster Management": "Advanced Cluster Management",
+  "All Clusters": "All Clusters",
   "Target pods": "Target pods",
   "To ports": "To ports",
   "From pods": "From pods",

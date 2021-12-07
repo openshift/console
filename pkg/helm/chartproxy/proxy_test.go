@@ -19,7 +19,7 @@ type MockKubeVersion struct {
 	fakeVersion string
 }
 
-func (v MockKubeVersion) GetKubeVersion() string {
+func (v MockKubeVersion) GetKubeVersion(cluster string) string {
 	return v.fakeVersion
 }
 

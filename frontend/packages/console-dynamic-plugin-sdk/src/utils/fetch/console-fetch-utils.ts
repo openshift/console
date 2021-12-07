@@ -50,7 +50,8 @@ export const validateStatus = async (
   }
 
   if (response.status === 401 && shouldLogout(url)) {
-    authSvc.logout(window.location.pathname);
+    // FIXME: Remove reference to `store`
+    authSvc.logout(window.location.pathname, InternalReduxStore.getState().UI.get('activeCluster'));
   }
 
   const contentType = response.headers.get('content-type');
@@ -100,20 +101,24 @@ export const validateStatus = async (
 };
 
 type ImpersonateHeaders = {
-  'Impersonate-User': string;
+  'Impersonate-Group'?: string;
+  'Impersonate-User'?: string;
+  'X-Cluster'?: string;
 };
+// TODO: Rename this to something more general since it also includes the `X-Cluster` header.
 export const getImpersonateHeaders = (): ImpersonateHeaders => {
   if (!InternalReduxStore) return undefined;
   const { kind, name } = InternalReduxStore.getState().UI.get('impersonate', {});
+  const activeCluster = InternalReduxStore.getState().UI.get('activeCluster', 'local-cluster');
+  const headers: ImpersonateHeaders = {
+    'X-Cluster': activeCluster,
+  };
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
-    const headers = {
-      'Impersonate-User': name,
-    };
+    headers['Impersonate-User'] = name;
     if (kind === 'Group') {
       headers['Impersonate-Group'] = name;
     }
-    return headers;
   }
-  return undefined;
+  return headers;
 };

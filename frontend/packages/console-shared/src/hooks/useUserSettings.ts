@@ -62,6 +62,7 @@ export const useUserSettings = <T>(
             namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
             isList: false,
             name: `user-settings-${userUid}`,
+            cluster: 'local-cluster',
           },
     [userUid, isLocalStorage],
   );
