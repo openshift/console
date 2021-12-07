@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
+import { serviceBindingModal } from '@console/app/src/components/modals/service-binding';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import {
   k8sGet,
@@ -10,7 +11,6 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { createServiceBinding } from '../operators/actions/serviceBindings';
 
 export type ConnectsToData = { apiVersion: string; kind: string; name: string };
 
@@ -295,6 +295,10 @@ export const doContextualBinding = async (
   contextualSource: string,
 ): Promise<K8sResourceKind> => {
   const { source } = await getSourceAndTargetForBinding(target, contextualSource, true);
-  await createServiceBinding(source, target);
+  serviceBindingModal({
+    model: modelFor(referenceFor(source)),
+    source,
+    target,
+  });
   return target;
 };

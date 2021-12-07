@@ -100,7 +100,7 @@ export const DeploymentActionFactory: ResourceActionFactory = {
     cta: () =>
       serviceBindingModal({
         model: kind,
-        resource: obj,
+        source: obj,
       }),
     accessReview: asAccessReview(ServiceBindingModel, obj, 'create'),
   }),

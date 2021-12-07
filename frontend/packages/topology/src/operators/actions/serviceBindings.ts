@@ -1,5 +1,6 @@
 import { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
+import { serviceBindingModal } from '@console/app/src/components/modals/service-binding';
 import {
   k8sCreate,
   K8sResourceKind,
@@ -13,27 +14,22 @@ import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 export const createServiceBinding = (
   source: K8sResourceKind,
   target: K8sResourceKind,
-  serviceBindingName?: string,
+  serviceBindingName: string,
 ): Promise<K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject();
   }
 
-  const sourceModel = modelFor(referenceFor(source));
-  const targetModel = modelFor(referenceFor(target));
   const targetName = target.metadata.name;
   const { namespace, name: sourceName } = source.metadata;
   const sourceGroup = _.split(source.apiVersion, '/');
   const targetGroup = _.split(target.apiVersion, '/');
-  const sbrName =
-    serviceBindingName ||
-    `${sourceName}-${sourceModel.abbr.toLowerCase()}-${targetName}-${targetModel.abbr.toLowerCase()}`;
 
   const serviceBinding = {
     apiVersion: apiVersionForModel(ServiceBindingModel),
     kind: ServiceBindingModel.kind,
     metadata: {
-      name: sbrName,
+      name: serviceBindingName,
       namespace,
     },
     spec: {
@@ -61,8 +57,11 @@ export const createServiceBinding = (
 const createServiceBindingConnection = (source: Node, target: Node) => {
   const sourceResource = source.getData().resource || source.getData().resources?.obj;
   const targetResource = target.getData().resource || target.getData().resources?.obj;
-
-  return createServiceBinding(sourceResource, targetResource).then(() => null);
+  return serviceBindingModal({
+    model: modelFor(referenceFor(sourceResource)),
+    source: sourceResource,
+    target: targetResource,
+  }).then(() => null);
 };
 
 export const getCreateConnector = (createHints: string[], source: Node, target: Node) => {

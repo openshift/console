@@ -14,18 +14,19 @@ import { InputField } from '@console/shared';
 import BindableServices from './BindableServices';
 
 export type CreateServiceBindingFormProps = {
-  resource: K8sResourceKind;
+  source: K8sResourceKind;
+  target?: K8sResourceKind;
   cancel?: () => void;
 };
 
 const CreateServiceBindingForm: React.FC<FormikProps<FormikValues> &
   CreateServiceBindingFormProps> = ({
-  resource,
+  source,
+  target,
   handleSubmit,
   isSubmitting,
   cancel,
   status,
-  dirty,
   errors,
 }) => {
   const { t } = useTranslation();
@@ -43,12 +44,12 @@ const CreateServiceBindingForm: React.FC<FormikProps<FormikValues> &
             label={t('console-app~Name')}
             required
           />
-          <BindableServices resource={resource} />
+          {!target && <BindableServices resource={source} />}
         </FormSection>
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('console-app~Create')}
-        submitDisabled={!dirty || isSubmitting || !_.isEmpty(errors)}
+        submitDisabled={isSubmitting || !_.isEmpty(errors)}
         cancel={cancel}
         inProgress={isSubmitting}
         errorMessage={status?.submitError}
