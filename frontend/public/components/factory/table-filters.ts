@@ -23,9 +23,10 @@ import {
   alertSource,
   alertState,
   silenceState,
+  targetSource,
 } from '../monitoring/utils';
 
-import { Alert, AlertStates, Rule, Silence } from '../monitoring/types';
+import { Alert, AlertStates, Rule, Silence, Target } from '../monitoring/types';
 import { requesterFilter } from '@console/shared/src/components/namespace';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
@@ -84,6 +85,19 @@ export const tableFilters: FilterMap = {
 
   'alerting-rule-source': (filter, rule: Rule) =>
     filter.selected?.includes(alertingRuleSource(rule)) || _.isEmpty(filter.selected),
+
+  'observe-target-labels': (values, target: Target) =>
+    !values.all || values.all.every((v) => getLabelsAsString(target, 'labels').includes(v)),
+
+  'observe-target-health': (filter, target: Target) =>
+    filter.selected?.includes(target.health) || _.isEmpty(filter.selected),
+
+  'observe-target-source': (filter, target: Target) =>
+    filter.selected?.includes(targetSource(target)) || _.isEmpty(filter.selected),
+
+  'observe-target-text': (filter, target: Target) =>
+    fuzzyCaseInsensitive(filter.selected?.[0], target.scrapeUrl) ||
+    fuzzyCaseInsensitive(filter.selected?.[0], target.labels?.namespace),
 
   'silence-name': (filter, silence: Silence) =>
     fuzzyCaseInsensitive(filter.selected?.[0], silence.name),

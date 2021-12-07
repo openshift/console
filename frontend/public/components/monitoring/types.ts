@@ -104,3 +104,15 @@ export type ListPageProps = {
   rowFilters: RowFilter[];
   showTitle?: boolean;
 };
+
+export type Target = {
+  discoveredLabels: PrometheusLabels;
+  globalUrl: string;
+  health: 'up' | 'down';
+  labels: PrometheusLabels;
+  lastError: string;
+  lastScrape: string;
+  lastScrapeDuration: number;
+  scrapePool: string;
+  scrapeUrl: string;
+};

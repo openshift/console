@@ -67,6 +67,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   hideNameLabelFilters,
   columnLayout,
   nameFilterPlaceholder,
+  nameFilterTitle,
   labelFilterPlaceholder,
   textFilter = filterTypeMap[FilterType.NAME],
   labelFilter = filterTypeMap[FilterType.LABEL],
@@ -79,10 +80,13 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   const location = useLocation();
 
   const { t } = useTranslation();
+
+  const translatedNameFilterTitle = nameFilterTitle ?? t('public~Name');
+
   const translateFilterType = (value: string) => {
     switch (value) {
       case 'Name':
-        return t('public~Name');
+        return translatedNameFilterTitle;
       case 'Label':
         return t('public~Label');
       default:
@@ -90,7 +94,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     }
   };
   const filterDropdownItems = {
-    NAME: t('public~Name'),
+    NAME: translatedNameFilterTitle,
     LABEL: t('public~Label'),
   };
 
@@ -351,7 +355,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   setNameInputText('');
                   applyNameFilter('');
                 }}
-                categoryName={t('public~Name')}
+                categoryName={translatedNameFilterTitle}
               >
                 <div className="pf-c-input-group">
                   {!hideLabelFilter && (
@@ -445,6 +449,7 @@ type FilterToolbarProps = {
   labelPath?: string;
   columnLayout?: ColumnLayout;
   nameFilterPlaceholder?: string;
+  nameFilterTitle?: string;
   labelFilterPlaceholder?: string;
   // Used when multiple tables are in the same page
   uniqueFilterName?: string;

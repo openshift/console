@@ -53,9 +53,11 @@ import { PrometheusLabels } from '../graphs';
 import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './alert-manager-config';
 import MonitoringDashboardsPage from './dashboards';
+import { Label, Labels } from './labels';
 import { QueryBrowserPage, ToggleGraph } from './metrics';
 import { FormatSeriesTitle, QueryBrowser } from './query-browser';
 import { CreateSilence, EditSilence } from './silence-form';
+import { TargetsUI } from './targets';
 import {
   Alert,
   Alerts,
@@ -428,14 +430,6 @@ const SourceHelp: React.FC<{}> = React.memo(() => {
   );
 });
 
-const Label = ({ k, v }) => (
-  <div className="co-m-label co-m-label--expand" key={k}>
-    <span className="co-m-label__key">{k}</span>
-    <span className="co-m-label__eq">=</span>
-    <span className="co-m-label__value">{v}</span>
-  </div>
-);
-
 const queryBrowserURL = (query: string, namespace: string) =>
   namespace
     ? `/dev-monitoring/ns/${namespace}/metrics?query0=${encodeURIComponent(query)}`
@@ -790,15 +784,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 <dl className="co-m-pane__details" data-test="label-list">
                   <dt>{t('public~Labels')}</dt>
                   <dd>
-                    {_.isEmpty(labels) ? (
-                      <div className="text-muted">{t('public~No labels')}</div>
-                    ) : (
-                      <div className={`co-text-${AlertResource.kind.toLowerCase()}`}>
-                        {_.map(labels, (v, k) => (
-                          <Label key={k} k={k} v={v} />
-                        ))}
-                      </div>
-                    )}
+                    <Labels kind="alert" labels={labels} />
                   </dd>
                 </dl>
               </div>
@@ -1030,15 +1016,7 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                 <dl className="co-m-pane__details">
                   <dt>{t('public~Labels')}</dt>
                   <dd>
-                    {_.isEmpty(rule?.labels) ? (
-                      <div className="text-muted">{t('public~No labels')}</div>
-                    ) : (
-                      <div className={`co-text-${RuleResource.kind.toLowerCase()}`}>
-                        {_.map(rule.labels, (v, k) => (
-                          <Label key={k} k={k} v={v} />
-                        ))}
-                      </div>
-                    )}
+                    <Labels kind="alertrule" labels={rule?.labels} />
                   </dd>
                 </dl>
               </div>
@@ -1824,6 +1802,7 @@ export const MonitoringUI = () => (
     <Route path="/monitoring/dashboards/:board?" exact component={MonitoringDashboardsPage} />
     <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
     <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
+    <Route path="/monitoring/targets" component={TargetsUI} />
     <Route component={PollerPages} />
   </Switch>
 );

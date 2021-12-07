@@ -210,9 +210,10 @@ export type UseUtilizationDuration = (
 
 export enum PrometheusEndpoint {
   LABEL = 'api/v1/label',
-  RULES = 'api/v1/rules',
   QUERY = 'api/v1/query',
   QUERY_RANGE = 'api/v1/query_range',
+  RULES = 'api/v1/rules',
+  TARGETS = 'api/v1/targets',
 }
 
 type PrometheusPollProps = {
