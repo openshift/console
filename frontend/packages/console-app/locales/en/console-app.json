@@ -4,6 +4,7 @@
   "General": "General",
   "Language": "Language",
   "Notifications": "Notifications",
+  "Applications": "Applications",
   "Perspective": "Perspective",
   "If a perspective is not selected, the console defaults to the last viewed.": "If a perspective is not selected, the console defaults to the last viewed.",
   "Project": "Project",

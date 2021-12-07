@@ -591,5 +591,19 @@
       "submenu": true,
       "insertAfter": ["delete-application"]
     }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "devconsole.routingOptions",
+      "label": "",
+      "groupId": "applications",
+      "description": "",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "userPreferences.SecureRouteFields" }
+      },
+      "insertAfter": "console.preferredCreateEditMethod"
+    }
   }
 ]

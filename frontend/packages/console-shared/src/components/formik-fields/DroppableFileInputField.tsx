@@ -12,6 +12,7 @@ const DroppableFileInputField: React.FC<FieldProps> = ({ name, label, helpText }
   return (
     <FormGroup fieldId={fieldId}>
       <DroppableFileInput
+        id={fieldId}
         label={label}
         onChange={(fileData: string) => setFieldValue(name, fileData)}
         inputFileData={field.value}
