@@ -64,7 +64,7 @@ export enum AddNodeDirection {
 const DAGRE_SHARED_PROPS: dagre.GraphLabel = {
   nodesep: NODE_SEPARATION_VERTICAL,
   ranksep: NODE_SEPARATION_HORIZONTAL,
-  edgesep: 25,
+  edgesep: 50,
   ranker: 'longest-path',
   rankdir: 'LR',
   marginx: 20,
