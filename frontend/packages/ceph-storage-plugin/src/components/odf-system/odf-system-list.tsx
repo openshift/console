@@ -21,6 +21,7 @@ import { usePrometheusPoll } from '@console/internal/components/graphs/prometheu
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { RowFilter, ColumnLayout } from '@console/dynamic-plugin-sdk';
 import { OperandStatus } from '@console/operator-lifecycle-manager/src/components/operand';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import ODFSystemLink from './system-link';
 import { getGVK, normalizeMetrics } from './utils';
 import { getActions } from './actions';
@@ -28,6 +29,7 @@ import { StorageSystemModel } from '../../models';
 import { StorageSystemKind } from '../../types';
 import { ODF_QUERIES, ODFQueries } from '../../queries';
 import { CEPH_STORAGE_NAMESPACE } from '../../constants';
+import { MCG_STANDALONE, OCS_INDEPENDENT_FLAG } from '../../features';
 
 const tableColumnClasses = [
   'pf-u-w-15-on-xl',
@@ -54,7 +56,8 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
   const providerName = obj?.spec?.name;
   const systemName = obj?.metadata?.name;
   const { normalizedMetrics } = customData;
-
+  const isMCGStandalone = useFlag(MCG_STANDALONE);
+  const isExternal = useFlag(OCS_INDEPENDENT_FLAG);
   const { rawCapacity, usedCapacity, iops, throughput, latency } =
     normalizedMetrics?.[systemName] || {};
 
@@ -77,7 +80,7 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
       <TableData className={tableColumnClasses[6]}>{latency?.string || '-'}</TableData>
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab
-          actions={getActions(systemKind)}
+          actions={getActions(systemKind, isMCGStandalone || isExternal)}
           resource={obj}
           kind={referenceForModel(StorageSystemModel)}
           customData={{ tFunction: t }}

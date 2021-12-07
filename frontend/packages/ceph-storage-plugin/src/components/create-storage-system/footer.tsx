@@ -42,7 +42,7 @@ import { MINIMUM_NODES, OCS_EXTERNAL_CR_NAME, OCS_INTERNAL_CR_NAME } from '../..
 import { NetworkType } from '../../types';
 import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
 import { createClusterKmsResources } from '../kms-config/utils';
-import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../features';
+import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG, MCG_STANDALONE } from '../../features';
 
 const validateBackingStorageStep = (backingStorage, sc) => {
   const { type, externalStorage, isValidSC } = backingStorage;
@@ -108,6 +108,7 @@ export const setActionFlags = (
   type: WizardState['backingStorage']['type'],
   flagDispatcher: any,
   isRhcs: boolean,
+  isMCG: boolean,
 ) => {
   switch (type) {
     case BackingStorageType.EXISTING:
@@ -128,6 +129,7 @@ export const setActionFlags = (
       break;
     default:
   }
+  flagDispatcher(setFlag(MCG_STANDALONE, isMCG));
 };
 
 const handleReviewAndCreateNext = async (
@@ -179,7 +181,7 @@ const handleReviewAndCreateNext = async (
       await createExternalSubSystem(subSystemPayloads);
     }
     // These flags control the enablement of dashboards and other ODF UI components in console
-    setActionFlags(isMCG ? BackingStorageType.EXISTING : type, flagDispatcher, isRhcs);
+    setActionFlags(type, flagDispatcher, isRhcs, isMCG);
     history.push('/odf/systems');
   } catch (err) {
     handleError(err.message, true);
