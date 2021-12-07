@@ -8,7 +8,6 @@ import {
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { fromSamples } from '../../actions/add-resources';
 import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 
 interface SampleGettingStartedCardProps {
@@ -46,7 +45,7 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
   const [activeNamespace] = useActiveNamespace();
 
   const disabledAddActions = getDisabledAddActions();
-  if (disabledAddActions?.includes(fromSamples.id)) {
+  if (disabledAddActions?.includes('import-from-samples')) {
     return null;
   }
 

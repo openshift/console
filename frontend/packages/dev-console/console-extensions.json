@@ -459,6 +459,28 @@
     }
   },
   {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyGraphActionProvider" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyApplicationActionProvider" }
+    }
+  },
+  {
+    "type": "console.action/group",
+    "properties": {
+      "id": "add-to-project",
+      "label": "%devconsole~Add to Project%",
+      "submenu": true
+    }
+  },
+  {
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
@@ -568,13 +590,6 @@
       "label": "%devconsole~Add to Application%",
       "submenu": true,
       "insertAfter": ["delete-application"]
-    }
-  },
-  {
-    "type": "console.action/provider",
-    "properties": {
-      "contextId": "topology-actions",
-      "provider": { "$codeRef": "actions.useAddToApplicationActionProvider" }
     }
   }
 ]
