@@ -23,7 +23,7 @@ func GetRegistrySamples(registry string) ([]byte, error) {
 
 		devfileIndex, err := registryLibrary.GetRegistryIndex(registry, registryOption, indexSchema.SampleDevfileType)
 		if err != nil {
-		return nil, err
+			return nil, err
 		}
 		return json.Marshal(devfileIndex)
 	} else {
