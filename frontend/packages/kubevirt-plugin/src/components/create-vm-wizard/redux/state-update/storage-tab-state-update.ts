@@ -28,7 +28,11 @@ import { getEmptyInstallStorage } from '../../../../utils/storage';
 import { getNextIDResolver } from '../../../../utils/utils';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
-import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import {
+  getInitialData,
+  iGetCommonData,
+  iGetLoadedCommonData,
+} from '../../selectors/immutable/selectors';
 import {
   hasStoragesChanged,
   iGetProvisionSourceAdditionalStorage,
@@ -328,7 +332,7 @@ const initialDefaultStorageClassUpdater = ({
   }
 };
 
-const initialStorageWindowsUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+const initialStorageWindowsPVCUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   const relevantOptions = iGetRelevantTemplateSelectors(state, id);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
@@ -393,6 +397,54 @@ const initialStorageWindowsUpdater = ({ id, prevState, dispatch, getState }: Upd
   }
 };
 
+const initialStorageWindowsImportUpdater = ({
+  id,
+  prevState,
+  dispatch,
+  getState,
+}: UpdateOptions) => {
+  const state = getState();
+  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+  const isCdRom = getInitialData(state, id)?.source?.cdRom;
+  const template =
+    iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions).toJS();
+
+  if (!hasStoragesChanged(prevState, state, id)) {
+    return;
+  }
+  const storages = getStorages(state, id);
+  const rootCdRom = storages?.find(
+    ({ type, disk }) =>
+      type === VMWizardStorageType.PROVISION_SOURCE_DISK &&
+      disk?.name === ROOT_DISK_NAME &&
+      disk?.cdrom,
+  );
+  const rootProvisionAdditionalDisk = storages?.find(
+    ({ type, disk }) =>
+      type === VMWizardStorageType.PROVISION_SOURCE_ADDITIONAL_DISK &&
+      disk?.name === ROOT_DISK_NAME,
+  );
+
+  if (isWindowsTemplate(template) && rootCdRom && isCdRom) {
+    const disk = new DiskWrapper(rootCdRom?.disk).setName(ROOT_DISK_INSTALL_NAME).asResource();
+    const volume = new VolumeWrapper(rootCdRom.volume).setName(ROOT_DISK_INSTALL_NAME).asResource();
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+        ...rootProvisionAdditionalDisk,
+        disk: { ...rootProvisionAdditionalDisk?.disk, disk: { bus: DiskBus.SATA.getValue() } },
+      }),
+    );
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+        ...rootCdRom,
+        volume,
+        disk,
+      }),
+    );
+  }
+};
+
 export const updateStorageTabState = (options: UpdateOptions) =>
   [
     prefillInitialDiskUpdater,
@@ -401,7 +453,8 @@ export const updateStorageTabState = (options: UpdateOptions) =>
     initialDefaultStorageClassUpdater,
     initialStorageClassUpdater,
     initialStorageDiskUpdater,
-    initialStorageWindowsUpdater,
+    initialStorageWindowsPVCUpdater,
+    initialStorageWindowsImportUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });

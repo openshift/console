@@ -34,6 +34,7 @@ export enum VMWizardProps {
   storageClassConfigMap = 'storageClassConfigMap',
   nads = 'nads',
   initialData = 'initialData',
+  cdRom = 'cdRom',
 }
 
 // order important
@@ -235,6 +236,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplate
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
+  | VMWizardProps.cdRom
   | VMWizardProps.openshiftCNVBaseImages
   | VMWizardProps.dataVolumes
   | VMWizardProps.storageClassConfigMap
