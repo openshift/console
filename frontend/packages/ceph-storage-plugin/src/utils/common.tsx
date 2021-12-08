@@ -2,7 +2,7 @@ import { TFunction } from 'i18next';
 import * as React from 'react';
 
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
-import { humanizePercentage } from '@console/internal/components/utils';
+import { humanizePercentage, HumanizeResult } from '@console/internal/components/utils';
 
 import { StorageClusterKind } from '../types';
 
@@ -19,8 +19,8 @@ export const commaSeparatedString = (text: string[], t: TFunction): string =>
 
 export const toList = (text: string[]): React.ReactNode => text.map((s) => <li key={s}>{s}</li>);
 
-export const calcPercentage = (value: number, total: number) =>
-  humanizePercentage((value * 100) / total).string;
+export const calcPercentage = (value: number, total: number): HumanizeResult =>
+  humanizePercentage((value * 100) / total);
 
 export const twelveHoursdateTimeNoYear = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
   month: 'short',

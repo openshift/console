@@ -98,13 +98,22 @@ const MirroringImageHealthChart: React.FC<MirroringImageHealthChartProps> = ({ t
   const totalImageCount = Object.keys(states).reduce((sum, state) => sum + states[state], 0);
 
   if (totalImageCount > 0) {
-    const data = Object.keys(states).map((state) => ({
-      x: ImageStateLegendMap(t)[state],
-      y: calcPercentage(states[state], totalImageCount),
-    }));
-    const legendData = Object.keys(states).map((state) => ({
-      name: `${ImageStateLegendMap(t)[state]}: ${calcPercentage(states[state], totalImageCount)}`,
-    }));
+    const { data, legendData } = Object.keys(states).reduce(
+      (acc, state) => {
+        const percentage = calcPercentage(states[state], totalImageCount);
+        acc.data.push({
+          x: ImageStateLegendMap(t)[state],
+          y: percentage.value,
+        });
+        acc.legendData.push({
+          name: `${ImageStateLegendMap(t)[state]}: ${
+            calcPercentage(states[state], totalImageCount).string
+          }`,
+        });
+        return acc;
+      },
+      { data: [], legendData: [] },
+    );
 
     return (
       <div style={{ maxHeight: '210px', maxWidth: '300px' }}>
