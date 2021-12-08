@@ -363,7 +363,7 @@
   "I/O Operations": "I/O 작업",
   "Logial Used Capacity": "논리 사용 용량",
   "Physical vs. Logical used capacity": "물리적 및 논리적 사용 용량",
-  "Egress": "송신",
+  "Egress": "Egress",
   "Latency": "지연 시간",
   "Bandwidth": "대역폭",
   "Service Type": "서비스 유형",
