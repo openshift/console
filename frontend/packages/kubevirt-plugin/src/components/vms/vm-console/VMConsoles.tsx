@@ -202,12 +202,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
           {showSerialOption && <SerialConsoleConnector vmi={vmi} setConsoleType={setConsoleType} />}
           {showVNCOption && <VncConsoleConnector vmi={vmi} setConsoleType={setConsoleType} />}
           {isWindows(vm) && (
-            <DesktopViewerSelector
-              vmPod={vmStatusBundle.pod}
-              vm={vm}
-              vmi={vmi}
-              setConsoleType={setConsoleType}
-            />
+            <DesktopViewerSelector vm={vm} vmi={vmi} setConsoleType={setConsoleType} />
           )}
         </AccessConsoles>
       </StackItem>
