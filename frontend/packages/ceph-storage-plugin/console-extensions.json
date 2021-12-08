@@ -5,11 +5,8 @@
       "alert": "CephOSDDiskUnavailable",
       "text": "%ceph-storage-plugin~Troubleshoot%",
       "action": {
-        "$codeRef": "alert.getAlertActionPath"
+        "$codeRef": "alert.getDiskAlertActionPath"
       }
-    },
-    "flags": {
-      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
     }
   },
   {
@@ -18,11 +15,8 @@
       "alert": "CephOSDDiskNotResponding",
       "text": "%ceph-storage-plugin~Troubleshoot%",
       "action": {
-        "$codeRef": "alert.getAlertActionPath"
+        "$codeRef": "alert.getDiskAlertActionPath"
       }
-    },
-    "flags": {
-      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
     }
   },
   {
