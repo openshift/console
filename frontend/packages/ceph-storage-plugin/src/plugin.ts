@@ -17,9 +17,6 @@ import {
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { NodeModel } from '@console/internal/models';
-import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
-import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import * as models from './models';
 import * as mockModels from './mock-models';
 import { getCephHealthState } from './components/dashboards/persistent-internal/status-card/utils';
@@ -267,24 +264,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [CEPH_FLAG],
-    },
-  },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      model: NodeModel,
-      page: {
-        href: 'disks',
-        // t('ceph-storage-plugin~Disks')
-        name: '%ceph-storage-plugin~Disks%',
-      },
-      loader: () =>
-        import(
-          './components/disk-inventory/ocs-disks-list' /* webpackChunkName: "ocs-nodes-disks-list" */
-        ).then((m) => m.OCSNodesDiskListPage),
-    },
-    flags: {
-      required: [OCS_ATTACHED_DEVICES_FLAG, LSO_DEVICE_DISCOVERY],
     },
   },
   // Noobaa Related Plugins
