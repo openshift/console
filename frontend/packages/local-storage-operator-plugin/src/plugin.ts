@@ -10,7 +10,6 @@ import {
   RoutePage,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-import { detectOCSAttachedDeviceMode, OCS_ATTACHED_DEVICES_FLAG } from './features';
 import * as models from './models';
 
 type ConsumedExtensions =
@@ -45,12 +44,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'FeatureFlag/Custom',
-    properties: {
-      detect: detectOCSAttachedDeviceMode,
-    },
-  },
-  {
     type: 'Page/Route',
     properties: {
       exact: true,
@@ -82,7 +75,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [LSO_DEVICE_DISCOVERY],
-      disallowed: [OCS_ATTACHED_DEVICES_FLAG],
     },
   },
   {

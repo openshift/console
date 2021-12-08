@@ -1,13 +1,9 @@
-import { Alert } from '@console/internal/components/monitoring/types';
-import { history } from '@console/internal/components/utils';
 import { k8sGet } from '@console/internal/module/k8s';
 import { CEPH_STORAGE_NAMESPACE } from '../constants';
 import { OCSServiceModel } from '../models';
 
-export const getAlertActionPath = (alertData: Alert) =>
-  history.push(
-    `/k8s/cluster/nodes/${alertData.labels.host}/disks?node-disk-name=${alertData.labels.device}`,
-  );
+export const getDiskAlertActionPath = () =>
+  window.open('https://access.redhat.com/solutions/5194851');
 
 export const launchClusterExpansionModal = async () => {
   try {
