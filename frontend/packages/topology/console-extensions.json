@@ -246,5 +246,15 @@
       "contextId": "topology-actions",
       "provider": { "$codeRef": "actions.useTopologyVisualConnectorActionProvider" }
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+    "contextId": "topology-actions",
+    "provider": { "$codeRef": "actions.useEditApplicationTopologyActionsProvider" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]
