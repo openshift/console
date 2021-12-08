@@ -230,13 +230,18 @@ export const EditYAML_ = connect(stateToProps)(
             name,
             namespace,
           };
-          checkAccess(resourceAttributes, impersonate).then((resp) => {
-            const notAllowed = !resp.status.allowed;
-            this.setState({ notAllowed });
-            if (this.monacoRef.current) {
-              this.monacoRef.current.editor.updateOptions({ readOnly: notAllowed });
-            }
-          });
+          checkAccess(resourceAttributes, impersonate)
+            .then((resp) => {
+              const notAllowed = !resp.status.allowed;
+              this.setState({ notAllowed });
+              if (this.monacoRef.current) {
+                this.monacoRef.current.editor.updateOptions({ readOnly: notAllowed });
+              }
+            })
+            .catch((e) => {
+              // eslint-disable-next-line no-console
+              console.warn('Error while check edit access', e);
+            });
         }
 
         appendYAMLString(yaml) {
