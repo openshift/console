@@ -3,6 +3,10 @@ FROM quay.io/coreos/tectonic-console-builder:v23 AS build
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
+# prevent download of chromedriver, geckodriver, and the cypress binary as part of module installs
+ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
+    GECKODRIVER_SKIP_DOWNLOAD=true \
+    CYPRESS_INSTALL_BINARY=0
 RUN ./build.sh
 
 FROM openshift/origin-base
