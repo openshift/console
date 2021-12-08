@@ -11,8 +11,8 @@
  * Do not edit the class manually.
  */
 
+import { K8sIoApiCoreV1ResourceRequirements } from './K8sIoApiCoreV1ResourceRequirements';
 import { V1LabelSelector } from './V1LabelSelector';
-import { V1ResourceRequirements } from './V1ResourceRequirements';
 import { V1TypedLocalObjectReference } from './V1TypedLocalObjectReference';
 
 /**
@@ -35,10 +35,10 @@ export interface V1beta1StorageSpec {
   dataSource?: V1TypedLocalObjectReference;
   /**
    *
-   * @type {V1ResourceRequirements}
+   * @type {K8sIoApiCoreV1ResourceRequirements}
    * @memberof V1PersistentVolumeClaimSpec
    */
-  resources?: V1ResourceRequirements;
+  resources?: K8sIoApiCoreV1ResourceRequirements;
   /**
    *
    * @type {V1LabelSelector}
