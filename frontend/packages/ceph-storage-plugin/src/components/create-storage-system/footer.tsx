@@ -13,7 +13,6 @@ import {
   AlertActionCloseButton,
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
-import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { setFlag } from '@console/internal/actions/features';
 import { WizardCommonProps, WizardState } from './reducer';
 import {
@@ -112,6 +111,7 @@ export const setActionFlags = (
 ) => {
   switch (type) {
     case BackingStorageType.EXISTING:
+    case BackingStorageType.LOCAL_DEVICES:
       flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
       flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
       flagDispatcher(setFlag(OCS_FLAG, true));
@@ -119,12 +119,6 @@ export const setActionFlags = (
     case BackingStorageType.EXTERNAL:
       flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, isRhcs));
       flagDispatcher(setFlag(OCS_CONVERGED_FLAG, !isRhcs));
-      flagDispatcher(setFlag(OCS_FLAG, true));
-      break;
-    case BackingStorageType.LOCAL_DEVICES:
-      flagDispatcher(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
-      flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
-      flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
       flagDispatcher(setFlag(OCS_FLAG, true));
       break;
     default:

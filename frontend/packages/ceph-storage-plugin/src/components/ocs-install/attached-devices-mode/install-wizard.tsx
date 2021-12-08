@@ -19,7 +19,6 @@ import {
 import { history } from '@console/internal/components/utils/router';
 import { setFlag } from '@console/internal/actions/features';
 import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
@@ -93,7 +92,6 @@ const createCluster = async (
       promises.push(...taintNodes(nodes));
     }
     await Promise.all(promises).then(() => k8sCreate(OCSServiceModel, storageCluster));
-    flagDispatcher(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
     flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
     flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
     flagDispatcher(setFlag(OCS_FLAG, true));
