@@ -22,6 +22,8 @@ export type ToastOptions = {
     dismiss?: boolean;
     // Sets the base component to render. defaults to button
     component?: React.ElementType<any> | React.ComponentType<any>;
+    // The data test id
+    dataTest?: string;
   }[];
   // If `true`, displays a close button.
   dismissible?: boolean;

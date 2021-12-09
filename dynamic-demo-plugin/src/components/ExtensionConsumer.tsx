@@ -29,7 +29,7 @@ const ExtensionConsumer: React.FC = () => {
     <Page
       additionalGroupedContent={
         <PageSection variant="light">
-          <Title headingLevel="h1">
+          <Title headingLevel="h1" data-test="test-consumer-title">
             {t("Extensions of type Console.flag/Model")}
           </Title>
         </PageSection>

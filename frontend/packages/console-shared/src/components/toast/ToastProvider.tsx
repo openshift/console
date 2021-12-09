@@ -83,6 +83,7 @@ const ToastProvider: React.FC = ({ children }) => {
                           action.callback();
                         }}
                         component={action.component}
+                        data-test={action.dataTest || 'toast-action'}
                       >
                         {action.label}
                       </AlertActionLink>

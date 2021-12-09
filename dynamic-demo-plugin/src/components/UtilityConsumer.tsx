@@ -16,7 +16,7 @@ const UtilityConsumer: React.FC = () => {
     <Page
       additionalGroupedContent={
         <PageSection variant="light">
-          <Title headingLevel="h1">
+          <Title headingLevel="h1" data-test="test-utilities-title">
             {t("Utilities from Dynamic Plugin SDK")}
           </Title>
         </PageSection>
@@ -24,8 +24,8 @@ const UtilityConsumer: React.FC = () => {
     >
       <PageSection>
         <Card>
-          <CardTitle>{t("Utility: consoleFetchJSON")}</CardTitle>
-          <CardBody>
+          <CardTitle data-test="test-utility-card">{t("Utility: consoleFetchJSON")}</CardTitle>
+          <CardBody data-test="test-utility-fetch">
             <ConsoleFetchConsumer />
           </CardBody>
         </Card>
