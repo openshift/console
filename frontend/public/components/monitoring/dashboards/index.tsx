@@ -458,11 +458,6 @@ const getPanelClassModifier = (panel: Panel): string => {
   }
 };
 
-// Matches Prometheus labels surrounded by {{ }} in the graph legend label templates.
-// The regex pattern is inspired from https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels
-// with additional matchers to consider leading and trailing spaces.
-const legendTemplateOptions = { interpolate: /{{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/g };
-
 const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   const namespace = React.useContext(NamespaceContext);
   const activePerspective = getActivePerspective(namespace);
@@ -481,15 +476,17 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
 
   const formatSeriesTitle = React.useCallback(
     (labels, i) => {
-      const legendFormat = panel.targets?.[i]?.legendFormat;
-      const compiled = _.template(legendFormat, legendTemplateOptions);
-      try {
-        return compiled(labels);
-      } catch (e) {
-        // If we can't format the label (e.g. if one of it's variables is missing from `labels`),
-        // show the template string instead
-        return legendFormat;
+      const title = panel.targets?.[i]?.legendFormat;
+      if (_.isNil(title)) {
+        return _.isEmpty(labels) ? '{}' : '';
       }
+      // Replace Prometheus labels surrounded by {{ }} in the graph legend label templates
+      // Regex is based on https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels
+      // with additional matchers to allow leading and trailing whitespace
+      return title.replace(
+        /{{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/g,
+        (match, key) => labels[key] ?? '',
+      );
     },
     [panel],
   );

@@ -223,12 +223,15 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     [(k) => -_.uniq(allSeries.map((s) => s.labels[k])).length, (k) => k.length],
   );
   const getSeriesName = (series: TooltipSeries): string => {
-    if (series.name) {
+    if (_.isString(series.name)) {
       return series.name;
     }
-    const name = series.labels?.__name__ ?? '';
+    if (_.isEmpty(series.labels)) {
+      return '{}';
+    }
+    const name = series.labels.__name__ ?? '';
     const otherLabels = _.intersection(allSeriesSorted, Object.keys(series.labels));
-    return `${name}{${_.map(otherLabels, (l) => `${l}=${series.labels[l]}`).join(',')}}`;
+    return `${name}{${otherLabels.map((l) => `${l}=${series.labels[l]}`).join(',')}}`;
   };
 
   return (
