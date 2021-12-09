@@ -428,14 +428,6 @@ const SourceHelp: React.FC<{}> = React.memo(() => {
   );
 });
 
-const Annotation = ({ children, title }) =>
-  _.isNil(children) ? null : (
-    <>
-      <dt>{title}</dt>
-      <dd>{children}</dd>
-    </>
-  );
-
 const Label = ({ k, v }) => (
   <div className="co-m-label co-m-label--expand" key={k}>
     <span className="co-m-label__key">{k}</span>
@@ -746,23 +738,34 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                     <Severity severity={labels?.severity} />
                   </dd>
                   {alert?.annotations?.description && (
-                    <Annotation title={t('public~Description')}>
-                      <AlertMessage
-                        alertText={alert.annotations.description}
-                        labels={labels}
-                        template={rule?.annotations.description}
-                      />
-                    </Annotation>
+                    <>
+                      <dt>{t('public~Description')}</dt>
+                      <dd>
+                        <AlertMessage
+                          alertText={alert.annotations.description}
+                          labels={labels}
+                          template={rule?.annotations?.description}
+                        />
+                      </dd>
+                    </>
                   )}
-                  <Annotation title={t('public~Summary')}>{alert?.annotations?.summary}</Annotation>
+                  {alert?.annotations?.summary && (
+                    <>
+                      <dt>{t('public~Summary')}</dt>
+                      <dd>{alert.annotations.summary}</dd>
+                    </>
+                  )}
                   {alert?.annotations?.message && (
-                    <Annotation title={t('public~Message')}>
-                      <AlertMessage
-                        alertText={alert.annotations.message}
-                        labels={labels}
-                        template={rule?.annotations.message}
-                      />
-                    </Annotation>
+                    <>
+                      <dt>{t('public~Message')}</dt>
+                      <dd>
+                        <AlertMessage
+                          alertText={alert.annotations.message}
+                          labels={labels}
+                          template={rule?.annotations?.message}
+                        />
+                      </dd>
+                    </>
                   )}
                 </dl>
               </div>
@@ -976,13 +979,28 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                   <dd>
                     <Severity severity={rule?.labels?.severity} />
                   </dd>
-                  <Annotation title={t('public~Description')}>
-                    <PrometheusTemplate text={rule?.annotations?.description} />
-                  </Annotation>
-                  <Annotation title={t('public~Summary')}>{rule?.annotations?.summary}</Annotation>
-                  <Annotation title={t('public~Message')}>
-                    <PrometheusTemplate text={rule?.annotations?.message} />
-                  </Annotation>
+                  {rule?.annotations?.description && (
+                    <>
+                      <dt>{t('public~Description')}</dt>
+                      <dd>
+                        <PrometheusTemplate text={rule.annotations.description} />
+                      </dd>
+                    </>
+                  )}
+                  {rule?.annotations?.summary && (
+                    <>
+                      <dt>{t('public~Summary')}</dt>
+                      <dd>{rule.annotations.summary}</dd>
+                    </>
+                  )}
+                  {rule?.annotations?.message && (
+                    <>
+                      <dt>{t('public~Message')}</dt>
+                      <dd>
+                        <PrometheusTemplate text={rule.annotations.message} />
+                      </dd>
+                    </>
+                  )}
                 </dl>
               </div>
               <div className="col-sm-6">
