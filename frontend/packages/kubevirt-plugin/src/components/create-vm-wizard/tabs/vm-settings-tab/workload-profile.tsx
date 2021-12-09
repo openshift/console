@@ -82,20 +82,20 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
                 .sort((a, b) => a.getOrder() - b.getOrder())
                 .map((workload) => {
                   const isDefault =
-                    getLabelValue(defaultTemplate, getWorkloadLabel(workload.getValue())) ===
+                    getLabelValue(defaultTemplate, getWorkloadLabel(workload?.getValue())) ===
                     'true';
 
                   return (
                     <SelectOption
-                      key={workload.getValue()}
-                      value={workload.getValue()}
-                      description={t(workload.getDescriptionKey())}
+                      key={workload?.getValue()}
+                      value={workload?.getValue()}
+                      description={t(workload?.getDescriptionKey())}
                     >
                       {isDefault
                         ? t('kubevirt-plugin~{{workload}} (default)', {
-                            workload: t(workload.toString()),
+                            workload: t(workload?.toString()),
                           })
-                        : t(workload.toString())}
+                        : t(workload?.toString())}
                     </SelectOption>
                   );
                 })}
