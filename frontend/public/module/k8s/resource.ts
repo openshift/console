@@ -7,7 +7,6 @@ import {
   k8sWatch,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sKind, Patch } from './types';
-// import { WSFactory, WSOptions } from '../ws-factory';
 
 export type Options = {
   ns?: string;

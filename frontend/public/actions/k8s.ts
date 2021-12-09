@@ -13,6 +13,12 @@ import { makeReduxID } from '../components/utils/k8s-watcher';
 import { CustomResourceDefinitionModel } from '../models';
 import { watchK8sList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 
+export {
+  watchK8sObject,
+  watchK8sList,
+  stopK8sWatch,
+} from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+
 export enum ActionType {
   ReceivedResources = 'resources',
   GetResourcesInFlight = 'getResourcesInFlight',
@@ -44,12 +50,6 @@ export const getResources = () => (dispatch: Dispatch) => {
       setTimeout(fetchSwagger, 10000);
     });
 };
-
-export {
-  watchK8sObject,
-  watchK8sList,
-  stopK8sWatch,
-} from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 
 export const startAPIDiscovery = () => (dispatch) => {
   const reduxID = makeReduxID(CustomResourceDefinitionModel, {});

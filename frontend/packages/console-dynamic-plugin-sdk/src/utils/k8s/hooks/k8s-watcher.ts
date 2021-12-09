@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 // import * as k8sActions from '@console/internal/actions/k8s';
 import { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
+import { SDKStoreState } from '../../../app/redux-types';
 import { WatchK8sResource } from '../../../extensions/console-types';
 import { getReferenceForModel } from '../k8s-ref';
 import { GetIDAndDispatch, MakeQuery, Query } from './k8s-watch-types';
@@ -59,7 +60,7 @@ export const getReduxData = (immutableData, resource: WatchK8sResource) => {
   return null;
 };
 
-export const getIDAndDispatch: GetIDAndDispatch = (resource, k8sModel) => {
+export const getIDAndDispatch: GetIDAndDispatch<SDKStoreState> = (resource, k8sModel) => {
   if (!k8sModel || !resource) {
     return null;
   }

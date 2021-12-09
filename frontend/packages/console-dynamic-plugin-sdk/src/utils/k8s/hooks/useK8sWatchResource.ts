@@ -6,9 +6,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { getReduxIdPayload } from '../../../app/k8s/reducers/k8sSelector';
+import { SDKStoreState } from '../../../app/redux-types';
 import { UseK8sWatchResource } from '../../../extensions/console-types';
 import { getReference } from '../k8s-ref';
-import { RootState } from './k8s-watch-types';
 import { getIDAndDispatch, getReduxData, NoModelError } from './k8s-watcher';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 import { useModelsLoaded } from './useModelsLoaded';
@@ -21,7 +21,7 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
     ? getReference(resource.groupVersionKind)
     : resource?.kind;
 
-  const k8sModel = useSelector<RootState, K8sModel>(({ k8s }) =>
+  const k8sModel = useSelector<SDKStoreState, K8sModel>(({ k8s }) =>
     kindReference ? k8s.getIn(['RESOURCES', 'models', kindReference]) : null,
   );
 
@@ -40,7 +40,7 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
     };
   }, [dispatch, reduxID]);
 
-  const resourceK8s = useSelector<RootState, ImmutableMap<string, any>>((state) =>
+  const resourceK8s = useSelector<SDKStoreState, ImmutableMap<string, any>>((state) =>
     reduxID ? getReduxIdPayload(state, reduxID.id) : null,
   );
 
