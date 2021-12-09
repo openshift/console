@@ -43,6 +43,18 @@ export enum VMStatusSimpleLabel {
   Deleting = 'Deleting',
 }
 
+export enum VMPrintableStatusSimpleLabel {
+  Stopped = 'Stopped',
+  Migrating = 'Migrating',
+  Provisioning = 'Provisioning',
+  Starting = 'Starting',
+  Running = 'Running',
+  Paused = 'Paused',
+  Stopping = 'Stopping',
+  Terminating = 'Terminating',
+  Unknown = 'Unknown',
+}
+
 export const VM_STATUS_SIMPLE_LABELS = [
   StatusSimpleLabel.Error,
   StatusSimpleLabel.Pending,
