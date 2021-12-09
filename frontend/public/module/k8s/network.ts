@@ -41,14 +41,16 @@ export const useClusterNetworkFeatures = (): [ClusterNetworkFeatures, boolean] =
     networkConfigMapNamespace,
   );
   React.useEffect(() => {
-    if (configLoaded && config?.data) {
-      setFeatures({
-        PolicyEgress: getFeatureState(config.data, policyEgressConfigKey),
-        PolicyPeerIPBlockExceptions: getFeatureState(
-          config.data,
-          policyPeerIPBlockExceptionsConfigKey,
-        ),
-      });
+    if (configLoaded) {
+      if (config?.data) {
+        setFeatures({
+          PolicyEgress: getFeatureState(config.data, policyEgressConfigKey),
+          PolicyPeerIPBlockExceptions: getFeatureState(
+            config.data,
+            policyPeerIPBlockExceptionsConfigKey,
+          ),
+        });
+      }
       setFeaturesLoaded(true);
     }
   }, [config, configLoaded]);
