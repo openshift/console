@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
-import { humanizePercentage } from '@console/internal/components/utils';
+import { humanizePercentage, HumanizeResult } from '@console/internal/components/utils';
 
 import { StorageClusterKind } from '../types';
 
@@ -25,8 +25,8 @@ export const toList = (text: string[]): React.ReactNode => (
   </div>
 );
 
-export const calcPercentage = (value: number, total: number) =>
-  humanizePercentage((value * 100) / total).string;
+export const calcPercentage = (value: number, total: number): HumanizeResult =>
+  humanizePercentage((value * 100) / total);
 
 export const twelveHoursdateTimeNoYear = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
   month: 'short',
