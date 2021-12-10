@@ -145,7 +145,7 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
           </div>
           {canStartBuild && (
             <div>
-              <Button variant="secondary" onClick={onClick}>
+              <Button variant="secondary" onClick={onClick} data-test-id="start-build-action">
                 {t('topology~Start Build')}
               </Button>
             </div>

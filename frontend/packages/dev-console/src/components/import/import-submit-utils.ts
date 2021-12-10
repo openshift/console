@@ -182,11 +182,11 @@ export const createOrUpdateBuildConfig = (
   let buildStrategyData;
 
   let desiredContextDir = contextDir;
-  const customBuildEnvs = imageEnv
-    ? Object.keys(imageEnv)
-        .filter((k) => !!imageEnv[k])
-        .map((k) => ({ name: k, value: imageEnv[k] }))
-    : [];
+  const imageEnvKeys = imageEnv ? Object.keys(imageEnv) : [];
+  const customEnvs = imageEnvKeys
+    .filter((k) => !!imageEnv[k])
+    .map((k) => ({ name: k, value: imageEnv[k] }));
+  const buildEnvs = env.filter((buildEnv) => !imageEnvKeys.includes(buildEnv.name));
 
   switch (buildStrategy) {
     case 'Devfile':
@@ -203,7 +203,7 @@ export const createOrUpdateBuildConfig = (
     default:
       buildStrategyData = {
         sourceStrategy: {
-          env: [...env, ...customBuildEnvs],
+          env: [...customEnvs, ...buildEnvs],
           from: {
             kind: 'ImageStreamTag',
             name: `${imageStreamName}:${selectedTag}`,

@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
-import {
-  ImportEnvironment,
-  isImportEnvironment,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk';
+import { useFormikContext, FormikValues } from 'formik';
 import { InputField } from '@console/shared';
+import { useBuilderImageEnvironments } from './builderImageHooks';
 
 interface BuilderImageEnvironmentsProps {
   name: string;
@@ -18,37 +15,44 @@ const BuilderImageEnvironments: React.FC<BuilderImageEnvironmentsProps> = ({
   imageStreamName,
   imageStreamTag,
 }) => {
-  const [environmentExtensions, resolved] = useResolvedExtensions<ImportEnvironment>(
-    isImportEnvironment,
-  );
+  const {
+    values: {
+      build: { env: buildEnvs },
+      image: { imageEnv },
+      formType,
+    },
+    setFieldValue,
+  } = useFormikContext<FormikValues>();
 
-  const filteredExtensions = React.useMemo(
-    () =>
-      environmentExtensions?.filter(
-        (e) =>
-          e.properties.imageStreamName === imageStreamName &&
-          e.properties.imageStreamTags.includes(imageStreamTag),
-      ),
-    [environmentExtensions, imageStreamName, imageStreamTag],
-  );
+  const [environments, loaded] = useBuilderImageEnvironments(imageStreamName, imageStreamTag);
 
-  if (!resolved) {
+  React.useEffect(() => {
+    if (formType === 'edit' && buildEnvs?.length > 0 && !imageEnv) {
+      environments.forEach((env) =>
+        buildEnvs.forEach((buildEnv) => {
+          if (buildEnv.name === env.key) {
+            setFieldValue(`${name}.${env.key}`, buildEnv.value);
+          }
+        }),
+      );
+    }
+  }, [buildEnvs, formType, imageEnv, setFieldValue, environments, name]);
+
+  if (!loaded) {
     return null;
   }
   return (
     <>
-      {filteredExtensions.map(({ properties }) =>
-        properties.environments.map((env) => (
-          <InputField
-            key={`${properties.imageStreamName}-${env.key}`}
-            type={TextInputTypes.text}
-            name={`${name}.${env.key}`}
-            label={env.label}
-            helpText={env.description}
-            placeholder={env.defaultValue}
-          />
-        )),
-      )}
+      {environments.map((env) => (
+        <InputField
+          key={`${imageStreamName}-${env.key}`}
+          type={TextInputTypes.text}
+          name={`${name}.${env.key}`}
+          label={env.label}
+          helpText={env.description}
+          placeholder={env.defaultValue}
+        />
+      ))}
     </>
   );
 };

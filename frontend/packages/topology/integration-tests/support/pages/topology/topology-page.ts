@@ -321,6 +321,11 @@ export const topologyPage = {
     cy.get(topologyPO.sidePane.applicationGroupingsTitle).should('be.visible');
     cy.get(topologyPO.sidePane.resourcesTabApplicationGroupings).should('be.visible');
   },
+  startBuild: () => {
+    cy.get('button[data-test-id="start-build-action"]')
+      .should('be.visible')
+      .click({ force: true });
+  },
 };
 
 export const addGitWorkload = (

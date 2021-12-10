@@ -208,8 +208,19 @@ Feature: Create Application from git form
         Scenario: Provide custom build environments for nodejs git import
             Given user is at Import from Git form
             When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex"
-            And user enters run command for "NPM_RUN" as "build2"
+            And user enters run command for "NPM_RUN" as "build1"
             And user enters Name as "nodejs-env"
             And user clicks Create button on Add page
             Then user will be redirected to Topology page
-            And user is able to navigate to Build #1 for deployment "nodejs-env" and see environment variable "NPM_RUN" in Environment tab of details page
+            And user is able to navigate to Build "nodejs-env-1" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build1" in Environment tab of details page
+
+        @regression
+        Scenario: Update custom build environment in nodejs application edit page
+            Given user is at Topology page
+            When user edits the application "nodejs-env"
+            And user enters run command for "NPM_RUN" as "build2"
+            And user clicks Create button on Add page
+            And user clicks on workload "nodejs-env"
+            And user starts a new build
+            And user navigates to Topology page
+            Then user is able to navigate to Build "nodejs-env-2" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build2" in Environment tab of details page
