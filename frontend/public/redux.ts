@@ -9,6 +9,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
 import k8sReducers, { K8sState } from './reducers/k8s';
+import ObserveReducers, { ObserveState } from './reducers/observe';
 import UIReducers, { UIState } from './reducers/ui';
 import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
 
@@ -17,6 +18,7 @@ const composeEnhancers =
 
 export type RootState = {
   k8s: K8sState;
+  observe: ObserveState;
   UI: UIState;
   [featureReducerName]: FeatureState;
   dashboards: DashboardsState;
@@ -27,6 +29,7 @@ export type RootState = {
 
 const baseReducers = Object.freeze({
   k8s: k8sReducers, // data
+  observe: ObserveReducers,
   UI: UIReducers,
   [featureReducerName]: featureReducer,
   dashboards: dashboardsReducer,

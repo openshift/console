@@ -34,7 +34,7 @@ import { VictoryPortal } from 'victory-core';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
-import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/ui';
+import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
@@ -630,9 +630,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   wrapperClassName,
 }) => {
   const { t } = useTranslation();
-  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
+  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
   const tickInterval = useSelector(
-    ({ UI }: RootState) => pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
+    ({ observe }: RootState) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
   );
 
   const dispatch = useDispatch();

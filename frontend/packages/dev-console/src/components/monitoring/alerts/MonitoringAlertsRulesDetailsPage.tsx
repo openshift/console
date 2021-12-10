@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { match as RMatch } from 'react-router';
-import { monitoringSetRules, monitoringLoaded } from '@console/internal/actions/ui';
+import { alertingLoaded, alertingSetRules } from '@console/internal/actions/observe';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import {
   AlertsDetailsPage,
@@ -48,8 +48,8 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
 
   React.useEffect(() => {
     const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
-    dispatch(monitoringSetRules('devRules', sortThanosRules, 'dev'));
-    dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
+    dispatch(alertingSetRules('devRules', sortThanosRules, 'dev'));
+    dispatch(alertingLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
   }, [dispatch, thanosAlertsAndRules]);
 
   if (loading && _.isEmpty(loadError)) {

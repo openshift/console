@@ -11,7 +11,7 @@ import {
   queryBrowserRunQueries,
   queryBrowserPatchQuery,
   queryBrowserSetMetrics,
-} from '@console/internal/actions/ui';
+} from '@console/internal/actions/observe';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { QueryInput } from '@console/internal/components/monitoring/metrics';
@@ -45,8 +45,8 @@ const MetricsQueryInput: React.FC = () => {
   ];
 
   const namespace = useSelector((state: RootState) => getActiveNamespace(state));
-  const queries = useSelector((state: RootState) =>
-    state.UI.getIn(['queryBrowser', 'queries', 0]).toJS(),
+  const queries = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', 0]).toJS(),
   );
   const dispatch = useDispatch();
   const [title, setTitle] = React.useState(DEFAULT_TITLE);

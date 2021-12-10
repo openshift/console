@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
 import { Alert } from '@console/dynamic-plugin-sdk';
 import { LabelSelector, ObjectMetadata } from '@console/internal/module/k8s';
-import { NotificationAlerts } from '@console/internal/reducers/ui';
+import { NotificationAlerts } from '@console/internal/reducers/observe';
 import { RootState } from '@console/internal/redux';
 import { SYSTEM_ALERT_RULE_LABEL } from '../constants/monitoring';
 import { useUserSettings } from './useUserSettings';
@@ -27,7 +27,7 @@ export const useNotificationAlerts = (
     true,
   );
   const { data: alerts, loaded, loadError } = useSelector<NotificationAlerts>(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'notificationAlerts']) ?? {},
+    ({ observe }: RootState) => observe.get('notificationAlerts') ?? {},
   );
 
   const [filteredAlerts, setFilteredAlerts] = React.useState<Alert[]>([]);

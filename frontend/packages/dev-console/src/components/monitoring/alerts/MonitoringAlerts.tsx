@@ -9,7 +9,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
 import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
-import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
+import { alertingLoaded, alertingSetRules } from '@console/internal/actions/observe';
+import { sortList } from '@console/internal/actions/ui';
 import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
@@ -64,8 +65,8 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
 
   React.useEffect(() => {
     const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
-    dispatch(monitoringSetRules('devRules', sortThanosRules, 'dev'));
-    dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
+    dispatch(alertingSetRules('devRules', sortThanosRules, 'dev'));
+    dispatch(alertingLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
   }, [dispatch, thanosAlertsAndRules]);
 
   const filteredRules = React.useMemo(() => {
@@ -149,7 +150,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
 
 const mapStateToProps = (state: RootState): StateProps => {
   return {
-    rules: state.UI.getIn(['monitoring', 'devRules']),
+    rules: state.observe.getIn(['devRules']),
     filters: state.k8s.getIn([reduxID, 'filters']),
     listSorts: state.UI.getIn(['listSorts', reduxID]),
   };

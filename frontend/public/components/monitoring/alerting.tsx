@@ -28,11 +28,11 @@ import {
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
-  monitoringErrored,
-  monitoringLoaded,
-  monitoringLoading,
-  monitoringSetRules,
-} from '../../actions/ui';
+  alertingErrored,
+  alertingLoaded,
+  alertingLoading,
+  alertingSetRules,
+} from '../../actions/observe';
 import { coFetchJSON } from '../../co-fetch';
 import {
   ContainerModel,
@@ -666,11 +666,11 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const isDevPerspective = _.has(match.params, 'ns');
   const namespace = match.params?.ns;
 
-  const alerts: Alerts = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', isDevPerspective ? 'devAlerts' : 'alerts']),
+  const alerts: Alerts = useSelector(({ observe }: RootState) =>
+    observe.get(isDevPerspective ? 'devAlerts' : 'alerts'),
   );
 
-  const silencesLoaded = ({ UI }) => UI.getIn(['monitoring', 'silences'])?.loaded;
+  const silencesLoaded = ({ observe }) => observe.get('silences')?.loaded;
 
   const ruleAlerts = _.filter(alerts?.data, (a) => a.rule.id === match?.params?.ruleID);
   const rule = ruleAlerts?.[0]?.rule;
@@ -918,14 +918,13 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const isDevPerspective = _.has(match.params, 'ns');
   const namespace = match.params?.ns;
 
-  const rules: Rule[] = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', isDevPerspective ? 'devRules' : 'rules']),
+  const rules: Rule[] = useSelector(({ observe }: RootState) =>
+    observe.get(isDevPerspective ? 'devRules' : 'rules'),
   );
   const rule = _.find(rules, { id: _.get(match, 'params.id') });
 
   const { loaded, loadError }: Alerts = useSelector(
-    ({ UI }: RootState) =>
-      UI.getIn(['monitoring', isDevPerspective ? 'devAlerts' : 'alerts']) || {},
+    ({ observe }: RootState) => observe.get(isDevPerspective ? 'devAlerts' : 'alerts') || {},
   );
 
   const formatSeriesTitle = (alertLabels) => {
@@ -1103,13 +1102,10 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const [perspective] = useActivePerspective();
 
   const alertsLoaded = useSelector(
-    ({ UI }: RootState) =>
-      UI.getIn(['monitoring', perspective === 'dev' ? 'devAlerts' : 'alerts'])?.loaded,
+    ({ observe }: RootState) => observe.get(perspective === 'dev' ? 'devAlerts' : 'alerts')?.loaded,
   );
 
-  const silences: Silences = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', 'silences']),
-  );
+  const silences: Silences = useSelector(({ observe }: RootState) => observe.get('silences'));
   const silence = _.find(silences?.data, { id: _.get(match, 'params.id') });
 
   return (
@@ -1342,7 +1338,7 @@ const MonitoringListPage: React.FC<ListPageProps & {
   const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
 
   const silencesLoadError = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'silences'])?.loadError,
+    ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
 
   return (
@@ -1409,7 +1405,7 @@ const AlertsPage_: React.FC<Alerts> = () => {
   const { t } = useTranslation();
 
   const { data, loaded, loadError }: Alerts = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'alerts']) || {},
+    ({ observe }: RootState) => observe.get('alerts') || {},
   );
 
   const Header = () => [
@@ -1518,9 +1514,9 @@ const RuleTableRow: React.FC<RowFunctionArgs<Rule>> = ({ obj }) => (
 const RulesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
 
-  const data = useSelector(({ UI }: RootState) => UI.getIn(['monitoring', 'rules']));
+  const data = useSelector(({ observe }: RootState) => observe.get('rules'));
   const { loaded, loadError }: Alerts = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'alerts']) || {},
+    ({ observe }: RootState) => observe.get('alerts') || {},
   );
 
   const Header = () => [
@@ -1601,7 +1597,7 @@ const SilencesPage_: React.FC<Silences> = () => {
   const { t } = useTranslation();
 
   const { data, loaded, loadError }: Silences = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'silences']) || {},
+    ({ observe }: RootState) => observe.get('silences') || {},
   );
 
   const Header = () => getSilenceTableHeader(t);
@@ -1769,22 +1765,22 @@ const PollerPages = () => {
     if (prometheusBaseURL) {
       const alertsKey = 'alerts';
       const rulesKey = 'rules';
-      dispatch(monitoringLoading(alertsKey));
+      dispatch(alertingLoading(alertsKey));
       const url = getPrometheusURL({ endpoint: PrometheusEndpoint.RULES });
       const poller = (): void => {
         coFetchJSON(url)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
-            dispatch(monitoringLoaded(alertsKey, alerts));
-            dispatch(monitoringSetRules(rulesKey, rules));
+            dispatch(alertingLoaded(alertsKey, alerts));
+            dispatch(alertingSetRules(rulesKey, rules));
           })
-          .catch((e) => dispatch(monitoringErrored(alertsKey, e)))
+          .catch((e) => dispatch(alertingErrored(alertsKey, e)))
           .then(() => (pollerTimeouts[alertsKey] = setTimeout(poller, 15 * 1000)));
       };
       pollers[alertsKey] = poller;
       poller();
     } else {
-      dispatch(monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
+      dispatch(alertingErrored('alerts', new Error('prometheusBaseURL not set')));
     }
     return () => _.each(pollerTimeouts, clearTimeout);
   }, [dispatch]);
