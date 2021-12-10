@@ -349,4 +349,8 @@ export const gitPage = {
   enterScalingReplicaCount: (replicaCount: string) =>
     cy.get(gitPO.advancedOptions.scaling.replicaCount).type(replicaCount),
   enterLabels: (labelName: string) => cy.get(gitPO.advancedOptions.labels).type(labelName),
+  enterRouteLabels: (labelRouteName: string) =>
+    cy.get(gitPO.advancedOptions.routing.routeLabel).type(labelRouteName),
+  notificationVerify: (message: string) =>
+    cy.get(gitPO.pipeline.infoMessage).should('contain.text', message),
 };

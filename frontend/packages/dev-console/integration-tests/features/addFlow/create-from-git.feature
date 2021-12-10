@@ -11,7 +11,7 @@ Feature: Create Application from git form
         # @smoke
         # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
         # TODO: Use Cypress HTTP mocking to solve the github rate limiting issue. See - https://docs.cypress.io/guides/guides/network-requests
-        @regression @manual
+        @regression @manual @odc-6266
         Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>": A-06-TC01
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
@@ -20,6 +20,7 @@ Feature: Create Application from git form
               And user selects resource type as "<resource_type>"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user can see toast notification saying "Deployment created successfully"
               And user is able to see workload "<name>" in topology page
 
         Examples:
@@ -28,7 +29,7 @@ Feature: Create Application from git form
                   | import-git-1 | Deployment Config |
 
 
-        @regression
+        @regression @odc-6266
         Scenario: Add new git workload to the existing application: A-06-TC02
             Given user has created workload "exist-git" with resource type "Deployment"
               And user is at Add page
@@ -39,6 +40,7 @@ Feature: Create Application from git form
               And user selects resource type as "Deployment Config"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user can see toast notification saying "Deployment created successfully"
               And user can see the created workload "dancer-ex-git-2" is linked to existing application "nodejs-ex-git-app"
 
 
@@ -62,18 +64,21 @@ Feature: Create Application from git form
               And public url is not created for node "name-no-route" in the workload sidebar
 
 
-        @regression
+        @regression @odc-6266
         Scenario: Create a git workload with advanced option "Routing": A-06-TC05
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
               And user enters name as "git-route" in General section
-              And user clicks "Routing" link in Advanced Options section
+              And user clicks "Show advanced Routing options" link in Advanced Options section
+              And user enters "route=testRoute1" in Additional Route labels section
               And user enters Hostname as "home"
               And user enters Path as "/home"
               And user selects default Target Port
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user can see the toast notification containg the route value "home"
               And the route of application "git-route" contains "home" in the Routes section of the workload sidebar
+              And user is able to see label "route=testRoute1"  in Route details page for deployment "git-route"
 
 
         @regression
@@ -207,20 +212,20 @@ Feature: Create Application from git form
         @regression
         Scenario: Provide custom build environments for nodejs git import
             Given user is at Import from Git form
-            When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex"
-            And user enters run command for "NPM_RUN" as "build1"
-            And user enters Name as "nodejs-env"
-            And user clicks Create button on Add page
-            Then user will be redirected to Topology page
-            And user is able to navigate to Build "nodejs-env-1" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build1" in Environment tab of details page
+             When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex"
+              And user enters run command for "NPM_RUN" as "build1"
+              And user enters Name as "nodejs-env"
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to navigate to Build "nodejs-env-1" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build1" in Environment tab of details page
 
         @regression
         Scenario: Update custom build environment in nodejs application edit page
             Given user is at Topology page
-            When user edits the application "nodejs-env"
-            And user enters run command for "NPM_RUN" as "build2"
-            And user clicks Create button on Add page
-            And user clicks on workload "nodejs-env"
-            And user starts a new build
-            And user navigates to Topology page
-            Then user is able to navigate to Build "nodejs-env-2" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build2" in Environment tab of details page
+             When user edits the application "nodejs-env"
+              And user enters run command for "NPM_RUN" as "build2"
+              And user clicks Create button on Add page
+              And user clicks on workload "nodejs-env"
+              And user starts a new build
+              And user navigates to Topology page
+             Then user is able to navigate to Build "nodejs-env-2" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build2" in Environment tab of details page

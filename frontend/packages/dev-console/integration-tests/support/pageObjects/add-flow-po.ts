@@ -58,6 +58,8 @@ export const gitPO = {
       secureRoute: 'input#form-checkbox-route-secure-field',
       tlsTermination: 'button#form-dropdown-route-tls-termination-field',
       insecureTraffic: 'button#form-dropdown-route-tls-insecureEdgeTerminationPolicy-field',
+      routeLabel: '', // defined when feature pr of story ODC-6433 gets merged
+      labelsRouteDetails: '[data-test="label-list"]',
     },
     buildConfig: {
       webHookBuildTrigger: 'input#form-checkbox-build-triggers-webhook-field',
