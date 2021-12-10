@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Stack, StackItem } from '@patternfly/react-core';
 import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
@@ -35,20 +36,24 @@ export const StoragePopover: React.FC<StoragePopoverProps> = ({ ceph }) => {
   const dashboardLink = !isOdfInstalled ? '/ocs-dashboards' : '/odf';
 
   return (
-    <>
-      {t(
-        "ceph-storage-plugin~Storage status represents the health status of {{operatorName}}'s StorageCluster.",
-        { operatorName },
-      )}
-      <StatusPopupSection
-        firstColumn={t('ceph-storage-plugin~Provider')}
-        secondColumn={t('ceph-storage-plugin~Health')}
-      >
-        <Status key="ocs" value={value} icon={icon}>
-          {!isOdfManaged ? <Link to={dashboardLink}>{operatorName}</Link> : operatorName}
-        </Status>
-      </StatusPopupSection>
-    </>
+    <Stack hasGutter>
+      <StackItem>
+        {t(
+          "ceph-storage-plugin~Storage status represents the health status of {{operatorName}}'s StorageCluster.",
+          { operatorName },
+        )}
+      </StackItem>
+      <StackItem>
+        <StatusPopupSection
+          firstColumn={t('ceph-storage-plugin~Provider')}
+          secondColumn={t('ceph-storage-plugin~Health')}
+        >
+          <Status key="ocs" value={value} icon={icon}>
+            {!isOdfManaged ? <Link to={dashboardLink}>{operatorName}</Link> : operatorName}
+          </Status>
+        </StatusPopupSection>
+      </StackItem>
+    </Stack>
   );
 };
 

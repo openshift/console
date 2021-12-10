@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
+import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -48,23 +49,17 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   };
 
   return (
-    <div className="co-insights__box">
-      <p>
+    <Stack hasGutter>
+      <StackItem>
         {t(
           'insights-plugin~Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
         )}
-      </p>
-      {isError && (
-        <div className="co-status-popup__section">
-          {t('insights-plugin~Temporary unavailable.')}
-        </div>
-      )}
+      </StackItem>
+      {isError && <StackItem>{t('insights-plugin~Temporary unavailable.')}</StackItem>}
       {isWaitingOrDisabled && (
-        <div className="co-status-popup__section">
-          {t('insights-plugin~Disabled or waiting for results.')}
-        </div>
+        <StackItem>{t('insights-plugin~Disabled or waiting for results.')}</StackItem>
       )}
-      <div className="co-status-popup__section">
+      <StackItem>
         {!isWaitingOrDisabled && !isError && (
           <div>
             <ChartDonut
@@ -104,8 +99,6 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
             />
           </div>
         )}
-      </div>
-      <div className="co-status-popup__section">
         {!isWaitingOrDisabled && !isError && clusterID && (
           <>
             <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
@@ -128,8 +121,8 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         {(isWaitingOrDisabled || isError) && (
           <ExternalLink href={insightsLink} text={t('insights-plugin~More about Insights')} />
         )}
-      </div>
-    </div>
+      </StackItem>
+    </Stack>
   );
 };
 
