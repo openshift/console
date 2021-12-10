@@ -1,5 +1,9 @@
 $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
 
+.co-alert-manager {
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
 .co-alert-manager-config__edit-alert-routing-btn {
   margin-bottom: 10px;
 }

@@ -15,7 +15,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion-details__field {
-  padding-bottom: 10px;
+  padding-bottom: var(--pf-global--spacer--lg);
 }
 
 .co-clusterserviceversion-details__field-description {
