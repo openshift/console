@@ -185,7 +185,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
     }),
     [element, application],
   );
-  const primaryResource = appData.resources?.[0].resource || {};
+  const primaryResource = appData.resources?.[0]?.resource || {};
   const [kindObj, inFlight] = useK8sModel(referenceFor(primaryResource));
 
   return React.useMemo(() => {
