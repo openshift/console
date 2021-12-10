@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
-// import * as k8sActions from '@console/internal/actions/k8s';
 import { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { SDKStoreState } from '../../../app/redux-types';
 import { WatchK8sResource } from '../../../extensions/console-types';
+import { CustomError } from '../../error/custom-error';
 import { getReferenceForModel } from '../k8s-ref';
 import { GetIDAndDispatch, MakeQuery, Query } from './k8s-watch-types';
 
-export class NoModelError extends Error {
+export class NoModelError extends CustomError {
   constructor() {
     super('Model does not exist');
   }

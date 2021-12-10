@@ -55,13 +55,12 @@ const WS = {} as { [id: string]: WebSocket & any };
 const POLLs = {};
 const REF_COUNTS = {};
 
-const nop = () => {};
 const paginationLimit = 250;
 
 export const stopK8sWatch = (id: string) => (dispatch) => {
   REF_COUNTS[id] -= 1;
   if (REF_COUNTS[id] > 0) {
-    return nop;
+    return _.noop;
   }
 
   const ws = WS[id];
@@ -85,7 +84,7 @@ export const watchK8sList = (
   // Only one watch per unique list ID
   if (id in REF_COUNTS) {
     REF_COUNTS[id] += 1;
-    return nop;
+    return _.noop;
   }
 
   dispatch(startWatchK8sList(id, query));
@@ -228,7 +227,7 @@ export const watchK8sObject = (
 ) => (dispatch, getState) => {
   if (id in REF_COUNTS) {
     REF_COUNTS[id] += 1;
-    return nop;
+    return _.noop;
   }
   const watch = dispatch(startWatchK8sObject(id));
   REF_COUNTS[id] = 1;
@@ -255,7 +254,7 @@ export const watchK8sObject = (
   if (!_.get(k8sType, 'verbs', ['watch']).includes('watch')) {
     // eslint-disable-next-line no-console
     console.warn(`${getReferenceForModel(k8sType)} does not support watching`);
-    return nop;
+    return _.noop;
   }
 
   const { subprotocols } = getImpersonate(getState()) || {};
