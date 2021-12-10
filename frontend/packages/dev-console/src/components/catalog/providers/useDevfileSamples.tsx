@@ -39,11 +39,7 @@ const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], bool
 
   React.useEffect(() => {
     let mounted = true;
-    const payload = {
-      registry: 'https://registry.devfile.io',
-    };
-    coFetchJSON
-      .put('/api/devfile/samples', payload)
+    coFetchJSON('/api/devfile/samples/?registry=https://registry.devfile.io')
       .then((res) => {
         if (mounted) setDevfileSamples(res);
       })
