@@ -1,3 +1,4 @@
+import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAccessFilterExtensions } from '../useAccessFilterExtensions';
 import * as hook from '../useAddActionsAccessReviews';
@@ -18,13 +19,15 @@ describe('useAccessFilterExtensions', () => {
       pipeline: AccessReviewStatus.ALLOWED,
       'deploy-image': AccessReviewStatus.ALLOWED,
     };
-    useAddActionsAccessReviewsSpy.mockReturnValue(mockAddAccessReviewResults);
-    const [filteredAddActionExtensions, loaded] = useAccessFilterExtensions(
-      namespace,
-      addActionExtensions,
-    );
-    expect(filteredAddActionExtensions.length).toEqual(0);
-    expect(loaded).toBe(false);
+    testHook(() => {
+      useAddActionsAccessReviewsSpy.mockReturnValue(mockAddAccessReviewResults);
+      const [filteredAddActionExtensions, loaded] = useAccessFilterExtensions(
+        namespace,
+        addActionExtensions,
+      );
+      expect(filteredAddActionExtensions.length).toEqual(0);
+      expect(loaded).toBe(false);
+    });
   });
 
   it('should return filtered array of add actions for which access review status is allowed and loaded with value true', () => {
@@ -37,12 +40,14 @@ describe('useAccessFilterExtensions', () => {
     const accessAllowedResults = Object.values(mockAccessReviewResults).filter(
       (result) => result === AccessReviewStatus.ALLOWED,
     );
-    useAddActionsAccessReviewsSpy.mockReturnValue(mockAccessReviewResults);
-    const [filteredAddActionExtensions, loaded] = useAccessFilterExtensions(
-      namespace,
-      addActionExtensions,
-    );
-    expect(filteredAddActionExtensions.length).toEqual(accessAllowedResults.length);
-    expect(loaded).toBe(true);
+    testHook(() => {
+      useAddActionsAccessReviewsSpy.mockReturnValue(mockAccessReviewResults);
+      const [filteredAddActionExtensions, loaded] = useAccessFilterExtensions(
+        namespace,
+        addActionExtensions,
+      );
+      expect(filteredAddActionExtensions.length).toEqual(accessAllowedResults.length);
+      expect(loaded).toBe(true);
+    });
   });
 });

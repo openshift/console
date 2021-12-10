@@ -8,6 +8,10 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
+import {
+  VIRTUALMACHINES_BASE_URL,
+  VIRTUALMACHINES_TEMPLATES_BASE_URL,
+} from '../../constants/url-params';
 import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../flags/const';
 import { VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
@@ -23,8 +27,8 @@ export const RedirectToVirtualizationPage: React.FC<RouteComponentProps<{ ns: st
   <Redirect
     to={{
       pathname: props.match.params.ns
-        ? `/k8s/ns/${props.match.params.ns}/virtualization`
-        : `/k8s/all-namespaces/virtualization`,
+        ? `/k8s/ns/${props.match.params.ns}/${VIRTUALMACHINES_BASE_URL}`
+        : `/k8s/all-namespaces/${VIRTUALMACHINES_BASE_URL}`,
       search: decodeURI(props.location.search),
     }}
   />
@@ -36,8 +40,8 @@ export const RedirectToVirtualizationTemplatePage: React.FC<RouteComponentProps<
   <Redirect
     to={{
       pathname: props.match.params.ns
-        ? `/k8s/ns/${props.match.params.ns}/virtualization/templates`
-        : `/k8s/all-namespaces/virtualization/templates`,
+        ? `/k8s/ns/${props.match.params.ns}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`
+        : `/k8s/all-namespaces/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
       search: decodeURI(props.location.search),
     }}
   />

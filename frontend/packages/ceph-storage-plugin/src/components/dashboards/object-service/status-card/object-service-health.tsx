@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Stack, StackItem } from '@patternfly/react-core';
 import Status, {
   StatusPopupSection,
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
@@ -45,20 +46,26 @@ export const ObjectServiceStatus: React.FC<ObjectServiceStatusProps> = ({
     />
   ) : (
     <HealthItem title={title} state={state} details={message} popupTitle={popupTitle}>
-      {statusType === StatusType.HEALTH
-        ? t('ceph-storage-plugin~The object service includes 2 services.')
-        : t('ceph-storage-plugin~The data resiliency includes 2 services')}
-      <StatusPopupSection
-        firstColumn={t('ceph-storage-plugin~Services')}
-        secondColumn={t('ceph-storage-plugin~Status')}
-      >
-        <Status icon={healthStateMapping[MCGMetrics.state]?.icon}>
-          {t('ceph-storage-plugin~Multicloud Object Gateway')}
-        </Status>
-        <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>
-          {t('ceph-storage-plugin~Object Gateway (RGW)')}
-        </Status>
-      </StatusPopupSection>
+      <Stack hasGutter>
+        <StackItem>
+          {statusType === StatusType.HEALTH
+            ? t('ceph-storage-plugin~The object service includes 2 services.')
+            : t('ceph-storage-plugin~The data resiliency includes 2 services')}
+        </StackItem>
+        <StackItem>
+          <StatusPopupSection
+            firstColumn={t('ceph-storage-plugin~Services')}
+            secondColumn={t('ceph-storage-plugin~Status')}
+          >
+            <Status icon={healthStateMapping[MCGMetrics.state]?.icon}>
+              {t('ceph-storage-plugin~Multicloud Object Gateway')}
+            </Status>
+            <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>
+              {t('ceph-storage-plugin~Object Gateway (RGW)')}
+            </Status>
+          </StatusPopupSection>
+        </StackItem>
+      </Stack>
     </HealthItem>
   );
 };

@@ -143,7 +143,7 @@ describe('test dev console', () => {
     it('ID(CNV-5702) clone vm', () => {
       selectActionFromDropdown(VM_ACTION.Clone, actionButtons.actionDropdownButton);
       cy.get(modalTitle)
-        .contains('Clone Virtual Machine')
+        .contains('Clone')
         .should('exist');
       cy.get(alertTitle).should('be.visible');
       cy.get(confirmCloneButton).click();

@@ -16,7 +16,7 @@ import { ProvisionSource } from './utils/constants/enums/provisionSource';
 import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 
 describe('Test VM Migration', () => {
-  const MIGRATE_VM = 'Migrate Virtual Machine';
+  const MIGRATE_VM = 'Migrate';
   const CANCEL_MIGRATION = 'Cancel Virtual Machine Migration';
   const VM_BOOT_AND_MIGRATE_TIMEOUT = VM_BOOTUP_TIMEOUT_SECS + VM_MIGRATION_TIMEOUT_SECS;
 

@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $pipeline-aborted-color: $pf-color-black-300;
 $pipeline-border-color: $pf-color-black-300;
 $pipeline-failed-color: $pf-color-red-100;
@@ -10,19 +12,19 @@ $pipeline-require-attention-color: $pf-color-gold-400;
 $pipeline-circle-animation-time: 0.35s;
 $pipeline-circle-diameter: 18px;
 $pipeline-line-border-width: 8px;
-$pipeline-circle-border-width: ($pipeline-line-border-width / 2);
-$pipeline-circle-radius: ($pipeline-circle-diameter / 2);
+$pipeline-circle-border-width: ($pipeline-line-border-width * 0.5);
+$pipeline-circle-radius: ($pipeline-circle-diameter * 0.5);
 $pipeline-inner-circle-animation-time: 0.1s;
 $pipeline-icon-animation-time: $pipeline-inner-circle-animation-time;
 $pipeline-inner-circle-color: #fff;
 $pipeline-line-animation-time: $pipeline-circle-animation-time;
 $pipeline-line-border-width: 8px;
 $pipeline-line-grow-animation-time: 0.5s;
-$pipeline-line-height: ($pipeline-line-border-width / 2);
+$pipeline-line-height: ($pipeline-line-border-width * 0.5);
 $pipeline-padding: 10px;
 $pipeline-progress-line: 100%;
 $pipeline-progress-rail-animation-time: 5s;
-$pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time / 2);
+$pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time * 0.5);
 
 // Animations
 @keyframes build-progress-line {
@@ -68,7 +70,7 @@ $pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time / 2);
   display: flex;
   flex-wrap: wrap;
   height: 100%;
-  padding: 0 ($pipeline-padding / 2);
+  padding: 0 ($pipeline-padding * 0.5);
 }
 
 .build-pipeline__stage {
@@ -97,7 +99,7 @@ $pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time / 2);
   @media (min-width: 480px) {
     padding-right: ($pipeline-padding * 5.2);
     padding-bottom: ($pipeline-padding + 5);
-    width: (100% / 3);
+    width: math.div(100%, 3);
     &:before {
       bottom: auto;
       content: '\2192';
@@ -119,7 +121,7 @@ $pipelineStageScreenSize: (
 @each $screenSize in $pipelineStageScreenSize {
   @media (min-width: nth($screenSize, 2)) {
     .build-pipeline__stage {
-      width: (100% / nth($screenSize, 1));
+      width: math.div(100%, nth($screenSize, 1));
     }
   }
 }
@@ -240,7 +242,7 @@ $pipelineStageStatus: (
   align-items: center;
   display: flex;
   flex-direction: column;
-  margin-bottom: -($pipeline-circle-diameter / 2);
+  margin-bottom: -($pipeline-circle-diameter * 0.5);
 }
 .build-pipeline__log-link,
 .build-pipeline__timestamp {
@@ -263,7 +265,7 @@ $pipelineStageStatus: (
   background: $pipeline-pending-color;
   border-radius: $pipeline-circle-radius;
   height: $pipeline-circle-diameter;
-  margin-top: (-($pipeline-circle-diameter / 2) - ($pipeline-line-height / 2));
+  margin-top: (-($pipeline-circle-diameter * 0.5) - ($pipeline-line-height * 0.5));
   position: relative;
   transform: rotate(-90deg);
   width: $pipeline-circle-diameter;

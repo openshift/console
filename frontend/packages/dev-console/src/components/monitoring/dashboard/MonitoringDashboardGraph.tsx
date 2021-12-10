@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import {
-  monitoringDashboardsSetEndTime,
-  monitoringDashboardsSetTimespan,
-} from '@console/internal/actions/ui';
+import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { Humanize } from '@console/internal/components/utils';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -69,8 +66,8 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
   const dispatch = useDispatch();
   const onZoom = React.useCallback(
     (from, to) => {
-      dispatch(monitoringDashboardsSetEndTime(to, 'dev'));
-      dispatch(monitoringDashboardsSetTimespan(to - from, 'dev'));
+      dispatch(dashboardsSetEndTime(to, 'dev'));
+      dispatch(dashboardsSetTimespan(to - from, 'dev'));
     },
     [dispatch],
   );

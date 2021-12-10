@@ -1,16 +1,22 @@
 import * as React from 'react';
-import { GraphElement, Edge, isEdge } from '@patternfly/react-topology';
+import { GraphElement, Graph, Node, Edge, isEdge, isGraph } from '@patternfly/react-topology';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
+import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
 import { Action } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceFor,
+  referenceForModel,
+  modelFor,
+} from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
-import { RevisionModel } from '../models';
+import { RevisionModel, EventingBrokerModel, ServiceModel } from '../models';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_KAFKA,
@@ -21,9 +27,12 @@ import {
   TYPE_REVISION_TRAFFIC,
   TYPE_KAFKA_CONNECTION_LINK,
 } from '../topology/const';
+import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
 import { AddBrokerAction } from './add-broker';
 import { AddChannelAction } from './add-channel';
 import { AddEventSourceAction } from './add-event-source';
+import { AddSubscriptionAction, SUBSCRIPTION_ACTION_ID } from './add-subscription';
+import { AddTriggerAction, TRIGGER_ACTION_ID } from './add-trigger';
 import {
   addSubscriptionChannel,
   addTriggerBroker,
@@ -108,23 +117,52 @@ export const useChannelActionProvider = (resource: K8sResourceKind) => {
   return [actions, !inFlight, undefined];
 };
 
-export const useAddToApplicationActionProvider = (element: GraphElement) => {
+export const useTopologyActionsProvider = ({
+  element,
+  connectorSource,
+}: {
+  element: GraphElement;
+  connectorSource?: Node;
+}) => {
   const [namespace] = useActiveNamespace();
   const actions = React.useMemo(() => {
-    if (element.getType() !== TYPE_APPLICATION_GROUP) return undefined;
-    const label = element.getLabel();
-    return [
-      AddEventSourceAction(namespace, label, undefined, 'add-to-application'),
-      AddChannelAction(namespace, label, 'add-to-application'),
-      AddBrokerAction(namespace, label, 'add-to-application'),
-    ];
-  }, [element, namespace]);
-  return React.useMemo(() => {
-    if (actions) {
-      return [actions, true, undefined];
+    const application = element.getLabel();
+    if (!connectorSource) {
+      if (!isGraph(element) && element.getType() !== TYPE_APPLICATION_GROUP) {
+        return [];
+      }
+      const path = application ? 'add-to-application' : 'add-to-project';
+      return [
+        AddEventSourceAction(namespace, application, undefined, path),
+        AddChannelAction(namespace, application, path),
+        AddBrokerAction(namespace, application, path),
+      ].filter(disabledActionsFilter);
     }
-    return [[], true, undefined];
-  }, [actions]);
+
+    if (connectorSource.getData().type === TYPE_EVENT_SOURCE_KAFKA) return [];
+
+    const sourceKind = connectorSource.getData().data.kind;
+    const connectorResource = connectorSource.getData().resource;
+    if (isEventingChannelResourceKind(sourceKind)) {
+      return [AddSubscriptionAction(connectorResource)];
+    }
+    switch (sourceKind) {
+      case referenceForModel(ServiceModel):
+        return [
+          AddEventSourceAction(
+            namespace,
+            application,
+            `${sourceKind}/${connectorResource.metadata.name}`,
+            '',
+          ),
+        ].filter(disabledActionsFilter);
+      case referenceForModel(EventingBrokerModel):
+        return [AddTriggerAction(connectorResource)];
+      default:
+        return [];
+    }
+  }, [connectorSource, element, namespace]);
+  return [actions, true, undefined];
 };
 
 export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
@@ -219,4 +257,20 @@ export const useKnativeConnectorActionProvider = (element: Edge) => {
     }
     return [actions, true, undefined];
   }, [actions]);
+};
+
+export const topologyServerlessActionsFilter = (
+  scope: {
+    element: Graph;
+    connectorSource?: Node;
+  },
+  action: Action,
+) => {
+  if (
+    [TYPE_EVENT_SOURCE_KAFKA, TYPE_EVENT_PUB_SUB].includes(scope.connectorSource?.getData().type) &&
+    ![TRIGGER_ACTION_ID, SUBSCRIPTION_ACTION_ID].includes(action.id)
+  ) {
+    return false;
+  }
+  return true;
 };

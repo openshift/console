@@ -14,6 +14,7 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
+import { VIRTUALMACHINES_BASE_URL } from '../../constants/url-params';
 import { VirtualMachineModel, VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName } from '../../selectors';
@@ -119,11 +120,11 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
     return [
       {
         name: 'Virtualization',
-        path: `/k8s/ns/${vmNamespace}/virtualization`,
+        path: `/k8s/ns/${vmNamespace}/${VIRTUALMACHINES_BASE_URL}`,
       },
       {
         name: 'Virtual Machines',
-        path: `/k8s/ns/${vmNamespace}/virtualization`,
+        path: `/k8s/ns/${vmNamespace}/${VIRTUALMACHINES_BASE_URL}`,
       },
       {
         name: `${vmName} Snapshots`,

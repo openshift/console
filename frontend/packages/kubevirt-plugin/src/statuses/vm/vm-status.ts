@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
-import { VMStatus } from '../../constants/vm/vm-status';
+import { VMPrintableStatusSimpleLabel, VMStatus } from '../../constants/vm/vm-status';
 import { VMIPhase } from '../../constants/vmi/phase';
 import { VirtualMachineImportModel } from '../../models';
 import { getDeletetionTimestamp, getName, getNamespace, getOwnerReferences } from '../../selectors';
@@ -205,7 +205,7 @@ const isBeingImported = (
   };
 };
 
-const isVMError = (vm: VMKind): VMStatusBundle => {
+export const isVMError = (vm: VMKind): VMStatusBundle => {
   const vmFailureCond = getStatusConditionOfType(vm, 'Failure');
   if (vmFailureCond) {
     return {
@@ -235,6 +235,16 @@ const isBeingStopped = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
   }
 
   return null;
+};
+
+export const isVMProcessing = (vm: VMKind, vmi?: VMIKind) => {
+  return (
+    vm?.status?.printableStatus === VMPrintableStatusSimpleLabel.Starting ||
+    vm?.status?.printableStatus === VMPrintableStatusSimpleLabel.Stopping ||
+    vm?.status?.printableStatus === VMPrintableStatusSimpleLabel.Terminating ||
+    !!isBeingStopped(vm, vmi) ||
+    !!isDeleting(vm, vmi)
+  );
 };
 
 const isOff = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {

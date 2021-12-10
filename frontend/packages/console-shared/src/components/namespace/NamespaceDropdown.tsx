@@ -329,10 +329,11 @@ const NamespaceMenu: React.FC<{
       }}
       activeItemId={selected}
       data-test="namespace-dropdown-menu"
+      isScrollable
     >
       {/*
         //@ts-ignore */}
-      <MenuContent menuHeight="60vh">
+      <MenuContent menuHeight="60vh" maxMenuHeight="60vh">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}

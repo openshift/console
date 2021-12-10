@@ -36,12 +36,12 @@
   "Search": "Search",
   "Project": "Project",
   "Builds": "Builds",
+  "Add to Project": "Add to Project",
   "Create Service Binding": "Create Service Binding",
   "Add to Application": "Add to Application",
   "Container Image": "Container Image",
-  "From Git": "From Git",
   "From Catalog": "From Catalog",
-  "Helm Charts": "Helm Charts",
+  "Delete Application": "Delete Application",
   "Edit {{applicationName}}": "Edit {{applicationName}}",
   "Access permissions needed": "Access permissions needed",
   "Unable to load": "Unable to load",
@@ -571,8 +571,6 @@
   "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.": "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.",
   "Select a Project to search inside or <2>create a Project</2>.": "Select a Project to search inside or <2>create a Project</2>.",
   "BindableKinds": "BindableKinds",
-  "Invalid import option provided": "Invalid import option provided",
-  "Add to Project": "Add to Project",
   "Image name from external registry": "Image name from external registry",
   "Image stream tag from internal registry": "Image stream tag from internal registry"
 }

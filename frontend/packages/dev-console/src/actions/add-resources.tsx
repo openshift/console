@@ -8,125 +8,138 @@ import {
   BoltIcon,
   FileUploadIcon,
 } from '@patternfly/react-icons';
-import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
-import { ImportOptions } from '../components/import/import-types';
-import { KebabAction, createKebabAction } from '../utils/add-resources-menu-utils';
+import i18next from 'i18next';
+import { Action } from '@console/dynamic-plugin-sdk/src';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { INCONTEXT_ACTIONS_CONNECTS_TO, QUERY_PROPERTIES } from '../const';
+import { resolvedHref } from '../utils/add-page-utils';
 import { getDisabledAddActions } from '../utils/useAddActionExtensions';
 
 export const allImportResourceAccess = 'allImportResourceAccess';
 export const allCatalogImageResourceAccess = 'allCatalogImageResourceAccess';
 
-type AddActionItem = { id: string; action: KebabAction };
+type ActionFactory = (
+  namespace: string,
+  application?: string,
+  contextSource?: string,
+  path?: string,
+  accessReviewDisabled?: boolean,
+) => Action;
 
-export const fromGit: AddActionItem = {
-  id: 'import-from-git',
-  action: createKebabAction(
-    // t('devconsole~From Git')
-    'devconsole~Import from Git',
-    <GitAltIcon />,
-    ImportOptions.GIT,
-    allImportResourceAccess,
-  ),
+const resolvedURLWithParams = (
+  unresolvedHref: string,
+  namespace: string,
+  application?: string,
+  contextSource?: string,
+) => {
+  const resolvedURL = resolvedHref(unresolvedHref, namespace);
+  const queryParams = new URLSearchParams();
+  if (application || contextSource) {
+    application
+      ? queryParams.append(QUERY_PROPERTIES.APPLICATION, application)
+      : queryParams.append(QUERY_PROPERTIES.APPLICATION, UNASSIGNED_KEY);
+    contextSource &&
+      queryParams.append(
+        QUERY_PROPERTIES.CONTEXT_ACTION,
+        JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
+      );
+    return `${resolvedURL}${resolvedURL.indexOf('?') > -1 ? '&' : '?'}${queryParams.toString()}`;
+  }
+  return resolvedURL;
 };
 
-export const containerImage: AddActionItem = {
-  id: 'deploy-image',
-  action: createKebabAction(
-    // t('devconsole~Container Image')
-    'devconsole~Container Image',
-    <OsImageIcon />,
-    ImportOptions.CONTAINER,
-    allCatalogImageResourceAccess,
-  ),
-};
-
-export const fromCatalog: AddActionItem = {
-  id: 'dev-catalog',
-  action: createKebabAction(
-    // t('devconsole~From Catalog')
-    'devconsole~From Catalog',
-    <CatalogIcon />,
-    ImportOptions.CATALOG,
-  ),
-};
-
-export const fromDatabaseCatalog: AddActionItem = {
-  id: 'dev-catalog-databases',
-  action: createKebabAction(
-    // t('devconsole~Database')
-    'devconsole~Database',
-    <DatabaseIcon />,
-    ImportOptions.DATABASE,
-  ),
-};
-
-export const fromSamples: AddActionItem = {
-  id: 'import-from-samples',
-  action: createKebabAction(
-    // t('devconsole~Samples')
-    'devconsole~Samples',
-    <LaptopCodeIcon />,
-    ImportOptions.SAMPLES,
-  ),
-};
-
-export const fromOperatorBacked: AddActionItem = {
-  id: 'operator-backed',
-  action: createKebabAction(
-    // t('devconsole~Operator Backed')
-    'devconsole~Operator Backed',
-    <BoltIcon />,
-    ImportOptions.OPERATORBACKED,
-  ),
-};
-
-export const fromHelmCharts: AddActionItem = {
-  id: 'helm',
-  action: createKebabAction(
-    // t('devconsole~Helm Charts')
-    'devconsole~Helm Charts',
-    <img style={{ height: '1em', width: '1em' }} src={helmIcon} alt="Helm Charts Logo" />,
-    ImportOptions.HELMCHARTS,
-  ),
-};
-
-export const uploadJarFile: AddActionItem = {
-  id: 'upload-jar',
-  action: createKebabAction(
-    // t('devconsole~Upload JAR file')
-    'devconsole~Upload JAR file',
-    <FileUploadIcon />,
-    ImportOptions.UPLOADJAR,
-    allCatalogImageResourceAccess,
-  ),
+export const AddActions: { [name: string]: ActionFactory } = {
+  FromGit: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+    id: 'import-from-git',
+    label: i18next.t('devconsole~Import from Git'),
+    icon: <GitAltIcon />,
+    cta: {
+      href: resolvedURLWithParams('/import/ns/:namespace', namespace, application, contextSource),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
+  ContainerImage: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+    id: 'deploy-image',
+    label: i18next.t('devconsole~Container Image'),
+    icon: <OsImageIcon />,
+    cta: {
+      href: resolvedURLWithParams(
+        '/deploy-image/ns/:namespace',
+        namespace,
+        application,
+        contextSource,
+      ),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
+  DevCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+    id: 'dev-catalog',
+    label: i18next.t('devconsole~From Catalog'),
+    icon: <CatalogIcon />,
+    cta: {
+      href: resolvedURLWithParams('/catalog/ns/:namespace', namespace, application, contextSource),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
+  DatabaseCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+    id: 'dev-catalog-databases',
+    label: i18next.t('devconsole~Database'),
+    icon: <DatabaseIcon />,
+    cta: {
+      href: resolvedURLWithParams(
+        '/catalog/ns/:namespace?category=databases',
+        namespace,
+        application,
+        contextSource,
+      ),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
+  Samples: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+    id: 'import-form-samples',
+    label: i18next.t('devconsole~Samples'),
+    icon: <LaptopCodeIcon />,
+    cta: {
+      href: resolvedURLWithParams('/samples/ns/:namespace', namespace, application, contextSource),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
+  OperatorBacked: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+    id: 'operator-backed',
+    label: i18next.t('devconsole~Operator Backed'),
+    icon: <BoltIcon />,
+    cta: {
+      href: resolvedURLWithParams(
+        '/catalog/ns/:namespace?catalogType=OperatorBackedService',
+        namespace,
+        application,
+        contextSource,
+      ),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
+  UploadJarFile: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+    id: 'upload-jar',
+    label: i18next.t('devconsole~Upload JAR file'),
+    icon: <FileUploadIcon />,
+    cta: {
+      href: resolvedURLWithParams(
+        '/upload-jar/ns/:namespace',
+        namespace,
+        application,
+        contextSource,
+      ),
+    },
+    path,
+    disabled: accessReviewDisabled,
+  }),
 };
 
 const disabledAddActions = getDisabledAddActions();
-export const disabledFilter = (item) => !disabledAddActions?.includes(item.id);
-export const actionMapper = (item) => item.action;
-
-export const addResourceMenu: KebabAction[] = [
-  fromSamples,
-  fromGit,
-  containerImage,
-  fromCatalog,
-  fromDatabaseCatalog,
-  fromOperatorBacked,
-  fromHelmCharts,
-  uploadJarFile,
-]
-  .filter(disabledFilter)
-  .map(actionMapper);
-
-export const addGroupResourceMenu: KebabAction[] = [fromGit, containerImage, uploadJarFile]
-  .filter(disabledFilter)
-  .map(actionMapper);
-
-export const addResourceMenuWithoutCatalog: KebabAction[] = [
-  fromGit,
-  containerImage,
-  fromOperatorBacked,
-  uploadJarFile,
-]
-  .filter(disabledFilter)
-  .map(actionMapper);
+export const disabledActionsFilter = (item: Action) => !disabledAddActions?.includes(item.id);

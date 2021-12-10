@@ -4,10 +4,7 @@ import * as React from 'react';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  monitoringDashboardsSetEndTime,
-  monitoringDashboardsSetTimespan,
-} from '../../../actions/ui';
+import { dashboardsSetEndTime, dashboardsSetTimespan } from '../../../actions/observe';
 import { RootState } from '../../../redux';
 import { FormatSeriesTitle, QueryBrowser } from '../query-browser';
 
@@ -34,17 +31,17 @@ const Graph: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const [activePerspective] = useActivePerspective();
-  const endTime = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'endTime']),
+  const endTime = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'endTime']),
   );
-  const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
+  const timespan = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
 
   const onZoom = React.useCallback(
     (from, to) => {
-      dispatch(monitoringDashboardsSetEndTime(to, activePerspective));
-      dispatch(monitoringDashboardsSetTimespan(to - from, activePerspective));
+      dispatch(dashboardsSetEndTime(to, activePerspective));
+      dispatch(dashboardsSetTimespan(to - from, activePerspective));
       onZoomHandle?.(to - from, to);
     },
     [activePerspective, dispatch, onZoomHandle],

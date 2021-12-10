@@ -9,6 +9,7 @@ export const getRdpAddressPort = (
   launcherPod: PodKind,
 ) => {
   const [rdpService, rdpPortObj] = findRDPServiceAndPort(vmi, services);
+
   if (!rdpService || !rdpPortObj) {
     return null;
   }
@@ -20,12 +21,6 @@ export const getRdpAddressPort = (
       address = rdpService.spec.externalIPs?.[0];
       if (!address) {
         console.warn('External IP is not defined for the LoadBalancer RDP Service: ', rdpService);
-      }
-      break;
-    case 'ClusterIP':
-      address = rdpService.spec.clusterIP;
-      if (!address) {
-        console.warn('Cluster IP is not defined for the ClusterIP RDP Service: ', rdpService);
       }
       break;
     case 'NodePort':

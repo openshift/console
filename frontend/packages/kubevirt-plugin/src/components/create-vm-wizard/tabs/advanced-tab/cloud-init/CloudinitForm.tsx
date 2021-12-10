@@ -93,10 +93,12 @@ const CloudinitForm: React.FC<CloudinitFormProps> = ({
                   variant={ButtonVariant.link}
                   onClick={() => {
                     setAuthKeys((keys) => {
-                      if (idx === 0) {
-                        return ['', ...keys.slice(1)];
+                      if (keys) {
+                        return idx === 0
+                          ? ['', ...keys?.slice(1)]
+                          : keys?.filter((__, index) => index !== Number(uiIDX));
                       }
-                      return keys.filter((__, index) => index !== Number(uiIDX));
+                      return keys;
                     });
                   }}
                 />
@@ -110,7 +112,7 @@ const CloudinitForm: React.FC<CloudinitFormProps> = ({
           icon={<PlusCircleIcon />}
           variant={ButtonVariant.link}
           isInline
-          onClick={() => setAuthKeys((keys) => (keys ? [...keys, ''] : ['']))}
+          onClick={() => setAuthKeys((keys) => [...(keys || ['']), ''])}
         >
           {t('kubevirt-plugin~Add SSH Key')}
         </Button>

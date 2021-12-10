@@ -38,7 +38,6 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
 import {
-  monitoringToggleGraphs,
   queryBrowserAddQuery,
   queryBrowserDeleteAllQueries,
   queryBrowserDeleteQuery,
@@ -50,7 +49,8 @@ import {
   queryBrowserSetPollInterval,
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
-} from '../../actions/ui';
+  toggleGraphs,
+} from '../../actions/observe';
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
@@ -152,8 +152,8 @@ let focusedQuery;
 const MetricsActionsMenu: React.FC<{}> = () => {
   const { t } = useTranslation();
 
-  const isAllExpanded = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
+  const isAllExpanded = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
   );
 
   const dispatch = useDispatch();
@@ -185,10 +185,10 @@ const MetricsActionsMenu: React.FC<{}> = () => {
 export const ToggleGraph: React.FC<{}> = () => {
   const { t } = useTranslation();
 
-  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
+  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
 
   const dispatch = useDispatch();
-  const toggle = React.useCallback(() => dispatch(monitoringToggleGraphs()), [dispatch]);
+  const toggle = React.useCallback(() => dispatch(toggleGraphs()), [dispatch]);
 
   const icon = hideGraphs ? <ChartLineIcon /> : <CompressIcon />;
 
@@ -297,18 +297,20 @@ const ExpandButton = ({ isExpanded, onClick }) => {
 
 const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
   const { t } = useTranslation();
-  const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ UI }: RootState) => {
-    const disabledSeries = UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
+
+  const [colorIndex, isDisabled, isSeriesEmpty] = useSelector(({ observe }: RootState) => {
+    const disabledSeries = observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries']);
     if (_.some(disabledSeries, (s) => _.isEqual(s, labels))) {
       return [null, true, false];
     }
 
-    const series = UI.getIn(['queryBrowser', 'queries', index, 'series']);
+    const series = observe.getIn(['queryBrowser', 'queries', index, 'series']);
     if (_.isEmpty(series)) {
       return [null, false, true];
     }
 
-    const colorOffset = UI.getIn(['queryBrowser', 'queries'])
+    const colorOffset = observe
+      .getIn(['queryBrowser', 'queries'])
       .take(index)
       .filter((q) => q.get('isEnabled'))
       .reduce((sum, q) => sum + _.size(q.get('series')), 0);
@@ -371,10 +373,12 @@ export const QueryInput: React.FC<QueryInputProps> = ({ index }) => {
 
   const [token, setToken] = React.useState('');
 
-  const metrics = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'metrics']));
+  const metrics = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'metrics']),
+  );
 
-  const text = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'text'], ''),
+  const text = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'text'], ''),
   );
 
   const dispatch = useDispatch();
@@ -522,14 +526,14 @@ export const QueryInput: React.FC<QueryInputProps> = ({ index }) => {
 const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
 
-  const isDisabledSeriesEmpty = useSelector(({ UI }: RootState) =>
-    _.isEmpty(UI.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
+  const isDisabledSeriesEmpty = useSelector(({ observe }: RootState) =>
+    _.isEmpty(observe.getIn(['queryBrowser', 'queries', index, 'disabledSeries'])),
   );
-  const isEnabled = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  const isEnabled = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
   );
-  const series = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'series']),
+  const series = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'series']),
   );
 
   const dispatch = useDispatch();
@@ -580,20 +584,20 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   const [perPage, setPerPage] = React.useState(50);
   const [sortBy, setSortBy] = React.useState<ISortBy>();
 
-  const isEnabled = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  const isEnabled = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
   );
-  const isExpanded = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+  const isExpanded = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
   );
-  const pollInterval = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'pollInterval'], 15 * 1000),
+  const pollInterval = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'pollInterval'], 15 * 1000),
   );
-  const query = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'query']),
+  const query = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'query']),
   );
-  const series = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'series']),
+  const series = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'series']),
   );
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
@@ -759,12 +763,14 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
 const Query: React.FC<{ index: number }> = ({ index }) => {
   const { t } = useTranslation();
 
-  const id = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'queries', index, 'id']));
-  const isEnabled = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  const id = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'id']),
   );
-  const isExpanded = useSelector(({ UI }: RootState) =>
-    UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+  const isEnabled = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
+  );
+  const isExpanded = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
   );
 
   const dispatch = useDispatch();
@@ -814,8 +820,10 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
 
   const dispatch = useDispatch();
 
-  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
-  const queriesList = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'queries']));
+  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
+  const queriesList = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'queries']),
+  );
 
   const queries = queriesList.toJS();
 
@@ -927,7 +935,9 @@ const RunQueriesButton: React.FC<{}> = () => {
 };
 
 const QueriesList: React.FC<{}> = () => {
-  const count = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'queries']).size);
+  const count = useSelector(
+    ({ observe }: RootState) => observe.getIn(['queryBrowser', 'queries']).size,
+  );
 
   return (
     <>
@@ -939,7 +949,9 @@ const QueriesList: React.FC<{}> = () => {
 };
 
 const PollIntervalDropdown = () => {
-  const interval = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'pollInterval']));
+  const interval = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'pollInterval']),
+  );
 
   const dispatch = useDispatch();
   const setInterval = React.useCallback((v: number) => dispatch(queryBrowserSetPollInterval(v)), [

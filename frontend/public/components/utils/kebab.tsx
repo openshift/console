@@ -91,7 +91,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
       onEscape();
     }
   };
-  const disabled = !isAllowed || option.isDisabled;
+  const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
   const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
   return (
     <button
@@ -107,7 +107,9 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
     </button>
   );
 };
-const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: ImpersonateKind }) => {
+export const KebabItemAccessReview_ = (
+  props: KebabItemProps & { impersonate: ImpersonateKind },
+) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
   return <KebabItem_ {...props} isAllowed={isAllowed} />;

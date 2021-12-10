@@ -6,10 +6,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  monitoringDashboardsSetEndTime,
-  monitoringDashboardsSetTimespan,
-} from '../../../actions/ui';
+import { dashboardsSetEndTime, dashboardsSetTimespan } from '../../../actions/observe';
 import { RootState } from '../../../redux';
 import { getQueryArgument, removeQueryArgument, setQueryArgument } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
@@ -25,11 +22,11 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const activePerspective = getActivePerspective(namespace);
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
 
-  const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
+  const timespan = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
-  const endTime = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'endTime']),
+  const endTime = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'endTime']),
   );
 
   const timeSpanFromParams = getQueryArgument('timeRange');
@@ -43,8 +40,8 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
       } else {
         setQueryArgument('timeRange', parsePrometheusDuration(v).toString());
         removeQueryArgument('endTime');
-        dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v), activePerspective));
-        dispatch(monitoringDashboardsSetEndTime(null, activePerspective));
+        dispatch(dashboardsSetTimespan(parsePrometheusDuration(v), activePerspective));
+        dispatch(dashboardsSetEndTime(null, activePerspective));
       }
     },
     [activePerspective, dispatch],

@@ -2,7 +2,13 @@ import * as _ from 'lodash';
 import { history } from '@console/internal/components/utils/router';
 import { k8sBasePath, TemplateKind } from '@console/internal/module/k8s';
 import { VMTabURLEnum } from '../components/vms/types';
-import { VMWizardURLParams } from '../constants/url-params';
+import {
+  customizeWizardBaseURLBuilder,
+  VIRTUALMACHINES_BASE_URL,
+  VMWizardURLParams,
+  wizardBaseURLBuilder,
+  YAMLBaseURLBuilder,
+} from '../constants/url-params';
 import { VMWizardMode, VMWizardName, VMWizardView } from '../constants/vm';
 import { getName, getNamespace } from '../selectors';
 import { isCommonTemplate } from '../selectors/vm-template/basic';
@@ -22,7 +28,7 @@ export const redirectToTab = (tabPath: string) => {
 };
 
 export const getVMTabURL = (vm: VMKind, tabName: VMTabURLEnum) =>
-  `/ns/${getNamespace(vm)}/virtualmachines/${getName(vm)}/${tabName}`;
+  `/ns/${getNamespace(vm)}/${VIRTUALMACHINES_BASE_URL}/${getName(vm)}/${tabName}`;
 
 export const getConsoleAPIBase = () => {
   // avoid the extra slash when compose the URL by VncConsole
@@ -104,10 +110,10 @@ export const getVMWizardCreateLink = ({
       params.append(VMWizardURLParams.INITIAL_DATA, JSON.stringify(initialData));
     }
     const paramsString = params.toString() ? `?${params}` : '';
-    return `/k8s/virtualization/~new-from-template${paramsString}`;
+    return wizardBaseURLBuilder(namespace, paramsString);
   }
 
-  const type = wizardName === VMWizardName.YAML ? '~new' : '~new-wizard';
+  const isYaml = wizardName === VMWizardName.YAML ? '~new' : '';
 
   if (mode && mode !== VMWizardMode.VM) {
     params.append(VMWizardURLParams.MODE, mode);
@@ -149,7 +155,9 @@ export const getVMWizardCreateLink = ({
 
   const paramsString = params.toString() ? `?${params}` : '';
 
-  return `/k8s/ns/${namespace || 'default'}/virtualization/${type}${paramsString}`;
+  return isYaml
+    ? YAMLBaseURLBuilder(namespace)
+    : customizeWizardBaseURLBuilder(namespace, paramsString);
 };
 
 export const parseVMWizardInitialData = (searchParams: URLSearchParams): VMWizardInitialData => {

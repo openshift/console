@@ -17,6 +17,7 @@ import {
   UseListPageFilter,
   ResourceLinkProps,
 } from '../extensions/console-types';
+import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
 export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
   .useK8sWatchResource;
@@ -91,3 +92,8 @@ export {
   getGroupVersionKindForResource,
   getGroupVersionKindForModel,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+
+export const StatusPopupSection: React.FC<StatusPopupSectionProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
+  .StatusPopupSection;
+export const StatusPopupItem: React.FC<StatusPopupItemProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
+  .default;

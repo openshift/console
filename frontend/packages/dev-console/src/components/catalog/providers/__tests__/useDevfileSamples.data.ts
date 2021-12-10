@@ -4,15 +4,15 @@ import { DevfileSample } from '../../../import/devfile/devfile-types';
 export const devfileSamples: DevfileSample[] = [
   {
     name: 'nodejs-basic',
-    displayName: 'Basic NodeJS',
-    description: 'A simple Hello world NodeJS application',
+    displayName: 'Basic Node.js',
+    description: 'A simple Hello World Node.js application',
     icon: 'trimmed',
     tags: ['NodeJS', 'Express'],
     projectType: 'nodejs',
     language: 'nodejs',
     git: {
       remotes: {
-        origin: 'https://github.com/redhat-developer/devfile-sample.git',
+        origin: 'https://github.com/nodeshift-starters/devfile-sample.git',
       },
     },
   },
@@ -26,7 +26,7 @@ export const devfileSamples: DevfileSample[] = [
     language: 'java',
     git: {
       remotes: {
-        origin: 'https://github.com/elsony/devfile-sample-code-with-quarkus.git',
+        origin: 'https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
       },
     },
   },
@@ -40,7 +40,7 @@ export const devfileSamples: DevfileSample[] = [
     language: 'java',
     git: {
       remotes: {
-        origin: 'https://github.com/elsony/devfile-sample-java-springboot-basic.git',
+        origin: 'https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
       },
     },
   },
@@ -54,7 +54,7 @@ export const devfileSamples: DevfileSample[] = [
     language: 'python',
     git: {
       remotes: {
-        origin: 'https://github.com/elsony/devfile-sample-python-basic.git',
+        origin: 'https://github.com/devfile-samples/devfile-sample-python-basic.git',
       },
     },
   },
@@ -64,15 +64,15 @@ export const expectedCatalogItems: CatalogItem[] = [
   {
     uid: 'nodejs-basic',
     type: 'Sample',
-    name: 'Basic NodeJS',
-    description: 'A simple Hello world NodeJS application',
+    name: 'Basic Node.js',
+    description: 'A simple Hello World Node.js application',
     tags: ['NodeJS', 'Express'],
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/redhat-developer/devfile-sample.git',
+        '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
     },
-    icon: { url: 'data:image/png;base64,trimmed' },
+    icon: { url: 'trimmed' },
   },
   {
     uid: 'code-with-quarkus',
@@ -83,9 +83,9 @@ export const expectedCatalogItems: CatalogItem[] = [
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/elsony/devfile-sample-code-with-quarkus.git',
+        '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
     },
-    icon: { url: 'data:image/png;base64,trimmed' },
+    icon: { url: 'trimmed' },
   },
   {
     uid: 'java-springboot-basic',
@@ -96,9 +96,9 @@ export const expectedCatalogItems: CatalogItem[] = [
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/elsony/devfile-sample-java-springboot-basic.git',
+        '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
     },
-    icon: { url: 'data:image/png;base64,trimmed' },
+    icon: { url: 'trimmed' },
   },
   {
     uid: 'python-basic',
@@ -109,8 +109,8 @@ export const expectedCatalogItems: CatalogItem[] = [
     cta: {
       label: 'Create Devfile Sample',
       href:
-        '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/elsony/devfile-sample-python-basic.git',
+        '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
     },
-    icon: { url: 'data:image/png;base64,trimmed' },
+    icon: { url: 'trimmed' },
   },
 ];

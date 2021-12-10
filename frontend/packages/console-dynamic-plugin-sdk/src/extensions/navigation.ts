@@ -89,6 +89,8 @@ export const isSeparator = (e: Extension): e is Separator =>
 export const isNavSection = (e: Extension): e is NavSection =>
   e.type === 'console.navigation/section';
 
-export const isNavItem = (e: Extension): e is NavItem => {
-  return isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
-};
+export const isNavItem = (e: Extension): e is NavItem =>
+  isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
+
+export const isNavItemOrSeparator = (e: Extension): e is NavItem | Separator =>
+  isNavItem(e) || isSeparator(e);

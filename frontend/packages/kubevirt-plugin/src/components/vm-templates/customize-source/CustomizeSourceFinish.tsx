@@ -22,6 +22,7 @@ import {
   ProgressStatus,
   SuccessStatus,
 } from '@console/shared/src';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
 import { createTemplateFromVM, patchVMDisks } from '../../../k8s/requests/vmtemplate/customize';
 import { VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
@@ -182,7 +183,7 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
                     isDisabled={progressValue !== 100}
                     onClick={() =>
                       history.push(
-                        `/k8s/ns/${vmt.metadata.namespace}/vmtemplates/${vmt.metadata.name}`,
+                        `/k8s/ns/${vmt.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${vmt.metadata.name}`,
                       )
                     }
                   >
@@ -194,7 +195,9 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
                     data-test="navigate-list"
                     isDisabled={progressValue !== 100}
                     onClick={() =>
-                      history.push(`/k8s/ns/${vmt.metadata.namespace}/virtualization/templates`)
+                      history.push(
+                        `/k8s/ns/${vmt.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
+                      )
                     }
                     variant="secondary"
                   >

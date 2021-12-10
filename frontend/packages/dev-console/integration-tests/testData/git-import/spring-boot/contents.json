@@ -1,0 +1,371 @@
+[
+    {
+      "name": ".editorconfig",
+      "path": ".editorconfig",
+      "sha": "48a40c43887addd0581131a72c5d9854729069cb",
+      "size": 100,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/.editorconfig?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/.editorconfig",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/48a40c43887addd0581131a72c5d9854729069cb",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/.editorconfig",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/.editorconfig?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/48a40c43887addd0581131a72c5d9854729069cb",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/.editorconfig"
+      }
+    },
+    {
+      "name": ".github",
+      "path": ".github",
+      "sha": "86f011ab0941755c06433263e4e189ca3cf7a972",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/.github?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/.github",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/86f011ab0941755c06433263e4e189ca3cf7a972",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/.github?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/86f011ab0941755c06433263e4e189ca3cf7a972",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/.github"
+      }
+    },
+    {
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "6edbdcda3124dfeb1e27052f88aae1909f5ef5e2",
+      "size": 429,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/.gitignore?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/.gitignore",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/6edbdcda3124dfeb1e27052f88aae1909f5ef5e2",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/.gitignore",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/.gitignore?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/6edbdcda3124dfeb1e27052f88aae1909f5ef5e2",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/.gitignore"
+      }
+    },
+    {
+      "name": "CODE_OF_CONDUCT.adoc",
+      "path": "CODE_OF_CONDUCT.adoc",
+      "sha": "17783c7c066b04660444139b9b160f56db4c3df2",
+      "size": 2353,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/CODE_OF_CONDUCT.adoc?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/CODE_OF_CONDUCT.adoc",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/17783c7c066b04660444139b9b160f56db4c3df2",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/CODE_OF_CONDUCT.adoc",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/CODE_OF_CONDUCT.adoc?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/17783c7c066b04660444139b9b160f56db4c3df2",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/CODE_OF_CONDUCT.adoc"
+      }
+    },
+    {
+      "name": "CONTRIBUTING.adoc",
+      "path": "CONTRIBUTING.adoc",
+      "sha": "0bee31a9372dacf6109e261501b34a1321a745ea",
+      "size": 4028,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/CONTRIBUTING.adoc?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/CONTRIBUTING.adoc",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/0bee31a9372dacf6109e261501b34a1321a745ea",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/CONTRIBUTING.adoc",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/CONTRIBUTING.adoc?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/0bee31a9372dacf6109e261501b34a1321a745ea",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/CONTRIBUTING.adoc"
+      }
+    },
+    {
+      "name": "LICENSE.txt",
+      "path": "LICENSE.txt",
+      "sha": "823c1c8e9820bcc35d561f04d1cc972323162769",
+      "size": 11359,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/LICENSE.txt?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/LICENSE.txt",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/823c1c8e9820bcc35d561f04d1cc972323162769",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/LICENSE.txt",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/LICENSE.txt?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/823c1c8e9820bcc35d561f04d1cc972323162769",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/LICENSE.txt"
+      }
+    },
+    {
+      "name": "README.adoc",
+      "path": "README.adoc",
+      "sha": "1f1c575116afade0e4bdb4386b1973bf845a906b",
+      "size": 9799,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/README.adoc?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/README.adoc",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/1f1c575116afade0e4bdb4386b1973bf845a906b",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/README.adoc",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/README.adoc?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/1f1c575116afade0e4bdb4386b1973bf845a906b",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/README.adoc"
+      }
+    },
+    {
+      "name": "SUPPORT.adoc",
+      "path": "SUPPORT.adoc",
+      "sha": "898f5caa8a16bfa5f60785cc5cf0764ce671f6b9",
+      "size": 1198,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/SUPPORT.adoc?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/SUPPORT.adoc",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/898f5caa8a16bfa5f60785cc5cf0764ce671f6b9",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/SUPPORT.adoc",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/SUPPORT.adoc?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/898f5caa8a16bfa5f60785cc5cf0764ce671f6b9",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/SUPPORT.adoc"
+      }
+    },
+    {
+      "name": "build.gradle",
+      "path": "build.gradle",
+      "sha": "58f14bb79b4da98b79f889f243d901414fedca3b",
+      "size": 955,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/build.gradle?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/build.gradle",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/58f14bb79b4da98b79f889f243d901414fedca3b",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/build.gradle",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/build.gradle?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/58f14bb79b4da98b79f889f243d901414fedca3b",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/build.gradle"
+      }
+    },
+    {
+      "name": "buildSrc",
+      "path": "buildSrc",
+      "sha": "9b8c1e750f1492744752d2f66e49ffa3cd848be0",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/buildSrc?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/buildSrc",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/9b8c1e750f1492744752d2f66e49ffa3cd848be0",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/buildSrc?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/9b8c1e750f1492744752d2f66e49ffa3cd848be0",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/buildSrc"
+      }
+    },
+    {
+      "name": "ci",
+      "path": "ci",
+      "sha": "e65d04b81441f8a6733c4ebf8d842057bb3fa996",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/ci?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/ci",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/e65d04b81441f8a6733c4ebf8d842057bb3fa996",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/ci?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/e65d04b81441f8a6733c4ebf8d842057bb3fa996",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/ci"
+      }
+    },
+    {
+      "name": "eclipse",
+      "path": "eclipse",
+      "sha": "925c2bda88226265cd4cb31dd640780f4b686939",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/eclipse?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/eclipse",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/925c2bda88226265cd4cb31dd640780f4b686939",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/eclipse?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/925c2bda88226265cd4cb31dd640780f4b686939",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/eclipse"
+      }
+    },
+    {
+      "name": "git",
+      "path": "git",
+      "sha": "0fe21f9ecd4d608d507038cfc070a92bd40efb7b",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/git?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/git",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/0fe21f9ecd4d608d507038cfc070a92bd40efb7b",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/git?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/0fe21f9ecd4d608d507038cfc070a92bd40efb7b",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/git"
+      }
+    },
+    {
+      "name": "gradle.properties",
+      "path": "gradle.properties",
+      "sha": "479d3b34c414177b7b41352f665ee44db3d61644",
+      "size": 204,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradle.properties?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/gradle.properties",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/479d3b34c414177b7b41352f665ee44db3d61644",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/gradle.properties",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradle.properties?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/479d3b34c414177b7b41352f665ee44db3d61644",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/gradle.properties"
+      }
+    },
+    {
+      "name": "gradle",
+      "path": "gradle",
+      "sha": "7c063399abc38345813c38f7f870308360925445",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradle?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/gradle",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/7c063399abc38345813c38f7f870308360925445",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradle?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/7c063399abc38345813c38f7f870308360925445",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/gradle"
+      }
+    },
+    {
+      "name": "gradlew",
+      "path": "gradlew",
+      "sha": "1b6c787337ffb79f0e3cf8b1e9f00f680a959de1",
+      "size": 8070,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradlew?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/gradlew",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/1b6c787337ffb79f0e3cf8b1e9f00f680a959de1",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/gradlew",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradlew?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/1b6c787337ffb79f0e3cf8b1e9f00f680a959de1",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/gradlew"
+      }
+    },
+    {
+      "name": "gradlew.bat",
+      "path": "gradlew.bat",
+      "sha": "107acd32c4e687021ef32db511e8a206129b88ec",
+      "size": 2674,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradlew.bat?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/gradlew.bat",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/107acd32c4e687021ef32db511e8a206129b88ec",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/gradlew.bat",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/gradlew.bat?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/107acd32c4e687021ef32db511e8a206129b88ec",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/gradlew.bat"
+      }
+    },
+    {
+      "name": "idea",
+      "path": "idea",
+      "sha": "73dcd97ee8994d69310c96a92dc4758a20d13a12",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/idea?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/idea",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/73dcd97ee8994d69310c96a92dc4758a20d13a12",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/idea?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/73dcd97ee8994d69310c96a92dc4758a20d13a12",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/idea"
+      }
+    },
+    {
+      "name": "settings.gradle",
+      "path": "settings.gradle",
+      "sha": "cac3f1d52156aba0a5558d1d5de07f6954c60c17",
+      "size": 3594,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/settings.gradle?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/blob/main/settings.gradle",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/cac3f1d52156aba0a5558d1d5de07f6954c60c17",
+      "download_url": "https://raw.githubusercontent.com/spring-projects/spring-boot/main/settings.gradle",
+      "type": "file",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/settings.gradle?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/blobs/cac3f1d52156aba0a5558d1d5de07f6954c60c17",
+        "html": "https://github.com/spring-projects/spring-boot/blob/main/settings.gradle"
+      }
+    },
+    {
+      "name": "spring-boot-project",
+      "path": "spring-boot-project",
+      "sha": "d88496b9edf6b0b2551ac829ac5374ca46a2d412",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/spring-boot-project?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/spring-boot-project",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/d88496b9edf6b0b2551ac829ac5374ca46a2d412",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/spring-boot-project?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/d88496b9edf6b0b2551ac829ac5374ca46a2d412",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/spring-boot-project"
+      }
+    },
+    {
+      "name": "spring-boot-system-tests",
+      "path": "spring-boot-system-tests",
+      "sha": "ba48eb71ba35af8017ec775dd52803e04d7d62d7",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/spring-boot-system-tests?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/spring-boot-system-tests",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/ba48eb71ba35af8017ec775dd52803e04d7d62d7",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/spring-boot-system-tests?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/ba48eb71ba35af8017ec775dd52803e04d7d62d7",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/spring-boot-system-tests"
+      }
+    },
+    {
+      "name": "spring-boot-tests",
+      "path": "spring-boot-tests",
+      "sha": "71a7b126d247f8f31288149714dd7e777c9d3f4c",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/spring-boot-tests?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/spring-boot-tests",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/71a7b126d247f8f31288149714dd7e777c9d3f4c",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/spring-boot-tests?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/71a7b126d247f8f31288149714dd7e777c9d3f4c",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/spring-boot-tests"
+      }
+    },
+    {
+      "name": "src",
+      "path": "src",
+      "sha": "0412d435807f0169355411f856ad16870c45fa33",
+      "size": 0,
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/contents/src?ref=main",
+      "html_url": "https://github.com/spring-projects/spring-boot/tree/main/src",
+      "git_url": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/0412d435807f0169355411f856ad16870c45fa33",
+      "download_url": null,
+      "type": "dir",
+      "_links": {
+        "self": "https://api.github.com/repos/spring-projects/spring-boot/contents/src?ref=main",
+        "git": "https://api.github.com/repos/spring-projects/spring-boot/git/trees/0412d435807f0169355411f856ad16870c45fa33",
+        "html": "https://github.com/spring-projects/spring-boot/tree/main/src"
+      }
+    }
+  ]
+  

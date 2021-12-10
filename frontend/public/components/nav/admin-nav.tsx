@@ -39,7 +39,7 @@ type SeparatorProps = {
 };
 
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.
-const Separator: React.FC<SeparatorProps> = ({ name, id }) => (
+export const Separator: React.FC<SeparatorProps> = ({ name, id }) => (
   <NavItemSeparator name={name} id={id} />
 );
 

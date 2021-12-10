@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import {
@@ -21,31 +22,35 @@ const ControlPlanePopup: React.FC<PrometheusHealthPopupProps> = ({ responses }) 
   ];
 
   return (
-    <>
-      {t(
-        'console-app~Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.',
-      )}
-      <StatusPopupSection
-        firstColumn={t('console-app~Components')}
-        secondColumn={t('console-app~Response rate')}
-      >
-        {responses.map(({ response, error }, index) => {
-          const health = getControlPlaneComponentHealth(response, error, t);
-          const icon =
-            health.state === HealthState.LOADING ? (
-              <div className="skeleton-health" />
-            ) : (
-              healthStateMapping[health.state].icon
+    <Stack hasGutter>
+      <StackItem>
+        {t(
+          'console-app~Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.',
+        )}
+      </StackItem>
+      <StackItem>
+        <StatusPopupSection
+          firstColumn={t('console-app~Components')}
+          secondColumn={t('console-app~Response rate')}
+        >
+          {responses.map(({ response, error }, index) => {
+            const health = getControlPlaneComponentHealth(response, error, t);
+            const icon =
+              health.state === HealthState.LOADING ? (
+                <div className="skeleton-health" />
+              ) : (
+                healthStateMapping[health.state].icon
+              );
+            const value = health.message || healthStateMessage(health.state, t);
+            return (
+              <Status key={titles[index]} value={value} icon={icon}>
+                {titles[index]}
+              </Status>
             );
-          const value = health.message || healthStateMessage(health.state, t);
-          return (
-            <Status key={titles[index]} value={value} icon={icon}>
-              {titles[index]}
-            </Status>
-          );
-        })}
-      </StatusPopupSection>
-    </>
+          })}
+        </StatusPopupSection>
+      </StackItem>
+    </Stack>
   );
 };
 

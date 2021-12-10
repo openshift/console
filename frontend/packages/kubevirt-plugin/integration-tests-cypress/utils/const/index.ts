@@ -33,16 +33,16 @@ export enum DEFAULT_VALUES {
 // VM Actions
 export enum VM_ACTION {
   Cancel = 'Cancel Virtual Machine Migration',
-  Clone = 'Clone Virtual Machine',
+  Clone = 'Clone',
   Delete = 'Delete Virtual Machine',
   EditAnnotations = 'Edit Annotations',
   EditLabels = 'Edit Labels',
-  Migrate = 'Migrate Virtual Machine',
-  Restart = 'Restart Virtual Machine',
-  Start = 'Start Virtual Machine',
-  Stop = 'Stop Virtual Machine',
-  Unpause = 'Unpause Virtual Machine',
-  Pause = 'Pause Virtual Machine',
+  Migrate = 'Migrate Node to Node',
+  Restart = 'Restart',
+  Start = 'Start',
+  Stop = 'Stop',
+  Resume = 'Resume',
+  Pause = 'Pause',
 }
 
 export enum VMI_ACTION {

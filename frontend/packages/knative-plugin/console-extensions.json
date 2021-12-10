@@ -824,8 +824,18 @@
   {
     "type": "console.action/provider",
     "properties": {
-      "contextId": "topology-actions",
-      "provider": { "$codeRef": "actions.useAddToApplicationActionProvider" }
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/filter",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "filter": { "$codeRef": "actions.topologyServerlessActionsFilter" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]

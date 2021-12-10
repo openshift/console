@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { monitoringSetRules } from '@console/internal/actions/ui';
+import { alertingSetRules } from '@console/internal/actions/observe';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import {
   ALERT_MANAGER_TENANCY_BASE_PATH,
@@ -61,7 +61,7 @@ const SilenceAlert: React.FC<SilenceAlertProps> = ({ rule, namespace }) => {
             ).then((response) => {
               const thanosAlertsAndRules = getAlertsAndRules(response?.data);
               const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
-              dispatch(monitoringSetRules('devRules', sortThanosRules, 'dev'));
+              dispatch(alertingSetRules('devRules', sortThanosRules, 'dev'));
               setIsChecked(true);
             });
           })
