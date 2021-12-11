@@ -63,4 +63,12 @@ export class TimeoutError extends CustomError {
   }
 }
 
+export class IncompleteDataError extends CustomError {
+  public constructor(public successfulCalls: number, public totalCalls: number) {
+    super(
+      `Only ${successfulCalls} of ${totalCalls} resources loaded. Some data might not be displayed.`,
+    );
+  }
+}
+
 export class RetryError extends CustomError {}

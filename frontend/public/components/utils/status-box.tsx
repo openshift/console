@@ -3,8 +3,10 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { TimeoutError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-
+import {
+  IncompleteDataError,
+  TimeoutError,
+} from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 
 export const Box: React.FC<BoxProps> = ({ children, className }) => (
@@ -149,7 +151,7 @@ const Data: React.FC<DataProps> = ({
 Data.displayName = 'Data';
 
 export const StatusBox: React.FC<StatusBoxProps> = (props) => {
-  const { loadError, loaded, skeleton, ...dataProps } = props;
+  const { loadError, loaded, skeleton, data, ...dataProps } = props;
   const { t } = useTranslation();
 
   if (loadError) {
@@ -167,9 +169,25 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
       return <AccessDenied message={loadError.message} />;
     }
 
+    if (loadError instanceof IncompleteDataError && !_.isEmpty(data)) {
+      return (
+        <Data data={data} {...dataProps}>
+          <Alert
+            variant="info"
+            isInline
+            title={t(
+              'public~Only {{successfulCalls}} of {{totalCalls}} resources loaded. Some data might not be displayed.',
+              { successfulCalls: loadError.successfulCalls, totalCalls: loadError.totalCalls },
+            )}
+          />
+          {props.children}
+        </Data>
+      );
+    }
+
     if (loaded && loadError instanceof TimeoutError) {
       return (
-        <Data {...dataProps}>
+        <Data data={data} {...dataProps}>
           <div className="co-m-timeout-error text-muted">
             {t('public~Timed out fetching new data. The data below is stale.')}
           </div>
@@ -190,7 +208,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   if (!loaded) {
     return skeleton ? <>{skeleton}</> : <LoadingBox className="loading-box loading-box__loading" />;
   }
-  return <Data {...dataProps} />;
+  return <Data data={data} {...dataProps} />;
 };
 StatusBox.displayName = 'StatusBox';
 
