@@ -8,6 +8,7 @@ export const initialState = {
   diskType: 'All',
   diskMode: diskModeDropdownItems.BLOCK,
   deviceType: [],
+  fsType: '',
   maxDiskLimit: '',
   minDiskSize: '1',
   maxDiskSize: '',
@@ -23,6 +24,7 @@ export type State = {
   isValidDiskSize: boolean;
   diskType: string;
   diskMode: string;
+  fsType: string;
   deviceType: string[];
   maxDiskLimit: string;
   minDiskSize: string;
@@ -39,6 +41,7 @@ export type Action =
   | { type: 'setIsValidDiskSize'; value: boolean }
   | { type: 'setDiskType'; value: string }
   | { type: 'setDiskMode'; value: string }
+  | { type: 'setFsType'; value: string }
   | { type: 'setMaxDiskLimit'; value: string }
   | { type: 'setMinDiskSize'; value: string }
   | { type: 'setMaxDiskSize'; value: string }
@@ -62,6 +65,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { diskMode: action.value });
     case 'setDeviceType':
       return Object.assign({}, state, { deviceType: action.value });
+    case 'setFsType':
+      return Object.assign({}, state, { fsType: action.value });
     case 'setMaxDiskLimit':
       return Object.assign({}, state, { maxDiskLimit: action.value });
     case 'setMinDiskSize':

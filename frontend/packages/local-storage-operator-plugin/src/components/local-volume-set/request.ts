@@ -54,6 +54,7 @@ export const getLocalVolumeSetRequestData = (
     },
   } as LocalVolumeSetKind;
 
+  if (state.fsType) requestData.spec.fsType = state.fsType;
   if (!_.isEmpty(toleration)) requestData.spec.tolerations = [toleration];
   if (state.maxDiskLimit) requestData.spec.maxDeviceCount = +state.maxDiskLimit;
   if (state.minDiskSize)
