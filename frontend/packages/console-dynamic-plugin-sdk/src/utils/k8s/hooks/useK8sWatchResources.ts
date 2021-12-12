@@ -6,10 +6,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
-import { SDKStoreState } from '../../../app/redux-types';
 import { UseK8sWatchResources } from '../../../extensions/console-types';
 import { getReference } from '../k8s-ref';
-import { GetIDAndDispatch } from './k8s-watch-types';
+import { GetIDAndDispatch, OpenShiftReduxRootState } from './k8s-watch-types';
 import { getIDAndDispatch, getReduxData, NoModelError } from './k8s-watcher';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 import { useModelsLoaded } from './useModelsLoaded';
@@ -19,8 +18,8 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 
-  const allK8sModels = useSelector<SDKStoreState, ImmutableMap<string, K8sModel>>(
-    (state: SDKStoreState) => state.sdkK8s.getIn(['RESOURCES', 'models']),
+  const allK8sModels = useSelector<OpenShiftReduxRootState, ImmutableMap<string, K8sModel>>(
+    (state: OpenShiftReduxRootState) => state.k8s.getIn(['RESOURCES', 'models']),
   );
 
   const prevK8sModels = usePrevious(allK8sModels);
@@ -42,7 +41,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const k8sModels = k8sModelsRef.current;
 
   const reduxIDs = React.useMemo<{
-    [key: string]: ReturnType<GetIDAndDispatch<SDKStoreState>> & { noModel: boolean };
+    [key: string]: ReturnType<GetIDAndDispatch<OpenShiftReduxRootState>> & { noModel: boolean };
   }>(
     () =>
       modelsLoaded
@@ -101,7 +100,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resourceK8sSelector = React.useMemo(
     () =>
       resourceK8sSelectorCreator(
-        (state: SDKStoreState) => state.sdkK8s,
+        (state: OpenShiftReduxRootState) => state.sdkK8s,
         (sdkK8s) => sdkK8s,
       ),
     [resourceK8sSelectorCreator],
