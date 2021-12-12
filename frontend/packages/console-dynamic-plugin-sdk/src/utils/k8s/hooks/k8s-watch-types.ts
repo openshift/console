@@ -3,6 +3,8 @@ import { K8sModel } from '../../../api/common-types';
 import { SDKStoreState } from '../../../app/redux-types';
 import { WatchK8sResource } from '../../../extensions/console-types';
 
+export type RootState = any;
+
 export type GetIDAndDispatch<StoreData extends SDKStoreState> = (
   resource: WatchK8sResource,
   k8sModel: K8sModel,
