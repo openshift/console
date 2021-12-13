@@ -127,7 +127,7 @@ This descriptor allows you to specify the mini/max amount of compute resources r
 **x-descriptors**
 
 This descriptor allows you to specify the prerequisite kubernetes object (e.g. _Secrets, ServiceAccount, Service, ConfigMap, Namespace, etc_) for your instance. See example from
-[[CSV] Couchbase Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/couchbase-enterprise/1.2.2/couchbase-v1.2.2.clusterserviceversion.yaml#L96-L101):
+[[CSV] Couchbase Operator](https://github.com/operator-framework/community-operators/blob/1591b5e18d47129ed14e83ac2f9832d6cb41bb40/upstream-community-operators/couchbase-enterprise/1.2.2/manifests/couchbase-v1.2.2.clusterserviceversion.yaml#L95-L99):
 
 ```yaml
 …
