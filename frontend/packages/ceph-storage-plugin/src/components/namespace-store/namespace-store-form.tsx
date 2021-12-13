@@ -8,9 +8,15 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import { apiVersionForModel, k8sCreate, SecretKind } from '@console/internal/module/k8s';
+import {
+  apiVersionForModel,
+  k8sCreate,
+  PersistentVolumeClaimKind,
+  SecretKind,
+} from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { CEPH_STORAGE_NAMESPACE } from '@console/ceph-storage-plugin/src/constants';
+import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
 import { initialState, providerDataReducer } from './reducer';
 import { NooBaaNamespaceStoreModel } from '../../models';
 import {
@@ -22,7 +28,6 @@ import {
 import { getExternalProviders, getProviders, secretPayloadCreator } from '../../utils/noobaa-utils';
 import { Payload, NamespaceStoreKind } from '../../types';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
-
 import { S3EndPointType } from '../noobaa-provider-endpoints/s3-endpoint-type';
 import { StoreType } from '../../constants/common';
 
@@ -35,13 +40,14 @@ const NamespaceStoreForm: React.FC<NamespaceStoreFormProps> = withHandlePromise<
   const { t } = useTranslation();
   const [nsName, setNsName] = React.useState('');
   const [provider, setProvider] = React.useState(BC_PROVIDERS.AWS);
+  const [pvc, setPVC] = React.useState('');
+  const [folderName, setFolderName] = React.useState('');
   const [providerDataState, providerDataDispatch] = React.useReducer(
     providerDataReducer,
     initialState,
   );
 
   const handleNsNameTextInputChange = (strVal: string) => setNsName(strVal);
-
   const {
     onCancel,
     className,
@@ -107,7 +113,9 @@ const NamespaceStoreForm: React.FC<NamespaceStoreFormProps> = withHandlePromise<
     if (provider === BC_PROVIDERS.AWS) {
       nsPayload.spec.awsS3 = { ...nsPayload.spec.awsS3, region: providerDataState.region };
     }
-
+    if (provider === BC_PROVIDERS.FILESYSTEM) {
+      nsPayload.spec.nsfs = { ...nsPayload.spec.nsfs, pvcName: pvc, subPath: folderName };
+    }
     promises.push(k8sCreate(NooBaaNamespaceStoreModel, nsPayload));
     return handlePromise(
       Promise.all(promises),
@@ -175,6 +183,45 @@ const NamespaceStoreForm: React.FC<NamespaceStoreFormProps> = withHandlePromise<
           state={providerDataState}
           dispatch={providerDataDispatch}
         />
+      )}
+      {provider === BC_PROVIDERS.FILESYSTEM && (
+        <>
+          <FormGroup
+            label={t('ceph-storage-plugin~Persistent volume claim')}
+            fieldId="pvc-name"
+            className="nb-endpoints-form-entry"
+            isRequired
+          >
+            <PVCDropdown
+              id="pvc-name"
+              dataTest="pvc-dropdown"
+              namespace={namespace}
+              onChange={setPVC}
+              selectedKey={pvc}
+              dataFilter={(pvcObj: PersistentVolumeClaimKind) =>
+                pvcObj?.status?.phase === 'Bound' &&
+                pvcObj?.spec?.accessModes.some((mode) => mode === 'ReadWriteMany')
+              }
+            />
+          </FormGroup>
+          <FormGroup
+            label={t('ceph-storage-plugin~Folder')}
+            fieldId="folder-name"
+            className="nb-endpoints-form-entry"
+            helperText={t(
+              'ceph-storage-plugin~If the name you write exists, we will be using the existing folder if not we will create a new folder ',
+            )}
+            isRequired
+          >
+            <TextInput
+              id="folder-name"
+              onChange={setFolderName}
+              value={folderName}
+              data-test="folder-name"
+              placeholder="Please enter the folder name"
+            />
+          </FormGroup>
+        </>
       )}
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
