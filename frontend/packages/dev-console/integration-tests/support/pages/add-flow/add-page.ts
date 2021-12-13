@@ -11,12 +11,14 @@ export const addPage = {
       case 'Git':
       case addOptions.Git:
         cy.byTestID('item import-from-git').click();
+        app.waitForLoad();
         cy.testA11y('Import from Git Page');
         detailsPage.titleShouldContain(pageTitle.Git);
         break;
       case 'Deploy Image':
       case addOptions.ContainerImage:
         cy.byTestID('item deploy-image').click();
+        app.waitForLoad();
         cy.testA11y('Deploy Page');
         detailsPage.titleShouldContain(pageTitle.ContainerImage);
         break;
@@ -24,6 +26,7 @@ export const addPage = {
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
         cy.byTestID('item import-from-git').click();
+        app.waitForLoad();
         cy.testA11y('Import from Docker file');
         detailsPage.titleShouldContain(pageTitle.Git);
         break;
@@ -38,24 +41,28 @@ export const addPage = {
       case 'Database':
       case addOptions.Database:
         cy.byTestID('item dev-catalog-databases').click();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         cy.testA11y(pageTitle.DeveloperCatalog);
         break;
       case 'Event Source':
       case addOptions.EventSource:
         cy.byTestID('item knative-event-source').click();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.EventSource);
         cy.testA11y(pageTitle.EventSource);
         break;
       case 'Helm Chart':
       case addOptions.HelmChart:
         cy.byTestID('item helm').click({ force: true });
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.HelmCharts);
         cy.testA11y(pageTitle.HelmCharts);
         break;
       case 'Operator Backed':
       case addOptions.OperatorBacked:
         cy.byTestID('item operator-backed').click();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.OperatorBacked);
         cy.testA11y(pageTitle.OperatorBacked);
         break;
@@ -66,27 +73,32 @@ export const addPage = {
           'have.text',
           pageTitle.PipelineBuilder,
         );
+        app.waitForLoad();
         cy.testA11y(pageTitle.PipelineBuilder);
         break;
       case 'Yaml':
       case addOptions.YAML:
         cy.byTestID('item import-yaml').click();
         cy.get('[data-mode-id="yaml"]').should('be.visible');
+        app.waitForLoad();
         cy.testA11y(pageTitle.YAML);
         break;
       case 'Channel':
       case addOptions.Channel:
         cy.byTestID('item knative-eventing-channel').click();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.Channel);
         cy.testA11y(pageTitle.Channel);
         break;
       case addOptions.DevFile:
         cy.byTestID('item import-from-git').click();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.Git);
         cy.testA11y(pageTitle.Git);
         break;
       case addOptions.UploadJARFile:
         cy.byTestID('item upload-jar').click();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.UploadJarFile);
         cy.testA11y(pageTitle.UploadJarFile);
         break;
