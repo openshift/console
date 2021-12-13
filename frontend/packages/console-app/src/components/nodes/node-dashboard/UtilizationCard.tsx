@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PopoverPosition } from '@patternfly/react-core';
+import { PopoverPosition, Card, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   PrometheusUtilizationItem,
@@ -12,9 +12,6 @@ import {
   humanizeNumber,
 } from '@console/internal/components/utils';
 import { PodModel, ProjectModel } from '@console/internal/models';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import ConsumerPopover, {
   LimitsBody,
 } from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
@@ -192,11 +189,13 @@ const UtilizationCard: React.FC = () => {
   ]);
 
   return (
-    <DashboardCard data-test-id="utilization-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('console-app~Utilization')}</DashboardCardTitle>
-        <UtilizationDurationDropdown />
-      </DashboardCardHeader>
+    <Card data-test-id="utilization-card">
+      <CardHeader>
+        <CardTitle>{t('console-app~Utilization')}</CardTitle>
+        <CardActions>
+          <UtilizationDurationDropdown />
+        </CardActions>
+      </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('console-app~CPU')}
@@ -239,7 +238,7 @@ const UtilizationCard: React.FC = () => {
           utilizationQuery={queries[NodeQueries.POD_COUNT]}
         />
       </UtilizationBody>
-    </DashboardCard>
+    </Card>
   );
 };
 

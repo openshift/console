@@ -105,9 +105,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
               {!expanded && (error || !isLoading) && (
                 <div className="co-inventory-card__item-status">
                   {error ? (
-                    <div className="co-dashboard-text--small text-secondary">
-                      {t('console-shared~Not available')}
-                    </div>
+                    <div className="text-secondary">{t('console-shared~Not available')}</div>
                   ) : (
                     children
                   )}
@@ -132,9 +130,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
         {(error || !isLoading) && (
           <div className="co-inventory-card__item-status">
             {error ? (
-              <div className="co-dashboard-text--small text-secondary">
-                {t('console-shared~Not available')}
-              </div>
+              <div className="text-secondary">{t('console-shared~Not available')}</div>
             ) : (
               children
             )}

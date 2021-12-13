@@ -13,7 +13,7 @@ const AlertsBody: React.FC<AlertsBodyProps> = ({ error = false, children }) => {
   const { t } = useTranslation();
   return (
     (error || !!React.Children.toArray(children).length) && (
-      <div className="co-dashboard-card__body--no-padding co-status-card__alerts-body co-dashboard-card__body--top-margin">
+      <div className="co-status-card__alerts-body">
         {error ? (
           <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
             <EmptyStateIcon className="co-status-card__alerts-icon" icon={UnknownIcon} />

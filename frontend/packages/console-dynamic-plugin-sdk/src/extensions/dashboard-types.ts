@@ -8,9 +8,13 @@ import {
   WatchK8sResults,
   FirehoseResourcesResult,
   FirehoseResult,
+  OverviewCardSpan,
 } from './console-types';
 
-export type DashboardCardSpan = 4 | 6 | 12;
+/**
+ * @deprecated use OverviewCardSpan type instead
+ */
+export type CardSpan = OverviewCardSpan;
 
 export type GetOperatorsWithStatuses<R extends K8sResourceCommon = K8sResourceCommon> = (
   resources: FirehoseResourcesResult,

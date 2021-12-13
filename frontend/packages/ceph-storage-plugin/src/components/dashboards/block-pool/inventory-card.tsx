@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
@@ -42,11 +39,11 @@ export const InventoryCard: React.FC = () => {
   }, [poolSc, pvcMemoized]);
 
   return (
-    <DashboardCard data-test-id="inventory-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="inventory-card">
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Inventory')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <ResourceInventoryItem
           dataTest="inventory-sc"
           isLoading={!scLoaded}
@@ -64,7 +61,7 @@ export const InventoryCard: React.FC = () => {
           mapper={getPVCStatusGroups}
           showLink
         />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };

@@ -1,13 +1,10 @@
 import * as React from 'react';
+import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { BareMetalHostModel } from '../../../models';
@@ -24,20 +21,22 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
   const hostRole = <BareMetalHostRole machine={machine} node={node} />;
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('metal3-plugin~Details')}</DashboardCardTitle>
-        <DashboardCardLink
-          to={`${resourcePathFromModel(
-            BareMetalHostModel,
-            getName(obj),
-            getNamespace(obj),
-          )}/details`}
-        >
-          {t('metal3-plugin~View all')}
-        </DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('metal3-plugin~Details')}</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link
+            to={`${resourcePathFromModel(
+              BareMetalHostModel,
+              getName(obj),
+              getNamespace(obj),
+            )}/details`}
+          >
+            {t('metal3-plugin~View all')}
+          </Link>
+        </CardActions>
+      </CardHeader>
+      <CardBody>
         <DetailsBody>
           <DetailItem title={t('metal3-plugin~Host name')} isLoading={false} error={null}>
             {hostName}
@@ -49,8 +48,8 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
             {nodeCell}
           </DetailItem>
         </DetailsBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

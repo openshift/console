@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { SubsystemHealth } from '@console/plugin-sdk';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { alertURL } from '@console/internal/components/monitoring/utils';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
@@ -164,32 +161,30 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   );
 
   return (
-    <DashboardCard gradient>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Status')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <HealthBody>
-          <Gallery className="nb-status-card__health" hasGutter>
-            <GalleryItem>
-              <ObjectServiceStatus
-                RGWMetrics={isRGWSupported ? RGWState : undefined}
-                MCGMetrics={MCGState}
-                statusType={StatusType.HEALTH}
-              />
-            </GalleryItem>
-            <GalleryItem>
-              <ObjectServiceStatus
-                RGWMetrics={isRGWSupported ? RGWResiliencyState : undefined}
-                MCGMetrics={dataResiliencyState}
-                statusType={StatusType.RESILIENCY}
-              />
-            </GalleryItem>
-          </Gallery>
-        </HealthBody>
-        <ObjectStorageAlerts />
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Status')}</CardTitle>
+      </CardHeader>
+      <HealthBody>
+        <Gallery className="nb-status-card__health" hasGutter>
+          <GalleryItem>
+            <ObjectServiceStatus
+              RGWMetrics={isRGWSupported ? RGWState : undefined}
+              MCGMetrics={MCGState}
+              statusType={StatusType.HEALTH}
+            />
+          </GalleryItem>
+          <GalleryItem>
+            <ObjectServiceStatus
+              RGWMetrics={isRGWSupported ? RGWResiliencyState : undefined}
+              MCGMetrics={dataResiliencyState}
+              statusType={StatusType.RESILIENCY}
+            />
+          </GalleryItem>
+        </Gallery>
+      </HealthBody>
+      <ObjectStorageAlerts />
+    </Card>
   );
 };
 

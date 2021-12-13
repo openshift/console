@@ -2,8 +2,7 @@ import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { CardHeader, CardTitle } from '@patternfly/react-core';
 import { DetailsCard } from '../components/dashboards/persistent-external/details-card';
 import { dashboardData } from '../__mocks__/independent-mode-dashboard-data';
 
@@ -30,11 +29,11 @@ xdescribe('DetailsCard', () => {
   });
 
   it('Should render Card Header', () => {
-    expect(wrapper.find(DashboardCardHeader).exists()).toBe(true);
+    expect(wrapper.find(CardHeader).exists()).toBe(true);
   });
 
   it('Should render Card Title', () => {
-    expect(wrapper.find(DashboardCardTitle).exists()).toBe(true);
+    expect(wrapper.find(CardTitle).exists()).toBe(true);
   });
 
   it('Should render details properly', () => {

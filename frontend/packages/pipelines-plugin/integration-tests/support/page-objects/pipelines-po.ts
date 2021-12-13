@@ -130,7 +130,7 @@ export const pipelineDetailsPO = {
     emptyMessage: '.pf-c-empty-state__body',
     timeRange: '',
     refreshInterval: '',
-    graphTitle: '.co-dashboard-card__title',
+    graphTitle: '.pf-c-card__title',
   },
   pipelineRuns: {
     pipelineRunIcon: '[title="PipelineRun"]',

@@ -2,11 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
@@ -31,6 +27,7 @@ import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 const getEventsResource = (projectName: string): FirehoseResource => ({
   isList: true,
@@ -150,18 +147,18 @@ export const ActivityCard: React.FC = () => {
   const viewEvents = `/k8s/ns/${projectName}/events`;
   const { t } = useTranslation();
   return (
-    <DashboardCard gradient data-test-id="activity-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={viewEvents}>{t('public~View events')}</DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <ActivityBody className="co-project-dashboard__activity-body">
-          <OngoingActivity projectName={projectName} />
-          <RecentEvent projectName={projectName} viewEvents={viewEvents} />
-        </ActivityBody>
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card data-test-id="activity-card" className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('public~Activity')}</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link to={viewEvents}>{t('public~View events')}</Link>
+        </CardActions>
+      </CardHeader>
+      <ActivityBody className="co-project-dashboard__activity-body">
+        <OngoingActivity projectName={projectName} />
+        <RecentEvent projectName={projectName} viewEvents={viewEvents} />
+      </ActivityBody>
+    </Card>
   );
 };
 

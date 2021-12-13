@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardActions, CardHeader, CardTitle, PopoverPosition } from '@patternfly/react-core';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import { getName } from '@console/shared';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { PopoverPosition } from '@patternfly/react-core';
+
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   humanizeBinaryBytes,
@@ -142,11 +140,13 @@ export const UtilizationCard: React.FC = () => {
   ]);
 
   return (
-    <DashboardCard data-test-id="utilization-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Utilization')}</DashboardCardTitle>
-        <UtilizationDurationDropdown />
-      </DashboardCardHeader>
+    <Card data-test-id="utilization-card">
+      <CardHeader>
+        <CardTitle>{t('public~Utilization')}</CardTitle>
+        <CardActions>
+          <UtilizationDurationDropdown />
+        </CardActions>
+      </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('public~CPU')}
@@ -187,6 +187,6 @@ export const UtilizationCard: React.FC = () => {
           namespace={projectName}
         />
       </UtilizationBody>
-    </DashboardCard>
+    </Card>
   );
 };

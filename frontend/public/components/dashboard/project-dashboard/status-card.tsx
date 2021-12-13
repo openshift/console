@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { Status } from '@console/shared';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
 import {
   DashboardsOverviewHealthResourceSubsystem,
   DashboardsOverviewHealthSubsystem,
@@ -15,7 +13,7 @@ import {
 } from '@console/plugin-sdk';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
-import { Gallery } from '@patternfly/react-core';
+
 import { DashboardAlerts } from '../dashboards-page/cluster-dashboard/status-card';
 
 export const StatusCard: React.FC = () => {
@@ -38,23 +36,27 @@ export const StatusCard: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <DashboardCard gradient data-test-id="status-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Status')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody isLoading={!obj}>
-        <HealthBody>
-          <Gallery className="co-overview-status__health" hasGutter>
-            <div className="co-status-card__health-item">
-              <Status status={obj.status.phase} className="co-icon-and-text--lg" />
-            </div>
-            {subsystem && (
-              <ResourceHealthItem subsystem={subsystem.properties} namespace={namespace} />
-            )}
-          </Gallery>
-        </HealthBody>
-        <DashboardAlerts labelSelector={{ namespace }} />
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card data-test-id="status-card" className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('public~Status')}</CardTitle>
+      </CardHeader>
+      {obj ? (
+        <>
+          <HealthBody>
+            <Gallery className="co-overview-status__health" hasGutter>
+              <div className="co-status-card__health-item">
+                <Status status={obj.status.phase} className="co-icon-and-text--lg" />
+              </div>
+              {subsystem && (
+                <ResourceHealthItem subsystem={subsystem.properties} namespace={namespace} />
+              )}
+            </Gallery>
+          </HealthBody>
+          <DashboardAlerts labelSelector={{ namespace }} />
+        </>
+      ) : (
+        <LoadingInline />
+      )}
+    </Card>
   );
 };

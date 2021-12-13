@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { RedExclamationCircleIcon } from '@console/shared';
 import {
   DashboardItemProps,
@@ -97,18 +94,18 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   const unhealthyNoobaaBucketsCount = Number(getGaugeValue(unhealthyNoobaaBuckets));
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>
           {t('ceph-storage-plugin~Buckets')}
           <FieldLevelHelp>
             {t(
               'ceph-storage-plugin~Buckets card represents the number of S3 buckets managed on Multicloud Object Gateway and the number of ObjectBucketClaims and the ObjectBuckets managed on both Multicloud Object Gateway and RGW (if deployed).',
             )}
           </FieldLevelHelp>
-        </DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+        </CardTitle>
+      </CardHeader>
+      <CardBody>
         <InventoryItem
           isLoading={!(noobaaCount && unhealthyNoobaaBuckets)}
           error={!!(noobaaCountError || unhealthyNoobaaBucketsError)}
@@ -149,8 +146,8 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
           resources={obcData}
           mapper={getObcStatusGroups}
         />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 
@@ -16,11 +13,11 @@ export const DetailsCard: React.FC = () => {
   const volumeType = obj.spec?.deviceClass?.toUpperCase() ?? '-';
 
   return (
-    <DashboardCard data-test-id="details-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Details')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="details-card">
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Details')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <DetailsBody>
           <DetailItem isLoading={!obj} title={t('ceph-storage-plugin~Pool name')}>
             {obj.metadata?.name}
@@ -32,7 +29,7 @@ export const DetailsCard: React.FC = () => {
             {obj.spec?.replicated?.size}
           </DetailItem>
         </DetailsBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };

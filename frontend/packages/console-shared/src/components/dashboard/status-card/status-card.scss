@@ -76,6 +76,9 @@
 .co-status-card__health-body {
   display: flex;
   flex-wrap: wrap;
+  padding-left: var(--pf-c-card--child--PaddingLeft);
+  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-bottom: var(--pf-c-card__title--not--last-child--PaddingBottom);
 }
 
 .co-status-card__health-item {

@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getInfrastructurePlatform, useFlag } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import {
   DashboardItemProps,
@@ -83,11 +80,11 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     ? t('ceph-storage-plugin~OpenShift Data Foundation')
     : t('ceph-storage-plugin~OpenShift Container Storage');
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Details')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Details')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <DetailsBody>
           <DetailItem
             key="service_name"
@@ -127,8 +124,8 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             {serviceVersion}
           </DetailItem>
         </DetailsBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

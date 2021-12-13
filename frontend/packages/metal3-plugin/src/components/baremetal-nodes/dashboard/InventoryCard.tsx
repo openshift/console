@@ -1,14 +1,11 @@
 import * as React from 'react';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { NodeInventoryItem } from '@console/app/src/components/nodes/node-dashboard/InventoryCard';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { PodModel, NodeModel } from '@console/internal/models';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
@@ -34,11 +31,11 @@ const InventoryCard: React.FC = () => {
   );
 
   return (
-    <DashboardCard data-test-id="inventory-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('metal3-plugin~Inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="inventory-card">
+      <CardHeader>
+        <CardTitle>{t('metal3-plugin~Inventory')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <NodeInventoryItem
           nodeName={obj.metadata.name}
           model={PodModel}
@@ -68,8 +65,8 @@ const InventoryCard: React.FC = () => {
           isLoading={!obj}
           count={getHostCPU(host).count}
         />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

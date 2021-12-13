@@ -37,7 +37,7 @@ const UtilizationAxis: React.FC = () => {
 export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ children }) => {
   const { t } = useTranslation();
   const axis = (
-    <div className="co-utilization-card__item">
+    <div className="co-utilization-card__item co-utilization-card__item-header">
       <div className="co-utilization-card__item-section co-u-hidden co-u-visible-on-xl">
         <span className="co-utilization-card__item-text" data-test="utilization-card-item-text">
           {t('console-shared~Resource')}

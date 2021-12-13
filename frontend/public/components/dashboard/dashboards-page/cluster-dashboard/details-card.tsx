@@ -8,13 +8,9 @@ import {
   getInfrastructurePlatform,
   isSingleNode,
 } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 
@@ -34,7 +30,7 @@ import {
   getOCMLink,
 } from '../../../../module/k8s';
 import { flagPending, featureReducerName } from '../../../../reducers/features';
-import { ExternalLink, useAccessReview } from '../../../utils';
+import { ExternalLink, useAccessReview, LoadingInline } from '../../../utils';
 import { RootState } from '../../../../redux';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
@@ -137,84 +133,90 @@ export const DetailsCard_ = connect(mapStateToProps)(
     const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
     return (
-      <DashboardCard data-test-id="details-card">
-        <DashboardCardHeader>
-          <DashboardCardTitle>{t('public~Details')}</DashboardCardTitle>
-          <DashboardCardLink to="/settings/cluster/">{t('public~View settings')}</DashboardCardLink>
-        </DashboardCardHeader>
-        <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
-          <DetailsBody>
-            {openshiftFlag ? (
-              <>
-                <DetailItem
-                  title={t('public~Cluster API address')}
-                  isLoading={!infrastructureLoaded}
-                  error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
-                  valueClassName="co-select-to-copy"
-                >
-                  {infrastuctureApiUrl}
-                </DetailItem>
-                <DetailItem
-                  title={t('public~Cluster ID')}
-                  error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
-                  isLoading={!clusterVersionLoaded}
-                >
-                  <div className="co-select-to-copy">{clusterId}</div>
-                  {window.SERVER_FLAGS.branding !== 'okd' &&
-                    window.SERVER_FLAGS.branding !== 'azure' && (
-                      <ExternalLink
-                        text={t('public~OpenShift Cluster Manager')}
-                        href={getOCMLink(clusterId)}
-                      />
-                    )}
-                </DetailItem>
-                <DetailItem
-                  title={t('public~Provider')}
-                  error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-                  isLoading={!infrastructureLoaded}
-                  valueClassName="co-select-to-copy"
-                >
-                  {infrastructurePlatform}
-                </DetailItem>
-                <DetailItem
-                  title={t('public~OpenShift version')}
-                  error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
-                  isLoading={!clusterVersionLoaded}
-                >
-                  <ClusterVersion cv={clusterVersionData} />
-                </DetailItem>
-                <DetailItem
-                  title={t('public~Update channel')}
-                  isLoading={!clusterVersionLoaded && !clusterVersionError}
-                  error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
-                  valueClassName="co-select-to-copy"
-                >
-                  {cvChannel}
-                </DetailItem>
-                {isSingleNode(infrastructure) && (
+      <Card data-test-id="details-card">
+        <CardHeader>
+          <CardTitle>{t('public~Details')}</CardTitle>
+          <CardActions className="co-overview-card__actions">
+            <Link to="/settings/cluster/">{t('public~View settings')}</Link>
+          </CardActions>
+        </CardHeader>
+        <CardBody>
+          {flagPending(openshiftFlag) ? (
+            <LoadingInline />
+          ) : (
+            <DetailsBody>
+              {openshiftFlag ? (
+                <>
                   <DetailItem
-                    title={t('public~Control plane high availability')}
-                    isLoading={false}
+                    title={t('public~Cluster API address')}
+                    isLoading={!infrastructureLoaded}
+                    error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
                     valueClassName="co-select-to-copy"
                   >
-                    {t('public~No (single master)')}
+                    {infrastuctureApiUrl}
                   </DetailItem>
-                )}
-              </>
-            ) : (
-              <DetailItem
-                key="kubernetes"
-                title={t('public~Kubernetes version')}
-                error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)}
-                isLoading={!k8sVersion}
-                valueClassName="co-select-to-copy"
-              >
-                {k8sGitVersion}
-              </DetailItem>
-            )}
-          </DetailsBody>
-        </DashboardCardBody>
-      </DashboardCard>
+                  <DetailItem
+                    title={t('public~Cluster ID')}
+                    error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
+                    isLoading={!clusterVersionLoaded}
+                  >
+                    <div className="co-select-to-copy">{clusterId}</div>
+                    {window.SERVER_FLAGS.branding !== 'okd' &&
+                      window.SERVER_FLAGS.branding !== 'azure' && (
+                        <ExternalLink
+                          text={t('public~OpenShift Cluster Manager')}
+                          href={getOCMLink(clusterId)}
+                        />
+                      )}
+                  </DetailItem>
+                  <DetailItem
+                    title={t('public~Provider')}
+                    error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
+                    isLoading={!infrastructureLoaded}
+                    valueClassName="co-select-to-copy"
+                  >
+                    {infrastructurePlatform}
+                  </DetailItem>
+                  <DetailItem
+                    title={t('public~OpenShift version')}
+                    error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
+                    isLoading={!clusterVersionLoaded}
+                  >
+                    <ClusterVersion cv={clusterVersionData} />
+                  </DetailItem>
+                  <DetailItem
+                    title={t('public~Update channel')}
+                    isLoading={!clusterVersionLoaded && !clusterVersionError}
+                    error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
+                    valueClassName="co-select-to-copy"
+                  >
+                    {cvChannel}
+                  </DetailItem>
+                  {isSingleNode(infrastructure) && (
+                    <DetailItem
+                      title={t('public~Control plane high availability')}
+                      isLoading={false}
+                      valueClassName="co-select-to-copy"
+                    >
+                      {t('public~No (single master)')}
+                    </DetailItem>
+                  )}
+                </>
+              ) : (
+                <DetailItem
+                  key="kubernetes"
+                  title={t('public~Kubernetes version')}
+                  error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)}
+                  isLoading={!k8sVersion}
+                  valueClassName="co-select-to-copy"
+                >
+                  {k8sGitVersion}
+                </DetailItem>
+              )}
+            </DetailsBody>
+          )}
+        </CardBody>
+      </Card>
     );
   },
 );

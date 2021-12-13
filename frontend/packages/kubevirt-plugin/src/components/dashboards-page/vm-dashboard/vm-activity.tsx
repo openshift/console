@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { CardActions } from '@patternfly/react-core';
+import { CardActions, Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -12,11 +13,6 @@ import ActivityBody, {
   PauseButton,
   RecentEventsBodyContent,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
@@ -78,20 +74,18 @@ export const VMActivityCard: React.FC = () => {
   )}/events`;
 
   return (
-    <DashboardCard gradient>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('kubevirt-plugin~Events')}</DashboardCardTitle>
-        <CardActions className="kubevirt-activity-card__actions">
-          <DashboardCardLink to={viewEventsLink}>{t('kubevirt-plugin~View all')}</DashboardCardLink>
+    <Card className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('kubevirt-plugin~Events')}</CardTitle>
+        <CardActions className="kubevirt-activity-card__actions co-overview-card__actions">
+          <Link to={viewEventsLink}>{t('kubevirt-plugin~View all')}</Link>
           <PauseButton paused={paused} togglePause={togglePause} />
         </CardActions>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <ActivityBody>
-          <RecentEvent vm={vmiLike} paused={paused} setPaused={setPaused} />
-        </ActivityBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardHeader>
+      <ActivityBody>
+        <RecentEvent vm={vmiLike} paused={paused} setPaused={setPaused} />
+      </ActivityBody>
+    </Card>
   );
 };
 

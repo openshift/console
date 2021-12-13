@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
@@ -8,11 +9,6 @@ import {
   resourcePath,
   Timestamp,
 } from '@console/internal/components/utils';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
@@ -78,12 +74,14 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const numLoggedInUsersMsg: string = getNumLoggedInUsersMessage(t, numLoggedInUsers);
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('kubevirt-plugin~Details')}</DashboardCardTitle>
-        <DashboardCardLink to={viewAllLink}>View all</DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody isLoading={false}>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('kubevirt-plugin~Details')}</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link to={viewAllLink}>View all</Link>
+        </CardActions>
+      </CardHeader>
+      <CardBody>
         <DetailsBody>
           <DetailItem
             title={t('kubevirt-plugin~Name')}
@@ -161,8 +159,8 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             )}
           </DetailItem>
         </DetailsBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

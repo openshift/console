@@ -1,4 +1,3 @@
-import { CardProps, CardBodyProps } from '@patternfly/react-core';
 import {
   K8sResourceCommon,
   FirehoseResult,
@@ -58,26 +57,6 @@ export type HealthItemProps = WithClassNameProps<{
   popupTitle?: string;
   noIcon?: boolean;
   icon?: React.ReactNode;
-}>;
-
-export type DashboardCardProps = CardProps & {
-  className?: string;
-  children: React.ReactNode;
-  gradient?: boolean;
-};
-
-export type DashboardCardBodyProps = CardBodyProps & {
-  classname?: string;
-  children: React.ReactNode;
-  isLoading?: boolean;
-};
-
-export type DashboardCardHeaderProps = WithClassNameProps<{
-  children: React.ReactNode;
-}>;
-
-export type DashboardCardTitleProps = WithClassNameProps<{
-  children?: React.ReactNode;
 }>;
 
 export type ResourceInventoryItemProps = {
@@ -148,17 +127,6 @@ export type UtilizationItemProps = {
   byteDataType?: ByteDataTypes;
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
   setLimitReqState?: (state: { limit: LIMIT_STATE; requested: LIMIT_STATE }) => void;
-};
-
-type GridDashboarCard = {
-  Card: React.ComponentType<any>;
-  span?: 4 | 6 | 12;
-};
-
-export type DashboardGridProps = {
-  mainCards: GridDashboarCard[];
-  leftCards?: GridDashboarCard[];
-  rightCards?: GridDashboarCard[];
 };
 
 type EventInvolvedObject = {

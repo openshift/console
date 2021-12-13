@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PopoverPosition } from '@patternfly/react-core';
+import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
@@ -22,34 +22,50 @@ import { RootState } from '@console/internal/redux';
 import { getName, getNamespace } from '../../..';
 import { FLAGS } from '../../../constants';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
-import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import Status from '../status-card/StatusPopup';
 import { LIMIT_STATE } from './UtilizationItem';
 
 import './top-consumer-popover.scss';
 
 const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
-  ({ current, title, humanize, consumers, namespace, position, description, children }) => {
+  ({
+    current,
+    title,
+    humanize,
+    consumers,
+    namespace,
+    position = PopoverPosition.top,
+    description,
+    children,
+  }) => {
     const { t } = useTranslation();
     const [isOpen, setOpen] = React.useState(false);
+    const onShow = React.useCallback(() => setOpen(true), []);
+    const onHide = React.useCallback(() => setOpen(false), []);
     return (
-      <DashboardCardPopupLink
-        popupTitle={t('console-shared~{{title}} breakdown', { title })}
-        linkTitle={current}
-        onHide={React.useCallback(() => setOpen(false), [])}
-        onShow={React.useCallback(() => setOpen(true), [])}
+      <Popover
         position={position}
+        headerContent={t('console-shared~{{title}} breakdown', { title })}
+        bodyContent={
+          <PopoverBody
+            humanize={humanize}
+            consumers={consumers}
+            namespace={namespace}
+            isOpen={isOpen}
+            description={description}
+          >
+            {children}
+          </PopoverBody>
+        }
+        enableFlip
+        onShow={onShow}
+        onHide={onHide}
+        maxWidth="21rem"
       >
-        <PopoverBody
-          humanize={humanize}
-          consumers={consumers}
-          namespace={namespace}
-          isOpen={isOpen}
-          description={description}
-        >
-          {children}
-        </PopoverBody>
-      </DashboardCardPopupLink>
+        <Button variant="link" isInline>
+          {current}
+        </Button>
+      </Popover>
     );
   },
 );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PopoverPosition } from '@patternfly/react-core';
+import { Button, Popover as PFPopover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import {
@@ -24,7 +24,6 @@ import {
   MachineKind,
   MachineHealthCheckKind,
 } from '@console/internal/module/k8s';
-import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
@@ -133,16 +132,22 @@ const HealthChecksLink: React.FC = () => {
   const healthState = getMachineHealth(obj, machine, healthChecks);
   const { t } = useTranslation();
   return (
-    <DashboardCardPopupLink
-      linkTitle={t('console-app~See details')}
-      popupTitle={t('console-app~Health checks')}
-      className="co-status-card__popup"
+    <PFPopover
+      position={PopoverPosition.top}
+      headerContent={t('console-app~Health checks')}
+      bodyContent={
+        <HealthChecksPopup
+          conditions={healthState.conditions}
+          machineHealthChecks={healthState.matchingHC}
+        />
+      }
+      enableFlip
+      maxWidth="21rem"
     >
-      <HealthChecksPopup
-        conditions={healthState.conditions}
-        machineHealthChecks={healthState.matchingHC}
-      />
-    </DashboardCardPopupLink>
+      <Button variant="link" isInline className="co-status-card__popup">
+        {t('console-app~See details')}
+      </Button>
+    </PFPopover>
   );
 };
 

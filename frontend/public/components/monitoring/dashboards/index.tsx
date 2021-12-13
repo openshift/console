@@ -1,5 +1,15 @@
 import * as _ from 'lodash-es';
-import { Button, Label, Select, SelectOption } from '@patternfly/react-core';
+import {
+  Button,
+  Label,
+  Select,
+  SelectOption,
+  Card as PFCard,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  CardActions,
+} from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -8,15 +18,13 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
+import { Link } from 'react-router-dom';
+import * as classNames from 'classnames';
 
 import { RedExclamationCircleIcon } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import {
@@ -406,7 +414,7 @@ const QueryBrowserLink = ({ queries }) => {
   const namespace = React.useContext(NamespaceContext);
 
   return (
-    <DashboardCardLink
+    <Link
       aria-label={t('public~Inspect')}
       to={
         namespace
@@ -415,7 +423,7 @@ const QueryBrowserLink = ({ queries }) => {
       }
     >
       {t('public~Inspect')}
-    </DashboardCardLink>
+    </Link>
   );
 };
 
@@ -520,15 +528,18 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     <div
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
     >
-      <DashboardCard
-        className="monitoring-dashboards__card"
-        gradient={panel.type === 'grafana-piechart-panel'}
+      <PFCard
+        className={classNames('monitoring-dashboards__card', {
+          'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
+        })}
       >
-        <DashboardCardHeader className="monitoring-dashboards__card-header">
-          <DashboardCardTitle>{panel.title}</DashboardCardTitle>
-          {!isLoading && <QueryBrowserLink queries={queries} />}
-        </DashboardCardHeader>
-        <DashboardCardBody className="co-dashboard-card__body--dashboard">
+        <CardHeader className="monitoring-dashboards__card-header">
+          <CardTitle>{panel.title}</CardTitle>
+          <CardActions className="co-overview-card__actions">
+            {!isLoading && <QueryBrowserLink queries={queries} />}
+          </CardActions>
+        </CardHeader>
+        <CardBody className="co-dashboard-card__body--dashboard">
           <div className="monitoring-dashboards__card-body-content " ref={ref}>
             {isLoading || !wasEverVisible ? (
               <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
@@ -570,8 +581,8 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
               </>
             )}
           </div>
-        </DashboardCardBody>
-      </DashboardCard>
+        </CardBody>
+      </PFCard>
     </div>
   );
 });

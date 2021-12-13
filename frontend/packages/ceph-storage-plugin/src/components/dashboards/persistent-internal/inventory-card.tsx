@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -86,11 +83,11 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
   const ocsNodesHref = `/search?kind=${NodeModel.kind}&q=${cephStorageLabel}`;
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Inventory')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <ResourceInventoryItem
           dataTest="inventory-nodes"
           isLoading={!nodesLoaded}
@@ -118,8 +115,8 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           mapper={getPVStatusGroups}
           showLink={false}
         />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

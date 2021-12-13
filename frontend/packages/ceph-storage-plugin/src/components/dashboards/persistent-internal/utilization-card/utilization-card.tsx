@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
@@ -35,18 +33,20 @@ const UtilizationCard: React.FC = () => {
   );
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>
           {t('ceph-storage-plugin~Utilization')}
           <FieldLevelHelp>
             {t(
               'ceph-storage-plugin~Performance metrics over time showing IOPS, Latency and more. Each metric is a link to a detailed view of this metric.',
             )}
           </FieldLevelHelp>
-        </DashboardCardTitle>
-        <UtilizationDurationDropdown />
-      </DashboardCardHeader>
+        </CardTitle>
+        <CardActions>
+          <UtilizationDurationDropdown />
+        </CardActions>
+      </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Used Capacity')}
@@ -78,7 +78,7 @@ const UtilizationCard: React.FC = () => {
           humanizeValue={humanizeDecimalBytesPerSec}
         />
       </UtilizationBody>
-    </DashboardCard>
+    </Card>
   );
 };
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Card } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import {
   DataState,
   PipelineExampleNames,
@@ -51,7 +51,7 @@ describe('Pipeline Metrics', () => {
     latestPipelineRunSpy.mockReturnValue(pipelineRun);
     const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
     expect(pipelineMetricsWrapper.find(PipelineMetricsEmptyState).exists()).toBe(false);
-    expect(pipelineMetricsWrapper.find(DashboardCard)).toHaveLength(4);
+    expect(pipelineMetricsWrapper.find(Card)).toHaveLength(4);
 
     expect(pipelineMetricsWrapper.find(PipelineMetricsTimeRangeDropdown).exists()).toBe(true);
     expect(pipelineMetricsWrapper.find(PipelineMetricsRefreshDropdown).exists()).toBe(true);
