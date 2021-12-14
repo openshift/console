@@ -21,6 +21,7 @@ describe('Visiting other routes', () => {
       path: '/',
       waitFor: () => {
         cy.byLegacyTestID('resource-title').should('exist');
+        cy.byTestID('loading-indicator').should('not.exist');
         cy.byTestID('skeleton-chart').should('not.exist');
       },
     },
@@ -131,7 +132,7 @@ describe('Visiting other routes', () => {
       if (route.waitFor) {
         route.waitFor();
       }
-      cy.testA11y(`${route} page`);
+      cy.testA11y(`${route.path}`);
     });
   });
 });
