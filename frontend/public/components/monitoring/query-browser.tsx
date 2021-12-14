@@ -154,8 +154,10 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
 );
 
 const TOOLTIP_MAX_ENTRIES = 20;
-const TOOLTIP_MAX_WIDTH = 300;
+const TOOLTIP_MAX_WIDTH = 400;
 const TOOLTIP_MAX_HEIGHT = 400;
+const TOOLTIP_MAX_LEFT_JUT_OUT = 85;
+const TOOLTIP_MAX_RIGHT_JUT_OUT = 45;
 
 type TooltipSeries = {
   color: string;
@@ -180,8 +182,10 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
   }
 
   // Pick tooltip width and location (left or right of the cursor) to maximize its available space
-  const tooltipMaxWidth: number = Math.min(width / 2 + 60, TOOLTIP_MAX_WIDTH);
-  const isOnLeft: boolean = x > (width - 40) / 2;
+  const spaceOnLeft = x + TOOLTIP_MAX_LEFT_JUT_OUT;
+  const spaceOnRight = width - x + TOOLTIP_MAX_RIGHT_JUT_OUT;
+  const isOnLeft = spaceOnLeft > spaceOnRight;
+  const tooltipMaxWidth = Math.min(isOnLeft ? spaceOnLeft : spaceOnRight, TOOLTIP_MAX_WIDTH);
 
   // Sort the entries in the tooltip from largest to smallest (to match the position of points in
   // the graph) and limit to the maximum number we can display. There could be a large number of
