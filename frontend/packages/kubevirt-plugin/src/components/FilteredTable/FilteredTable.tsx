@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Table, TableProps, TextFilter } from '@console/internal/components/factory';
 
 export type FilteredTableProps = TableProps & {
@@ -26,9 +27,11 @@ const FilteredTable: React.FC<FilteredTableProps> = ({
 
   return (
     <>
-      <div className="co-m-pane__filter-row">
-        <TextFilter value={textFilter} onChange={setTextFilter} />
-      </div>
+      {!_.isEmpty(data) && (
+        <div className="co-m-pane__filter-row">
+          <TextFilter value={textFilter} onChange={setTextFilter} />
+        </div>
+      )}
       <Table {...props} data={filteredData} />
     </>
   );
