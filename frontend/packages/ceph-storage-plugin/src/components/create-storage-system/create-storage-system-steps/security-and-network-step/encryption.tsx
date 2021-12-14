@@ -83,7 +83,13 @@ type EncryptionLevelProps = {
   dispatch: WizardDispatch;
 };
 
-const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, isMCG }) => {
+const KMSConnection: React.FC<EncryptionProps> = ({
+  encryption,
+  kms,
+  dispatch,
+  infraType,
+  isMCG,
+}) => {
   const { t } = useTranslation();
 
   const handleOnChange = React.useCallback(
@@ -125,8 +131,9 @@ const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, i
             <KMSConfigure
               state={{ encryption, kms }}
               dispatch={dispatch}
+              infraType={infraType}
               className="odf-security-kms-connection"
-              hideTitle
+              isWizardFlow
             />
           )
         }
@@ -135,7 +142,13 @@ const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, i
   );
 };
 
-export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, isMCG }) => {
+export const Encryption: React.FC<EncryptionProps> = ({
+  encryption,
+  kms,
+  dispatch,
+  infraType,
+  isMCG,
+}) => {
   const { t } = useTranslation();
   const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
   const [encryptionChecked, setEncryptionChecked] = React.useState(
@@ -220,6 +233,7 @@ export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatc
                   encryption={encryption}
                   kms={kms}
                   dispatch={dispatch}
+                  infraType={infraType}
                   isMCG={isMCG}
                 />
               </>
@@ -236,5 +250,6 @@ type EncryptionProps = {
   encryption: WizardState['securityAndNetwork']['encryption'];
   kms: WizardState['securityAndNetwork']['kms'];
   dispatch: WizardDispatch;
+  infraType: string;
   isMCG?: boolean;
 };

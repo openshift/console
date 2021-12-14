@@ -7,29 +7,25 @@ import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
-  ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import {
-  HandlePromiseProps,
-  withHandlePromise,
-} from '@console/internal/components/utils/promise-component';
+import { withHandlePromise } from '@console/internal/components/utils/promise-component';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
-import { State } from '../../ocs-install/attached-devices-mode/reducer';
-import { InternalClusterState, ActionType } from '../../ocs-install/internal-mode/reducer';
 import { KMSMaxFileUploadSize } from '../../../constants';
+import { AdvancedKMSModalProps } from '../../kms-config/providers';
+import { ActionType } from '../../ocs-install/internal-mode/reducer';
 import {
-  setEncryptionDispatch,
   generateCASecret,
   generateClientSecret,
   generateClientKeySecret,
-  EncryptionDispatch,
+  setEncryptionDispatch,
 } from '../../kms-config/utils';
+import { VaultConfig, ProviderNames } from '../../../types';
 import './advanced-kms-modal.scss';
-import { WizardState } from '../../create-storage-system/reducer';
 
-export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps) => {
+export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProps) => {
   const { close, cancel, errorMessage, inProgress, state, dispatch, mode } = props;
-  const { kms } = state;
+  const kms: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
+
   const { t } = useTranslation();
   const [backendPath, setBackendPath] = React.useState(kms?.backend || '');
   const [tlsName, setTLSName] = React.useState(kms?.tls || '');
@@ -96,7 +92,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
       : (kmsAdvanced.clientKey = null);
     mode
       ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsAdvanced)
-      : dispatch({ type: 'securityAndNetwork/setKms', payload: kmsAdvanced });
+      : dispatch({ type: 'securityAndNetwork/setVault', payload: kmsAdvanced });
     close();
   };
   const readFile = (file: File, fn: Function, fileFn: Function) => {
@@ -129,7 +125,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
   };
 
   return (
-    <Form onSubmit={submit} key="advanced-kms-modal">
+    <Form onSubmit={submit} key="advanced-vault-modal">
       <div className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>{t('ceph-storage-plugin~Key Management Service Advanced Settings')}</ModalTitle>
         <ModalBody>
@@ -253,14 +249,4 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
   );
 });
 
-export type AdvancedKMSModalProps = {
-  state:
-    | InternalClusterState
-    | State
-    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
-  dispatch: EncryptionDispatch;
-  mode?: string;
-} & HandlePromiseProps &
-  ModalComponentProps;
-
-export const advancedKMSModal = createModalLauncher(AdvancedKMSModal);
+export const advancedVaultModal = createModalLauncher(AdvancedVaultModal);

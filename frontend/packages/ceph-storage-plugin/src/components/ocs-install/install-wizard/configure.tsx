@@ -199,7 +199,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               state={state}
               dispatch={dispatch}
               mode={mode}
-              hideTitle
+              isWizardFlow
               className="ocs-install-encryption"
             />
           )}

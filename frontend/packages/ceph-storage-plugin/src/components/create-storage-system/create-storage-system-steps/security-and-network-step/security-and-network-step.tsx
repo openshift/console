@@ -8,7 +8,11 @@ import { GUARDED_FEATURES } from '../../../../features';
 import { WizardDispatch, WizardState } from '../../reducer';
 import { NetworkFormGroup } from '../../../ocs-install/install-wizard/configure';
 
-export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, dispatch }) => {
+export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({
+  state,
+  dispatch,
+  infraType,
+}) => {
   const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
 
   const { networkType: nwType, clusterNetwork, publicNetwork, encryption, kms } = state;
@@ -32,7 +36,7 @@ export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, d
 
   return (
     <Form noValidate={false}>
-      <Encryption encryption={encryption} kms={kms} dispatch={dispatch} />
+      <Encryption encryption={encryption} kms={kms} dispatch={dispatch} infraType={infraType} />
       {isMultusSupported && (
         <NetworkFormGroup
           networkType={nwType}
@@ -49,4 +53,5 @@ export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, d
 type SecurityAndNetworkProps = {
   state: WizardState['securityAndNetwork'];
   dispatch: WizardDispatch;
+  infraType: string;
 };

@@ -1,6 +1,6 @@
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
-import { EncryptionType, KMSConfig, NetworkType } from '../../../types';
-import { defaultRequestSize, KMSEmptyState } from '../../../constants';
+import { EncryptionType, VaultConfig, NetworkType } from '../../../types';
+import { defaultRequestSize, VaultEmptyState } from '../../../constants';
 
 export type InternalClusterState = {
   storageClass: StorageClassResourceKind;
@@ -11,7 +11,7 @@ export type InternalClusterState = {
   enableTaint: boolean;
   // Encryption state declare
   encryption: EncryptionType;
-  kms: KMSConfig;
+  kms: VaultConfig;
   publicNetwork: string;
   clusterNetwork: string;
   networkType: NetworkType;
@@ -45,7 +45,7 @@ export type InternalClusterAction =
   // Encryption actions
   | { type: ActionType.SET_ENCRYPTION; payload: EncryptionType }
   // KMS action
-  | { type: ActionType.SET_KMS_ENCRYPTION; payload: KMSConfig }
+  | { type: ActionType.SET_KMS_ENCRYPTION; payload: VaultConfig }
   | { type: ActionType.CLEAR_KMS_STATE }
   | { type: ActionType.SET_ENABLE_ENCRYPTION; payload: boolean }
   | { type: ActionType.SET_ENABLE_MINIMAL; payload: boolean }
@@ -175,7 +175,7 @@ export const reducer = (state: InternalClusterState, action: InternalClusterActi
     case ActionType.CLEAR_KMS_STATE: {
       return {
         ...state,
-        kms: { ...KMSEmptyState },
+        kms: { ...VaultEmptyState },
       };
     }
     default:
