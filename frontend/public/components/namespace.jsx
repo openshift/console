@@ -44,6 +44,7 @@ import {
   REQUESTER_FILTER,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 
 import {
   ConsoleLinkModel,
@@ -54,7 +55,6 @@ import {
 } from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
-import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {

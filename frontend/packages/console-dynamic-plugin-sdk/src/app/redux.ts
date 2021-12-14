@@ -1,4 +1,5 @@
 import { coreReducer } from './core/reducers/core';
+import sdkK8sReducers from './k8s/reducers/k8s';
 
 /**
  * Dynamic Plugin SDK Redux store reducers
@@ -8,4 +9,5 @@ import { coreReducer } from './core/reducers/core';
  */
 export const SDKReducers = Object.freeze({
   sdkCore: coreReducer,
+  sdkK8s: sdkK8sReducers,
 });
