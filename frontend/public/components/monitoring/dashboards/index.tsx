@@ -540,7 +540,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
           </CardActions>
         </CardHeader>
         <CardBody className="co-dashboard-card__body--dashboard">
-          <div className="monitoring-dashboards__card-body-content " ref={ref}>
+          <div className="monitoring-dashboards__card-body-content" ref={ref}>
             {isLoading || !wasEverVisible ? (
               <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
                 <LoadingInline />
