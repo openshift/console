@@ -98,12 +98,13 @@ export const createOrUpdateImageStream = (
     application: { name: applicationName },
     labels: userLabels,
     image: { tag: selectedTag },
+    labels,
   } = formData;
-  const INSTANCE_LABEL = 'app.kubernetes.io/instance';
+  const NAME_LABEL = 'app.kubernetes.io/name';
   const repository = (formData as GitImportFormData).git?.url;
   const ref = (formData as GitImportFormData).git?.ref;
   const imageStreamList = appResources?.imageStream?.data?.filter(
-    (imgstr) => imgstr.metadata?.labels?.[INSTANCE_LABEL] === name,
+    (imgstr) => imgstr.metadata?.labels?.[NAME_LABEL] === (labels[NAME_LABEL] || name),
   );
   const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
   const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
@@ -113,18 +114,28 @@ export const createOrUpdateImageStream = (
     ...(repository && getGitAnnotations(repository, ref)),
     ...getCommonAnnotations(),
   };
-  const imgStreamName = generatedImageStreamName || name;
+  const imgStreamName =
+    verb === 'update' && !_.isEmpty(originalImageStream)
+      ? originalImageStream.metadata.labels[NAME_LABEL]
+      : name;
   const newImageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
     metadata: {
-      name: imgStreamName,
+      name: generatedImageStreamName || imgStreamName,
       namespace,
-      labels: { ...defaultLabels, ...userLabels, [INSTANCE_LABEL]: imgStreamName },
+      labels: {
+        ...defaultLabels,
+        ...userLabels,
+        [NAME_LABEL]: imgStreamName,
+      },
       annotations: defaultAnnotations,
     },
   };
   const imageStream = mergeData(originalImageStream, newImageStream);
+  if (verb === 'update') {
+    imageStream.metadata.name = originalImageStream.metadata.name;
+  }
   return verb === 'update'
     ? k8sUpdate(ImageStreamModel, imageStream)
     : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
@@ -173,7 +184,7 @@ export const createOrUpdateBuildConfig = (
     build: { env, triggers, strategy: buildStrategy },
     labels: userLabels,
   } = formData;
-
+  const NAME_LABEL = 'app.kubernetes.io/name';
   const imageStreamName = imageStream && imageStream.metadata.name;
   const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
 
@@ -221,15 +232,18 @@ export const createOrUpdateBuildConfig = (
     },
   };
 
-  const buildConfigName = verb === 'update' ? originalBuildConfig?.metadata?.name : name;
+  const buildConfigName =
+    verb === 'update' && !_.isEmpty(originalBuildConfig)
+      ? originalBuildConfig.metadata.labels[NAME_LABEL]
+      : name;
 
   const newBuildConfig = {
     apiVersion: 'build.openshift.io/v1',
     kind: 'BuildConfig',
     metadata: {
-      name: buildConfigName,
+      name: generatedImageStreamName || buildConfigName,
       namespace,
-      labels: { ...defaultLabels, ...userLabels },
+      labels: { ...defaultLabels, ...userLabels, [NAME_LABEL]: buildConfigName },
       annotations: defaultAnnotations,
     },
     spec: {
@@ -267,10 +281,12 @@ export const createOrUpdateBuildConfig = (
   };
 
   const buildConfig = mergeData(originalBuildConfig, newBuildConfig);
-
+  if (verb === 'update') {
+    buildConfig.metadata.name = originalBuildConfig.metadata.name;
+  }
   return verb === 'update'
     ? k8sUpdate(BuildConfigModel, buildConfig)
-    : k8sCreate(BuildConfigModel, buildConfig, dryRun ? dryRunOpt : {});
+    : k8sCreate(BuildConfigModel, newBuildConfig, dryRun ? dryRunOpt : {});
 };
 
 export const createOrUpdateDeployment = (
@@ -610,17 +626,18 @@ export const createOrUpdateResources = async (
     resources,
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
-
+  const originalRepository =
+    appResources?.buildConfig?.data?.spec?.source?.git?.uri ??
+    appResources?.pipeline?.data?.spec?.params?.find((param) => param?.name === 'GIT_REPO')
+      ?.default;
   createNewProject && (await createProject(formData.project));
 
   const responses: K8sResourceKind[] = [];
   let generatedImageStreamName: string = '';
-  const imageStreamList = appResources?.imageStream?.data;
   if (
     resources === Resources.KnativeService &&
-    imageStreamList &&
-    imageStreamList.length &&
-    verb === 'update'
+    originalRepository &&
+    originalRepository !== repository
   ) {
     generatedImageStreamName = `${name}-${getRandomChars()}`;
   }
@@ -653,7 +670,7 @@ export const createOrUpdateResources = async (
         imageStream,
         dryRun,
         appResources?.buildConfig?.data,
-        verb,
+        generatedImageStreamName ? 'create' : verb,
         generatedImageStreamName,
       ),
     );
@@ -691,6 +708,7 @@ export const createOrUpdateResources = async (
       undefined,
       annotations,
       _.get(appResources, 'editAppResource.data'),
+      generatedImageStreamName,
     );
     const domainMappingResources = await getDomainMappingRequests(
       formData,

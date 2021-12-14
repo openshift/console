@@ -1,7 +1,7 @@
 import {
   deployImageInitialValues,
   getDeploymentData,
-  getExternalImagelValues,
+  getExternalImageValues,
   getIconInitialValues,
   getKsvcRouteData,
   getServerlessData,
@@ -133,6 +133,7 @@ export const knatifyResources = async (
     knDeploymentResource,
     dryRun,
   );
+
   return Promise.all([
     k8sCreate(ServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
     ...domainMappingResources,
@@ -218,7 +219,7 @@ export const getInitialValuesKnatify = (
     imageStream: { image, tag },
   } = internalImageValues;
   const isInternalImageValid = image && tag && namespace;
-  const externalImageValues = getExternalImagelValues(ksvcResourceData);
+  const externalImageValues = getExternalImageValues(ksvcResourceData);
   return {
     ...commonValues,
     ...iconValues,
