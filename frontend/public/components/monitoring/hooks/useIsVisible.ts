@@ -14,7 +14,9 @@ export const useIsVisible = (ref) => {
   const observer = new IntersectionObserver(callback);
 
   React.useEffect(() => {
-    observer.observe(ref.current);
+    if (ref?.current) {
+      observer.observe(ref.current);
+    }
     return () => observer.disconnect();
   }, [observer, ref]);
 
