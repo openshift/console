@@ -84,7 +84,10 @@ export const filters: RowFilter[] = [
 
 const ListPage = () => {
   const [pods, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
-    kind: 'Pod',
+    groupVersionKind: {
+      version: 'v1',
+      kind: 'Pod',
+    },
     isList: true,
     namespaced: true,
   });

@@ -7,10 +7,15 @@ import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { UseK8sWatchResources } from '../../../extensions/console-types';
-import { getReference } from '../k8s-ref';
+import {
+  transformGroupVersionKindToReference,
+  getReferenceForModel,
+  getGroupVersionKindForReference,
+} from '../k8s-ref';
 import { GetIDAndDispatch, OpenShiftReduxRootState } from './k8s-watch-types';
 import { getIDAndDispatch, getReduxData, NoModelError } from './k8s-watcher';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
+import { getK8sModel } from './useK8sModel';
 import { useModelsLoaded } from './useModelsLoaded';
 import { usePrevious } from './usePrevious';
 
@@ -30,12 +35,20 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   if (
     prevResources !== resources ||
     (prevK8sModels !== allK8sModels &&
-      Object.values(resources).some(
-        ({ kind }) => prevK8sModels?.get(kind) !== allK8sModels.get(kind),
-      ))
+      Object.values(resources).some((r) => {
+        const modelReference = transformGroupVersionKindToReference(r.groupVersionKind || r.kind);
+        return (
+          getK8sModel(prevK8sModels, modelReference) !== getK8sModel(allK8sModels, modelReference)
+        );
+      }))
   ) {
-    const requiredModels = Object.values(resources).map((r) => r.kind);
-    k8sModelsRef.current = allK8sModels.filter((model, key) => requiredModels.includes(key));
+    const requiredModels = Object.values(resources).map((r) =>
+      transformGroupVersionKindToReference(r.groupVersionKind || r.kind),
+    );
+    k8sModelsRef.current = allK8sModels.filter(
+      (model) =>
+        requiredModels.includes(getReferenceForModel(model)) || requiredModels.includes(model.kind),
+    );
   }
 
   const k8sModels = k8sModelsRef.current;
@@ -46,11 +59,13 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     () =>
       modelsLoaded
         ? Object.keys(resources).reduce((ids, key) => {
-            const kindReference = resources[key]?.groupVersionKind
-              ? getReference(resources[key].groupVersionKind)
-              : resources[key].kind;
+            const modelReference = transformGroupVersionKindToReference(
+              resources[key].groupVersionKind || resources[key].kind,
+            );
 
-            const resourceModel = k8sModels.get(kindReference);
+            const resourceModel =
+              k8sModels.get(modelReference) ||
+              k8sModels.get(getGroupVersionKindForReference(modelReference).kind);
             if (!resourceModel) {
               ids[key] = {
                 noModel: true,
