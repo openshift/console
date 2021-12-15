@@ -35,9 +35,6 @@ export const NetworkPolicyPeerSelectors: React.FC<PeerSelectorProps> = (props) =
         );
   }
 
-  const RuleName: React.FC<{}> = () =>
-    direction === 'ingress' ? t('console-app~ingress rule') : t('console-app~egress rule');
-
   return (
     <>
       {namespaceSelector && (
@@ -63,18 +60,33 @@ export const NetworkPolicyPeerSelectors: React.FC<PeerSelectorProps> = (props) =
         />
       </div>
       <p>
-        <Trans ns="console-app" i18nKey="netpolicy_peers_preview_affected_pods">
-          Show a preview of the{' '}
-          <Button
-            data-test={`show-affected-pods-${props.direction}`}
-            ref={podsPreviewPopoverRef}
-            variant="link"
-            isInline
-          >
-            affected pods
-          </Button>{' '}
-          that this <RuleName /> will apply to
-        </Trans>
+        {props.direction === 'ingress' ? (
+          <Trans ns="console-app">
+            Show a preview of the{' '}
+            <Button
+              data-test="show-affected-pods-ingress"
+              ref={podsPreviewPopoverRef}
+              variant="link"
+              isInline
+            >
+              affected pods
+            </Button>{' '}
+            that this ingress rule will apply to.
+          </Trans>
+        ) : (
+          <Trans ns="console-app">
+            Show a preview of the{' '}
+            <Button
+              data-test="show-affected-pods-egress"
+              ref={podsPreviewPopoverRef}
+              variant="link"
+              isInline
+            >
+              affected pods
+            </Button>{' '}
+            that this egress rule will apply to.
+          </Trans>
+        )}
       </p>
       <NetworkPolicySelectorPreview
         policyNamespace={policyNamespace}
