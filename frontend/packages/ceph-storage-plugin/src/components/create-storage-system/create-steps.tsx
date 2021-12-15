@@ -39,6 +39,8 @@ export const createSteps = (
   const { externalStorage, deployment } = backingStorage;
   const { encryption, kms } = securityAndNetwork;
 
+  const isMCG = deployment === DeploymentType.MCG;
+
   const commonSteps = {
     capacityAndNodes: {
       name: StepsName(t)[Steps.CapacityAndNodes],
@@ -56,6 +58,18 @@ export const createSteps = (
       name: StepsName(t)[Steps.SecurityAndNetwork],
       component: (
         <SecurityAndNetwork state={securityAndNetwork} dispatch={dispatch} infraType={infraType} />
+      ),
+    },
+    security: {
+      name: StepsName(t)[Steps.Security],
+      component: (
+        <Security
+          infraType={infraType}
+          encryption={encryption}
+          kms={kms}
+          dispatch={dispatch}
+          isMCG
+        />
       ),
     },
     reviewAndCreate: {
@@ -99,107 +113,126 @@ export const createSteps = (
     ),
   };
 
-  if (deployment === DeploymentType.MCG)
-    return [
-      {
-        id: 2,
-        name: StepsName(t)[Steps.Security],
-        canJumpTo: stepIdReached >= 2,
-        component: (
-          <Security
-            encryption={encryption}
-            kms={kms}
-            dispatch={dispatch}
-            infraType={infraType}
-            isMCG
-          />
-        ),
-      },
-      {
-        id: 3,
-        canJumpTo: stepIdReached >= 3,
-        ...commonSteps.reviewAndCreate,
-      },
-    ];
+  const createLocalVolumeSetStep: WizardStep = {
+    name: StepsName(t)[Steps.CreateLocalVolumeSet],
+    canJumpTo: stepIdReached >= 2,
+    id: 2,
+    component: (
+      <CreateLocalVolumeSet
+        state={state.createLocalVolumeSet}
+        dispatch={dispatch}
+        storageClass={storageClass}
+        nodes={nodes}
+        stepIdReached={stepIdReached}
+        isMCG={isMCG}
+      />
+    ),
+  };
 
   switch (backingStorage.type) {
     case BackingStorageType.EXISTING:
-      return [
-        {
-          id: 2,
-          canJumpTo: stepIdReached >= 2,
-
-          ...commonSteps.capacityAndNodes,
-        },
-        {
-          id: 3,
-          canJumpTo: stepIdReached >= 3,
-
-          ...commonSteps.securityAndNetwork,
-        },
-        {
-          id: 4,
-          canJumpTo: stepIdReached >= 4,
-          ...commonSteps.reviewAndCreate,
-        },
-      ];
+      return isMCG
+        ? [
+            {
+              id: 2,
+              canJumpTo: stepIdReached >= 2,
+              ...commonSteps.security,
+            },
+            {
+              id: 3,
+              canJumpTo: stepIdReached >= 3,
+              ...commonSteps.reviewAndCreate,
+            },
+          ]
+        : [
+            {
+              id: 2,
+              canJumpTo: stepIdReached >= 2,
+              ...commonSteps.capacityAndNodes,
+            },
+            {
+              id: 3,
+              canJumpTo: stepIdReached >= 3,
+              ...commonSteps.securityAndNetwork,
+            },
+            {
+              id: 4,
+              canJumpTo: stepIdReached >= 4,
+              ...commonSteps.reviewAndCreate,
+            },
+          ];
     case BackingStorageType.LOCAL_DEVICES:
-      return [
-        {
-          name: StepsName(t)[Steps.CreateLocalVolumeSet],
-          canJumpTo: stepIdReached >= 2,
-          id: 2,
-          component: (
-            <CreateLocalVolumeSet
-              state={state.createLocalVolumeSet}
-              dispatch={dispatch}
-              storageClass={storageClass}
-              nodes={nodes}
-              stepIdReached={stepIdReached}
-            />
-          ),
-        },
-        {
-          canJumpTo: stepIdReached >= 3,
-          ...commonSteps.capacityAndNodes,
-          id: 3,
-        },
-        {
-          canJumpTo: stepIdReached >= 4,
-          name: StepsName(t)[Steps.SecurityAndNetwork],
-          ...commonSteps.securityAndNetwork,
-          id: 4,
-        },
-        {
-          canJumpTo: stepIdReached >= 5,
-          name: StepsName(t)[Steps.ReviewAndCreate],
-          ...commonSteps.reviewAndCreate,
-          id: 5,
-        },
-      ];
+      return isMCG
+        ? [
+            createLocalVolumeSetStep,
+            {
+              id: 3,
+              canJumpTo: stepIdReached >= 3,
+              ...commonSteps.security,
+            },
+            {
+              id: 4,
+              canJumpTo: stepIdReached >= 4,
+              ...commonSteps.reviewAndCreate,
+            },
+          ]
+        : [
+            createLocalVolumeSetStep,
+            {
+              canJumpTo: stepIdReached >= 3,
+              ...commonSteps.capacityAndNodes,
+              id: 3,
+            },
+            {
+              canJumpTo: stepIdReached >= 4,
+              name: StepsName(t)[Steps.SecurityAndNetwork],
+              ...commonSteps.securityAndNetwork,
+              id: 4,
+            },
+            {
+              canJumpTo: stepIdReached >= 5,
+              name: StepsName(t)[Steps.ReviewAndCreate],
+              ...commonSteps.reviewAndCreate,
+              id: 5,
+            },
+          ];
     case BackingStorageType.EXTERNAL:
       if (externalStorage === OCSServiceModel.kind) {
         return rhcsExternalProviderSteps;
       }
       if (!hasOCS) {
-        return [
-          nonRhcsExternalProviderStep,
-          {
-            canJumpTo: stepIdReached >= 3,
-            id: 3,
-            ...commonSteps.capacityAndNodes,
-          },
-          {
-            canJumpTo: stepIdReached >= 4,
-            id: 4,
-            ...commonSteps.securityAndNetwork,
-          },
-          {
-            canJumpTo: stepIdReached >= 5,
-            id: 5,
-            ...commonSteps.reviewAndCreate,
-          },
-        ];
+        return isMCG
+          ? [
+              nonRhcsExternalProviderStep,
+              {
+                id: 3,
+                canJumpTo: stepIdReached >= 3,
+                ...commonSteps.security,
+              },
+              {
+                id: 4,
+                canJumpTo: stepIdReached >= 4,
+                ...commonSteps.reviewAndCreate,
+              },
+            ]
+          : [
+              nonRhcsExternalProviderStep,
+              {
+                canJumpTo: stepIdReached >= 3,
+                id: 3,
+                ...commonSteps.capacityAndNodes,
+              },
+              {
+                canJumpTo: stepIdReached >= 4,
+                id: 4,
+                ...commonSteps.securityAndNetwork,
+              },
+              {
+                canJumpTo: stepIdReached >= 5,
+                id: 5,
+                ...commonSteps.reviewAndCreate,
+              },
+            ];
       }
       return [
         nonRhcsExternalProviderStep,

@@ -17,7 +17,6 @@ import { setFlag } from '@console/internal/actions/features';
 import { WizardCommonProps, WizardState } from './reducer';
 import {
   createExternalSubSystem,
-  createMCGStorageCluster,
   createStorageCluster,
   createStorageSystem,
   labelNodes,
@@ -44,15 +43,18 @@ import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
 import { createClusterKmsResources } from '../kms-config/utils';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG, MCG_STANDALONE } from '../../features';
 
-const validateBackingStorageStep = (backingStorage, sc) => {
-  const { type, externalStorage, isValidSC } = backingStorage;
+const validateBackingStorageStep = (
+  backingStorage: WizardState['backingStorage'],
+  sc: WizardState['storageClass'],
+) => {
+  const { type, externalStorage, deployment } = backingStorage;
   switch (type) {
     case BackingStorageType.EXISTING:
-      return !!sc.name && isValidSC;
+      return !!sc.name && !!deployment;
     case BackingStorageType.EXTERNAL:
-      return !!externalStorage && isValidSC;
+      return !!externalStorage;
     case BackingStorageType.LOCAL_DEVICES:
-      return isValidSC;
+      return !!deployment;
     default:
       return false;
   }
@@ -140,13 +142,12 @@ const handleReviewAndCreateNext = async (
   const isMCG: boolean = deployment === DeploymentType.MCG;
 
   try {
+    await labelOCSNamespace();
     if (isMCG) {
-      await labelOCSNamespace();
       if (encryption.advanced)
         await Promise.all(createClusterKmsResources(kms[kms.kmsProvider], kms.kmsProvider));
-      await createMCGStorageCluster(encryption.advanced);
+      await createStorageCluster(state);
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
-      await labelOCSNamespace();
       await labelNodes(nodes);
       if (capacityAndNodes.enableTaint) await taintNodes(nodes);
       if (encryption.advanced)
@@ -168,7 +169,6 @@ const handleReviewAndCreateNext = async (
         storageClass.name,
       );
 
-      await labelOCSNamespace();
       await createStorageSystem(subSystemName, subSystemKind);
       if (!hasOCS && !isRhcs) {
         await labelNodes(nodes);

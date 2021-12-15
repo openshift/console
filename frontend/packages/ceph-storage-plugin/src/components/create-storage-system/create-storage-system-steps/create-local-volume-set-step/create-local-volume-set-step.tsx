@@ -28,7 +28,10 @@ import {
   createLocalVolumeDiscovery,
   updateLocalVolumeDiscovery,
 } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/request';
-import { LABEL_OPERATOR } from '@console/local-storage-operator-plugin/src/constants';
+import {
+  diskModeDropdownItems,
+  LABEL_OPERATOR,
+} from '@console/local-storage-operator-plugin/src/constants';
 import { LABEL_SELECTOR } from '@console/local-storage-operator-plugin/src/constants/disks-list';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LocalVolumeDiscoveryResultKind } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
@@ -163,6 +166,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   dispatch,
   nodes,
   stepIdReached,
+  isMCG,
 }) => {
   const { t } = useTranslation();
   const allNodes = React.useRef([]);
@@ -221,6 +225,9 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
                 storageClassName={storageClass.name}
                 allNodes={allNodes.current}
                 nodes={nodes}
+                defaultVolumeMode={
+                  isMCG ? diskModeDropdownItems.FILESYSTEM : diskModeDropdownItems.BLOCK
+                }
               />
             </Form>
           </GridItem>
@@ -277,6 +284,7 @@ type CreateLocalVolumeSetProps = {
   nodes: WizardState['nodes'];
   stepIdReached: WizardState['stepIdReached'];
   dispatch: WizardDispatch;
+  isMCG: boolean;
 };
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({

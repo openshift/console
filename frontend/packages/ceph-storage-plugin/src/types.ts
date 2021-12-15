@@ -282,31 +282,36 @@ export enum ImageStates {
 }
 
 export type StorageClusterKind = K8sResourceCommon & {
+  // https://pkg.go.dev/github.com/red-hat-storage/ocs-operator/api/v1#StorageCluster
   spec: {
-    network: {
+    network?: {
       provider: string;
       selectors: {
         public: string;
         private?: string;
       };
     };
-    manageNodes: boolean;
-    storageDeviceSets: DeviceSet[];
-    resources: StorageClusterResource;
+    manageNodes?: boolean;
+    storageDeviceSets?: DeviceSet[];
+    resources?: StorageClusterResource;
+    arbiter?: {
+      enable: boolean;
+    };
+    nodeTopologies?: {
+      arbiterLocation: string;
+    };
     encryption?: {
       enable: boolean;
       kms?: {
         enable: boolean;
       };
     };
-    arbiter: {
-      enable: boolean;
-    };
-    nodeTopologies: {
-      arbiterLocation: string;
-    };
     flexibleScaling?: boolean;
     monDataDirHostPath?: string;
+    multiCloudGateway?: {
+      reconcileStrategy: string;
+      dbStorageClassName: string;
+    };
   };
   status?: {
     phase: string;
@@ -315,6 +320,7 @@ export type StorageClusterKind = K8sResourceCommon & {
 };
 
 export type DeviceSet = {
+  // https://pkg.go.dev/github.com/red-hat-storage/ocs-operator/api/v1#StorageDeviceSet
   name: string;
   count: number;
   replica: number;
