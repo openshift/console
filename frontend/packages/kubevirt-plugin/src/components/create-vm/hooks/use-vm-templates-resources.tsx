@@ -9,8 +9,9 @@ import {
   TEMPLATE_TYPE_VM,
 } from '../../../constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
-import { DataVolumeModel } from '../../../models';
+import { DataSourceModel, DataVolumeModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { DataSourceKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 
 export const useVmTemplatesResources = (namespace: string): useVmTemplatesResourcesValues => {
@@ -20,6 +21,10 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     selector: {
       matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
     },
+    isList: true,
+  });
+  const [dataSources, dataSourcesLoaded] = useK8sWatchResource<DataSourceKind[]>({
+    kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
   });
   const [baseTemplates, btLoaded, btError] = useK8sWatchResource<TemplateKind[]>({
@@ -51,7 +56,13 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
   const [baseImages, baseLoaded, baseError, baseDVs, basePods] = useBaseImages(baseTemplates, true);
 
   const resourcesLoaded =
-    utLoaded && btLoaded && podsLoaded && dvsLoaded && pvcsLoaded && baseLoaded;
+    utLoaded &&
+    btLoaded &&
+    podsLoaded &&
+    dvsLoaded &&
+    pvcsLoaded &&
+    baseLoaded &&
+    dataSourcesLoaded;
   const resourcesLoadError = utError || btError || podsError || dvsError || pvcsError || baseError;
 
   return React.useMemo(() => {
@@ -63,6 +74,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
       pods: allPods,
       dataVolumes: allDVs,
       pvcs: allPVCs,
+      dataSources,
       userTemplates,
       baseTemplates,
       resourcesLoaded,
@@ -75,6 +87,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     baseDVs,
     pvcs,
     baseImages,
+    dataSources,
     userTemplates,
     baseTemplates,
     resourcesLoaded,
@@ -86,6 +99,7 @@ type useVmTemplatesResourcesValues = {
   pods: PodKind[];
   dataVolumes: V1alpha1DataVolume[];
   pvcs: PersistentVolumeClaimKind[];
+  dataSources: DataSourceKind[];
   userTemplates: TemplateKind[];
   baseTemplates: TemplateKind[];
   resourcesLoaded: boolean;

@@ -189,6 +189,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
     pods,
     dataVolumes,
     pvcs,
+    dataSources,
     userTemplates,
     baseTemplates,
     resourcesLoaded,
@@ -207,8 +208,8 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
       template: selectedTemplate.variants[0],
       pods,
       dataVolumes,
+      dataSources,
     });
-
   React.useEffect(() => {
     if ((initData.commonTemplateName || initData.userTemplateName) && !selectedTemplate && loaded) {
       const name = initData.commonTemplateName ?? initData.userTemplateName;
@@ -352,6 +353,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
             pods={pods}
             pvcs={pvcs}
             dataVolumes={dataVolumes}
+            dataSources={dataSources}
             templates={templates}
             selectedTemplate={selectedTemplate}
             selectTemplate={(template) => {

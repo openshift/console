@@ -16,7 +16,12 @@ import {
   TEMPLATE_TYPE_VM,
   VM_CUSTOMIZE_LABEL,
 } from '../../constants/vm';
-import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import {
+  DataSourceModel,
+  DataVolumeModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getTemplateProviderType, templateProviders } from '../../selectors/vm-template/basic';
 import { VirtualMachineTemplateBundle } from './table/types';
@@ -90,6 +95,11 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       isList: true,
       namespace,
       prop: 'pvcs',
+    },
+    {
+      kind: kubevirtReferenceForModel(DataSourceModel),
+      isList: true,
+      prop: 'dataSources',
     },
     {
       kind: PodModel.kind,

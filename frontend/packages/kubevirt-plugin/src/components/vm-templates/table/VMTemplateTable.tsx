@@ -11,7 +11,7 @@ import { useBaseImages } from '../../../hooks/use-base-images';
 import { useNamespace } from '../../../hooks/use-namespace';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
-import { VMIKind } from '../../../types';
+import { DataSourceKind, VMIKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { dimensifyHeader } from '../../../utils';
 import VMTemplateSupport from '../VMTemplateSupport';
@@ -19,7 +19,6 @@ import { VirtualMachineTemplateBundle } from './types';
 import { tableColumnClasses } from './utils';
 import VMCustomizeRow from './VMCustomizeRow';
 import VMTemplateRow from './VMTemplateRow';
-
 import './vm-template-table.scss';
 
 const vmTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
@@ -133,6 +132,7 @@ const VMTemplateTable: React.FC<VMTemplateTableProps> = (props) => {
             isPinned,
             sourceLoadError: error,
             vmis: props.resources.vmis,
+            dataSources: props?.resources?.dataSources,
           }}
           isPinned={(obj: VirtualMachineTemplateBundle) =>
             obj.template ? isPinned(obj.template) : true
@@ -165,6 +165,7 @@ type VMTemplateTableProps = React.ComponentProps<typeof Table> & {
     pvcs: FirehoseResult<PersistentVolumeClaimKind[]>;
     pods: FirehoseResult<PodKind[]>;
     vmis: FirehoseResult<VMIKind[]>;
+    dataSources: FirehoseResult<DataSourceKind[]>;
   };
 };
 
