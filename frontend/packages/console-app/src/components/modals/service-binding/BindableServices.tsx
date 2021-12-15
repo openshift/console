@@ -35,7 +35,7 @@ const BindableServices: React.FC<BindableServiceProps> = ({ resource }) => {
   const watchedResources = {
     csvs: {
       isList: true,
-      kind: referenceForGroupVersionKind(group)(version)(kind),
+      kind: referenceForGroupVersionKind(group, version, kind),
       namespace: resource.metadata.namespace,
       optional: true,
     },

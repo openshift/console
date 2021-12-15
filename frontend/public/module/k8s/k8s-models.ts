@@ -106,7 +106,7 @@ export const modelForGroupKind = (group: string, kind: string): K8sKind => {
   const { preferredVersion, versions } = groupVersionMap?.[group] || {};
   if (preferredVersion) {
     // Find a model for the CRD that uses this preferred version
-    const ref = referenceForGroupVersionKind(group)(preferredVersion)(kind);
+    const ref = referenceForGroupVersionKind(group, preferredVersion, kind);
     const model = models.get(ref);
     if (model) {
       return model;
@@ -116,7 +116,7 @@ export const modelForGroupKind = (group: string, kind: string): K8sKind => {
   if (versions) {
     const sortedVersions: string[] = versions.sort(apiVersionCompare);
     for (const version of sortedVersions) {
-      const ref = referenceForGroupVersionKind(group)(version)(kind);
+      const ref = referenceForGroupVersionKind(group, version, kind);
       const model = models.get(ref);
       if (model) {
         return model;

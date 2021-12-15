@@ -101,15 +101,17 @@ export const getLatestVersionForCRD = (crd: CustomResourceDefinitionKind) => {
 };
 
 export const referenceForCRD = (obj: CustomResourceDefinitionKind): GroupVersionKind =>
-  referenceForGroupVersionKind(obj.spec.group)(getLatestVersionForCRD(obj))(obj.spec.names.kind);
+  referenceForGroupVersionKind(obj.spec.group, getLatestVersionForCRD(obj), obj.spec.names.kind);
 
 export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind =>
-  referenceForGroupVersionKind(groupVersionFor(ownerRef.apiVersion).group)(
+  referenceForGroupVersionKind(
+    groupVersionFor(ownerRef.apiVersion).group,
     groupVersionFor(ownerRef.apiVersion).version,
-  )(ownerRef.kind);
+    ownerRef.kind,
+  );
 
 export const referenceForExtensionModel = (model: ExtensionK8sGroupModel): GroupVersionKind =>
-  referenceForGroupVersionKind(model?.group || 'core')(model?.version)(model?.kind);
+  referenceForGroupVersionKind(model?.group || 'core', model?.version, model?.kind);
 
 export const referenceFor = ({ kind, apiVersion }: K8sResourceCommon): GroupVersionKind => {
   if (!kind) {
@@ -125,7 +127,7 @@ export const referenceFor = ({ kind, apiVersion }: K8sResourceCommon): GroupVers
   }
 
   const { group, version } = groupVersionFor(apiVersion);
-  return referenceForGroupVersionKind(group)(version)(kind);
+  return referenceForGroupVersionKind(group, version, kind);
 };
 
 export const kindForReference = (ref: K8sResourceKindReference) =>

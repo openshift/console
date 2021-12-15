@@ -160,7 +160,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
   const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
     ({ name, kind, version }): FirehoseResource => {
       const group = name ? name.substring(name.indexOf('.') + 1) : '';
-      const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
+      const reference = group ? referenceForGroupVersionKind(group, version, kind) : kind;
       const model = modelFor(reference);
       return {
         kind: model && !model.crd ? kind : reference,

@@ -44,7 +44,7 @@ export const getOperatorBackedServiceResources = (
     return (
       kind !== 'ServiceBinding' && {
         isList: true,
-        kind: referenceForGroupVersionKind(group)(version)(kind),
+        kind: referenceForGroupVersionKind(group, version, kind),
         namespace,
         optional: true,
         prop: obs,

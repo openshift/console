@@ -175,7 +175,7 @@ export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
       version: api.split('.')[1],
       kind: api.split('.')[0],
     }))
-    .map(({ group, version, kind }) => referenceForGroupVersionKind(group)(version)(kind));
+    .map(({ group, version, kind }) => referenceForGroupVersionKind(group, version, kind));
 
 type RequireOperatorGroupProps = {
   operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };

@@ -109,7 +109,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
         const { group, version, kind } = properties.model;
         return {
           ...properties,
-          model: modelFor(referenceForGroupVersionKind(group)(version)(kind)),
+          model: modelFor(referenceForGroupVersionKind(group, version, kind)),
         };
       });
       const allItems = [...winnowedResponses, ...usableConfigs]

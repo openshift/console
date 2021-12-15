@@ -22,7 +22,7 @@ const TimestampWrapper: React.FC<TimestampWrapperProps> = ({ resModels }) => {
     let resources = {};
     _.forEach(resModels, (res) => {
       const { group, version, kind, name, namespace } = res;
-      const resourceRef = referenceForGroupVersionKind(group)(version)(kind);
+      const resourceRef = referenceForGroupVersionKind(group, version, kind);
       const model = modelFor(resourceRef);
       resources = {
         ...resources,

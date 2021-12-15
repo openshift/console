@@ -96,7 +96,7 @@ const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
   const firehoseResources = resourcesToGet.reduce((acc, descriptor) => {
     const { name, kind, version } = descriptor;
     const group = name ? name.substring(name.indexOf('.') + 1) : '';
-    const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
+    const reference = group ? referenceForGroupVersionKind(group, version, kind) : kind;
     const model = modelFor(reference);
     acc.push({
       prop: kind,

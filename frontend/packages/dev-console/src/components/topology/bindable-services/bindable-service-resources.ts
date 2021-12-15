@@ -19,7 +19,7 @@ export const getBindableServiceResources = (namespace: string): WatchK8sResource
       (acc, { group, version, kind }) => ({
         [kind]: {
           namespace,
-          kind: referenceForGroupVersionKind(group)(version)(kind),
+          kind: referenceForGroupVersionKind(group, version, kind),
           isList: true,
           optional: true,
           prop: kind,

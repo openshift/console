@@ -334,7 +334,7 @@ const mapStateToProps = ({ k8s }) => {
   const hasHyperConvergedCRD =
     !kindsInFlight &&
     !!['v1beta1', 'v1alpha1', 'v1alpha3'].find(
-      (v) => !!modelFor(referenceForGroupVersionKind('hco.kubevirt.io')(v)('HyperConverged')),
+      (v) => !!modelFor(referenceForGroupVersionKind('hco.kubevirt.io', v, 'HyperConverged')),
     );
 
   return {

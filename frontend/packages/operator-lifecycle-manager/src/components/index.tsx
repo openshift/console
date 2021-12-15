@@ -60,12 +60,14 @@ export const referenceForProvidedAPI = (
   desc: CRDDescription | APIServiceDefinition,
 ): GroupVersionKind =>
   _.get(desc, 'group')
-    ? referenceForGroupVersionKind((desc as APIServiceDefinition).group)(desc.version)(desc.kind)
-    : referenceForGroupVersionKind((desc as CRDDescription).name.slice(desc.name.indexOf('.') + 1))(
+    ? referenceForGroupVersionKind((desc as APIServiceDefinition).group, desc.version, desc.kind)
+    : referenceForGroupVersionKind(
+        (desc as CRDDescription).name.slice(desc.name.indexOf('.') + 1),
         desc.version,
-      )(desc.kind);
+        desc.kind,
+      );
 export const referenceForStepResource = (resource: StepResource): GroupVersionKind =>
-  referenceForGroupVersionKind(resource.group || 'core')(resource.version)(resource.kind);
+  referenceForGroupVersionKind(resource.group || 'core', resource.version, resource.kind);
 
 export const defaultChannelFor = (packageManifest: PackageManifestKind) => {
   const channel = !_.isEmpty(packageManifest.status.defaultChannel)

@@ -50,7 +50,7 @@ const EventSourceResources: React.FC<EventSourceResourcesProps> = ({ obj, ownedS
           <li className="list-group-item">
             {isSinkReference && (
               <ResourceLink
-                kind={referenceForGroupVersionKind(group)(version)(sinkKind)}
+                kind={referenceForGroupVersionKind(group, version, sinkKind)}
                 name={sinkName}
                 namespace={namespace}
               />

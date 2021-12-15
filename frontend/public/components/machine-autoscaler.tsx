@@ -34,7 +34,9 @@ const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = 
   }
 
   const groupVersion = groupVersionFor(targetAPIVersion);
-  const reference = referenceForGroupVersionKind(groupVersion.group)(groupVersion.version)(
+  const reference = referenceForGroupVersionKind(
+    groupVersion.group,
+    groupVersion.version,
     targetKind,
   );
   return <ResourceLink kind={reference} name={targetName} namespace={obj.metadata.namespace} />;

@@ -72,7 +72,7 @@ subscribeToExtensions<DynamicModelFeatureFlag>(
   extensionDiffListener((added, removed) => {
     const getModelRef = (e: DynamicModelFeatureFlag) => {
       const model = e.properties.model;
-      return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
+      return referenceForGroupVersionKind(model.group, model.version, model.kind);
     };
 
     added.forEach((e) => {
