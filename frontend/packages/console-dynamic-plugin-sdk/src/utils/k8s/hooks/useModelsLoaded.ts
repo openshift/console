@@ -7,11 +7,11 @@ import { OpenShiftReduxRootState } from './k8s-watch-types';
 
 export const useModelsLoaded = (): boolean => {
   const ref = React.useRef(false);
-  const k8sModels = useSelector<OpenShiftReduxRootState, K8sModel>(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'models']),
+  const k8sModels = useSelector<OpenShiftReduxRootState, K8sModel>(({ sdkK8s }) =>
+    sdkK8s.getIn(['RESOURCES', 'models']),
   );
-  const inFlight = useSelector<OpenShiftReduxRootState, K8sModel>(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'inFlight']),
+  const inFlight = useSelector<OpenShiftReduxRootState, K8sModel>(({ sdkK8s }) =>
+    sdkK8s.getIn(['RESOURCES', 'inFlight']),
   );
 
   if (!ref.current && k8sModels.size && !inFlight) {

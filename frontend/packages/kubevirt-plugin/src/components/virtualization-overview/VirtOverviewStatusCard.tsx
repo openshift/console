@@ -79,7 +79,7 @@ const NetworkingHealthItem = ({ nac }) => {
 };
 
 const mapStateToProps = (state: RootState) => ({
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModels: state.sdkK8s.getIn(['RESOURCES', 'models']),
 });
 
 export const VirtOverviewStatusCard = connect<VirtOverviewStatusCardProps>(mapStateToProps)(

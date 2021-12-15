@@ -15,6 +15,6 @@ import { UseK8sModels } from '../../../extensions/console-types';
  * ```
  */
 export const useK8sModels: UseK8sModels = () => [
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'models']))?.toJS() ?? {},
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
+  useSelector(({ sdkK8s }) => sdkK8s.getIn(['RESOURCES', 'models']))?.toJS() ?? {},
+  useSelector(({ sdkK8s }) => sdkK8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
 ];

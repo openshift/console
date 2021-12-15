@@ -27,8 +27,11 @@ import {
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 
 const stateToProps = (state: RootState) => ({
-  configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
-  clusterOperatorConfigResources: state.k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']),
+  configResources: state.sdkK8s.getIn(['RESOURCES', 'configResources']),
+  clusterOperatorConfigResources: state.sdkK8s.getIn([
+    'RESOURCES',
+    'clusterOperatorConfigResources',
+  ]),
 });
 
 export const breadcrumbsForGlobalConfig = (detailsPageKind: string, detailsPagePath: string) => [

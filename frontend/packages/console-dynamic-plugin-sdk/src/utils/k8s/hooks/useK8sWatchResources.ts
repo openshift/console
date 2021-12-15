@@ -19,7 +19,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const modelsLoaded = useModelsLoaded();
 
   const allK8sModels = useSelector<OpenShiftReduxRootState, ImmutableMap<string, K8sModel>>(
-    (state: OpenShiftReduxRootState) => state.k8s.getIn(['RESOURCES', 'models']),
+    (state: OpenShiftReduxRootState) => state.sdkK8s.getIn(['RESOURCES', 'models']),
   );
 
   const prevK8sModels = usePrevious(allK8sModels);

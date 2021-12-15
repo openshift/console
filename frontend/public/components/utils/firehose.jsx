@@ -114,9 +114,9 @@ const ConnectToState = connect(mapStateToProps)(
 );
 
 const stateToProps = (state, { resources }) => {
-  const { k8s, sdkK8s } = state;
+  const { sdkK8s } = state;
   const k8sModels = resources.reduce(
-    (models, { kind }) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])),
+    (models, { kind }) => models.set(kind, sdkK8s.getIn(['RESOURCES', 'models', kind])),
     ImmutableMap(),
   );
   const loaded = (r) =>
@@ -132,7 +132,7 @@ const stateToProps = (state, { resources }) => {
   return {
     k8sModels,
     loaded: resources.every(loaded),
-    inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
+    inFlight: sdkK8s.getIn(['RESOURCES', 'inFlight']),
   };
 };
 

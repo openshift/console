@@ -50,7 +50,7 @@ const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'defa
 const stateToProps = (state) => ({
   activeNamespace: state.UI.get('activeNamespace'),
   impersonate: getImpersonate(state),
-  models: state.k8s.getIn(['RESOURCES', 'models']),
+  models: state.sdkK8s.getIn(['RESOURCES', 'models']),
 });
 
 const WithYamlTemplates = (Component) =>

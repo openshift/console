@@ -52,8 +52,8 @@ const RecentEvent = withDashboardResources(
   },
 );
 
-const mapStateToProps = ({ k8s }) => ({
-  models: k8s.getIn(['RESOURCES', 'models']),
+const mapStateToProps = ({ sdkK8s }) => ({
+  models: sdkK8s.getIn(['RESOURCES', 'models']),
 });
 
 const OngoingActivity = connect(mapStateToProps)(

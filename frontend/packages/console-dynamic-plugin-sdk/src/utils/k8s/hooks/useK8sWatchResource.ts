@@ -21,8 +21,8 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
     ? getReference(resource.groupVersionKind)
     : resource?.kind;
 
-  const k8sModel = useSelector<SDKStoreState, K8sModel>(({ k8s }) =>
-    kindReference ? k8s.getIn(['RESOURCES', 'models', kindReference]) : null,
+  const k8sModel = useSelector<SDKStoreState, K8sModel>(({ sdkK8s }) =>
+    kindReference ? sdkK8s.getIn(['RESOURCES', 'models', kindReference]) : null,
   );
 
   const reduxID = React.useMemo(() => getIDAndDispatch(resource, k8sModel), [k8sModel, resource]);

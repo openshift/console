@@ -123,7 +123,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
 TemplateInfo.displayName = 'TemplateInfo';
 
 const stateToProps = (state: RootState) => ({
-  models: state.k8s.getIn(['RESOURCES', 'models']),
+  models: state.sdkK8s.getIn(['RESOURCES', 'models']),
 });
 
 class TemplateForm_ extends React.Component<

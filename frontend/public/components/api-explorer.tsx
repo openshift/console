@@ -152,8 +152,8 @@ const APIResourceRows = ({ componentProps: { data } }) =>
     },
   ]);
 
-const stateToProps = ({ k8s }) => ({
-  models: k8s.getIn(['RESOURCES', 'models']),
+const stateToProps = ({ sdkK8s }) => ({
+  models: sdkK8s.getIn(['RESOURCES', 'models']),
 });
 
 const APIResourcesList = compose(

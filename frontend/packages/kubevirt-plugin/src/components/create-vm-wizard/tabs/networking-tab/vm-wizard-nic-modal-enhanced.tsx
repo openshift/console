@@ -104,7 +104,7 @@ type VMWizardNICModalProps = ModalComponentProps & {
 
 const stateToProps = (state, { wizardReduxID }) => {
   // FIXME: This should be a flag.
-  const hasNADs = !!state.k8s.getIn([
+  const hasNADs = !!state.sdkK8s.getIn([
     'RESOURCES',
     'models',
     referenceForModel(NetworkAttachmentDefinitionModel),

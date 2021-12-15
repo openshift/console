@@ -137,9 +137,9 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   );
 };
 
-const resourceListDropdownStateToProps = ({ k8s }) => ({
-  allModels: k8s.getIn(['RESOURCES', 'models']),
-  groupToVersionMap: k8s.getIn(['RESOURCES', 'groupToVersionMap']),
+const resourceListDropdownStateToProps = ({ sdkK8s }) => ({
+  allModels: sdkK8s.getIn(['RESOURCES', 'models']),
+  groupToVersionMap: sdkK8s.getIn(['RESOURCES', 'groupToVersionMap']),
 });
 
 export const ResourceListDropdown = connect<ResourceListDropdownStateToProps>(

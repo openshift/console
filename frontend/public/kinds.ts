@@ -18,11 +18,11 @@ export const connectToModel = connect(
     const kind: string = props.kind || _.get(props, 'match.params.plural');
 
     const kindObj: K8sKind = !_.isEmpty(kind)
-      ? state.k8s.getIn(['RESOURCES', 'models', kind]) ||
-        state.k8s.getIn(['RESOURCES', 'models', kindForReference(kind)])
+      ? state.sdkK8s.getIn(['RESOURCES', 'models', kind]) ||
+        state.sdkK8s.getIn(['RESOURCES', 'models', kindForReference(kind)])
       : null;
 
-    return { kindObj, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']) } as any;
+    return { kindObj, kindsInFlight: state.sdkK8s.getIn(['RESOURCES', 'inFlight']) } as any;
   },
 );
 
@@ -62,7 +62,7 @@ export const connectToPlural: ConnectToPlural = connect(
       });
 
       if (!kindObj) {
-        kindObj = state.k8s.getIn(['RESOURCES', 'models']).get(plural);
+        kindObj = state.sdkK8s.getIn(['RESOURCES', 'models']).get(plural);
       }
     } else {
       kindObj = allModels().find(
@@ -72,6 +72,6 @@ export const connectToPlural: ConnectToPlural = connect(
 
     const modelRef = isGroupVersionKind(plural) ? plural : _.get(kindObj, 'kind');
 
-    return { kindObj, modelRef, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']) };
+    return { kindObj, modelRef, kindsInFlight: state.sdkK8s.getIn(['RESOURCES', 'inFlight']) };
   },
 );

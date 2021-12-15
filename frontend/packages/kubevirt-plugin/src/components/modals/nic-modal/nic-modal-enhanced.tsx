@@ -124,9 +124,9 @@ type NICModalFirehoseProps = ModalComponentProps & {
   isVMRunning?: boolean;
 };
 
-const nicModalStateToProps = ({ k8s }) => {
+const nicModalStateToProps = ({ sdkK8s }) => {
   // FIXME: This should be a flag.
-  const hasNADs = !!k8s.getIn([
+  const hasNADs = !!sdkK8s.getIn([
     'RESOURCES',
     'models',
     referenceForModel(NetworkAttachmentDefinitionModel),

@@ -128,8 +128,8 @@ export const ResourceRequirementsModal = withHandlePromise(
   },
 );
 
-const stateToProps = ({ k8s }: RootState, { obj }) => ({
-  model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) as K8sKind,
+const stateToProps = ({ sdkK8s }: RootState, { obj }) => ({
+  model: sdkK8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) as K8sKind,
 });
 
 export const ResourceRequirementsModalLink = connect(stateToProps)(

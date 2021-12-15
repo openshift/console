@@ -57,7 +57,7 @@ const RecentEvent = withDashboardResources<RecentEventProps>(
 );
 
 const mapStateToProps = (state: RootState): OngoingActivityReduxProps => ({
-  models: state.k8s.getIn(['RESOURCES', 'models']) as ImmutableMap<string, K8sKind>,
+  models: state.sdkK8s.getIn(['RESOURCES', 'models']) as ImmutableMap<string, K8sKind>,
 });
 
 const OngoingActivity = connect(mapStateToProps)(

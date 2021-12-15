@@ -76,7 +76,7 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
   m = store
     .getState()
-    .k8s.getIn(['RESOURCES', 'models'])
+    .sdkK8s.getIn(['RESOURCES', 'models'])
     .get(ref);
   if (m) {
     return m;
@@ -90,7 +90,7 @@ export const modelFor = (ref: K8sResourceKindReference) => {
 
   m = store
     .getState()
-    .k8s.getIn(['RESOURCES', 'models'])
+    .sdkK8s.getIn(['RESOURCES', 'models'])
     .get(kindForReference(ref));
   if (m) {
     return m;
@@ -102,10 +102,12 @@ export const modelFor = (ref: K8sResourceKindReference) => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelForGroupKind = (group: string, kind: string): K8sKind => {
-  const models: ImmutableMap<string, K8sKind> = store.getState().k8s.getIn(['RESOURCES', 'models']);
+  const models: ImmutableMap<string, K8sKind> = store
+    .getState()
+    .sdkK8s.getIn(['RESOURCES', 'models']);
   const groupVersionMap: DiscoveryResources['groupVersionMap'] = store
     .getState()
-    .k8s.getIn(['RESOURCES', 'groupToVersionMap']);
+    .sdkK8s.getIn(['RESOURCES', 'groupToVersionMap']);
 
   const { preferredVersion, versions } = groupVersionMap?.[group] || {};
   if (preferredVersion) {
@@ -143,16 +145,16 @@ export const useModelFinder = () => {
   const referenceForGroupVersionPlural = (group: string) => (version: string) => (plural: string) =>
     [group || 'core', version, plural].join('~');
 
-  const models: ImmutableMap<string, K8sKind> = useSelector(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'models']),
+  const models: ImmutableMap<string, K8sKind> = useSelector(({ sdkK8s }) =>
+    sdkK8s.getIn(['RESOURCES', 'models']),
   );
   const pluralsToModelMap = models.reduce((acc, curr) => {
     const ref = referenceForGroupVersionPlural(curr.apiGroup)(curr.apiVersion)(curr.plural);
     acc[ref] = curr;
     return acc;
   }, {});
-  const groupVersionMap: DiscoveryResources['groupVersionMap'] = useSelector(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'groupToVersionMap']),
+  const groupVersionMap: DiscoveryResources['groupVersionMap'] = useSelector(({ sdkK8s }) =>
+    sdkK8s.getIn(['RESOURCES', 'groupToVersionMap']),
   );
 
   const findModel = (group: string, resource: string) => {

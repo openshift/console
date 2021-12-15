@@ -125,8 +125,8 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
 };
 
 export const mapStateToProps = (state: RootState) => ({
-  kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  kindsInFlight: state.sdkK8s.getIn(['RESOURCES', 'inFlight']),
+  k8sModels: state.sdkK8s.getIn(['RESOURCES', 'models']),
 });
 
 export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);

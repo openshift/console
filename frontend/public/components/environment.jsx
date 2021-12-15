@@ -288,8 +288,8 @@ class CurrentEnvVars {
 /** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean, useLoadingInline?: boolean}) => {model: K8sKind}} */
 const stateToProps = (state, { obj }) => ({
   model:
-    state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
-    state.k8s.getIn(['RESOURCES', 'models', obj.kind]),
+    state.sdkK8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
+    state.sdkK8s.getIn(['RESOURCES', 'models', obj.kind]),
   impersonate: getImpersonate(state),
 });
 

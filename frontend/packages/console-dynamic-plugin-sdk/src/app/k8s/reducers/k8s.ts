@@ -1,5 +1,7 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 import * as _ from 'lodash';
+import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
+import { getNamespacedResources, allModels } from '../../../utils/k8s/k8s-utils';
 import { K8sState } from '../../redux-types';
 import { ActionType, K8sAction } from '../actions/k8s';
 import { getK8sDataById } from './k8sSelector';
@@ -89,6 +91,53 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
 
   let newList;
   switch (action.type) {
+    case ActionType.GetResourcesInFlight:
+      return state.setIn(['RESOURCES', 'inFlight'], true);
+
+    case ActionType.ReceivedResources:
+      return (
+        action.payload.resources.models
+          .filter((model) => !state.getIn(['RESOURCES', 'models']).has(getReferenceForModel(model)))
+          .filter((model) => {
+            const existingModel = state.getIn(['RESOURCES', 'models', model.kind]);
+            return (
+              !existingModel || getReferenceForModel(existingModel) !== getReferenceForModel(model)
+            );
+          })
+          .map((model) => {
+            model.namespaced
+              ? getNamespacedResources().add(getReferenceForModel(model))
+              : getNamespacedResources().delete(getReferenceForModel(model));
+            return model;
+          })
+          .reduce((prevState, newModel) => {
+            // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
+            const [modelRef, model] = allModels().findEntry(
+              (staticModel) => getReferenceForModel(staticModel) === getReferenceForModel(newModel),
+            ) || [getReferenceForModel(newModel), newModel];
+            // Verbs and short names are not part of the static model definitions, so use the values found during discovery.
+            return prevState.updateIn(['RESOURCES', 'models'], (models) =>
+              models.set(modelRef, {
+                ...model,
+                verbs: newModel.verbs,
+                shortNames: newModel.shortNames,
+              }),
+            );
+          }, state)
+          // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
+          .setIn(['RESOURCES', 'allResources'], action.payload.resources.allResources)
+          .setIn(['RESOURCES', 'safeResources'], action.payload.resources.safeResources)
+          .setIn(['RESOURCES', 'adminResources'], action.payload.resources.adminResources)
+          .setIn(['RESOURCES', 'configResources'], action.payload.resources.configResources)
+          .setIn(
+            ['RESOURCES', 'clusterOperatorConfigResources'],
+            action.payload.resources.clusterOperatorConfigResources,
+          )
+          .setIn(['RESOURCES', 'namespacedSet'], action.payload.resources.namespacedSet)
+          .setIn(['RESOURCES', 'groupToVersionMap'], action.payload.resources.groupVersionMap)
+          .setIn(['RESOURCES', 'inFlight'], false)
+      );
+
     case ActionType.StartWatchK8sObject:
       return state.set(
         action.payload.id,

@@ -144,7 +144,7 @@ export const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ labelSelector 
 };
 
 const mapStateToProps = (state: RootState) => ({
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModels: state.sdkK8s.getIn(['RESOURCES', 'models']),
 });
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
   const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(

@@ -323,8 +323,8 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   );
 };
 
-const mapStateToProps = ({ k8s }) => {
-  const kindsInFlight = k8s.getIn(['RESOURCES', 'inFlight']);
+const mapStateToProps = ({ sdkK8s }) => {
+  const kindsInFlight = sdkK8s.getIn(['RESOURCES', 'inFlight']);
   const hasHyperConvergedCRD =
     !kindsInFlight &&
     !!['v1beta1', 'v1alpha1', 'v1alpha3'].find(
