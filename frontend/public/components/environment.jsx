@@ -392,9 +392,12 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
       name,
       namespace,
     };
-    checkAccess(resourceAttributes, impersonate).then((resp) =>
-      this.setState({ allowed: resp.status.allowed }),
-    );
+    checkAccess(resourceAttributes, impersonate)
+      .then((resp) => this.setState({ allowed: resp.status.allowed }))
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('Error while check edit access for environment variables', e);
+      });
   }
 
   /**

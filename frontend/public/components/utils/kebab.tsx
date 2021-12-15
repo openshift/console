@@ -513,7 +513,10 @@ class KebabWithTranslation extends React.Component<
     // This depends on `checkAccess` being memoized.
     _.each(this.props.options, (option: KebabOption) => {
       if (option.accessReview) {
-        checkAccess(option.accessReview);
+        checkAccess(option.accessReview).catch((e) => {
+          // eslint-disable-next-line no-console
+          console.warn('Error while check action menu access review', e);
+        });
       }
     });
   };

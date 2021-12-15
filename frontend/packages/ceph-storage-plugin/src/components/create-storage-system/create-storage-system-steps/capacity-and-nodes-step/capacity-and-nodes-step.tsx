@@ -86,7 +86,7 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   const onRowSelected = React.useCallback(
     (selectedNodes: NodeKind[]) => {
       const nodesData = createWizardNodeState(selectedNodes);
-      dispatch({ type: 'wizard/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/setNodes', payload: nodesData });
     },
     [dispatch],
   );
@@ -185,7 +185,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
       const pvNodes = getAssociatedNodes(pvBySc);
       const filteredNodes = memoizedAllNodes.filter((node) => pvNodes.includes(node.metadata.name));
       const nodesData = createWizardNodeState(filteredNodes);
-      dispatch({ type: 'wizard/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/setNodes', payload: nodesData });
     }
   }, [dispatch, allNodeLoadError, allNodeLoaded, memoizedAllNodes, pvBySc]);
 

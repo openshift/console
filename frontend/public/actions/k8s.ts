@@ -45,9 +45,14 @@ export const getResources = () => (dispatch: Dispatch) => {
       dispatch(receivedResources(resources));
     })
     // eslint-disable-next-line no-console
-    .catch((err) => console.error(err))
+    .catch((err) => console.error('Fetching resource failed:', err))
     .finally(() => {
-      setTimeout(fetchSwagger, 10000);
+      setTimeout(() => {
+        fetchSwagger().catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error('Could not fetch OpenAPI yaml after fetching all resources.', e);
+        });
+      }, 10000);
     });
 };
 
@@ -57,36 +62,41 @@ export const startAPIDiscovery = () => (dispatch) => {
     group: CustomResourceDefinitionModel.apiGroup,
     resource: CustomResourceDefinitionModel.plural,
     verb: 'list',
-  }).then((res) => {
-    if (res.status.allowed) {
-      // eslint-disable-next-line no-console
-      console.log('API discovery method: Watching');
-      // Watch CRDs and dispatch refreshAPI action whenever an event is received
-      dispatch(
-        watchK8sList(
-          reduxID,
-          {},
-          CustomResourceDefinitionModel,
-          // Only re-run API discovery on added or removed CRDs.
-          (_id: string, events: K8sEvent[]) =>
-            events.some((e) => e.type !== 'MODIFIED') ? getResources() : _.noop,
-        ),
-      );
-    } else {
-      // eslint-disable-next-line no-console
-      console.log('API discovery method: Polling');
-      // Poll API discovery every 30 seconds since we can't watch CRDs
-      dispatch(getResources());
-      if (POLLs[apiDiscovery]) {
-        clearTimeout(POLLs[apiDiscovery]);
-        delete POLLs[apiDiscovery];
+  })
+    .then((res) => {
+      if (res.status.allowed) {
+        // eslint-disable-next-line no-console
+        console.log('API discovery method: Watching');
+        // Watch CRDs and dispatch refreshAPI action whenever an event is received
+        dispatch(
+          watchK8sList(
+            reduxID,
+            {},
+            CustomResourceDefinitionModel,
+            // Only re-run API discovery on added or removed CRDs.
+            (_id: string, events: K8sEvent[]) =>
+              events.some((e) => e.type !== 'MODIFIED') ? getResources() : _.noop,
+          ),
+        );
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('API discovery method: Polling');
+        // Poll API discovery every 30 seconds since we can't watch CRDs
+        dispatch(getResources());
+        if (POLLs[apiDiscovery]) {
+          clearTimeout(POLLs[apiDiscovery]);
+          delete POLLs[apiDiscovery];
+        }
+        POLLs[apiDiscovery] = setTimeout(
+          () => dispatch(startAPIDiscovery()),
+          API_DISCOVERY_POLL_INTERVAL,
+        );
       }
-      POLLs[apiDiscovery] = setTimeout(
-        () => dispatch(startAPIDiscovery()),
-        API_DISCOVERY_POLL_INTERVAL,
-      );
-    }
-  });
+    })
+    .catch((e) => {
+      // eslint-disable-next-line no-console
+      console.warn('Error while start API discovery', e);
+    });
 };
 
 const k8sActions = {
