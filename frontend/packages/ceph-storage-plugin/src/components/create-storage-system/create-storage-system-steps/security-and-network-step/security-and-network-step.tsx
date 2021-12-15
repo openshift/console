@@ -4,7 +4,7 @@ import { useFlag, getNamespace, getName } from '@console/shared';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { Encryption } from './encryption';
 import { NetworkType, NADSelectorType } from '../../../../types';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import { WizardDispatch, WizardState } from '../../reducer';
 import { NetworkFormGroup } from '../../../ocs-install/install-wizard/configure';
 
@@ -13,7 +13,7 @@ export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({
   dispatch,
   infraType,
 }) => {
-  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
+  const isMultusSupported = useFlag(FEATURES.OCS_MULTUS);
 
   const { networkType: nwType, clusterNetwork, publicNetwork, encryption, kms } = state;
 

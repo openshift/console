@@ -14,7 +14,7 @@ import {
 } from '../../../../utils/create-storage-system';
 import { OSD_CAPACITY_SIZES } from '../../../../utils/osd-size-dropdown';
 import { WizardState } from '../../reducer';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import './review-and-create-step.scss';
 
 export const ReviewItem = ({ children, title }) => (
@@ -28,8 +28,8 @@ export const ReviewItem = ({ children, title }) => (
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS }) => {
   const { t } = useTranslation();
-  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
-  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
+  const isMultusSupported = useFlag(FEATURES.OCS_MULTUS);
+  const isTaintSupported = useFlag(FEATURES.OCS_TAINT_NODES);
 
   const {
     storageClass,

@@ -6,7 +6,7 @@ import { FieldLevelHelp } from '@console/internal/components/utils';
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import { KMSEmptyState } from '../../../../constants';
 import { WizardDispatch, WizardState } from '../../reducer';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import { KMSConfigure } from '../../../kms-config/kms-config';
 import { AdvancedSubscription } from '../../advanced-subscription/advanced-subscription';
 import './encryption.scss';
@@ -150,7 +150,7 @@ export const Encryption: React.FC<EncryptionProps> = ({
   isMCG,
 }) => {
   const { t } = useTranslation();
-  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
+  const isKmsSupported = useFlag(FEATURES.OCS_KMS);
   const [encryptionChecked, setEncryptionChecked] = React.useState(
     encryption.clusterWide || encryption.storageClass,
   );

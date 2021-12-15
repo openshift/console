@@ -35,6 +35,7 @@ import {
   detectManagedODF,
   detectComponents,
   MCG_STANDALONE,
+  FEATURES,
 } from './features';
 import { ODF_MODEL_FLAG } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
@@ -484,7 +485,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      disallowed: [OCS_INDEPENDENT_FLAG, MCG_STANDALONE],
+      disallowed: [OCS_INDEPENDENT_FLAG, MCG_STANDALONE, FEATURES.ADD_CAPACITY],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl
@@ -503,6 +504,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/odf-system/odf-system-list' /* webpackChunkName: "odf-system-list" */
           )
         ).default,
+    },
+    flags: {
+      disallowed: [FEATURES.SS_LIST],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl

@@ -30,7 +30,7 @@ import {
 } from '@console/internal/module/k8s/types';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { ConfigMapModel, StorageClassModel, InfrastructureModel } from '@console/internal/models';
-import { OCS_INDEPENDENT_FLAG, GUARDED_FEATURES } from '../../features';
+import { OCS_INDEPENDENT_FLAG, FEATURES } from '../../features';
 import {
   OCS_INTERNAL_CR_NAME,
   OCS_EXTERNAL_CR_NAME,
@@ -274,7 +274,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
+  const isKmsSupported = useFlag(FEATURES.OCS_KMS);
   const [checked, isChecked] = React.useState(false);
 
   const setChecked = (value: boolean) => {
@@ -321,7 +321,7 @@ const ExistingKMSDropDown: React.FC<ExistingKMSDropDownProps> = ({
   setEncryptionId,
 }) => {
   const { t } = useTranslation();
-  const isHpcsKmsSupported = useFlag(GUARDED_FEATURES.ODF_HPCS_KMS);
+  const isHpcsKmsSupported = useFlag(FEATURES.ODF_HPCS_KMS);
 
   const [isProviderOpen, setProviderOpen] = React.useState(false);
   const [isServiceOpen, setServiceOpen] = React.useState(false);

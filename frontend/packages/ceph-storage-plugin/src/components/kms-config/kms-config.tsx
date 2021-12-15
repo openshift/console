@@ -6,7 +6,7 @@ import { ValutConfigure } from './vault-config';
 import { HpcsConfigure } from './hpcs-config';
 import { EncryptionDispatch, KMSConfigureProps } from './providers';
 import { isLengthUnity } from './utils';
-import { GUARDED_FEATURES } from '../../features';
+import { FEATURES } from '../../features';
 import { ProviderNames } from '../../types';
 import './kms-config.scss';
 
@@ -40,7 +40,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const isHpcsKmsSupported = useFlag(GUARDED_FEATURES.ODF_HPCS_KMS);
+  const isHpcsKmsSupported = useFlag(FEATURES.ODF_HPCS_KMS);
   // vault as default KMS
   const kmsProvider: ProviderNames = state.kms?.['provider'] || ProviderNames.VAULT;
   const allowedKMSProviders = KMSProviders.filter(
