@@ -77,7 +77,7 @@ export const CapacityCard: React.FC<CapacityCardProps> = React.memo((props) => {
           <FieldLevelHelp>{description}</FieldLevelHelp>
         </CardTitle>
       </CardHeader>
-      <CardBody>
+      <CardBody className="ceph-raw-usage__container">
         {!loading && !loadError && (
           <>
             <div className="ceph-raw-usage__item ceph-raw-usage__legend">

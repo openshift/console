@@ -1,7 +1,7 @@
 // TODO (@rexagod): https://github.com/openshift/console/pull/10470#discussion_r766453369
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardActions, CardHeader, CardTitle, Grid } from '@patternfly/react-core';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
@@ -10,7 +10,6 @@ import {
   humanizeDecimalBytesPerSec,
   FieldLevelHelp,
 } from '@console/internal/components/utils';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { humanizeIOPS, humanizeLatency } from './utils';
 import { PrometheusUtilizationItem } from './prometheus-utilization-item';
 import { PrometheusMultilineUtilizationItem } from './prometheus-multi-utilization-item';
@@ -39,7 +38,7 @@ const UtilizationCard: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
+        <CardTitle className="co-utilization-card__title">
           {t('ceph-storage-plugin~Utilization')}
           <FieldLevelHelp>
             {t(
@@ -51,7 +50,7 @@ const UtilizationCard: React.FC = () => {
           <UtilizationDurationDropdown />
         </CardActions>
       </CardHeader>
-      <UtilizationBody>
+      <Grid className="co-utilization-card__body">
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Used Capacity')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
@@ -93,7 +92,7 @@ const UtilizationCard: React.FC = () => {
           }
           humanizeValue={humanizeDecimalBytesPerSec}
         />
-      </UtilizationBody>
+      </Grid>
     </Card>
   );
 };

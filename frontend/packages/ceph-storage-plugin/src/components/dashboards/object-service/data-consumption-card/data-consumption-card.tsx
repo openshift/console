@@ -81,7 +81,7 @@ const DataConsumptionCard: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="nb-data-consumption-card__header">
         <CardTitle>
           {t('ceph-storage-plugin~Performance')}
           <FieldLevelHelp>

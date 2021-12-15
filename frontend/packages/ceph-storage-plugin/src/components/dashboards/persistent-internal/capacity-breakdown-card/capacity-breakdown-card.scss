@@ -6,6 +6,8 @@
 
 .ceph-capacity-breakdown-card__header {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .ceph-capacity-breakdown-card-header__dropdown {

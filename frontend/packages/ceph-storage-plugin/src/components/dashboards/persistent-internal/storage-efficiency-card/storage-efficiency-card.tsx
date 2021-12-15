@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -92,8 +92,10 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
       <CardHeader>
         <CardTitle>{t('ceph-storage-plugin~Storage Efficiency')}</CardTitle>
       </CardHeader>
-      <EfficiencyItemBody {...compressionRatioProps} />
-      <EfficiencyItemBody {...savingsProps} />
+      <CardBody>
+        <EfficiencyItemBody {...compressionRatioProps} />
+        <EfficiencyItemBody {...savingsProps} />
+      </CardBody>
     </Card>
   );
 };
