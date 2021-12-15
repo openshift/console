@@ -4,7 +4,12 @@ import {
   GetGroupVersionKindForResource,
   GetGroupVersionKindForModel,
 } from '../../api/k8s-types';
-import { K8sGroupVersionKind, K8sResourceKindReference } from '../../extensions/console-types';
+import {
+  GroupVersionKind,
+  K8sGroupVersionKind,
+  K8sResourceKindReference,
+  OwnerReference,
+} from '../../extensions/console-types';
 
 /**
  * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind
@@ -21,6 +26,42 @@ export const getReference = ({
   version,
   kind,
 }: K8sGroupVersionKind): K8sResourceKindReference => [group || 'core', version, kind].join('~');
+
+/**
+ * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind
+ * Provides an object containing group and version for given apiVersion string.
+ * @param apiVersion apiVersion
+ * @return The object containing group and version for given apiVersion string.
+ * * */
+export const groupVersionFor = (apiVersion: string) => ({
+  group: apiVersion.split('/').length === 2 ? apiVersion.split('/')[0] : 'core',
+  version: apiVersion.split('/').length === 2 ? apiVersion.split('/')[1] : apiVersion,
+});
+
+// TODO(alecmerdler): Replace all manual string building with this function
+/**
+ * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind
+ * Provides a reference string that uniquely identifies given group, version, and kind.
+ * @param group group
+ * @param version version
+ * @param kind kind
+ * @return The reference for group, version and kind i.e `group~version~kind`.
+ * * */
+export const referenceForGroupVersionKind = (group: string, version: string, kind: string) =>
+  [group, version, kind].join('~');
+
+/**
+ * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind
+ * Provides a reference string that uniquely identifies the group, version, and kind of an owner reference.
+ * @param ownerRef owner reference
+ * @return The reference for owner reference i.e `group~version~kind`.
+ * * */
+export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind =>
+  referenceForGroupVersionKind(
+    groupVersionFor(ownerRef.apiVersion).group,
+    groupVersionFor(ownerRef.apiVersion).version,
+    ownerRef.kind,
+  );
 
 /**
  * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind

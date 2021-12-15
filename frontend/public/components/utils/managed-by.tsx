@@ -5,14 +5,9 @@ import { useTranslation } from 'react-i18next';
 
 import { ResourceIcon } from './resource-icon';
 import { resourcePathFromModel, ResourceLink } from './resource-link';
-import {
-  K8sResourceCommon,
-  referenceForOwnerRef,
-  OwnerReference,
-  modelFor,
-  k8sList,
-} from '../../module/k8s';
 import { useSafetyFirst } from '../safety-first';
+import { K8sResourceCommon, OwnerReference, modelFor, k8sList } from '../../module/k8s';
+import { referenceForOwnerRef } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
