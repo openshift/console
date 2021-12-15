@@ -1,6 +1,13 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { addOptions, buildConfigOptions, messages } from '../../constants';
-import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
+import { addOptions, buildConfigOptions, messages, resources } from '../../constants';
+import {
+  gitPage,
+  addPage,
+  topologyPage,
+  addHealthChecksPage,
+  topologySidePane,
+  app,
+} from '../../pages';
 import { dockerfilePage } from '../../pages/add-flow/dockerfile-page';
 
 Given('user is at Import from Git form', () => {
@@ -32,6 +39,10 @@ Then('Name displays as {string}', (nodeName: string) => {
   gitPage.verifyNodeName(nodeName);
 });
 
+Then('user can see toast notification saying {string}', (message: string) => {
+  gitPage.notificationVerify(message);
+});
+
 When('user selects resource type as {string}', (resourceType: string) => {
   gitPage.selectResource(resourceType);
 });
@@ -41,6 +52,7 @@ Then(
   (workloadName: string, appName: string) => {
     topologyPage.verifyWorkloadInTopologyPage(workloadName);
     topologyPage.getAppNode(appName).click({ force: true });
+    cy.get('[role="dialog"]').should('contain', 'DeploymentConfig');
     topologySidePane.verifyResource(workloadName);
   },
 );
@@ -71,6 +83,12 @@ When('user enters Name as {string} in General section of Dockerfile page', (name
 
 When('user clicks {string} link in Advanced Options section', (linkName: string) => {
   cy.byButtonText(linkName).click();
+});
+
+When('user enters {string} in Additional Route labels section', (labelName: string) => {
+  // Below to be uncommeted after the epic is feature complete
+  // gitPage.enterRouteLabels(labelName);
+  cy.log(labelName); // to avoid lint issues
 });
 
 When('user enters Hostname as {string}', (hostName: string) => {
@@ -181,6 +199,10 @@ When('user enters label as {string}', (labelName: string) => {
   gitPage.enterLabels(labelName);
 });
 
+Then('user can see the toast notification containg the route value {string}', (message: string) => {
+  gitPage.notificationVerify(message);
+});
+
 Then('public url is not created for node {string} in the workload sidebar', (nodeName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
   topologyPage.componentNode(nodeName).click({ force: true });
@@ -199,7 +221,8 @@ Then(
     topologyPage.componentNode(nodeName).click({ force: true });
     topologySidePane.selectTab('Resources');
     topologySidePane.verifySection('Routes');
-    cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
+    // cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
+    cy.byLegacyTestID('route-link').should('contain.text', routeName);
   },
 );
 
@@ -210,5 +233,16 @@ Then(
     topologySidePane.selectTab('Details');
     topologySidePane.verifyLabel(labelName);
     topologySidePane.close();
+  },
+);
+
+Then(
+  'user is able to see label {string}  in Route details page for deployment {string}',
+  (labelName: string, nodeName: string) => {
+    topologySidePane.selectTab('Resources');
+    topologySidePane.selectResource(resources.Routes, 'aut-addflow-git', nodeName);
+    app.waitForLoad();
+    // Below to be uncommeted after the epic is feature complete
+    // cy.get(gitPO.advancedOptions.routing.labelsRouteDetails).should('contain', labelName);
   },
 );

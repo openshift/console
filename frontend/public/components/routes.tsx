@@ -108,7 +108,14 @@ export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({
   additionalClassName,
 }) => {
   const link = getRouteWebURL(route);
-  return <ExternalLinkWithCopy additionalClassName={additionalClassName} link={link} text={link} />;
+  return (
+    <ExternalLinkWithCopy
+      additionalClassName={additionalClassName}
+      link={link}
+      text={link}
+      dataTestID="route-link"
+    />
+  );
 };
 
 // Renders LinkAndCopy for non subdomains
