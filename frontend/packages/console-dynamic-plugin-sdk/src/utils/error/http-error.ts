@@ -64,10 +64,8 @@ export class TimeoutError extends CustomError {
 }
 
 export class IncompleteDataError extends CustomError {
-  public constructor(public successfulCalls: number, public totalCalls: number) {
-    super(
-      `Only ${successfulCalls} of ${totalCalls} resources loaded. Some data might not be displayed.`,
-    );
+  public constructor(public labels: string[]) {
+    super(`Could not fetch all data. This data are missing: ${labels.join(', ')}.`);
   }
 }
 

@@ -8,6 +8,7 @@ import {
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
+import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 export const Box: React.FC<BoxProps> = ({ children, className }) => (
   <div className={classNames('cos-status-box', className)}>{children}</div>
@@ -176,8 +177,13 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
             variant="info"
             isInline
             title={t(
-              'public~Only {{successfulCalls}} of {{totalCalls}} resources loaded. Some data might not be displayed.',
-              { successfulCalls: loadError.successfulCalls, totalCalls: loadError.totalCalls },
+              'public~{{labels}} content is not available in the catalog at this time due to loading failures.',
+              {
+                labels: new Intl.ListFormat(getLastLanguage() || 'en', {
+                  style: 'long',
+                  type: 'conjunction',
+                }).format(loadError.labels),
+              },
             )}
           />
           {props.children}

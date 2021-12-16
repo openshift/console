@@ -123,12 +123,18 @@ describe('StatusBox', () => {
 
   it('should render a patternfly alert together with its children when an IncompleteDataError occured', () => {
     const { getByText } = render(
-      <StatusBox loaded data={[{}]} loadError={new IncompleteDataError(1, 5)}>
+      <StatusBox
+        loaded
+        data={[{}]}
+        loadError={new IncompleteDataError(['Test', 'RedHat', 'Hello World'])}
+      >
         my-children
       </StatusBox>,
     );
 
-    getByText('Only 1 of 5 resources loaded. Some data might not be displayed.');
+    getByText(
+      'Test, RedHat, and Hello World content is not available in the catalog at this time due to loading failures.',
+    );
     getByText('my-children');
   });
 

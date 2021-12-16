@@ -86,7 +86,14 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     return result;
   }, [catalogProviderExtensions, catalogItems]);
 
-  const successfulCalls = catalogProviderExtensions.filter(({ uid }) => extItemsMap[uid]).length;
+  const failedExtensions = [
+    ...new Set(
+      catalogProviderExtensions
+        .filter(({ uid }) => extItemsErrorMap[uid])
+        .map((e) => e.properties.title),
+    ),
+  ];
+
   const failedCalls = catalogProviderExtensions.filter(({ uid }) => extItemsErrorMap[uid]).length;
   const totalCalls = catalogProviderExtensions.length;
   const loadError =
@@ -94,7 +101,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
       ? null
       : failedCalls === totalCalls
       ? new Error('failed loading catalog data')
-      : new IncompleteDataError(successfulCalls, totalCalls);
+      : new IncompleteDataError(failedExtensions);
 
   const catalogService: CatalogService = {
     type: catalogType,

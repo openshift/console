@@ -704,6 +704,7 @@
     "properties": {
       "catalogId": "pipelines-task-catalog",
       "type": "Red Hat",
+      "title": "%pipelines-plugin~Tasks%",
       "provider": { "$codeRef": "catalog.TektonTaskProvider" }
     },
     "flags": {
@@ -715,6 +716,7 @@
     "properties": {
       "catalogId": "pipelines-task-catalog",
       "type": "Community",
+      "title": "%pipelines-plugin~Tasks%",
       "provider": { "$codeRef": "catalog.TektonHubTaskProvider" }
     },
     "flags": {

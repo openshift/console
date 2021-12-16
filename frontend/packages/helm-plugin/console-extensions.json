@@ -125,6 +125,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "HelmChart",
+      "title": "%helm-plugin~Helm Charts%",
       "provider": { "$codeRef": "helmCatalog.helmChartProvider" }
     },
     "flags": {

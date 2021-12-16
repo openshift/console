@@ -1691,7 +1691,7 @@
   "You don't have access to this section due to cluster policy.": "You don't have access to this section due to cluster policy.",
   "Error details": "Error details",
   "404: Not Found": "404: Not Found",
-  "Only {{successfulCalls}} of {{totalCalls}} resources loaded. Some data might not be displayed.": "Only {{successfulCalls}} of {{totalCalls}} resources loaded. Some data might not be displayed.",
+  "{{labels}} content is not available in the catalog at this time due to loading failures.": "{{labels}} content is not available in the catalog at this time due to loading failures.",
   "Timed out fetching new data. The data below is stale.": "Timed out fetching new data. The data below is stale.",
   "No default StorageClass": "No default StorageClass",
   "Select StorageClass": "Select StorageClass",
