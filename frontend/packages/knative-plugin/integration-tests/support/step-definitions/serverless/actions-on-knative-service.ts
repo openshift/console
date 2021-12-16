@@ -87,7 +87,7 @@ Given(
       .contains('Labels')
       .scrollIntoView()
       .click();
-    editLabels.enterLabel('app=frontend');
+    gitPage.enterLabels('app=frontend');
     cy.get(formPO.create).click();
     topologyPage.verifyTopologyPage();
     topologyPage.clickOnKnativeService(knativeService);
@@ -112,7 +112,7 @@ Given('user created another revision for knative Service {string}', (knativeServ
     .contains('Labels')
     .scrollIntoView()
     .click();
-  editLabels.enterLabel('app=frontend');
+  gitPage.enterLabels('app=frontend');
   cy.get(formPO.create).click();
   navigateTo(devNavigationMenu.Topology);
   topologyPage.clickOnKnativeService(knativeService);
@@ -130,7 +130,7 @@ When('user modifies the details of knative service', () => {
     .contains('Labels')
     .scrollIntoView()
     .click();
-  editLabels.enterLabel('app=frontend');
+  gitPage.enterLabels('app=frontend');
 });
 
 Then(

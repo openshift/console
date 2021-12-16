@@ -115,7 +115,15 @@ export const createRoute = (
     application: { name: applicationName },
     name,
     labels: userLabels,
-    route: { hostname, unknownTargetPort, defaultUnknownPort, secure, path, tls },
+    route: {
+      hostname,
+      unknownTargetPort,
+      defaultUnknownPort,
+      secure,
+      path,
+      tls,
+      labels: routeLabels,
+    },
     image: { ports: imagePorts, tag: selectedTag },
   } = formData;
 
@@ -159,7 +167,7 @@ export const createRoute = (
     metadata: {
       name,
       namespace,
-      labels: { ...defaultLabels, ...userLabels },
+      labels: { ...defaultLabels, ...userLabels, ...routeLabels },
       defaultAnnotations,
     },
     spec: {
