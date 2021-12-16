@@ -42,6 +42,9 @@ const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
     const [isOpen, setOpen] = React.useState(false);
     const onShow = React.useCallback(() => setOpen(true), []);
     const onHide = React.useCallback(() => setOpen(false), []);
+    if (!current) {
+      return null;
+    }
     return (
       <Popover
         position={position}
