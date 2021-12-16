@@ -31,7 +31,7 @@ const SinkSourceModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const dirty =
-    values?.formData?.sink?.name !== initialValues.formData.sink.name ||
+    values?.formData?.sink?.key !== initialValues.formData.sink.key ||
     values?.formData?.sink?.uri !== initialValues.formData.sink.uri;
 
   return (

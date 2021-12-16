@@ -30,6 +30,7 @@ import {
   getEventSourceResource,
 } from '../../utils/create-eventsources-utils';
 import { getEventSourceModels } from '../../utils/fetch-dynamic-eventsources-utils';
+import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import { EVENT_SOURCES_APP } from './const';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
@@ -89,7 +90,6 @@ export const EventSource: React.FC<Props> = ({
   const [sinkGroupVersionKind = '', sinkName = ''] = contextSource?.split('/') ?? [];
   const [sinkGroup = '', sinkVersion = '', sinkKind = ''] =
     getGroupVersionKind(sinkGroupVersionKind) ?? [];
-  const sinkKey = sinkName && sinkKind ? `${sinkKind}-${sinkName}` : '';
   const sinkApiVersion = sinkGroup ? `${sinkGroup}/${sinkVersion}` : '';
 
   const eventSourceMetaDescription = (
@@ -114,7 +114,7 @@ export const EventSource: React.FC<Props> = ({
       apiVersion: sinkApiVersion,
       kind: sinkKind,
       name: sinkName,
-      key: sinkKey,
+      key: craftResourceKey(sinkName, { kind: sinkKind, apiVersion: sinkGroupVersionKind }),
       uri: '',
     },
     type: sourceKind,

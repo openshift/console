@@ -21,6 +21,7 @@ describe('SinkSourceModal Form', () => {
         apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
         kind: ServiceModel.kind,
         name: 'event-greeter',
+        key: 'serving.knative.dev~event-greeter',
       },
     },
   };

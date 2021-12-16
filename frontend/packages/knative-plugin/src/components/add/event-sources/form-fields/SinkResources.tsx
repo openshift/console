@@ -4,7 +4,7 @@ import { useFormikContext, FormikValues, useField } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
 import { EventingBrokerModel, EventingChannelModel } from '../../../../models';
 import { getDynamicChannelResourceList } from '../../../../utils/fetch-dynamic-eventsources-utils';
@@ -13,7 +13,10 @@ import {
   knativeEventingResourcesBroker,
   k8sServices,
 } from '../../../../utils/get-knative-resources';
+import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
 import { SinkType } from '../../import-types';
+
+import './SinkResources.scss';
 
 export interface SinkResourcesProps {
   namespace: string;
@@ -27,14 +30,15 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     FormikValues
   >();
   const [, { touched: sinkTypeTouched }] = useField('formData.sinkType');
-  const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
+  const autocompleteFilter = (strText: string, item: React.ReactElement): boolean =>
+    fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('sink-name', 'dropdown');
   const onChange = React.useCallback(
     (selectedValue, valueObj) => {
       const modelData = valueObj?.props?.model;
       const name = valueObj?.props?.name;
       if (name && modelData) {
-        const { apiGroup, apiVersion, kind } = modelData;
+        const { apiGroup = 'core', apiVersion, kind } = modelData;
         setFieldValue('formData.sink.name', name);
         setFieldTouched('formData.sink.name', true);
         setFieldValue('formData.sink.apiVersion', `${apiGroup}/${apiVersion}`);
@@ -98,6 +102,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         </>
       )}
       <ResourceDropdownField
+        menuClassName={'max-height-menu'}
         data-test="sinkable-resources"
         name="formData.sink.key"
         resources={resourcesData}
@@ -109,9 +114,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         onChange={onChange}
         autocompleteFilter={autocompleteFilter}
         autoSelect
-        customResourceKey={(key: string, resource: K8sResourceKind) =>
-          key ? `${referenceFor(resource)}-${key}` : undefined
-        }
+        customResourceKey={craftResourceKey}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />

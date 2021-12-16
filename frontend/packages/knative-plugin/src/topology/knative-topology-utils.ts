@@ -12,6 +12,8 @@ import {
   k8sUpdate,
   kindForReference,
   apiVersionForReference,
+  apiGroupForReference,
+  groupVersionFor,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { getOwnedResources, OverviewItem } from '@console/shared';
@@ -743,6 +745,7 @@ const getEventSourcesData = (sinkUri: string, resources) => {
   );
 };
 
+const getApiGroup = (apiVersion: string) => groupVersionFor(apiVersion)?.group;
 /**
  * Form Edge data for event sources
  */
@@ -760,7 +763,7 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
       if (
         resName === sinkTarget.name &&
         kind === sinkTarget.kind &&
-        apiVersion === sinkTarget.apiVersion
+        getApiGroup(apiVersion) === getApiGroup(sinkTarget.apiVersion)
       ) {
         edges.push({
           id: `${uid}_${resUid}`,
@@ -794,7 +797,8 @@ export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources):
       });
       if (
         knativeService &&
-        connectedService.apiVersion === apiVersionForReference(referenceFor(knativeService))
+        getApiGroup(connectedService.apiVersion) ===
+          apiGroupForReference(referenceFor(knativeService))
       ) {
         const {
           metadata: { uid: serviceUid },
@@ -841,7 +845,7 @@ export const getSubscriptionTopologyEdgeItems = (
           } = res;
           if (
             resName === svcData.name &&
-            svcData.apiVersion === apiVersionForReference(referenceFor(resource))
+            groupVersionFor(svcData.apiVersion).group === apiGroupForReference(referenceFor(res))
           ) {
             edges.push({
               id: `${uid}_${resUid}`,

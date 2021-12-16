@@ -3,6 +3,7 @@ import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { getSinkableResources } from '../../utils/get-knative-resources';
+import { craftResourceKey, sanitizeResourceName } from '../pub-sub/pub-sub-utils';
 import SinkPubsubModal from './SinkPubsubModal';
 
 export interface SinkPubsubProps {
@@ -26,17 +27,17 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, resourceType, cancel, c
     ref: {
       apiVersion,
       kind,
-      name: sinkName,
+      name: craftResourceKey(sinkName, spec?.subscriber?.ref),
     },
   };
 
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    const updatePayload = {
+    const updatePayload = sanitizeResourceName({
       ...source,
       ...(sinkName !== values?.ref?.name && {
         spec: { ...source.spec, subscriber: { ...values } },
       }),
-    };
+    });
     return k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
         action.setStatus({ error: '' });

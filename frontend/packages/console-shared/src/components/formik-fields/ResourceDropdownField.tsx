@@ -25,6 +25,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   appendItems?: ResourceDropdownItems;
   customResourceKey?: (key: string, resource: K8sResourceKind) => string;
   dataTest?: string;
+  menuClassName?: string;
 }
 
 const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
