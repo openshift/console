@@ -4,7 +4,9 @@ import { configureUpdateStrategyModal, errorModal } from '@console/internal/comp
 import { togglePaused, asAccessReview } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, K8sKind, k8sCreate } from '@console/internal/module/k8s';
+import { ServiceBindingModel } from '@console/topology/src/models';
 import { resourceLimitsModal } from '../../components/modals/resource-limits';
+import { serviceBindingModal } from '../../components/modals/service-binding';
 import { ResourceActionFactory } from './common-factory';
 
 const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
@@ -91,5 +93,15 @@ export const DeploymentActionFactory: ResourceActionFactory = {
       namespace: obj.metadata.namespace,
       verb: 'patch',
     },
+  }),
+  CreateServiceBinding: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+    id: 'create-service-binding',
+    label: i18next.t('console-app~Create Service Binding'),
+    cta: () =>
+      serviceBindingModal({
+        model: kind,
+        resource: obj,
+      }),
+    accessReview: asAccessReview(ServiceBindingModel, obj, 'create'),
   }),
 };

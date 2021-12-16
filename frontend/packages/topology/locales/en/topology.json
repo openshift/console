@@ -145,7 +145,7 @@
   "Find by name": "Find by name",
   "Search results may appear outside of the visible area. <2>Click here</2> to fit to the screen.": "Search results may appear outside of the visible area. <2>Click here</2> to fit to the screen.",
   "Kiali": "Kiali",
-  "Create a binding connector": "Create a binding connector",
+  "Create Service Binding": "Create Service Binding",
   "Operator groupings": "Operator groupings",
   "Error: no resource provided to update Application for.": "Error: no resource provided to update Application for.",
   "Error: invalid resource kind provided for updating Application.": "Error: invalid resource kind provided for updating Application.",
