@@ -8,6 +8,7 @@ import { CAMEL_K_PROVIDER_ANNOTATION, CAMEL_K_TYPE_LABEL } from '../const';
 import { useKameletsData } from '../hooks/useKameletsData';
 import { CamelKameletBindingModel } from '../models';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
+import { getEventSourceSupport } from './utils';
 
 const normalizeKamelets = (
   kamelets: K8sResourceKind[],
@@ -32,6 +33,14 @@ const normalizeKamelets = (
       cta: { label: t('knative-plugin~Create Event Source'), href },
       type: 'EventSource',
       icon: { url: iconUrl },
+      details: {
+        properties: [
+          {
+            label: t('knative-plugin~Support'),
+            value: getEventSourceSupport(k),
+          },
+        ],
+      },
     };
   });
   return normalizedKamelets;
