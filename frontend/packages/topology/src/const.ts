@@ -10,6 +10,7 @@ export const TYPE_APPLICATION_GROUP = 'part-of';
 export const TYPE_TRAFFIC_CONNECTOR = 'traffic-connector';
 export const LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-topology-view`;
 export const TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/topology-layout`;
+export const LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY = `${STORAGE_PREFIX}/last-topology-overview-open`;
 
 const STORAGE_TOPOLOGY = 'topology';
 const CONFIG_STORAGE_DEVCONSOLE = 'devconsole';
