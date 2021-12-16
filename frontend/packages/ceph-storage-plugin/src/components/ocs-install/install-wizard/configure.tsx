@@ -45,6 +45,12 @@ const resources = [
     namespace: 'default',
     prop: 'default-nad',
   },
+  {
+    isList: true,
+    kind: referenceForModel(NetworkAttachmentDefinitionModel),
+    namespace: 'openshift-multus',
+    prop: 'openshift-multus-nad',
+  },
 ];
 
 export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
