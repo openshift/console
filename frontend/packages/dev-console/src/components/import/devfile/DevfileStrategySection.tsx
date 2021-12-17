@@ -8,6 +8,7 @@ import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import FormSection from '../section/FormSection';
 import { useDevfileServer, useDevfileSource, useSelectedDevfileSample } from './devfileHooks';
 import DevfileInfo from './DevfileInfo';
+import './DevfileStrategySection.scss';
 
 const DevfileStrategySection: React.FC = () => {
   const { t } = useTranslation();
@@ -93,9 +94,16 @@ const DevfileStrategySection: React.FC = () => {
   return (
     <>
       {devfileParseError && (
-        <Alert isInline variant="danger" title={t('devconsole~Import is not possible.')}>
-          {devfileParseError}
-        </Alert>
+        <FormSection>
+          <Alert
+            isInline
+            className="odc-devfile-strategy-section__error-alert"
+            variant="danger"
+            title={t('devconsole~Import is not possible.')}
+          >
+            {devfileParseError}
+          </Alert>
+        </FormSection>
       )}
       {showEditImportStrategy && importType !== 'devfile' && (
         <FormSection>
