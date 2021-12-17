@@ -33,7 +33,7 @@ describe('RouteSection', () => {
           certificate: '',
           destinationCACertificate: '',
           insecureEdgeTerminationPolicy: '',
-          privateKey: '',
+          key: '',
           termination: '',
         },
         unknownTargetPort: '',

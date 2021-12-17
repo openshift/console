@@ -25,6 +25,7 @@ Object {
     "port": Object {
       "targetPort": "8080-tcp",
     },
+    "tls": null,
     "to": Object {
       "kind": "Service",
       "name": "test-app",
@@ -61,6 +62,7 @@ Object {
     "port": Object {
       "targetPort": "8080-tcp",
     },
+    "tls": null,
     "to": Object {
       "kind": "Service",
       "name": "test-app",
