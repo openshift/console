@@ -175,6 +175,31 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   return routeData;
 };
 
+export const getDefaultLabels = () => {
+  return [
+    'app',
+    'app.kubernetes.io/instance',
+    'app.openshift.io/runtime',
+    'app.kubernetes.io/part-of',
+    'app.openshift.io/runtime-version',
+    'app.openshift.io/runtime-namespace',
+    'networking.knative.dev/visibility',
+  ];
+};
+
+export const getRouteLabels = (
+  route: K8sResourceKind,
+  resource: K8sResourceKind,
+): Record<string, string> => {
+  const allLabels = _.get(resource, 'metadata.labels', {});
+  const allRouteLabels = _.get(route, 'metadata.labels', {});
+  const filteredRouteLabels = _.omit(allRouteLabels, [
+    ...getDefaultLabels(),
+    ...Object.keys(allLabels),
+  ]);
+  return filteredRouteLabels;
+};
+
 export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
   let routeData = {
     disable: !_.isEmpty(route),
@@ -193,6 +218,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
       destinationCACertificate: _.get(route, 'spec.destinationCACertificate', ''),
       privateKey: _.get(route, 'spec.privateKey', ''),
     },
+    labels: getRouteLabels(route, resource),
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
     routeData = {
@@ -330,17 +356,8 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
 };
 
 export const getUserLabels = (resource: K8sResourceKind) => {
-  const defaultLabels = [
-    'app',
-    'app.kubernetes.io/instance',
-    'app.openshift.io/runtime',
-    'app.kubernetes.io/part-of',
-    'app.openshift.io/runtime-version',
-    'app.openshift.io/runtime-namespace',
-    'networking.knative.dev/visibility',
-  ];
   const allLabels = _.get(resource, 'metadata.labels', {});
-  const userLabels = _.omit(allLabels, defaultLabels);
+  const userLabels = _.omit(allLabels, getDefaultLabels());
   return userLabels;
 };
 

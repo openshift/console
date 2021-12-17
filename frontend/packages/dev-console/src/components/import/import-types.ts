@@ -207,6 +207,7 @@ export interface RouteData {
   hostname?: string;
   secure?: boolean;
   tls?: TLSData;
+  labels?: { [name: string]: string };
 }
 
 export interface TLSData {

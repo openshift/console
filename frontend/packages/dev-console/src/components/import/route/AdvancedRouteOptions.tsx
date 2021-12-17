@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse } from '@console/internal/components/utils';
+import SelectorInputField from '@console/shared/src/components/formik-fields/SelectorInputField';
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';
 import ServerlessRouteSection from '../serverless/ServerlessRouteSection';
@@ -31,6 +32,15 @@ const AdvancedRouteOptions: React.FC<AdvancedRouteOptionsProps> = ({
             <>
               <CreateRoute />
               <SecureRoute />
+              <SelectorInputField
+                name="route.labels"
+                label={t('devconsole~Labels')}
+                helpText={t(
+                  'devconsole~Additional labels which are only added to the Route resource.',
+                )}
+                placeholder="app.io/type=frontend"
+                dataTest="route-labels"
+              />
             </>
           )
         ) : (

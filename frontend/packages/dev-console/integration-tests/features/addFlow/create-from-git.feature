@@ -78,7 +78,7 @@ Feature: Create Application from git form
              Then user will be redirected to Topology page
               And user can see the toast notification containg the route value "home"
               And the route of application "git-route" contains "home" in the Routes section of the workload sidebar
-              And user is able to see label "route=testRoute1"  in Route details page for deployment "git-route"
+              And user is able to see label "route=testRoute1" in Route details page for deployment "git-route"
 
 
         @regression
@@ -218,7 +218,8 @@ Feature: Create Application from git form
               And user enters Name as "nodejs-env"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user is able to navigate to Build "nodejs-env-1" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build1" in Environment tab of details page
+              And user is able to navigate to Build "nodejs-env-1" for deployment "nodejs-env"
+              And see environment variable "NPM_RUN" with value "build1" in Environment tab of details page
 
 
         @regression
@@ -230,7 +231,8 @@ Feature: Create Application from git form
               And user clicks on workload "nodejs-env"
               And user starts a new build
               And user navigates to Topology page
-             Then user is able to navigate to Build "nodejs-env-2" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build2" in Environment tab of details page
+             Then user is able to navigate to Build "nodejs-env-2" for deployment "nodejs-env"
+              And see environment variable "NPM_RUN" with value "build2" in Environment tab of details page
 
 
         @regression @odc-6303

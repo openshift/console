@@ -1,4 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { addOptions, buildConfigOptions, messages, resources } from '../../constants';
 import { gitPO } from '../../pageObjects';
 import {
@@ -87,9 +88,7 @@ When('user clicks {string} link in Advanced Options section', (linkName: string)
 });
 
 When('user enters {string} in Additional Route labels section', (labelName: string) => {
-  // Below to be uncommeted after the epic is feature complete
-  // gitPage.enterRouteLabels(labelName);
-  cy.log(labelName); // to avoid lint issues
+  gitPage.enterRouteLabels(labelName);
 });
 
 When('user enters Hostname as {string}', (hostName: string) => {
@@ -238,13 +237,12 @@ Then(
 );
 
 Then(
-  'user is able to see label {string}  in Route details page for deployment {string}',
+  'user is able to see label {string} in Route details page for deployment {string}',
   (labelName: string, nodeName: string) => {
     topologySidePane.selectTab('Resources');
     topologySidePane.selectResource(resources.Routes, 'aut-addflow-git', nodeName);
     app.waitForLoad();
-    // Below to be uncommeted after the epic is feature complete
-    // cy.get(gitPO.advancedOptions.routing.labelsRouteDetails).should('contain', labelName);
+    detailsPage.labelShouldExist(labelName);
   },
 );
 Then('user is able to see Secure Route checkbox is checked', () => {
