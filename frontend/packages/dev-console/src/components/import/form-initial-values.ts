@@ -57,7 +57,7 @@ export const getBaseInitialValues = (
         caCertificate: '',
         certificate: '',
         destinationCACertificate: '',
-        privateKey: '',
+        key: '',
       },
     },
     resources: Resources.Kubernetes,

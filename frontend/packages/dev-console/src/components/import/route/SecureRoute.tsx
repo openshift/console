@@ -63,7 +63,7 @@ const SecureRoute: React.FC = () => {
                 )}
               />
               <DroppableFileInputField
-                name="route.tls.privateKey"
+                name="route.tls.key"
                 label={t('devconsole~Private Key')}
                 helpText={t(
                   'devconsole~The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',

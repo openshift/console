@@ -92,7 +92,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      privateKey: '',
+      key: '',
     },
   },
   build: {
