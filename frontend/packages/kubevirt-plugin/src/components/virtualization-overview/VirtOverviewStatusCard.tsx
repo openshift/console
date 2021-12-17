@@ -71,7 +71,7 @@ const NetworkingHealthItem = ({ nac }) => {
   const findAvailableCondition = (conditions) =>
     conditions?.find((cond) => cond?.type === AVAILABLE);
   const availableCondition = findAvailableCondition(nacConditions);
-  const status = availableCondition?.status === true;
+  const status = availableCondition?.status === 'True';
   const message = availableCondition?.message;
   const state = status ? HealthState.OK : HealthState.NOT_AVAILABLE;
 
