@@ -14,3 +14,6 @@ export const DURATION_VALUES = {
 
 export const DEFAULT_DURATION_KEY = DurationKeys.OneHour;
 export const DEFAULT_DURATION = DURATION_VALUES[DEFAULT_DURATION_KEY];
+
+export const TOAST_TIMEOUT_LONG = 20000;
+export const TOAST_TIMEOUT_DEFAULT = true;

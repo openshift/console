@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ExportApplicationModal } from '../ExportApplicationModal';
+import ExportViewLogButton from '../ExportViewLogButton';
 
 describe('ExportApplicationModal', () => {
   it('should show only one button to close modal', () => {
@@ -47,5 +48,16 @@ describe('ExportApplicationModal', () => {
     );
     wrapper.find('[data-test="export-restart-btn"]').simulate('click');
     expect(onRestartExport).toHaveBeenCalled();
+  });
+
+  it('should contain view log button and call onViewLog', () => {
+    const wrapper = shallow(
+      <ExportApplicationModal
+        namespace="my-app"
+        onCancelExport={jest.fn()}
+        onRestartExport={jest.fn()}
+      />,
+    );
+    expect(wrapper.find(ExportViewLogButton).exists()).toBe(true);
   });
 });
