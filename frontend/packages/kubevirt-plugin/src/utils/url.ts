@@ -4,12 +4,14 @@ import { k8sBasePath, TemplateKind } from '@console/internal/module/k8s';
 import { VMTabURLEnum } from '../components/vms/types';
 import {
   customizeWizardBaseURLBuilder,
+  instantiateTemplateBaseURLBuilder,
   VIRTUALMACHINES_BASE_URL,
   VMWizardURLParams,
   wizardBaseURLBuilder,
   YAMLBaseURLBuilder,
 } from '../constants/url-params';
 import { VMWizardMode, VMWizardName, VMWizardView } from '../constants/vm';
+import { VMTemplateWrapper } from '../k8s/wrapper/vm/vm-template-wrapper';
 import { getName, getNamespace } from '../selectors';
 import { isCommonTemplate } from '../selectors/vm-template/basic';
 import { VMKind } from '../types';
@@ -95,6 +97,16 @@ export const getVMWizardCreateLink = ({
 }) => {
   const params = new URLSearchParams();
   const initialData: VMWizardInitialData = {};
+  const workloadProfile = new VMTemplateWrapper(template).getWorkloadProfile();
+  const isSapHanaTemplate = workloadProfile === 'saphana';
+
+  if (isSapHanaTemplate) {
+    const { name: templateName, namespace: templateNS } = template?.metadata;
+    return instantiateTemplateBaseURLBuilder(
+      namespace,
+      `?template-ns=${templateNS}&template-name=${templateName}`,
+    );
+  }
 
   if (wizardName === VMWizardName.BASIC) {
     if (namespace) {
