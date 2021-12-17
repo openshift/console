@@ -213,6 +213,9 @@ describe('Project Dashboard', () => {
           .$('a')
           .getText(),
       ).toEqual(resourceQuota.metadata.name);
+      await browser.wait(
+        until.presenceOf(projectDashboardView.resourceQuotasCard.$('.co-resource-quota-chart-row')),
+      );
       expect(
         projectDashboardView.resourceQuotasCard.$('.co-resource-quota-chart-row').isDisplayed(),
       ).toBe(true);
