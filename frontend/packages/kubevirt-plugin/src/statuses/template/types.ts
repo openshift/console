@@ -1,5 +1,6 @@
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { V1alpha1DataVolume } from '../../types/api';
+import { DataSourceKind } from '../../types/vm/index';
 
 export enum SOURCE_TYPE {
   BASE_IMAGE = 'BASE_IMAGE',
@@ -15,6 +16,7 @@ type GetTemplateSourceStatusProps = {
   pods: PodKind[];
   pvcs: PersistentVolumeClaimKind[];
   dataVolumes: V1alpha1DataVolume[];
+  dataSources: DataSourceKind[];
 };
 
 export type TemplateSourceStatusError = {

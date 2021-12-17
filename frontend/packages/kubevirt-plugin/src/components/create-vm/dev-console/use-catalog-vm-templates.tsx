@@ -20,6 +20,7 @@ import {
 import { getOperatingSystemName, getWorkloadProfile } from '../../../selectors/vm/selectors';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../../statuses/template/types';
+import { DataSourceKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { TemplateItem } from '../../../types/template';
 import { FormRow } from '../../form/form-row';
@@ -37,7 +38,13 @@ const normalizeVmTemplates = (
     pods,
     pvcs,
     dataVolumes,
-  }: { pods: PodKind[]; pvcs: PersistentVolumeClaimKind[]; dataVolumes: V1alpha1DataVolume[] },
+    dataSources,
+  }: {
+    pods: PodKind[];
+    pvcs: PersistentVolumeClaimKind[];
+    dataVolumes: V1alpha1DataVolume[];
+    dataSources: DataSourceKind[];
+  },
   activeNamespace: string = '',
   t: TFunction,
 ): CatalogItem[] =>
@@ -48,6 +55,7 @@ const normalizeVmTemplates = (
       pvcs,
       dataVolumes,
       template: tmp,
+      dataSources,
     });
     const displayName = getTemplateName(tmp) || tmp.kind;
     const templateProvider = getTemplateProvider(t, tmp);
@@ -199,6 +207,7 @@ const useCatalogVmTemplates: ExtensionHook<CatalogItem[]> = ({
   const {
     pods,
     dataVolumes,
+    dataSources,
     pvcs,
     userTemplates,
     baseTemplates,
@@ -213,6 +222,7 @@ const useCatalogVmTemplates: ExtensionHook<CatalogItem[]> = ({
         pvcs,
         dataVolumes,
         template: tmp.variants[0],
+        dataSources,
       });
 
       if (isTemplateSourceError(tempSourceStatus) || !tempSourceStatus?.isReady) {
@@ -222,20 +232,21 @@ const useCatalogVmTemplates: ExtensionHook<CatalogItem[]> = ({
     });
 
     return [
-      normalizeVmTemplates(templates, { pods, pvcs, dataVolumes }, namespace, t),
+      normalizeVmTemplates(templates, { pods, pvcs, dataVolumes, dataSources }, namespace, t),
       resourcesLoaded,
       resourcesLoadError,
     ];
   }, [
-    t,
-    namespace,
     userTemplates,
     baseTemplates,
-    dataVolumes,
     pods,
     pvcs,
-    resourcesLoadError,
+    dataVolumes,
+    dataSources,
+    namespace,
+    t,
     resourcesLoaded,
+    resourcesLoadError,
   ]);
 };
 

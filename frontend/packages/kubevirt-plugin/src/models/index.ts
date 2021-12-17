@@ -244,3 +244,16 @@ export const NetworkAddonsConfigModel: K8sKind = {
   id: 'networkaddonsconfig',
   crd: true,
 };
+
+export const DataSourceModel: K8sKind = {
+  label: 'DataSource',
+  labelPlural: 'DataSources',
+  apiVersion: 'v1beta1',
+  apiGroup: 'cdi.kubevirt.io',
+  plural: 'datasources',
+  abbr: 'datasources',
+  namespaced: true,
+  kind: 'DataSource',
+  id: 'datasource',
+  crd: true,
+};

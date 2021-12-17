@@ -83,3 +83,5 @@ export const TEMPLATE_WARN_SUPPORT = 'kubevirt.templates.warnSupport';
 export const TEMPLATE_CUSTOMIZE_SOURCE = 'kubevirt.templates.customizeSource';
 
 export const DEFAULT_DISK_SIZE = '20Gi';
+
+export const RED_HAT = 'Red Hat';

@@ -19,10 +19,11 @@ import {
 import { useBaseImages } from '../../hooks/use-base-images';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../hooks/use-support-modal';
-import { DataVolumeModel } from '../../models';
+import { DataSourceModel, DataVolumeModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
+import { DataSourceKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMDisks } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
@@ -63,6 +64,10 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
     isList: true,
     namespace,
   });
+  const [dataSources, dataSourcesLoaded] = useK8sWatchResource<DataSourceKind[]>({
+    kind: kubevirtReferenceForModel(DataSourceModel),
+    isList: true,
+  });
   const [template, templateLoaded, templateError] = useK8sWatchResource<TemplateKind>({
     kind: TemplateModel.kind,
     namespace,
@@ -80,12 +85,14 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
           pvcs: [...baseImages, ...pvcs],
           dataVolumes: [...dataVolumes, ...baseImageDVs],
           pods: [...pods, ...baseImagePods],
+          dataSources,
         })
       : null;
 
   const withSupportModal = useSupportModal();
   const withCustomizeModal = useCustomizeSourceModal();
-  const sourceLoaded = dvLoaded && podsLoaded && pvcsLoaded && templateLoaded && imagesLoaded;
+  const sourceLoaded =
+    dvLoaded && podsLoaded && pvcsLoaded && templateLoaded && imagesLoaded && dataSourcesLoaded;
   const sourceLoadError = dvError || podsError || pvcsError || templateError || error;
 
   const nicsPage = {
