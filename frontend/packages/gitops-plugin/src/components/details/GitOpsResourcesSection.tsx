@@ -113,7 +113,8 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({
             </SplitItem>
           </Tooltip>
         )}
-        {degradedResources?.length === 0 && nonSyncedResources.length === 0 && <>&nbsp;</>}
+        {(degradedResources === null || degradedResources.length === 0) &&
+          nonSyncedResources.length === 0 && <>&nbsp;</>}
       </Split>
     );
   };
