@@ -201,7 +201,7 @@ const BreakdownCard: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="nb-capacity-breakdown-card__header">
         <CardTitle>
           {t('ceph-storage-plugin~Capacity breakdown')}
           <FieldLevelHelp>

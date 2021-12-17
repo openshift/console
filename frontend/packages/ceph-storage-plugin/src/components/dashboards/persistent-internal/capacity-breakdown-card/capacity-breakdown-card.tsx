@@ -69,7 +69,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="ceph-capacity-breakdown-card__header">
         <CardTitle>
           {t('ceph-storage-plugin~Used Capacity Breakdown')}
           <FieldLevelHelp>
@@ -78,21 +78,19 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
             )}
           </FieldLevelHelp>
         </CardTitle>
-        <div className="ceph-capacity-breakdown-card__header">
-          <Select
-            className="ceph-capacity-breakdown-card-header__dropdown"
-            autoFocus={false}
-            onSelect={handleMetricsChange}
-            onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
-            isOpen={isOpenBreakdownSelect}
-            selections={[metricType]}
-            placeholderText={t('ceph-storage-plugin~{{metricType}}', { metricType })}
-            aria-label={t('ceph-storage-plugin~Break By Dropdown')}
-            isCheckboxSelectionBadgeHidden
-          >
-            {breakdownSelectItems}
-          </Select>
-        </div>
+        <Select
+          className="ceph-capacity-breakdown-card-header__dropdown"
+          autoFocus={false}
+          onSelect={handleMetricsChange}
+          onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
+          isOpen={isOpenBreakdownSelect}
+          selections={[metricType]}
+          placeholderText={t('ceph-storage-plugin~{{metricType}}', { metricType })}
+          aria-label={t('ceph-storage-plugin~Break By Dropdown')}
+          isCheckboxSelectionBadgeHidden
+        >
+          {breakdownSelectItems}
+        </Select>
       </CardHeader>
       <CardBody className="ceph-capacity-breakdown-card__body">
         <BreakdownCardBody
