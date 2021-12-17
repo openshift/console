@@ -284,6 +284,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "VmTemplate",
+      "title": "%kubevirt-plugin~VM templates%",
       "provider": { "$codeRef": "createVM.catalogVMTemplateProvider" }
     },
     "flags": {
