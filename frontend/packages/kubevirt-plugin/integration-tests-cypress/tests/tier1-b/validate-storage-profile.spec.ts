@@ -46,12 +46,12 @@ allowVolumeExpansion: true
 
 Cypress.Commands.add('deleteStorageClass', () => {
   cy.log('Delete StorageClass resource');
-  cy.exec(`kubectl delete storageclasses fake-example-storagecluster`);
+  cy.exec(`kubectl delete --ignore-not-found=true storageclasses fake-example-storagecluster`);
 });
 
 Cypress.Commands.add('deleteStorageProfile', () => {
   cy.log('Delete StorageProfile resource');
-  cy.exec(`kubectl delete storageprofiles fake-example-storagecluster`);
+  cy.exec(`kubectl delete --ignore-not-found=true storageprofiles fake-example-storagecluster`);
 });
 
 Cypress.Commands.add('editStorageProfile', () => {

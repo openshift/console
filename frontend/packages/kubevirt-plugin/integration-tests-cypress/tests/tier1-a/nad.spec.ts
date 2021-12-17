@@ -1,15 +1,15 @@
+import { testName } from '../../support';
 import { K8S_KIND } from '../../utils/const/index';
 import { createNAD, deleteNAD } from '../../views/nad';
 
 const name = 'test-nad';
 const name1 = 'nad-uncheck-macspoof';
 const bridge = 'br0';
-// TODO: Don't use default project after bz2023560 is fixed.
-const testName = 'default';
 
 describe('Test network attachment definition', () => {
   before(() => {
     cy.Login();
+    cy.createProject(testName);
   });
 
   beforeEach(() => {
@@ -19,6 +19,7 @@ describe('Test network attachment definition', () => {
   after(() => {
     cy.deleteResource(K8S_KIND.NAD, name, testName);
     cy.deleteResource(K8S_KIND.NAD, name1, testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-3256) Create NAD with MAC Spoof checked', () => {

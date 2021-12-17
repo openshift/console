@@ -3,6 +3,7 @@ import { virtualization } from '../../views/virtualization';
 
 describe('ID(CNV-5654) test vm empty state', () => {
   before(() => {
+    cy.Login();
     cy.createProject(testName);
   });
 

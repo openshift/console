@@ -1,9 +1,16 @@
+import { testName } from '../../support';
+
 const template = 'rhel6-server-small';
 
 describe('smoke tests', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
+    cy.createProject(testName);
+  });
+
+  after(() => {
+    cy.deleteTestProject(testName);
   });
 
   describe('visit template list page', () => {

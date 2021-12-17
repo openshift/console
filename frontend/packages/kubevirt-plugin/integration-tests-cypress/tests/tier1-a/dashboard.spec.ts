@@ -170,7 +170,7 @@ describe('Test VM dashboard tab', () => {
           .should('contain', 'Red Hat Enterprise Linux'); // OS
         cy.get(dashboardTab.detailsCardItem)
           .eq(7)
-          .should('contain', 'EDT'); // Time Zone
+          .should('not.contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED); // Time Zone
         cy.get(dashboardTab.detailsCardItem)
           .eq(8)
           .should('contain', 'No users logged in'); // Active Users
