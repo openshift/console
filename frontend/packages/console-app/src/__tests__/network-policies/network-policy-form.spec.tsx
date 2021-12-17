@@ -30,8 +30,8 @@ const emptyPolicy: NetworkPolicyKind = {
   },
 };
 
-describe('NetworkPolicyForm without permissions to fetch CNI type', () => {
-  (useK8sGet as jest.Mock).mockReturnValue([null, true, 'error fetching CNI']);
+describe('NetworkPolicyForm without the CNO config map', () => {
+  (useK8sGet as jest.Mock).mockReturnValue([null, true, 'error fetching CNO configmap']);
   const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should render a warning in case the customer is using Openshift SDN', () => {
@@ -54,9 +54,9 @@ describe('NetworkPolicyForm without permissions to fetch CNI type', () => {
   });
 });
 
-describe('NetworkPolicyForm with Unknown CNI type', () => {
-  const unknownSDNSpec = { spec: { networkType: 'Calico' } };
-  (useK8sGet as jest.Mock).mockReturnValue([unknownSDNSpec, true, null]);
+describe('NetworkPolicyForm with unknown network features', () => {
+  const cm = { data: {} };
+  (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should render a warning in case the customer is using Openshift SDN', () => {
@@ -80,8 +80,9 @@ describe('NetworkPolicyForm with Unknown CNI type', () => {
 });
 
 describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
-  const openShiftSDNSpec = { spec: { networkType: 'OpenShiftSDN' } };
-  (useK8sGet as jest.Mock).mockReturnValue([openShiftSDNSpec, true, null]);
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  const cm = { data: { policy_egress: 'false', policy_peer_ipblock_exceptions: 'false' } };
+  (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should not render any warning', () => {
@@ -102,8 +103,9 @@ describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
 });
 
 describe('NetworkPolicyForm with OVN Kubernetes CNI type', () => {
-  const ovnK8sSpec = { spec: { networkType: 'OVNKubernetes' } };
-  (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  const cm = { data: { policy_egress: 'true', policy_peer_ipblock_exceptions: 'true' } };
+  (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(<NetworkPolicyForm formData={emptyPolicy} onChange={jest.fn()} />);
 
   it('should not render any warning', () => {
