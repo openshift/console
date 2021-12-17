@@ -49,6 +49,7 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
             'aria-label': ariaLabel,
           }
         : null)}
+      data-test-id="decorator"
     >
       <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
       <SvgDropShadowFilter id={HOVER_FILTER_ID} dy={3} stdDeviation={5} floodOpacity={0.5} />
