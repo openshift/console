@@ -184,14 +184,14 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     defaultUnknownPort: 8080,
     path: _.get(route, 'spec.path', ''),
     hostname: _.get(route, 'spec.host', ''),
-    secure: _.has(route, 'spec.termination'),
+    secure: _.has(route, 'spec.tls.termination'),
     tls: {
-      termination: _.get(route, 'spec.termination', ''),
-      insecureEdgeTerminationPolicy: _.get(route, 'spec.insecureEdgeTerminationPolicy', ''),
-      caCertificate: _.get(route, 'spec.caCertificate', ''),
-      certificate: _.get(route, 'spec.certificate', ''),
-      destinationCACertificate: _.get(route, 'spec.destinationCACertificate', ''),
-      privateKey: _.get(route, 'spec.privateKey', ''),
+      termination: _.get(route, 'spec.tls.termination', ''),
+      insecureEdgeTerminationPolicy: _.get(route, 'spec.tls.insecureEdgeTerminationPolicy', ''),
+      caCertificate: _.get(route, 'spec.tls.caCertificate', ''),
+      certificate: _.get(route, 'spec.tls.certificate', ''),
+      destinationCACertificate: _.get(route, 'spec.tls.destinationCACertificate', ''),
+      key: _.get(route, 'spec.tls.key', ''),
     },
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
