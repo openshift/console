@@ -2,6 +2,7 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import { addOptions, devNavigationMenu, switchPerspective } from '../../constants';
+import { gitPO } from '../../pageObjects';
 import {
   getPreferenceDropdown,
   getTab,
@@ -12,6 +13,7 @@ import {
   app,
   catalogPage,
   createGitWorkload,
+  gitPage,
   navigateTo,
   perspective,
   projectNameSpace,
@@ -206,4 +208,29 @@ Then('user will see the language change to 日本語', () => {
     });
   // After execution of all tests Language value is changed back to English
   cy.selectByDropDownText(getPreferenceDropdown('Language'), 'English');
+});
+
+When('user deselects the checkbox of user preference Secure Route', () => {
+  // cy.get().uncheck();
+});
+
+Given('user clicks on Import from Git card', () => {
+  addPage.selectCardFromOptions(addOptions.Git);
+});
+
+When('user enters Git Repo URL as {string}', (gitUrl: string) => {
+  gitPage.enterGitUrl(gitUrl);
+  gitPage.verifyValidatedMessage(gitUrl);
+});
+
+When('user enters Name as {string} in General section', (name: string) => {
+  gitPage.enterComponentName(name);
+});
+
+When('user clicks {string} link in Advanced Options section', (linkName: string) => {
+  cy.byButtonText(linkName).click();
+});
+
+Then('user is able to see Secure Route checkbox is deselected', () => {
+  cy.get(gitPO.advancedOptions.routing.secureRoute).should('not.be.checked');
 });

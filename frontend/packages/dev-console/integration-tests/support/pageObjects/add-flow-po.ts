@@ -287,3 +287,14 @@ export const uploadJarFilePO = {
     builderImageVersion: '#form-dropdown-image-tag-field',
   },
 };
+export const quickSearchAddPO = {
+  quickSearchButton: '[data-test="quick-search"]',
+  quickSearchBar: '[data-test="quick-search-bar"]',
+  quickSearchInput: '[data-test~="quick-search-bar"] [data-test~="input"]',
+  quickSearchListItem(itemName: string, itemType: string): string {
+    return `[data-test="item-name-${itemName}-${itemType}"]`;
+  },
+  quickSearchCreateButton: '[data-test="create-quick-search"]',
+  viewInDevCatalog: '#devCatalog',
+  quickSearchNoResults: '[data-test="quick-search-no-results"]',
+};

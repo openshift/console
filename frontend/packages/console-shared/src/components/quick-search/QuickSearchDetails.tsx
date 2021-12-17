@@ -39,6 +39,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
         <Button
           variant={ButtonVariant.primary}
           className="ocs-quick-search-details__form-button"
+          data-test="create-quick-search"
           onClick={(e) => {
             handleCta(e, props.selectedItem, props.closeModal, fireTelemetryEvent);
           }}

@@ -99,3 +99,16 @@ Feature: Manage user preferences
               And user clicks on the checkbox to uncheck it
               And user changes user preference "Language" dropdown to "日本語"
              Then user will see the language change to 日本語
+
+
+        @regression @odc-6303
+        Scenario: Setting Routing options preference for import form: UP-01-TC07
+            Given user has created or selected namespace "aut-user-preferences"
+             When user clicks on user dropdown on masthead and selects "User Preference"
+              And user deselects the checkbox of user preference "Secure Route"
+              And user clicks on Add in navigation menu
+              And user clicks on Import from Git card
+              And user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex.git"
+              And user enters name as "node-route" in General section
+              And user clicks "Show advanced Routing options" link in Advanced Options section
+             Then user is able to see "Secure Route" checkbox is deselected

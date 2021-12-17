@@ -15,6 +15,7 @@ const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }
     <Tooltip position="right" content={t('topology~Add to Project')}>
       <Button
         className="odc-topology-quick-search-button"
+        data-test="quick-search"
         variant="plain"
         onClick={(e) => {
           e.stopPropagation();

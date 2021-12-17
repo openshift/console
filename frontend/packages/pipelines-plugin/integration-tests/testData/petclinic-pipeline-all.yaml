@@ -1,0 +1,675 @@
+apiVersion: v1
+data:
+  settings.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+
+    <!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+    -->
+
+    <!--
+    | This is the configuration file for Maven. It can be specified at two levels:
+    |
+    |  1. User Level. This settings.xml file provides configuration for a single user,
+    |                 and is normally provided in ${user.home}/.m2/settings.xml.
+    |
+    |                 NOTE: This location can be overridden with the CLI option:
+    |
+    |                 -s /path/to/user/settings.xml
+    |
+    |  2. Global Level. This settings.xml file provides configuration for all Maven
+    |                 users on a machine (assuming they're all using the same Maven
+    |                 installation). It's normally provided in
+    |                 ${maven.conf}/settings.xml.
+    |
+    |                 NOTE: This location can be overridden with the CLI option:
+    |
+    |                 -gs /path/to/global/settings.xml
+    |
+    | The sections in this sample file are intended to give you a running start at
+    | getting the most out of your Maven installation. Where appropriate, the default
+    | values (values used when the setting is not specified) are provided.
+    |
+    |-->
+    <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+      <!-- localRepository
+      | The path to the local repository maven will use to store artifacts.
+      |
+      | Default: ${user.home}/.m2/repository
+      <localRepository>/path/to/local/repo</localRepository>
+      -->
+
+      <!-- interactiveMode
+      | This will determine whether maven prompts you when it needs input. If set to false,
+      | maven will use a sensible default value, perhaps based on some other setting, for
+      | the parameter in question.
+      |
+      | Default: true
+      <interactiveMode>true</interactiveMode>
+      -->
+
+      <!-- offline
+      | Determines whether maven should attempt to connect to the network when executing a build.
+      | This will have an effect on artifact downloads, artifact deployment, and others.
+      |
+      | Default: false
+      <offline>false</offline>
+      -->
+
+      <!-- pluginGroups
+      | This is a list of additional group identifiers that will be searched when resolving plugins by their prefix, i.e.
+      | when invoking a command line like "mvn prefix:goal". Maven will automatically add the group identifiers
+      | "org.apache.maven.plugins" and "org.codehaus.mojo" if these are not already contained in the list.
+      |-->
+      <pluginGroups>
+        <!-- pluginGroup
+        | Specifies a further group identifier to use for plugin lookup.
+        <pluginGroup>com.your.plugins</pluginGroup>
+        -->
+      </pluginGroups>
+
+      <!-- proxies
+      | This is a list of proxies which can be used on this machine to connect to the network.
+      | Unless otherwise specified (by system property or command-line switch), the first proxy
+      | specification in this list marked as active will be used.
+      |-->
+      <proxies>
+        <!-- proxy
+        | Specification for one proxy, to be used in connecting to the network.
+        |
+        <proxy>
+          <id>optional</id>
+          <active>true</active>
+          <protocol>http</protocol>
+          <username>proxyuser</username>
+          <password>proxypass</password>
+          <host>proxy.host.net</host>
+          <port>80</port>
+          <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
+        </proxy>
+        -->
+      </proxies>
+
+      <!-- servers
+      | This is a list of authentication profiles, keyed by the server-id used within the system.
+      | Authentication profiles can be used whenever maven must make a connection to a remote server.
+      |-->
+      <servers>
+        <!-- server
+        | Specifies the authentication information to use when connecting to a particular server, identified by
+        | a unique name within the system (referred to by the 'id' attribute below).
+        |
+        | NOTE: You should either specify username/password OR privateKey/passphrase, since these pairings are
+        |       used together.
+        |
+        <server>
+          <id>deploymentRepo</id>
+          <username>repouser</username>
+          <password>repopwd</password>
+        </server>
+        -->
+
+        <!-- Another sample, using keys to authenticate.
+        <server>
+          <id>siteServer</id>
+          <privateKey>/path/to/private/key</privateKey>
+          <passphrase>optional; leave empty if not used.</passphrase>
+        </server>
+        -->
+      </servers>
+
+      <!-- mirrors
+      | This is a list of mirrors to be used in downloading artifacts from remote repositories.
+      |
+      | It works like this: a POM may declare a repository to use in resolving certain artifacts.
+      | However, this repository may have problems with heavy traffic at times, so people have mirrored
+      | it to several places.
+      |
+      | That repository definition will have a unique id, so we can create a mirror reference for that
+      | repository, to be used as an alternate download site. The mirror site will be the preferred
+      | server for that repository.
+      |-->
+      <mirrors>
+        <!-- mirror
+        | Specifies a repository mirror site to use instead of a given repository. The repository that
+        | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
+        | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
+        |
+        <mirror>
+          <id>mirrorId</id>
+          <mirrorOf>repositoryId</mirrorOf>
+          <name>Human Readable Name for this Mirror.</name>
+          <url>http://my.repository.com/repo/path</url>
+        </mirror>
+        -->
+      </mirrors>
+
+      <!-- profiles
+      | This is a list of profiles which can be activated in a variety of ways, and which can modify
+      | the build process. Profiles provided in the settings.xml are intended to provide local machine-
+      | specific paths and repository locations which allow the build to work in the local environment.
+      |
+      | For example, if you have an integration testing plugin - like cactus - that needs to know where
+      | your Tomcat instance is installed, you can provide a variable here such that the variable is
+      | dereferenced during the build process to configure the cactus plugin.
+      |
+      | As noted above, profiles can be activated in a variety of ways. One way - the activeProfiles
+      | section of this document (settings.xml) - will be discussed later. Another way essentially
+      | relies on the detection of a system property, either matching a particular value for the property,
+      | or merely testing its existence. Profiles can also be activated by JDK version prefix, where a
+      | value of '1.4' might activate a profile when the build is executed on a JDK version of '1.4.2_07'.
+      | Finally, the list of active profiles can be specified directly from the command line.
+      |
+      | NOTE: For profiles defined in the settings.xml, you are restricted to specifying only artifact
+      |       repositories, plugin repositories, and free-form properties to be used as configuration
+      |       variables for plugins in the POM.
+      |
+      |-->
+      <profiles>
+        <!-- profile
+        | Specifies a set of introductions to the build process, to be activated using one or more of the
+        | mechanisms described above. For inheritance purposes, and to activate profiles via <activatedProfiles/>
+        | or the command line, profiles have to have an ID that is unique.
+        |
+        | An encouraged best practice for profile identification is to use a consistent naming convention
+        | for profiles, such as 'env-dev', 'env-test', 'env-production', 'user-jdcasey', 'user-brett', etc.
+        | This will make it more intuitive to understand what the set of introduced profiles is attempting
+        | to accomplish, particularly when you only have a list of profile id's for debug.
+        |
+        | This profile example uses the JDK version to trigger activation, and provides a JDK-specific repo.
+        <profile>
+          <id>jdk-1.4</id>
+
+          <activation>
+            <jdk>1.4</jdk>
+          </activation>
+
+          <repositories>
+            <repository>
+              <id>jdk14</id>
+              <name>Repository for JDK 1.4 builds</name>
+              <url>http://www.myhost.com/maven/jdk14</url>
+              <layout>default</layout>
+              <snapshotPolicy>always</snapshotPolicy>
+            </repository>
+          </repositories>
+        </profile>
+        -->
+
+        <!--
+        | Here is another profile, activated by the system property 'target-env' with a value of 'dev',
+        | which provides a specific path to the Tomcat instance. To use this, your plugin configuration
+        | might hypothetically look like:
+        |
+        | ...
+        | <plugin>
+        |   <groupId>org.myco.myplugins</groupId>
+        |   <artifactId>myplugin</artifactId>
+        |
+        |   <configuration>
+        |     <tomcatLocation>${tomcatPath}</tomcatLocation>
+        |   </configuration>
+        | </plugin>
+        | ...
+        |
+        | NOTE: If you just wanted to inject this configuration whenever someone set 'target-env' to
+        |       anything, you could just leave off the <value/> inside the activation-property.
+        |
+        <profile>
+          <id>env-dev</id>
+
+          <activation>
+            <property>
+              <name>target-env</name>
+              <value>dev</value>
+            </property>
+          </activation>
+
+          <properties>
+            <tomcatPath>/path/to/tomcat/instance</tomcatPath>
+          </properties>
+        </profile>
+        -->
+      </profiles>
+
+      <!-- activeProfiles
+      | List of profiles that are active for all builds.
+      |
+      <activeProfiles>
+        <activeProfile>alwaysActiveProfile</activeProfile>
+        <activeProfile>anotherAlwaysActiveProfile</activeProfile>
+      </activeProfiles>
+      -->
+    </settings>
+kind: ConfigMap
+metadata:
+  name: maven-settings
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spring-petclinic
+  name: spring-petclinic
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: 8443-tcp
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  - name: 8778-tcp
+    port: 8778
+    protocol: TCP
+    targetPort: 8778
+  selector:
+    app: spring-petclinic
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spring-petclinic
+    app.kubernetes.io/component: web
+    app.kubernetes.io/instance: spring-petclinic
+    app.kubernetes.io/name: spring-petclinic
+    app.kubernetes.io/part-of: spring-petclinic
+    app.openshift.io/runtime: java
+  name: spring-petclinic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-petclinic
+  template:
+    metadata:
+      labels:
+        app: spring-petclinic
+    spec:
+      containers:
+      - image: quay.io/siamaksade/spring-petclinic:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: spring-petclinic
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        - containerPort: 8778
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: EventListener
+    app.kubernetes.io/part-of: Triggers
+    eventlistener: petclinic-event-listener
+  name: el-petclinic-event-listener
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: el-petclinic-event-listener
+    weight: 100
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: spring-petclinic
+  name: spring-petclinic
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: spring-petclinic
+    weight: 100
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: petclinic-deploy
+spec:
+  params:
+  - default: spring-petclinic
+    description: The application deployment name
+    name: APP_NAME
+    type: string
+  - default: https://github.com/siamaksade/spring-petclinic/
+    description: The application git repository url
+    name: APP_GIT_URL
+    type: string
+  - default: master
+    description: The application git repository revision
+    name: APP_GIT_REVISION
+    type: string
+  - default: spring-petclinic:latest
+    description: The application image stream
+    name: APP_IMAGE_STREAM
+    type: string
+  tasks:
+  - name: git-clone
+    params:
+    - name: url
+      value: $(params.APP_GIT_URL)
+    - name: revision
+      value: $(params.APP_GIT_REVISION)
+    - name: deleteExisting
+      value: "true"
+    taskRef:
+      kind: ClusterTask
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: app-source
+  - name: build-jar
+    params:
+    - name: GOALS
+      value:
+      - package
+      - -DskipTests
+    runAfter:
+    - git-clone
+    taskRef:
+      name: maven
+    workspaces:
+    - name: maven-cache
+      workspace: maven-cache
+    - name: maven-settings
+      workspace: maven-settings
+    - name: source
+      workspace: app-source
+  - name: build-image
+    params:
+    - name: TLSVERIFY
+      value: "false"
+    - name: OUTPUT_IMAGE_STREAM
+      value: $(params.APP_IMAGE_STREAM)
+    runAfter:
+    - build-jar
+    taskRef:
+      name: s2i-java-11-binary
+    workspaces:
+    - name: source
+      workspace: app-source
+  - name: deploy
+    params:
+    - name: DEPLOYMENT
+      value: $(params.APP_NAME)
+    - name: IMAGE_STREAM
+      value: $(params.APP_IMAGE_STREAM)
+    runAfter:
+    - build-image
+    taskRef:
+      name: redeploy
+  workspaces:
+  - name: maven-cache
+  - name: maven-settings
+  - name: app-source
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: maven
+spec:
+  params:
+  - default:
+    - package
+    description: maven goals to run
+    name: GOALS
+    type: array
+  steps:
+  - args:
+    - -Dmaven.repo.local=$(workspaces.maven-cache.path)
+    - -s
+    - $(workspaces.maven-settings.path)/settings.xml
+    - $(params.GOALS)
+    command:
+    - /usr/bin/mvn
+    image: gcr.io/cloud-builders/mvn
+    name: mvn
+    workingDir: $(workspaces.source.path)
+  workspaces:
+  - name: source
+  - name: maven-cache
+  - name: maven-settings
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: redeploy
+spec:
+  params:
+  - name: DEPLOYMENT
+    type: string
+  - name: IMAGE_STREAM
+    type: string
+  steps:
+  - env:
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+    name: deploy
+    script: |
+      #!/usr/bin/env bash
+
+      image_ref="image-registry.openshift-image-registry.svc:5000/$POD_NAMESPACE/$(params.IMAGE_STREAM)"
+
+      echo "Deploying $image_ref"
+
+      oc set image deployment/$(params.DEPLOYMENT) $(params.DEPLOYMENT)=$image_ref
+      oc patch deployment $(params.DEPLOYMENT) -p "{\"spec\": {\"template\": {\"metadata\": { \"labels\": {  \"redeploy\": \"$(date +%s)\"}}}}}"
+      oc rollout status deployment/$(params.DEPLOYMENT)
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: s2i-java-11-binary
+spec:
+  params:
+  - default: .
+    description: The location of the path to run s2i from
+    name: PATH_CONTEXT
+    type: string
+  - default: "false"
+    description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+    name: TLSVERIFY
+    type: string
+  - description: The application image url in registry
+    name: OUTPUT_IMAGE_STREAM
+    type: string
+  stepTemplate:
+    env:
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+  steps:
+  - command:
+    - s2i
+    - build
+    - $(params.PATH_CONTEXT)
+    - registry.access.redhat.com/openjdk/openjdk-11-rhel7
+    - --image-scripts-url
+    - image:///usr/local/s2i
+    - --as-dockerfile
+    - /gen-source/Dockerfile.gen
+    image: registry.redhat.io/ocp-tools-43-tech-preview/source-to-image-rhel8
+    name: generate
+    volumeMounts:
+    - mountPath: /env-params
+      name: envparams
+    - mountPath: /gen-source
+      name: gen-source
+    workingdir: $(workspaces.source.path)/target
+  - command:
+    - buildah
+    - bud
+    - --tls-verify=$(params.TLSVERIFY)
+    - --layers
+    - -f
+    - /gen-source/Dockerfile.gen
+    - -t
+    - image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
+    - .
+    image: registry.redhat.io/rhel8/buildah
+    name: build
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /var/lib/containers
+      name: varlibcontainers
+    - mountPath: /gen-source
+      name: gen-source
+    workingdir: /gen-source
+  - command:
+    - buildah
+    - push
+    - --tls-verify=$(params.TLSVERIFY)
+    - image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
+    - docker://image-registry.openshift-image-registry.svc:5000/$(POD_NAMESPACE)/$(params.OUTPUT_IMAGE_STREAM)
+    image: registry.redhat.io/rhel8/buildah
+    name: push
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /var/lib/containers
+      name: varlibcontainers
+  volumes:
+  - emptyDir: {}
+    name: varlibcontainers
+  - emptyDir: {}
+    name: gen-source
+  - emptyDir: {}
+    name: envparams
+  workspaces:
+  - name: source
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: petclinic-event-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+  - bindings:
+    - kind: ClusterTriggerBinding
+      ref: github-push
+    template:
+      name: trigger-template-petclinic-deploy
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: trigger-template-petclinic-deploy
+spec:
+  params:
+  - name: git-revision
+  - name: git-commit-message
+  - name: git-repo-url
+  - name: git-repo-name
+  - name: content-type
+  - name: pusher-name
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      labels:
+        tekton.dev/pipeline: petclinic-deploy
+      name: petclinic-deploy-$(uid)
+      namespace: demo
+    spec:
+      params:
+      - name: APP_NAME
+        value: spring-petclinic
+      - name: APP_GIT_URL
+        value: https://github.com/siamaksade/spring-petclinic/
+      - name: APP_GIT_REVISION
+        value: $(params.git-revision)
+      - name: APP_IMAGE_STREAM
+        value: spring-petclinic:$(params.git-revision)
+      pipelineRef:
+        name: petclinic-deploy
+      workspaces:
+      - name: app-source
+        persistentVolumeClaim:
+          claimName: app-source-pvc
+      - name: maven-cache
+        persistentVolumeClaim:
+          claimName: maven-cache-pvc
+      - configMap:
+          name: maven-settings
+        name: maven-settings
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-source-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: maven-cache-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem

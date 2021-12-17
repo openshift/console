@@ -209,6 +209,7 @@ Feature: Create Application from git form
                   | https://github.com/sclorg/httpd-ex.git |
                   | https://github.com/sclorg/nginx-ex.git |
 
+
         @regression
         Scenario: Provide custom build environments for nodejs git import
             Given user is at Import from Git form
@@ -218,6 +219,7 @@ Feature: Create Application from git form
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to navigate to Build "nodejs-env-1" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build1" in Environment tab of details page
+
 
         @regression
         Scenario: Update custom build environment in nodejs application edit page
@@ -229,3 +231,16 @@ Feature: Create Application from git form
               And user starts a new build
               And user navigates to Topology page
              Then user is able to navigate to Build "nodejs-env-2" for deployment "nodejs-env" and see environment variable "NPM_RUN" with value "build2" in Environment tab of details page
+
+
+        @regression @odc-6303
+        Scenario: Checking Secure Route option in import form: A-06-TC05
+            Given user is at Import from Git form
+             When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex.git"
+              And user enters name as "nodejs-route" in General section
+              And user clicks "Show advanced Routing options" link in Advanced Options section
+             Then user is able to see Secure Route checkbox is checked
+              And user is able to see Edge value is selected in "TLS termination"
+              And user is able to see Redirect value is selected in "Insecure traffic"
+
+
