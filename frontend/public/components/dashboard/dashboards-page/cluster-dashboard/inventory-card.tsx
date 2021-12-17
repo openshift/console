@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   ResourceInventoryItem,
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
@@ -25,6 +26,8 @@ import {
   isDashboardsOverviewInventoryItemReplacement as isDynamicDashboardsOverviewInventoryItemReplacement,
   ResolvedExtension,
   WatchK8sResources,
+  ClusterOverviewInventoryItem,
+  isClusterOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 
@@ -132,6 +135,10 @@ export const InventoryCard = () => {
     DynamicDashboardsOverviewInventoryItemReplacement
   >(isDynamicDashboardsOverviewInventoryItemReplacement);
 
+  const [inventoryExtensions] = useResolvedExtensions<ClusterOverviewInventoryItem>(
+    isClusterOverviewInventoryItem,
+  );
+
   const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
     itemExtensions,
     replacementExtensions,
@@ -150,23 +157,34 @@ export const InventoryCard = () => {
         <CardTitle>{t('public~Cluster inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
-        {mergedItems.map((item) => (
-          <ClusterInventoryItem
-            key={item.properties.model.kind}
-            model={item.properties.model}
-            mapperLoader={item.properties.mapper}
-            additionalResources={item.properties.additionalResources}
-            expandedComponent={item.properties.expandedComponent}
-          />
-        ))}
-        {dynamicMergedItems.map((item) => (
-          <ClusterInventoryItem
-            key={item.properties.model.kind}
-            model={item.properties.model}
-            resolvedMapper={item.properties.mapper}
-            additionalResources={item.properties.additionalResources}
-          />
-        ))}
+        <Stack hasGutter>
+          {mergedItems.map((item) => (
+            <StackItem key={item.properties.model.kind}>
+              <ClusterInventoryItem
+                model={item.properties.model}
+                mapperLoader={item.properties.mapper}
+                additionalResources={item.properties.additionalResources}
+                expandedComponent={item.properties.expandedComponent}
+              />
+            </StackItem>
+          ))}
+          {dynamicMergedItems.map((item) => (
+            <StackItem key={item.properties.model.kind}>
+              <ClusterInventoryItem
+                model={item.properties.model}
+                resolvedMapper={item.properties.mapper}
+                additionalResources={item.properties.additionalResources}
+              />
+            </StackItem>
+          ))}
+          {inventoryExtensions.map(({ uid, properties: { component: Component } }) => (
+            <ErrorBoundary key={uid}>
+              <StackItem>
+                <Component />
+              </StackItem>
+            </ErrorBoundary>
+          ))}
+        </Stack>
       </CardBody>
     </Card>
   );

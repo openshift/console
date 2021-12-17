@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { TableGridBreakpoint, OnSelect, SortByDirection, ICell } from '@patternfly/react-table';
 import { RouteComponentProps } from 'react-router';
@@ -480,4 +481,18 @@ export type OverviewGridProps = {
   mainCards: OverviewGridCard[];
   leftCards?: OverviewGridCard[];
   rightCards?: OverviewGridCard[];
+};
+
+export type InventoryItemTitleProps = {
+  children: React.ReactNode;
+};
+
+export type InventoryItemBodyProps = {
+  error?: any;
+};
+
+export type InventoryItemStatusProps = {
+  count: number;
+  icon: React.ReactNode;
+  linkTo?: string;
 };

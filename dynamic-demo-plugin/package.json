@@ -53,7 +53,8 @@
       "exampleProxyPage": "./components/ExampleProxyPage",
       "K8sAPIConsumer": "./components/k8sConsumer/K8sAPIConsumer",
       "navPage": "./components/Nav",
-      "listPage": "./components/ListPage"
+      "listPage": "./components/ListPage",
+      "clusterInventoryOverview": "./components/ClusterOverview/Inventory"
     },
     "dependencies": {
       "@console/pluginAPI": "*"

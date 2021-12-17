@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { NodeInventoryItem } from '@console/app/src/components/nodes/node-dashboard/InventoryCard';
@@ -36,35 +36,47 @@ const InventoryCard: React.FC = () => {
         <CardTitle>{t('metal3-plugin~Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
-        <NodeInventoryItem
-          nodeName={obj.metadata.name}
-          model={PodModel}
-          mapper={getPodStatusGroups}
-        />
-        <InventoryItem
-          isLoading={!obj}
-          title={t('metal3-plugin~Image')}
-          titlePlural={t('metal3-plugin~Images')}
-          count={obj.status?.images?.length}
-          error={!obj.status?.images}
-        />
-        <InventoryItem
-          title={t('metal3-plugin~Disk')}
-          isLoading={!obj}
-          count={getHostStorage(host).length}
-          TitleComponent={DiskTitleComponent}
-        />
-        <InventoryItem
-          title={t('metal3-plugin~NIC')}
-          isLoading={!obj}
-          count={getHostNICs(host).length}
-          TitleComponent={NICTitleComponent}
-        />
-        <InventoryItem
-          title={t('metal3-plugin~CPU')}
-          isLoading={!obj}
-          count={getHostCPU(host).count}
-        />
+        <Stack hasGutter>
+          <StackItem>
+            <NodeInventoryItem
+              nodeName={obj.metadata.name}
+              model={PodModel}
+              mapper={getPodStatusGroups}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              isLoading={!obj}
+              title={t('metal3-plugin~Image')}
+              titlePlural={t('metal3-plugin~Images')}
+              count={obj.status?.images?.length}
+              error={!obj.status?.images}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~Disk')}
+              isLoading={!obj}
+              count={getHostStorage(host).length}
+              TitleComponent={DiskTitleComponent}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~NIC')}
+              isLoading={!obj}
+              count={getHostNICs(host).length}
+              TitleComponent={NICTitleComponent}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~CPU')}
+              isLoading={!obj}
+              count={getHostCPU(host).count}
+            />
+          </StackItem>
+        </Stack>
       </CardBody>
     </Card>
   );
