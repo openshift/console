@@ -9,7 +9,7 @@ import { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
   const normalizedDevfileSamples = devfileSamples?.map((sample) => {
-    const { name: uid, displayName, description, tags, git, icon } = sample;
+    const { name: uid, displayName, description, tags, git, icon, provider } = sample;
     const gitRepoUrl = Object.values(git.remotes)[0];
     const href = `/import?importType=devfile&devfileName=${uid}&gitRepo=${gitRepoUrl}`;
     const createLabel = t('devconsole~Create Application');
@@ -36,6 +36,7 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
       name: displayName,
       description,
       tags,
+      provider,
       cta: {
         label: createLabel,
         href,
