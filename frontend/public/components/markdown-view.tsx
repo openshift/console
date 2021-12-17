@@ -228,7 +228,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     padding-top: 0;
   }
   </style>
-  <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markup}</div></body>`;
+  <body class="pf-m-redhat-font pf-c-content"><div style="overflow-y: auto;">${markup}</div></body>`;
   return (
     <>
       <iframe

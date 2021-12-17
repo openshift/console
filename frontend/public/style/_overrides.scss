@@ -154,8 +154,7 @@ form.pf-c-form {
     flex-direction: column;
   }
 
-  // `.pf-c-page` specificity required
-  .pf-c-toolbar {
+  .pf-c-toolbar--align-left {
     --pf-c-toolbar--PaddingTop: 0;
     --pf-c-toolbar__content--PaddingLeft: 0;
     --pf-c-toolbar__content--PaddingRight: 0;
