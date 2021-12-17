@@ -132,6 +132,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.webTerminalOperatorCard).click();
         break;
       }
+      case 'gitops-primer':
+      case operators.GitopsPrimer: {
+        cy.get(operatorsPO.operatorHub.gitopsPrimer).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }

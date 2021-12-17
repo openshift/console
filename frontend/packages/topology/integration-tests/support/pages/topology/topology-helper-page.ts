@@ -7,7 +7,7 @@ export const topologyHelper = {
       .get(topologyPO.search)
       .clear()
       .type(name),
-  verifyWorkloadInTopologyPage: (appName: string) => {
+  verifyWorkloadInTopologyPage: (appName: string, options?: { timeout: number }) => {
     topologyHelper.search(appName);
     // eslint-disable-next-line promise/catch-or-return
     cy.get('body').then(($body) => {
@@ -21,7 +21,7 @@ export const topologyHelper = {
       }
     });
     cy.get(topologyPO.graph.reset).click();
-    cy.get(topologyPO.highlightNode).should('be.visible');
+    cy.get(topologyPO.highlightNode, options).should('be.visible');
     app.waitForDocumentLoad();
   },
   verifyWorkloadDeleted: (workloadName: string) => {
