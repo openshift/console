@@ -70,7 +70,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
     : t('ceph-storage-plugin~Disabled');
 
   const kmsStatus = encryption.advanced
-    ? kms[kms.kmsProvider].name.value
+    ? kms[kms.provider].name.value
     : t('ceph-storage-plugin~Not connected');
 
   const totalCpu = getTotalCpu(nodes);

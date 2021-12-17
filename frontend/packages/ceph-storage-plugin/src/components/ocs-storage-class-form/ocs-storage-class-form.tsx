@@ -40,11 +40,16 @@ import {
   CLUSTER_STATUS,
   CEPH_STORAGE_NAMESPACE,
   KMSConfigMapCSIName,
-  UISupportedProviders,
+  SupportedProviders,
   DescriptionKey,
 } from '../../constants';
 import { cephBlockPoolResource, cephClusterResource } from '../../resources';
-import { CephClusterKind, StoragePoolKind, ProviderNames } from '../../types';
+import {
+  CephClusterKind,
+  StoragePoolKind,
+  ProviderNames,
+  KmsCsiConfigKeysMapping,
+} from '../../types';
 import { createBlockPoolModal } from '../modals/block-pool-modal/create-block-pool-modal';
 import { POOL_STATE } from '../../constants/storage-pool-const';
 import { KMSConfigure } from '../kms-config/kms-config';
@@ -329,11 +334,11 @@ const ExistingKMSDropDown: React.FC<ExistingKMSDropDownProps> = ({
   };
 
   const kmsProviderDropdownItems = _.reduce(
-    UISupportedProviders,
+    SupportedProviders,
     (res, providerDetails, providerName) => {
       if (
-        !UISupportedProviders[providerName].allowedPlatforms ||
-        UISupportedProviders[providerName]?.allowedPlatforms.includes(infraType)
+        !SupportedProviders[providerName].allowedPlatforms ||
+        SupportedProviders[providerName]?.allowedPlatforms.includes(infraType)
       )
         res.push(
           <DropdownItem
@@ -362,7 +367,13 @@ const ExistingKMSDropDown: React.FC<ExistingKMSDropDownProps> = ({
             // removing any object having syntax error
             // or, which are not supported by UI.
             const kmsData = JSON.parse(connectionDetails);
-            if (UISupportedProviders[provider].supported.includes(kmsData?.[KMS_PROVIDER])) {
+
+            // Todo: will remove this once we we completly moved to camelcase
+            const kmsProviderName =
+              kmsData?.[KMS_PROVIDER] ?? kmsData?.[KmsCsiConfigKeysMapping[KMS_PROVIDER]];
+            const kmsDescriptionKey = DescriptionKey[kmsProviderName];
+
+            if (SupportedProviders[provider].supported.includes(kmsProviderName)) {
               res.push(
                 <DropdownItem
                   key={connectionName}
@@ -370,7 +381,10 @@ const ExistingKMSDropDown: React.FC<ExistingKMSDropDownProps> = ({
                   id={connectionName}
                   data-test={connectionName}
                   onClick={handleServiceDropdownChange}
-                  description={kmsData?.[DescriptionKey[kmsData?.[KMS_PROVIDER]]]}
+                  description={
+                    kmsData?.[kmsDescriptionKey] ??
+                    kmsData?.[KmsCsiConfigKeysMapping[kmsDescriptionKey]]
+                  }
                 >
                   {connectionName}
                 </DropdownItem>,
@@ -400,7 +414,7 @@ const ExistingKMSDropDown: React.FC<ExistingKMSDropDownProps> = ({
               toggleIndicator={CaretDownIcon}
               isDisabled={!isHpcsKmsSupported || isLengthUnity(kmsProviderDropdownItems)}
             >
-              {UISupportedProviders[provider].group}
+              {SupportedProviders[provider].group}
             </DropdownToggle>
           }
           isOpen={isProviderOpen}
@@ -447,8 +461,18 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
   const [progress, setInProgress] = React.useState<boolean>(false);
   const [serviceName, setServiceName] = React.useState<string>('');
 
-  const { kms } = state.securityAndNetwork;
-  const { kmsProvider } = kms;
+  const { kms, encryption } = state.securityAndNetwork;
+  const { provider } = kms;
+
+  if (!encryption.storageClass) {
+    dispatch({
+      type: 'securityAndNetwork/setEncryption',
+      payload: {
+        ...encryption,
+        storageClass: true,
+      },
+    });
+  }
 
   const csiCMWatchResource: WatchK8sResource = {
     kind: ConfigMapModel.kind,
@@ -507,18 +531,18 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
     setInProgress(true);
     const allServiceNames = csiKmsDetails ? Object.keys(csiKmsDetails?.data) : [];
     if (
-      (allServiceNames.length && allServiceNames.indexOf(kms[kmsProvider].name.value) === -1) ||
+      (allServiceNames.length && allServiceNames.indexOf(kms[provider].name.value) === -1) ||
       !csiKmsDetails
     ) {
       try {
         const promises: Promise<K8sResourceKind>[] = createCsiKmsResources(
-          kms[kmsProvider],
+          kms[provider],
           !!csiKmsDetails,
-          kmsProvider,
+          provider,
         );
         await Promise.all(promises).then(() => {
           setIsExistingKms(true);
-          setEncryptionId(kms[kmsProvider].name.value);
+          setEncryptionId(kms[provider].name.value);
         });
         setErrorMessage('');
       } catch (error) {
@@ -527,7 +551,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
     } else {
       setErrorMessage(
         t('ceph-storage-plugin~KMS service {{value}} already exist', {
-          value: kms[kmsProvider].name.value,
+          value: kms[provider].name.value,
         }),
       );
     }
@@ -558,7 +582,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
             <ExistingKMSDropDown
               csiConfigMap={csiKmsDetails}
               serviceName={serviceName}
-              kmsProvider={kmsProvider}
+              kmsProvider={provider}
               infraType={infraType}
               setEncryptionId={setEncryptionId}
             />
@@ -585,7 +609,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
                     <Button
                       variant="secondary"
                       onClick={updateKMS}
-                      isDisabled={!kmsConfigValidation(kms[kmsProvider], kmsProvider)}
+                      isDisabled={!kmsConfigValidation(kms[provider], provider)}
                       data-test="save-action"
                     >
                       {t('ceph-storage-plugin~Save')}

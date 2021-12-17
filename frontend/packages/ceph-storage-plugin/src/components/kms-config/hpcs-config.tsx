@@ -159,7 +159,7 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
         onClick={openAdvancedModal}
         data-test="kms-advanced-settings-link"
       >
-        {t('ceph-storage-plugin~Advanced Settings')}{' '}
+        {t('ceph-storage-plugin~Advanced settings')}{' '}
         {(kms.baseUrl || kms.tokenUrl) && (
           <PencilAltIcon data-test="edit-icon" size="sm" color={blueInfoColor.value} />
         )}

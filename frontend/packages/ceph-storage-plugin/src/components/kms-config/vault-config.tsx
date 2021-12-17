@@ -1,22 +1,42 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
+
 import {
-  InputGroup,
   FormGroup,
+  FormSelect,
+  FormSelectOption,
   TextInput,
   Button,
   ValidatedOptions,
-  Tooltip,
 } from '@patternfly/react-core';
 import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { PencilAltIcon, EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
-import { setEncryptionDispatch, parseURL, kmsConfigValidation } from './utils';
-import { KMSConfigureProps } from './providers';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { useFlag } from '@console/shared/src/hooks/flag';
+
+import { setEncryptionDispatch, parseURL, kmsConfigValidation, isLengthUnity } from './utils';
+import { KMSConfigureProps, EncryptionDispatch } from './providers';
+import {
+  VaultTokenConfigure,
+  VaultServiceAccountConfigure,
+  VaultAuthMethodProps,
+} from './vault-auth-methods';
+import { State } from '../ocs-install/attached-devices-mode/reducer';
+import { InternalClusterState, ActionType } from '../ocs-install/internal-mode/reducer';
+import { WizardState } from '../create-storage-system/reducer';
+import { GUARDED_FEATURES } from '../../features';
 import { advancedVaultModal } from '../modals/advanced-kms-modal/advanced-vault-modal';
-import { ActionType } from '../ocs-install/internal-mode/reducer';
-import { VaultConfig, ProviderNames } from '../../types';
+
+import {
+  VaultConfig,
+  ProviderNames,
+  VaultAuthMethods,
+  KmsEncryptionLevel,
+  VaultAuthMethodMapping,
+} from '../../types';
+
 import './kms-config.scss';
 
 export const ValutConfigure: React.FC<KMSConfigureProps> = ({
@@ -28,84 +48,128 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const kms: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
-  const kmsObj: VaultConfig = _.cloneDeep(kms);
+  const isKmsVaultSASupported = useFlag(GUARDED_FEATURES.ODF_VAULT_SA_KMS);
 
-  const [revealToken, setRevealToken] = React.useState(false);
+  const vaultState: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
+  const vaultStateClone: VaultConfig = _.cloneDeep(vaultState);
+  const { encryption } = state;
 
+  const updateVaultState = (vaultConfig: VaultConfig) => {
+    mode
+      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, vaultConfig)
+      : dispatch({
+          type: 'securityAndNetwork/setVault',
+          payload: vaultConfig,
+        });
+  };
+
+  const setAuthMethod = (authMethod: VaultAuthMethods) => {
+    vaultStateClone.authMethod = authMethod;
+    updateVaultState(vaultStateClone);
+  };
+
+  const filteredVaultAuthMethodMapping = Object.values(VaultAuthMethodMapping).filter(
+    (authMethod) =>
+      (encryption.clusterWide
+        ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.CLUSTER_WIDE)
+        : true) &&
+      (encryption.storageClass
+        ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.STORAGE_CLASS)
+        : true),
+  );
+
+  const vaultAuthMethods = filteredVaultAuthMethodMapping.map((authMethod) => authMethod.value);
+  if (!vaultAuthMethods.includes(vaultState.authMethod)) {
+    if (isKmsVaultSASupported) {
+      // From 4.10 kubernetes is default auth method
+      setAuthMethod(VaultAuthMethods.KUBERNETES);
+    } else {
+      // upto 4.9 token is the default auth method
+      setAuthMethod(VaultAuthMethods.TOKEN);
+    }
+  }
+
+  return (
+    <>
+      {isKmsVaultSASupported && (
+        <FormGroup
+          fieldId="authentication-method"
+          label={t('ceph-storage-plugin~Authentication method')}
+          className={`${className}__form-body`}
+          helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
+          isRequired
+        >
+          <FormSelect
+            value={vaultState.authMethod}
+            onChange={setAuthMethod}
+            id="authentication-method"
+            name="authentication-method"
+            aria-label={t('ceph-storage-plugin~authentication-method')}
+            isDisabled={isLengthUnity(vaultAuthMethods)}
+          >
+            {filteredVaultAuthMethodMapping.map((authMethod) => (
+              <FormSelectOption
+                value={authMethod.value}
+                label={authMethod.name}
+                key={authMethod.name}
+              />
+            ))}
+          </FormSelect>
+        </FormGroup>
+      )}
+      <ValutConnectionForm
+        {...{
+          t,
+          state,
+          vaultState,
+          className,
+          mode,
+          isWizardFlow,
+          dispatch,
+          updateVaultState,
+        }}
+      />
+    </>
+  );
+};
+
+const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
+  t,
+  state,
+  vaultState,
+  className,
+  mode,
+  isWizardFlow,
+  dispatch,
+  updateVaultState,
+}) => {
+  const vaultStateClone: VaultConfig = _.cloneDeep(vaultState);
+  const Component: React.FC<VaultAuthMethodProps> =
+    vaultState.authMethod === VaultAuthMethods.TOKEN
+      ? VaultTokenConfigure
+      : VaultServiceAccountConfigure;
+
+  // Webhook
   React.useEffect(() => {
     const hasHandled: boolean =
-      kms.token?.valid && kms.token?.value !== '' && kmsConfigValidation(kms, ProviderNames.VAULT);
-    if (kms.hasHandled !== hasHandled) {
+      vaultState.authValue?.valid &&
+      vaultState.authValue?.value !== '' &&
+      kmsConfigValidation(vaultState, ProviderNames.VAULT);
+    if (vaultState.hasHandled !== hasHandled) {
       mode
         ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, {
-            ...kms,
+            ...vaultState,
             hasHandled,
           })
         : dispatch({
             type: 'securityAndNetwork/setVault',
             payload: {
-              ...kms,
+              ...vaultState,
               hasHandled,
             },
           });
     }
-  }, [dispatch, mode, kms]);
-
-  const setServiceName = (name: string) => {
-    kmsObj.name.value = name;
-    kmsObj.name.valid = name !== '';
-    mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
-      : dispatch({
-          type: 'securityAndNetwork/setVault',
-          payload: kmsObj,
-        });
-  };
-
-  const setAddress = (address: string) => {
-    kmsObj.address.value = address;
-    kmsObj.address.valid = address !== '' && parseURL(address.trim()) != null;
-    mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
-      : dispatch({
-          type: 'securityAndNetwork/setVault',
-          payload: kmsObj,
-        });
-  };
-
-  const setAddressPort = (port: string) => {
-    kmsObj.port.value = port;
-    kmsObj.port.valid =
-      port !== '' && !_.isNaN(Number(port)) && Number(port) > 0 && Number(port) < 65536;
-    mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
-      : dispatch({
-          type: 'securityAndNetwork/setVault',
-          payload: kmsObj,
-        });
-  };
-
-  const setToken = (token: string) => {
-    kmsObj.token.value = token;
-    kmsObj.token.valid = token !== '';
-    mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
-      : dispatch({
-          type: 'securityAndNetwork/setVault',
-          payload: kmsObj,
-        });
-  };
-
-  const validateAddressMessage = () =>
-    kms.address.value === ''
-      ? t('ceph-storage-plugin~This is a required field')
-      : t('ceph-storage-plugin~Please enter a URL');
-
-  const validatePortMessage = () =>
-    kms.port.value === ''
-      ? t('ceph-storage-plugin~This is a required field')
-      : t('ceph-storage-plugin~Please enter a valid port');
+  }, [dispatch, mode, vaultState]);
 
   const openAdvancedModal = () =>
     advancedVaultModal({
@@ -113,6 +177,42 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
       dispatch,
       mode,
     });
+
+  // vault state update
+  const setServiceName = (name: string) => {
+    vaultStateClone.name.value = name;
+    vaultStateClone.name.valid = name !== '';
+    updateVaultState(vaultStateClone);
+  };
+
+  const setAddress = (address: string) => {
+    vaultStateClone.address.value = address;
+    vaultStateClone.address.valid = address !== '' && parseURL(address.trim()) != null;
+    updateVaultState(vaultStateClone);
+  };
+
+  const setAddressPort = (port: string) => {
+    vaultStateClone.port.value = port;
+    vaultStateClone.port.valid =
+      port !== '' && !_.isNaN(Number(port)) && Number(port) > 0 && Number(port) < 65536;
+    updateVaultState(vaultStateClone);
+  };
+
+  const setAuthValue = (authValue: string) => {
+    vaultStateClone.authValue.value = authValue;
+    vaultStateClone.authValue.valid = authValue !== '';
+    updateVaultState(vaultStateClone);
+  };
+
+  const validateAddressMessage = () =>
+    vaultState.address.value === ''
+      ? t('ceph-storage-plugin~This is a required field')
+      : t('ceph-storage-plugin~Please enter a URL');
+
+  const validatePortMessage = () =>
+    vaultState.port.value === ''
+      ? t('ceph-storage-plugin~This is a required field')
+      : t('ceph-storage-plugin~Please enter a valid port');
 
   const isValid = (value: boolean) => (value ? ValidatedOptions.default : ValidatedOptions.error);
 
@@ -123,20 +223,20 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
         label={t('ceph-storage-plugin~Connection name')}
         className={`${className}__form-body`}
         helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
-        validated={isValid(kms.name?.valid)}
+        validated={isValid(vaultState.name?.valid)}
         helperText={t(
           'ceph-storage-plugin~A unique name for the key management service within the project.',
         )}
         isRequired
       >
         <TextInput
-          value={kms.name?.value}
+          value={vaultState.name?.value}
           onChange={setServiceName}
           type="text"
           id="kms-service-name"
           name="kms-service-name"
           isRequired
-          validated={isValid(kms.name?.valid)}
+          validated={isValid(vaultState.name?.valid)}
           data-test="kms-service-name-text"
         />
       </FormGroup>
@@ -146,18 +246,18 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
           label={t('ceph-storage-plugin~Address')}
           className={classNames('ocs-install-kms__form-address', `${className}__form-body`)}
           helperTextInvalid={validateAddressMessage()}
-          validated={isValid(kms.address?.valid)}
+          validated={isValid(vaultState.address?.valid)}
           isRequired
         >
           <TextInput
-            value={kms.address?.value}
+            value={vaultState.address?.value}
             onChange={setAddress}
             className="ocs-install-kms__form-address--padding"
             type="url"
             id="kms-address"
             name="kms-address"
             isRequired
-            validated={isValid(kms.address?.valid)}
+            validated={isValid(vaultState.address?.valid)}
             data-test="kms-address-text"
           />
         </FormGroup>
@@ -169,53 +269,25 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
             `${className}__form-body--small-padding`,
           )}
           helperTextInvalid={validatePortMessage()}
-          validated={isValid(kms.port?.valid)}
+          validated={isValid(vaultState.port?.valid)}
           isRequired
         >
           <TextInput
-            value={kms.port?.value}
+            value={vaultState.port?.value}
             onChange={setAddressPort}
             type="text"
             id="kms-address-port"
             name="kms-address-port"
             isRequired
-            validated={isValid(kms.port?.valid)}
+            validated={isValid(vaultState.port?.valid)}
             data-test="kms-address-port-text"
           />
         </FormGroup>
       </div>
       {isWizardFlow && (
-        <FormGroup
-          fieldId="kms-token"
-          label={t('ceph-storage-plugin~Token')}
-          className={`${className}__form-body`}
-          helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
-          validated={isValid(kms.token?.valid)}
-          isRequired
-        >
-          <InputGroup className="ocs-install-kms__form-token">
-            <TextInput
-              value={kms.token?.value}
-              onChange={setToken}
-              type={revealToken ? 'text' : 'password'}
-              id="kms-token"
-              name="kms-token"
-              isRequired
-              validated={isValid(kms.token?.valid)}
-            />
-            <Tooltip
-              content={
-                revealToken
-                  ? t('ceph-storage-plugin~Hide token')
-                  : t('ceph-storage-plugin~Reveal token')
-              }
-            >
-              <Button variant="control" onClick={() => setRevealToken(!revealToken)}>
-                {revealToken ? <EyeSlashIcon /> : <EyeIcon />}
-              </Button>
-            </Tooltip>
-          </InputGroup>
-        </FormGroup>
+        <Component
+          {...{ t, className: `${className}__form-body`, vaultState, setAuthValue, isValid }}
+        />
       )}
       <Button
         variant="link"
@@ -223,16 +295,31 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
         onClick={openAdvancedModal}
         data-test="kms-advanced-settings-link"
       >
-        {t('ceph-storage-plugin~Advanced Settings')}{' '}
-        {(kms.backend ||
-          kms.caCert ||
-          kms.tls ||
-          kms.clientCert ||
-          kms.clientKey ||
-          kms.providerNamespace) && (
+        {t('ceph-storage-plugin~Advanced settings')}{' '}
+        {(vaultState.backend ||
+          vaultState.caCert ||
+          vaultState.tls ||
+          vaultState.clientCert ||
+          vaultState.clientKey ||
+          vaultState.providerNamespace) && (
           <PencilAltIcon data-test="edit-icon" size="sm" color={blueInfoColor.value} />
         )}
       </Button>
     </>
   );
+};
+
+export type ValutConnectionFormProps = {
+  state:
+    | InternalClusterState
+    | State
+    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
+  vaultState: VaultConfig;
+  className: string;
+  mode: string;
+  infraType?: string;
+  isWizardFlow?: boolean;
+  t: TFunction;
+  dispatch: EncryptionDispatch;
+  updateVaultState: (VaultConfig) => void;
 };
