@@ -18,6 +18,7 @@ import {
   getTrafficByRevision,
   getKnativeServingDomainMapping,
   getDomainMapping,
+  getSinkableResources,
 } from '../get-knative-resources';
 import { deploymentData, deploymentKnativeData } from './knative-serving-data';
 
@@ -205,6 +206,35 @@ describe('Get knative resources', () => {
         namespace: 'mynamespace',
         optional: true,
       });
+    });
+  });
+
+  describe('getSinkableResources', () => {
+    it('expect to return empty array, if invalid value is passed', () => {
+      expect(getSinkableResources(null)).toHaveLength(0);
+      expect(getSinkableResources(undefined)).toHaveLength(0);
+      expect(getSinkableResources('')).toHaveLength(0);
+    });
+
+    it('expect to return Knative and K8s Services', () => {
+      const SAMPLE_NAMESPACE = 'mynamespace';
+      const sinkableResources = getSinkableResources(SAMPLE_NAMESPACE);
+      expect(sinkableResources).toEqual([
+        {
+          isList: true,
+          kind: 'Service',
+          namespace: 'mynamespace',
+          optional: true,
+          prop: 'services',
+        },
+        {
+          isList: true,
+          kind: 'serving.knative.dev~v1~Service',
+          namespace: 'mynamespace',
+          optional: true,
+          prop: 'ksservices',
+        },
+      ]);
     });
   });
 });

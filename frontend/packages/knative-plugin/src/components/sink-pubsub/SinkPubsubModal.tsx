@@ -10,6 +10,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { ResourceDropdownField } from '@console/shared';
+import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
 export interface SinkPubsubModalProps {
   resourceName: string;
@@ -43,7 +44,7 @@ const SinkPubsubModal: React.FC<Props> = ({
         setFieldTouched('ref.name', true);
         setFieldValue('ref.name', selectedValue);
         if (modelResource) {
-          const { apiGroup, apiVersion, kind } = modelResource;
+          const { apiGroup = 'core', apiVersion, kind } = modelResource;
           const sinkApiversion = `${apiGroup}/${apiVersion}`;
           setFieldValue('ref.apiVersion', sinkApiversion);
           setFieldTouched('ref.apiVersion', true);
@@ -76,6 +77,7 @@ const SinkPubsubModal: React.FC<Props> = ({
             placeholder={t('knative-plugin~Select a sink')}
             showBadge
             autocompleteFilter={autocompleteFilter}
+            customResourceKey={craftResourceKey}
             onChange={onSinkChange}
             autoSelect
             selectedKey={values?.ref?.name}
