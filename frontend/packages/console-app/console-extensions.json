@@ -219,6 +219,13 @@
     }
   },
   {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "applications",
+      "label": "%console-app~Applications%"
+    }
+  },
+  {
     "type": "console.user-preference/item",
     "properties": {
       "id": "console.preferredPerspective",

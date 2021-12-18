@@ -572,6 +572,8 @@
   "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.": "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.",
   "Select a Project to search inside or <2>create a Project</2>.": "Select a Project to search inside or <2>create a Project</2>.",
   "BindableKinds": "BindableKinds",
+  "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.": "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.",
+  "Secure route": "Secure route",
   "Image name from external registry": "Image name from external registry",
   "Image stream tag from internal registry": "Image stream tag from internal registry"
 }
