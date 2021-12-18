@@ -6,7 +6,7 @@ import {
   withDragNode,
   withSelection,
 } from '@patternfly/react-topology';
-import { contextMenuActions } from '@console/topology/src/actions/contextMenuActions';
+import { contextMenuActions } from '@console/topology/src/actions';
 import {
   CreateConnector,
   createConnectorCallback,
