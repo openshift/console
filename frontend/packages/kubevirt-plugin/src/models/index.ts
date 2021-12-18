@@ -257,3 +257,15 @@ export const DataSourceModel: K8sKind = {
   id: 'datasource',
   crd: true,
 };
+
+export const KubeDeschedulerModel = {
+  kind: 'KubeDescheduler',
+  label: 'KubeDescheduler',
+  labelPlural: 'KubeDeschedulers',
+  apiGroup: 'operator.openshift.io',
+  apiVersion: 'v1',
+  abbr: 'KD',
+  namespaced: false,
+  crd: true,
+  plural: 'kubedeschedulers',
+};

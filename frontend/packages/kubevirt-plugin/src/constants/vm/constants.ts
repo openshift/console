@@ -46,6 +46,8 @@ export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace'
 
 export const DEFAULT_RDP_PORT = 3389;
 
+export const DESCHEDULER_EVICT_LABEL = 'descheduler.alpha.kubernetes.io/evict';
+
 export const VM_DETAIL_DETAILS_HREF = 'details';
 export const VM_DETAIL_DISKS_HREF = 'disks';
 export const VM_DETAIL_NETWORKS_HREF = 'nics';
