@@ -51,7 +51,7 @@ export const useStorageClassConfigMap = (): UseConfigMapResult => {
         )}`;
         setError(err);
         // eslint-disable-next-line no-console
-        console.warn(err);
+        console.warn('Failed to fetch ConfigMap for storage class', err);
       }
     };
 

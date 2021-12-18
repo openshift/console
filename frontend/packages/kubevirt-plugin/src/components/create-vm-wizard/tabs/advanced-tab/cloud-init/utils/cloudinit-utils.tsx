@@ -17,7 +17,7 @@ const cleanUserData = (userData: string): string => {
       return yamlParser.dump(omit(userDataJS, 'ssh_authorized_keys'));
     }
   } catch (e) {
-    console.log(e?.message); // eslint-disable-line no-console
+    console.log('Failed to clean user data', e?.message); // eslint-disable-line no-console
   }
   return userData;
 };

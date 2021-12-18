@@ -168,7 +168,7 @@ const DeployImage: React.FC<Props> = ({
       .then((resources) => postFormCallback(resources))
       .catch((err) => {
         // eslint-disable-next-line no-console
-        console.log(err);
+        console.log('Failed to create or update image resources', err);
       });
 
     return resourceActions

@@ -20,8 +20,13 @@ export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
         const errorMsg = error.message || t('public~An error occurred. Please try again.');
         setInProgress(false);
         setErrorMessage(errorMsg);
-        // eslint-disable-next-line no-console
-        onError ? onError(errorMsg) : console.error(error);
+        onError
+          ? onError(errorMsg)
+          : // eslint-disable-next-line no-console
+            console.error(
+              `handlePromise failed in component ${Component.displayName || Component.name}:`,
+              error,
+            );
       },
     );
   };

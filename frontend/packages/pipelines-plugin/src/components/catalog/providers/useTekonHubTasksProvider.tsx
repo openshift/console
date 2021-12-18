@@ -50,7 +50,7 @@ const normalizeTektonHubTasks = async (
         })
         .catch((err) => {
           // eslint-disable-next-line no-console
-          console.log(err);
+          console.log('Failed to fetch tekton hub resource', err);
         }),
     );
     return acc;

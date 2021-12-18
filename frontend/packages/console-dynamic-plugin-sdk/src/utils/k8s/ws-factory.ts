@@ -204,7 +204,7 @@ export class WSFactory {
         h(data);
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error(e);
+        console.error('WS handling failed:', e);
       }
     });
   }
@@ -316,7 +316,7 @@ export class WSFactory {
       }
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error(e);
+      console.error('Error while close WS socket', e);
     }
 
     clearInterval(this.flushCanceler);
@@ -334,7 +334,7 @@ export class WSFactory {
       this.triggerEvent('destroy');
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error(e);
+      console.error('Error while trigger destroy event for WS socket', e);
     }
 
     this.state = 'destroyed';

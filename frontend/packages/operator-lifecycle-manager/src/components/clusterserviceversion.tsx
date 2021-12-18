@@ -936,7 +936,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         return JSON.parse(initializationResourceJSON);
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while parseing CSV initialization resource JSON', error.message);
       }
     }
     return null;
@@ -950,7 +950,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         return url.toString();
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while setting utm_source to support workflow URL', error.message);
       }
     }
     return null;
