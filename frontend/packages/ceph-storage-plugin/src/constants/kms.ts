@@ -4,6 +4,7 @@ export const KMSMaxFileUploadSize = 4000000;
 export const KMSConfigMapName = 'ocs-kms-connection-details';
 export const KMSConfigMapCSIName = 'csi-kms-connection-details';
 export const KMSVaultTokenSecretName = 'ocs-kms-token';
+export const KMSVaultCSISecretName = 'ceph-csi-kms-token';
 export const KMS_PROVIDER = 'KMS_PROVIDER';
 
 /**
