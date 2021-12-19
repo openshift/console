@@ -486,10 +486,7 @@
     "type": "console.dashboards/overview/inventory/item",
     "properties": {
       "mapper": { "$codeRef": "dashboardInventory.getVMStatusGroups" },
-      "model": { "$codeRef": "models.VirtualMachineModel" },
-      "additionalResources": {
-        "$codeRef": "dashboardHealth.additionalResources"
-      }
+      "model": { "$codeRef": "models.VirtualMachineModel" }
     },
     "flags": {
       "required": ["KUBEVIRT"]

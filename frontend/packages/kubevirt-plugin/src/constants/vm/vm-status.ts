@@ -56,11 +56,11 @@ export enum VMPrintableStatusSimpleLabel {
 }
 
 export const VM_STATUS_SIMPLE_LABELS = [
+  ...getStringEnumValues<VMStatusSimpleLabel>(VMStatusSimpleLabel),
   StatusSimpleLabel.Error,
   StatusSimpleLabel.Pending,
   StatusSimpleLabel.Importing,
   StatusSimpleLabel.Other,
-  ...getStringEnumValues<VMStatusSimpleLabel>(VMStatusSimpleLabel),
 ];
 
 const VM_STATUS_SIMPLE_LABELS_SET = new Set(VM_STATUS_SIMPLE_LABELS);
@@ -227,14 +227,71 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
   };
 }
 
-export const printableToVMStatus = {
-  Stopped: VMStatus.STOPPED,
-  Migrating: VMStatus.MIGRATING,
-  Provisioning: VMStatus.STARTING,
-  Starting: VMStatus.STARTING,
-  Running: VMStatus.RUNNING,
-  Paused: VMStatus.PAUSED,
-  Stopping: VMStatus.STOPPING,
-  Terminating: VMStatus.DELETING,
-  Unknown: VMStatus.UNKNOWN,
+export const printableVmStatus = {
+  Stopped: 'Stopped',
+  Migrating: 'Migrating',
+  Provisioning: 'Provisioning',
+  Starting: 'Starting',
+  Running: 'Running',
+  Paused: 'Paused',
+  Stopping: 'Stopping',
+  Terminating: 'Terminating',
+  Unknown: 'Unknown',
+  CrashLoopBackOff: 'CrashLoopBackOff',
+  FailedUnschedulable: 'FailedUnschedulable',
+  ErrorUnschedulable: 'ErrorUnschedulable',
+  ErrImagePull: 'ErrImagePull',
+  ImagePullBackOff: 'ImagePullBackOff',
+  ErrorPvcNotFound: 'ErrorPvcNotFound',
+  ErrorDataVolumeNotFound: 'ErrorDataVolumeNotFound',
+  DataVolumeError: 'DataVolumeError',
+  WaitingForVolumeBinding: 'WaitingForVolumeBinding',
 };
+
+export const printableToVMStatus = {
+  [printableVmStatus.Stopped]: VMStatus.STOPPED,
+  [printableVmStatus.Migrating]: VMStatus.MIGRATING,
+  [printableVmStatus.Provisioning]: VMStatus.STARTING,
+  [printableVmStatus.Starting]: VMStatus.STARTING,
+  [printableVmStatus.Running]: VMStatus.RUNNING,
+  [printableVmStatus.Paused]: VMStatus.PAUSED,
+  [printableVmStatus.Stopping]: VMStatus.STOPPING,
+  [printableVmStatus.Terminating]: VMStatus.DELETING,
+  [printableVmStatus.WaitingForVolumeBinding]: VMStatus.STARTING,
+  [printableVmStatus.ErrImagePull]: VMStatus.VM_ERROR,
+  [printableVmStatus.CrashLoopBackOff]: VMStatus.VM_ERROR,
+  [printableVmStatus.FailedUnschedulable]: VMStatus.VM_ERROR,
+  [printableVmStatus.ErrorUnschedulable]: VMStatus.VM_ERROR,
+  [printableVmStatus.ImagePullBackOff]: VMStatus.VM_ERROR,
+  [printableVmStatus.ErrorPvcNotFound]: VMStatus.CDI_IMPORT_ERROR,
+  [printableVmStatus.ErrorDataVolumeNotFound]: VMStatus.CDI_IMPORT_ERROR,
+  [printableVmStatus.DataVolumeError]: VMStatus.CDI_IMPORT_ERROR,
+  [printableVmStatus.Unknown]: VMStatus.UNKNOWN,
+};
+
+export const printableStatusToLabel = {
+  [printableVmStatus.Stopped]: VMStatusSimpleLabel.Stopped,
+  [printableVmStatus.Migrating]: VMStatusSimpleLabel.Migrating,
+  [printableVmStatus.Provisioning]: VMStatusSimpleLabel.Starting,
+  [printableVmStatus.Starting]: VMStatusSimpleLabel.Starting,
+  [printableVmStatus.Running]: VMStatusSimpleLabel.Running,
+  [printableVmStatus.Paused]: VMStatusSimpleLabel.Paused,
+  [printableVmStatus.Stopping]: VMStatusSimpleLabel.Stopping,
+  [printableVmStatus.Terminating]: VMStatusSimpleLabel.Deleting,
+  [printableVmStatus.WaitingForVolumeBinding]: VMStatusSimpleLabel.Starting,
+  [printableVmStatus.ErrImagePull]: StatusSimpleLabel.Error,
+  [printableVmStatus.CrashLoopBackOff]: StatusSimpleLabel.Error,
+  [printableVmStatus.FailedUnschedulable]: StatusSimpleLabel.Error,
+  [printableVmStatus.ErrorUnschedulable]: StatusSimpleLabel.Error,
+  [printableVmStatus.ImagePullBackOff]: StatusSimpleLabel.Error,
+  [printableVmStatus.ErrorPvcNotFound]: StatusSimpleLabel.Error,
+  [printableVmStatus.ErrorDataVolumeNotFound]: StatusSimpleLabel.Error,
+  [printableVmStatus.DataVolumeError]: StatusSimpleLabel.Error,
+  [printableVmStatus.Unknown]: StatusSimpleLabel.Other,
+};
+
+export const getVmStatusFromPrintable = (printableStatus: string): VMStatus =>
+  printableToVMStatus?.[printableStatus] || VMStatus.UNKNOWN;
+
+export const getVmStatusLabelFromPrintable = (printableStatus: string) =>
+  printableStatusToLabel?.[printableStatus] || StatusSimpleLabel.Other;

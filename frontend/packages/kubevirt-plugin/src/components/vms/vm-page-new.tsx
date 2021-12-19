@@ -34,7 +34,7 @@ import { LazyActionMenu } from '@console/shared';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
-import { printableToVMStatus, VMStatus } from '../../constants/vm/vm-status';
+import { getVmStatusFromPrintable, VMStatus } from '../../constants/vm/vm-status';
 import { useNamespace } from '../../hooks/use-namespace';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
@@ -131,7 +131,7 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = (
   const dimensify = dimensifyRow(tableColumnClasses);
   const arePendingChanges = hasPendingChanges(vm, vmi);
   const printableStatus = obj?.metadata?.status;
-  const status: VMStatus = printableToVMStatus?.[printableStatus];
+  const status: VMStatus = getVmStatusFromPrintable(printableStatus);
 
   const model = (vm && VirtualMachineModel) || (vmi && VirtualMachineInstanceModel);
   const context = getVMActionContext(vm || vmi);
