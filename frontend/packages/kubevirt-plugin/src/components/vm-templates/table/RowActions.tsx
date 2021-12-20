@@ -97,6 +97,7 @@ const RowActions: React.FC<RowActionsProps> = ({
   const { t } = useTranslation();
   const [createVmAllowed] = useAccessReview2({
     namespace,
+    group: VirtualMachineModel.apiGroup,
     resource: VirtualMachineModel.plural,
     verb: 'create' as K8sVerb,
   });
