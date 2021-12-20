@@ -37,6 +37,7 @@ export enum nodeActions {
   EditRevision = 'Edit Revision',
   DeleteRevision = 'Delete Revision',
   MakeServerless = 'Make Serverless',
+  AddTrigger = 'Add Trigger',
 }
 
 export enum applicationGroupingsActions {

@@ -9,6 +9,7 @@ export const pageTitle = {
   CreateEventSource: 'Create Event Source',
   upgradeHelmRelease: 'Upgrade Helm Release',
   Channel: 'Channel',
+  Broker: 'Broker',
   Add: 'Add',
   GitOPs: 'GitOps',
   Observe: 'Observe',

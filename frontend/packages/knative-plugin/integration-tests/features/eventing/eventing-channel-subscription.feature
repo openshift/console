@@ -20,6 +20,17 @@ Feature: Knative Eventing Channel and Subscription
              Then user will see connection between Channel "channel-test" and Subscriber "nodejs-ex-git"
 
 
+        @regression @odc-6359
+        Scenario: Multiple Subscriber in Add Subscriptin modal: KE-04-TC02
+            Given user has created knative service "nodejs-ex-git"
+              And user has created channel "channel-test1"
+              And user is at Topology page
+             When user right clicks on the Channel "channel-test1" to open the context menu
+              And user clicks on the Add Subscription
+              And user will click on the Subscriber dropdown on the modal
+             Then Subscriber has knative service dropdown with "Service" and "KSVC" options
+
+
         @regression @manual
         Scenario: Subscribe channel to multiple services: KE-05-TC02
             Given user is having Channel subscribed to a service on the Topology page

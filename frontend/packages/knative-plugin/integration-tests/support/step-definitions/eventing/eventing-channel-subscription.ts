@@ -1,12 +1,18 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
+  devNavigationMenu,
+  nodeActions,
+  resourceTypes,
+} from '@console/dev-console/integration-tests/support/constants';
+import {
   topologyPage,
   topologySidePane,
   addSubscription,
   createChannel,
+  createGitWorkloadIfNotExistsOnTopologyPage,
 } from '@console/dev-console/integration-tests/support/pages';
-import { sidePane } from '@console/dev-console/integration-tests/support/pages/app';
+import { navigateTo, sidePane } from '@console/dev-console/integration-tests/support/pages/app';
 
 Given('user has created channel {string}', (channelName: string) => {
   createChannel(channelName);
@@ -43,5 +49,35 @@ Then(
     topologySidePane.verify();
     cy.byLegacyTestID(subscriber).should('be.visible');
     sidePane.close();
+  },
+);
+
+Given('user has created knative service {string}', (knativeServiceName: string) => {
+  createGitWorkloadIfNotExistsOnTopologyPage(
+    'https://github.com/sclorg/nodejs-ex.git',
+    knativeServiceName,
+    resourceTypes.knativeService,
+  );
+});
+
+Given('user is at Topology page', () => {
+  navigateTo(devNavigationMenu.Topology);
+});
+
+When('user clicks on the Add Subscription', () => {
+  topologyPage.selectContextMenuAction(nodeActions.AddSubscription);
+});
+
+When('user will click on the Subscriber dropdown on the modal', () => {
+  cy.get('[id=form-ns-dropdown-spec-subscriber-ref-name-field"]').click();
+});
+
+Then(
+  'Subscriber has knative service dropdown with {string} and {string} options',
+  (option1: string, option2: string) => {
+    cy.get("[role='listbox']")
+      .should('be.visible')
+      .and('contain', option1)
+      .and('contain', option2);
   },
 );

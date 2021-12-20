@@ -184,3 +184,27 @@ Then('user will see the Rate of Transmitted Packets Dropped on Dashboard tab', (
     .scrollIntoView()
     .should('be.visible');
 });
+
+Given('user is on Observe page', () => {
+  navigateTo(devNavigationMenu.Observe);
+});
+
+When('user clicks on Dashboard tab', () => {
+  cy.get(monitoringPO.tabs.dashboard)
+    .should('be.visible')
+    .click();
+});
+
+When('user clicks on Dashboard dropdown', () => {
+  cy.get(monitoringPO.dashboardTab.dashboardFilter)
+    .should('be.visible')
+    .click();
+});
+
+When('user can see {string} and {string} option', (option1: string, option2: string) => {
+  // Uncommented after story ODC-6340 is implemented
+  // cy.get('.pf-c-select__menu')
+  //   .should('contain', option1)
+  //   .and('contain', option2);
+  cy.log(option1, option2); // to avoid lint issues
+});

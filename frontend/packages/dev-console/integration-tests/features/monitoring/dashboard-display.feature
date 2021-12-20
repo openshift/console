@@ -158,3 +158,11 @@ Feature: Observe Page
             Given user is on Observe page
              When user clicks on "Alerts" tab
              Then user is able to see Name, Severity, Alert State and Notifications
+
+
+        @regression @odc-6359
+        Scenario: Knative items present in dashboard: M-02-TC11
+            Given user is on Observe page
+             When user clicks on "Dashboard" tab
+              And user clicks on Dashboard dropdown
+             Then user can see "Knative Serving - Revision CPU and Memory Usage" and "Knative Serving - Revision Queue Proxy Metrics" option
