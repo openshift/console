@@ -20,6 +20,7 @@ export const addPage = {
         cy.testA11y('Deploy Page');
         detailsPage.titleShouldContain(pageTitle.ContainerImage);
         break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
         cy.byTestID('item import-from-git').click();
@@ -149,12 +150,18 @@ export const verifyAddPage = {
       case 'Event Source':
         cy.byTestID('item knative-event-source').should('be.visible');
         break;
+      case 'Import from Git':
+        cy.byTestID('item import-from-git').should('be.visible');
+        break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'From Git':
         cy.byTestID('item import-from-git').should('be.visible');
         break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'From Devfile':
         cy.byTestID('item import-from-git').should('be.visible');
         break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'From Dockerfile':
         cy.byTestID('item import-from-git').should('be.visible');
         break;
