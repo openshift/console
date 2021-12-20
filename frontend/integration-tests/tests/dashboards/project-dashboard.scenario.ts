@@ -198,9 +198,13 @@ describe('Project Dashboard', () => {
 
     it('shows Resource Quotas', async () => {
       expect(projectDashboardView.resourceQuotasCard.isDisplayed()).toBe(true);
-      expect(projectDashboardView.resourceQuotasCard.$('.pf-c-card__body').getText()).toEqual(
-        'No ResourceQuotas\nNo AppliedClusterResourceQuotas',
+      await browser.wait(
+        until.visibilityOf(
+          projectDashboardView.resourceQuotasCard.$('.pf-c-card__body .text-secondary'),
+        ),
       );
+      const card = await projectDashboardView.resourceQuotasCard.$('.pf-c-card__body');
+      expect(card.getText()).toEqual('No ResourceQuotas\nNo AppliedClusterResourceQuotas');
       createResource(resourceQuota);
       addLeakableResource(leakedResources, resourceQuota);
 
