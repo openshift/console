@@ -104,6 +104,8 @@ export const iconFor = (pkg: PackageManifestKind) => {
 
 export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps> = (props) => {
   const { icon, displayName, provider, version } = props;
+  const { t } = useTranslation();
+
   const imgSrc: string = _.isString(icon)
     ? icon
     : _.isEmpty(icon)
@@ -125,8 +127,12 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
           {displayName}
         </h1>
         {provider && (
-          <span className="co-clusterserviceversion-logo__name__provider text-muted">{`${version ||
-            ''} provided by ${_.get(provider, 'name', provider)}`}</span>
+          <span className="co-clusterserviceversion-logo__name__provider text-muted">
+            {t('olm~{{version}} provided by {{provider}}', {
+              version: version || '',
+              provider: _.get(provider, 'name', provider),
+            })}
+          </span>
         )}
       </div>
     </div>

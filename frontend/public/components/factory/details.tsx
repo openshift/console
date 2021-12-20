@@ -166,6 +166,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           label={props.label || (props.kind as any).label}
           resourceKeys={resourceKeys}
           customData={props.customData}
+          createRedirect={props.createRedirect}
         />
       </Firehose>
     </>
@@ -178,6 +179,7 @@ export type DetailsPageProps = {
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
   buttonActions?: any[];
+  createRedirect?: boolean;
   customActionMenu?:
     | React.ReactNode
     | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.

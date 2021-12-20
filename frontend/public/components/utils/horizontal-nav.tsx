@@ -6,6 +6,7 @@ import * as _ from 'lodash-es';
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
+  Redirect,
   Route,
   Switch,
   Link,
@@ -221,7 +222,9 @@ NavBar.displayName = 'NavBar';
 
 export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const renderContent = (routes: JSX.Element[]) => {
-    const { noStatusBox, obj, EmptyMsg, label } = props;
+    const { createRedirect, noStatusBox, obj, EmptyMsg, label } = props;
+    // Handle cases where matching Routes do not exist and show the details page instead of a blank page
+    createRedirect && routes.length >= 1 && routes.push(<Redirect to={routes[0].props.path} />);
     const content = (
       <React.Suspense fallback={<LoadingBox />}>
         <Switch>{routes}</Switch>
@@ -390,6 +393,7 @@ export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resou
   /* The facade support a limited set of properties for pages */
   match: Match<any>;
   className?: string;
+  createRedirect?: boolean;
   pages: Page[];
   label?: string;
   obj?: { data: K8sResourceCommon; loaded: boolean };
