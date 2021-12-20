@@ -9,7 +9,7 @@ import {
   RedExclamationCircleIcon,
   ColoredIconProps,
 } from '@console/shared/src/components/status';
-import { TopConsumerPopoverProp } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { AreaChart } from './area-chart';
@@ -144,7 +144,6 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
                 {TopConsumerPopover ? (
                   <TopConsumerPopover
                     current={currentHumanized}
-                    max={humanMax}
                     limit={latestLimit ? humanizeValue(latestLimit).string : null}
                     requested={latestRequested ? humanizeValue(latestRequested).string : null}
                     available={humanAvailable}
@@ -213,6 +212,6 @@ type UtilizationItemProps = {
   error: boolean;
   max?: number;
   byteDataType?: ByteDataTypes;
-  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
   setLimitReqState?: (state: { limit: LIMIT_STATE; requested: LIMIT_STATE }) => void;
 };
