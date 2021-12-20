@@ -100,6 +100,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       kind: kubevirtReferenceForModel(DataSourceModel),
       isList: true,
       prop: 'dataSources',
+      optional: true,
     },
     {
       kind: PodModel.kind,

@@ -23,7 +23,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     },
     isList: true,
   });
-  const [dataSources, dataSourcesLoaded] = useK8sWatchResource<DataSourceKind[]>({
+  const [dataSources] = useK8sWatchResource<DataSourceKind[]>({
     kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
   });
@@ -56,13 +56,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
   const [baseImages, baseLoaded, baseError, baseDVs, basePods] = useBaseImages(baseTemplates, true);
 
   const resourcesLoaded =
-    utLoaded &&
-    btLoaded &&
-    podsLoaded &&
-    dvsLoaded &&
-    pvcsLoaded &&
-    baseLoaded &&
-    dataSourcesLoaded;
+    utLoaded && btLoaded && podsLoaded && dvsLoaded && pvcsLoaded && baseLoaded;
   const resourcesLoadError = utError || btError || podsError || dvsError || pvcsError || baseError;
 
   return React.useMemo(() => {
