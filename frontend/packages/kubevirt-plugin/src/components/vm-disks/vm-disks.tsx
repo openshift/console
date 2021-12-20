@@ -9,7 +9,11 @@ import {
   Table,
 } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
+import {
+  FieldLevelHelp,
+  FirehoseResult,
+  useAccessReview2,
+} from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import {
@@ -182,6 +186,13 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi }) => {
       ? new Set(changedDisks(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmi)))
       : null;
 
+  const [canCreate] = useAccessReview2({
+    group: DataVolumeModel?.apiGroup,
+    resource: DataVolumeModel?.plural,
+    verb: 'create',
+    namespace,
+  });
+
   const resources = [
     getResource(PersistentVolumeClaimModel, {
       namespace,
@@ -226,7 +237,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi }) => {
       createButtonText={t('kubevirt-plugin~Add disk')}
       canCreate
       createProps={{
-        isDisabled: isLocked || isCommon || isVMI(vmLikeEntity),
+        isDisabled: isLocked || isCommon || isVMI(vmLikeEntity) || !canCreate,
         onClick: createFn,
         id: 'add-disk',
       }}
