@@ -43,6 +43,9 @@ jest.mock('react-redux', () => {
   };
 });
 
+const originalConsole = { ...console };
+const consoleMock = jest.fn();
+
 const emptyConfigMap: ConfigMapKind = {
   apiVersion: 'v1',
   kind: 'ConfigMap',
@@ -59,18 +62,23 @@ const savedDataConfigMap: ConfigMapKind = {
   },
 };
 
-describe('useUserSettings', () => {
-  beforeEach(() => {
-    useK8sWatchResourceMock.mockClear();
-    createConfigMapMock.mockClear();
-    updateConfigMapMock.mockClear();
-    useSelectorMock.mockClear();
-    useSelectorMock.mockImplementation((selector) =>
-      selector({ sdkCore: { user: { metadata: { uid: 'foo' } } } }),
-    );
-  });
+beforeEach(() => {
+  jest.resetAllMocks();
+  useSelectorMock.mockImplementation((selector) =>
+    selector({ sdkCore: { user: { metadata: { uid: 'foo' } } } }),
+  );
 
-  it('should create and update user settings if watcher could not find a ConfigMap', async () => {
+  // eslint-disable-next-line no-console
+  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = consoleMock));
+});
+
+afterEach(() => {
+  // eslint-disable-next-line no-console
+  ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = originalConsole[key]));
+});
+
+describe('useUserSettings', () => {
+  it('should create and update user settings if watcher returns 404 Not found (returned for kubeadmins who have access to the openshift-console-user-settings namespace)', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
@@ -81,7 +89,7 @@ describe('useUserSettings', () => {
 
     // Mock ConfigMap not found
     await act(async () => {
-      const k8sError: Error & { response?: any } = new Error('ConfigMap Not Found');
+      const k8sError: Error & { response?: any } = new Error('Not found');
       k8sError.response = { ok: false, status: 404 };
       useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
       rerender();
@@ -108,6 +116,48 @@ describe('useUserSettings', () => {
       'console.key',
       'default value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should create and update user settings if watcher returns 403 Forbidden (returned for users who could not access non existing ConfigMaps in openshift-console-user-settings namespace)', async () => {
+    // Mock loading
+    useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+
+    const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
+
+    // Expect loading
+    expect(result.current).toEqual([undefined, expect.any(Function), false]);
+
+    // Mock ConfigMap not found
+    await act(async () => {
+      const k8sError: Error & { response?: any } = new Error('Forbidden');
+      k8sError.response = { ok: false, status: 403 };
+      useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
+      rerender();
+    });
+
+    // Expect loading
+    expect(result.current).toEqual([undefined, expect.any(Function), false]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(createConfigMapMock).toHaveBeenCalledWith();
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+
+    // Mock that ConfigMap is now available
+    await act(async () => {
+      useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
+      rerender();
+    });
+
+    // Expect default value with loaded
+    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(updateConfigMapMock).toHaveBeenCalledWith(
+      emptyConfigMap,
+      'console.key',
+      'default value',
+    );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should return default value for an empty configmap after switching from loading to loaded', async () => {
@@ -134,6 +184,7 @@ describe('useUserSettings', () => {
       'console.key',
       'default value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should return saved value for an known key after switching from loading to loaded', async () => {
@@ -155,6 +206,7 @@ describe('useUserSettings', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should return default value for an unknown key if data is already loaded (hook is used twice)', async () => {
@@ -172,6 +224,7 @@ describe('useUserSettings', () => {
       'console.key',
       'default value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should return saved value for an known key if data is already loaded (hook is used twice)', async () => {
@@ -184,6 +237,7 @@ describe('useUserSettings', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should return latest user settings value after switching from loading to loaded', async () => {
@@ -205,6 +259,7 @@ describe('useUserSettings', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should return latest user settings value in loaded state (hook is used twice)', async () => {
@@ -217,6 +272,7 @@ describe('useUserSettings', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should trigger update user settings when setter was called', async () => {
@@ -245,6 +301,7 @@ describe('useUserSettings', () => {
       'console.key',
       'new value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should provide the default value for user settings without sync and setter if there is no old value', async () => {
@@ -276,6 +333,7 @@ describe('useUserSettings', () => {
       'console.key',
       'new value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should provide the default value for user settings with sync and setter if there is no old value', async () => {
@@ -309,6 +367,7 @@ describe('useUserSettings', () => {
       'console.key',
       'new value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should provide the old value for user settings without sync and setter if there is an old value', async () => {
@@ -340,6 +399,7 @@ describe('useUserSettings', () => {
       'console.key',
       'new value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should provide the old value for user settings with sync and setter if there is an old value', async () => {
@@ -373,6 +433,7 @@ describe('useUserSettings', () => {
       'console.key',
       'new value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should provide an updated value for user settings wuthout sync and setter if there is was an update in the meantime', async () => {
@@ -420,6 +481,7 @@ describe('useUserSettings', () => {
       'console.key',
       'new value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
   it('should provide an updated value for user settings with sync and setter if there is was an update in the meantime', async () => {
@@ -468,9 +530,10 @@ describe('useUserSettings', () => {
       'console.key',
       'new value',
     );
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should fallback to localStorage if fetch fails with 403 (must not call updateConfigMap or createConfigMapMock)', async () => {
+  it('should fallback to localStorage if creation fails and watch returns 404 Not found (returned for kubeadmin who have acess to the openshift-console-user-settings namespace)', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
@@ -479,24 +542,33 @@ describe('useUserSettings', () => {
     // Expect loading data
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
-    // Mock that createConfigMap is 403 Forbidden and that ConfigMap is not found.
+    // Mock that createConfigMap is 404 Not found.
+    const error: Error & { response?: any } = new Error('Not Found');
+    error.response = {
+      ok: false,
+      status: 404,
+    };
     await act(async () => {
-      const error: Error & { response?: any } = new Error('Forbidden');
-      error.response = {
-        ok: false,
-        status: 403,
-      };
+      createConfigMapMock.mockImplementation(async () => {
+        throw error;
+      });
       useK8sWatchResourceMock.mockReturnValue([null, false, error]);
       rerender();
     });
 
     // Should call createConfigMap, but not updateConfigMap
     expect(result.current).toEqual(['default value', expect.any(Function), true]);
-    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(createConfigMapMock).toHaveBeenCalledWith();
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(1);
+    expect(consoleMock).toHaveBeenCalledWith(
+      'Could not create ConfigMap for user settings:',
+      error,
+    );
   });
 
-  it('should fallback to localStorage if creation fails with 404 (must call createConfigMapMock)', async () => {
+  it('should fallback to localStorage if creation fails and watch return 403 Forbidden (returned for users who could not access non existing ConfigMaps in openshift-console-user-settings namespace)', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
@@ -506,17 +578,17 @@ describe('useUserSettings', () => {
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
     // Mock that createConfigMap is 404 API not found.
+    const error: Error & { response?: any } = new Error('Forbidden');
+    error.response = {
+      ok: false,
+      status: 403,
+    };
     await act(async () => {
       createConfigMapMock.mockImplementation(async () => {
-        const error: Error & { response?: any } = new Error('Not Found');
-        error.response = {
-          ok: false,
-          status: 404,
-        };
         throw error;
       });
-      const k8sError: Error & { response?: any } = new Error('ConfigMap Not Found');
-      k8sError.response = { ok: false, status: 404 };
+      const k8sError: Error & { response?: any } = new Error('Forbidden');
+      k8sError.response = { ok: false, status: 403 };
       useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
       rerender();
     });
@@ -526,9 +598,42 @@ describe('useUserSettings', () => {
     expect(createConfigMapMock).toHaveBeenCalledTimes(1);
     expect(createConfigMapMock).toHaveBeenCalledWith();
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(1);
+    expect(consoleMock).toHaveBeenCalledWith(
+      'Could not create ConfigMap for user settings:',
+      error,
+    );
   });
 
-  it('should use session storage when impersonating', () => {
+  it('should fallback to localStorage if creation fails and watch returns any other error then Not Found or Forbidden', async () => {
+    // Mock loading
+    useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+
+    const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
+
+    // Expect loading data
+    expect(result.current).toEqual([undefined, expect.any(Function), false]);
+
+    // Mock that createConfigMap returns an unknown error.
+    await act(async () => {
+      createConfigMapMock.mockImplementation(async () => {
+        throw new Error('Unknown error');
+      });
+      useK8sWatchResourceMock.mockReturnValue([null, false, new Error('Unknown error')]);
+      rerender();
+    });
+
+    // Should call createConfigMap, but not updateConfigMap
+    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should use session storage when impersonating', async () => {
+    // Mock loading
+    useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+
     useSelectorMock.mockImplementation((selector) =>
       selector({
         sdkCore: {
@@ -551,9 +656,13 @@ describe('useUserSettings', () => {
 
     expect(result.current).toEqual(['impersonate.value', expect.any(Function), true]);
 
-    result.current[1]('newValue');
+    await act(async () => {
+      result.current[1]('newValue');
+    });
 
     expect(storageListenerInvoked).toBe(true);
     window.removeEventListener('storage', storageListener);
+
+    expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 });
