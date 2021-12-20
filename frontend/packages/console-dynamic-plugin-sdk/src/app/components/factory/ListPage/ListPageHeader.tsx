@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk';
-
-import { PageHeading } from '../../utils';
+import { PageHeading } from '@console/internal/components/utils/headings';
+import { ListPageHeaderProps } from '../../../../extensions/console-types';
 
 const ListPageHeader: React.FC<ListPageHeaderProps> = ({ helpText, title, children, badge }) => (
   <>

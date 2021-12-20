@@ -58,7 +58,7 @@ import {
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory';
-import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageHeader from '@console/dynamic-plugin-sdk/src/app/components/factory/ListPage/ListPageHeader';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {

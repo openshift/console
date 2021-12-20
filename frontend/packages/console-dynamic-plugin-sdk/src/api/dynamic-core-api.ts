@@ -55,7 +55,7 @@ export const TableData: React.FC<TableDataProps> = require('@console/internal/co
   .TableData;
 export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')
   .useActiveColumns;
-export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/internal/components/factory/ListPage/ListPageHeader')
+export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/dynamic-plugin-sdk/src/app/components/factory/ListPage/ListPageHeader')
   .default;
 export const ListPageCreate: React.FC<ListPageCreateProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
   .default;

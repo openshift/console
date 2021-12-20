@@ -13,7 +13,7 @@ import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
 import { Table, TableData } from '../factory';
 import ListPageFilter from '../factory/ListPage/ListPageFilter';
-import ListPageHeader from '../factory/ListPage/ListPageHeader';
+import ListPageHeader from '@console/dynamic-plugin-sdk/src/app/components/factory/ListPage/ListPageHeader';
 import { useListPageFilter } from '../factory/ListPage/filter-hook';
 import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
 import { RadioGroup } from '../radio';

@@ -19,7 +19,7 @@ import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { DetailsPage } from './factory';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
-import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageHeader from '@console/dynamic-plugin-sdk/src/app/components/factory/ListPage/ListPageHeader';
 import { useListPageFilter } from './factory/ListPage/filter-hook';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
