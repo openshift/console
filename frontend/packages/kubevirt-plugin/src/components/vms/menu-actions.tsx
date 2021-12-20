@@ -164,6 +164,7 @@ export const VmActionFactory = {
           btnText: i18next.t('kubevirt-plugin~Pause'),
           executeFn: () => pauseVMI(vmi),
         }),
+      accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
   Unpause: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
@@ -208,6 +209,7 @@ export const VmActionFactory = {
           btnText: i18next.t('kubevirt-plugin~Migrate Node to Node'),
           executeFn: () => startVMIMigration(vmi),
         }),
+      accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
   CancelMigration: (kindObj: K8sKind, vm: VMKind, { vmStatusBundle }: ActionArgs): Action => {
