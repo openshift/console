@@ -15,9 +15,11 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { ExternalLink } from '@console/internal/components/utils';
 import { handleCta } from '@console/shared';
 import { QuickSearchDetailsRendererProps } from '@console/shared/src/components/quick-search/QuickSearchDetails';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { TEKTON_HUB_ENDPOINT } from '../catalog/const';
 import {
   getCtaButtonText,
   getTaskCtaType,
@@ -45,6 +47,14 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       setSelectedVersion(selectedItem.data?.latestVersion?.id?.toString());
     }
   }, [selectedItem]);
+
+  const loadedVersion = React.useMemo(
+    () => versions?.find((version) => version.id?.toString() === selectedVersion),
+    [selectedVersion, versions],
+  );
+
+  const hubURL = loadedVersion?.hubURL; // To-Do: test once API is up and if needed change
+  const hubLink = hubURL && `${TEKTON_HUB_ENDPOINT}/${hubURL}`;
 
   return (
     <div className="opp-quick-search-details">
@@ -95,6 +105,14 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       {<PipelineQuickSearchTaskAlert ctaType={getTaskCtaType(selectedItem, selectedVersion)} />}
       <TextContent className="opp-quick-search-details__description" data-test="task-description">
         {selectedItem.description}
+        {hubLink && (
+          <ExternalLink
+            additionalClassName="opp-quick-search-details__hublink"
+            dataTestID="task-hub-link"
+            href={hubLink}
+            text={t('pipelines-plugin~Read more')}
+          />
+        )}
       </TextContent>
       <Stack className="opp-quick-search-details__badges-section" hasGutter>
         {selectedItem?.attributes?.categories?.length > 0 && (

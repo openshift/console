@@ -242,6 +242,44 @@ export const sampleTektonHubCatalogItem: CatalogItem = {
   data: sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
 };
 
+export const sampleTektonHubCatalogItemWithHubURL: CatalogItem = {
+  uid: '1',
+  type: 'Community',
+  name: 'ansible-runner',
+
+  attributes: {
+    installed: '',
+    versions: [
+      { id: '1', hubURL: 'foo/bar/test' },
+      { id: '2', hubURL: 'foo/bar/test2' },
+      { id: '3', hubURL: 'foo/bar/test3' },
+    ],
+  },
+  data: {
+    id: 1,
+    name: 'ansible-runner',
+    kind: 'Task',
+    latestVersion: {
+      id: 1,
+      version: '0.1',
+      displayName: 'Ansible Runner',
+      description: 'Task to run Ansible playbooks using Ansible Runner',
+      minPipelinesVersion: '0.12.1',
+      rawURL:
+        'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
+      webURL:
+        'https://github.com/tektoncd/catalog/tree/main/task/ansible-runner/0.1/ansible-runner.yaml',
+      updatedAt: '2021-07-26T12:15:08Z',
+      platforms: [
+        {
+          id: 1,
+          name: 'linux/amd64',
+        },
+      ],
+    },
+  },
+};
+
 export const sampleTaskWithMultipleVersions = {
   [sampleVersions.VERSION_01]: `---
   apiVersion: tekton.dev/v1beta1
