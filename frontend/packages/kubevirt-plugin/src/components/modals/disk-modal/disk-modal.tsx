@@ -198,12 +198,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     (combinedDiskSize && combinedDiskSize.unit) || BinaryUnit.Gi,
   );
 
+  const applyProvidedSP = applySP && isSPSettingProvided;
   const [accessMode, setAccessMode] = React.useState<AccessMode>(
-    isEditing ? (combinedDisk.getAccessModes() || [])[0] : applySP ? spAccessMode : null,
+    isEditing ? (combinedDisk.getAccessModes() || [])[0] : applyProvidedSP ? spAccessMode : null,
   );
 
   const [volumeMode, setVolumeMode] = React.useState<VolumeMode>(
-    isEditing ? combinedDisk.getVolumeMode() : applySP ? spVolumeMode : null,
+    isEditing ? combinedDisk.getVolumeMode() : applyProvidedSP ? spVolumeMode : null,
   );
 
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
@@ -263,11 +264,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         url:
           source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
       })
-      .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
-      .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null)
+      .setVolumeMode(applyProvidedSP && spVolumeMode ? spVolumeMode : volumeMode || null)
+      .setAccessModes(
+        applyProvidedSP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null,
+      )
       .setPreallocationDisk(enablePreallocation)
-      .setNamespace(vmNamespace)
-      .addOwnerReferences(buildOwnerReference(vm));
+      .setNamespace(vmNamespace);
+    vm &&
+      resultDataVolume.addOwnerReferences(buildOwnerReference(vm, { blockOwnerDeletion: false }));
   }
 
   let resultPersistentVolumeClaim: PersistentVolumeClaimWrapper;
@@ -279,8 +283,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         size,
         unit,
       })
-      .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
-      .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null);
+      .setVolumeMode(applyProvidedSP && spVolumeMode ? spVolumeMode : volumeMode || null)
+      .setAccessModes(
+        applyProvidedSP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null,
+      );
   }
 
   const {
@@ -381,7 +387,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     setAccessModeHelp(displayMessage);
     setStorageClassName(newSC?.metadata?.name);
     setStorageProvisioner(provisioner);
-    if (applySP && isSPSettingProvided) {
+    if (applyProvidedSP) {
       setAccessMode(spAccessMode);
       setVolumeMode(spVolumeMode);
     }
@@ -704,7 +710,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   </StackItem>
                   {!spLoaded && !loadError ? (
                     <LoadingInline />
-                  ) : isSPSettingProvided && applySP ? (
+                  ) : applyProvidedSP ? (
                     <StackItem data-test="sp-default-settings">
                       {t(
                         'kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}',
