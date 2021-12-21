@@ -4,6 +4,9 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { useAccessReview2 } from '@console/internal/components/utils';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+import { useActiveNamespace } from '@console/shared/src';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
@@ -129,6 +132,14 @@ export const VMNics: React.FC<VMTabProps> = ({
       ? new Set(changedNics(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmi)))
       : null;
 
+  const [namespace] = useActiveNamespace();
+  const [canCreate] = useAccessReview2({
+    group: NetworkAttachmentDefinitionModel?.apiGroup,
+    resource: NetworkAttachmentDefinitionModel?.plural,
+    verb: 'create',
+    namespace,
+  });
+
   return (
     <div className="co-m-list">
       {!isVMI(vmLikeEntity) && (
@@ -146,7 +157,7 @@ export const VMNics: React.FC<VMTabProps> = ({
                   }).result,
                 )
               }
-              isDisabled={isLocked || isCommonTemplate}
+              isDisabled={isLocked || isCommonTemplate || !canCreate}
             >
               {t('kubevirt-plugin~Add Network Interface')}
             </Button>
