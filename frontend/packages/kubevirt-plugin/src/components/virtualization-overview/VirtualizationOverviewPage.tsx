@@ -11,6 +11,7 @@ import { GettingStartedContainerCard } from './getting-started-card/GettingStart
 import { VirtOverviewInventoryCard } from './inventory-card/VirtOverviewInventoryCard';
 import { VirtOverviewPermissionsCard } from './permissions-card/VirtOverviewPermissionsCard';
 import { RunningVMsPerTemplateCard } from './running-vms-per-template-card/RunningVMsPerTemplateCard';
+import { VirtOverviewTopConsumersCard } from './top-consumers-card/VirtOverviewTopConsumersCard';
 import { VirtOverviewActivityCard } from './VirtOverviewActivityCard';
 import { VirtOverviewDetailsCard } from './VirtOverviewDetailsCard';
 import { VirtOverviewStatusCard } from './VirtOverviewStatusCard';
@@ -35,6 +36,7 @@ export const WrappedVirtualizationOverviewPage: React.FC = () => {
       <Dashboard>
         <GettingStartedContainerCard />
         <DashboardGrid leftCards={leftCards} mainCards={mainCards} rightCards={rightCards} />
+        <VirtOverviewTopConsumersCard />
       </Dashboard>
     </>
   );
