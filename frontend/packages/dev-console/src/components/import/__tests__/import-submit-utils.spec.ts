@@ -11,6 +11,7 @@ import {
 import * as k8s from '@console/internal/module/k8s';
 import * as knativeUtils from '@console/knative-plugin/src/utils/create-knative-utils';
 import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
+import * as triggerUtils from '@console/pipelines-plugin/src/components/pipelines/modals/triggers/submit-utils';
 import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import * as submitUtils from '../import-submit-utils';
@@ -18,6 +19,7 @@ import { Resources } from '../import-types';
 import {
   defaultData,
   nodeJsBuilderImage as buildImage,
+  sampleClusterTriggerBinding,
   sampleDevfileFormData,
 } from './import-submit-utils-data';
 
@@ -172,13 +174,16 @@ describe('Import Submit Utils', () => {
   describe('createPipelineResource tests', () => {
     beforeEach(() => {
       jest.spyOn(k8s, 'k8sCreate').mockImplementation((model, data) => Promise.resolve(data));
+      jest.spyOn(k8s, 'k8sGet').mockReturnValue(Promise.resolve(sampleClusterTriggerBinding));
+      jest.spyOn(triggerUtils, 'submitTrigger').mockImplementation(jest.fn());
+      jest.spyOn(triggerUtils, 'createTrigger').mockImplementation(() => Promise.resolve([]));
     });
 
     afterEach(() => {
       jest.restoreAllMocks();
     });
 
-    it('should create pipeline resource if pipeline is enabled and template is present', async (done) => {
+    it('should create pipeline resources if pipeline is enabled and template is present', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
@@ -201,6 +206,9 @@ describe('Import Submit Utils', () => {
       const createPipelineRunResourceSpy = jest
         .spyOn(pipelineUtils, 'createPipelineRunForImportFlow')
         .mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
+      const createPipelineWebhookSpy = jest
+        .spyOn(triggerUtils, 'createTrigger')
+        .mockImplementation(() => Promise.resolve([]));
 
       await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
       expect(createPipelineResourceSpy).toHaveBeenCalledWith(
@@ -214,6 +222,7 @@ describe('Import Submit Utils', () => {
         mockData.image.tag,
       );
       expect(createPipelineRunResourceSpy).toHaveBeenCalledTimes(1);
+      expect(createPipelineWebhookSpy).toHaveBeenCalledTimes(1);
       done();
     });
 
@@ -247,6 +256,31 @@ describe('Import Submit Utils', () => {
       done();
     });
 
+    it('should suppress the error if the trigger creation fails with the error', async (done) => {
+      const mockData = _.cloneDeep(defaultData);
+      mockData.resources = Resources.Kubernetes;
+      mockData.pipeline.enabled = true;
+
+      // Suppress the console log for a cleaner test
+      const errorLogger = jest.spyOn(console, 'warn').mockImplementation(jest.fn());
+
+      // Force an exception
+      jest
+        .spyOn(triggerUtils, 'createTrigger')
+        .mockImplementation(() =>
+          Promise.reject(new Error('Webhook trigger errored out and was not caught')),
+        );
+
+      await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
+      expect(errorLogger).toHaveBeenCalled();
+
+      // re-enable logs for future tests
+      // eslint-disable-next-line no-console
+      (console.warn as any).mockRestore();
+
+      done();
+    });
+
     it('should suppress the error if the pipelinerun creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
@@ -274,7 +308,7 @@ describe('Import Submit Utils', () => {
         'create',
       );
       expect(setPipelineNotStartedSpy).toHaveBeenCalled();
-      expect(returnValue).toHaveLength(6);
+      expect(returnValue).toHaveLength(7);
 
       // re-enable logs for future tests
       // eslint-disable-next-line no-console

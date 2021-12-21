@@ -34,6 +34,7 @@ import {
   updatePipelineForImportFlow,
 } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { PIPELINE_SERVICE_ACCOUNT } from '@console/pipelines-plugin/src/components/pipelines/const';
+import { createTrigger } from '@console/pipelines-plugin/src/components/pipelines/modals/triggers/submit-utils';
 import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import {
@@ -446,8 +447,9 @@ export const createOrUpdateDeploymentConfig = (
 export const managePipelineResources = async (
   formData: GitImportFormData,
   pipelineData: PipelineKind,
-) => {
-  if (!formData) return;
+): Promise<K8sResourceKind[]> => {
+  const pipelineResources = [];
+  if (!formData) return Promise.resolve([]);
 
   const { name, git, pipeline, project, docker, image } = formData;
   let managedPipeline: PipelineKind;
@@ -476,6 +478,14 @@ export const managePipelineResources = async (
       docker.dockerfilePath,
       image.tag,
     );
+    pipelineResources.push(managedPipeline);
+    try {
+      const triggerResources = await createTrigger(managedPipeline, git.detectedType);
+      pipelineResources.push(...triggerResources);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('Error occured while creating triggers', error);
+    }
   }
 
   if (git.secret) {
@@ -503,13 +513,15 @@ export const managePipelineResources = async (
 
   if (_.has(managedPipeline?.metadata?.labels, 'app.kubernetes.io/instance')) {
     try {
-      await createPipelineRunForImportFlow(managedPipeline);
+      const pipelineRun = await createPipelineRunForImportFlow(managedPipeline);
+      pipelineResources.push(pipelineRun);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error);
       setPipelineNotStarted(managedPipeline.metadata.name, managedPipeline.metadata.namespace);
     }
   }
+  return Promise.all(pipelineResources);
 };
 
 export const createDevfileResources = async (
@@ -661,7 +673,11 @@ export const createOrUpdateResources = async (
 
   if (pipeline.enabled) {
     if (!dryRun) {
-      await managePipelineResources(formData, appResources?.pipeline?.data);
+      const pipelineResources = await managePipelineResources(
+        formData,
+        appResources?.pipeline?.data,
+      );
+      responses.push(...pipelineResources);
     }
   } else {
     responses.push(
