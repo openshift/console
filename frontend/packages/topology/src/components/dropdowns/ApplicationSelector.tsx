@@ -30,6 +30,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   const [nameField] = useField(subPath ? `${subPath}.application.name` : 'application.name');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [applicationExists, setApplicationExists] = React.useState<boolean>(false);
+  const applicationNameInputRef = React.useRef<HTMLInputElement>();
   const fieldId = getFieldId('application-name', 'dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
@@ -77,6 +78,12 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     ? t('topology~Warning: the Application grouping already exists.')
     : t('topology~A unique name given to the Application grouping to label your resources.');
 
+  React.useEffect(() => {
+    if (selectedKey.value === CREATE_APPLICATION_KEY) {
+      applicationNameInputRef.current?.focus();
+    }
+  }, [selectedKey.value]);
+
   return (
     <>
       {projectsAvailable && applicationsAvailable && (
@@ -108,6 +115,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           type={TextInputTypes.text}
           required={selectedKey.value === CREATE_APPLICATION_KEY}
           name={nameField.name}
+          ref={applicationNameInputRef}
           label={t('topology~Application name')}
           data-test-id="application-form-app-input"
           helpText={inputHelpText}
