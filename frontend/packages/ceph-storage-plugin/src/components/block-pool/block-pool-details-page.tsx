@@ -17,7 +17,7 @@ import { CephBlockPoolModel } from '../../models';
 
 const BlockPoolIcon: React.FC<BlockPoolIconProps> = ({ name, kind }) => {
   return (
-    <span>
+    <span data-test="block-pool-icon">
       <ResourceIcon kind={kind} />
       {name}
     </span>
