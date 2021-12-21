@@ -127,6 +127,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
   const isDisabled = isLocked || !canCreateSnapshot || !canCreateRestore;
+  const usedSnapshotNames = new Set(snapshots?.map((snapshot) => snapshot?.metadata?.name));
 
   return (
     <div className="co-m-list">
@@ -146,7 +147,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
                       asVM(vmLikeEntity),
                       vmi,
                     ),
-                    snapshots,
+                    usedSnapshotNames,
                     hotplugVolumeSnapshotStatuses: getVMIHotplugVolumeSnapshotStatuses(
                       asVM(vmLikeEntity),
                       vmi,
