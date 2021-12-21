@@ -1,13 +1,9 @@
 import * as _ from 'lodash';
 import 'whatwg-fetch';
+import { getUtilsConfig } from '../../app/configSetup';
 import { ConsoleFetchText, ConsoleFetchJSON, ConsoleFetch } from '../../extensions/console-types';
 import { TimeoutError, RetryError } from '../error/http-error';
-import { getCSRFToken, validateStatus, getImpersonateHeaders } from './console-fetch-utils';
-
-const initDefaults = {
-  headers: {},
-  credentials: 'same-origin',
-};
+import { getImpersonateHeaders } from './console-fetch-utils';
 
 const consoleFetchInternal = (
   url: string,
@@ -15,21 +11,14 @@ const consoleFetchInternal = (
   timeout: number,
   retry: boolean,
 ): Promise<Response> => {
-  const allOptions = _.defaultsDeep({}, initDefaults, options);
-  if (allOptions.method !== 'GET') {
-    allOptions.headers['X-CSRFToken'] = getCSRFToken();
+  let fetchPromise: Promise<Response>;
+  try {
+    const utilsConfig = getUtilsConfig();
+    fetchPromise = utilsConfig.appFetch(url, options, retry);
+  } catch (e) {
+    const promiseData: Promise<Response> = new Promise((unused, reject) => reject(e));
+    return promiseData;
   }
-
-  // If the URL being requested is absolute (and therefore, not a local request),
-  // remove the authorization header to prevent credentials from leaking.
-  if (url.indexOf('://') >= 0) {
-    delete allOptions.headers.Authorization;
-    delete allOptions.headers['X-CSRFToken'];
-  }
-
-  const fetchPromise = fetch(url, allOptions).then((response) =>
-    validateStatus(response, url, allOptions.method, retry),
-  );
 
   // return fetch promise directly if timeout <= 0
   if (timeout < 1) {
