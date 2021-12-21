@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 const SupportedSnapshotVolumesList = ({ supportedVolumes }: SupportedSnapshotVolumesListProps) => {
   const { t } = useTranslation();
 
-  if (supportedVolumes) {
+  if (_.isEmpty(supportedVolumes)) {
     return null;
   }
 
