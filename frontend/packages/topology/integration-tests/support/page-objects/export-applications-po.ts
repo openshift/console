@@ -5,10 +5,9 @@ export const exportApplication = {
 
 export const buttonDisplayName = (buttonName: string) => {
   switch (buttonName) {
-    // below statements to be uncommented after the story ODC-6401 is completed
-    //   case 'View logs': {
-    //     // to be updated after the story ODC-6401 is completed
-    //   }
+    case 'View logs': {
+      return 'export-view-log-btn';
+    }
     case 'Cancel Export': {
       return 'export-cancel-btn';
     }

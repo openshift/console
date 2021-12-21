@@ -64,8 +64,7 @@ When('user clicks on Export Application button again', () => {
 Then(
   'user can see {string} link, {string}, {string}, and {string} button',
   (el1, el2, el3, el4) => {
-    //   To be uncommented after completion of story ODC-6401
-    //   cy.get(exportModalButton(el1)).should('be.visible');
+    cy.get(exportModalButton(el1)).should('be.visible');
     cy.get(exportModalButton(el2)).should('be.visible');
     cy.get(exportModalButton(el3)).should('be.visible');
     cy.get(exportModalButton(el4)).should('be.visible');
