@@ -21,7 +21,6 @@ import {
 import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { permissionsErrorModal } from '../../modals/permissions-error-modal/permissions-error-modal';
 import { createVMAction } from '../utils';
-import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
 import './vm-template-table.scss';
 
 type VMTemplateDetailsBodyProps = {
@@ -40,11 +39,6 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
   const storage = getTemplateSizeRequirementInBytes(template, sourceStatus);
   return (
     <Stack hasGutter>
-      {
-        <StackItem>
-          <VMTemplateCommnunityLabel template={template} />
-        </StackItem>
-      }
       {osName && <StackItem>{osName}</StackItem>}
       <StackItem>
         <div className="kubevirt-vm-template-popover">

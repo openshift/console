@@ -31,6 +31,7 @@ describe('test VM template support', () => {
     wizard.template.createTemplate(TEMPLATE_NAME, 'bar', true);
     virtualization.templates.testProvider(TEMPLATE_NAME, 'bar');
     virtualization.templates.testSource(TEMPLATE_NAME, 'bar');
+    virtualization.templates.testSupport(TEMPLATE_NAME, 'Full');
 
     wizard.template.open();
     wizard.template.createTemplate(TEMPLATE_NO_SUPPORT_NAME, 'bar', false);
