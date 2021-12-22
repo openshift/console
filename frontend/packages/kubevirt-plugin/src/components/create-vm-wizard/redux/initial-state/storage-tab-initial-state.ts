@@ -22,6 +22,7 @@ import {
 } from '../../../../selectors/config-map/sc-defaults';
 import { iGetPrameterValue } from '../../../../selectors/immutable/common';
 import {
+  iGetCommonTemplateDataVolumeSize,
   iGetCommonTemplateDiskBus,
   iGetRelevantTemplate,
 } from '../../../../selectors/immutable/template/combined';
@@ -61,7 +62,6 @@ const getContainerStorage = (
   url = '',
 ): VMWizardStorage => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
-
   return {
     type: VMWizardStorageType.PROVISION_SOURCE_DISK,
     disk: new DiskWrapper()
@@ -249,6 +249,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   const tmpDiskBus = DiskBus.fromString(
     iGetCommonTemplateDiskBus(iTemplate, VM_TEMPLATE_NAME_PARAMETER),
   );
+  const tmpDiskSize = iGetCommonTemplateDataVolumeSize(iTemplate, VM_TEMPLATE_NAME_PARAMETER);
   const initialData = getInitialData(state, id);
   const { source } = initialData;
   const storagesUpdate = getStorages(state, id);
@@ -272,24 +273,24 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
       return getUrlStorage(
         storageClassConfigMap,
         diskBus,
-        source.size,
+        tmpDiskSize ?? source.size,
         source.cdRom ? DiskType.CDROM : DiskType.DISK,
         source.url,
       );
     }
-    return getUrlStorage(storageClassConfigMap, diskBus, source?.size);
+    return getUrlStorage(storageClassConfigMap, diskBus, tmpDiskSize ?? source.size);
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
     if (source?.container) {
       return getContainerStorage(
         storageClassConfigMap,
         diskBus,
-        source.size,
+        tmpDiskSize ?? source.size,
         source.cdRom ? DiskType.CDROM : DiskType.DISK,
         source.container,
       );
     }
-    return getContainerStorage(storageClassConfigMap, diskBus, source?.size);
+    return getContainerStorage(storageClassConfigMap, diskBus, tmpDiskSize ?? source?.size);
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
