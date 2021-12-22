@@ -64,15 +64,20 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       const findFunction = findByDataSource(matchedDataSource);
       const matchedDataSourcePVC = pvcs?.find(findFunction);
       const matchedDataSourceDataVolume = dataVolumes?.find(findFunction);
-      return {
-        source: SOURCE_TYPE.BASE_IMAGE,
-        provider: RED_HAT,
-        isReady: matchedDataSourceDataVolume?.status?.phase === 'Succeeded',
-        pvc: matchedDataSourcePVC,
-        dataVolume: matchedDataSourceDataVolume,
-        isCDRom: isCDRom(matchedDataSourceDataVolume, matchedDataSourcePVC),
-        addedOn: getCreationTimestamp(matchedDataSourceDataVolume),
-      };
+      if (
+        !getAnnotation(matchedDataSourcePVC, ANNOTATION_SOURCE_PROVIDER) &&
+        matchedDataSourceDataVolume
+      ) {
+        return {
+          source: SOURCE_TYPE.BASE_IMAGE,
+          provider: RED_HAT,
+          isReady: matchedDataSourceDataVolume?.status?.phase === 'Succeeded',
+          pvc: matchedDataSourcePVC,
+          dataVolume: matchedDataSourceDataVolume,
+          isCDRom: isCDRom(matchedDataSourceDataVolume, matchedDataSourcePVC),
+          addedOn: getCreationTimestamp(matchedDataSourceDataVolume),
+        };
+      }
     }
     const pvc = pvcs?.find(
       ({ metadata }) =>
