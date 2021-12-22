@@ -22,6 +22,7 @@ interface SvgBoxedTextProps {
   cornerRadius?: number;
   kind?: string;
   typeIconClass?: string;
+  typeIcon?: React.ReactNode;
   typeIconPadding?: number;
   truncate?: number;
   dragRef?: WithDndDragProps['dndDragRef'];
@@ -45,6 +46,7 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   y = 0,
   kind,
   typeIconClass,
+  typeIcon,
   typeIconPadding = 4,
   onMouseEnter,
   onMouseLeave,
@@ -57,7 +59,8 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   const [iconSize, iconRef] = useSize([kind]);
   const iconSpace = kind && iconSize ? iconSize.width + paddingX : 0;
   const refs = useCombineRefs(dragRef, typeof truncate === 'number' ? labelHoverRef : undefined);
-  const typedIconWidth = typeIconClass && iconSize ? iconSize.height + typeIconPadding * 2 : 0;
+  const iconType = typeIconClass || typeIcon;
+  const typedIconWidth = iconType && iconSize ? iconSize.height + typeIconPadding * 2 : 0;
   const midX = typedIconWidth ? x + typedIconWidth / 2 : x;
 
   return (
@@ -67,8 +70,8 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
         <rect
           key={`rect-${FILTER_ID}`}
           filter={createSvgIdUrl(FILTER_ID)}
-          x={midX - paddingX - textSize.width / 2 - iconSpace / 2 - (typeIconClass ? 10 : 0)}
-          width={textSize.width + paddingX * 2 + iconSpace + (typeIconClass ? 10 : 0)}
+          x={midX - paddingX - textSize.width / 2 - iconSpace / 2 - (iconType ? 10 : 0)}
+          width={textSize.width + paddingX * 2 + iconSpace + (iconType ? 10 : 0)}
           y={y - paddingY - textSize.height / 2}
           height={textSize.height + paddingY * 2}
           rx={cornerRadius}
@@ -83,13 +86,14 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
           kind={kind}
         />
       )}
-      {textSize && iconSize && typeIconClass && (
+      {textSize && iconSize && iconType && (
         <SvgCircledIcon
           x={midX - (textSize.width + iconSpace) / 2 - paddingX}
           y={y - iconSize.height + paddingY * 1.5}
           width={iconSize.height + paddingY}
           height={iconSize.height + paddingY}
           iconClass={typeIconClass}
+          icon={typeIcon}
           padding={typeIconPadding}
         />
       )}

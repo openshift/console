@@ -14,7 +14,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
     <FormSection
       title={
         <>
-          {t('knative-plugin~Sink')}
+          {t('knative-plugin~Input Target')}
           <span
             className="pf-c-form__label-required"
             aria-hidden="true"
@@ -25,7 +25,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
         </>
       }
       subTitle={t(
-        'knative-plugin~Add a sink to route this Event source to a Channel, Broker, Knative Service or another route.',
+        'knative-plugin~Add an input target to route this Event source to a Channel, Broker, Knative Service or another route.',
       )}
       extraMargin
       fullWidth={fullWidth}
