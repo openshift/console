@@ -8,8 +8,6 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
-import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import { dropdownUnits, initialAccessModes } from '@console/internal/components/storage/shared';
 import {
   FieldLevelHelp,
@@ -25,6 +23,7 @@ import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
 import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
+import { AccessModeSelector } from '../../AccessMode/AccessModeSelector';
 import { getGiBUploadPVCSizeByImage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 import { VMSettingsField } from '../../create-vm-wizard/types';
 import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
@@ -34,6 +33,7 @@ import { ContainerSourceHelp } from '../../form/helper/container-source-help';
 import { URLSourceHelp } from '../../form/helper/url-source-help';
 import { ProjectDropdown } from '../../form/project-dropdown';
 import { preventDefault } from '../../form/utils';
+import { VolumeModeSelector } from '../../VolumeMode/VolumeModeSelector';
 import { BOOT_ACTION_TYPE, BootSourceAction, BootSourceState } from './boot-source-form-reducer';
 
 type AdvancedSectionProps = {
@@ -174,6 +174,9 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
                 provisioner={provisioner}
                 loaded
                 availableAccessModes={initialAccessModes}
+                initialAccessMode={
+                  isSPSettingProvided && storageClassName ? spAccessMode?.getValue() : undefined
+                }
               />
             </FormRow>
             <FormRow fieldId="form-ds-volume-mode" isRequired>
@@ -188,6 +191,9 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
                 accessMode={state.accessMode?.value}
                 storageClass={storageClassName}
                 loaded
+                initialVolumeMode={
+                  isSPSettingProvided && storageClassName ? spVolumeMode?.getValue() : undefined
+                }
               />
             </FormRow>
           </div>
