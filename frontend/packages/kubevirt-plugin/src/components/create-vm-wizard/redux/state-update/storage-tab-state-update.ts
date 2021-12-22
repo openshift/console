@@ -1,8 +1,10 @@
 import {
+  AccessMode,
   CLOUDINIT_DISK,
   LABEL_CDROM_SOURCE,
   ROOT_DISK_INSTALL_NAME,
   ROOT_DISK_NAME,
+  VolumeMode,
 } from '../../../../constants';
 import { DiskBus } from '../../../../constants/vm/storage/disk-bus';
 import { DiskType } from '../../../../constants/vm/storage/disk-type';
@@ -12,10 +14,10 @@ import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { ValidationErrorType } from '../../../../selectors';
 import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-} from '../../../../selectors/config-map/sc-defaults';
-import { getDataVolumeStorageClassName } from '../../../../selectors/dv/selectors';
+  getDataVolumeAccessModes,
+  getDataVolumeStorageClassName,
+  getDataVolumeVolumeMode,
+} from '../../../../selectors/dv/selectors';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { isWindowsTemplate } from '../../../../selectors/vm-template/advanced';
 import { getVolumeContainerImage } from '../../../../selectors/vm/volume';
@@ -256,45 +258,24 @@ const initialStorageDiskUpdater = ({ id, prevState, dispatch, getState }: Update
 const initialStorageClassUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   const provisionSourceStorage = iGetProvisionSourceStorage(state, id)?.toJSON();
-  const storageClassConfigMap = iGetCommonData(
-    state,
-    id,
-    VMWizardProps.storageClassConfigMap,
-  )?.toJSON();
 
   const { commonTemplateName } = iGetCommonData(state, id, VMWizardProps.initialData).toJSON();
 
-  if (
-    !hasStoragesChanged(prevState, state, id) ||
-    !storageClassConfigMap ||
-    !commonTemplateName ||
-    !provisionSourceStorage
-  ) {
+  if (!hasStoragesChanged(prevState, state, id) || !commonTemplateName || !provisionSourceStorage) {
     return;
   }
 
-  const provisionSourceStorageClassName = getDataVolumeStorageClassName(
-    provisionSourceStorage?.dataVolume,
+  const accessMode = AccessMode.fromString(
+    getDataVolumeAccessModes(provisionSourceStorage?.dataVolume),
+  );
+  const volumeMode = VolumeMode.fromString(
+    getDataVolumeVolumeMode(provisionSourceStorage?.dataVolume),
   );
 
-  const storageClassVolumeMode = getDefaultSCVolumeMode(
-    storageClassConfigMap?.data,
-    provisionSourceStorageClassName,
-  );
-
-  const storageClassAccessMode = getDefaultSCAccessModes(
-    storageClassConfigMap?.data,
-    provisionSourceStorageClassName,
-  );
-
-  if (
-    storageClassVolumeMode &&
-    storageClassAccessMode &&
-    !provisionSourceStorage?.dataVolume?.spec?.source?.pvc
-  ) {
+  if (volumeMode && accessMode && !provisionSourceStorage?.dataVolume?.spec?.source?.pvc) {
     const updatedStorage = new DataVolumeWrapper(provisionSourceStorage.dataVolume)
-      .setVolumeMode(storageClassVolumeMode)
-      .setAccessModes(storageClassAccessMode)
+      .setVolumeMode(volumeMode)
+      .setAccessModes([accessMode])
       .asResource();
     dispatch(
       vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
