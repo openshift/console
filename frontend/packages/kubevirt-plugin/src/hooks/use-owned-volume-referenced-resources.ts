@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s';
 import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
@@ -38,7 +39,10 @@ export const useOwnedVolumeReferencedResources = (
         const ref = referencedObjectLookup[volumeName];
         acc[volumeName] = {
           name: ref.name,
-          kind: kubevirtReferenceForModel(ref.model),
+          kind:
+            ref?.model.kind === PersistentVolumeClaimModel.kind
+              ? ref?.model.kind
+              : kubevirtReferenceForModel(ref.model),
           namespace,
           isList: false,
         };
