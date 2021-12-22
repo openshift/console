@@ -1377,7 +1377,7 @@ const MonitoringListPage: React.FC<ListPageProps & {
 }) => {
   const { t } = useTranslation();
 
-  const filters = useSelector(({ sdkK8s }: RootState) => sdkK8s.getIn([reduxID, 'filters']));
+  const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
 
   const silencesLoadError = useSelector(
     ({ observe }: RootState) => observe.get('silences')?.loadError,

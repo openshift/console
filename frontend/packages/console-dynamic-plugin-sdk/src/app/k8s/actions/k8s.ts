@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { ActionType as Action, action } from 'typesafe-actions';
-import { K8sModel, MatchLabels, Selector } from '../../../api/common-types';
+import { DiscoveryResources, K8sModel, MatchLabels, Selector } from '../../../api/common-types';
 import { K8sResourceCommon, FilterValue } from '../../../extensions/console-types';
 import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
@@ -17,6 +17,8 @@ type K8sResourceKind = K8sResourceCommon & {
 };
 
 export enum ActionType {
+  ReceivedResources = 'resources',
+  GetResourcesInFlight = 'getResourcesInFlight',
   StartWatchK8sObject = 'startWatchK8sObject',
   StartWatchK8sList = 'startWatchK8sList',
   ModifyObject = 'modifyObject',
@@ -265,6 +267,10 @@ export const watchK8sObject = (
   return watch;
 };
 
+export const receivedResources = (resources: DiscoveryResources) =>
+  action(ActionType.ReceivedResources, { resources });
+export const getResourcesInFlight = () => action(ActionType.GetResourcesInFlight);
+
 const k8sActions = {
   startWatchK8sObject,
   startWatchK8sList,
@@ -275,6 +281,8 @@ const k8sActions = {
   bulkAddToList,
   updateListFromWS,
   filterList,
+  receivedResources,
+  getResourcesInFlight,
 };
 
 export type K8sAction = Action<typeof k8sActions>;

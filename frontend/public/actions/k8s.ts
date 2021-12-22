@@ -1,28 +1,25 @@
 import * as _ from 'lodash-es';
 import { Dispatch } from 'react-redux';
-import { ActionType as Action, action } from 'typesafe-actions';
+import { ActionType as Action } from 'typesafe-actions';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 
-import {
-  cacheResources,
-  getResources as getResources_,
-  DiscoveryResources,
-} from '../module/k8s/get-resources';
+import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
 import { K8sResourceKind, fetchSwagger } from '../module/k8s';
 import { makeReduxID } from '../components/utils/k8s-watcher';
 import { CustomResourceDefinitionModel } from '../models';
-import { watchK8sList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import {
+  watchK8sList,
+  getResourcesInFlight,
+  receivedResources,
+} from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 
 export {
   watchK8sObject,
   watchK8sList,
   stopK8sWatch,
+  getResourcesInFlight,
+  receivedResources,
 } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-
-export enum ActionType {
-  ReceivedResources = 'resources',
-  GetResourcesInFlight = 'getResourcesInFlight',
-}
 
 export const API_DISCOVERY_POLL_INTERVAL = 60000;
 
@@ -30,10 +27,6 @@ const POLLs = {};
 const apiDiscovery = 'apiDiscovery';
 
 type K8sEvent = { type: 'ADDED' | 'DELETED' | 'MODIFIED'; object: K8sResourceKind };
-
-export const receivedResources = (resources: DiscoveryResources) =>
-  action(ActionType.ReceivedResources, { resources });
-export const getResourcesInFlight = () => action(ActionType.GetResourcesInFlight);
 
 export const getResources = () => (dispatch: Dispatch) => {
   dispatch(getResourcesInFlight());
@@ -100,8 +93,6 @@ export const startAPIDiscovery = () => (dispatch) => {
 };
 
 const k8sActions = {
-  receivedResources,
-  getResourcesInFlight,
   startAPIDiscovery,
 };
 

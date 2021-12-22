@@ -21,5 +21,5 @@ export type CoreState = {
 
 export type SDKStoreState = {
   sdkCore: CoreState;
-  sdkK8s: K8sState;
+  k8s: K8sState;
 };

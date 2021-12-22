@@ -183,3 +183,19 @@ export type Rule = PrometheusRule & {
 
 export type PrometheusLabels = { [key: string]: string };
 export type PrometheusValue = [number, string];
+
+export type DiscoveryResources = {
+  adminResources: string[];
+  allResources: string[];
+  configResources: K8sKind[];
+  clusterOperatorConfigResources: K8sKind[];
+  models: K8sKind[];
+  namespacedSet: Set<string>;
+  safeResources: string[];
+  groupVersionMap: {
+    [key: string]: {
+      versions: string[];
+      preferredVersion: string;
+    };
+  };
+};

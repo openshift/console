@@ -29,7 +29,7 @@ import {
 import { referenceForGroupVersionKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s/k8s-ref';
 import { RootState } from '../redux';
-import { ActionType as K8sActionType } from '../actions/k8s';
+import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
 import { pluginStore } from '../plugins';
 

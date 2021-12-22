@@ -3,6 +3,7 @@ import { plural } from 'pluralize';
 
 import { K8sKind, K8sVerb } from '../../module/k8s';
 import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
+import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { fetchURL } from '../../graphql/client';
@@ -79,21 +80,7 @@ export const getCachedResources = () =>
     resolve(null);
   });
 
-export type DiscoveryResources = {
-  adminResources: string[];
-  allResources: string[];
-  configResources: K8sKind[];
-  clusterOperatorConfigResources: K8sKind[];
-  models: K8sKind[];
-  namespacedSet: Set<string>;
-  safeResources: string[];
-  groupVersionMap: {
-    [key: string]: {
-      versions: string[];
-      preferredVersion: string;
-    };
-  };
-};
+export { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export const pluralizeKind = (kind: string): string => {
   // Use startCase to separate words so the last can be pluralized but remove spaces so as not to humanize
