@@ -49,12 +49,18 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
           return (
             <li className="list-group-item  container-fluid" key={uid}>
               {!sinkUri ? (
-                <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
+                <ResourceLink
+                  kind={referenceFor(resource)}
+                  name={name}
+                  namespace={namespace}
+                  dataTest={`resource-link-${name}`}
+                />
               ) : (
                 <ExternalLink
                   href={sinkUri}
                   additionalClassName="co-external-link--block"
                   text={sinkUri}
+                  dataTestID={`sink-uri-${sinkUri}`}
                 />
               )}
             </li>
@@ -70,6 +76,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
                 kind={referenceForModel(SecretModel)}
                 name={data.sbr.status.secret}
                 namespace={data.sbr.metadata.namespace}
+                dataTest={`secret-resource-link-${data.sbr.status.secret}`}
               />
             </li>
           </ul>
@@ -81,6 +88,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
           <ExternalLink
             href={getNamespaceDashboardKialiLink(consoleLinks, namespace)}
             text={t('topology~Kiali Graph view')}
+            dataTestID="kiali-link"
           />
         </>
       )}
