@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { render, cleanup, waitFor, configure } from '@testing-library/react';
 import { omit } from 'lodash';
+import { sampleClusterTaskCatalogItem } from '../../../test-data/catalog-item-data';
 import PipelineQuickSearchVersionDropdown from '../PipelineQuickSearchVersionDropdown';
-import { sampleClusterTaskCatalogItem } from './pipeline-quicksearch-data';
 
 configure({ testIdAttribute: 'data-test' });
 
