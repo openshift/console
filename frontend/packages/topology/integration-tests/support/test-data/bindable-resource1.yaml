@@ -1,0 +1,35 @@
+apiVersion: binding.operators.coreos.com/v1alpha1
+kind: BindableKinds
+metadata:
+  creationTimestamp: '2021-11-18T05:19:15Z'
+  generation: 6
+  managedFields:
+    - apiVersion: binding.operators.coreos.com/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status': {}
+      manager: manager
+      operation: Update
+      time: '2021-11-18T05:19:15Z'
+  name: bindable-kinds
+  resourceVersion: '29894'
+  uid: ae6df662-41a2-45da-9acf-1332d5c69adf
+status:
+  - group: rabbitmq.com
+    kind: RabbitmqCluster
+    version: v1beta1
+  - group: rhoas.redhat.com
+    kind: KafkaConnection
+    version: v1alpha1
+  - group: redis.redis.opstreelabs.in
+    kind: Redis
+    version: v1beta1
+  - group: postgres-operator.crunchydata.com
+    kind: PostgresCluster
+    version: v1beta1
+  - group: postgresql.k8s.enterprisedb.io
+    kind: Cluster
+    version: v1
+  - group: rhoas.redhat.com
+    kind: ServiceRegistryConnection
+    version: v1alpha1

@@ -315,3 +315,74 @@ Feature: Topology chart area
               And user opens the details page for "nodejs-2" by clicking on the title
               And user navigate back to Topology page
              Then user will see the the workload "nodejs-2" selected with sidebar open
+
+
+        @regression @odc-5947
+        Scenario: Create Service Binding option in nodes actions menu: T-06-TC27
+            Given user has installed Service Binding operator
+              And user is at developer perspective
+              And user is at Topology page chart view
+              And user has created a deployment workload "node-js1"
+             When user right clicks on workload "node-js1"
+              And user clicks on "Create Service Binding" option from context menu
+             Then user will see "Create Service Binding" modal
+              And user will see alert "No bindable services available"
+
+
+        @regression @manual @odc-5947
+        Scenario: Bindable services options in Create Service Binding modal: T-06-TC28
+            Given user has installed Service Binding operator
+              And user is at Topology page chart view
+              And user has created a deployment workload "node-js2"
+            #Please refer to test case KM-01-TC01 for creating kafka connection
+              And user has created external bindable resource Kafka Connection "kafka-instance-ex"
+              And user has created operator-backed service of postgresSQL "example-pg"
+              And user has applied '/testdata/bindableresource1.yaml' yaml
+             When user right clicks on workload "node-js2"
+              And user clicks on "Create Service Binding" option from context menu
+              And user clicks on Bindable service dropdown
+             Then user will see postgres and kafka connection services options
+              And user is able to see service binding connector with name "node-js2-d-kafka-example-pg-pc" after clicking on create with "example-pg" option selected in Create Service Binding modal
+
+
+        @regression @manual @odc-5947
+        Scenario: Drag and drop connector to existing bindable resource: T-06-TC29
+            Given user has installed Service Binding operator
+              And user is at Topology page chart view
+              And user has created a deployment workload "node-s"
+            #Please refer to test case KM-01-TC01 for creating kafka connection
+              And user has created external bindable resource Kafka Connection "kafka-instance-ex"
+             When user drag and drop the connector to Kafka Connection
+              And user clicks on Create with name "node-s-d-kafka-instance-ex-akc"
+              And user clicks on connector
+             Then user will see the name as "node-s-d-kafka-instance-ex-akc"
+              And user will see Secret section with secret present
+
+
+        @regression @manual @odc-5947
+        Scenario: Specify the name and the bindable object to connect to in Create Service Binding modal: T-06-TC30
+            Given user has installed Service Binding operator
+              And user is at Topology page chart view
+              And user has created a deployment workload "node-js"
+             When user drag and drop the connector to empty area
+              And user selects Operator backed option
+              And user selects Kafka Connection
+              And user clicks on Create
+              And user clicks on Create button on Create Kafka Connection form
+              And user replaced the name "node-js-d-kafka-instance-ex-akc" with "node-kc-connection-1" in Create Service Binding modal
+              And user clicks on Create
+             Then user will see the connection between node workload and Kafka Connection
+              And user will see the name "node-kc-connection-1" in connector sidebar
+
+
+        @regression @manual @odc-5947
+        Scenario: Create connection to already existing service binding connection: T-06-TC31
+            Given user has installed Service Binding operator
+              And user is at Topology page chart view
+            #Please refer to test case KM-01-TC01 for creating kafka connection
+              And user has created service binding connnector between deployment workload "node-j" and Kafka Connection "kafka-instance-ex1"
+             When user right clicks on workload "node-j"
+              And user clicks on "Create Service Binding" option from context menu
+              And user selects Bindable service as "kafka-instance-ex1"
+              And user clicks on Save
+             Then user will see error "Service binding already exists. Select a different service to connect to."

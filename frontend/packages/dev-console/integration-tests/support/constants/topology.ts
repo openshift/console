@@ -38,6 +38,7 @@ export enum nodeActions {
   DeleteRevision = 'Delete Revision',
   MakeServerless = 'Make Serverless',
   AddTrigger = 'Add Trigger',
+  CreateServiceBinding = 'Create Service Binding',
 }
 
 export enum applicationGroupingsActions {
