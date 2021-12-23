@@ -3,6 +3,13 @@ import { omit } from 'lodash';
 import * as coFetch from '@console/internal/co-fetch';
 import * as k8s from '@console/internal/module/k8s';
 import { CatalogItem } from '../../../../../console-dynamic-plugin-sdk/src';
+import {
+  sampleTektonHubCatalogItem,
+  sampleClusterTaskCatalogItem,
+  sampleCatalogItems,
+  sampleTaskWithMultipleVersions,
+  sampleVersions,
+} from '../../../test-data/catalog-item-data';
 import { CTALabel } from '../const';
 import {
   findInstalledTask,
@@ -18,13 +25,6 @@ import {
   isTaskVersionInstalled,
   updateTask,
 } from '../pipeline-quicksearch-utils';
-import {
-  sampleTektonHubCatalogItem,
-  sampleClusterTaskCatalogItem,
-  sampleCatalogItems,
-  sampleTaskWithMultipleVersions,
-  sampleVersions,
-} from './pipeline-quicksearch-data';
 
 describe('pipeline-quicksearch-utils', () => {
   const sampleCatalogInstalledTask: CatalogItem = {

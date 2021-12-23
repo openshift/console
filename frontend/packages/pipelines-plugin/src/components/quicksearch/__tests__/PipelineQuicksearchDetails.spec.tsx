@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { render, fireEvent, screen, cleanup, waitFor, configure } from '@testing-library/react';
 import { omit } from 'lodash';
-import PipelineQuickSearchDetails from '../PipelineQuickSearchDetails';
 import {
   sampleClusterTaskCatalogItem,
   sampleTektonHubCatalogItem,
-} from './pipeline-quicksearch-data';
+} from '../../../test-data/catalog-item-data';
+import PipelineQuickSearchDetails from '../PipelineQuickSearchDetails';
 
 configure({ testIdAttribute: 'data-test' });
 

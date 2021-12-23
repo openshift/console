@@ -1,3 +1,18 @@
+export type TektonHubItem = {
+  id: number;
+  name: string;
+};
+
+export type TektonHubCategory = TektonHubItem;
+
+export type TektonHubTag = TektonHubItem;
+
+export type TektonHubPlatform = TektonHubItem;
+
+export type TektonHubCatalog = TektonHubItem & {
+  type: string;
+};
+
 export type TektonHubLatestVersion = {
   id: number;
   version: string;
@@ -6,28 +21,17 @@ export type TektonHubLatestVersion = {
   minPipelinesVersion: string;
   rawURL: string;
   webURL: string;
+  hubURL: string;
+  platforms: TektonHubPlatform[];
   updatedAt: string;
-};
-
-export type TektonHubCategory = {
-  id: number;
-  name: string;
-};
-
-export type TektonHubTag = {
-  id: number;
-  name: string;
 };
 
 export type TektonHubTask = {
   id: number;
   name: string;
   categories: TektonHubCategory[];
-  catalog: {
-    id: number;
-    name: string;
-    type: string;
-  };
+  catalog: TektonHubCatalog;
+  platforms: TektonHubPlatform[];
   kind: string;
   latestVersion: TektonHubLatestVersion;
   tags: TektonHubTag[];

@@ -8,13 +8,14 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
 import { TektonHubTask } from '../../../types/tektonHub';
 import { TektonTaskProviders } from '../../pipelines/const';
+import { filterBySupportedPlatforms } from '../catalog-utils';
 import { TEKTON_HUB_API_ENDPOINT } from '../const';
 import useApiResponse from '../hooks/useApiResponse';
 
 const normalizeTektonHubTasks = async (
   tektonHubTasks: TektonHubTask[],
 ): Promise<CatalogItem<TektonHubTask>[]> => {
-  const tasks = tektonHubTasks.reduce((acc, task) => {
+  const tasks = tektonHubTasks.filter(filterBySupportedPlatforms).reduce((acc, task) => {
     if (task.kind !== TaskModel.kind) {
       return acc;
     }
