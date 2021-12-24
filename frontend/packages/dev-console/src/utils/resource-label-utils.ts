@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TRIGGERS_ANNOTATION } from '@console/shared';
+import { ROUTE_DISABLED_ANNOTATION } from '@console/topology/src/const';
 
 export const getAppLabels = ({
   name,
@@ -53,6 +54,7 @@ export const getGitAnnotations = (gitURL: string, gitRef?: string) => {
 export const getCommonAnnotations = () => {
   return {
     'openshift.io/generated-by': 'OpenShiftWebConsole',
+    [ROUTE_DISABLED_ANNOTATION]: 'false',
   };
 };
 

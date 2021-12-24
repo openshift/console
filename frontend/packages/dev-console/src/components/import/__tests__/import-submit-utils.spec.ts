@@ -384,6 +384,7 @@ describe('Import Submit Utils', () => {
               '[{"from":{"kind":"ImageStreamTag","name":"devfile-sample:latest","namespace":"gijohn"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"devfile-sample\\")].image","pause":"false"}]',
             isFromDevfile: 'true',
             'openshift.io/generated-by': 'OpenShiftWebConsole',
+            'app.openshift.io/route-disabled': 'false',
           },
           creationTimestamp: null,
           labels: {
