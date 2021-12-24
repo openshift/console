@@ -40,7 +40,7 @@ import { NodeModel } from '@console/internal/models';
 import { LocalVolumeSetBody } from './body';
 import { SelectedCapacity } from './selected-capacity';
 import { createWizardNodeState } from '../../../../utils/create-storage-system';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import {
   arbiterText,
   LSO_OPERATOR,
@@ -298,7 +298,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   nodes,
 }) => {
   const { t } = useTranslation();
-  const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
+  const isArbiterSupported = useFlag(FEATURES.OCS_ARBITER);
   const { onNext, activeStep } = React.useContext<WizardContextType>(WizardContext);
 
   const cancel = () => {

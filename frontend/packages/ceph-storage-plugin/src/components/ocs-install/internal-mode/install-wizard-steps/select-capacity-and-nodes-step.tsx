@@ -15,7 +15,7 @@ import { StorageClassDropdown } from '@console/internal/components/utils/storage
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { getName, getUID, useFlag } from '@console/shared';
-import { GUARDED_FEATURES } from '@console/ceph-storage-plugin/src/features';
+import { FEATURES } from '@console/ceph-storage-plugin/src/features';
 import { storageClassTooltip, requestedCapacityTooltip } from '../../../../constants';
 import { OSDSizeDropdown, TotalCapacityText } from '../../../../utils/osd-size-dropdown';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../reducer';
@@ -55,7 +55,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   const scName: string = getName(storageClass);
   const nodesCount = selectedNodes.length;
   const validations = validate(scName, enableMinimal);
-  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
+  const isTaintSupported = useFlag(FEATURES.OCS_TAINT_NODES);
 
   React.useEffect(() => {
     const isMinimal = shouldDeployAsMinimal(cpu, memory, nodesCount);

@@ -34,7 +34,7 @@ import {
   NodesPerZoneMap,
   getZonesFromNodesKind,
 } from '../../../../utils/create-storage-system';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-and-nodes';
 import { pvResource, nodeResource } from '../../../../resources';
@@ -46,7 +46,7 @@ import './capacity-and-nodes.scss';
 
 const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ dispatch, enableTaint }) => {
   const { t } = useTranslation();
-  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
+  const isTaintSupported = useFlag(FEATURES.OCS_TAINT_NODES);
 
   return isTaintSupported ? (
     <Checkbox

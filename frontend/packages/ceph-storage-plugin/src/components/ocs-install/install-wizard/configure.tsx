@@ -12,7 +12,7 @@ import { State, Action } from '../attached-devices-mode/reducer';
 import { KMSConfigure } from '../../kms-config/kms-config';
 import { NetworkType, NADSelectorType } from '../../../types';
 import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';
-import { GUARDED_FEATURES } from '../../../features';
+import { FEATURES } from '../../../features';
 import { setEncryptionDispatch } from '../../kms-config/utils';
 import { AdvancedSubscription } from '../subscription-icon';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
@@ -59,7 +59,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   mode,
 }) => {
   const { t } = useTranslation();
-  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
+  const isKmsSupported = useFlag(FEATURES.OCS_KMS);
 
   const { encryption } = state;
   const [encryptionChecked, setEncryptionChecked] = React.useState(

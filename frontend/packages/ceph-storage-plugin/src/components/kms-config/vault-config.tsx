@@ -26,7 +26,7 @@ import {
 import { State } from '../ocs-install/attached-devices-mode/reducer';
 import { InternalClusterState, ActionType } from '../ocs-install/internal-mode/reducer';
 import { WizardState } from '../create-storage-system/reducer';
-import { GUARDED_FEATURES } from '../../features';
+import { FEATURES } from '../../features';
 import { advancedVaultModal } from '../modals/advanced-kms-modal/advanced-vault-modal';
 
 import {
@@ -48,7 +48,7 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const isKmsVaultSASupported = useFlag(GUARDED_FEATURES.ODF_VAULT_SA_KMS);
+  const isKmsVaultSASupported = useFlag(FEATURES.ODF_VAULT_SA_KMS);
 
   const vaultState: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
   const vaultStateClone: VaultConfig = _.cloneDeep(vaultState);

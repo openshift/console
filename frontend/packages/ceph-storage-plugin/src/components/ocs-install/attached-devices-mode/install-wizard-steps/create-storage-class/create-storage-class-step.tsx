@@ -8,7 +8,7 @@ import { LocalVolumeSetBody } from '@console/local-storage-operator-plugin/src/c
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
 import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
 import { SelectedCapacity } from './selected-capacity';
-import { GUARDED_FEATURES } from '../../../../../features';
+import { FEATURES } from '../../../../../features';
 import { hasOCSTaint } from '../../../../../utils/install';
 import {
   MINIMUM_NODES,
@@ -124,7 +124,7 @@ type CreateStorageClassProps = {
 
 const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns, lvsNodes }) => {
   const { t } = useTranslation();
-  const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
+  const isArbiterSupported = useFlag(FEATURES.OCS_ARBITER);
   return (
     <WizardContextConsumer>
       {({ onNext }) => {
