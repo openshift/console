@@ -313,7 +313,7 @@ export const VmImportActionFactory = {
       return innerArgs?.vm ? (
         <>
           {t(
-            'kubevirt-plugin~Are you sure you want to cancel importing {{vmImportElem}}? It will also delete the newly created {{vmElem}} in the {{nsElem}} namespace?',
+            'kubevirt-plugin~Are you sure you want to cancel importing {{vmImportElem}}? It will also delete the newly created {{vmElem}} in the {{nsElem}} namespace.',
             { vmImportElem, vmElem, nsElem },
           )}
         </>
