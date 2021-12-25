@@ -214,6 +214,8 @@ When('user deselects the checkbox of user preference Secure Route', () => {
   // cy.get().uncheck();
 });
 
+// TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
+// In this case we could maybe also use the given string instead of mapping it, or?
 Given('user clicks on Import from Git card', () => {
   addPage.selectCardFromOptions(addOptions.Git);
 });

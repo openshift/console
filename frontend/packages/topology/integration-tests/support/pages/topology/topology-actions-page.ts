@@ -146,6 +146,7 @@ export const topologyActions = {
 export const addToApplication = {
   selectAction: (action: addToApplicationGroupings | string) => {
     switch (action) {
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case addToApplicationGroupings.FromGit:
       case 'From Git': {
         cy.byTestActionID(action)
@@ -153,6 +154,7 @@ export const addToApplication = {
           .click();
         break;
       }
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case addToApplicationGroupings.FromDevfile:
       case 'From Devfile': {
         cy.byTestActionID(action)
@@ -160,6 +162,7 @@ export const addToApplication = {
           .click();
         break;
       }
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case addToApplicationGroupings.FromDockerfile:
       case 'From Dockerfile': {
         cy.byTestActionID(action)

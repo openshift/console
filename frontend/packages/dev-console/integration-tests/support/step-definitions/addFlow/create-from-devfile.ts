@@ -3,6 +3,8 @@ import { addOptions } from '../../constants';
 import { gitPO, topologyPO } from '../../pageObjects';
 import { addPage, gitPage, topologyPage, devFilePage } from '../../pages';
 
+// TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
+// In this case we could also use the given string instead of mapping it.
 Given('user is at Import from Devfile page', () => {
   addPage.selectCardFromOptions(addOptions.DevFile);
 });
