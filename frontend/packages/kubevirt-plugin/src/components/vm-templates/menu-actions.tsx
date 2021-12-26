@@ -47,6 +47,7 @@ const newTemplateFromCommon: MenuAction = (kind, vmTemplate, { namespace }) => (
     mode: VMWizardMode.TEMPLATE,
     template: vmTemplate.variants[0],
   }),
+  accessReview: asAccessReview(kind, vmTemplate, 'patch'),
 });
 
 const vmTemplateCreateVMAction: MenuAction = (
@@ -138,6 +139,7 @@ const PinTemplateLabel: React.FC<{ pinned: boolean }> = ({ pinned }) => {
 const pinTemplate: MenuAction = (kindObj, vmTemplate, { togglePin, pinned }) => ({
   label: <PinTemplateLabel pinned={pinned} />,
   callback: () => togglePin(vmTemplate),
+  accessReview: asAccessReview(kindObj, vmTemplate, 'patch'),
 });
 
 const isTemplateItem = (template: TemplateItem | TemplateKind): template is TemplateItem =>
