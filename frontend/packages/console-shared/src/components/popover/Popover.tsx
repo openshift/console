@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { FocusTrap } from '@patternfly/react-core';
+import { FocusTrap, TitleSizes, Title } from '@patternfly/react-core';
 import { PopoverArrow } from '@patternfly/react-core/dist/js/components/Popover/PopoverArrow';
 import { PopoverBody } from '@patternfly/react-core/dist/js/components/Popover/PopoverBody';
 import { PopoverCloseButton } from '@patternfly/react-core/dist/js/components/Popover/PopoverCloseButton';
 import { PopoverContent } from '@patternfly/react-core/dist/js/components/Popover/PopoverContent';
 import { PopoverFooter } from '@patternfly/react-core/dist/js/components/Popover/PopoverFooter';
-import { PopoverHeader } from '@patternfly/react-core/dist/js/components/Popover/PopoverHeader';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/Popover/popover';
 import { useTranslation } from 'react-i18next';
@@ -56,7 +55,9 @@ const Popover: React.FC<PopoverProps> = ({
             <PopoverContent>
               <PopoverCloseButton onClose={onClose} aria-label={t('console-shared~Close')} />
               {headerContent && (
-                <PopoverHeader id={`popover-${uniqueId}-header`}>{headerContent}</PopoverHeader>
+                <Title headingLevel="h6" size={TitleSizes.md} id={`popover-${uniqueId}-header`}>
+                  {headerContent}
+                </Title>
               )}
               <PopoverBody id={`popover-${uniqueId}-body`}>{children}</PopoverBody>
               {footerContent && (
