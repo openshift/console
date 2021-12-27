@@ -4,6 +4,7 @@ import { omit } from 'lodash';
 import {
   sampleClusterTaskCatalogItem,
   sampleTektonHubCatalogItem,
+  sampleTektonHubCatalogItemWithHubURL,
 } from '../../../test-data/catalog-item-data';
 import PipelineQuickSearchDetails from '../PipelineQuickSearchDetails';
 
@@ -98,6 +99,42 @@ describe('pipelineQuickSearchDetails', () => {
       );
       await waitFor(() => {
         expect(queryByTestId('task-version-dropdown')).toBeNull();
+      });
+    });
+  });
+
+  describe('Hub Link', () => {
+    beforeAll(() => {
+      configure({ testIdAttribute: 'data-test-id' });
+    });
+    afterAll(() => {
+      configure({ testIdAttribute: 'data-test' });
+    });
+
+    it('should show correct hub link when hubURL present', async () => {
+      const installedTektonHubTask = {
+        ...sampleTektonHubCatalogItemWithHubURL,
+      };
+      const { queryByTestId } = render(
+        <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={installedTektonHubTask} />,
+      );
+      await waitFor(async () => {
+        expect(queryByTestId('task-hub-link').getAttribute('href')).toBe(
+          'https://hub.tekton.dev/foo/bar/test',
+        );
+      });
+    });
+
+    it('should not show the hub link if the hub url is not available', async () => {
+      const installedTektonHubTask = {
+        ...sampleTektonHubCatalogItem,
+        attributes: { ...sampleTektonHubCatalogItem.attributes, installed: 1 },
+      };
+      const { queryByTestId } = render(
+        <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={installedTektonHubTask} />,
+      );
+      await waitFor(async () => {
+        expect(queryByTestId('task-hub-link')).toBeNull();
       });
     });
   });
