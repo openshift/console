@@ -33,7 +33,7 @@ import {
 import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
 import GraphComponent from './GraphComponent';
 import { Application } from './groups';
-import { graphContextMenu } from './nodeContextMenu';
+import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import { WorkloadNode } from './nodes';
 
 import './ContextMenu.scss';
@@ -42,7 +42,7 @@ export const componentFactory: ComponentFactory = (kind, type) => {
   switch (type) {
     case TYPE_APPLICATION_GROUP:
       return withDndDrop(applicationGroupDropTargetSpec)(
-        withSelection({ controlled: true })(withContextMenu(contextMenuActions)(Application)),
+        withSelection({ controlled: true })(withContextMenu(groupContextMenu)(Application)),
       );
     case TYPE_WORKLOAD:
       return withCreateConnector(
