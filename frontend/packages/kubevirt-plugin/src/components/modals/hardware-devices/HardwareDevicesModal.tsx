@@ -116,7 +116,7 @@ export const HardwareDevicesModal: React.FC<HardwareDevicesModalProps> = ({
   };
 
   return (
-    <div className="modal-content">
+    <div className="modal-content modal-content--no-inner-scroll">
       <HWContext.Provider
         value={{
           isBlur,
