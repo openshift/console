@@ -35,6 +35,7 @@ import {
   FLAG_KNATIVE_EVENTING,
   CAMEL_SOURCE_INTEGRATION,
   SERVERLESS_FUNCTION_LABEL,
+  SERVERLESS_FUNCTION_LABEL_DEPRECATED,
 } from '../const';
 import {
   EventingBrokerModel,
@@ -1299,5 +1300,7 @@ export const isServerlessFunction = (element: K8sResourceKind): boolean => {
   const {
     metadata: { labels },
   } = element;
-  return !!labels?.[SERVERLESS_FUNCTION_LABEL];
+
+  // TODO: remove check for the deprecated label for serverless function
+  return !!(labels?.[SERVERLESS_FUNCTION_LABEL] || labels?.[SERVERLESS_FUNCTION_LABEL_DEPRECATED]);
 };
