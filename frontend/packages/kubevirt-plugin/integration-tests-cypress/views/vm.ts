@@ -111,7 +111,7 @@ export const vm = {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(15000);
   },
-  delete: () => {
+  delete: (vmData?: VirtualMachineData) => {
     cy.get('body').then(($body) => {
       if ($body.text().includes('Instance')) {
         action(VMI_ACTION.Delete);
@@ -119,7 +119,13 @@ export const vm = {
         action(VM_ACTION.Delete);
       }
     });
-    cy.byTestID('create-vm-empty').should('be.visible');
+    if (vmData) {
+      cy.get(row)
+        .contains(vmData.name)
+        .should('not.exist');
+    } else {
+      cy.byTestID('create-vm-empty').should('be.visible');
+    }
   },
   resume: () => {
     waitForStatus(VM_STATUS.Paused);
