@@ -56,7 +56,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title, fullWidth })
     }
   };
   return (
-    <FormSection title={title} extraMargin fullWidth={fullWidth}>
+    <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
       <FormGroup
         fieldId={fieldId}
         label={t('knative-plugin~Resource')}

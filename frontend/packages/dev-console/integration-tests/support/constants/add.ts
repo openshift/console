@@ -15,6 +15,7 @@ export enum addOptions {
   DevFile = 'From Devfile',
   Channel = 'Channel',
   UploadJARFile = 'Upload JAR file',
+  Broker = 'Broker',
 }
 
 export enum buildConfigOptions {

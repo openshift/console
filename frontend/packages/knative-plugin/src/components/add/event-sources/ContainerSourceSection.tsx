@@ -51,7 +51,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
     [setFieldValue],
   );
   return (
-    <FormSection title={title} extraMargin fullWidth={fullWidth}>
+    <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
       <h3 className="co-section-heading-tertiary">{t('knative-plugin~Container')}</h3>
       <InputField
         data-test-id="container-image-field"

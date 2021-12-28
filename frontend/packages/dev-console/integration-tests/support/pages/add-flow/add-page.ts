@@ -90,6 +90,12 @@ export const addPage = {
         detailsPage.titleShouldContain(pageTitle.UploadJarFile);
         cy.testA11y(pageTitle.UploadJarFile);
         break;
+      case 'Broker':
+      case addOptions.Broker:
+        cy.byTestID('item knative-eventing-broker').click();
+        detailsPage.titleShouldContain(pageTitle.Broker);
+        cy.testA11y(pageTitle.Broker);
+        break;
       default:
         throw new Error(`Unable to find the "${card}" card on Add page`);
     }
