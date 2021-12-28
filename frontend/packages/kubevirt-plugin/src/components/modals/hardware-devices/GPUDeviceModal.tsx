@@ -2,21 +2,22 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { VMKind } from '../../../types';
 import { V1GPU } from '../../../types/api';
 import { gpuDevicePath } from './consts';
 import { HardwareDevicesModal } from './HardwareDevicesModal';
 
 export type GPUDevicesModalProps = {
-  vm: VMKind;
-  isVMRunning: boolean;
+  vmLikeEntity: VMKind | TemplateKind;
   vmDevices: V1GPU[];
-  vmiDevices: V1GPU[];
+  vmiDevices?: V1GPU[];
+  isVMRunning?: boolean;
 } & ModalComponentProps &
   HandlePromiseProps;
 
 export const GPUDevicesModal: React.FC<GPUDevicesModalProps> = ({
-  vm,
+  vmLikeEntity,
   isVMRunning,
   vmDevices,
   vmiDevices,
@@ -33,7 +34,7 @@ export const GPUDevicesModal: React.FC<GPUDevicesModalProps> = ({
 
   return (
     <HardwareDevicesModal
-      vm={vm}
+      vmLikeEntity={vmLikeEntity}
       patchPath={gpuDevicePath}
       isVMRunning={isVMRunning}
       vmDevices={vmDevices}

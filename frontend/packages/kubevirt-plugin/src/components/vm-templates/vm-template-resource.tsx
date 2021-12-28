@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LabelList, ResourceSummary } from '@console/internal/components/utils';
+import { LabelList, ResourceSummary, useAccessReview2 } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { HyperConvergedModel } from '../../models';
 import { getDescription } from '../../selectors/selectors';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import {
@@ -22,6 +23,9 @@ import { BootOrderSummary } from '../boot-order';
 import { vmFlavorModal } from '../modals';
 import { BootOrderModal } from '../modals/boot-order-modal';
 import { descriptionModal } from '../modals/description-modal';
+import { gpuDevicesModal } from '../modals/hardware-devices/GPUDeviceModal';
+import { hostDevicesModal } from '../modals/hardware-devices/HostDevicesModal';
+import { permissionsErrorModal } from '../modals/permissions-error-modal/permissions-error-modal';
 import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
@@ -29,6 +33,7 @@ import evictionStrategyModal from '../modals/scheduling-modals/eviction-strategy
 import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
 import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
 import VMDetailsItem from '../vms/VMDetailsItem';
+import VMEditWithPencil from '../vms/VMEditWithPencil';
 import { getVMTemplateResourceFlavorData } from './utils';
 import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
@@ -130,6 +135,13 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
 
   const id = getBasicID(template);
   const devices = getTransformedDevices(template);
+  const vmWrapper = new VMWrapper(asVM(template));
+
+  const [canWatchHC] = useAccessReview2({
+    group: HyperConvergedModel?.apiGroup,
+    resource: HyperConvergedModel?.plural,
+    verb: 'watch',
+  });
 
   return (
     <dl className="co-m-pane__details">
@@ -159,6 +171,57 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </VMDetailsItem>
       <VMDetailsItem title={t('kubevirt-plugin~Support')}>
         <VMTemplateSupportDescription template={template} />
+      </VMDetailsItem>
+      <VMDetailsItem
+        title={t('kubevirt-plugin~Hardware devices')}
+        idValue={prefixedID(id, 'hardware-devices')}
+        editButtonId={prefixedID(id, 'hardware-devices-edit')}
+      >
+        <VMEditWithPencil
+          isEdit={!isCommonTemplate(template)}
+          onEditClick={
+            canWatchHC
+              ? () =>
+                  gpuDevicesModal({
+                    vmLikeEntity: template,
+                    vmDevices: vmWrapper.getGPUDevices(),
+                  })
+              : () =>
+                  permissionsErrorModal({
+                    title: t('kubevirt-plugin~Attach GPU device to VM'),
+                    errorMsg: t(
+                      'kubevirt-plugin~You do not have permissions to attach GPU devices. Contact your system administrator for more information.',
+                    ),
+                  })
+          }
+        >
+          {t('kubevirt-plugin~{{gpusCount}} GPU devices', {
+            gpusCount: vmWrapper.getGPUDevices()?.length || [].length,
+          })}
+        </VMEditWithPencil>
+        <br />
+        <VMEditWithPencil
+          isEdit={!isCommonTemplate(template)}
+          onEditClick={
+            canWatchHC
+              ? () =>
+                  hostDevicesModal({
+                    vmLikeEntity: template,
+                    vmDevices: vmWrapper.getHostDevices(),
+                  })
+              : () =>
+                  permissionsErrorModal({
+                    title: t('kubevirt-plugin~Attach Host device to VM'),
+                    errorMsg: t(
+                      'kubevirt-plugin~You do not have permissions to attach Host devices. Contact your system administrator for more information.',
+                    ),
+                  })
+          }
+        >
+          {t('kubevirt-plugin~{{hostDevicesCount}} Host devices', {
+            hostDevicesCount: vmWrapper.getHostDevices()?.length || [].length,
+          })}
+        </VMEditWithPencil>
       </VMDetailsItem>
     </dl>
   );

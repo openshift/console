@@ -315,7 +315,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
             canWatchHC
               ? () =>
                   gpuDevicesModal({
-                    vm: vmWrapper.asResource(),
+                    vmLikeEntity: vmWrapper.asResource(),
                     vmDevices: vmWrapper.getGPUDevices(),
                     vmiDevices: vmiWrapper.getGPUDevices(),
                     isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
@@ -340,7 +340,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
             canWatchHC
               ? () =>
                   hostDevicesModal({
-                    vm: vmWrapper.asResource(),
+                    vmLikeEntity: vmWrapper.asResource(),
                     vmDevices: vmWrapper.getHostDevices(),
                     vmiDevices: vmiWrapper.getHostDevices(),
                     isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
