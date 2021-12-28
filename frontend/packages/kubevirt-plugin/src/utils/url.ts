@@ -84,6 +84,8 @@ export const getVMWizardCreateLink = ({
   bootSource,
   startVM,
   storageClass,
+  accessMode,
+  volumeMode,
 }: {
   namespace?: string;
   wizardName: VMWizardName;
@@ -94,6 +96,8 @@ export const getVMWizardCreateLink = ({
   bootSource?: VMWizardBootSourceParams;
   startVM?: boolean;
   storageClass?: string;
+  accessMode?: string;
+  volumeMode?: string;
 }) => {
   const params = new URLSearchParams();
   const initialData: VMWizardInitialData = {};
@@ -154,6 +158,14 @@ export const getVMWizardCreateLink = ({
 
   if (storageClass) {
     initialData.storageClass = storageClass;
+  }
+
+  if (accessMode) {
+    initialData.accessMode = accessMode;
+  }
+
+  if (volumeMode) {
+    initialData.volumeMode = volumeMode;
   }
 
   if (mode === VMWizardMode.IMPORT && view === VMWizardView.ADVANCED) {
