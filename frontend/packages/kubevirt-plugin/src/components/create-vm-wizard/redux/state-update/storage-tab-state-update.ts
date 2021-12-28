@@ -397,18 +397,9 @@ const initialStorageWindowsPVCUpdater = ({ id, prevState, dispatch, getState }: 
   }
 };
 
-const initialStorageWindowsImportUpdater = ({
-  id,
-  prevState,
-  dispatch,
-  getState,
-}: UpdateOptions) => {
+const initialStorageCdromImportUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
-  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
   const isCdRom = getInitialData(state, id)?.source?.cdRom;
-  const template =
-    iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions).toJS();
 
   if (!hasStoragesChanged(prevState, state, id)) {
     return;
@@ -426,7 +417,7 @@ const initialStorageWindowsImportUpdater = ({
       disk?.name === ROOT_DISK_NAME,
   );
 
-  if (isWindowsTemplate(template) && rootCdRom && isCdRom) {
+  if (rootCdRom && isCdRom) {
     const disk = new DiskWrapper(rootCdRom?.disk).setName(ROOT_DISK_INSTALL_NAME).asResource();
     const volume = new VolumeWrapper(rootCdRom.volume).setName(ROOT_DISK_INSTALL_NAME).asResource();
     dispatch(
@@ -454,7 +445,7 @@ export const updateStorageTabState = (options: UpdateOptions) =>
     initialStorageClassUpdater,
     initialStorageDiskUpdater,
     initialStorageWindowsPVCUpdater,
-    initialStorageWindowsImportUpdater,
+    initialStorageCdromImportUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });
