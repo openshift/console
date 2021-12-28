@@ -10,8 +10,6 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
-import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import { initialAccessModes } from '@console/internal/components/storage/shared';
 import {
@@ -71,6 +69,7 @@ import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { isValidationError } from '../../../utils/validations/common';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 import { validateDisk } from '../../../utils/validations/vm';
+import { AccessModeSelector } from '../../AccessMode/AccessModeSelector';
 import { VMImportProvider } from '../../create-vm-wizard/types';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormRow } from '../../form/form-row';
@@ -80,6 +79,7 @@ import { URLSourceHelp } from '../../form/helper/url-source-help';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
+import { VolumeModeSelector } from '../../VolumeMode/VolumeModeSelector';
 import { ModalFooter } from '../modal/modal-footer';
 import { HotplugFieldLevelHelp } from './HotplugFieldLevelHelp';
 import { StorageUISource } from './storage-ui-source';
@@ -199,12 +199,21 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   );
 
   const applyProvidedSP = applySP && isSPSettingProvided;
+  const getModeInitialValue = (spMode: any, diskMode: any) => {
+    if (isSPSettingProvided) {
+      return spMode;
+    }
+    if (isEditing) {
+      return diskMode;
+    }
+    return undefined;
+  };
   const [accessMode, setAccessMode] = React.useState<AccessMode>(
-    isEditing ? (combinedDisk.getAccessModes() || [])[0] : applyProvidedSP ? spAccessMode : null,
+    getModeInitialValue(spAccessMode, (combinedDisk.getAccessModes() || [])[0]),
   );
 
   const [volumeMode, setVolumeMode] = React.useState<VolumeMode>(
-    isEditing ? combinedDisk.getVolumeMode() : applyProvidedSP ? spVolumeMode : null,
+    getModeInitialValue(spVolumeMode, combinedDisk.getVolumeMode()),
   );
 
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
@@ -225,6 +234,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       setVolumeMode((value) => VolumeMode.fromString(pvc?.spec?.volumeMode) || value);
     }
   }, [dataVolume, persistentVolumeClaims, pvcNameDataVolume, source]);
+
+  React.useEffect(() => {
+    if (applyProvidedSP) {
+      setVolumeMode(spVolumeMode);
+      setAccessMode(spAccessMode);
+    }
+  }, [applyProvidedSP, spVolumeMode, spAccessMode]);
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -264,10 +280,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         url:
           source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
       })
-      .setVolumeMode(applyProvidedSP && spVolumeMode ? spVolumeMode : volumeMode || null)
-      .setAccessModes(
-        applyProvidedSP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null,
-      )
+      .setVolumeMode(volumeMode || null)
+      .setAccessModes(accessMode ? [accessMode] : null)
       .setPreallocationDisk(enablePreallocation)
       .setNamespace(vmNamespace);
     vm &&
@@ -387,10 +401,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     setAccessModeHelp(displayMessage);
     setStorageClassName(newSC?.metadata?.name);
     setStorageProvisioner(provisioner);
-    if (applyProvidedSP) {
-      setAccessMode(spAccessMode);
-      setVolumeMode(spVolumeMode);
-    }
   };
 
   const onSourceChanged = (e, uiSource) => {
@@ -427,6 +437,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   };
 
   const onTogglePreallocation = () => setEnablePreallocation(!enablePreallocation);
+
+  const onToggleSPSettings = () => {
+    setApplySP((prev) => !prev);
+    setAccessMode((prev) => prev);
+    setVolumeMode((prev) => prev);
+  };
 
   let modalTitle;
   if (isVMRunning) {
@@ -702,7 +718,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       )}
                       isChecked={applySP}
                       data-checked-state={applySP}
-                      onChange={() => setApplySP(!applySP)}
+                      onChange={onToggleSPSettings}
                       isDisabled={!isSPSettingProvided}
                       label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
                       data-test="apply-storage-provider"
@@ -729,6 +745,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                           loaded
                           availableAccessModes={initialAccessModes}
                           description={accessModeHelp}
+                          initialAccessMode={getModeInitialValue(
+                            spAccessMode,
+                            (combinedDisk.getAccessModes() || [])[0],
+                          )?.getValue()}
                         />
                       </StackItem>
                       <StackItem>
@@ -738,6 +758,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                           accessMode={accessMode?.getValue()}
                           storageClass={storageClassName}
                           loaded
+                          initialVolumeMode={getModeInitialValue(
+                            spVolumeMode,
+                            combinedDisk.getVolumeMode(),
+                          )?.getValue()}
                         />
                       </StackItem>
                     </div>
