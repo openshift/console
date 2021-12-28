@@ -81,6 +81,9 @@ export const ROOT_DISK_INSTALL_NAME = 'install';
 
 export const TEMPLATE_PIN = 'kubevirt.templates.pins';
 export const TEMPLATE_PIN_PROMOTED = 'kubevirt.templates.pins.promoted';
+export const TEMPLATE_PIN_RHEL_7 = 'rhel7-server-small';
+export const TEMPLATE_PIN_RHEL_8 = 'rhel8-server-small';
+export const TEMPLATE_PIN_RHEL_9 = 'rhel9-server-small';
 export const TEMPLATE_WARN_SUPPORT = 'kubevirt.templates.warnSupport';
 export const TEMPLATE_CUSTOMIZE_SOURCE = 'kubevirt.templates.customizeSource';
 
