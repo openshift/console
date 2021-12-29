@@ -29,22 +29,22 @@ export const AffinityTable: React.FC<AffinityTableProps> = ({
         dimensifyHeader(
           [
             {
-              title: 'Type',
+              title: t('kubevirt-plugin~Type'),
               sortField: 'type',
               transforms: [sortable],
             },
             {
-              title: 'Condition',
+              title: t('kubevirt-plugin~Condition'),
               sortField: 'condition',
               transforms: [sortable],
             },
             {
-              title: 'Weight',
+              title: t('kubevirt-plugin~Weight'),
               sortField: 'weight',
               transforms: [sortable],
             },
             {
-              title: 'Terms',
+              title: t('kubevirt-plugin~Terms'),
             },
             {
               title: '',

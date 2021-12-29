@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -214,14 +214,16 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-        <div className="co-m-pane__name">Create Network Attachment Definition</div>
+        <div className="co-m-pane__name">
+          {t('kubevirt-plugin~Create Network Attachment Definition')}
+        </div>
         <div className="co-m-pane__heading-link">
           <Link
             to={`/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new`}
             id="yaml-link"
             replace
           >
-            Edit YAML
+            {t('kubevirt-plugin~Edit YAML')}
           </Link>
         </div>
       </h1>
@@ -231,7 +233,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
           validated={fieldErrors.nameValidationMsg ? 'error' : null}
         >
           <label className="control-label co-required" htmlFor="network-attachment-definition-name">
-            Name
+            {t('kubevirt-plugin~Name')}
           </label>
           <TextInput
             type="text"
@@ -246,7 +248,9 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         </FormGroup>
 
         <FormGroup fieldId="basic-settings-description">
-          <label htmlFor="network-attachment-definition-description">Description</label>
+          <label htmlFor="network-attachment-definition-description">
+            {t('kubevirt-plugin~Description')}
+          </label>
           <TextInput
             type="text"
             id="network-attachment-definition-description"
@@ -257,7 +261,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
 
         <FormGroup fieldId="basic-settings-network-type">
           <label className="control-label co-required" htmlFor="network-type">
-            Network Type
+            {t('kubevirt-plugin~Network Type')}
           </label>
           {_.isEmpty(networkTypeDropdownItems) && (
             <Alert
@@ -266,9 +270,11 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
               variant="warning"
               title={'Missing installed operators'}
             >
-              <strong>OpenShift Virtualization Operator</strong> or{' '}
-              <strong>SR-IOV Network Operator </strong>
-              needs to be installed on the cluster, in order to pick the Network Type.
+              <Trans ns="kubevirt-plugin" t={t}>
+                <strong>OpenShift Virtualization Operator</strong> or{' '}
+                <strong>SR-IOV Network Operator </strong>
+                needs to be installed on the cluster, in order to pick the Network Type.
+              </Trans>
             </Alert>
           )}
           <Dropdown
@@ -311,10 +317,10 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
               type="submit"
               variant="primary"
             >
-              Create
+              {t('kubevirt-plugin~Create')}
             </Button>
             <Button id="cancel" onClick={history.goBack} type="button" variant="secondary">
-              Cancel
+              {t('kubevirt-plugin~Cancel')}
             </Button>
           </ActionGroup>
         </ButtonBar>
