@@ -36,6 +36,7 @@ import {
   detectComponents,
   MCG_STANDALONE,
   FEATURES,
+  RGW_FLAG,
 } from './features';
 import { ODF_MODEL_FLAG } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
@@ -108,7 +109,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectRGW,
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -135,7 +136,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectComponents,
     },
     flags: {
-      required: [OCS_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -323,7 +324,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -336,7 +337,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketDetailsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -349,7 +350,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketClaimsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -362,7 +363,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketClaimsDetailsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -376,6 +377,21 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+    },
+  },
+  // When RGW is available without MCG
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/k8s/ns/:ns/${referenceForModel(models.NooBaaObjectBucketClaimModel)}/~new/form`,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/create-obc' /* webpackChunkName: "create-obc" */
+        ).then((m) => m.CreateOBCPage),
+    },
+    flags: {
+      required: [RGW_FLAG],
+      disallowed: [MCG_FLAG],
     },
   },
   {
