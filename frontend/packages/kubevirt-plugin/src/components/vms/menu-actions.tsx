@@ -149,14 +149,15 @@ export const VmActionFactory = {
       accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
-  Pause: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
+  Pause: (kindObj: K8sKind, vm: VMKind, { vmi, vmStatusBundle }: ActionArgs): Action => {
     return {
       id: 'vm-action-pause',
       label: i18next.t('kubevirt-plugin~Pause'),
       disabled:
         (!isVMError(vm) && isVMProcessing(vm, vmi)) ||
         isVMIPaused(vmi) ||
-        !isVMRunningOrExpectedRunning(vm, vmi),
+        !isVMRunningOrExpectedRunning(vm, vmi) ||
+        vmStatusBundle?.status?.isImporting(),
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Pause'),
