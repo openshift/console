@@ -5,6 +5,7 @@ export const getHelmWatchedResources = (namespace: string) => {
       kind: 'Secret',
       namespace,
       optional: true,
+      partialMetadata: true,
     },
   };
 };
