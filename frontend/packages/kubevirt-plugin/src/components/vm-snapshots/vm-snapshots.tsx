@@ -7,6 +7,7 @@ import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useVMStatus } from '../../hooks/use-vm-status';
 import { VirtualMachineRestoreModel, VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../selectors';
@@ -97,6 +98,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const vmName = getName(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
   const vmi = vmisProp[0];
+  const vmStatusBundle = useVMStatus(vmName, namespace);
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
@@ -126,7 +128,8 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
-  const isDisabled = isLocked || !canCreateSnapshot || !canCreateRestore;
+  const isDisabled =
+    isLocked || !canCreateSnapshot || !canCreateRestore || vmStatusBundle?.status?.isImporting();
   const usedSnapshotNames = new Set(snapshots?.map((snapshot) => snapshot?.metadata?.name));
 
   return (
