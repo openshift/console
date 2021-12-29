@@ -35,7 +35,7 @@ import {
   getTemplateValidationsFromTemplate,
   getVMTemplateNamespacedName,
 } from '../../selectors/vm-template/selectors';
-import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { isVMIReady, isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { asVM } from '../../selectors/vm/vm';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMIKind } from '../../types';
@@ -180,7 +180,8 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi }) => {
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const templateValidations = getTemplateValidationsFromTemplate(vmTemplate);
-  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
+  const isVMRunning =
+    isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi) && isVMIReady(vmi);
   const pendingChangesDisks: Set<string> =
     isVMRunning && vmi
       ? new Set(changedDisks(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmi)))
