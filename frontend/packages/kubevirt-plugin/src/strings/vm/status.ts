@@ -12,3 +12,5 @@ export const IMPORT_CDI_PENDING_MESSAGE =
   'The importer pod is waiting for resources to become available.';
 export const PENDING_CHANGES_WARNING_MESSAGE =
   'The following areas have pending changes that will be applied when this virtual machine is restarted.';
+export const VM_SHUTDOWN_FROM_CONSOLE =
+  'The virtual machine has recieved a shutdown signle from the console.';

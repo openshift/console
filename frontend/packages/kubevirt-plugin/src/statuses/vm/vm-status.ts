@@ -16,7 +16,11 @@ import {
   getStatusPhase,
 } from '../../selectors/selectors';
 import { findConversionPod } from '../../selectors/vm/combined';
-import { isVMCreated, isVMExpectedRunning } from '../../selectors/vm/selectors';
+import {
+  isStoppedFromConsole,
+  isVMCreated,
+  isVMExpectedRunning,
+} from '../../selectors/vm/selectors';
 import {
   findVMIMigration,
   getMigrationStatusPhase,
@@ -32,6 +36,7 @@ import {
   IMPORTING_VMWARE_MESSAGE,
   STARTING_MESSAGE,
   VMI_WAITING_MESSAGE,
+  VM_SHUTDOWN_FROM_CONSOLE,
 } from '../../strings/vm/status';
 import { VMIKind, VMKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
@@ -306,6 +311,13 @@ const isWaitingForVMI = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
   return null;
 };
 
+const isStoppedConsole = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
+  if (isStoppedFromConsole(vm, vmi)) {
+    return { status: VMStatus.STOPPED, message: VM_SHUTDOWN_FROM_CONSOLE };
+  }
+  return null;
+};
+
 export const getVMStatus = ({
   vm,
   vmi,
@@ -337,6 +349,7 @@ export const getVMStatus = ({
     isOff(vm, vmi) ||
     isError(vm, vmi, launcherPod) ||
     isRunning(vmi) ||
+    isStoppedConsole(vm, vmi) ||
     isStarting(vm, vmi, launcherPod) ||
     isWaitingForVMI(vm, vmi) ||
     ([VMIPhase.Scheduling, VMIPhase.Scheduled].includes(getStatusPhase<VMIPhase>(vmi)) && {
