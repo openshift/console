@@ -6,6 +6,7 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
 import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
+import { VMStatus } from '../../constants/vm/vm-status';
 import { VMIPhase } from '../../constants/vmi/phase';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
@@ -135,7 +136,19 @@ export const isVMExpectedRunning = (vm: VMKind, vmi: VMIKind) => {
   return false;
 };
 
+export const isStoppedFromConsole = (vm: VMKind, vmi: VMIKind) => {
+  return (
+    vm &&
+    isVMCreated(vm) &&
+    getStatusPhase(vmi) === VMIPhase.Succeeded &&
+    vm.status.printableStatus === VMStatus.STOPPED.getSimpleLabel()
+  );
+};
+
 export const isVMRunningOrExpectedRunning = (vm: VMKind, vmi: VMIKind) => {
+  if (isStoppedFromConsole(vm, vmi)) {
+    return false;
+  }
   if (isVMExpectedRunning(vm, vmi)) {
     return true;
   }
