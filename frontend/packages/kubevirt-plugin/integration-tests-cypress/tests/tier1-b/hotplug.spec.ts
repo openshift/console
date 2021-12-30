@@ -132,7 +132,7 @@ export const verifyDiskAttached = (disk: Disk, tag: string) => {
   verifyHotplugLabel(disk.name, tag);
 };
 
-describe('Test UI for VM hotplug disks', () => {
+xdescribe('Test UI for VM hotplug disks', () => {
   before(() => {
     cy.Login();
     cy.createProject(testName);

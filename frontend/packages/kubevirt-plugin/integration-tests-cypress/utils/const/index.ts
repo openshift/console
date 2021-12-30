@@ -151,7 +151,7 @@ export const TEMPLATE = {
     exampleRegUrl: urls.RHEL8_EXAMPLE_CONTAINER,
   },
   RHEL9: {
-    name: 'Red Hat Enterprise Linux 9.0 Alpha VM',
+    name: 'Red Hat Enterprise Linux 9.0 Beta VM',
     dvName: 'rhel9',
     metadataName: 'rhel9-server-small',
     os: 'Red Hat Enterprise Linux 9.0 or higher',
@@ -160,10 +160,10 @@ export const TEMPLATE = {
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
   FEDORA: {
-    name: 'Fedora 32+ VM',
+    name: 'Fedora 34+ VM',
     dvName: 'fedora',
     metadataName: 'fedora-server-small',
-    os: 'Fedora 32 or higher',
+    os: 'Fedora 34 or higher',
     supportLevel: 'Community',
     exampleImgUrl: urls.FEDORA_IMAGE_LINK,
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
