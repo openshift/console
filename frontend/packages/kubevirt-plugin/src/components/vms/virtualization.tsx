@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { HorizontalNav } from '@console/internal/components/utils';
+import { HorizontalNav, useAccessReview2 } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import {
@@ -69,6 +69,13 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
 
   const namespace = props.match.params.ns;
 
+  const [canCreate] = useAccessReview2({
+    group: VirtualMachineModel?.apiGroup,
+    resource: VirtualMachineModel?.plural,
+    verb: 'create',
+    namespace,
+  });
+
   const obj = { loaded: true, data: { kind: kubevirtReferenceForModel(VirtualMachineModel) } };
   const pages = [
     {
@@ -107,22 +114,24 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading" data-test-id="cluster-settings-page-heading">
           {t('kubevirt-plugin~Virtual Machines')}
-          <div className="co-actions" data-test-id="details-actions">
-            <MigrationTool />
-            <Dropdown
-              data-test-id="item-create"
-              onSelect={() => setOpen(false)}
-              toggle={
-                <DropdownToggle onToggle={setOpen} isPrimary>
-                  {t('kubevirt-plugin~Create')}
-                </DropdownToggle>
-              }
-              isOpen={isOpen}
-              dropdownItems={[vmMenuItems(t).map(getMenuItem)]}
-              isGrouped
-              position={DropdownPosition.right}
-            />
-          </div>
+          {canCreate && (
+            <div className="co-actions" data-test-id="details-actions">
+              <MigrationTool />
+              <Dropdown
+                data-test-id="item-create"
+                onSelect={() => setOpen(false)}
+                toggle={
+                  <DropdownToggle onToggle={setOpen} isPrimary>
+                    {t('kubevirt-plugin~Create')}
+                  </DropdownToggle>
+                }
+                isOpen={isOpen}
+                dropdownItems={[vmMenuItems(t).map(getMenuItem)]}
+                isGrouped
+                position={DropdownPosition.right}
+              />
+            </div>
+          )}
         </h1>
       </div>
       <HorizontalNav
