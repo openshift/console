@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 const SupportedSnapshotVolumesList = ({ supportedVolumes }: SupportedSnapshotVolumesListProps) => {
   const { t } = useTranslation();
-
+  const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
   if (_.isEmpty(supportedVolumes)) {
     return null;
   }
@@ -13,6 +13,8 @@ const SupportedSnapshotVolumesList = ({ supportedVolumes }: SupportedSnapshotVol
   return (
     <StackItem>
       <ExpandableSection
+        isExpanded={isExpanded}
+        onClick={() => setIsExpanded((prev) => !prev)}
         toggleText={t('kubevirt-plugin~Disks included in this snapshot ({{count}})', {
           count: supportedVolumes?.length,
         })}
