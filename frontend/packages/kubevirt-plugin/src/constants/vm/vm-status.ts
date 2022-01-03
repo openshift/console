@@ -5,6 +5,7 @@ import { StatusSimpleLabel } from '../status-constants';
 import { StatusEnum, StatusMetadata } from '../status-enum';
 import { StatusGroup } from '../status-group';
 import { V2VVMImportStatus } from '../v2v-import/ovirt/v2v-vm-import-status';
+import { VMIPhase } from '../vmi/phase';
 
 export const VMStatusMigrationPhases = {
   Pending: {
@@ -41,6 +42,7 @@ export enum VMStatusSimpleLabel {
   Running = 'Running',
   Stopped = 'Stopped',
   Deleting = 'Deleting',
+  Unknown = 'Unknown',
 }
 
 export enum VMPrintableStatusSimpleLabel {
@@ -295,3 +297,19 @@ export const getVmStatusFromPrintable = (printableStatus: string): VMStatus =>
 
 export const getVmStatusLabelFromPrintable = (printableStatus: string) =>
   printableStatusToLabel?.[printableStatus] || StatusSimpleLabel.Other;
+
+export const getVmStatusLabelFromVMIPhase = (phase: VMIPhase) => {
+  switch (phase) {
+    case VMIPhase.Pending:
+      return VMStatusSimpleLabel.Starting;
+
+    case VMIPhase.Running:
+      return VMStatusSimpleLabel.Running;
+
+    case VMIPhase.Failed:
+      return StatusSimpleLabel.Error;
+
+    default:
+      return StatusSimpleLabel.Other;
+  }
+};

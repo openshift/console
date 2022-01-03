@@ -52,7 +52,7 @@ export const useVmStatusResources = (namespace: string): VmStatusResourcesValue 
       namespace,
       selector: {
         matchLabels: {
-          app: 'containerized-data-importer',
+          'kubevirt.io': 'virt-launcher',
         },
       },
     },
