@@ -38,6 +38,7 @@ import { getTemplateName } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../../statuses/template/types';
 import { VMKind } from '../../../types';
+import { generateVMName } from '../../../utils';
 import { validateVmLikeEntityName } from '../../../utils/validations';
 import { AUTHORIZED_SSH_KEYS } from '../../ssh-service/SSHForm/ssh-form-utils';
 import { getTemplateOSIcon } from '../../vm-templates/os-icons';
@@ -149,6 +150,23 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
       setQueryArgument('namespace', newNamespace);
     }
   };
+
+  const onNameChange = (value: string) => {
+    const validation = validateVmLikeEntityName(value, namespace, vms, {
+      // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
+      existsErrorMessage:
+        'kubevirt-plugin~Name is already used by another virtual machine in this namespace',
+    });
+    dispatch({ type: FORM_ACTION_TYPE.SET_NAME, payload: { value, validation } });
+  };
+
+  React.useEffect(() => {
+    if (!state.name && selectedTemplate) {
+      const initName = generateVMName(template);
+      onNameChange(initName);
+    }
+    // eslint-disable-next-line
+  }, [selectedTemplate]);
 
   return (
     <NamespacedPage
