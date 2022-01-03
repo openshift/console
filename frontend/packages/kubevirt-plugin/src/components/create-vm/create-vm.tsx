@@ -328,6 +328,8 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
         name: state.name,
         startVM: state.startVM,
         storageClass: bootState?.storageClass?.value,
+        accessMode: bootState?.accessMode?.value,
+        volumeMode: bootState?.volumeMode?.value,
         bootSource: dataSource
           ? {
               size:
