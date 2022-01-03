@@ -143,7 +143,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   const [applySP, setApplySP] = React.useState<boolean>(true);
 
-  const inProgress = _inProgress && !spLoaded;
+  const inProgress = _inProgress || !spLoaded;
 
   const isDisabled = (fieldName: string, disabled?: boolean) =>
     inProgress || disabled || isFieldDisabled(editConfig, fieldName);
@@ -208,13 +208,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     }
     return undefined;
   };
-  const [accessMode, setAccessMode] = React.useState<AccessMode>(
-    getModeInitialValue(spAccessMode, (combinedDisk.getAccessModes() || [])[0]),
-  );
 
-  const [volumeMode, setVolumeMode] = React.useState<VolumeMode>(
-    getModeInitialValue(spVolumeMode, combinedDisk.getVolumeMode()),
+  const initAccessMode = getModeInitialValue(
+    spAccessMode,
+    (combinedDisk.getAccessModes() || [])[0],
   );
+  const initVolumeMode = getModeInitialValue(spVolumeMode, combinedDisk.getVolumeMode());
+  const [accessMode, setAccessMode] = React.useState<AccessMode>(initAccessMode);
+  const [volumeMode, setVolumeMode] = React.useState<VolumeMode>(initVolumeMode);
 
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
   const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
@@ -241,6 +242,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       setAccessMode(spAccessMode);
     }
   }, [applyProvidedSP, spVolumeMode, spAccessMode]);
+
+  React.useEffect(() => {
+    if (!(volumeMode && accessMode) && initVolumeMode && initAccessMode) {
+      setVolumeMode(initVolumeMode);
+      setAccessMode(initAccessMode);
+    }
+  }, [volumeMode, accessMode, initVolumeMode, initAccessMode]);
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -297,10 +305,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         size,
         unit,
       })
-      .setVolumeMode(applyProvidedSP && spVolumeMode ? spVolumeMode : volumeMode || null)
-      .setAccessModes(
-        applyProvidedSP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null,
-      );
+      .setVolumeMode(volumeMode || null)
+      .setAccessModes(accessMode ? [accessMode] : null);
   }
 
   const {
@@ -745,10 +751,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                           loaded
                           availableAccessModes={initialAccessModes}
                           description={accessModeHelp}
-                          initialAccessMode={getModeInitialValue(
-                            spAccessMode,
-                            (combinedDisk.getAccessModes() || [])[0],
-                          )?.getValue()}
+                          initialAccessMode={initAccessMode?.getValue()}
                         />
                       </StackItem>
                       <StackItem>
@@ -758,10 +761,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                           accessMode={accessMode?.getValue()}
                           storageClass={storageClassName}
                           loaded
-                          initialVolumeMode={getModeInitialValue(
-                            spVolumeMode,
-                            combinedDisk.getVolumeMode(),
-                          )?.getValue()}
+                          initialVolumeMode={initVolumeMode?.getValue()}
                         />
                       </StackItem>
                     </div>
