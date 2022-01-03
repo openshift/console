@@ -94,7 +94,7 @@ describe('Test template creation', () => {
     });
   });
 
-  it('ID(CNV-4094): create template from PXE', () => {
+  xit('ID(CNV-4094): create template from PXE', () => {
     cy.visitVMTemplatesList();
     virtualization.templates.createTemplateFromWizard(pxeTemplate);
     const vmt: Template = { name: pxeTemplate.name };

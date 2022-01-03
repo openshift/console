@@ -12,18 +12,24 @@ import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
 import { QuickStartModel } from '@console/app/src/models';
 import {
-  MultiListPage,
-  RowFunctionArgs,
-  Table,
+  K8sResourceCommon,
+  RowProps,
+  TableColumn,
+} from '@console/dynamic-plugin-sdk/src/extensions';
+import { useListPageFilter } from '@console/internal/components/factory/ListPage/filter-hook';
+import ListPageBody from '@console/internal/components/factory/ListPage/ListPageBody';
+import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
+import VirtualizedTable, {
   TableData,
-} from '@console/internal/components/factory';
+} from '@console/internal/components/factory/Table/VirtualizedTable';
 import {
-  FirehoseResult,
+  CamelCaseWrap,
   history,
   Kebab,
   ResourceLink,
@@ -31,151 +37,153 @@ import {
   useAccessReview2,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { NamespaceModel, NodeModel } from '@console/internal/models';
-import { LazyActionMenu } from '@console/shared';
+import { NodeModel } from '@console/internal/models';
+import { apiGroupForReference, versionForReference } from '@console/internal/module/k8s/k8s';
+import { createBasicLookup, EntityMap, LazyActionMenu } from '@console/shared';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import { VMWizardMode, VMWizardName } from '../../constants';
-import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { getVmStatusFromPrintable, VMStatus } from '../../constants/vm/vm-status';
 import { useNamespace } from '../../hooks/use-namespace';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
-import {
-  getCreationTimestamp,
-  getLabels,
-  getName,
-  getNamespace,
-  getOwnerReferences,
-  getUID,
-} from '../../selectors';
-import { isVM, isVMI } from '../../selectors/check-type';
+import { getStatusPhase } from '../../selectors';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
-import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../types';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { VMILikeEntityKind } from '../../types/vmLike';
-import {
-  createLookup,
-  dimensifyHeader,
-  dimensifyRow,
-  getBasicID,
-  getLoadedData,
-  getVMActionContext,
-} from '../../utils';
+import { DASH, getBasicID, getVMActionContext } from '../../utils';
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { LazyVMStatus } from '../vm-status/lazy-vm-status';
-import { useVmStatusResources, VmStatusResourcesValue } from '../vm-status/use-vm-status-resources';
 import { getVMStatusIcon } from '../vm-status/vm-status';
-import { vmStatusFilterNew } from './table-filters';
+import { vmTableFilters } from './table-filters';
 import VMIP from './VMIP';
 
 import './vm.scss';
 
-const tableColumnClasses = (showNamespace: boolean) => [
-  'pf-u-w-16-on-xl pf-u-w-50-on-xs',
-  classNames('pf-m-hidden', { 'pf-m-visible-on-lg': showNamespace }),
-  '',
-  'pf-m-hidden pf-m-visible-on-xl',
-  'pf-m-hidden pf-m-visible-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg',
-  '',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { className: '', id: 'name' },
+  { className: '', id: 'namespace' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'status' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'created' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'node' },
+  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'ip' },
+  { className: Kebab.columnClass, id: '' },
 ];
 
-const VMHeader = (t: TFunction, showNamespace: boolean) => () =>
-  dimensifyHeader(
-    [
-      {
-        title: t('kubevirt-plugin~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-      },
-      {
-        title: t('kubevirt-plugin~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-      },
-      {
-        title: t('kubevirt-plugin~Status'),
-        sortField: 'metadata.status',
-        transforms: [sortable],
-      },
-      {
-        title: t('kubevirt-plugin~Conditions'),
-      },
-      {
-        title: t('kubevirt-plugin~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-      },
-      {
-        title: t('kubevirt-plugin~Node'),
-        sortField: 'metadata.node',
-        transforms: [sortable],
-      },
-      {
-        title: t('kubevirt-plugin~IP Address'),
-      },
-      {
-        title: '',
-      },
-    ],
-    tableColumnClasses(showNamespace),
-  );
+const columns: (t: TFunction) => TableColumn<K8sResourceCommon>[] = (t) => [
+  {
+    title: t('kubevirt-plugin~Name'),
+    sort: 'metadata.name',
+    id: tableColumnInfo[0].id,
+    transforms: [sortable],
+    props: { className: tableColumnInfo[0].className },
+  },
+  {
+    title: t('kubevirt-plugin~Namespace'),
+    sort: 'metadata.namespace',
+    id: tableColumnInfo[1].id,
+    transforms: [sortable],
+    props: { className: tableColumnInfo[1].className },
+  },
+  {
+    title: t('kubevirt-plugin~Status'),
+    sort: 'status.printableStatus',
+    id: tableColumnInfo[2].id,
+    transforms: [sortable],
+    props: { className: tableColumnInfo[2].className },
+  },
+  {
+    title: t('kubevirt-plugin~Created'),
+    sort: 'metadata.creationTimestamp',
+    id: tableColumnInfo[3].id,
+    transforms: [sortable],
+    props: { className: tableColumnInfo[3].className },
+  },
+  {
+    title: t('kubevirt-plugin~Node'),
+    id: tableColumnInfo[4].id,
+    props: { className: tableColumnInfo[4].className },
+  },
+  {
+    title: t('kubevirt-plugin~IP Address'),
+    id: tableColumnInfo[5].id,
+    props: { className: tableColumnInfo[5].className },
+  },
+  {
+    title: '',
+    props: { className: tableColumnInfo[6].className },
+    id: tableColumnInfo[6].id,
+  },
+];
 
-const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = ({
-  obj,
-  customData: vmStatusResources,
-}) => {
-  const { vm, vmi } = obj;
-  const { name, namespace, creationTimestamp, node } = obj.metadata;
-  const activeNamespace = useNamespace();
-  const dimensify = dimensifyRow(tableColumnClasses(!activeNamespace));
-  const arePendingChanges = hasPendingChanges(vm, vmi);
-  const printableStatus = obj?.metadata?.status;
-  const status: VMStatus = getVmStatusFromPrintable(printableStatus);
+const VMRow: React.FC<RowProps<
+  VMILikeEntityKind,
+  { kind: string; vmisLookup: EntityMap<VMIKind> }
+>> = ({ obj, activeColumnIDs, rowData: { vmisLookup, kind } }) => {
+  const vmContext = getVMActionContext(obj);
+  const lookupID = getBasicID(obj);
 
-  const model = (vm && VirtualMachineModel) || (vmi && VirtualMachineInstanceModel);
-  const context = getVMActionContext(vm || vmi);
+  const vmi = React.useMemo(() => {
+    return obj.kind === VirtualMachineModel.kind ? vmisLookup[lookupID] : (obj as VMIKind);
+  }, [lookupID, obj, vmisLookup]);
 
+  const { node, ipAddresses } = React.useMemo(() => {
+    return {
+      node: getVMINodeName(vmi),
+      ipAddresses: getVmiIpAddresses(vmi),
+    };
+  }, [vmi]);
+
+  const arePendingChanges = React.useMemo(() => {
+    return obj.kind === VirtualMachineModel.kind ? hasPendingChanges(obj as VMKind, vmi) : false;
+  }, [obj, vmi]);
+
+  const vmsStatus: VMStatus = getVmStatusFromPrintable(obj?.status?.printableStatus);
   return (
     <>
-      <TableData className={dimensify()}>
-        <ResourceLink kind={kubevirtReferenceForModel(model)} name={name} namespace={namespace} />
-      </TableData>
-      <TableData className={dimensify()}>
-        <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
-      </TableData>
-      <TableData className={dimensify()}>
-        {status ? (
-          <GenericStatus
-            title={printableStatus}
-            Icon={getVMStatusIcon(status, arePendingChanges)}
-          />
-        ) : (
-          '-'
-        )}
-      </TableData>
-      <TableData className={dimensify()}>
-        <LazyVMStatus
-          vm={vm}
-          vmi={vmi}
-          printableStatus={printableStatus}
-          vmStatusResources={vmStatusResources}
+      <TableData {...tableColumnInfo[0]} activeColumnIDs={activeColumnIDs}>
+        <ResourceLink
+          groupVersionKind={{
+            kind: obj?.kind,
+            version: versionForReference(kind),
+            group: apiGroupForReference(kind),
+          }}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={dimensify()}>
-        <Timestamp timestamp={creationTimestamp} />
+      <TableData {...tableColumnInfo[1]} activeColumnIDs={activeColumnIDs}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={dimensify()}>
-        {node && (
-          <ResourceLink key="node-link" kind={NodeModel.kind} name={node} namespace={namespace} />
+      <TableData {...tableColumnInfo[2]} activeColumnIDs={activeColumnIDs}>
+        {obj.kind === VirtualMachineModel.kind ? (
+          <GenericStatus
+            title={obj?.status?.printableStatus || getStatusPhase(obj)}
+            Icon={getVMStatusIcon(vmsStatus, arePendingChanges)}
+          />
+        ) : (
+          <CamelCaseWrap value={getStatusPhase(obj)} dataTest="status-text" />
         )}
       </TableData>
-      <TableData className={dimensify()}>{vmi && <VMIP data={getVmiIpAddresses(vmi)} />}</TableData>
-      <TableData className={dimensify(true)}>
-        <LazyActionMenu context={context} />
+      <TableData {...tableColumnInfo[3]} activeColumnIDs={activeColumnIDs}>
+        <Timestamp timestamp={obj?.metadata?.creationTimestamp} />
+      </TableData>
+      <TableData {...tableColumnInfo[4]} activeColumnIDs={activeColumnIDs}>
+        {node ? (
+          <ResourceLink
+            key="node-link"
+            kind={NodeModel.kind}
+            name={node}
+            namespace={obj?.metadata?.namespace}
+          />
+        ) : (
+          DASH
+        )}
+      </TableData>
+      <TableData {...tableColumnInfo[5]} activeColumnIDs={activeColumnIDs}>
+        {ipAddresses?.length > 0 ? <VMIP data={ipAddresses} /> : DASH}
+      </TableData>
+      <TableData {...tableColumnInfo[6]} activeColumnIDs={activeColumnIDs}>
+        <LazyActionMenu context={vmContext} />
       </TableData>
     </>
   );
@@ -252,149 +260,73 @@ const VMListEmpty: React.FC = () => {
   );
 };
 
-const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => {
+const VMTable: React.FC<{
+  vmisLookup: EntityMap<VMIKind>;
+  kind: string;
+  data: K8sResourceCommon[];
+  unfilteredData: K8sResourceCommon[];
+  loaded: boolean;
+  loadError: any;
+}> = ({ data, unfilteredData, loaded, loadError, vmisLookup, kind }) => {
   const { t } = useTranslation();
-  const activeNamespace = useNamespace();
-  return (
-    <div className="kv-vm-list">
-      <Table
-        {...props}
-        EmptyMsg={VMListEmpty}
-        aria-label={t('kubevirt-plugin~Virtual Machines')}
-        Header={VMHeader(t, !activeNamespace)}
-        Row={VMRow}
-        virtualize
-      />
-    </div>
-  );
-};
-
-VMList.displayName = 'VMList';
-
-export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
-  const { t } = useTranslation();
-  const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
-  const namespace = props.match.params.ns;
-  const vmStatusResources = useVmStatusResources(namespace);
-
-  const resources = React.useMemo(
-    () => [
-      {
-        kind: kubevirtReferenceForModel(VirtualMachineModel),
-        namespace,
-        prop: 'vms',
-      },
-      {
-        kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
-        namespace,
-        prop: 'vmis',
-      },
-    ],
-    [namespace],
-  );
-
-  const flatten = ({
-    vms,
-    vmis,
-  }: {
-    vms: FirehoseResult<VMKind[]>;
-    vmis: FirehoseResult<VMIKind[]>;
-  }) => {
-    const loadedVMs = getLoadedData(vms);
-    const loadedVMIs = getLoadedData(vmis);
-
-    if (![loadedVMs, loadedVMIs].every((v) => v)) {
-      return null;
-    }
-    const vmisLookup = createLookup<VMIKind>(vmis, getBasicID);
-
-    const virtualMachines = [
-      ...loadedVMs,
-      ...loadedVMIs.filter(
-        (vmi) => !getOwnerReferences(vmi)?.find((owner) => owner.kind === VirtualMachineModel.kind),
-      ),
-    ];
-
-    return virtualMachines.map((obj: VMILikeEntityKind) => {
-      const objectBundle: ObjectBundle = { vm: null, vmi: null, vmImport: null };
-      const lookupID = getBasicID(obj);
-
-      if (isVM(obj)) {
-        objectBundle.vm = obj;
-        objectBundle.vmi = vmisLookup[lookupID];
-      } else if (isVMI(obj)) {
-        objectBundle.vmi = obj;
-      }
-      return {
-        metadata: {
-          name: getName(obj),
-          namespace: getNamespace(obj),
-          creationTimestamp: getCreationTimestamp(obj),
-          node: getVMINodeName(objectBundle.vmi),
-          uid: getUID(obj),
-          lookupID,
-          labels: getLabels(obj),
-          status: isVM(obj)
-            ? obj?.status?.printableStatus
-            : isVMI(obj)
-            ? obj?.status?.phase
-            : 'Unknown',
-        },
-        ...objectBundle,
-      };
-    });
-  };
-
-  const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
-  const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
 
   return (
-    <MultiListPage
-      {...modifiedProps}
-      createAccessReview={createAccessReview}
-      createButtonText={t('kubevirt-plugin~Create virtual machine')}
-      title={VirtualMachineModel.labelPlural}
-      showTitle={showTitle}
-      rowFilters={[vmStatusFilterNew]}
-      ListComponent={VMList}
-      resources={resources}
-      flatten={flatten}
-      label={VirtualMachineModel.labelPlural}
-      customData={vmStatusResources}
+    <VirtualizedTable<K8sResourceCommon, { kind: string; vmisLookup: EntityMap<VMIKind> }>
+      data={data}
+      unfilteredData={unfilteredData}
+      loaded={loaded}
+      loadError={loadError}
+      columns={columns(t)}
+      Row={VMRow}
+      EmptyMsg={VMListEmpty}
+      rowData={{ vmisLookup, kind }}
     />
   );
 };
 
-type ObjectBundle = {
-  vm: VMKind;
-  vmi: VMIKind;
-  vmImport: VMImportKind;
-};
-
-export type VMRowObjType = {
-  metadata: {
-    name: string;
-    namespace: string;
-    status: string;
-    node: string;
-    creationTimestamp: string;
-    uid: string;
-    lookupID: string;
-    vmStatusBundle: VMStatusBundle;
-    vmImportStatus?: V2VVMImportStatus;
-  };
-} & ObjectBundle;
-
-type VMListProps = {
-  data: VMRowObjType[];
-};
-
-type VirtualMachinesPageProps = {
+export const VirtualMachinesPage: React.FC<{
+  obj: { kind: string };
   match: match<{ ns?: string }>;
-  customData: {
-    showTitle?: boolean;
-    skipAccessReview?: boolean;
-    noProjectsAvailable?: boolean;
-    namespace: string;
-  };
+}> = (props) => {
+  const [vms, loaded, loadError] = useK8sWatchResource<VMKind[]>({
+    kind: props?.obj?.kind,
+    isList: true,
+    namespaced: true,
+    namespace: props?.match?.params?.ns,
+  });
+  const [vmis, vmisLoaded, vmisLoadError] = useK8sWatchResource<VMIKind[]>({
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+    isList: true,
+    namespaced: true,
+    namespace: props?.match?.params?.ns,
+  });
+
+  const vmLikeUnion = React.useMemo(() => {
+    return _.unionBy<VMILikeEntityKind>(vms, vmis, getBasicID);
+  }, [vmis, vms]);
+
+  const vmisLookup = React.useMemo(() => {
+    return createBasicLookup<VMIKind>(vmis, getBasicID);
+  }, [vmis]);
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(vmLikeUnion, vmTableFilters);
+
+  return (
+    <ListPageBody>
+      <ListPageFilter
+        data={data}
+        loaded={loaded && vmisLoaded}
+        rowFilters={vmTableFilters}
+        onFilterChange={onFilterChange}
+      />
+      <VMTable
+        data={filteredData}
+        unfilteredData={data}
+        loaded={loaded && vmisLoaded}
+        loadError={loadError || vmisLoadError}
+        vmisLookup={vmisLookup}
+        kind={props?.obj?.kind}
+      />
+    </ListPageBody>
+  );
 };
