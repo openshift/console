@@ -35,8 +35,12 @@ import {
 } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
+  DashboardsOverviewInventoryItem as DynamicDashboardsOverviewInventoryItem,
+  DashboardsOverviewInventoryItemReplacement as DynamicDashboardsOverviewInventoryItemReplacement,
   ProjectDashboardInventoryItem as DynamicProjectDashboardInventoryItem,
   isProjectDashboardInventoryItem as isDynamicProjectDashboardInventoryItem,
+  isDashboardsOverviewInventoryItem as isDynamicDashboardsOverviewInventoryItem,
+  isDashboardsOverviewInventoryItemReplacement as isDynamicDashboardsOverviewInventoryItemReplacement,
   K8sResourceCommon,
   WatchK8sResources,
 } from '@console/dynamic-plugin-sdk';
@@ -127,6 +131,25 @@ export const InventoryCard = () => {
   const [dynamicItemExtensions] = useResolvedExtensions<DynamicProjectDashboardInventoryItem>(
     isDynamicProjectDashboardInventoryItem,
   );
+
+  const [dynamicDashboardItemExtensions] = useResolvedExtensions<
+    DynamicDashboardsOverviewInventoryItem
+  >(isDynamicDashboardsOverviewInventoryItem);
+  const [dynamicDashboardReplacementExtensions] = useResolvedExtensions<
+    DynamicDashboardsOverviewInventoryItemReplacement
+  >(isDynamicDashboardsOverviewInventoryItemReplacement);
+
+  const dynamicMergedItems = React.useMemo(
+    () =>
+      dynamicDashboardItemExtensions.map(
+        (item) =>
+          dynamicDashboardReplacementExtensions.find(
+            (r) => r.properties.model === item.properties.model,
+          ) || item,
+      ),
+    [dynamicDashboardItemExtensions, dynamicDashboardReplacementExtensions],
+  );
+
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const canListSecrets = useAccessReview({
@@ -183,6 +206,15 @@ export const InventoryCard = () => {
           model={VolumeSnapshotModel}
           mapper={getVSStatusGroups}
         />
+        {dynamicMergedItems.map((item) => (
+          <ProjectInventoryItem
+            key={item.properties.model.kind}
+            projectName={projectName}
+            model={item.properties.model}
+            mapper={item.properties.mapper}
+            additionalDynamicResources={item.properties.additionalResources}
+          />
+        ))}
       </CardBody>
     </Card>
   );
