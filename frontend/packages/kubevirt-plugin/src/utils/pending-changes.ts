@@ -61,7 +61,7 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       execAction: () => {
         redirectToTab(getVMTabURL(vm, VMTabURLEnum.details));
         hostDevicesModal({
-          vm,
+          vmLikeEntity: vm,
           vmDevices: vmWrapper.getHostDevices(),
           vmiDevices: vmiWrapper.getHostDevices(),
           isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
@@ -75,7 +75,7 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       execAction: () => {
         redirectToTab(getVMTabURL(vm, VMTabURLEnum.details));
         gpuDevicesModal({
-          vm,
+          vmLikeEntity: vm,
           vmDevices: vmWrapper.getGPUDevices(),
           vmiDevices: vmiWrapper.getGPUDevices(),
           isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
