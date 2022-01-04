@@ -24,7 +24,7 @@ Feature: Create Application from Devfile
         @regression
         Scenario: Create the workload from dev file: A-04-TC02
             Given user is at Import from Git form
-             When user enters Git Repo URL as "https://github.com/redhat-developer/devfile-sample"
+             When user enters Git Repo URL as "https://github.com/nodeshift-starters/devfile-sample"
               And user enters workload name as "node-bulletin-board"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page

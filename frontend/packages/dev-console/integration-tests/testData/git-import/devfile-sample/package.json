@@ -1,0 +1,18 @@
+{
+  "name": "package.json",
+  "path": "package.json",
+  "sha": "73003980284f47ce6ce7fc44098ac5e4c26800ad",
+  "size": 391,
+  "url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/package.json?ref=main",
+  "html_url": "https://github.com/nodeshift-starters/devfile-sample/blob/main/package.json",
+  "git_url": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/73003980284f47ce6ce7fc44098ac5e4c26800ad",
+  "download_url": "https://raw.githubusercontent.com/nodeshift-starters/devfile-sample/main/package.json",
+  "type": "file",
+  "content": "ewogICJuYW1lIjogIm5vZGVqcy1zdGFydGVyIiwKICAidmVyc2lvbiI6ICIx\nLjAuMCIsCiAgImRlc2NyaXB0aW9uIjogIlNpbXBsZSBOb2RlLmpzIGFwcGxp\nY2F0aW9uIiwKICAibGljZW5zZSI6ICJFUEwtMi4wIiwKICAic2NyaXB0cyI6\nIHsKICAgICJzdGFydCI6ICJub2RlIHNlcnZlci5qcyIsCiAgICAiZGVidWci\nOiAibm9kZSAtLWluc3BlY3Q9JHtERUJVR19QT1JUfSBzZXJ2ZXIuanMiLAog\nICAgInRlc3QiOiAibm9kZSB0ZXN0L3Rlc3QuanMiCiAgfSwKICAiZGVwZW5k\nZW5jaWVzIjogewogICAgImV4cHJlc3MiOiAiXjQuMTcuMSIsCiAgICAicGlu\nbyI6ICJeNi4yLjEiLAogICAgInBpbm8taHR0cCI6ICJeNS4xLjAiLAogICAg\nInByb20tY2xpZW50IjogIl4xMi4wLjAiCiAgfQp9Cg==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/nodeshift-starters/devfile-sample/contents/package.json?ref=main",
+    "git": "https://api.github.com/repos/nodeshift-starters/devfile-sample/git/blobs/73003980284f47ce6ce7fc44098ac5e4c26800ad",
+    "html": "https://github.com/nodeshift-starters/devfile-sample/blob/main/package.json"
+  }
+}
