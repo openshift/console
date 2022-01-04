@@ -8,7 +8,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
 import { TektonHubTask } from '../../../types/tektonHub';
 import { TektonTaskProviders } from '../../pipelines/const';
-import { filterBySupportedPlatforms } from '../catalog-utils';
+import { filterBySupportedPlatforms, useTektonHubIntegration } from '../catalog-utils';
 import { TEKTON_HUB_API_ENDPOINT } from '../const';
 import useApiResponse from '../hooks/useApiResponse';
 
@@ -82,9 +82,11 @@ const useTektonHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
     verb: 'update',
   });
 
+  const integrationEnabled = useTektonHubIntegration();
+
   const [tektonHubTasks, tasksLoaded, tasksError] = useApiResponse<TektonHubTask>(
     `${TEKTON_HUB_API_ENDPOINT}/resources`,
-    canCreateTask && canUpdateTask,
+    canCreateTask && canUpdateTask && integrationEnabled,
   );
 
   React.useMemo(

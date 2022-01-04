@@ -306,6 +306,8 @@
   "Pod not found": "Pod not found",
   "TaskRun log": "TaskRun log",
   "{{taskLabel}} details": "{{taskLabel}} details",
+  "TektonConfig": "TektonConfig",
+  "TektonConfigs": "TektonConfigs",
   "Pipeline {{status}}": "Pipeline {{status}}",
   "Pipeline status is {{status}}. View logs.": "Pipeline status is {{status}}. View logs.",
   "Pipeline not started. Start pipeline.": "Pipeline not started. Start pipeline.",
