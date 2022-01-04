@@ -151,8 +151,9 @@ const NamespaceDropdown: React.FC = () => {
       activeItemId={selected}
       data-test="dropdown menu console.preferredNamespace"
       onActionClick={() => {}}
+      isScrollable
     >
-      <MenuContent menuHeight="40vh" translate="no">
+      <MenuContent menuHeight="40vh" maxMenuHeight="40vh" translate="no">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}

@@ -52,7 +52,7 @@ const CustomizeSource: React.FC<RouteComponentProps> = ({ location }) => {
   });
 
   return finish ? (
-    <CustomizeSourceFinish vm={vm} />
+    <CustomizeSourceFinish vm={vm} dataVolumes={dataVolumes} pvcs={pvcs} />
   ) : (
     <StatusBox loaded={loaded} loadError={loadError} data={vm}>
       {isVMIRunning(vmi) ? (

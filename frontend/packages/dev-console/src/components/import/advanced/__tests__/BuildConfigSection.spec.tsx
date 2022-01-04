@@ -23,8 +23,13 @@ jest.mock('formik', () => ({
         },
         strategy: 'Source',
       },
+      image: { selected: 'nodejs-ex', tag: 'latest' },
     },
   })),
+}));
+
+jest.mock('../../builder/builderImageHooks', () => ({
+  useBuilderImageEnvironments: () => [[], true],
 }));
 
 describe('BuildConfigSection', () => {
@@ -53,6 +58,7 @@ describe('BuildConfigSection', () => {
           triggers: {},
           strategy: 'Source',
         },
+        image: { selected: 'nodejs-ex', tag: 'latest' },
       },
     });
     const wrapper = shallow(<BuildConfigSection {...BuildConfigSectionProps} />);

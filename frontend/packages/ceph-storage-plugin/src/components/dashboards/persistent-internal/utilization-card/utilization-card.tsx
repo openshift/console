@@ -1,24 +1,25 @@
+// TODO (@rexagod): https://github.com/openshift/console/pull/10470#discussion_r766453369
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardActions, CardHeader, CardTitle, Grid } from '@patternfly/react-core';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   FieldLevelHelp,
 } from '@console/internal/components/utils';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
-import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { humanizeIOPS, humanizeLatency } from './utils';
+import { PrometheusUtilizationItem } from './prometheus-utilization-item';
+import { PrometheusMultilineUtilizationItem } from './prometheus-multi-utilization-item';
 import {
   StorageDashboardQuery,
   UTILIZATION_QUERY,
   utilizationPopoverQueryMap,
 } from '../../../../queries';
+
+import './utilization-card.scss';
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
@@ -35,19 +36,21 @@ const UtilizationCard: React.FC = () => {
   );
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle className="co-utilization-card__title">
           {t('ceph-storage-plugin~Utilization')}
           <FieldLevelHelp>
             {t(
               'ceph-storage-plugin~Performance metrics over time showing IOPS, Latency and more. Each metric is a link to a detailed view of this metric.',
             )}
           </FieldLevelHelp>
-        </DashboardCardTitle>
-        <UtilizationDurationDropdown />
-      </DashboardCardHeader>
-      <UtilizationBody>
+        </CardTitle>
+        <CardActions>
+          <UtilizationDurationDropdown />
+        </CardActions>
+      </CardHeader>
+      <Grid className="co-utilization-card__body">
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Used Capacity')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
@@ -55,20 +58,32 @@ const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
         />
-        <PrometheusUtilizationItem
+        <PrometheusMultilineUtilizationItem
           title={t('ceph-storage-plugin~IOPS')}
-          utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY]}
+          queries={[
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_READ_QUERY],
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_WRITE_QUERY],
+          ]}
           humanizeValue={humanizeIOPS}
+          chartType="stacked-area"
         />
-        <PrometheusUtilizationItem
-          title={t('ceph-storage-plugin~Latency')}
-          utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY]}
-          humanizeValue={humanizeLatency}
-        />
-        <PrometheusUtilizationItem
+        <PrometheusMultilineUtilizationItem
           title={t('ceph-storage-plugin~Throughput')}
-          utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY]}
+          queries={[
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_READ_QUERY],
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_WRITE_QUERY],
+          ]}
           humanizeValue={humanizeDecimalBytesPerSec}
+          chartType="stacked-area"
+        />
+        <PrometheusMultilineUtilizationItem
+          title={t('ceph-storage-plugin~Latency')}
+          queries={[
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_READ_QUERY],
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_WRITE_QUERY],
+          ]}
+          humanizeValue={humanizeLatency}
+          chartType="grouped-line"
         />
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Recovery')}
@@ -77,8 +92,8 @@ const UtilizationCard: React.FC = () => {
           }
           humanizeValue={humanizeDecimalBytesPerSec}
         />
-      </UtilizationBody>
-    </DashboardCard>
+      </Grid>
+    </Card>
   );
 };
 

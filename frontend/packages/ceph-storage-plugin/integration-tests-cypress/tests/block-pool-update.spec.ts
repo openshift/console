@@ -9,7 +9,8 @@ import {
   poolMessage,
 } from '../views/block-pool';
 
-describe('Test block pool update under OCS UI', () => {
+/** @depricated testcases are moved to odf-console */
+xdescribe('Test block pool update under OCS UI', () => {
   before(() => {
     cy.login();
     cy.visit('/');

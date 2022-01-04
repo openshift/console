@@ -7,6 +7,7 @@ export enum BC_PROVIDERS {
   GCP = 'Google Cloud Storage',
   AZURE = 'Azure Blob',
   IBM = 'IBM COS',
+  FILESYSTEM = 'Filesystem',
 }
 
 export const PROVIDERS_NOOBAA_MAP = {
@@ -16,6 +17,7 @@ export const PROVIDERS_NOOBAA_MAP = {
   [BC_PROVIDERS.GCP]: 'googleCloudStorage' as const,
   [BC_PROVIDERS.PVC]: 'pvPool' as const,
   [BC_PROVIDERS.IBM]: 'ibmCos' as const,
+  [BC_PROVIDERS.FILESYSTEM]: 'nsfs' as const,
 };
 
 export const NOOBAA_TYPE_MAP = {
@@ -25,6 +27,7 @@ export const NOOBAA_TYPE_MAP = {
   [BC_PROVIDERS.GCP]: 'google-cloud-storage' as const,
   [BC_PROVIDERS.PVC]: 'pv-pool' as const,
   [BC_PROVIDERS.IBM]: 'ibm-cos' as const,
+  [BC_PROVIDERS.FILESYSTEM]: 'nsfs' as const,
 };
 
 export const NS_PROVIDERS_NOOBAA_MAP = _.pick(
@@ -33,6 +36,7 @@ export const NS_PROVIDERS_NOOBAA_MAP = _.pick(
   BC_PROVIDERS.S3,
   BC_PROVIDERS.AZURE,
   BC_PROVIDERS.IBM,
+  BC_PROVIDERS.FILESYSTEM,
 );
 
 export const NS_NOOBAA_TYPE_MAP = _.pick(

@@ -34,7 +34,7 @@ import { VictoryPortal } from 'victory-core';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
-import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/ui';
+import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
@@ -154,8 +154,10 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
 );
 
 const TOOLTIP_MAX_ENTRIES = 20;
-const TOOLTIP_MAX_WIDTH = 300;
+const TOOLTIP_MAX_WIDTH = 400;
 const TOOLTIP_MAX_HEIGHT = 400;
+const TOOLTIP_MAX_LEFT_JUT_OUT = 85;
+const TOOLTIP_MAX_RIGHT_JUT_OUT = 45;
 
 type TooltipSeries = {
   color: string;
@@ -180,8 +182,10 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
   }
 
   // Pick tooltip width and location (left or right of the cursor) to maximize its available space
-  const tooltipMaxWidth: number = Math.min(width / 2 + 60, TOOLTIP_MAX_WIDTH);
-  const isOnLeft: boolean = x > (width - 40) / 2;
+  const spaceOnLeft = x + TOOLTIP_MAX_LEFT_JUT_OUT;
+  const spaceOnRight = width - x + TOOLTIP_MAX_RIGHT_JUT_OUT;
+  const isOnLeft = spaceOnLeft > spaceOnRight;
+  const tooltipMaxWidth = Math.min(isOnLeft ? spaceOnLeft : spaceOnRight, TOOLTIP_MAX_WIDTH);
 
   // Sort the entries in the tooltip from largest to smallest (to match the position of points in
   // the graph) and limit to the maximum number we can display. There could be a large number of
@@ -223,12 +227,15 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     [(k) => -_.uniq(allSeries.map((s) => s.labels[k])).length, (k) => k.length],
   );
   const getSeriesName = (series: TooltipSeries): string => {
-    if (series.name) {
+    if (_.isString(series.name)) {
       return series.name;
     }
-    const name = series.labels?.__name__ ?? '';
+    if (_.isEmpty(series.labels)) {
+      return '{}';
+    }
+    const name = series.labels.__name__ ?? '';
     const otherLabels = _.intersection(allSeriesSorted, Object.keys(series.labels));
-    return `${name}{${_.map(otherLabels, (l) => `${l}=${series.labels[l]}`).join(',')}}`;
+    return `${name}{${otherLabels.map((l) => `${l}=${series.labels[l]}`).join(',')}}`;
   };
 
   return (
@@ -630,9 +637,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   wrapperClassName,
 }) => {
   const { t } = useTranslation();
-  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
+  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
   const tickInterval = useSelector(
-    ({ UI }: RootState) => pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
+    ({ observe }: RootState) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
   );
 
   const dispatch = useDispatch();

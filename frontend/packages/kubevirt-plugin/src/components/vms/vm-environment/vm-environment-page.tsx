@@ -7,6 +7,7 @@ import {
   Firehose,
   FirehoseResult,
   HandlePromiseProps,
+  useAccessReview2,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import {
@@ -24,6 +25,7 @@ import {
   ServiceAccountKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
+import { useActiveNamespace } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s/patch';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
@@ -152,6 +154,14 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     const defaultEnvVar: EnvVarSource = {
       configMapSecretRef: { name: t('kubevirt-plugin~Select a resource'), key: '' },
     };
+
+    const [namespace] = useActiveNamespace();
+    const [canPatchVM] = useAccessReview2({
+      group: VirtualMachineModel?.apiGroup,
+      resource: VirtualMachineModel?.plural,
+      verb: 'patch',
+      namespace,
+    });
 
     const getUsedSources = (): EnvDisk[] => {
       let counter = 0;
@@ -427,7 +437,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             serviceAccounts={availableServiceAccounts}
             firstTitle={t('kubevirt-plugin~config map / secret / service account')}
             secondTitle={t('kubevirt-plugin~Serial Number')}
-            addButtonDisabled={addButtonDisabled || inProgress}
+            addButtonDisabled={addButtonDisabled || inProgress || !canPatchVM}
             addButtonLabel={t('kubevirt-plugin~Add Config Map, Secret or Service Account')}
           />
         </div>
@@ -437,7 +447,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             reload={onReload}
             errorMsg={errMsg}
             isSuccess={isSuccess}
-            isSaveBtnDisabled={isSaveBtnDisabled()}
+            isSaveBtnDisabled={!canPatchVM || isSaveBtnDisabled()}
           />
         </div>
       </>

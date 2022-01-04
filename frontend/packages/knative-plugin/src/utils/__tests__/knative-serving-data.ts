@@ -78,7 +78,7 @@ export const defaultData: DeployImageFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      privateKey: '',
+      key: '',
     },
   },
   build: {

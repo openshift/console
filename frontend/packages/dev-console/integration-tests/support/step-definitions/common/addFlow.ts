@@ -1,4 +1,4 @@
-import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import {
   switchPerspective,
@@ -103,14 +103,21 @@ When('user enters run command for {string} as {string}', (envKey: string, value:
 });
 
 Then(
-  'user is able to navigate to Build #1 for deployment {string} and see environment variable {string} in Environment tab of details page',
-  (name: string, env: string) => {
+  'user is able to navigate to Build {string} for deployment {string}',
+  (build: string, name: string) => {
     topologyPage.clickOnNode(name);
     topologySidePane.selectTab('Resources');
-    topologySidePane.selectResource(resources.Builds, 'aut-addflow-git', `${name}-1`);
+    topologySidePane.selectResource(resources.Builds, 'aut-addflow-git', build);
+  },
+);
+
+And(
+  'see environment variable {string} with value {string} in Environment tab of details page',
+  (envKey: string, envVal: string) => {
     app.waitForLoad();
     detailsPage.selectTab('Environment');
     app.waitForLoad();
-    cy.get(`input[data-test="pairs-list-name"][value="${env}"]`).should('exist');
+    cy.get(`input[data-test="pairs-list-name"][value="${envKey}"]`).should('have.length', 1);
+    cy.get(`input[data-test="pairs-list-value"][value="${envVal}"]`).should('have.length', 1);
   },
 );

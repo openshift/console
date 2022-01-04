@@ -163,3 +163,7 @@ export type StorageProfile = {
     storageClass: string;
   };
 } & K8sResourceKind;
+
+export type DataSourceKind = {
+  spec: { source: { pvc: { name: string; namespace: string } } };
+} & K8sResourceKind;

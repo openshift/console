@@ -30,12 +30,12 @@ import {
   setOrRemoveQueryArgument,
 } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
-import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
 import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared/src';
 import { TextFilter } from './factory';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -276,6 +276,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   return (
     <Toolbar
+      className="pf-c-toolbar--align-left"
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}

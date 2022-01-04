@@ -27,7 +27,7 @@ module.exports = {
           argFunction(filePath, packageDir);
         }
       } catch (e) {
-        console.error(e);
+        console.error(`Failed to parseFolder ${directory}:`, e);
       }
     })();
   },
@@ -35,7 +35,7 @@ module.exports = {
     try {
       fs.unlinkSync(filePath);
     } catch (e) {
-      console.error(e);
+      console.error(`Failed to delete file ${filePath}:`, e);
     }
   },
 };

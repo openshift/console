@@ -13,7 +13,7 @@ import {
   PageComponentProps,
 } from '../extensions';
 import { K8sResourceCommon } from '../extensions/console-types';
-import { DisplayFilters, TopologyDataResources } from '../extensions/topology-types';
+import { DisplayFilters } from '../extensions/topology-types';
 import { K8sModel, MatchLabels, Selector as SelectorKind } from './common-types';
 import { RootState } from '@console/internal/redux';
 import { AnyAction, Store } from 'redux';
@@ -131,13 +131,6 @@ export const useDisplayFilters: () => DisplayFilters = require('@console/topolog
 export const useSearchFilter: (
   text: string,
 ) => [boolean, string] = require('@console/topology/src/filters/useSearchFilter').useSearchFilter;
-
-export const workloadActions: (
-  contextMenuResource: K8sResourceKind,
-  allowRegroup?: boolean,
-  resources?: TopologyDataResources,
-  isOperatorBacked?: boolean,
-) => KebabOption[] = require('@console/topology/src/actions/workloadActions').workloadActions;
 
 export const {
   BlueInfoCircleIcon,
@@ -361,10 +354,6 @@ export const Timestamp = React.lazy(() =>
   import('@console/internal/components/utils').then((m) => ({
     default: m.Timestamp,
   })),
-);
-
-export const DashboardCardLink = React.lazy(() =>
-  import('@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink'),
 );
 
 export const GenericStatus = React.lazy(() =>

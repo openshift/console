@@ -261,5 +261,27 @@
       "path": "/test-k8sapi",
       "component": { "$codeRef": "K8sAPIConsumer.default" }
     }
+  },
+  {
+    "type": "console.cluster-overview/inventory-item",
+    "properties": {
+      "component": { "$codeRef": "clusterInventoryOverview.default" }
+    }
+  },
+  {
+    "type": "console.cluster-overview/utilization-item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Foo item%",
+      "getUtilizationQuery": { "$codeRef": "clusterOverview.getUtilizationQuery" },
+      "humanize": { "$codeRef": "clusterOverview.humanize" }
+    }
+  },
+  {
+    "type": "console.cluster-overview/multiline-utilization-item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Bar item%",
+      "getUtilizationQueries": { "$codeRef": "clusterOverview.getUtilizationQueries" },
+      "humanize": { "$codeRef": "clusterOverview.humanize" }
+    }
   }
 ]

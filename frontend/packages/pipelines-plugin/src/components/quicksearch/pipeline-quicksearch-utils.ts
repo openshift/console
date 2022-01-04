@@ -100,15 +100,8 @@ export const updateTask = async (
         ...task.metadata.annotations,
         ...getInstalledFromAnnotation(),
       };
-      await k8sUpdate(
-        TaskModel,
-        _.merge({}, taskData.data, {
-          metadata: task.metadata,
-          spec: task.spec,
-        }),
-        namespace,
-        name,
-      );
+      task.metadata = _.merge({}, taskData.data.metadata, task.metadata);
+      return k8sUpdate(TaskModel, task, namespace, name);
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

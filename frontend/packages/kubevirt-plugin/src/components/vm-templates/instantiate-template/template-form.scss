@@ -1,0 +1,22 @@
+.kv-template-form-details {
+    display: flex;
+    margin: 0 0 10px;
+
+    &__tag {
+        color: var(--pf-global--palette--black-600)
+    }
+}
+
+.kv-template-form-list {
+    grid-row-gap: var(--pf-global--spacer--sm);
+}
+.kv-template-form-details__tags {
+    margin-bottom: var(--pf-global--spacer--xs);
+}
+
+.kv-template-form-icon {
+    padding-right: var(--pf-global--spacer--sm);
+    &__img {
+        size: var(--pf-global--icon--FontSize--lg);
+    }
+}

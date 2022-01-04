@@ -37,22 +37,6 @@ const moveConnection = (edge: Edge, availableTargets: Node[]) => {
   };
 };
 
-/**
- * @deprecated migrated to use new Action extension, use DeleteConnectorAction
- */
-const deleteConnection = (edge: Edge) => {
-  const resourceObj = getResource(edge.getSource());
-  const resourceModel = modelFor(referenceFor(resourceObj));
-  return {
-    // t('topology~Delete connector')
-    labelKey: 'topology~Delete connector',
-    callback: () => {
-      removeConnection(edge);
-    },
-    accessReview: asAccessReview(resourceModel, resourceObj, 'delete'),
-  };
-};
-
 const getAvailableTargetForEdge = (edge: Edge, nodes: Node[]) => {
   const currentTargets = edge
     .getSource()
@@ -122,19 +106,12 @@ export const DeleteConnectorAction = (kindObj: K8sModel, element: Edge): Action 
   };
 };
 
+/**
+ * @deprecated remove this after migrating the Traffic connector side-panel to dynamic extensions
+ */
 export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
   const actions: KebabOption[] = [];
   const availableTargets = getAvailableTargetForEdge(edge, nodes);
   actions.push(moveConnection(edge, availableTargets));
-
-  switch (edge.getType()) {
-    case TYPE_CONNECTS_TO:
-    case TYPE_SERVICE_BINDING:
-      actions.push(deleteConnection(edge));
-      break;
-    default:
-      break;
-  }
-
   return actions;
 };

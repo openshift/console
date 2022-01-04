@@ -1,13 +1,10 @@
 import * as React from 'react';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   SourceMissingStatus,
   SubscriptionStatus,
 } from '@console/operator-lifecycle-manager/src/components/subscription';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { useKubevirtCsvDetails } from '../../hooks/use-kubevirt-csv-details';
@@ -28,11 +25,11 @@ export const VirtOverviewDetailsCard: React.FC = () => {
   const isLoading = !loaded && !loadError;
 
   return (
-    <DashboardCard data-test-id="kubevirt-overview-dashboard--details-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('kubevirt-plugin~Details')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="kubevirt-overview-dashboard--details-card">
+      <CardHeader>
+        <CardTitle>{t('kubevirt-plugin~Details')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <DetailsBody>
           <DetailItem isLoading={isLoading} title={t('kubevirt-plugin~Service name')}>
             {name}
@@ -57,7 +54,7 @@ export const VirtOverviewDetailsCard: React.FC = () => {
             {updateChannel}
           </DetailItem>
         </DetailsBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };

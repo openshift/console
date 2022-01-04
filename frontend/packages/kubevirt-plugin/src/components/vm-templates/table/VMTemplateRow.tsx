@@ -24,12 +24,28 @@ import './vm-template-table.scss';
 
 const VMTemplateRow: React.FC<RowFunctionArgs<TemplateItem, VMTemplateRowProps>> = ({
   obj,
-  customData: { dataVolumes, pvcs, pods, namespace, loaded, togglePin, isPinned, sourceLoadError },
+  customData: {
+    dataVolumes,
+    pvcs,
+    pods,
+    namespace,
+    loaded,
+    togglePin,
+    isPinned,
+    sourceLoadError,
+    dataSources,
+  },
 }) => {
   const { t } = useTranslation();
   const [template] = obj.variants;
   const dimensify = dimensifyRow(tableColumnClasses(!namespace));
-  const sourceStatus = getTemplateSourceStatus({ template, pvcs, dataVolumes, pods });
+  const sourceStatus = getTemplateSourceStatus({
+    template,
+    pvcs,
+    dataVolumes,
+    pods,
+    dataSources: dataSources?.data,
+  });
   const provider = getTemplateProvider(t, template);
   const pinned = isPinned(obj);
   const withSupportModal = useSupportModal();

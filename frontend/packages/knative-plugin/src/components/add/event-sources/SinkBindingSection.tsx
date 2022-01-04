@@ -61,7 +61,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
   }, [matchType, setFieldValue]);
 
   return (
-    <FormSection title={title} extraMargin fullWidth={fullWidth}>
+    <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
       <h3 className="co-section-heading-tertiary">{t('knative-plugin~Subject')}</h3>
       <InputField
         data-test-id="sinkbinding-apiversion-field"

@@ -22,7 +22,7 @@ export const BucketsTitle: React.FC<BucketsTitleProps> = ({ objects, link, error
   } else {
     const objectsCount = getGaugeValue(objects);
     objectsBody = (
-      <div className="co-dashboard-text--small text-secondary">
+      <div className="text-secondary">
         {!error && objectsCount
           ? formatCount(Number(objectsCount), t)
           : t('ceph-storage-plugin~Not available')}

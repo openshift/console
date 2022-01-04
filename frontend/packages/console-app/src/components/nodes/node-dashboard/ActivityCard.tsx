@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { Card, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventModel, NodeModel } from '@console/internal/models';
@@ -8,11 +10,6 @@ import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 const eventsResource = {
@@ -40,18 +37,18 @@ const ActivityCard: React.FC = () => {
   const eventsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/events`;
   const { t } = useTranslation();
   return (
-    <DashboardCard gradient data-test-id="activity-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('console-app~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={eventsLink}>{t('console-app~View events')}</DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <ActivityBody className="co-project-dashboard__activity-body">
-          <OngoingActivityBody loaded />
-          <RecentEvent node={obj} />
-        </ActivityBody>
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card data-test-id="activity-card" className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('console-app~Activity')}</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link to={eventsLink}>{t('console-app~View events')}</Link>
+        </CardActions>
+      </CardHeader>
+      <ActivityBody className="co-project-dashboard__activity-body">
+        <OngoingActivityBody loaded />
+        <RecentEvent node={obj} />
+      </ActivityBody>
+    </Card>
   );
 };
 

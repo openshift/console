@@ -21,8 +21,18 @@ export const MirroringCardItem: React.FC<MirroringCardItemProps> = React.memo(
     }
     return (
       <>
-        {title && <dt className="odf-block-pool__mirroring-card-item-dt">{title}</dt>}
-        <dd className={classNames('odf-block-pool__mirroring-card-item-dd', valueClassName)}>
+        {title && (
+          <dt
+            className="odf-block-pool__mirroring-card-item-dt"
+            data-test="mirroring-card-item-title"
+          >
+            {title}
+          </dt>
+        )}
+        <dd
+          className={classNames('odf-block-pool__mirroring-card-item-dd', valueClassName)}
+          data-test="mirroring-card-item-value"
+        >
           {status}
         </dd>
       </>

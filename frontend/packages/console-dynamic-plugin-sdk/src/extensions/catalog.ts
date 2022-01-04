@@ -27,6 +27,8 @@ export type CatalogItemProvider = ExtensionDeclaration<
     catalogId: string | string[];
     /** Type ID for the catalog item type. */
     type: string;
+    /** Title for the catalog item provider */
+    title: string;
     /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
     provider: CodeRef<ExtensionHook<CatalogItem[], CatalogExtensionHookOptions>>;
     /** Priority for this provider. Defaults to 0. Higher priority providers may override catalog
@@ -101,16 +103,18 @@ export type CatalogItem<T extends any = any> = {
     class?: string;
     node?: React.ReactNode;
   };
-  details?: {
-    properties?: CatalogItemDetailsProperty[];
-    descriptions?: CatalogItemDetailsDescription[];
-  };
+  details?: CatalogItemDetails;
   // Optional text only badges for the catalog item which will be rendered on the tile and details panel.
   badges?: CatalogItemBadge[];
   // Optional data attached by the provider.
   // May be consumed by filters.
   // `data` for each `type` of CatalogItem should implement the same interface.
   data?: T;
+};
+
+export type CatalogItemDetails = {
+  properties?: CatalogItemDetailsProperty[];
+  descriptions?: CatalogItemDetailsDescription[];
 };
 
 export type CatalogItemDetailsProperty = {

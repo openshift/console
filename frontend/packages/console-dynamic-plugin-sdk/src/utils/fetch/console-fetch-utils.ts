@@ -57,7 +57,7 @@ export const validateStatus = async (
       storeHandler
         .getStore()
         ?.getState()
-        .UI.get('activeCluster'),
+        ?.UI?.get('activeCluster') ?? 'local-cluster',
     );
   }
 
@@ -116,12 +116,15 @@ type ImpersonateHeaders = {
 export const getImpersonateHeaders = (): ImpersonateHeaders => {
   const store = storeHandler.getStore();
   if (!store) return undefined;
-  const { kind, name } = getImpersonate(store.getState()) || {};
-  const activeCluster = store.getState().UI.get('activeCluster', 'local-cluster');
 
+  // Set X-Cluster header
+  const activeCluster = store.getState()?.UI?.get('activeCluster') ?? 'local-cluster';
   const headers: ImpersonateHeaders = {
     'X-Cluster': activeCluster,
   };
+
+  // Set impersonate headers
+  const { kind, name } = getImpersonate(store.getState()) || {};
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
     headers['Impersonate-User'] = name;

@@ -5,12 +5,12 @@ import {
   withSelection,
   withCreateConnector,
 } from '@patternfly/react-topology';
+import { contextMenuActions } from '@console/topology/src/actions';
 import {
   createConnectorCallback,
   nodeDragSourceSpec,
   withContextMenu,
   CreateConnector,
-  noRegroupWorkloadContextMenu,
 } from '@console/topology/src/components/graph-view';
 import BindableNode from '@console/topology/src/components/graph-view/components/nodes/trapezoidNode/BindableNode';
 import { withEditReviewAccess } from '@console/topology/src/utils';
@@ -28,9 +28,7 @@ export const getDevConsoleComponentFactory = (
       )(
         withEditReviewAccess('patch')(
           withDragNode(nodeDragSourceSpec(type))(
-            withSelection({ controlled: true })(
-              withContextMenu(noRegroupWorkloadContextMenu)(BindableNode),
-            ),
+            withSelection({ controlled: true })(withContextMenu(contextMenuActions)(BindableNode)),
           ),
         ),
       );

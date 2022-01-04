@@ -13,6 +13,7 @@ import {
   PodKind,
 } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { VMPrintableStatusSimpleLabel } from '../../constants/vm/vm-status';
 import { restartVM, startVM, stopVM } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { pauseVMI, unpauseVMI } from '../../k8s/requests/vmi/actions';
@@ -30,6 +31,7 @@ import {
 import { isVMIPaused } from '../../selectors/vmi';
 import { getMigrationVMIName } from '../../selectors/vmi-migration';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { isVMError, isVMProcessing } from '../../statuses/vm/vm-status';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMIKind, VMKind } from '../../types/vm';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
@@ -69,6 +71,7 @@ export const VmActionFactory = {
     return {
       id: 'vm-action-start',
       disabled:
+        isVMProcessing(vm, vmi) ||
         vmStatusBundle?.status?.isMigrating() ||
         isVMRunningOrExpectedRunning(vm, vmi) ||
         isVMIPaused(vmi),
@@ -91,7 +94,10 @@ export const VmActionFactory = {
   Stop: (kindObj: K8sKind, vm: VMKind, { vmi, vmStatusBundle }: ActionArgs): Action => {
     return {
       id: 'vm-action-stop',
-      disabled: vmStatusBundle?.status?.isImporting(),
+      disabled:
+        (!isVMError(vm) && vmStatusBundle?.status?.isImporting()) ||
+        (!isVMError(vm) && isVMProcessing(vm, vmi)) ||
+        vm?.status?.printableStatus === VMPrintableStatusSimpleLabel.Stopping,
       label: i18next.t('kubevirt-plugin~Stop'),
       cta: () =>
         confirmVMIModal({
@@ -118,10 +124,11 @@ export const VmActionFactory = {
       id: 'vm-action-restart',
       label: i18next.t('kubevirt-plugin~Restart'),
       disabled:
+        (!isVMError(vm) && isVMProcessing(vm, vmi)) ||
         vmStatusBundle?.status?.isImporting() ||
         vmStatusBundle?.status?.isMigrating() ||
-        !isVMExpectedRunning(vm, vmi) ||
-        !isVMCreated(vm),
+        (!isVMError(vm) && !isVMExpectedRunning(vm, vmi)) ||
+        (!isVMError(vm) && !isVMCreated(vm)),
       cta: () =>
         confirmVMIModal({
           vmi,
@@ -142,11 +149,15 @@ export const VmActionFactory = {
       accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
-  Pause: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
+  Pause: (kindObj: K8sKind, vm: VMKind, { vmi, vmStatusBundle }: ActionArgs): Action => {
     return {
       id: 'vm-action-pause',
       label: i18next.t('kubevirt-plugin~Pause'),
-      disabled: isVMIPaused(vmi) || !isVMRunningOrExpectedRunning(vm, vmi),
+      disabled:
+        (!isVMError(vm) && isVMProcessing(vm, vmi)) ||
+        isVMIPaused(vmi) ||
+        !isVMRunningOrExpectedRunning(vm, vmi) ||
+        vmStatusBundle?.status?.isImporting(),
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Pause'),
@@ -154,6 +165,7 @@ export const VmActionFactory = {
           btnText: i18next.t('kubevirt-plugin~Pause'),
           executeFn: () => pauseVMI(vmi),
         }),
+      accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
   Unpause: (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): Action => {
@@ -184,7 +196,9 @@ export const VmActionFactory = {
       id: 'vm-action-migrate',
       label: i18next.t('kubevirt-plugin~Migrate Node to Node'),
       disabled:
+        isVMProcessing(vm, vmi) ||
         isVMIPaused(vmi) ||
+        !!isVMError(vm) ||
         vmStatusBundle?.status?.isMigrating() ||
         vmStatusBundle?.status?.isError() ||
         vmStatusBundle?.status?.isInProgress() ||
@@ -196,6 +210,7 @@ export const VmActionFactory = {
           btnText: i18next.t('kubevirt-plugin~Migrate Node to Node'),
           executeFn: () => startVMIMigration(vmi),
         }),
+      accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
   },
   CancelMigration: (kindObj: K8sKind, vm: VMKind, { vmStatusBundle }: ActionArgs): Action => {
@@ -214,7 +229,7 @@ export const VmActionFactory = {
     return {
       id: 'vm-action-cancel-migration',
       label: i18next.t('kubevirt-plugin~Cancel Virtual Machine Migration'),
-      disabled: !vmStatusBundle?.status?.isMigrating(),
+      disabled: isVMProcessing(vm) || !vmStatusBundle?.status?.isMigrating(),
       cta: () =>
         confirmModal({
           title: i18next.t('kubevirt-plugin~Cancel Virtual Machine Migration'),
@@ -230,7 +245,7 @@ export const VmActionFactory = {
     return {
       id: 'vm-action-clone',
       label: i18next.t('kubevirt-plugin~Clone'),
-      disabled: vmStatusBundle?.status?.isImporting(),
+      disabled: isVMProcessing(vm, vmi) || !!isVMError(vm) || vmStatusBundle?.status?.isImporting(),
       cta: () => cloneVMModal({ vm, vmi }),
       accessReview: asAccessReview(kindObj, vm, 'patch'),
     };
@@ -240,7 +255,11 @@ export const VmActionFactory = {
       id: 'vm-action-open-console',
       label: i18next.t('kubevirt-plugin~Open Console'),
       icon: <ExternalLinkAltIcon />,
-      disabled: isVMIPaused(vmi) || (!isVMRunningOrExpectedRunning(vm, vmi) && !isVMIPaused(vmi)),
+      disabled:
+        isVMProcessing(vm, vmi) ||
+        isVMIPaused(vmi) ||
+        !!isVMError(vm) ||
+        (!isVMRunningOrExpectedRunning(vm, vmi) && !isVMIPaused(vmi)),
       cta: () =>
         window.open(
           `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,

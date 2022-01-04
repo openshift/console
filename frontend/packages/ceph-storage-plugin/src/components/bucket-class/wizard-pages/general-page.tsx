@@ -17,7 +17,7 @@ import { useFlag } from '@console/shared';
 import { Action, State } from '../state';
 import { bucketClassTypeRadios } from '../../../constants/bucket-class';
 import { validateBucketClassName } from '../../../utils/bucket-class';
-import { GUARDED_FEATURES } from '../../../features';
+import { FEATURES } from '../../../features';
 
 const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
 
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
 
-  const isNamespaceStoreSupported = useFlag(GUARDED_FEATURES.OCS_NAMESPACE_STORE);
+  const isNamespaceStoreSupported = useFlag(FEATURES.OCS_NAMESPACE_STORE);
   const onChange = (value: string) => {
     dispatch({ type: 'setBucketClassName', name: value });
     if (validateBucketClassName(value)) {

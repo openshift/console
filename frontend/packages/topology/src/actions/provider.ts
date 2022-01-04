@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { Edge, GraphElement } from '@patternfly/react-topology';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { Edge, GraphElement, Node } from '@patternfly/react-topology';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_WORKLOAD, TYPE_CONNECTS_TO } from '../const';
 import { getResource } from '../utils';
@@ -36,4 +36,13 @@ export const useTopologyVisualConnectorActionProvider = (element: Edge) => {
     if (!actions) return [[], true, undefined];
     return [actions, !inFlight, undefined];
   }, [actions, inFlight]);
+};
+
+export const useEditApplicationTopologyActionsProvider = (element: Node) => {
+  const resource: K8sResourceKind = getResource(element);
+  const [, inFlight] = useK8sModel(referenceFor(resource));
+  const actions = useMemo(() => {
+    return [getModifyApplicationAction(modelFor(referenceFor(resource)), resource)];
+  }, [resource]);
+  return useMemo(() => [actions, !inFlight, undefined], [actions, inFlight]);
 };

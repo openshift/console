@@ -5,7 +5,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { ActionGroup, Button, ButtonVariant, ButtonType } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 
-import { GUARDED_FEATURES } from '../../../features';
+import { FEATURES } from '../../../features';
 import { POOL_PROGRESS } from '../../../constants/storage-pool-const';
 import {
   BlockPoolAction,
@@ -19,7 +19,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
   const { state, dispatch, onSubmit, primaryAction, cancel, close } = props;
   const { t } = useTranslation();
 
-  const isPoolManagementSupported = useFlag(GUARDED_FEATURES.OCS_POOL_MANAGEMENT);
+  const isPoolManagementSupported = useFlag(FEATURES.OCS_POOL_MANAGEMENT);
 
   const handleFinishButton = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();

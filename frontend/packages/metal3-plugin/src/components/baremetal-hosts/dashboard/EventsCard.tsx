@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Card, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -19,11 +21,6 @@ import ActivityBody, {
   Activity,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { BareMetalHostModel } from '../../../models';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
 import { BareMetalHostKind } from '../../../types';
@@ -78,49 +75,49 @@ const EventsCard: React.FC<EventsCardProps> = ({
   const hostStatus = getBareMetalHostStatus(obj);
 
   return (
-    <DashboardCard gradient>
-      <DashboardCardHeader>
-        <DashboardCardTitle>Activity</DashboardCardTitle>
-        <DashboardCardLink
-          to={`${resourcePathFromModel(
-            BareMetalHostModel,
-            getName(obj),
-            getNamespace(obj),
-          )}/events`}
-        >
-          {t('metal3-plugin~View events')}
-        </DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <ActivityBody>
-          <div className="co-activity-card__ongoing-title">Ongoing</div>
-          <div className="co-activity-card__ongoing-body">
-            {inProgress ? (
-              <Activity timestamp={null}>
-                <ActivityItem>
-                  {t(hostStatus.titleKey)}
-                  <ResourceLink
-                    kind={BareMetalHostModel.kind}
-                    name={getName(obj)}
-                    namespace={getNamespace(obj)}
-                  />
-                </ActivityItem>
-              </Activity>
-            ) : (
-              <Activity>
-                <div className="text-secondary">
-                  {t('metal3-plugin~There are no ongoing activities.')}
-                </div>
-              </Activity>
-            )}
-          </div>
-          <RecentEventsBody
-            events={resources.events as FirehoseResult<EventKind[]>}
-            filter={filter}
-          />
-        </ActivityBody>
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>Activity</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link
+            to={`${resourcePathFromModel(
+              BareMetalHostModel,
+              getName(obj),
+              getNamespace(obj),
+            )}/events`}
+          >
+            {t('metal3-plugin~View events')}
+          </Link>
+        </CardActions>
+      </CardHeader>
+      <ActivityBody>
+        <div className="co-activity-card__ongoing-title">Ongoing</div>
+        <div className="co-activity-card__ongoing-body">
+          {inProgress ? (
+            <Activity timestamp={null}>
+              <ActivityItem>
+                {t(hostStatus.titleKey)}
+                <ResourceLink
+                  kind={BareMetalHostModel.kind}
+                  name={getName(obj)}
+                  namespace={getNamespace(obj)}
+                />
+              </ActivityItem>
+            </Activity>
+          ) : (
+            <Activity>
+              <div className="text-secondary">
+                {t('metal3-plugin~There are no ongoing activities.')}
+              </div>
+            </Activity>
+          )}
+        </div>
+        <RecentEventsBody
+          events={resources.events as FirehoseResult<EventKind[]>}
+          filter={filter}
+        />
+      </ActivityBody>
+    </Card>
   );
 };
 

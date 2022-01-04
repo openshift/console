@@ -1,5 +1,9 @@
 @import '~@patternfly/patternfly/sass-utilities/all';
 
+.nb-data-consumption-card__header {
+  justify-content: space-between;
+}
+
 .nb-data-consumption-card__dropdown {
   display: flex;
 }

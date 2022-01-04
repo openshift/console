@@ -17,6 +17,7 @@ export const sourceURL = '#provision-source-url';
 export const sourceRegistry = '#provision-source-container';
 export const cdrom = 'input[id="cdrom"]';
 export const dropDownItemLink = '[data-test="dropdown-menu-item-link"]';
+export const mountGuestTool = '#mount-windows-guest-tools-checkbox';
 
 // pvc selectors
 export const pvcSize = '#request-size-input';

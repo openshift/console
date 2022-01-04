@@ -44,7 +44,7 @@ import AttachedDevicesNodeTable from '../sc-node-list';
 import { PVsAvailableCapacity } from '../../pvs-available-capacity';
 import { getSCAvailablePVs } from '../../../../selectors';
 import { nodeResource, pvResource } from '../../../../resources';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 
 const validate = (
   scName: string,
@@ -71,9 +71,9 @@ const validate = (
 
 export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatch }) => {
   const { t } = useTranslation();
-  const isFlexibleScalingSupported = useFlag(GUARDED_FEATURES.OCS_FLEXIBLE_SCALING);
-  const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
-  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
+  const isFlexibleScalingSupported = useFlag(FEATURES.OCS_FLEXIBLE_SCALING);
+  const isArbiterSupported = useFlag(FEATURES.OCS_ARBITER);
+  const isTaintSupported = useFlag(FEATURES.OCS_TAINT_NODES);
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const [nodesData, nodesLoaded, nodesError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 

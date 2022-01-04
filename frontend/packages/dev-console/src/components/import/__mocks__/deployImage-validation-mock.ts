@@ -92,7 +92,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      privateKey: '',
+      key: '',
     },
   },
   build: {
@@ -155,6 +155,7 @@ export const mockImageStreamData = {
         name: 'latest',
         annotations: {
           'openshift.io/generated-by': 'OpenShiftWebConsole',
+          'app.openshift.io/route-disabled': 'false',
           'openshift.io/imported-from': 'myimage',
         },
         from: { kind: 'DockerImage', name: 'myimage' },

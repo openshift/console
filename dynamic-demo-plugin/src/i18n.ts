@@ -10,3 +10,5 @@
 // t('plugin__console-demo-plugin~Dynamic Nav 2')
 // t('plugin__console-demo-plugin~Test Consumer')
 // t('plugin__console-demo-plugin~Test Utilities')
+// t('plugin__console-demo-plugin~Foo item')
+// t('plugin__console-demo-plugin~Bar item')

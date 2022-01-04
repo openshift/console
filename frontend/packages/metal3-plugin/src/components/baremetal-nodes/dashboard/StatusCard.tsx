@@ -1,17 +1,21 @@
 import * as React from 'react';
-import { Gallery, GalleryItem, Stack, StackItem } from '@patternfly/react-core';
+import {
+  Gallery,
+  GalleryItem,
+  Stack,
+  StackItem,
+  Card,
+  CardHeader,
+  CardTitle,
+} from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import NodeAlerts from '@console/app/src/components/nodes/node-dashboard/NodeAlerts';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/NodeHealth';
-import { resourcePathFromModel } from '@console/internal/components/utils';
+import { resourcePathFromModel, LoadingInline } from '@console/internal/components/utils';
 import { BlueInfoCircleIcon } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -74,50 +78,54 @@ const StatusCard: React.FC = () => {
   const hasPowerMgmt = hasPowerManagement(host);
 
   return (
-    <DashboardCard gradient data-test-id="status-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('metal3-plugin~Status')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody isLoading={!obj}>
-        <HealthBody>
-          <Gallery className="co-overview-status__health" hasGutter>
-            <GalleryItem>
-              <BareMetalNodeStatus
-                {...status}
-                nodeMaintenance={nodeMaintenance}
-                className="co-node-health__status"
-                csr={csr}
-              />
-            </GalleryItem>
-            <GalleryItem>
-              <HealthChecksItem
-                disabledAlert={getDisabledAlert(bmoEnabled, host, hasPowerMgmt, t)}
-              />
-            </GalleryItem>
-          </Gallery>
-        </HealthBody>
-        <NodeAlerts>
-          {host && !hasPowerMgmt && (
-            <StatusItem
-              Icon={BlueInfoCircleIcon}
-              message={t(
-                'metal3-plugin~Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided for the underlying host.',
-              )}
-            >
-              <Link
-                to={`${resourcePathFromModel(
-                  BareMetalHostModel,
-                  host.metadata.name,
-                  host.metadata.namespace,
-                )}/edit?powerMgmt`}
+    <Card data-test-id="status-card" className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('metal3-plugin~Status')}</CardTitle>
+      </CardHeader>
+      {obj ? (
+        <>
+          <HealthBody>
+            <Gallery className="co-overview-status__health" hasGutter>
+              <GalleryItem>
+                <BareMetalNodeStatus
+                  {...status}
+                  nodeMaintenance={nodeMaintenance}
+                  className="co-node-health__status"
+                  csr={csr}
+                />
+              </GalleryItem>
+              <GalleryItem>
+                <HealthChecksItem
+                  disabledAlert={getDisabledAlert(bmoEnabled, host, hasPowerMgmt, t)}
+                />
+              </GalleryItem>
+            </Gallery>
+          </HealthBody>
+          <NodeAlerts>
+            {host && !hasPowerMgmt && (
+              <StatusItem
+                Icon={BlueInfoCircleIcon}
+                message={t(
+                  'metal3-plugin~Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided for the underlying host.',
+                )}
               >
-                {t('metal3-plugin~Add credentials')}
-              </Link>
-            </StatusItem>
-          )}
-        </NodeAlerts>
-      </DashboardCardBody>
-    </DashboardCard>
+                <Link
+                  to={`${resourcePathFromModel(
+                    BareMetalHostModel,
+                    host.metadata.name,
+                    host.metadata.namespace,
+                  )}/edit?powerMgmt`}
+                >
+                  {t('metal3-plugin~Add credentials')}
+                </Link>
+              </StatusItem>
+            )}
+          </NodeAlerts>
+        </>
+      ) : (
+        <LoadingInline />
+      )}
+    </Card>
   );
 };
 

@@ -139,7 +139,7 @@ export const topologySidePane = {
       }
       case 'Builds':
       case resources.Builds: {
-        cy.get(`[href="/k8s/ns/${namespace}/builds/${name}]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/builds/${name}"]`).click();
         break;
       }
       case 'Services':

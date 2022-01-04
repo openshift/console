@@ -727,7 +727,7 @@ const mastheadToolbarStateToProps = (state) => ({
   activeNamespace: state.UI.get('activeNamespace'),
   clusterID: state.UI.get('clusterID'),
   user: getUser(state),
-  alertCount: state.UI.getIn(['monitoring', 'alertCount']),
+  alertCount: state.observe.getIn(['alertCount']),
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 

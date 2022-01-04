@@ -19,7 +19,7 @@ import {
   RequestErrors,
 } from '../../install-wizard/review-and-create';
 import { NetworkType } from '../../../../types';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   state,
@@ -43,7 +43,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   const scName = getName(storageClass);
   const emptyRequiredField =
     nodes.length < MINIMUM_NODES && !zones.size && !scName && !memory && !cpu;
-  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
+  const isMultusSupported = useFlag(FEATURES.OCS_MULTUS);
 
   return (
     <>

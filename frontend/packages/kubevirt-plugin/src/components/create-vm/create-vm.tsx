@@ -18,6 +18,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ProjectModel } from '@console/internal/models';
 import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import { DataVolumeSourceType, VMWizardMode, VMWizardName, VolumeType } from '../../constants';
+import { instantiateTemplateBaseURLBuilder } from '../../constants/url-params';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
 import useSSHKeys from '../../hooks/use-ssh-keys';
@@ -28,6 +29,7 @@ import { createVM } from '../../k8s/requests/vm/create/simple-create';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { getTemplateWorkloadProfiles } from '../../selectors/vm-template/advanced';
 import { selectVM } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../statuses/template/types';
@@ -68,6 +70,7 @@ type FooterProps = WizardContextType & {
   templateIsReady: boolean;
   template: TemplateItem;
   loaded: boolean;
+  namespace?: string;
 };
 
 const Footer: React.FC<FooterProps> = ({
@@ -87,12 +90,15 @@ const Footer: React.FC<FooterProps> = ({
   onBack,
   onClose,
   loaded,
+  namespace,
 }) => {
   const { t } = useTranslation();
   const withSupportModal = useSupportModal();
   const isReview = activeStep.id === WizardStep.REVIEW;
   const isCustomSource = activeStep.id === WizardStep.SOURCE;
   const isSelectTemplate = activeStep.id === WizardStep.TEMPLATE;
+  const [workload] = getTemplateWorkloadProfiles([template?.variants?.[0]]);
+
   let canContinue = true;
   if (isReview) {
     canContinue = formIsValid;
@@ -127,7 +133,18 @@ const Footer: React.FC<FooterProps> = ({
             isReview
               ? onFinish
               : isSelectTemplate
-              ? () => withSupportModal(template.variants[0], onNext)
+              ? () => {
+                  workload === 'saphana'
+                    ? withSupportModal(template.variants[0], () =>
+                        history.push(
+                          instantiateTemplateBaseURLBuilder(
+                            namespace,
+                            `?template-ns=${template?.variants?.[0]?.metadata?.namespace}&template-name=${template?.variants?.[0]?.metadata?.name}`,
+                          ),
+                        ),
+                      )
+                    : withSupportModal(template.variants[0], onNext);
+                }
               : onNext
           }
           isDisabled={!canContinue || isCreating}
@@ -189,6 +206,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
     pods,
     dataVolumes,
     pvcs,
+    dataSources,
     userTemplates,
     baseTemplates,
     resourcesLoaded,
@@ -207,8 +225,8 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
       template: selectedTemplate.variants[0],
       pods,
       dataVolumes,
+      dataSources,
     });
-
   React.useEffect(() => {
     if ((initData.commonTemplateName || initData.userTemplateName) && !selectedTemplate && loaded) {
       const name = initData.commonTemplateName ?? initData.userTemplateName;
@@ -310,6 +328,8 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
         name: state.name,
         startVM: state.startVM,
         storageClass: bootState?.storageClass?.value,
+        accessMode: bootState?.accessMode?.value,
+        volumeMode: bootState?.volumeMode?.value,
         bootSource: dataSource
           ? {
               size:
@@ -352,6 +372,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
             pods={pods}
             pvcs={pvcs}
             dataVolumes={dataVolumes}
+            dataSources={dataSources}
             templates={templates}
             selectedTemplate={selectedTemplate}
             selectTemplate={(template) => {
@@ -416,6 +437,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
                 isCreating={isCreating}
                 createError={createError}
                 cleanError={() => setCreateError(undefined)}
+                namespace={namespace}
                 onFinish={async () => {
                   resetError();
                   setCreating(true);

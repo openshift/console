@@ -85,7 +85,7 @@ const useMigrationTool = (): useMigrationResult => {
       });
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.log(e);
+      console.log('Failed to create forklift-controller', e);
     }
   };
 

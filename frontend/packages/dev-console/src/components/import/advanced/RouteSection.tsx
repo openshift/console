@@ -12,17 +12,17 @@ interface RouteSectionProps {
 
 const RouteSection: React.FC<RouteSectionProps> = ({ route, resources }) => {
   const { t } = useTranslation();
-  const { disable, create, defaultUnknownPort } = route;
+  const { defaultUnknownPort, disable, create } = route;
 
   return (
     <>
+      <PortInputField defaultPort={defaultUnknownPort} />
       <CheckboxField
         name="route.create"
         label={t('devconsole~Create a route to the Application')}
         helpText={t('devconsole~Exposes your Application at a public URL')}
         isDisabled={disable}
       />
-      {create && <PortInputField defaultPort={defaultUnknownPort} />}
       <AdvancedRouteOptions canCreateRoute={create} resources={resources} />
     </>
   );

@@ -61,7 +61,7 @@ export const uploadJarMockFormData: UploadJarFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      privateKey: '',
+      key: '',
     },
   },
   resources: Resources.OpenShift,

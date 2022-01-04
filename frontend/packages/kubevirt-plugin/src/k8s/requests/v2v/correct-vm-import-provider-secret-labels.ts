@@ -66,7 +66,9 @@ export const correctVMImportProviderSecretLabels = async ({
   }
   const resultPatches = _.compact(patches);
   if (resultPatches.length > 0) {
-    return k8sPatch(SecretModel, secret, patches).catch((err) => console.log(err)); // eslint-disable-line no-console
+    return k8sPatch(SecretModel, secret, patches).catch(
+      (err) => console.log(`Failed to update secret ${secretName}`, err), // eslint-disable-line no-console
+    );
   }
   return null;
 };

@@ -189,7 +189,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           })
           .catch((e) => {
             // eslint-disable-next-line no-console
-            console.error(e);
+            console.error('Cloud shell error', e);
           });
       }) // eslint-disable-next-line no-console
       .onerror((evt) => console.error(`WS error?! ${evt}`));

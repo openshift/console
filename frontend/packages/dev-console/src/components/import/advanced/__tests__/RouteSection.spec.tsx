@@ -33,10 +33,11 @@ describe('RouteSection', () => {
           certificate: '',
           destinationCACertificate: '',
           insecureEdgeTerminationPolicy: '',
-          privateKey: '',
+          key: '',
           termination: '',
         },
         unknownTargetPort: '',
+        labels: {},
       },
       resources: Resources.OpenShift,
     };
@@ -59,9 +60,15 @@ describe('RouteSection', () => {
     ).toEqual('Target port');
   });
 
-  it('should not show the Target port field if the create route checkbox is not checked ', () => {
+  it('should also show the Target port field if the create route checkbox is not checked ', () => {
     props.route.create = false;
     const component = shallow(<RouteSection {...props} />);
-    expect(component.find(PortInputField).exists()).toBe(false);
+    expect(
+      component
+        .find(PortInputField)
+        .dive()
+        .find(SelectInputField)
+        .props().label,
+    ).toEqual('Target port');
   });
 });

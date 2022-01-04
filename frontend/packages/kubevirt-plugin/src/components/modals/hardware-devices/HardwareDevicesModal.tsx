@@ -4,7 +4,7 @@ import { isEqual } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import { ExternalLink, HandlePromiseProps } from '@console/internal/components/utils';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
 import { useHyperconvergedCR } from '../../../hooks/use-hyperconverged-resource';
 import { PatchBuilder } from '../../../k8s/helpers/patch';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
@@ -20,10 +20,10 @@ export const HARDWARE_DEVICES_DOCS_URL =
   'https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/advanced_vm_management/virt-configuring-pci-passthrough.html';
 
 export type HardwareDevicesModalProps = {
-  vm: VMKind;
+  vmLikeEntity: VMKind | TemplateKind;
   patchPath: string;
   vmDevices: V1GPU[] | V1HostDevice[];
-  vmiDevices: V1GPU[] | V1HostDevice[];
+  vmiDevices?: V1GPU[] | V1HostDevice[];
   isVMRunning?: boolean;
   emptyState?: React.ReactNode;
   addDeviceText?: string;
@@ -32,7 +32,7 @@ export type HardwareDevicesModalProps = {
   HandlePromiseProps;
 
 export const HardwareDevicesModal: React.FC<HardwareDevicesModalProps> = ({
-  vm,
+  vmLikeEntity,
   patchPath,
   isVMRunning,
   close,
@@ -62,7 +62,7 @@ export const HardwareDevicesModal: React.FC<HardwareDevicesModalProps> = ({
   const isNameValid = name?.length > 0 && !updatedUsedNames?.includes(name);
   const isDeviceNameValid = deviceName?.length > 0;
 
-  const isChanged = !isEqual(vmiDevices, updatedDevices);
+  const isChanged = vmiDevices && !isEqual(vmiDevices, updatedDevices);
 
   const isUserForbidden = React.useMemo(() => !hc && !loaded && loadError?.code === 403, [
     hc,
@@ -98,9 +98,9 @@ export const HardwareDevicesModal: React.FC<HardwareDevicesModalProps> = ({
     const patch = [new PatchBuilder(patchPath).replace(updatedDevices).build()];
 
     const promise = k8sPatch(
-      getVMLikeModel(vm),
-      vm,
-      getVMLikePatches(vm, () => patch),
+      getVMLikeModel(vmLikeEntity),
+      vmLikeEntity,
+      getVMLikePatches(vmLikeEntity, () => patch),
     );
 
     handlePromise(
@@ -116,7 +116,7 @@ export const HardwareDevicesModal: React.FC<HardwareDevicesModalProps> = ({
   };
 
   return (
-    <div className="modal-content">
+    <div className="modal-content modal-content--no-inner-scroll">
       <HWContext.Provider
         value={{
           isBlur,

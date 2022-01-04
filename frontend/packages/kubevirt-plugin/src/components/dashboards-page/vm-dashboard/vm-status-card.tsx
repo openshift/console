@@ -1,11 +1,7 @@
 import * as React from 'react';
-import { Gallery } from '@patternfly/react-core';
+import { Gallery, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { getVMStatusIcon } from '../../vm-status/vm-status';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
@@ -24,11 +20,11 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
   const StatusIcon = getVMStatusIcon(status, false);
 
   return (
-    <DashboardCard gradient>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('kubevirt-plugin~Status')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody className="VMStatusCard-body">
+    <Card className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('kubevirt-plugin~Status')}</CardTitle>
+      </CardHeader>
+      <CardBody className="VMStatusCard-body">
         <HealthBody>
           <Gallery className="VMStatusCard co-overview-status__health" hasGutter>
             <VMStatusHealth vmStatusBundle={vmStatusBundle} icon={<StatusIcon />} />
@@ -37,8 +33,8 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
         </HealthBody>
         <div className="VMStatusCard-separator" />
         <VMEventsStatusCard vm={vm} />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

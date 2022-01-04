@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getStrategyType } from '@console/internal/components/build';
+import { LoadingBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { CheckboxField, EnvironmentField } from '@console/shared';
+import { useBuilderImageEnvironments } from '../builder/builderImageHooks';
 import FormSection from '../section/FormSection';
 
 export interface BuildConfigSectionProps {
@@ -15,7 +16,10 @@ export interface BuildConfigSectionProps {
 const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, resource }) => {
   const { t } = useTranslation();
   const {
-    values: { build },
+    values: {
+      build,
+      image: { selected: selectedImage, tag: selectedTag },
+    },
   } = useFormikContext<FormikValues>();
   const buildConfigObj = resource || {
     kind: 'BuildConfig',
@@ -23,8 +27,12 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
       namespace,
     },
   };
+  const [environments, envsLoaded] = useBuilderImageEnvironments(selectedImage, selectedTag);
   const strategyType = getStrategyType(resource?.spec?.strategy?.type);
-  const envs = _.get(buildConfigObj, `spec.strategy.${strategyType}.env`, []);
+  const envs = (buildConfigObj.spec?.strategy?.[strategyType]?.env || []).filter(
+    (e) => !environments.some((env) => env.key === e.name),
+  );
+
   return (
     <FormSection title={t('devconsole~Build configuration')} fullWidth>
       {typeof build?.triggers?.webhook === 'boolean' && (
@@ -45,12 +53,16 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
           label={t('devconsole~Launch the first build when the build configuration is created')}
         />
       )}
-      <EnvironmentField
-        name="build.env"
-        label={t('devconsole~Environment variables (build and runtime)')}
-        obj={buildConfigObj}
-        envs={envs}
-      />
+      {envsLoaded ? (
+        <EnvironmentField
+          name="build.env"
+          label={t('devconsole~Environment variables (build and runtime)')}
+          obj={buildConfigObj}
+          envs={envs}
+        />
+      ) : (
+        <LoadingBox />
+      )}
     </FormSection>
   );
 };

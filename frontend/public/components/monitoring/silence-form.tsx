@@ -398,9 +398,7 @@ const EditInfo = () => {
 export const EditSilence = ({ match }) => {
   const { t } = useTranslation();
 
-  const silences: Silences = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', 'silences']),
-  );
+  const silences: Silences = useSelector(({ observe }: RootState) => observe.get('silences'));
 
   const silence: Silence = _.find(silences?.data, { id: match.params.id });
   const isExpired = silenceState(silence) === SilenceStates.Expired;
@@ -419,8 +417,8 @@ export const EditSilence = ({ match }) => {
     <StatusBox
       data={silence}
       label={SilenceResource.label}
-      loaded={silences.loaded}
-      loadError={silences.loadError}
+      loaded={silences?.loaded}
+      loadError={silences?.loadError}
     >
       <SilenceForm
         defaults={defaults}

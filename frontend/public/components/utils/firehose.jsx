@@ -18,7 +18,7 @@ const shallowMapEquals = (a, b) => {
   return a.every((v, k) => b.get(k) === v);
 };
 
-const processReduxId = ({ k8s }, props) => {
+const processReduxId = ({ sdkK8s }, props) => {
   const { reduxID, isList, filters } = props;
 
   if (!reduxID) {
@@ -26,7 +26,7 @@ const processReduxId = ({ k8s }, props) => {
   }
 
   if (!isList) {
-    let stuff = k8s.get(reduxID);
+    let stuff = sdkK8s.get(reduxID);
     if (stuff) {
       stuff = stuff.toJS();
       stuff.optional = props.optional;
@@ -34,9 +34,9 @@ const processReduxId = ({ k8s }, props) => {
     return stuff || {};
   }
 
-  const data = k8s.getIn([reduxID, 'data']);
-  const _filters = k8s.getIn([reduxID, 'filters']);
-  const selected = k8s.getIn([reduxID, 'selected']);
+  const data = sdkK8s.getIn([reduxID, 'data']);
+  const _filters = sdkK8s.getIn([reduxID, 'filters']);
+  const selected = sdkK8s.getIn([reduxID, 'selected']);
 
   return {
     data: data && data.toArray().map((p) => p.toJSON()),
@@ -44,8 +44,8 @@ const processReduxId = ({ k8s }, props) => {
     // the injected component. Ideally filters should all come from redux.
     filters: _.extend({}, _filters && _filters.toJS(), filters),
     kind: props.kind,
-    loadError: k8s.getIn([reduxID, 'loadError']),
-    loaded: k8s.getIn([reduxID, 'loaded']),
+    loadError: sdkK8s.getIn([reduxID, 'loadError']),
+    loaded: sdkK8s.getIn([reduxID, 'loaded']),
     optional: props.optional,
     selected,
   };
@@ -72,14 +72,14 @@ const worstError = (errors) => {
   return worst;
 };
 
-const mapStateToProps = ({ k8s }) => ({
-  k8s,
+const mapStateToProps = ({ sdkK8s }) => ({
+  sdkK8s,
 });
 
 const propsAreEqual = (prevProps, nextProps) => {
   if (nextProps.children === prevProps.children && nextProps.reduxes === prevProps.reduxes) {
     return nextProps.reduxes.every(
-      ({ reduxID }) => prevProps.k8s.get(reduxID) === nextProps.k8s.get(reduxID),
+      ({ reduxID }) => prevProps.sdkK8s.get(reduxID) === nextProps.sdkK8s.get(reduxID),
     );
   }
   return false;
@@ -88,11 +88,11 @@ const propsAreEqual = (prevProps, nextProps) => {
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
 // passing it to children
 const ConnectToState = connect(mapStateToProps)(
-  React.memo(({ k8s, reduxes, children }) => {
+  React.memo(({ sdkK8s, reduxes, children }) => {
     const resources = {};
 
     reduxes.forEach((redux) => {
-      resources[redux.prop] = processReduxId({ k8s }, redux);
+      resources[redux.prop] = processReduxId({ sdkK8s }, redux);
     });
 
     const required = _.filter(resources, (r) => !r.optional);
@@ -113,7 +113,8 @@ const ConnectToState = connect(mapStateToProps)(
   }, propsAreEqual),
 );
 
-const stateToProps = ({ k8s, UI }, { resources }) => {
+const stateToProps = (state, { resources }) => {
+  const { k8s, sdkK8s, UI } = state;
   const cluster = UI.get('activeCluster');
   const k8sModels = resources.reduce(
     (models, { kind }) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])),
@@ -121,7 +122,7 @@ const stateToProps = ({ k8s, UI }, { resources }) => {
   );
   const loaded = (r) =>
     r.optional ||
-    k8s.getIn([
+    sdkK8s.getIn([
       makeReduxID(
         k8sModels.get(r.kind),
         makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),

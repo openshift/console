@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Humanize, TopConsumerPopoverProps, LIMIT_STATE } from '@console/dynamic-plugin-sdk';
 import { UtilizationItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { DataPoint } from '@console/internal/components/graphs';
 import {
@@ -9,7 +10,6 @@ import {
   chartStatusColors,
 } from '@console/internal/components/graphs/area';
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
-import { Humanize } from '@console/internal/components/utils/types';
 import { ByteDataTypes } from '../../../graph-helper/data-utils';
 import { useUtilizationDuration } from '../../../hooks';
 import {
@@ -17,12 +17,6 @@ import {
   RedExclamationCircleIcon,
   ColoredIconProps,
 } from '../../status';
-
-export enum LIMIT_STATE {
-  ERROR = 'ERROR',
-  WARN = 'WARN',
-  OK = 'OK',
-}
 
 const getCurrentData = (
   humanizeValue: Humanize,
@@ -220,7 +214,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       }
     }
 
-    const currentHumanized = current ? humanizeValue(current).string : null;
+    const currentHumanized = !_.isNil(current) ? humanizeValue(current).string : null;
 
     return (
       <div className="co-utilization-card__item" data-test-id="utilization-item">
@@ -235,9 +229,10 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
                 {TopConsumerPopover ? (
                   <TopConsumerPopover
                     current={currentHumanized}
-                    max={humanMax}
-                    limit={latestLimit ? humanizeValue(latestLimit).string : null}
-                    requested={latestRequested ? humanizeValue(latestRequested).string : null}
+                    limit={!_.isNil(latestLimit) ? humanizeValue(latestLimit).string : null}
+                    requested={
+                      !_.isNil(latestRequested) ? humanizeValue(latestRequested).string : null
+                    }
                     available={humanAvailable}
                     total={humanMax}
                     limitState={limitState}
@@ -308,18 +303,7 @@ type MultilineUtilizationItemProps = {
   queries: QueryWithDescription[];
   error: boolean;
   byteDataType?: ByteDataTypes;
-  TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProp>[];
-};
-
-export type TopConsumerPopoverProp = {
-  current: string;
-  max?: string;
-  limit?: string;
-  available?: string;
-  requested?: string;
-  total?: string;
-  limitState?: LIMIT_STATE;
-  requestedState?: LIMIT_STATE;
+  TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProps>[];
 };
 
 export type QueryWithDescription = {

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { TableGridBreakpoint, OnSelect, SortByDirection, ICell } from '@patternfly/react-table';
 import { RouteComponentProps } from 'react-router';
@@ -488,4 +489,75 @@ export type Status = {
   metadata: any;
   reason: string;
   status: string;
+};
+
+export type OverviewProps = {
+  className?: string;
+  children: React.ReactNode;
+};
+
+export enum GridPosition {
+  MAIN = 'MAIN',
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
+
+export type OverviewCardSpan = 4 | 6 | 12;
+
+export type OverviewGridCard = {
+  Card: React.ComponentType<any>;
+  span?: OverviewCardSpan;
+};
+
+export type OverviewGridProps = {
+  mainCards: OverviewGridCard[];
+  leftCards?: OverviewGridCard[];
+  rightCards?: OverviewGridCard[];
+};
+
+export type InventoryItemTitleProps = {
+  children: React.ReactNode;
+};
+
+export type InventoryItemBodyProps = {
+  error?: any;
+};
+
+export type InventoryItemStatusProps = {
+  count: number;
+  icon: React.ReactNode;
+  linkTo?: string;
+};
+
+export type HumanizeResult = {
+  string: string;
+  value: number;
+  unit: string;
+};
+
+export type Humanize = (
+  value: string | number,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => HumanizeResult;
+
+export enum LIMIT_STATE {
+  'ERROR' = 'ERROR',
+  'WARN' = 'WARN',
+  'OK' = 'OK',
+}
+
+export type TopConsumerPopoverProps = {
+  current: string;
+  total?: string;
+  available?: string;
+  limit?: string;
+  limitState?: LIMIT_STATE;
+  requested?: string;
+  requestedState?: LIMIT_STATE;
+};
+
+export type QueryWithDescription = {
+  query: string;
+  desc: string;
 };

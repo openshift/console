@@ -1,33 +1,23 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
+import { serviceBindingModal } from '@console/app/src/components/modals/service-binding';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import {
-  allModels,
   k8sGet,
-  K8sKind,
   k8sList,
   k8sPatch,
   K8sResourceKind,
-  kindForReference,
+  modelFor,
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { createServiceBinding } from '../operators/actions/serviceBindings';
 
 export type ConnectsToData = { apiVersion: string; kind: string; name: string };
-
-const getModel = (groupVersionKind: string): K8sKind => {
-  const m = allModels().get(groupVersionKind);
-  if (m) {
-    return m;
-  }
-  return allModels().get(kindForReference(groupVersionKind));
-};
 
 const fetchResource = async (source: string, namespace: string) => {
   const [groupVersionKind, resourceName] = source.split('/');
   const contextualResource: K8sResourceKind = await k8sGet(
-    getModel(groupVersionKind),
+    modelFor(groupVersionKind),
     resourceName,
     namespace,
   );
@@ -63,7 +53,7 @@ export const listInstanceResources = (
   const kinds = ['ReplicationController', 'Route', 'Service', 'ReplicaSet', 'BuildConfig', 'Build'];
   _.forEach(kinds, (kind) => {
     lists.push(
-      k8sList(getModel(kind), {
+      k8sList(modelFor(kind), {
         ns: namespace,
         labelSelector: instanceLabelSelector,
       }).then((values) => {
@@ -85,7 +75,7 @@ export const updateItemAppConnectTo = (
   connectValue: ConnectsToData,
   oldValueIndex: number,
 ) => {
-  const model = getModel(referenceFor(item) || item.kind);
+  const model = modelFor(referenceFor(item) || item.kind);
 
   if (!model) {
     return Promise.reject(
@@ -305,6 +295,10 @@ export const doContextualBinding = async (
   contextualSource: string,
 ): Promise<K8sResourceKind> => {
   const { source } = await getSourceAndTargetForBinding(target, contextualSource, true);
-  await createServiceBinding(source, target);
+  serviceBindingModal({
+    model: modelFor(referenceFor(source)),
+    source,
+    target,
+  });
   return target;
 };

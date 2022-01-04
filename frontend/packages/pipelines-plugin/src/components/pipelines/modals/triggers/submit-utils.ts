@@ -1,15 +1,24 @@
 import { errorModal } from '@console/internal/components/modals';
 import { RouteModel, ServiceModel } from '@console/internal/models';
 import { k8sCreate, k8sGet, K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
-import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
-import { PipelineKind, PipelineRunKind } from '../../../../types';
+import {
+  ClusterTriggerBindingModel,
+  EventListenerModel,
+  TriggerTemplateModel,
+} from '../../../../models';
+import { PipelineKind, PipelineRunKind, TektonWorkspace } from '../../../../types';
+import { VolumeTypes } from '../../const';
 import {
   EventListenerKind,
   TriggerTemplateKind,
   TriggerTemplateKindParam,
 } from '../../resource-types';
 import { getPipelineOperatorVersion } from '../../utils/pipeline-operator';
-import { getPipelineRunFromForm } from '../common/utils';
+import {
+  convertPipelineToModalData,
+  getDefaultVolumeClaimTemplate,
+  getPipelineRunFromForm,
+} from '../common/utils';
 import {
   createEventListener,
   createEventListenerRoute,
@@ -93,4 +102,30 @@ export const submitTrigger = async (
   exposeRoute(eventListener.metadata.name, thisNamespace);
 
   return Promise.resolve(resources);
+};
+
+export const createTrigger = async (
+  pipeline: PipelineKind,
+  gitDetectedType: string,
+): Promise<K8sResourceKind[]> => {
+  const createdResources = [];
+  const defaultTriggerBinding = gitDetectedType ? `${gitDetectedType}-push` : 'github-push';
+  const clusterTriggerBinding = await k8sGet(ClusterTriggerBindingModel, defaultTriggerBinding);
+  if (clusterTriggerBinding) {
+    const triggerValues: AddTriggerFormValues = {
+      ...convertPipelineToModalData(pipeline),
+      workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
+        ...workspace,
+        type: VolumeTypes.VolumeClaimTemplate,
+        data: getDefaultVolumeClaimTemplate(pipeline?.metadata?.name),
+      })),
+      triggerBinding: {
+        name: defaultTriggerBinding,
+        resource: clusterTriggerBinding,
+      },
+    };
+    const resources = await submitTrigger(pipeline, triggerValues);
+    createdResources.push(...resources);
+  }
+  return Promise.resolve(createdResources);
 };

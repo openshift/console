@@ -9,5 +9,13 @@
   "Network attachment definition name must start/end with alphanumeric character": "Network attachment definition name must start/end with alphanumeric character",
   "Network attachment definition name cannot contain uppercase characters": "Network attachment definition name cannot contain uppercase characters",
   "Network attachment definition name is too long": "Network attachment definition name is too long",
-  "Network attachment definition name is too short": "Network attachment definition name is too short"
+  "Network attachment definition name is too short": "Network attachment definition name is too short",
+  "Create Network Attachment Definition": "Create Network Attachment Definition",
+  "Edit YAML": "Edit YAML",
+  "Name": "Name",
+  "Description": "Description",
+  "Network Type": "Network Type",
+  "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.",
+  "Create": "Create",
+  "Cancel": "Cancel"
 }

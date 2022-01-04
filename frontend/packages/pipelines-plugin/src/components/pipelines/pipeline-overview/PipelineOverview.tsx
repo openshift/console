@@ -17,6 +17,7 @@ import PipelineOverviewAlert from './PipelineOverviewAlert';
 import PipelineRunItem from './PipelineRunItem';
 import PipelineStartButton from './PipelineStartButton';
 import TriggerLastRunButton from './TriggerLastRunButton';
+import TriggersOverview from './TriggersOverview';
 
 const MAX_VISIBLE = 3;
 
@@ -33,10 +34,10 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
     pipelineRuns,
   },
 }) => {
-  const { t } = useTranslation();
   const {
     metadata: { name, namespace },
   } = pipeline;
+  const { t } = useTranslation();
   const [showAlert, setShowAlert] = React.useState(isPipelineNotStarted(name, namespace));
 
   React.useEffect(() => {
@@ -90,6 +91,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
           <PipelineRunItem key={pr.metadata.uid} pipelineRun={pr} />
         ))}
       </ul>
+      <TriggersOverview pipeline={pipeline} />
     </>
   );
 };

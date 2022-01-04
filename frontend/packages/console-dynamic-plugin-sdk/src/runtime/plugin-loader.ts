@@ -55,7 +55,7 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
     };
 
     script.onerror = (event) => {
-      console.error(event);
+      console.error('Plugin loader received an error:', event);
       reject(new Error(`Error while loading entry script for plugin ${pluginID}`));
     };
 

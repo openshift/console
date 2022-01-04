@@ -24,7 +24,7 @@ const setNext = (next) => {
     localStorage.setItem('next', path.startsWith('/error') ? '/' : path);
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error(e);
+    console.error('Failed to next URL in localStorage', e);
   }
 };
 
@@ -34,7 +34,7 @@ const clearLocalStorage = (keys) => {
       localStorage.removeItem(key);
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error(e);
+      console.error('Failed to clear localStorage', e);
     }
   });
 };

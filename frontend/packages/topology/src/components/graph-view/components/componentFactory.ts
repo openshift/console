@@ -1,5 +1,4 @@
 import {
-  Edge,
   ModelKind,
   withPanZoom,
   withDragNode,
@@ -8,12 +7,9 @@ import {
   withDndDrop,
   withCreateConnector,
   DragObjectWithType,
-  isNode,
-  Node,
   ComponentFactory,
 } from '@patternfly/react-topology';
-import { kebabOptionsToMenu } from '@console/internal/components/utils';
-import { edgeActions } from '../../../actions/edgeActions';
+import { contextMenuActions } from '../../../actions';
 import {
   TYPE_WORKLOAD,
   TYPE_CONNECTS_TO,
@@ -37,25 +33,10 @@ import {
 import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
 import GraphComponent from './GraphComponent';
 import { Application } from './groups';
-import {
-  workloadContextMenu,
-  groupContextMenu,
-  graphContextMenu,
-  createMenuItems,
-} from './nodeContextMenu';
+import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import { WorkloadNode } from './nodes';
 
 import './ContextMenu.scss';
-
-const connectToActions = (edge: Edge) => {
-  const nodes = edge
-    .getController()
-    .getElements()
-    .filter((e) => isNode(e) && !e.isGroup()) as Node[];
-
-  const actions = edgeActions(edge, nodes);
-  return createMenuItems(kebabOptionsToMenu(actions));
-};
 
 export const componentFactory: ComponentFactory = (kind, type) => {
   switch (type) {
@@ -77,7 +58,7 @@ export const componentFactory: ComponentFactory = (kind, type) => {
           withEditReviewAccess('patch')(
             withDragNode(nodeDragSourceSpec(type))(
               withSelection({ controlled: true })(
-                withContextMenu(workloadContextMenu)(WorkloadNode),
+                withContextMenu(contextMenuActions)(WorkloadNode),
               ),
             ),
           ),
@@ -86,7 +67,7 @@ export const componentFactory: ComponentFactory = (kind, type) => {
     case TYPE_CONNECTS_TO:
       return withTargetDrag<DragObjectWithType>(
         edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, createConnection),
-      )(withContextMenu(connectToActions)(ConnectsTo));
+      )(withContextMenu(contextMenuActions)(ConnectsTo));
     case TYPE_AGGREGATE_EDGE:
       return AggregateEdge;
     case TYPE_TRAFFIC_CONNECTOR:

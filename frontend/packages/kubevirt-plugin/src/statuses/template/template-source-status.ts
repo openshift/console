@@ -8,6 +8,7 @@ import {
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_PROVIDER_ANNOTATION,
+  RED_HAT,
   VolumeType,
 } from '../../constants';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
@@ -19,6 +20,7 @@ import { getPvcImportPodName, getPvcUploadPodName } from '../../selectors/pvc/se
 import { getAnnotation, getParameterValue } from '../../selectors/selectors';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { V1alpha1DataVolume } from '../../types/api';
+import { DataSourceKind } from '../../types/vm/index';
 import { DVStatusType, getDVStatus } from '../dv/dv-status';
 import { GetTemplateSourceStatus, SOURCE_TYPE } from './types';
 
@@ -28,6 +30,12 @@ const supportedDVSources = [
   DataVolumeSourceType.REGISTRY,
   DataVolumeSourceType.PVC,
 ];
+
+const findByDataSource = (matchedDataSource: DataSourceKind) => (
+  item: PersistentVolumeClaimKind | V1alpha1DataVolume,
+) =>
+  item?.metadata?.name === matchedDataSource?.spec?.source?.pvc?.name &&
+  item?.metadata?.namespace === matchedDataSource?.spec?.source?.pvc?.namespace;
 
 const getProvider = (resource: K8sResourceCommon): string => {
   const provider = getAnnotation(resource, ANNOTATION_SOURCE_PROVIDER);
@@ -42,12 +50,34 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
   pods,
   pvcs,
   dataVolumes,
+  dataSources,
 }) => {
   if (isCommonTemplate(template)) {
     const baseImageName = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
     const baseImageNs = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
     if (!baseImageName || !baseImageNs) {
       return null;
+    }
+
+    const matchedDataSource = dataSources?.find(({ metadata }) => metadata?.name === baseImageName);
+    if (matchedDataSource) {
+      const findFunction = findByDataSource(matchedDataSource);
+      const matchedDataSourcePVC = pvcs?.find(findFunction);
+      const matchedDataSourceDataVolume = dataVolumes?.find(findFunction);
+      if (
+        !getAnnotation(matchedDataSourcePVC, ANNOTATION_SOURCE_PROVIDER) &&
+        matchedDataSourceDataVolume
+      ) {
+        return {
+          source: SOURCE_TYPE.BASE_IMAGE,
+          provider: RED_HAT,
+          isReady: matchedDataSourceDataVolume?.status?.phase === 'Succeeded',
+          pvc: matchedDataSourcePVC,
+          dataVolume: matchedDataSourceDataVolume,
+          isCDRom: isCDRom(matchedDataSourceDataVolume, matchedDataSourcePVC),
+          addedOn: getCreationTimestamp(matchedDataSourceDataVolume),
+        };
+      }
     }
     const pvc = pvcs?.find(
       ({ metadata }) =>

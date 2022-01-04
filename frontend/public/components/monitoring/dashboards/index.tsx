@@ -1,5 +1,15 @@
 import * as _ from 'lodash-es';
-import { Button, Label, Select, SelectOption } from '@patternfly/react-core';
+import {
+  Button,
+  Label,
+  Select,
+  SelectOption,
+  Card as PFCard,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  CardActions,
+} from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -8,26 +18,24 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
+import { Link } from 'react-router-dom';
+import * as classNames from 'classnames';
 
 import { RedExclamationCircleIcon } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import {
-  monitoringDashboardsPatchAllVariables,
-  monitoringDashboardsPatchVariable,
-  monitoringDashboardsSetEndTime,
-  monitoringDashboardsSetPollInterval,
-  monitoringDashboardsSetTimespan,
-  monitoringDashboardsVariableOptionsLoaded,
+  dashboardsPatchAllVariables,
+  dashboardsPatchVariable,
+  dashboardsSetEndTime,
+  dashboardsSetPollInterval,
+  dashboardsSetTimespan,
+  dashboardsVariableOptionsLoaded,
   queryBrowserDeleteAllQueries,
-} from '../../../actions/ui';
+} from '../../../actions/observe';
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
@@ -165,12 +173,12 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
   const { t } = useTranslation();
   const activePerspective = getActivePerspective(namespace);
 
-  const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
+  const timespan = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
 
-  const variables = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'variables']),
+  const variables = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'variables']),
   );
   const variable = variables.toJS()[name];
   const query = evaluateTemplate(variable.query, variables, timespan);
@@ -197,18 +205,16 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
         namespace,
       });
 
-      dispatch(monitoringDashboardsPatchVariable(name, { isLoading: true }, activePerspective));
+      dispatch(dashboardsPatchVariable(name, { isLoading: true }, activePerspective));
 
       safeFetch(url)
         .then(({ data }) => {
           setIsError(false);
           const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
-          dispatch(monitoringDashboardsVariableOptionsLoaded(name, newOptions, activePerspective));
+          dispatch(dashboardsVariableOptionsLoaded(name, newOptions, activePerspective));
         })
         .catch((err) => {
-          dispatch(
-            monitoringDashboardsPatchVariable(name, { isLoading: false }, activePerspective),
-          );
+          dispatch(dashboardsPatchVariable(name, { isLoading: false }, activePerspective));
           if (err.name !== 'AbortError') {
             setIsError(true);
           }
@@ -234,7 +240,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
         } else if (activePerspective === 'admin') {
           setQueryArgument(name, v);
         }
-        dispatch(monitoringDashboardsPatchVariable(name, { value: v }, activePerspective));
+        dispatch(dashboardsPatchVariable(name, { value: v }, activePerspective));
       }
     },
     [activePerspective, dispatch, name, variable.value],
@@ -280,8 +286,8 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 
 const AllVariableDropdowns = () => {
   const namespace = React.useContext(NamespaceContext);
-  const variables = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', getActivePerspective(namespace), 'variables']),
+  const variables = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', getActivePerspective(namespace), 'variables']),
   );
 
   return (
@@ -347,8 +353,8 @@ export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }
   const { t } = useTranslation();
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
   const activePerspective = getActivePerspective(namespace);
-  const interval = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'pollInterval']),
+  const interval = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'pollInterval']),
   );
 
   const dispatch = useDispatch();
@@ -359,7 +365,7 @@ export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }
       } else {
         removeQueryArgument('refreshInterval');
       }
-      dispatch(monitoringDashboardsSetPollInterval(v, activePerspective));
+      dispatch(dashboardsSetPollInterval(v, activePerspective));
     },
     [dispatch, activePerspective],
   );
@@ -408,7 +414,7 @@ const QueryBrowserLink = ({ queries }) => {
   const namespace = React.useContext(NamespaceContext);
 
   return (
-    <DashboardCardLink
+    <Link
       aria-label={t('public~Inspect')}
       to={
         namespace
@@ -417,7 +423,7 @@ const QueryBrowserLink = ({ queries }) => {
       }
     >
       {t('public~Inspect')}
-    </DashboardCardLink>
+    </Link>
   );
 };
 
@@ -452,22 +458,17 @@ const getPanelClassModifier = (panel: Panel): string => {
   }
 };
 
-// Matches Prometheus labels surrounded by {{ }} in the graph legend label templates.
-// The regex pattern is inspired from https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels
-// with additional matchers to consider leading and trailing spaces.
-const legendTemplateOptions = { interpolate: /{{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/g };
-
 const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   const namespace = React.useContext(NamespaceContext);
   const activePerspective = getActivePerspective(namespace);
-  const pollInterval = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'pollInterval']),
+  const pollInterval = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'pollInterval']),
   );
-  const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
+  const timespan = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'timespan']),
   );
-  const variables = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', activePerspective, 'variables']),
+  const variables = useSelector(({ observe }: RootState) =>
+    observe.getIn(['dashboards', activePerspective, 'variables']),
   );
 
   const ref = React.useRef();
@@ -475,15 +476,17 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
 
   const formatSeriesTitle = React.useCallback(
     (labels, i) => {
-      const legendFormat = panel.targets?.[i]?.legendFormat;
-      const compiled = _.template(legendFormat, legendTemplateOptions);
-      try {
-        return compiled(labels);
-      } catch (e) {
-        // If we can't format the label (e.g. if one of it's variables is missing from `labels`),
-        // show the template string instead
-        return legendFormat;
+      const title = panel.targets?.[i]?.legendFormat;
+      if (_.isNil(title)) {
+        return _.isEmpty(labels) ? '{}' : '';
       }
+      // Replace Prometheus labels surrounded by {{ }} in the graph legend label templates
+      // Regex is based on https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels
+      // with additional matchers to allow leading and trailing whitespace
+      return title.replace(
+        /{{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/g,
+        (match, key) => labels[key] ?? '',
+      );
     },
     [panel],
   );
@@ -522,16 +525,19 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
     <div
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
     >
-      <DashboardCard
-        className="monitoring-dashboards__card"
-        gradient={panel.type === 'grafana-piechart-panel'}
+      <PFCard
+        className={classNames('monitoring-dashboards__card', {
+          'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
+        })}
       >
-        <DashboardCardHeader className="monitoring-dashboards__card-header">
-          <DashboardCardTitle>{panel.title}</DashboardCardTitle>
-          {!isLoading && <QueryBrowserLink queries={queries} />}
-        </DashboardCardHeader>
-        <DashboardCardBody className="co-dashboard-card__body--dashboard">
-          <div className="monitoring-dashboards__card-body-content " ref={ref}>
+        <CardHeader className="monitoring-dashboards__card-header">
+          <CardTitle>{panel.title}</CardTitle>
+          <CardActions className="co-overview-card__actions">
+            {!isLoading && <QueryBrowserLink queries={queries} />}
+          </CardActions>
+        </CardHeader>
+        <CardBody className="co-dashboard-card__body--dashboard">
+          <div className="monitoring-dashboards__card-body-content" ref={ref}>
             {isLoading || !wasEverVisible ? (
               <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
                 <LoadingInline />
@@ -572,8 +578,8 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
               </>
             )}
           </div>
-        </DashboardCardBody>
-      </DashboardCard>
+        </CardBody>
+      </PFCard>
     </div>
   );
 });
@@ -673,17 +679,15 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         }
 
         const allVariables = getAllVariables(boards, newBoard, namespace);
-        dispatch(monitoringDashboardsPatchAllVariables(allVariables, activePerspective));
+        dispatch(dashboardsPatchAllVariables(allVariables, activePerspective));
 
         // Set time range and poll interval options to their defaults or from the query params if available
         if (refreshInterval) {
-          dispatch(
-            monitoringDashboardsSetPollInterval(_.toNumber(refreshInterval), activePerspective),
-          );
+          dispatch(dashboardsSetPollInterval(_.toNumber(refreshInterval), activePerspective));
         }
-        dispatch(monitoringDashboardsSetEndTime(_.toNumber(endTime) || null, activePerspective));
+        dispatch(dashboardsSetEndTime(_.toNumber(endTime) || null, activePerspective));
         dispatch(
-          monitoringDashboardsSetTimespan(
+          dashboardsSetTimespan(
             _.toNumber(timeSpan) || MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
             activePerspective,
           ),
@@ -706,7 +710,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
   React.useEffect(() => {
     const newBoard = getQueryArgument('dashboard');
     const allVariables = getAllVariables(boards, newBoard, namespace);
-    dispatch(monitoringDashboardsPatchAllVariables(allVariables, activePerspective));
+    dispatch(dashboardsPatchAllVariables(allVariables, activePerspective));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace]);
 

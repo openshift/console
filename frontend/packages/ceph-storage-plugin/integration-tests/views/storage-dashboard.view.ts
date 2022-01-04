@@ -2,7 +2,7 @@ import { $, $$, browser } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
 
-// export const clusterHealth = $('[class="co-dashboard-text--small co-health-card__text"]');
+// export const clusterHealth = $('[class="co-health-card__text"]');
 export const clusterHealth = $('div.co-status-card__health-item div svg');
 export const detailsCardStructure = $$('.co-details-card__body dt');
 const clusterDetails = $$('.co-details-card__body dd');

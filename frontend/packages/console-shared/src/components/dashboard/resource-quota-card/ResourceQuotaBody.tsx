@@ -19,7 +19,7 @@ const ResourceQuotaBody: React.FC<ResourceQuotaBodyProps> = ({
     body = <div className="text-secondary">{noText || t('console-shared~No ResourceQuotas')}</div>;
   }
 
-  return <div className="co-dashboard-card__body--top-margin">{body || children}</div>;
+  return <>{body || children}</>;
 };
 
 export default ResourceQuotaBody;

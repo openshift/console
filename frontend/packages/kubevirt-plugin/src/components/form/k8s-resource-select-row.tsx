@@ -64,7 +64,7 @@ export const K8sResourceSelectRow: React.FC<K8sResourceSelectProps> = ({
       title={title || model.label}
       fieldId={id}
       isLoading={isLoading}
-      validationMessage={loadError || missingError || (validation && validation.messageKey)}
+      validationMessage={loadError || missingError || (validation && t(validation?.messageKey))}
       validationType={
         loadError || missingError ? ValidationErrorType.Error : validation && validation.type
       }

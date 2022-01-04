@@ -6,7 +6,7 @@ import {
   k8sPatchByName,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { CustomResourceDefinitionModel, NodeModel, SecretModel } from '@console/internal/models';
+import { CustomResourceDefinitionModel, NodeModel } from '@console/internal/models';
 import { K8sModel } from '@console/dynamic-plugin-sdk';
 import { WizardNodeState, WizardState } from './reducer';
 import { Payload } from './external-storage/types';
@@ -14,9 +14,7 @@ import {
   ocsTaint,
   CEPH_STORAGE_NAMESPACE,
   defaultRequestSize,
-  KMSSecretName,
   NO_PROVISIONER,
-  OCS_INTERNAL_CR_NAME,
 } from '../../constants';
 import { OCSServiceModel, StorageSystemModel } from '../../models';
 import { getOCSRequestData } from '../ocs-install/ocs-request-data';
@@ -24,7 +22,7 @@ import { capacityAndNodesValidate } from '../../utils/create-storage-system';
 import { ValidationType } from '../../utils/common-ocs-install-el';
 import { cephStorageLabel } from '../../selectors';
 import { StorageSystemKind } from '../../types';
-import { createAdvancedKmsResources } from '../kms-config/utils';
+import { DeploymentType } from '../../constants/create-storage-system';
 
 export const createStorageSystem = async (subSystemName: string, subSystemKind: string) => {
   const payload: StorageSystemKind = {
@@ -43,45 +41,8 @@ export const createStorageSystem = async (subSystemName: string, subSystemKind: 
   return k8sCreate(StorageSystemModel, payload);
 };
 
-export const createNoobaaKmsResources = async (kms: WizardState['securityAndNetwork']['kms']) => {
-  const tokenSecret = {
-    apiVersion: SecretModel.apiVersion,
-    kind: SecretModel.kind,
-    metadata: {
-      name: KMSSecretName,
-      namespace: CEPH_STORAGE_NAMESPACE,
-    },
-    stringData: {
-      token: kms.token.value,
-    },
-  };
-  try {
-    await Promise.all([k8sCreate(SecretModel, tokenSecret), ...createAdvancedKmsResources(kms)]);
-  } catch (err) {
-    throw err;
-  }
-};
-
-export const createMCGStorageCluster = async (enableKms: boolean) => {
-  const storageClusterPayload: K8sResourceKind = {
-    apiVersion: apiVersionForModel(OCSServiceModel),
-    kind: OCSServiceModel.kind,
-    metadata: { name: OCS_INTERNAL_CR_NAME, namespace: CEPH_STORAGE_NAMESPACE },
-    spec: {
-      multiCloudGateway: {
-        reconcileStrategy: 'standalone',
-      },
-      encryption: {
-        enable: enableKms,
-        kms: { enable: enableKms },
-      },
-    },
-  };
-  return k8sCreate(OCSServiceModel, storageClusterPayload);
-};
-
 export const createStorageCluster = async (state: WizardState) => {
-  const { storageClass, capacityAndNodes, securityAndNetwork, nodes } = state;
+  const { storageClass, capacityAndNodes, securityAndNetwork, nodes, backingStorage } = state;
   const { capacity, enableArbiter, arbiterLocation, pvCount } = capacityAndNodes;
   const { encryption, publicNetwork, clusterNetwork, kms } = securityAndNetwork;
 
@@ -95,18 +56,21 @@ export const createStorageCluster = async (state: WizardState) => {
 
   const isFlexibleScaling = validations.includes(ValidationType.ATTACHED_DEVICES_FLEXIBLE_SCALING);
 
+  const isMCG = backingStorage.deployment === DeploymentType.MCG;
+
   const payload = getOCSRequestData(
     storageClass,
     storage,
-    encryption.clusterWide,
+    encryption,
     isMinimal,
     isFlexibleScaling,
     publicNetwork,
     clusterNetwork,
-    kms.hasHandled && encryption.advanced,
+    kms[kms.provider].hasHandled && encryption.advanced,
     arbiterLocation,
     enableArbiter,
     pvCount,
+    isMCG,
   );
   return k8sCreate(OCSServiceModel, payload);
 };

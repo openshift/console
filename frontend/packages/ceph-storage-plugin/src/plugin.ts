@@ -17,9 +17,6 @@ import {
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { NodeModel } from '@console/internal/models';
-import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
-import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import * as models from './models';
 import * as mockModels from './mock-models';
 import { getCephHealthState } from './components/dashboards/persistent-internal/status-card/utils';
@@ -38,6 +35,8 @@ import {
   detectManagedODF,
   detectComponents,
   MCG_STANDALONE,
+  FEATURES,
+  RGW_FLAG,
 } from './features';
 import { ODF_MODEL_FLAG } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
@@ -110,7 +109,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectRGW,
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -137,7 +136,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectComponents,
     },
     flags: {
-      required: [OCS_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -269,24 +268,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [CEPH_FLAG],
     },
   },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      model: NodeModel,
-      page: {
-        href: 'disks',
-        // t('ceph-storage-plugin~Disks')
-        name: '%ceph-storage-plugin~Disks%',
-      },
-      loader: () =>
-        import(
-          './components/disk-inventory/ocs-disks-list' /* webpackChunkName: "ocs-nodes-disks-list" */
-        ).then((m) => m.OCSNodesDiskListPage),
-    },
-    flags: {
-      required: [OCS_ATTACHED_DEVICES_FLAG, LSO_DEVICE_DISCOVERY],
-    },
-  },
   // Noobaa Related Plugins
   {
     type: 'Page/Route',
@@ -343,7 +324,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -356,7 +337,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketDetailsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -369,7 +350,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketClaimsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -382,7 +363,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ObjectBucketClaimsDetailsPage),
     },
     flags: {
-      required: [MCG_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -396,6 +377,21 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+    },
+  },
+  // When RGW is available without MCG
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/k8s/ns/:ns/${referenceForModel(models.NooBaaObjectBucketClaimModel)}/~new/form`,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/create-obc' /* webpackChunkName: "create-obc" */
+        ).then((m) => m.CreateOBCPage),
+    },
+    flags: {
+      required: [RGW_FLAG],
+      disallowed: [MCG_FLAG],
     },
   },
   {
@@ -442,7 +438,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/bucket-class/modals/edit-backingstore-modal')
           .then((m) => m.default({ bucketClass: obj, modalClassName: 'nb-modal' }))
           // eslint-disable-next-line no-console
-          .catch((e) => console.error(e)),
+          .catch((e) => console.error('BucketClassEditModal could not be loaded', e)),
     },
     flags: {
       required: [MCG_FLAG],
@@ -505,7 +501,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      disallowed: [OCS_INDEPENDENT_FLAG, MCG_STANDALONE],
+      disallowed: [OCS_INDEPENDENT_FLAG, MCG_STANDALONE, FEATURES.ADD_CAPACITY],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl
@@ -524,6 +520,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/odf-system/odf-system-list' /* webpackChunkName: "odf-system-list" */
           )
         ).default,
+    },
+    flags: {
+      disallowed: [FEATURES.SS_LIST],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl

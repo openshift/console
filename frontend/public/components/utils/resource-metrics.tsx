@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { Grid, GridItem } from '@patternfly/react-core';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import { Grid, GridItem, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+
 import { QueryBrowser } from '../monitoring/query-browser';
 import {
   ResourceUtilizationQuery,
@@ -14,14 +11,14 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 const ResourceMetricsDashboardCard: React.FC<ResourceMetricsDashboardCardProps> = (props) => (
-  <DashboardCard className="resource-metrics-dashboard__card">
-    <DashboardCardHeader>
-      <DashboardCardTitle>{props.title}</DashboardCardTitle>
-    </DashboardCardHeader>
-    <DashboardCardBody className="resource-metrics-dashboard__card-body">
+  <Card className="resource-metrics-dashboard__card">
+    <CardHeader>
+      <CardTitle>{props.title}</CardTitle>
+    </CardHeader>
+    <CardBody className="resource-metrics-dashboard__card-body">
       <QueryBrowser queries={props.queries} namespace={props.namespace} disableZoom hideControls />
-    </DashboardCardBody>
-  </DashboardCard>
+    </CardBody>
+  </Card>
 );
 
 export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> = ({ obj }) => {

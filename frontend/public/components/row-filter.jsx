@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { filterList } from '../actions/k8s';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { getQueryArgument, setQueryArgument } from './utils';
 
 export const CheckBox = ({ title, active, number, toggle }) => {

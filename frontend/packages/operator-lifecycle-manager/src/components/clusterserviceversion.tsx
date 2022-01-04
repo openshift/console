@@ -352,6 +352,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
   ({ activeNamespace, obj, subscription, catalogSourceMissing }) => {
     const { displayName, provider, version } = obj.spec ?? {};
+    const { t } = useTranslation();
     const olmOperatorNamespace = obj.metadata?.annotations?.['olm.operatorNamespace'] ?? '';
     const [icon] = obj.spec.icon ?? [];
     const route = resourceObjPath(obj, referenceFor(obj));
@@ -421,8 +422,11 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
               ))
             : '-'}
           {providedAPIs.length > 4 && (
-            <Link to={route} title={`View ${providedAPIs.length - 4} more...`}>
-              {`View ${providedAPIs.length - 4} more...`}
+            <Link
+              to={route}
+              title={t('olm~View {{numAPIs}} more...', { numAPIs: providedAPIs.length - 4 })}
+            >
+              {t('olm~View {{numAPIs}} more...', { numAPIs: providedAPIs.length - 4 })}
             </Link>
           )}
         </TableData>
@@ -851,6 +855,7 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
 };
 
 export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
+  const { t } = useTranslation();
   return (
     <div className="co-crd-card-row">
       {providedAPIs.length ? (
@@ -858,7 +863,9 @@ export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
           <CRDCard key={referenceForProvidedAPI(crd)} crd={crd} csv={csv} />
         ))
       ) : (
-        <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
+        <span className="text-muted">
+          {t('olm~No Kubernetes APIs are being provided by this Operator.')}
+        </span>
       )}
     </div>
   );
@@ -936,7 +943,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         return JSON.parse(initializationResourceJSON);
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while parseing CSV initialization resource JSON', error.message);
       }
     }
     return null;
@@ -950,7 +957,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         return url.toString();
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while setting utm_source to support workflow URL', error.message);
       }
     }
     return null;
@@ -1260,10 +1267,10 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       {...props}
       breadcrumbsFor={() => [
         {
-          name: 'Installed Operators',
+          name: t('olm~Installed Operators'),
           path: getBreadcrumbPath(props.match),
         },
-        { name: t('olm~{{item}} details', { item: 'Operator' }), path: props.match.url },
+        { name: t('olm~Operator details'), path: props.match.url },
       ]}
       resources={[
         { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscriptions' },
@@ -1284,6 +1291,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       name={props.match.params.name}
       pagesFor={pagesFor}
       menuActions={menuActions}
+      createRedirect
     />
   );
 };

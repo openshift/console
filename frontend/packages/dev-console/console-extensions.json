@@ -218,6 +218,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "BuilderImage",
+      "title": "%devconsole~Builder Images%",
       "provider": { "$codeRef": "catalog.builderImageProvider" }
     },
     "flags": {
@@ -241,6 +242,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "Template",
+      "title": "%devconsole~Templates%",
       "provider": { "$codeRef": "catalog.templateProvider" }
     },
     "flags": {
@@ -264,6 +266,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "Devfile",
+      "title": "%devconsole~Devfiles%",
       "provider": { "$codeRef": "catalog.devfileProvider" }
     },
     "flags": {
@@ -285,6 +288,7 @@
     "properties": {
       "catalogId": "samples-catalog",
       "type": "Sample",
+      "title": "%devconsole~Builder Images%",
       "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
     },
     "flags": {
@@ -296,6 +300,7 @@
     "properties": {
       "catalogId": "samples-catalog",
       "type": "Sample",
+      "title": "%devconsole~Devfiles%",
       "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
     },
     "flags": {
@@ -590,6 +595,20 @@
       "label": "%devconsole~Add to Application%",
       "submenu": true,
       "insertAfter": ["delete-application"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "devconsole.routingOptions",
+      "label": "",
+      "groupId": "applications",
+      "description": "",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "userPreferences.SecureRouteFields" }
+      },
+      "insertAfter": "console.preferredCreateEditMethod"
     }
   }
 ]

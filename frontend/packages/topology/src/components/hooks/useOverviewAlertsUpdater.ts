@@ -16,13 +16,13 @@ export const useOverviewAlertsUpdater = (
         updateMonitoringAlerts(alerts);
       })
       .catch((e) => {
-        console.error(e); // eslint-disable-line no-console
+        console.error('Failed to fetch monitoring alerts', e); // eslint-disable-line no-console
       })
       .then(() => {
         alertsInterval = setTimeout(fetchAlerts, interval);
       })
       .catch((e) => {
-        console.error(e); // eslint-disable-line no-console
+        console.error('Failed to fetch monitoring alerts', e); // eslint-disable-line no-console
       });
   };
 

@@ -6,7 +6,7 @@
     }
   },
   {
-    "type": "console.navigation/resource-cluster",
+    "type": "console.navigation/resource-ns",
     "properties": {
       "id": "networkattachmentdefinitions",
       "section": "networking",

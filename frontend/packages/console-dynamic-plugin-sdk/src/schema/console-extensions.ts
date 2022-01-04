@@ -1,6 +1,11 @@
 import { SupportedActionExtensions } from '../extensions/actions';
 import { AddAction, AddActionGroup } from '../extensions/add-actions';
 import { SupportedCatalogExtensions } from '../extensions/catalog';
+import {
+  ClusterOverviewInventoryItem,
+  ClusterOverviewUtilizationItem,
+  ClusterOverviewMultilineUtilizationItem,
+} from '../extensions/cluster-overview';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import { ContextProvider } from '../extensions/context-providers';
 import { CreateResource } from '../extensions/create-resource';
@@ -104,7 +109,10 @@ export type SupportedExtension =
   | UserPreferenceGroup
   | UserPreferenceItem
   | Perspective
-  | HorizontalNavTab;
+  | HorizontalNavTab
+  | ClusterOverviewInventoryItem
+  | ClusterOverviewUtilizationItem
+  | ClusterOverviewMultilineUtilizationItem;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

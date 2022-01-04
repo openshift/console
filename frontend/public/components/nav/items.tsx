@@ -307,7 +307,7 @@ export const PluginNavItems: React.FC<PluginNavItemsProps> = ({ items }) => {
         if (isSeparator(item)) {
           return <NavItemSeparator key={`separator-${index}`} />;
         }
-        return <li key={item.uid}>{createLink(item, true)}</li>;
+        return <div key={item.uid}>{createLink(item, true)}</div>;
       })}
     </>
   );

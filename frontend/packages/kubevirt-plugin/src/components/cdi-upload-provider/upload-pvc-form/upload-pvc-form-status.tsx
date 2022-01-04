@@ -109,41 +109,56 @@ const DataUploadStatus: React.FC<DataUploadStatus> = ({
   );
 };
 
-const AllocatingStatus: React.FC = () => (
-  <>
-    <EmptyStateIcon icon={Spinner} />
-    <Title headingLevel="h4" size="lg">
-      Allocating Resources
-    </Title>
-    <EmptyStateBody>
-      Please wait, once the Data Volume has been created the data will start uploading into this
-      Persistent Volume Claim.
-    </EmptyStateBody>
-  </>
-);
+const AllocatingStatus: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <EmptyStateIcon icon={Spinner} />
+      <Title headingLevel="h4" size="lg">
+        {t('kubevirt-plugin~Allocating Resources')}
+      </Title>
+      <EmptyStateBody>
+        {t(
+          'kubevirt-plugin~Please wait, once the Data Volume has been created the data will start uploading into this Persistent Volume Claims.',
+        )}
+      </EmptyStateBody>
+    </>
+  );
+};
 
-const CancellingStatus: React.FC = () => (
-  <>
-    <EmptyStateIcon icon={Spinner} />
-    <Title headingLevel="h4" size="lg">
-      Cancelling Upload
-    </Title>
-    <EmptyStateBody>Resources are being removed, please wait.</EmptyStateBody>
-  </>
-);
+const CancellingStatus: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <EmptyStateIcon icon={Spinner} />
+      <Title headingLevel="h4" size="lg">
+        {t('kubevirt-plugin~Cancelling Upload')}
+      </Title>
+      <EmptyStateBody>
+        {' '}
+        {t('kubevirt-plugin~Resources are being removed, please wait.')}
+      </EmptyStateBody>
+    </>
+  );
+};
 
-const ErrorStatus: React.FC<ErrorStatusProps> = ({ error, onErrorClick }) => (
-  <>
-    <EmptyStateIcon icon={ErrorCircleOIcon} color="#cf1010" />
-    <Title headingLevel="h4" size="lg">
-      Error Uploading Data
-    </Title>
-    <EmptyStateBody>{error}</EmptyStateBody>
-    <Button id="cdi-upload-error-btn" variant="primary" onClick={onErrorClick}>
-      {error ? 'Back to Form' : 'View Persistent Volume Claim details'}
-    </Button>
-  </>
-);
+const ErrorStatus: React.FC<ErrorStatusProps> = ({ error, onErrorClick }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <EmptyStateIcon icon={ErrorCircleOIcon} color="#cf1010" />
+      <Title headingLevel="h4" size="lg">
+        {t('kubevirt-plugin~Error Uploading Data')}
+      </Title>
+      <EmptyStateBody>{error}</EmptyStateBody>
+      <Button id="cdi-upload-error-btn" variant="primary" onClick={onErrorClick}>
+        {error
+          ? t('kubevirt-plugin~Back to Form')
+          : t('kubevirt-plugin~View Persistent Volume Claim details')}
+      </Button>
+    </>
+  );
+};
 
 const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcName, namespace }) => {
   const { t } = useTranslation();
@@ -158,13 +173,14 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
     <>
       <EmptyStateIcon icon={ErrorCircleOIcon} color="#cf1010" />
       <Title headingLevel="h4" size="lg">
-        CDI Error: Could not initiate Data Volume
+        {t('kubevirt-plugin~CDI Error: Could not initiate Data Volume')}
       </Title>
       <EmptyStateBody>
         <Stack hasGutter>
           <StackItem>
-            Data Volume failed to initiate upload, you can either delete the Data Volume and try
-            again, or check logs
+            {t(
+              'kubevirt-plugin~Data Volume failed to initiate upload, you can either delete the Data Volume and try again, or check logs',
+            )}
           </StackItem>
           <StackItem>
             <Split>
@@ -174,7 +190,7 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
                 isChecked={shouldKillDv}
                 data-checked-state={shouldKillDv}
                 aria-label="kill datavolume checkbox"
-                label={`Delete Data Volume: ${pvcName}`}
+                label={t('kubevirt-plugin~Delete Data Volume: {{pvcName}}', { pvcName })}
                 onChange={(v) => setShouldKillDv(v)}
               />
               <SplitItem isFilled />
@@ -199,7 +215,9 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
             : onErrorClick
         }
       >
-        Back to Form {shouldKillDv && '(Deletes DV)'}
+        {shouldKillDv
+          ? t('kubevirt-plugin~Back to Form (Deletes DV)')
+          : t('kubevirt-plugin~Back to Form')}
       </Button>
       {podLoaded && !podError && pod && (
         <EmptyStateSecondaryActions>
@@ -222,49 +240,55 @@ const UploadingStatus: React.FC<UploadingStatusProps> = ({
   upload,
   onSuccessClick,
   onCancelClick,
-}) => (
-  <>
-    <EmptyStateIcon icon={InProgressIcon} />
-    <Title headingLevel="h4" size="lg">
-      Uploading data to Persistent Volume Claim
-    </Title>
-    <EmptyStateBody>
-      <Stack hasGutter>
-        {upload?.uploadStatus === UPLOAD_STATUS.UPLOADING && (
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <EmptyStateIcon icon={InProgressIcon} />
+      <Title headingLevel="h4" size="lg">
+        {t('kubevirt-plugin~Uploading data to Persistent Volume Claim')}
+      </Title>
+      <EmptyStateBody>
+        <Stack hasGutter>
+          {upload?.uploadStatus === UPLOAD_STATUS.UPLOADING && (
+            <StackItem>
+              <Alert
+                className="kv--create-upload__alert"
+                isInline
+                variant={AlertVariant.warning}
+                title={t('kubevirt-plugin~Please don’t close this browser tab')}
+              >
+                {t(
+                  'kubevirt-plugin~Closing it will cause the upload to fail. You may still navigate the console.',
+                )}
+              </Alert>
+            </StackItem>
+          )}
           <StackItem>
-            <Alert
-              className="kv--create-upload__alert"
-              isInline
-              variant={AlertVariant.warning}
-              title="Please don’t close this browser tab"
-            >
-              Closing it will cause the upload to fail. You may still navigate the console.
-            </Alert>
+            {t(
+              'kubevirt-plugin~Persistent Volume Claim has been created and your data source is now being uploaded to it. Once the uploading is completed the Persistent Volume Claim will become available',
+            )}
           </StackItem>
-        )}
-        <StackItem>
-          Persistent Volume Claim has been created and your data source is now being uploaded to it.
-          Once the uploading is completed the Persistent Volume Claim will become available
-        </StackItem>
-        <StackItem>
-          <Progress value={upload?.progress} variant={getProgressVariant(upload?.uploadStatus)} />
-        </StackItem>
-      </Stack>
-    </EmptyStateBody>
-    {onSuccessClick && (
-      <Button id="cdi-upload-primary-pvc" variant="primary" onClick={onSuccessClick}>
-        View Persistent Volume Claim details
-      </Button>
-    )}
-    {onCancelClick && upload?.uploadStatus === UPLOAD_STATUS.UPLOADING && (
-      <EmptyStateSecondaryActions>
-        <Button id="cdi-upload-cancel-btn" onClick={onCancelClick} variant="link">
-          Cancel Upload
+          <StackItem>
+            <Progress value={upload?.progress} variant={getProgressVariant(upload?.uploadStatus)} />
+          </StackItem>
+        </Stack>
+      </EmptyStateBody>
+      {onSuccessClick && (
+        <Button id="cdi-upload-primary-pvc" variant="primary" onClick={onSuccessClick}>
+          {t('kubevirt-plugin~View Persistent Volume Claim details')}
         </Button>
-      </EmptyStateSecondaryActions>
-    )}
-  </>
-);
+      )}
+      {onCancelClick && upload?.uploadStatus === UPLOAD_STATUS.UPLOADING && (
+        <EmptyStateSecondaryActions>
+          <Button id="cdi-upload-cancel-btn" onClick={onCancelClick} variant="link">
+            {t('kubevirt-plugin~Cancel Upload')}
+          </Button>
+        </EmptyStateSecondaryActions>
+      )}
+    </>
+  );
+};
 
 type UploadingStatusProps = {
   upload: DataUpload;

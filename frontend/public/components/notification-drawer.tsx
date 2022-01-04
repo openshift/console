@@ -12,6 +12,12 @@ import {
   NotificationCategory,
   NotificationTypes,
 } from '@console/patternfly';
+import {
+  alertingErrored,
+  alertingLoaded,
+  alertingLoading,
+  setAlertCount,
+} from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
 import {
@@ -20,7 +26,7 @@ import {
   AlertSeverity,
 } from '@console/internal/components/monitoring/types';
 import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
-import { NotificationAlerts } from '@console/internal/reducers/ui';
+import { NotificationAlerts } from '@console/internal/reducers/observe';
 import { RedExclamationCircleIcon } from '@console/shared';
 import {
   getAlertDescription,
@@ -189,12 +195,12 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const dispatch = useDispatch();
   React.useEffect(() => {
     const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
-      dispatch(UIActions.monitoringLoading(key));
+      dispatch(alertingLoading(key));
       const notificationPoller = (): void => {
         coFetchJSON(url)
           .then((response) => dataHandler(response))
-          .then((data) => dispatch(UIActions.monitoringLoaded(key, data)))
-          .catch((e) => dispatch(UIActions.monitoringErrored(key, e)))
+          .then((data) => dispatch(alertingLoaded(key, data)))
+          .catch((e) => dispatch(alertingErrored(key, e)))
           .then(() => (pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000)));
       };
       pollers[key] = notificationPoller;
@@ -220,10 +226,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       );
     } else {
       dispatch(
-        UIActions.monitoringErrored(
-          'notificationAlerts',
-          new Error(t('public~prometheusBaseURL not set')),
-        ),
+        alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
       );
     }
 
@@ -242,9 +245,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
         return silences;
       });
     } else {
-      dispatch(
-        UIActions.monitoringErrored('silences', new Error(t('public~alertManagerBaseURL not set'))),
-      );
+      dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
     }
 
     return () => _.each(pollerTimeouts, clearTimeout);
@@ -318,7 +319,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   // Update alert count.
   const alertCount = alerts?.length ?? 0;
   React.useEffect(() => {
-    dispatch(UIActions.setAlertCount(alertCount));
+    dispatch(setAlertCount(alertCount));
   }, [alertCount, dispatch]);
 
   const emptyState = loadError ? (

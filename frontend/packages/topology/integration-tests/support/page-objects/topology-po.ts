@@ -35,6 +35,7 @@ export const topologyPO = {
     addNewAnnotations: '[data-test="add-button"]',
     deleteApplication: '[id="form-input-resourceName-field"]',
     connector: '[data-test-id="edge-handler"]',
+    routeDecorator: '[aria-label="Open URL"] [data-test-id="decorator"]',
     displayOptions: {
       connectivityMode: '[id="showGroups"]',
       consumptionMode: '[id="hideGroups"]',
@@ -81,6 +82,7 @@ export const topologyPO = {
     resourcesTab: {
       startLastRun: '[role="dialog"] li.list-group-item.pipeline-overview div button',
       pipelineRuns: 'li.odc-pipeline-run-item',
+      routeLink: '[data-test-id="route-link"]',
     },
     monitoringTab: {
       viewMonitoringDashBoardLink: '',

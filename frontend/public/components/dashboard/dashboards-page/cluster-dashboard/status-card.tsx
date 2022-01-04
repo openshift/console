@@ -32,13 +32,16 @@ import {
   useResolvedExtensions,
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
-import { Gallery, GalleryItem } from '@patternfly/react-core';
+import {
+  Gallery,
+  GalleryItem,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardActions,
+} from '@patternfly/react-core';
 import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import AlertItem, {
@@ -151,10 +154,31 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
     DynamicDashboardsOverviewHealthSubsystem
   >(isDynamicDashboardsOverviewHealthSubsystem);
 
-  const subsystems = React.useMemo(
-    () => filterSubsystems([...subsystemExtensions, ...dynamicSubsystemExtensions], k8sModels),
-    [subsystemExtensions, dynamicSubsystemExtensions, k8sModels],
-  );
+  const subsystems = React.useMemo(() => {
+    const filteredSubsystems = filterSubsystems(
+      [...subsystemExtensions, ...dynamicSubsystemExtensions],
+      k8sModels,
+    );
+    return filteredSubsystems.map((e) => {
+      if (
+        isResolvedDashboardsOverviewHealthURLSubsystem(e) ||
+        isResolvedDashboardsOverviewHealthPrometheusSubsystem(e) ||
+        isResolvedDashboardsOverviewHealthResourceSubsystem(e)
+      ) {
+        const popup = e.properties.popupComponent
+          ? { popupComponent: () => Promise.resolve(e.properties.popupComponent) }
+          : {};
+        return {
+          ...e,
+          properties: {
+            ...e.properties,
+            ...popup,
+          },
+        };
+      }
+      return e;
+    });
+  }, [subsystemExtensions, dynamicSubsystemExtensions, k8sModels]);
 
   const operatorSubsystemIndex = React.useMemo(
     () =>
@@ -227,22 +251,22 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   }
 
   return (
-    <DashboardCard gradient data-test-id="status-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Status')}</DashboardCardTitle>
-        <DashboardCardLink to="/monitoring/alerts">{t('public~View alerts')}</DashboardCardLink>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <HealthBody>
-          <Gallery className="co-overview-status__health" hasGutter>
-            {healthItems.map((item) => {
-              return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
-            })}
-          </Gallery>
-        </HealthBody>
-        <DashboardAlerts />
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card data-test-id="status-card" className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('public~Status')}</CardTitle>
+        <CardActions className="co-overview-card__actions">
+          <Link to="/monitoring/alerts">{t('public~View alerts')}</Link>
+        </CardActions>
+      </CardHeader>
+      <HealthBody>
+        <Gallery className="co-overview-status__health" hasGutter>
+          {healthItems.map((item) => {
+            return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
+          })}
+        </Gallery>
+      </HealthBody>
+      <DashboardAlerts />
+    </Card>
   );
 });
 

@@ -40,7 +40,7 @@ export const VMStatusInventoryItem: React.FC<VMStatusInventoryItemProps> = ({ st
   return (
     <div className="co-inventory-card__status">
       <span className="co-dashboard-icon kv-inventory-card__status-icon">{<Icon />}</span>
-      <Link to={to} className="co-inventory-card__status-link">
+      <Link to={to}>
         <span className="kv-inventory-card__status-text">{count}</span>
       </Link>
       <span>{status}</span>

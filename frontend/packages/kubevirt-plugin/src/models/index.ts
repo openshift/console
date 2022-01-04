@@ -244,3 +244,28 @@ export const NetworkAddonsConfigModel: K8sKind = {
   id: 'networkaddonsconfig',
   crd: true,
 };
+
+export const DataSourceModel: K8sKind = {
+  label: 'DataSource',
+  labelPlural: 'DataSources',
+  apiVersion: 'v1beta1',
+  apiGroup: 'cdi.kubevirt.io',
+  plural: 'datasources',
+  abbr: 'datasources',
+  namespaced: true,
+  kind: 'DataSource',
+  id: 'datasource',
+  crd: true,
+};
+
+export const KubeDeschedulerModel = {
+  kind: 'KubeDescheduler',
+  label: 'KubeDescheduler',
+  labelPlural: 'KubeDeschedulers',
+  apiGroup: 'operator.openshift.io',
+  apiVersion: 'v1',
+  abbr: 'KD',
+  namespaced: false,
+  crd: true,
+  plural: 'kubedeschedulers',
+};

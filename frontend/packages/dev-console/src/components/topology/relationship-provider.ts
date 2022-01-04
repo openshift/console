@@ -1,6 +1,7 @@
 import { Node } from '@patternfly/react-topology';
+import { serviceBindingModal } from '@console/app/src/components/modals/service-binding';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { TYPE_WORKLOAD } from '@console/topology/src/const';
-import { createServiceBinding } from '@console/topology/src/operators/actions/serviceBindings';
 import { getResource } from '@console/topology/src/utils';
 
 export const providerProvidesServiceBinding = (source: Node, target: Node) => {
@@ -19,5 +20,9 @@ export const providerProvidesServiceBinding = (source: Node, target: Node) => {
 export const providerCreateServiceBinding = (source: Node, target: Node) => {
   const sourceResource = getResource(source);
   const targetResource = getResource(target);
-  return createServiceBinding(sourceResource, targetResource).then(() => null);
+  return serviceBindingModal({
+    model: modelFor(referenceFor(sourceResource)),
+    source: sourceResource,
+    target: targetResource,
+  });
 };

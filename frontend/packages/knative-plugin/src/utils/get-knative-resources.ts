@@ -48,8 +48,9 @@ const isKnativeDeployment = (dc: K8sResourceKind) => {
 const getKsResource = (dc: K8sResourceKind, { data }: K8sResourceKind): K8sResourceKind[] => {
   let ksResource = [];
   if (isKnativeDeployment(dc)) {
+    const name = dc.metadata.labels?.[KNATIVE_SERVING_LABEL];
     ksResource = _.filter(data, (config: K8sResourceKind) => {
-      return dc.metadata.labels[KNATIVE_SERVING_LABEL] === _.get(config, 'metadata.name');
+      return name === _.get(config, 'metadata.name');
     });
   }
   return ksResource;
@@ -58,8 +59,9 @@ const getKsResource = (dc: K8sResourceKind, { data }: K8sResourceKind): K8sResou
 const getRevisions = (dc: K8sResourceKind, { data }): K8sResourceKind[] => {
   let revisionResource = [];
   if (isKnativeDeployment(dc)) {
+    const ownerUid = dc.metadata.ownerReferences?.[0]?.uid;
     revisionResource = _.filter(data, (revision: K8sResourceKind) => {
-      return dc.metadata.ownerReferences[0].uid === revision.metadata.uid;
+      return ownerUid && ownerUid === revision.metadata.uid;
     });
   }
   return revisionResource;
@@ -147,6 +149,20 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
       namespace,
       prop: 'ksroutes',
       optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const k8sServices = (namespace: string, limit?: number): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: 'Service',
+      namespace,
+      prop: 'services',
+      optional: true,
+      ...(limit && { limit }),
     },
   ];
   return knativeResource;
@@ -372,6 +388,12 @@ export const getTrafficByRevision = (revName: string, service: K8sResourceKind) 
     ...trafficPercent,
     percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
   };
+};
+
+export const getSinkableResources = (namespace: string): FirehoseResource[] => {
+  return namespace
+    ? [...k8sServices(namespace), ...knativeServingResourcesServices(namespace)]
+    : [];
 };
 
 export const getKnativeResources = (namespace: string) => {

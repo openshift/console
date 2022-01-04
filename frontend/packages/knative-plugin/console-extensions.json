@@ -485,6 +485,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "EventSource",
+      "title": "%knative-plugin~Event Sources%",
       "provider": { "$codeRef": "catalog.eventSourceProvider" }
     },
     "flags": {
@@ -496,6 +497,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "EventSource",
+      "title": "%knative-plugin~Event Sources%",
       "provider": { "$codeRef": "catalog.kameletsProvider" }
     },
     "flags": {

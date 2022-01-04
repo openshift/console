@@ -34,7 +34,7 @@ import {
   NodesPerZoneMap,
   getZonesFromNodesKind,
 } from '../../../../utils/create-storage-system';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-and-nodes';
 import { pvResource, nodeResource } from '../../../../resources';
@@ -46,7 +46,7 @@ import './capacity-and-nodes.scss';
 
 const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ dispatch, enableTaint }) => {
   const { t } = useTranslation();
-  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
+  const isTaintSupported = useFlag(FEATURES.OCS_TAINT_NODES);
 
   return isTaintSupported ? (
     <Checkbox
@@ -86,7 +86,7 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   const onRowSelected = React.useCallback(
     (selectedNodes: NodeKind[]) => {
       const nodesData = createWizardNodeState(selectedNodes);
-      dispatch({ type: 'wizard/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/setNodes', payload: nodesData });
     },
     [dispatch],
   );
@@ -185,7 +185,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
       const pvNodes = getAssociatedNodes(pvBySc);
       const filteredNodes = memoizedAllNodes.filter((node) => pvNodes.includes(node.metadata.name));
       const nodesData = createWizardNodeState(filteredNodes);
-      dispatch({ type: 'wizard/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/setNodes', payload: nodesData });
     }
   }, [dispatch, allNodeLoadError, allNodeLoaded, memoizedAllNodes, pvBySc]);
 

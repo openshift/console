@@ -154,8 +154,7 @@ form.pf-c-form {
     flex-direction: column;
   }
 
-  // `.pf-c-page` specificity required
-  .pf-c-toolbar {
+  .pf-c-toolbar--align-left {
     --pf-c-toolbar--PaddingTop: 0;
     --pf-c-toolbar__content--PaddingLeft: 0;
     --pf-c-toolbar__content--PaddingRight: 0;
@@ -366,6 +365,7 @@ ul {
 }
 // And here we explicitly remove it from PF components so it doesn't show.
 ul.pf-c-alert-group,
+.pf-c-nav__item,
 ul.pf-c-nav__list,
 ul.pf-c-options-menu__menu,
 ul.pf-c-simple-list__list,

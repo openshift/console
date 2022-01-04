@@ -7,11 +7,6 @@ import {
   AlertsBodyProps,
   AlertItemProps,
   HealthItemProps,
-  DashboardCardProps,
-  DashboardCardBodyProps,
-  DashboardCardHeaderProps,
-  DashboardCardTitleProps,
-  DashboardGridProps,
   ResourceInventoryItemProps,
   DetailItemProps,
   DetailsBodyProps,
@@ -37,16 +32,6 @@ export const AlertItem: React.FC<AlertItemProps> = require('@console/shared/src/
 export const HealthItem: React.FC<HealthItemProps> = require('@console/shared/src/components/dashboard/status-card/HealthItem')
   .default;
 export const HealthBody: React.FC = require('@console/shared/src/components/dashboard/status-card/HealthBody')
-  .default;
-export const DashboardCard: React.FC<DashboardCardProps> = require('@console/shared/src/components/dashboard/dashboard-card/DashboardCard')
-  .default;
-export const DashboardCardBody: React.FC<DashboardCardBodyProps> = require('@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody')
-  .default;
-export const DashboardCardHeader: React.FC<DashboardCardHeaderProps> = require('@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader')
-  .default;
-export const DashboardCardTitle: React.FC<DashboardCardTitleProps> = require('@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle')
-  .default;
-export const DashboardGrid: React.FC<DashboardGridProps> = require('@console/shared/src/components/dashboard//DashboardGrid')
   .default;
 export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryItem')
   .ResourceInventoryItem;

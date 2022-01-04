@@ -114,7 +114,7 @@ export const defaultData: GitImportFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      privateKey: '',
+      key: '',
     },
   },
   resources: Resources.OpenShift,
@@ -544,7 +544,7 @@ export const defaultDevfileFormData: GitImportFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      privateKey: '',
+      key: '',
     },
   },
   resources: Resources.Kubernetes,
@@ -859,5 +859,84 @@ export const sampleDevfileFormData: GitImportFormData = {
         status: {},
       },
     },
+  },
+};
+
+export const sampleClusterTriggerBinding = {
+  apiVersion: 'triggers.tekton.dev/v1beta1',
+  kind: 'ClusterTriggerBinding',
+  metadata: {
+    annotations: {
+      'kubectl.kubernetes.io/last-applied-configuration':
+        '{"apiVersion":"triggers.tekton.dev/v1alpha1","kind":"ClusterTriggerBinding","metadata":{"name":"github-push","namespace":"openshift-pipelines","ownerReferences":[{"apiVersion":"operator.tekton.dev/v1alpha1","blockOwnerDeletion":true,"controller":true,"kind":"TektonInstallerSet","name":"addon-triggers-k74bh","uid":"fe29d5cd-2580-48fa-b6de-a236c518e2e8"}]},"spec":{"params":[{"name":"git-revision","value":"$(body.head_commit.id)"},{"name":"git-commit-message","value":"$(body.head_commit.message)"},{"name":"git-repo-url","value":"$(body.repository.url)"},{"name":"git-repo-name","value":"$(body.repository.name)"},{"name":"content-type","value":"$(header.Content-Type)"},{"name":"pusher-name","value":"$(body.pusher.name)"}]}}\n',
+    },
+    creationTimestamp: '2021-12-15T04:29:42Z',
+    generation: 1,
+    managedFields: [
+      {
+        apiVersion: 'triggers.tekton.dev/v1alpha1',
+        fieldsType: 'FieldsV1',
+        fieldsV1: {
+          'f:metadata': {
+            'f:annotations': {
+              '.': {},
+              'f:kubectl.kubernetes.io/last-applied-configuration': {},
+            },
+            'f:ownerReferences': {
+              '.': {},
+              'k:{"uid":"fe29d5cd-2580-48fa-b6de-a236c518e2e8"}': {},
+            },
+          },
+          'f:spec': {
+            '.': {},
+            'f:params': {},
+          },
+        },
+        manager: 'manifestival',
+        operation: 'Update',
+        time: '2021-12-15T04:29:46Z',
+      },
+    ],
+    name: 'github-push',
+    ownerReferences: [
+      {
+        apiVersion: 'operator.tekton.dev/v1alpha1',
+        blockOwnerDeletion: true,
+        controller: true,
+        kind: 'TektonInstallerSet',
+        name: 'addon-triggers-k74bh',
+        uid: 'fe29d5cd-2580-48fa-b6de-a236c518e2e8',
+      },
+    ],
+    resourceVersion: '165774',
+    uid: '5e13962b-097f-4966-b1e6-d6774e517adb',
+  },
+  spec: {
+    params: [
+      {
+        name: 'git-revision',
+        value: '$(body.head_commit.id)',
+      },
+      {
+        name: 'git-commit-message',
+        value: '$(body.head_commit.message)',
+      },
+      {
+        name: 'git-repo-url',
+        value: '$(body.repository.url)',
+      },
+      {
+        name: 'git-repo-name',
+        value: '$(body.repository.name)',
+      },
+      {
+        name: 'content-type',
+        value: '$(header.Content-Type)',
+      },
+      {
+        name: 'pusher-name',
+        value: '$(body.pusher.name)',
+      },
+    ],
   },
 };

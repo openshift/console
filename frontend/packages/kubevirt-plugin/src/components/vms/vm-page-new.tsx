@@ -13,7 +13,7 @@ import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { QuickStartModel } from '@console/app/src/models';
 import {
   MultiListPage,
@@ -27,6 +27,7 @@ import {
   Kebab,
   ResourceLink,
   Timestamp,
+  useAccessReview2,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel, NodeModel } from '@console/internal/models';
@@ -34,7 +35,7 @@ import { LazyActionMenu } from '@console/shared';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
-import { printableToVMStatus, VMStatus } from '../../constants/vm/vm-status';
+import { getVmStatusFromPrintable, VMStatus } from '../../constants/vm/vm-status';
 import { useNamespace } from '../../hooks/use-namespace';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
@@ -131,7 +132,7 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = (
   const dimensify = dimensifyRow(tableColumnClasses);
   const arePendingChanges = hasPendingChanges(vm, vmi);
   const printableStatus = obj?.metadata?.status;
-  const status: VMStatus = printableToVMStatus?.[printableStatus];
+  const status: VMStatus = getVmStatusFromPrintable(printableStatus);
 
   const model = (vm && VirtualMachineModel) || (vmi && VirtualMachineInstanceModel);
   const context = getVMActionContext(vm || vmi);
@@ -180,8 +181,14 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = (
 
 const VMListEmpty: React.FC = () => {
   const { t } = useTranslation();
-  const location = useLocation();
   const namespace = useNamespace();
+
+  const [canCreate] = useAccessReview2({
+    group: VirtualMachineModel?.apiGroup,
+    resource: VirtualMachineModel?.plural,
+    verb: 'create',
+    namespace,
+  });
 
   const searchText = 'virtual machine';
   const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
@@ -205,10 +212,7 @@ const VMListEmpty: React.FC = () => {
       <EmptyStateBody>
         <Trans ns="kubevirt-plugin">
           See the{' '}
-          <Link
-            data-test="vm-empty-templates"
-            to={`${location.pathname}${location.pathname.endsWith('/') ? '' : '/'}templates`}
-          >
+          <Link data-test="vm-empty-templates" to={`/k8s/ns/${namespace}/virtualmachinetemplates`}>
             templates tab
           </Link>{' '}
           to quickly create a virtual machine from the available templates.
@@ -217,6 +221,7 @@ const VMListEmpty: React.FC = () => {
       <Button
         data-test="create-vm-empty"
         variant="primary"
+        isDisabled={!canCreate}
         onClick={() =>
           history.push(
             getVMWizardCreateLink({

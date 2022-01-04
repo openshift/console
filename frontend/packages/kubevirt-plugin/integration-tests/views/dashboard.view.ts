@@ -10,7 +10,7 @@ export const vmDetailsIPAddress = vmDetails.get(5);
 export const vmDetailsOS = vmDetails.get(6);
 export const vmDetailsTZ = vmDetails.get(7);
 export const vmDetailsActiveUsers = vmDetails.get(8); // Exception messages only (GA not available, VM off, etc)
-export const vmDetailsViewAll = $$('.co-dashboard-card__link').get(0);
+export const vmDetailsViewAll = $$('.pf-m-link').get(0);
 
 export const vmDetailsNumActiveUsersMsg = $('#num-active-users-message'); // GA available and at least 1 active user
 
@@ -22,7 +22,7 @@ export const vmInventoryNICs = vmInventoryItems.get(0);
 export const vmInventoryDisks = vmInventoryItems.get(1);
 
 export const vmEvents = $('.co-activity-card__recent-accordion');
-export const vmEventsViewAll = $$('.co-dashboard-card__link').get(1);
+export const vmEventsViewAll = $$('.pf-m-link').get(1);
 
 export const vmUtilizationItems = $$('[data-test-id=utilization-item]');
 export const vmUtilizationItemUsage = (index: number) =>

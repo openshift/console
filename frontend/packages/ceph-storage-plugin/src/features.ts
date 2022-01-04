@@ -19,6 +19,7 @@ import {
   OCS_OPERATOR,
   NOOBAA_PROVISIONER,
   ODF_MANAGED_LABEL,
+  OCS_DISABLED_ANNOTATION,
 } from './constants';
 import { StorageClusterKind } from './types';
 
@@ -40,7 +41,7 @@ export const OCS_FLAG = 'OCS';
 
 export const MCG_STANDALONE = 'MCG_STANDALONE';
 
-export enum GUARDED_FEATURES {
+export enum FEATURES {
   // Flag names to be prefixed with "OCS_" so as to seperate from console flags
   OCS_MULTUS = 'OCS_MULTUS',
   OCS_ARBITER = 'OCS_ARBITER',
@@ -51,19 +52,30 @@ export enum GUARDED_FEATURES {
   OCS_POOL_MANAGEMENT = 'OCS_POOL_MANAGEMENT',
   OCS_NAMESPACE_STORE = 'OCS_NAMESPACE_STORE',
   ODF_MCG_STANDALONE = 'ODF_MCG_STANDALONE',
+  ODF_HPCS_KMS = 'ODF_HPCS_KMS',
+  ODF_VAULT_SA_KMS = 'ODF_VAULT_SA_KMS',
+  SS_LIST = 'ODF_SS_LIST',
+  ADD_CAPACITY = 'ODF_ADD_CAPACITY',
 }
 
 const OCS_FEATURE_FLAGS = {
   // [flag name]: <value of flag in csv annotation>
-  [GUARDED_FEATURES.OCS_MULTUS]: 'multus',
-  [GUARDED_FEATURES.OCS_ARBITER]: 'arbiter',
-  [GUARDED_FEATURES.OCS_KMS]: 'kms',
-  [GUARDED_FEATURES.OCS_FLEXIBLE_SCALING]: 'flexible-scaling',
-  [GUARDED_FEATURES.OCS_TAINT_NODES]: 'taint-nodes',
-  [GUARDED_FEATURES.OCS_THICK_PROVISION]: 'thick-provision',
-  [GUARDED_FEATURES.OCS_POOL_MANAGEMENT]: 'pool-management',
-  [GUARDED_FEATURES.OCS_NAMESPACE_STORE]: 'namespace-store',
-  [GUARDED_FEATURES.ODF_MCG_STANDALONE]: 'mcg-standalone',
+  [FEATURES.OCS_MULTUS]: 'multus',
+  [FEATURES.OCS_ARBITER]: 'arbiter',
+  [FEATURES.OCS_KMS]: 'kms',
+  [FEATURES.OCS_FLEXIBLE_SCALING]: 'flexible-scaling',
+  [FEATURES.OCS_TAINT_NODES]: 'taint-nodes',
+  [FEATURES.OCS_THICK_PROVISION]: 'thick-provision',
+  [FEATURES.OCS_POOL_MANAGEMENT]: 'pool-management',
+  [FEATURES.OCS_NAMESPACE_STORE]: 'namespace-store',
+  [FEATURES.ODF_MCG_STANDALONE]: 'mcg-standalone',
+  [FEATURES.ODF_HPCS_KMS]: 'hpcs-kms',
+  [FEATURES.ODF_VAULT_SA_KMS]: 'vault-sa-kms',
+};
+
+export const ODF_BLOCK_FLAG = {
+  [FEATURES.SS_LIST]: 'ss-list',
+  [FEATURES.ADD_CAPACITY]: 'add-capacity',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
@@ -197,6 +209,11 @@ const detectFeatures = (dispatch, csv: ClusterServiceVersionKind) => {
   const support = JSON.parse(getAnnotations(csv)?.[OCS_SUPPORT_ANNOTATION]);
   _.keys(OCS_FEATURE_FLAGS).forEach((feature) => {
     dispatch(setFlag(feature, support.includes(OCS_FEATURE_FLAGS[feature])));
+  });
+  // Todo(bipuladh): Remove array string after CI starts using ODF 4.10
+  const disabled = JSON.parse(getAnnotations(csv)?.[OCS_DISABLED_ANNOTATION] || '[]');
+  _.keys(ODF_BLOCK_FLAG).forEach((feature) => {
+    dispatch(setFlag(feature, disabled.includes(ODF_BLOCK_FLAG[feature])));
   });
 };
 

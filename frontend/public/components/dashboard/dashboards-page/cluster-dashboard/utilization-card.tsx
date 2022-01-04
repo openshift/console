@@ -1,27 +1,35 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardActions,
+  Select,
+  SelectOption,
+  SelectVariant,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
+import {
+  ClusterOverviewUtilizationItem,
+  isClusterOverviewUtilizationItem,
+  ClusterOverviewMultilineUtilizationItem,
+  isClusterOverviewMultilineUtilizationItem,
+  useResolvedExtensions,
+  Humanize,
+  TopConsumerPopoverProps,
+} from '@console/dynamic-plugin-sdk';
 import UtilizationItem, {
-  TopConsumerPopoverProp,
   MultilineUtilizationItem,
   QueryWithDescription,
   LimitRequested,
   trimSecondsXMutator,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import {
-  Flex,
-  FlexItem,
-  PopoverPosition,
-  Select,
-  SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core';
+
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import {
   humanizeBinaryBytes,
@@ -32,18 +40,27 @@ import {
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import {
   getMultilineQueries,
-  getTop25ConsumerQueries,
   getUtilizationQueries,
   OverviewQuery,
 } from '@console/shared/src/promql/cluster-dashboard';
-import { MachineConfigPoolModel, NodeModel, PodModel, ProjectModel } from '../../../../models';
+import { MachineConfigPoolModel } from '../../../../models';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
-import { Humanize } from '../../../utils/types';
 import { DataPoint, PrometheusResponse } from '../../../graphs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { MachineConfigPoolKind, referenceForModel } from '@console/internal/module/k8s';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { useUtilizationDuration } from '@console/shared/src/hooks/useUtilizationDuration';
+import {
+  ClusterUtilizationContext,
+  CPUPopover,
+  MemoryPopover,
+  StoragePopover,
+  NetworkInPopover,
+  NetworkOutPopover,
+  PodPopover,
+} from './utilization-popovers';
+
+const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
 export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtilizationItemProps>(
   ({
@@ -227,6 +244,7 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
       selections={selectedNodes}
       isOpen={isOpen}
       placeholderText={t('public~Filter by Node type')}
+      isPlain
     >
       {sortedMCPs.map((mcp) => (
         <SelectOption key={mcp.metadata.name} value={mcp.metadata.name} />
@@ -245,6 +263,14 @@ export const UtilizationCard = () => {
   });
   // TODO: add `useUserSettings` to get default selected
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+
+  const [dynamicItemExtensions] = useResolvedExtensions<ClusterOverviewUtilizationItem>(
+    isClusterOverviewUtilizationItem,
+  );
+  const [dynamicMultilineItemExtensions] = useResolvedExtensions<
+    ClusterOverviewMultilineUtilizationItem
+  >(isClusterOverviewMultilineUtilizationItem);
+
   // TODO: add `useUserSettingsCompatibility` to store selectedNodes
   const onNodeSelect = (event: React.MouseEvent, selection: string) => {
     if (selectedNodes.includes(selection)) {
@@ -255,235 +281,95 @@ export const UtilizationCard = () => {
   };
   // if no filter is applied, show all nodes using regex
   const nodeType = _.isEmpty(selectedNodes) ? '.+' : selectedNodes.join('|');
-  const consumerQueries = React.useMemo(() => getTop25ConsumerQueries(nodeType), [nodeType]);
-  const utilizationQueries = React.useMemo(() => getUtilizationQueries(nodeType), [nodeType]);
-  const multilineQueries = React.useMemo(() => getMultilineQueries(nodeType), [nodeType]);
-
-  const cpuPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title={t('public~CPU')}
-        current={current}
-        consumers={[
-          {
-            query: consumerQueries[OverviewQuery.PROJECTS_BY_CPU],
-            model: ProjectModel,
-            metric: 'namespace',
-          },
-          {
-            query: consumerQueries[OverviewQuery.PODS_BY_CPU],
-            model: PodModel,
-            metric: 'pod',
-          },
-          {
-            query: consumerQueries[OverviewQuery.NODES_BY_CPU],
-            model: NodeModel,
-            metric: 'instance',
-          },
-        ]}
-        humanize={humanizeCpuCores}
-        position={PopoverPosition.top}
-      />
-    )),
-    [],
+  const [utilizationQueries, multilineQueries] = React.useMemo(
+    () => [getUtilizationQueries(nodeType), getMultilineQueries(nodeType)],
+    [nodeType],
   );
-
-  const memPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title={t('public~Memory')}
-        current={current}
-        consumers={[
-          {
-            query: consumerQueries[OverviewQuery.PROJECTS_BY_MEMORY],
-            model: ProjectModel,
-            metric: 'namespace',
-          },
-          {
-            query: consumerQueries[OverviewQuery.PODS_BY_MEMORY],
-            model: PodModel,
-            metric: 'pod',
-          },
-          {
-            query: consumerQueries[OverviewQuery.NODES_BY_MEMORY],
-            model: NodeModel,
-            metric: 'instance',
-          },
-        ]}
-        humanize={humanizeBinaryBytes}
-        position={PopoverPosition.top}
-      />
-    )),
-    [],
-  );
-
-  const storagePopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title={t('public~Filesystem')}
-        current={current}
-        consumers={[
-          {
-            query: consumerQueries[OverviewQuery.PROJECTS_BY_STORAGE],
-            model: ProjectModel,
-            metric: 'namespace',
-          },
-          {
-            query: consumerQueries[OverviewQuery.PODS_BY_STORAGE],
-            model: PodModel,
-            metric: 'pod',
-          },
-          {
-            query: consumerQueries[OverviewQuery.NODES_BY_STORAGE],
-            model: NodeModel,
-            metric: 'instance',
-          },
-        ]}
-        humanize={humanizeBinaryBytes}
-        position={PopoverPosition.top}
-      />
-    )),
-    [],
-  );
-
-  const podPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title={t('public~Pod count')}
-        current={current}
-        consumers={[
-          {
-            query: consumerQueries[OverviewQuery.PROJECTS_BY_PODS],
-            model: ProjectModel,
-            metric: 'namespace',
-          },
-          {
-            query: consumerQueries[OverviewQuery.NODES_BY_PODS],
-            model: NodeModel,
-            metric: 'node',
-          },
-        ]}
-        humanize={humanizeNumber}
-        position={PopoverPosition.top}
-      />
-    )),
-    [],
-  );
-
-  const networkInPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title={t('public~Network in')}
-        current={current}
-        consumers={[
-          {
-            query: consumerQueries[OverviewQuery.PROJECTS_BY_NETWORK_IN],
-            model: ProjectModel,
-            metric: 'namespace',
-          },
-          {
-            query: consumerQueries[OverviewQuery.PODS_BY_NETWORK_IN],
-            model: PodModel,
-            metric: 'pod',
-          },
-          {
-            query: consumerQueries[OverviewQuery.NODES_BY_NETWORK_IN],
-            model: NodeModel,
-            metric: 'instance',
-          },
-        ]}
-        humanize={humanizeDecimalBytesPerSec}
-        position={PopoverPosition.top}
-      />
-    )),
-    [],
-  );
-
-  const networkOutPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title={t('public~Network out')}
-        current={current}
-        consumers={[
-          {
-            query: consumerQueries[OverviewQuery.PROJECTS_BY_NETWORK_OUT],
-            model: ProjectModel,
-            metric: 'namespace',
-          },
-          {
-            query: consumerQueries[OverviewQuery.PODS_BY_NETWORK_OUT],
-            model: PodModel,
-            metric: 'pod',
-          },
-          {
-            query: consumerQueries[OverviewQuery.NODES_BY_NETWORK_OUT],
-            model: NodeModel,
-            metric: 'instance',
-          },
-        ]}
-        humanize={humanizeDecimalBytesPerSec}
-        position={PopoverPosition.top}
-      />
-    )),
-    [],
-  );
-
   return (
     machineConfigPoolsLoaded && (
-      <DashboardCard data-test-id="utilization-card">
-        <DashboardCardHeader>
-          <DashboardCardTitle>{t('public~Cluster utilization')}</DashboardCardTitle>
-          <Flex>
-            <FlexItem>
-              <UtilizationCardNodeFilter
-                machineConfigPools={machineConfigPools}
-                onNodeSelect={onNodeSelect}
-                selectedNodes={selectedNodes}
-              />
-            </FlexItem>
-            <UtilizationDurationDropdown />
-          </Flex>
-        </DashboardCardHeader>
+      <Card data-test-id="utilization-card">
+        <CardHeader>
+          <CardTitle data-test="utilization-card__title">
+            {t('public~Cluster utilization')}
+          </CardTitle>
+          <CardActions>
+            <Split>
+              <SplitItem>
+                <UtilizationCardNodeFilter
+                  machineConfigPools={machineConfigPools}
+                  onNodeSelect={onNodeSelect}
+                  selectedNodes={selectedNodes}
+                />
+              </SplitItem>
+              <SplitItem>
+                <UtilizationDurationDropdown />
+              </SplitItem>
+            </Split>
+          </CardActions>
+        </CardHeader>
         <UtilizationBody>
-          <PrometheusUtilizationItem
-            title={t('public~CPU')}
-            utilizationQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].utilization}
-            totalQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].total}
-            requestQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].requests}
-            TopConsumerPopover={cpuPopover}
-            humanizeValue={humanizeCpuCores}
-          />
-          <PrometheusUtilizationItem
-            title={t('public~Memory')}
-            utilizationQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].utilization}
-            totalQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].total}
-            requestQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].requests}
-            TopConsumerPopover={memPopover}
-            humanizeValue={humanizeBinaryBytes}
-            byteDataType={ByteDataTypes.BinaryBytes}
-          />
-          <PrometheusUtilizationItem
-            title={t('public~Filesystem')}
-            utilizationQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].utilization}
-            totalQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].total}
-            TopConsumerPopover={storagePopover}
-            humanizeValue={humanizeBinaryBytes}
-            byteDataType={ByteDataTypes.BinaryBytes}
-          />
-          <PrometheusMultilineUtilizationItem
-            title={t('public~Network transfer')}
-            queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]}
-            humanizeValue={humanizeDecimalBytesPerSec}
-            TopConsumerPopovers={[networkInPopover, networkOutPopover]}
-          />
-          <PrometheusUtilizationItem
-            title={t('public~Pod count')}
-            utilizationQuery={utilizationQueries[OverviewQuery.POD_UTILIZATION].utilization}
-            TopConsumerPopover={podPopover}
-            humanizeValue={humanizeNumber}
-          />
+          <ClusterUtilizationContext.Provider value={nodeType}>
+            <PrometheusUtilizationItem
+              title={t('public~CPU')}
+              utilizationQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].utilization}
+              totalQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].total}
+              requestQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].requests}
+              TopConsumerPopover={CPUPopover}
+              humanizeValue={humanizeCpuCores}
+            />
+            <PrometheusUtilizationItem
+              title={t('public~Memory')}
+              utilizationQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].utilization}
+              totalQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].total}
+              requestQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].requests}
+              TopConsumerPopover={MemoryPopover}
+              humanizeValue={humanizeBinaryBytes}
+              byteDataType={ByteDataTypes.BinaryBytes}
+            />
+            <PrometheusUtilizationItem
+              title={t('public~Filesystem')}
+              utilizationQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].utilization}
+              totalQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].total}
+              TopConsumerPopover={StoragePopover}
+              humanizeValue={humanizeBinaryBytes}
+              byteDataType={ByteDataTypes.BinaryBytes}
+            />
+            <PrometheusMultilineUtilizationItem
+              title={t('public~Network transfer')}
+              queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]}
+              humanizeValue={humanizeDecimalBytesPerSec}
+              TopConsumerPopovers={networkPopovers}
+            />
+            <PrometheusUtilizationItem
+              title={t('public~Pod count')}
+              utilizationQuery={utilizationQueries[OverviewQuery.POD_UTILIZATION].utilization}
+              TopConsumerPopover={PodPopover}
+              humanizeValue={humanizeNumber}
+            />
+            {dynamicItemExtensions.map(({ uid, properties }) => (
+              <PrometheusUtilizationItem
+                key={uid}
+                title={properties.title}
+                utilizationQuery={properties.getUtilizationQuery(selectedNodes)}
+                totalQuery={properties.getTotalQuery?.(selectedNodes)}
+                humanizeValue={properties.humanize}
+                TopConsumerPopover={properties.TopConsumerPopover}
+                requestQuery={properties.getRequestQuery?.(selectedNodes)}
+                limitQuery={properties.getLimitQuery?.(selectedNodes)}
+              />
+            ))}
+            {dynamicMultilineItemExtensions.map(({ uid, properties }) => (
+              <PrometheusMultilineUtilizationItem
+                key={uid}
+                title={properties.title}
+                queries={properties.getUtilizationQueries(selectedNodes)}
+                humanizeValue={properties.humanize}
+                TopConsumerPopovers={properties.TopConsumerPopovers}
+              />
+            ))}
+          </ClusterUtilizationContext.Provider>
         </UtilizationBody>
-      </DashboardCard>
+      </Card>
     )
   );
 };
@@ -502,14 +388,14 @@ type PrometheusUtilizationItemProps = DashboardItemProps &
     totalQuery?: string;
     limitQuery?: string;
     requestQuery?: string;
-    TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+    TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
     setLimitReqState?: (state: LimitRequested) => void;
   };
 
 type PrometheusMultilineUtilizationItemProps = DashboardItemProps &
   PrometheusCommonProps & {
     queries: QueryWithDescription[];
-    TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProp>[];
+    TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProps>[];
   };
 
 type UtilizationCardNodeFilterProps = {

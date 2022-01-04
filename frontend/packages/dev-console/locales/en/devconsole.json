@@ -440,6 +440,7 @@
   "Edit source code": "Edit source code",
   "Hide advanced Routing options": "Hide advanced Routing options",
   "Show advanced Routing options": "Show advanced Routing options",
+  "Additional labels which are only added to the Route resource.": "Additional labels which are only added to the Route resource.",
   "Select the checkbox \"Create a route to the application\" to edit advanced routing options": "Select the checkbox \"Create a route to the application\" to edit advanced routing options",
   "Hostname": "Hostname",
   "Public hostname for the route. If not specified, a hostname is generated.": "Public hostname for the route. If not specified, a hostname is generated.",
@@ -571,6 +572,8 @@
   "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.": "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.",
   "Select a Project to search inside or <2>create a Project</2>.": "Select a Project to search inside or <2>create a Project</2>.",
   "BindableKinds": "BindableKinds",
+  "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.": "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.",
+  "Secure route": "Secure route",
   "Image name from external registry": "Image name from external registry",
   "Image stream tag from internal registry": "Image stream tag from internal registry"
 }

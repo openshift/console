@@ -1,4 +1,7 @@
 {
+  "{{count}} Worker Node": "{{count}} Worker Node",
+  "{{count}} Worker Node_plural": "{{count}} Worker Nodes",
+  "Worker Nodes": "Worker Nodes",
   "Example info alert": "Example info alert",
   "Example warning alert": "Example warning alert",
   "Example hint": "Example hint",
@@ -26,6 +29,8 @@
   "Dynamic Nav 2": "Dynamic Nav 2",
   "Test Consumer": "Test Consumer",
   "Test Utilities": "Test Utilities",
+  "Foo item": "Foo item",
+  "Bar item": "Bar item",
   "Dynamic Page 1": "Dynamic Page 1",
   "Dynamic Page 2": "Dynamic Page 2"
 }

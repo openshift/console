@@ -13,6 +13,7 @@ import { removeQueryArgument, setQueryArgument } from '@console/internal/compone
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
+  LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
   LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
 } from '../../const';
@@ -99,6 +100,15 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   const queryParams = useQueryParams();
   const viewType =
     (queryParams.get('view') as TopologyViewType) || topologyViewState || defaultViewType;
+
+  React.useEffect(() => {
+    const lastOverviewOpen = JSON.parse(
+      sessionStorage.getItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY) ?? '{}',
+    );
+    if (loaded && namespace in lastOverviewOpen) {
+      setQueryArgument('selectId', lastOverviewOpen[namespace]);
+    }
+  }, [loaded, namespace]);
 
   React.useEffect(() => {
     if (!queryParams.get('view') && loaded) {

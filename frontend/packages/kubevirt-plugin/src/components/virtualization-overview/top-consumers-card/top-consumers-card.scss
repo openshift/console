@@ -1,0 +1,95 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
+.kv-top-consumers-card {
+  padding-top: 1rem;
+}
+
+.kv-top-consumers-card__header {
+  border-bottom: 1px solid $pf-color-black-300;
+}
+
+.kv-top-consumers-card__dropdown {
+  display: inline-block;
+  margin-left: var(--pf-global--spacer--lg);
+}
+
+div.kv-top-consumers-card__body {
+  padding-right: 0;
+  padding-left: 0;
+  padding-bottom: 0;
+}
+
+.kv-top-consumers-card__top-grid {
+  border-bottom: 1px solid $pf-color-black-300;
+}
+
+.kv-top-consumers-card__progress-chart--title {
+  font-size: var(--pf-global--FontSize--xs);
+  margin-bottom: -5px;
+}
+
+.kv-top-consumers-card__card-grid-item {
+  &:not(:last-child) {
+    border-right: 1px solid $pf-color-black-300;
+  }
+}
+
+.kv-top-consumers-card__metric-card {
+  padding-right: 0;
+  padding-left: 0;
+  padding-bottom: 0;
+  box-shadow: none;
+}
+
+.kv-top-consumer-card__header {
+  align-items: center;
+  display: flex;
+  justify-content: right;
+  padding-left: var(--pf-c-card--child--PaddingLeft);
+  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-top: var(--pf-c-card--first-child--PaddingTop);
+}
+
+.kv-top-consumers-card__chart-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  color: var(--pf-global--Color--200);
+  font-size: var(--pf-global--FontSize--sm);
+  border-bottom: 1px solid $pf-color-black-300;
+  padding-left: var(--pf-c-card--child--PaddingLeft);
+  padding-right: var(--pf-c-card--child--PaddingRight);
+  padding-top: var(--pf-global--spacer--md);
+  padding-bottom: var(--pf-global--spacer--sm);
+}
+
+.kv-top-consumers-card__chart-list-container {
+  padding-top: var(--pf-global--spacer--md);
+  min-height: 235px;
+}
+
+.kv-top-consumers-card__chart-list-body {
+  align-content: center;
+  height: 100%;
+}
+
+.kv-top-consumers-card__chart-list-no-data-msg {
+  padding: var(--pf-global--spacer--md);
+}
+
+.kv-top-consumers-card__chart-list-no-data-msg--link {
+  margin-top: var(--pf-global--spacer--sm);
+}
+
+.kv-top-consumers-card__chart-list-no-data-msg--icon {
+  padding-left: var(--pf-global--spacer--sm);
+}
+
+.kv-top-consumers-card__metric-title {
+  font-weight: bold;
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.kv-top-consumers-card__scope-select {
+  margin-left: var(--pf-global--spacer--md);
+}

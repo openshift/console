@@ -37,15 +37,15 @@ export const useVmActionsProvider = (vm: VMKind) => {
 
     const pause =
       !vmi || !isVMIPaused(vmi)
-        ? VmActionFactory.Pause(k8sModel, vm, { vmi })
-        : VmActionFactory.Unpause(k8sModel, vm, { vmi });
+        ? VmActionFactory.Pause(k8sModel, vm, { vmi, vmStatusBundle })
+        : VmActionFactory.Unpause(k8sModel, vm, { vmi, vmStatusBundle });
 
     return vmStatusBundle
       ? [
           start,
           VmActionFactory.Restart(k8sModel, vm, { vmi }),
           pause,
-          VmActionFactory.Clone(k8sModel, vm, { vmi }),
+          VmActionFactory.Clone(k8sModel, vm, { vmi, vmStatusBundle }),
           migrate,
           VmActionFactory.OpenConsole(k8sModel, vm, { vmi }),
           // disabled until https://issues.redhat.com/browse/CNV-9746 is implemented

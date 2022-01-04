@@ -323,7 +323,11 @@ export const getEventSourceModelsWithAccess = (
       verb: 'create',
     })
       .then((result) => (result.status.allowed ? model : null))
-      .catch(() => null);
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('Could not check access for event source models', e);
+        return null;
+      });
   });
 };
 

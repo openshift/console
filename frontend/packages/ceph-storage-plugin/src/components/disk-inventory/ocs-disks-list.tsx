@@ -25,7 +25,7 @@ import { TemplateInstanceKind } from '@console/internal/module/k8s';
 import { PrometheusResult } from '@console/internal/components/graphs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { RootState } from '@console/internal/redux';
-import { NotificationAlerts } from '@console/internal/reducers/ui';
+import { NotificationAlerts } from '@console/internal/reducers/observe';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { DiskMetadata } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
 import {
@@ -138,7 +138,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
   const { data: alertsData, loaded: alertsLoaded, loadError: alertsLoadError } = useSelector<
     RootState,
     NotificationAlerts
-  >(({ UI }) => UI.getIn(['monitoring', 'notificationAlerts']));
+  >(({ observe }) => observe.get('notificationAlerts'));
 
   const error = alertsLoadError || cephDiskLoadError || progressLoadError;
   const isLoading = !alertsLoaded || cephDiskLoading || progressLoading;

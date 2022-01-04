@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Accordion } from '@patternfly/react-core';
+import { Accordion, Button } from '@patternfly/react-core';
 import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,6 @@ import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/eve
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { EventKind } from '@console/internal/module/k8s';
-import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
 
 import './activity-card.scss';
@@ -125,7 +124,9 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
 export const PauseButton: React.FC<PauseButtonProps> = ({ paused, togglePause }) => {
   const { t } = useTranslation();
   return (
-    <DashboardCardButtonLink
+    <Button
+      variant="link"
+      isInline
       onClick={togglePause}
       className="co-activity-card__recent-actions"
       icon={paused ? <PlayIcon /> : <PauseIcon />}
@@ -133,7 +134,7 @@ export const PauseButton: React.FC<PauseButtonProps> = ({ paused, togglePause })
       data-test="events-pause-button"
     >
       {paused ? t('console-shared~Resume') : t('console-shared~Pause')}
-    </DashboardCardButtonLink>
+    </Button>
   );
 };
 
@@ -212,10 +213,7 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
 };
 
 const ActivityBody: React.FC<ActivityBodyProps> = ({ children, className }) => (
-  <div
-    className={classNames('co-dashboard-card__body--no-padding co-activity-card__body', className)}
-    id="activity-body"
-  >
+  <div className={classNames('co-activity-card__body', className)} id="activity-body">
     {children}
   </div>
 );

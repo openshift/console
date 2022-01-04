@@ -66,7 +66,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
 
   return (
     <Tooltip
-      content={t('topology~Create a binding connector')}
+      content={t('topology~Create Service Binding')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}

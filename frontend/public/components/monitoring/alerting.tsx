@@ -28,11 +28,11 @@ import {
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
-  monitoringErrored,
-  monitoringLoaded,
-  monitoringLoading,
-  monitoringSetRules,
-} from '../../actions/ui';
+  alertingErrored,
+  alertingLoaded,
+  alertingLoading,
+  alertingSetRules,
+} from '../../actions/observe';
 import { coFetchJSON } from '../../co-fetch';
 import {
   ContainerModel,
@@ -89,7 +89,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { getURLSearchParams, LinkifyExternal } from '../utils/link';
+import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
@@ -428,14 +428,6 @@ const SourceHelp: React.FC<{}> = React.memo(() => {
   );
 });
 
-const Annotation = ({ children, title }) =>
-  _.isNil(children) ? null : (
-    <>
-      <dt>{title}</dt>
-      <dd>{children}</dd>
-    </>
-  );
-
 const Label = ({ k, v }) => (
   <div className="co-m-label co-m-label--expand" key={k}>
     <span className="co-m-label__key">{k}</span>
@@ -597,9 +589,11 @@ const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template
   });
 
   return (
-    <p>
-      <LinkifyExternal>{messageParts}</LinkifyExternal>
-    </p>
+    <div className="co-alert-manager">
+      <p>
+        <LinkifyExternal>{messageParts}</LinkifyExternal>
+      </p>
+    </div>
   );
 };
 
@@ -666,11 +660,11 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const isDevPerspective = _.has(match.params, 'ns');
   const namespace = match.params?.ns;
 
-  const alerts: Alerts = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', isDevPerspective ? 'devAlerts' : 'alerts']),
+  const alerts: Alerts = useSelector(({ observe }: RootState) =>
+    observe.get(isDevPerspective ? 'devAlerts' : 'alerts'),
   );
 
-  const silencesLoaded = ({ UI }) => UI.getIn(['monitoring', 'silences'])?.loaded;
+  const silencesLoaded = ({ observe }) => observe.get('silences')?.loaded;
 
   const ruleAlerts = _.filter(alerts?.data, (a) => a.rule.id === match?.params?.ruleID);
   const rule = ruleAlerts?.[0]?.rule;
@@ -684,6 +678,9 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const labelsMemoKey = JSON.stringify(alert?.labels);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
+
+  // eslint-disable-next-line camelcase
+  const runbookURL = alert?.annotations?.runbook_url;
 
   return (
     <>
@@ -746,23 +743,42 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                     <Severity severity={labels?.severity} />
                   </dd>
                   {alert?.annotations?.description && (
-                    <Annotation title={t('public~Description')}>
-                      <AlertMessage
-                        alertText={alert.annotations.description}
-                        labels={labels}
-                        template={rule?.annotations.description}
-                      />
-                    </Annotation>
+                    <>
+                      <dt>{t('public~Description')}</dt>
+                      <dd>
+                        <AlertMessage
+                          alertText={alert.annotations.description}
+                          labels={labels}
+                          template={rule?.annotations?.description}
+                        />
+                      </dd>
+                    </>
                   )}
-                  <Annotation title={t('public~Summary')}>{alert?.annotations?.summary}</Annotation>
+                  {alert?.annotations?.summary && (
+                    <>
+                      <dt>{t('public~Summary')}</dt>
+                      <dd>{alert.annotations.summary}</dd>
+                    </>
+                  )}
                   {alert?.annotations?.message && (
-                    <Annotation title={t('public~Message')}>
-                      <AlertMessage
-                        alertText={alert.annotations.message}
-                        labels={labels}
-                        template={rule?.annotations.message}
-                      />
-                    </Annotation>
+                    <>
+                      <dt>{t('public~Message')}</dt>
+                      <dd>
+                        <AlertMessage
+                          alertText={alert.annotations.message}
+                          labels={labels}
+                          template={rule?.annotations?.message}
+                        />
+                      </dd>
+                    </>
+                  )}
+                  {runbookURL && (
+                    <>
+                      <dt>{t('public~Runbook')}</dt>
+                      <dd>
+                        <ExternalLink href={runbookURL} text={runbookURL} />
+                      </dd>
+                    </>
                   )}
                 </dl>
               </div>
@@ -918,14 +934,13 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const isDevPerspective = _.has(match.params, 'ns');
   const namespace = match.params?.ns;
 
-  const rules: Rule[] = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', isDevPerspective ? 'devRules' : 'rules']),
+  const rules: Rule[] = useSelector(({ observe }: RootState) =>
+    observe.get(isDevPerspective ? 'devRules' : 'rules'),
   );
   const rule = _.find(rules, { id: _.get(match, 'params.id') });
 
   const { loaded, loadError }: Alerts = useSelector(
-    ({ UI }: RootState) =>
-      UI.getIn(['monitoring', isDevPerspective ? 'devAlerts' : 'alerts']) || {},
+    ({ observe }: RootState) => observe.get(isDevPerspective ? 'devAlerts' : 'alerts') || {},
   );
 
   const formatSeriesTitle = (alertLabels) => {
@@ -933,6 +948,9 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
     const otherLabels = _.omit(alertLabels, '__name__');
     return `${nameLabel}{${_.map(otherLabels, (v, k) => `${k}="${v}"`).join(',')}}`;
   };
+
+  // eslint-disable-next-line camelcase
+  const runbookURL = rule?.annotations?.runbook_url;
 
   return (
     <>
@@ -976,13 +994,36 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                   <dd>
                     <Severity severity={rule?.labels?.severity} />
                   </dd>
-                  <Annotation title={t('public~Description')}>
-                    <PrometheusTemplate text={rule?.annotations?.description} />
-                  </Annotation>
-                  <Annotation title={t('public~Summary')}>{rule?.annotations?.summary}</Annotation>
-                  <Annotation title={t('public~Message')}>
-                    <PrometheusTemplate text={rule?.annotations?.message} />
-                  </Annotation>
+                  {rule?.annotations?.description && (
+                    <>
+                      <dt>{t('public~Description')}</dt>
+                      <dd>
+                        <PrometheusTemplate text={rule.annotations.description} />
+                      </dd>
+                    </>
+                  )}
+                  {rule?.annotations?.summary && (
+                    <>
+                      <dt>{t('public~Summary')}</dt>
+                      <dd>{rule.annotations.summary}</dd>
+                    </>
+                  )}
+                  {rule?.annotations?.message && (
+                    <>
+                      <dt>{t('public~Message')}</dt>
+                      <dd>
+                        <PrometheusTemplate text={rule.annotations.message} />
+                      </dd>
+                    </>
+                  )}
+                  {runbookURL && (
+                    <>
+                      <dt>{t('public~Runbook')}</dt>
+                      <dd>
+                        <ExternalLink href={runbookURL} text={runbookURL} />
+                      </dd>
+                    </>
+                  )}
                 </dl>
               </div>
               <div className="col-sm-6">
@@ -1103,13 +1144,10 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   const [perspective] = useActivePerspective();
 
   const alertsLoaded = useSelector(
-    ({ UI }: RootState) =>
-      UI.getIn(['monitoring', perspective === 'dev' ? 'devAlerts' : 'alerts'])?.loaded,
+    ({ observe }: RootState) => observe.get(perspective === 'dev' ? 'devAlerts' : 'alerts')?.loaded,
   );
 
-  const silences: Silences = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoring', 'silences']),
-  );
+  const silences: Silences = useSelector(({ observe }: RootState) => observe.get('silences'));
   const silence = _.find(silences?.data, { id: _.get(match, 'params.id') });
 
   return (
@@ -1339,10 +1377,10 @@ const MonitoringListPage: React.FC<ListPageProps & {
 }) => {
   const { t } = useTranslation();
 
-  const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
+  const filters = useSelector(({ sdkK8s }: RootState) => sdkK8s.getIn([reduxID, 'filters']));
 
   const silencesLoadError = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'silences'])?.loadError,
+    ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
 
   return (
@@ -1409,7 +1447,7 @@ const AlertsPage_: React.FC<Alerts> = () => {
   const { t } = useTranslation();
 
   const { data, loaded, loadError }: Alerts = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'alerts']) || {},
+    ({ observe }: RootState) => observe.get('alerts') || {},
   );
 
   const Header = () => [
@@ -1518,9 +1556,9 @@ const RuleTableRow: React.FC<RowFunctionArgs<Rule>> = ({ obj }) => (
 const RulesPage_: React.FC<{}> = () => {
   const { t } = useTranslation();
 
-  const data = useSelector(({ UI }: RootState) => UI.getIn(['monitoring', 'rules']));
+  const data = useSelector(({ observe }: RootState) => observe.get('rules'));
   const { loaded, loadError }: Alerts = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'alerts']) || {},
+    ({ observe }: RootState) => observe.get('alerts') || {},
   );
 
   const Header = () => [
@@ -1601,7 +1639,7 @@ const SilencesPage_: React.FC<Silences> = () => {
   const { t } = useTranslation();
 
   const { data, loaded, loadError }: Silences = useSelector(
-    ({ UI }: RootState) => UI.getIn(['monitoring', 'silences']) || {},
+    ({ observe }: RootState) => observe.get('silences') || {},
   );
 
   const Header = () => getSilenceTableHeader(t);
@@ -1769,22 +1807,22 @@ const PollerPages = () => {
     if (prometheusBaseURL) {
       const alertsKey = 'alerts';
       const rulesKey = 'rules';
-      dispatch(monitoringLoading(alertsKey));
+      dispatch(alertingLoading(alertsKey));
       const url = getPrometheusURL({ endpoint: PrometheusEndpoint.RULES });
       const poller = (): void => {
         coFetchJSON(url)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
-            dispatch(monitoringLoaded(alertsKey, alerts));
-            dispatch(monitoringSetRules(rulesKey, rules));
+            dispatch(alertingLoaded(alertsKey, alerts));
+            dispatch(alertingSetRules(rulesKey, rules));
           })
-          .catch((e) => dispatch(monitoringErrored(alertsKey, e)))
+          .catch((e) => dispatch(alertingErrored(alertsKey, e)))
           .then(() => (pollerTimeouts[alertsKey] = setTimeout(poller, 15 * 1000)));
       };
       pollers[alertsKey] = poller;
       poller();
     } else {
-      dispatch(monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
+      dispatch(alertingErrored('alerts', new Error('prometheusBaseURL not set')));
     }
     return () => _.each(pollerTimeouts, clearTimeout);
   }, [dispatch]);

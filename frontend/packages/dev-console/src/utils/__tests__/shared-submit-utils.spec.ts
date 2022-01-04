@@ -56,6 +56,27 @@ describe('Shared submit utils', () => {
       expect(routeObj.spec.port.targetPort).toEqual('8081-tcp');
     });
 
+    it('should set correct route labels if custom labels are set', () => {
+      const mockData: GitImportFormData = _.cloneDeep(mockFormData);
+      mockData.route.labels = {
+        'custom-route-label': 'a-custom-route-label',
+      };
+      mockData.labels = {
+        'shared-label': 'a-shared-label-value',
+      };
+      const routeObj = createRoute(mockData);
+      expect(routeObj.metadata.labels).toEqual({
+        app: 'test-app',
+        'app.kubernetes.io/component': 'test-app',
+        'app.kubernetes.io/instance': 'test-app',
+        'app.kubernetes.io/name': 'test-app',
+        'app.kubernetes.io/part-of': 'mock-app',
+        'app.openshift.io/runtime-version': 'latest',
+        'shared-label': 'a-shared-label-value',
+        'custom-route-label': 'a-custom-route-label',
+      });
+    });
+
     it('should match the previous snapshot with git import data', () => {
       const mockData: GitImportFormData = _.cloneDeep(mockFormData);
       mockData.route.targetPort = '8080-tcp';

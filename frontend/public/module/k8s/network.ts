@@ -1,20 +1,12 @@
 import * as React from 'react';
 import { useK8sGet } from '../../components/utils/k8s-get-hook';
 import { K8sResourceKind } from './types';
-import { NetworkOperatorConfigModel } from '../../models';
+import { ConfigMapModel } from '../../models';
 
-const clusterNetworkModel = NetworkOperatorConfigModel;
-const networkName = 'cluster';
-
-/**
- * CNI type, or Unknown if the type can't be fetched (e.g. because the logged user does not
- * have permissions to fetch it)
- */
-enum ClusterNetworkType {
-  OpenShiftSDN = 'OpenShiftSDN',
-  OVNKubernetes = 'OVNKubernetes',
-  Unknown = 'Unknown',
-}
+const networkConfigMapName = 'openshift-network-features';
+const networkConfigMapNamespace = 'openshift-config-managed';
+const policyEgressConfigKey = 'policy_egress';
+const policyPeerIPBlockExceptionsConfigKey = 'policy_peer_ipblock_exceptions';
 
 export enum ClusterNetworkFeature {
   PolicyEgress = 'PolicyEgress',
@@ -25,29 +17,15 @@ export type ClusterNetworkFeatures = {
   [key in ClusterNetworkFeature]?: boolean;
 };
 
-/**
- * Main document depicting all the features that are supported by each supported CNI type.
- * Undefined features would require to take an ambiguous action (e.g. allow the customer
- * to set the policy Egress rule in a form, but show a warning explaining that this field is
- * not available for the Openshift SDN type)
- */
-const featuresDocument: {
-  [k in ClusterNetworkType]: ClusterNetworkFeatures;
-} = {
-  OpenShiftSDN: {
-    PolicyEgress: false,
-    PolicyPeerIPBlockExceptions: false,
-  },
-  OVNKubernetes: {
-    PolicyEgress: true,
-    PolicyPeerIPBlockExceptions: true,
-  },
-  Unknown: {},
+const getFeatureState = (data: { [key: string]: string }, key: string): boolean | undefined => {
+  // Note: config map data comes as string, not bool
+  return data.hasOwnProperty(key) ? data[key] === 'true' : undefined;
 };
 
 /**
  *  Fetches and returns the features supported by the Cluster Network Type
- *  (Openshift SDN or Kubernetes OVN)
+ *  (Openshift SDN, Kubernetes OVN ...) using a config map provided by the
+ *  cluster network operator.
  *
  *  @async
  *  @returns [ClusterNetworkFeatures, boolean, any] - The asynchronously-loaded cluster network
@@ -55,18 +33,27 @@ const featuresDocument: {
  *  returned)
  */
 export const useClusterNetworkFeatures = (): [ClusterNetworkFeatures, boolean] => {
-  const [features, setFeatures] = React.useState<ClusterNetworkFeatures>(
-    featuresDocument[ClusterNetworkType.Unknown],
-  );
+  const [features, setFeatures] = React.useState<ClusterNetworkFeatures>({});
   const [featuresLoaded, setFeaturesLoaded] = React.useState(false);
-  const [network, networkLoaded] = useK8sGet<K8sResourceKind>(clusterNetworkModel, networkName);
+  const [config, configLoaded] = useK8sGet<K8sResourceKind>(
+    ConfigMapModel,
+    networkConfigMapName,
+    networkConfigMapNamespace,
+  );
   React.useEffect(() => {
-    if (networkLoaded) {
-      const cniType = ClusterNetworkType[network?.spec?.networkType];
-      setFeatures(featuresDocument[cniType ?? ClusterNetworkType.Unknown]);
+    if (configLoaded) {
+      if (config?.data) {
+        setFeatures({
+          PolicyEgress: getFeatureState(config.data, policyEgressConfigKey),
+          PolicyPeerIPBlockExceptions: getFeatureState(
+            config.data,
+            policyPeerIPBlockExceptionsConfigKey,
+          ),
+        });
+      }
       setFeaturesLoaded(true);
     }
-  }, [network, networkLoaded]);
+  }, [config, configLoaded]);
 
   return [features, featuresLoaded];
 };

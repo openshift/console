@@ -1,8 +1,16 @@
 import * as React from 'react';
-import { GalleryItem, Gallery } from '@patternfly/react-core';
+import {
+  GalleryItem,
+  Gallery,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardActions,
+} from '@patternfly/react-core';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   isDashboardsOverviewHealthSubsystem as isDynamicDashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthSubsystem as DynamicDashboardsOverviewHealthSubsystem,
@@ -23,11 +31,6 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { NetworkAddonsConfigModel } from '../../models';
@@ -68,7 +71,7 @@ const NetworkingHealthItem = ({ nac }) => {
   const findAvailableCondition = (conditions) =>
     conditions?.find((cond) => cond?.type === AVAILABLE);
   const availableCondition = findAvailableCondition(nacConditions);
-  const status = availableCondition?.status === true;
+  const status = availableCondition?.status === 'True';
   const message = availableCondition?.message;
   const state = status ? HealthState.OK : HealthState.NOT_AVAILABLE;
 
@@ -116,24 +119,22 @@ export const VirtOverviewStatusCard = connect<VirtOverviewStatusCardProps>(mapSt
     });
 
     return (
-      <DashboardCard gradient data-test-id="kv-overview-status-card">
-        <DashboardCardHeader>
-          <DashboardCardTitle>{t('kubevirt-plugin~Status')}</DashboardCardTitle>
-          <DashboardCardLink to="/monitoring/alerts">
-            {t('kubevirt-plugin~View alerts')}
-          </DashboardCardLink>
-        </DashboardCardHeader>
-        <DashboardCardBody>
-          <HealthBody>
-            <Gallery className="co-overview-status__health" hasGutter>
-              {virtStatusItems.map((item) => {
-                return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
-              })}
-            </Gallery>
-          </HealthBody>
-          <DashboardAlerts />
-        </DashboardCardBody>
-      </DashboardCard>
+      <Card className="co-overview-card--gradient" data-test-id="kv-overview-status-card">
+        <CardHeader>
+          <CardTitle>{t('kubevirt-plugin~Status')}</CardTitle>
+          <CardActions className="co-overview-card__actions">
+            <Link to="/monitoring/alerts">{t('kubevirt-plugin~View alerts')}</Link>
+          </CardActions>
+        </CardHeader>
+        <HealthBody>
+          <Gallery className="co-overview-status__health" hasGutter>
+            {virtStatusItems.map((item) => {
+              return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
+            })}
+          </Gallery>
+        </HealthBody>
+        <DashboardAlerts />
+      </Card>
     );
   },
 );

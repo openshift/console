@@ -276,7 +276,7 @@ subscribeToExtensions<DynamicFeatureFlag>(
         })
         .catch((error) => {
           // eslint-disable-next-line no-console
-          console.error(error);
+          console.error('Resolve extension failed:', error);
         });
     });
   }),

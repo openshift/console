@@ -33,12 +33,10 @@ Feature: Add page on Developer Console
               And user will see "Operator Backed" option
               And user will see "Helm Chart" option
 
-     # Git, Docker file, Devfile forms are converged as per the 4.9 Epic: ODC-5009
-     #    @regression @to-do
-     #    Scenario: Git Repository option to create an Application, Component or Service: A-11-TC04
-     #         Then user will see "From Git" option
-     #          And user will see "From Devfile" option
-     #          And user will see "From Dockerfile" option
+
+        @regression
+        Scenario: Git Repository option to create an Application, Component or Service: A-11-TC04
+             Then user will see "Import from Git" option
 
 
         @regression

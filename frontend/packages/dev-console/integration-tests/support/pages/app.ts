@@ -174,6 +174,7 @@ export const projectNameSpace = {
   },
 
   selectOrCreateProject: (projectName: string) => {
+    app.waitForLoad();
     projectNameSpace.clickProjectDropdown();
     cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
     cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);

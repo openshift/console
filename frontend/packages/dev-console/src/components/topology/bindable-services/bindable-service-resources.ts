@@ -16,6 +16,7 @@ export const getBindableServiceResources = (namespace: string): WatchK8sResource
       kind: referenceForModel(ServiceBindingModel),
       isList: true,
       optional: true,
+      prop: 'serviceBindingRequests',
     },
     ...getBindableServicesList().reduce(
       (acc, { group, version, kind }) => ({
@@ -24,6 +25,7 @@ export const getBindableServiceResources = (namespace: string): WatchK8sResource
           kind: referenceForGroupVersionKind(group)(version)(kind),
           isList: true,
           optional: true,
+          prop: kind,
         },
         ...acc,
       }),

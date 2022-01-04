@@ -34,7 +34,7 @@ describe('smoke tests', () => {
     });
 
     it('vmi overview tab is loaded', () => {
-      cy.get('.co-dashboard-card__title').should('exist');
+      cy.get('.pf-c-card__title').should('exist');
     });
 
     it('vmi details tab is loaded', () => {

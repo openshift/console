@@ -10,11 +10,13 @@ import { KUBEVIRT_QUICK_START_USER_SETTINGS_KEY } from './getting-started-card/c
 import { GettingStartedContainerCard } from './getting-started-card/GettingStartedContainerCard';
 import { VirtOverviewInventoryCard } from './inventory-card/VirtOverviewInventoryCard';
 import { VirtOverviewPermissionsCard } from './permissions-card/VirtOverviewPermissionsCard';
+import { RunningVMsPerTemplateCard } from './running-vms-per-template-card/RunningVMsPerTemplateCard';
+import { VirtOverviewTopConsumersCard } from './top-consumers-card/VirtOverviewTopConsumersCard';
 import { VirtOverviewActivityCard } from './VirtOverviewActivityCard';
 import { VirtOverviewDetailsCard } from './VirtOverviewDetailsCard';
 import { VirtOverviewStatusCard } from './VirtOverviewStatusCard';
 
-const leftCards = [{ Card: VirtOverviewDetailsCard }];
+const leftCards = [{ Card: VirtOverviewDetailsCard }, { Card: RunningVMsPerTemplateCard }];
 const mainCards = [{ Card: VirtOverviewStatusCard }, { Card: VirtOverviewInventoryCard }];
 const rightCards = [{ Card: VirtOverviewActivityCard }, { Card: VirtOverviewPermissionsCard }];
 
@@ -34,6 +36,7 @@ export const WrappedVirtualizationOverviewPage: React.FC = () => {
       <Dashboard>
         <GettingStartedContainerCard />
         <DashboardGrid leftCards={leftCards} mainCards={mainCards} rightCards={rightCards} />
+        <VirtOverviewTopConsumersCard />
       </Dashboard>
     </>
   );

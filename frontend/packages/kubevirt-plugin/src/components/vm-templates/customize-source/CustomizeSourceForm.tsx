@@ -45,7 +45,7 @@ import useV2VConfigMap from '../../../hooks/use-v2v-config-map';
 import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
-import { VirtualMachineModel } from '../../../models/index';
+import { DataSourceModel, VirtualMachineModel } from '../../../models/index';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getAnnotation } from '../../../selectors/selectors';
 import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
@@ -54,7 +54,7 @@ import { vCPUCount } from '../../../selectors/vm/cpu';
 import { getCPU } from '../../../selectors/vm/selectors';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../../statuses/template/types';
-import { VMKind } from '../../../types';
+import { DataSourceKind, VMKind } from '../../../types';
 import { validateVmLikeEntityName } from '../../../utils/validations';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormRow } from '../../form/form-row';
@@ -135,6 +135,11 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
       : undefined,
   );
 
+  const [dataSources, dataSourcesLoaded] = useK8sWatchResource<DataSourceKind[]>({
+    kind: kubevirtReferenceForModel(DataSourceModel),
+    isList: true,
+  });
+
   React.useEffect(() => {
     if (!selectedTemplate && template) {
       formDispatch({
@@ -161,6 +166,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     pvcs: template?.isCommon ? baseImages : pvcs,
     dataVolumes: [],
     pods: [],
+    dataSources,
   });
 
   const nameValidation = validateVmLikeEntityName(
@@ -265,7 +271,8 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
               imagesLoaded &&
               pvcsLoaded &&
               loadvmWithCutomBootSource &&
-              V2VConfigMapImagesLoaded
+              V2VConfigMapImagesLoaded &&
+              dataSourcesLoaded
             }
             loadError={loadError || error || pvcsError || vmWithCustomBootSourceError}
             data={selectedTemplate}

@@ -8,7 +8,6 @@ import {
   TextArea,
   TextInput,
 } from '@patternfly/react-core';
-import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -22,9 +21,9 @@ import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 import { getName, getNamespace } from '../../../selectors';
 import { getVolumeSnapshotStatuses } from '../../../selectors/vm/selectors';
 import { asVM } from '../../../selectors/vm/vm';
-import { VMSnapshot } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';
-import { buildOwnerReference, prefixedID } from '../../../utils';
+import { buildOwnerReference, getSequenceName, prefixedID } from '../../../utils';
+import { validateSnapshotName } from '../../../utils/validations/vm/snapshot';
 import { FormRow } from '../../form/form-row';
 import { ModalFooter } from '../modal/modal-footer';
 import NoSupportedVolumesSnapshotAlert from './NoSupportedVolumesSnapshotAlert';
@@ -48,12 +47,14 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
     close,
     cancel,
     isVMRunningOrExpectedRunning,
-    snapshots,
+    usedSnapshotNames,
     hotplugVolumeSnapshotStatuses,
   } = props;
   const { t } = useTranslation();
   const vmName = getName(vmLikeEntity);
-  const [name, setName] = React.useState(getSnapshotName(vmName));
+  const [name, setName] = React.useState(
+    getSequenceName(getSnapshotName(vmName), usedSnapshotNames),
+  );
   const [description, setDescription] = React.useState('');
   const [approveUnsupported, setApproveUnsupported] = React.useState(false);
   const asId = prefixedID.bind(null, 'snapshot');
@@ -69,6 +70,8 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
 
   const userNeedsToAckWarning = hasUnsupportedVolumes || isVMRunningOrExpectedRunning;
 
+  const nameValidation = validateSnapshotName(name, usedSnapshotNames);
+
   const submit = async (e) => {
     e.preventDefault();
     const snapshotWrapper = new VMSnapshotWrapper()
@@ -79,8 +82,8 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
         vmName,
       })
       .addOwnerReferences(buildOwnerReference(vmLikeEntity, { blockOwnerDeletion: false }));
-    const isValidName = isEmpty(snapshots.filter(({ metadata }) => metadata?.name === name));
-    if (snapshotWrapper && isValidName) {
+
+    if (snapshotWrapper) {
       handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()), close);
     }
   };
@@ -103,7 +106,12 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
         <Form onSubmit={submit}>
           {hasSupportedVolumes && (
             <>
-              <FormRow title={t('kubevirt-plugin~Snapshot Name')} fieldId={asId('name')} isRequired>
+              <FormRow
+                validation={nameValidation}
+                title={t('kubevirt-plugin~Snapshot Name')}
+                fieldId={asId('name')}
+                isRequired
+              >
                 <TextInput
                   autoFocus
                   isRequired
@@ -176,7 +184,7 @@ export default createModalLauncher(SnapshotsModal);
 export type SnapshotsModalProps = {
   vmLikeEntity: VMLikeEntityKind;
   isVMRunningOrExpectedRunning: boolean;
-  snapshots: VMSnapshot[];
+  usedSnapshotNames: Set<string>;
   hotplugVolumeSnapshotStatuses?: any[];
 } & ModalComponentProps &
   HandlePromiseProps;

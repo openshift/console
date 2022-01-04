@@ -10,6 +10,9 @@ export enum VMWizardURLParams {
   MODE = 'mode',
   INITIAL_DATA = 'initialData',
   VIEW = 'view',
+  TEMPLATE = 'template',
+  TEMPLATE_NS = 'template-ns',
+  PRESELECTED_NS = 'preselected-ns',
 }
 
 const baseURLBuilder = (namespace = 'default') =>
@@ -30,3 +33,8 @@ export const customizeWizardBaseURLBuilder = (
 ) => `${baseURLBuilder(namespace)}/customize${params || ''}`;
 
 export const YAMLBaseURLBuilder = (namespace: string | undefined) => baseURLBuilder(namespace);
+
+export const instantiateTemplateBaseURLBuilder = (
+  namespace: string | undefined,
+  params?: string | undefined,
+) => `${baseURLBuilder(namespace)}/instantiate-template${params || ''}`;

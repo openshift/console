@@ -46,7 +46,7 @@ describe('Localization', () => {
     cy.log('test utilization card components');
     cy.visit('/dashboards?pseudolocalization=true&lng=en');
     cy.byLegacyTestID('utilization-card').within(() => {
-      cy.byTestID('dashboard-card-title').isPseudoLocalized();
+      cy.byTestID('utilization-card__title').isPseudoLocalized();
       cy.byTestID('utilization-card-item-text').isPseudoLocalized();
     });
   });

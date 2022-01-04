@@ -16,7 +16,13 @@ import {
   ListPageFilterProps,
   UseListPageFilter,
   ResourceLinkProps,
+  OverviewProps,
+  OverviewGridProps,
+  InventoryItemTitleProps,
+  InventoryItemBodyProps,
+  InventoryItemStatusProps,
 } from '../extensions/console-types';
+import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
 export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
   .useK8sWatchResource;
@@ -91,3 +97,22 @@ export {
   getGroupVersionKindForResource,
   getGroupVersionKindForModel,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+
+export const StatusPopupSection: React.FC<StatusPopupSectionProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
+  .StatusPopupSection;
+export const StatusPopupItem: React.FC<StatusPopupItemProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
+  .default;
+export const Overview: React.FC<OverviewProps> = require('@console/shared/src/components/dashboard/Dashboard')
+  .default;
+export const OverviewGrid: React.FC<OverviewGridProps> = require('@console/shared/src/components/dashboard/DashboardGrid')
+  .default;
+export const InventoryItem: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
+  .default;
+export const InventoryItemTitle: React.FC<InventoryItemTitleProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
+  .InventoryItemTitle;
+export const InventoryItemBody: React.FC<InventoryItemBodyProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
+  .InventoryItemBody;
+export const InventoryItemStatus: React.FC<InventoryItemStatusProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
+  .InventoryItemStatus;
+export const InventoryItemLoading: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
+  .InventoryItemLoading;

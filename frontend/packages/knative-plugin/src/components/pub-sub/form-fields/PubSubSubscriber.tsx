@@ -5,7 +5,8 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceDropdownField, getFieldId } from '@console/shared';
-import { knativeServingResourcesServices } from '../../../utils/get-knative-resources';
+import { getSinkableResources } from '../../../utils/get-knative-resources';
+import { craftResourceKey } from '../pub-sub-utils';
 
 const PubSubSubscriber: React.FC = () => {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ const PubSubSubscriber: React.FC = () => {
         setFieldTouched('spec.subscriber.ref.name', true);
         setFieldValue('spec.subscriber.ref.name', selectedValue);
         if (modelResource) {
-          const { apiGroup, apiVersion, kind } = modelResource;
+          const { apiGroup = 'core', apiVersion, kind } = modelResource;
           const sinkApiversion = `${apiGroup}/${apiVersion}`;
           setFieldValue('spec.subscriber.ref.apiVersion', sinkApiversion);
           setFieldTouched('spec.subscriber.ref.apiVersion', true);
@@ -43,7 +44,6 @@ const PubSubSubscriber: React.FC = () => {
     setResourceAlert(_.isEmpty(resourceList));
   };
 
-  const dropdownResources = knativeServingResourcesServices(values.metadata.namespace);
   return (
     <FormGroup
       fieldId={getFieldId('pubsub', 'subscriber')}
@@ -62,7 +62,7 @@ const PubSubSubscriber: React.FC = () => {
       )}
       <ResourceDropdownField
         name="spec.subscriber.ref.name"
-        resources={dropdownResources}
+        resources={getSinkableResources(values.metadata.namespace)}
         dataSelector={['metadata', 'name']}
         fullWidth
         required
@@ -70,6 +70,7 @@ const PubSubSubscriber: React.FC = () => {
         showBadge
         autocompleteFilter={autocompleteFilter}
         onChange={onSubscriberChange}
+        customResourceKey={craftResourceKey}
         autoSelect
         disabled={resourceAlert}
         onLoad={handleOnLoad}

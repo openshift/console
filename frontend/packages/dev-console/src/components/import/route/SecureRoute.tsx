@@ -3,6 +3,7 @@ import { FormHelperText } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/shared';
+import { usePreferredRoutingOptions } from '../../user-preferences/usePreferredRoutingOptions';
 import {
   TerminationTypes,
   PassthroughInsecureTrafficTypes,
@@ -11,11 +12,30 @@ import {
 
 const SecureRoute: React.FC = () => {
   const { t } = useTranslation();
+  const [preferredRoutingOptions, , preferredRoutingOptionsLoaded] = usePreferredRoutingOptions();
+  const { secure: secureRoute, tlsTermination, insecureTraffic } =
+    preferredRoutingOptionsLoaded && preferredRoutingOptions;
   const {
     values: {
+      formType,
       route: { secure, tls },
     },
+    setFieldValue,
   } = useFormikContext<FormikValues>();
+  React.useEffect(() => {
+    if (formType !== 'edit' && preferredRoutingOptionsLoaded) {
+      setFieldValue('route.secure', secureRoute, false);
+      setFieldValue('route.tls.termination', tlsTermination, false);
+      setFieldValue('route.tls.insecureEdgeTerminationPolicy', insecureTraffic, true);
+    }
+  }, [
+    formType,
+    insecureTraffic,
+    preferredRoutingOptionsLoaded,
+    secureRoute,
+    setFieldValue,
+    tlsTermination,
+  ]);
   return (
     <>
       <CheckboxField
@@ -63,7 +83,7 @@ const SecureRoute: React.FC = () => {
                 )}
               />
               <DroppableFileInputField
-                name="route.tls.privateKey"
+                name="route.tls.key"
                 label={t('devconsole~Private Key')}
                 helpText={t(
                   'devconsole~The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',

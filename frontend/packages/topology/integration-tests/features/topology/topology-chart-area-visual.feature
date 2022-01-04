@@ -294,3 +294,24 @@ Feature: Topology chart area
               And user drag the connector from the deployment workload
               And user drops the connector on the enabled bindable resource
              Then user will see service binding connection
+
+
+        @regression @odc-6361
+        Scenario: Search with label: T-06-TC26
+            Given user has created a deployment workload "nodejs-1"
+              And user has created a deployment workload "nodejs-2"
+              And user is at Topology page chart view
+             When user selects "Label" option in filter menu
+              And user searches for label "app.kubernetes.io/component=nodejs-1"
+             Then user can see the workload "nodejs-1" visible
+
+
+        @regression @odc-6361
+        Scenario: Check last selected node in topology per project per session: T-06-TC26
+            Given user has created a deployment workload "nodejs-1"
+              And user has created a deployment workload "nodejs-2"
+              And user is at Topology page chart view
+             When user clicks on workload "nodejs-2" to open sidebar
+              And user opens the details page for "nodejs-2" by clicking on the title
+              And user navigate back to Topology page
+             Then user will see the the workload "nodejs-2" selected with sidebar open

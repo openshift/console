@@ -13,12 +13,10 @@ import {
   AlertActionCloseButton,
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
-import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { setFlag } from '@console/internal/actions/features';
 import { WizardCommonProps, WizardState } from './reducer';
 import {
   createExternalSubSystem,
-  createMCGStorageCluster,
   createStorageCluster,
   createStorageSystem,
   labelNodes,
@@ -45,15 +43,18 @@ import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
 import { createClusterKmsResources } from '../kms-config/utils';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG, MCG_STANDALONE } from '../../features';
 
-const validateBackingStorageStep = (backingStorage, sc) => {
-  const { type, externalStorage, isValidSC } = backingStorage;
+const validateBackingStorageStep = (
+  backingStorage: WizardState['backingStorage'],
+  sc: WizardState['storageClass'],
+) => {
+  const { type, externalStorage, deployment } = backingStorage;
   switch (type) {
     case BackingStorageType.EXISTING:
-      return !!sc.name && isValidSC;
+      return !!sc.name && !!deployment;
     case BackingStorageType.EXTERNAL:
-      return !!externalStorage && isValidSC;
+      return !!externalStorage;
     case BackingStorageType.LOCAL_DEVICES:
-      return isValidSC;
+      return !!deployment;
     default:
       return false;
   }
@@ -95,9 +96,9 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     case StepsName(t)[Steps.CapacityAndNodes]:
       return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.SecurityAndNetwork]:
-      return encryption.hasHandled && kms.hasHandled && hasConfiguredNetwork;
+      return encryption.hasHandled && kms[kms.provider].hasHandled && hasConfiguredNetwork;
     case StepsName(t)[Steps.Security]:
-      return encryption.hasHandled && kms.hasHandled;
+      return encryption.hasHandled && kms[kms.provider].hasHandled;
     case StepsName(t)[Steps.ReviewAndCreate]:
       return true;
     default:
@@ -113,6 +114,7 @@ export const setActionFlags = (
 ) => {
   switch (type) {
     case BackingStorageType.EXISTING:
+    case BackingStorageType.LOCAL_DEVICES:
       flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
       flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
       flagDispatcher(setFlag(OCS_FLAG, true));
@@ -120,12 +122,6 @@ export const setActionFlags = (
     case BackingStorageType.EXTERNAL:
       flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, isRhcs));
       flagDispatcher(setFlag(OCS_CONVERGED_FLAG, !isRhcs));
-      flagDispatcher(setFlag(OCS_FLAG, true));
-      break;
-    case BackingStorageType.LOCAL_DEVICES:
-      flagDispatcher(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
-      flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
-      flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
       flagDispatcher(setFlag(OCS_FLAG, true));
       break;
     default:
@@ -146,15 +142,16 @@ const handleReviewAndCreateNext = async (
   const isMCG: boolean = deployment === DeploymentType.MCG;
 
   try {
+    await labelOCSNamespace();
     if (isMCG) {
-      await labelOCSNamespace();
-      if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
-      await createMCGStorageCluster(encryption.advanced);
+      if (encryption.advanced)
+        await Promise.all(createClusterKmsResources(kms[kms.provider], kms.provider));
+      await createStorageCluster(state);
     } else if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
-      await labelOCSNamespace();
       await labelNodes(nodes);
       if (capacityAndNodes.enableTaint) await taintNodes(nodes);
-      if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
+      if (encryption.advanced)
+        await Promise.all(createClusterKmsResources(kms[kms.provider], kms.provider));
       await createStorageSystem(OCS_INTERNAL_CR_NAME, STORAGE_CLUSTER_SYSTEM_KIND);
       await createStorageCluster(state);
     } else if (type === BackingStorageType.EXTERNAL) {
@@ -172,12 +169,12 @@ const handleReviewAndCreateNext = async (
         storageClass.name,
       );
 
-      await labelOCSNamespace();
       await createStorageSystem(subSystemName, subSystemKind);
       if (!hasOCS && !isRhcs) {
         await labelNodes(nodes);
-        if (encryption.advanced) await Promise.all(createClusterKmsResources(kms));
         if (capacityAndNodes.enableTaint) await taintNodes(nodes);
+        if (encryption.advanced)
+          await Promise.all(createClusterKmsResources(kms[kms.provider], kms.provider));
         await createStorageCluster(state);
       }
       if (!isRhcs) await waitforCRD(model);

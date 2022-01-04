@@ -5,10 +5,10 @@ import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { InternalClusterAction, InternalClusterState, ActionType } from '../reducer';
 import { EncryptionFormGroup, NetworkFormGroup } from '../../install-wizard/configure';
 import { NetworkType, NADSelectorType } from '../../../../types';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 
 export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) => {
-  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
+  const isMultusSupported = useFlag(FEATURES.OCS_MULTUS);
 
   const { networkType: nwType, publicNetwork, clusterNetwork } = state;
 

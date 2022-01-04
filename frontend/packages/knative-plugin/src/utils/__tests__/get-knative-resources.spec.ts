@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
@@ -17,6 +18,7 @@ import {
   getTrafficByRevision,
   getKnativeServingDomainMapping,
   getDomainMapping,
+  getSinkableResources,
 } from '../get-knative-resources';
 import { deploymentData, deploymentKnativeData } from './knative-serving-data';
 
@@ -31,8 +33,20 @@ describe('Get knative resources', () => {
       expect(knServingRevResource.revisions).toHaveLength(1);
     });
     it('expect getKnativeServingRevisions to return revision as undefined', () => {
-      const knServingResource = getKnativeServingRevisions(deploymentData, MockResources);
-      expect(knServingResource).toBeUndefined();
+      const knServingRevResource = getKnativeServingRevisions(deploymentData, MockResources);
+      expect(knServingRevResource).toBeUndefined();
+    });
+    it('expect getKnativeServingRevisions to return revision as undefined when deployment contains an empty owner reference', () => {
+      const deployment = _.cloneDeep(deploymentKnativeData);
+      deployment.metadata.ownerReferences = [];
+      const knServingRevResource = getKnativeServingRevisions(deployment, MockKnativeResources);
+      expect(knServingRevResource).toBeUndefined();
+    });
+    it('expect getKnativeServingRevisions to return revision as undefined when deployment contains no owner reference array', () => {
+      const deployment = _.cloneDeep(deploymentKnativeData);
+      delete deployment.metadata.ownerReferences;
+      const knServingRevResource = getKnativeServingRevisions(deployment, MockKnativeResources);
+      expect(knServingRevResource).toBeUndefined();
     });
     it('expect getKnativeServingConfigurations to return configuration data', () => {
       const knServingResource = getKnativeServingConfigurations(
@@ -192,6 +206,35 @@ describe('Get knative resources', () => {
         namespace: 'mynamespace',
         optional: true,
       });
+    });
+  });
+
+  describe('getSinkableResources', () => {
+    it('expect to return empty array, if invalid value is passed', () => {
+      expect(getSinkableResources(null)).toHaveLength(0);
+      expect(getSinkableResources(undefined)).toHaveLength(0);
+      expect(getSinkableResources('')).toHaveLength(0);
+    });
+
+    it('expect to return Knative and K8s Services', () => {
+      const SAMPLE_NAMESPACE = 'mynamespace';
+      const sinkableResources = getSinkableResources(SAMPLE_NAMESPACE);
+      expect(sinkableResources).toEqual([
+        {
+          isList: true,
+          kind: 'Service',
+          namespace: 'mynamespace',
+          optional: true,
+          prop: 'services',
+        },
+        {
+          isList: true,
+          kind: 'serving.knative.dev~v1~Service',
+          namespace: 'mynamespace',
+          optional: true,
+          prop: 'ksservices',
+        },
+      ]);
     });
   });
 });

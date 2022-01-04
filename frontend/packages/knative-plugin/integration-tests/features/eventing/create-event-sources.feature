@@ -8,59 +8,53 @@ Feature: Create event sources
               And user is at Event Sources page
 
 
-        @regression
+        @regression @odc-6359
         Scenario: Event source details for ApiServerSource event source type: KE-02-TC01
              When user selects event source type "Api Server Source"
               And user selects Create Event Source
-             Then page contains Resource, Mode, Service Account Name, Sink, General sections
+             Then page contains Resource, Mode, Service Account name, Sink
               And Resource contains App Version, Kind fields
-              And sink has knative service dropdown with default text "Select knative Service"
-              And Application Name, Name fields have default text as "api-server-source-app", "api-server-source"
+              And sink has knative service dropdown with "Service" and "KSVC" options
               And Create button is disabled
 
 
-        @regression
+        @regression @odc-6359
         Scenario: Event source details for ContainerSource event source type: KE-02-TC02
              When user selects event source type "Container Source"
               And user selects Create Event Source
-             Then page contains Container, Environmental variables, Sink, General sections
+             Then page contains Container, Environment variables, Sink, Application and node name
               And container has Image, Name, Arguments text fields and Add args link
               And environment variables has Name, Value fields and Add More link
-              And sink has knative service dropdown with default text "Select knative Service"
-              And Application Name, Name fields will have default text as "container-source-app", "container-source"
+              And sink has knative service dropdown with "Service" and "KSVC" options
               And Create button is disabled
 
 
-        @regression
+        @regression @un-verified
         Scenario: Event source details for CronJobSource event source type: KE-02-TC03
              When user selects event source type "Cron Job Source"
               And user selects Create Event Source
-             Then page contains CronJobSource, Sink, General sections
+             Then page contains CronJobSource, Sink, Application and node name
               And CronJobSource has Data, Schedule fields
-              And sink has knative service dropdown with default text "Select knative Service"
-              And Application Name, Name fields will have default text as "cron-job-source-app", "cron-job-source"
+              And sink has knative service dropdown with "Service" and "KSVC" options
               And Create button is disabled
 
 
-        @regression
+        @regression @odc-6359
         Scenario: Event source details for PingSource event source type: KE-02-TC04
              When user selects event source type "PingSource"
               And user selects Create Event Source
-             Then page contains PingSource, Sink, General sections
-              And PingSource has Data, Schedule fields
-              And sink has knative service dropdown with default text "Select knative Service"
-              And Application Name, Name fields will have default text as "ping-source-app", "ping-source"
+             Then page contains Data, Schedule, Sink, Application and node name
+              And sink has knative service dropdown with "Service" and "KSVC" options
               And Create button is disabled
 
 
-        @regression
+        @regression @odc-6359
         Scenario: Event source details for SinkBinding event source type: KE-02-TC05
              When user selects event source type "SinkBinding"
               And user selects Create Event Source
-             Then page contains Subject, Sink, General sections
+             Then page contains Subject, Sink
               And Subject has apiVersion, Kind, Match Labels with Name, Value fields and Add Values link
-              And sink has knative service dropdown with default text "Select knative Service"
-              And Application Name, Name fields will have default text as "ping-source-app", "ping-source"
+              And sink has knative service dropdown with "Service" and "KSVC" options
               And Create button is disabled
 
 

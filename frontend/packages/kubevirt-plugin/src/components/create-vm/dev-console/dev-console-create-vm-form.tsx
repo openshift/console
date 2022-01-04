@@ -75,6 +75,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   const {
     pods,
     dataVolumes,
+    dataSources,
     pvcs,
     userTemplates,
     baseTemplates,
@@ -95,6 +96,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
         pvcs,
         dataVolumes,
         template: tmp.variants[0],
+        dataSources,
       });
 
       if (isTemplateSourceError(tempSourceStatus) || !tempSourceStatus?.isReady) {
@@ -119,6 +121,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
     pods,
     dataVolumes,
     template,
+    dataSources,
   });
   const {
     enableSSHService,

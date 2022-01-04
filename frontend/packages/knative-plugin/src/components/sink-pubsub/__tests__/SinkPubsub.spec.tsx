@@ -19,7 +19,9 @@ describe('SinkPubsub', () => {
   it('should render Formik with proper initial values', () => {
     const formikForm = pubsubForm.find(Formik);
     expect(formikForm).toHaveLength(1);
-    expect(formikForm.get(0).props.initialValues.ref.name).toBe('overlayimage');
+    expect(formikForm.get(0).props.initialValues.ref.name).toBe(
+      '1#serving.knative.dev~v1~Service#overlayimage',
+    );
   });
 
   it('should render Formik child with proper props', () => {

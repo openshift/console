@@ -5,9 +5,11 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
-  line-height: 1.5rem;
-  padding: 1rem 0 0 0;
   flex-wrap: wrap;
+}
+
+.co-inventory-card__item:last-child {
+  padding-bottom: 0rem;
 }
 
 .co-inventory-card__item-status {
@@ -34,10 +36,6 @@
 
 .co-inventory-card__status-icon--progress {
   color: $pf-color-black-600;
-}
-
-.co-inventory-card__status-link {
-  text-decoration: none;
 }
 
 .co-inventory-card__accordion.pf-c-accordion {

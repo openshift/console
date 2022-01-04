@@ -8,6 +8,7 @@ import {
 } from '@console/internal/module/k8s';
 import { OverviewItem } from '@console/shared';
 import {
+  getTopologyEdgeItems,
   getTopologyGroupItems,
   getTopologyNodeItem,
   mergeGroup,
@@ -103,6 +104,7 @@ export const getKubevirtTopologyDataModel = (
       vmsDataModel.nodes.push(
         getTopologyNodeItem(resource, TYPE_VIRTUAL_MACHINE, data, WorkloadModelProps),
       );
+      vmsDataModel.edges.push(...getTopologyEdgeItems(resource, resources.virtualmachines.data));
       mergeGroup(getTopologyGroupItems(resource), vmsDataModel.nodes);
     });
   }

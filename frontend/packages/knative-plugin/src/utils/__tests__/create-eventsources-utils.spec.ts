@@ -83,7 +83,7 @@ describe('Create knative Utils', () => {
         done();
       })
       // eslint-disable-next-line no-console
-      .catch((err) => console.warn(err.message));
+      .catch((err) => console.warn('Failed to get event source models', err.message));
   });
 
   it('expect getEventSourceData should return data for builtin Sources', () => {

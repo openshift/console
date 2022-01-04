@@ -1,4 +1,4 @@
-import { gitImportRepos } from '../../../testData/git-import/repos';
+import { getResponseMocks, gitImportRepos } from '../../../testData/git-import/repos';
 import { gitAdvancedOptions, buildConfigOptions, builderImages, messages } from '../../constants';
 import { gitPO } from '../../pageObjects';
 import { app } from '../app';
@@ -26,31 +26,22 @@ export const gitPage = {
       const organization = urlSegments[urlSegments.length - 2];
       const name = urlSegments[urlSegments.length - 1];
       const apiBaseUrl = `https://api.github.com/repos/${organization}/${name}`;
+      const responses = getResponseMocks(repository);
 
-      cy.readFile(`testData/git-import/${repository.folder}/repo.json`).then((repoResponse) => {
-        cy.intercept('GET', apiBaseUrl, {
-          statusCode: 200,
-          body: repoResponse,
-        }).as('getRepo');
-      });
+      cy.intercept('GET', apiBaseUrl, {
+        statusCode: 200,
+        body: responses.repoResponse,
+      }).as('getRepo');
 
-      cy.readFile(`testData/git-import/${repository.folder}/contents.json`).then(
-        (contentsResponse) => {
-          cy.intercept('GET', `${apiBaseUrl}/contents/`, {
-            statusCode: 200,
-            body: contentsResponse,
-          }).as('getContents');
-        },
-      );
+      cy.intercept('GET', `${apiBaseUrl}/contents/`, {
+        statusCode: 200,
+        body: responses.contentsResponse,
+      }).as('getContents');
 
-      cy.task('readFileIfExists', `testData/git-import/${repository.folder}/package.json`).then(
-        (packageResponse) => {
-          cy.intercept('GET', `${apiBaseUrl}/contents//package.json`, {
-            statusCode: packageResponse ? 200 : 404,
-            body: packageResponse,
-          }).as('getPackage');
-        },
-      );
+      cy.intercept('GET', `${apiBaseUrl}/contents//package.json`, {
+        statusCode: responses.packageResponse ? 200 : 404,
+        body: responses.packageResponse,
+      }).as('getPackage');
     }
 
     cy.get(gitPO.gitRepoUrl)
@@ -358,4 +349,8 @@ export const gitPage = {
   enterScalingReplicaCount: (replicaCount: string) =>
     cy.get(gitPO.advancedOptions.scaling.replicaCount).type(replicaCount),
   enterLabels: (labelName: string) => cy.get(gitPO.advancedOptions.labels).type(labelName),
+  enterRouteLabels: (labelRouteName: string) =>
+    cy.get(gitPO.advancedOptions.routing.labels).type(labelRouteName),
+  notificationVerify: (message: string) =>
+    cy.get(gitPO.pipeline.infoMessage).should('contain.text', message),
 };

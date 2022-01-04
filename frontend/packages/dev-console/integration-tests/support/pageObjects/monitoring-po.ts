@@ -8,6 +8,7 @@ export const monitoringPO = {
   timeRange: '',
   refreshInterval: '',
   dashboardTab: {
+    dashboardFilter: '[aria-label="Options menu"]',
     workloadsFilter: '#odc-monitoring-dashboard-workload-filter',
     dashboard: '[data-test-id="dashboard"]',
     sections: {

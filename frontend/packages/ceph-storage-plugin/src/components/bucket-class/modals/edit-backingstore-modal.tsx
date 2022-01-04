@@ -39,14 +39,14 @@ import { SingleNamespaceStorePage } from '../wizard-pages/namespace-store-pages/
 import { CacheNamespaceStorePage } from '../wizard-pages/namespace-store-pages/cache-namespace-store';
 import { MultiNamespaceStorePage } from '../wizard-pages/namespace-store-pages/multi-namespace-store';
 import { validateDuration } from '../../../utils/bucket-class';
-import { GUARDED_FEATURES } from '../../../features';
+import { FEATURES } from '../../../features';
 
 const BucketClassEditModal = withHandlePromise<
   HandlePromiseProps & BucketClassEditModalProps & ModalComponentProps & CreateModalLauncherProps
 >((props) => {
   const { t } = useTranslation();
   const { bucketClass, inProgress, errorMessage, handlePromise, close, cancel } = props;
-  const isNamespaceStoreSupported = useFlag(GUARDED_FEATURES.OCS_NAMESPACE_STORE);
+  const isNamespaceStoreSupported = useFlag(FEATURES.OCS_NAMESPACE_STORE);
   const isNamespaceType = isNamespaceStoreSupported && !!bucketClass.spec?.namespacePolicy;
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [data, loaded, loadError] = useK8sGet(

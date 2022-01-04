@@ -48,7 +48,7 @@ function processDirectory(directory, language) {
           processFile(filePath, language);
         }
       } catch (e) {
-        console.error(e);
+        console.error(`Failed to processDirectory ${directory}:`, e);
       }
     })();
   } else {

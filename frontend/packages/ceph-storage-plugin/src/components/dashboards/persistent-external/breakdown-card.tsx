@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Select, SelectProps } from '@patternfly/react-core';
+import { Select, SelectProps, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { breakdownIndependentQueryMap } from '../../../queries';
 import { PROJECTS, STORAGE_CLASSES, PODS } from '../../../constants';
@@ -70,9 +67,9 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
   const breakdownSelectItems = getSelectOptions(dropdownOptions);
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Capacity breakdown')}</DashboardCardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Capacity breakdown')}</CardTitle>
         <div className="ceph-capacity-breakdown-card__header">
           <Select
             className="ceph-capacity-breakdown-card-header__dropdown"
@@ -88,8 +85,8 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
             {breakdownSelectItems}
           </Select>
         </div>
-      </DashboardCardHeader>
-      <DashboardCardBody className="ceph-capacity-breakdown-card__body">
+      </CardHeader>
+      <CardBody className="ceph-capacity-breakdown-card__body">
         <BreakdownCardBody
           isLoading={queriesDataLoaded}
           hasLoadError={queriesLoadError}
@@ -99,8 +96,8 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
           metricModel={model}
           humanize={humanize}
         />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

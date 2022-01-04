@@ -399,6 +399,26 @@ const PollConsoleUpdates = React.memo(() => {
   return null;
 });
 
+let updateSwaggerInterval;
+
+/**
+ * Fetch OpenAPI definitions immediately upon application start and
+ * then poll swagger definitions every 5 minutes to ensure they stay up to date.
+ */
+const updateSwaggerDefinitionContinual = () => {
+  fetchSwagger().catch((e) => {
+    // eslint-disable-next-line no-console
+    console.error('Could not fetch OpenAPI after application start:', e);
+  });
+  clearInterval(updateSwaggerInterval);
+  updateSwaggerInterval = setInterval(() => {
+    fetchSwagger().catch((e) => {
+      // eslint-disable-next-line no-console
+      console.error('Could not fetch OpenAPI to stay up to date:', e);
+    });
+  }, 5 * 60 * 1000);
+};
+
 graphQLReady.onReady(() => {
   // Load cached API resources from localStorage to speed up page load.
   getCachedResources()
@@ -416,24 +436,23 @@ graphQLReady.onReady(() => {
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
-  // Fetch swagger definitions immediately upon application start
-  fetchSwagger();
-  // then poll swagger definitions every 5 minutes to ensure they stay up to date
-  setInterval(fetchSwagger, 5 * 60 * 1000);
+  updateSwaggerDefinitionContinual();
 
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
     const formattedStack = error?.stack?.replace(/\\n/g, '\n');
-    window.windowError = `unhandled error: ${message} ${formattedStack || ''}`;
+    const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
+    window.windowError = formattedMessage;
     // eslint-disable-next-line no-console
-    console.error(window.windowError);
+    console.error(formattedMessage, error || message);
   };
   window.onunhandledrejection = (promiseRejectionEvent) => {
     const { reason } = promiseRejectionEvent;
-    window.windowError = `unhandled promise rejection: ${reason}`;
+    const formattedMessage = `unhandled promise rejection: ${reason}`;
+    window.windowError = formattedMessage;
     // eslint-disable-next-line no-console
-    console.error(window.windowError);
+    console.error(formattedMessage, reason);
   };
 
   if ('serviceWorker' in navigator) {
