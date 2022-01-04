@@ -332,7 +332,7 @@ export const RoleBindingsPage = ({
         type: 'role-binding-kind',
         reducer: bindingType,
         filter: (filter, binding) =>
-          filter.selected?.includes(bindingType(binding)) || !filter.selected?.size,
+          filter.selected?.includes(bindingType(binding)) || !filter.selected?.length,
         items: hasCRBindings
           ? [
               {
