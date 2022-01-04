@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Button, Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { history, resourcePath } from '@console/internal/components/utils';
 import { ErrorStatus, ProgressStatus, Status } from '@console/shared';
+import { CREATING, READY } from '../../constants/vm-snapshot';
 import { VirtualMachineRestoreModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../selectors';
@@ -15,26 +17,30 @@ import { VMRestore, VMSnapshot } from '../../types';
 import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
 
 export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, restore }) => {
+  const { t } = useTranslation();
   const snapshotError = getVMSnapshotError(snapshot);
   const restoreError = getVMRestoreError(restore);
   const isRestoreProgressing = isVmRestoreProgressing(restore);
   const snapshotReady = isVMSnapshotReady(snapshot);
 
   if (snapshotError) {
-    return <ErrorStatus title={'Create Failed'}>{snapshotError?.message}</ErrorStatus>;
+    return (
+      <ErrorStatus title={t('kubevirt-plugin~Create Failed')}>{snapshotError?.message}</ErrorStatus>
+    );
   }
   if (restoreError) {
     return (
-      <ErrorStatus title={'Restore Failed'}>
+      <ErrorStatus title={t('kubevirt-plugin~Restore Failed')}>
         <Stack hasGutter>
           <StackItem>
-            <strong>{getName(snapshot)}</strong> failed to restore due to: {restoreError?.message}
+            <strong>{getName(snapshot)}</strong> {t('kubevirt-plugin~failed to restore due to:')}{' '}
+            {restoreError?.message}
           </StackItem>
           <StackItem>
             <Split hasGutter>
               <SplitItem>
                 <Button variant="secondary" onClick={() => snapshotRestoreModal({ snapshot })}>
-                  Try Again
+                  {t('kubevirt-plugin~Try Again')}
                 </Button>
               </SplitItem>
               <SplitItem>
@@ -50,7 +56,7 @@ export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, re
                     )
                   }
                 >
-                  Restore Details
+                  {t('kubevirt-plugin~Restore Details')}
                 </Button>
               </SplitItem>
             </Split>
@@ -61,10 +67,10 @@ export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, re
   }
   if (isRestoreProgressing)
     return (
-      <ProgressStatus title="Restoring">
+      <ProgressStatus title={t('kubevirt-plugin~Restoring')}>
         <Stack hasGutter>
           <StackItem>
-            restoring from snapshot: <strong>{getName(snapshot)}</strong>
+            {t('kubevirt-plugin~restoring from snapshot: ')} <strong>{getName(snapshot)}</strong>
           </StackItem>
           <StackItem>
             <Button
@@ -79,13 +85,13 @@ export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, re
                 )
               }
             >
-              Restore Details
+              {t('kubevirt-plugin~Restore Details')}
             </Button>
           </StackItem>
         </Stack>
       </ProgressStatus>
     );
-  return snapshotReady ? <Status status="Ready" /> : <ProgressStatus title="Creating" />;
+  return snapshotReady ? <Status status={READY} /> : <ProgressStatus title={CREATING} />;
 };
 
 export type VMSnapshotStatusProps = {
