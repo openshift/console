@@ -1,12 +1,18 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
+import * as staticModels from '@console/internal/models';
+import {
+  K8sModel,
+  MatchExpression,
+  MatchLabels,
+  ModelDefinition,
+  Selector,
+} from '../../api/common-types';
 import { Options } from '../../api/internal-types';
 import { QueryParams, K8sResourceKindReference } from '../../extensions/console-types';
-import { Extension, ModelDefinition } from '../../types';
+import { Extension } from '../../types';
 import { k8sBasePath } from './k8s';
 import { getReferenceForModel } from './k8s-ref';
-import * as staticModels from './models';
 import { WSFactory, WSOptions } from './ws-factory';
 
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }: K8sModel): string => {

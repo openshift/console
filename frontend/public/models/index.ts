@@ -1,4 +1,4 @@
-import { K8sKind } from '../module/k8s';
+import { K8sModel as K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export const PrometheusModel: K8sKind = {
   kind: 'Prometheus',

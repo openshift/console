@@ -1,5 +1,3 @@
-import { K8sModel } from './api/common-types';
-
 /**
  * Console feature flags used to gate extension instances.
  */
@@ -132,16 +130,3 @@ export type UpdateExtensionProperties<
 export type ResolvedExtension<E extends Extension<P>, P = ExtensionProperties<E>> = LoadedExtension<
   UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>, P>
 >;
-
-export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
-
-namespace ExtensionProperties {
-  export interface ModelDefinition {
-    /** Additional Kubernetes model definitions to register with Console. */
-    models: K8sModel[];
-  }
-}
-
-export interface ModelDefinition extends AlwaysOnExtension<ExtensionProperties.ModelDefinition> {
-  type: 'ModelDefinition';
-}

@@ -6,13 +6,8 @@ import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import { ResourceIcon } from './utils';
-import {
-  K8sKind,
-  K8sResourceKindReference,
-  modelFor,
-  referenceForModel,
-  DiscoveryResources,
-} from '../module/k8s';
+import { K8sKind, K8sResourceKindReference, modelFor, referenceForModel } from '../module/k8s';
+import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 
 // Blacklist known duplicate resources.

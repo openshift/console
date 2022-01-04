@@ -80,8 +80,6 @@ export const getCachedResources = () =>
     resolve(null);
   });
 
-export { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
-
 export const pluralizeKind = (kind: string): string => {
   // Use startCase to separate words so the last can be pluralized but remove spaces so as not to humanize
   const pluralized = plural(_.startCase(kind)).replace(/\s+/g, '');
