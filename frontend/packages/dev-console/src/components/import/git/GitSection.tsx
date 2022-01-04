@@ -230,17 +230,26 @@ const GitSection: React.FC<GitSectionProps> = ({
         return;
       }
       const detectedGitType = detectGitType(url);
-      const gitType = values.git.showGitType ? values.git.type : detectedGitType;
+      const isUnsureDetectedGitType = detectedGitType === GitTypes.unsure;
       const gitRepoName = formType !== 'sample' && detectGitRepoName(url);
 
       // Updated detectedType only
       if (detectedGitType !== values.git.detectedType) {
-        setFieldValue('git.detectedType', gitType);
+        setFieldValue('git.detectedType', detectedGitType);
       }
-      if (detectedGitType === GitTypes.unsure && !values.git.showGitType) {
+      if (isUnsureDetectedGitType && !values.git.showGitType) {
         setFieldValue('git.showGitType', true);
       }
+
+      if (!isUnsureDetectedGitType && values.git.showGitType) {
+        setFieldValue('git.showGitType', false);
+      }
+
+      const gitType =
+        isUnsureDetectedGitType && values.git.showGitType ? values.git.type : detectedGitType;
+
       if (gitType !== values.git.type) {
+        setFieldTouched('git.type', false, false);
         setFieldValue('git.type', gitType);
       }
 
