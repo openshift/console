@@ -317,8 +317,7 @@ export const RoleBindingsPage = ({
 
   const data = React.useMemo(() => flatten(resources), [resources]);
 
-  // Show table if at least a RBAC loaded property is true
-  const loaded = Object.values(resources).some((r) => r.loaded);
+  const loaded = Object.values(resources).every((r) => r.loaded);
 
   const hasCRBindings =
     resources.ClusterRoleBinding.data?.length > 0 &&
