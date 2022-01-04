@@ -1,0 +1,45 @@
+.co-virtualized-table .pf-c-table {
+  table-layout: fixed;
+}
+
+.co-virtualized-table .pf-c-table tbody > tr:first-child::before {
+  content: none;
+  width: 0 !important;
+}
+
+.co-virtualized-table .pf-c-table tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.co-virtualized-table .pf-c-table tr > * {
+  height: auto;
+}
+
+.co-virtualized-table .pf-c-table .pf-c-table__check {
+  width: 8.333% !important;
+}
+
+@media screen and (max-width: 768px) {
+  .co-virtualized-table .pf-c-table .pf-c-table__check {
+    width: 16.66% !important;
+  }
+}
+
+.co-virtualized-table .pf-c-table .pf-c-table__action {
+  padding-left: 0px !important;
+  width: 5% !important;
+}
+@media screen and (max-width: 992px) {
+  .co-virtualized-table .pf-c-table .pf-c-table__action {
+    width: 10% !important;
+  }
+}
+
+.pf-c-window-scroller.ReactVirtualized__VirtualGrid,
+.pf-c-window-scroller .ReactVirtualized__VirtualGrid,
+.pf-c-window-scroller .ReactVirtualized__VirtualGrid__innerScrollContainer {
+  overflow: visible !important;
+}
+
