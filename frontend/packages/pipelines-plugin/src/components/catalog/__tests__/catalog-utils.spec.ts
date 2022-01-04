@@ -1,5 +1,15 @@
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import { tekonHubPlatformTasks } from '../../../test-data/catalog-item-data';
-import { filterBySupportedPlatforms } from '../catalog-utils';
+import {
+  IntegrationTypes,
+  tektonHubIntegrationConfigs,
+} from '../../../test-data/tekon-config-data';
+import { filterBySupportedPlatforms, useTektonHubIntegration } from '../catalog-utils';
+
+jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
+  useK8sGet: jest.fn(),
+}));
 
 describe('catalog-utils', () => {
   const sampleTekonhubTasks = Object.values(tekonHubPlatformTasks);
@@ -24,6 +34,61 @@ describe('catalog-utils', () => {
       window.SERVER_FLAGS.GOOS = 'linux';
       window.SERVER_FLAGS.GOARCH = 's390x';
       expect(sampleTekonhubTasks.filter(filterBySupportedPlatforms)).toHaveLength(1);
+    });
+  });
+
+  describe('useTektonHubIntegration', () => {
+    it('Integration should be enabled if the config does not contain hub object', () => {
+      testHook(() => {
+        (useK8sGet as jest.Mock).mockReturnValue([{ spec: {} }, true, null]);
+        const tektonHubTasksEnabled = useTektonHubIntegration();
+        expect(tektonHubTasksEnabled).toBe(true);
+      });
+    });
+
+    it('Integration should be enabled if the config does not contain devconsole integration key', () => {
+      testHook(() => {
+        (useK8sGet as jest.Mock).mockReturnValue([
+          tektonHubIntegrationConfigs[IntegrationTypes.MISSING_INTEGRATION_KEY],
+          true,
+        ]);
+        const tektonHubTasksEnabled = useTektonHubIntegration();
+        expect(tektonHubTasksEnabled).toBe(true);
+      });
+    });
+
+    it('Integration should be enabled if the config for devconsole integration key is available and set to true', () => {
+      testHook(() => {
+        (useK8sGet as jest.Mock).mockReturnValue([
+          tektonHubIntegrationConfigs[IntegrationTypes.ENABLED],
+          true,
+        ]);
+        const tektonHubTasksEnabled = useTektonHubIntegration();
+        expect(tektonHubTasksEnabled).toBe(true);
+      });
+    });
+
+    it('Integration should be enabled by default if the fetch call errors out', () => {
+      testHook(() => {
+        (useK8sGet as jest.Mock).mockReturnValue([
+          tektonHubIntegrationConfigs[IntegrationTypes.ENABLED],
+          true,
+          { error: 'cannot be fetched' },
+        ]);
+        const tektonHubTasksEnabled = useTektonHubIntegration();
+        expect(tektonHubTasksEnabled).toBe(true);
+      });
+    });
+
+    it('Integration should be disabled if the config for devconsole integration key is available and set to false', () => {
+      testHook(() => {
+        (useK8sGet as jest.Mock).mockReturnValue([
+          tektonHubIntegrationConfigs[IntegrationTypes.DISABLED],
+          true,
+        ]);
+        const tektonHubTasksEnabled = useTektonHubIntegration();
+        expect(tektonHubTasksEnabled).toBe(false);
+      });
     });
   });
 });
