@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { BadgeType, NodeAddress } from '@console/shared';
+import { NodeAddress } from '@console/shared';
 import {
   ObjectReference,
   ObjectMetadata,
@@ -8,7 +8,7 @@ import {
   AccessReviewResourceAttributes,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
-import { Selector, MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { Selector, MatchLabels, K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 export * from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -926,34 +926,10 @@ export type GroupKind = {
   users: string[];
 } & K8sResourceCommon;
 
-export type K8sKind = {
-  abbr: string;
-  kind: string;
-  label: string;
-  labelKey?: string;
-  labelPlural: string;
-  labelPluralKey?: string;
-  plural: string;
-  propagationPolicy?: 'Foreground' | 'Background';
-
-  id?: string;
-  crd?: boolean;
-  apiVersion: string;
-  apiGroup?: string;
-  namespaced?: boolean;
-  selector?: Selector;
-  labels?: { [key: string]: string };
-  annotations?: { [key: string]: string };
-  verbs?: K8sVerb[];
-  shortNames?: string[];
-  badge?: BadgeType;
-  color?: string;
-
-  // Legacy option for supporing plural names in URL paths when `crd: true`.
-  // This should not be set for new models, but is needed to avoid breaking
-  // existing links as we transition to using the API group in URL paths.
-  legacyPluralURL?: boolean;
-};
+/**
+ * @deprecated migrated to new type K8sModel, use K8sModel from dynamic-plugin-sdk over K8sKind
+ */
+export type K8sKind = K8sModel;
 
 export type Cause = {
   field: string;
