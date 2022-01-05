@@ -8,10 +8,11 @@ import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: string }> = ({
-  disabled = false,
-  formContextField,
-}) => {
+const ImageStreamDropdown: React.FC<{
+  disabled?: boolean;
+  formContextField?: string;
+  reloadCount?: number;
+}> = ({ disabled = false, formContextField, reloadCount }) => {
   const { t } = useTranslation();
   const imgCollection = {};
 
@@ -79,6 +80,11 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
     imageStream.image && onDropdownChange(imageStream.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageStream.image, isStreamsAvailable]);
+
+  React.useEffect(() => {
+    reloadCount && imageStream.image && onDropdownChange(imageStream.image);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reloadCount, isStreamsAvailable]);
 
   return (
     <ResourceDropdownField

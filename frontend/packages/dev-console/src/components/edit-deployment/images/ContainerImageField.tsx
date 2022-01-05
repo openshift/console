@@ -9,6 +9,7 @@ const ContainerImageField: React.FC = () => {
   const {
     values: {
       formData: { fromImageStreamTag },
+      formReloadCount,
     },
   } = useFormikContext<FormikValues>();
   return (
@@ -21,6 +22,7 @@ const ContainerImageField: React.FC = () => {
         <ImageStream
           label={t('devconsole~Image stream tag')}
           formContextField="formData"
+          reloadCount={formReloadCount}
           dataTest="image-stream-tag"
           required
         />

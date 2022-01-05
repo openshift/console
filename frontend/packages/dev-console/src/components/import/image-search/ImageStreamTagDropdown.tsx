@@ -17,10 +17,11 @@ import {
 } from '../../../utils/imagestream-utils';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamTagDropdown: React.FC<{ disabled?: boolean; formContextField?: string }> = ({
-  disabled = false,
-  formContextField,
-}) => {
+const ImageStreamTagDropdown: React.FC<{
+  disabled?: boolean;
+  formContextField?: string;
+  reloadCount?: number;
+}> = ({ disabled = false, formContextField, reloadCount }) => {
   const { t } = useTranslation();
   const unmounted = React.useRef(false);
   let imageStreamTagList = {};
@@ -117,6 +118,11 @@ const ImageStreamTagDropdown: React.FC<{ disabled?: boolean; formContextField?: 
     imageStream.tag && searchImageTag(imageStream.tag);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageStream.tag]);
+
+  React.useEffect(() => {
+    reloadCount && imageStream.tag && searchImageTag(imageStream.tag);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reloadCount]);
 
   React.useEffect(() => {
     if (
