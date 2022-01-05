@@ -599,8 +599,14 @@ const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, 
       );
   }, [alertManagerBaseURL]);
 
+  const { t } = useTranslation();
   return (
-    <StatusBox {...obj} label="Alertmanager Globals" loaded={loaded} loadError={loadError}>
+    <StatusBox
+      {...obj}
+      label={t('public~Alertmanager globals')}
+      loaded={loaded}
+      loadError={loadError}
+    >
       <ReceiverBaseForm {...props} obj={obj.data} alertmanagerGlobals={alertmanagerGlobals} />
     </StatusBox>
   );

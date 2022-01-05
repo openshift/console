@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
   LoadingBox,
+  isUpstream,
   openshiftHelpBase,
   PageHeading,
   ExternalLink,
@@ -40,6 +41,10 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
   const filteredRoleBindings = filterRoleBindings(roleBindings.data, Object.keys(roles.data));
 
   const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(filteredRoleBindings);
+
+  const rbacLink = isUpstream()
+    ? `${openshiftHelpBase}authentication/using-rbac.html`
+    : `${openshiftHelpBase}html/authentication_and_authorization/using-rbac`;
 
   const initialValues = {
     projectAccess: roleBindings.loaded && userRoleBindings,
@@ -113,10 +118,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
             Role Bindings
           </Link>
           . For more information, see the{' '}
-          <ExternalLink href={`${openshiftHelpBase}authentication/using-rbac.html`}>
-            role-based access control documentation
-          </ExternalLink>{' '}
-          .
+          <ExternalLink href={rbacLink}>role-based access control documentation</ExternalLink>.
         </Trans>
       </PageHeading>
       {roleBindings.loadError ? (

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { QueryWithDescription } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import { QueryWithDescription } from '../components/dashboard/utilization-card/UtilizationItem';
 
 export enum OverviewQuery {
   MEMORY_TOTAL = 'MEMORY_TOTAL',

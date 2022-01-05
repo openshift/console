@@ -145,7 +145,7 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
           </div>
           {canStartBuild && (
             <div>
-              <Button variant="secondary" onClick={onClick}>
+              <Button variant="secondary" onClick={onClick} data-test-id="start-build-action">
                 {t('public~Start Build')}
               </Button>
             </div>

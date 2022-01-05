@@ -12,7 +12,7 @@ import { State, Action } from '../attached-devices-mode/reducer';
 import { KMSConfigure } from '../../kms-config/kms-config';
 import { NetworkType, NADSelectorType } from '../../../types';
 import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';
-import { GUARDED_FEATURES } from '../../../features';
+import { FEATURES } from '../../../features';
 import { setEncryptionDispatch } from '../../kms-config/utils';
 import { AdvancedSubscription } from '../subscription-icon';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
@@ -45,6 +45,12 @@ const resources = [
     namespace: 'default',
     prop: 'default-nad',
   },
+  {
+    isList: true,
+    kind: referenceForModel(NetworkAttachmentDefinitionModel),
+    namespace: 'openshift-multus',
+    prop: 'openshift-multus-nad',
+  },
 ];
 
 export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
@@ -53,7 +59,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   mode,
 }) => {
   const { t } = useTranslation();
-  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
+  const isKmsSupported = useFlag(FEATURES.OCS_KMS);
 
   const { encryption } = state;
   const [encryptionChecked, setEncryptionChecked] = React.useState(
@@ -131,6 +137,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
           data-test="encryption-checkbox"
           id="enable-encryption"
           isChecked={encryptionChecked}
+          data-checked-state={encryptionChecked}
           label={t('ceph-storage-plugin~Enable Encryption')}
           description={t(
             'ceph-storage-plugin~Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted.',
@@ -150,6 +157,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               <Checkbox
                 id="cluster-wide-encryption"
                 isChecked={encryption.clusterWide}
+                data-checked-state={encryption.clusterWide}
                 label={
                   <span className="ocs-install-encryption__pv-title--padding">
                     {t('ceph-storage-plugin~Cluster-wide encryption')}
@@ -165,6 +173,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               <Checkbox
                 id="storage-class-encryption"
                 isChecked={encryption.storageClass}
+                data-checked-state={encryption.storageClass}
                 label={<StorageClassEncryptionLabel />}
                 aria-label={t('ceph-storage-plugin~StorageClass encryption')}
                 description={t(
@@ -184,6 +193,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               <Checkbox
                 id="advanced-encryption"
                 isChecked={encryption.advanced}
+                data-checked-state={encryption.advanced}
                 label={t('ceph-storage-plugin~Connect to an external key management service')}
                 onChange={toggleAdvancedEncryption}
                 isDisabled={encryption.storageClass || !encryption.hasHandled}
@@ -195,7 +205,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               state={state}
               dispatch={dispatch}
               mode={mode}
-              hideTitle
+              isWizardFlow
               className="ocs-install-encryption"
             />
           )}

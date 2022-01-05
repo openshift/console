@@ -1,6 +1,14 @@
+@import '../../../../../public/style/vars';
+
 .ocs-page-layout {
   &__content {
-    padding: var(--pf-global--spacer--lg);
+    padding:  $pf-global-gutter--md $pf-global-gutter;
+
+    @media (min-width: $pf-global--breakpoint--xl) {
+      padding-left: $pf-global-gutter--md;
+      padding-right: $pf-global-gutter--md;
+    }
+
     flex: 1;
 
     &.is-dark {
@@ -13,13 +21,21 @@
   }
 
   &__hint {
-    padding-left: var(--pf-global--spacer--lg);
-    padding-right: var(--pf-global--spacer--lg);
     padding-bottom: var(--pf-global--spacer--md);
+    padding: 0 $pf-global-gutter $pf-global-gutter--md;
+
+    @media (min-width: $pf-global--breakpoint--xl) {
+      padding-left: $pf-global-gutter--md;
+      padding-right: $pf-global-gutter--md;
+    }
   }
 
   &__title {
-    padding-left: var(--pf-global--spacer--lg);
-    padding-right: var(--pf-global--spacer--lg);
+    padding: 0 $pf-global-gutter;
+
+    @media (min-width: $pf-global--breakpoint--xl) {
+      padding-left: $pf-global-gutter--md;
+      padding-right: $pf-global-gutter--md;
+    }
   }
 }

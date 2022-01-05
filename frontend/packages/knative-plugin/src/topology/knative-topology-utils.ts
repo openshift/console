@@ -3,7 +3,7 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { DeploymentModel, PodModel } from '@console/internal/models';
+import { DeploymentModel, PodModel, ServiceModel } from '@console/internal/models';
 import {
   K8sResourceKind,
   apiVersionForModel,
@@ -11,6 +11,9 @@ import {
   modelFor,
   k8sUpdate,
   kindForReference,
+  apiVersionForReference,
+  apiGroupForReference,
+  groupVersionFor,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { getOwnedResources, OverviewItem } from '@console/shared';
@@ -32,6 +35,7 @@ import {
   FLAG_KNATIVE_EVENTING,
   CAMEL_SOURCE_INTEGRATION,
   SERVERLESS_FUNCTION_LABEL,
+  SERVERLESS_FUNCTION_LABEL_DEPRECATED,
 } from '../const';
 import {
   EventingBrokerModel,
@@ -185,7 +189,7 @@ const isSubscriber = (
   }
   return (
     subscriberRef &&
-    referenceFor(resource) === referenceFor(subscriberRef) &&
+    apiVersionForReference(referenceFor(resource)) === subscriberRef.apiVersion &&
     resource.metadata.name === subscriberRef.name
   );
 };
@@ -210,7 +214,8 @@ const isPublisher = (
   return (
     channel &&
     channel.name === relatedResource.metadata.name &&
-    channel.kind === relatedResource.kind
+    channel.kind === relatedResource.kind &&
+    channel.apiVersion === relatedResource.apiVersion
   );
 };
 
@@ -246,7 +251,11 @@ export const getSubscribedEventsources = (
     getKnativeDynamicResources(resources, eventSourceProps),
     (acc, evSrc) => {
       const sinkRes = evSrc?.spec?.sink?.ref || {};
-      if (pubSubResource.kind === sinkRes.kind && pubSubResource.metadata.name === sinkRes.name) {
+      if (
+        pubSubResource.kind === sinkRes.kind &&
+        pubSubResource.metadata.name === sinkRes.name &&
+        pubSubResource.apiVersion === sinkRes.apiVersion
+      ) {
         acc.push(evSrc);
       }
       return acc;
@@ -273,6 +282,11 @@ export const getPubSubSubscribers = (
         relationshipResource: 'triggers',
         isRelatedResource: isSubscriber,
       },
+      {
+        relatedResource: 'services',
+        relationshipResource: 'triggers',
+        isRelatedResource: isSubscriber,
+      },
     ],
     Service: [
       {
@@ -294,6 +308,11 @@ export const getPubSubSubscribers = (
         relationshipResource: 'eventingsubscription',
         isRelatedResource: isSubscriber,
       },
+      {
+        relatedResource: 'services',
+        relationshipResource: 'eventingsubscription',
+        isRelatedResource: isSubscriber,
+      },
     ];
   });
 
@@ -307,7 +326,11 @@ export const getPubSubSubscribers = (
           _.reduce(
             resources[relatedResource].data,
             (acc, relRes) => {
-              if (isInternalResource(relRes) || !isRelatedResource) {
+              if (
+                (referenceFor(relRes) !== referenceFor(ServiceModel) &&
+                  isInternalResource(relRes)) ||
+                !isRelatedResource
+              ) {
                 return acc;
               }
               const relationshipResources = (resources[relationshipResource].data || []).filter(
@@ -583,6 +606,7 @@ export const createPubSubDataItems = (
         const knService = _.find(resources?.ksservices?.data, {
           metadata: { name: trigger?.spec?.subscriber?.ref?.name },
           kind: trigger?.spec?.subscriber?.ref?.kind,
+          apiVersion: trigger?.spec?.subscriber?.ref?.apiVersion,
         });
         const knServiceAdded =
           knService &&
@@ -691,6 +715,7 @@ export const getSinkUriTopologyEdgeItems = (
     edges.push({
       id: `${uid}_${targetUid}`,
       type: EdgeType.EventSource,
+      label: i18next.t('knative-plugin~Event source connector'),
       source: uid,
       target: targetUid,
     });
@@ -721,6 +746,7 @@ const getEventSourcesData = (sinkUri: string, resources) => {
   );
 };
 
+const getApiGroup = (apiVersion: string) => groupVersionFor(apiVersion)?.group;
 /**
  * Form Edge data for event sources
  */
@@ -731,13 +757,19 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
   if (sinkTarget) {
     _.forEach(data, (res) => {
       const {
+        apiVersion,
         kind,
         metadata: { uid: resUid, name: resName },
       } = res;
-      if (resName === sinkTarget.name && kind === sinkTarget.kind) {
+      if (
+        resName === sinkTarget.name &&
+        kind === sinkTarget.kind &&
+        getApiGroup(apiVersion) === getApiGroup(sinkTarget.apiVersion)
+      ) {
         edges.push({
           id: `${uid}_${resUid}`,
           type: EdgeType.EventSource,
+          label: i18next.t('knative-plugin~Event source connector'),
           source: uid,
           target: resUid,
         });
@@ -759,12 +791,16 @@ export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources):
   const edges = [];
   _.forEach(triggers?.data, (trigger) => {
     const brokerName = trigger?.spec?.broker;
-    const connectedService = trigger.spec?.subscriber?.ref?.name;
+    const connectedService = trigger.spec?.subscriber?.ref;
     if (name === brokerName && ksservices?.data.length > 0) {
       const knativeService = _.find(ksservices.data as K8sResourceKind[], {
-        metadata: { name: connectedService },
+        metadata: { name: connectedService.name },
       });
-      if (knativeService) {
+      if (
+        knativeService &&
+        getApiGroup(connectedService.apiVersion) ===
+          apiGroupForReference(referenceFor(knativeService))
+      ) {
         const {
           metadata: { uid: serviceUid },
         } = knativeService;
@@ -808,7 +844,10 @@ export const getSubscriptionTopologyEdgeItems = (
           const {
             metadata: { uid: resUid, name: resName },
           } = res;
-          if (resName === svcData.name) {
+          if (
+            resName === svcData.name &&
+            groupVersionFor(svcData.apiVersion).group === apiGroupForReference(referenceFor(res))
+          ) {
             edges.push({
               id: `${uid}_${resUid}`,
               type: EdgeType.EventPubSubLink,
@@ -855,6 +894,7 @@ export const getKnSourceKafkaTopologyEdgeItems = (
       acc.push({
         id: edgeId,
         type: EdgeType.EventSourceKafkaLink,
+        label: i18next.t('knative-plugin~Kafka connector'),
         source: kafkaSource.metadata?.uid,
         target: kafkaConnection.metadata?.uid,
       });
@@ -887,6 +927,7 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
         edges.push({
           id: `${uid}_${resUid}`,
           type: EdgeType.Traffic,
+          label: i18next.t('knative-plugin~Traffic distribution connector'),
           source: uid,
           target: resUid,
           data: { percent: trafficPercent },
@@ -1259,5 +1300,7 @@ export const isServerlessFunction = (element: K8sResourceKind): boolean => {
   const {
     metadata: { labels },
   } = element;
-  return !!labels?.[SERVERLESS_FUNCTION_LABEL];
+
+  // TODO: remove check for the deprecated label for serverless function
+  return !!(labels?.[SERVERLESS_FUNCTION_LABEL] || labels?.[SERVERLESS_FUNCTION_LABEL_DEPRECATED]);
 };

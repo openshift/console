@@ -1,11 +1,18 @@
 import * as React from 'react';
-import { Flex, FlexItem, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
+import {
+  Flex,
+  FlexItem,
+  Grid,
+  GridItem,
+  Stack,
+  StackItem,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
 import { useLatestPipelineRun } from '../hooks';
 import { GraphData } from './pipeline-metrics-utils';
@@ -69,13 +76,11 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
           className="pipeline-metrics-dashboard__body-content"
         >
           <GridItem xl2={7} xl={12} lg={12} md={12} sm={12}>
-            <DashboardCard>
-              <DashboardCardHeader>
-                <DashboardCardTitle>
-                  {t('pipelines-plugin~Pipeline Success Ratio')}
-                </DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('pipelines-plugin~Pipeline Success Ratio')}</CardTitle>
+              </CardHeader>
+              <CardBody>
                 <PipelineSuccessRatioDonut
                   interval={interval}
                   timespan={timespan}
@@ -84,17 +89,15 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
                   onLoad={graphOnLoad}
                   queryPrefix={queryPrefix}
                 />
-              </DashboardCardBody>
-            </DashboardCard>
+              </CardBody>
+            </Card>
           </GridItem>
           <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
-            <DashboardCard>
-              <DashboardCardHeader>
-                <DashboardCardTitle>
-                  {t('pipelines-plugin~Number of PipelineRuns')}
-                </DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('pipelines-plugin~Number of PipelineRuns')}</CardTitle>
+              </CardHeader>
+              <CardBody>
                 <PipelineRunCount
                   interval={interval}
                   timespan={timespan}
@@ -103,18 +106,16 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
                   onLoad={graphOnLoad}
                   queryPrefix={queryPrefix}
                 />
-              </DashboardCardBody>
-            </DashboardCard>
+              </CardBody>
+            </Card>
           </GridItem>
 
           <GridItem xl2={7} xl={12} lg={12} md={12} sm={12}>
-            <DashboardCard>
-              <DashboardCardHeader>
-                <DashboardCardTitle>
-                  {t('pipelines-plugin~PipelineRun Duration')}
-                </DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('pipelines-plugin~PipelineRun Duration')}</CardTitle>
+              </CardHeader>
+              <CardBody>
                 <PipelineRunDurationGraph
                   interval={interval}
                   pipeline={obj}
@@ -123,15 +124,15 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
                   onLoad={graphOnLoad}
                   queryPrefix={queryPrefix}
                 />
-              </DashboardCardBody>
-            </DashboardCard>
+              </CardBody>
+            </Card>
           </GridItem>
           <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
-            <DashboardCard>
-              <DashboardCardHeader>
-                <DashboardCardTitle>{t('pipelines-plugin~TaskRun Duration')}</DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('pipelines-plugin~TaskRun Duration')}</CardTitle>
+              </CardHeader>
+              <CardBody>
                 <PipelineRunTaskRunGraph
                   interval={interval}
                   timespan={timespan}
@@ -140,8 +141,8 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
                   onLoad={graphOnLoad}
                   queryPrefix={queryPrefix}
                 />
-              </DashboardCardBody>
-            </DashboardCard>
+              </CardBody>
+            </Card>
           </GridItem>
         </Grid>
       </StackItem>

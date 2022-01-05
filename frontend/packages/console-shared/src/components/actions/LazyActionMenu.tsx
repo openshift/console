@@ -36,7 +36,10 @@ const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
     // This depends on `checkAccess` being memoized.
     _.each(actions, (action: Action) => {
       if (action.accessReview) {
-        checkAccess(action.accessReview);
+        checkAccess(action.accessReview).catch((e) =>
+          // eslint-disable-next-line no-console
+          console.warn('Could not check access for action menu', e),
+        );
       }
     });
   }, [actions]);

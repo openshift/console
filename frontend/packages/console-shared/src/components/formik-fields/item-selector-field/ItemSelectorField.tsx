@@ -13,7 +13,8 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
-import { getFieldId, useDebounceCallback } from '@console/shared';
+import { useDebounceCallback } from '../../../hooks/debounce';
+import { getFieldId } from '../field-utils';
 import SelectorCard from './SelectorCard';
 import './ItemSelectorField.scss';
 

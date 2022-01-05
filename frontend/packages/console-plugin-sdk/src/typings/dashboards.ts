@@ -1,5 +1,10 @@
 import { TFunction } from 'i18next';
-import { WatchK8sResources, ResourcesObject, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import {
+  WatchK8sResources,
+  ResourcesObject,
+  WatchK8sResults,
+  GridPosition,
+} from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   FirehoseResource,
@@ -7,7 +12,6 @@ import {
   FirehoseResourcesResult,
 } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import {
   StatusGroupMapper,
   ExpandedComponentProps,
@@ -145,7 +149,7 @@ namespace ExtensionProperties {
     loader: LazyLoader;
 
     /** Card's vertical span in the column. Ignored for small screens, defaults to 12. */
-    span?: DashboardCardSpan;
+    span?: CardSpan;
   }
 
   export interface DashboardsOverviewInventoryItem {
@@ -340,7 +344,7 @@ export const isDashboardsOverviewInventoryItemReplacement = (
 ): e is DashboardsOverviewInventoryItemReplacement =>
   e.type === 'Dashboards/Overview/Inventory/Item/Replacement';
 
-export type DashboardCardSpan = 4 | 6 | 12;
+export type CardSpan = 4 | 6 | 12;
 
 export type K8sActivityProps = {
   resource: K8sResourceKind;

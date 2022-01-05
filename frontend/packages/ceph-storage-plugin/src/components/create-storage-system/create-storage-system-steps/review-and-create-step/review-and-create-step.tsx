@@ -14,7 +14,7 @@ import {
 } from '../../../../utils/create-storage-system';
 import { OSD_CAPACITY_SIZES } from '../../../../utils/osd-size-dropdown';
 import { WizardState } from '../../reducer';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import './review-and-create-step.scss';
 
 export const ReviewItem = ({ children, title }) => (
@@ -28,7 +28,8 @@ export const ReviewItem = ({ children, title }) => (
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS }) => {
   const { t } = useTranslation();
-  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
+  const isMultusSupported = useFlag(FEATURES.OCS_MULTUS);
+  const isTaintSupported = useFlag(FEATURES.OCS_TAINT_NODES);
 
   const {
     storageClass,
@@ -40,12 +41,15 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
     createStorageClass,
     nodes,
   } = state;
-  const { capacity, arbiterLocation, enableArbiter } = capacityAndNodes;
+  const { capacity, arbiterLocation, enableTaint, enableArbiter } = capacityAndNodes;
   const { encryption, kms, networkType } = securityAndNetwork;
   const { deployment, externalStorage, type } = backingStorage;
 
+  // NooBaa standalone deployment
   const isMCG = deployment === DeploymentType.MCG;
+  // External Red Hat Ceph Storage deployment
   const isRhcs = !_.isEmpty(connectionDetails);
+  // External IBM deployment without ODF
   const isStandaloneExternal = hasOCS && !_.isEmpty(createStorageClass);
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
@@ -61,7 +65,13 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
     ? t('ceph-storage-plugin~Enabled')
     : t('ceph-storage-plugin~Disabled');
 
-  const kmsStatus = encryption.advanced ? kms.name.value : t('ceph-storage-plugin~Not connected');
+  const ocsTaintsStatus = enableTaint
+    ? t('ceph-storage-plugin~Enabled')
+    : t('ceph-storage-plugin~Disabled');
+
+  const kmsStatus = encryption.advanced
+    ? kms[kms.provider].name.value
+    : t('ceph-storage-plugin~Not connected');
 
   const totalCpu = getTotalCpu(nodes);
   const totalMemory = getTotalMemory(nodes);
@@ -70,19 +80,21 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
   return (
     <>
       <ReviewItem title={t('ceph-storage-plugin~Backing storage')}>
-        {!isMCG && !isRhcs && (
+        {!isRhcs && !isStandaloneExternal && (
           <ListItem>
-            {t('ceph-storage-plugin~StorageClass: {{name}}', {
+            {t('ceph-storage-plugin~Deployment type: {{deployment}}', {
+              deployment,
+            })}
+          </ListItem>
+        )}
+        {!isRhcs && (
+          <ListItem>
+            {t('ceph-storage-plugin~Backing storage type: {{name}}', {
               name: storageClass.name || createLocalVolumeSet.volumeSetName,
             })}
           </ListItem>
         )}
-        <ListItem>
-          {t('ceph-storage-plugin~Deployment type: {{deployment}}', {
-            deployment,
-          })}
-        </ListItem>
-        {!isMCG && type === BackingStorageType.EXTERNAL && (
+        {type === BackingStorageType.EXTERNAL && (
           <ListItem>
             {t('ceph-storage-plugin~External storage platform: {{storagePlatform}}', {
               storagePlatform,
@@ -119,6 +131,13 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state, hasOCS 
             <ListItem>
               {t('ceph-storage-plugin~Arbiter zone: {{zone}}', {
                 zone: arbiterLocation,
+              })}
+            </ListItem>
+          )}
+          {isTaintSupported && (
+            <ListItem>
+              {t('ceph-storage-plugin~Taint nodes: {{ocsTaintsStatus}}', {
+                ocsTaintsStatus,
               })}
             </ListItem>
           )}

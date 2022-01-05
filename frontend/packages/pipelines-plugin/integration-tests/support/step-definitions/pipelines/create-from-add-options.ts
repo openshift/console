@@ -216,3 +216,7 @@ When('user selects resource type as {string}', (resourceType: string) => {
 Then('user can see sidebar opens with Resources tab selected by default', () => {
   topologySidePane.verifySelectedTab('Resources');
 });
+
+When('user selects {string} pipeline from the pipeline dropdown menu', (pipelineName: string) => {
+  gitPage.selectPipeline(pipelineName);
+});

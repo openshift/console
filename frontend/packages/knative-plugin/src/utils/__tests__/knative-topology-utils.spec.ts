@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
-import { SERVERLESS_FUNCTION_LABEL } from '../../const';
+import { SERVERLESS_FUNCTION_LABEL, SERVERLESS_FUNCTION_LABEL_DEPRECATED } from '../../const';
 import { EventSourceCronJobModel, EventSourceKafkaModel } from '../../models';
 import {
   MockKnativeResources,
@@ -185,6 +185,13 @@ describe('knative topology utils', () => {
       metadata: { labels: { [SERVERLESS_FUNCTION_LABEL]: 'true' } },
     };
     expect(isServerlessFunction(sampleKnResource)).toBe(true);
+
+    // TODO: remove test case for deprecated label for serverless function
+    const sampleKnResourceDep: k8s.K8sResourceKind = {
+      ...MockKnativeResources.ksservices.data[0],
+      metadata: { labels: { [SERVERLESS_FUNCTION_LABEL_DEPRECATED]: 'true' } },
+    };
+    expect(isServerlessFunction(sampleKnResourceDep)).toBe(true);
   });
 });
 
@@ -306,6 +313,7 @@ describe('event-source-kafka', () => {
     const expectedEdges = [
       {
         id: '1317f615-9636-11e9-b134-06a61d886b689_1_85ffdf52-59f5-4120-b2cd-e90c991845e0',
+        label: 'Kafka connector',
         type: 'event-source-kafka-link',
         source: '1317f615-9636-11e9-b134-06a61d886b689_1',
         target: '85ffdf52-59f5-4120-b2cd-e90c991845e0',

@@ -1,6 +1,6 @@
 [
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "tekton.dev",
@@ -14,7 +14,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "tekton.dev",
@@ -28,7 +28,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "tekton.dev",
@@ -42,7 +42,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "tekton.dev",
@@ -56,7 +56,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "tekton.dev",
@@ -70,7 +70,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "tekton.dev",
@@ -84,7 +84,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "tekton.dev",
@@ -98,7 +98,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "triggers.tekton.dev",
@@ -113,7 +113,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "triggers.tekton.dev",
@@ -128,7 +128,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "triggers.tekton.dev",
@@ -143,7 +143,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "triggers.tekton.dev",
@@ -158,7 +158,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "pipelinesascode.tekton.dev",
@@ -704,6 +704,7 @@
     "properties": {
       "catalogId": "pipelines-task-catalog",
       "type": "Red Hat",
+      "title": "%pipelines-plugin~Tasks%",
       "provider": { "$codeRef": "catalog.TektonTaskProvider" }
     },
     "flags": {
@@ -715,6 +716,7 @@
     "properties": {
       "catalogId": "pipelines-task-catalog",
       "type": "Community",
+      "title": "%pipelines-plugin~Tasks%",
       "provider": { "$codeRef": "catalog.TektonHubTaskProvider" }
     },
     "flags": {

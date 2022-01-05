@@ -387,7 +387,7 @@ export const NodeModel: K8sKind = {
 };
 
 export const CertificateSigningRequestModel: K8sKind = {
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   apiGroup: 'certificates.k8s.io',
   label: 'CertificateSigningRequest',
   // t('public~CertificateSigningRequest')
@@ -721,6 +721,23 @@ export const ClusterResourceQuotaModel: K8sKind = {
   labelPlural: 'ClusterResourceQuotas',
   // t('public~ClusterResourceQuotas')
   labelPluralKey: 'public~ClusterResourceQuotas',
+  crd: true,
+};
+
+export const AppliedClusterResourceQuotaModel: K8sKind = {
+  label: 'AppliedClusterResourceQuota',
+  // t('public~AppliedClusterResourceQuota')
+  labelKey: 'public~AppliedClusterResourceQuota',
+  apiGroup: 'quota.openshift.io',
+  apiVersion: 'v1',
+  plural: 'appliedclusterresourcequotas',
+  abbr: 'ACRQ',
+  namespaced: true,
+  kind: 'AppliedClusterResourceQuota',
+  id: 'appliedclusterresourcequota',
+  labelPlural: 'AppliedClusterResourceQuotas',
+  // t('public~AppliedClusterResourceQuotas')
+  labelPluralKey: 'public~AppliedClusterResourceQuotas',
   crd: true,
 };
 

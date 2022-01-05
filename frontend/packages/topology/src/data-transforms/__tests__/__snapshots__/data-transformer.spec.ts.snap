@@ -5,65 +5,7 @@ Object {
   "edges": Array [
     Object {
       "id": "5ca9ae28-680d-11e9-8c69-5254003f9382_60a9b423-680d-11e9-8c69-5254003f9382",
-      "resource": Object {
-        "apiVersion": "apps/v1",
-        "kind": "Deployment",
-        "metadata": Object {
-          "annotations": Object {
-            "app.openshift.io/connects-to": "[\\"wit\\"]",
-          },
-          "creationTimestamp": "2019-04-22T11:35:37Z",
-          "generation": 5,
-          "labels": Object {
-            "app.kubernetes.io/component": "backend",
-            "app.kubernetes.io/instance": "analytics",
-            "app.kubernetes.io/name": "python",
-            "app.kubernetes.io/part-of": "application-1",
-            "app.kubernetes.io/version": "1.0",
-          },
-          "name": "analytics-deployment",
-          "namespace": "testproject1",
-          "resourceVersion": "753748",
-          "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
-        },
-        "spec": Object {
-          "progressDeadlineSeconds": 600,
-          "replicas": 3,
-          "revisionHistoryLimit": 10,
-          "selector": Object {
-            "matchLabels": Object {
-              "app.kubernetes.io/component": "backend",
-              "app.kubernetes.io/instance": "analytics",
-              "app.kubernetes.io/name": "python",
-              "app.kubernetes.io/part-of": "application-1",
-              "app.kubernetes.io/version": "1.0",
-            },
-          },
-          "strategy": Object {
-            "rollingUpdate": Object {
-              "maxSurge": "25%",
-              "maxUnavailable": "25%",
-            },
-            "type": "RollingUpdate",
-          },
-          "template": Object {
-            "metadata": Object {
-              "creationTimestamp": null,
-              "labels": Object {
-                "app.kubernetes.io/component": "backend",
-                "app.kubernetes.io/instance": "analytics",
-                "app.kubernetes.io/name": "python",
-                "app.kubernetes.io/part-of": "application-1",
-                "app.kubernetes.io/version": "1.0",
-              },
-            },
-            "spec": Object {
-              "containers": Array [],
-            },
-          },
-        },
-        "status": Object {},
-      },
+      "label": "Visual connector",
       "source": "5ca9ae28-680d-11e9-8c69-5254003f9382",
       "target": "60a9b423-680d-11e9-8c69-5254003f9382",
       "type": "connects-to",

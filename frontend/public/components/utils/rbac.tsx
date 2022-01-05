@@ -17,6 +17,7 @@ import {
 } from '../../module/k8s';
 import { ProjectModel, SelfSubjectAccessReviewModel } from '../../models';
 import { useSafetyFirst } from '../../components/safety-first';
+import { ImpersonateKind, getImpersonate } from '@console/dynamic-plugin-sdk';
 
 // Memoize the result so we only make the request once for each access review.
 // This does mean that the user will have to refresh the page to see updates.
@@ -60,7 +61,7 @@ const checkAccessInternal = _.memoize(
 );
 
 const getImpersonateKey = (impersonate): string => {
-  impersonate = impersonate || store.getState().UI.get('impersonate');
+  impersonate = impersonate || getImpersonate(store.getState());
   return impersonate ? `${impersonate.kind}~{impersonate.user}` : '';
 };
 
@@ -184,7 +185,7 @@ RequireCreatePermission.displayName = 'RequireCreatePermission';
 type RequireCreatePermissionProps = {
   model: K8sKind;
   namespace?: string;
-  impersonate?: string;
+  impersonate?: ImpersonateKind;
   children: React.ReactNode;
 };
 

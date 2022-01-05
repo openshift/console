@@ -1,13 +1,16 @@
 import { CLOUDINIT_DISK, DiskBus, DiskType, VolumeType } from '../../../../constants/vm';
+import { NetworkInterfaceModel } from '../../../../constants/vm/network';
 import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import {
   iGetCommonTemplateCloudInit,
   iGetCommonTemplateDiskBus,
+  iGetCommonTemplateNetworkInterfaceDevices,
   iGetRelevantTemplate,
 } from '../../../../selectors/immutable/template/combined';
 import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
+import { iGetNetworks } from '../../selectors/immutable/networks';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { iGetStorages } from '../../selectors/immutable/storage';
 import {
@@ -46,6 +49,32 @@ export const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: Up
   const cloudInitHelper = new CloudInitDataHelper(
     toShallowJS(iGetCommonTemplateCloudInit(iTemplate)),
   );
+  const templateNetworkInterfacesDevices = iGetCommonTemplateNetworkInterfaceDevices(
+    iTemplate,
+  )?.toJS();
+
+  if (templateNetworkInterfacesDevices) {
+    const vmNetworks = iGetNetworks(state, id);
+    templateNetworkInterfacesDevices.forEach((nic) => {
+      if (nic?.model) {
+        vmNetworks?.toJS()?.forEach((network) => {
+          if (
+            network?.networkInterface?.name === nic?.name &&
+            network?.networkInterface?.model !== nic?.model
+          ) {
+            const updatedNetwork = {
+              ...network,
+              networkInterface: {
+                ...network?.networkInterface,
+                model: NetworkInterfaceModel[nic?.model?.toUpperCase()]?.getValue(),
+              },
+            };
+            dispatch(vmWizardInternalActions[InternalActionType.UpdateNIC](id, updatedNetwork));
+          }
+        });
+      }
+    });
+  }
 
   if (!cloudInitHelper.isEmpty()) {
     let isCloudInitForm = false;

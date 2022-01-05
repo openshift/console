@@ -1,8 +1,10 @@
+// eslint-disable no-empty
 import { VirtualMachineData } from '../types/vm';
 import { TEMPLATE_SUPPORT } from '../utils/const/index';
 import { ProvisionSource } from '../utils/const/provisionSource';
+import { wizardTitle } from '../utils/const/string';
 import { addDisk, addNIC } from './dialog';
-import { modalCancel, modalTitle, modalConfirm, storageClass } from './selector';
+import { modalCancel, modalConfirm, modalTitle, storageClass } from './selector';
 import * as wizardView from './selector-wizard';
 
 const fillBootSource = (
@@ -65,7 +67,7 @@ const fillBootSource = (
 export const wizard = {
   vm: {
     open: () => {
-      cy.get(wizardView.create).click();
+      cy.get(wizardView.createVM).click();
       cy.get(wizardView.vmWizard).click();
     },
     selectTemplate: (vmData: VirtualMachineData) => {
@@ -91,7 +93,7 @@ export const wizard = {
           .find('.pf-c-expandable-section__toggle-icon')
           .click();
         cy.get(storageClass.dropdown).click();
-        cy.get(storageClass.selectMenu)
+        cy.get(wizardView.dropDownItemLink)
           .contains(Cypress.env('STORAGE_CLASS'))
           .click();
         cy.contains('Access mode').should('exist');
@@ -100,9 +102,17 @@ export const wizard = {
     },
     fillReviewForm: (vmData: VirtualMachineData) => {
       const { namespace, name, flavor, sshEnable, startOnCreation } = vmData;
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-test-id="modal-title"]').length) {
+          cy.get('#confirm-action').click();
+        }
+      });
+      cy.contains(wizardTitle).should('exist');
       if (namespace !== undefined) {
         cy.get(wizardView.projectDropdown).click();
-        cy.get(wizardView.projectNS(namespace)).click();
+        cy.get(wizardView.dropDownItemLink)
+          .contains(namespace)
+          .click();
       }
       if (name !== undefined) {
         cy.get(wizardView.vmName)
@@ -190,7 +200,7 @@ export const wizard = {
           .click();
         cy.get('[data-test-action="Edit"]').click();
         cy.get(storageClass.dropdown).click();
-        cy.get(storageClass.selectMenu)
+        cy.get(wizardView.dropDownItemLink)
           .contains(Cypress.env('STORAGE_CLASS'))
           .click();
         cy.contains('Access mode').should('exist');
@@ -261,8 +271,8 @@ export const wizard = {
   },
   template: {
     open: () => {
-      cy.byLegacyTestID('item-create').click();
-      cy.byLegacyTestID('template-wizard').click();
+      cy.byTestID('item-create').click();
+      cy.get('[data-test-dropdown-menu="wizard"]').click();
     },
     createTemplate: (
       name: string,

@@ -31,6 +31,7 @@ export enum operators {
   WebTerminalOperator = 'Web Terminal',
   ApacheKafka = 'Red Hat Integration - AMQ Streams',
   RedHatCodereadyWorkspaces = 'Red Hat CodeReady Workspaces',
+  GitopsPrimer = 'gitops-primer',
 }
 
 export enum authenticationType {
@@ -41,6 +42,7 @@ export enum authenticationType {
 export enum resources {
   Deployments = 'Deployments',
   BuildConfigs = 'Build Configs',
+  Builds = 'Builds',
   Services = 'Services',
   ImageStreams = 'Image Streams',
   Routes = 'Routes',

@@ -36,6 +36,8 @@ export enum nodeActions {
   DeleteInMemoryChannel = 'Delete InMemoryChannel',
   EditRevision = 'Edit Revision',
   DeleteRevision = 'Delete Revision',
+  MakeServerless = 'Make Serverless',
+  AddTrigger = 'Add Trigger',
 }
 
 export enum applicationGroupingsActions {
@@ -49,11 +51,21 @@ export enum authenticationTypes {
 }
 
 export enum addToApplicationGroupings {
+  // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
   FromGit = 'From Git',
   ContainerImage = 'Container Image',
+  // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
   FromDockerfile = 'From Dockerfile',
+  // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
   FromDevfile = 'From Devfile',
   UploadJarfile = 'Upload JAR file',
   EventSource = 'Event Source',
   Channel = 'Channel',
+}
+
+export enum sideBarTabs {
+  Details = 'Details',
+  Resources = 'Resources',
+  ReleaseNotes = 'Release notes',
+  Observe = 'Observe',
 }

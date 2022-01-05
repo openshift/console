@@ -64,7 +64,8 @@ export const getSourceKind = (envDisk: EnvDisk): string => {
   }
 };
 
-export const getNewDiskName = (sourceName: string) => `${sourceName}-${getRandomChars(6)}-disk`;
+export const getNewDiskName = (sourceName: string) =>
+  `${sourceName?.replace('.', '-')}-${getRandomChars(6)}-disk`;
 
 export const areEnvDisksEqual = (envDisk1: EnvDisk, envDisk2: EnvDisk): boolean => {
   if (!envDisk1 && !envDisk2) {

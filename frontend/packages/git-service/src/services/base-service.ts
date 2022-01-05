@@ -29,47 +29,47 @@ export abstract class BaseService {
   /**
    * Returns if repo reachable or not along with the api response.
    */
-  abstract async isRepoReachable(): Promise<RepoStatus>;
+  abstract isRepoReachable(): Promise<RepoStatus>;
 
   /**
    * Returns list of branches for given gitsource.
    */
-  abstract async getRepoBranchList(): Promise<BranchList>;
+  abstract getRepoBranchList(): Promise<BranchList>;
 
   /**
    * Returns source code tree for given gitsource
    */
-  abstract async getRepoFileList(): Promise<RepoFileList>;
+  abstract getRepoFileList(): Promise<RepoFileList>;
 
   /**
    * Returns list of detected languages.
    */
-  abstract async getRepoLanguageList(): Promise<RepoLanguageList>;
+  abstract getRepoLanguageList(): Promise<RepoLanguageList>;
 
   /**
    * Check if Dockerfile present in the repo.
    */
-  abstract async isDockerfilePresent(): Promise<boolean>;
+  abstract isDockerfilePresent(): Promise<boolean>;
 
   /**
    * Checks if dockerfile exist in the repo and returns dockerfile content
    */
-  abstract async getDockerfileContent(): Promise<string>;
+  abstract getDockerfileContent(): Promise<string>;
 
   /**
    * Check if Devfile present in the repo.
    */
-  abstract async isDevfilePresent(): Promise<boolean>;
+  abstract isDevfilePresent(): Promise<boolean>;
 
   /**
    * Check if Devfile present in the repo.
    */
-  abstract async getDevfileContent(): Promise<string>;
+  abstract getDevfileContent(): Promise<string>;
 
   /**
    * Checks if package.json exist in the repo and returns content of the file.
    */
-  abstract async getPackageJsonContent(): Promise<string>;
+  abstract getPackageJsonContent(): Promise<string>;
 
   /**
    * Detect build types for given gitsource, It runs regular expressions on file list

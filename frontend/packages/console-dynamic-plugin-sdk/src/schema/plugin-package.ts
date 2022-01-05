@@ -22,6 +22,8 @@ export type ConsolePluginMetadata = {
     '@console/pluginAPI': string;
     [pluginName: string]: string;
   };
+  /** Disable the given static plugins when this plugin gets loaded. */
+  disableStaticPlugins?: string[];
 };
 
 /**

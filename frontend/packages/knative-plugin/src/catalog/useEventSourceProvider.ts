@@ -15,7 +15,7 @@ const normalizeEventSources = (
   const normalizedEventSources: CatalogItem[] = eventSources.map((eventSource) => {
     const { kind, label: name, id: uid } = eventSource;
     const href = `/catalog/ns/${namespace}/eventsource?sourceKind=${kind}`;
-    const { description, provider } = getEventSourceCatalogProviderData(kind, t) ?? {};
+    const { description, provider, support } = getEventSourceCatalogProviderData(kind, t) ?? {};
     return {
       uid,
       name,
@@ -24,6 +24,14 @@ const normalizeEventSources = (
       type: 'EventSource',
       provider,
       cta: { label: t('knative-plugin~Create Event Source'), href },
+      details: {
+        properties: [
+          {
+            label: t('knative-plugin~Support'),
+            value: support,
+          },
+        ],
+      },
     };
   });
   return normalizedEventSources;

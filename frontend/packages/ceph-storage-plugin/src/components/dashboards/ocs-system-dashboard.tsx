@@ -10,14 +10,13 @@ import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { OverviewGridCard } from '@console/dynamic-plugin-sdk';
 import {
   DashboardsPageProps,
   mapStateToProps,
 } from '@console/internal/components/dashboard/dashboards-page/dashboards';
 import { Page, HorizontalNav, LoadingBox, PageHeading } from '@console/internal/components/utils';
-import DashboardGrid, {
-  GridDashboardCard,
-} from '@console/shared/src/components/dashboard/DashboardGrid';
+import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { default as StatusCard } from './persistent-internal/status-card/status-card';
@@ -42,7 +41,7 @@ import { default as ObjectActivityCard } from './object-service/activity-card/ac
 import { ResourceProvidersCard } from './object-service/resource-providers-card/resource-providers-card';
 import { OCS_INDEPENDENT_FLAG, MCG_FLAG, CEPH_FLAG } from '../../features';
 
-const convertToCard = (Card: React.ComponentType): GridDashboardCard => ({ Card });
+const convertToCard = (Card: React.ComponentType): OverviewGridCard => ({ Card });
 
 const isPagePresent = (pages: Page[], page: Page): boolean =>
   pages.some((p) => page.href === p.href);
@@ -67,9 +66,9 @@ const CommonDashboardRenderer: React.FC<CommonDashboardRendererProps> = ({
   rightCards,
   mainCards,
 }) => {
-  const mainGridCards: GridDashboardCard[] = mainCards.map(convertToCard);
-  const leftGridCards: GridDashboardCard[] = leftCards.map(convertToCard);
-  const rightGridCards: GridDashboardCard[] = rightCards.map(convertToCard);
+  const mainGridCards: OverviewGridCard[] = mainCards.map(convertToCard);
+  const leftGridCards: OverviewGridCard[] = leftCards.map(convertToCard);
+  const rightGridCards: OverviewGridCard[] = rightCards.map(convertToCard);
 
   return (
     <Dashboard>

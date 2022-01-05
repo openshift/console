@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Select, SelectProps } from '@patternfly/react-core';
+import { Select, SelectProps, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { humanizeBinaryBytes, FieldLevelHelp } from '@console/internal/components/utils';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { breakdownQueryMap } from '../../../../queries';
 import { PODS, PROJECTS, STORAGE_CLASSES } from '../../../../constants';
@@ -71,33 +68,31 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const breakdownSelectItems = getSelectOptions(dropdownOptions);
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>
+    <Card>
+      <CardHeader className="ceph-capacity-breakdown-card__header">
+        <CardTitle>
           {t('ceph-storage-plugin~Used Capacity Breakdown')}
           <FieldLevelHelp>
             {t(
               'ceph-storage-plugin~This card shows the used capacity for different Kubernetes resources. The figures shown represent the Usable storage, meaning that data replication is not taken into consideration.',
             )}
           </FieldLevelHelp>
-        </DashboardCardTitle>
-        <div className="ceph-capacity-breakdown-card__header">
-          <Select
-            className="ceph-capacity-breakdown-card-header__dropdown"
-            autoFocus={false}
-            onSelect={handleMetricsChange}
-            onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
-            isOpen={isOpenBreakdownSelect}
-            selections={[metricType]}
-            placeholderText={t('ceph-storage-plugin~{{metricType}}', { metricType })}
-            aria-label={t('ceph-storage-plugin~Break By Dropdown')}
-            isCheckboxSelectionBadgeHidden
-          >
-            {breakdownSelectItems}
-          </Select>
-        </div>
-      </DashboardCardHeader>
-      <DashboardCardBody className="ceph-capacity-breakdown-card__body">
+        </CardTitle>
+        <Select
+          className="ceph-capacity-breakdown-card-header__dropdown"
+          autoFocus={false}
+          onSelect={handleMetricsChange}
+          onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
+          isOpen={isOpenBreakdownSelect}
+          selections={[metricType]}
+          placeholderText={t('ceph-storage-plugin~{{metricType}}', { metricType })}
+          aria-label={t('ceph-storage-plugin~Break By Dropdown')}
+          isCheckboxSelectionBadgeHidden
+        >
+          {breakdownSelectItems}
+        </Select>
+      </CardHeader>
+      <CardBody className="ceph-capacity-breakdown-card__body">
         <BreakdownCardBody
           isLoading={queriesDataLoaded}
           hasLoadError={queriesLoadError}
@@ -107,8 +102,8 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
           metricModel={model}
           humanize={humanize}
         />
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

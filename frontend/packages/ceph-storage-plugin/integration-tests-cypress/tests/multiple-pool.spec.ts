@@ -36,7 +36,7 @@ const createBlockPool = (poolCreationAction: string) => {
   verifyBlockPoolJSON();
 };
 
-// Todo(bipuladh): Enable after downstream builds are available with v1 CSIDrivers
+/** @depricated testcases are moved to odf-console */
 xdescribe('Test Ceph pool creation', () => {
   before(() => {
     cy.login();

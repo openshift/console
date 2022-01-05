@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { PageSection, PageSectionVariants, Stack, StackItem } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -150,55 +150,57 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
           <StackItem>
             <PipelineBuilderHeader namespace={namespace} />
           </StackItem>
-          <FlexForm onSubmit={handleSubmit}>
-            <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
-              <PipelineQuickSearch
-                namespace={namespace}
-                viewContainer={contentRef.current}
-                isOpen={menuOpen}
-                callback={savedCallback.current}
-                setIsOpen={(open) => setMenuOpen(open)}
-                onUpdateTasks={onUpdateTasks}
-                taskGroup={taskGroup}
+          <PageSection variant={PageSectionVariants.light}>
+            <FlexForm onSubmit={handleSubmit}>
+              <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
+                <PipelineQuickSearch
+                  namespace={namespace}
+                  viewContainer={contentRef.current}
+                  isOpen={menuOpen}
+                  callback={savedCallback.current}
+                  setIsOpen={(open) => setMenuOpen(open)}
+                  onUpdateTasks={onUpdateTasks}
+                  taskGroup={taskGroup}
+                />
+                <SyncedEditorField
+                  name="editorType"
+                  formContext={{
+                    name: 'formData',
+                    editor: formEditor,
+                    label: t('pipelines-plugin~Pipeline builder'),
+                    sanitizeTo: (yamlPipeline: PipelineKind) =>
+                      sanitizeToForm(formData, yamlPipeline),
+                  }}
+                  yamlContext={{
+                    name: 'yamlData',
+                    editor: yamlEditor,
+                    sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
+                  }}
+                  lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+                />
+              </FormBody>
+              <FormFooter
+                handleReset={closeSidebarAndHandleReset}
+                errorMessage={status?.submitError}
+                isSubmitting={isSubmitting}
+                submitLabel={
+                  existingPipeline ? t('pipelines-plugin~Save') : t('pipelines-plugin~Create')
+                }
+                disableSubmit={
+                  editorType === EditorType.YAML
+                    ? !dirty
+                    : !dirty ||
+                      !_.isEmpty(errors) ||
+                      !_.isEmpty(status?.tasks) ||
+                      !_.isEmpty(status?.[STATUS_KEY_NAME_ERROR]) ||
+                      formData.tasks.length === 0 ||
+                      formData.loadingTasks.length > 0
+                }
+                resetLabel={t('pipelines-plugin~Cancel')}
+                sticky
               />
-              <SyncedEditorField
-                name="editorType"
-                formContext={{
-                  name: 'formData',
-                  editor: formEditor,
-                  label: t('pipelines-plugin~Pipeline builder'),
-                  sanitizeTo: (yamlPipeline: PipelineKind) =>
-                    sanitizeToForm(formData, yamlPipeline),
-                }}
-                yamlContext={{
-                  name: 'yamlData',
-                  editor: yamlEditor,
-                  sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
-                }}
-                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
-              />
-            </FormBody>
-            <FormFooter
-              handleReset={closeSidebarAndHandleReset}
-              errorMessage={status?.submitError}
-              isSubmitting={isSubmitting}
-              submitLabel={
-                existingPipeline ? t('pipelines-plugin~Save') : t('pipelines-plugin~Create')
-              }
-              disableSubmit={
-                editorType === EditorType.YAML
-                  ? !dirty
-                  : !dirty ||
-                    !_.isEmpty(errors) ||
-                    !_.isEmpty(status?.tasks) ||
-                    !_.isEmpty(status?.[STATUS_KEY_NAME_ERROR]) ||
-                    formData.tasks.length === 0 ||
-                    formData.loadingTasks.length > 0
-              }
-              resetLabel={t('pipelines-plugin~Cancel')}
-              sticky
-            />
-          </FlexForm>
+            </FlexForm>
+          </PageSection>
         </Stack>
       </div>
       <Sidebar

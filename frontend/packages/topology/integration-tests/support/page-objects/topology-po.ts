@@ -1,5 +1,5 @@
 export const topologyPO = {
-  switcher: '[data-test-id="topology-switcher-view"]',
+  switcher: 'button[data-test-id="topology-switcher-view"]',
   noWorkLoadsText: 'h2.co-hint-block__title',
   title: 'h1.ocs-page-layout__title',
   search: '[data-test-id="item-filter"]',
@@ -7,8 +7,16 @@ export const topologyPO = {
   emptyText: '[data-test="no-resources-found"]',
   addToApplication: '[data-test-action="devconsole~Add to Application"]',
   addToApplicationInContext: 'button.pf-topology-context-sub-menu.pf-c-dropdown__menu-item',
+  quickSearch: '[data-test="quick-search-bar"]',
+  filterByResourceDropDown: '[data-test="filter-by-resource"] button',
+  topologyDropDown: 'button[aria-label="Options menu"]',
+  emptyView: {
+    startBuildingYourApplicationLink: '[data-test="start-building-your-application"]',
+    addPageLink: '[data-test="add-page"]',
+  },
   graph: {
     reset: '#reset-view',
+    layoutViewGroup: '.odc-topology__layout-group',
     zoomIn: '#zoom-in',
     zoomOut: '#zoom-out',
     fitToScreen: '#fit-to-screen',
@@ -27,14 +35,14 @@ export const topologyPO = {
     addNewAnnotations: '[data-test="add-button"]',
     deleteApplication: '[id="form-input-resourceName-field"]',
     connector: '[data-test-id="edge-handler"]',
+    routeDecorator: '[aria-label="Open URL"] [data-test-id="decorator"]',
     displayOptions: {
-      connenctivityMode: '[id="showGroups"]',
+      connectivityMode: '[id="showGroups"]',
       consumptionMode: '[id="hideGroups"]',
       expandSwitchToggle: '.pf-c-switch__input',
-      applicationGroupingsDisabled: '.pf-c-check.pf-c-select__menu-item.pf-m-disabled',
-    },
-    filterByResource: {
-      filterByResourceDropDown: '[data-test="filter-by-resource"]',
+      applicationGroupings: '[id$=expand-app-groups]',
+      showLabels: '[id$=show-labels]',
+      showPodCount: '[id$=show-pod-count]',
     },
     contextMenuOptions: {
       addToProject: '.pf-topology-context-sub-menu',
@@ -53,8 +61,9 @@ export const topologyPO = {
     showPodCount: '[id$=show-pod-count]',
     dialog: '[role="dialog"]',
     title: '[role="dialog"] h1',
+    knativeServiceIcon: '[title="Service"]',
     tabs: '[role="dialog"] li button',
-    sectionTitle: '[role="dialog"] h2.sidebar__section-heading',
+    sectionTitle: 'h2',
     close: 'button[aria-label="Close"]',
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
@@ -66,13 +75,14 @@ export const topologyPO = {
     applicationGroupingsSidepane: 'overview__sidebar-pane resource-overview',
     resourcesTabApplicationGroupings: '.co-m-horizontal-nav__menu-item',
     detailsTab: {
-      labels: 'dt[data-test-selector$="Labels"]',
-      annotations: '[data-test-selector="details-item-label__Annotations"]',
+      labels: '[data-test="label-list"]',
+      annotations: '[data-test="edit-annotations"]',
       labelsEdit: '[data-test="Labels-details-item__edit-button"]',
     },
     resourcesTab: {
       startLastRun: '[role="dialog"] li.list-group-item.pipeline-overview div button',
       pipelineRuns: 'li.odc-pipeline-run-item',
+      routeLink: '[data-test-id="route-link"]',
     },
     monitoringTab: {
       viewMonitoringDashBoardLink: '',

@@ -7,7 +7,7 @@ import (
 
 // ComponentType describes the type of component.
 // Only one of the following component type may be specified.
-// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume;Plugin;Custom
+// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume;Image;Plugin;Custom
 type ComponentType string
 
 const (
@@ -16,11 +16,12 @@ const (
 	OpenshiftComponentType  ComponentType = "Openshift"
 	PluginComponentType     ComponentType = "Plugin"
 	VolumeComponentType     ComponentType = "Volume"
+	ImageComponentType      ComponentType = "Image"
 	CustomComponentType     ComponentType = "Custom"
 )
 
-// Workspace component: Anything that will bring additional features / tooling / behaviour / context
-// to the workspace, in order to make working in it easier.
+// DevWorkspace component: Anything that will bring additional features / tooling / behaviour / context
+// to the devworkspace, in order to make working in it easier.
 type BaseComponent struct {
 }
 
@@ -34,6 +35,9 @@ type Component struct {
 	Name string `json:"name"`
 	// Map of implementation-dependant free-form YAML attributes.
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes     attributes.Attributes `json:"attributes,omitempty"`
 	ComponentUnion `json:",inline"`
 }
@@ -46,18 +50,18 @@ type ComponentUnion struct {
 	// +optional
 	ComponentType ComponentType `json:"componentType,omitempty"`
 
-	// Allows adding and configuring workspace-related containers
+	// Allows adding and configuring devworkspace-related containers
 	// +optional
 	Container *ContainerComponent `json:"container,omitempty"`
 
-	// Allows importing into the workspace the Kubernetes resources
+	// Allows importing into the devworkspace the Kubernetes resources
 	// defined in a given manifest. For example this allows reusing the Kubernetes
 	// definitions used to deploy some runtime components in production.
 	//
 	// +optional
 	Kubernetes *KubernetesComponent `json:"kubernetes,omitempty"`
 
-	// Allows importing into the workspace the OpenShift resources
+	// Allows importing into the devworkspace the OpenShift resources
 	// defined in a given manifest. For example this allows reusing the OpenShift
 	// definitions used to deploy some runtime components in production.
 	//
@@ -68,6 +72,10 @@ type ComponentUnion struct {
 	// shared by several other components
 	// +optional
 	Volume *VolumeComponent `json:"volume,omitempty"`
+
+	// Allows specifying the definition of an image for outer loop builds
+	// +optional
+	Image *ImageComponent `json:"image,omitempty"`
 
 	// Allows importing a plugin.
 	//

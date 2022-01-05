@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { InputField, getFieldId } from '@console/shared';
+import { DropdownField, InputField, getFieldId } from '@console/shared';
 import { EventSources } from '../import-types';
 
 interface SinkBindingSectionProps {
@@ -41,8 +41,27 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
     [setFieldValue],
   );
   const fieldId = getFieldId(values.type, 'subject-matchLabels');
+
+  const matchType = values.sinkBindingMatchType;
+  React.useEffect(() => {
+    if (matchType === 'name') {
+      setFieldValue(`formData.data.${EventSources.SinkBinding}.subject.selector`, undefined);
+    } else {
+      setFieldValue(`formData.data.${EventSources.SinkBinding}.subject.name`, undefined);
+      setFieldValue(
+        `formData.data.${EventSources.SinkBinding}.subject.selector.matchLabels`,
+        nameValue.reduce((acc, [name, val]) => (val.length ? { ...acc, [name]: val } : acc), {}),
+      );
+    }
+  }, [matchType, setFieldValue, nameValue]);
+  React.useEffect(() => {
+    if (!matchType) {
+      setFieldValue('sinkBindingMatchType', 'labels');
+    }
+  }, [matchType, setFieldValue]);
+
   return (
-    <FormSection title={title} extraMargin fullWidth={fullWidth}>
+    <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
       <h3 className="co-section-heading-tertiary">{t('knative-plugin~Subject')}</h3>
       <InputField
         data-test-id="sinkbinding-apiversion-field"
@@ -58,21 +77,40 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
         label={t('knative-plugin~Kind')}
         required
       />
-      <FormGroup fieldId={fieldId} label={t('knative-plugin~Match labels')}>
-        <AsyncComponent
-          loader={() =>
-            import('@console/internal/components/utils/name-value-editor').then(
-              (c) => c.NameValueEditor,
-            )
-          }
-          nameValuePairs={nameValue}
-          valueString={t('knative-plugin~Value')}
-          nameString={t('knative-plugin~Name')}
-          addLabel={t('knative-plugin~Add values')}
-          readOnly={false}
-          allowSorting={false}
-          updateParentData={handleNameValuePairs}
-        />
+      <FormGroup fieldId={fieldId} label={t('knative-plugin~Match subject')}>
+        <div className="pf-c-form__helper-text">
+          {t('knative-plugin~Match subject using name or labels.')}
+        </div>
+        <div className="form-group">
+          <DropdownField
+            name="sinkBindingMatchType"
+            items={{ name: t('knative-plugin~Name'), labels: t('knative-plugin~Labels') }}
+            title={t('knative-plugin~Match type')}
+          />
+        </div>
+        {matchType === 'name' ? (
+          <InputField
+            type={TextInputTypes.text}
+            name={`formData.data.${EventSources.SinkBinding}.subject.name`}
+            label={t('knative-plugin~Subject Name')}
+            required
+          />
+        ) : (
+          <AsyncComponent
+            loader={() =>
+              import('@console/internal/components/utils/name-value-editor').then(
+                (c) => c.NameValueEditor,
+              )
+            }
+            nameValuePairs={nameValue}
+            valueString={t('knative-plugin~Value')}
+            nameString={t('knative-plugin~Name')}
+            addLabel={t('knative-plugin~Add values')}
+            readOnly={false}
+            allowSorting={false}
+            updateParentData={handleNameValuePairs}
+          />
+        )}
       </FormGroup>
     </FormSection>
   );

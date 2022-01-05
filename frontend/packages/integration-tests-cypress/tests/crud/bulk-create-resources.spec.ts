@@ -104,7 +104,7 @@ stringData:
     yamlEditor.isImportLoaded();
     yamlEditor.setEditorContent(missingNS).then(() => {
       yamlEditor.clickSaveCreateButton();
-      cy.get(errorMessage).should('exist');
+      cy.byTestID('retry-failed-resources').should('exist');
     });
   });
 

@@ -15,17 +15,28 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Prompt } from 'react-router';
 import { history } from '@console/internal/components/utils';
-import { k8sKill, TemplateKind } from '@console/internal/module/k8s';
+import { TemplateModel } from '@console/internal/models';
+import {
+  k8sKill,
+  k8sPatch,
+  PersistentVolumeClaimKind,
+  TemplateKind,
+} from '@console/internal/module/k8s';
 import {
   ErrorStatus,
   GreenCheckCircleIcon,
   ProgressStatus,
   SuccessStatus,
 } from '@console/shared/src';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
+import { PatchBuilder } from '../../../k8s/helpers/patch';
 import { createTemplateFromVM, patchVMDisks } from '../../../k8s/requests/vmtemplate/customize';
-import { VirtualMachineModel } from '../../../models';
+import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
+import { getOwnerReferences } from '../../../selectors';
 import { VMKind } from '../../../types';
+import { V1alpha1DataVolume } from '../../../types/api';
+import { buildOwnerReferenceForModel } from '../../../utils';
 
 type ItemStatusProps = {
   error: boolean;
@@ -55,9 +66,11 @@ const ItemStatus: React.FC<ItemStatusProps> = ({
 
 type CustomizeSourceFinishProps = {
   vm: VMKind;
+  dataVolumes?: V1alpha1DataVolume[];
+  pvcs?: PersistentVolumeClaimKind[];
 };
 
-const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => {
+const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm, dataVolumes, pvcs }) => {
   const { t } = useTranslation();
 
   const [vmtError, setVMTError] = React.useState();
@@ -67,9 +80,35 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
   const [disksError, setDisksError] = React.useState<string>();
   const [disksSuccess, setDisksSuccess] = React.useState(false);
 
-  const deleteVM = async () => {
+  const deleteVM = async (template?: TemplateKind) => {
     setVMError(undefined);
     try {
+      if (vm.spec.dataVolumeTemplates) {
+        await k8sPatch(VirtualMachineModel, vm, [
+          new PatchBuilder('/spec/dataVolumeTemplates').remove().build(),
+        ]);
+      }
+      if (dataVolumes) {
+        const vmOwnedDataVolumes = dataVolumes?.filter(({ metadata }) =>
+          metadata?.ownerReferences?.map((ref) => ref.name)?.includes(vm.metadata?.name),
+        );
+
+        const vmOwnerRef = buildOwnerReferenceForModel(VirtualMachineModel, vm.metadata?.name);
+        const { name, uid } = template?.metadata;
+        const templateOwnerRef = buildOwnerReferenceForModel(TemplateModel, name, uid);
+
+        const removeVMOwnerRef = vmOwnedDataVolumes?.map((dv) => {
+          return k8sPatch(DataVolumeModel, dv, [
+            new PatchBuilder('/metadata/ownerReferences').setListUpdate(templateOwnerRef).build(),
+            new PatchBuilder('/metadata/ownerReferences')
+              .setListRemove(getOwnerReferences(dv), () =>
+                getOwnerReferences(dv)?.includes(vmOwnerRef),
+              )
+              .build(),
+          ]);
+        });
+        await Promise.all(removeVMOwnerRef);
+      }
       await k8sKill(getKubevirtAvailableModel(VirtualMachineModel), vm);
       setVMSuccess(true);
     } catch (err) {
@@ -83,7 +122,7 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
     Promise.all(patchVMDisks(vm, template))
       .then(async () => {
         setDisksSuccess(true);
-        deleteVM();
+        deleteVM(template);
       })
       .catch((err) => setDisksError(err.message));
   };
@@ -94,7 +133,7 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
     setVMError(undefined);
     let template: TemplateKind;
     try {
-      template = await createTemplateFromVM(vm);
+      template = await createTemplateFromVM(vm, pvcs);
       setVMT(template);
     } catch (err) {
       setVMTError(err.message);
@@ -146,9 +185,9 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
               <ItemStatus
                 error={!!disksError}
                 success={disksSuccess}
-                errorMsg={t('kubevirt-plugin~Error patching template disks')}
-                successMsg={t('kubevirt-plugin~Template disks patched')}
-                progressMsg={t('kubevirt-plugin~Patching template disks')}
+                errorMsg={t('kubevirt-plugin~Error modifying template disks')}
+                successMsg={t('kubevirt-plugin~Template disks modified')}
+                progressMsg={t('kubevirt-plugin~Modifying template disks')}
               />
               <ItemStatus
                 error={!!vmError}
@@ -170,7 +209,11 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
             {error ? (
               <Button
                 onClick={() => {
-                  vmtError ? customizeVMT() : disksError ? patchDisksAndDeleteVM(vmt) : deleteVM();
+                  vmtError
+                    ? customizeVMT()
+                    : disksError
+                    ? patchDisksAndDeleteVM(vmt)
+                    : deleteVM(vmt);
                 }}
               >
                 {t('kubevirt-plugin~Retry')}
@@ -182,7 +225,7 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
                     isDisabled={progressValue !== 100}
                     onClick={() =>
                       history.push(
-                        `/k8s/ns/${vmt.metadata.namespace}/vmtemplates/${vmt.metadata.name}`,
+                        `/k8s/ns/${vmt.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${vmt.metadata.name}`,
                       )
                     }
                   >
@@ -194,7 +237,9 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
                     data-test="navigate-list"
                     isDisabled={progressValue !== 100}
                     onClick={() =>
-                      history.push(`/k8s/ns/${vmt.metadata.namespace}/virtualization/templates`)
+                      history.push(
+                        `/k8s/ns/${vmt.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
+                      )
                     }
                     variant="secondary"
                   >

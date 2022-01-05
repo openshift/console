@@ -15,7 +15,7 @@ const ImportStrategyList: ImportStrategyType[] = [
   {
     name: 'Devfile',
     type: ImportStrategy.DEVFILE,
-    expectedRegexp: /^devfile.yaml$/,
+    expectedRegexp: /^\.?devfile\.yaml$/,
     priority: 2,
   },
   {

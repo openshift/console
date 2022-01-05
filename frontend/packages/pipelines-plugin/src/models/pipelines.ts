@@ -145,7 +145,6 @@ export const TriggerBindingModel: K8sKind = {
   id: 'triggerbinding',
   labelPlural: 'TriggerBindings',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -164,7 +163,6 @@ export const ClusterTriggerBindingModel: K8sKind = {
   id: 'clustertriggerbinding',
   labelPlural: 'ClusterTriggerBindings',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -183,7 +181,6 @@ export const TriggerTemplateModel: K8sKind = {
   id: 'triggertemplate',
   labelPlural: 'TriggerTemplates',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -202,7 +199,6 @@ export const EventListenerModel: K8sKind = {
   id: 'eventlistener',
   labelPlural: 'EventListeners',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -223,4 +219,21 @@ export const RepositoryModel: K8sKind = {
   crd: true,
   badge: BadgeType.DEV,
   color,
+};
+
+export const TektonConfigModel: K8sKind = {
+  apiGroup: 'operator.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'TektonConfig',
+  // t('pipelines-plugin~TektonConfig')
+  labelKey: 'pipelines-plugin~TektonConfig',
+  // t('pipelines-plugin~TektonConfigs')
+  labelPluralKey: 'pipelines-plugin~TektonConfigs',
+  plural: 'tektonconfigs',
+  abbr: 'TC',
+  namespaced: false,
+  kind: 'TektonConfig',
+  id: 'tektonconfig',
+  labelPlural: 'TektonConfigs',
+  crd: true,
 };

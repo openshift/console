@@ -6,7 +6,7 @@ import { FieldLevelHelp } from '@console/internal/components/utils';
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import { KMSEmptyState } from '../../../../constants';
 import { WizardDispatch, WizardState } from '../../reducer';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import { KMSConfigure } from '../../../kms-config/kms-config';
 import { AdvancedSubscription } from '../../advanced-subscription/advanced-subscription';
 import './encryption.scss';
@@ -58,6 +58,7 @@ const EncryptionLevel: React.FC<EncryptionLevelProps> = ({ encryption, dispatch 
         id="cluster-wide-encryption"
         className="odf-security-encryption"
         isChecked={encryption.clusterWide}
+        data-checked-state={encryption.clusterWide}
         label={<span>{t('ceph-storage-plugin~Cluster-wide encryption')}</span>}
         description={t('ceph-storage-plugin~Encryption for the entire cluster (block and file)')}
         onChange={handleClusterWideEncryption}
@@ -66,6 +67,7 @@ const EncryptionLevel: React.FC<EncryptionLevelProps> = ({ encryption, dispatch 
         id="storage-class-encryption"
         className="odf-security-encryption"
         isChecked={encryption.storageClass}
+        data-checked-state={encryption.storageClass}
         label={<EncryptionLabel label={t('ceph-storage-plugin~StorageClass encryption')} />}
         description={t(
           'ceph-storage-plugin~An encryption key will be generated for each persistent volume (block) created using an encryption enabled StorageClass.',
@@ -81,7 +83,13 @@ type EncryptionLevelProps = {
   dispatch: WizardDispatch;
 };
 
-const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, isMCG }) => {
+const KMSConnection: React.FC<EncryptionProps> = ({
+  encryption,
+  kms,
+  dispatch,
+  infraType,
+  isMCG,
+}) => {
   const { t } = useTranslation();
 
   const handleOnChange = React.useCallback(
@@ -114,6 +122,7 @@ const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, i
       <Checkbox
         id="kms-connection"
         isChecked={encryption.advanced}
+        data-checked-state={encryption.advanced}
         label={t('ceph-storage-plugin~Connect to an external key management service')}
         onChange={handleOnChange}
         isDisabled={encryption.storageClass || !encryption.hasHandled}
@@ -122,8 +131,9 @@ const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, i
             <KMSConfigure
               state={{ encryption, kms }}
               dispatch={dispatch}
+              infraType={infraType}
               className="odf-security-kms-connection"
-              hideTitle
+              isWizardFlow
             />
           )
         }
@@ -132,9 +142,15 @@ const KMSConnection: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, i
   );
 };
 
-export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatch, isMCG }) => {
+export const Encryption: React.FC<EncryptionProps> = ({
+  encryption,
+  kms,
+  dispatch,
+  infraType,
+  isMCG,
+}) => {
   const { t } = useTranslation();
-  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
+  const isKmsSupported = useFlag(FEATURES.OCS_KMS);
   const [encryptionChecked, setEncryptionChecked] = React.useState(
     encryption.clusterWide || encryption.storageClass,
   );
@@ -203,6 +219,7 @@ export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatc
           data-test="encryption-checkbox"
           id="configure-encryption"
           isChecked={isMCG || encryptionChecked}
+          data-checked-state={isMCG || encryptionChecked}
           isDisabled={isMCG}
           label={encryptionLabel}
           description={description}
@@ -216,6 +233,7 @@ export const Encryption: React.FC<EncryptionProps> = ({ encryption, kms, dispatc
                   encryption={encryption}
                   kms={kms}
                   dispatch={dispatch}
+                  infraType={infraType}
                   isMCG={isMCG}
                 />
               </>
@@ -232,5 +250,6 @@ type EncryptionProps = {
   encryption: WizardState['securityAndNetwork']['encryption'];
   kms: WizardState['securityAndNetwork']['kms'];
   dispatch: WizardDispatch;
+  infraType: string;
   isMCG?: boolean;
 };

@@ -162,7 +162,7 @@
     "type": "console.action/provider",
     "properties": {
       "contextId": "topology-actions",
-      "provider": { "$codeRef": "actions.useTopologyWorloadActionProvider" }
+      "provider": { "$codeRef": "actions.useTopologyWorkloadActionProvider" }
     }
   },
   {
@@ -206,6 +206,55 @@
       },
       "insertBefore": "console.preferredCreateEditMethod",
       "insertAfter": "console.preferredNamespace"
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-application",
+      "tab": "topology-side-bar-tab-resource",
+      "section": { "$codeRef": "applicationSidebar.getApplicationPanelResourceTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "applicationSidebar.getApplicationPanelResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 10,
+      "link": { "$codeRef": "vcSidebar.getEdgeResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-visual-connector",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "vcSidebar.getVisualConnectorResourceTabSection"
+      }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useTopologyVisualConnectorActionProvider" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+    "contextId": "topology-actions",
+    "provider": { "$codeRef": "actions.useEditApplicationTopologyActionsProvider" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
     }
   }
 ]

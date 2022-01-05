@@ -242,6 +242,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
                 label={t('public~Wrap lines')}
                 id="wrapLogLines"
                 isChecked={isWrapLines}
+                data-checked-state={isWrapLines}
                 onChange={(checked: boolean) => {
                   setWrapLines(checked);
                 }}

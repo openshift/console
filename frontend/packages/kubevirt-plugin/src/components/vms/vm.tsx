@@ -23,10 +23,9 @@ import {
   TableData,
 } from '@console/internal/components/factory';
 import {
+  Kebab,
   FirehoseResult,
   history,
-  Kebab,
-  KebabOption,
   ResourceLink,
   Timestamp,
 } from '@console/internal/components/utils';
@@ -37,7 +36,8 @@ import {
   PersistentVolumeClaimModel,
   PodModel,
 } from '@console/internal/models';
-import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { useNamespace } from '../../hooks/use-namespace';
@@ -66,11 +66,11 @@ import {
   dimensifyRow,
   getBasicID,
   getLoadedData,
+  getVMActionContext,
 } from '../../utils';
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VMStatus } from '../vm-status/vm-status';
-import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actions';
 import { vmStatusFilter } from './table-filters';
 import VMIP from './VMIP';
 
@@ -134,24 +134,11 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType>> = ({ obj }) => {
   const { name, namespace, node, creationTimestamp, uid, vmStatusBundle } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
 
-  let options: KebabOption[];
-  let model: K8sKind;
-
-  if (vmImport) {
-    model = VirtualMachineImportModel;
-    options = vmImportMenuActions.map((action) => action(model, vmImport));
-  } else if (vm) {
-    model = VirtualMachineModel;
-    options = vmMenuActions.map((action) =>
-      action(model, vm, {
-        vmStatusBundle,
-        vmi,
-      }),
-    );
-  } else if (vmi) {
-    model = VirtualMachineInstanceModel;
-    options = vmiMenuActions.map((action) => action(model, vmi));
-  }
+  const model =
+    (vmImport && VirtualMachineImportModel) ||
+    (vm && VirtualMachineModel) ||
+    (vmi && VirtualMachineInstanceModel);
+  const context = getVMActionContext(vm || vmi);
 
   const arePendingChanges = hasPendingChanges(vm, vmi);
 
@@ -182,7 +169,7 @@ const VMRow: React.FC<RowFunctionArgs<VMRowObjType>> = ({ obj }) => {
       </TableData>
       <TableData className={dimensify()}>{vmi && <VMIP data={getVmiIpAddresses(vmi)} />}</TableData>
       <TableData className={dimensify(true)}>
-        <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
+        <LazyActionMenu context={context} key={`kebab-for-${uid}`} />
       </TableData>
     </>
   );
@@ -290,7 +277,22 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
     {
       kind: PodModel.kind,
       namespace,
-      prop: 'pods',
+      prop: 'kubevirtPods',
+      selector: {
+        matchLabels: {
+          app: 'kubevirt',
+        },
+      },
+    },
+    {
+      kind: PodModel.kind,
+      namespace,
+      prop: 'cdiPods',
+      selector: {
+        matchLabels: {
+          app: 'containerized-data-importer',
+        },
+      },
     },
     {
       kind: kubevirtReferenceForModel(VirtualMachineInstanceMigrationModel),
@@ -321,7 +323,8 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   const flatten = ({
     vms,
     vmis,
-    pods,
+    kubevirtPods,
+    cdiPods,
     migrations,
     pvcs,
     dataVolumes,
@@ -329,7 +332,8 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   }: {
     vms: FirehoseResult<VMKind[]>;
     vmis: FirehoseResult<VMIKind[]>;
-    pods: FirehoseResult<PodKind[]>;
+    kubevirtPods: FirehoseResult<PodKind[]>;
+    cdiPods: FirehoseResult<PodKind[]>;
     migrations: FirehoseResult;
     pvcs: FirehoseResult<PersistentVolumeClaimKind[]>;
     dataVolumes: FirehoseResult<V1alpha1DataVolume[]>;
@@ -337,7 +341,8 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   }) => {
     const loadedVMs = getLoadedData(vms);
     const loadedVMIs = getLoadedData(vmis);
-    const loadedPods = getLoadedData(pods);
+    const loadedKubevirtPods = getLoadedData(kubevirtPods);
+    const loadedCDIPods = getLoadedData(cdiPods);
     const loadedMigrations = getLoadedData(migrations);
     const loadedVMImports = getLoadedData(vmImports);
     const loadedPVCs = getLoadedData(pvcs);
@@ -348,7 +353,8 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       ![
         loadedVMs,
         loadedVMIs,
-        loadedPods,
+        loadedKubevirtPods,
+        loadedCDIPods,
         loadedMigrations,
         loadedDataVolumes,
         isVMImportLoaded,
@@ -402,7 +408,7 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
           vmStatusBundle = getVMStatus({
             vm: objectBundle.vm,
             vmi: objectBundle.vmi,
-            pods: loadedPods,
+            pods: [...loadedKubevirtPods, ...loadedCDIPods],
             migrations: loadedMigrations,
             pvcs: loadedPVCs,
             dataVolumes: loadedDataVolumes,

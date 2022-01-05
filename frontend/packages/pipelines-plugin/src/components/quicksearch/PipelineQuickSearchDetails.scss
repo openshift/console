@@ -22,6 +22,10 @@
     font-size: 15px !important;
   }
 
+  &__hublink {
+    margin-left: var(--pf-global--spacer--sm);
+  }
+
   &__badges-section {
     margin: var(--pf-global--spacer--md) 0;
     --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm) !important;

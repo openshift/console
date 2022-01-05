@@ -1,32 +1,34 @@
 .oc-perspective-nav {
   .pf-c-nav__section:first-child {
     .pf-c-nav__section-title {
-      padding-top: 0;
+      --pf-c-nav__section-title--PaddingTop: 0;
+
       border: none;
     }
   }
   .pf-c-nav__section {
-    margin-top: 0;
+    --pf-c-nav__section--MarginTop: 0;
     .pf-c-nav__section-title {
-      padding-bottom: 0;
+      --pf-c-nav__section-title--PaddingBottom: 0;
     }
   }
 }
 
 .oc-nav-pinned-item.pf-c-nav__item {
+  --pf-c-nav__link--PaddingRight: 0;
+
   display: flex;
 
   .pf-c-nav__link {
     display: block;
     flex-grow: 1;
     overflow: hidden;
-    padding-right: 0;
     position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;
 
     &:hover, &:focus {
-      padding-right: 30px;
+      --pf-c-nav__section-title--PaddingRight: 30px;
       .oc-nav-pinned-item__unpin-button {
         .oc-nav-pinned-item__icon {
           opacity: 1;

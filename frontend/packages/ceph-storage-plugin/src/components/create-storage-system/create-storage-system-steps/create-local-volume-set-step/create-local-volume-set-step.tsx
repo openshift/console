@@ -28,7 +28,10 @@ import {
   createLocalVolumeDiscovery,
   updateLocalVolumeDiscovery,
 } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/request';
-import { LABEL_OPERATOR } from '@console/local-storage-operator-plugin/src/constants';
+import {
+  diskModeDropdownItems,
+  LABEL_OPERATOR,
+} from '@console/local-storage-operator-plugin/src/constants';
 import { LABEL_SELECTOR } from '@console/local-storage-operator-plugin/src/constants/disks-list';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LocalVolumeDiscoveryResultKind } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
@@ -37,7 +40,7 @@ import { NodeModel } from '@console/internal/models';
 import { LocalVolumeSetBody } from './body';
 import { SelectedCapacity } from './selected-capacity';
 import { createWizardNodeState } from '../../../../utils/create-storage-system';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import {
   arbiterText,
   LSO_OPERATOR,
@@ -163,6 +166,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   dispatch,
   nodes,
   stepIdReached,
+  isMCG,
 }) => {
   const { t } = useTranslation();
   const allNodes = React.useRef([]);
@@ -221,6 +225,9 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
                 storageClassName={storageClass.name}
                 allNodes={allNodes.current}
                 nodes={nodes}
+                defaultVolumeMode={
+                  isMCG ? diskModeDropdownItems.FILESYSTEM : diskModeDropdownItems.BLOCK
+                }
               />
             </Form>
           </GridItem>
@@ -277,6 +284,7 @@ type CreateLocalVolumeSetProps = {
   nodes: WizardState['nodes'];
   stepIdReached: WizardState['stepIdReached'];
   dispatch: WizardDispatch;
+  isMCG: boolean;
 };
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -290,7 +298,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   nodes,
 }) => {
   const { t } = useTranslation();
-  const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
+  const isArbiterSupported = useFlag(FEATURES.OCS_ARBITER);
   const { onNext, activeStep } = React.useContext<WizardContextType>(WizardContext);
 
   const cancel = () => {
@@ -326,9 +334,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   const description = (
     <>
       <span>
-        {t(
-          "ceph-storage-plugin~After the LocalVolumeSet is created you won't be able to go back to this step.",
-        )}
+        {t("ceph-storage-plugin~After the LocalVolumeSet is created you won't be able to edit it.")}
       </span>
       {isArbiterSupported && (
         <p className="pf-u-pt-sm">

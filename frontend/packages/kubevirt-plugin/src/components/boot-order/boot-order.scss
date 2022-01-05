@@ -11,8 +11,11 @@
 }
 
 .pf-c-button.pf-m-link.kubevirt-boot-order__add-device-delete-btn {
-  padding: 0;
-  color: var(--pf-global--Color--100);
+  --pf-c-button--PaddingTop: 0;
+  --pf-c-button--PaddingRight: 0;
+  --pf-c-button--PaddingBottom: 0;
+  --pf-c-button--PaddingLeft: 0;
+  --pf-c-button--m-link--Color: var(--pf-global--Color--100);
 }
 
 .kubevirt-boot-order__add-device-select {

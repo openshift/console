@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import { referenceFor } from '@console/internal/module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import {
   VM_DETAIL_CONSOLES_HREF,
@@ -11,6 +14,7 @@ import {
   VM_DETAIL_DISKS_HREF,
   VM_DETAIL_NETWORKS_HREF,
 } from '../../constants';
+import { VIRTUALMACHINES_BASE_URL } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
@@ -31,7 +35,6 @@ import { getResource } from '../../utils';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
 import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
-import { vmMenuActionsCreator } from './menu-actions';
 import { PendingChangesWarningFirehose } from './pending-changes-warning';
 import VMConsoleDetailsPage from './vm-console/VMConsoleDetailsPage';
 import { VMDashboard } from './vm-dashboard';
@@ -42,11 +45,11 @@ import { VMEvents } from './vm-events';
 export const breadcrumbsForVMPage = (t: TFunction, match: any) => () => [
   {
     name: t('kubevirt-plugin~Virtualization'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~Virtual Machines'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),
@@ -164,7 +167,11 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       namespace={namespace}
       kind={kubevirtReferenceForModel(VirtualMachineModel)}
       kindObj={VirtualMachineModel}
-      menuActions={vmMenuActionsCreator}
+      customActionMenu={(kindObj, obj) => {
+        const objReference = referenceFor(obj);
+        const context = { [objReference]: obj };
+        return <LazyActionMenu variant={ActionMenuVariant.DROPDOWN} context={context} />;
+      }}
       pages={pages}
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}

@@ -22,24 +22,24 @@ export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName }) =
           RHEL download page
         </a>
       </strong>{' '}
-      (requires login) and copy the download link URL of the KVM guest image
+      (requires login) and copy the download link URL of the KVM guest image (expires quickly)
     </Trans>
   ) : baseImageName?.includes('win') ? (
     <Trans t={t} ns="kubevirt-plugin">
-      Example: For Windows, visit the{' '}
+      Example: For Windows, get a link to the{' '}
       <strong>
         <a href={WINDOWS_IMAGE_LINK} rel="noopener noreferrer" target="_blank">
-          Windows 10 cloud image
+          installation iso of Windows 10
         </a>
       </strong>{' '}
-      and copy the download link URL for the cloud base image
+      and copy the download link URL
     </Trans>
   ) : baseImageName?.includes('centos') ? (
     <Trans t={t} ns="kubevirt-plugin">
-      Example: For Centos, visit the{' '}
+      Example: For CentOS, visit the{' '}
       <strong>
         <a href={CENTOS_IMAGE_LINK} rel="noopener noreferrer" target="_blank">
-          Centos cloud image list
+          CentOS cloud image list
         </a>
       </strong>{' '}
       and copy the download link URL for the cloud base image

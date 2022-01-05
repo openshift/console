@@ -91,6 +91,7 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
           hintText: 'A unique ID matching KMS ConfigMap',
           Component: StorageClassEncryptionKMSID,
           visible: (params) => params?.encrypted?.value === 'true',
+          required: (params) => params?.encrypted?.value === 'true',
         },
         thickProvision: {
           name: 'Enable Thick Provisioning',

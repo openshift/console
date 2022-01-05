@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Gallery, GalleryItem } from '@patternfly/react-core';
+import {
+  Gallery,
+  GalleryItem,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+} from '@patternfly/react-core';
 import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -12,10 +19,6 @@ import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BlueInfoCircleIcon, StatusIconAndText } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
@@ -87,11 +90,11 @@ const HealthCard: React.FC<HealthCardProps> = ({
   const restartScheduled = isHostScheduledForRestart(obj);
 
   return (
-    <DashboardCard gradient>
-      <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>Status</CardTitle>
+      </CardHeader>
+      <CardBody>
         <HealthBody>
           <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem className="bmh-health__status-item">
@@ -156,8 +159,8 @@ const HealthCard: React.FC<HealthCardProps> = ({
               ))
             : null}
         </AlertsBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

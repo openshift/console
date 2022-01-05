@@ -14,6 +14,7 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
   spec: {
     storageClassName: string;
     volumeMode: string;
+    fsType: string;
     deviceInclusionSpec: {
       deviceTypes?: DiskType[];
       deviceMechanicalProperties: [keyof typeof DiskMechanicalProperties];

@@ -88,7 +88,7 @@ function processFile(fileName, packageDir, language) {
           .catch((e) => console.error(fileName, e));
       }
     } catch (err) {
-      console.error(err);
+      console.error(`Failed to processFile ${fileName} in ${packageDir}:`, err);
     }
   } else {
     const i18nFile = path.join(__dirname, `./../public/locales/en/${fileName}.json`);
@@ -120,7 +120,7 @@ function processFile(fileName, packageDir, language) {
           .catch((e) => console.error(fileName, e));
       }
     } catch (err) {
-      console.error(err);
+      console.error(`Failed to processFile ${fileName}:`, err);
     }
   }
   common.deleteFile(tmpFile);

@@ -227,7 +227,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
         return url.toString();
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while setting utm_source to support workflow URL', error.message);
       }
     }
     return null;

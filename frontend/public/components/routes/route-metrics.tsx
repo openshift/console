@@ -5,12 +5,8 @@ import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
 import { connectToFlags, WithFlagsProps } from '../../reducers/connectToFlags';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 
 // TODO Update to use QueryBrowser for each graph
 export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
@@ -24,42 +20,42 @@ export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
       <Dashboard className="resource-metrics-dashboard">
         <Grid hasGutter>
           <GridItem xl={6} lg={12}>
-            <DashboardCard className="resource-metrics-dashboard__card">
-              <DashboardCardHeader>
-                <DashboardCardTitle>{t('public~Traffic in')}</DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody className="resource-metrics-dashboard__card-body">
+            <Card className="resource-metrics-dashboard__card">
+              <CardHeader>
+                <CardTitle>{t('public~Traffic in')}</CardTitle>
+              </CardHeader>
+              <CardBody className="resource-metrics-dashboard__card-body">
                 <Area
                   humanize={humanizeDecimalBytesPerSec}
                   query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_server_bytes_in_total${namespaceRouteQuery}))`}
                 />
-              </DashboardCardBody>
-            </DashboardCard>
+              </CardBody>
+            </Card>
           </GridItem>
           <GridItem xl={6} lg={12}>
-            <DashboardCard className="resource-metrics-dashboard__card">
-              <DashboardCardHeader>
-                <DashboardCardTitle>{t('public~Traffic out')}</DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody className="resource-metrics-dashboard__card-body">
+            <Card className="resource-metrics-dashboard__card">
+              <CardHeader>
+                <CardTitle>{t('public~Traffic out')}</CardTitle>
+              </CardHeader>
+              <CardBody className="resource-metrics-dashboard__card-body">
                 <Area
                   humanize={humanizeDecimalBytesPerSec}
                   query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_server_bytes_out_total${namespaceRouteQuery}))`}
                 />
-              </DashboardCardBody>
-            </DashboardCard>
+              </CardBody>
+            </Card>
           </GridItem>
           <GridItem xl={6} lg={12}>
-            <DashboardCard className="resource-metrics-dashboard__card">
-              <DashboardCardHeader>
-                <DashboardCardTitle>{t('public~Connection rate')}</DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody className="resource-metrics-dashboard__card-body">
+            <Card className="resource-metrics-dashboard__card">
+              <CardHeader>
+                <CardTitle>{t('public~Connection rate')}</CardTitle>
+              </CardHeader>
+              <CardBody className="resource-metrics-dashboard__card-body">
                 <Area
                   query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_backend_connections_total${namespaceRouteQuery}))`}
                 />
-              </DashboardCardBody>
-            </DashboardCard>
+              </CardBody>
+            </Card>
           </GridItem>
         </Grid>
       </Dashboard>

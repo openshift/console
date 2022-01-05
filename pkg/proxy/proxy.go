@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"k8s.io/klog"
 )
 
 var websocketPingInterval = 30 * time.Second
@@ -87,18 +88,23 @@ func decodeSubprotocol(encodedProtocol string) (string, error) {
 	return string(decodedProtocol), err
 }
 
-var headerBlacklist = []string{"Cookie", "X-CSRFToken"}
+var HeaderBlacklist = []string{"Cookie", "X-CSRFToken"}
 
 // pass through headers that are needed for browser caching and content negotiation,
 // except "Cookie" and "X-CSRFToken" headers.
 func CopyRequestHeaders(originalRequest, newRequest *http.Request) {
 	newRequest.Header = originalRequest.Header.Clone()
-	for _, h := range headerBlacklist {
+	for _, h := range HeaderBlacklist {
 		newRequest.Header.Del(h)
 	}
 }
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	if klog.V(3) {
+		klog.Infof("PROXY: %#q\n", r.URL)
+	}
+
 	// Block scripts from running in proxied content for browsers that support Content-Security-Policy.
 	w.Header().Set("Content-Security-Policy", "sandbox;")
 	// Add `X-Content-Security-Policy` for IE11 and older browsers.
@@ -114,7 +120,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	for _, h := range headerBlacklist {
+	for _, h := range HeaderBlacklist {
 		r.Header.Del(h)
 	}
 

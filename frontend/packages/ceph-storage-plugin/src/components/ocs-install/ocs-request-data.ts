@@ -17,6 +17,7 @@ import {
   StorageClusterResource,
   DeviceSet,
   ResourceConstraints,
+  EncryptionType,
 } from '../../types';
 import { WizardState } from '../create-storage-system/reducer';
 
@@ -124,7 +125,7 @@ export const createDeviceSet = (
 export const getOCSRequestData = (
   storageClass: WizardState['storageClass'],
   storage: string,
-  encrypted: boolean,
+  encryption: EncryptionType,
   isMinimal: boolean,
   flexibleScaling = false,
   publicNetwork?: string,
@@ -133,6 +134,7 @@ export const getOCSRequestData = (
   selectedArbiterZone?: string,
   stretchClusterChecked?: boolean,
   availablePvsCount?: number,
+  isMCG?: boolean,
 ): StorageClusterKind => {
   const scName: string = storageClass.name;
   const isNoProvisioner: boolean = storageClass?.provisioner === NO_PROVISIONER;
@@ -151,14 +153,31 @@ export const getOCSRequestData = (
       name: OCS_INTERNAL_CR_NAME,
       namespace: CEPH_STORAGE_NAMESPACE,
     },
-    spec: {
+    spec: {},
+  };
+
+  if (isNoProvisioner) {
+    // required for disk list page
+    requestData.metadata.annotations = {
+      [ATTACHED_DEVICES_ANNOTATION]: 'true',
+    };
+  }
+
+  if (isMCG) {
+    // for mcg standalone deployment
+    requestData.spec = {
+      multiCloudGateway: {
+        dbStorageClassName: scName,
+        reconcileStrategy: 'standalone',
+      },
+    };
+  } else {
+    // for full deployment - ceph + mcg
+    requestData.spec = {
+      monDataDirHostPath: isNoProvisioner ? '/var/lib/rook' : '',
       manageNodes: false,
       resources: isMinimal ? MIN_SPEC_RESOURCES : {},
       flexibleScaling,
-      encryption: {
-        enable: encrypted,
-        kms: Object.assign(kmsEnable ? { enable: true } : {}),
-      },
       arbiter: {
         enable: stretchClusterChecked,
       },
@@ -188,17 +207,19 @@ export const getOCSRequestData = (
             }
           : {},
       ),
-    },
-  };
+    };
+  }
 
-  if (isNoProvisioner) {
-    requestData.spec.monDataDirHostPath = '/var/lib/rook';
-    requestData.metadata = {
-      ...requestData.metadata,
-      annotations: {
-        [ATTACHED_DEVICES_ANNOTATION]: 'true',
+  if (encryption) {
+    requestData.spec.encryption = {
+      enable: encryption.clusterWide,
+      clusterWide: encryption.clusterWide,
+      storageClass: encryption.storageClass,
+      kms: {
+        enable: kmsEnable,
       },
     };
   }
+
   return requestData;
 };

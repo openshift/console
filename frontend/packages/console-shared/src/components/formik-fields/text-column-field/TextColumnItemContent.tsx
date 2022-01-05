@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { InputField } from '@console/shared';
+import InputField from '../InputField';
 import {
   TextColumnItemProps,
   TextColumnFieldChildParameterProps,

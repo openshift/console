@@ -9,10 +9,10 @@ import MetricsTooltip from './MetricsTooltip';
 
 import './MetricsCell.scss';
 
-interface CpuCellComponentProps {
+type CpuCellComponentProps = {
   cpuByPod: any;
   totalCores: number;
-}
+};
 
 const CpuCellComponent: React.FC<CpuCellComponentProps> = React.memo(({ cpuByPod, totalCores }) => {
   const { t } = useTranslation();

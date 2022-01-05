@@ -1,13 +1,11 @@
 import * as React from 'react';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   ResourceInventoryItem,
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
@@ -28,6 +26,8 @@ import {
   isDashboardsOverviewInventoryItemReplacement as isDynamicDashboardsOverviewInventoryItemReplacement,
   ResolvedExtension,
   WatchK8sResources,
+  ClusterOverviewInventoryItem,
+  isClusterOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 
@@ -135,6 +135,10 @@ export const InventoryCard = () => {
     DynamicDashboardsOverviewInventoryItemReplacement
   >(isDynamicDashboardsOverviewInventoryItemReplacement);
 
+  const [inventoryExtensions] = useResolvedExtensions<ClusterOverviewInventoryItem>(
+    isClusterOverviewInventoryItem,
+  );
+
   const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
     itemExtensions,
     replacementExtensions,
@@ -148,30 +152,41 @@ export const InventoryCard = () => {
   const { t } = useTranslation();
 
   return (
-    <DashboardCard data-test-id="inventory-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('public~Cluster inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        {mergedItems.map((item) => (
-          <ClusterInventoryItem
-            key={item.properties.model.kind}
-            model={item.properties.model}
-            mapperLoader={item.properties.mapper}
-            additionalResources={item.properties.additionalResources}
-            expandedComponent={item.properties.expandedComponent}
-          />
-        ))}
-        {dynamicMergedItems.map((item) => (
-          <ClusterInventoryItem
-            key={item.properties.model.kind}
-            model={item.properties.model}
-            resolvedMapper={item.properties.mapper}
-            additionalResources={item.properties.additionalResources}
-          />
-        ))}
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card data-test-id="inventory-card">
+      <CardHeader>
+        <CardTitle>{t('public~Cluster inventory')}</CardTitle>
+      </CardHeader>
+      <CardBody>
+        <Stack hasGutter>
+          {mergedItems.map((item) => (
+            <StackItem key={item.properties.model.kind}>
+              <ClusterInventoryItem
+                model={item.properties.model}
+                mapperLoader={item.properties.mapper}
+                additionalResources={item.properties.additionalResources}
+                expandedComponent={item.properties.expandedComponent}
+              />
+            </StackItem>
+          ))}
+          {dynamicMergedItems.map((item) => (
+            <StackItem key={item.properties.model.kind}>
+              <ClusterInventoryItem
+                model={item.properties.model}
+                resolvedMapper={item.properties.mapper}
+                additionalResources={item.properties.additionalResources}
+              />
+            </StackItem>
+          ))}
+          {inventoryExtensions.map(({ uid, properties: { component: Component } }) => (
+            <ErrorBoundary key={uid}>
+              <StackItem>
+                <Component />
+              </StackItem>
+            </ErrorBoundary>
+          ))}
+        </Stack>
+      </CardBody>
+    </Card>
   );
 };
 

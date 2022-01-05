@@ -6,7 +6,6 @@ import {
 } from '@console/dev-console/src/components/import/validation-schema';
 import { isValidUrl, nameValidationSchema } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
 import { EventSources, SinkType } from './import-types';
 
 export const sinkTypeUriValidation = (t: TFunction) =>
@@ -68,6 +67,10 @@ export const sourceDataSpecSchema = (t: TFunction) =>
           subject: yup.object().shape({
             selector: yup.object().shape({
               matchLabels: yup.object(),
+            }),
+            name: yup.string().when('selector.matchLabels', {
+              is: (obj: object) => !obj,
+              then: yup.string().required(t('knative-plugin~Required')),
             }),
             apiVersion: yup
               .string()
@@ -185,16 +188,17 @@ export const eventSourceValidationSchema = (t: TFunction) =>
   });
 
 export const addChannelValidationSchema = (t: TFunction) =>
-  yup.lazy((formData) => {
-    if (isDefaultChannel(getChannelKind(formData.type))) {
-      return yup.object().shape({
+  yup.object().shape({
+    editorType: yup.string(),
+    formData: yup.object().when('editorType', {
+      is: EditorType.Form,
+      then: yup.object().shape({
+        project: projectNameValidationSchema,
         application: applicationNameValidationSchema,
         name: nameValidationSchema(t),
-        data: sourceDataSpecSchema(t),
+        data: yup.object(),
         type: yup.string(),
-      });
-    }
-    return yup.object().shape({
-      yamlData: yup.string(),
-    });
+      }),
+    }),
+    yamlData: yup.string(),
   });

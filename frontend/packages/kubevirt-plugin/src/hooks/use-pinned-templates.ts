@@ -1,9 +1,15 @@
 import * as React from 'react';
-import { TEMPLATE_PIN, TEMPLATE_PIN_PROMOTED } from '../constants';
+import {
+  TEMPLATE_PIN,
+  TEMPLATE_PIN_PROMOTED,
+  TEMPLATE_PIN_RHEL_7,
+  TEMPLATE_PIN_RHEL_8,
+  TEMPLATE_PIN_RHEL_9,
+} from '../constants';
 import { TemplateItem } from '../types/template';
 import { useLocalStorage } from './use-local-storage';
 
-const PROMOTED_TEMPLATES = ['rhel7-server-small', 'rhel8-server-small'];
+const PROMOTED_TEMPLATES = [TEMPLATE_PIN_RHEL_7, TEMPLATE_PIN_RHEL_8, TEMPLATE_PIN_RHEL_9];
 
 const isPromoted = (templateItem: TemplateItem): boolean =>
   templateItem.isCommon && PROMOTED_TEMPLATES.includes(templateItem.metadata.name);

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import { Button } from '@patternfly/react-core';
+import { Button, TextContent } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
@@ -84,7 +84,7 @@ const NoDataEmptyMsgDetail = () => {
   const canEditIdentityProviders = useCanEditIdentityProviders();
   const [oauth, oauthLoaded] = useOAuthData(canEditIdentityProviders);
   return (
-    <>
+    <TextContent>
       {canEditIdentityProviders && oauthLoaded ? (
         oauth?.spec?.identityProviders?.length > 0 ? (
           <p>
@@ -109,7 +109,7 @@ const NoDataEmptyMsgDetail = () => {
           <UsersHelpText />
         </p>
       )}
-    </>
+    </TextContent>
   );
 };
 

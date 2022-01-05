@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import CatalogServiceProvider, {
+import {
+  QuickSearchController,
+  QuickSearchProviders,
   CatalogService,
-} from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
-import { QuickSearchController, QuickSearchProviders } from '@console/shared';
+  CatalogServiceProvider,
+} from '@console/shared';
 import { TektonTaskProviders } from '../pipelines/const';
 import { useCleanupOnFailure, useLoadingTaskCleanup } from '../pipelines/pipeline-builder/hooks';
 import {

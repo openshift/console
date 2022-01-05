@@ -1,5 +1,10 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
-import { K8sResourceKind, apiVersionForModel } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  apiVersionForModel,
+  modelFor,
+  referenceFor,
+} from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src/types';
 import {
   getDefaultOperatorIcon,
@@ -86,7 +91,9 @@ export const getRhoasServiceBindingEdges = (
       if (bss) {
         const targetNode = rhoasNodes.find(
           (node) =>
-            node.data.resource.kind === bss.kind && node.data.resource.metadata.name === bss.name,
+            (bss.kind === node.data.resource.kind ||
+              bss.resource === modelFor(referenceFor(node.data.resource)).plural) &&
+            node.data.resource.metadata.name === bss.name,
         );
         if (targetNode) {
           const target = targetNode.data.resource.metadata.uid;

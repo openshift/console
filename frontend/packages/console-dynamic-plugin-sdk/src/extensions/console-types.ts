@@ -1,12 +1,14 @@
+import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { TableGridBreakpoint, OnSelect, SortByDirection, ICell } from '@patternfly/react-table';
 import { RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
-  K8sKind,
+  K8sModel,
   PrometheusLabels,
   PrometheusValue,
   ResolvedExtension,
+  Selector,
 } from '../api/common-types';
 import { Extension, ExtensionTypeGuard } from '../types';
 
@@ -73,23 +75,9 @@ export type AccessReviewResourceAttributes = {
   namespace?: string;
 };
 
-export type MatchExpression = {
-  key: string;
-  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
-  values?: string[];
-  value?: string;
-};
-
-export type MatchLabels = {
-  [key: string]: string;
-};
-
-export type Selector = {
-  matchLabels?: MatchLabels;
-  matchExpressions?: MatchExpression[];
-};
-
 /**
+ * @deprecated Use K8sGroupVersionKind type instead. Support for type K8sResourceKindReference will be removed in a future release.
+ * @see K8sGroupVersionKind
  * GroupVersionKind unambiguously identifies a kind.
  * https://godoc.org/k8s.io/apimachinery/pkg/runtime/schema#GroupVersionKind
  * TODO: Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
@@ -101,6 +89,8 @@ export type GroupVersionKind = string;
  * Maintains backwards-compatibility with references using the `kind` string field.
  */
 export type K8sResourceKindReference = GroupVersionKind | string;
+
+export type K8sGroupVersionKind = { group?: string; version: string; kind: string };
 
 enum InventoryStatusGroup {
   WARN = 'WARN',
@@ -156,7 +146,9 @@ export type PrometheusResponse = {
 };
 
 export type WatchK8sResource = {
-  kind: K8sResourceKindReference;
+  /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
+  kind?: K8sResourceKindReference;
+  groupVersionKind?: K8sGroupVersionKind;
   name?: string;
   namespace?: string;
   isList?: boolean;
@@ -437,7 +429,9 @@ export type UseListPageFilter = <D, R>(
 ) => [D[], D[], OnFilterChange];
 
 export type ResourceLinkProps = {
-  kind: GroupVersionKind;
+  /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
+  kind?: K8sResourceKindReference;
+  groupVersionKind?: K8sGroupVersionKind;
   className?: string;
   displayName?: string;
   inline?: boolean;
@@ -450,8 +444,11 @@ export type ResourceLinkProps = {
   onClick?: () => void;
 };
 
-export type UseK8sModel = (groupVersionKind?: GroupVersionKind) => [K8sKind, boolean];
-export type UseK8sModels = () => [{ [key: string]: K8sKind }, boolean];
+export type UseK8sModel = (
+  // Use K8sGroupVersionKind type instead of K8sResourceKindReference. Support for type K8sResourceKindReference will be removed in a future release.
+  groupVersionKind?: K8sResourceKindReference | K8sGroupVersionKind,
+) => [K8sModel, boolean];
+export type UseK8sModels = () => [{ [key: string]: K8sModel }, boolean];
 
 export type PerspectiveType = string;
 
@@ -459,3 +456,108 @@ export type UseActivePerspective = () => [
   PerspectiveType,
   React.Dispatch<React.SetStateAction<PerspectiveType>>,
 ];
+
+export type QueryParams = {
+  watch?: string;
+  labelSelector?: string;
+  fieldSelector?: string;
+  resourceVersion?: string;
+  [key: string]: string;
+};
+
+export type Patch = {
+  op: string;
+  path: string;
+  value?: any;
+};
+
+export type Cause = {
+  field: string;
+  message: string;
+  reason: string;
+};
+
+export type Status = {
+  apiVersion: 'v1';
+  kind: 'Status';
+  details: {
+    causes: Cause[];
+    group: string;
+    kind: string;
+  };
+  message: string;
+  metadata: any;
+  reason: string;
+  status: string;
+};
+
+export type OverviewProps = {
+  className?: string;
+  children: React.ReactNode;
+};
+
+export enum GridPosition {
+  MAIN = 'MAIN',
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
+
+export type OverviewCardSpan = 4 | 6 | 12;
+
+export type OverviewGridCard = {
+  Card: React.ComponentType<any>;
+  span?: OverviewCardSpan;
+};
+
+export type OverviewGridProps = {
+  mainCards: OverviewGridCard[];
+  leftCards?: OverviewGridCard[];
+  rightCards?: OverviewGridCard[];
+};
+
+export type InventoryItemTitleProps = {
+  children: React.ReactNode;
+};
+
+export type InventoryItemBodyProps = {
+  error?: any;
+};
+
+export type InventoryItemStatusProps = {
+  count: number;
+  icon: React.ReactNode;
+  linkTo?: string;
+};
+
+export type HumanizeResult = {
+  string: string;
+  value: number;
+  unit: string;
+};
+
+export type Humanize = (
+  value: string | number,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => HumanizeResult;
+
+export enum LIMIT_STATE {
+  'ERROR' = 'ERROR',
+  'WARN' = 'WARN',
+  'OK' = 'OK',
+}
+
+export type TopConsumerPopoverProps = {
+  current: string;
+  total?: string;
+  available?: string;
+  limit?: string;
+  limitState?: LIMIT_STATE;
+  requested?: string;
+  requestedState?: LIMIT_STATE;
+};
+
+export type QueryWithDescription = {
+  query: string;
+  desc: string;
+};

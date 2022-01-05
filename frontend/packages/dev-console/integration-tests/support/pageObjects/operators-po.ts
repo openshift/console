@@ -32,6 +32,7 @@ export const operatorsPO = {
     redHatSourceType: '[data-test-group-name="catalogSourceDisplayName"] [title="Red Hat"]',
     redHatCodeReadyWorkspacesCard:
       '[data-test^="codeready-workspaces-redhat-operators-openshift-marketplace"]',
+    gitopsPrimer: '[data-test="gitops-primer-community-operators-openshift-marketplace"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',

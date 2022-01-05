@@ -2,8 +2,6 @@ import { TFunction } from 'i18next';
 import { Map as ImmutableMap } from 'immutable';
 import YAML from 'js-yaml';
 import * as _ from 'lodash';
-import { defaultCatalogCategories } from '@console/dev-console/src/components/catalog/utils/default-categories';
-import { defaultProjectAccessRoles } from '@console/dev-console/src/components/project-access/project-access-form-utils';
 import { AddAction, isAddAction } from '@console/dynamic-plugin-sdk';
 import { FirehoseResult } from '@console/internal/components/utils';
 import * as denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
@@ -31,6 +29,7 @@ import {
 } from '@console/internal/module/k8s';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
+import { defaultCatalogCategories } from './default-categories';
 
 export type Sample = {
   highlightText?: string;
@@ -47,10 +46,18 @@ export type Sample = {
   };
 };
 
+type ProjectAccessRoles = {
+  availableClusterRoles: string[];
+};
+
 const getTargetResource = (model: K8sKind) => ({
   apiVersion: apiVersionForModel(model),
   kind: model.kind,
 });
+
+const defaultProjectAccessRoles: ProjectAccessRoles = {
+  availableClusterRoles: ['admin', 'edit', 'view'],
+};
 
 const clusterRoleBindingSamples = (t: TFunction): Sample[] => [
   {

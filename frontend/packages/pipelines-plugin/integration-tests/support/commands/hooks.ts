@@ -16,3 +16,7 @@ after(() => {
   });
   // cy.logout();
 });
+
+afterEach(() => {
+  cy.checkErrors();
+});

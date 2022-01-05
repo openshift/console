@@ -1,14 +1,11 @@
 import * as React from 'react';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s/types';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import InventoryItem, {
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
@@ -80,31 +77,41 @@ const InventoryCard: React.FC = () => {
   );
 
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('metal3-plugin~Inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <PodInventoryItem />
-        <InventoryItem
-          title={t('metal3-plugin~Disk')}
-          isLoading={!obj}
-          count={getHostStorage(obj).length}
-          TitleComponent={DiskTitleComponent}
-        />
-        <InventoryItem
-          title={t('metal3-plugin~NIC')}
-          isLoading={!obj}
-          count={getHostNICs(obj).length}
-          TitleComponent={NICTitleComponent}
-        />
-        <InventoryItem
-          title={t('metal3-plugin~CPU')}
-          isLoading={!obj}
-          count={getHostCPU(obj).count}
-        />
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('metal3-plugin~Inventory')}</CardTitle>
+      </CardHeader>
+      <CardBody>
+        <Stack hasGutter>
+          <StackItem>
+            <PodInventoryItem />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~Disk')}
+              isLoading={!obj}
+              count={getHostStorage(obj).length}
+              TitleComponent={DiskTitleComponent}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~NIC')}
+              isLoading={!obj}
+              count={getHostNICs(obj).length}
+              TitleComponent={NICTitleComponent}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              title={t('metal3-plugin~CPU')}
+              isLoading={!obj}
+              count={getHostCPU(obj).count}
+            />
+          </StackItem>
+        </Stack>
+      </CardBody>
+    </Card>
   );
 };
 

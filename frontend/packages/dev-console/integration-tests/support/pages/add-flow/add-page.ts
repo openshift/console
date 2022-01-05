@@ -20,6 +20,7 @@ export const addPage = {
         cy.testA11y('Deploy Page');
         detailsPage.titleShouldContain(pageTitle.ContainerImage);
         break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
         cy.byTestID('item import-from-git').click();
@@ -30,7 +31,7 @@ export const addPage = {
       case 'From Catalog':
       case addOptions.DeveloperCatalog:
         cy.byTestID('item dev-catalog').click();
-        app.waitForDocumentLoad();
+        app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         cy.testA11y(pageTitle.DeveloperCatalog);
         break;
@@ -89,11 +90,24 @@ export const addPage = {
         detailsPage.titleShouldContain(pageTitle.UploadJarFile);
         cy.testA11y(pageTitle.UploadJarFile);
         break;
+      case 'Broker':
+      case addOptions.Broker:
+        cy.byTestID('item knative-eventing-broker').click();
+        detailsPage.titleShouldContain(pageTitle.Broker);
+        cy.testA11y(pageTitle.Broker);
+        break;
       default:
         throw new Error(`Unable to find the "${card}" card on Add page`);
     }
   },
   verifyCard: (cardName: string) => cy.get(cardTitle).should('contain.text', cardName),
+  setBuildEnvField: (envKey: string, value: string) =>
+    cy
+      .get(`#form-input-image-imageEnv-${envKey}-field`)
+      .scrollIntoView()
+      .should('be.visible')
+      .clear()
+      .type(value),
 };
 
 export const verifyAddPage = {
@@ -142,12 +156,18 @@ export const verifyAddPage = {
       case 'Event Source':
         cy.byTestID('item knative-event-source').should('be.visible');
         break;
+      case 'Import from Git':
+        cy.byTestID('item import-from-git').should('be.visible');
+        break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'From Git':
         cy.byTestID('item import-from-git').should('be.visible');
         break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'From Devfile':
         cy.byTestID('item import-from-git').should('be.visible');
         break;
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case 'From Dockerfile':
         cy.byTestID('item import-from-git').should('be.visible');
         break;

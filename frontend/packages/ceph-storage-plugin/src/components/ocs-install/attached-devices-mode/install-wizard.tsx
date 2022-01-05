@@ -18,7 +18,6 @@ import {
 import { history } from '@console/internal/components/utils/router';
 import { setFlag } from '@console/internal/actions/features';
 import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
@@ -39,7 +38,7 @@ import {
   OCS_INTERNAL_CR_NAME,
   MODES,
 } from '../../../constants';
-import { StorageClusterKind, NetworkType, NavUtils } from '../../../types';
+import { StorageClusterKind, NetworkType, NavUtils, ProviderNames } from '../../../types';
 import { getOCSRequestData, labelNodes, labelOCSNamespace } from '../ocs-request-data';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
@@ -74,7 +73,7 @@ const createCluster = async (
     const storageCluster: StorageClusterKind = getOCSRequestData(
       { name: storageClass?.metadata?.name, provisioner: storageClass?.provisioner },
       defaultRequestSize.BAREMETAL,
-      encryption.clusterWide,
+      encryption,
       enableMinimal,
       enableFlexibleScaling,
       publicNetwork,
@@ -86,13 +85,12 @@ const createCluster = async (
     );
     const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
     if (encryption.advanced && kms.hasHandled) {
-      promises.push(...createClusterKmsResources(kms));
+      promises.push(...createClusterKmsResources(kms, ProviderNames.VAULT));
     }
     if (enableTaint) {
       promises.push(...taintNodes(nodes));
     }
     await Promise.all(promises).then(() => k8sCreate(OCSServiceModel, storageCluster));
-    flagDispatcher(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
     flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
     flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
     flagDispatcher(setFlag(OCS_FLAG, true));

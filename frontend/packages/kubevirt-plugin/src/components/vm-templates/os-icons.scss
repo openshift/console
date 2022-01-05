@@ -16,17 +16,13 @@
 }
 
 .kv-pin-btn.pf-c-button.pf-m-plain {
-  color: var(--pf-global--palette--black-300);
-  :hover {
-    color: var(--pf-global--palette--gold-300);
-  }
+  --pf-c-button--m-plain--Color: var(--pf-global--palette--black-300);
+  --pf-c-button--m-plain--hover--Color: var(--pf-global--palette--gold-300);
 }
 
 .kv-pin-remove-btn.pf-c-button.pf-m-plain {
-  color: var(--pf-global--palette--gold-300);
-  :hover {
-    color: var(--pf-global--palette--gold-500);
-  }
+  --pf-c-button--m-plain--Color: var(--pf-global--palette--gold-300);
+  --pf-c-button--m-plain--hover--Color: var(--pf-global--palette--gold-500);
 }
 
 .kv-pin-customize-btn {

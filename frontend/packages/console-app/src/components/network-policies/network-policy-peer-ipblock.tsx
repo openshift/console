@@ -8,7 +8,7 @@ import { NetworkPolicyIPBlock } from './network-policy-model';
 
 export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps> = (props) => {
   const { t } = useTranslation();
-  const { onChange, ipBlock } = props;
+  const { onChange, ipBlock, direction } = props;
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
 
   const handleCIDRChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,8 +36,20 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           id="cidr"
           name="cidr"
           aria-describedby="ipblock-help"
+          data-test="ipblock-cidr-input"
           required
         />
+        <div className="help-block">
+          <p>
+            {direction === 'ingress'
+              ? t(
+                  'console-app~If this field is empty, traffic will be allowed from all external sources.',
+                )
+              : t(
+                  'console-app~If this field is empty, traffic will be allowed to all external sources.',
+                )}
+          </p>
+        </div>
       </div>
       {networkFeaturesLoaded && networkFeatures.PolicyPeerIPBlockExceptions !== false && (
         <div className="form-group co-create-networkpolicy__exceptions">
@@ -53,6 +65,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 name={`exception-${idx}`}
                 id={`exception-${idx}`}
                 value={exc.value}
+                data-test="ipblock-exception-input"
               />
               <Button
                 aria-label={t('console-app~Remove exception')}
@@ -66,6 +79,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 }}
                 type="button"
                 variant="plain"
+                data-test="ipblock-remove-exception"
               >
                 <MinusCircleIcon />
               </Button>
@@ -80,6 +94,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
               }}
               type="button"
               variant="link"
+              data-test="ipblock-add-exception"
             >
               <PlusCircleIcon className="co-icon-space-r" />
               {t('console-app~Add exception')}

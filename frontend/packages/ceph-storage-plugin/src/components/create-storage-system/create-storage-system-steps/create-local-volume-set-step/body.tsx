@@ -51,23 +51,29 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   storageClassName,
   nodes,
   allNodes,
+  defaultVolumeMode,
 }) => {
   const { t } = useTranslation();
   const [radio, setRadio] = React.useState(FilterDiskBy.ALL_NODES);
   const [activeMinDiskSize, setMinActiveState] = React.useState(false);
   const [activeMaxDiskSize, setMaxActiveState] = React.useState(false);
 
-  React.useEffect(() => {
-    // Update the nodes with allNodes when the component is rendered
-    dispatch({ type: 'wizard/nodes', payload: allNodes });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const formHandler = React.useCallback(
     (field: keyof LocalVolumeSet, value: LocalVolumeSet[keyof LocalVolumeSet]) =>
       dispatch({ type: 'wizard/setCreateLocalVolumeSet', payload: { field, value } }),
     [dispatch],
   );
+
+  React.useEffect(() => {
+    // Updates the nodes with allNodes when the component is rendered
+    dispatch({ type: 'wizard/setNodes', payload: allNodes });
+
+    // Updates the pre-selected volume mode
+    formHandler('diskMode', defaultVolumeMode);
+
+    // Required to be run only on initial rendering , hence suppressing the eslint rule
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const INTEGER_MAX_REGEX = /^\+?([1-9]\d*)$/;
   const INTEGER_MIN_REGEX = /^\+?([0-9]\d*)$/;
@@ -104,7 +110,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   const onRowSelected = React.useCallback(
     (selectedNodes: NodeKind[]) => {
       const nodesData = createWizardNodeState(selectedNodes);
-      dispatch({ type: 'wizard/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/setNodes', payload: nodesData });
     },
     [dispatch],
   );
@@ -114,8 +120,8 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   const onRadioSelect = (_, event) => {
     const { value } = event.target || { value: '' };
     value === FilterDiskBy.ALL_NODES
-      ? dispatch({ type: 'wizard/nodes', payload: allNodes })
-      : dispatch({ type: 'wizard/nodes', payload: [] });
+      ? dispatch({ type: 'wizard/setNodes', payload: allNodes })
+      : dispatch({ type: 'wizard/setNodes', payload: [] });
     setRadio(value);
   };
 
@@ -342,4 +348,5 @@ type LocalVolumeSetBodyProps = {
   storageClassName: string;
   nodes: WizardState['nodes'];
   allNodes: WizardState['nodes'];
+  defaultVolumeMode: WizardState['createLocalVolumeSet']['diskMode'];
 };

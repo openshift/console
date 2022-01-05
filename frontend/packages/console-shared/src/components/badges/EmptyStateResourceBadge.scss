@@ -2,9 +2,9 @@
   margin-bottom: var(--pf-global--spacer--md);
   &--badge {
     &.pf-c-badge {
-      color: var(--pf-global--palette--white);
-      font-size: var(--pf-global--icon--FontSize--md);
-      background-color: var(--pf-global--Color--400);
+      --pf-c-badge--Color: var(--pf-global--palette--white);
+      --pf-c-badge--FontSize: var(--pf-global--icon--FontSize--md);
+      --pf-c-badge--BackgroundColor: var(--pf-global--Color--400);
     }
   }
 }

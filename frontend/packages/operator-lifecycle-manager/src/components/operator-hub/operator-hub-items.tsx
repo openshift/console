@@ -331,10 +331,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
   const { uid, name, imgUrl, provider, description, installed } = item;
   const vendor = provider ? t('olm~provided by {{provider}}', { provider }) : null;
-  const badges = ([
-    DefaultCatalogSource.CommunityOperators,
-    DefaultCatalogSource.RedHatMarketPlace,
-  ] as string[]).includes(item.catalogSource)
+  const badges = item?.catalogSourceDisplayName
     ? [<Badge text={item.catalogSourceDisplayName} />]
     : [];
   const icon = (
@@ -439,7 +436,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         return url.toString();
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while setting utm_source to remote workflow URL', error.message);
       }
     }
     return null;

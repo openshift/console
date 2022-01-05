@@ -12,13 +12,18 @@ import {
   PodKind,
   TemplateKind,
 } from '@console/internal/module/k8s/types';
+import {
+  VIRTUALMACHINES_BASE_URL,
+  VIRTUALMACHINES_TEMPLATES_BASE_URL,
+} from '../../constants/url-params';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../hooks/use-support-modal';
-import { DataVolumeModel } from '../../models';
+import { DataSourceModel, DataVolumeModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
+import { DataSourceKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMDisks } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
@@ -28,11 +33,11 @@ import { VMTemplateDetails } from './vm-template-details';
 export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatch) => () => [
   {
     name: t('kubevirt-plugin~Virtualization'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~Templates'),
-    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization/templates`,
+    path: `/k8s/ns/${match.params.ns || 'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
   },
   {
     name: t('kubevirt-plugin~{{name}} Details', { name: match.params.name }),
@@ -59,6 +64,10 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
     isList: true,
     namespace,
   });
+  const [dataSources, dataSourcesLoaded] = useK8sWatchResource<DataSourceKind[]>({
+    kind: kubevirtReferenceForModel(DataSourceModel),
+    isList: true,
+  });
   const [template, templateLoaded, templateError] = useK8sWatchResource<TemplateKind>({
     kind: TemplateModel.kind,
     namespace,
@@ -76,12 +85,14 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
           pvcs: [...baseImages, ...pvcs],
           dataVolumes: [...dataVolumes, ...baseImageDVs],
           pods: [...pods, ...baseImagePods],
+          dataSources,
         })
       : null;
 
   const withSupportModal = useSupportModal();
   const withCustomizeModal = useCustomizeSourceModal();
-  const sourceLoaded = dvLoaded && podsLoaded && pvcsLoaded && templateLoaded && imagesLoaded;
+  const sourceLoaded =
+    dvLoaded && podsLoaded && pvcsLoaded && templateLoaded && imagesLoaded && dataSourcesLoaded;
   const sourceLoadError = dvError || podsError || pvcsError || templateError || error;
 
   const nicsPage = {

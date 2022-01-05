@@ -1,3 +1,4 @@
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pageTitle, operators, switchPerspective } from '../../constants';
 import { devNavigationMenuPO, operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';
@@ -9,6 +10,13 @@ export const installOperator = (operatorName: operators) => {
   operatorsPage.navigateToOperatorHubPage();
   operatorsPage.searchOperator(operatorName);
   operatorsPage.selectOperator(operatorName);
+  cy.get('body').then(($body) => {
+    if ($body.text().includes('Show community Operator')) {
+      cy.log('Installing community operator');
+      modal.submit();
+      modal.shouldBeClosed();
+    }
+  });
   operatorsPage.verifySidePane();
   cy.get(operatorsPO.alertDialog).then(($sidePane) => {
     if ($sidePane.find(operatorsPO.sidePane.install).length) {
@@ -17,12 +25,13 @@ export const installOperator = (operatorName: operators) => {
       cy.get(operatorsPO.operatorHub.install).click();
       cy.get(operatorsPO.operatorHub.installingOperatorModal).should('be.visible');
       app.waitForLoad();
-      operatorsPage.navigateToInstallOperatorsPage();
-      operatorsPage.verifyInstalledOperator(operatorName);
+      cy.byTestID('success-icon').should('be.visible');
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
     }
+    operatorsPage.navigateToInstallOperatorsPage();
+    operatorsPage.verifyInstalledOperator(operatorName);
   });
 };
 
@@ -52,8 +61,8 @@ const performPostInstallationSteps = (operator: operators): void => {
   switch (operator) {
     case operators.ServerlessOperator:
       cy.log(`Performing Serverless post installation steps`);
-      createKnativeEventing();
       createKnativeServing();
+      createKnativeEventing();
       break;
     case operators.RedHatCodereadyWorkspaces:
       cy.log(`Performing CRW post-installation steps`);
@@ -109,4 +118,9 @@ export const verifyAndInstallPipelinesOperator = () => {
 export const verifyAndInstallKnativeOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.ServerlessOperator);
+};
+
+export const verifyAndInstallGitopsPrimerOperator = () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  verifyAndInstallOperator(operators.GitopsPrimer);
 };

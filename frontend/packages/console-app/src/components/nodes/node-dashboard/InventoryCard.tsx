@@ -1,13 +1,10 @@
 import * as React from 'react';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { referenceForModel, K8sResourceCommon, K8sKind } from '@console/internal/module/k8s';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import InventoryItem, {
   ResourceInventoryItem,
   StatusGroupMapper,
@@ -48,25 +45,31 @@ const InventoryCard: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <DashboardCard data-test-id="inventory-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('console-app~Inventory')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <NodeInventoryItem
-          nodeName={obj.metadata.name}
-          model={PodModel}
-          mapper={getPodStatusGroups}
-        />
-        <InventoryItem
-          isLoading={!obj}
-          title={t('console-app~Image')}
-          titlePlural={t('console-app~Images')}
-          count={obj.status?.images?.length}
-          error={!obj.status?.images}
-        />
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card data-test-id="inventory-card">
+      <CardHeader>
+        <CardTitle>{t('console-app~Inventory')}</CardTitle>
+      </CardHeader>
+      <CardBody>
+        <Stack hasGutter>
+          <StackItem>
+            <NodeInventoryItem
+              nodeName={obj.metadata.name}
+              model={PodModel}
+              mapper={getPodStatusGroups}
+            />
+          </StackItem>
+          <StackItem>
+            <InventoryItem
+              isLoading={!obj}
+              title={t('console-app~Image')}
+              titlePlural={t('console-app~Images')}
+              count={obj.status?.images?.length}
+              error={!obj.status?.images}
+            />
+          </StackItem>
+        </Stack>
+      </CardBody>
+    </Card>
   );
 };
 

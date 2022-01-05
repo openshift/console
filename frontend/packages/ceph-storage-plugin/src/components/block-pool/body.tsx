@@ -30,7 +30,7 @@ import {
 } from '../../utils/block-pool';
 import { POOL_STATE, POOL_PROGRESS } from '../../constants/storage-pool-const';
 
-import { GUARDED_FEATURES } from '../../features';
+import { FEATURES } from '../../features';
 
 import './body.scss';
 
@@ -62,7 +62,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
   const { cephCluster, state, dispatch, showPoolStatus, isUpdate } = props;
   const { t } = useTranslation();
 
-  const isPoolManagementSupported = useFlag(GUARDED_FEATURES.OCS_POOL_MANAGEMENT);
+  const isPoolManagementSupported = useFlag(FEATURES.OCS_POOL_MANAGEMENT);
   const [storageCluster, storageClusterLoaded, storageClusterLoadError] = useK8sGet<
     ListKind<StorageClusterKind>
   >(OCSServiceModel, null, CEPH_STORAGE_NAMESPACE);
@@ -76,7 +76,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
     if (storageClusterLoaded && !storageClusterLoadError)
       dispatch({
         type: BlockPoolActionType.SET_FAILURE_DOMAIN,
-        payload: storageCluster.items[0].status?.failureDomain || '',
+        payload: storageCluster?.items[0]?.status?.failureDomain || '',
       });
   }, [storageCluster, storageClusterLoaded, storageClusterLoadError, dispatch]);
 

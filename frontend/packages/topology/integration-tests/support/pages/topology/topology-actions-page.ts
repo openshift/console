@@ -1,3 +1,4 @@
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   nodeActions,
@@ -115,6 +116,12 @@ export const topologyActions = {
           .click();
         break;
       }
+      case 'Make Serverless':
+      case nodeActions.MakeServerless: {
+        cy.byTestActionID(action).click();
+        detailsPage.titleShouldContain(action);
+        break;
+      }
       case 'Delete Application':
       case applicationGroupingsActions.DeleteApplication: {
         cy.byTestActionID(action)
@@ -139,6 +146,7 @@ export const topologyActions = {
 export const addToApplication = {
   selectAction: (action: addToApplicationGroupings | string) => {
     switch (action) {
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case addToApplicationGroupings.FromGit:
       case 'From Git': {
         cy.byTestActionID(action)
@@ -146,6 +154,7 @@ export const addToApplication = {
           .click();
         break;
       }
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case addToApplicationGroupings.FromDevfile:
       case 'From Devfile': {
         cy.byTestActionID(action)
@@ -153,6 +162,7 @@ export const addToApplication = {
           .click();
         break;
       }
+      // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
       case addToApplicationGroupings.FromDockerfile:
       case 'From Dockerfile': {
         cy.byTestActionID(action)

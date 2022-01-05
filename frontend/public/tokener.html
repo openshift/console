@@ -12,7 +12,7 @@
           });
         } catch (e) {
           error = e;
-          console.error(e);
+          console.error('Failed to set localStorage from SERVER_FLAGS', e);
           document.body.append('localStorage must be enabled:');
           document.body.append(e.message || e.toString());
         }

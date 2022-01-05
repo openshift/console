@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ExternalLink } from '@console/internal/components/utils';
 import { APIError } from '@console/shared';
@@ -9,9 +9,8 @@ import { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
   const normalizedDevfileSamples = devfileSamples?.map((sample) => {
-    const { name: uid, displayName, description, tags, git, icon } = sample;
+    const { name: uid, displayName, description, tags, git, icon, provider } = sample;
     const gitRepoUrl = Object.values(git.remotes)[0];
-    const iconUrl = icon ? `data:image/png;base64,${icon}` : '';
     const href = `/import?importType=devfile&devfileName=${uid}&gitRepo=${gitRepoUrl}`;
     const createLabel = t('devconsole~Create Application');
     const type = 'Devfile';
@@ -37,11 +36,12 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
       name: displayName,
       description,
       tags,
+      provider,
       cta: {
         label: createLabel,
         href,
       },
-      icon: { url: iconUrl },
+      icon: { url: icon },
       details: {
         properties: detailsProperties,
         descriptions: detailsDescriptions,
@@ -55,17 +55,13 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
 };
 
 const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
-  const [devfileSamples, setDevfileSamples] = React.useState<DevfileSample[]>([]);
+  const [devfileSamples, setDevfileSamples] = React.useState<DevfileSample[]>();
   const [loadedError, setLoadedError] = React.useState<APIError>();
   const { t } = useTranslation();
 
   React.useEffect(() => {
     let mounted = true;
-    const payload = {
-      registry: 'sample-placeholder',
-    };
-    coFetchJSON
-      .put('/api/devfile/samples', payload)
+    coFetchJSON('/api/devfile/samples/?registry=https://registry.devfile.io')
       .then((resp) => {
         if (mounted) setDevfileSamples(resp);
       })
@@ -75,7 +71,7 @@ const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, an
     return () => (mounted = false);
   }, []);
 
-  const normalizedDevfileSamples = React.useMemo(() => normalizeDevfile(devfileSamples, t), [
+  const normalizedDevfileSamples = React.useMemo(() => normalizeDevfile(devfileSamples || [], t), [
     devfileSamples,
     t,
   ]);

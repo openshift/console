@@ -5,13 +5,13 @@ import { ProvisionerProps } from '@console/plugin-sdk';
 import { Checkbox } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
 
-import { GUARDED_FEATURES } from '../../features';
+import { FEATURES } from '../../features';
 
 import './ocs-storage-class-form.scss';
 
 export const ThickProvision: React.FC<ProvisionerProps> = ({ parameterKey, onParamChange }) => {
   const { t } = useTranslation();
-  const isThickProvisionSupported = useFlag(GUARDED_FEATURES.OCS_THICK_PROVISION);
+  const isThickProvisionSupported = useFlag(FEATURES.OCS_THICK_PROVISION);
 
   const [checked, isChecked] = React.useState(false);
 
@@ -27,6 +27,7 @@ export const ThickProvision: React.FC<ProvisionerProps> = ({ parameterKey, onPar
           id="ocs-sc-thickprovision-checkbox"
           data-test="ocs-sc-thickprovision-checkbox"
           isChecked={checked}
+          data-checked-state={checked}
           label={t('ceph-storage-plugin~Enable Thick Provisioning')}
           onChange={setChecked}
         />

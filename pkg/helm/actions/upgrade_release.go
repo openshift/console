@@ -3,6 +3,7 @@ package actions
 import (
 	"strings"
 
+	"github.com/openshift/console/pkg/helm/metrics"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
@@ -61,5 +62,14 @@ func UpgradeRelease(ns, name, url string, vals map[string]interface{}, conf *act
 		ch.Metadata.Annotations["chart_url"] = url
 	}
 
-	return client.Run(name, ch, vals)
+	rel, err = client.Run(name, ch, vals)
+	if err != nil {
+		return nil, err
+	}
+
+	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+		metrics.HandleconsoleHelmUpgradesTotal(ch.Metadata.Name, ch.Metadata.Version)
+	}
+
+	return rel, nil
 }

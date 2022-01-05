@@ -48,7 +48,7 @@ export const mockFormData: GitImportFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      privateKey: '',
+      key: '',
     },
   },
   build: {

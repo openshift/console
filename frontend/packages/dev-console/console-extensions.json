@@ -187,6 +187,21 @@
     }
   },
   {
+    "type": "dev-console.import/environment",
+    "properties": {
+      "imageStreamName": "nodejs",
+      "imageStreamTags": ["16-ubi8", "14-ubi8", "14-ubi8-minimal", "12-ubi8", "latest"],
+      "environments": [
+        {
+          "key": "NPM_RUN",
+          "label": "%devconsole~Run command%",
+          "description": "%devconsole~Optional parameter for Node.js applications to define the npm run <command>.%",
+          "defaultValue": "start"
+        }
+      ]
+    }
+  },
+  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "BuilderImage",
@@ -203,6 +218,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "BuilderImage",
+      "title": "%devconsole~Builder Images%",
       "provider": { "$codeRef": "catalog.builderImageProvider" }
     },
     "flags": {
@@ -226,6 +242,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "Template",
+      "title": "%devconsole~Templates%",
       "provider": { "$codeRef": "catalog.templateProvider" }
     },
     "flags": {
@@ -249,6 +266,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "Devfile",
+      "title": "%devconsole~Devfiles%",
       "provider": { "$codeRef": "catalog.devfileProvider" }
     },
     "flags": {
@@ -270,6 +288,7 @@
     "properties": {
       "catalogId": "samples-catalog",
       "type": "Sample",
+      "title": "%devconsole~Builder Images%",
       "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
     },
     "flags": {
@@ -281,6 +300,7 @@
     "properties": {
       "catalogId": "samples-catalog",
       "type": "Sample",
+      "title": "%devconsole~Devfiles%",
       "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
     },
     "flags": {
@@ -444,6 +464,28 @@
     }
   },
   {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyGraphActionProvider" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "actions.useTopologyApplicationActionProvider" }
+    }
+  },
+  {
+    "type": "console.action/group",
+    "properties": {
+      "id": "add-to-project",
+      "label": "%devconsole~Add to Project%",
+      "submenu": true
+    }
+  },
+  {
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
@@ -544,6 +586,29 @@
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.action/group",
+    "properties": {
+      "id": "add-to-application",
+      "label": "%devconsole~Add to Application%",
+      "submenu": true,
+      "insertAfter": ["delete-application"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "devconsole.routingOptions",
+      "label": "",
+      "groupId": "applications",
+      "description": "",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "userPreferences.SecureRouteFields" }
+      },
+      "insertAfter": "console.preferredCreateEditMethod"
     }
   }
 ]

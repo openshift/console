@@ -251,7 +251,7 @@ export const usePodScalingAccessStatus = (
           // console.log is used here instead of throw error
           // throw error will break the thread and likely end-up in a white screen
           // eslint-disable-next-line
-          console.log(error);
+          console.log('Checking pod edit acceess failed:', error);
           setEditable(false);
         });
     }

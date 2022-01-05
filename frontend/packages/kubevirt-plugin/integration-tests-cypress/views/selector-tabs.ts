@@ -1,5 +1,4 @@
 // bootOrder
-export const bootOrder = '.kv-vm-resource--boot-order';
 export const addSource = '#add-device-btm';
 export const selectDevice = 'select[id="add-device-select"]';
 export const draggablePointer = 'div[style="cursor: move;"]';

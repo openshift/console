@@ -3,12 +3,12 @@ import { shallow } from 'enzyme';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import HealthChecks from '../../../health-checks/HealthChecks';
 import { Resources } from '../../import-types';
-import RouteCheckbox from '../../route/RouteCheckbox';
 import AdvancedSection from '../AdvancedSection';
 import BuildConfigSection from '../BuildConfigSection';
 import DeploymentConfigSection from '../DeploymentConfigSection';
 import LabelSection from '../LabelSection';
 import ResourceLimitSection from '../ResourceLimitSection';
+import RouteSection from '../RouteSection';
 import ScalingSection from '../ScalingSection';
 import ServerlessScalingSection from '../ServerlessScalingSection';
 
@@ -38,7 +38,7 @@ describe('AdvancedSection', () => {
 
   it('Should render advance section for Kubernetes(D) resource and not serverless sections', () => {
     const wrapper = shallow(<AdvancedSection {...advanceSectionProps} />);
-    expect(wrapper.find(RouteCheckbox).exists()).toBe(true);
+    expect(wrapper.find(RouteSection).exists()).toBe(true);
     expect(wrapper.find(HealthChecks).exists()).toBe(true);
     expect(wrapper.find(BuildConfigSection).exists()).toBe(true);
     expect(wrapper.find(DeploymentConfigSection).exists()).toBe(true);
@@ -61,7 +61,7 @@ describe('AdvancedSection', () => {
       },
     };
     const wrapper = shallow(<AdvancedSection {...newAdvanceSectionProps} />);
-    expect(wrapper.find(RouteCheckbox).exists()).toBe(true);
+    expect(wrapper.find(RouteSection).exists()).toBe(true);
     expect(wrapper.find(HealthChecks).exists()).toBe(true);
     expect(wrapper.find(DeploymentConfigSection).exists()).toBe(true);
     expect(wrapper.find(ScalingSection).exists()).toBe(true);
@@ -81,7 +81,7 @@ describe('AdvancedSection', () => {
       },
     };
     const wrapper = shallow(<AdvancedSection {...newAdvanceSectionProps} />);
-    expect(wrapper.find(RouteCheckbox).exists()).toBe(true);
+    expect(wrapper.find(RouteSection).exists()).toBe(true);
     expect(wrapper.find(HealthChecks).exists()).toBe(true);
     expect(wrapper.find(BuildConfigSection).exists()).toBe(true);
     expect(wrapper.find(DeploymentConfigSection).exists()).toBe(true);

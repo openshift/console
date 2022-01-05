@@ -38,7 +38,10 @@ import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
 import { initializeCommonMetadata, initializeCommonTemplateMetadata } from '../vm/create/common';
 import { prepareVM } from '../vm/create/simple-create';
 
-export const createTemplateFromVM = (vm: VMKind): Promise<TemplateKind> => {
+export const createTemplateFromVM = (
+  vm: VMKind,
+  pvcs: PersistentVolumeClaimKind[],
+): Promise<TemplateKind> => {
   const template = JSON.parse(
     vm.metadata.annotations[TEMPLATE_CUSTOMIZED_ANNOTATION],
   ) as TemplateKind;
@@ -67,6 +70,8 @@ export const createTemplateFromVM = (vm: VMKind): Promise<TemplateKind> => {
         ? dataVolumes.find((dv) => dv.metadata.name === volume.dataVolume.name)
         : undefined;
 
+      const pvcSize = pvcs?.find(({ metadata }) => metadata.name === volume.dataVolume.name)?.spec
+        ?.resources?.requests?.storage;
       disk.name = disk.name.replace(vmWrapper.getName(), VM_TEMPLATE_NAME_PARAMETER);
       volume.name = disk.name;
       if (dataVolume) {
@@ -84,6 +89,10 @@ export const createTemplateFromVM = (vm: VMKind): Promise<TemplateKind> => {
           VM_TEMPLATE_NAME_PARAMETER,
         );
         volume.dataVolume.name = dataVolume.metadata.name;
+        // setting the DV size to matching PVC size in case of overhead
+        if (pvcSize) {
+          dataVolume.spec.storage.resources.requests.storage = pvcSize;
+        }
       }
       return {
         disk,

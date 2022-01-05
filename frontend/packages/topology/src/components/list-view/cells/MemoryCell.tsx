@@ -12,10 +12,10 @@ type MemoryCellProps = {
   item: Node;
 };
 
-interface MemoryCellComponentProps {
+type MemoryCellComponentProps = {
   totalBytes: number;
   memoryByPod: any;
-}
+};
 
 const MemoryCellComponent: React.FC<MemoryCellComponentProps> = React.memo(
   ({ totalBytes, memoryByPod }) => (

@@ -319,7 +319,7 @@ export const instantiateBinaryBuild = (
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
-      console.log(err);
+      console.log('Failed to upload binary file to trigger a new Build', err);
       window.removeEventListener('beforeunload', onBeforeUnload);
     });
 };

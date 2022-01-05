@@ -87,7 +87,7 @@ Then(
 
 Then('user will see Import from Git card under Git Repository section', () => {
   verifyAddPage.verifyAddPageCard('Git Repository');
-  verifyAddPage.verifyAddPageCard('From Git');
+  verifyAddPage.verifyAddPageCard('Import from Git');
 });
 
 Then('user will see Import YAML, Upload JAR file under From Local Machine section', () => {

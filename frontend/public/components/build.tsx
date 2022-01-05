@@ -4,7 +4,15 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Alert, Grid, GridItem } from '@patternfly/react-core';
+import {
+  Alert,
+  Grid,
+  GridItem,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+} from '@patternfly/react-core';
 
 import { ONE_HOUR, ONE_MINUTE, Status } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -45,10 +53,6 @@ import { Area, requirePrometheus } from './graphs';
 import { BuildModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -173,48 +177,48 @@ const BuildMetrics = requirePrometheus(({ obj }) => {
     <Dashboard className="resource-metrics-dashboard">
       <Grid hasGutter>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~Memory usage')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~Memory usage')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Area
                 byteDataType={ByteDataTypes.BinaryBytes}
                 humanize={humanizeBinaryBytes}
                 query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
                 {...areaProps}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~CPU usage')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~CPU usage')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Area
                 humanize={humanizeCpuCores}
                 query={`pod:container_cpu_usage:sum{pod='${podName}',container='',namespace='${namespace}'}`}
                 {...areaProps}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard className="resource-metrics-dashboard__card">
-            <DashboardCardHeader>
-              <DashboardCardTitle>{t('public~Filesystem')}</DashboardCardTitle>
-            </DashboardCardHeader>
-            <DashboardCardBody className="resource-metrics-dashboard__card-body">
+          <Card className="resource-metrics-dashboard__card">
+            <CardHeader>
+              <CardTitle>{t('public~Filesystem')}</CardTitle>
+            </CardHeader>
+            <CardBody className="resource-metrics-dashboard__card-body">
               <Area
                 byteDataType={ByteDataTypes.BinaryBytes}
                 humanize={humanizeBinaryBytes}
                 query={`pod:container_fs_usage_bytes:sum{pod='${podName}',container='',namespace='${namespace}'}`}
                 {...areaProps}
               />
-            </DashboardCardBody>
-          </DashboardCard>
+            </CardBody>
+          </Card>
         </GridItem>
       </Grid>
       <br />

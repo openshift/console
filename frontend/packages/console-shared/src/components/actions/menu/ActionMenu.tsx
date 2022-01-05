@@ -29,7 +29,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const menuOptions = options || actions;
+  const menuOptions = options.length > 0 ? options : actions;
 
   const hideMenu = () => {
     setIsOpen(false);
@@ -40,7 +40,10 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     // This depends on `checkAccess` being memoized.
     _.each(actions, (action: Action) => {
       if (action.accessReview) {
-        checkAccess(action.accessReview);
+        checkAccess(action.accessReview).catch((e) =>
+          // eslint-disable-next-line no-console
+          console.warn('Could not check access for action menu', e),
+        );
       }
     });
   }, [actions]);

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { V1Network, V1NetworkInterface, VMIKind } from '../../types';
-import { V1Disk, V1Volume } from '../../types/api';
+import { V1Disk, V1GPU, V1HostDevice, V1Volume } from '../../types/api';
 
 export const getVMIDisks = (vmi: VMIKind, defaultValue: V1Disk[] = []): V1Disk[] =>
   vmi && vmi.spec && vmi.spec.domain && vmi.spec.domain.devices && vmi.spec.domain.devices.disks
@@ -42,3 +42,11 @@ export const getVMINodeSelector = (vmi: VMIKind) => vmi?.spec?.nodeSelector;
 export const getVMITolerations = (vmi: VMIKind) => vmi?.spec?.tolerations;
 
 export const getVMIAffinity = (vmi: VMIKind) => vmi?.spec?.affinity;
+
+export const getVMIGPUDevices = (vmi: VMIKind, defaultValue: V1GPU[] = []): V1GPU[] =>
+  vmi?.spec?.domain?.devices?.gpus || defaultValue;
+
+export const getVMIHostDevices = (
+  vmi: VMIKind,
+  defaultValue: V1HostDevice[] = [],
+): V1HostDevice[] => vmi?.spec?.domain?.devices?.hostDevices || defaultValue;

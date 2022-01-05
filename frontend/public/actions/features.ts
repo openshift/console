@@ -12,13 +12,14 @@ import {
   FeatureFlag as DynamicFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,
   SetFeatureFlag,
+  setUser,
 } from '@console/dynamic-plugin-sdk';
 import { resolveExtension } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import store from '../redux';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
-import { setClusterID, setCreateProjectMessage, setUser } from './common';
+import { setClusterID, setCreateProjectMessage } from './common';
 import client, { fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
 import { SSARQueryType, SSARQueryVariables } from '../../@types/console/generated/graphql-schema';
@@ -275,7 +276,7 @@ subscribeToExtensions<DynamicFeatureFlag>(
         })
         .catch((error) => {
           // eslint-disable-next-line no-console
-          console.error(error);
+          console.error('Resolve extension failed:', error);
         });
     });
   }),

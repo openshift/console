@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { sinkTypeUriValidation } from '../add/eventSource-validation-utils';
 import { SinkType } from '../add/import-types';
+import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import SinkSourceModal from './SinkSourceModal';
 
 export interface SinkSourceProps {
@@ -23,7 +24,6 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
   const { name: sinkName = '', apiVersion = '', kind = '', uri = '' } = isSinkRef
     ? spec?.sink?.ref
     : spec?.sink || {};
-  const sinkKey = sinkName && kind ? `${kind}-${sinkName}` : '';
   const initialValues = {
     formData: {
       sinkType: uri ? SinkType.Uri : SinkType.Resource,
@@ -31,7 +31,7 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
         apiVersion,
         kind,
         name: sinkName,
-        key: sinkKey,
+        key: craftResourceKey(sinkName, { kind, apiVersion }),
         uri,
       },
     },

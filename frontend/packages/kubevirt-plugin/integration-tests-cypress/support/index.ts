@@ -1,3 +1,4 @@
+import { projectDropdown } from '../../../integration-tests-cypress/views/common';
 import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
 import {
@@ -27,6 +28,7 @@ declare global {
       selectProject(project: string): void;
       createNAD(namespace: string): void;
       waitForLoginPrompt(vmName: string, namespace: string): void;
+      visitNADPage(): void;
     }
   }
 }
@@ -42,15 +44,15 @@ Cypress.Commands.add('deleteResource', (kind: string, name: string, namespace?: 
   }
 
   cy.exec(
-    `kubectl delete --ignore-not-found=true -n ${namespace} --cascade ${kind} ${name} --wait=true --timeout=120s`,
+    `kubectl delete --ignore-not-found=true -n ${namespace} --cascade ${kind} ${name} --wait=true --timeout=120s || true`,
     { timeout: 120000 },
   );
 
   if (kind === K8S_KIND.VM) {
     // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
     cy.exec(
-      `kubectl delete --ignore-not-found=true -n ${namespace} vmi ${name} --wait=true --timeout=120s`,
-      { timeout: 120000 },
+      `kubectl delete --ignore-not-found=true -n ${namespace} vmi ${name} --wait=true --timeout=240s || true`,
+      { timeout: 240000 },
     );
   }
 });
@@ -67,16 +69,16 @@ Cypress.Commands.add('waitForResource', (resource: any) => {
   const { kind } = resource;
   const { name } = resource.metadata;
   const ns = resource.metadata.namespace;
-  cy.exec(`kubectl wait --for condition=Ready ${kind} ${name} -n ${ns} --timeout=600s`, {
+  cy.exec(`kubectl wait --for condition=Ready ${kind} ${name} -n ${ns} --timeout=600s || true`, {
     timeout: 600000,
   });
 });
 
 Cypress.Commands.add('createDataVolume', (name: string, namespace: string) => {
-  cy.exec(
-    `kubectl get -o json -n ${KUBEVIRT_PROJECT_NAME} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
-  ).then((result) => {
-    const configMap = JSON.parse(result.stdout);
+  const execCommand = (project: string) =>
+    `kubectl get -o json -n ${project} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`;
+
+  const createDataVolume = (configMap) => {
     cy.fixture('data-volume').then((dv) => {
       dv.metadata.name = name;
       dv.metadata.namespace = namespace;
@@ -93,6 +95,10 @@ Cypress.Commands.add('createDataVolume', (name: string, namespace: string) => {
       cy.applyResource(dv);
       cy.waitForResource(dv);
     });
+  };
+
+  cy.exec(execCommand(KUBEVIRT_PROJECT_NAME)).then((result) => {
+    result?.stdout && createDataVolume(JSON.parse(result?.stdout));
   });
 });
 
@@ -156,25 +162,8 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('selectProject', (project: string) => {
-  // it's flaky by using projectDropdown, try to avoid it
-  // projectDropdown.selectProject(project);
-  // projectDropdown.shouldContain(project);
-  cy.byLegacyTestID('namespace-bar-dropdown')
-    .contains('Project:')
-    .click();
-  cy.byTestID('showSystemSwitch').check();
-  cy.byTestID('dropdown-menu-item-link')
-    .contains('.pf-c-menu__item-text', project)
-    .should('exist');
-  // try to add a explict wait to remove the flake
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(3000);
-  cy.get('.pf-c-menu__item-text')
-    .contains(project)
-    .click();
-  cy.byLegacyTestID('namespace-bar-dropdown')
-    .contains(project)
-    .should('exist');
+  projectDropdown.selectProject(project);
+  projectDropdown.shouldContain(project);
 });
 
 Cypress.Commands.add('createNAD', (namespace: string) => {
@@ -187,4 +176,8 @@ Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) =
     failOnNonZeroExit: false,
     timeout: 600000,
   });
+});
+
+Cypress.Commands.add('visitNADPage', () => {
+  cy.clickNavLink(['Networking', 'NetworkAttachmentDefinitions']);
 });

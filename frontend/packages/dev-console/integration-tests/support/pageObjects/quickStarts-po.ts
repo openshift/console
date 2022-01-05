@@ -11,6 +11,7 @@ export const quickStartsPO = {
 };
 
 export const quickStartSidebarPO = {
+  quickStartSidebar: '[data-test~="drawer"]',
   quickStartSidebarBody: '[data-test~="drawer"] [data-test~="content"]',
   startButton: `[data-test="Start button"]`,
   nextButton: '[data-test="Next button"]',

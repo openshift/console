@@ -49,6 +49,6 @@ const CronJobSideBarDetails: React.FC<CronJobSideBarDetailsProps> = ({ cronjob }
 
 export const getCronJobSideBarDetails = (element: GraphElement) => {
   const resource = getResource<CronJobKind>(element);
-  if (resource.kind !== CronJobModel.kind) return undefined;
+  if (!resource || resource.kind !== CronJobModel.kind) return undefined;
   return <CronJobSideBarDetails cronjob={resource} />;
 };

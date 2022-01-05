@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Select } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel } from '@console/internal/models';
+import NamespaceMenuToggle from '@console/shared/src/components/namespace/NamespaceMenuToggle';
 import NamespaceDropdown from '../NamespaceDropdown';
 import { usePreferredNamespace } from '../usePreferredNamespace';
 import { mockNamespaces } from './namespace.data';
@@ -19,6 +19,10 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 jest.mock('../usePreferredNamespace', () => ({
   usePreferredNamespace: jest.fn(),
 }));
+
+jest.mock('fuzzysearch', () => {
+  return { default: jest.fn() };
+});
 
 const mockProjectOrNamespaceModel = useProjectOrNamespaceModel as jest.Mock;
 const mockK8sWatchResource = useK8sWatchResource as jest.Mock;
@@ -42,13 +46,13 @@ describe('NamespaceDropdown', () => {
     ).toBeTruthy();
   });
 
-  it('should render select with preferred namespace if extensions have loaded and user preference for namespace is defined', () => {
+  it('should render menu with preferred namespace if extensions have loaded and user preference for namespace is defined', () => {
     mockProjectOrNamespaceModel.mockReturnValue([NamespaceModel, true]);
     mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
     mockUsePreferredNamespace.mockReturnValue([preferredNamespace, jest.fn(), true]);
     wrapper = shallow(<NamespaceDropdown />);
     expect(wrapper.find('[data-test="dropdown console.preferredNamespace"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().selections).toEqual(preferredNamespace);
+    expect(wrapper.find(NamespaceMenuToggle).props().title).toEqual(preferredNamespace);
   });
 
   it('should render select with "Last viewed" if extensions have loaded but user preference for namespace is not defined', () => {
@@ -57,6 +61,6 @@ describe('NamespaceDropdown', () => {
     mockUsePreferredNamespace.mockReturnValue([undefined, jest.fn(), true]);
     wrapper = shallow(<NamespaceDropdown />);
     expect(wrapper.find('[data-test="dropdown console.preferredNamespace"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().selections).toEqual('Last viewed');
+    expect(wrapper.find(NamespaceMenuToggle).props().title).toEqual('Last viewed');
   });
 });

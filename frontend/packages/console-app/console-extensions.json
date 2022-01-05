@@ -105,6 +105,50 @@
       "model": {
         "group": "apps",
         "version": "v1",
+        "kind": "Deployment"
+      },
+      "provider": { "$codeRef": "actions.useCreateServiceBindingProvider" }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "provider": { "$codeRef": "actions.useCreateServiceBindingProvider" }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "provider": {
+        "$codeRef": "actions.useCreateServiceBindingProvider"
+      }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
         "kind": "StatefulSet"
       },
       "provider": { "$codeRef": "actions.useStatefulSetActionsProvider" }
@@ -175,6 +219,13 @@
     }
   },
   {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "applications",
+      "label": "%console-app~Applications%"
+    }
+  },
+  {
     "type": "console.user-preference/item",
     "properties": {
       "id": "console.preferredPerspective",
@@ -234,6 +285,23 @@
       "field": {
         "type": "custom",
         "component": { "$codeRef": "userPreferences.LanguageDropdown" }
+      }
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.hideUserWorkloadNotifications",
+      "label": "%console-app~User workload notifications%",
+      "groupId": "notifications",
+      "description": "%console-app~Do not display notifications created by users for specific projects on the cluster overview page or notification drawer.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.hideUserWorkloadNotifications",
+        "label": "%console-app~Hide user workload notifications%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
       }
     }
   }

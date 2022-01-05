@@ -198,11 +198,13 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
           try {
             secret = await k8sGet(SecretModel, null, res.namespace, options);
           } catch (err) {
-            console.error(err); // eslint-disable-line no-console
+            console.error('Could not fetch all helm chart releases', err); // eslint-disable-line no-console
           }
           const secretId = secret?.items?.[0]?.metadata?.uid;
           if (secretId) {
-            redirect = `${config.redirectURL}?selectId=${secretId}&selectTab=Release+notes`;
+            redirect = `${config.redirectURL}?selectId=${secretId}&selectTab=${t(
+              'helm-plugin~Release notes',
+            )}`;
           }
         }
 

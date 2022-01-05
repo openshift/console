@@ -10,7 +10,10 @@ import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { NetworkingOverview } from './NetworkingOverview';
 import { getDataFromAdapter } from './utils';
 
-const NetworkTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
+const NetworkTabSection: React.FC<{ element: GraphElement; renderNull: () => null }> = ({
+  element,
+  renderNull,
+}) => {
   const [networkAdapterExtensions, extensionsLoaded] = useResolvedExtensions<NetworkAdapter>(
     isNetworkAdapter,
   );
@@ -26,9 +29,11 @@ const NetworkTabSection: React.FC<{ element: GraphElement }> = ({ element }) => 
     <TopologySideBarTabSection>
       <NetworkingOverview obj={networkAdapter.resource} />
     </TopologySideBarTabSection>
-  ) : null;
+  ) : (
+    renderNull()
+  );
 };
 
-export const getNetworkingSideBarTabSection = (element: GraphElement) => {
-  return <NetworkTabSection element={element} />;
+export const getNetworkingSideBarTabSection = (element: GraphElement, renderNull: () => null) => {
+  return <NetworkTabSection element={element} renderNull={renderNull} />;
 };

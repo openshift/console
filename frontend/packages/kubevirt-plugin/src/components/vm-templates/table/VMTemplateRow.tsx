@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel, TemplateModel } from '@console/internal/models';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
 import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
@@ -19,17 +20,32 @@ import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
 import RowActions from './RowActions';
 import { VMTemplateRowProps } from './types';
 import { tableColumnClasses } from './utils';
-
 import './vm-template-table.scss';
 
 const VMTemplateRow: React.FC<RowFunctionArgs<TemplateItem, VMTemplateRowProps>> = ({
   obj,
-  customData: { dataVolumes, pvcs, pods, namespace, loaded, togglePin, isPinned, sourceLoadError },
+  customData: {
+    dataVolumes,
+    pvcs,
+    pods,
+    namespace,
+    loaded,
+    togglePin,
+    isPinned,
+    sourceLoadError,
+    dataSources,
+  },
 }) => {
   const { t } = useTranslation();
   const [template] = obj.variants;
   const dimensify = dimensifyRow(tableColumnClasses(!namespace));
-  const sourceStatus = getTemplateSourceStatus({ template, pvcs, dataVolumes, pods });
+  const sourceStatus = getTemplateSourceStatus({
+    template,
+    pvcs,
+    dataVolumes,
+    pods,
+    dataSources: dataSources?.data,
+  });
   const provider = getTemplateProvider(t, template);
   const pinned = isPinned(obj);
   const withSupportModal = useSupportModal();
@@ -49,7 +65,7 @@ const VMTemplateRow: React.FC<RowFunctionArgs<TemplateItem, VMTemplateRowProps>>
       <TableData className={dimensify()}>
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         <Link
-          to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+          to={`/k8s/ns/${template.metadata.namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${template.metadata.name}`}
           data-test-id={template.metadata.name}
           className="co-resource-item__resource-name"
         >

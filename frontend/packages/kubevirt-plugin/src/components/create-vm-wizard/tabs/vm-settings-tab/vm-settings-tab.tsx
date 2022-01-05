@@ -9,6 +9,7 @@ import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
 import useV2VConfigMap from '../../../../hooks/use-v2v-config-map';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
+import { selectVM } from '../../../../selectors/vm-template/basic';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormPFSelect } from '../../../form/form-pf-select';
 import { FormField, FormFieldType } from '../../form/form-field';
@@ -20,6 +21,7 @@ import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import {
+  HardwareDevicesField,
   VMSettingsField,
   VMSettingsFieldAttribute,
   VMSettingsRenderableField,
@@ -29,6 +31,7 @@ import {
   VMWizardTabsMetadata,
 } from '../../types';
 import { getFieldId } from '../../utils/renderable-field-utils';
+import { iGetVmAdvancedSettings } from '../advanced-tab/hardware-devices/selectors';
 import { ClonePVCSource } from './clone-pvc-source';
 import { ContainerSource } from './container-source';
 import { FlavorSelect } from './flavor';
@@ -52,8 +55,10 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   steps,
   goToStep,
   vmSettings,
+  vmAdvancedSettings,
   onFieldChange,
   onFieldAttributeChange,
+  onHardwareFieldChange,
 }) => {
   const { t } = useTranslation();
   useV2VConfigMap();
@@ -91,6 +96,21 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
 
   const defaultStorageClass =
     scAllowed && (getDefaultStorageClass(storageClasses) || storageClasses?.[0]);
+
+  const isDevicesInitialized = React.useMemo(
+    () => iGetIn(vmAdvancedSettings, [HardwareDevicesField.IS_DEVICES_INITIALIZED, 'value']),
+    [vmAdvancedSettings],
+  );
+
+  React.useEffect(() => {
+    const template = iUserTemplate?.toJS();
+    if (!isDevicesInitialized && template?.loaded) {
+      const templateDevices = selectVM(template.data)?.spec?.template?.spec?.domain?.devices;
+      onHardwareFieldChange(HardwareDevicesField.GPUS, templateDevices?.gpus);
+      onHardwareFieldChange(HardwareDevicesField.HOST_DEVICES, templateDevices?.hostDevices);
+      onHardwareFieldChange(HardwareDevicesField.IS_DEVICES_INITIALIZED, true);
+    }
+  }, [iUserTemplate, isDevicesInitialized, onHardwareFieldChange]);
 
   React.useEffect(() => {
     if (defaultStorageClass) {
@@ -219,6 +239,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
 
 const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
+  vmAdvancedSettings: iGetVmAdvancedSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   iUserTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate),
   commonTemplateName: getInitialData(state, wizardReduxID).commonTemplateName,
@@ -233,8 +254,10 @@ const stateToProps = (state, { wizardReduxID }) => ({
 type VMSettingsTabComponentProps = {
   onFieldChange: (key: VMSettingsRenderableField, value: string) => void;
   onFieldAttributeChange: (key: VMSettingsFieldAttribute, value: string) => void;
+  onHardwareFieldChange: (key: HardwareDevicesField, value: any | any[]) => void;
   updateStorage: (storage: VMWizardStorage) => void;
   vmSettings: any;
+  vmAdvancedSettings: any;
   provisionSourceStorage: VMWizardStorage;
   commonTemplates: any;
   iUserTemplate: any;
@@ -252,6 +275,8 @@ const dispatchToProps = (dispatch, props) => ({
     dispatch(vmWizardActions[ActionType.SetVmSettingsFieldValue](props.wizardReduxID, key, value)),
   onFieldAttributeChange: (key, value) =>
     dispatch(vmWizardActions[ActionType.SetVmSettingsFieldValue](props.wizardReduxID, key, value)),
+  onHardwareFieldChange: (key, value) =>
+    dispatch(vmWizardActions[ActionType.SetVmHardwareFieldValue](props.wizardReduxID, key, value)),
   updateStorage: (storage: VMWizardStorage) => {
     dispatch(vmWizardActions[ActionType.UpdateStorage](props.wizardReduxID, storage));
   },

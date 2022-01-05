@@ -119,6 +119,17 @@ export const iGetCommonTemplateDiskBus = (tmp: ITemplate, diskName: string) => {
   return iGetIn(disk, ['disk', 'bus']);
 };
 
+export const iGetCommonTemplateDataVolumeSize = (tmp: ITemplate, diskName: string) => {
+  const dataVolume = iGetIn(iSelectVM(tmp), ['spec', 'dataVolumeTemplates'])?.find(
+    (d) => iGetIn(d, ['metadata', 'name']) === diskName,
+  );
+
+  return (
+    iGetIn(dataVolume, ['spec', 'storage', 'resources', 'requests', 'storage']) ??
+    iGetIn(dataVolume, ['spec', 'pvc', 'resources', 'requests', 'storage'])
+  );
+};
+
 export const iGetDefaultTemplate = (
   iCommonTemplates: ImmutableMap<string, ITemplate>,
   os: string,
@@ -144,3 +155,6 @@ export const iGetTemplateGuestToolsDisk = (tmp: ITemplate) =>
   iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'volumes'])?.find((v) =>
     isWinToolsImage(iGetIn(v, ['containerDisk', 'image'])),
   );
+
+export const iGetCommonTemplateNetworkInterfaceDevices = (tmp: ITemplate) =>
+  iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'domain', 'devices', 'interfaces']);

@@ -23,15 +23,8 @@ export type LoadedExtension<E extends Extension = Extension> = E & {
 /**
  * An extension of the Console application.
  *
- * Each extension is a realization (instance) of an extension `type` using the
- * parameters provided via the `properties` object.
- *
- * The value of extension `type` should be formatted in a way that describes
- * the broader category as well as any specialization(s), for example:
- *
- * - `ModelDefinition`
- * - `Page/Resource/List`
- * - `Dashboards/Overview/Utilization/Item`
+ * Each extension instance has a `type` and the corresponding parameters
+ * represented by the `properties` object.
  *
  * Each extension may specify `flags` referencing Console feature flags which
  * are required and/or disallowed in order to put this extension into effect.
@@ -50,24 +43,32 @@ export type ExtensionDeclaration<T extends string, P extends {}> = Extension<P> 
 };
 
 /**
- * Remote (i.e. webpack container) entry module interface.
+ * Resolution of modules shared between the Console application and its dynamic plugins.
+ */
+export type SharedModuleResolution = { [moduleRequest: string]: () => Promise<() => any> };
+
+/**
+ * Remote webpack container entry module interface.
  */
 export type RemoteEntryModule = {
   /**
-   * Get a module exposed through the container.
-   *
-   * Fails if the requested module doesn't exist in container.
+   * Initialize the container with modules provided via the shared scope.
    */
-  get: <T extends {}>(moduleName: string) => Promise<() => T>;
+  init: (sharedScope: any) => void;
 
   /**
-   * Override module(s) that were flagged by the container as "overridable".
+   * _For webpack 5.0.0-beta.16 compatibility_
    *
-   * All modules exposed through the container will use the given replacement modules
-   * instead of the container-local modules. If an override doesn't exist, all modules
-   * of the container will use the container-local module implementation.
+   * Override module(s) that were flagged by the container as "overridable".
    */
-  override: (modules: { [moduleName: string]: () => Promise<() => any> }) => void;
+  override?: (modules: SharedModuleResolution) => void;
+
+  /**
+   * Get a module exposed through the container.
+   *
+   * Fails if the requested module doesn't exist in the container.
+   */
+  get: <T extends {}>(moduleRequest: string) => Promise<() => T>;
 };
 
 /**

@@ -1,12 +1,14 @@
 import * as React from 'react';
+import { Select, SelectVariant, SelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { Dropdown } from '@console/internal/components/utils';
-import { DurationKeys, DURATION_VALUES, useUtilizationDuration } from '@console/shared';
+import { DurationKeys, DURATION_VALUES } from '../../../constants/duration';
+import { useUtilizationDuration } from '../../../hooks';
 
 export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = ({
   adjustDuration,
 }) => {
+  const [isOpen, setOpen] = React.useState(false);
   const { t } = useTranslation();
   const { selectedKey, updateSelectedKey, updateDuration } = useUtilizationDuration(adjustDuration);
   const items = {
@@ -15,20 +17,31 @@ export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownPr
     [DurationKeys.TwentyFourHours]: t('console-shared~24 hours'),
   };
 
-  const onChange = React.useCallback(
-    (newSelected) => {
+  const onSelect = React.useCallback(
+    (event, newSelected) => {
       updateSelectedKey(newSelected);
       updateDuration(DURATION_VALUES[newSelected]);
+      setOpen(false);
     },
     [updateDuration, updateSelectedKey],
   );
 
   return (
-    <Dropdown
-      items={items}
-      onChange={onChange}
-      selectedKey={selectedKey}
-      title={items[selectedKey]}
-    />
+    <div data-test-id="duration-select">
+      <Select
+        variant={SelectVariant.single}
+        onToggle={setOpen}
+        onSelect={onSelect}
+        selections={selectedKey}
+        isOpen={isOpen}
+        isPlain
+      >
+        {Object.keys(items).map((key) => (
+          <SelectOption key={key} value={key}>
+            {items[key]}
+          </SelectOption>
+        ))}
+      </Select>
+    </div>
   );
 };

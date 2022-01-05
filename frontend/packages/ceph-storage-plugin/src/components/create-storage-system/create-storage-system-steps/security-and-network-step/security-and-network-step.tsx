@@ -4,12 +4,16 @@ import { useFlag, getNamespace, getName } from '@console/shared';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { Encryption } from './encryption';
 import { NetworkType, NADSelectorType } from '../../../../types';
-import { GUARDED_FEATURES } from '../../../../features';
+import { FEATURES } from '../../../../features';
 import { WizardDispatch, WizardState } from '../../reducer';
 import { NetworkFormGroup } from '../../../ocs-install/install-wizard/configure';
 
-export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, dispatch }) => {
-  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
+export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({
+  state,
+  dispatch,
+  infraType,
+}) => {
+  const isMultusSupported = useFlag(FEATURES.OCS_MULTUS);
 
   const { networkType: nwType, clusterNetwork, publicNetwork, encryption, kms } = state;
 
@@ -32,7 +36,7 @@ export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, d
 
   return (
     <Form noValidate={false}>
-      <Encryption encryption={encryption} kms={kms} dispatch={dispatch} />
+      <Encryption encryption={encryption} kms={kms} dispatch={dispatch} infraType={infraType} />
       {isMultusSupported && (
         <NetworkFormGroup
           networkType={nwType}
@@ -49,4 +53,5 @@ export const SecurityAndNetwork: React.FC<SecurityAndNetworkProps> = ({ state, d
 type SecurityAndNetworkProps = {
   state: WizardState['securityAndNetwork'];
   dispatch: WizardDispatch;
+  infraType: string;
 };

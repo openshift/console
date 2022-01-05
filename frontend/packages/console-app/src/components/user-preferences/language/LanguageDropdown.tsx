@@ -56,6 +56,7 @@ const LanguageDropdown: React.FC = () => {
         id="default-language-checkbox"
         label={checkboxLabel}
         isChecked={isUsingDefault}
+        data-checked-state={isUsingDefault}
         onChange={onUsingDefault}
         aria-label={checkboxLabel}
         data-test="checkbox console.preferredLanguage"

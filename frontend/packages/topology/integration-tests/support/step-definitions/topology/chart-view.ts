@@ -1,10 +1,13 @@
 import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
+import {
+  devNavigationMenu,
+  resources,
+} from '@console/dev-console/integration-tests/support/constants/global';
 import { createGitWorkload } from '@console/dev-console/integration-tests/support/pages';
 import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { topologyPO, typeOfWorkload } from '../../page-objects/topology-po';
-import { topologyHelper } from '../../pages/topology';
+import { topologyHelper, topologyPage, topologySidePane } from '../../pages/topology';
 
 When('user navigates to Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
@@ -57,6 +60,16 @@ Given('user has created a deployment workload named {string}', (componentName: s
   );
 });
 
+Given('user has created a deployment workload {string}', (componentName: string) => {
+  navigateTo(devNavigationMenu.Add);
+  createGitWorkload(
+    'https://github.com/sclorg/nodejs-ex.git',
+    componentName,
+    'Deployment',
+    'nodejs-ex-git-app',
+  );
+});
+
 Given('user has created a deployment config workload {string}', (componentName: string) => {
   navigateTo(devNavigationMenu.Add);
   createGitWorkload(
@@ -98,7 +111,7 @@ When('user is at Topology page chart view', () => {
 });
 
 When('user clicks the filter by resource on top', () => {
-  cy.get(topologyPO.graph.filterByResource.filterByResourceDropDown)
+  cy.get(topologyPO.filterByResourceDropDown)
     .should('be.visible')
     .click();
 });
@@ -112,3 +125,59 @@ When('user clicks on {string} option', (resourceType: string) => {
 Then('user can see only the {string} workload', (workload: string) => {
   cy.get(typeOfWorkload(workload)).should('be.visible');
 });
+
+When('user selects {string} option in filter menu', (searchType: string) => {
+  cy.get('#toggle-id').click();
+  cy.get("[role='menu']")
+    .find('li')
+    .contains(searchType)
+    .should('be.visible')
+    .click();
+});
+
+When('user searches for label {string}', (search: string) => {
+  cy.get(topologyPO.search)
+    .clear()
+    .type(search);
+  cy.get('.co-suggestion-box__suggestions')
+    .find('button')
+    .contains(search)
+    .should('be.visible')
+    .first()
+    .click();
+});
+
+Then('user can see the workload {string} visible', (workload: string) => {
+  cy.get(topologyPO.highlightNode).should('be.visible');
+  cy.get(topologyPO.highlightNode).should('contain', workload);
+  app.waitForDocumentLoad();
+});
+
+When('user clicks on workload {string} to open sidebar', (workloadName: string) => {
+  topologyPage.componentNode(workloadName).click({ force: true });
+});
+
+When(
+  'user opens the details page for {string} by clicking on the title',
+  (workloadName: string) => {
+    topologySidePane.selectResource(
+      resources.Deployments,
+      'aut-topology-delete-workload',
+      `${workloadName}`,
+    );
+  },
+);
+
+When('user navigate back to Topology page', () => {
+  navigateTo(devNavigationMenu.Topology);
+  cy.get(topologyPO.switcher).should('have.attr', 'aria-label', 'List view');
+});
+
+Then(
+  'user will see the the workload {string} selected with sidebar open',
+  (workloadName: string) => {
+    // topologySidePane.verify();
+    // topologySidePane.verifyTitle(workloadName);
+    cy.log(workloadName, 'sidebar is open'); // to avoid lint issues
+  },
+);

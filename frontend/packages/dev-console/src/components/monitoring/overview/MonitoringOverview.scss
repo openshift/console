@@ -9,7 +9,10 @@
   }
   &__alerts-body {
     .pf-c-accordion__expanded-content-body {
-      padding: var(--pf-global--spacer--sm) 0;
+      --pf-c-accordion__expanded-content-body--PaddingTop: var(--pf-global--spacer--sm);
+      --pf-c-accordion__expanded-content-body--PaddingRight: 0;
+      --pf-c-accordion__expanded-content-body--PaddingBottom: var(--pf-global--spacer--sm);
+      --pf-c-accordion__expanded-content-body--PaddingLeft: 0;
     }
   }
   &__view-monitoring-dashboard {

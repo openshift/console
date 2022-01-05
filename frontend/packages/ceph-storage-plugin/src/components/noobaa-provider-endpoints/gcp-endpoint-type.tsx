@@ -1,12 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Button, FormGroup, TextInput, InputGroup, TextArea } from '@patternfly/react-core';
+import {
+  Button,
+  FormGroup,
+  TextInput,
+  InputGroup,
+  TextArea,
+  PopoverPosition,
+  Popover,
+} from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { ExternalLink, Firehose } from '@console/internal/components/utils';
 import { ResourceDropdown } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
-import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import {
   BackingStoreProviderDataState,
   BackingStoreAction,
@@ -39,25 +46,28 @@ export const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
   const toggleShowSecret = () => setShowSecret((isShown) => !isShown);
 
   const gcpHelpText = (
-    <DashboardCardPopupLink
-      linkTitle={
-        <>
-          <HelpIcon />
-          {t('ceph-storage-plugin~Where can I find Google Cloud credentials?')}
-        </>
+    <Popover
+      position={PopoverPosition.top}
+      headerContent=" "
+      bodyContent={
+        <div>
+          {t(
+            'ceph-storage-plugin~Service account keys are needed for Google Cloud Storage authentication. The keys can be found in the service accounts page in the GCP console.',
+          )}
+          <ExternalLink
+            href="https://cloud.google.com/iam/docs/service-accounts#service_account_keys"
+            text={t('ceph-storage-plugin~Learn more')}
+          />
+        </div>
       }
-      popupTitle=" "
+      enableFlip
+      maxWidth="21rem"
     >
-      <div>
-        {t(
-          'ceph-storage-plugin~Service account keys are needed for Google Cloud Storage authentication. The keys can be found in the service accounts page in the GCP console.',
-        )}
-        <ExternalLink
-          href="https://cloud.google.com/iam/docs/service-accounts#service_account_keys"
-          text={t('ceph-storage-plugin~Learn more')}
-        />
-      </div>
-    </DashboardCardPopupLink>
+      <Button variant="link">
+        <HelpIcon />
+        {t('ceph-storage-plugin~Where can I find Google Cloud credentials?')}
+      </Button>
+    </Popover>
   );
 
   const onUpload = (event) => {

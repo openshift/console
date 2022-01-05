@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
+import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
+import { ExternalLink, isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import {
@@ -32,6 +33,10 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const isWaitingOrDisabled = _isWaitingOrDisabled(metrics);
   const isError = _isError(metrics);
 
+  const insightsLink = isUpstream()
+    ? `${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`
+    : `${openshiftHelpBase}html/support/remote-health-monitoring-with-connected-clusters#using-insights-to-identify-issues-with-your-cluster`;
+
   const riskKeys = {
     // t('insights-plugin~low')
     low: 'insights-plugin~low',
@@ -44,23 +49,17 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   };
 
   return (
-    <div className="co-insights__box">
-      <p>
+    <Stack hasGutter>
+      <StackItem>
         {t(
           'insights-plugin~Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
         )}
-      </p>
-      {isError && (
-        <div className="co-status-popup__section">
-          {t('insights-plugin~Temporary unavailable.')}
-        </div>
-      )}
+      </StackItem>
+      {isError && <StackItem>{t('insights-plugin~Temporary unavailable.')}</StackItem>}
       {isWaitingOrDisabled && (
-        <div className="co-status-popup__section">
-          {t('insights-plugin~Disabled or waiting for results.')}
-        </div>
+        <StackItem>{t('insights-plugin~Disabled or waiting for results.')}</StackItem>
       )}
-      <div className="co-status-popup__section">
+      <StackItem>
         {!isWaitingOrDisabled && !isError && (
           <div>
             <ChartDonut
@@ -100,8 +99,6 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
             />
           </div>
         )}
-      </div>
-      <div className="co-status-popup__section">
         {!isWaitingOrDisabled && !isError && clusterID && (
           <>
             <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
@@ -122,13 +119,10 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
           </div>
         )}
         {(isWaitingOrDisabled || isError) && (
-          <ExternalLink
-            href={`${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`}
-            text={t('insights-plugin~More about Insights')}
-          />
+          <ExternalLink href={insightsLink} text={t('insights-plugin~More about Insights')} />
         )}
-      </div>
-    </div>
+      </StackItem>
+    </Stack>
   );
 };
 

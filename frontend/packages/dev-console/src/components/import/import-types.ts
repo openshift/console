@@ -146,6 +146,7 @@ export interface ImageData {
   tag: string;
   tagObj: object;
   ports: ContainerPort[];
+  imageEnv?: { [key: string]: string };
 }
 
 export interface ImageStreamImageData {
@@ -206,13 +207,14 @@ export interface RouteData {
   hostname?: string;
   secure?: boolean;
   tls?: TLSData;
+  labels?: { [name: string]: string };
 }
 
 export interface TLSData {
   termination: string;
   insecureEdgeTerminationPolicy: string;
   certificate: string;
-  privateKey: string;
+  key: string;
   caCertificate: string;
   destinationCACertificate: string;
 }

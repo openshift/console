@@ -20,6 +20,8 @@ type ODFSystemDashboardPageProps = Omit<DashboardsPageProps, 'match'> & {
   match: Match<{ systemName: string }>;
 };
 
+const blockPoolRef = referenceForModel(CephBlockPoolModel);
+
 const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
   kindsInFlight,
   k8sModels,
@@ -29,22 +31,30 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
   const isObjectServiceAvailable = useFlag(MCG_FLAG);
   const isCephAvailable = useFlag(CEPH_FLAG);
   const { systemName } = rest.match.params;
-  const dashboardTab = isCephAvailable === false && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
+  const dashboardTab = !isCephAvailable && isObjectServiceAvailable ? OBJECT : BLOCK_FILE;
   const defaultDashboard = React.useRef(dashboardTab);
-
-  const pages: Page[] = [
+  const [pages, setPages] = React.useState<Page[]>([
     {
       path: 'overview/:dashboard',
       href: `overview/${defaultDashboard.current}`,
       name: t('ceph-storage-plugin~Overview'),
       component: OCSOverview,
     },
-    {
-      href: referenceForModel(CephBlockPoolModel),
-      name: t('ceph-storage-plugin~BlockPools'),
-      component: () => <BlockPoolListPage namespace={CEPH_STORAGE_NAMESPACE} />,
-    },
-  ];
+  ]);
+
+  React.useEffect(() => {
+    const isBlockPoolAdded = pages.find((page) => page.href === blockPoolRef);
+    if (isCephAvailable && !isBlockPoolAdded) {
+      setPages([
+        ...pages,
+        {
+          href: blockPoolRef,
+          name: t('ceph-storage-plugin~BlockPools'),
+          component: () => <BlockPoolListPage namespace={CEPH_STORAGE_NAMESPACE} />,
+        },
+      ]);
+    }
+  }, [isCephAvailable, pages, t]);
 
   const breadcrumbs = [
     {

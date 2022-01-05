@@ -6,8 +6,12 @@ import { TYPE_WORKLOAD } from '@console/topology/src/const';
 import { getResource } from '@console/topology/src/utils';
 
 export const getManagedByOperatorLinkSideBarTabSection = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
+  if (element.getType() !== TYPE_WORKLOAD && !element.getData()?.data?.isKnativeResource)
+    return undefined;
   const resource = getResource(element);
+  if (!resource) {
+    return undefined;
+  }
   return (
     <TopologySideBarTabSection>
       <ManagedByOperatorLink obj={resource} />

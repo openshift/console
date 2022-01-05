@@ -46,6 +46,8 @@ export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace'
 
 export const DEFAULT_RDP_PORT = 3389;
 
+export const DESCHEDULER_EVICT_LABEL = 'descheduler.alpha.kubernetes.io/evict';
+
 export const VM_DETAIL_DETAILS_HREF = 'details';
 export const VM_DETAIL_DISKS_HREF = 'disks';
 export const VM_DETAIL_NETWORKS_HREF = 'nics';
@@ -72,14 +74,19 @@ export const VIRTIO_WIN_IMAGE = 'virtio-win-image';
 
 export const PENDING_RESTART_LABEL = '(pending restart)';
 export const getPVCUploadURL = (pvcNamespace: string): string =>
-  `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/upload-form`;
+  `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/data`;
 
 export const ROOT_DISK_NAME = 'rootdisk';
 export const ROOT_DISK_INSTALL_NAME = 'install';
 
 export const TEMPLATE_PIN = 'kubevirt.templates.pins';
 export const TEMPLATE_PIN_PROMOTED = 'kubevirt.templates.pins.promoted';
+export const TEMPLATE_PIN_RHEL_7 = 'rhel7-server-small';
+export const TEMPLATE_PIN_RHEL_8 = 'rhel8-server-small';
+export const TEMPLATE_PIN_RHEL_9 = 'rhel9-server-small';
 export const TEMPLATE_WARN_SUPPORT = 'kubevirt.templates.warnSupport';
 export const TEMPLATE_CUSTOMIZE_SOURCE = 'kubevirt.templates.customizeSource';
 
 export const DEFAULT_DISK_SIZE = '20Gi';
+
+export const RED_HAT = 'Red Hat';

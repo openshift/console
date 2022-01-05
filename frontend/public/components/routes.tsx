@@ -12,7 +12,6 @@ import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './fact
 import {
   CopyToClipboard,
   DetailsItem,
-  ExternalLink,
   Kebab,
   ResourceKebab,
   ResourceLink,
@@ -20,6 +19,7 @@ import {
   SectionHeading,
   detailsPage,
   navFactory,
+  ExternalLinkWithCopy,
 } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 import {
@@ -83,7 +83,7 @@ const getSubdomain = (route: RouteKind): string => {
   return hostname.replace(/^[a-z0-9]([-a-z0-9]*[a-z0-9])\./, '');
 };
 
-const getRouteLabel = (route: RouteKind): string => {
+export const getRouteLabel = (route: RouteKind): string => {
   if (isWebRoute(route)) {
     return getRouteWebURL(route);
   }
@@ -103,14 +103,26 @@ const getRouteLabel = (route: RouteKind): string => {
   return label;
 };
 
+export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({
+  route,
+  additionalClassName,
+}) => {
+  const link = getRouteWebURL(route);
+  return (
+    <ExternalLinkWithCopy
+      additionalClassName={additionalClassName}
+      link={link}
+      text={link}
+      dataTestID="route-link"
+    />
+  );
+};
+
+// Renders LinkAndCopy for non subdomains
 export const RouteLocation: React.FC<RouteHostnameProps> = ({ obj }) => (
   <div>
     {isWebRoute(obj) ? (
-      <ExternalLink
-        href={getRouteWebURL(obj)}
-        additionalClassName="co-external-link--block"
-        text={getRouteLabel(obj)}
-      />
+      <RouteLinkAndCopy route={obj} additionalClassName="co-external-link--block" />
     ) : (
       getRouteLabel(obj)
     )}
@@ -610,6 +622,11 @@ export type RoutesDetailsPageProps = {
 
 export type RouteIngressStatusProps = {
   route: RouteKind;
+};
+
+export type RouteLinkAndCopyProps = {
+  route: RouteKind;
+  additionalClassName?: string;
 };
 
 export type CustomRouteHelpProps = {

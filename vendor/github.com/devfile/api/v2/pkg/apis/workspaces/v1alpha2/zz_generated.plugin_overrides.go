@@ -37,6 +37,9 @@ type ComponentPluginOverride struct {
 
 	// Map of implementation-dependant free-form YAML attributes.
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes                   attributes.Attributes `json:"attributes,omitempty"`
 	ComponentUnionPluginOverride `json:",inline"`
 }
@@ -52,6 +55,9 @@ type CommandPluginOverride struct {
 
 	// Map of implementation-dependant free-form YAML attributes.
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes                 attributes.Attributes `json:"attributes,omitempty"`
 	CommandUnionPluginOverride `json:",inline"`
 }
@@ -59,25 +65,25 @@ type CommandPluginOverride struct {
 // +union
 type ComponentUnionPluginOverride struct {
 
-	// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume
+	// +kubebuilder:validation:Enum=Container;Kubernetes;Openshift;Volume;Image
 	// Type of component
 	//
 	// +unionDiscriminator
 	// +optional
 	ComponentType ComponentTypePluginOverride `json:"componentType,omitempty"`
 
-	// Allows adding and configuring workspace-related containers
+	// Allows adding and configuring devworkspace-related containers
 	// +optional
 	Container *ContainerComponentPluginOverride `json:"container,omitempty"`
 
-	// Allows importing into the workspace the Kubernetes resources
+	// Allows importing into the devworkspace the Kubernetes resources
 	// defined in a given manifest. For example this allows reusing the Kubernetes
 	// definitions used to deploy some runtime components in production.
 	//
 	// +optional
 	Kubernetes *KubernetesComponentPluginOverride `json:"kubernetes,omitempty"`
 
-	// Allows importing into the workspace the OpenShift resources
+	// Allows importing into the devworkspace the OpenShift resources
 	// defined in a given manifest. For example this allows reusing the OpenShift
 	// definitions used to deploy some runtime components in production.
 	//
@@ -88,13 +94,17 @@ type ComponentUnionPluginOverride struct {
 	// shared by several other components
 	// +optional
 	Volume *VolumeComponentPluginOverride `json:"volume,omitempty"`
+
+	// Allows specifying the definition of an image for outer loop builds
+	// +optional
+	Image *ImageComponentPluginOverride `json:"image,omitempty"`
 }
 
 // +union
 type CommandUnionPluginOverride struct {
 
-	// +kubebuilder:validation:Enum=Exec;Apply;VscodeTask;VscodeLaunch;Composite
-	// Type of workspace command
+	// +kubebuilder:validation:Enum=Exec;Apply;Composite
+	// Type of devworkspace command
 	// +unionDiscriminator
 	// +optional
 	CommandType CommandTypePluginOverride `json:"commandType,omitempty"`
@@ -104,26 +114,18 @@ type CommandUnionPluginOverride struct {
 	Exec *ExecCommandPluginOverride `json:"exec,omitempty"`
 
 	// Command that consists in applying a given component definition,
-	// typically bound to a workspace event.
+	// typically bound to a devworkspace event.
 	//
 	// For example, when an `apply` command is bound to a `preStart` event,
 	// and references a `container` component, it will start the container as a
-	// K8S initContainer in the workspace POD, unless the component has its
+	// K8S initContainer in the devworkspace POD, unless the component has its
 	// `dedicatedPod` field set to `true`.
 	//
 	// When no `apply` command exist for a given component,
-	// it is assumed the component will be applied at workspace start
+	// it is assumed the component will be applied at devworkspace start
 	// by default.
 	// +optional
 	Apply *ApplyCommandPluginOverride `json:"apply,omitempty"`
-
-	// Command providing the definition of a VsCode Task
-	// +optional
-	VscodeTask *VscodeConfigurationCommandPluginOverride `json:"vscodeTask,omitempty"`
-
-	// Command providing the definition of a VsCode launch action
-	// +optional
-	VscodeLaunch *VscodeConfigurationCommandPluginOverride `json:"vscodeLaunch,omitempty"`
 
 	// Composite command that allows executing several sub-commands
 	// either sequentially or concurrently
@@ -135,27 +137,33 @@ type CommandUnionPluginOverride struct {
 // Only one of the following component type may be specified.
 type ComponentTypePluginOverride string
 
-// Component that allows the developer to add a configured container into his workspace
+// Component that allows the developer to add a configured container into their devworkspace
 type ContainerComponentPluginOverride struct {
 	BaseComponentPluginOverride `json:",inline"`
 	ContainerPluginOverride     `json:",inline"`
 	Endpoints                   []EndpointPluginOverride `json:"endpoints,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
-// Component that allows partly importing Kubernetes resources into the workspace POD
+// Component that allows partly importing Kubernetes resources into the devworkspace POD
 type KubernetesComponentPluginOverride struct {
 	K8sLikeComponentPluginOverride `json:",inline"`
 }
 
-// Component that allows partly importing Openshift resources into the workspace POD
+// Component that allows partly importing Openshift resources into the devworkspace POD
 type OpenshiftComponentPluginOverride struct {
 	K8sLikeComponentPluginOverride `json:",inline"`
 }
 
-// Component that allows the developer to declare and configure a volume into his workspace
+// Component that allows the developer to declare and configure a volume into their devworkspace
 type VolumeComponentPluginOverride struct {
 	BaseComponentPluginOverride `json:",inline"`
 	VolumePluginOverride        `json:",inline"`
+}
+
+// Component that allows the developer to build a runtime image for outerloop
+type ImageComponentPluginOverride struct {
+	BaseComponentPluginOverride `json:",inline"`
+	ImagePluginOverride         `json:",inline"`
 }
 
 // CommandType describes the type of command.
@@ -202,7 +210,7 @@ type ExecCommandPluginOverride struct {
 	// If set to `true` the command won't be restarted and it is expected to handle file changes on its own.
 	//
 	// Default value is `false`
-	HotReloadCapable bool `json:"hotReloadCapable,omitempty"`
+	HotReloadCapable *bool `json:"hotReloadCapable,omitempty"`
 }
 
 type ApplyCommandPluginOverride struct {
@@ -214,11 +222,6 @@ type ApplyCommandPluginOverride struct {
 	Component string `json:"component,omitempty"`
 }
 
-type VscodeConfigurationCommandPluginOverride struct {
-	BaseCommandPluginOverride                        `json:",inline"`
-	VscodeConfigurationCommandLocationPluginOverride `json:",inline"`
-}
-
 type CompositeCommandPluginOverride struct {
 	LabeledCommandPluginOverride `json:",inline"`
 
@@ -227,11 +230,11 @@ type CompositeCommandPluginOverride struct {
 
 	// Indicates if the sub-commands should be executed concurrently
 	// +optional
-	Parallel bool `json:"parallel,omitempty"`
+	Parallel *bool `json:"parallel,omitempty"`
 }
 
-// Workspace component: Anything that will bring additional features / tooling / behaviour / context
-// to the workspace, in order to make working in it easier.
+// DevWorkspace component: Anything that will bring additional features / tooling / behaviour / context
+// to the devworkspace, in order to make working in it easier.
 type BaseComponentPluginOverride struct {
 }
 
@@ -297,7 +300,7 @@ type ContainerPluginOverride struct {
 	//
 	// Default value is `false`
 	// +optional
-	DedicatedPod bool `json:"dedicatedPod,omitempty"`
+	DedicatedPod *bool `json:"dedicatedPod,omitempty"`
 }
 
 type EndpointPluginOverride struct {
@@ -314,12 +317,12 @@ type EndpointPluginOverride struct {
 	// - `public` means that the endpoint will be exposed on the public network, typically through
 	// a K8S ingress or an OpenShift route.
 	//
-	// - `internal` means that the endpoint will be exposed internally outside of the main workspace POD,
+	// - `internal` means that the endpoint will be exposed internally outside of the main devworkspace POD,
 	// typically by K8S services, to be consumed by other elements running
 	// on the same cloud internal network.
 	//
 	// - `none` means that the endpoint will not be exposed and will only be accessible
-	// inside the main workspace POD, on a local address.
+	// inside the main devworkspace POD, on a local address.
 	//
 	// Default value is `public`
 	// +optional
@@ -348,7 +351,7 @@ type EndpointPluginOverride struct {
 	// Describes whether the endpoint should be secured and protected by some
 	// authentication process. This requires a protocol of `https` or `wss`.
 	// +optional
-	Secure bool `json:"secure,omitempty"`
+	Secure *bool `json:"secure,omitempty"`
 
 	// Path of the endpoint URL
 	// +optional
@@ -362,6 +365,9 @@ type EndpointPluginOverride struct {
 	//
 	// - type: "terminal" / "ide" / "ide-dev",
 	// +optional
+	// +kubebuilder:validation:Type=object
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
 }
 
@@ -377,6 +383,19 @@ type VolumePluginOverride struct {
 	// +optional
 	// Size of the volume
 	Size string `json:"size,omitempty"`
+
+	// +optional
+	// Ephemeral volumes are not stored persistently across restarts. Defaults
+	// to false
+	Ephemeral *bool `json:"ephemeral,omitempty"`
+}
+
+type ImagePluginOverride struct {
+
+	//  +optional
+	// Name of the image for the resulting outerloop build
+	ImageName                string `json:"imageName,omitempty"`
+	ImageUnionPluginOverride `json:",inline"`
 }
 
 type LabeledCommandPluginOverride struct {
@@ -392,33 +411,6 @@ type EnvVarPluginOverride struct {
 	Name string `json:"name" yaml:"name"`
 	//  +optional
 	Value string `json:"value,omitempty" yaml:"value"`
-}
-
-type BaseCommandPluginOverride struct {
-
-	// +optional
-	// Defines the group this command is part of
-	Group *CommandGroupPluginOverride `json:"group,omitempty"`
-}
-
-// +union
-type VscodeConfigurationCommandLocationPluginOverride struct {
-
-	// +kubebuilder:validation:Enum=Uri;Inlined
-	// Type of Vscode configuration command location
-	// +
-	// +unionDiscriminator
-	// +optional
-	LocationType VscodeConfigurationCommandLocationTypePluginOverride `json:"locationType,omitempty"`
-
-	// Location as an absolute of relative URI
-	// the VsCode configuration will be fetched from
-	// +optional
-	Uri string `json:"uri,omitempty"`
-
-	// Inlined content of the VsCode configuration
-	// +optional
-	Inlined string `json:"inlined,omitempty"`
 }
 
 // Volume that should be mounted to a component container
@@ -466,6 +458,44 @@ type K8sLikeComponentLocationPluginOverride struct {
 	Inlined string `json:"inlined,omitempty"`
 }
 
+// +union
+type ImageUnionPluginOverride struct {
+
+	// +kubebuilder:validation:Enum=Dockerfile
+	// Type of image
+	//
+	// +unionDiscriminator
+	// +optional
+	ImageType ImageTypePluginOverride `json:"imageType,omitempty"`
+
+	// Allows specifying dockerfile type build
+	// +optional
+	Dockerfile *DockerfileImagePluginOverride `json:"dockerfile,omitempty"`
+}
+
+type BaseCommandPluginOverride struct {
+
+	// +optional
+	// Defines the group this command is part of
+	Group *CommandGroupPluginOverride `json:"group,omitempty"`
+}
+
+// K8sLikeComponentLocationType describes the type of
+// the location the configuration is fetched from.
+// Only one of the following component type may be specified.
+type K8sLikeComponentLocationTypePluginOverride string
+
+// ImageType describes the type of image.
+// Only one of the following image type may be specified.
+type ImageTypePluginOverride string
+
+// Dockerfile Image type to specify the outerloop build using a Dockerfile
+type DockerfileImagePluginOverride struct {
+	BaseImagePluginOverride     `json:",inline"`
+	DockerfileSrcPluginOverride `json:",inline"`
+	DockerfilePluginOverride    `json:",inline"`
+}
+
 type CommandGroupPluginOverride struct {
 
 	//  +optional
@@ -474,21 +504,118 @@ type CommandGroupPluginOverride struct {
 
 	// +optional
 	// Identifies the default command for a given group kind
-	IsDefault bool `json:"isDefault,omitempty"`
+	IsDefault *bool `json:"isDefault,omitempty"`
 }
 
-// VscodeConfigurationCommandLocationType describes the type of
-// the location the configuration is fetched from.
-// Only one of the following component type may be specified.
-type VscodeConfigurationCommandLocationTypePluginOverride string
+type BaseImagePluginOverride struct {
+}
 
-// K8sLikeComponentLocationType describes the type of
-// the location the configuration is fetched from.
-// Only one of the following component type may be specified.
-type K8sLikeComponentLocationTypePluginOverride string
+// +union
+type DockerfileSrcPluginOverride struct {
+
+	// +kubebuilder:validation:Enum=Uri;DevfileRegistry;Git
+	// Type of Dockerfile src
+	// +
+	// +unionDiscriminator
+	// +optional
+	SrcType DockerfileSrcTypePluginOverride `json:"srcType,omitempty"`
+
+	// URI Reference of a Dockerfile.
+	// It can be a full URL or a relative URI from the current devfile as the base URI.
+	// +optional
+	Uri string `json:"uri,omitempty"`
+
+	// Dockerfile's Devfile Registry source
+	// +optional
+	DevfileRegistry *DockerfileDevfileRegistrySourcePluginOverride `json:"devfileRegistry,omitempty"`
+
+	// Dockerfile's Git source
+	// +optional
+	Git *DockerfileGitProjectSourcePluginOverride `json:"git,omitempty"`
+}
+
+type DockerfilePluginOverride struct {
+
+	// Path of source directory to establish build context. Defaults to ${PROJECT_ROOT} in the container
+	// +optional
+	BuildContext string `json:"buildContext,omitempty"`
+
+	// The arguments to supply to the dockerfile build.
+	// +optional
+	Args []string `json:"args,omitempty" patchStrategy:"replace"`
+
+	// Specify if a privileged builder pod is required.
+	//
+	// Default value is `false`
+	// +optional
+	RootRequired *bool `json:"rootRequired,omitempty"`
+}
 
 // CommandGroupKind describes the kind of command group.
-// +kubebuilder:validation:Enum=build;run;test;debug
+// +kubebuilder:validation:Enum=build;run;test;debug;deploy
 type CommandGroupKindPluginOverride string
+
+// DockerfileSrcType describes the type of
+// the src for the Dockerfile outerloop build.
+// Only one of the following location type may be specified.
+type DockerfileSrcTypePluginOverride string
+
+type DockerfileDevfileRegistrySourcePluginOverride struct {
+
+	//  +optional
+	// Id in a devfile registry that contains a Dockerfile. The src in the OCI registry
+	// required for the Dockerfile build will be downloaded for building the image.
+	Id string `json:"id,omitempty"`
+
+	// Devfile Registry URL to pull the Dockerfile from when using the Devfile Registry as Dockerfile src.
+	// To ensure the Dockerfile gets resolved consistently in different environments,
+	// it is recommended to always specify the `devfileRegistryUrl` when `Id` is used.
+	// +optional
+	RegistryUrl string `json:"registryUrl,omitempty"`
+}
+
+type DockerfileGitProjectSourcePluginOverride struct {
+
+	// Git src for the Dockerfile build. The src required for the Dockerfile build will need to be
+	// cloned for building the image.
+	GitProjectSourcePluginOverride `json:",inline"`
+
+	// Location of the Dockerfile in the Git repository when using git as Dockerfile src.
+	// Defaults to Dockerfile.
+	// +optional
+	FileLocation string `json:"fileLocation,omitempty"`
+}
+
+type GitProjectSourcePluginOverride struct {
+	GitLikeProjectSourcePluginOverride `json:",inline"`
+}
+
+type GitLikeProjectSourcePluginOverride struct {
+	CommonProjectSourcePluginOverride `json:",inline"`
+
+	// Defines from what the project should be checked out. Required if there are more than one remote configured
+	// +optional
+	CheckoutFrom *CheckoutFromPluginOverride `json:"checkoutFrom,omitempty"`
+
+	//  +optional
+	// The remotes map which should be initialized in the git project.
+	// Projects must have at least one remote configured while StarterProjects & Image Component's Git source can only have at most one remote configured.
+	Remotes map[string]string `json:"remotes,omitempty"`
+}
+
+type CommonProjectSourcePluginOverride struct {
+}
+
+type CheckoutFromPluginOverride struct {
+
+	// The revision to checkout from. Should be branch name, tag or commit id.
+	// Default branch is used if missing or specified revision is not found.
+	// +optional
+	Revision string `json:"revision,omitempty"`
+
+	// The remote name should be used as init. Required if there are more than one remote configured
+	// +optional
+	Remote string `json:"remote,omitempty"`
+}
 
 func (overrides PluginOverrides) isOverride() {}

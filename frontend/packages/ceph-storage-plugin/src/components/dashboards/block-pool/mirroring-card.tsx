@@ -12,12 +12,13 @@ import {
   Button,
   List,
   ListItem,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
 } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+
 import { StoragePoolKind } from 'packages/ceph-storage-plugin/src/types';
 import { MirroringCardBody } from './mirroring-card-body';
 import { MirroringCardItem } from './mirroring-card-item';
@@ -98,13 +99,22 @@ const MirroringImageHealthChart: React.FC<MirroringImageHealthChartProps> = ({ t
   const totalImageCount = Object.keys(states).reduce((sum, state) => sum + states[state], 0);
 
   if (totalImageCount > 0) {
-    const data = Object.keys(states).map((state) => ({
-      x: ImageStateLegendMap(t)[state],
-      y: calcPercentage(states[state], totalImageCount),
-    }));
-    const legendData = Object.keys(states).map((state) => ({
-      name: `${ImageStateLegendMap(t)[state]}: ${calcPercentage(states[state], totalImageCount)}`,
-    }));
+    const { data, legendData } = Object.keys(states).reduce(
+      (acc, state) => {
+        const percentage = calcPercentage(states[state], totalImageCount);
+        acc.data.push({
+          x: ImageStateLegendMap(t)[state],
+          y: percentage.value,
+        });
+        acc.legendData.push({
+          name: `${ImageStateLegendMap(t)[state]}: ${
+            calcPercentage(states[state], totalImageCount).string
+          }`,
+        });
+        return acc;
+      },
+      { data: [], legendData: [] },
+    );
 
     return (
       <div style={{ maxHeight: '210px', maxWidth: '300px' }}>
@@ -141,11 +151,11 @@ export const MirroringCard: React.FC = () => {
     : '-';
 
   return (
-    <DashboardCard data-test-id="mirroring-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Mirroring')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="mirroring-card">
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Mirroring')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <MirroringCardBody>
           <MirroringCardItem isLoading={!obj} title={t('ceph-storage-plugin~Mirroring status')}>
             {mirroringStatus ? t('ceph-storage-plugin~Enabled') : t('ceph-storage-plugin~Disabled')}
@@ -180,8 +190,8 @@ export const MirroringCard: React.FC = () => {
             </>
           )}
         </MirroringCardBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

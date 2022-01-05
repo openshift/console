@@ -20,8 +20,15 @@ export const DetailItem: React.FC<DetailItemProps> = React.memo(
     }
     return (
       <>
-        <dt className="co-details-card__item-title">{title}</dt>
-        <dd className={classNames('co-details-card__item-value', valueClassName)}>{status}</dd>
+        <dt className="co-details-card__item-title" data-test="detail-item-title">
+          {title}
+        </dt>
+        <dd
+          className={classNames('co-details-card__item-value', valueClassName)}
+          data-test="detail-item-value"
+        >
+          {status}
+        </dd>
       </>
     );
   },

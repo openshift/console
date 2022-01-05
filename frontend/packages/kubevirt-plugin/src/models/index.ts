@@ -219,3 +219,53 @@ export const ForkliftControllerModel = {
   crd: true,
   plural: 'forkliftcontrollers',
 };
+
+export const HyperConvergedModel = {
+  kind: 'HyperConverged',
+  label: 'HyperConverged',
+  labelPlural: 'HyperConvergeds',
+  apiGroup: 'hco.kubevirt.io',
+  apiVersion: 'v1beta1',
+  abbr: 'HC',
+  namespaced: true,
+  crd: true,
+  plural: 'hyperconvergeds',
+};
+
+export const NetworkAddonsConfigModel: K8sKind = {
+  label: 'NetworkAddonsConfig',
+  labelPlural: 'NetworkAddonsConfigs',
+  apiVersion: 'v1',
+  apiGroup: 'networkaddonsoperator.network.kubevirt.io',
+  plural: 'networkaddonsconfigs',
+  abbr: 'NAC',
+  namespaced: true,
+  kind: 'NetworkAddonsConfig',
+  id: 'networkaddonsconfig',
+  crd: true,
+};
+
+export const DataSourceModel: K8sKind = {
+  label: 'DataSource',
+  labelPlural: 'DataSources',
+  apiVersion: 'v1beta1',
+  apiGroup: 'cdi.kubevirt.io',
+  plural: 'datasources',
+  abbr: 'datasources',
+  namespaced: true,
+  kind: 'DataSource',
+  id: 'datasource',
+  crd: true,
+};
+
+export const KubeDeschedulerModel = {
+  kind: 'KubeDescheduler',
+  label: 'KubeDescheduler',
+  labelPlural: 'KubeDeschedulers',
+  apiGroup: 'operator.openshift.io',
+  apiVersion: 'v1',
+  abbr: 'KD',
+  namespaced: false,
+  crd: true,
+  plural: 'kubedeschedulers',
+};

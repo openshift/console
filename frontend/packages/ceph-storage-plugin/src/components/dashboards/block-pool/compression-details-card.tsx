@@ -3,11 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compose } from 'redux';
 
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
@@ -81,11 +77,11 @@ export const CompressionDetailsCard: React.FC = () => {
   };
 
   return (
-    <DashboardCard data-test-id="compression-details-card">
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Compression')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card data-test-id="compression-details-card">
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Compression')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <DetailsBody>
           <DetailItem isLoading={!obj} title={t('ceph-storage-plugin~Compression status')}>
             {!compressionEnabled
@@ -106,7 +102,7 @@ export const CompressionDetailsCard: React.FC = () => {
             </div>
           </DetailsBody>
         )}
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };

@@ -15,7 +15,13 @@ export const winToolsContainerNames = (images?: {
   [key: string]: string;
 }): winToolsContainerNamesResult => {
   const configMapImages = async () => {
-    const configMap = (await getVmwareConfigMap()) as ConfigMapKind;
+    let configMap: ConfigMapKind;
+    try {
+      configMap = (await getVmwareConfigMap()) as ConfigMapKind;
+    } catch ({ message }) {
+      // eslint-disable-next-line no-console
+      console.error(message);
+    }
     return configMap?.data?.[VIRTIO_WIN_IMAGE];
   };
 

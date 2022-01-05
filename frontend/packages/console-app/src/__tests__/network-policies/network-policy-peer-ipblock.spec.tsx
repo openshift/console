@@ -19,8 +19,8 @@ const networkPolicyPeerIPBlock = (
   />
 );
 
-describe('NetworkPolicyPeerIPBlock without permissions to fetch CNI type', () => {
-  (useK8sGet as jest.Mock).mockReturnValue([null, true, 'error fetching CNI']);
+describe('NetworkPolicyPeerIPBlock without the CNO config map', () => {
+  (useK8sGet as jest.Mock).mockReturnValue([null, true, 'error fetching CNO configmap']);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
   it('should render the exceptions section', () => {
@@ -40,9 +40,9 @@ describe('NetworkPolicyPeerIPBlock without permissions to fetch CNI type', () =>
   });
 });
 
-describe('NetworkPolicyPeerIPBlock with Unknown CNI type', () => {
-  const unknownSDNSpec = { spec: { networkType: 'Calico' } };
-  (useK8sGet as jest.Mock).mockReturnValue([unknownSDNSpec, true, null]);
+describe('NetworkPolicyPeerIPBlock with unknown network features', () => {
+  const cm = { data: {} };
+  (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
   it('should render the exceptions section', () => {
@@ -63,7 +63,9 @@ describe('NetworkPolicyPeerIPBlock with Unknown CNI type', () => {
 });
 
 describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
-  (useK8sGet as jest.Mock).mockReturnValue([{ spec: { networkType: 'OpenShiftSDN' } }, true, null]);
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  const cm = { data: { policy_egress: 'false', policy_peer_ipblock_exceptions: 'false' } };
+  (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
   it('should not render the exceptions section', () => {
@@ -83,11 +85,9 @@ describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
 });
 
 describe('NetworkPolicyPeerIPBlock with OVN Kubernetes CNI type', () => {
-  (useK8sGet as jest.Mock).mockReturnValue([
-    { spec: { networkType: 'OVNKubernetes' } },
-    true,
-    null,
-  ]);
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  const cm = { data: { policy_egress: 'true', policy_peer_ipblock_exceptions: 'true' } };
+  (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
   it('should render the exceptions section', () => {

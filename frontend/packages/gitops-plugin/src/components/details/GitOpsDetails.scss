@@ -1,7 +1,8 @@
 .odc-gitops-details {
   padding: var(--pf-global--spacer--xl);
   height: 100%;
-  flex-wrap: nowrap;
+  display: flex;
+  flex-wrap: wrap;
   &__env-section {
     display: inline-table;
     margin-right: 35px;
@@ -25,8 +26,8 @@
       margin: var(--pf-global--spacer--xs) 0px;
       outline: none;
     }
-    &__envname-and-status{
-      display:flex;
+    &__envname-and-status {
+      display: flex;
     }
     &__env {
       .pf-c-label__text {
@@ -37,7 +38,7 @@
       }
     }
     &__time {
-      margin: var(--pf-global--spacer--xs) 0px  var(--pf-global--spacer--xs) 0px;
+      margin: var(--pf-global--spacer--xs) 0px var(--pf-global--spacer--xs) 0px;
       display: flex;
       .co-icon-and-text__icon {
         display: none;
@@ -60,8 +61,8 @@
     }
     article {
       border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-      min-width: 323px;
-      max-width: 366px;
+      min-width: 335px;
+      max-width: 335px;
     }
     a {
       font-size: 12px;
@@ -95,6 +96,6 @@
     }
   }
   &__operator-upgrade-alert {
-    margin-bottom: var(--pf-global--spacer--xl)
+    margin-bottom: var(--pf-global--spacer--xl);
   }
 }

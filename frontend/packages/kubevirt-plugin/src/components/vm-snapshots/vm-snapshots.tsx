@@ -5,11 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { VirtualMachineSnapshotModel } from '../../models';
+import { useVMStatus } from '../../hooks/use-vm-status';
+import { VirtualMachineRestoreModel, VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../selectors';
 import { isVMI } from '../../selectors/check-type';
+import { getVMIHotplugVolumeSnapshotStatuses } from '../../selectors/disks/hotplug';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { asVM } from '../../selectors/vm/vm';
@@ -95,6 +98,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const vmName = getName(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
   const vmi = vmisProp[0];
+  const vmStatusBundle = useVMStatus(vmName, namespace);
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
@@ -102,6 +106,19 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
     namespaced: true,
     namespace,
   };
+
+  const [canCreateSnapshot] = useAccessReview2({
+    group: VirtualMachineSnapshotModel?.apiGroup,
+    resource: VirtualMachineSnapshotModel?.plural,
+    verb: 'create',
+    namespace,
+  });
+  const [canCreateRestore] = useAccessReview2({
+    group: VirtualMachineRestoreModel?.apiGroup,
+    resource: VirtualMachineRestoreModel?.plural,
+    verb: 'create',
+    namespace,
+  });
 
   const [snapshots, snapshotsLoaded, snapshotsError] = useK8sWatchResource<VMSnapshot[]>(
     snapshotResource,
@@ -111,7 +128,9 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
-  const isDisabled = isLocked;
+  const isDisabled =
+    isLocked || !canCreateSnapshot || !canCreateRestore || vmStatusBundle?.status?.isImporting();
+  const usedSnapshotNames = new Set(snapshots?.map((snapshot) => snapshot?.metadata?.name));
 
   return (
     <div className="co-m-list">
@@ -121,6 +140,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
             <Button
               variant="primary"
               id="add-snapshot"
+              isDisabled={isDisabled}
               onClick={() =>
                 withProgress(
                   SnapshotModal({
@@ -130,7 +150,11 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
                       asVM(vmLikeEntity),
                       vmi,
                     ),
-                    snapshots,
+                    usedSnapshotNames,
+                    hotplugVolumeSnapshotStatuses: getVMIHotplugVolumeSnapshotStatuses(
+                      asVM(vmLikeEntity),
+                      vmi,
+                    ),
                   }).result,
                 )
               }

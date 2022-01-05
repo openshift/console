@@ -18,6 +18,6 @@ const JobsTabSection: React.FC<{ resource: K8sResourceCommon }> = ({ resource })
 
 export const getJobsSideBarTabSection = (element: GraphElement) => {
   const resource = getResource(element);
-  if (resource.kind !== CronJobModel.kind) return undefined;
+  if (!resource || resource.kind !== CronJobModel.kind) return undefined;
   return <JobsTabSection resource={resource} />;
 };

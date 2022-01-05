@@ -8,7 +8,7 @@ import {
   ExternalLink,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ConsoleLinkModel } from '@console/internal/models';
+import { ConsoleLinkModel, SecretModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import { getNamespaceDashboardKialiLink, getResource } from '../../utils/topology-utils';
@@ -26,6 +26,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
   });
   const source = getResource(edge.getSource());
   const target = getResource(edge.getTarget());
+  const data = edge.getData();
   const resources = [source, target];
   const {
     metadata: { namespace },
@@ -41,20 +42,53 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
           }
           const {
             metadata: { name, uid },
+            spec,
           } = resource;
+          const sinkUri = spec?.sinkUri;
+
           return (
             <li className="list-group-item  container-fluid" key={uid}>
-              <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
+              {!sinkUri ? (
+                <ResourceLink
+                  kind={referenceFor(resource)}
+                  name={name}
+                  namespace={namespace}
+                  dataTest={`resource-link-${name}`}
+                />
+              ) : (
+                <ExternalLink
+                  href={sinkUri}
+                  additionalClassName="co-external-link--block"
+                  text={sinkUri}
+                  dataTestID={`sink-uri-${sinkUri}`}
+                />
+              )}
             </li>
           );
         })}
       </ul>
+      {data?.sbr?.status.secret && (
+        <>
+          <SidebarSectionHeading text={t('topology~Secret')} />
+          <ul className="list-group">
+            <li className="list-group-item  container-fluid" key={data.sbr.status.secret}>
+              <ResourceLink
+                kind={referenceForModel(SecretModel)}
+                name={data.sbr.status.secret}
+                namespace={data.sbr.metadata.namespace}
+                dataTest={`secret-resource-link-${data.sbr.status.secret}`}
+              />
+            </li>
+          </ul>
+        </>
+      )}
       {edge.getType() === TYPE_TRAFFIC_CONNECTOR && (
         <>
           <SidebarSectionHeading text={t('topology~Kiali link')} />
           <ExternalLink
             href={getNamespaceDashboardKialiLink(consoleLinks, namespace)}
             text={t('topology~Kiali Graph view')}
+            dataTestID="kiali-link"
           />
         </>
       )}

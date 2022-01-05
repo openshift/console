@@ -34,7 +34,7 @@ Given(
 );
 
 When('user clicks on Monitoring tab', () => {
-  topologySidePane.selectTab(sideBarTabs.observe);
+  topologySidePane.selectTab(sideBarTabs.Observe);
 });
 
 When('user selects {string} from Context Menu', (menuOption: string) => {
@@ -103,6 +103,13 @@ When(
   },
 );
 
+When('user edits the application {string}', (name: string) => {
+  topologyPage.rightClickOnNode(name);
+  cy.byTestActionID(`Edit ${name}`)
+    .should('be.visible')
+    .click();
+});
+
 When(
   'user right clicks on the Service {string} to open the Context Menu',
   (serviceName: string) => {
@@ -130,6 +137,10 @@ When('user right clicks on the {string} to open the Context Menu', (nodeName: st
   topologyPage.rightClickOnNode(nodeName);
 });
 
+When('user starts a new build', () => {
+  topologyPage.startBuild();
+});
+
 Then('user will be taken to Dashboard tab on the Monitoring page', () => {
   detailsPage.titleShouldContain(pageTitle.Observe);
 });
@@ -137,7 +148,7 @@ Then('user will be taken to Dashboard tab on the Monitoring page', () => {
 Then('user wont see Monitoring tab', () => {
   topologySidePane.verify();
   cy.get(topologyPO.sidePane.tabName)
-    .contains(sideBarTabs.observe)
+    .contains(sideBarTabs.Observe)
     .should('not.be.visible');
 });
 

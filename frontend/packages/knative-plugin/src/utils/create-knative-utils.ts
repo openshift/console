@@ -27,6 +27,7 @@ export const getKnativeServiceDepResource = (
   imageNamespace?: string,
   annotations?: { [name: string]: string },
   originalKnativeService?: K8sResourceKind,
+  generatedImageStreamName?: string,
 ): K8sResourceKind => {
   const {
     name,
@@ -101,7 +102,7 @@ export const getKnativeServiceDepResource = (
         ...defaultLabel,
         ...labels,
         ...(!create && { 'networking.knative.dev/visibility': `cluster-local` }),
-        ...((formData as GitImportFormData).pipeline?.enabled && {
+        ...(((formData as GitImportFormData).pipeline?.enabled || generatedImageStreamName) && {
           'app.kubernetes.io/name': name,
         }),
       },
@@ -113,6 +114,9 @@ export const getKnativeServiceDepResource = (
           labels: {
             ...defaultLabel,
             ...labels,
+            'app.kubernetes.io/name': generatedImageStreamName
+              ? formData.name
+              : labels['app.kubernetes.io/name'],
           },
           annotations: {
             ...(concurrencytarget && {
@@ -269,7 +273,7 @@ export const getDomainMappingResources = (
     })
     .catch((err) => {
       // eslint-disable-next-line no-console
-      console.log(err);
+      console.log('Failed to get domain mapping resources', err);
       return domainMappingResources;
     });
 };

@@ -31,20 +31,21 @@
 
   &__view-switcher.pf-m-plain {
     @media (min-width: 768px) {
-      padding-bottom: 7px !important;
+      padding-bottom: 4px;
+      padding-right: 2px;
     }
   }
 
   &__layout-group {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     margin: 0 var(--pf-global--spacer--sm);
   }
 
   &__layout-button {
     .pf-topology-control-bar__button.pf-c-button {
-      border-radius: 0;
+      --pf-c-button--BorderRadius: 0;
+
       margin-right: 0;
 
       &:focus {
@@ -68,13 +69,13 @@
 
     &:first-of-type {
       .pf-topology-control-bar__button.pf-c-button {
-        border-radius: var(--pf-global--BorderRadius--sm) 0 0 var(--pf-global--BorderRadius--sm);
+        --pf-c-button--BorderRadius: var(--pf-global--BorderRadius--sm) 0 0 var(--pf-global--BorderRadius--sm);
       }
     }
 
     &:last-of-type {
       .pf-topology-control-bar__button.pf-c-button {
-        border-radius: 0 var(--pf-global--BorderRadius--sm) var(--pf-global--BorderRadius--sm) 0;
+        --pf-c-button--BorderRadius: 0 var(--pf-global--BorderRadius--sm) var(--pf-global--BorderRadius--sm) 0;
       }
     }
 
@@ -104,6 +105,9 @@
   .pf-topology-side-bar {
     display: flex;
     flex-direction: column;
+  }
+  .pf-topology-side-bar-resizable {
+    flex: 1 1 0;
   }
   .pf-topology-side-bar__body {
     display: flex;

@@ -17,7 +17,7 @@ export enum EventlistenerTypes {
 
 type TriggerTestData = { [key in TriggerTypes]?: EventListenerKindTrigger };
 type EventListenerTestData = { [key in EventlistenerTypes]?: EventListenerKind };
-export const TriggerTestData = {
+export const TriggerTestData: TriggerTestData = {
   [TriggerTypes.BINDING_TEMPLATE_REF]: {
     name: 'foo-trig',
     bindings: [

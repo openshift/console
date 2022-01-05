@@ -1,6 +1,6 @@
 [
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "helm.openshift.io",
@@ -125,6 +125,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "HelmChart",
+      "title": "%helm-plugin~Helm Charts%",
       "provider": { "$codeRef": "helmCatalog.helmChartProvider" }
     },
     "flags": {
@@ -146,6 +147,16 @@
     "properties": {
       "contextId": "topology-actions",
       "provider": { "$codeRef": "helmActions.useHelmActionProviderForTopology" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-context-actions",
+      "provider": { "$codeRef": "helmActions.useTopologyActionProvider" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]

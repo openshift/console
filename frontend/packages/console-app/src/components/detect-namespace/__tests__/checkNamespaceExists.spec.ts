@@ -23,9 +23,9 @@ describe('getValueForNamespace', () => {
   });
 
   it(`should return true if namespace is equal to ${ALL_NAMESPACES_KEY}`, async () => {
-    k8sGetMock.mockReturnValueOnce(Promise.reject());
     const exists = await checkNamespaceExists(ALL_NAMESPACES_KEY, true);
 
+    expect(k8sGetMock).toHaveBeenCalledTimes(0);
     expect(exists).toBeTruthy();
   });
 

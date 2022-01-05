@@ -175,6 +175,31 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   return routeData;
 };
 
+export const getDefaultLabels = () => {
+  return [
+    'app',
+    'app.kubernetes.io/instance',
+    'app.openshift.io/runtime',
+    'app.kubernetes.io/part-of',
+    'app.openshift.io/runtime-version',
+    'app.openshift.io/runtime-namespace',
+    'networking.knative.dev/visibility',
+  ];
+};
+
+export const getRouteLabels = (
+  route: K8sResourceKind,
+  resource: K8sResourceKind,
+): Record<string, string> => {
+  const allLabels = _.get(resource, 'metadata.labels', {});
+  const allRouteLabels = _.get(route, 'metadata.labels', {});
+  const filteredRouteLabels = _.omit(allRouteLabels, [
+    ...getDefaultLabels(),
+    ...Object.keys(allLabels),
+  ]);
+  return filteredRouteLabels;
+};
+
 export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
   let routeData = {
     disable: !_.isEmpty(route),
@@ -184,15 +209,16 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     defaultUnknownPort: 8080,
     path: _.get(route, 'spec.path', ''),
     hostname: _.get(route, 'spec.host', ''),
-    secure: _.has(route, 'spec.termination'),
+    secure: _.has(route, 'spec.tls.termination'),
     tls: {
-      termination: _.get(route, 'spec.termination', ''),
-      insecureEdgeTerminationPolicy: _.get(route, 'spec.insecureEdgeTerminationPolicy', ''),
-      caCertificate: _.get(route, 'spec.caCertificate', ''),
-      certificate: _.get(route, 'spec.certificate', ''),
-      destinationCACertificate: _.get(route, 'spec.destinationCACertificate', ''),
-      privateKey: _.get(route, 'spec.privateKey', ''),
+      termination: _.get(route, 'spec.tls.termination', ''),
+      insecureEdgeTerminationPolicy: _.get(route, 'spec.tls.insecureEdgeTerminationPolicy', ''),
+      caCertificate: _.get(route, 'spec.tls.caCertificate', ''),
+      certificate: _.get(route, 'spec.tls.certificate', ''),
+      destinationCACertificate: _.get(route, 'spec.tls.destinationCACertificate', ''),
+      key: _.get(route, 'spec.tls.key', ''),
     },
+    labels: getRouteLabels(route, resource),
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
     routeData = {
@@ -330,17 +356,8 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
 };
 
 export const getUserLabels = (resource: K8sResourceKind) => {
-  const defaultLabels = [
-    'app',
-    'app.kubernetes.io/instance',
-    'app.openshift.io/runtime',
-    'app.kubernetes.io/part-of',
-    'app.openshift.io/runtime-version',
-    'app.openshift.io/runtime-namespace',
-    'networking.knative.dev/visibility',
-  ];
   const allLabels = _.get(resource, 'metadata.labels', {});
-  const userLabels = _.omit(allLabels, defaultLabels);
+  const userLabels = _.omit(allLabels, getDefaultLabels());
   return userLabels;
 };
 
@@ -495,7 +512,7 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
   };
 };
 
-export const getExternalImagelValues = (appResource: K8sResourceKind) => {
+export const getExternalImageValues = (appResource: K8sResourceKind) => {
   const name = _.get(appResource, 'spec.template.spec.containers[0].image', null);
   if (_.isEmpty(appResource) || !name) {
     return deployImageInitialValues;
@@ -562,7 +579,7 @@ export const getInitialValues = (
     ) {
       if (editAppResourceData?.kind === ServiceModel.kind) {
         internalImageValues = {};
-        externalImageValues = getExternalImagelValues(editAppResourceData);
+        externalImageValues = getExternalImageValues(editAppResourceData);
       }
     }
   } else if (isFromJarUpload(getBuildSourceType(buildConfigData))) {

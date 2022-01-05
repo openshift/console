@@ -68,6 +68,8 @@ export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60
       if (e instanceof RetryError) {
         retry = true;
       } else {
+        // eslint-disable-next-line no-console
+        console.warn(`consoleFetch failed for url ${url}`, e);
         throw e;
       }
     }

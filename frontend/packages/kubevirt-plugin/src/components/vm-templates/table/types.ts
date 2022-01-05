@@ -3,6 +3,7 @@ import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/inter
 import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { TemplateItem } from '../../../types/template';
+import { DataSourceKind } from '../../../types/vm/index';
 
 export type VirtualMachineTemplateBundle = {
   template?: TemplateItem;
@@ -16,6 +17,7 @@ export type VMTemplateRowProps = {
   dataVolumes: V1alpha1DataVolume[];
   pvcs: PersistentVolumeClaimKind[];
   pods: PodKind[];
+  dataSources: FirehoseResult<DataSourceKind[]>;
   vmis: FirehoseResult<VMIKind[]>;
   namespace: string;
   loaded: boolean;

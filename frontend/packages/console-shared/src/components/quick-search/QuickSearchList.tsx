@@ -15,11 +15,10 @@ import {
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { getIconProps } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
-import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useTelemetry } from '../../hooks';
+import { CatalogType, getIconProps } from '../catalog';
 import { CatalogLinkData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
@@ -124,7 +123,12 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                       wrapModifier="truncate"
                       key={`${item.uid}-name`}
                     >
-                      <span className="ocs-quick-search-list__item-name">{item.name}</span>
+                      <span
+                        className="ocs-quick-search-list__item-name"
+                        data-test={`item-name-${item.name}-${itemType}`}
+                      >
+                        {item.name}
+                      </span>
                       <Split style={{ alignItems: 'center' }} hasGutter>
                         <SplitItem>
                           <Label>{itemType}</Label>

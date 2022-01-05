@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { queryBrowserDeleteAllQueries } from '@console/internal/actions/ui';
+import { queryBrowserDeleteAllQueries } from '@console/internal/actions/observe';
 import { QueryTable } from '@console/internal/components/monitoring/metrics';
 import {
   QueryBrowser,
@@ -58,7 +58,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({ deleteAll, queries, 
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  queries: state.UI.getIn(['queryBrowser', 'queries']).toJS(),
+  queries: state.observe.getIn(['queryBrowser', 'queries']).toJS(),
   namespace: getActiveNamespace(state),
 });
 

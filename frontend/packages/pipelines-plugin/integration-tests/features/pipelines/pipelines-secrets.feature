@@ -27,6 +27,8 @@ Feature: Secrets
             Given user has created pipeline "<pipeline_name>" with git resources
               And user is at Start Pipeline modal for pipeline "<pipeline_name>"
              When user enters URL, Revision as "<git_private_repo_url>" and "master"
+              And user clicks on Show Credentials link present in Start Pipeline modal
+              And user clicks on Add Secret link
               And user enters Secret Name as "<secret_name>"
               And user selects the "Git Server" option from accessTo drop down
               And user enters the server url as "https://github.com"

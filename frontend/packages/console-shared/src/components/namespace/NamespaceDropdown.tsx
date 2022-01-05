@@ -34,7 +34,7 @@ import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';
 
-const NoResults: React.FC<{
+export const NoResults: React.FC<{
   isProjects: boolean;
   onClear: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }> = ({ isProjects, onClear }) => {
@@ -61,7 +61,7 @@ const NoResults: React.FC<{
 
 /* ****************************************** */
 
-const Filter: React.FC<{
+export const Filter: React.FC<{
   filterRef: React.Ref<any>;
   onFilterChange: (filterText: string) => void;
   filterText: string;
@@ -128,12 +128,13 @@ const SystemSwitch: React.FC<{
 
 /* ****************************************** */
 
-const NamespaceGroup: React.FC<{
+export const NamespaceGroup: React.FC<{
   isFavorites?: boolean;
   options: { key: string; title: string }[];
   selectedKey: string;
-  favorites: { [key: string]: boolean }[];
-}> = ({ isFavorites, options, selectedKey, favorites }) => {
+  favorites?: { [key: string]: boolean }[];
+  canFavorite?: boolean;
+}> = ({ isFavorites, options, selectedKey, favorites, canFavorite = true }) => {
   const { t } = useTranslation();
   const label = isFavorites ? t('console-shared~Favorites') : t('console-shared~Projects');
 
@@ -152,7 +153,7 @@ const NamespaceGroup: React.FC<{
               <MenuItem
                 key={option.key}
                 itemId={option.key}
-                isFavorited={!!favorites?.[option.key]}
+                isFavorited={canFavorite ? !!favorites?.[option.key] : undefined}
                 isSelected={selectedKey === option.key}
                 data-test="dropdown-menu-item-link"
               >
@@ -171,7 +172,7 @@ const NamespaceGroup: React.FC<{
 // The items in the footer are not accessible via the keyboard.
 // This is being tracked in: https://github.com/patternfly/patternfly-react/issues/6031
 
-const Footer: React.FC<{
+export const Footer: React.FC<{
   canCreateNew: boolean;
   isProject?: boolean;
   setOpen: (isOpen: boolean) => void;
@@ -285,6 +286,9 @@ const NamespaceMenu: React.FC<{
     (option, checkIsFavorite: boolean) => {
       const containsFilterText = fuzzysearch(filterText.toLowerCase(), option.title.toLowerCase());
 
+      if (checkIsFavorite) {
+        return containsFilterText && isFavorite(option);
+      }
       return (
         containsFilterText &&
         (systemNamespaces || !isSystemNamespace(option)) &&
@@ -325,21 +329,16 @@ const NamespaceMenu: React.FC<{
       }}
       activeItemId={selected}
       data-test="namespace-dropdown-menu"
+      isScrollable
     >
       {/*
         //@ts-ignore */}
-      <MenuContent menuHeight="60vh">
+      <MenuContent menuHeight="60vh" maxMenuHeight="60vh">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}
           filterText={filterText}
           isProject={isProjects}
-        />
-        <SystemSwitch
-          hasSystemNamespaces={hasSystemNamespaces}
-          isProject={isProjects}
-          isChecked={systemNamespaces}
-          onChange={setSystemNamespaces}
         />
         {filteredOptions.length === 0 ? (
           <NoResults
@@ -357,6 +356,12 @@ const NamespaceMenu: React.FC<{
           options={filteredFavorites}
           selectedKey={selected}
           favorites={favorites}
+        />
+        <SystemSwitch
+          hasSystemNamespaces={hasSystemNamespaces}
+          isProject={isProjects}
+          isChecked={systemNamespaces}
+          onChange={setSystemNamespaces}
         />
         <NamespaceGroup options={filteredOptions} selectedKey={selected} favorites={favorites} />
       </MenuContent>

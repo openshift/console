@@ -42,6 +42,7 @@ export const gitPO = {
   pipeline: {
     infoMessage: '[aria-label="Info Alert"]',
     addPipeline: '#form-checkbox-pipeline-enabled-field',
+    pipelineDropdown: '#form-dropdown-pipeline-templateSelected-field',
   },
   resources: {
     deployment: '#form-radiobutton-resources-kubernetes-field',
@@ -57,6 +58,7 @@ export const gitPO = {
       secureRoute: 'input#form-checkbox-route-secure-field',
       tlsTermination: 'button#form-dropdown-route-tls-termination-field',
       insecureTraffic: 'button#form-dropdown-route-tls-insecureEdgeTerminationPolicy-field',
+      labels: 'input[data-test="route-labels"]',
     },
     buildConfig: {
       webHookBuildTrigger: 'input#form-checkbox-build-triggers-webhook-field',
@@ -93,7 +95,7 @@ export const gitPO = {
       memoryRequestHelperText: 'div#form-resource-limit-limits-memory-request-field-helper',
       memoryLimitHelperText: 'div#form-resource-limit-limits-memory-limit-field-helper',
     },
-    labels: 'input#tags-input',
+    labels: 'input[data-test="labels"]',
   },
 };
 
@@ -215,6 +217,7 @@ export const containerImagePO = {
 export const eventSourcePO = {
   search: '[placeholder="Filter by type..."]',
   apiServerSource: {
+    apiServerSourceSection: '[data-test~="ApiServerSource"][data-test~="section"]',
     apiVersion: '[data-test=pairs-list-name]',
     kind: '[data-test=pairs-list-value]',
     serviceAccountName: '[id$=ApiServerSource-serviceAccountName-field]',
@@ -222,6 +225,7 @@ export const eventSourcePO = {
     mode: '[id$=ApiServerSource-mode-field]',
   },
   sinkBinding: {
+    sinkBindingSection: '[data-test~="SinkBinding"][data-test~="section"]',
     apiVersion: '[data-test-id="sinkbinding-apiversion-field"]',
     kind: '[data-test-id="sinkbinding-kind-field"]',
     matchLabels: {
@@ -249,7 +253,14 @@ export const eventSourcePO = {
     name: '[id$="name-field"]',
   },
   containerImage: {
+    containerSourceSection: '[data-test~="ContainerSource"][data-test~="section"]',
     image: '[data-test-id="container-image-field"]',
+    name: '[data-test-id="container-name-field"]',
+    arguments: '[data-test="text-column-field"]',
+    addArgs: '[data-test="add-action"]',
+    environmentVariableName: '[data-test="pairs-list-name"]',
+    environmentVariableValue: '[data-test="pairs-list-name"]',
+    addMoreRow: '[data-test="add-button"]',
   },
 };
 
@@ -283,4 +294,15 @@ export const uploadJarFilePO = {
     runTimeIcon: '.odc-icon-dropdown',
     builderImageVersion: '#form-dropdown-image-tag-field',
   },
+};
+export const quickSearchAddPO = {
+  quickSearchButton: '[data-test="quick-search"]',
+  quickSearchBar: '[data-test="quick-search-bar"]',
+  quickSearchInput: '[data-test~="quick-search-bar"] [data-test~="input"]',
+  quickSearchListItem(itemName: string, itemType: string): string {
+    return `[data-test="item-name-${itemName}-${itemType}"]`;
+  },
+  quickSearchCreateButton: '[data-test="create-quick-search"]',
+  viewInDevCatalog: '#devCatalog',
+  quickSearchNoResults: '[data-test="quick-search-no-results"]',
 };

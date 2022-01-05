@@ -10,6 +10,8 @@ import {
   USERSETTINGS_PREFIX,
   useToast,
   useUserSettings,
+  TOAST_TIMEOUT_DEFAULT,
+  TOAST_TIMEOUT_LONG,
 } from '@console/shared/src';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';
 import { ExportModel } from '../../models';
@@ -20,6 +22,7 @@ import {
   killExportResource,
 } from '../../utils/export-app-utils';
 import exportApplicationModal from './ExportApplicationModal';
+import ExportViewLogButton from './ExportViewLogButton';
 import { ExportAppUserSettings } from './types';
 
 type ExportApplicationProps = {
@@ -38,6 +41,7 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
     verb: 'create',
     namespace,
   });
+
   const toast = useToast();
   const [exportAppToast, setExportAppToast] = useUserSettings<ExportAppUserSettings>(
     `${USERSETTINGS_PREFIX}.exportApp`,
@@ -62,12 +66,15 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
         variant: AlertVariant.info,
         title: t('topology~Export Application'),
         content: (
-          <Trans t={t} ns="topology">
-            Export of resources in <strong>{{ namespace }}</strong> has started.
-          </Trans>
+          <>
+            <Trans t={t} ns="topology">
+              Export of resources in <strong>{{ namespace }}</strong> has started.
+            </Trans>
+            <ExportViewLogButton namespace={namespace} />
+          </>
         ),
         dismissible: true,
-        timeout: true,
+        timeout: TOAST_TIMEOUT_LONG,
       });
       setExportAppToast(exportAppToastConfig);
       setIsCreating(false);
@@ -83,7 +90,7 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
           </Trans>
         ),
         dismissible: true,
-        timeout: true,
+        timeout: TOAST_TIMEOUT_DEFAULT,
       });
     }
   };
@@ -125,8 +132,11 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
         setExportAppToast(exportAppToastConfig);
         await createExportCR();
       }
-    } catch {
-      await createExportCR();
+    } catch (error) {
+      createExportCR().catch((createError) =>
+        // eslint-disable-next-line no-console
+        console.warn('Could not createExportCR:', createError),
+      );
     }
   };
 

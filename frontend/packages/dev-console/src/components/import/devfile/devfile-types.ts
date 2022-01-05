@@ -12,4 +12,5 @@ export interface DevfileSample {
       [remote: string]: string;
     };
   };
+  provider?: string;
 }

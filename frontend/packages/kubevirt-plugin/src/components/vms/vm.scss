@@ -18,7 +18,6 @@
   }
 }
 
-.kv-vm-resource--boot-order {
-  display: flex;
-  justify-content: space-between;
+.kv-vm-resource--link-pending-changes {
+  margin-left: var(--pf-global--spacer--sm);
 }

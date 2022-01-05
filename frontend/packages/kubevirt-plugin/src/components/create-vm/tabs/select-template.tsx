@@ -45,6 +45,7 @@ import {
 } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
+import { DataSourceKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { TemplateItem } from '../../../types/template';
 import { FormPFSelect } from '../../form/form-pf-select';
@@ -73,6 +74,10 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
 }) => {
   const { t } = useTranslation();
   const [template] = templateItem.variants;
+
+  const gpusCount = template?.objects?.[0].spec?.template?.spec?.domain?.devices?.gpus?.length;
+  const hostDevicesCount =
+    template?.objects?.[0].spec?.template?.spec?.domain?.devices?.hostDevices?.length;
 
   const osName = getTemplateOperatingSystems(templateItem.variants)?.[0]?.name;
   const provider = getTemplateProvider(t, template, true);
@@ -107,12 +112,17 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
         <StackItem>
           <Stack>
             <StackItem>
-              <b>{t('kubevirt-plugin~Project ')}</b>
-              {template.metadata.namespace}
+              <b>{t('kubevirt-plugin~Project')}</b> {template.metadata.namespace}
             </StackItem>
             <StackItem>
-              <b>{t('kubevirt-plugin~Storage ')}</b>
-              {storageLable}
+              <b>{t('kubevirt-plugin~Storage')}</b> {storageLable}
+            </StackItem>
+            <StackItem>
+              <b>{t('kubevirt-plugin~Hardware Devices')}</b>{' '}
+              {!gpusCount && !hostDevicesCount && t('kubevirt-plugin~None')}
+              {gpusCount && t('kubevirt-plugin~{{gpusCount}} GPU', { gpusCount })}{' '}
+              {hostDevicesCount &&
+                t('kubevirt-plugin~{{hostDevicesCount}} Host device', { hostDevicesCount })}
             </StackItem>
           </Stack>
         </StackItem>
@@ -128,6 +138,7 @@ type SelectTemplateProps = {
   selectedTemplate: TemplateItem;
   pods: PodKind[];
   dataVolumes: V1alpha1DataVolume[];
+  dataSources: DataSourceKind[];
   pvcs: PersistentVolumeClaimKind[];
   templates: TemplateItem[];
   namespace: string;
@@ -143,6 +154,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
   selectedTemplate,
   pods,
   dataVolumes,
+  dataSources,
   templates,
   pvcs,
   namespace,
@@ -167,6 +179,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
         pvcs,
         dataVolumes,
         template: template.variants[0],
+        dataSources,
       }),
       isPinned: isPinned(template),
     }))

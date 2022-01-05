@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
-import { PodControllerOverviewItem } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 
 type DeploymentOverviewListProps = {
-  current: PodControllerOverviewItem;
+  resource: K8sResourceKind;
 };
 
-const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ current }) => {
+const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ resource }) => {
   const { t } = useTranslation();
-  const { obj } = current || {};
+  const { pods } = usePodsForRevisions(resource.metadata.uid, resource.metadata.namespace);
+  const { obj } = pods?.[0] || {};
   const namespace = obj?.metadata?.namespace;
   const deploymentData = obj?.metadata?.ownerReferences[0];
   return (

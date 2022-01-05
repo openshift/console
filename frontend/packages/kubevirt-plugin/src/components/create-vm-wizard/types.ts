@@ -34,6 +34,7 @@ export enum VMWizardProps {
   storageClassConfigMap = 'storageClassConfigMap',
   nads = 'nads',
   initialData = 'initialData',
+  cdRom = 'cdRom',
 }
 
 // order important
@@ -147,6 +148,12 @@ export enum CloudInitField {
   AUTH_KEYS = 'AUTH_KEYS',
 }
 
+export enum HardwareDevicesField {
+  HOST_DEVICES = 'HOST_DEVICES',
+  GPUS = 'GPUS',
+  IS_DEVICES_INITIALIZED = 'IS_DEVICES_INITIALIZED',
+}
+
 export type VMSettingsFieldAttribute =
   | VMSettingsField.HOSTNAME
   | VMSettingsField.DEFAULT_STORAGE_CLASS;
@@ -229,6 +236,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplate
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
+  | VMWizardProps.cdRom
   | VMWizardProps.openshiftCNVBaseImages
   | VMWizardProps.dataVolumes
   | VMWizardProps.storageClassConfigMap

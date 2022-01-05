@@ -106,7 +106,8 @@ export const endpointsSupported = [BC_PROVIDERS.S3, BC_PROVIDERS.IBM];
 export const getProviders = (type: StoreType) => {
   const values =
     type === StoreType.BS
-      ? Object.values(BC_PROVIDERS)
+      ? // BackingStore does not support filesystem, NamespaceStore does not support PVC and GCP
+        Object.values(BC_PROVIDERS).filter((provider) => provider !== BC_PROVIDERS.FILESYSTEM)
       : Object.values(BC_PROVIDERS).filter(
           (provider) => provider !== BC_PROVIDERS.GCP && provider !== BC_PROVIDERS.PVC,
         );

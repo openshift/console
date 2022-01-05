@@ -108,7 +108,7 @@ describe('DeployImage Submit Utils', () => {
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
         true,
-        null,
+        mockImageStreamData,
         'update',
       );
 
@@ -149,7 +149,7 @@ describe('DeployImage Submit Utils', () => {
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
         false,
-        null,
+        mockImageStreamData,
         'update',
       );
 

@@ -7,7 +7,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { ServiceModel } from '../../../models';
-import { SinkUriResourcesGroup } from '../../add/event-sources/SinkSection';
+import SinkUriResourcesGroup from '../../add/event-sources/form-fields/SinkUriResourcesGroup';
 import SinkSourceModal from '../SinkSourceModal';
 
 type SinkSourceModalProps = React.ComponentProps<typeof SinkSourceModal>;
@@ -21,6 +21,7 @@ describe('SinkSourceModal Form', () => {
         apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
         kind: ServiceModel.kind,
         name: 'event-greeter',
+        key: 'serving.knative.dev~event-greeter',
       },
     },
   };

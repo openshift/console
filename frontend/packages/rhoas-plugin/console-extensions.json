@@ -1,6 +1,6 @@
 [
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "rhoas.redhat.com",
@@ -13,7 +13,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "rhoas.redhat.com",
@@ -26,7 +26,7 @@
     }
   },
   {
-    "type": "console.resource-metadata",
+    "type": "console.model-metadata",
     "properties": {
       "model": {
         "group": "rhoas.redhat.com",
@@ -97,6 +97,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "managedservices",
+      "title": "%rhoas-plugin~Application Services%",
       "provider": { "$codeRef": "catalog.rhoasProvider" }
     },
     "flags": {

@@ -3,9 +3,10 @@ import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { sortable, IRow } from '@patternfly/react-table';
 import { Table } from '@console/internal/components/factory';
-import { ResourceLink } from '@console/internal/components/utils';
+import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils';
 import { WizardNodeState } from '../../reducer';
 import { SelectNodesTableFooter } from '../../select-nodes-table/select-nodes-table-footer';
+import { getConvertedUnits } from '../../../../utils/install';
 
 const tableColumnClasses = [
   classNames('pf-u-w-40-on-sm'),
@@ -29,10 +30,10 @@ const getRows = ({ componentProps }) => {
         title: roles.join(', ') ?? '-',
       },
       {
-        title: cpu ?? '-',
+        title: `${humanizeCpuCores(cpu).string || '-'}`,
       },
       {
-        title: memory ?? '-',
+        title: `${getConvertedUnits(memory)}`,
       },
       {
         title: zone ?? '-',

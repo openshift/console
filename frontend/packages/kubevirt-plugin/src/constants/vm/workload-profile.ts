@@ -26,6 +26,13 @@ export class WorkloadProfile extends SelectDropdownObjectEnum<string> {
     descriptionKey: 'kubevirt-plugin~Optimized for High resource consumption workloads',
     order: 3,
   });
+  static readonly SAP_HANA = new WorkloadProfile('saphana', {
+    // t('kubevirt-plugin~SAP HANA')
+    labelKey: 'kubevirt-plugin~SAP HANA',
+    // t('kubevirt-plugin~Optimized for SAP HANA workloads')
+    descriptionKey: 'kubevirt-plugin~Optimized for SAP HANA workloads',
+    order: 4,
+  });
 
   private static readonly ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<WorkloadProfile>(WorkloadProfile),

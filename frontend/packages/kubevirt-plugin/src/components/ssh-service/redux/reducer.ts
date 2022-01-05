@@ -5,7 +5,7 @@ const initialState = {
   sshServices: {},
   showRestoreKeyButton: true,
   tempSSHKey: null,
-  enableSSHService: true,
+  enableSSHService: false,
   disableSaveInNamespaceCheckbox: null,
   isValidSSHKey: true,
   updateSSHKeyInGlobalNamespaceSecret: false,

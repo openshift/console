@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { constants, SerialConsole } from '@patternfly/react-console';
+import { useTranslation } from 'react-i18next';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { ConsoleType } from '../../../../constants/vm/console-type';
 import { getName } from '../../../../selectors';
@@ -33,6 +34,7 @@ const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi, se
   const [status, setStatus] = React.useState(LOADING);
   const terminalRef = React.useRef(null);
   const socket = React.useRef<WebSocket>(null);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     setConsoleType(ConsoleType.SERIAL);
@@ -118,6 +120,11 @@ const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi, se
       onResize={onResize}
       ref={terminalRef}
       status={status}
+      textConnect={t('kubevirt-plugin~Connect')}
+      textDisconnect={t('kubevirt-plugin~Disconnect')}
+      textDisconnected={t('kubevirt-plugin~Click Connect to open serial console.')}
+      textLoading={t('kubevirt-plugin~Loading ...')}
+      textReset={t('kubevirt-plugin~Reset')}
     />
   );
 };

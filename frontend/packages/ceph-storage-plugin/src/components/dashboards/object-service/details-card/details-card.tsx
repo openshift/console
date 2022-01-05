@@ -3,10 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -88,7 +85,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   const subscriptionLoaded = _.get(subscription, 'loaded');
   const serviceVersion = !isODF ? getOCSVersion(subscription) : getODFVersion(subscription);
 
-  const serviceName = !isODF
+  const serviceName = isODF
     ? t('ceph-storage-plugin~OpenShift Data Foundation')
     : t('ceph-storage-plugin~OpenShift Container Storage');
 
@@ -99,11 +96,11 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
     CEPH_STORAGE_NAMESPACE,
   )}`;
   return (
-    <DashboardCard>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Details')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Details')}</CardTitle>
+      </CardHeader>
+      <CardBody>
         <DetailsBody>
           <DetailItem
             key="service_name"
@@ -150,8 +147,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             {serviceVersion}
           </DetailItem>
         </DetailsBody>
-      </DashboardCardBody>
-    </DashboardCard>
+      </CardBody>
+    </Card>
   );
 };
 

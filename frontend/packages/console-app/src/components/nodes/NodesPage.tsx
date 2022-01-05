@@ -233,6 +233,7 @@ const NodesTableRow: React.FC<RowFunctionArgs<NodeKind>> = ({
   obj: node,
   customData: { tableColumns },
 }) => {
+  const { t } = useTranslation();
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'node']));
   const nodeName = getName(node);
   const nodeUID = getUID(node);
@@ -246,7 +247,10 @@ const NodesTableRow: React.FC<RowFunctionArgs<NodeKind>> = ({
   const totalCores = metrics?.totalCPU?.[nodeName];
   const cpu =
     Number.isFinite(cores) && Number.isFinite(totalCores)
-      ? `${formatCores(cores)} cores / ${totalCores} cores`
+      ? t('console-app~{{formattedCores}} cores / {{totalCores}} cores', {
+          formattedCores: formatCores(cores),
+          totalCores,
+        })
       : '-';
   const usedStrg = metrics?.usedStorage?.[nodeName];
   const totalStrg = metrics?.totalStorage?.[nodeName];

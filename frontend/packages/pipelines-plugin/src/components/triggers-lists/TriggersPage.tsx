@@ -7,13 +7,14 @@ import NamespacedPage, {
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { TechPreviewBadge, MultiTabListPage } from '@console/shared';
+import { MultiTabListPage } from '@console/shared';
 import {
   EventListenerModel,
   TriggerTemplateModel,
   TriggerBindingModel,
   ClusterTriggerBindingModel,
 } from '../../models';
+import { useTriggersTechPreviewBadge } from '../../utils/hooks';
 
 interface TriggersPageProps {
   match: Rmatch<any>;
@@ -24,6 +25,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
   const {
     params: { ns: namespace },
   } = match;
+  const badge = useTriggersTechPreviewBadge(namespace);
   const [showTitle, canCreate] = [false, false];
   const menuActions = {
     eventListener: { model: EventListenerModel },
@@ -83,7 +85,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
         pages={pages}
         match={match}
         title={t('pipelines-plugin~Triggers')}
-        badge={<TechPreviewBadge />}
+        badge={badge}
         menuActions={menuActions}
       />
     </NamespacedPage>

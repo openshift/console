@@ -28,6 +28,12 @@ export const deviceTypeDropdownItems = Object.freeze({
   PART: 'Part',
 });
 
+export const fsTypeDropdownItems = Object.freeze({
+  EXT4: 'ext4',
+  EXT3: 'ext3',
+  XFS: 'xfs',
+});
+
 export const diskTypeDropdownItems = (t: TFunction) =>
   Object.freeze({
     All: t('lso-plugin~All'),

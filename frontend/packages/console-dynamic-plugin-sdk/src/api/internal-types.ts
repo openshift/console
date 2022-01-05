@@ -1,12 +1,14 @@
-import { CardProps, CardBodyProps } from '@patternfly/react-core';
 import {
   K8sResourceCommon,
   FirehoseResult,
   PrometheusResponse,
   HealthState,
   StatusGroupMapper,
+  QueryParams,
+  TopConsumerPopoverProps,
+  LIMIT_STATE,
 } from '../extensions/console-types';
-import { K8sKind, Alert } from './common-types';
+import { K8sModel, Alert } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
   className?: string;
@@ -59,36 +61,18 @@ export type HealthItemProps = WithClassNameProps<{
   icon?: React.ReactNode;
 }>;
 
-export type DashboardCardProps = CardProps & {
-  className?: string;
-  children: React.ReactNode;
-  gradient?: boolean;
-};
-
-export type DashboardCardBodyProps = CardBodyProps & {
-  classname?: string;
-  children: React.ReactNode;
-  isLoading?: boolean;
-};
-
-export type DashboardCardHeaderProps = WithClassNameProps<{
-  children: React.ReactNode;
-}>;
-
-export type DashboardCardTitleProps = WithClassNameProps<{
-  children?: React.ReactNode;
-}>;
-
 export type ResourceInventoryItemProps = {
   resources: K8sResourceCommon[];
   additionalResources?: { [key: string]: [] };
   mapper?: StatusGroupMapper;
-  kind: K8sKind;
+  kind: K8sModel;
   isLoading: boolean;
   namespace?: string;
   error: boolean;
   showLink?: boolean;
   TitleComponent?: React.ComponentType<{}>;
+  title?: string;
+  titlePlural?: string;
   ExpandedComponent?: React.ComponentType<{}>;
   basePath?: string;
   dataTest?: string;
@@ -111,19 +95,6 @@ export type UtilizationBodyProps = {
   children: React.ReactNode;
 };
 
-type LIMIT_STATE = 'ERROR' | 'WARN' | 'OK';
-
-export type TopConsumerPopoverProp = {
-  current: string;
-  max?: string;
-  limit?: string;
-  available?: string;
-  requested?: string;
-  total?: string;
-  limitState?: LIMIT_STATE;
-  requestedState?: string;
-};
-
 export enum ByteDataTypes {
   BinaryBytes = 'binaryBytes',
   BinaryBytesWithoutB = 'binaryBytesWithoutB',
@@ -143,19 +114,8 @@ export type UtilizationItemProps = {
   error: boolean;
   max?: number;
   byteDataType?: ByteDataTypes;
-  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
   setLimitReqState?: (state: { limit: LIMIT_STATE; requested: LIMIT_STATE }) => void;
-};
-
-type GridDashboarCard = {
-  Card: React.ComponentType<any>;
-  span?: 4 | 6 | 12;
-};
-
-export type DashboardGridProps = {
-  mainCards: GridDashboarCard[];
-  leftCards?: GridDashboarCard[];
-  rightCards?: GridDashboarCard[];
 };
 
 type EventInvolvedObject = {
@@ -224,3 +184,11 @@ type PrometheusPollProps = {
 };
 
 export type UsePrometheusPoll = (props: PrometheusPollProps) => [PrometheusResponse, any, boolean];
+
+export type Options = {
+  ns?: string;
+  name?: string;
+  path?: string;
+  queryParams?: QueryParams;
+  cluster?: string;
+};

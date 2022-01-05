@@ -50,7 +50,7 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-765) Unpauses VM', () => {
       vm.pause();
-      vm.unpause();
+      vm.resume();
     });
 
     it('ID(CNV-4015) Stops VM', () => {
@@ -82,7 +82,14 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-1794) Unpauses VM', () => {
       vm.pause();
-      vm.unpause();
+      cy.waitForResource({
+        kind: 'VirtualMachine',
+        metadata: {
+          name: vmData.name,
+          namespace: vmData.namespace,
+        },
+      });
+      vm.resume();
     });
 
     it('ID(CNV-4019) Unpauses VM via modal dialog', () => {
@@ -110,6 +117,13 @@ describe('Test VM/VMI actions', () => {
       cy.applyResource(vmiFixture);
       cy.visitVMsList();
       waitForStatus(VM_STATUS.Running);
+      cy.waitForResource({
+        kind: 'VirtualMachineInstance',
+        metadata: {
+          name: vmiData.name,
+          namespace: vmiData.namespace,
+        },
+      });
     });
 
     it('ID(CNV-3693) Test VMI list view action', () => {

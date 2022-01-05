@@ -19,7 +19,7 @@ export interface GettingStartedLink {
   id: string;
   loading?: boolean;
 
-  title?: string;
+  title?: string | React.ReactElement;
 
   external?: boolean;
   /** Default hyperlink location */
@@ -91,6 +91,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                           'data-test': `item ${link.id}`,
                         }
                   }
+                  href={link.href}
                   onClick={link.onClick}
                 >
                   {link.title}

@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 import { authSvc } from '@console/internal/module/auth';
+import { getImpersonate } from '../../app/core/reducers';
+import storeHandler from '../../app/storeHandler';
 import { RetryError, HttpError } from '../error/http-error';
-import { InternalReduxStore } from '../redux';
 
 const cookiePrefix = 'csrf-token=';
 export const getCSRFToken = () =>
@@ -51,7 +52,13 @@ export const validateStatus = async (
 
   if (response.status === 401 && shouldLogout(url)) {
     // FIXME: Remove reference to `store`
-    authSvc.logout(window.location.pathname, InternalReduxStore.getState().UI.get('activeCluster'));
+    authSvc.logout(
+      window.location.pathname,
+      storeHandler
+        .getStore()
+        ?.getState()
+        ?.UI?.get('activeCluster') ?? 'local-cluster',
+    );
   }
 
   const contentType = response.headers.get('content-type');
@@ -107,12 +114,17 @@ type ImpersonateHeaders = {
 };
 // TODO: Rename this to something more general since it also includes the `X-Cluster` header.
 export const getImpersonateHeaders = (): ImpersonateHeaders => {
-  if (!InternalReduxStore) return undefined;
-  const { kind, name } = InternalReduxStore.getState().UI.get('impersonate', {});
-  const activeCluster = InternalReduxStore.getState().UI.get('activeCluster', 'local-cluster');
+  const store = storeHandler.getStore();
+  if (!store) return undefined;
+
+  // Set X-Cluster header
+  const activeCluster = store.getState()?.UI?.get('activeCluster') ?? 'local-cluster';
   const headers: ImpersonateHeaders = {
     'X-Cluster': activeCluster,
   };
+
+  // Set impersonate headers
+  const { kind, name } = getImpersonate(store.getState()) || {};
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
     headers['Impersonate-User'] = name;

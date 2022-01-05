@@ -29,7 +29,7 @@ export const addHealthChecksPage = {
     cy.get(addHealthChecksPO.removeReadinessProbeIcon).click();
   },
   addLivenessProbe: () => {
-    cy.byButtonText('Add Liveness probe')
+    cy.contains('Add Liveness probe')
       .scrollIntoView()
       .click();
     cy.get('div.odc-heath-check-probe-form').should('be.visible');

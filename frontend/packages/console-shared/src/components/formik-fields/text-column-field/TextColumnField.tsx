@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
 import { FieldArray, useField } from 'formik';
-import { useFormikValidationFix } from '@console/shared';
+import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
 import { getFieldId } from '../field-utils';
 import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
 import DragAndDrop from './DragAndDrop';

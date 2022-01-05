@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
-import { monitoringSetRules } from '@console/internal/actions/ui';
+import { getUser } from '@console/dynamic-plugin-sdk';
+import { alertingSetRules } from '@console/internal/actions/observe';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
@@ -39,8 +40,8 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [silencing, setSilencing] = React.useState(false);
-  const createdBy = useSelector((state: RootState) => state.UI.get('user')?.metadata?.name);
-  const rules = useSelector((state: RootState) => state.UI.getIn(['monitoring', 'devRules']));
+  const createdBy = useSelector((state: RootState) => getUser(state)?.metadata?.name);
+  const rules = useSelector(({ observe }: RootState) => observe.getIn(['devRules']));
   const ruleMatchers = _.map(rule?.labels, (value, key) => ({ isRegex: false, name: key, value }));
   const dispatch = useDispatch();
 
@@ -84,7 +85,7 @@ const SilenceDurationDropDown: React.FC<SilenceDurationDropDownProps> = ({
             const ruleIndex = rules.findIndex((r) => r.id === rule.id);
             const updatedRules = _.cloneDeep(rules);
             updatedRules.splice(ruleIndex, 1, rule);
-            dispatch(monitoringSetRules('devRules', updatedRules, 'dev'));
+            dispatch(alertingSetRules('devRules', updatedRules, 'dev'));
             setSilencing(false);
             silenceInProgress && silenceInProgress(false);
           },

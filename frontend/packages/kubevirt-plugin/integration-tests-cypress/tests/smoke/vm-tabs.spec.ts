@@ -43,7 +43,7 @@ describe('smoke tests', () => {
     });
 
     it('vm overview tab is loaded', () => {
-      cy.get('.co-dashboard-card__title').should('exist');
+      cy.get('.pf-c-card__title').should('exist');
     });
 
     it('vm details tab is loaded', () => {
@@ -90,11 +90,17 @@ describe('smoke tests', () => {
 
   describe('visit vm/vmi tabs', () => {
     before(() => {
-      cy.visit(`/k8s/ns/${testName}/virtualmachineinstances/${vmData.name}`);
+      cy.byLegacyTestID('horizontal-link-Overview').click();
+      cy.get('[title="VirtualMachineInstance"]')
+        .contains('VMI')
+        .click();
+      cy.byLegacyTestID(vmData.name)
+        .contains(vmData.name)
+        .click();
     });
 
     it('vm/vmi overview tab is loaded', () => {
-      cy.get('.co-dashboard-card__title').should('exist');
+      cy.get('.pf-c-card__title').should('exist');
     });
 
     it('vm/vmi details tab is loaded', () => {

@@ -13,6 +13,18 @@ import { gitPage } from '@console/dev-console/integration-tests/support/pages/ad
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
+  verifyUserIsInGraphView: () => {
+    cy.byLegacyTestID('topology-view-shortcuts').should('be.visible');
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get('body').then(($body) => {
+      if ($body.find('.odc-topology-list-view').length !== 0) {
+        cy.get(topologyPO.switcher)
+          .should('be.enabled')
+          .click({ force: true });
+        cy.get(topologyPO.graph.fitToScreen).should('be.visible');
+      }
+    });
+  },
   waitForLoad: (timeout = 50000) => {
     app.waitForLoad();
     cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
@@ -24,11 +36,14 @@ export const topologyPage = {
   verifyTopologyPage: () => {
     app.waitForDocumentLoad();
     cy.url().should('include', 'topology');
-    //  Commenting below line, as above line  already asserts the same
-    // cy.get(topologyPO.graph.emptyGraph).should('be.visible');
   },
   verifyTopologyGraphView: () => {
-    return cy.get(topologyPO.graph.emptyGraph);
+    // eslint-disable-next-line promise/catch-or-return
+    cy.url().then(($text) => {
+      $text.includes('graph')
+        ? cy.log(`user is at topology graph view`)
+        : cy.get(topologyPO.switcher).click({ force: true });
+    });
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
@@ -43,11 +58,15 @@ export const topologyPage = {
   verifyWorkloadNotInTopologyPage: (appName: string) => {
     topologyHelper.search(appName).should('not.exist');
   },
-  clickDisplayOptionDropdown: () => cy.contains('Display options').click(),
-  checkConnectivityMode: () => cy.get(topologyPO.graph.displayOptions.connenctivityMode).click(),
+  clickDisplayOptionDropdown: () =>
+    cy
+      .get('.odc-topology-filter-dropdown__select')
+      .contains('Display options')
+      .click(),
+  checkConnectivityMode: () => cy.get(topologyPO.graph.displayOptions.connectivityMode).click(),
   checkConsumptionMode: () => cy.get(topologyPO.graph.displayOptions.consumptionMode).click(),
   verifyConnectivityModeChecked: () =>
-    cy.get(topologyPO.graph.displayOptions.connenctivityMode).should('be.checked'),
+    cy.get(topologyPO.graph.displayOptions.connectivityMode).should('be.checked'),
   verifyConsumptionModeChecked: () =>
     cy.get(topologyPO.graph.displayOptions.consumptionMode).should('be.checked'),
   verifyExpandChecked: () =>
@@ -55,7 +74,7 @@ export const topologyPage = {
   verifyExpandDisabled: () =>
     cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).should('be.disabled'),
   verifyExpandOptionsDisabled: () =>
-    cy.get(topologyPO.graph.displayOptions.applicationGroupingsDisabled).should('be.visible'),
+    cy.get(topologyPO.graph.displayOptions.applicationGroupings).should('be.disabled'),
   uncheckExpandToggle: () => {
     cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).click({ force: true });
   },
@@ -116,13 +135,13 @@ export const topologyPage = {
   verifyHelmReleaseSidePaneTabs: () => {
     cy.get(topologyPO.sidePane.tabName)
       .eq(0)
-      .should('contain.text', sideBarTabs.details);
+      .should('contain.text', sideBarTabs.Details);
     cy.get(topologyPO.sidePane.tabName)
       .eq(1)
-      .should('contain.text', sideBarTabs.resources);
+      .should('contain.text', sideBarTabs.Resources);
     cy.get(topologyPO.sidePane.tabs)
       .eq(2)
-      .should('contain.text', sideBarTabs.releaseNotes);
+      .should('contain.text', sideBarTabs.ReleaseNotes);
   },
   getAppNode: (appName: string) => {
     return cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A');
@@ -185,10 +204,9 @@ export const topologyPage = {
     topologyPage.getNode(releaseName).click({ force: true });
   },
   clickOnApplicationGroupings: (appName: string) => {
-    const id = `[data-id="group:${appName}"]`;
+    const id = `[data-id="group:${appName}"] [data-test="icon application"]`;
     cy.get(id)
-      .should('be.visible')
-      .first()
+      .next('text')
       .click({ force: true });
   },
   verifyApplicationGroupingsDeleted: (appName: string) => {
@@ -203,7 +221,16 @@ export const topologyPage = {
     topologyPage.getNode(nodeName).click({ force: true });
   },
   getKnativeService: (serviceName: string) => {
-    return cy.get('[data-type="knative-service"]').contains(serviceName);
+    return cy
+      .get('[data-type="knative-service"]')
+      .find(topologyPO.graph.nodeLabel)
+      .contains(serviceName);
+  },
+  getKnativeRevision: (serviceName: string) => {
+    return cy
+      .get('[data-type="knative-service"]')
+      .find('[data-type="knative-revision"] [data-test-id="base-node-handler"]')
+      .contains(serviceName);
   },
   waitForKnativeRevision: () => {
     cy.get(topologyPO.graph.node, { timeout: 300000 }).should('be.visible');
@@ -293,6 +320,11 @@ export const topologyPage = {
   verifyApplicationGroupingSidepane: () => {
     cy.get(topologyPO.sidePane.applicationGroupingsTitle).should('be.visible');
     cy.get(topologyPO.sidePane.resourcesTabApplicationGroupings).should('be.visible');
+  },
+  startBuild: () => {
+    cy.get('button[data-test-id="start-build-action"]')
+      .should('be.visible')
+      .click({ force: true });
   },
 };
 

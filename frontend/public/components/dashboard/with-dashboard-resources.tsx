@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
 import { RESULTS_TYPE, RequestMap } from '../../reducers/dashboards';
-import { NotificationAlerts } from '../../reducers/ui';
+import { NotificationAlerts } from '../../reducers/observe';
 import {
   Fetch,
   StopWatchPrometheusAction,
@@ -18,7 +18,7 @@ import {
 } from '../../actions/dashboards';
 import { RootState } from '../../redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, AppliedClusterResourceQuotaKind } from '../../module/k8s';
 import { PrometheusResponse } from '../graphs';
 
 const mapDispatchToProps: DispatchToProps = (dispatch) => ({
@@ -35,7 +35,7 @@ const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS) as RequestMap<
     PrometheusResponse
   >,
-  notificationAlerts: state.UI.getIn(['monitoring', 'notificationAlerts']),
+  notificationAlerts: state.observe.get('notificationAlerts'),
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -221,6 +221,9 @@ export type DashboardItemProps = {
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
   resources?: {
-    [key: string]: FirehoseResult | FirehoseResult<K8sResourceKind>;
+    [key: string]:
+      | FirehoseResult
+      | FirehoseResult<K8sResourceKind>
+      | FirehoseResult<AppliedClusterResourceQuotaKind>;
   };
 };

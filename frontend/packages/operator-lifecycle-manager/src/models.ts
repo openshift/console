@@ -3,7 +3,11 @@ import { K8sKind } from '@console/internal/module/k8s';
 export const OperatorSourceModel: K8sKind = {
   kind: 'OperatorSource',
   label: 'OperatorSource',
+  // t('olm~OperatorSource')
+  labelKey: 'olm~OperatorSource',
   labelPlural: 'OperatorSource',
+  // t('olm~OperatorSource')
+  labelPluralKey: 'olm~OperatorSource',
   apiGroup: 'operators.coreos.com',
   apiVersion: 'v1',
   abbr: 'OSRC',
@@ -15,7 +19,11 @@ export const OperatorSourceModel: K8sKind = {
 export const CatalogSourceModel: K8sKind = {
   kind: 'CatalogSource',
   label: 'CatalogSource',
+  // t('olm~CatalogSource')
+  labelKey: 'olm~CatalogSource',
   labelPlural: 'CatalogSources',
+  // t('olm~CatalogSources')
+  labelPluralKey: 'olm~CatalogSources',
   apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
   abbr: 'CS',
@@ -27,7 +35,11 @@ export const CatalogSourceModel: K8sKind = {
 export const PackageManifestModel: K8sKind = {
   kind: 'PackageManifest',
   label: 'PackageManifest',
+  // t('olm~PackageManifest')
+  labelKey: 'olm~PackageManifest',
   labelPlural: 'PackageManifests',
+  // t('olm~PackageManifests')
+  labelPluralKey: 'olm~PackageManifests',
   apiGroup: 'packages.operators.coreos.com',
   apiVersion: 'v1',
   abbr: 'PM',
@@ -39,7 +51,11 @@ export const PackageManifestModel: K8sKind = {
 export const ClusterServiceVersionModel: K8sKind = {
   kind: 'ClusterServiceVersion',
   label: 'ClusterServiceVersion',
+  // t('olm~ClusterServiceVersion')
+  labelKey: 'olm~ClusterServiceVersion',
   labelPlural: 'ClusterServiceVersions',
+  // t('olm~ClusterServiceVersions')
+  labelPluralKey: 'olm~ClusterServiceVersions',
   apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
   abbr: 'CSV',
@@ -53,7 +69,11 @@ export const ClusterServiceVersionModel: K8sKind = {
 export const InstallPlanModel: K8sKind = {
   kind: 'InstallPlan',
   label: 'InstallPlan',
+  // t('olm~InstallPlan')
+  labelKey: 'olm~InstallPlan',
   labelPlural: 'InstallPlans',
+  // t('olm~InstallPlans')
+  labelPluralKey: 'olm~InstallPlans',
   apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
   abbr: 'IP',
@@ -66,7 +86,11 @@ export const InstallPlanModel: K8sKind = {
 export const SubscriptionModel: K8sKind = {
   kind: 'Subscription',
   label: 'Subscription',
+  // t('olm~Subscription')
+  labelKey: 'olm~Subscription',
   labelPlural: 'Subscriptions',
+  // t('olm~Subscriptions')
+  labelPluralKey: 'olm~Subscriptions',
   apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
   abbr: 'SUB',
@@ -79,7 +103,11 @@ export const SubscriptionModel: K8sKind = {
 export const OperatorGroupModel: K8sKind = {
   kind: 'OperatorGroup',
   label: 'OperatorGroup',
+  // t('olm~OperatorGroup')
+  labelKey: 'olm~OperatorGroup',
   labelPlural: 'OperatorGroups',
+  // t('olm~OperatorGroups')
+  labelPluralKey: 'olm~OperatorGroups',
   apiGroup: 'operators.coreos.com',
   apiVersion: 'v1',
   abbr: 'OG',
@@ -91,7 +119,11 @@ export const OperatorGroupModel: K8sKind = {
 export const OperatorHubModel: K8sKind = {
   kind: 'OperatorHub',
   label: 'OperatorHub',
+  // t('olm~OperatorHub')
+  labelKey: 'olm~OperatorHub',
   labelPlural: 'OperatorHubs',
+  // t('olm~OperatorHubs')
+  labelPluralKey: 'olm~OperatorHubs',
   apiGroup: 'config.openshift.io',
   apiVersion: 'v1',
   abbr: 'OH',

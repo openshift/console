@@ -134,7 +134,7 @@ export class VMClone {
     return this;
   };
 
-  withClonedDataVolumes = (dataVolumes: K8sResourceKind[]) => {
+  withClonedDataVolumes = (dataVolumes: K8sResourceKind[], pvcs) => {
     const dvLookup = createBasicLookup(dataVolumes, getBasicID);
     const name = this.vm.getName();
 
@@ -145,7 +145,45 @@ export class VMClone {
         const dvName = getVolumeDataVolumeName(volume);
         const dataVolume = dvLookup[`${this.oldVMNamespace}-${dvName}`];
 
-        if (dataVolume) {
+        // when we create DV with storage section, although we request 1Gi for example
+        // the actual PVC created with 1.06Gi~ and than state that DV size is smaller than PVC
+        // that's why we need to fetch PVCs and get actual size
+        const pvcSize = pvcs
+          ?.filter((pvc) => pvc?.metadata?.name === dvName)
+          ?.map((pvc) => pvc?.spec?.resources?.requests?.storage)
+          ?.join('');
+
+        if (dataVolume?.spec?.storage) {
+          const clonedDVTemplate: V1DataVolumeTemplateSpec = {
+            metadata: {
+              name: generateDataVolumeName(name, volume.name),
+            },
+            spec: {
+              storage: {
+                accessModes: _.cloneDeep(getDataVolumeAccessModes(dataVolume)),
+                volumeMode: getDataVolumeVolumeMode(dataVolume),
+                resources: {
+                  requests: {
+                    storage: pvcSize,
+                  },
+                },
+                storageClassName: getDataVolumeStorageClassName(dataVolume),
+              },
+              source: {
+                pvc: {
+                  name: dvName,
+                  namespace: this.oldVMNamespace,
+                },
+              },
+            },
+          };
+
+          this.vm.ensureDataVolumeTemplates().push(clonedDVTemplate);
+
+          volume.dataVolume = {
+            name: getName(clonedDVTemplate),
+          };
+        } else if (dataVolume?.spec?.pvc) {
           const clonedDVTemplate: V1DataVolumeTemplateSpec = {
             metadata: {
               name: generateDataVolumeName(name, volume.name),

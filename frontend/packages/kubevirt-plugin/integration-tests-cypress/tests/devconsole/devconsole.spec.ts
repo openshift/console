@@ -89,15 +89,18 @@ describe('test dev console', () => {
       cy.get(detailsTab.vmTemplate).should('contain', template.dvName);
     });
 
-    it('ID(CNV-5701) review resources tab', () => {
-      // navigate to resource tab
-      cy.get('.co-m-horizontal-nav__menu-item')
-        .contains('Resources')
-        .click();
+    /**
+     * Should be fixed and reenabled once Virtualization merged.
+     */
 
-      // check pod status is running in this tab
-      cy.get(detailsTab.vmStatus).should('contain', VM_STATUS.Running);
-    });
+    // it('ID(CNV-5701) review resources tab', () => {
+    //   // navigate to resource tab
+    //   cy.get('.co-m-horizontal-nav__menu-item')
+    //     .contains('Resources')
+    //     .click();
+    //   // check pod status is running in this tab
+    //   cy.get(detailsTab.vmStatus).should('contain', VM_STATUS.Running);
+    // });
   });
 
   describe('vm actions in devconsole', () => {
@@ -140,7 +143,7 @@ describe('test dev console', () => {
     it('ID(CNV-5702) clone vm', () => {
       selectActionFromDropdown(VM_ACTION.Clone, actionButtons.actionDropdownButton);
       cy.get(modalTitle)
-        .contains('Clone Virtual Machine')
+        .contains('Clone')
         .should('exist');
       cy.get(alertTitle).should('be.visible');
       cy.get(confirmCloneButton).click();

@@ -8,6 +8,7 @@ import {
   ModalFooter,
   createModalLauncher,
 } from '@console/internal/components/factory/modal';
+import ExportViewLogButton from './ExportViewLogButton';
 
 export type ExportApplicationModalProps = ModalComponentProps & {
   namespace: string;
@@ -81,6 +82,9 @@ export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (pr
               </Button>
             </FlexItem>
           )}
+          <FlexItem>
+            <ExportViewLogButton namespace={namespace} onViewLog={cancel} />
+          </FlexItem>
           <FlexItem>
             <Button type="button" variant="primary" data-test="export-close-btn" onClick={cancel}>
               {t('topology~OK')}

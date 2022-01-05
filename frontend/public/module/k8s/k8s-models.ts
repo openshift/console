@@ -4,7 +4,12 @@ import * as _ from 'lodash-es';
 // @ts-ignore
 import { useSelector } from 'react-redux';
 
-import { K8sResourceKindReference, K8sKind, DiscoveryResources } from './index';
+import {
+  K8sResourceKindReference,
+  K8sKind,
+  DiscoveryResources,
+  getModelExtensionMetadata,
+} from './index';
 import * as staticModels from '../../models';
 import {
   referenceForModel,
@@ -14,7 +19,8 @@ import {
 } from './k8s';
 import store from '../../redux';
 import { pluginStore } from '../../plugins';
-import { isModelDefinition } from '@console/plugin-sdk';
+import { isModelDefinition, LoadedExtension } from '@console/plugin-sdk';
+import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
 
 const modelKey = (model: K8sKind): string => {
   // TODO: Use `referenceForModel` even for known API objects
@@ -42,7 +48,7 @@ const getK8sModels = () => {
     k8sModels = k8sModels.withMutations((map) => {
       const pluginModels = _.flatMap(
         pluginStore
-          .getAllExtensions()
+          .getExtensionsInUse()
           .filter(isModelDefinition)
           .map((md) => md.properties.models),
       );
@@ -57,10 +63,16 @@ const getK8sModels = () => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelFor = (ref: K8sResourceKindReference) => {
+  const metadataExtensions = pluginStore
+    .getExtensionsInUse()
+    .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
+
   let m = getK8sModels().get(ref);
   if (m) {
-    return m;
+    const metadata = getModelExtensionMetadata(metadataExtensions, m?.group, m?.version, m?.kind);
+    return _.merge(m, metadata);
   }
+
   // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
   m = store
     .getState()
@@ -69,10 +81,13 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   if (m) {
     return m;
   }
+
   m = getK8sModels().get(kindForReference(ref));
   if (m) {
-    return m;
+    const metadata = getModelExtensionMetadata(metadataExtensions, m?.group, m?.version, m?.kind);
+    return _.merge(m, metadata);
   }
+
   m = store
     .getState()
     .k8s.getIn(['RESOURCES', 'models'])

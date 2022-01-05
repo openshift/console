@@ -1,5 +1,4 @@
-import { getRandomChars } from '@console/shared/src/utils/utils';
-import { toTitleCase } from '../utils';
+import { getRandomChars, toTitleCase } from '../utils';
 
 describe('Utils', () => {
   describe('getRandomCharacters', () => {

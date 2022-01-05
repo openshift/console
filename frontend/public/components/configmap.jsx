@@ -88,7 +88,7 @@ const ConfigMaps = (props) => {
   return (
     <Table
       {...props}
-      aria-label="Config Maps"
+      aria-label={t('public~ConfigMaps')}
       Header={ConfigMapTableHeader}
       Row={ConfigMapTableRow}
       virtualize
@@ -115,7 +115,7 @@ const ConfigMapsDetailsPage = (props) => {
         </div>
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Data')} />
-          <ConfigMapData data={configMap.data} label="Data" />
+          <ConfigMapData data={configMap.data} label={t('public~Data')} />
         </div>
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Binary data')} />

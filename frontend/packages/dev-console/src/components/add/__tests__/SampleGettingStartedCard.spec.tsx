@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { useActiveNamespace } from '@console/shared/src';
+import { useActiveNamespace, CatalogServiceProvider } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
-import CatalogServiceProvider from '../../catalog/service/CatalogServiceProvider';
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 
@@ -10,7 +9,7 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('../../catalog/service/CatalogServiceProvider', () => ({
+jest.mock('@console/shared/src/components/catalog/service/CatalogServiceProvider', () => ({
   default: jest.fn(),
 }));
 
@@ -85,13 +84,13 @@ describe('SampleGettingStartedCard', () => {
         id: 'code-with-quarkus',
         title: 'Basic Quarkus',
         href:
-          '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/elsony/devfile-sample-code-with-quarkus.git',
+          '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
       },
       {
         id: 'java-springboot-basic',
         title: 'Basic Spring Boot',
         href:
-          '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/elsony/devfile-sample-java-springboot-basic.git',
+          '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
@@ -118,9 +117,9 @@ describe('SampleGettingStartedCard', () => {
       },
       {
         id: 'nodejs-basic',
-        title: 'Basic NodeJS',
+        title: 'Basic Node.js',
         href:
-          '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/redhat-developer/devfile-sample.git',
+          '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({

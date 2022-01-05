@@ -51,4 +51,8 @@
   &__form--padding {
     padding-left: var(--pf-global--spacer--md) !important;
   }
+
+  &__form-dropdown--padding {
+    padding: 0 0 var(--pf-global--spacer--md) var(--pf-global--spacer--md);
+  }
 }

@@ -34,7 +34,7 @@ import { VictoryPortal } from 'victory-core';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
-import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/ui';
+import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
@@ -125,7 +125,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
     return (
       <>
         <TextInput
-          aria-label="graph timespan"
+          aria-label={t('public~graph timespan')}
           className="query-browser__span-text"
           validated={isValid ? 'default' : 'error'}
           onChange={(v) => setSpan(v, true)}
@@ -133,7 +133,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
           value={text}
         />
         <Dropdown
-          ariaLabel="graph timespan"
+          ariaLabel={t('public~graph timespan')}
           buttonClassName="dropdown-button--icon-only"
           items={dropdownItems}
           menuClassName="query-browser__span-dropdown-menu"
@@ -154,8 +154,18 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
 );
 
 const TOOLTIP_MAX_ENTRIES = 20;
-const TOOLTIP_MAX_WIDTH = 300;
+const TOOLTIP_MAX_WIDTH = 400;
 const TOOLTIP_MAX_HEIGHT = 400;
+const TOOLTIP_MAX_LEFT_JUT_OUT = 85;
+const TOOLTIP_MAX_RIGHT_JUT_OUT = 45;
+
+type TooltipSeries = {
+  color: string;
+  labels: PrometheusLabels;
+  name: string;
+  total: number;
+  value: string;
+};
 
 // For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
 const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style, width, x }) => {
@@ -172,14 +182,16 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
   }
 
   // Pick tooltip width and location (left or right of the cursor) to maximize its available space
-  const tooltipMaxWidth = Math.min(width / 2 + 60, TOOLTIP_MAX_WIDTH);
-  const isOnLeft = x > (width - 40) / 2;
+  const spaceOnLeft = x + TOOLTIP_MAX_LEFT_JUT_OUT;
+  const spaceOnRight = width - x + TOOLTIP_MAX_RIGHT_JUT_OUT;
+  const isOnLeft = spaceOnLeft > spaceOnRight;
+  const tooltipMaxWidth = Math.min(isOnLeft ? spaceOnLeft : spaceOnRight, TOOLTIP_MAX_WIDTH);
 
   // Sort the entries in the tooltip from largest to smallest (to match the position of points in
   // the graph) and limit to the maximum number we can display. There could be a large number of
   // points, so we use a slightly less succinct approach to avoid sorting the whole list of points
   // and to avoid processing points that won't fit in the tooltip.
-  const largestPoints = [];
+  const largestPoints: TooltipSeries[] = [];
   activePoints.forEach(({ _y1, y }, i) => {
     const total = _y1 ?? y;
     if (
@@ -188,6 +200,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     ) {
       const point = {
         color: style[i]?.fill,
+        labels: style[i]?.labels,
         name: style[i]?.name,
         total,
         value: valueFormatter(style[i]?.units)(y),
@@ -199,7 +212,31 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
       );
     }
   });
-  const allSeries = largestPoints.slice(0, TOOLTIP_MAX_ENTRIES);
+  const allSeries: TooltipSeries[] = largestPoints.slice(0, TOOLTIP_MAX_ENTRIES);
+
+  // For each series we are displaying in the tooltip, create a name based on its labels. We have
+  // limited space, so sort the labels to try to show the most useful first since later labels will
+  // likely be cut off. Sort first by the number of unique values for the label (prefer to show
+  // labels with more values because they are more helpful in identifying the series), then by the
+  // length of the label (prefer to show sorter labels because space is limited).
+  const allSeriesSorted: string[] = _.sortBy(
+    _.without(
+      _.uniq(_.flatMap(allSeries, (s) => (s.labels ? Object.keys(s.labels) : []))),
+      '__name__',
+    ),
+    [(k) => -_.uniq(allSeries.map((s) => s.labels[k])).length, (k) => k.length],
+  );
+  const getSeriesName = (series: TooltipSeries): string => {
+    if (_.isString(series.name)) {
+      return series.name;
+    }
+    if (_.isEmpty(series.labels)) {
+      return '{}';
+    }
+    const name = series.labels.__name__ ?? '';
+    const otherLabels = _.intersection(allSeriesSorted, Object.keys(series.labels));
+    return `${name}{${otherLabels.map((l) => `${l}=${series.labels[l]}`).join(',')}}`;
+  };
 
   return (
     <>
@@ -223,7 +260,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
               {allSeries.map((s, i) => (
                 <div className="query-browser__tooltip-series" key={i}>
                   <div className="query-browser__series-btn" style={{ backgroundColor: s.color }} />
-                  <div className="co-nowrap co-truncate">{s.name}</div>
+                  <div className="co-nowrap co-truncate">{getSeriesName(s)}</div>
                   <div className="query-browser__tooltip-value">{s.value}</div>
                 </div>
               ))}
@@ -265,12 +302,6 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
 const Null = () => null;
 const nullComponent = <Null />;
 
-const formatLabels = (labels: PrometheusLabels) => {
-  const name = labels?.__name__ ?? '';
-  const otherLabels = _.omit(labels, '__name__');
-  return `${name}{${_.map(otherLabels, (v, k) => `${k}=${v}`).join(',')}}`;
-};
-
 type GraphSeries = GraphDataPoint[] | null;
 
 const getXDomain = (endTime: number, span: number): AxisDomain => [endTime - span, endTime];
@@ -289,6 +320,7 @@ const Graph: React.FC<GraphProps> = React.memo(
   }) => {
     const data: GraphSeries[] = [];
     const tooltipSeriesNames: string[] = [];
+    const tooltipSeriesLabels: PrometheusLabels[] = [];
     const legendData: { name: string }[] = [];
     const { t } = useTranslation();
 
@@ -310,7 +342,7 @@ const Graph: React.FC<GraphProps> = React.memo(
           legendData.push({ name });
           tooltipSeriesNames.push(name);
         } else {
-          tooltipSeriesNames.push(formatLabels(metric));
+          tooltipSeriesLabels.push(metric);
         }
       });
     });
@@ -394,7 +426,12 @@ const Graph: React.FC<GraphProps> = React.memo(
             const color = colors[i % colors.length];
             const style = {
               data: { [isStack ? 'fill' : 'stroke']: color },
-              labels: { fill: color, name: tooltipSeriesNames[i], units },
+              labels: {
+                fill: color,
+                labels: tooltipSeriesLabels[i],
+                name: tooltipSeriesNames[i],
+                units,
+              },
             };
             return (
               // We need to use the `name` prop to prevent an error in VictorySharedEvents when
@@ -600,9 +637,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   wrapperClassName,
 }) => {
   const { t } = useTranslation();
-  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
+  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
   const tickInterval = useSelector(
-    ({ UI }: RootState) => pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
+    ({ observe }: RootState) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
   );
 
   const dispatch = useDispatch();
@@ -840,6 +877,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               <Checkbox
                 id="stacked"
                 isChecked={isStacked}
+                data-checked-state={isStacked}
                 label={t('public~Stacked')}
                 onChange={(v) => setIsStacked(v)}
               />
@@ -982,7 +1020,7 @@ type TooltipProps = {
   activePoints?: { x: number; y: number; _y1?: number }[];
   center?: { x: number; y: number };
   height?: number;
-  style?: { fill: string; name: string; units: string };
+  style?: { fill: string; labels: PrometheusLabels; name: string; units: string };
   width?: number;
   x?: number;
 };

@@ -9,7 +9,7 @@ import {
 } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
 import { BlueInfoCircleIcon } from '@console/shared';
-import { TEMPLATE_PROVIDER_ANNOTATION, TEMPLATE_SUPPORT_LEVEL } from '../../../constants';
+import { TEMPLATE_PROVIDER_URL, TEMPLATE_SUPPORT_LEVEL } from '../../../constants';
 import { SUPPORT_URL } from '../../../constants/vm-templates/constants';
 import { TemplateSupport } from '../../../constants/vm-templates/support';
 import { ModalFooter } from '../modal/modal-footer';
@@ -68,7 +68,7 @@ const SupportModal: React.FC<SupportModalProps> = ({
               </StackItem>
               <StackItem>
                 <Label className="kv-support-label">
-                  {TEMPLATE_PROVIDER_ANNOTATION}: Your company name
+                  {TEMPLATE_PROVIDER_URL}: Your company name
                 </Label>
                 <Label>
                   {TEMPLATE_SUPPORT_LEVEL}: {TemplateSupport.FULL_SUPPORT.getValue()}
@@ -82,6 +82,7 @@ const SupportModal: React.FC<SupportModalProps> = ({
               label={t('kubevirt-plugin~Do not show this message again')}
               onChange={setDoNotShow}
               isChecked={doNotShow}
+              data-checked-state={doNotShow}
             />
           </StackItem>
         </Stack>

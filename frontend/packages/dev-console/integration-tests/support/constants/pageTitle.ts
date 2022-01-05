@@ -9,6 +9,7 @@ export const pageTitle = {
   CreateEventSource: 'Create Event Source',
   upgradeHelmRelease: 'Upgrade Helm Release',
   Channel: 'Channel',
+  Broker: 'Broker',
   Add: 'Add',
   GitOPs: 'GitOps',
   Observe: 'Observe',
@@ -45,4 +46,5 @@ export const pageTitle = {
   UploadJarFile: 'Upload JAR file',
   KnativeServings: 'KnativeServings',
   KnativeEventings: 'KnativeEventings',
+  CreateRepository: 'Create Repository',
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Breadcrumb, BreadcrumbItem, Button } from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem, Button, TextContent } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -94,7 +94,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     _.get(allDefinitions, [ref, 'format']) || _.get(allDefinitions, [ref, 'type']);
 
   return (
-    <>
+    <TextContent>
       {!_.isEmpty(breadcrumbs) && (
         <Breadcrumb className="pf-c-breadcrumb--no-padding-top co-break-word">
           {breadcrumbs.map((crumb, i) => {
@@ -126,7 +126,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
       {_.isEmpty(currentProperties) ? (
         <EmptyBox label={t('public~Properties')} />
       ) : (
-        <ul className="co-resource-sidebar-list">
+        <ul className="co-resource-sidebar-list pf-c-list">
           {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
             const path = getDrilldownPath(name);
             const definitionType = definition.type || getTypeForRef(getRef(definition));
@@ -160,7 +160,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
           })}
         </ul>
       )}
-    </>
+    </TextContent>
   );
 };
 

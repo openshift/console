@@ -14,9 +14,14 @@ import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage, setUser } from './common';
-import { Rule } from '../components/monitoring/types';
+import { setClusterID, setCreateProjectMessage } from './common';
 import { subsClient } from '../graphql/client';
+import {
+  beginImpersonate,
+  endImpersonate,
+  getUser,
+  getImpersonate,
+} from '@console/dynamic-plugin-sdk';
 
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
@@ -27,34 +32,9 @@ export enum ActionType {
   SetActiveNamespace = 'setActiveNamespace',
   SetCreateProjectMessage = 'setCreateProjectMessage',
   SetCurrentLocation = 'setCurrentLocation',
-  MonitoringDashboardsPatchVariable = 'monitoringDashboardsPatchVariable',
-  MonitoringDashboardsPatchAllVariables = 'monitoringDashboardsPatchAllVariables',
-  MonitoringDashboardsSetEndTime = 'monitoringDashboardsSetEndTime',
-  MonitoringDashboardsSetPollInterval = 'monitoringDashboardsSetPollInterval',
-  MonitoringDashboardsSetTimespan = 'monitoringDashboardsSetTimespan',
-  MonitoringDashboardsVariableOptionsLoaded = 'monitoringDashboardsVariableOptionsLoaded',
-  MonitoringSetRules = 'monitoringSetRules',
-  SetMonitoringData = 'setMonitoringData',
-  ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
-  QueryBrowserAddQuery = 'queryBrowserAddQuery',
-  QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
-  QueryBrowserDeleteAllSeries = 'queryBrowserDeleteAllSeries',
-  QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
-  QueryBrowserDismissNamespaceAlert = 'queryBrowserDismissNamespaceAlert',
-  QueryBrowserInsertText = 'queryBrowserInsertText',
-  QueryBrowserPatchQuery = 'queryBrowserPatchQuery',
-  QueryBrowserRunQueries = 'queryBrowserRunQueries',
-  QueryBrowserSetAllExpanded = 'queryBrowserSetAllExpanded',
-  QueryBrowserSetMetrics = 'queryBrowserSetMetrics',
-  QueryBrowserSetPollInterval = 'queryBrowserSetPollInterval',
-  QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
-  QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
   SetClusterID = 'setClusterID',
-  SetUser = 'setUser',
   SortList = 'sortList',
-  BeginImpersonate = 'beginImpersonate',
-  EndImpersonate = 'endImpersonate',
   UpdateOverviewMetrics = 'updateOverviewMetrics',
   UpdateOverviewResources = 'updateOverviewResources',
   UpdateOverviewSelectedGroup = 'updateOverviewSelectedGroup',
@@ -125,7 +105,7 @@ export const getNamespacedResources = () => {
 
 export const getActiveCluster = (): string => store.getState().UI.get('activeCluster');
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
-export const getActiveUserName = (): string => store.getState().UI.get('user')?.metadata?.name;
+export const getActiveUserName = (): string => getUser(store.getState())?.metadata?.name;
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'namespace']);
@@ -226,9 +206,6 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
-export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
-  action(ActionType.BeginImpersonate, { kind, name, subprotocols });
-export const endImpersonate = () => action(ActionType.EndImpersonate);
 export const startImpersonate = (kind: string, name: string) => async (dispatch, getState) => {
   let textEncoder;
   try {
@@ -242,8 +219,8 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
     textEncoder = await import('text-encoding').then((module) => new module.TextEncoder('utf-8'));
   }
 
-  const imp = getState().UI.get('impersonate', {});
-  if ((imp.name && imp.name !== name) || (imp.kin && imp.kind !== kind)) {
+  const imp = getImpersonate(getState());
+  if ((imp?.name && imp.name !== name) || (imp?.kind && imp.kind !== kind)) {
     // eslint-disable-next-line no-console
     console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
     return;
@@ -309,86 +286,8 @@ export const updateOverviewLabels = (labels: string[]) =>
   action(ActionType.UpdateOverviewLabels, { labels });
 export const updateOverviewFilterValue = (value: string) =>
   action(ActionType.UpdateOverviewFilterValue, { value });
-export const monitoringDashboardsPatchVariable = (key: string, patch: any, perspective: string) =>
-  action(ActionType.MonitoringDashboardsPatchVariable, { key, patch, perspective });
-export const monitoringDashboardsPatchAllVariables = (variables: any, perspective: string) =>
-  action(ActionType.MonitoringDashboardsPatchAllVariables, { variables, perspective });
-export const monitoringDashboardsSetEndTime = (endTime: number, perspective: string) =>
-  action(ActionType.MonitoringDashboardsSetEndTime, { endTime, perspective });
-export const monitoringDashboardsSetPollInterval = (pollInterval: number, perspective: string) =>
-  action(ActionType.MonitoringDashboardsSetPollInterval, { pollInterval, perspective });
-export const monitoringDashboardsSetTimespan = (timespan: number, perspective: string) =>
-  action(ActionType.MonitoringDashboardsSetTimespan, { timespan, perspective });
-export const monitoringDashboardsVariableOptionsLoaded = (
-  key: string,
-  newOptions: string[],
-  perspective: string,
-) => action(ActionType.MonitoringDashboardsVariableOptionsLoaded, { key, newOptions, perspective });
-export const monitoringLoading = (
-  key: 'alerts' | 'silences' | 'notificationAlerts',
-  perspective = 'admin',
-) =>
-  action(ActionType.SetMonitoringData, {
-    key,
-    data: { loaded: false, loadError: null, data: null, perspective },
-  });
-export const monitoringLoaded = (
-  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
-  alerts: any,
-  perspective = 'admin',
-) =>
-  action(ActionType.SetMonitoringData, {
-    key,
-    data: { loaded: true, loadError: null, data: alerts, perspective },
-  });
-export const monitoringErrored = (
-  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
-  loadError: Error,
-  perspective = 'admin',
-) =>
-  action(ActionType.SetMonitoringData, {
-    key,
-    data: { loaded: true, loadError, data: null, perspective },
-  });
-export const monitoringSetRules = (
-  key: 'rules' | 'devRules',
-  rules: Rule[],
-  perspective = 'admin',
-) => action(ActionType.MonitoringSetRules, { key, data: rules, perspective });
-export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);
-export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
-export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
-export const queryBrowserDeleteAllSeries = () => action(ActionType.QueryBrowserDeleteAllSeries);
-export const queryBrowserDismissNamespaceAlert = () =>
-  action(ActionType.QueryBrowserDismissNamespaceAlert);
-export const queryBrowserDeleteQuery = (index: number) =>
-  action(ActionType.QueryBrowserDeleteQuery, { index });
-export const queryBrowserInsertText = (
-  index: number,
-  newText: string,
-  replaceFrom: number,
-  replaceTo: number,
-) => {
-  return action(ActionType.QueryBrowserInsertText, { index, newText, replaceFrom, replaceTo });
-};
-export const queryBrowserPatchQuery = (index: number, patch: { [key: string]: unknown }) => {
-  return action(ActionType.QueryBrowserPatchQuery, { index, patch });
-};
-export const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQueries);
-export const queryBrowserSetAllExpanded = (isExpanded: boolean) => {
-  return action(ActionType.QueryBrowserSetAllExpanded, { isExpanded });
-};
-export const queryBrowserSetMetrics = (metrics: string[]) =>
-  action(ActionType.QueryBrowserSetMetrics, { metrics });
-export const queryBrowserSetPollInterval = (pollInterval: number) =>
-  action(ActionType.QueryBrowserSetPollInterval, { pollInterval });
-export const queryBrowserToggleIsEnabled = (index: number) =>
-  action(ActionType.QueryBrowserToggleIsEnabled, { index });
-export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) => {
-  return action(ActionType.QueryBrowserToggleSeries, { index, labels });
-};
 export const setPodMetrics = (podMetrics: PodMetrics) =>
   action(ActionType.SetPodMetrics, { podMetrics });
 export const setNamespaceMetrics = (namespaceMetrics: NamespaceMetrics) =>
@@ -410,12 +309,9 @@ const uiActions = {
   setActiveApplication,
   setActiveCluster,
   setActiveNamespace,
-  beginImpersonate,
-  endImpersonate,
   sortList,
   setCreateProjectMessage,
   setClusterID,
-  setUser,
   selectOverviewItem,
   selectOverviewDetailsTab,
   updateOverviewMetrics,
@@ -425,30 +321,6 @@ const uiActions = {
   updateOverviewSelectedGroup,
   updateOverviewLabels,
   updateOverviewFilterValue,
-  monitoringDashboardsPatchVariable,
-  monitoringDashboardsPatchAllVariables,
-  monitoringDashboardsSetEndTime,
-  monitoringDashboardsSetPollInterval,
-  monitoringDashboardsSetTimespan,
-  monitoringDashboardsVariableOptionsLoaded,
-  monitoringLoading,
-  monitoringLoaded,
-  monitoringErrored,
-  monitoringSetRules,
-  monitoringToggleGraphs,
-  queryBrowserAddQuery,
-  queryBrowserDeleteAllQueries,
-  queryBrowserDeleteAllSeries,
-  queryBrowserDeleteQuery,
-  queryBrowserDismissNamespaceAlert,
-  queryBrowserInsertText,
-  queryBrowserPatchQuery,
-  queryBrowserRunQueries,
-  queryBrowserSetAllExpanded,
-  queryBrowserSetMetrics,
-  queryBrowserSetPollInterval,
-  queryBrowserToggleIsEnabled,
-  queryBrowserToggleSeries,
   setPodMetrics,
   setNamespaceMetrics,
   setNodeMetrics,

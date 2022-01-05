@@ -3,9 +3,7 @@ import './details-card.scss';
 import { DetailsBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 const DetailsBody: React.FC<DetailsBodyProps> = ({ children }) => (
-  <dl className="co-dashboard-card__body--top-margin co-details-card__body co-dashboard-text--small">
-    {children}
-  </dl>
+  <dl className="co-details-card__body">{children}</dl>
 );
 
 export default DetailsBody;

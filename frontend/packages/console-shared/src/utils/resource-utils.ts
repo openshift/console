@@ -702,24 +702,6 @@ export const createOverviewItemForType = (
   }
 };
 
-export const createOverviewItemsForType = (
-  type: string,
-  resources: any,
-  utils?: ResourceUtil[],
-): OverviewItem[] => {
-  if (!WORKLOAD_TYPES.includes(type)) {
-    return [];
-  }
-  const typedItems = resources[type]?.data ?? [];
-  return typedItems.reduce((acc, resource) => {
-    const item = createOverviewItemForType(type, resource, resources, utils);
-    if (item) {
-      acc.push(item);
-    }
-    return acc;
-  }, []);
-};
-
 export const getResourceLimitsData = (limitsData: LimitsData) => ({
   ...((limitsData.cpu.limit || limitsData.memory.limit) && {
     limits: {

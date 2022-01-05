@@ -20,13 +20,16 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager'
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { RowFilter, ColumnLayout } from '@console/dynamic-plugin-sdk';
+import { OperandStatus } from '@console/operator-lifecycle-manager/src/components/operand';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import ODFSystemLink from './system-link';
-import { getGVK, normalizeMetrics, healthStateMap } from './utils';
+import { getGVK, normalizeMetrics } from './utils';
 import { getActions } from './actions';
 import { StorageSystemModel } from '../../models';
 import { StorageSystemKind } from '../../types';
 import { ODF_QUERIES, ODFQueries } from '../../queries';
 import { CEPH_STORAGE_NAMESPACE } from '../../constants';
+import { MCG_STANDALONE, OCS_INDEPENDENT_FLAG } from '../../features';
 
 const tableColumnClasses = [
   'pf-u-w-15-on-xl',
@@ -50,22 +53,24 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
   const { t } = useTranslation();
   const { apiGroup, apiVersion, kind } = getGVK(obj.spec.kind);
   const systemKind = referenceForGroupVersionKind(apiGroup)(apiVersion)(kind);
-  const providerName = obj?.spec?.name;
   const systemName = obj?.metadata?.name;
   const { normalizedMetrics } = customData;
-
-  const { rawCapacity, usedCapacity, iops, throughput, latency, health } =
+  const isMCGStandalone = useFlag(MCG_STANDALONE);
+  const isExternal = useFlag(OCS_INDEPENDENT_FLAG);
+  const { rawCapacity, usedCapacity, iops, throughput, latency } =
     normalizedMetrics?.[systemName] || {};
 
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ODFSystemLink kind={systemKind} systemName={systemName} providerName={providerName} />
+        <ODFSystemLink kind={systemKind} systemName={systemName} providerName={systemName} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <Status
-          status={obj?.metadata?.deletionTimestamp ? 'Terminating' : healthStateMap(health)}
-        />
+        {obj?.metadata?.deletionTimestamp ? (
+          <Status status="Terminating" />
+        ) : (
+          <OperandStatus operand={obj} />
+        )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{rawCapacity?.string || '-'}</TableData>
       <TableData className={tableColumnClasses[3]}>{usedCapacity?.string || '-'}</TableData>
@@ -74,7 +79,7 @@ const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> =
       <TableData className={tableColumnClasses[6]}>{latency?.string || '-'}</TableData>
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab
-          actions={getActions(systemKind)}
+          actions={getActions(systemKind, isMCGStandalone || isExternal)}
           resource={obj}
           kind={referenceForModel(StorageSystemModel)}
           customData={{ tFunction: t }}
@@ -151,10 +156,6 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
     endpoint: PrometheusEndpoint.QUERY,
     query: ODF_QUERIES[ODFQueries.USED_CAPACITY],
   });
-  const [health] = usePrometheusPoll({
-    endpoint: PrometheusEndpoint.QUERY,
-    query: ODF_QUERIES[ODFQueries.HEALTH],
-  });
 
   const normalizedMetrics = React.useMemo(
     () => ({
@@ -165,10 +166,9 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
         rawCapacity,
         usedCapacity,
         iops,
-        health,
       ),
     }),
-    [props.data, iops, latency, rawCapacity, throughput, usedCapacity, health],
+    [props.data, iops, latency, rawCapacity, throughput, usedCapacity],
   );
 
   return (

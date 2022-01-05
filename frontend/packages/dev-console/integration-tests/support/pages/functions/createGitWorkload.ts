@@ -1,8 +1,8 @@
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
 import { devNavigationMenu, addOptions } from '../../constants';
-import { topologyPO } from '../../pageObjects';
+import { formPO, topologyPO } from '../../pageObjects';
 import { addPage, gitPage } from '../add-flow';
-import { app, createForm, navigateTo } from '../app';
+import { createForm, navigateTo } from '../app';
 
 export const createGitWorkload = (
   gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
@@ -21,8 +21,18 @@ export const createGitWorkload = (
     gitPage.selectAddPipeline();
   }
   createForm.clickCreate().then(() => {
-    app.waitForLoad();
-    cy.log(`Workload "${componentName}" with resource type "${resourceType}" is created`);
+    cy.get('.co-m-loader').should('not.exist');
+    cy.get('body').then(($body) => {
+      if ($body.find(formPO.errorAlert).length !== 0) {
+        cy.get(formPO.errorAlert)
+          .find('.co-pre-line')
+          .then(($ele) => {
+            cy.log($ele.text());
+          });
+      } else {
+        cy.log(`Workload : "${componentName}" is created`);
+      }
+    });
   });
 };
 

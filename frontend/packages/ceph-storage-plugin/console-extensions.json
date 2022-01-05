@@ -5,11 +5,8 @@
       "alert": "CephOSDDiskUnavailable",
       "text": "%ceph-storage-plugin~Troubleshoot%",
       "action": {
-        "$codeRef": "alert.getAlertActionPath"
+        "$codeRef": "alert.getDiskAlertActionPath"
       }
-    },
-    "flags": {
-      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
     }
   },
   {
@@ -18,11 +15,8 @@
       "alert": "CephOSDDiskNotResponding",
       "text": "%ceph-storage-plugin~Troubleshoot%",
       "action": {
-        "$codeRef": "alert.getAlertActionPath"
+        "$codeRef": "alert.getDiskAlertActionPath"
       }
-    },
-    "flags": {
-      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
     }
   },
   {
@@ -79,6 +73,24 @@
       "required": ["MCG"]
     }
   },
+  /* Activates when RGW is present without MCG */
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "id": "objectbuckets",
+      "section": "storage",
+      "name": "%ceph-storage-plugin~Object Buckets%",
+      "model": {
+        "group": "objectbucket.io",
+        "kind": "ObjectBucket",
+        "version": "v1alpha1"
+      }
+    },
+    "flags": {
+      "required": ["RGW"],
+      "disallowed": ["MCG"]
+    }
+  },
   {
     "type": "console.navigation/resource-ns",
     "properties": {
@@ -93,6 +105,24 @@
     },
     "flags": {
       "required": ["MCG"]
+    }
+  },
+  /* Activates when RGW is present without MCG */
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "objectbucketclaims",
+      "section": "storage",
+      "name": "%ceph-storage-plugin~Object Bucket Claims%",
+      "model": {
+        "group": "objectbucket.io",
+        "kind": "ObjectBucketClaim",
+        "version": "v1alpha1"
+      }
+    },
+    "flags": {
+      "required": ["RGW"],
+      "disallowed": ["MCG"]
     }
   },
   {
@@ -197,6 +227,13 @@
       "component": {
         "$codeRef": "odfSystemDashboard.default"
       }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "csv-actions",
+      "provider": { "$codeRef": "actions.useCsvActions" }
     }
   }
 ]

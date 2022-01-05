@@ -25,6 +25,7 @@ import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import { getUser } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, featureReducerName } from '../reducers/features';
@@ -614,7 +615,7 @@ class MastheadToolbarContents_ extends React.Component {
       showAboutModal,
       statuspageData,
     } = this.state;
-    const { consoleLinks, drawerToggle, canAccessNS, notificationAlerts, t } = this.props;
+    const { consoleLinks, drawerToggle, canAccessNS, alertCount, t } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
@@ -647,7 +648,7 @@ class MastheadToolbarContents_ extends React.Component {
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
                   variant="read"
-                  count={notificationAlerts?.data?.length || 0}
+                  count={alertCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
                 >
                   <BellIcon alt="" />
@@ -691,13 +692,13 @@ class MastheadToolbarContents_ extends React.Component {
           </PageHeaderToolsGroup>
           <PageHeaderToolsGroup>
             {/* mobile -- (notification drawer button) */
-            alertAccess && notificationAlerts?.data?.length > 0 && (
+            alertAccess && alertCount > 0 && (
               <PageHeaderToolsItem className="visible-xs-block">
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
                   variant="read"
-                  count={notificationAlerts?.data?.length}
+                  count={alertCount}
                   data-quickstart-id="qs-masthead-notifications"
                 >
                   <BellIcon />
@@ -725,8 +726,8 @@ class MastheadToolbarContents_ extends React.Component {
 const mastheadToolbarStateToProps = (state) => ({
   activeNamespace: state.UI.get('activeNamespace'),
   clusterID: state.UI.get('clusterID'),
-  user: state.UI.get('user'),
-  notificationAlerts: state.UI.getIn(['monitoring', 'notificationAlerts']),
+  user: getUser(state),
+  alertCount: state.observe.getIn(['alertCount']),
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 

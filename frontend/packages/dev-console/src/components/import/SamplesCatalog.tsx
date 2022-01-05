@@ -3,8 +3,7 @@ import { Button } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import CatalogController from '../catalog/CatalogController';
-import CatalogServiceProvider from '../catalog/service/CatalogServiceProvider';
+import { CatalogController, CatalogServiceProvider } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 

@@ -1,22 +1,31 @@
 import { vmFlavorModal } from '../components/modals';
 import { BootOrderModal } from '../components/modals/boot-order-modal';
+import { gpuDevicesModal } from '../components/modals/hardware-devices/GPUDeviceModal';
+import { hostDevicesModal } from '../components/modals/hardware-devices/HostDevicesModal';
 import { IsPendingChange, PendingChanges, VMTabEnum, VMTabURLEnum } from '../components/vms/types';
 import { VMIPhase } from '../constants/vmi/phase';
 import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../k8s/wrapper/vm/vmi-wrapper';
 import {
   changedEnvDisks,
+  changedGPUDevices,
+  changedHostDevices,
   changedNics,
   isBootOrderChanged,
   isFlavorChanged,
 } from '../selectors/vm-like/next-run-changes';
+import { isVMRunningOrExpectedRunning } from '../selectors/vm/selectors';
 import { VMIKind, VMKind } from '../types';
 import { getVMTabURL, redirectToTab } from './url';
 
 export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper): PendingChanges => {
   const vm = vmWrapper.asResource();
+  const vmi = vmiWrapper.asResource();
+
   const modifiedEnvDisks = changedEnvDisks(vmWrapper, vmiWrapper);
   const modifiedNics = changedNics(vmWrapper, vmiWrapper);
+  const modifiedGPUDevices = changedGPUDevices(vmWrapper, vmiWrapper);
+  const modifiedHostDevices = changedHostDevices(vmWrapper, vmiWrapper);
 
   return {
     [IsPendingChange.flavor]: {
@@ -46,6 +55,34 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       execAction: () => redirectToTab(getVMTabURL(vm, VMTabURLEnum.nics)),
       resourceNames: modifiedNics,
       vmTab: VMTabEnum.nics,
+    },
+    [IsPendingChange.hostDevices]: {
+      isPendingChange: modifiedHostDevices.length > 0,
+      execAction: () => {
+        redirectToTab(getVMTabURL(vm, VMTabURLEnum.details));
+        hostDevicesModal({
+          vmLikeEntity: vm,
+          vmDevices: vmWrapper.getHostDevices(),
+          vmiDevices: vmiWrapper.getHostDevices(),
+          isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
+        });
+      },
+      resourceNames: modifiedHostDevices,
+      vmTab: VMTabEnum.details,
+    },
+    [IsPendingChange.gpuDevices]: {
+      isPendingChange: modifiedGPUDevices.length > 0,
+      execAction: () => {
+        redirectToTab(getVMTabURL(vm, VMTabURLEnum.details));
+        gpuDevicesModal({
+          vmLikeEntity: vm,
+          vmDevices: vmWrapper.getGPUDevices(),
+          vmiDevices: vmiWrapper.getGPUDevices(),
+          isVMRunning: isVMRunningOrExpectedRunning(vm, vmi),
+        });
+      },
+      resourceNames: modifiedGPUDevices,
+      vmTab: VMTabEnum.details,
     },
   };
 };

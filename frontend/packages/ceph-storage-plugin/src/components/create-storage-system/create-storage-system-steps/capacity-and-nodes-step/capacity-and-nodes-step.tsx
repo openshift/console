@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
+  Checkbox,
   Grid,
   GridItem,
   Form,
@@ -12,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize, useFlag } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SelectedNodesTable } from './selected-nodes-table';
 import { StretchCluster } from './stretch-cluster';
@@ -33,16 +34,47 @@ import {
   NodesPerZoneMap,
   getZonesFromNodesKind,
 } from '../../../../utils/create-storage-system';
+import { FEATURES } from '../../../../features';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-and-nodes';
 import { pvResource, nodeResource } from '../../../../resources';
 import { ValidationMessage } from '../../../../utils/common-ocs-install-el';
 import { SelectNodesTable } from '../../select-nodes-table/select-nodes-table';
+import { ErrorHandler } from '../../error-handler';
+
+import './capacity-and-nodes.scss';
+
+const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ dispatch, enableTaint }) => {
+  const { t } = useTranslation();
+  const isTaintSupported = useFlag(FEATURES.OCS_TAINT_NODES);
+
+  return isTaintSupported ? (
+    <Checkbox
+      label={t('ceph-storage-plugin~Taint nodes')}
+      description={t(
+        'ceph-storage-plugin~Selected nodes will be dedicated to OpenShift Data Foundation use only',
+      )}
+      className="odf-capacity-and-nodes__taint-checkbox"
+      id="taint-nodes"
+      data-checked-state={enableTaint}
+      isChecked={enableTaint}
+      onChange={() => dispatch({ type: 'capacityAndNodes/enableTaint', payload: !enableTaint })}
+    />
+  ) : (
+    <></>
+  );
+};
+
+type EnableTaintNodesProps = {
+  dispatch: WizardDispatch;
+  enableTaint: WizardState['capacityAndNodes']['enableTaint'];
+};
 
 const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   dispatch,
   capacity,
   nodes,
+  enableTaint,
 }) => {
   const { t } = useTranslation();
 
@@ -54,7 +86,7 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   const onRowSelected = React.useCallback(
     (selectedNodes: NodeKind[]) => {
       const nodesData = createWizardNodeState(selectedNodes);
-      dispatch({ type: 'wizard/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/setNodes', payload: nodesData });
     },
     [dispatch],
   );
@@ -101,6 +133,7 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
           <SelectNodesTable nodes={nodes} onRowSelected={onRowSelected} />
         </GridItem>
       </Grid>
+      <EnableTaintNodes dispatch={dispatch} enableTaint={enableTaint} />
     </>
   );
 };
@@ -109,12 +142,14 @@ type SelectCapacityAndNodesProps = {
   dispatch: WizardDispatch;
   capacity: WizardState['capacityAndNodes']['capacity'];
   nodes: WizardState['nodes'];
+  enableTaint: WizardState['capacityAndNodes']['enableTaint'];
 };
 
 const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   capacity,
   storageClassName,
   enableArbiter,
+  enableTaint,
   arbiterLocation,
   dispatch,
   nodes,
@@ -150,7 +185,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
       const pvNodes = getAssociatedNodes(pvBySc);
       const filteredNodes = memoizedAllNodes.filter((node) => pvNodes.includes(node.metadata.name));
       const nodesData = createWizardNodeState(filteredNodes);
-      dispatch({ type: 'wizard/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/setNodes', payload: nodesData });
     }
   }, [dispatch, allNodeLoadError, allNodeLoaded, memoizedAllNodes, pvBySc]);
 
@@ -179,70 +214,81 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   );
 
   return (
-    <>
-      <TextContent>
-        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Selected capacity')}</Text>
-      </TextContent>
-      <FormGroup
-        fieldId="available-raw-capacity"
-        label={t('ceph-storage-plugin~Available raw capacity')}
-      >
-        <Grid hasGutter>
-          <GridItem span={5}>
-            <TextInput
-              isReadOnly
-              value={humanizeBinaryBytes(capacity).string}
-              id="available-raw-capacity"
-            />
-            <TextContent>
-              <Text component={TextVariants.small}>
-                <Trans ns="ceph-storage-plugin">
-                  The available capacity is based on all attached disks associated with the selected{' '}
-                  {/* eslint-disable-next-line react/no-unescaped-entities */}
-                  StorageClass <b>{{ storageClassName }}</b>
-                </Trans>
-              </Text>
-            </TextContent>
-            <TextContent />
-          </GridItem>
-          <GridItem span={7} />
-        </Grid>
-      </FormGroup>
-      {hasStrechClusterEnabled && (
-        <StretchCluster
-          enableArbiter={enableArbiter}
-          arbiterLocation={arbiterLocation}
-          zones={zones}
-          onChecked={onArbiterChecked}
-          onSelect={onZonesSelect}
-        />
+    <ErrorHandler
+      error={pvLoadError}
+      loaded={pvLoaded && !!capacity}
+      loadingMessage={t(
+        'ceph-storage-plugin~PersistentVolumes are being provisioned on the selected nodes.',
       )}
-      <TextContent>
-        <Text id="selected-nodes" component={TextVariants.h3}>
-          {t('ceph-storage-plugin~Selected nodes')}
-        </Text>
-      </TextContent>
-      <Grid>
-        <GridItem span={11}>
-          <SelectNodesText
-            text={
-              enableArbiter
-                ? attachDevicesWithArbiter(t, storageClassName)
-                : attachDevices(t, storageClassName)
-            }
+      errorMessage={t('ceph-storage-plugin~Error while loading PersistentVolumes.')}
+    >
+      <>
+        <TextContent>
+          <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Selected capacity')}</Text>
+        </TextContent>
+        <FormGroup
+          fieldId="available-raw-capacity"
+          label={t('ceph-storage-plugin~Available raw capacity')}
+        >
+          <Grid hasGutter>
+            <GridItem span={5}>
+              <TextInput
+                isReadOnly
+                value={humanizeBinaryBytes(capacity).string}
+                id="available-raw-capacity"
+              />
+              <TextContent>
+                <Text component={TextVariants.small}>
+                  <Trans ns="ceph-storage-plugin">
+                    The available capacity is based on all attached disks associated with the
+                    selected {/* eslint-disable-next-line react/no-unescaped-entities */}
+                    StorageClass <b>{{ storageClassName }}</b>
+                  </Trans>
+                </Text>
+              </TextContent>
+              <TextContent />
+            </GridItem>
+            <GridItem span={7} />
+          </Grid>
+        </FormGroup>
+        {hasStrechClusterEnabled && (
+          <StretchCluster
+            enableArbiter={enableArbiter}
+            arbiterLocation={arbiterLocation}
+            zones={zones}
+            onChecked={onArbiterChecked}
+            onSelect={onZonesSelect}
           />
-        </GridItem>
-        <GridItem span={10}>
-          <SelectedNodesTable data={nodes} />
-        </GridItem>
-      </Grid>
-    </>
+        )}
+        <TextContent>
+          <Text id="selected-nodes" component={TextVariants.h3}>
+            {t('ceph-storage-plugin~Selected nodes')}
+          </Text>
+        </TextContent>
+        <Grid>
+          <GridItem span={11}>
+            <SelectNodesText
+              text={
+                enableArbiter
+                  ? attachDevicesWithArbiter(t, storageClassName)
+                  : attachDevices(t, storageClassName)
+              }
+            />
+          </GridItem>
+          <GridItem span={10}>
+            <SelectedNodesTable data={nodes} />
+          </GridItem>
+        </Grid>
+        <EnableTaintNodes dispatch={dispatch} enableTaint={enableTaint} />
+      </>
+    </ErrorHandler>
   );
 };
 
 type SelectedCapacityAndNodesProps = {
   capacity: WizardState['capacityAndNodes']['capacity'];
   enableArbiter: WizardState['capacityAndNodes']['enableArbiter'];
+  enableTaint: WizardState['capacityAndNodes']['enableTaint'];
   storageClassName: string;
   arbiterLocation: WizardState['capacityAndNodes']['arbiterLocation'];
   dispatch: WizardDispatch;
@@ -256,10 +302,9 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
   volumeSetName,
   nodes,
 }) => {
-  const { capacity, enableArbiter, arbiterLocation } = state;
+  const { capacity, enableArbiter, enableTaint, arbiterLocation } = state;
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
-
   const validations = capacityAndNodesValidate(nodes, enableArbiter, isNoProvisioner);
 
   return (
@@ -269,14 +314,21 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
           storageClassName={storageClass.name || volumeSetName}
           enableArbiter={enableArbiter}
           arbiterLocation={arbiterLocation}
+          enableTaint={enableTaint}
           dispatch={dispatch}
           nodes={nodes}
           capacity={capacity}
         />
       ) : (
-        <SelectCapacityAndNodes dispatch={dispatch} capacity={capacity} nodes={nodes} />
+        <SelectCapacityAndNodes
+          dispatch={dispatch}
+          enableTaint={enableTaint}
+          capacity={capacity}
+          nodes={nodes}
+        />
       )}
       {!!validations.length &&
+        !!capacity &&
         validations.map((validation) => (
           <ValidationMessage key={validation} validation={validation} />
         ))}

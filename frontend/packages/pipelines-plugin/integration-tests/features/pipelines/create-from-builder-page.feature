@@ -176,7 +176,7 @@ Feature: Create the pipeline from builder page
         Scenario: Create pipeline with Workspaces: P-02-TC12
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-workspace"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
               And user clicks on Add in "git-clone" task
               And user selects the "git-clone" node
@@ -194,7 +194,7 @@ Feature: Create the pipeline from builder page
         Scenario: Create pipeline with optional Workspaces: P-02-TC13
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipe-opt-workspace"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
               And user clicks on Add in "git-clone" task
               And user selects the "git-clone" node
@@ -331,4 +331,20 @@ Feature: Create the pipeline from builder page
             # user uses yaml content "sum-and-multiply-pipeline/pipelineRun-sum-and-multiply-pipeline.yaml"
               And user clicks on Create button
               And user clicks on Logs tab in PipelineRun details page
-             Then user will be able to see the output in sum and multipy task
+             Then user will be able to see the output in sum and multiply task
+
+
+        @regression @manual @odc-6377
+        Scenario: Disable Tektonhub integration in the pipeline builder : P-02-TC22
+            Given user is at Search page
+              And user searches 'TektonConfig' in Resources dropdown
+              And user selects config with apiVersion operator.openshift.io/v1 option from Resources dropdown
+              And user clicks on "config" Name in TektonConfigs
+              And user switches to YAML tab
+              And user adds value of "spec.hub.params.value" as "false"
+              And user clicks on Save button
+              And user clicks on Pipeline tab in navigation menu
+              And user clicks Create Pipeline button
+              And user clicks on Add task
+              And user types 'git'
+             Then user will see Task, clusterTask only

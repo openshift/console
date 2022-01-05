@@ -109,7 +109,7 @@ export const resourceLimitsObj = {
 };
 
 export const labelsObj = {
-  labelName: element(by.css('input#tags-input')),
+  labelName: element(by.css('input[data-test="labels"]')),
 };
 
 export enum AdvancedOptions {

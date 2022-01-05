@@ -50,21 +50,24 @@ export const createOrUpdateImageStream = async (
     isi: { name: isiName, tag },
     labels: userLabels,
   } = formData;
+  const NAME_LABEL = 'app.kubernetes.io/name';
   const imgStreamName =
-    verb === 'update' && originalImageStream ? originalImageStream.metadata.name : name;
+    verb === 'update' && !_.isEmpty(originalImageStream)
+      ? originalImageStream.metadata.labels[NAME_LABEL]
+      : name;
   const defaultLabels = getAppLabels({ name, applicationName });
   const newImageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
     metadata: {
-      name: `${generatedImageStreamName || imgStreamName}`,
+      name: generatedImageStreamName || imgStreamName,
       namespace,
-      labels: { ...defaultLabels, ...userLabels },
+      labels: { ...defaultLabels, ...userLabels, [NAME_LABEL]: imgStreamName },
     },
     spec: {
       tags: [
         {
-          name: tag,
+          name: tag || 'latest',
           annotations: {
             ...getCommonAnnotations(),
             'openshift.io/imported-from': isiName,
@@ -80,8 +83,9 @@ export const createOrUpdateImageStream = async (
     },
   };
 
-  if (verb === 'update') {
+  if (verb === 'update' && !_.isEmpty(originalImageStream)) {
     const mergedImageStream = mergeData(originalImageStream, newImageStream);
+    mergedImageStream.metadata.name = originalImageStream.metadata.name;
     return k8sUpdate(ImageStreamModel, mergedImageStream);
   }
   const createdImageStream = await k8sCreate(
@@ -391,20 +395,15 @@ export const createOrUpdateDeployImageResources = async (
     }
   } else if (formData.resources === Resources.KnativeService) {
     let imageStreamUrl: string = image?.dockerImageReference;
+    let generatedImageStreamName: string = '';
     if (registry === RegistryType.External) {
-      let generatedImageStreamName: string = '';
-      if (verb === 'update') {
-        if (imageStreamList && imageStreamList.length) {
-          const originalImageStreamTag = _.find(originalImageStream?.status?.tags, [
-            'tag',
-            imageStreamTag,
-          ]);
-          if (!_.isEmpty(originalImageStreamTag)) {
-            generatedImageStreamName = `${name}-${getRandomChars()}`;
-          }
-        } else {
-          generatedImageStreamName = `${name}-${getRandomChars()}`;
-        }
+      const originalImageStreamName = originalImageStream?.spec?.tags?.[0]?.from?.name;
+      const newImageName = formData.isi.name;
+      if (
+        (originalImageStreamName && originalImageStreamName !== newImageName) ||
+        (verb === 'update' && _.isEmpty(originalImageStream))
+      ) {
+        generatedImageStreamName = `${name}-${getRandomChars()}`;
       }
       const imageStreamResponse = await createOrUpdateImageStream(
         formData,
@@ -436,6 +435,7 @@ export const createOrUpdateDeployImageResources = async (
       internalImageStreamNamespace,
       annotations,
       _.get(appResources, 'editAppResource.data'),
+      generatedImageStreamName,
     );
     const domainMappingResources = await getDomainMappingRequests(
       formData,

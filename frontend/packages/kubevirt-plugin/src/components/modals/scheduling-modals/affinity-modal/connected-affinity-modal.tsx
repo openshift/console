@@ -7,6 +7,8 @@ import { getVMLikeModel } from '../../../../selectors/vm/vmlike';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
 import { AffinityModal } from './affinity-modal';
 
+import './affinity-modal.scss';
+
 const FirehoseAffinityModal: React.FC<FirehoseAffinityModalProps> = (props) => {
   const { vmLikeEntity, ...restProps } = props;
 

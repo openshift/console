@@ -52,6 +52,7 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
               className="co-modal-ignore-warning__checkbox"
               onChange={setIgnoreWarnings}
               isChecked={ignoreWarnings}
+              data-checked-state={ignoreWarnings}
               id="do-not-show-warning"
               label={t('olm~Do not show this warning again')}
             />

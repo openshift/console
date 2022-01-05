@@ -22,7 +22,7 @@ import {
   shouldHideMonitoringAlertDecorator,
 } from '@console/shared';
 import { useSearchFilter } from '../../filters';
-import { getResourceKind } from '../../utils/topology-utils';
+import { getResource, getResourceKind } from '../../utils/topology-utils';
 import {
   AlertsCell,
   GroupResourcesCell,
@@ -32,11 +32,11 @@ import {
   TypedResourceBadgeCell,
 } from './cells';
 
-interface DispatchProps {
+type DispatchProps = {
   onSelectTab?: (name: string) => void;
-}
+};
 
-interface TopologyListViewNodeProps {
+type TopologyListViewNodeProps = {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
@@ -49,7 +49,7 @@ interface TopologyListViewNodeProps {
   groupResourcesCell?: React.ReactNode;
   hideAlerts?: boolean;
   noPods?: boolean;
-}
+};
 
 const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> = ({
   item,
@@ -68,7 +68,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
   children,
 }) => {
   const { t } = useTranslation();
-  const [filtered] = useSearchFilter(item.getLabel());
+  const [filtered] = useSearchFilter(item.getLabel(), getResource(item)?.metadata?.labels);
   if (!item.isVisible) {
     return null;
   }

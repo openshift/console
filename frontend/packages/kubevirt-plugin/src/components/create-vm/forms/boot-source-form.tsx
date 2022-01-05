@@ -8,8 +8,6 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
-import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import { dropdownUnits, initialAccessModes } from '@console/internal/components/storage/shared';
 import {
   FieldLevelHelp,
@@ -25,6 +23,7 @@ import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
 import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
+import { AccessModeSelector } from '../../AccessMode/AccessModeSelector';
 import { getGiBUploadPVCSizeByImage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 import { VMSettingsField } from '../../create-vm-wizard/types';
 import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
@@ -34,6 +33,7 @@ import { ContainerSourceHelp } from '../../form/helper/container-source-help';
 import { URLSourceHelp } from '../../form/helper/url-source-help';
 import { ProjectDropdown } from '../../form/project-dropdown';
 import { preventDefault } from '../../form/utils';
+import { VolumeModeSelector } from '../../VolumeMode/VolumeModeSelector';
 import { BOOT_ACTION_TYPE, BootSourceAction, BootSourceState } from './boot-source-form-reducer';
 
 type AdvancedSectionProps = {
@@ -62,9 +62,13 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
 
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
 
-  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
-    storageClassName || defaultSCName,
-  );
+  const [
+    spAccessMode,
+    spVolumeMode,
+    spLoaded,
+    isSPSettingProvided,
+    loadError,
+  ] = useStorageProfileSettings(storageClassName || defaultSCName);
 
   const [applySP, setApplySP] = React.useState<boolean>(true);
 
@@ -141,13 +145,14 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
               'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
             )}
             isChecked={applySP}
+            data-checked-state={applySP}
             onChange={() => setApplySP(!applySP)}
             isDisabled={!isSPSettingProvided}
             label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
             data-test="apply-storage-provider"
           />
         </FormRow>
-        {!spLoaded ? (
+        {!spLoaded && !loadError ? (
           <LoadingInline />
         ) : isSPSettingProvided && applySP ? (
           <FormRow fieldId="form-ds-sp-settings" data-test="sp-default-settings">
@@ -169,6 +174,9 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
                 provisioner={provisioner}
                 loaded
                 availableAccessModes={initialAccessModes}
+                initialAccessMode={
+                  isSPSettingProvided && storageClassName ? spAccessMode?.getValue() : undefined
+                }
               />
             </FormRow>
             <FormRow fieldId="form-ds-volume-mode" isRequired>
@@ -183,6 +191,9 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
                 accessMode={state.accessMode?.value}
                 storageClass={storageClassName}
                 loaded
+                initialVolumeMode={
+                  isSPSettingProvided && storageClassName ? spVolumeMode?.getValue() : undefined
+                }
               />
             </FormRow>
           </div>
@@ -361,6 +372,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
       <FormRow fieldId="form-ds-cdrom">
         <Checkbox
           isChecked={state.cdRom?.value}
+          data-checked-state={state.cdRom?.value}
           onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CD_ROM, payload })}
           isDisabled={disabled}
           label={

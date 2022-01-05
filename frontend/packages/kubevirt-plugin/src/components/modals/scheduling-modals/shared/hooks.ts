@@ -25,7 +25,7 @@ const withOperatorPredicate = <T extends IDLabel = IDLabel>(store: any, label: T
         ? _.get(store, key) === value
         : values.every((singleValue) => _.get(store, key) !== singleValue);
     default:
-      return value ? _.get(store, key) === value : _.has(store, key);
+      return value ? _.get(store, key) === value : _.get(store, key) === '';
   }
 };
 
@@ -66,8 +66,7 @@ export const useNodeQualifier = <T extends IDLabel = IDLabel>(
             nodeTaints &&
             filteredConstraints.every(({ key, value, effect }) =>
               nodeTaints.some(
-                (taint) =>
-                  taint.key === key && (!value || taint.value === value) && taint.effect === effect,
+                (taint) => taint.key === key && taint.value === value && taint.effect === effect,
               ),
             )
           ) {

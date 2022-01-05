@@ -10,59 +10,45 @@
   --pf-c-content--MarginBottom: var(--pf-global--spacer--md);
 }
 
-// These are written as nested rules in PF4 .pf-c-content *
-// node_modules/@patternfly/patternfly/components/Content/content.css
-dl:not(:last-child), ol:not(:last-child), ul:not(:last-child), blockquote:not(:last-child), small:not(:last-child), hr:not(:last-child), pre:not(:last-child) {
-  margin-bottom: var(--pf-c-content--MarginBottom);
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--pf-global--FontFamily--heading--sans-serif);
+    font-weight: var(--pf-global--FontWeight--normal);
+    line-height: var(--pf-global--LineHeight--md);
+    margin-bottom: var(--pf-global--spacer--sm);
+    word-break: break-word;
+  }
 
-// Prevents our tile text from inheriting the link color
-.co-catalog-tile {
-  color: var(--pf-global--Color--100);
-}
+  h1 {
+    font-size: var(--pf-global--FontSize--2xl);
+    line-height: var(--pf-global--LineHeight--sm);
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--pf-global--FontFamily--heading--sans-serif);
-  font-weight: var(--pf-global--FontWeight--normal);
-  line-height: var(--pf-global--LineHeight--md);
-  margin-bottom: var(--pf-global--spacer--sm);
-  word-break: break-word;
-}
+  h2 {
+    font-size: var(--pf-global--FontSize--xl);
+  }
 
-h1 {
-  font-size: var(--pf-global--FontSize--2xl);
-  line-height: var(--pf-global--LineHeight--sm);
-}
+  h3 {
+    font-size: var(--pf-global--FontSize--lg);
+  }
 
-h2 {
-  font-size: var(--pf-global--FontSize--xl);
-}
+  h4, h5, h6 {
+    font-size: var(--pf-global--FontSize--md);
+  }
 
-h3 {
-  font-size: var(--pf-global--FontSize--lg);
-}
+  // Override PF4 inheritance
+  button, input, optgroup, select, textarea,
+  .pf-c-badge {
+    font-family: var(--pf-global--FontFamily--sans-serif);
+  }
 
-h4, h5, h6 {
-  font-size: var(--pf-global--FontSize--md);
-}
+  pre {
+    background-color: var(--pf-c-code-block--BackgroundColor);
+    color: var(--pf-global--Color--100);
+    font-family: var(--pf-c-code-block__pre--FontFamily);
+    font-size: var(--pf-c-code-block__pre--FontSize);
+    overflow-wrap: break-word;
+    padding: var(--pf-global--spacer--md);
+    white-space: pre-wrap;
+    display: block;
+  }
 
-// Override PF4 inheritance
-button, input, optgroup, select, textarea,
-.pf-c-badge {
-  font-family: var(--pf-global--FontFamily--sans-serif);
-}
-
-p {
-  margin-bottom: var(--pf-c-content--MarginBottom);
-}
-
-pre {
-  background-color: var(--pf-c-code-block--BackgroundColor);
-  color: var(--pf-global--Color--100);
-  font-family: var(--pf-c-code-block__pre--FontFamily);
-  font-size: var(--pf-c-code-block__pre--FontSize);
-  overflow-wrap: break-word;
-  padding: var(--pf-global--spacer--md);
-  white-space: pre-wrap;
-  display: block;
-}

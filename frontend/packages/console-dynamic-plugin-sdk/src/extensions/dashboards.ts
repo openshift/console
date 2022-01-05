@@ -1,4 +1,4 @@
-import { K8sKind } from '../api/common-types';
+import { K8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef, ResolvedExtension } from '../types';
 import {
   K8sResourceCommon,
@@ -11,7 +11,7 @@ import {
   FirehoseResult,
 } from './console-types';
 import {
-  DashboardCardSpan,
+  CardSpan,
   GetOperatorsWithStatuses,
   K8sActivityProps,
   OperatorRowProps,
@@ -46,7 +46,7 @@ export type DashboardsCard = ExtensionDeclaration<
     /** Dashboard card component. */
     component: CodeRef<React.ComponentType>;
     /** Card's vertical span in the column. Ignored for small screens, defaults to 12. */
-    span?: DashboardCardSpan;
+    span?: CardSpan;
   }
 >;
 
@@ -150,7 +150,7 @@ export type DashboardsInventoryItemGroup = ExtensionDeclaration<
 
 /** Adds a resource tile to the overview inventory card. */
 export type DashboardsOverviewInventoryItem<
-  T extends K8sKind = K8sKind,
+  T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
 > = ExtensionDeclaration<
   'console.dashboards/overview/inventory/item',
@@ -159,7 +159,7 @@ export type DashboardsOverviewInventoryItem<
 
 /** Replaces an overview inventory card. */
 export type DashboardsOverviewInventoryItemReplacement<
-  T extends K8sKind = K8sKind,
+  T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
 > = ExtensionDeclaration<
   'console.dashboards/overview/inventory/item/replacement',
@@ -168,7 +168,7 @@ export type DashboardsOverviewInventoryItemReplacement<
 
 /** Adds a resource tile to the project overview inventory card. */
 export type ProjectDashboardInventoryItem<
-  T extends K8sKind = K8sKind,
+  T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
 > = ExtensionDeclaration<
   'console.dashboards/project/overview/item',
@@ -292,7 +292,7 @@ export const isDashboardsOverviewHealthSubsystem = (
   isDashboardsOverviewHealthOperator(e);
 
 type DashboardsOverviewInventoryItemProperties<
-  T extends K8sKind = K8sKind,
+  T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
 > = {
   /** The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. */

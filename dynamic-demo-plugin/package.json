@@ -1,0 +1,67 @@
+{
+  "name": "@console/dynamic-demo-plugin",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "yarn clean && NODE_ENV=production yarn ts-node node_modules/.bin/webpack",
+    "build-dev": "yarn clean && yarn ts-node node_modules/.bin/webpack",
+    "build-plugin-sdk": "yarn --cwd ../frontend build-plugin-sdk && rm -rf node_modules/@openshift-console && yarn install --check-files",
+    "http-server": "./http-server.sh dist",
+    "i18n": "i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
+  },
+  "devDependencies": {
+    "@openshift-console/dynamic-plugin-sdk": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/core",
+    "@openshift-console/dynamic-plugin-sdk-webpack": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
+    "@patternfly/react-core": "4.162.2",
+    "@patternfly/react-table": "4.31.7",
+    "@types/react": "16.8.13",
+    "@types/react-router-dom": "5.1.2",
+    "comment-json": "4.x",
+    "copy-webpack-plugin": "^6.4.1",
+    "css-loader": "0.28.x",
+    "file-loader": "1.1.11",
+    "http-server": "0.12.x",
+    "i18next-parser": "^3.3.0",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-helmet": "^6.1.0",
+    "react-i18next": "^11.7.3",
+    "react-router": "5.2.0",
+    "react-router-dom": "5.2.0",
+    "read-pkg": "5.x",
+    "style-loader": "0.23.1",
+    "ts-loader": "9.x",
+    "ts-node": "5.0.1",
+    "typescript": "4.x",
+    "webpack": "^5.62.1",
+    "webpack-cli": "4.9.x"
+  },
+  "consolePlugin": {
+    "name": "console-demo-plugin",
+    "version": "0.0.0",
+    "displayName": "Console Demo Plugin",
+    "description": "Plasma reactors online. Initiating hyper drive.",
+    "exposedModules": {
+      "exampleNavs": "./utils/example-navs",
+      "barUtils": "./utils/bar",
+      "perspective": "./utils/perspective",
+      "telemetry": "./utils/telemetry",
+      "extensionConsumer": "./components/ExtensionConsumer",
+      "utilityConsumer": "./components/UtilityConsumer",
+      "exampleProxyPage": "./components/ExampleProxyPage",
+      "K8sAPIConsumer": "./components/k8sConsumer/K8sAPIConsumer",
+      "navPage": "./components/Nav",
+      "listPage": "./components/ListPage",
+      "clusterInventoryOverview": "./components/ClusterOverview/Inventory",
+      "clusterOverview": "./utils/cluster-overview"
+    },
+    "dependencies": {
+      "@console/pluginAPI": "*"
+    },
+    "disableStaticPlugins": [
+      "@console/demo-plugin"
+    ]
+  }
+}

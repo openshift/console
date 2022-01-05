@@ -21,6 +21,8 @@ export type NetworkAttachmentDefinitionConfig = {
   type?: string;
   bridge?: string;
   isGateway?: true;
+  macspoofchk?: boolean;
+  vlan?: number;
   ipam?: IPAMConfig;
   plugins?: NetworkAttachmentDefinitionPlugin[];
 };

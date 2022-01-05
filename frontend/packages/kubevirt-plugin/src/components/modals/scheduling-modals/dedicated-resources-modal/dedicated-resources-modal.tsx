@@ -79,6 +79,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
               'kubevirt-plugin~Schedule this workload with dedicated resources (guaranteed policy)',
             )}
             isChecked={isPinned}
+            data-checked-state={isPinned}
             isDisabled={!isLoaded(nodes) || inProgress}
             onChange={(flag) => setIsPinned(flag)}
             id="dedicated-resources-checkbox"

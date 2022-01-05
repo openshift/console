@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { EventKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { EventModel } from '@console/internal/models';
@@ -129,17 +126,15 @@ const ActivityCard: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   return (
-    <DashboardCard gradient>
-      <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Activity')}</DashboardCardTitle>
-      </DashboardCardHeader>
-      <DashboardCardBody>
-        <ActivityBody className="nb-activity-card__body">
-          <OngoingActivity />
-          <RecentEvent />
-        </ActivityBody>
-      </DashboardCardBody>
-    </DashboardCard>
+    <Card className="co-overview-card--gradient">
+      <CardHeader>
+        <CardTitle>{t('ceph-storage-plugin~Activity')}</CardTitle>
+      </CardHeader>
+      <ActivityBody className="nb-activity-card__body">
+        <OngoingActivity />
+        <RecentEvent />
+      </ActivityBody>
+    </Card>
   );
 };
 

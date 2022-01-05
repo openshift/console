@@ -99,6 +99,23 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
 	addManagedClusters(fs, config.ManagedClusterConfigFile)
+	err = addProxy(fs, &config.Proxy)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func addProxy(fs *flag.FlagSet, proxyConfig *Proxy) error {
+	if proxyConfig != nil {
+		marshaledProxyConfig, err := json.Marshal(proxyConfig)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig 'proxy' field: %v", err)
+			return err
+		}
+		fs.Set("plugin-proxy", string(marshaledProxyConfig))
+	}
 	return nil
 }
 

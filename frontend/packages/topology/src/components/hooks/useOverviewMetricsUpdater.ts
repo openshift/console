@@ -38,7 +38,7 @@ export const useOverviewMetricsUpdater = (
         metricsInterval = setTimeout(fetchMetrics, interval);
       })
       .catch((e) => {
-        console.error(e); // eslint-disable-line no-console
+        console.error('Failed to fetch metrics', e); // eslint-disable-line no-console
       });
   };
 

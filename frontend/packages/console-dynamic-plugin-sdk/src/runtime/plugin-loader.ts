@@ -5,7 +5,7 @@ import { PluginStore } from '@console/plugin-sdk/src/store';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
-import { overrideSharedModules } from '../shared-modules-override';
+import { initSharedPluginModules } from '../shared-modules-init';
 import { RemoteEntryModule } from '../types';
 import { resolveURL } from '../utils/url';
 import { fetchPluginManifest } from './plugin-manifest';
@@ -55,7 +55,7 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
     };
 
     script.onerror = (event) => {
-      console.error(event);
+      console.error('Plugin loader received an error:', event);
       reject(new Error(`Error while loading entry script for plugin ${pluginID}`));
     };
 
@@ -65,7 +65,7 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
 
 export const getPluginEntryCallback = (
   pluginStore: PluginStore,
-  overrideSharedModulesCallback: typeof overrideSharedModules,
+  initSharedPluginModulesCallback: typeof initSharedPluginModules,
   resolveEncodedCodeRefsCallback: typeof resolveEncodedCodeRefs,
 ) => (pluginID: string, entryModule: RemoteEntryModule) => {
   if (!pluginMap.has(pluginID)) {
@@ -83,9 +83,9 @@ export const getPluginEntryCallback = (
   pluginData.entryCallbackFired = true;
 
   try {
-    overrideSharedModulesCallback(entryModule);
+    initSharedPluginModulesCallback(entryModule);
   } catch (error) {
-    console.error(`Failed to override shared modules for plugin ${pluginID}`, error);
+    console.error(`Failed to initialize shared modules for plugin ${pluginID}`, error);
     return;
   }
 
@@ -105,7 +105,7 @@ export const getPluginEntryCallback = (
 export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
   window.loadPluginEntry = getPluginEntryCallback(
     pluginStore,
-    overrideSharedModules,
+    initSharedPluginModules,
     resolveEncodedCodeRefs,
   );
 };

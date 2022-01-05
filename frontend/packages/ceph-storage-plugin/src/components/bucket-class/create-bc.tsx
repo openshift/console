@@ -27,7 +27,7 @@ import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-cla
 import { validateBucketClassName, validateDuration } from '../../utils/bucket-class';
 import { NooBaaBucketClassModel } from '../../models';
 import { PlacementPolicy } from '../../types';
-import { ODF_MODEL_FLAG } from '../../constants';
+import { ODF_MODEL_FLAG, CEPH_STORAGE_NAMESPACE } from '../../constants';
 
 enum CreateStepsBC {
   GENERAL = 'GENERAL',
@@ -39,7 +39,7 @@ enum CreateStepsBC {
 const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { ns, appName } = match.params;
+  const { ns = CEPH_STORAGE_NAMESPACE, appName } = match.params;
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const isODF = useFlag(ODF_MODEL_FLAG);
 
@@ -158,12 +158,15 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     const promiseObj = k8sCreate(NooBaaBucketClassModel, payload);
     promiseObj
       .then((obj) => {
+        const resourcePath = `${referenceForModel(NooBaaBucketClassModel)}/${getName(obj)}`;
         dispatch({ type: 'setIsLoading', value: false });
-        history.push(
-          `/k8s/ns/${ns}/clusterserviceversions/${getName(
-            clusterServiceVersion,
-          )}/${referenceForModel(NooBaaBucketClassModel)}/${getName(obj)}`,
-        );
+        isODF
+          ? history.push(`/odf/resource/${resourcePath}`)
+          : history.push(
+              `/k8s/ns/${ns}/clusterserviceversions/${getName(
+                clusterServiceVersion,
+              )}/${resourcePath}`,
+            );
       })
       .catch((err) => {
         dispatch({ type: 'setIsLoading', value: false });
@@ -204,6 +207,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     );
   };
 
+  const [currentStep, setCurrentStep] = React.useState(1);
   const [stepsReached, setStepsReached] = React.useState(1);
 
   const StepPositionMap = Object.entries(CreateStepsBC).reduce((acc, cur, index) => {
@@ -211,12 +215,23 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     return acc;
   }, {});
 
+  const canJumpToHelper = (that) => {
+    const currentId = StepPositionMap[that.id];
+    if (currentId === currentStep && !that.enableNext) {
+      setStepsReached(currentId);
+    }
+    return stepsReached >= currentId;
+  };
+
   const steps: WizardStep[] = [
     {
       id: CreateStepsBC.GENERAL,
       name: t('ceph-storage-plugin~General'),
       component: <GeneralPage dispatch={dispatch} state={state} />,
       enableNext: validateBucketClassName(state.bucketClassName.trim()),
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
     {
       id: CreateStepsBC.PLACEMENT,
@@ -231,7 +246,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? !!state.tier1Policy
           : !!state.namespacePolicyType,
-      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.PLACEMENT],
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
     {
       id: CreateStepsBC.RESOURCES,
@@ -246,7 +263,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         state.bucketClassType === BucketClassType.STANDARD
           ? backingStoreNextConditions()
           : namespaceStoreNextConditions(),
-      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.RESOURCES],
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
     {
       id: CreateStepsBC.REVIEW,
@@ -254,7 +273,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       component: <ReviewPage state={state} />,
       nextButtonText: t('ceph-storage-plugin~Create BucketClass'),
       enableNext: creationConditionsSatisfied(),
-      canJumpTo: stepsReached >= StepPositionMap[CreateStepsBC.REVIEW],
+      get canJumpTo() {
+        return canJumpToHelper(this);
+      },
     },
   ];
 
@@ -295,10 +316,17 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           onSave={finalStep}
           onClose={() => history.goBack()}
           onNext={({ id }) => {
+            setCurrentStep(currentStep + 1);
             const idIndexPlusOne = StepPositionMap[id];
             const newStepHigherBound =
               stepsReached < idIndexPlusOne ? idIndexPlusOne : stepsReached;
             setStepsReached(newStepHigherBound);
+          }}
+          onBack={() => {
+            setCurrentStep(currentStep - 1);
+          }}
+          onGoToStep={(newStep) => {
+            setCurrentStep(StepPositionMap[newStep.id]);
           }}
         />
       </div>

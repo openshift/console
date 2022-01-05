@@ -61,6 +61,7 @@ export const StretchCluster: React.FC<StretchClusterProps> = ({
         aria-label={t('ceph-storage-plugin~Enable arbiter')}
         id="stretch-cluster"
         isChecked={enableArbiter}
+        data-checked-state={enableArbiter}
         label={<EnableArbiterLabel />}
         description={<HelperText enableArbiter={enableArbiter} />}
         onChange={(hasChecked: boolean) => {

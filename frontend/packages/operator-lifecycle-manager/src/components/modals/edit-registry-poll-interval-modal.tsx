@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Form, FormGroup } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -31,6 +32,7 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
   handlePromise,
   errorMessage,
 }) => {
+  const { t } = useTranslation();
   const [pollInterval, setPollInterval] = React.useState(
     catalogSource.spec?.updateStrategy?.registryPoll?.interval,
   );
@@ -46,9 +48,9 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
   return (
     <Form onSubmit={submit} name="form">
       <div className="modal-content modal-content--no-inner-scroll">
-        <ModalTitle>Edit registry poll interval</ModalTitle>
+        <ModalTitle>{t('olm~Edit registry poll interval')}</ModalTitle>
         <ModalBody>
-          <FormGroup label="Registry poll interval" fieldId="pollInterval_dropdown">
+          <FormGroup label={t('olm~Registry poll interval')} fieldId="pollInterval_dropdown">
             <Dropdown
               className="dropdown--full-width"
               id="pollInterval_dropdown"
@@ -64,7 +66,7 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
         <ModalSubmitFooter
           errorMessage={errorMessage}
           inProgress={false}
-          submitText="Save"
+          submitText={t('olm~Save')}
           cancel={cancel}
           submitDisabled={
             pollInterval === catalogSource.spec?.updateStrategy?.registryPoll?.interval

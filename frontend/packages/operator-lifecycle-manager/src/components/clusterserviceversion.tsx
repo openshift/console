@@ -16,7 +16,7 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import { Conditions } from '@console/internal/components/conditions';
+import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
   DetailsPage,
@@ -46,6 +46,7 @@ import {
   KebabOption,
   resourceObjPath,
   KebabAction,
+  isUpstream,
   openshiftHelpBase,
   Page,
 } from '@console/internal/components/utils';
@@ -351,6 +352,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
   ({ activeNamespace, obj, subscription, catalogSourceMissing }) => {
     const { displayName, provider, version } = obj.spec ?? {};
+    const { t } = useTranslation();
     const olmOperatorNamespace = obj.metadata?.annotations?.['olm.operatorNamespace'] ?? '';
     const [icon] = obj.spec.icon ?? [];
     const route = resourceObjPath(obj, referenceFor(obj));
@@ -420,8 +422,11 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
               ))
             : '-'}
           {providedAPIs.length > 4 && (
-            <Link to={route} title={`View ${providedAPIs.length - 4} more...`}>
-              {`View ${providedAPIs.length - 4} more...`}
+            <Link
+              to={route}
+              title={t('olm~View {{numAPIs}} more...', { numAPIs: providedAPIs.length - 4 })}
+            >
+              {t('olm~View {{numAPIs}} more...', { numAPIs: providedAPIs.length - 4 })}
             </Link>
           )}
         </TableData>
@@ -688,18 +693,18 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 
   const customData = React.useMemo(
     () => ({
-      catalogSources: catalogSources.data,
-      subscriptions: subscriptions.data,
+      catalogSources: catalogSources?.data ?? [],
+      subscriptions: subscriptions?.data ?? [],
       activeNamespace,
     }),
-    [activeNamespace, catalogSources.data, subscriptions.data],
+    [activeNamespace, catalogSources, subscriptions],
   );
 
   return (
     <Table
       data={filterOperators(data, allNamespaceActive)}
       {...rest}
-      aria-label="Installed Operators"
+      aria-label={t('olm~Installed Operators')}
       Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
       Row={InstalledOperatorTableRow}
       EmptyMsg={CSVListEmptyMsg}
@@ -717,16 +722,15 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
   const { t } = useTranslation();
   const title = t('olm~Installed Operators');
+  const olmLink = isUpstream()
+    ? `${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`
+    : `${openshiftHelpBase}html/operators/understanding-operators#olm-what-operators-are`;
   const helpText = (
     <Trans ns="olm">
       Installed Operators are represented by ClusterServiceVersions within this Namespace. For more
       information, see the{' '}
-      <ExternalLink
-        href={`${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`}
-      >
-        Understanding Operators documentation
-      </ExternalLink>
-      . Or create an Operator and ClusterServiceVersion using the{' '}
+      <ExternalLink href={olmLink}>Understanding Operators documentation</ExternalLink>. Or create
+      an Operator and ClusterServiceVersion using the{' '}
       <ExternalLink href="https://sdk.operatorframework.io/">Operator SDK</ExternalLink>.
     </Trans>
   );
@@ -851,6 +855,7 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
 };
 
 export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
+  const { t } = useTranslation();
   return (
     <div className="co-crd-card-row">
       {providedAPIs.length ? (
@@ -858,7 +863,9 @@ export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
           <CRDCard key={referenceForProvidedAPI(crd)} crd={crd} csv={csv} />
         ))
       ) : (
-        <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
+        <span className="text-muted">
+          {t('olm~No Kubernetes APIs are being provided by this Operator.')}
+        </span>
       )}
     </div>
   );
@@ -936,7 +943,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         return JSON.parse(initializationResourceJSON);
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while parseing CSV initialization resource JSON', error.message);
       }
     }
     return null;
@@ -950,7 +957,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         return url.toString();
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error.message);
+        console.error('Error while setting utm_source to support workflow URL', error.message);
       }
     }
     return null;
@@ -1151,6 +1158,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
             type: c.phase,
             status: 'True',
           }))}
+          type={ConditionTypes.ClusterServiceVersion}
         />
       </div>
     </>
@@ -1259,10 +1267,10 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       {...props}
       breadcrumbsFor={() => [
         {
-          name: 'Installed Operators',
+          name: t('olm~Installed Operators'),
           path: getBreadcrumbPath(props.match),
         },
-        { name: t('olm~{{item}} details', { item: 'Operator' }), path: props.match.url },
+        { name: t('olm~Operator details'), path: props.match.url },
       ]}
       resources={[
         { kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscriptions' },
@@ -1283,6 +1291,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       name={props.match.params.name}
       pagesFor={pagesFor}
       menuActions={menuActions}
+      createRedirect
     />
   );
 };

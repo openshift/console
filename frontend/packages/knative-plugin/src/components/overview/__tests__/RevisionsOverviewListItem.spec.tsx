@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PodStatus } from '@console/shared';
 import { RevisionModel } from '../../../models';
@@ -15,9 +16,17 @@ jest.mock('../../../utils/usePodsForRevisions', () => ({
   usePodsForRevisions: jest.fn(),
 }));
 
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
+}));
+
 describe('RevisionsOverviewListItem', () => {
   let wrapper: ShallowWrapper<RevisionsOverviewListItemProps>;
   beforeEach(() => {
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([
+      [MockKnativeResources.ksservices.data[0]],
+      true,
+    ]);
     (usePodsForRevisions as jest.Mock).mockReturnValue({
       loaded: true,
       loadError: null,

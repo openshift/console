@@ -1,4 +1,3 @@
-import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { app } from '@console/dev-console/integration-tests/support/pages';
@@ -20,16 +19,18 @@ export const topologySidePane = {
       .should('be.visible'),
   verifyActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).should('be.visible'),
   clickActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).click(),
-  selectTab: (tabName: string) =>
-    cy
-      .get(topologyPO.sidePane.tabName)
-      .contains(tabName)
-      .click(),
-  verifySection: (sectionTitle: string) => {
+  selectTab: (tabName: string) => {
     app.waitForLoad();
-    cy.get(topologyPO.sidePane.sectionTitle)
-      .contains(sectionTitle)
-      .should('be.visible');
+    cy.get(topologyPO.sidePane.tabName)
+      .contains(tabName)
+      .click();
+  },
+  verifySection: (sectionTitle: string) => {
+    cy.get(topologyPO.sidePane.dialog).within(() => {
+      cy.get(topologyPO.sidePane.sectionTitle)
+        .contains(sectionTitle)
+        .should('be.visible');
+    });
   },
   verifyActions: (...actions: string[]) => {
     cy.byLegacyTestID('action-items')
@@ -44,7 +45,10 @@ export const topologySidePane = {
       .scrollIntoView()
       .click(),
   verifyFieldInDetailsTab: (fieldName: string) =>
-    cy.get(`[data-test-selector="details-item-label__${fieldName}"]`).should('be.visible'),
+    cy
+      .get(`[data-test-selector="details-item-label__${fieldName}"]`)
+      .scrollIntoView()
+      .should('be.visible'),
   verifyWorkload: () =>
     cy
       .get(topologyPO.sidePane.sectionTitle)
@@ -82,22 +86,16 @@ export const topologySidePane = {
     cy.byLegacyTestID('actions-menu-button').click();
     topologyActions.selectAction(action);
   },
-  verifyLabel: (labelName: string) => {
-    cy.get(topologyPO.sidePane.detailsTab.labels).should('be.visible');
-    cy.get(topologyPO.sidePane.detailsTab.labelsEdit).click();
-    modal.shouldBeOpened();
-    cy.get('span.tag-item__content')
-      .contains(labelName)
-      .scrollIntoView()
+  verifyLabel: (labelName: string, timeout = 80000) => {
+    cy.get(topologyPO.sidePane.detailsTab.labels)
+      .contains(labelName, { timeout })
       .should('be.visible');
-    cy.byLegacyTestID('modal-cancel-action').click();
-    modal.shouldBeClosed();
   },
   verifyAnnotation: (annotationName: string) => {
     cy.byTestID('edit-annotations').click();
     cy.byTestID('label-list')
       .find('a')
-      .contains(annotationName)
+      .contains(annotationName, { timeout: 80000 })
       .should('be.visible');
   },
   verifyNumberOfAnnotations: (num: string) => {
@@ -109,9 +107,7 @@ export const topologySidePane = {
     });
   },
   verifyResource: (resourceName: string) => {
-    cy.get(topologyPO.sidePane.tabs)
-      .contains('Resources')
-      .click();
+    topologySidePane.selectTab('Resources');
     cy.byLegacyTestID(resourceName).should('be.visible');
   },
   clickStartLastRun: () => {
@@ -129,31 +125,36 @@ export const topologySidePane = {
     cy.byTestActionID('Delete Application').should('be.visible');
     cy.get(topologyPO.addToApplicationInContext).should('be.visible');
   },
-  selectResource: (opt: resources | string, namespace: string) => {
+  selectResource: (opt: resources | string, namespace: string, name: string) => {
     switch (opt) {
       case 'Deployments':
       case resources.Deployments: {
-        cy.get(`[href="/k8s/ns/${namespace}/deployments/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/deployments/${name}"]`).click();
         break;
       }
       case 'Build Configs':
       case resources.BuildConfigs: {
-        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/${name}"]`).click();
+        break;
+      }
+      case 'Builds':
+      case resources.Builds: {
+        cy.get(`[href="/k8s/ns/${namespace}/builds/${name}"]`).click();
         break;
       }
       case 'Services':
       case resources.Services: {
-        cy.get(`[href="/k8s/ns/${namespace}/services/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/services/${name}"]`).click();
         break;
       }
       case 'Image Streams':
       case resources.ImageStreams: {
-        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/${name}"]`).click();
         break;
       }
       case 'Routes':
       case resources.Routes: {
-        cy.get(`[href="/k8s/ns/${namespace}/routes/nodejs-release"]`).click();
+        cy.get(`[href="/k8s/ns/${namespace}/routes/${name}"]`).click();
         break;
       }
       default: {
