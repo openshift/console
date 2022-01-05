@@ -167,7 +167,7 @@ export type DashboardsOverviewInventoryItemReplacement<
 >;
 
 /** Adds a resource tile to the project overview inventory card. */
-export type ProjectDashboardInventoryItem<
+export type DashboardsProjectOverviewInventoryItem<
   T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
 > = ExtensionDeclaration<
@@ -264,7 +264,9 @@ export const isDashboardsOverviewInventoryItemReplacement = (
 ): e is DashboardsOverviewInventoryItemReplacement =>
   e.type === 'console.dashboards/overview/inventory/item/replacement';
 
-export const isProjectDashboardInventoryItem = (e: Extension): e is ProjectDashboardInventoryItem =>
+export const isDashboardsProjectOverviewInventoryItem = (
+  e: Extension,
+): e is DashboardsProjectOverviewInventoryItem =>
   e.type === 'console.dashboards/project/overview/item';
 
 export const isDashboardsOverviewResourceActivity = (

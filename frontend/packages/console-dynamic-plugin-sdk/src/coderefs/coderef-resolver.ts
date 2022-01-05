@@ -130,6 +130,10 @@ export const resolveExtension = async <
       ref()
         .then((resolvedValue) => {
           obj[key] = resolvedValue;
+
+          if (_.isNil(resolvedValue)) {
+            console.warn(`Code reference property '${key}' resolved to null or undefined`);
+          }
         })
         .catch((e) => {
           setCodeRefError(ref, e ?? true);
