@@ -14,7 +14,7 @@ const GitOpsDeploymentHistory: React.FC<GitOpsDeploymentHistoryProps> = ({
   customData: { envs, appName },
 }) => {
   return (
-    <div className="odc-gitops-details">
+    <div className="gop-gitops-details">
       {_.map(
         envs,
         (env) =>

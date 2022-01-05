@@ -70,10 +70,10 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'pf-u-text-nowrap')}>
         {syncStatuses.length > 0 ? (
-          <Flex className="odc-gitops-syncStatus">
+          <Flex className="gop-gitops-syncStatus">
             <GitOpsSyncFragment
               tooltip={syncedEnvs.map((env) => (
-                <Split className="odc-gitops-tooltip-text" hasGutter key={`${name}-${env}`}>
+                <Split className="gop-gitops-tooltip-text" hasGutter key={`${name}-${env}`}>
                   <SplitItem>
                     <GreenCheckCircleIcon />
                   </SplitItem>
@@ -86,7 +86,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
             />
             <GitOpsSyncFragment
               tooltip={outOfSyncEnvs.map((env) => (
-                <Split className="odc-gitops-tooltip-text" hasGutter key={`${name}-${env}`}>
+                <Split className="gop-gitops-tooltip-text" hasGutter key={`${name}-${env}`}>
                   <SplitItem>
                     <YellowExclamationTriangleIcon />
                   </SplitItem>
@@ -99,7 +99,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
             />
             <GitOpsSyncFragment
               tooltip={unknownEnvs.map((env) => (
-                <Split className="odc-gitops-tooltip-text" hasGutter key={`${name}-${env}`}>
+                <Split className="gop-gitops-tooltip-text" hasGutter key={`${name}-${env}`}>
                   <SplitItem>
                     <GrayUnknownIcon />
                   </SplitItem>
@@ -118,7 +118,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
       <TableData className={tableColumnClasses[3]}>
         {latestDeployedTime !== '' ? (
           <Flex>
-            <FlexItem className="odc-gitops-lastDeploymentTime" spacer={{ default: 'spacerXs' }}>
+            <FlexItem className="gop-gitops-lastDeploymentTime" spacer={{ default: 'spacerXs' }}>
               <span>
                 <Timestamp timestamp={latestDeployedTime} />
               </span>

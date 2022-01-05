@@ -26,7 +26,7 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
       ({ sync_status }) => sync_status /* eslint-disable-line @typescript-eslint/camelcase */,
     ) || false;
   return (
-    <div className="odc-gitops-list">
+    <div className="gop-gitops-list">
       {!emptyStateMsg && appGroups ? (
         <>
           <div className="co-m-pane__filter-row">
