@@ -10,13 +10,14 @@ interface SvgTypedIconProps {
   width: number;
   height: number;
   padding?: number;
-  iconClass: string;
+  iconClass?: string;
+  icon?: React.ReactNode;
 }
 
 const FILTER_ID = 'SvgTypedIconDropShadowFilterId';
 
 const CircledIcon: React.FC<SvgTypedIconProps> = (
-  { className, x, y, width, height, iconClass, padding = 4 },
+  { className, x, y, width, height, iconClass, icon, padding = 4 },
   circleRef,
 ) => {
   const [typedIconSize, typedIconRef] = useSize([]);
@@ -39,17 +40,31 @@ const CircledIcon: React.FC<SvgTypedIconProps> = (
         cy={y + iconHeight / 2}
         r={iconWidth / 2 + padding}
       />
-      <g ref={typedIconRef}>
-        <image
-          key={`image-${FILTER_ID}`}
-          x={x - iconWidth}
-          y={y}
-          width={width}
-          height={height}
-          xlinkHref={getImageForIconClass(iconClass) || iconClass}
-          filter={createSvgIdUrl(FILTER_ID)}
-        />
-      </g>
+      {icon ? (
+        <g ref={typedIconRef}>
+          <foreignObject
+            key={`image-${FILTER_ID}`}
+            x={x - iconWidth + 4}
+            y={y}
+            width={width}
+            height={height}
+          >
+            {icon}
+          </foreignObject>
+        </g>
+      ) : (
+        <g ref={typedIconRef}>
+          <image
+            key={`image-${FILTER_ID}`}
+            x={x - iconWidth}
+            y={y}
+            width={width}
+            height={height}
+            xlinkHref={getImageForIconClass(iconClass) || iconClass}
+            filter={createSvgIdUrl(FILTER_ID)}
+          />
+        </g>
+      )}
     </g>
   );
 };

@@ -8,14 +8,17 @@ interface TypedResourceBadgeCellProps {
   kind: string;
   imageClass?: string;
   typeIconClass?: string;
+  typeIcon?: React.ReactNode;
 }
 
 const TypedResourceBadgeCell: React.FC<TypedResourceBadgeCellProps> = ({
   typeIconClass,
+  typeIcon,
   imageClass,
   kind,
 }) => {
-  let itemIcon;
+  let itemIcon: React.ReactNode;
+  let iconType: React.ReactNode;
   if (imageClass) {
     itemIcon = (
       <image
@@ -31,21 +34,30 @@ const TypedResourceBadgeCell: React.FC<TypedResourceBadgeCellProps> = ({
       />
     );
   }
-
-  const typeIcon = typeIconClass ? (
-    <span className="odc-topology-list-view__type-icon-bg">
-      <img
-        className="odc-topology-list-view__type-icon"
-        alt={kind}
-        src={isValidUrl(typeIconClass) ? typeIconClass : getImageForIconClass(typeIconClass)}
-      />
-    </span>
-  ) : null;
+  if (typeIconClass) {
+    iconType = (
+      <span className="odc-topology-list-view__type-icon-bg">
+        <img
+          className="odc-topology-list-view__type-icon"
+          alt={kind}
+          src={isValidUrl(typeIconClass) ? typeIconClass : getImageForIconClass(typeIconClass)}
+        />
+      </span>
+    );
+  } else if (typeIcon) {
+    iconType = (
+      <span className="odc-topology-list-view__type-icon-bg">
+        <foreignObject className="odc-topology-list-view__type-icon">{typeIcon}</foreignObject>
+      </span>
+    );
+  } else {
+    iconType = null;
+  }
 
   return (
     <span className="odc-topology-list-view__resource-icon__container">
       {itemIcon}
-      {typeIcon}
+      {iconType}
     </span>
   );
 };
