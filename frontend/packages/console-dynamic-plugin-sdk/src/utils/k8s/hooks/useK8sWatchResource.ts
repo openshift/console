@@ -12,6 +12,21 @@ import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 import { useK8sModel } from './useK8sModel';
 import { useModelsLoaded } from './useModelsLoaded';
 
+/**
+ * Hook that retrieves the k8s resource along with status for loaded and error.
+ * @param initResource options needed to watch for resource.
+ * @return An array with first item as resource(s), second item as loaded status and third item as error state if any.
+ * @example
+ * ```ts
+ * const Component: React.FC = () => {
+ *   const watchRes = {
+        ...
+      }
+ *   const [data, loaded, error] = UseK8sWatchResource(watchRes)
+ *   return ...
+ * }
+ * ```
+ */
 export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
   const resource = useDeepCompareMemoize(initResource, true);
   const modelsLoaded = useModelsLoaded();
