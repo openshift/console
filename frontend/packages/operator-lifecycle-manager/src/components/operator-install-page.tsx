@@ -125,25 +125,24 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
       </h2>
       <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
         <InstallPlanReview installPlan={installObj} />
-        {(installObjIsInstallPlan && canPatchInstallPlans) ||
-          (!installObjIsInstallPlan && (
-            <>
-              <Button variant="primary" onClick={approve}>
-                {t('olm~Approve')}
+        {((installObjIsInstallPlan && canPatchInstallPlans) || !installObjIsInstallPlan) && (
+          <>
+            <Button variant="primary" onClick={approve}>
+              {t('olm~Approve')}
+            </Button>
+            <Link
+              to={`${resourcePathFromModel(
+                SubscriptionModel,
+                subscriptionObj?.metadata?.name,
+                namespace,
+              )}?showDelete=true`}
+            >
+              <Button className="co-clusterserviceversion__button" variant="secondary">
+                {t('olm~Deny')}
               </Button>
-              <Link
-                to={`${resourcePathFromModel(
-                  SubscriptionModel,
-                  subscriptionObj?.metadata?.name,
-                  namespace,
-                )}?showDelete=true`}
-              >
-                <Button className="co-clusterserviceversion__button" variant="secondary">
-                  {t('olm~Deny')}
-                </Button>
-              </Link>
-            </>
-          ))}
+            </Link>
+          </>
+        )}
         {!canPatchInstallPlans && installObjIsInstallPlan && (
           <NeedInstallPlanPermissions installPlan={installObj as InstallPlanKind} />
         )}
