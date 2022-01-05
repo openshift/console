@@ -39,7 +39,7 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
   setStatus,
   setErrors,
   errors,
-  values: { editorType, formData, yamlData },
+  values: { editorType, formData, yamlData, formReloadCount },
 }) => {
   const { t } = useTranslation();
   const resourceType = getResourcesType(resource);
@@ -73,13 +73,13 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
   const onReload = React.useCallback(() => {
     setStatus({ submitSuccess: '', submitError: '' });
     setErrors({});
-    if (editorType === EditorType.YAML) {
-      setFieldValue('formData.resourceVersion', resource.metadata.resourceVersion);
-      setFieldValue('yamlData', safeJSToYAML(resource, 'yamlData', { skipInvalid: true }));
-    } else {
+    if (editorType === EditorType.Form) {
       setFieldValue('formData', convertDeploymentToEditForm(resource));
     }
-  }, [editorType, resource, setErrors, setFieldValue, setStatus]);
+    setFieldValue('formData.resourceVersion', resource.metadata.resourceVersion);
+    setFieldValue('yamlData', safeJSToYAML(resource, 'yamlData', { skipInvalid: true }));
+    setFieldValue('formReloadCount', formReloadCount + 1);
+  }, [editorType, resource, setErrors, setFieldValue, setStatus, formReloadCount]);
 
   return (
     <FlexForm onSubmit={handleSubmit}>
