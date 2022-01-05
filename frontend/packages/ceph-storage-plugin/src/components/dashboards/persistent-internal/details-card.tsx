@@ -88,7 +88,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
         <DetailsBody>
           <DetailItem
             key="service_name"
-            title={t('ceph-storage-plugin~Service name')}
+            title={t('ceph-storage-plugin~Service Name')}
             isLoading={false}
             error={false}
           >
@@ -98,7 +98,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           </DetailItem>
           <DetailItem
             key="cluster_name"
-            title={t('ceph-storage-plugin~Cluster name')}
+            title={t('ceph-storage-plugin~Cluster Name')}
             error={!!ocsError}
             isLoading={!ocsLoaded}
           >
