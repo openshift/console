@@ -19,6 +19,7 @@ import {
   DashboardsInventoryItemGroup,
   DashboardsOverviewInventoryItem,
   DashboardsOverviewResourceActivity,
+  DashboardsProjectOverviewInventoryItem,
 } from '../extensions/dashboards';
 import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
 import { FileUpload } from '../extensions/file-upload';
@@ -98,6 +99,7 @@ export type SupportedExtension =
   | DashboardsInventoryItemGroup
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewResourceActivity
+  | DashboardsProjectOverviewInventoryItem
   | TopologyComponentFactory
   | TopologyCreateConnector
   | TopologyDataModelFactory

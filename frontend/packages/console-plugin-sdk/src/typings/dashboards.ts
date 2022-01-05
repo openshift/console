@@ -212,17 +212,6 @@ namespace ExtensionProperties {
     /** Loader for corresponding action component */
     loader: LazyLoader<PrometheusActivityProps>;
   }
-
-  export interface ProjectDashboardInventoryItem {
-    /** The K8s model which will be scoped to project, fetched and passed to `mapper` function. */
-    model: K8sKind;
-
-    /** Additional resources which will be fetched and passed to `mapper` function. */
-    additionalResources?: FirehoseResource[];
-
-    /** Function which will map various statuses to groups. */
-    mapper: StatusGroupMapper;
-  }
 }
 
 export interface DashboardsOverviewHealthURLSubsystem<R = any>
@@ -325,14 +314,6 @@ export const isDashboardsOverviewPrometheusActivity = (
   e: Extension,
 ): e is DashboardsOverviewPrometheusActivity =>
   e.type === 'Dashboards/Overview/Activity/Prometheus';
-
-export interface ProjectDashboardInventoryItem
-  extends Extension<ExtensionProperties.ProjectDashboardInventoryItem> {
-  type: 'Project/Dashboard/Inventory/Item';
-}
-
-export const isProjectDashboardInventoryItem = (e: Extension): e is ProjectDashboardInventoryItem =>
-  e.type === 'Project/Dashboard/Inventory/Item';
 
 export interface DashboardsOverviewInventoryItemReplacement
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {

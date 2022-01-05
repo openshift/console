@@ -37,7 +37,9 @@
       "bcCreate": "./src/components/bucket-class/create-bc.tsx",
       "nssCreate": "./src/components/namespace-store/create-namespace-store.tsx",
       "odfSystemDashboard": "./src/components/dashboards/odf-system-dashboard.tsx",
-      "actions": "src/actions"
+      "actions": "src/actions",
+      "models": "src/models.ts",
+      "bcDashboardUtils": "src/components/dashboards/object-service/buckets-card/utils.ts"
     }
   }
 }

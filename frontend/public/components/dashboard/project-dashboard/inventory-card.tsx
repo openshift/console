@@ -29,18 +29,12 @@ import { K8sKind, referenceForModel } from '../../../module/k8s';
 import { getName } from '@console/shared';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import {
-  useExtensions,
-  ProjectDashboardInventoryItem,
-  isProjectDashboardInventoryItem,
-} from '@console/plugin-sdk';
-import {
   useResolvedExtensions,
-  ProjectDashboardInventoryItem as DynamicProjectDashboardInventoryItem,
-  isProjectDashboardInventoryItem as isDynamicProjectDashboardInventoryItem,
+  DashboardsProjectOverviewInventoryItem,
+  isDashboardsProjectOverviewInventoryItem,
   K8sResourceCommon,
   WatchK8sResources,
 } from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 
 const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
   kind: model.crd ? referenceForModel(model) : model.kind,
@@ -58,60 +52,42 @@ const ProjectInventoryItem = withDashboardResources(
     model,
     mapper,
     additionalResources,
-    additionalDynamicResources,
   }: ProjectInventoryItemProps) => {
     React.useEffect(() => {
       if (projectName) {
         const resource = createFirehoseResource(model, projectName);
         watchK8sResource(resource);
-        if (additionalResources) {
-          additionalResources.forEach((r) => watchK8sResource({ ...r, namespace: projectName }));
-        }
         return () => {
           stopWatchK8sResource(resource);
-          if (additionalResources) {
-            additionalResources.forEach(stopWatchK8sResource);
-          }
         };
       }
-    }, [watchK8sResource, stopWatchK8sResource, projectName, model, additionalResources]);
+    }, [watchK8sResource, stopWatchK8sResource, projectName, model]);
 
     const resourceData = _.get(resources.resource, 'data', []) as FirehoseResult['data'];
     const resourceLoaded = _.get(resources.resource, 'loaded');
     const resourceLoadError = _.get(resources.resource, 'loadError');
 
-    const additionalResourcesData = additionalResources
-      ? additionalResources.reduce((acc, r) => {
-          acc[r.prop] = _.get(resources[r.prop], 'data');
-          return acc;
-        }, {})
-      : {};
-    const additionalResourcesLoaded = additionalResources
-      ? additionalResources
-          .filter((r) => !r.optional)
-          .every((r) => _.get(resources[r.prop], 'loaded'))
-      : true;
-    const additionalResourcesLoadError = additionalResources
-      ? additionalResources
-          .filter((r) => !r.optional)
-          .some((r) => !!_.get(resources[r.prop], 'loadError'))
-      : false;
-
-    const dynamicResources = useK8sWatchResources(additionalDynamicResources || {});
-    const dynamicResourcesError = Object.values(dynamicResources).find((r) => r.loadError)
-      ?.loadError;
-    const dynamicResourcesLoaded = Object.keys(dynamicResources).every(
-      (key) => dynamicResources[key].loaded,
-    );
+    const additionalResourcesData = {};
+    let additionalResourcesLoaded = true;
+    let additionalResourcesLoadError = false;
+    if (additionalResources) {
+      additionalResourcesLoaded = Object.keys(additionalResources)
+        .filter((key) => !additionalResources[key].optional)
+        .every((key) => resources[key].loaded);
+      Object.keys(additionalResources).forEach((key) => {
+        additionalResourcesData[key] = resources[key].data;
+      });
+      additionalResourcesLoadError = Object.keys(additionalResources)
+        .filter((key) => !additionalResources[key].optional)
+        .some((key) => !!resources[key].loadError);
+    }
 
     return (
       <ResourceInventoryItem
         kind={model}
-        isLoading={
-          !projectName || !resourceLoaded || !additionalResourcesLoaded || !dynamicResourcesLoaded
-        }
+        isLoading={!projectName || !resourceLoaded || !additionalResourcesLoaded}
         namespace={projectName}
-        error={!!resourceLoadError || additionalResourcesLoadError || dynamicResourcesError}
+        error={!!resourceLoadError || additionalResourcesLoadError}
         resources={resourceData}
         additionalResources={additionalResourcesData}
         mapper={mapper}
@@ -121,11 +97,8 @@ const ProjectInventoryItem = withDashboardResources(
 );
 
 export const InventoryCard = () => {
-  const itemExtensions = useExtensions<ProjectDashboardInventoryItem>(
-    isProjectDashboardInventoryItem,
-  );
-  const [dynamicItemExtensions] = useResolvedExtensions<DynamicProjectDashboardInventoryItem>(
-    isDynamicProjectDashboardInventoryItem,
+  const [dynamicItemExtensions] = useResolvedExtensions<DashboardsProjectOverviewInventoryItem>(
+    isDashboardsProjectOverviewInventoryItem,
   );
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
@@ -160,22 +133,13 @@ export const InventoryCard = () => {
         <ProjectInventoryItem projectName={projectName} model={RouteModel} />
         <ProjectInventoryItem projectName={projectName} model={ConfigMapModel} />
         {canListSecrets && <ProjectInventoryItem projectName={projectName} model={SecretModel} />}
-        {itemExtensions.map((item) => (
-          <ProjectInventoryItem
-            key={item.properties.model.kind}
-            projectName={projectName}
-            model={item.properties.model}
-            mapper={item.properties.mapper}
-            additionalResources={item.properties.additionalResources}
-          />
-        ))}
         {dynamicItemExtensions.map((item) => (
           <ProjectInventoryItem
             key={item.properties.model.kind}
             projectName={projectName}
             model={item.properties.model}
             mapper={item.properties.mapper}
-            additionalDynamicResources={item.properties.additionalResources}
+            additionalResources={item.properties.additionalResources}
           />
         ))}
         <ProjectInventoryItem
@@ -192,8 +156,7 @@ type ProjectInventoryItemProps = DashboardItemProps & {
   projectName: string;
   model: K8sKind;
   mapper?: StatusGroupMapper;
-  additionalResources?: FirehoseResource[];
-  additionalDynamicResources?: WatchK8sResources<{
+  additionalResources?: WatchK8sResources<{
     [key: string]: K8sResourceCommon[];
   }>;
 };

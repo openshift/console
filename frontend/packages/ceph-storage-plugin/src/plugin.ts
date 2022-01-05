@@ -12,7 +12,6 @@ import {
   DashboardsOverviewResourceActivity,
   CustomFeatureFlag,
   StorageClassProvisioner,
-  ProjectDashboardInventoryItem,
   ResourceListPage,
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
@@ -39,7 +38,6 @@ import {
   RGW_FLAG,
 } from './features';
 import { ODF_MODEL_FLAG } from './constants';
-import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
 import { STORAGE_CLUSTER_SYSTEM_KIND } from './constants/create-storage-system';
 
 type ConsumedExtensions =
@@ -55,7 +53,6 @@ type ConsumedExtensions =
   | ClusterServiceVersionAction
   | DashboardsOverviewResourceActivity
   | StorageClassProvisioner
-  | ProjectDashboardInventoryItem
   | ResourceListPage;
 
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
@@ -414,16 +411,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     flags: {
       required: [MCG_FLAG],
       disallowed: [OCS_FLAG, ODF_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Project/Dashboard/Inventory/Item',
-    properties: {
-      model: models.NooBaaObjectBucketClaimModel,
-      mapper: getObcStatusGroups,
-    },
-    flags: {
-      required: [MCG_FLAG],
     },
   },
   {

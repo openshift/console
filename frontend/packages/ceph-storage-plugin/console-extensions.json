@@ -235,5 +235,15 @@
       "contextId": "csv-actions",
       "provider": { "$codeRef": "actions.useCsvActions" }
     }
+  },
+  {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "model": { "$codeRef": "models.NooBaaObjectBucketClaimModel" },
+      "mapper": { "$codeRef": "bcDashboardUtils.getObcStatusGroups" }
+    },
+    "flags": {
+      "required": ["MCG"]
+    }
   }
 ]
