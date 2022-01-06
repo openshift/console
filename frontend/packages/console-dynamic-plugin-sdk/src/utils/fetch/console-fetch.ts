@@ -2,36 +2,8 @@ import * as _ from 'lodash';
 import 'whatwg-fetch';
 import { getUtilsConfig } from '../../app/configSetup';
 import { ConsoleFetchText, ConsoleFetchJSON, ConsoleFetch } from '../../extensions/console-types';
-import { TimeoutError, RetryError } from '../error/http-error';
+import { TimeoutError } from '../error/http-error';
 import { getImpersonateHeaders } from './console-fetch-utils';
-
-const consoleFetchInternal = (
-  url: string,
-  options: RequestInit,
-  timeout: number,
-  retry: boolean,
-): Promise<Response> => {
-  let fetchPromise: Promise<Response>;
-  try {
-    const utilsConfig = getUtilsConfig();
-    fetchPromise = utilsConfig.appFetch(url, options, retry);
-  } catch (e) {
-    const promiseData: Promise<Response> = new Promise((unused, reject) => reject(e));
-    return promiseData;
-  }
-
-  // return fetch promise directly if timeout <= 0
-  if (timeout < 1) {
-    return fetchPromise;
-  }
-
-  const timeoutPromise: Promise<Response> = new Promise((unused, reject) =>
-    setTimeout(() => reject(new TimeoutError(url, timeout)), timeout),
-  );
-
-  // Initiate both the fetch promise and a timeout promise
-  return Promise.race([fetchPromise, timeoutPromise]);
-};
 
 /**
  * A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.
@@ -42,28 +14,17 @@ const consoleFetchInternal = (
  * @return A promise that resolves to the response
  * * */
 export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) => {
-  let attempt = 0;
-  let response;
-  let retry = true;
-  while (retry) {
-    retry = false;
-    attempt++;
-    try {
-      // have to disable for retry logic
-      // eslint-disable-next-line no-await-in-loop
-      response = await consoleFetchInternal(url, options, timeout, attempt < 3);
-    } catch (e) {
-      if (e instanceof RetryError) {
-        retry = true;
-      } else {
-        // eslint-disable-next-line no-console
-        console.warn(`consoleFetch failed for url ${url}`, e);
-        throw e;
-      }
-    }
+  const fetchPromise = getUtilsConfig().appFetch(url, options);
+
+  if (timeout <= 0) {
+    return fetchPromise;
   }
 
-  return response;
+  const timeoutPromise = new Promise<Response>((resolve, reject) => {
+    setTimeout(() => reject(new TimeoutError(url, timeout)), timeout);
+  });
+
+  return Promise.race([fetchPromise, timeoutPromise]);
 };
 
 const consoleFetchCommon = async (

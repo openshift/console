@@ -128,18 +128,32 @@ const initDefaults = {
   credentials: 'same-origin',
 };
 
-export const appInternalFetch = (
-  url: string,
-  options: RequestInit,
-  retry: boolean,
-): Promise<Response> => {
+export const appInternalFetch = async (url: string, options: RequestInit): Promise<Response> => {
+  let attempt = 0;
+  let response: Response;
+  let retry = true;
+
   const op1 = applyConsoleHeaders(url, options);
   const allOptions = _.defaultsDeep({}, initDefaults, op1);
-  const fetchPromise = fetch(url, allOptions).then((response) =>
-    validateStatus(response, url, allOptions.method, retry),
-  );
 
-  return fetchPromise;
+  while (retry) {
+    retry = false;
+    attempt++;
+    try {
+      response = await fetch(url, allOptions).then((resp) =>
+        validateStatus(resp, url, allOptions.method, attempt < 3),
+      );
+    } catch (e) {
+      if (e instanceof RetryError) {
+        retry = true;
+      } else {
+        // eslint-disable-next-line no-console
+        console.warn(`consoleFetch failed for url ${url}`, e);
+        throw e;
+      }
+    }
+  }
+  return response;
 };
 
 export {

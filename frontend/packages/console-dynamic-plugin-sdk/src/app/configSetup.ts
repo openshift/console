@@ -1,9 +1,3 @@
-export type ResourceFetch = (
-  url: string,
-  options?: RequestInit,
-  retry?: boolean,
-) => Promise<Response>;
-
 export type UtilsConfig = {
   /**
    * Resource fetch implementation provided by the host application.
@@ -13,7 +7,7 @@ export type UtilsConfig = {
    * If the request cannot be completed successfully, the Promise should be rejected
    * with an appropriate error.
    */
-  appFetch: ResourceFetch;
+  appFetch: (url: string, options?: RequestInit) => Promise<Response>;
 };
 
 let config: UtilsConfig | undefined;
@@ -28,7 +22,7 @@ export const setUtilsConfig = (c: UtilsConfig) => {
     throw new Error('setUtilsConfig has already been called');
   }
 
-  config = c;
+  config = Object.freeze({ ...c });
 };
 
 /**

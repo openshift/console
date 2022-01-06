@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
-import { ResourceFetch, setUtilsConfig } from './configSetup';
+import { setUtilsConfig, UtilsConfig } from './configSetup';
 import { useReduxStore } from './useReduxStore';
 
 type AppInitSDKProps = {
   children: React.ReactNode;
   configurations: {
     apiDiscovery: (store: Store<any>) => void;
-    appFetch: ResourceFetch;
+    appFetch: UtilsConfig['appFetch'];
   };
 };
 
@@ -22,7 +22,7 @@ type AppInitSDKProps = {
  * ```ts
  * return (
  *  <Provider store={store}>
- *   <AppInitSDK configurations={appFetch, apiDiscovery}>
+ *   <AppInitSDK configurations={{ appFetch, apiDiscovery }}>
  *      <CustomApp />
  *      ...
  *   </AppInitSDK>
@@ -32,9 +32,9 @@ type AppInitSDKProps = {
  */
 const AppInitSDK: React.FC<AppInitSDKProps> = ({ children, configurations }) => {
   const { store, storeContextPresent } = useReduxStore();
-  const { appFetch, apiDiscovery } = configurations;
 
   React.useEffect(() => {
+    const { appFetch, apiDiscovery } = configurations;
     apiDiscovery(store);
     try {
       setUtilsConfig({ appFetch });
@@ -42,7 +42,7 @@ const AppInitSDK: React.FC<AppInitSDKProps> = ({ children, configurations }) => 
       // eslint-disable-next-line no-console
       console.warn(e);
     }
-  }, [apiDiscovery, appFetch, configurations, store]);
+  }, [configurations, store]);
 
   return !storeContextPresent ? <Provider store={store}>{children}</Provider> : <>{children}</>;
 };
