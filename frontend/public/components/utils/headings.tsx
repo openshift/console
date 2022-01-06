@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
+import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import {
   OverviewItem,
@@ -23,7 +24,6 @@ import {
   KebabOption,
   ResourceIcon,
   resourcePath,
-  ResourceStatus,
 } from './index';
 import { connectToModel } from '../../kinds';
 import {

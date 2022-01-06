@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResource, ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -35,7 +35,6 @@ import {
   Timestamp,
   SectionHeading,
   ResourceSummary,
-  ResourceStatus,
   ScrollToTopOnMount,
   AsyncComponent,
   ExternalLink,

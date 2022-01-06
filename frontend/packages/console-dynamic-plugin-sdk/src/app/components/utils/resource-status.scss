@@ -1,0 +1,15 @@
+.dps-resource-item {
+  &__resource-status {
+    padding-left: var(--pf-global--spacer--sm);
+    white-space: nowrap;
+    &-badge {
+      vertical-align: middle;
+      &--alt {
+        vertical-align: baseline;
+      }
+      .dps-icon-and-text__icon {
+        top: 2px;
+      }
+    }
+  }
+}
