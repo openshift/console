@@ -421,6 +421,105 @@ const sampleKnativeBuilds: FirehoseResult = {
   data: [],
 };
 
+export const sampleKnativeBuildConfigs2: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      metadata: {
+        name: 'overlayimage',
+        namespace: 'testproject3',
+        uid: '73d2d812-29aa-4b6a-87e0-d69fcf3ed0cd',
+        resourceVersion: '58983',
+        creationTimestamp: '2020-06-24T11:17:40Z',
+        labels: {
+          app: 'overlayimage',
+        },
+      },
+      spec: {
+        nodeSelector: null,
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'py-cron:1.0',
+          },
+        },
+        resources: {},
+        successfulBuildsHistoryLimit: 5,
+        failedBuildsHistoryLimit: 5,
+        strategy: {
+          type: 'Source',
+          sourceStrategy: {
+            from: {
+              kind: 'ImageStreamTag',
+              namespace: 'openshift',
+              name: 'python:3.6',
+            },
+          },
+        },
+        postCommit: {},
+        source: {
+          type: 'Git',
+          git: {
+            uri: 'https://github.com/clcollins/openshift-cronjob-example.git',
+            ref: 'master',
+          },
+        },
+        runPolicy: 'Serial',
+      },
+      status: {
+        lastVersion: 1,
+      },
+    },
+    {
+      metadata: {
+        name: 'overlayimage2',
+        namespace: 'testproject3',
+        uid: '73d2d812-29aa-4b6a-87e0-d69fcf3ed0cd',
+        resourceVersion: '58983',
+        creationTimestamp: '2020-06-24T11:17:40Z',
+        labels: {
+          app: 'overlayimage',
+        },
+      },
+      spec: {
+        nodeSelector: null,
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'py-cron:1.0',
+          },
+        },
+        resources: {},
+        successfulBuildsHistoryLimit: 5,
+        failedBuildsHistoryLimit: 5,
+        strategy: {
+          type: 'Source',
+          sourceStrategy: {
+            from: {
+              kind: 'ImageStreamTag',
+              namespace: 'openshift',
+              name: 'python:3.6',
+            },
+          },
+        },
+        postCommit: {},
+        source: {
+          type: 'Git',
+          git: {
+            uri: 'https://github.com/clcollins/openshift-cronjob-example.git',
+            ref: 'master',
+          },
+        },
+        runPolicy: 'Serial',
+      },
+      status: {
+        lastVersion: 1,
+      },
+    },
+  ],
+};
+
 export const sampleKnativeConfigurations: FirehoseResult = {
   loaded: true,
   loadError: '',
@@ -1026,6 +1125,12 @@ export const EventIMCObj: EventChannelKind = {
       url: 'http://channel-display1.testproject3.svc.cluster.local',
     },
   },
+};
+
+export const sampleKnativeChannels: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [EventIMCObj],
 };
 
 export const EventBrokerObj: EventChannelKind = {
