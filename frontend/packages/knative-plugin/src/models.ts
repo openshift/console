@@ -159,7 +159,7 @@ export const EventSourceCronJobModel: K8sKind = {
 
 export const EventSourcePingModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1beta2',
+  apiVersion,
   kind: 'PingSource',
   label: 'PingSource',
   // t('knative-plugin~PingSource')
