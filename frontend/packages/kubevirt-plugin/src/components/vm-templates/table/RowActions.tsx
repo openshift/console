@@ -102,7 +102,7 @@ const RowActions: React.FC<RowActionsProps> = ({
       : permissionsErrorModal({
           title: t('kubevirt-plugin~Create Virtual Machine from template'),
           errorMsg: t(
-            'kubevirt-plugin~You do not have permissions to create Virtual Machine. Contact your system administrator for more information.',
+            'kubevirt-plugin~You do not have permissions to create the Virtual Machine. Contact your system administrator for more information.',
           ),
         });
   };
