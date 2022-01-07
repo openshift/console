@@ -2,23 +2,29 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKindReference } from '../../module/k8s';
+import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { K8sGroupVersionKind, K8sResourceKindReference } from '../../module/k8s';
 import { modelFor } from '../../module/k8s/k8s-models';
 import { kindToAbbr } from '../../module/k8s/get-resources';
 
 const MEMO = {};
 
-export const ResourceIcon: React.SFC<ResourceIconProps> = ({ className, kind }) => {
-  // if no kind, return null so an empty icon isn't rendered
-  if (!kind) {
+export const ResourceIcon: React.SFC<ResourceIconProps> = ({
+  className,
+  groupVersionKind,
+  kind,
+}) => {
+  // if no kind or groupVersionKind, return null so an empty icon isn't rendered
+  if (!kind && !groupVersionKind) {
     return null;
   }
-  const memoKey = className ? `${kind}/${className}` : kind;
+  const kindReference = kind || getReference(groupVersionKind);
+  const memoKey = className ? `${kindReference}/${className}` : kindReference;
   if (MEMO[memoKey]) {
     return MEMO[memoKey];
   }
-  const kindObj = modelFor(kind);
-  const kindStr = _.get(kindObj, 'kind', kind);
+  const kindObj = modelFor(kindReference);
+  const kindStr = kindObj?.kind ?? kindReference;
   const backgroundColor = _.get(kindObj, 'color', undefined);
   const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
   const iconLabel = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
@@ -40,7 +46,9 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({ className, kind }) 
 
 export type ResourceIconProps = {
   className?: string;
-  kind: K8sResourceKindReference;
+  /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
+  kind?: K8sResourceKindReference;
+  groupVersionKind?: K8sGroupVersionKind;
 };
 
 export type ResourceNameProps = {
