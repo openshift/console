@@ -1,8 +1,6 @@
 /* eslint-disable */
 import * as React from 'react';
 import {
-  UseK8sWatchResource,
-  UseK8sWatchResources,
   HorizontalNavProps,
   UseResolvedExtensions,
   VirtualizedTableFC,
@@ -24,10 +22,6 @@ import {
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
-export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
-  .useK8sWatchResource;
-export const useK8sWatchResources: UseK8sWatchResources = require('@console/internal/components/utils/k8s-watch-hook')
-  .useK8sWatchResources;
 export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;
 
@@ -76,7 +70,12 @@ export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/inter
   .ResourceLink;
 export { default as ResourceStatus } from '@console/dynamic-plugin-sdk/src/app/components/utils/resource-status';
 
-export { useK8sModel, useK8sModels } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
+export {
+  useK8sModel,
+  useK8sModels,
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 
 export {
   consoleFetch,

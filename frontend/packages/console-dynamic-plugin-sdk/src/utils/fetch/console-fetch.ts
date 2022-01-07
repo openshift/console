@@ -48,7 +48,6 @@ const consoleFetchInternal = (
  * A custom wrapper around `fetch` that adds console specific headers and allows for retries and timeouts.
  * It also validates the response status code and throws appropriate error or logs out the user if required.
  * @param url The URL to fetch
- * @param method  The HTTP method to use
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
  * @return A promise that resolves to the response
@@ -118,7 +117,6 @@ export const consoleFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options 
  * It returns the response as a text.
  * Uses consoleFetch internally.
  * @param url The URL to fetch
- * @param method  The HTTP method to use. Defaults to GET
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
  * @returns A promise that resolves to the response as text.
