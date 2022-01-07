@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
+import { Selection } from 'monaco-editor';
 import MonacoEditor from 'react-monaco-editor';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
 import { K8sKind } from '@console/internal/module/k8s';
@@ -60,10 +61,11 @@ const YAMLEditorSidebar: React.FC<YAMLEditorSidebarProps> = ({
         selection.startColumn,
         selection.startLineNumber + lineCount - 1,
         selection.startColumn + indentedLines[indentedLines.length - 1].length,
-      );
+      ) as Selection;
 
       const op = { range, text: indentedText, forceMoveMarkers: true };
       editor.executeEdits(id, [op], [newContentSelection]);
+
       editor.focus();
     },
     [editor, sanitizeYamlContent],

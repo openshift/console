@@ -167,7 +167,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(
               notificationAlerts={this.props.notificationAlerts}
               watchK8sResource={this.watchK8sResource}
               stopWatchK8sResource={this.stopWatchK8sResource}
-              {...this.getExternalProps(this.props)}
+              {...(this.getExternalProps(this.props) as any)}
             />
           </Firehose>
         );
