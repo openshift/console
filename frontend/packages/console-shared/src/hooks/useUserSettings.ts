@@ -39,7 +39,7 @@ export const useUserSettings = <T>(
   defaultValue?: T,
   sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
-  const impersonate = useSelector((state: RootState) => !!getImpersonate(state));
+  const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
   const keyRef = React.useRef<string>(key);
   const defaultValueRef = React.useRef<T>(defaultValue);
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
@@ -86,7 +86,15 @@ export const useUserSettings = <T>(
     if (isLocalStorage) {
       return;
     }
-    if (cfLoadError?.response?.status === 404 || (!cfData && cfLoaded)) {
+    if (
+      // Expected load error (404 Not found) for kubeadmin or other admins,
+      // who have access to the complete openshift-console-user-settings namespace.
+      cfLoadError?.response?.status === 404 ||
+      // Expected load error (403 Forbidden) for all other (restricted) users,
+      // which have no access to non-existing ConfigMaps in openshift-console-user-settings namespace.
+      cfLoadError?.response?.status === 403 ||
+      (!cfData && cfLoaded)
+    ) {
       (async () => {
         try {
           await createConfigMap();
