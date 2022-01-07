@@ -11,13 +11,13 @@ import {
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { errorModal } from '@console/internal/components/modals';
 import {
   Firehose,
   FirehoseResult,
   ResourceLink,
-  ResourceStatus,
   resourcePathFromModel,
   useAccessReview,
 } from '@console/internal/components/utils';

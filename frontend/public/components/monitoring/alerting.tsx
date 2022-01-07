@@ -18,7 +18,7 @@ import {
   OutlinedBellIcon,
 } from '@patternfly/react-icons';
 
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective, ResourceStatus } from '@console/dynamic-plugin-sdk';
 import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
@@ -93,7 +93,6 @@ import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
-import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Timestamp } from '../utils/timestamp';

@@ -59,5 +59,4 @@ export { default } from './operator-backed-owner-references';
 export * from './field-level-help';
 export * from './details-item';
 export * from './types';
-export * from './resource-status';
 export * from './release-notes-link';

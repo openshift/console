@@ -74,6 +74,7 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
   .useListPageFilter;
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
   .ResourceLink;
+export { default as ResourceStatus } from '@console/dynamic-plugin-sdk/src/app/components/utils/resource-status';
 
 export { useK8sModel, useK8sModels } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 

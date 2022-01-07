@@ -145,19 +145,6 @@
   &__resource-name {
     min-width: 0; // required so co-break-word works
   }
-  &__resource-status {
-    padding-left: var(--pf-global--spacer--sm);
-    white-space: nowrap;
-    &-badge {
-      vertical-align: middle;
-      &--alt {
-        vertical-align: baseline;
-      }
-      .co-icon-and-text__icon {
-        top: 2px;
-      }
-    }
-  }
 }
 
 .co-namespace-summary__description {
