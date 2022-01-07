@@ -24,7 +24,6 @@ import {
 } from '../modals';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
-  AccessReviewResourceAttributes,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
@@ -39,7 +38,9 @@ import {
   DeploymentModel,
   VolumeSnapshotModel,
 } from '../../models';
-import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { KebabOption, ImpersonateKind } from '@console/dynamic-plugin-sdk';
+
+export { KebabOption } from '@console/dynamic-plugin-sdk';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -600,24 +601,6 @@ function restoreStaticProperties(Kebab) {
 }
 
 export const Kebab = restoreStaticProperties(withTranslation()(KebabWithTranslation));
-
-export type KebabOption = {
-  hidden?: boolean;
-  label?: React.ReactNode;
-  labelKey?: string;
-  labelKind?: { [key: string]: string | string[] };
-  href?: string;
-  callback?: () => any;
-  accessReview?: AccessReviewResourceAttributes;
-  isDisabled?: boolean;
-  tooltip?: string;
-  tooltipKey?: string;
-  // a `/` separated string where each segment denotes a new sub menu entry
-  // Eg. `Menu 1/Menu 2/Menu 3`
-  path?: string;
-  pathKey?: string;
-  icon?: React.ReactNode;
-};
 
 export type KebabAction = (
   kind: K8sKind,
