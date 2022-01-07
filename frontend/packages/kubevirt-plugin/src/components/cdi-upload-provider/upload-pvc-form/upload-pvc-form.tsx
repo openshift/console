@@ -392,7 +392,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                   onChange={handlePvcSizeTemplate}
                 />
                 <Checkbox
-                  id="golden-os-checkbox-pvc-size-template"
+                  id="golden-os-checkbox-cdrom-boot-source-template"
                   className="kv--create-upload__golden-switch"
                   isChecked={!!mountAsCDROM}
                   data-checked-state={!!mountAsCDROM}
