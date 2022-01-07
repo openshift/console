@@ -42,40 +42,34 @@ const MirroringImageStatePopover: React.FC<MirroringImageStatePopoverProps> = ({
           </ListItem>
           <ListItem>
             <Trans t={t} ns="ceph-storage-plugin">
-              {' '}
-              <strong>Starting replay:</strong> Initiating image (PV) replication process.{' '}
+              <strong>Starting replay:</strong> Initiating image (PV) replication process.
             </Trans>
           </ListItem>
           <ListItem>
             <Trans t={t} ns="ceph-storage-plugin">
-              {' '}
               <strong>Replaying:</strong> Image (PV) replication is ongoing or idle between
-              clusters.{' '}
+              clusters.
             </Trans>
           </ListItem>
           <ListItem>
             <Trans t={t} ns="ceph-storage-plugin">
-              {' '}
-              <strong>Stopping replay:</strong> Image (PV) replication process is shutting down.{' '}
+              <strong>Stopping replay:</strong> Image (PV) replication process is shutting down.
             </Trans>
           </ListItem>
           <ListItem>
             <Trans t={t} ns="ceph-storage-plugin">
-              {' '}
-              <strong>Stopped:</strong> Image (PV) replication process has shut down.{' '}
+              <strong>Stopped:</strong> Image (PV) replication process has shut down.
             </Trans>
           </ListItem>
           <ListItem>
             <Trans t={t} ns="ceph-storage-plugin">
-              {' '}
-              <strong>Error:</strong> Image (PV) replication process stopped due to an error.{' '}
+              <strong>Error:</strong> Image (PV) replication process stopped due to an error.
             </Trans>
           </ListItem>
           <ListItem>
             <Trans t={t} ns="ceph-storage-plugin">
-              {' '}
               <strong>Unknown:</strong> Unable to determine image (PV) state due to an error. Check
-              your network connection and remote cluster mirroring daemon.{' '}
+              your network connection and remote cluster mirroring daemon.
             </Trans>
           </ListItem>
         </List>
