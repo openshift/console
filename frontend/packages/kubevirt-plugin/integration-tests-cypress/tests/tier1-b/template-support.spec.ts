@@ -9,6 +9,7 @@ const TEMPLATE_NO_SUPPORT_NAME = 'foo-no-support';
 
 describe('test VM template support', () => {
   before(() => {
+    cy.Login();
     cy.visit('');
     cy.createProject(testName);
   });

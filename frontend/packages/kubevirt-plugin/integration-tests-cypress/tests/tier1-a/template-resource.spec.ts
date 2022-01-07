@@ -27,6 +27,7 @@ describe('Test template resource', () => {
   after(() => {
     cy.deleteResource(K8S_KIND.NAD, NAD_NAME, testName);
     cy.deleteResource(K8S_KIND.Template, TEMPLATE.DEFAULT.name, testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-1850) Add/Delete a NIC to/from a VM template', () => {

@@ -18,7 +18,7 @@ const TEMPLATE_PROVIDER = 'bar';
 
 describe('test custom template creation support', () => {
   before(() => {
-    cy.login();
+    cy.Login();
     cy.visit('');
     cy.createProject(testName);
   });

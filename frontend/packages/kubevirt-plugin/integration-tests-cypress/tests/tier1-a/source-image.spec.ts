@@ -15,6 +15,7 @@ const template = TEMPLATE.RHEL8;
 
 describe('test VM template source image', () => {
   before(() => {
+    cy.Login();
     cy.visit('');
     cy.createProject(testName);
     cy.visitVMTemplatesList();

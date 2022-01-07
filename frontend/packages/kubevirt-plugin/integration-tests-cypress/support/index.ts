@@ -8,6 +8,7 @@ import {
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
 } from '../utils/const/index';
 import './virtualization';
+import { tour, Perspective, switchPerspective } from '../views/dev-perspective';
 
 export * from '../../../integration-tests-cypress/support';
 
@@ -128,13 +129,20 @@ Cypress.Commands.add('cdiCloner', (srcNS: string, destNS: string) => {
 Cypress.Commands.add('Login', () => {
   if (Cypress.env('IDP')) {
     cy.login(Cypress.env('IDP'), Cypress.env('IDP_USERNAME'), Cypress.env('IDP_PASSWORD'));
+    // skip tour
+    cy.get('body').then(($body) => {
+      if ($body.find(tour).length) {
+        cy.get(tour).click();
+        switchPerspective(Perspective.Administrator);
+      }
+    });
   } else {
     cy.login();
   }
 });
 
 Cypress.Commands.add('deleteTestProject', (namespace: string) => {
-  cy.exec(`oc delete project ${namespace}`);
+  cy.exec(`oc delete --ignore-not-found=true project ${namespace}`);
 });
 
 Cypress.Commands.add('pauseVM', (vmData: VirtualMachineData) => {

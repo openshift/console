@@ -47,6 +47,7 @@ describe('test vm template source image', () => {
   it('customize common template source', () => {
     const vmtName = 'tmp-customized';
     cy.visitVMTemplatesList();
+    cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS); // delete source before retry
     virtualization.templates.addSource(template.name);
     addSource.addBootSource(ProvisionSource.REGISTRY);
     virtualization.templates.testSource(template.name, IMPORTING);

@@ -82,13 +82,6 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-1794) Unpauses VM', () => {
       vm.pause();
-      cy.waitForResource({
-        kind: 'VirtualMachine',
-        metadata: {
-          name: vmData.name,
-          namespace: vmData.namespace,
-        },
-      });
       vm.resume();
     });
 

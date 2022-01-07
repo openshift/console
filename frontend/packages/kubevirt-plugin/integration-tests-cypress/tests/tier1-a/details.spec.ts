@@ -112,7 +112,7 @@ describe('Test VM details tab', () => {
         cy.get(detailsTab.vmPod).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
         cy.get(detailsTab.vmIP).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
         cy.get(detailsTab.vmHostname).should('contain', YAML_VM_NAME);
-        cy.get(detailsTab.vmTimezone).should('contain', 'EDT');
+        cy.get(detailsTab.vmTimezone).should('not.contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED);
         cy.get(detailsTab.vmNode).should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE);
         cy.get(detailsTab.activeUser).should('contain', 'No Active Users');
       }
