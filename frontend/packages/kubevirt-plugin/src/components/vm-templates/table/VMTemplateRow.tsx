@@ -6,17 +6,18 @@ import { Link } from 'react-router-dom';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel, TemplateModel } from '@console/internal/models';
+import { TEMPLATE_SUPPORT_LEVEL } from '../../../constants';
 import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
 import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../../hooks/use-support-modal';
+import { getAnnotation } from '../../../selectors/selectors';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { TemplateItem } from '../../../types/template';
-import { dimensifyRow } from '../../../utils';
+import { DASH, dimensifyRow } from '../../../utils';
 import { menuActionsCreator } from '../menu-actions';
 import { getTemplateOSIcon } from '../os-icons';
 import { TemplateSource } from '../vm-template-source';
-import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
 import RowActions from './RowActions';
 import { VMTemplateRowProps } from './types';
 import { tableColumnClasses } from './utils';
@@ -73,7 +74,10 @@ const VMTemplateRow: React.FC<RowFunctionArgs<TemplateItem, VMTemplateRowProps>>
         </Link>
       </TableData>
       <TableData data-test="template-provider" className={dimensify()}>
-        {provider} <VMTemplateCommnunityLabel template={template} />
+        {provider}
+      </TableData>
+      <TableData data-test="template-support" className={dimensify()}>
+        {getAnnotation(template, TEMPLATE_SUPPORT_LEVEL) || DASH}
       </TableData>
       <TableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} />

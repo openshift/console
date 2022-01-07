@@ -7,9 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { TEMPLATE_SUPPORT_LEVEL } from '../../../constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { useNamespace } from '../../../hooks/use-namespace';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
+import { getAnnotation } from '../../../selectors/selectors';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { DataSourceKind, VMIKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
@@ -49,6 +51,11 @@ const vmTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
       {
         title: t('kubevirt-plugin~Template Provider'),
         sortFunc: 'vmTemplateProvider',
+        transforms: [sortable],
+      },
+      {
+        title: t('kubevirt-plugin~Support Level'),
+        sortFunc: 'templateSupportLevel',
         transforms: [sortable],
       },
       {
@@ -149,6 +156,10 @@ const VMTemplateTable: React.FC<VMTemplateTableProps> = (props) => {
                 t,
                 obj.template ? obj.template.variants[0] : obj.customizeTemplate.template,
               ),
+            templateSupportLevel: (obj: VirtualMachineTemplateBundle) =>
+              obj.template
+                ? getAnnotation(obj.template.variants[0], TEMPLATE_SUPPORT_LEVEL)
+                : getAnnotation(obj.customizeTemplate.template, TEMPLATE_SUPPORT_LEVEL),
           }}
           getRowProps={getRowProps}
         />

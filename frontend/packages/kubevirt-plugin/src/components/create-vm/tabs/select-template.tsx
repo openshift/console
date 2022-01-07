@@ -51,7 +51,6 @@ import { TemplateItem } from '../../../types/template';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { getTemplateOSIcon, PinnedIcon } from '../../vm-templates/os-icons';
 import { TemplateSource } from '../../vm-templates/vm-template-source';
-import { VMTemplateCommnunityLabel } from '../../vm-templates/VMTemplateCommnunityLabel';
 import VMTemplateSupport from '../../vm-templates/VMTemplateSupport';
 import { useVmTemplatesFilters } from '../hooks/use-vm-templates-filters';
 
@@ -93,7 +92,7 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
         'pf-m-selectable pf-m-selected': isSelected,
       })}
       icon={<img src={getTemplateOSIcon(template)} alt="" />}
-      badges={[<VMTemplateCommnunityLabel template={template} />, isPinned && <PinnedIcon />]}
+      badges={[...(isPinned ? [<PinnedIcon />] : [])]}
       title={
         <Stack>
           <StackItem>

@@ -1,5 +1,5 @@
 import { VirtualMachineData } from '../types/vm';
-import { ADD_SOURCE, COMMUNITY, TEMPLATE_ACTION } from '../utils/const/index';
+import { ADD_SOURCE, TEMPLATE_ACTION } from '../utils/const/index';
 import { wizard } from './wizard';
 
 export const getRow = (templateName: string, within: VoidFunction) =>
@@ -38,10 +38,10 @@ export const virtualization = {
       getRow(templateName, () => cy.byTestID('template-details').click());
       if (support) {
         cy.byTestID('template-support').should('exist');
-        cy.byTestID('template-provider').should('include.text', support);
+        cy.byTestID('template-support').should('include.text', support);
       } else {
         cy.byTestID('template-support').should('exist');
-        cy.byTestID('template-provider').should('include.text', COMMUNITY);
+        cy.byTestID('template-support').should('include.text', '-');
       }
       if (parentSupport) {
         cy.byTestID('template-support-parent').should('exist');
