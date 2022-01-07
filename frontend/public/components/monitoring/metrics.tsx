@@ -582,7 +582,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   const [error, setError] = React.useState<PrometheusAPIError>();
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(50);
-  const [sortBy, setSortBy] = React.useState<ISortBy>();
+  const [sortBy, setSortBy] = React.useState<ISortBy>({});
 
   const isEnabled = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
@@ -624,7 +624,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     setData(undefined);
     setError(undefined);
     setPage(1);
-    setSortBy(undefined);
+    setSortBy({});
   }, [namespace, query]);
 
   if (!isEnabled || !isExpanded || !query) {
