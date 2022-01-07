@@ -30,7 +30,6 @@ export const CENTOS7_EXAMPLE_CONTAINER = 'quay.io/kubevirt/centos7-container-dis
 export const CENTOS_IMAGE_LINK = 'https://cloud.centos.org/centos/';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
 export const RHEL_IMAGE_LINK = 'https://access.redhat.com/downloads/content/479/ver=/rhel---8/';
-export const WINDOWS_IMAGE_LINK = 'https://www.microsoft.com/en-us/software-download/windows10ISO';
 export const CLOUD_INIT_MISSING_USERNAME =
   'No username set, see operating system documentation for the default username.';
 export const CLOUD_INIT_DOC_LINK = 'https://cloudinit.readthedocs.io/en/latest/index.html';
@@ -45,3 +44,11 @@ export const NODE_PORTS_LINK =
 
 export const PREALLOCATION_DATA_VOLUME_LINK =
   'https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/virtualization/virtual-machines#virt-using-preallocation-for-datavolumes';
+
+export const WINDOWS_IMAGE_LINKS = {
+  win10: 'https://www.microsoft.com/en-us/software-download/windows10ISO',
+  win2k16: 'https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2016?filetype=ISO',
+  win2k12r2:
+    'https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2012-r2?filetype=ISO',
+  win2k19: 'https://www.microsoft.com/en-US/evalcenter/evaluate-windows-server-2019?filetype=ISO',
+};
