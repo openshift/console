@@ -13,6 +13,7 @@ import {
   Rule,
   Silence,
   SilenceStates,
+  Target,
 } from './types';
 
 export const AlertResource: MonitoringResource = {
@@ -138,3 +139,8 @@ export const silenceStateOrder = (silence: Silence): ListOrder => [
   ),
   _.get(silence, silenceState(silence) === SilenceStates.Pending ? 'startsAt' : 'endsAt'),
 ];
+
+export const targetSource = (target: Target): AlertSource =>
+  target.labels?.prometheus === 'openshift-monitoring/k8s'
+    ? AlertSource.Platform
+    : AlertSource.User;

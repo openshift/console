@@ -32,13 +32,14 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
-import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
+import { getPrometheusURL } from '../graphs/helpers';
 import { queryBrowserTheme } from '../graphs/themes';
 import {
   Dropdown,

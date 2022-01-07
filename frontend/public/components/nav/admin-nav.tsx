@@ -95,6 +95,12 @@ const MonitoringNavSection: React.FC<{}> = () => {
         href="/monitoring/dashboards"
         name={t('public~Dashboards')}
       />
+      <HrefLink
+        id="monitoringtargets"
+        href="/monitoring/targets"
+        name={t('public~Targets')}
+        startsWith={['monitoring/targets']}
+      />
     </NavSection>
   );
 };

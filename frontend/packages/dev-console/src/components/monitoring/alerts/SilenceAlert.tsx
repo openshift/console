@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { alertingSetRules } from '@console/internal/actions/observe';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import {
-  ALERT_MANAGER_TENANCY_BASE_PATH,
+  ALERTMANAGER_TENANCY_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
 } from '@console/internal/components/graphs';
 import { StateTimestamp } from '@console/internal/components/monitoring/alerting';
@@ -52,7 +52,7 @@ const SilenceAlert: React.FC<SilenceAlertProps> = ({ rule, namespace }) => {
     if (checked) {
       _.each(rule.silencedBy, (silence) => {
         coFetchJSON
-          .delete(`${ALERT_MANAGER_TENANCY_BASE_PATH}/api/v2/silence/${silence.id}`)
+          .delete(`${ALERTMANAGER_TENANCY_BASE_PATH}/api/v2/silence/${silence.id}`)
           .then(() => {
             refreshNotificationPollers();
             // eslint-disable-next-line promise/no-nesting

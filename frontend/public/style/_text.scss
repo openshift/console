@@ -1,5 +1,6 @@
 $kinds: (
   alert: $color-alert-dark,
+  alertmanager: $color-alertmanager-dark,
   alertrule: $color-alertrule-dark,
   configmap: $color-configmap-dark,
   daemonset: $color-replicaset-dark,
@@ -13,6 +14,7 @@ $kinds: (
   machineconfigpool: $color-node-dark,
   machinedeployment: $color-node-dark,
   machineset: $color-node-dark,
+  metricstarget: $color-alert-dark,
   namespace: $color-namespace-dark,
   node: $color-node-dark,
   pod: $color-pod-dark,
@@ -24,7 +26,6 @@ $kinds: (
   serviceaccount: $color-serviceaccount-dark,
   servicemonitor: $color-service-dark,
   silence: $color-alert-dark,
-  alertmanager: $color-alertmanager-dark,
 );
 
 @each $kind, $color in $kinds {
