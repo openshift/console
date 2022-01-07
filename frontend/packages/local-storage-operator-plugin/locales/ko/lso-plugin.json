@@ -31,6 +31,7 @@
   "Disk Type": "디스크 유형",
   "Advanced": "고급 옵션",
   "Volume Mode": "볼륨 모드",
+  "File System Type": "파일 시스템 유형",
   "Disk Size": "디스크 크기",
   "Min": "분",
   "Please enter a positive Integer": "양의 정수를 입력하십시오",

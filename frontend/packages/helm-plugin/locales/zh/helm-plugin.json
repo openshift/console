@@ -74,7 +74,6 @@
   "Install a Helm Chart from the developer catalog": "从开发人员目录安装 Helm Chart",
   "Select a Project to view the list of Helm Releases or <2>create a Project</2>.": "选择一个项目来查看 Helm 发行列表或<2>创建一个项目</2>。",
   "Unable to find resource for {{helmLabel}}": "无法为 {{helmLabel}} 找到资源",
-  "Details": "详情",
   " / App Version {{appVersion}}": " / 应用程序版本 {{appVersion}}",
   " (Provided by {{chartRepoName}})": " （由{{chartRepoName}}提供）",
   "The Helm Chart can be installed by completing the form. Default values may be provided by the Helm chart authors.": "Helm Chart 可通过填写表单安装。Helm Chart 作者可能会提供默认值。",

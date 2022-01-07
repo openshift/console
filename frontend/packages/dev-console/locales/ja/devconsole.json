@@ -440,6 +440,7 @@
   "Edit source code": "ソースコードの編集",
   "Hide advanced Routing options": "詳細なルーティングオプションを非表示にする",
   "Show advanced Routing options": "詳細なルーティングオプションを表示する",
+  "Additional labels which are only added to the Route resource.": "ルートリソースにのみ追加される追加のラベル。",
   "Select the checkbox \"Create a route to the application\" to edit advanced routing options": "「アプリケーションへのルートの作成」チェックボックスを選択して、詳細なルーティングオプションを編集します。",
   "Hostname": "ホスト名",
   "Public hostname for the route. If not specified, a hostname is generated.": "ルートのパブリックホスト名。指定されない場合は、ホスト名が生成されます。",
@@ -571,6 +572,8 @@
   "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.": "{{projectLabelPlural}}の一覧を表示するためにプロジェクトを選択するか、または <4>プロジェクトを作成</4> します。",
   "Select a Project to search inside or <2>create a Project</2>.": "中を検索するためにプロジェクトを選択するか、または <2>プロジェクトを作成</2> します。",
   "BindableKinds": "BindableKinds",
+  "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.": "以下のデフォルトは、デプロイメントまたはデプロイメント設定作成時の Git からのインポートおよびデプロイイメージフォームにのみ適用されます。",
+  "Secure route": "セキュアなルート",
   "Image name from external registry": "外部レジストリーからのイメージ名",
   "Image stream tag from internal registry": "内部レジストリーからのイメージストリームタグ"
 }

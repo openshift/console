@@ -1,0 +1,7 @@
+{
+  "View {{title}} metrics in query browser": "クエリーブラウザーの {{title}} メトリクスの表示",
+  "Not available": "利用不可",
+  "{{humanAvailable}} available of {{humanLimit}} total limit": "利用可能な {{humanAvailable}}/{{humanLimit}} 合計制限",
+  "{{humanAvailable}} available of {{humanMax}}": "利用可能な {{humanAvailable}}/{{humanMax}}",
+  "{{humanAvailable}} available": "利用可能な {{humanAvailable}}"
+}
