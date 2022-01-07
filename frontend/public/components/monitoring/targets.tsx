@@ -4,10 +4,12 @@ import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useSelector } from 'react-redux';
+/* eslint-disable import/named */
 import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
+/* eslint-enable import/named */
 
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
@@ -92,75 +94,81 @@ type DetailsProps = RouteComponentProps<{ scrapeUrl?: string }> & {
   targets: Target[];
 };
 
-const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets }) => {
-  const { t } = useTranslation();
+const Details = withRouter<DetailsProps, React.FunctionComponent<DetailsProps>>(
+  ({ loaded, loadError, match, targets }) => {
+    const { t } = useTranslation();
 
-  const scrapeUrl = atob(match?.params?.scrapeUrl ?? '');
-  const target: Target = scrapeUrl ? _.find(targets, { scrapeUrl }) : undefined;
+    const scrapeUrl = atob(match?.params?.scrapeUrl ?? '');
+    const target: Target = scrapeUrl ? _.find(targets, { scrapeUrl }) : undefined;
 
-  return (
-    <>
-      <Helmet>
-        <title>{t('public~Target details')}</title>
-      </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            { name: t('public~Targets'), path: '/monitoring/targets' },
-            { name: t('public~Target details'), path: undefined },
-          ]}
-        />
-        <h1 className="co-m-pane__heading">
-          <div className="co-resource-item">{scrapeUrl}</div>
-        </h1>
-      </div>
-      <StatusBox data={target} label="target" loaded={loaded} loadError={loadError}>
-        <div className="co-m-pane__body">
-          <SectionHeading text={t('public~Target details')} />
-          <div className="co-m-pane__body-group">
-            <div className="row">
-              <div className="col-sm-6">
-                <dl className="co-m-pane__details">
-                  <dt>{t('public~Endpoint')}</dt>
-                  <dd>{scrapeUrl}</dd>
-                  <dt>{t('public~Namespace')}</dt>
-                  <dd>
-                    <ResourceLink kind="Namespace" name={target?.labels?.namespace} />
-                  </dd>
-                  <dt>{t('public~Labels')}</dt>
-                  <dd>
-                    <Labels kind="metricstarget" labels={target?.labels} />
-                  </dd>
-                  <dt>{t('public~Last scrape')}</dt>
-                  <dd>
-                    <Timestamp timestamp={target?.lastScrape} />
-                  </dd>
-                  {target?.lastError && (
-                    <Alert className="co-alert" title={t('public~Scrape failed')} variant="danger">
-                      {target?.lastError}
-                    </Alert>
-                  )}
-                </dl>
-              </div>
-              <div className="col-sm-6">
-                <dl className="co-m-pane__details">
-                  <dt>{t('public~Status')}</dt>
-                  <dd>
-                    <Health health={target?.health} />
-                  </dd>
-                  <dt>{t('public~Monitor')}</dt>
-                  <dd>
-                    <ServiceMonitor target={target} />
-                  </dd>
-                </dl>
+    return (
+      <>
+        <Helmet>
+          <title>{t('public~Target details')}</title>
+        </Helmet>
+        <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+          <BreadCrumbs
+            breadcrumbs={[
+              { name: t('public~Targets'), path: '/monitoring/targets' },
+              { name: t('public~Target details'), path: undefined },
+            ]}
+          />
+          <h1 className="co-m-pane__heading">
+            <div className="co-resource-item">{scrapeUrl}</div>
+          </h1>
+        </div>
+        <StatusBox data={target} label="target" loaded={loaded} loadError={loadError}>
+          <div className="co-m-pane__body">
+            <SectionHeading text={t('public~Target details')} />
+            <div className="co-m-pane__body-group">
+              <div className="row">
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <dt>{t('public~Endpoint')}</dt>
+                    <dd>{scrapeUrl}</dd>
+                    <dt>{t('public~Namespace')}</dt>
+                    <dd>
+                      <ResourceLink kind="Namespace" name={target?.labels?.namespace} />
+                    </dd>
+                    <dt>{t('public~Labels')}</dt>
+                    <dd>
+                      <Labels kind="metricstarget" labels={target?.labels} />
+                    </dd>
+                    <dt>{t('public~Last scrape')}</dt>
+                    <dd>
+                      <Timestamp timestamp={target?.lastScrape} />
+                    </dd>
+                    {target?.lastError && (
+                      <Alert
+                        className="co-alert"
+                        title={t('public~Scrape failed')}
+                        variant="danger"
+                      >
+                        {target?.lastError}
+                      </Alert>
+                    )}
+                  </dl>
+                </div>
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <dt>{t('public~Status')}</dt>
+                    <dd>
+                      <Health health={target?.health} />
+                    </dd>
+                    <dt>{t('public~Monitor')}</dt>
+                    <dd>
+                      <ServiceMonitor target={target} />
+                    </dd>
+                  </dl>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </StatusBox>
-    </>
-  );
-});
+        </StatusBox>
+      </>
+    );
+  },
+);
 
 const tableClasses = [
   'pf-u-w-25-on-md', // Endpoint

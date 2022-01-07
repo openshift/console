@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Badge } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import './resource-status.scss';
 
 type ResourceStatusProps = {
@@ -29,9 +29,10 @@ const ResourceStatus: React.FC<ResourceStatusProps> = ({
   children,
 }) => {
   return (
-    <span className={classNames('dps-resource-item__resource-status', additionalClassNames)}>
+    <span className={classnames('dps-resource-item__resource-status', additionalClassNames)}>
       <Badge
-        className={classNames('dps-resource-item__resource-status-badge', {
+        className={classnames('dps-resource-item__resource-status-badge', {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'dps-resource-item__resource-status-badge--alt': badgeAlt,
         })}
         isRead

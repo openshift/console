@@ -3,6 +3,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
+/* eslint-disable import/named */
 import { match as RMatch } from 'react-router-dom';
 import {
   Table as PfTable,
@@ -13,7 +14,8 @@ import {
   OnSelect,
   TableProps as PfTableProps,
 } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+/* eslint-enable import/named */
+import classnames from 'classnames';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
   AutoSizer,
@@ -583,7 +585,7 @@ export const Table: React.FC<TableProps> = ({
   const children = mock ? (
     <EmptyBox label={label} />
   ) : (
-    <div className={classNames({ 'co-virtualized-table': virtualize })}>
+    <div className={classnames({ 'co-virtualized-table': virtualize })}>
       <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
         <PfTable
           cells={columns}
