@@ -86,7 +86,7 @@ export type BootSourceAction =
   | { type: BOOT_ACTION_TYPE.SET_PROVIDER; payload: BootSourceState['provider']['value'] };
 
 export const initBootFormState: BootSourceState = {
-  dataSource: undefined,
+  dataSource: { value: 'pvc' },
   file: undefined,
   size: {
     value: {

@@ -244,13 +244,11 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           {(withUpload
             ? ProvisionSource.getVMTemplateBaseImageSources()
             : ProvisionSource.getBasicWizardSources()
-          )
-            .sort((a, b) => a.getOrder() - b.getOrder())
-            .map((ds) => (
-              <SelectOption key={ds.getValue()} value={ds} description={t(ds.getDescriptionKey())}>
-                {t(ds.toString())}
-              </SelectOption>
-            ))}
+          ).map((ds) => (
+            <SelectOption key={ds.getValue()} value={ds} description={t(ds.getDescriptionKey())}>
+              {t(ds.toString())}
+            </SelectOption>
+          ))}
         </FormPFSelect>
       </FormRow>
       {state.dataSource?.value === ProvisionSource.UPLOAD.getValue() && (
