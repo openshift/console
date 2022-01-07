@@ -71,13 +71,17 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
   .useListPageFilter;
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
   .ResourceLink;
-export { default as ResourceStatus } from '../app/components/utils/resource-status';
-
 export {
   checkAccess,
   useAccessReview,
   useAccessReviewAllowed,
 } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+
+export { default as ResourceStatus } from '@console/dynamic-plugin-sdk/src/app/components/utils/resource-status';
+export {
+  ResourceIcon,
+  ResourceIconProps,
+} from '@console/dynamic-plugin-sdk/src/app/components/utils/resource-icon';
 
 export {
   useK8sModel,
@@ -86,11 +90,7 @@ export {
   useK8sWatchResources,
 } from '../utils/k8s/hooks';
 
-export {
-  consoleFetch,
-  consoleFetchJSON,
-  consoleFetchText,
-} from '../utils/fetch';
+export { consoleFetch, consoleFetchJSON, consoleFetchText } from '../utils/fetch';
 
 // Expose K8s CRUD utilities as below
 export {
