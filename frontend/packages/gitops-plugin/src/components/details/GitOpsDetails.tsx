@@ -27,9 +27,10 @@ import './GitOpsDetails.scss';
 interface GitOpsDetailsProps {
   envs: GitOpsEnvironment[];
   appName: string;
+  error: Error;
 }
 
-const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
+const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, error }) => {
   const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
@@ -46,19 +47,29 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
   if (envs && envs.length > 0) {
     oldAPI = envs[0] && envs[0].deployments ? envs[0].deployments === null : true;
   }
-
+  let errMsg = '';
+  if (error != null) {
+    errMsg = t('gitops-plugin~Error cannot retrieve environments');
+  }
   return (
     <div className="gop-gitops-details">
       {oldAPI && (
-        <>
-          <Alert
-            isInline
-            title={t('gitops-plugin~Compatibility Issue')}
-            className="gop-gitops-details__operator-upgrade-alert"
-          >
-            {t('gitops-plugin~Compatibility Issue Message')}
-          </Alert>
-        </>
+        <Alert
+          isInline
+          title={t('gitops-plugin~Compatibility Issue')}
+          className="gop-gitops-details__special-message-alert"
+        >
+          {t('gitops-plugin~Compatibility Issue Message')}
+        </Alert>
+      )}
+      {error != null && (
+        <Alert
+          isInline
+          title={t('gitops-plugin~Error Encountered')}
+          className="gop-gitops-details__special-message-alert"
+        >
+          {errMsg}
+        </Alert>
       )}
       {_.map(
         envs,

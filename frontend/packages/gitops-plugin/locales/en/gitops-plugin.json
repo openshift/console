@@ -1,7 +1,9 @@
 {
   "Environments": "Environments",
+  "Error cannot retrieve environments": "Cannot retrieve environments. Ensure the Argo CD applications are available and check the log for the 'cluster' pod created by the GitOps Operator.",
   "Compatibility Issue": "Compatibility Issue",
   "Compatibility Issue Message": "It is detected that an older version of the GitOps Operator is installed. Please upgrade the GitOps Operator",
+  "Error Encountered": "Error Encountered",
   "Cluster URL not available": "Cluster URL not available",
   "{{message}}": "{{message}}",
   "by {{author}}": "by {{author}}",
@@ -32,6 +34,7 @@
   "Environment": "Environment",
   "Last deployment": "Last deployment",
   "No GitOps manifest URLs found": "No GitOps manifest URLs found",
+  "Error cannot retrieve applications": "Cannot retrieve applications. Ensure the Argo CD applications are available and check the log for the 'cluster' pod created by the GitOps Operator.",
   "No Application groups found": "No Application groups found",
   "Environment details were not found. Try reloading the page or contacting an administrator.": "Environment details were not found. Try reloading the page or contacting an administrator."
 }
