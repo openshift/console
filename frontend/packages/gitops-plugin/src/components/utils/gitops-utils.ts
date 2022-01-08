@@ -33,6 +33,7 @@ export const fetchAppGroups = async (
     try {
       data = await coFetchJSON(`${baseURL}&url=${manifestURL}`);
     } catch {} // eslint-disable-line no-empty
+    // Ignore and let empty data be handled by fetchAllAppGroups
   }
   return data?.applications ?? [];
 };
@@ -53,7 +54,10 @@ export const fetchAllAppGroups = async (baseURL: string, manifestURLs: string[],
           ),
           ['name'],
         );
-      } catch {} // eslint-disable-line no-empty
+      } catch {
+        emptyMsg = t('gitops-plugin~Error cannot retrieve applications');
+        return [allAppGroups, emptyMsg];
+      }
       if (_.isEmpty(allAppGroups)) {
         emptyMsg = t('gitops-plugin~No Application groups found');
       }
@@ -69,7 +73,9 @@ export const getEnvData = async (v2EnvURI: string, envURI: string, env: string, 
   } catch {
     try {
       data = await coFetchJSON(`${envURI}/${env}${appURI}`);
-    } catch {} // eslint-disable-line no-empty
+    } catch (error) {
+      throw error;
+    }
   }
   return data;
 };

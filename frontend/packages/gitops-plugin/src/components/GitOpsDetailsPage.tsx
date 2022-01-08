@@ -26,6 +26,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
   const environmentBaseURI = `/api/gitops/environments`;
   const environmentBaseURIV2 = `/api/gitops/environment`;
   const [envs, emptyStateMsg] = useEnvDetails(appName, manifestURL, pipelinesBaseURI);
+  const [error, setError] = React.useState<Error>(null);
 
   React.useEffect(() => {
     const getEnvsData = async () => {
@@ -37,13 +38,15 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
               getEnvData(environmentBaseURIV2, environmentBaseURI, env, applicationBaseURI),
             ),
           );
-        } catch {} // eslint-disable-line no-empty
+        } catch (err) {
+          setError(err);
+        }
         setEnvsData(data);
       }
     };
 
     getEnvsData();
-  }, [applicationBaseURI, environmentBaseURIV2, environmentBaseURI, envs, manifestURL]);
+  }, [applicationBaseURI, environmentBaseURIV2, environmentBaseURI, envs, manifestURL, error]);
 
   return (
     <>
@@ -57,7 +60,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
         badge={<DevPreviewBadge />}
       />
       {!emptyStateMsg ? (
-        <GitOpsDetails envs={envsData} appName={appName} />
+        <GitOpsDetails envs={envsData} appName={appName} error={error} />
       ) : (
         <GitOpsEmptyState emptyStateMsg={emptyStateMsg} />
       )}
