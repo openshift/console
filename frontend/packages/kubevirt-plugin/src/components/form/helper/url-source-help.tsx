@@ -4,15 +4,17 @@ import {
   CENTOS_IMAGE_LINK,
   FEDORA_IMAGE_LINK,
   RHEL_IMAGE_LINK,
-  WINDOWS_IMAGE_LINK,
+  WINDOWS_IMAGE_LINKS,
 } from '../../../utils/strings';
 
 type URLSourceHelpProps = {
   baseImageName: string;
+  templateName?: string;
 };
 
-export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName }) => {
+export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName, templateName }) => {
   const { t } = useTranslation();
+  const windowsTemplateName = templateName?.replace(/ VM/g, '') || 'Microsoft Windows 10';
   // checking os is RHEL/Windows and adjust link images accordingly, Fedora is default for all other OS.
   const body = baseImageName?.includes('rhel') ? (
     <Trans t={t} ns="kubevirt-plugin">
@@ -28,8 +30,12 @@ export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName }) =
     <Trans t={t} ns="kubevirt-plugin">
       Example: For Windows, get a link to the{' '}
       <strong>
-        <a href={WINDOWS_IMAGE_LINK} rel="noopener noreferrer" target="_blank">
-          installation iso of Windows 10
+        <a
+          href={WINDOWS_IMAGE_LINKS[baseImageName] || WINDOWS_IMAGE_LINKS.win10}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          installation iso of {windowsTemplateName}
         </a>
       </strong>{' '}
       and copy the download link URL

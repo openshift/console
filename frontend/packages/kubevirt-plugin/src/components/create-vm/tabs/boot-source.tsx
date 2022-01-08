@@ -66,6 +66,7 @@ export const BootSource: React.FC<BootSourceProps> = ({ template, state, dispatc
               scAllowed={scAllowed}
               scAllowedLoading={scAllowedLoading}
               baseImageName={baseImageName}
+              templateName={name}
             />
           </GridItem>
         </Grid>

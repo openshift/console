@@ -192,7 +192,7 @@ export const TEMPLATE = {
     metadataName: 'windows10-desktop-medium',
     os: 'Microsoft Windows 10',
     supportLevel: 'Full',
-    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINKS.win10,
     exampleRegUrl: '',
   },
   WIN2K12R2: {
@@ -201,7 +201,7 @@ export const TEMPLATE = {
     metadataName: 'windows2k12r2-server-medium',
     os: 'Microsoft Windows Server 2012 R2',
     supportLevel: 'Full',
-    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINKS.win2k12r2,
     exampleRegUrl: '',
   },
   WIN2K16: {
@@ -210,7 +210,7 @@ export const TEMPLATE = {
     metadataName: 'windows2k16-server-medium',
     os: 'Microsoft Windows Server 2016',
     supportLevel: 'Full',
-    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINKS.win2k16,
     exampleRegUrl: '',
   },
   WIN2K19: {
@@ -219,7 +219,7 @@ export const TEMPLATE = {
     metadataName: 'windows2k19-server-medium',
     os: 'Microsoft Windows Server 2019',
     supportLevel: 'Full',
-    exampleImgUrl: urls.WINDOWS_IMAGE_LINK,
+    exampleImgUrl: urls.WINDOWS_IMAGE_LINKS.win2k19,
     exampleRegUrl: '',
   },
   DEFAULT: {
