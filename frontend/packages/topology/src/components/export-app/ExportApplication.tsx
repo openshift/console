@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ToolbarItem, Button, AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useAccessReview } from '@console/internal/components/utils';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import {
@@ -52,13 +53,14 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
   const createExportCR = async () => {
     try {
       const exportResp = await createExportResource(getExportAppData(namespace));
-      const key = `${namespace}-${exportResp.metadata.name}`;
+      const { uid, name } = exportResp;
+      const key = `${namespace}-${name}`;
       const exportAppToastConfig = {
         ...exportAppToast,
         [key]: {
-          uid: exportResp.metadata.uid,
-          name: exportResp.metadata.name,
-          kind: exportResp.kind,
+          groupVersionKind: getGroupVersionKindForResource(exportResp),
+          uid,
+          name,
           namespace,
         },
       };

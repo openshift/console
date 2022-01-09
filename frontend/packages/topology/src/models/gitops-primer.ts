@@ -1,6 +1,6 @@
-import { K8sKind } from '@console/internal/module/k8s';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
-export const ExportModel: K8sKind = {
+export const ExportModel: K8sModel = {
   id: 'export',
   kind: 'Export',
   plural: 'exports',
