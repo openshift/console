@@ -50,7 +50,7 @@ describe('ExportViewLogButton', () => {
     // mount required for using provider
     const logButtonWrapper = mount(
       <Provider store={store}>
-        <ExportViewLogButton namespace="test" />
+        <ExportViewLogButton name="test" namespace="test" />
       </Provider>,
     );
     const logButton = logButtonWrapper.find('[data-test="export-view-log-btn"]').find(Button);
@@ -64,7 +64,7 @@ describe('ExportViewLogButton', () => {
     // mount required for using provider
     const logButtonWrapper = mount(
       <Provider store={store}>
-        <ExportViewLogButton namespace="test" onViewLog={viewLogCallback} />
+        <ExportViewLogButton name="test" namespace="test" onViewLog={viewLogCallback} />
       </Provider>,
     );
     const logButton = logButtonWrapper.find('[data-test="export-view-log-btn"]').find(Button);
@@ -76,7 +76,7 @@ describe('ExportViewLogButton', () => {
     // mount required for using provider
     const logButtonWrapper = mount(
       <Provider store={store}>
-        <ExportViewLogButton namespace="test" />
+        <ExportViewLogButton name="test" namespace="test" />
       </Provider>,
     );
     expect(
@@ -113,7 +113,7 @@ describe('ExportViewLogButton', () => {
     // mount required for using provider
     const logButtonWrapper = mount(
       <Provider store={store}>
-        <ExportViewLogButton namespace="test" />
+        <ExportViewLogButton name="test" namespace="test" />
       </Provider>,
     );
     const logButton = logButtonWrapper.find('[data-test="export-view-log-btn"]').find(Button);
@@ -146,7 +146,7 @@ describe('ExportViewLogButton', () => {
     // mount required for using provider
     const logButtonWrapper = mount(
       <Provider store={store}>
-        <ExportViewLogButton namespace="test" />
+        <ExportViewLogButton name="test" namespace="test" />
       </Provider>,
     );
     const logTooltip = logButtonWrapper.find(Tooltip);

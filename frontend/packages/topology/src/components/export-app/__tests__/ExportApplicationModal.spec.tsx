@@ -5,7 +5,7 @@ import ExportViewLogButton from '../ExportViewLogButton';
 
 describe('ExportApplicationModal', () => {
   it('should show only one button to close modal', () => {
-    const wrapper = shallow(<ExportApplicationModal namespace="my-app" />);
+    const wrapper = shallow(<ExportApplicationModal name="my-export" namespace="my-app" />);
     expect(wrapper.find('[data-test="export-close-btn"]').exists()).toBe(true);
     expect(wrapper.find('[data-test="export-canel-btn"]').exists()).toBe(false);
     expect(wrapper.find('[data-test="export-restart-btn"]').exists()).toBe(false);
@@ -14,6 +14,7 @@ describe('ExportApplicationModal', () => {
   it('should show buttons to cancel and restart export', () => {
     const wrapper = shallow(
       <ExportApplicationModal
+        name="my-export"
         namespace="my-app"
         onCancelExport={jest.fn()}
         onRestartExport={jest.fn()}
@@ -28,6 +29,7 @@ describe('ExportApplicationModal', () => {
     const onCancelExport = jest.fn();
     const wrapper = shallow(
       <ExportApplicationModal
+        name="my-export"
         namespace="my-app"
         onCancelExport={onCancelExport}
         onRestartExport={jest.fn()}
@@ -41,6 +43,7 @@ describe('ExportApplicationModal', () => {
     const onRestartExport = jest.fn();
     const wrapper = shallow(
       <ExportApplicationModal
+        name="my-export"
         namespace="my-app"
         onCancelExport={jest.fn()}
         onRestartExport={onRestartExport}
@@ -53,6 +56,7 @@ describe('ExportApplicationModal', () => {
   it('should contain view log button and call onViewLog', () => {
     const wrapper = shallow(
       <ExportApplicationModal
+        name="my-export"
         namespace="my-app"
         onCancelExport={jest.fn()}
         onRestartExport={jest.fn()}

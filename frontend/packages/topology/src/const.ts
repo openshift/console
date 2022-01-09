@@ -35,7 +35,7 @@ export const UNASSIGNED_KEY = '#UNASSIGNED_APP#';
 
 export const ALLOW_EXPORT_APP = 'ALLOW_EXPORT_APP';
 export const EXPORT_CR_NAME = 'primer';
-export const EXPORT_JOB_NAME = 'primer-export-primer';
+export const EXPORT_JOB_PREFIX = 'primer-export-';
 
 export const ROUTE_URL_ANNOTATION = 'app.openshift.io/route-url';
 export const ROUTE_DISABLED_ANNOTATION = 'app.openshift.io/route-disabled';

@@ -52,14 +52,14 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
 
   const createExportCR = async () => {
     try {
-      const exportResp = await createExportResource(getExportAppData(namespace));
-      const { uid, name } = exportResp;
+      const name = EXPORT_CR_NAME;
+      const exportResp = await createExportResource(getExportAppData(name, namespace));
       const key = `${namespace}-${name}`;
       const exportAppToastConfig = {
         ...exportAppToast,
         [key]: {
           groupVersionKind: getGroupVersionKindForResource(exportResp),
-          uid,
+          uid: exportResp.metadata.uid,
           name,
           namespace,
         },
@@ -72,7 +72,7 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
             <Trans t={t} ns="topology">
               Export of resources in <strong>{{ namespace }}</strong> has started.
             </Trans>
-            <ExportViewLogButton namespace={namespace} />
+            <ExportViewLogButton name={name} namespace={namespace} />
           </>
         ),
         dismissible: true,
@@ -98,7 +98,8 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
   };
 
   const killExportCR = async (): Promise<boolean> => {
-    const exportResData = await getExportResource(namespace);
+    const name = EXPORT_CR_NAME;
+    const exportResData = await getExportResource(name, namespace);
     if (exportResData) {
       await killExportResource(exportResData);
     }
@@ -112,16 +113,18 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
   };
 
   const exportAppClickHandle = async () => {
+    const name = EXPORT_CR_NAME;
     if (isCreating) {
-      exportApplicationModal({ namespace });
+      exportApplicationModal({ name, namespace });
       return;
     }
     try {
       setIsCreating(true);
-      const exportRes = await getExportResource(namespace);
+      const exportRes = await getExportResource(name, namespace);
       if (exportRes && exportRes.status?.completed !== true) {
         const startTime = dateTimeFormatter.format(new Date(exportRes.metadata.creationTimestamp));
         exportApplicationModal({
+          name,
           namespace,
           startTime,
           onCancelExport: killExportCR,
@@ -130,7 +133,7 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
         setIsCreating(false);
       } else if (exportRes && exportRes.status?.completed) {
         await killExportResource(exportRes);
-        const exportAppToastConfig = _.omit(exportAppToast, `${namespace}-${EXPORT_CR_NAME}`);
+        const exportAppToastConfig = _.omit(exportAppToast, `${namespace}-${name}`);
         setExportAppToast(exportAppToastConfig);
         await createExportCR();
       }

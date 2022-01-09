@@ -6,18 +6,23 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { JobModel, PodModel } from '@console/internal/models';
 import { PodKind, JobKind } from '@console/internal/module/k8s';
 import { isModifiedEvent } from '@console/shared';
-import { EXPORT_JOB_NAME } from '../../const';
+import { EXPORT_JOB_PREFIX } from '../../const';
 
 interface ExportViewLogButtonProps {
+  name: string;
   namespace: string;
   onViewLog?: () => void;
 }
 
-const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({ namespace, onViewLog }) => {
+const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({
+  name,
+  namespace,
+  onViewLog,
+}) => {
   const { t } = useTranslation();
   const [job, jobLoaded] = useK8sWatchResource<JobKind>({
     kind: JobModel.kind,
-    name: EXPORT_JOB_NAME,
+    name: EXPORT_JOB_PREFIX + name,
     namespace,
     isList: false,
   });
