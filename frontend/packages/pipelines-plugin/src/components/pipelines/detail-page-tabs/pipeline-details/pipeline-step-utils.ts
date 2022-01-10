@@ -1,5 +1,5 @@
 import { runStatus } from '../../../../utils/pipeline-augment';
-import { calculateRelativeTime } from '../../../../utils/pipeline-utils';
+import { calculateDuration } from '../../../../utils/pipeline-utils';
 
 enum TerminatedReasons {
   Completed = 'Completed',
@@ -35,10 +35,11 @@ const getMatchingStepDuration = (matchingStep?: TaskStatusStep) => {
   if (!matchingStep) return '';
 
   if (matchingStep.terminated) {
-    return calculateRelativeTime(matchingStep.terminated.startedAt);
+    return calculateDuration(matchingStep.terminated.startedAt, matchingStep.terminated.finishedAt);
   }
+
   if (matchingStep.running) {
-    return calculateRelativeTime(matchingStep.running.startedAt);
+    return calculateDuration(matchingStep.running.startedAt);
   }
 
   return '';
