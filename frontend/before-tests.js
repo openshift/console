@@ -1,7 +1,7 @@
 /* eslint-env node */
 
 import { configure } from 'enzyme';
-import * as Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 
 import 'url-search-params-polyfill';
 

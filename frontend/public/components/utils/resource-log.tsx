@@ -32,7 +32,7 @@ import { LoadingInline, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
-import screenfull from 'screenfull';
+import * as screenfull from 'screenfull';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
 import { RootState } from '../../redux';
