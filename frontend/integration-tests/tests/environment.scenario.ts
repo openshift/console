@@ -1,5 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as _ from 'lodash';
 
 import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
@@ -27,9 +27,9 @@ describe('Interacting with the environment variable editor', () => {
     const newContent = _.defaultsDeep(
       {},
       { metadata: { name: WORKLOAD_NAME, labels: { ['lbl-env']: testName } } },
-      safeLoad(content),
+      load(content),
     );
-    await yamlView.setEditorContent(safeDump(newContent));
+    await yamlView.setEditorContent(dump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
     await browser.wait(until.presenceOf(crudView.actionsButton));

@@ -1,6 +1,6 @@
 import { $, browser, by, element, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
-import { safeDump, safeLoad } from 'js-yaml';
+import { dump, load } from 'js-yaml';
 
 import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
@@ -38,7 +38,7 @@ describe('CRD extensions', () => {
       await crudView.isLoaded();
       await crudView.clickCreateWithYAML();
       await yamlView.isLoaded();
-      await yamlView.setEditorContent(safeDump(crdObj));
+      await yamlView.setEditorContent(dump(crdObj));
       expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
@@ -112,9 +112,9 @@ describe('CRD extensions', () => {
               metadata: { name: instanceName },
               spec: { location: menuLinkLocation, text: menuLinkText },
             },
-            safeLoad(content),
+            load(content),
           );
-          await yamlView.setEditorContent(safeDump(newContent));
+          await yamlView.setEditorContent(dump(newContent));
           expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
         });
 
@@ -174,9 +174,9 @@ describe('CRD extensions', () => {
       const newContent = _.defaultsDeep(
         {},
         { metadata: { name }, spec: { location, text } },
-        safeLoad(content),
+        load(content),
       );
-      await yamlView.setEditorContent(safeDump(newContent));
+      await yamlView.setEditorContent(dump(newContent));
       expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
@@ -202,8 +202,8 @@ describe('CRD extensions', () => {
       await browser.getCurrentUrl().then((url) => browser.get(`${url}/yaml`));
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, { spec: { location, text } }, safeLoad(content));
-      await yamlView.setEditorContent(safeDump(newContent));
+      const newContent = _.defaultsDeep({}, { spec: { location, text } }, load(content));
+      await yamlView.setEditorContent(dump(newContent));
       expect(yamlView.getEditorContent()).toContain(`location: ${location}`);
       await browser.wait(until.elementToBeClickable(yamlView.saveButton));
       await yamlView.saveButton.click();
@@ -244,12 +244,8 @@ describe('CRD extensions', () => {
       await crudView.clickCreateWithYAML();
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep(
-        {},
-        { metadata: { name }, spec: { text } },
-        safeLoad(content),
-      );
-      await yamlView.setEditorContent(safeDump(newContent));
+      const newContent = _.defaultsDeep({}, { metadata: { name }, spec: { text } }, load(content));
+      await yamlView.setEditorContent(dump(newContent));
       expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
@@ -273,9 +269,9 @@ describe('CRD extensions', () => {
       const newContent = _.defaultsDeep(
         {},
         { metadata: { name: podName, labels: { app: name } } },
-        safeLoad(content),
+        load(content),
       );
-      await yamlView.setEditorContent(safeDump(newContent));
+      await yamlView.setEditorContent(dump(newContent));
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
@@ -295,8 +291,8 @@ describe('CRD extensions', () => {
       await crudView.editRow(crd)(name);
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
-      const newContent = _.defaultsDeep({}, { spec: { namespaceFilter } }, safeLoad(content));
-      await yamlView.setEditorContent(safeDump(newContent));
+      const newContent = _.defaultsDeep({}, { spec: { namespaceFilter } }, load(content));
+      await yamlView.setEditorContent(dump(newContent));
       expect(yamlView.getEditorContent()).toContain(`namespaceFilter: ${namespaceFilter}`);
       await browser.wait(until.elementToBeClickable(yamlView.saveButton));
       await yamlView.saveButton.click();

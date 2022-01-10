@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 
 import { checkLogs, checkErrors, firstElementByTestID, appHost } from '../protractor.conf';
 import { fillInput } from '@console/shared/src/test-utils/utils';
@@ -16,7 +16,7 @@ import * as horizontalnavView from '../views/horizontal-nav.view';
 import { execSync } from 'child_process';
 
 const getGlobalsAndReceiverConfig = (configName: string, yamlStr: string) => {
-  const config: AlertmanagerConfig = safeLoad(yamlStr);
+  const config: AlertmanagerConfig = load(yamlStr);
   const receiverConfig: AlertmanagerReceiver = _.find(config.receivers, { name: 'MyReceiver' });
   return {
     globals: config.global,

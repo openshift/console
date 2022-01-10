@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as extensionHooks from '@console/plugin-sdk';
 
 import { CreateYAML, CreateYAMLProps } from '../../public/components/create-yaml';
@@ -38,15 +38,13 @@ describe(CreateYAML.displayName, () => {
       kind: 'Pod',
       metadata: { name: 'cool-app', namespace: 'default' },
     };
-    wrapper = wrapper.setProps({ template: safeDump(templateObj) });
+    wrapper = wrapper.setProps({ template: dump(templateObj) });
 
     expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);
   });
 
   it('creates sample object using default YAML template for model', () => {
-    const expectedObj = safeLoad(
-      getYAMLTemplates().getIn([referenceForModel(PodModel), 'default']),
-    );
+    const expectedObj = load(getYAMLTemplates().getIn([referenceForModel(PodModel), 'default']));
     expectedObj.metadata.namespace = 'default';
 
     expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);

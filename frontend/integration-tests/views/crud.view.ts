@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { safeDump, safeLoad } from 'js-yaml';
+import { dump, load } from 'js-yaml';
 import { $, $$, browser, by, ExpectedConditions as until, element } from 'protractor';
 
 import * as yamlView from './yaml.view';
@@ -176,9 +176,9 @@ export const createNamespacedTestResource = async (kindModel, name) => {
   const newContent = _.defaultsDeep(
     {},
     { metadata: { name, labels: { automatedTestName: testName } } },
-    safeLoad(content),
+    load(content),
   );
-  await yamlView.setEditorContent(safeDump(newContent));
+  await yamlView.setEditorContent(dump(newContent));
   await yamlView.saveButton.click();
   await browser.wait(until.presenceOf($(`.co-m-${kindModel.kind}`)));
   await browser.get(next);
