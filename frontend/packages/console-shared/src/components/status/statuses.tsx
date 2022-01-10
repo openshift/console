@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { HourglassHalfIcon, InProgressIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import GenericStatus from './GenericStatus';
+import { GenericStatus } from '@console/dynamic-plugin-sdk';
 import {
   RedExclamationCircleIcon,
   GreenCheckCircleIcon,

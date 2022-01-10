@@ -356,9 +356,7 @@ export const Timestamp = React.lazy(() =>
   })),
 );
 
-export const GenericStatus = React.lazy(() =>
-  import('@console/shared/src/components/status/GenericStatus'),
-);
+export const GenericStatus = React.lazy(() => import('../app/components/status/GenericStatus'));
 
 export const EventItem = React.lazy(() =>
   import('@console/shared/src/components/dashboard/activity-card/EventItem'),

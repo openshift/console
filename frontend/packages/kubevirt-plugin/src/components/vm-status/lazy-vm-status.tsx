@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, ButtonVariant, Skeleton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import GenericStatus from '@console/shared/src/components/status/GenericStatus';
+import { GenericStatus } from '@console/dynamic-plugin-sdk';
 import {
   VMStatus,
   VMStatus as VMStatusEnum,
