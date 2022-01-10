@@ -492,6 +492,14 @@ export type Status = {
   status: string;
 };
 
+export type StatusComponentProps = {
+  title?: string;
+  iconOnly?: boolean;
+  noTooltip?: boolean;
+  className?: string;
+  popoverTitle?: string;
+};
+
 export type OverviewProps = {
   className?: string;
   children: React.ReactNode;

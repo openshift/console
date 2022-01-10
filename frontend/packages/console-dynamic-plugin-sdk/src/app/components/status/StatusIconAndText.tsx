@@ -1,8 +1,8 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { CamelCaseWrap } from '@console/internal/components/utils';
-import { DASH } from '../../constants/ui';
-import { StatusComponentProps } from './types';
+import { StatusComponentProps } from '../../../extensions/console-types';
+import { DASH } from '../../constants';
+import CamelCaseWrap from '../utils/camel-case-wrap';
 
 type StatusIconAndTextProps = StatusComponentProps & {
   icon?: React.ReactElement;

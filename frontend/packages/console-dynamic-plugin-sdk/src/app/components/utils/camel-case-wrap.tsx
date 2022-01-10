@@ -2,7 +2,7 @@ import * as React from 'react';
 
 const MEMO = {};
 
-export const CamelCaseWrap: React.SFC<CamelCaseWrapProps> = ({ value, dataTest }) => {
+const CamelCaseWrap: React.FC<CamelCaseWrapProps> = ({ value, dataTest }) => {
   if (!value) {
     return '-';
   }
@@ -16,6 +16,7 @@ export const CamelCaseWrap: React.SFC<CamelCaseWrapProps> = ({ value, dataTest }
   const rendered = (
     <span data-test={dataTest}>
       {words.map((word, i) => (
+        // eslint-disable-next-line react/no-array-index-key
         <React.Fragment key={i}>
           {word}
           {i !== words.length - 1 && <wbr />}
@@ -27,7 +28,9 @@ export const CamelCaseWrap: React.SFC<CamelCaseWrapProps> = ({ value, dataTest }
   return rendered;
 };
 
-export type CamelCaseWrapProps = {
+type CamelCaseWrapProps = {
   value: string;
   dataTest?: string;
 };
+
+export default CamelCaseWrap;

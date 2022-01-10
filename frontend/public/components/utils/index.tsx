@@ -46,7 +46,6 @@ export * from './rbac';
 export * from './poll-hook';
 export * from './ref-width-hook';
 export * from './safe-fetch-hook';
-export * from './camel-case-wrap';
 export * from './truncate-middle';
 export * from './expand-collapse';
 export * from './volume-type';

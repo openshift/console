@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { SectionHeading, Timestamp, CamelCaseWrap } from '@console/internal/components/utils';
+import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
+import { SectionHeading, Timestamp } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
 
 type NodeDetailsConditionsProps = {

@@ -1,7 +1,13 @@
 import * as React from 'react';
+import { StatusComponentProps } from '../../../extensions/console-types';
 import PopoverStatus from './PopoverStatus';
 import StatusIconAndText from './StatusIconAndText';
-import { StatusComponentProps } from './types';
+
+type GenericStatusProps = StatusComponentProps & {
+  Icon: React.ComponentType<{ title?: string }>;
+  popoverTitle?: string;
+  noTooltip?: boolean;
+};
 
 const GenericStatus: React.FC<GenericStatusProps> = (props) => {
   const { Icon, children, popoverTitle, title, noTooltip, iconOnly, ...restProps } = props;
@@ -22,12 +28,6 @@ const GenericStatus: React.FC<GenericStatusProps> = (props) => {
   ) : (
     statusBody
   );
-};
-
-type GenericStatusProps = StatusComponentProps & {
-  Icon: React.ComponentType<{ title?: string }>;
-  popoverTitle?: string;
-  noTooltip?: boolean;
 };
 
 export default GenericStatus;

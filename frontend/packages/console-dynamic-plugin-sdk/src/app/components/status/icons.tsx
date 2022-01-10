@@ -10,6 +10,12 @@ import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-toke
 import { global_palette_green_500 as okColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 
+export type ColoredIconProps = {
+  className?: string;
+  title?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+};
+
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, title, size }) => (
   <CheckCircleIcon
     data-test="success-icon"
@@ -49,9 +55,3 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
 export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, title }) => (
   <InfoCircleIcon color={blueInfoColor.value} className={className} title={title} />
 );
-
-export type ColoredIconProps = {
-  className?: string;
-  title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-};
