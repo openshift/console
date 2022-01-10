@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Humanize, TopConsumerPopoverProps, LIMIT_STATE } from '@console/dynamic-plugin-sdk';
 import { UtilizationItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { ColoredIconProps } from '@console/dynamic-plugin-sdk/src/app/components/status/icons';
 import { DataPoint } from '@console/internal/components/graphs';
 import {
   AreaChart,
@@ -12,11 +13,7 @@ import {
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import { ByteDataTypes } from '../../../graph-helper/data-utils';
 import { useUtilizationDuration } from '../../../hooks';
-import {
-  YellowExclamationTriangleIcon,
-  RedExclamationCircleIcon,
-  ColoredIconProps,
-} from '../../status';
+import { YellowExclamationTriangleIcon, RedExclamationCircleIcon } from '../../status';
 
 const getCurrentData = (
   humanizeValue: Humanize,

@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import { WatchK8sResource, ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResource, ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -64,7 +64,7 @@ import {
   K8sResourceCommon,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY, Status, getNamespace, StatusIconAndText } from '@console/shared';
+import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';

@@ -4,8 +4,9 @@ import { Trans, useTranslation } from 'react-i18next';
 import { OffIcon } from '@patternfly/react-icons';
 import { TableData } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
-import { ErrorStatus, SuccessStatus, ProgressStatus, StatusIconAndText } from '@console/shared';
-import { PopoverStatus } from '@console/dynamic-plugin-sdk';
+import { ErrorStatus, SuccessStatus, ProgressStatus } from '@console/shared';
+import { StatusIconAndText, PopoverStatus } from '@console/dynamic-plugin-sdk';
+
 import {
   OCSColumnState,
   Status,

@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { StatusIconAndText } from '@console/shared';
+import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { ChartPie, ChartThemeColor } from '@patternfly/react-charts';
 import {
   ExpandableSection,

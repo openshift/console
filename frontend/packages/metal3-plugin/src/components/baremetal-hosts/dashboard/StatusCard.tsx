@@ -11,6 +11,7 @@ import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -18,7 +19,7 @@ import {
 import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { BlueInfoCircleIcon, StatusIconAndText } from '@console/shared';
+import { BlueInfoCircleIcon } from '@console/shared';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';

@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match, Link } from 'react-router-dom';
-import { ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
@@ -44,7 +44,6 @@ import {
   getNamespace,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
-  StatusIconAndText,
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
