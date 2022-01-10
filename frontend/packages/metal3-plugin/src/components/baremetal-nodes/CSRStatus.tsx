@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Button, Alert } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { PopoverStatus } from '@console/dynamic-plugin-sdk';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { CertificateSigningRequestModel } from '@console/internal/models';
-import { PopoverStatus, StatusIconAndText, SecondaryStatus } from '@console/shared';
+import { StatusIconAndText, SecondaryStatus } from '@console/shared';
 import { CertificateSigningRequestKind } from '../../types';
 import { approveCSR, denyCSR } from './menu-actions';
 

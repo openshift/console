@@ -2,16 +2,10 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { PopoverStatus } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  ProgressStatus,
-  SuccessStatus,
-  ErrorStatus,
-  Status,
-  PopoverStatus,
-  InfoStatus,
-} from '@console/shared';
+import { ProgressStatus, SuccessStatus, ErrorStatus, Status, InfoStatus } from '@console/shared';
 import {
   HOST_PROGRESS_STATES,
   HOST_ERROR_STATES,
