@@ -248,7 +248,7 @@
     "browser-env": "3.x",
     "cache-loader": "^4.1.0",
     "chalk": "2.4.x",
-    "chromedriver": "77.x",
+    "chromedriver": "90.x",
     "circular-dependency-plugin": "5.x",
     "comment-json": "4.x",
     "copy-webpack-plugin": "^5.1.1",
