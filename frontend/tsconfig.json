@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "./public/dist/build/",
