@@ -4,8 +4,12 @@ import { isUpstream } from '@console/internal/components/utils';
 import {
   CENTOS7,
   CENTOS8,
+  CENTOS_STREAM8,
+  CENTOS_STREAM9,
   CENTOS7_EXAMPLE_CONTAINER,
   CENTOS8_EXAMPLE_CONTAINER,
+  CENTOS_STREAM8_EXAMPLE_CONTAINER,
+  CENTOS_STREAM9_EXAMPLE_CONTAINER,
   FEDORA_EXAMPLE_CONTAINER,
   RHEL7,
   RHEL8,
@@ -24,10 +28,12 @@ export const ContainerSourceHelp: React.FC<ContainerSourceHelpProps> = ({ imageN
 
   const labelImage = () => {
     const os = {
-      [RHEL7]: RHEL7_EXAMPLE_CONTAINER,
-      [RHEL8]: RHEL8_EXAMPLE_CONTAINER,
+      [RHEL7]: isUpstream() ? FEDORA_EXAMPLE_CONTAINER : RHEL7_EXAMPLE_CONTAINER,
+      [RHEL8]: isUpstream() ? FEDORA_EXAMPLE_CONTAINER : RHEL8_EXAMPLE_CONTAINER,
       [CENTOS7]: CENTOS7_EXAMPLE_CONTAINER,
       [CENTOS8]: CENTOS8_EXAMPLE_CONTAINER,
+      [CENTOS_STREAM8]: CENTOS_STREAM8_EXAMPLE_CONTAINER,
+      [CENTOS_STREAM9]: CENTOS_STREAM9_EXAMPLE_CONTAINER,
       [WIN2k]: NO_LABEL,
       [WIN10]: NO_LABEL,
     };
@@ -38,7 +44,7 @@ export const ContainerSourceHelp: React.FC<ContainerSourceHelpProps> = ({ imageN
     return label;
   };
 
-  const container = isUpstream() ? FEDORA_EXAMPLE_CONTAINER : labelImage();
+  const container = labelImage();
 
   return (
     <div className="pf-c-form__helper-text" aria-live="polite" data-test="ContainerSourceHelp">
