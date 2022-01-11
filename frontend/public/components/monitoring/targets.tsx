@@ -211,7 +211,7 @@ const getRowProps = (target: Target) => ({ id: target.scrapeUrl, title: target.l
 const List: React.FC<ListProps> = ({ loaded, loadError, targets }) => {
   const { t } = useTranslation();
 
-  const filters = useSelector(({ k8s }: RootState) => k8s.getIn([REDUX_ID, 'filters']));
+  const filters = useSelector(({ sdkK8s }: RootState) => sdkK8s.getIn([REDUX_ID, 'filters']));
 
   const Header = () => [
     {
