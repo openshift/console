@@ -13,7 +13,7 @@ export const makeIDReferences = (resources: FirehoseResourceEnhanced[]): IDRefer
       resource.fieldSelector,
       resource.name,
     );
-    acc[resource.prop] = ['sdkK8s', makeReduxID(resource.model, query)];
+    acc[resource.prop] = ['k8s', makeReduxID(resource.model, query)];
 
     return acc;
   }, {});
