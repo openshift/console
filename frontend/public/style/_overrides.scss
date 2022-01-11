@@ -212,9 +212,11 @@ form.pf-c-form {
 }
 
 .pf-c-page__sidebar {
+  /*
   @media screen and (min-width: $pf-global--breakpoint--xl) {
     --pf-c-page__sidebar--BoxShadow: none;
   }
+  */
 
   // Perspective switcher
   &.pf-m-dark .pf-c-dropdown {
@@ -294,6 +296,13 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
   margin-bottom: ($form-group-margin-bottom * 2);
 }
 
+.pf-c-page .pf-c-toolbar {
+  --pf-c-toolbar--PaddingTop: 0;
+  --pf-c-toolbar__content--PaddingLeft: 0;
+  --pf-c-toolbar__content--PaddingRight: 0;
+  --pf-c-toolbar--RowGap: var(--pf-global--spacer--md);
+}
+
 // Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
 ul {
   list-style: disc;
@@ -316,4 +325,113 @@ ul.pf-c-tree-view__list {
 // TODO Remove this override when skip to content CSS is figured out.
 .pf-c-skip-to-content {
   position: absolute !important;
+}
+
+// dark theme overrides - higher specificity because this stylesheet doesn't override everything
+.pf-theme-dark {
+  .pf-c-page__main-section .co-m-nav-title--detail {
+    background: var(
+      --pf-global--BackgroundColor--100
+    ); // apply background as if this was the first <PageSection> with light variation
+    margin-top: 0; // reset margin and making it a padding instead so it looks like a page section
+    padding-top: 1.5em;
+    border-bottom-color: var(
+      --pf-global--BorderColor--100
+    ); // use standard border instead of custom existing #ccc
+  }
+
+  // this should be a light page section?
+  .co-namespace-bar {
+    background-color: var(--pf-global--BackgroundColor--100);
+    padding: 0;
+  }
+
+  .co-namespace-dropdown__menu-toggle {
+    background: transparent;
+    padding-left: var(
+      --pf-global--spacer--md
+    ) !important; // add back default padding that has been removed - pf component css loaded before overrides, needs important. does this need to override the default padding?
+    padding-right: var(
+      --pf-global--spacer--md
+    ) !important; // add back default padding that has been removed
+
+    @media (min-width: $pf-global--breakpoint--xl) {
+      padding-left: var(--pf-global--spacer--lg) !important;
+      padding-right: var(--pf-global--spacer--lg) !important;
+    }
+  }
+
+  .odc-namespaced-page__content {
+    background: transparent !important; // add dashboard page - let page section background show. The component styles are overriding this stylesheet, so added important
+  }
+
+  .odc-add-card-item__icon {
+    fill: #fff; // add dashboard icon color
+  }
+
+  // add getting started boxes - needs important to override style attr styles
+  .ocs-getting-started-card {
+    &[data-test*='samples'] .pf-c-title {
+      color: var(--pf-global--primary-color--100) !important;
+    }
+
+    &[data-test*='quick-start'] .pf-c-title {
+      color: var(--pf-global--palette--purple-100) !important;
+
+      svg {
+        fill: var(--pf-global--palette--purple-100) !important;
+      }
+    }
+
+    &[data-test*='developer-features'] .pf-c-title {
+      color: var(--pf-global--palette--orange-300) !important;
+    }
+  }
+
+  .monitoring-dashboards__legend-wrap text tspan {
+    fill: var(--pf-global--Color--200);
+  }
+
+  .co-namespace-bar {
+    border-bottom-color: var(
+      --pf-global--BorderColor--100
+    ); // pipelines list page, border under dropdown at top
+  }
+
+  .co-m-horizontal-nav__menu-item a,
+  .co-m-horizontal-nav__menu-item button {
+    color: var(--pf-global--Color--200);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--pf-global--Color--100);
+    }
+  }
+
+  // pipelines logs
+  .odc-multi-stream-logs__taskName {
+    background-color: var(--pf-global--BackgroundColor--200);
+    color: var(--pf-global--Color--200);
+  }
+
+  // pipelines logs
+  .odc-multi-stream-logs__container {
+    color: var(--pf-global--palette--white); // color was set to backgroundcolor-100...
+  }
+
+  // pipelines details tabs bottom border
+  .co-m-horizontal-nav__menu {
+    border-bottom-color: var(--pf-global--BorderColor--100);
+  }
+
+  // separator between links on right above pipeline logs
+  .odc-multi-stream-logs__divider {
+    color: var(--pf-global--BorderColor--100);
+  }
+
+  // add page main content, observe dashboard - to contrast cards
+  .ocs-page-layout__content,
+  .co-dashboard-body {
+    background-color: var(--pf-global--BackgroundColor--200);
+  }
 }
