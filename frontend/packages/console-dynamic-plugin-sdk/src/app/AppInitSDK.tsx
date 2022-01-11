@@ -9,6 +9,8 @@ type AppInitSDKProps = {
   configurations: {
     apiDiscovery: (store: Store<any>) => void;
     appFetch: UtilsConfig['appFetch'];
+    /** @deprecated - will be removed later when we have an interface for plugin */
+    initPlugins?: (store: Store<any>) => void;
   };
 };
 
@@ -34,10 +36,13 @@ const AppInitSDK: React.FC<AppInitSDKProps> = ({ children, configurations }) => 
   const { store, storeContextPresent } = useReduxStore();
 
   React.useEffect(() => {
-    const { appFetch, apiDiscovery } = configurations;
-    apiDiscovery(store);
+    const { appFetch, apiDiscovery, initPlugins } = configurations;
     try {
       setUtilsConfig({ appFetch });
+      apiDiscovery(store);
+      if (initPlugins) {
+        initPlugins(store);
+      }
     } catch (e) {
       // eslint-disable-next-line no-console
       console.warn(e);

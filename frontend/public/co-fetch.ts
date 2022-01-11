@@ -29,7 +29,7 @@ export const applyConsoleHeaders = (url, options) => {
 
   // If the URL being requested is absolute (and therefore, not a local request),
   // remove the authorization header to prevent credentials from leaking.
-  if (url.indexOf('://') >= 0) {
+  if (url.indexOf('://') >= 0 && options.headers) {
     delete options.headers.Authorization;
     delete options.headers['X-CSRFToken'];
   }
@@ -56,8 +56,6 @@ export const shouldLogout = (url: string): boolean => {
   }
   return false;
 };
-
-// export class RetryError extends Error {}
 
 export const validateStatus = async (
   response: Response,

@@ -241,8 +241,6 @@ const AppWithExtensions = withTranslation()((props) => {
   return <LoadingBox />;
 });
 
-initConsolePlugins(pluginStore, store);
-
 render(<LoadingBox />, document.getElementById('app'));
 
 const AppRouter = () => {
@@ -418,6 +416,9 @@ const updateSwaggerDefinitionContinual = () => {
   }, 5 * 60 * 1000);
 };
 
+const initPlugins = (storeInstance) => {
+  return initConsolePlugins(pluginStore, storeInstance);
+};
 // Load cached API resources from localStorage to speed up page load.
 const initApiDiscovery = (storeInstance) => {
   getCachedResources()
@@ -429,6 +430,7 @@ const initApiDiscovery = (storeInstance) => {
       storeInstance.dispatch(startAPIDiscovery());
     })
     .catch(() => storeInstance.dispatch(startAPIDiscovery()));
+  updateSwaggerDefinitionContinual();
 };
 
 graphQLReady.onReady(() => {
@@ -436,8 +438,6 @@ graphQLReady.onReady(() => {
 
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
-
-  updateSwaggerDefinitionContinual();
 
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
@@ -491,6 +491,7 @@ graphQLReady.onReady(() => {
           configurations={{
             appFetch: appInternalFetch,
             apiDiscovery: initApiDiscovery,
+            initPlugins,
           }}
         >
           <CaptureTelemetry />
