@@ -3,7 +3,7 @@ import { errorMessage } from '../../views/form';
 import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
-xdescribe('Bulk import operation', () => {
+describe('Bulk import operation', () => {
   const namespace = `bulk${testName}`;
   const dupSecrets = `apiVersion: v1
 kind: Secret
