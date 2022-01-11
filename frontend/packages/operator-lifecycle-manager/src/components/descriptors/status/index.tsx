@@ -12,6 +12,8 @@ import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { Phase } from './phase';
 import { PodStatusChart } from './pods';
 
+type StatusObject = { [key: string]: string[] };
+
 const PodStatuses: React.FC<StatusCapabilityProps> = ({
   description,
   descriptor,
@@ -25,10 +27,10 @@ const PodStatuses: React.FC<StatusCapabilityProps> = ({
     if (!_.isObject(value) || _.some(value, (v) => !_.isArray(v))) {
       return <Invalid path={descriptor.path} />;
     }
-    if (_.every(value, (v) => _.isArray(v) && v.length === 0)) {
+    if (_.every(value, (v) => _.isArray(v) && (v as any[]).length === 0)) {
       return <span className="text-muted">{t('olm~No members')}</span>;
     }
-    return <PodStatusChart statuses={value} subTitle={descriptor.path} />;
+    return <PodStatusChart statuses={value as StatusObject} subTitle={descriptor.path} />;
   }, [descriptor.path, t, value]);
   return (
     <div className="co-operand-details__section--info">

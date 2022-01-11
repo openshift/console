@@ -1,4 +1,4 @@
-import { Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 import { K8sModel } from '../../../api/common-types';
 import { SDKStoreState } from '../../../app/redux-types';
 import { WatchK8sResource } from '../../../extensions/console-types';

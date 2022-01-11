@@ -7,7 +7,7 @@ import { CreateYAML, CreateYAMLProps } from '../../public/components/create-yaml
 import { PodModel } from '../../public/models';
 import { getYAMLTemplates } from '../../public/models/yaml-templates';
 import { AsyncComponent, LoadingBox } from '../../public/components/utils';
-import { referenceForModel } from '../../public/module/k8s';
+import { referenceForModel, K8sResourceKind } from '../../public/module/k8s';
 
 describe(CreateYAML.displayName, () => {
   let wrapper: ShallowWrapper<CreateYAMLProps>;
@@ -44,7 +44,9 @@ describe(CreateYAML.displayName, () => {
   });
 
   it('creates sample object using default YAML template for model', () => {
-    const expectedObj = load(getYAMLTemplates().getIn([referenceForModel(PodModel), 'default']));
+    const expectedObj: K8sResourceKind = load(
+      getYAMLTemplates().getIn([referenceForModel(PodModel), 'default']),
+    );
     expectedObj.metadata.namespace = 'default';
 
     expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);

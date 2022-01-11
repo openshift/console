@@ -54,6 +54,12 @@ const Endpoints: React.FC<SpecCapabilityProps> = ({ description, label, obj, ful
   </DetailsItem>
 );
 
+type LabelObject = { [key: string]: string };
+
+function isLabelObject(value: object): value is LabelObject {
+  return typeof value.key === 'string';
+}
+
 const Label: React.FC<SpecCapabilityProps> = ({
   description,
   label,
@@ -63,7 +69,7 @@ const Label: React.FC<SpecCapabilityProps> = ({
   value,
 }) => (
   <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-    {_.isObject(value) ? (
+    {_.isObject(value) && isLabelObject(value) ? (
       <LabelList kind={model.kind} labels={value} />
     ) : (
       <span>{value || '-'}</span>
