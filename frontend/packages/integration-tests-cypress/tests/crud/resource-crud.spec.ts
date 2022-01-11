@@ -1,5 +1,5 @@
 import { OrderedMap } from 'immutable';
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as _ from 'lodash';
 import { testName, editKind, deleteKind, checkErrors } from '../../support';
 import { projectDropdown } from '../../views/common';
@@ -147,9 +147,9 @@ describe('Kubernetes resource CRUD operations', () => {
           newContent = _.defaultsDeep(
             {},
             { metadata: { name, labels: { [testLabel]: testName } } },
-            safeLoad(content),
+            load(content),
           );
-          yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+          yamlEditor.setEditorContent(dump(newContent, { sortKeys: true })).then(() => {
             yamlEditor.clickSaveCreateButton();
             cy.get(errorMessage).should('not.exist');
           });

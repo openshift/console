@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -38,7 +38,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
       broker = convertFormToBrokerYaml(formValues.formData);
     } else {
       try {
-        broker = safeLoad(formValues.yamlData);
+        broker = load(formValues.yamlData);
         if (!broker.metadata?.namespace) {
           broker.metadata.namespace = formValues.formData.project.name;
         }

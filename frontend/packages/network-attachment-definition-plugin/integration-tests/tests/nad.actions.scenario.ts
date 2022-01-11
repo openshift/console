@@ -1,4 +1,4 @@
-import { safeDump, safeLoad } from 'js-yaml';
+import { dump, load } from 'js-yaml';
 import * as _ from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
@@ -42,10 +42,10 @@ describe('Test NAD actions', () => {
       {
         metadata: { annotations: { description: newDesc } },
       },
-      safeLoad(await getEditorContent()),
+      load(await getEditorContent()),
     );
 
-    await setEditorContent(safeDump(newContent));
+    await setEditorContent(dump(newContent));
     await click(saveButton);
 
     await nad.navigateToDetail();

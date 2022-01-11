@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import * as _ from 'lodash';
 import {
   getCommonAnnotations,
@@ -172,7 +172,7 @@ export const useDefaultChannelConfiguration = (namespace: string): [string, bool
   );
   let defaultConfiguredChannel = EVENTING_IMC_KIND;
   if (configMap && defaultConfiguredChannelLoaded) {
-    const cfg = safeLoad(configMap.data?.['default-ch-config']);
+    const cfg = load(configMap.data?.['default-ch-config']);
 
     defaultConfiguredChannel = _.hasIn(cfg?.namespaceDefaults, namespace)
       ? cfg?.namespaceDefaults[namespace].kind

@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
@@ -94,7 +94,7 @@ export const updateTask = async (
   return coFetch(url)
     .then(async (res) => {
       const yaml = await res.text();
-      const task = safeLoad(yaml);
+      const task = load(yaml);
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,
@@ -114,7 +114,7 @@ export const createTask = (url: string, namespace: string) => {
   return coFetch(url)
     .then(async (res) => {
       const yaml = await res.text();
-      const task = safeLoad(yaml);
+      const task = load(yaml);
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,

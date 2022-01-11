@@ -1,5 +1,5 @@
 import { Set as ImmutableSet } from 'immutable';
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as _ from 'lodash';
 import {
   DeploymentModel,
@@ -47,9 +47,9 @@ describe('Visiting Overview page', () => {
           const newContent = _.defaultsDeep(
             {},
             { metadata: { name: resourceName, labels: { automatedTestName: testName } } },
-            safeLoad(content),
+            load(content),
           );
-          yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
+          yamlEditor.setEditorContent(dump(newContent)).then(() => {
             yamlEditor.clickSaveCreateButton();
             cy.get(errorMessage).should('not.exist');
             detailsPage.titleShouldContain(resourceName);

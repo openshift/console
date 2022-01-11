@@ -2,7 +2,7 @@ import * as React from 'react';
 import { GridItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { FormikValues, useFormikContext } from 'formik';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -114,7 +114,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       try {
         const response = await coFetch(`/api/helm/charts/index.yaml?namespace=${namespace}`);
         const yaml = await response.text();
-        json = safeLoad(yaml);
+        json = load(yaml);
       } catch {
         if (ignore) return;
       }

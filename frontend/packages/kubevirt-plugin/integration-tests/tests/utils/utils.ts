@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import * as _ from 'lodash';
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
@@ -65,7 +65,7 @@ export async function createExampleVMViaYAML(getVMObj?: boolean) {
   await yamlPageIsLoaded();
   if (getVMObj) {
     try {
-      vm = safeLoad(await getEditorContent());
+      vm = load(await getEditorContent());
     } catch {
       return null;
     }

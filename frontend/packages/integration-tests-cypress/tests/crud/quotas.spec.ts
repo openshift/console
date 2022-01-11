@@ -1,4 +1,4 @@
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
@@ -24,8 +24,8 @@ const createExampleQuotas = () => {
   yamlEditor.isLoaded();
   let newContent;
   yamlEditor.getEditorContent().then((content) => {
-    newContent = _.defaultsDeep({}, { metadata: { name: quotaName } }, safeLoad(content));
-    yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
+    newContent = _.defaultsDeep({}, { metadata: { name: quotaName } }, load(content));
+    yamlEditor.setEditorContent(dump(newContent)).then(() => {
       yamlEditor.clickSaveCreateButton();
       cy.get(errorMessage).should('not.exist');
     });
@@ -59,9 +59,9 @@ const createExampleQuotas = () => {
           },
         },
       },
-      safeLoad(content),
+      load(content),
     );
-    yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
+    yamlEditor.setEditorContent(dump(newContent)).then(() => {
       yamlEditor.clickSaveCreateButton();
       cy.get(errorMessage).should('not.exist');
     });

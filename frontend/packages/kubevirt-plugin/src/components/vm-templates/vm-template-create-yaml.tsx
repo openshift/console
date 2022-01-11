@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 /* eslint-disable lines-between-class-members */
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -58,7 +58,7 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
         })
         .catch(() => {
           setDefaultTemplate(
-            new VMTemplateWrapper(safeLoad(VMTemplateYAMLTemplates.getIn(['vm-template'])))
+            new VMTemplateWrapper(load(VMTemplateYAMLTemplates.getIn(['vm-template'])))
               .init()
               .setNamespace(match.params.ns || 'default')
               .asResource(),

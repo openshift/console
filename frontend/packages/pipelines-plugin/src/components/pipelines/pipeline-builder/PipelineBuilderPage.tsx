@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikBag } from 'formik';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
@@ -52,7 +52,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     let pipeline: PipelineKind;
     if (values.editorType === EditorType.YAML) {
       try {
-        pipeline = safeLoad(values.yamlData);
+        pipeline = load(values.yamlData);
         if (!pipeline.metadata?.namespace) {
           pipeline.metadata.namespace = ns;
         }

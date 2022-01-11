@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Ajv from 'ajv';
 import { Formik } from 'formik';
-import { safeDump, safeLoad } from 'js-yaml';
+import { dump, load } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
@@ -103,7 +103,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       if (ignore) return;
       const chart: HelmChart = res?.chart || res;
       const chartValues = getChartValuesYAML(chart);
-      const releaseValues = !_.isEmpty(res?.config) ? safeDump(res?.config) : '';
+      const releaseValues = !_.isEmpty(res?.config) ? dump(res?.config) : '';
       const valuesYAML = releaseValues || chartValues;
       const valuesJSON = (res?.config || chart?.values) ?? {};
       const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
@@ -168,7 +168,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       }
     } else if (yamlData) {
       try {
-        valuesObj = safeLoad(yamlData);
+        valuesObj = load(yamlData);
       } catch (err) {
         actions.setStatus({ submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }) });
         return Promise.resolve();

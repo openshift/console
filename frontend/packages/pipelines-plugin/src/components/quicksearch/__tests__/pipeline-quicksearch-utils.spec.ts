@@ -1,4 +1,4 @@
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { omit } from 'lodash';
 import * as coFetch from '@console/internal/co-fetch';
 import * as k8s from '@console/internal/module/k8s';
@@ -283,7 +283,7 @@ describe('pipeline-quicksearch-utils', () => {
     it('should update openshift client version from 0.1 to 0.2', async () => {
       const openshiftClientV1 = {
         ...sampleTektonHubCatalogItem,
-        data: safeLoad(sampleTaskWithMultipleVersions[sampleVersions.VERSION_01]),
+        data: load(sampleTaskWithMultipleVersions[sampleVersions.VERSION_01]),
       };
       const updatedTask = await updateTask(
         'oc-task-0.1/url',
@@ -301,7 +301,7 @@ describe('pipeline-quicksearch-utils', () => {
     it('should update openshift client version from 0.2 to 0.1', async () => {
       const openshiftClientV2 = {
         ...sampleTektonHubCatalogItem,
-        data: safeLoad(sampleTaskWithMultipleVersions[sampleVersions.VERSION_02]),
+        data: load(sampleTaskWithMultipleVersions[sampleVersions.VERSION_02]),
       };
       const updatedTask = await updateTask(
         'oc-task-0.2/url',

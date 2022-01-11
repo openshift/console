@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
@@ -24,7 +24,7 @@ const CreateNetAttachDefYAMLConnected = connectToPlural(
     }
 
     const template = NetworkAttachmentDefinitionsYAMLTemplates.getIn(['default']);
-    const obj = safeLoad(template);
+    const obj = load(template);
     obj.kind = kindObj.kind;
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = match.params.ns || 'default';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormikBag, Formik } from 'formik';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
@@ -49,7 +49,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
     const resourceType = getResourcesType(resource);
     if (values.editorType === EditorType.YAML) {
       try {
-        deploymentRes = safeLoad(values.yamlData);
+        deploymentRes = load(values.yamlData);
       } catch (err) {
         actions.setStatus({
           submitSuccess: '',

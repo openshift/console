@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import * as _ from 'lodash';
 import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -161,7 +161,7 @@ describe(CreateSubscriptionYAML.displayName, () => {
       .find(ErrorBoundary)
       .childAt(0)
       .dive<CreateYAMLProps, {}>();
-    const subTemplate = safeLoad(createYAML.props().template);
+    const subTemplate = load(createYAML.props().template);
 
     window.location.search = `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`;
 

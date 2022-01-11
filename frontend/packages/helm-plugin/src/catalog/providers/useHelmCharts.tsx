@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { ExtensionHook, CatalogItem, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
@@ -33,7 +33,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
       .then(async (res) => {
         if (mounted) {
           const yaml = await res.text();
-          const json = safeLoad(yaml);
+          const json = load(yaml);
           setHelmCharts(json.entries);
         }
       })

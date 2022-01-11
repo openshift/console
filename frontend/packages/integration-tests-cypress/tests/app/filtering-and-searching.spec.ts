@@ -1,4 +1,4 @@
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
@@ -25,9 +25,9 @@ describe('Filtering and Searching', () => {
       const newContent = _.defaultsDeep(
         {},
         { metadata: { name: WORKLOAD_NAME, labels: { 'lbl-filter': testName } } },
-        safeLoad(content),
+        load(content),
       );
-      yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
+      yamlEditor.setEditorContent(dump(newContent)).then(() => {
         yamlEditor.clickSaveCreateButton();
         cy.get(errorMessage).should('not.exist');
         detailsPage.titleShouldContain(WORKLOAD_NAME);

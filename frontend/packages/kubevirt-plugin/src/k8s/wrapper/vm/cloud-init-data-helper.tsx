@@ -1,4 +1,4 @@
-import { safeDump, safeLoad } from 'js-yaml';
+import { dump, load } from 'js-yaml';
 import * as _ from 'lodash';
 import { V1CloudInitNoCloudSource } from '../../../types/api';
 import { getRandomChars } from '../../../utils';
@@ -73,7 +73,7 @@ export class CloudInitDataHelper {
 
     if (_.trimEnd(header) === CLOUD_CONFIG_HEADER) {
       try {
-        this.cloudConfigData = safeLoad(rest);
+        this.cloudConfigData = load(rest);
         this.header = header;
       } catch (e) {
         this.otherFormatData = userData;
@@ -99,7 +99,7 @@ export class CloudInitDataHelper {
 
   getUserData = () => {
     if (this.cloudConfigData) {
-      const resultData = safeDump(this.cloudConfigData);
+      const resultData = dump(this.cloudConfigData);
       return this.header ? `${this.header}\n${resultData}` : resultData;
     }
     return this.otherFormatData;

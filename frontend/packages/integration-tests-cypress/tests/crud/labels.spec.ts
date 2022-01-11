@@ -1,4 +1,4 @@
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as _ from 'lodash';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
@@ -32,8 +32,8 @@ describe('Editing labels', () => {
     cy.visit(`k8s/ns/${testName}/${plural}/~new`);
     yamlEditor.isLoaded();
     yamlEditor.getEditorContent().then((content) => {
-      const newContent = _.defaultsDeep({}, yaml, safeLoad(content));
-      yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+      const newContent = _.defaultsDeep({}, yaml, load(content));
+      yamlEditor.setEditorContent(dump(newContent, { sortKeys: true })).then(() => {
         yamlEditor.clickSaveCreateButton();
         cy.get(errorMessage).should('not.exist');
       });

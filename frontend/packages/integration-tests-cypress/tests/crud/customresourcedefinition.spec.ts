@@ -1,4 +1,4 @@
-import { safeLoad, safeDump } from 'js-yaml';
+import { load, dump } from 'js-yaml';
 import * as _ from 'lodash';
 import { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
@@ -95,8 +95,8 @@ describe('CustomResourceDefinitions', () => {
       listPage.clickCreateYAMLbutton();
       yamlEditor.isLoaded();
       yamlEditor.getEditorContent().then((content) => {
-        const newContent = _.defaultsDeep({}, crd, safeLoad(content));
-        yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+        const newContent = _.defaultsDeep({}, crd, load(content));
+        yamlEditor.setEditorContent(dump(newContent, { sortKeys: true })).then(() => {
           yamlEditor.clickSaveCreateButton();
           cy.get(errorMessage).should('not.exist');
         });
@@ -107,8 +107,8 @@ describe('CustomResourceDefinitions', () => {
       listPage.clickCreateYAMLbutton();
       yamlEditor.isLoaded();
       yamlEditor.getEditorContent().then((content) => {
-        const newContent = _.defaultsDeep({}, customResource, safeLoad(content));
-        yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+        const newContent = _.defaultsDeep({}, customResource, load(content));
+        yamlEditor.setEditorContent(dump(newContent, { sortKeys: true })).then(() => {
           yamlEditor.clickSaveCreateButton();
           cy.get(errorMessage).should('not.exist');
         });
