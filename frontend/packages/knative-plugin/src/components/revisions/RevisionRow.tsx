@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
@@ -29,10 +29,13 @@ const RevisionRow: React.FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
+      <TableData
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[2], 'co-break-word')}>
         {service && (
           <ResourceLink
             kind={serviceReference}

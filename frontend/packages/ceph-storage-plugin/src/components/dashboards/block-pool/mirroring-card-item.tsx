@@ -30,7 +30,7 @@ export const MirroringCardItem: React.FC<MirroringCardItemProps> = React.memo(
           </dt>
         )}
         <dd
-          className={classNames('odf-block-pool__mirroring-card-item-dd', valueClassName)}
+          className={classnames('odf-block-pool__mirroring-card-item-dd', valueClassName)}
           data-test="mirroring-card-item-value"
         >
           {status}

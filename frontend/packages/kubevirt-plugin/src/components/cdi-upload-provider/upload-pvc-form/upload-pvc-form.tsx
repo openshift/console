@@ -13,7 +13,7 @@ import {
   StackItem,
 } from '@patternfly/react-core';
 import axios from 'axios';
-import cx from 'classnames';
+import classnames from 'classnames';
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
@@ -685,7 +685,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         <title>{title}</title>
       </Helmet>
       <div
-        className={cx('co-m-pane__body co-m-pane__form', {
+        className={classnames('co-m-pane__body co-m-pane__form', {
           // eslint-disable-next-line @typescript-eslint/naming-convention
           'kv--create-upload__hide': isSubmitting,
         })}

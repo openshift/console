@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormHelperText } from '@patternfly/react-core';
-import cx from 'classnames';
+import classnames from 'classnames';
 import './FormSection.scss';
 
 export interface FormSectionProps {
@@ -32,7 +32,7 @@ const FormSection: React.FC<FormSectionProps> = ({
   style,
 }) => (
   <div
-    className={cx('pf-c-form', {
+    className={classnames('pf-c-form', {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       'co-m-pane__form': !fullWidth,
       'odc-form-section--extra-margin': extraMargin,

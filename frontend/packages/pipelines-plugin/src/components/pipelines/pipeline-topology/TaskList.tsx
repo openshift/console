@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { useHover } from '@patternfly/react-topology';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { KebabOption, ResourceIcon, truncateMiddle } from '@console/internal/components/utils';
@@ -76,7 +76,7 @@ const TaskList: React.FC<any> = ({
       >
         <rect
           ref={triggerRef}
-          className={cx('odc-task-list-node__trigger-background', {
+          className={classnames('odc-task-list-node__trigger-background', {
             'is-disabled': options.length === 0,
           })}
           width={width}

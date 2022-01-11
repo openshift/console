@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Text } from '@patternfly/react-core';
-import cx from 'classnames';
+import classnames from 'classnames';
 
 import './PageLayout.scss';
 
@@ -19,7 +19,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, title, hint, isDark }
       </Text>
       {hint && <div className="ocs-page-layout__hint">{hint}</div>}
     </div>
-    <div className={cx('ocs-page-layout__content', { 'is-dark': isDark })}>{children}</div>
+    <div className={classnames('ocs-page-layout__content', { 'is-dark': isDark })}>{children}</div>
   </>
 );
 

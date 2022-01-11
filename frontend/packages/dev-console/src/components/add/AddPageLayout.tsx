@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Skeleton, Switch, Tooltip } from '@patternfly/react-core';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { getQueryArgument } from '@console/internal/components/utils';
@@ -67,7 +67,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
           <div className="odc-add-page-layout__hint-block__actions">
             <RestoreGettingStartedButton userSettingsKey={GETTING_STARTED_USER_SETTINGS_KEY} />
             <div
-              className={cx('odc-add-page-layout__hint-block__details-switch', {
+              className={classnames('odc-add-page-layout__hint-block__details-switch', {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'odc-add-page-layout__hint-block__details-switch__loading-state': !extensionsLoaded,
               })}

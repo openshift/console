@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { TopConsumerMetric } from '../../../constants/virt-overview/top-consumers-card/top-consumer-metric';
 import { TopConsumerCard } from './TopConsumerCard';
 
@@ -17,7 +17,8 @@ export const TopConsumersGridRow: React.FC<TopConsumersGridRowProps> = ({
   numItemsToShow,
   initialMetrics,
 }) => {
-  const classes = classNames('kv-top-consumers-card__grid', {
+  const classes = classnames('kv-top-consumers-card__grid', {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     'kv-top-consumers-card__top-grid': topGrid,
   });
 

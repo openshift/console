@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { SecondaryStatus } from '../../status';

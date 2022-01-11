@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 
 import {
   FormGroup,
@@ -244,7 +244,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
         <FormGroup
           fieldId="kms-address"
           label={t('ceph-storage-plugin~Address')}
-          className={classNames('ocs-install-kms__form-address', `${className}__form-body`)}
+          className={classnames('ocs-install-kms__form-address', `${className}__form-body`)}
           helperTextInvalid={validateAddressMessage()}
           validated={isValid(vaultState.address?.valid)}
           isRequired
@@ -264,7 +264,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
         <FormGroup
           fieldId="kms-address-port"
           label={t('ceph-storage-plugin~Port')}
-          className={classNames(
+          className={classnames(
             'ocs-install-kms__form-port',
             `${className}__form-body--small-padding`,
           )}

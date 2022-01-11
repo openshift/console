@@ -24,7 +24,7 @@ export const DetailItem: React.FC<DetailItemProps> = React.memo(
           {title}
         </dt>
         <dd
-          className={classNames('co-details-card__item-value', valueClassName)}
+          className={classnames('co-details-card__item-value', valueClassName)}
           data-test="detail-item-value"
         >
           {status}

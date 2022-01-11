@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
@@ -82,10 +82,10 @@ const tiResource: WatchK8sResource = {
 export const tableColumnClasses = [
   '',
   '',
-  cx('pf-m-hidden', 'pf-m-visible-on-xl'),
-  cx('pf-m-hidden', 'pf-m-visible-on-2xl'),
-  cx('pf-m-hidden', 'pf-m-visible-on-lg'),
-  cx('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -104,7 +104,7 @@ const DiskRow: React.FC<RowFunctionArgs<DiskMetadata, OCSMetadata>> = ({ obj, cu
         className={tableColumnClasses[1]}
       />
       <TableData className={tableColumnClasses[2]}>{obj.type || '-'}</TableData>
-      <TableData className={cx(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
         {obj.model || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

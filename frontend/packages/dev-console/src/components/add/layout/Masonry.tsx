@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import Measure from 'react-measure';
 import './MasonryLayout.scss';
 
@@ -52,8 +52,13 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
   });
 
   return (
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    <div className={cx('odc-masonry-layout', { 'odc-masonry-layout__allRendered': allRendered })}>
+    <div
+      className={classnames(
+        'odc-masonry-layout',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        { 'odc-masonry-layout__allRendered': allRendered },
+      )}
+    >
       {groupedColumns.map((groupedColumn, columnIndex) => (
         <div key={columnIndex.toString()} className="odc-masonry-layout__column">
           {groupedColumn.items.map((item) => (

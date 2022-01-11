@@ -8,7 +8,7 @@ import {
   HourglassHalfIcon,
   SyncAltIcon,
 } from '@patternfly/react-icons';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
 
 interface StatusIconProps {
@@ -22,7 +22,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status, disableSpin, ...
   switch (status) {
     case runStatus['In Progress']:
     case runStatus.Running:
-      return <SyncAltIcon {...props} className={cx({ 'fa-spin': !disableSpin })} />;
+      return <SyncAltIcon {...props} className={classnames({ 'fa-spin': !disableSpin })} />;
 
     case runStatus.Succeeded:
       return <CheckCircleIcon {...props} />;

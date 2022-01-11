@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TableVariant, Table, TableBody } from '@patternfly/react-table';
-import cx from 'classnames';
+import classnames from 'classnames';
 import './FilterTable.scss';
 
 export type FilterTableRowProps = { key: string; value: string }[];
@@ -17,14 +17,14 @@ const FilterTable: React.FC<FilterTableProps> = ({
 }) => {
   const filterRow = (key: string, value: string) => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const className = cx({ 'kn-filter-table__row--bordered': bordered });
+    const className = classnames({ 'kn-filter-table__row--bordered': bordered });
     return {
       cells: [
         {
           title: key,
           props: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            className: cx(className, { 'kn-filter-table__padding--left': paddingLeft }),
+            className: classnames(className, { 'kn-filter-table__padding--left': paddingLeft }),
           },
         },
         {

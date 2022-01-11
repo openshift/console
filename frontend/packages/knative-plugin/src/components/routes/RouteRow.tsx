@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, ExternalLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -24,7 +24,10 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
+      <TableData
+        className={classnames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

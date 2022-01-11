@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Split, SplitItem, Divider } from '@patternfly/react-core';
-import cx from 'classnames';
+import classnames from 'classnames';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { CatalogType } from '../catalog';
 import QuickSearchDetails, { DetailsRendererFunction } from './QuickSearchDetails';
@@ -40,7 +40,7 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   return (
     <Split className="ocs-quick-search-content">
       <SplitItem
-        className={cx('ocs-quick-search-content__list', {
+        className={classnames('ocs-quick-search-content__list', {
           // eslint-disable-next-line @typescript-eslint/naming-convention
           'ocs-quick-search-content__list--overflow': catalogItems.length >= limitItemCount,
         })}

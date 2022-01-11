@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
@@ -32,10 +32,10 @@ import { DiskMetadata, DiskStates, LocalVolumeDiscoveryResultKind } from './type
 export const tableColumnClasses = [
   '',
   '',
-  cx('pf-m-hidden', 'pf-m-visible-on-xl'),
-  cx('pf-m-hidden', 'pf-m-visible-on-2xl'),
-  cx('pf-m-hidden', 'pf-m-visible-on-lg'),
-  cx('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classnames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -48,7 +48,9 @@ const DiskRow: React.FC<RowFunctionArgs<DiskMetadata>> = ({ obj }) => (
     <TableData className={tableColumnClasses[0]}>{obj.path}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.status.state}</TableData>
     <TableData className={tableColumnClasses[2]}>{obj.type || '-'}</TableData>
-    <TableData className={cx(tableColumnClasses[3], 'co-break-word')}>{obj.model || '-'}</TableData>
+    <TableData className={classnames(tableColumnClasses[3], 'co-break-word')}>
+      {obj.model || '-'}
+    </TableData>
     <TableData className={tableColumnClasses[4]}>
       {humanizeBinaryBytes(obj.size).string || '-'}
     </TableData>

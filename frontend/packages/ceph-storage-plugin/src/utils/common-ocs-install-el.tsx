@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { TFunction } from 'i18next';
 import {
@@ -144,7 +144,7 @@ export const ActionAlert: React.FC<ActionAlertProps> = ({
   <WizardContextConsumer>
     {({ goToStepById }) => (
       <Alert
-        className={cx('co-alert', className)}
+        className={classnames('co-alert', className)}
         variant={variant}
         title={title}
         isInline
@@ -179,7 +179,7 @@ export const ValidationMessage: React.FC<ValidationMessageProps> = ({ className,
     actionLinkText,
   } = VALIDATIONS(validation, t);
   return actionLinkStep ? (
-    <Alert className={cx('co-alert', className)} variant={variant} title={title} isInline>
+    <Alert className={classnames('co-alert', className)} variant={variant} title={title} isInline>
       <p>{text}</p>
       {link && linkText && <Link to={link}>{linkText}</Link>}
     </Alert>

@@ -12,7 +12,7 @@ import {
   Text,
   TextVariants,
 } from '@patternfly/react-core';
-import cx from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
@@ -101,7 +101,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               id={item.uid}
               key={item.uid}
               tabIndex={-1}
-              className={cx('ocs-quick-search-list__item', {
+              className={classnames('ocs-quick-search-list__item', {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'ocs-quick-search-list__item--highlight': item.uid === selectedItemId,
               })}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import {
@@ -173,7 +173,7 @@ const TaskComponent: React.FC<TaskProps> = ({
     <text
       x={showStatusState ? 30 : width / 2}
       y={height / 2 + 1}
-      className={cx('odc-pipeline-vis-task-text', {
+      className={classnames('odc-pipeline-vis-task-text', {
         'is-text-center': !isPipelineRun,
         'is-linked': enableLogLink,
       })}
@@ -190,7 +190,7 @@ const TaskComponent: React.FC<TaskProps> = ({
         width={width}
         height={height}
         rx={15}
-        className={cx('odc-pipeline-vis-task', {
+        className={classnames('odc-pipeline-vis-task', {
           'is-selected': selected,
           'is-linked': enableLogLink,
         })}
@@ -212,7 +212,7 @@ const TaskComponent: React.FC<TaskProps> = ({
             }}
           >
             <g
-              className={cx({
+              className={classnames({
                 'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
                 'odc-pipeline-vis-task--icon-stop': status.reason !== runStatus.Running,
               })}
