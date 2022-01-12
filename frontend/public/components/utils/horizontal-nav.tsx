@@ -222,9 +222,7 @@ NavBar.displayName = 'NavBar';
 
 export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const renderContent = (routes: JSX.Element[]) => {
-    const { createRedirect, noStatusBox, obj, EmptyMsg, label } = props;
-    // Handle cases where matching Routes do not exist and show the details page instead of a blank page
-    createRedirect && routes.length >= 1 && routes.push(<Redirect to={routes[0].props.path} />);
+    const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = (
       <React.Suspense fallback={<LoadingBox />}>
         <Switch>{routes}</Switch>
@@ -331,6 +329,10 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     };
     return <Route path={path} exact key={p.nameKey || p.name} render={render} />;
   });
+  // Handle cases where matching Routes do not exist and show the details page instead of a blank page
+  if (props.createRedirect && routes.length >= 1) {
+    routes.push(<Redirect key="fallback_redirect" to={routes[0].props.path} />);
+  }
 
   return (
     <div className={classNames('co-m-page__body', props.className)}>
