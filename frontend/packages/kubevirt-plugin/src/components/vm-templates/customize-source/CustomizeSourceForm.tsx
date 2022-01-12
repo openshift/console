@@ -23,6 +23,7 @@ import { dropdownUnits } from '@console/internal/components/storage/shared';
 import {
   convertToBaseValue,
   history,
+  isUpstream,
   RequestSizeInput,
   StatusBox,
 } from '@console/internal/components/utils';
@@ -30,6 +31,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
 import {
+  KUBEVIRT_OS_IMAGES_NS,
+  OPENSHIFT_OS_IMAGES_NS,
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
   TEMPLATE_TYPE_BASE,
@@ -45,7 +48,7 @@ import useV2VConfigMap from '../../../hooks/use-v2v-config-map';
 import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
-import { DataSourceModel, VirtualMachineModel } from '../../../models/index';
+import { DataSourceModel, DataVolumeModel, VirtualMachineModel } from '../../../models/index';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getAnnotation } from '../../../selectors/selectors';
 import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
@@ -55,6 +58,7 @@ import { getCPU } from '../../../selectors/vm/selectors';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../../statuses/template/types';
 import { DataSourceKind, VMKind } from '../../../types';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { validateVmLikeEntityName } from '../../../utils/validations';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormRow } from '../../form/form-row';
@@ -135,9 +139,21 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
       : undefined,
   );
 
+  const dataSourceNS = React.useMemo(
+    () => (isUpstream() ? KUBEVIRT_OS_IMAGES_NS : OPENSHIFT_OS_IMAGES_NS),
+    [],
+  );
+
+  const [dataVolumes, dvLoaded] = useK8sWatchResource<V1alpha1DataVolume[]>({
+    kind: kubevirtReferenceForModel(DataVolumeModel),
+    isList: true,
+    namespace: dataSourceNS,
+  });
+
   const [dataSources, dataSourcesLoaded] = useK8sWatchResource<DataSourceKind[]>({
     kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
+    namespace: dataSourceNS,
   });
 
   React.useEffect(() => {
@@ -164,7 +180,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
   const sourceStatus = getTemplateSourceStatus({
     template: selectedTemplate,
     pvcs: template?.isCommon ? baseImages : pvcs,
-    dataVolumes: [],
+    dataVolumes,
     pods: [],
     dataSources,
   });
@@ -272,7 +288,8 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
               pvcsLoaded &&
               loadvmWithCutomBootSource &&
               V2VConfigMapImagesLoaded &&
-              dataSourcesLoaded
+              dataSourcesLoaded &&
+              dvLoaded
             }
             loadError={loadError || error || pvcsError || vmWithCustomBootSourceError}
             data={selectedTemplate}
