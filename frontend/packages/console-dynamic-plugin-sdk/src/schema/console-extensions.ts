@@ -18,7 +18,10 @@ import {
   DashboardsOverviewHealthOperator,
   DashboardsInventoryItemGroup,
   DashboardsOverviewInventoryItem,
+  DashboardsOverviewInventoryItemReplacement,
+  DashboardsProjectOverviewInventoryItem,
   DashboardsOverviewResourceActivity,
+  DashboardsOverviewPrometheusActivity,
 } from '../extensions/dashboards';
 import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
 import { FileUpload } from '../extensions/file-upload';
@@ -97,7 +100,10 @@ export type SupportedExtension =
   | DashboardsOverviewHealthOperator
   | DashboardsInventoryItemGroup
   | DashboardsOverviewInventoryItem
+  | DashboardsOverviewInventoryItemReplacement
+  | DashboardsProjectOverviewInventoryItem
   | DashboardsOverviewResourceActivity
+  | DashboardsOverviewPrometheusActivity
   | TopologyComponentFactory
   | TopologyCreateConnector
   | TopologyDataModelFactory
