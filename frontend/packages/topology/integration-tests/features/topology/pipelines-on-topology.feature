@@ -3,7 +3,7 @@ Feature: Improve the integration of Pipelines & Builds.
               As a user, I want to see pipelines instead of build
 
         Background:
-            Given user has installed OpenShift Pipelines operator using cli
+            Given user has installed OpenShift Pipelines Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-topology"
 
@@ -125,3 +125,16 @@ Feature: Improve the integration of Pipelines & Builds.
                   | resource_type     | workload_name   | builder_image1 | builder_image2 |
                   | deployment        | nodejs-ex-git-1 | Node.js        | Nginx          |
                   | deployment config | django-ex.git-1 | Python         | Httpd          |
+
+
+        @regression @odc-6375
+        Scenario Outline: Topology sidebar has Triggers section in Resources tab: T-01-TC10
+            Given user has created workload "<workload_name>" with resource type "<resource_type>" with pipeline
+             When user navigates to Topology page
+              And user clicks on workload "<workload_name>" to open sidebar
+             Then user can see "Triggers" section in Resources tab
+
+        Examples:
+                  | resource_type     | workload_name   |
+                  | deployment        | nodejs-ex-git-1 |
+                  | deployment config | dancer-ex-git-1 |
