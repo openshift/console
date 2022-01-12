@@ -1,8 +1,19 @@
 import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
+import i18next from 'i18next';
 import * as _ from 'lodash';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import {
+  alertingErrored,
+  alertingLoaded,
+  alertingLoading,
+} from '@console/internal/actions/observe';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { ALERTMANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
   StateCounts,
   Severity,
@@ -10,7 +21,7 @@ import {
   severityRowFilter,
   alertStateFilter,
 } from '@console/internal/components/monitoring/alerting';
-import { Alert, Rule, AlertStates } from '@console/internal/components/monitoring/types';
+import { Alert, Rule, AlertStates, Silence } from '@console/internal/components/monitoring/types';
 import {
   alertDescription,
   alertState,
@@ -19,11 +30,15 @@ import {
   labelsToParams,
 } from '@console/internal/components/monitoring/utils';
 import { Kebab } from '@console/internal/components/utils';
+import {
+  URL_POLL_DEFAULT_DELAY,
+  useURLPoll,
+} from '@console/internal/components/utils/url-poll-hook';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import SilenceAlert from './SilenceAlert';
 
 const viewAlertRule = (rule: Rule, ns: string) => ({
-  label: 'View Alerting Rule',
+  label: i18next.t('devconsole~View Alerting Rule'),
   href: `/dev-monitoring/ns/${ns}/rules/${rule.id}`,
 });
 
@@ -128,4 +143,32 @@ export const applyListSort = (rules: Rule[], orderBy: SortByDirection, func: str
     return setOrderBy(orderBy, sorted);
   }
   return rules;
+};
+
+export const useAlertManagerSilencesDispatch = ({ namespace }) => {
+  const url = `${ALERTMANAGER_TENANCY_BASE_PATH}/api/v2/silences?namespace=${namespace}`;
+  const [response, loadError, loading] = useURLPoll<Silence[]>(
+    url,
+    URL_POLL_DEFAULT_DELAY,
+    namespace,
+  );
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if (loadError) {
+      dispatch(alertingErrored('silences', loadError));
+    } else if (loading) {
+      dispatch(alertingLoading('silences'));
+    } else {
+      const silencesWithAlertsName = _.map(response, (s: Silence) => {
+        const alertName = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
+        return {
+          ...s,
+          name:
+            alertName ||
+            s.matchers.map((m) => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`).join(', '),
+        };
+      });
+      dispatch(alertingLoaded('silences', silencesWithAlertsName));
+    }
+  }, [dispatch, loadError, loading, response]);
 };
