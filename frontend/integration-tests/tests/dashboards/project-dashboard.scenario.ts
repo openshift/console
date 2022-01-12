@@ -197,28 +197,34 @@ describe('Project Dashboard', () => {
     });
 
     it('shows Resource Quotas', async () => {
-      expect(projectDashboardView.resourceQuotasCard.isDisplayed()).toBe(true);
-      expect(projectDashboardView.resourceQuotasCard.$('.pf-c-card__body').getText()).toEqual(
-        'No ResourceQuotas\nNo AppliedClusterResourceQuotas',
-      );
+      let isDisplayed = await projectDashboardView.resourceQuotasCard.isDisplayed();
+      expect(isDisplayed).toBe(true);
+
+      let resourceQuotaText = await projectDashboardView.resourceQuotasCard
+        .$('.pf-c-card__body')
+        .getText();
+      expect(resourceQuotaText).toEqual('No ResourceQuotas\nNo AppliedClusterResourceQuotas');
       createResource(resourceQuota);
       addLeakableResource(leakedResources, resourceQuota);
 
       await browser.wait(
         until.presenceOf(projectDashboardView.resourceQuotasCard.$('.co-resource-item')),
       );
-      expect(
-        projectDashboardView.resourceQuotasCard
-          .$('.co-resource-item')
-          .$('a')
-          .getText(),
-      ).toEqual(resourceQuota.metadata.name);
+
+      resourceQuotaText = await projectDashboardView.resourceQuotasCard
+        .$('.co-resource-item')
+        .$('a')
+        .getText();
+      expect(resourceQuotaText).toEqual(resourceQuota.metadata.name);
+
       await browser.wait(
         until.presenceOf(projectDashboardView.resourceQuotasCard.$('.co-resource-quota-chart-row')),
       );
-      expect(
-        projectDashboardView.resourceQuotasCard.$('.co-resource-quota-chart-row').isDisplayed(),
-      ).toBe(true);
+
+      isDisplayed = await projectDashboardView.resourceQuotasCard
+        .$('.co-resource-quota-chart-row')
+        .isDisplayed();
+      expect(isDisplayed).toBe(true);
     });
   });
 });
