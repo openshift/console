@@ -1,10 +1,16 @@
 import * as _ from 'lodash-es';
 import { plural } from 'pluralize';
+import i18next, { TFunction } from 'i18next';
 
 import { K8sKind, K8sVerb } from '../../module/k8s';
 import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import {
+  getTranslationKey,
+  isTranslatableString,
+  translateExtension,
+} from '@console/plugin-sdk/src/utils/extension-i18n';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { fetchURL } from '../../graphql/client';
 import { pluginStore } from '../../plugins';
@@ -96,7 +102,10 @@ export const getModelExtensionMetadata = (
   version?: string,
   kind?: string,
 ) => {
-  const groupVersionKindMetadata = extensions
+  const tcb: TFunction = (value: string) =>
+    isTranslatableString(value) ? i18next.t(getTranslationKey(value)) : value;
+  const translatedExtensions = extensions.map((e) => translateExtension(e, tcb));
+  const groupVersionKindMetadata = translatedExtensions
     .filter(
       ({ properties }) =>
         properties.model.group === group &&
@@ -104,7 +113,7 @@ export const getModelExtensionMetadata = (
         properties.model.version === version,
     )
     .map((e) => e.properties);
-  const groupKindMetadata = extensions
+  const groupKindMetadata = translatedExtensions
     .filter(
       ({ properties }) =>
         properties.model.version == null &&
@@ -112,7 +121,7 @@ export const getModelExtensionMetadata = (
         properties.model.kind === kind,
     )
     .map((e) => e.properties);
-  const groupMetadata = extensions
+  const groupMetadata = translatedExtensions
     .filter(
       ({ properties }) =>
         properties.model.kind == null &&
