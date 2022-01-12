@@ -15,11 +15,17 @@ import { BaseService } from './base-service';
 export class BitbucketService extends BaseService {
   private readonly metadata: RepoMetadata;
 
-  private readonly baseURL = 'https://api.bitbucket.org/2.0';
+  private baseURL = 'https://api.bitbucket.org/2.0';
+
+  private isServer = false;
 
   constructor(gitsource: GitSource) {
     super(gitsource);
     this.metadata = this.getRepoMetadata();
+    if (this.metadata.host !== 'bitbucket.org') {
+      this.baseURL = `https://${this.metadata.host}/rest/api/1.0`;
+      this.isServer = true;
+    }
   }
 
   protected getAuthProvider = (): any => {
@@ -61,7 +67,9 @@ export class BitbucketService extends BaseService {
   };
 
   isRepoReachable = async (): Promise<RepoStatus> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
+    const url = this.isServer
+      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}`
+      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
     try {
       const data = await this.fetchJson(url);
       if (data.slug === this.metadata.repoName) {
@@ -76,7 +84,9 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoBranchList = async (): Promise<BranchList> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/refs/branches`;
+    const url = this.isServer
+      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/branches`
+      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/refs/branches`;
     try {
       const data = await this.fetchJson(url);
       const list = data.values.map((b) => b.name);
@@ -87,10 +97,12 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoFileList = async (): Promise<RepoFileList> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}?pagelen=50`;
+    const url = this.isServer
+      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/files/${this.metadata.contextDir}?limit=50&at=${this.metadata.defaultBranch}`
+      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}?pagelen=50`;
     try {
       const data = await this.fetchJson(url);
-      const files = data.values?.map((f) => f.path) || [];
+      const files = this.isServer ? data.values : data.values?.map((f) => f.path) || [];
       return { files };
     } catch (e) {
       return { files: [] };
@@ -98,7 +110,9 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoLanguageList = async (): Promise<RepoLanguageList> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
+    const url = this.isServer
+      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}`
+      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
     try {
       const data = await this.fetchJson(url);
       return { languages: [data.language] };
@@ -108,7 +122,10 @@ export class BitbucketService extends BaseService {
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${path}`;
+    const filePath = path.replace(/^\//, '');
+    const url = this.isServer
+      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/raw/${filePath}?at=${this.metadata.defaultBranch}`
+      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${filePath}`;
     try {
       await this.fetchJson(url);
       return true;
@@ -118,7 +135,10 @@ export class BitbucketService extends BaseService {
   };
 
   getFileContent = async (path: string): Promise<string | null> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${path}`;
+    const filePath = path.replace(/^\//, '');
+    const url = this.isServer
+      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/raw/${filePath}?at=${this.metadata.defaultBranch}`
+      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${filePath}`;
     try {
       const data = await this.fetchJson(url);
       return data as string;
