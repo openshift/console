@@ -94,6 +94,25 @@ Finally run the console and visit [localhost:9000](http://localhost:9000):
 ./examples/run-bridge.sh
 ```
 
+#### CodeReady Containers
+
+If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/crc/#setting-up-codeready-containers_gsg), and the [OpenShift cluster is started](https://crc.dev/crc/#starting-the-virtual-machine_gsg).
+
+To login to the cluster's API server, you can use the following command:
+
+```shell
+oc login -u kubeadmin -p $(cat ~/.crc/machines/crc/kubeadmin-password) https://api.crc.testing:6443
+```
+
+&hellip; or, alternatively, use the CRC daemon UI (*Copy OC Login Command --> kubeadmin*) to get the cluster-specific command.
+
+Finally, prepare the environment, and run the console:
+
+```shell
+source ./contrib/environment.sh
+./bin/bridge
+```
+
 #### Native Kubernetes
 
 If you have a working `kubectl` on your path, you can run the application with:
@@ -121,26 +140,6 @@ kubectl describe secrets/<secret-id-obtained-previously>
 ```
 
 Use this token value to set the `BRIDGE_K8S_AUTH_BEARER_TOKEN` environment variable when running Bridge.
-
-#### CodeReady Containers
-
-If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/crc/#setting-up-codeready-containers_gsg), and the [OpenShift cluster is started](https://crc.dev/crc/#starting-the-virtual-machine_gsg).
-
-To login to the cluster's API server, you can use the following command:
-
-```shell
-oc login -u kubeadmin -p $(cat ~/.crc/machines/crc/kubeadmin-password) https://api.crc.testing:6443
-```
-
-&hellip; or, alternatively, use the CRC daemon UI (*Copy OC Login Command --> kubeadmin*) to get the cluster-specific command.
-
-Finally, prepare the environment, and run the console:
-
-```shell
-source ./contrib/environment.sh
-./bin/bridge
-```
-
 
 ## Operator
 
