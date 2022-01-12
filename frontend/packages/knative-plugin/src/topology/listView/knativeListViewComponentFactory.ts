@@ -9,6 +9,7 @@ import {
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_KNATIVE_REVISION,
   TYPE_EVENT_SOURCE_KAFKA,
+  TYPE_EVENT_SINK_LINK,
 } from '../const';
 import { KnativeRevisionListViewNode } from './KnativeRevisionListViewNode';
 import { KnativeServiceListViewNode } from './KnativeServiceListViewNode';
@@ -34,6 +35,7 @@ export const knativeListViewNodeComponentFactory = (
     case TYPE_EVENT_PUB_SUB_LINK:
     case TYPE_EVENT_SOURCE:
     case TYPE_EVENT_SOURCE_LINK:
+    case TYPE_EVENT_SINK_LINK:
     case TYPE_EVENT_PUB_SUB:
     case TYPE_EVENT_SOURCE_KAFKA:
       return NoStatusListViewNode;

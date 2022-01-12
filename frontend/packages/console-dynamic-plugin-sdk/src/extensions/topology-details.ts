@@ -151,9 +151,10 @@ export type DetailsResourceAlertContent = {
   actionLinks?: React.ReactNode;
 };
 
-export type AdapterDataType<D = {}> = {
+export type AdapterDataType<D = {}, T = {}> = {
   resource: K8sResourceCommon;
-  provider: (resource: K8sResourceCommon) => D;
+  data?: T;
+  provider: (resource: K8sResourceCommon, data?: T) => D;
 };
 
 export type PodsAdapterDataType<E = K8sResourceCommon> = {

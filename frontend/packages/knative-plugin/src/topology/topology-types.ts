@@ -5,6 +5,7 @@ import { KnativeItem } from '../utils/get-knative-resources';
 
 export enum NodeType {
   EventSource = 'event-source',
+  EventSink = 'event-sink',
   KnService = 'knative-service',
   Revision = 'knative-revision',
   PubSub = 'event-pubsub',
@@ -16,8 +17,14 @@ export enum NodeType {
 export enum EdgeType {
   Traffic = 'revision-traffic',
   EventSource = 'event-source-link',
+  EventSink = 'event-sink-link',
   EventPubSubLink = 'event-pubsub-link',
   EventSourceKafkaLink = 'event-source-kafka-link',
+}
+
+export enum KameletType {
+  Sink = 'Sink',
+  Source = 'Source',
 }
 
 export type RevK8sResourceKind = K8sResourceKind & {

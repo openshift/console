@@ -1,8 +1,10 @@
 import { DEFAULT_GROUP_PAD, GROUP_WIDTH } from '@console/topology/src/const';
 
 export const TYPE_EVENT_SOURCE = 'event-source';
+export const TYPE_EVENT_SINK = 'event-sink';
 export const TYPE_EVENT_SOURCE_KAFKA = 'event-source-kafka';
 export const TYPE_EVENT_SOURCE_LINK = 'event-source-link';
+export const TYPE_EVENT_SINK_LINK = 'event-sink-link';
 export const TYPE_KAFKA_CONNECTION_LINK = 'event-source-kafka-link';
 export const TYPE_EVENT_PUB_SUB = 'event-pubsub';
 export const TYPE_EVENT_PUB_SUB_LINK = 'event-pubsub-link';

@@ -13,6 +13,7 @@ export {
   getKnativeSidepanelRoutesSection,
   getKnativeSidepanelPodsAdapterSection,
   getKnativeSidepanelEventSourcesSection,
+  getKnativeSidePanelEventSinkDetailsTab,
 } from './knative-common-tab-sections';
 
 export {
@@ -26,3 +27,8 @@ export {
 } from './knative-eventsource-tab-sections';
 
 export { getKnativeConnectorSidepanelResourceSection } from './knative-connectors-tab-sections';
+
+export {
+  getKnativeSidepanelEventSinkSection,
+  getEventSinkPodsApdapter,
+} from './knative-resource-tab-sections';

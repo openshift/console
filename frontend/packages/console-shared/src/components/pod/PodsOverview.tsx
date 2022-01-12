@@ -135,7 +135,7 @@ type PodOverviewItemProps = {
 const PodsOverviewList: React.FC<PodOverviewListProps> = ({ pods }) => (
   <ul className="list-group">
     {_.map(pods, (pod) => (
-      <PodOverviewItem key={pod.metadata.uid} pod={pod} />
+      <PodOverviewItem key={pod.metadata?.uid} pod={pod} />
     ))}
   </ul>
 );

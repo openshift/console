@@ -29,8 +29,11 @@ import {
   TYPE_SINK_URI,
   TYPE_EVENT_SOURCE_KAFKA,
   TYPE_KAFKA_CONNECTION_LINK,
+  TYPE_EVENT_SINK,
+  TYPE_EVENT_SINK_LINK,
 } from '../const';
 import EventingPubSubLink from './edges/EventingPubSubLink';
+import EventSinkLink from './edges/EventSinkLink';
 import EventSourceLink from './edges/EventSourceLink';
 import KafkaConnectionLink from './edges/KafkaConnectionLink';
 import TrafficLink from './edges/TrafficLink';
@@ -48,6 +51,7 @@ import {
   kafkaSourceCreateConnectorCallback,
 } from './knativeComponentUtils';
 import EventingPubSubNode from './nodes/EventingPubSubNode';
+import EventSink from './nodes/EventSink';
 import EventSource from './nodes/EventSource';
 import RevisionNode from './nodes/RevisionNode';
 import SinkUriNode from './nodes/SinkUriNode';
@@ -95,6 +99,12 @@ export const getKnativeComponentFactory = (
           ),
         ),
       );
+    case TYPE_EVENT_SINK:
+      return withEditReviewAccess('patch')(
+        withDragNode(nodeDragSourceSpec(type))(
+          withSelection({ controlled: true })(withContextMenu(contextMenuActions)(EventSink)),
+        ),
+      );
     case TYPE_EVENT_PUB_SUB:
       return withCreateConnector(createConnectorCallback(), CreateConnector, '', {
         dragOperation,
@@ -129,6 +139,8 @@ export const getKnativeComponentFactory = (
       return TrafficLink;
     case TYPE_EVENT_SOURCE_LINK:
       return withTargetDrag(eventSourceLinkDragSourceSpec())(EventSourceLink);
+    case TYPE_EVENT_SINK_LINK:
+      return EventSinkLink;
     case TYPE_EVENT_SOURCE_KAFKA:
       return withCreateConnector(kafkaSourceCreateConnectorCallback, CreateConnector, '', {
         dragOperation: dragOperationKafka,

@@ -1,6 +1,10 @@
 import { Model, NodeShape } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import {
+  getKameletSinkAndSourceBindings,
+  isOperatorBackedKnResource,
+  isOperatorBackedKnSinkService,
+} from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/shared/src';
 import { TYPE_APPLICATION_GROUP } from '../const';
@@ -56,7 +60,7 @@ export const operatorsDataModelReconciler = (
     return;
   }
   const defaultIcon = getImageForIconClass(`icon-openshift`);
-
+  const { camelSinkKameletBindings } = getKameletSinkAndSourceBindings(resources);
   const obsGroupNodes: OdcNodeModel[] = [];
   installedOperators.forEach((csv) => {
     const crds = csv?.spec?.customresourcedefinitions?.owned ?? [];
@@ -69,6 +73,11 @@ export const operatorsDataModelReconciler = (
 
       // Hide operator backed if belong to source
       if (resources && isOperatorBackedKnResource(resource, resources)) {
+        return groupNodes;
+      }
+
+      // Hide operator backed if belong to sink
+      if (resources && isOperatorBackedKnSinkService(resource, camelSinkKameletBindings)) {
         return groupNodes;
       }
 

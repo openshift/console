@@ -40,6 +40,7 @@ const PodsTabSection: React.FC<{ element: GraphElement; renderNull: () => null }
       {podAdapterExtensionResolved && (
         <ResolveAdapter<PodsAdapterDataType<PodKind>>
           resource={podAdapter.resource}
+          data={podAdapter.data}
           useAdapterHook={podAdapter.provider}
           onAdapterDataResolved={handleAdapterResolved}
         />

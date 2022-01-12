@@ -26,6 +26,7 @@ import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_REVISION_TRAFFIC,
   TYPE_KAFKA_CONNECTION_LINK,
+  TYPE_EVENT_SINK,
 } from '../topology/const';
 import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
 import { AddBrokerAction } from './add-broker';
@@ -273,4 +274,21 @@ export const topologyServerlessActionsFilter = (
     return false;
   }
   return true;
+};
+
+export const useKnativeEventSinkActionProvider = (element: Node) => {
+  const resource = element.getData()?.resources?.obj;
+  const type = element.getType();
+  const [k8sModel] = useK8sModel(referenceFor(resource));
+  const actions = React.useMemo(() => {
+    if (type !== TYPE_EVENT_SINK) return undefined;
+    return k8sModel && resource ? getCommonResourceActions(k8sModel, resource) : undefined;
+  }, [type, k8sModel, resource]);
+
+  return React.useMemo(() => {
+    if (!actions) {
+      return [[], true, undefined];
+    }
+    return [actions, true, undefined];
+  }, [actions]);
 };

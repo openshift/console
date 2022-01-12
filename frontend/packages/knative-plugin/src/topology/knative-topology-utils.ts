@@ -8,6 +8,7 @@ import {
   K8sResourceKind,
   apiVersionForModel,
   referenceFor,
+  referenceForModel,
   modelFor,
   k8sUpdate,
   kindForReference,
@@ -60,6 +61,7 @@ import {
   KnativeServiceOverviewItem,
   KnativeDeploymentOverviewItem,
   KnativeTopologyDataObject,
+  KameletType,
 } from './topology-types';
 
 export const getKnNodeModelProps = (type: string) => {
@@ -742,6 +744,32 @@ const getEventSourcesData = (sinkUri: string, resources) => {
 };
 
 const getApiGroup = (apiVersion: string) => groupVersionFor(apiVersion)?.group;
+
+export const getEventSinkTopologyEdgeItems = (resource: K8sResourceKind, resources) => {
+  const uid = resource?.metadata?.uid;
+  const target = resource?.spec?.source?.ref;
+  let sinkTarget;
+  const targetRef = referenceFor(target);
+  if (target?.kind === EventingBrokerModel.kind) {
+    sinkTarget = resources.brokers.data.find((broker) => broker.metadata.name === target.name);
+  } else {
+    sinkTarget = resources[targetRef].data.find((res) => res.metadata.name === target.name);
+  }
+
+  if (sinkTarget) {
+    return [
+      {
+        id: `${uid}_${sinkTarget.metadata.uid}`,
+        type: EdgeType.EventSink,
+        label: i18next.t('knative-plugin~Event sink connector'),
+        target: sinkTarget.metadata.uid,
+        source: uid,
+      },
+    ];
+  }
+  return [];
+};
+
 /**
  * Form Edge data for event sources
  */
@@ -1018,6 +1046,29 @@ const getOwnedEventSourceData = (
   };
 };
 
+const getOwnedEventSinkData = (resource: K8sResourceKind, data: TopologyDataObject, resources) => {
+  const ownedIntegrationData = getOwnedResources(resource, resources.integrations.data);
+  const ownedServiceData = getOwnedResources(ownedIntegrationData[0], resources.ksservices.data);
+  const ownedDeploymentData = getOwnedResources(
+    ownedIntegrationData[0],
+    resources.deployments.data,
+  );
+  let knServiceData = {};
+  if (ownedServiceData.length > 0) {
+    knServiceData = getKnativeServiceData(ownedServiceData[0], resources);
+  }
+  return {
+    ...data,
+    resources: {
+      ...data.resources,
+      integrations: ownedIntegrationData,
+      services: ownedServiceData,
+      deployments: ownedDeploymentData,
+      ...knServiceData,
+    },
+  };
+};
+
 const sinkURIDataModel = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
@@ -1064,6 +1115,40 @@ const sinkURIDataModel = (
   knDataModel.edges.push(...getEventTopologyEdgeItems(resource, resources.brokers));
 };
 
+export const createEventSinkTopologyNodeData = (
+  resource: K8sResourceKind,
+  overviewItem: OverviewItem,
+  type: string,
+  defaultIcon: string,
+  operatorBackedService: boolean = false,
+): TopologyDataObject => {
+  const { monitoringAlerts = [] } = overviewItem;
+  const dcUID = _.get(resource, 'metadata.uid');
+  const deploymentsLabels = _.get(resource, 'metadata.labels', {});
+  const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
+
+  const builderImageIcon =
+    getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+    getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
+  return {
+    id: dcUID,
+    name: resource?.metadata.name || deploymentsLabels['app.kubernetes.io/instance'],
+    type,
+    resource,
+    resources: { ...overviewItem, isOperatorBackedService: operatorBackedService },
+    data: {
+      monitoringAlerts,
+      kind: referenceFor(resource),
+      editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
+      vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
+      vcsRef: deploymentsAnnotations['app.openshift.io/vcs-ref'],
+      builderImage: builderImageIcon || defaultIcon,
+      isKnativeResource: type === NodeType.EventSink,
+      kameletType: KameletType.Sink,
+    },
+  };
+};
+
 export const transformKnNodeData = (
   knResourcesData: K8sResourceKind[],
   type: string,
@@ -1074,6 +1159,20 @@ export const transformKnNodeData = (
   _.forEach(knResourcesData, (res) => {
     const item = createKnativeDeploymentItems(res, resources, utils);
     switch (type) {
+      case NodeType.EventSink: {
+        const data = createEventSinkTopologyNodeData(
+          res,
+          item,
+          type,
+          getImageForIconClass(`icon-openshift`),
+        );
+        const itemData = getOwnedEventSinkData(res, data, resources);
+        knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
+        knDataModel.edges.push(...getEventSinkTopologyEdgeItems(res, resources));
+        const newGroup = getTopologyGroupItems(res);
+        mergeGroup(newGroup, knDataModel.nodes);
+        break;
+      }
       case NodeType.EventSource: {
         const data = createTopologyNodeData(
           res,
@@ -1081,6 +1180,12 @@ export const transformKnNodeData = (
           type,
           getImageForIconClass(`icon-openshift`),
         );
+        if (referenceFor(res) === referenceForModel(CamelKameletBindingModel)) {
+          data.data = {
+            ...data.data,
+            kameletType: KameletType.Source,
+          };
+        }
         if (!(res.kind === EVENT_SOURCE_SINK_BINDING_KIND && res.metadata?.ownerReferences)) {
           const itemData = getOwnedEventSourceData(res, data, resources);
           knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
@@ -1200,6 +1305,38 @@ export const isOperatorBackedKnResource = (
 ) => {
   const eventSourceProps = getDynamicEventSourcesModelRefs();
   return !!_.find(getKnativeDynamicResources(resources, eventSourceProps), (evsrc) =>
+    obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
+  );
+};
+
+export const getKameletSinkAndSourceBindings = (resources) => {
+  const camelKameletBindingResources: K8sResourceKind[] = resources?.kameletbindings?.data ?? [];
+  const camelKameletResources: K8sResourceKind[] =
+    resources?.kamelets.data.length > 0
+      ? resources?.kamelets?.data
+      : resources?.kameletGlobalNS?.data ?? [];
+  const sinkCamelKameletResources: K8sResourceKind[] = camelKameletResources.filter(
+    (camelKamelet) => camelKamelet.metadata.labels['camel.apache.org/kamelet.type'] === 'sink',
+  );
+  return camelKameletBindingResources.reduce(
+    ({ camelSinkKameletBindings: sink, camelSourceKameletBindings: source }, binding) => {
+      const sinkResource = binding.spec.sink.ref.name;
+      sinkCamelKameletResources.findIndex(
+        (kameletSink) => kameletSink.metadata.name === sinkResource,
+      ) > -1
+        ? sink.push(binding)
+        : source.push(binding);
+      return { camelSinkKameletBindings: sink, camelSourceKameletBindings: source };
+    },
+    { camelSinkKameletBindings: [], camelSourceKameletBindings: [] },
+  );
+};
+
+export const isOperatorBackedKnSinkService = (
+  obj: K8sResourceKind,
+  knEventSinks: K8sResourceKind[],
+) => {
+  return !!_.find(knEventSinks, (evsrc) =>
     obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
   );
 };
