@@ -57,7 +57,9 @@ export const mapMetrics = (response: PrometheusResponse): Metrics => {
 // An error occurred while requesting Insights results (e.g. IO is turned off)
 export const isError = (values: Metrics) => _.isEmpty(values);
 
-/* Insights Operator is disabled (e.g. pull-secret is removed) or has been
-   just initialized and waiting for the first results. */
-export const isWaitingOrDisabled = (values: Metrics) =>
+// Insights Operator has been just initialized and waiting for the first results
+export const isWaiting = (values: Metrics) =>
   Object.values(values).some((cur: number) => cur === -1);
+
+// Insights Operator is disabled by removing the pull secret
+export const isDisabled = (response) => !!parseInt(response?.data?.result?.[0]?.value?.[1], 10);
