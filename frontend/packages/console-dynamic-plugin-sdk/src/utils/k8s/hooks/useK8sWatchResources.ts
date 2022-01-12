@@ -132,8 +132,8 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resourceK8sSelector = React.useMemo(
     () =>
       resourceK8sSelectorCreator(
-        (state: OpenShiftReduxRootState) => state.sdkK8s,
-        (sdkK8s) => sdkK8s,
+        (state: OpenShiftReduxRootState) => state.k8s,
+        (k8s) => k8s,
       ),
     [resourceK8sSelectorCreator],
   );

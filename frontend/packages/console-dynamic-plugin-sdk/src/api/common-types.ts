@@ -1,3 +1,5 @@
+import { Extension } from '../types';
+
 export { ResolvedExtension } from '../types';
 
 // Type for extension hook
@@ -183,3 +185,32 @@ export type Rule = PrometheusRule & {
 
 export type PrometheusLabels = { [key: string]: string };
 export type PrometheusValue = [number, string];
+
+export type DiscoveryResources = {
+  adminResources: string[];
+  allResources: string[];
+  configResources: K8sKind[];
+  clusterOperatorConfigResources: K8sKind[];
+  models: K8sKind[];
+  namespacedSet: Set<string>;
+  safeResources: string[];
+  groupVersionMap: {
+    [key: string]: {
+      versions: string[];
+      preferredVersion: string;
+    };
+  };
+};
+
+export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
+
+namespace ExtensionProperties {
+  export interface ModelDefinition {
+    /** Additional Kubernetes model definitions to register with Console. */
+    models: K8sModel[];
+  }
+}
+
+export interface ModelDefinition extends AlwaysOnExtension<ExtensionProperties.ModelDefinition> {
+  type: 'ModelDefinition';
+}

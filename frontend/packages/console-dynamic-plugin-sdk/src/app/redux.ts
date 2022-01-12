@@ -9,5 +9,5 @@ import sdkK8sReducers from './k8s/reducers/k8s';
  */
 export const SDKReducers = Object.freeze({
   sdkCore: coreReducer,
-  sdkK8s: sdkK8sReducers,
+  k8s: sdkK8sReducers,
 });

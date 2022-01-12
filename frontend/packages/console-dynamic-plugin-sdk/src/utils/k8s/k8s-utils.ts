@@ -1,8 +1,18 @@
+import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
+import * as staticModels from '@console/internal/models';
+import {
+  K8sModel,
+  MatchExpression,
+  MatchLabels,
+  ModelDefinition,
+  Selector,
+} from '../../api/common-types';
 import { Options } from '../../api/internal-types';
-import { QueryParams } from '../../extensions/console-types';
+import { QueryParams, K8sResourceKindReference } from '../../extensions/console-types';
+import { Extension } from '../../types';
 import { k8sBasePath } from './k8s';
+import { getReferenceForModel } from './k8s-ref';
 import { WSFactory, WSOptions } from './ws-factory';
 
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }: K8sModel): string => {
@@ -165,4 +175,83 @@ export const k8sWatch = (
   const path = resourceURL(kind, opts);
   wsOptionsUpdated.path = path;
   return new WSFactory(path, wsOptionsUpdated as WSOptions);
+};
+
+interface PluginStore {
+  getExtensionsInUse: () => Extension[];
+}
+
+let pluginStore: PluginStore;
+
+export const setPluginStore = (store: PluginStore): void => {
+  pluginStore = store;
+};
+
+const modelKey = (model: K8sModel): string => {
+  // TODO: Use `referenceForModel` even for known API objects
+  return model.crd ? getReferenceForModel(model) : model.kind;
+};
+
+export const modelsToMap = (
+  models: K8sModel[],
+): ImmutableMap<K8sResourceKindReference, K8sModel> => {
+  return ImmutableMap<K8sResourceKindReference, K8sModel>().withMutations((map) => {
+    models.forEach((model) => map.set(modelKey(model), model));
+  });
+};
+
+export const isModelDefinition = (e: Extension): e is ModelDefinition => {
+  return e.type === 'ModelDefinition';
+};
+
+/**
+ * Contains static resource definitions for Kubernetes objects.
+ * Keys are of type `group:version:Kind`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).
+ */
+let k8sModels;
+
+const getK8sModels = () => {
+  if (!k8sModels) {
+    k8sModels = modelsToMap(_.values(staticModels));
+
+    const hasModel = (model: K8sModel) => k8sModels.has(modelKey(model));
+
+    k8sModels = k8sModels.withMutations((map) => {
+      const pluginModels = _.flatMap(
+        pluginStore
+          .getExtensionsInUse()
+          .filter(isModelDefinition)
+          .map((md) => md.properties.models),
+      );
+      map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
+    });
+  }
+  return k8sModels;
+};
+
+// URL routes that can be namespaced
+let namespacedResources;
+
+/**
+ * Provides a synchronous way to acquire all statically-defined Kubernetes models.
+ * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
+ */
+export const allModels = getK8sModels;
+
+export const getNamespacedResources = () => {
+  if (!namespacedResources) {
+    namespacedResources = new Set();
+    allModels().forEach((v, k) => {
+      if (!v.namespaced) {
+        return;
+      }
+      if (v.crd) {
+        namespacedResources.add(k);
+      }
+      if (!v.crd || v.legacyPluralURL) {
+        namespacedResources.add(v.plural);
+      }
+    });
+  }
+  return namespacedResources;
 };

@@ -308,6 +308,40 @@ describe('resolveExtension', () => {
     });
   });
 
+  it('logs a warning if the referenced object resolves to null or undefined', async () => {
+    const extensions: Extension[] = [
+      {
+        type: 'Foo',
+        properties: {
+          test: true,
+          qux: getExecutableCodeRefMock(null),
+        },
+      },
+      {
+        type: 'Bar',
+        properties: {
+          test: [1],
+          baz: { test: getExecutableCodeRefMock(undefined) },
+        },
+      },
+    ];
+
+    expect((await resolveExtension(extensions[0])).properties).toHaveProperty('qux', null);
+
+    expect(consoleMock).toHaveBeenLastCalledWith(
+      "Code reference property 'qux' resolved to null or undefined",
+    );
+
+    expect((await resolveExtension(extensions[1])).properties).toHaveProperty(
+      'baz.test',
+      undefined,
+    );
+
+    expect(consoleMock).toHaveBeenLastCalledWith(
+      "Code reference property 'test' resolved to null or undefined",
+    );
+  });
+
   it('returns the same extension instance', async () => {
     const extensions: Extension[] = [
       {

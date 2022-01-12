@@ -1,24 +1,22 @@
 reviewers:
   - mareklibra
   - rawagner
-  - suomiy
   - vojtechszocs
   - pcbailey
   - jelkosz
-  - rhrazdil
   - yaacov
   - glekner
-  - irosenzw
   - gouyang
+  - metalice
+  - avivtur
 approvers:
   - mareklibra
   - rawagner
-  - suomiy
   - jelkosz
-  - rhrazdil
   - yaacov
   - glekner
   - pcbailey
-  - irosenzw
+  - metalice
+  - avivtur
 labels:
   - component/kubevirt

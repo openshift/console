@@ -35,8 +35,8 @@ import {
 } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
-  ProjectDashboardInventoryItem as DynamicProjectDashboardInventoryItem,
-  isProjectDashboardInventoryItem as isDynamicProjectDashboardInventoryItem,
+  DashboardsProjectOverviewInventoryItem as DynamicProjectDashboardInventoryItem,
+  isDashboardsProjectOverviewInventoryItem as isDynamicProjectDashboardInventoryItem,
   K8sResourceCommon,
   WatchK8sResources,
 } from '@console/dynamic-plugin-sdk';

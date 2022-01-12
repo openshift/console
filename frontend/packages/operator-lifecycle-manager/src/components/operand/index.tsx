@@ -621,7 +621,12 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
         )}
       {conditionsStatusDescriptors?.length > 0 &&
         conditionsStatusDescriptors.map((descriptor) => (
-          <DescriptorConditions descriptor={descriptor} schema={schema} obj={obj} />
+          <DescriptorConditions
+            key={descriptor.path}
+            descriptor={descriptor}
+            schema={schema}
+            obj={obj}
+          />
         ))}
     </div>
   );
