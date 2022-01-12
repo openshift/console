@@ -346,6 +346,7 @@ ul.pf-c-tree-view__list {
     padding: 0;
   }
 
+  // dropdown at top of content pages
   .co-namespace-dropdown__menu-toggle {
     background: transparent;
     padding-left: var(
@@ -361,8 +362,14 @@ ul.pf-c-tree-view__list {
     }
   }
 
+  // page content section
   .odc-namespaced-page__content {
     background: transparent !important; // add dashboard page - let page section background show. The component styles are overriding this stylesheet, so added important
+  }
+
+  // perspective switcher
+  .oc-nav-header .pf-c-dropdown__toggle {
+    background: transparent;
   }
 
   .odc-add-card-item__icon {
@@ -388,8 +395,9 @@ ul.pf-c-tree-view__list {
     }
   }
 
-  .monitoring-dashboards__legend-wrap text tspan {
-    fill: var(--pf-global--Color--200);
+  // victory chart text labels for axis ticks and legend text
+  text tspan {
+    fill: var(--pf-global--Color--200) !important;
   }
 
   .co-namespace-bar {
@@ -429,9 +437,68 @@ ul.pf-c-tree-view__list {
     color: var(--pf-global--BorderColor--100);
   }
 
+  // pipeline topology label/pill
+  .odc-pipeline-vis-task {
+    fill: var(--pf-global--BackgroundColor--300);
+  }
+
+  // pipeline log box text
+  .odc-pipeline-run-logs__logtext {
+    color: var(--pf-global--palette--white);
+  }
+
+  // pipeline topology label text
+  .odc-pipeline-vis-task-text {
+    fill: var(--pf-global--palette--white);
+  }
+
   // add page main content, observe dashboard - to contrast cards
   .ocs-page-layout__content,
   .co-dashboard-body {
     background-color: var(--pf-global--BackgroundColor--200);
+  }
+
+  // labels in pipelines details page
+  .co-m-label,
+  tags-input .tags .tag-item {
+    background-color: var(--pf-global--BackgroundColor--300);
+    border-color: var(--pf-global--active-color--200);
+  }
+
+  // pipeline builder footer
+  .ocs-form-footer__sticky {
+    margin-top: var(--pf-global--spacer--lg);
+    padding-left: 0;
+    background: transparent;
+  }
+
+  // pipeline builder viz first button
+  .odc-task-list-node__trigger {
+    text {
+      fill: var(--pf-global--palette--white);
+    }
+  }
+
+  text[data-test='add-finally-node'],
+  circle[fill='#06c'] {
+    fill: var(--pf-global--link--Color);
+  }
+
+  // pipeline add modal - match form control background
+  .ocs-quick-search-modal-body {
+    background-color: var(--pf-global--BackgroundColor--400);
+  }
+
+  // pipeline add task detail box
+  .ocs-quick-search-content__details {
+    background-color: var(--pf-global--BackgroundColor--100);
+  }
+
+  // pipeline add task highlited data list item on left
+  .ocs-quick-search-list__item--highlight,
+  .ocs-quick-search-list__item:hover {
+    background-color: var(
+      --pf-global--BackgroundColor--300
+    ) !important; // current style uses !important
   }
 }
