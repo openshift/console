@@ -1,8 +1,8 @@
 import { Model } from '@patternfly/react-topology';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { addToTopologyDataModel } from '@console/topology/src/data-transforms/transform-utils';
-import { TopologyDataResources } from '@console/topology/src/topology-types';
-import { EVENT_SOURCE_KAFKA_KIND } from '../const';
+import { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
+import { CAMEL_SOURCE_INTEGRATION, EVENT_SOURCE_KAFKA_KIND } from '../const';
 import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
@@ -18,6 +18,7 @@ import {
   getRevisionsData,
   transformKnNodeData,
   getKnativeDynamicResources,
+  getKameletSinkAndSourceBindings,
 } from './knative-topology-utils';
 import { KnativeUtil, NodeType } from './topology-types';
 
@@ -68,7 +69,9 @@ export const getKnativeTopologyDataModel = (
     channelResourceProps,
   );
   const knBrokerResources: K8sResourceKind[] = resources?.brokers?.data ?? [];
-  const camelKameletBindingResources: K8sResourceKind[] = resources?.kameletbindings?.data ?? [];
+  const { camelSinkKameletBindings, camelSourceKameletBindings } = getKameletSinkAndSourceBindings(
+    resources,
+  );
   const addTopologyData = (KnResources: K8sResourceKind[], type?: string) => {
     addKnativeTopologyData(knativeTopologyGraphModel, KnResources, type, resources, utils);
   };
@@ -78,7 +81,8 @@ export const getKnativeTopologyDataModel = (
   addTopologyData(knEventSourcesKafka, NodeType.EventSourceKafka);
   addTopologyData(knChannelResources, NodeType.PubSub);
   addTopologyData(knBrokerResources, NodeType.PubSub);
-  addTopologyData(camelKameletBindingResources, NodeType.EventSource);
+  addTopologyData(camelSourceKameletBindings, NodeType.EventSource);
+  addTopologyData(camelSinkKameletBindings, NodeType.EventSink);
 
   const revisionData = getRevisionsData(knRevResources, resources, utils);
 
@@ -91,6 +95,36 @@ export const getKnativeTopologyDataModel = (
       n.data = revisionData[n.id];
     }
   });
+  // filter out knative services/revision that belong to a integration type created by kamelet sinks
+  const knativeGraphNodes = knativeTopologyGraphModel.nodes.filter((n: OdcNodeModel) => {
+    if (n.type === NodeType.KnService) {
+      if (
+        camelSinkKameletBindings.findIndex((binding) =>
+          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION].startsWith(
+            binding.metadata?.name,
+          ),
+        ) > -1
+      ) {
+        return false;
+      }
+      return true;
+    }
+    if (n.type === NodeType.Revision) {
+      if (
+        camelSinkKameletBindings.findIndex((binding) =>
+          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION].startsWith(
+            binding.metadata?.name,
+          ),
+        ) > -1
+      ) {
+        return false;
+      }
+      return true;
+    }
+    return true;
+  });
+
+  knativeTopologyGraphModel.nodes = knativeGraphNodes;
 
   return Promise.resolve(knativeTopologyGraphModel);
 };

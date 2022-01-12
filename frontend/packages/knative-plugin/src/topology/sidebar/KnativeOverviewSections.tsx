@@ -103,3 +103,37 @@ export const KnativeOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({ 
     </div>
   );
 };
+
+export const KnativeEventSinkPodRing: React.FC<KnativeOverviewDetailsProps> = ({ item }) => {
+  const { revisions, obj } = item as { obj: K8sResourceKind; revisions: K8sResourceKind[] };
+  const { pods } = usePodsForRevisions(
+    revisions?.map((r) => r.metadata.uid),
+    obj.metadata.namespace,
+  );
+  return (
+    <div className="resource-overview__pod-counts">
+      <PodRing
+        pods={pods?.[0]?.pods || []}
+        obj={obj}
+        rc={pods?.[0]?.obj}
+        resourceKind={RevisionModel}
+        enableScaling={false}
+        path="/spec/replicas"
+      />
+    </div>
+  );
+};
+
+export const KnativeEventSinkOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({
+  item,
+}) => {
+  const { obj } = item;
+  return (
+    <div className="overview__sidebar-pane-body resource-overview__body">
+      <KnativeEventSinkPodRing item={item} />
+      <div className="resource-overview__summary">
+        <ResourceSummary resource={obj} />
+      </div>
+    </div>
+  );
+};

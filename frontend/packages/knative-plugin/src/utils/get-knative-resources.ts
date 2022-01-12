@@ -3,6 +3,7 @@ import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
+import { CamelKameletModel, GLOBAL_OPERATOR_NS } from '..';
 import { KNATIVE_SERVING_LABEL } from '../const';
 import {
   ServiceModel,
@@ -320,6 +321,23 @@ export const knativeCamelIntegrationsResourceWatchers = (
   };
 };
 
+export const knativeCamelKameletResourceWatchers = (namespace: string) => {
+  return {
+    [CamelKameletModel.plural]: {
+      isList: true,
+      kind: referenceForModel(CamelKameletModel),
+      namespace,
+      optional: true,
+    },
+    kameletGlobalNS: {
+      isList: true,
+      kind: referenceForModel(CamelKameletModel),
+      namespace: GLOBAL_OPERATOR_NS,
+      optional: true,
+    },
+  };
+};
+
 export const strimziResourcesWatcher = (namespace: string): WatchK8sResources<any> => {
   const strimziResources = {
     [KafkaModel.plural]: {
@@ -410,5 +428,6 @@ export const getKnativeResources = (namespace: string) => {
     ...knativeCamelIntegrationsResourceWatchers(namespace),
     ...knativeCamelKameletBindingResourceWatchers(namespace),
     ...knativeCamelDomainMappingResourceWatchers(namespace),
+    ...knativeCamelKameletResourceWatchers(namespace),
   };
 };

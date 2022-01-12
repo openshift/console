@@ -18,7 +18,11 @@ import { RevisionKind } from '../../types';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { TYPE_EVENT_PUB_SUB_LINK, TYPE_KNATIVE_SERVICE, TYPE_SINK_URI } from '../const';
 import { NodeType } from '../topology-types';
-import { KnativeOverviewDetails, EventSourcesOverviewList } from './KnativeOverviewSections';
+import {
+  KnativeOverviewDetails,
+  EventSourcesOverviewList,
+  KnativeEventSinkOverviewDetails,
+} from './KnativeOverviewSections';
 
 const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataType => {
   const { t } = useTranslation();
@@ -92,6 +96,14 @@ export const getKnativeSidepanelDetailsTab = (element: GraphElement) => {
   ) {
     const knObj = element.getData().resources;
     return <KnativeOverviewDetails item={knObj} />;
+  }
+  return undefined;
+};
+
+export const getKnativeSidePanelEventSinkDetailsTab = (element: GraphElement) => {
+  if (element.getType() === NodeType.EventSink) {
+    const knObj = element.getData().resources;
+    return <KnativeEventSinkOverviewDetails item={knObj} />;
   }
   return undefined;
 };

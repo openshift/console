@@ -1,18 +1,20 @@
 import * as React from 'react';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 
-type ResolveAdapterProps<D> = {
+type ResolveAdapterProps<D, T> = {
   resource: K8sResourceCommon;
-  useAdapterHook: (resource: K8sResourceCommon) => D;
+  data?: T;
+  useAdapterHook: (resource: K8sResourceCommon, data: T) => D;
   onAdapterDataResolved: (data: D) => void;
 };
 
-const ResolveAdapter = <D extends {}>({
+const ResolveAdapter = <D extends {}, T = {}>({
   resource,
+  data: customData,
   useAdapterHook,
   onAdapterDataResolved,
-}: ResolveAdapterProps<D>) => {
-  const data = useAdapterHook(resource);
+}: ResolveAdapterProps<D, T>) => {
+  const data = useAdapterHook(resource, customData);
 
   React.useEffect(() => {
     if (data) {

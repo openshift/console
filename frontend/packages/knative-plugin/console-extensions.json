@@ -1063,6 +1063,16 @@
     "type": "console.action/provider",
     "properties": {
       "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useKnativeEventSinkActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
       "provider": { "$codeRef": "actions.useEventSourcesActionsProviderForTopology" }
     },
     "flags": {
@@ -1526,6 +1536,40 @@
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-kn-event-sink-details",
+      "tab": "topology-side-bar-tab-details",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getKnativeSidePanelEventSinkDetailsTab"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-kn-event-sink-output-target",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getKnativeSidepanelEventSinkSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "knativeTopologySidebar.getEventSinkPodsApdapter"
+      }
     }
   }
 ]

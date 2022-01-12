@@ -7,7 +7,9 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { TopologyDataResources } from '@console/topology/src/topology-types';
+import { CamelKameletModel, DomainMappingModel } from '../..';
 import {
+  SERVERLESS_FUNCTION_LABEL,
   EVENTING_IMC_KIND,
   EVENT_SOURCE_API_SERVER_KIND,
   EVENT_SOURCE_CAMEL_KIND,
@@ -15,7 +17,6 @@ import {
   EVENT_SOURCE_SINK_BINDING_KIND,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENT_SOURCE_APIGROUP,
-  SERVERLESS_FUNCTION_LABEL,
   EVENT_SOURCE_CONTAINER_KIND,
   EVENT_SOURCE_CRONJOB_KIND,
   KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
@@ -1199,6 +1200,12 @@ const sampleTriggers: FirehoseResult = {
   data: [EventTriggerObj],
 };
 
+const sampleKamelets: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [],
+};
+
 export const MockKnativeResources: TopologyDataResources = {
   deployments: sampleKnativeDeployments,
   deploymentConfigs: sampleKnativeDeploymentConfigs,
@@ -1247,8 +1254,9 @@ export const MockKnativeResources: TopologyDataResources = {
   clusterServiceVersions: sampleClusterServiceVersions,
   triggers: sampleTriggers,
   brokers: sampleBrokers,
-  kameletbindings: sampleSourceKameletBinding,
-  domainmappings: sampleDomainMapping,
+  [CamelKameletBindingModel.plural]: sampleSourceKameletBinding,
+  [DomainMappingModel.plural]: sampleDomainMapping,
+  [CamelKameletModel.plural]: sampleKamelets,
 };
 
 export const MockKnativeBuildConfig = {
