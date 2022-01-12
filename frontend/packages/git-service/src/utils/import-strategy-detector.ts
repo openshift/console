@@ -58,17 +58,16 @@ export const detectImportStrategies = async (
 
   const repositoryStatus = gitService ? await gitService.isRepoReachable() : RepoStatus.Unreachable;
   let detectedFiles: string[] = [];
-  let detectedCustomData;
+  let detectedCustomData: string[];
 
   if (repositoryStatus === RepoStatus.Reachable) {
     try {
       const { files } = await gitService.getRepoFileList();
       detectedStrategies = await Promise.all(
         ImportStrategyList.map<Promise<DetectedStrategy>>(async (strategy) => {
-          if (strategy.customDetection) {
+          detectedFiles = files.filter((f) => strategy.expectedRegexp.test(f));
+          if (detectedFiles.length > 0 && strategy.customDetection) {
             detectedCustomData = await strategy.customDetection(gitService);
-          } else {
-            detectedFiles = files.filter((f) => strategy.expectedRegexp.test(f));
           }
           return {
             name: strategy.name,

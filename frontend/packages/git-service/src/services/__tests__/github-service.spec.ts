@@ -253,4 +253,17 @@ describe('Github Service', () => {
       nockDone();
     });
   });
+
+  it('should make API call to specified hostname', async () => {
+    const gitSource: GitSource = { url: 'https://example.com/test/repo' };
+    const gitService = new GithubService(gitSource);
+
+    const scope = nock('https://example.com/api/v3')
+      .get('/repos/test/repo')
+      .reply(200);
+
+    const status = await gitService.isRepoReachable();
+    expect(status).toEqual(RepoStatus.Reachable);
+    scope.done();
+  });
 });

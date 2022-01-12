@@ -50,7 +50,7 @@ const BuildTools: BuildTool[] = [
     name: 'Modern Web App',
     type: 'modern-webapp',
     language: 'javascript',
-    expectedRegexp: RegExp([`app.json`, `package.json`, `gulpfile.js`, `Gruntfile.js`].join('|')),
+    expectedRegexp: /package\.json/,
     priority: 1,
     customDetection: async (gitService) => {
       const packageJson = await gitService.getPackageJsonContent();
@@ -100,11 +100,9 @@ export const detectBuildTypes = async (gitService: BaseService): Promise<Detecte
 
   const buildTypes = await Promise.all(
     BuildTools.map<Promise<DetectedBuildType>>(async (t) => {
-      let detectedFiles: string[] = [];
-      if (t.customDetection) {
+      let detectedFiles = files.filter((f) => t.expectedRegexp.test(f));
+      if (detectedFiles.length > 0 && t.customDetection) {
         detectedFiles = await t.customDetection(gitService);
-      } else {
-        detectedFiles = files.filter((f) => t.expectedRegexp.test(f));
       }
       return {
         name: t.name,
