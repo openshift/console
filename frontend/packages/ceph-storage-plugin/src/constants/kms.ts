@@ -28,7 +28,7 @@ export const SupportedProviders = {
 export const DescriptionKey = {
   [KmsImplementations.VAULT_TOKENS]: 'VAULT_ADDR',
   [KmsImplementations.VAULT_TENANT_SA]: 'VAULT_ADDR',
-  [KmsImplementations.IBM_KEY_PROTECT]: 'IBM_SERVICE_INSTANCE_ID',
+  [KmsImplementations.IBM_KEY_PROTECT]: 'IBM_KP_SERVICE_INSTANCE_ID',
 };
 
 export const VaultEmptyState: VaultConfig = Object.seal({
@@ -80,7 +80,10 @@ export const HpcsEmptyState: HpcsConfig = Object.seal({
     value: '',
     valid: true,
   },
-  baseUrl: '',
+  baseUrl: {
+    value: '',
+    valid: true,
+  },
   tokenUrl: '',
   hasHandled: true,
 });

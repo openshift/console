@@ -173,10 +173,22 @@ export type HpcsConfig = {
     value: string;
     valid: boolean;
   };
-  baseUrl: string;
+  baseUrl: {
+    value: string;
+    valid: boolean;
+  };
   tokenUrl: string;
   hasHandled: boolean;
 };
+
+export enum HPCSParams {
+  NAME = 'name',
+  INSTANCE_ID = 'instanceId',
+  API_KEY = 'apiKey',
+  ROOT_KEY = 'rootKey',
+  BASE_URL = 'baseUrl',
+  TOKEN_URL = 'tokenUrl',
+}
 
 export enum ProviderNames {
   VAULT = 'vault',
@@ -221,10 +233,10 @@ export enum KmsCsiConfigKeysMapping {
   VAULT_CLIENT_CERT_FILE = 'vaultClientCertFileName',
 
   // ibm hpcs
-  IBM_SERVICE_INSTANCE_ID = 'ibmServiceInstanceID',
-  IBM_KMS_KEY = 'ibmKMSKey',
-  IBM_BASE_URL = 'ibmBaseURL',
-  IBM_TOKEN_URL = 'ibmTokenURL',
+  IBM_KP_SERVICE_INSTANCE_ID = 'ibmKPServiceInstanceID',
+  IBM_KP_SECRET_NAME = 'ibmKPKMSKey',
+  IBM_KP_BASE_URL = 'ibmKPBaseURL',
+  IBM_KP_TOKEN_URL = 'ibmKPTokenURL',
 
   // ui specific
   KMS_SERVICE_NAME = 'kmsServiceName',
@@ -296,10 +308,10 @@ export type VaultConfigMap = VaultTokenConfigMap | VaultSAConfigMap;
 export type HpcsConfigMap = {
   KMS_PROVIDER: string;
   KMS_SERVICE_NAME: string;
-  IBM_SERVICE_INSTANCE_ID: string;
-  IBM_KMS_KEY: string;
-  IBM_BASE_URL: string;
-  IBM_TOKEN_URL: string;
+  IBM_KP_SERVICE_INSTANCE_ID: string;
+  IBM_KP_SECRET_NAME: string;
+  IBM_KP_BASE_URL: string;
+  IBM_KP_TOKEN_URL: string;
 };
 
 export type WatchCephResource = {

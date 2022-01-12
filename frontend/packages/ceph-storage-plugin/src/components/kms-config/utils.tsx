@@ -135,14 +135,14 @@ const generateHpcsSecret = (kms: HpcsConfig) => ({
   apiVersion: SecretModel.apiVersion,
   kind: SecretModel.kind,
   metadata: {
-    name: `ibm-kms-key-${Math.random()
+    name: `ibm-kp-kms-${Math.random()
       .toString(36)
       .substring(7)}`,
     namespace: CEPH_STORAGE_NAMESPACE,
   },
   stringData: {
-    apiKey: kms.apiKey.value,
-    rootKey: kms.rootKey.value,
+    IBM_KP_SERVICE_API_KEY: kms.apiKey.value,
+    IBM_KP_CUSTOMER_ROOT_KEY: kms.rootKey.value,
   },
 });
 
@@ -248,15 +248,15 @@ const createCsiHpcsResources = (
   const csiConfigData: HpcsConfigMap = {
     KMS_PROVIDER: KmsImplementations.IBM_KEY_PROTECT,
     KMS_SERVICE_NAME: kms.name.value,
-    IBM_SERVICE_INSTANCE_ID: kms.instanceId.value,
-    IBM_KMS_KEY: secretName || keySecret.metadata.name,
-    IBM_BASE_URL: kms.baseUrl,
-    IBM_TOKEN_URL: kms.tokenUrl,
+    IBM_KP_SERVICE_INSTANCE_ID: kms.instanceId.value,
+    IBM_KP_SECRET_NAME: secretName || keySecret.metadata.name,
+    IBM_KP_BASE_URL: kms.baseUrl.value,
+    IBM_KP_TOKEN_URL: kms.tokenUrl,
   };
-  const csiConfigObj: ConfigMapKind = generateCsiKmsConfigMap(kms.name.value, csiConfigData);
+  const csiConfigObj: ConfigMapKind = generateCsiKmsConfigMap(kms.name.value, csiConfigData, false);
 
   if (update) {
-    const cmPatch = [generateConfigMapPatch(kms.name.value, csiConfigData)];
+    const cmPatch = [generateConfigMapPatch(kms.name.value, csiConfigData, false)];
     csiKmsResources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
   } else {
     csiKmsResources.push(k8sCreate(ConfigMapModel, csiConfigObj));
@@ -309,10 +309,10 @@ const createClusterHpcsResources = (
   const configData: HpcsConfigMap = {
     KMS_PROVIDER: KmsImplementations.IBM_KEY_PROTECT,
     KMS_SERVICE_NAME: kms.name.value,
-    IBM_SERVICE_INSTANCE_ID: kms.instanceId.value,
-    IBM_KMS_KEY: keySecret.metadata.name,
-    IBM_BASE_URL: kms.baseUrl,
-    IBM_TOKEN_URL: kms.tokenUrl,
+    IBM_KP_SERVICE_INSTANCE_ID: kms.instanceId.value,
+    IBM_KP_SECRET_NAME: keySecret.metadata.name,
+    IBM_KP_BASE_URL: kms.baseUrl.value,
+    IBM_KP_TOKEN_URL: kms.tokenUrl,
   };
   const configMapObj: ConfigMapKind = generateOcsKmsConfigMap(configData);
 
@@ -420,10 +420,12 @@ export const kmsConfigValidation = (kms: KMSConfig, provider = ProviderNames.VAU
         kmsObj.instanceId?.valid &&
         kmsObj.apiKey?.valid &&
         kmsObj.rootKey?.valid &&
+        kmsObj.baseUrl?.valid &&
         kmsObj.name?.value !== '' &&
         kmsObj.instanceId?.value !== '' &&
         kmsObj.apiKey?.value !== '' &&
-        kmsObj.rootKey?.value !== ''
+        kmsObj.rootKey?.value !== '' &&
+        kmsObj.baseUrl?.value !== ''
       );
     }
     default:
