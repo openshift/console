@@ -67,7 +67,6 @@ const testSuites = {
     'tests/crd-extensions.scenario.ts',
     'tests/oauth.scenario.ts',
     'tests/dashboards/cluster-dashboard.scenario.ts',
-    'tests/dashboards/project-dashboard.scenario.ts',
     'tests/event.scenario.ts',
     'tests/cluster-settings.scenario.ts',
   ]),
@@ -78,7 +77,6 @@ const testSuites = {
     'tests/monitoring.scenario.ts',
     'tests/crd-extensions.scenario.ts',
     'tests/dashboards/cluster-dashboard.scenario.ts',
-    'tests/dashboards/project-dashboard.scenario.ts',
     'tests/event.scenario.ts',
   ]),
   all: suite([
@@ -89,17 +87,13 @@ const testSuites = {
     'tests/crd-extensions.scenario.ts',
     'tests/oauth.scenario.ts',
     'tests/dashboards/cluster-dashboard.scenario.ts',
-    'tests/dashboards/project-dashboard.scenario.ts',
     'tests/event.scenario.ts',
     'tests/cluster-settings.scenario.ts',
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
   alertmanager: suite(['tests/alertmanager.scenario.ts']),
   login: ['tests/login.scenario.ts'],
-  dashboards: suite([
-    'tests/dashboards/cluster-dashboard.scenario.ts',
-    'tests/dashboards/project-dashboard.scenario.ts',
-  ]),
+  dashboards: suite(['tests/dashboards/cluster-dashboard.scenario.ts']),
 };
 
 export const config = {

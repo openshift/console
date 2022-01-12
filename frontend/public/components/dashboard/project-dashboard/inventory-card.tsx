@@ -115,6 +115,7 @@ const ProjectInventoryItem = withDashboardResources(
         resources={resourceData}
         additionalResources={additionalResourcesData}
         mapper={mapper}
+        dataTest="resource-inventory-item"
       />
     );
   },

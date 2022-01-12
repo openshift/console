@@ -23,6 +23,7 @@ const ResourceQuotaItem: React.FC<ResourceQuotaItemProps> = ({ resourceQuota }) 
           className="co-resource-item--truncate co-resource-quota-card__item-title"
           namespace={resourceQuota.metadata.namespace}
           inline
+          dataTest="resource-quota-link"
         />
         {scopes && <QuotaScopesInline scopes={scopes} />}
       </div>
