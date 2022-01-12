@@ -11,7 +11,11 @@ import {
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { INCONTEXT_ACTIONS_CONNECTS_TO, QUERY_PROPERTIES } from '../const';
+import {
+  INCONTEXT_ACTIONS_CONNECTS_TO,
+  INCONTEXT_ACTIONS_SERVICE_BINDING,
+  QUERY_PROPERTIES,
+} from '../const';
 import { resolvedHref } from '../utils/add-page-utils';
 import { getDisabledAddActions } from '../utils/useAddActionExtensions';
 
@@ -24,13 +28,15 @@ type ActionFactory = (
   contextSource?: string,
   path?: string,
   accessReviewDisabled?: boolean,
+  isServiceBindingAllowed?: boolean,
 ) => Action;
 
-const resolvedURLWithParams = (
+export const resolvedURLWithParams = (
   unresolvedHref: string,
   namespace: string,
   application?: string,
   contextSource?: string,
+  allowServiceBinding?: boolean,
 ) => {
   const resolvedURL = resolvedHref(unresolvedHref, namespace);
   const queryParams = new URLSearchParams();
@@ -41,7 +47,12 @@ const resolvedURLWithParams = (
     contextSource &&
       queryParams.append(
         QUERY_PROPERTIES.CONTEXT_ACTION,
-        JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
+        JSON.stringify({
+          type: allowServiceBinding
+            ? INCONTEXT_ACTIONS_SERVICE_BINDING
+            : INCONTEXT_ACTIONS_CONNECTS_TO,
+          payload: contextSource,
+        }),
       );
     return `${resolvedURL}${resolvedURL.indexOf('?') > -1 ? '&' : '?'}${queryParams.toString()}`;
   }
@@ -109,7 +120,14 @@ export const AddActions: { [name: string]: ActionFactory } = {
     path,
     disabled: accessReviewDisabled,
   }),
-  OperatorBacked: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+  OperatorBacked: (
+    namespace,
+    application,
+    contextSource,
+    path,
+    accessReviewDisabled,
+    isServiceBindingAllowed,
+  ) => ({
     id: 'operator-backed',
     label: i18next.t('devconsole~Operator Backed'),
     icon: <BoltIcon />,
@@ -119,6 +137,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
         namespace,
         application,
         contextSource,
+        isServiceBindingAllowed,
       ),
     },
     path,
