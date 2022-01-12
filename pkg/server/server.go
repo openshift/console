@@ -169,7 +169,7 @@ func (s *Server) prometheusProxyEnabled() bool {
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {
-	return s.AlertManagerProxyConfig != nil
+	return s.AlertManagerProxyConfig != nil && s.AlertManagerTenancyProxyConfig != nil
 }
 
 func (s *Server) meteringProxyEnabled() bool {
@@ -432,7 +432,7 @@ func (s *Server) HTTPHandler() http.Handler {
 			alertManagerTenancyProxyAPIPath = alertManagerTenancyProxyEndpoint + "/api/"
 
 			alertManagerProxy        = proxy.NewProxy(s.AlertManagerProxyConfig)
-			alertManagerTenancyProxy = proxy.NewProxy(s.AlertManagerProxyConfig)
+			alertManagerTenancyProxy = proxy.NewProxy(s.AlertManagerTenancyProxyConfig)
 		)
 
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
