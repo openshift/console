@@ -177,14 +177,14 @@ export const TEMPLATE = {
     exampleImgUrl: urls.CENTOS_IMAGE_LINK,
     exampleRegUrl: urls.CENTOS7_EXAMPLE_CONTAINER,
   },
-  CENTOS8: {
-    name: 'CentOS 8.0+ VM',
+  CENTOSSTREAM8: {
+    name: 'CentOS Stream 8 VM',
     dvName: 'centos8',
-    metadataName: 'centos8-server-small',
-    os: 'CentOS 8 or higher',
+    metadataName: 'centos-stream8-server-small',
+    os: 'CentOS Stream 8 or higher',
     supportLevel: 'Community',
     exampleImgUrl: urls.CENTOS_IMAGE_LINK,
-    exampleRegUrl: urls.CENTOS8_EXAMPLE_CONTAINER,
+    exampleRegUrl: urls.CENTOS7_EXAMPLE_CONTAINER, // use CENTOS7 temporary
   },
   WIN10: {
     name: 'Microsoft Windows 10 VM',
