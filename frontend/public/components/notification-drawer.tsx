@@ -256,6 +256,9 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
       return () => _.each(pollerTimeouts, clearTimeout);
     }
+    dispatch(
+      alertingErrored('notificationAlerts', new Error(t('public~monitoring access not granted'))),
+    );
   }, [dispatch, t, rulesAccess, isRulesAccessLoading]);
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
