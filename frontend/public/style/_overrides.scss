@@ -21,6 +21,10 @@ form.pf-c-form {
   }
 }
 
+.co-installed-operators .pf-c-table tbody>tr>* {
+  vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
+}
+
 .co-toolbar-no-padding.pf-c-toolbar {
   --pf-c-toolbar__content--PaddingLeft: 0;
   --pf-c-toolbar__content--PaddingRight: 0;

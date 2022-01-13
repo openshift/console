@@ -700,21 +700,23 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
   );
 
   return (
-    <Table
-      data={filterOperators(data, allNamespaceActive)}
-      {...rest}
-      aria-label={t('olm~Installed Operators')}
-      Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
-      Row={InstalledOperatorTableRow}
-      EmptyMsg={CSVListEmptyMsg}
-      NoDataEmptyMsg={CSVListNoDataEmptyMsg}
-      virtualize
-      customData={customData}
-      customSorts={{
-        formatTargetNamespaces,
-        getOperatorNamespace,
-      }}
-    />
+    <div className="co-installed-operators">
+      <Table
+        data={filterOperators(data, allNamespaceActive)}
+        {...rest}
+        aria-label={t('olm~Installed Operators')}
+        Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
+        Row={InstalledOperatorTableRow}
+        EmptyMsg={CSVListEmptyMsg}
+        NoDataEmptyMsg={CSVListNoDataEmptyMsg}
+        virtualize
+        customData={customData}
+        customSorts={{
+          formatTargetNamespaces,
+          getOperatorNamespace,
+        }}
+      />
+    </div>
   );
 };
 
