@@ -42,12 +42,6 @@ const validatePVCName = (pvcName: string, usedPVCNames: Set<string>): Validation
     // t('kubevirt-plugin~PVC with this name is already used by this VM!')
     return asValidationObject('kubevirt-plugin~PVC with this name is already used by this VM!');
   }
-
-  if (!pvcName) {
-    // t('kubevirt-plugin~PVC cannot be empty')
-    return asValidationObject('kubevirt-plugin~PVC cannot be empty');
-  }
-
   return null;
 };
 

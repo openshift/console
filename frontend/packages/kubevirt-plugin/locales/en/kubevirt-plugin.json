@@ -1070,7 +1070,6 @@
   "Disk name is too short": "Disk name is too short",
   "Disk with this name already exists!": "Disk with this name already exists!",
   "PVC with this name is already used by this VM!": "PVC with this name is already used by this VM!",
-  "PVC cannot be empty": "PVC cannot be empty",
   "Size must be positive": "Size must be positive",
   "NIC name cannot be empty": "NIC name cannot be empty",
   "NIC name name can contain only alphanumeric characters": "NIC name name can contain only alphanumeric characters",
