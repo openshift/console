@@ -1969,6 +1969,7 @@ export const sampleStatefulSets: FirehoseResult = {
         collisionCount: 0,
       },
       kind: 'StatefulSet',
+      apiVersion: 'apps/v1',
     },
   ],
 };
