@@ -5,6 +5,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import AppInitSDK from '../AppInitSDK';
 import * as configSetup from '../configSetup';
+import * as apiDiscovery from '../k8s/api-discovery/api-discovery';
 import * as hooks from '../useReduxStore';
 
 jest.mock('react-redux', () => {
@@ -79,8 +80,10 @@ describe('AppInitSDK', () => {
     expect(configSetupSpy).toHaveBeenCalledWith({ appFetch: mockConfig.appFetch });
   });
 
-  it('should call apiDiscovery with store instance', () => {
+  it('should call apiDiscovery with store instance if provided and not default one', () => {
     useReduxStoreSpy.mockImplementation(() => ({ store, storeContextPresent: true }));
+    const initApiDiscoverySpy = jest.spyOn(apiDiscovery, 'initApiDiscovery');
+    initApiDiscoverySpy.mockImplementation(jest.fn());
     mount(
       <AppInitSDK configurations={mockConfig}>
         <div data-test-id="child-id">Hello!!</div>
@@ -89,5 +92,23 @@ describe('AppInitSDK', () => {
     expect(mockConfig.apiDiscovery).toHaveBeenCalled();
     expect(mockConfig.apiDiscovery).toHaveBeenCalledTimes(1);
     expect(mockConfig.apiDiscovery).toHaveBeenCalledWith(store);
+    expect(initApiDiscoverySpy).toHaveBeenCalledTimes(0);
+  });
+
+  it('should trigger default apiDiscovery if apiDiscovery is not provided with config', () => {
+    const mockConfigData = {
+      appFetch: jest.fn(),
+    };
+    useReduxStoreSpy.mockImplementation(() => ({ store, storeContextPresent: false }));
+    const initApiDiscoverySpy = jest.spyOn(apiDiscovery, 'initApiDiscovery');
+    initApiDiscoverySpy.mockImplementation(jest.fn());
+    mount(
+      <AppInitSDK configurations={mockConfigData}>
+        <div data-test-id="child-id">Hello!!</div>
+      </AppInitSDK>,
+    );
+    expect(initApiDiscoverySpy).toHaveBeenCalled();
+    expect(initApiDiscoverySpy).toHaveBeenCalledTimes(1);
+    expect(initApiDiscoverySpy).toHaveBeenCalledWith(store);
   });
 });
