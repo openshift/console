@@ -493,6 +493,16 @@
     }
   },
   {
+    "type": "console.dashboards/project/overview/item",
+    "properties": {
+      "mapper": { "$codeRef": "dashboardInventory.getVMStatusGroups" },
+      "model": { "$codeRef": "models.VirtualMachineModel" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
     "type": "console.dashboards/overview/inventory/item/group",
     "properties": {
       "id": "vm-stopped",
