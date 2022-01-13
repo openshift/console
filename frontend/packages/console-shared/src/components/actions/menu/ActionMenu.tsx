@@ -29,7 +29,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const menuOptions = options.length > 0 ? options : actions;
+  const menuOptions = options?.length > 0 ? options : actions;
 
   const hideMenu = () => {
     setIsOpen(false);
@@ -78,7 +78,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>
       <MenuContent data-test-id="action-items" translate="no">
         <MenuList>
-          <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={options[0]} />
+          <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={menuOptions[0]} />
         </MenuList>
       </MenuContent>
     </Menu>
