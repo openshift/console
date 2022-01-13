@@ -580,7 +580,7 @@ class CreateConfigSubformWithTranslation extends React.Component<
       // If user creates a new image secret by filling out the form a 'kubernetes.io/dockerconfigjson' secret will be created.
       isDockerconfigjson: _.isEmpty(this.props.stringData) || !!this.props.stringData[AUTHS_KEY],
       secretEntriesArray: this.imageSecretObjectToArray(
-        this.props.stringData[AUTHS_KEY] || this.props.stringData,
+        this.props.stringData?.[AUTHS_KEY] || this.props.stringData,
       ),
       hasDuplicate: false,
     };
