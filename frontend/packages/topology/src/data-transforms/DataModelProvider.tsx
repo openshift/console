@@ -1,7 +1,9 @@
 import * as React from 'react';
 import {
+  ExtensionK8sGroupKindModel,
   isTopologyDataModelFactory as isDynamicTopologyDataModelFactory,
   TopologyDataModelFactory as DynamicTopologyDataModelFactory,
+  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
 import {
   modelForGroupKind,
@@ -19,6 +21,26 @@ interface DataModelProviderProps {
   children?: React.ReactNode;
 }
 
+const flattenResource = (
+  namespace: string,
+  model?: ExtensionK8sGroupKindModel,
+  opts = {} as Partial<WatchK8sResource>,
+) => {
+  if (!model) {
+    return { namespace, ...opts };
+  }
+
+  if (model.version) {
+    const extensionReference = referenceForExtensionModel(model); // requires model.version
+    return { namespace, kind: extensionReference, ...opts };
+  }
+
+  // If can't find reference for an extention model, fall back to internal reference
+  const internalModel = modelForGroupKind(model.group, model.kind); // Return null for CRDs
+  const internalReference = internalModel && referenceForModel(internalModel);
+  return { namespace, kind: internalReference, ...opts };
+};
+
 export const getNamespacedDynamicModelFactories = (
   factories: LoadedExtension<DynamicTopologyDataModelFactory>[],
 ) =>
@@ -30,15 +52,9 @@ export const getNamespacedDynamicModelFactories = (
         resources: (namespace: string) =>
           Object.assign(
             {},
-            ...Object.entries(properties.resources).map(([k, v]) => {
-              const kind = v?.model?.version
-                ? referenceForExtensionModel(v.model)
-                : v?.model
-                ? referenceForModel(modelForGroupKind(v.model?.group, v.model?.kind))
-                : v?.opts?.kind;
-
-              return { [k]: { namespace, kind, ...v?.opts } };
-            }),
+            ...Object.entries(properties.resources).map(([k, v]) => ({
+              [k]: flattenResource(namespace, v?.model, v?.opts),
+            })),
           ),
       },
     };
