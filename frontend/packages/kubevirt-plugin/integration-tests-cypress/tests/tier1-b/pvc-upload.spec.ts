@@ -91,15 +91,19 @@ describe('kubevirt PVC upload', () => {
     });
 
     it('ID(CNV-5597) Verify create VM from the template whose source is uploaded via CLI', () => {
-      vm.create(vmData);
-      vm.stop();
-      vm.delete();
+      if (Cypress.env('DOWNSTREAM')) {
+        vm.create(vmData);
+        vm.stop();
+        vm.delete();
+      }
     });
 
     it('ID(CNV-5598) Delete DV/PVC from CLI', () => {
-      cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
-      cy.visitVMTemplatesList();
-      virtualization.templates.testSource(template.name, 'Add source');
+      if (Cypress.env('DOWNSTREAM')) {
+        cy.deleteResource(K8S_KIND.DV, template.dvName, OS_IMAGES_NS);
+        cy.visitVMTemplatesList();
+        virtualization.templates.testSource(template.name, 'Add source');
+      }
     });
   });
 });

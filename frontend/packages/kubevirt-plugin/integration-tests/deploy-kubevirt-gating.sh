@@ -71,8 +71,9 @@ wait_mcp_for_updated()
 # ----------------------------------------------------------------------------------------------------
 # Install HCO (kubevirt and helper operators)
 
-export HOC_IMAGE_VER=1.5.0-unstable
-export HCO_SUBSCRIPTION_CHANNEL="1.5.0"
+export HOC_IMAGE_VER=1.6.0-unstable
+export HOC_GIT_TAG=v1.6.0-unstable
+export HCO_SUBSCRIPTION_CHANNEL="1.6.0"
 
 cat <<EOF | oc apply -f -
 apiVersion: operators.coreos.com/v1alpha1
@@ -117,7 +118,7 @@ sleep 60
 for i in {1..20}
 do
   echo "Attempt ${i}/20"
-  if oc create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/deploy/hco.cr.yaml -n kubevirt-hyperconverged; then
+  if oc create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/${HOC_GIT_TAG}/deploy/hco.cr.yaml -n kubevirt-hyperconverged; then
     echo "HCO cr is created"
     break
   fi
@@ -141,7 +142,7 @@ done
 # Create storage class and storage namespace for testing
 # Install HPP
 
-export HPP_VERSION="release-v0.8"
+export HPP_VERSION="release-v0.12"
 
 # Configure SELinux when using OpenShift to allow HPP to create storage on workers
 oc create -f \
@@ -152,11 +153,11 @@ wait_mcp_for_updated
 oc create -f \
   https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/${HPP_VERSION}/deploy/hostpathprovisioner_cr.yaml
 oc create -f \
-  https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/${HPP_VERSION}/deploy/storageclass-wffc.yaml
+  https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/${HPP_VERSION}/deploy/storageclass-wffc-csi.yaml
 
 # Set HPP as default StorageClass for the cluster
 oc annotate storageclasses --all storageclass.kubernetes.io/is-default-class-
-oc annotate storageclass hostpath-provisioner storageclass.kubernetes.io/is-default-class='true'
+oc annotate storageclass hostpath-csi storageclass.kubernetes.io/is-default-class='true'
 
 # ----------------------------------------------------------------------------------------------------
 # Download virtctl tool if needed

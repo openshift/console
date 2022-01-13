@@ -28,7 +28,7 @@ const vm: VirtualMachineData = {
 
 const cloneVMName = `${vm.name}-clone`;
 
-describe('test dev console', () => {
+xdescribe('test dev console', () => {
   before(() => {
     cy.viewport(1536, 960);
     cy.Login();

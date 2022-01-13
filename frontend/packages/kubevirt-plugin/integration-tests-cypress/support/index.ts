@@ -84,12 +84,12 @@ Cypress.Commands.add('createDataVolume', (name: string, namespace: string) => {
       dv.metadata.name = name;
       dv.metadata.namespace = namespace;
       const storageClass = Cypress.env('STORAGE_CLASS');
-      dv.spec.pvc.accessModes = storageClass
-        ? [configMap.data[`${storageClass}.accessMode`]]
-        : [configMap.data.accessMode];
-      dv.spec.pvc.volumeMode = storageClass
-        ? configMap.data[`${storageClass}.volumeMode`]
-        : configMap.data.volumeMode;
+      dv.spec.pvc.accessModes = (configMap.data[`${storageClass}.accessMode`] && [
+        configMap.data[`${storageClass}.accessMode`],
+      ]) ||
+        (configMap.data.accessMode && [configMap.data.accessMode]) || ['ReadWriteOnce'];
+      dv.spec.pvc.volumeMode =
+        configMap.data[`${storageClass}.volumeMode`] || configMap.data.volumeMode || 'Filesystem';
       if (storageClass) {
         dv.spec.pvc.storageClassName = storageClass;
       }
@@ -163,7 +163,7 @@ Cypress.Commands.add(
     }
     if (Cypress.env('STORAGE_CLASS') === 'hostpath-provisioner') {
       cy.exec(
-        `virtctl image-upload dv ${dvName} --image-path=${imagePath} --size=${size}Gi --storage-class=hostpath-provisioner --access-mode=ReadWriteOnce -n ${ns} --insecure || true`,
+        `virtctl image-upload dv ${dvName} --image-path=${imagePath} --size=${size}Gi --storage-class=hostpath-csi --access-mode=ReadWriteOnce -n ${ns} --insecure || true`,
       );
     }
   },
