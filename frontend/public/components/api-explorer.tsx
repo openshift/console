@@ -109,10 +109,10 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
   return _.isEmpty(rest) ? (
     <>{value}</>
   ) : (
-    <>
+    <span className="co-break-word">
       {first}
       <span className="text-muted">.{rest.join('.')}</span>
-    </>
+    </span>
   );
 };
 
