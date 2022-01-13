@@ -110,7 +110,9 @@ const PerspectiveNav: React.FC<{}> = () => {
     <div className="oc-perspective-nav">
       <PluginNavItems items={orderedNavItems} />
       {pinnedResourcesLoaded && pinnedResources?.length ? (
-        <NavGroup title="">{getPinnedItems()}</NavGroup>
+        <NavGroup title="" className="no-title">
+          {getPinnedItems()}
+        </NavGroup>
       ) : null}
     </div>
   );
