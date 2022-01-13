@@ -177,32 +177,38 @@ export const detectManagedODF: FeatureDetector = async (dispatch) => {
 };
 
 export const detectComponents: FeatureDetector = async (dispatch) => {
-  let id = null;
-  let noobaaFound = false;
-  let cephFound = false;
-  const detector = async () => {
+  let cephIntervalId = null;
+  let noobaaIntervalId = null;
+  const cephDetector = async () => {
     try {
-      if (!cephFound) {
-        const cephClusters = await k8sList(CephClusterModel, { ns: CEPH_STORAGE_NAMESPACE });
-        if (cephClusters?.length > 0) {
-          dispatch(setFlag(CEPH_FLAG, true));
-          cephFound = true;
-        }
-      }
-      if (!noobaaFound) {
-        const noobaaSystems = await k8sList(NooBaaSystemModel, { ns: CEPH_STORAGE_NAMESPACE });
-        if (noobaaSystems?.length > 0) {
-          dispatch(setFlag(MCG_FLAG, true));
-          noobaaFound = true;
-          clearInterval(id);
-        }
+      const cephClusters = await k8sList(CephClusterModel, { ns: CEPH_STORAGE_NAMESPACE });
+      if (cephClusters?.length > 0) {
+        dispatch(setFlag(CEPH_FLAG, true));
+        clearInterval(cephIntervalId);
       }
     } catch {
       dispatch(setFlag(CEPH_FLAG, false));
+    }
+  };
+  const noobaaDetector = async () => {
+    try {
+      const noobaaSystems = await k8sList(NooBaaSystemModel, { ns: CEPH_STORAGE_NAMESPACE });
+      if (noobaaSystems?.length > 0) {
+        dispatch(setFlag(MCG_FLAG, true));
+        clearInterval(noobaaIntervalId);
+        clearInterval(cephIntervalId);
+      }
+    } catch {
       dispatch(setFlag(MCG_FLAG, false));
     }
   };
-  id = setInterval(detector, 15 * SECOND);
+
+  // calling first time instantaneously
+  // else it will wait for 15s before start polling
+  cephDetector();
+  noobaaDetector();
+  cephIntervalId = setInterval(cephDetector, 15 * SECOND);
+  noobaaIntervalId = setInterval(noobaaDetector, 15 * SECOND);
 };
 
 const detectFeatures = (dispatch, csv: ClusterServiceVersionKind) => {
