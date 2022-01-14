@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResult, isUpstream } from '@console/internal/components/utils';
 import { NodeModel, TemplateModel } from '@console/internal/models';
 import { K8sResourceCommon, K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { KUBEVIRT_OS_IMAGES_NS, OPENSHIFT_OS_IMAGES_NS } from '../../../constants';
 import { VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types';
 import { flattenTemplates } from '../../vm-templates/utils';
@@ -24,6 +25,11 @@ export type ResourcesSectionProps = {
 export const ResourcesSection: React.FC<ResourcesSectionProps> = ({ resources }) => {
   const templates = React.useMemo(() => getTemplates(resources), [resources]);
 
+  const dataSourceNS = React.useMemo(
+    () => (isUpstream() ? KUBEVIRT_OS_IMAGES_NS : OPENSHIFT_OS_IMAGES_NS),
+    [],
+  );
+
   return (
     <>
       <ResourceInventoryItem
@@ -39,6 +45,7 @@ export const ResourcesSection: React.FC<ResourcesSectionProps> = ({ resources })
         isLoading={resources?.vmCommonTemplates?.loaded === false}
         error={!!resources?.vmCommonTemplates?.loadError}
         dataTest="kv-inventory-card--vm-templates"
+        basePath={`/k8s/ns/${dataSourceNS}/virtualmachinetemplates`}
       />
       <ResourceInventoryItem
         resources={resources?.nodes?.data as K8sResourceCommon[]}
