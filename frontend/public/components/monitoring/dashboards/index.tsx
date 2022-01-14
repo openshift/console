@@ -155,7 +155,15 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       onSelect={onSelect}
       onToggle={onToggle}
       onTypeaheadInputChanged={(v) => setFilterText(v.toLowerCase())}
-      placeholderText={items[selectedKey]}
+      placeholderText={
+        Object.keys(items).includes(selectedKey) ? (
+          items[selectedKey]
+        ) : (
+          <>
+            <RedExclamationCircleIcon /> {t('public~Select a dashboard from the dropdown')}
+          </>
+        )
+      }
     >
       {_.map(filteredItems, (v, k) => (
         <OptionComponent key={k} itemKey={k} />
