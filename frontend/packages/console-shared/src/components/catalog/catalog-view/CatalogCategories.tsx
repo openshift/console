@@ -2,8 +2,9 @@ import * as React from 'react';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
+import { getURLWithParams } from '../utils/catalog-utils';
 import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';
-import { CatalogCategory } from '../utils/types';
+import { CatalogCategory, CatalogQueryParams } from '../utils/types';
 
 type CatalogCategoriesProp = {
   categories: CatalogCategory[];
@@ -42,6 +43,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
         hasActiveDescendant={hasActiveDescendant(selectedCategory, category)}
         shown={toplevelCategory}
         data-test={`tab ${id}`}
+        href={getURLWithParams(CatalogQueryParams.CATEGORY, id)}
       >
         {subcategories && (
           <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryID, category)}>
