@@ -8,6 +8,10 @@ export const useUserSettingsLocalStorage = <T>(
   sync = false,
   session = false, // use sessionStorage if set to `true`
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
+  // Mount status for safty state updates
+  const mounted = React.useRef(true);
+  React.useEffect(() => () => (mounted.current = false), []);
+
   const storage = session ? sessionStorage : localStorage;
   const keyRef = React.useRef(userSettingsKey);
   const defaultValueRef = React.useRef(defaultValue);
@@ -24,7 +28,7 @@ export const useUserSettingsLocalStorage = <T>(
 
   const storageUpdated = React.useCallback(
     (event: StorageEvent) => {
-      if (event.storageArea === storage && event.key === storageKey) {
+      if (mounted.current && event.storageArea === storage && event.key === storageKey) {
         const configMapData = deseralizeData(event.newValue);
         const newData = configMapData?.[keyRef.current];
 
@@ -57,7 +61,11 @@ export const useUserSettingsLocalStorage = <T>(
         newState !== undefined &&
         seralizeData(newState) !== seralizeData(configMapData?.[keyRef.current])
       ) {
-        setData(newState);
+        if (mounted.current) {
+          setData(newState);
+        }
+
+        // Trigger update also when unmounted
         const dataToUpdate = {
           ...configMapData,
           ...{

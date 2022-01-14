@@ -81,6 +81,7 @@ describe('useUserSettings', () => {
   it('should create and update user settings if watcher returns 404 Not found (returned for kubeadmins who have access to the openshift-console-user-settings namespace)', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
     const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
 
@@ -122,6 +123,7 @@ describe('useUserSettings', () => {
   it('should create and update user settings if watcher returns 403 Forbidden (returned for users who could not access non existing ConfigMaps in openshift-console-user-settings namespace)', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
     const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
 
@@ -163,6 +165,7 @@ describe('useUserSettings', () => {
   it('should return default value for an empty configmap after switching from loading to loaded', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
     const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
 
@@ -212,6 +215,7 @@ describe('useUserSettings', () => {
   it('should return default value for an unknown key if data is already loaded (hook is used twice)', async () => {
     // Mock already loaded data
     useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
     const { result } = testHook(() => useUserSettings('console.key', 'default value'));
 
