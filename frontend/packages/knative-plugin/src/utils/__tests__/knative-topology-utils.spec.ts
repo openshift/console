@@ -1,7 +1,14 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
-import { SERVERLESS_FUNCTION_LABEL, SERVERLESS_FUNCTION_LABEL_DEPRECATED } from '../../const';
-import { EventSourceCronJobModel, EventSourceKafkaModel } from '../../models';
+import {
+  SERVERLESS_FUNCTION_LABEL,
+  SERVERLESS_FUNCTION_LABEL_DEPRECATED,
+  EVENT_SOURCE_CRONJOB_KIND,
+  KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+  EVENT_SOURCE_KAFKA_KIND,
+  KNATIVE_EVENT_SOURCE_APIGROUP,
+  EVENT_SOURCE_CAMEL_KIND,
+} from '../../const';
 import {
   MockKnativeResources,
   getEventSourceResponse,
@@ -85,7 +92,11 @@ describe('knative topology utils', () => {
 
   it('expect getKnativeTopologyNodeItems to return node data for event sources', () => {
     const knServiceNode = getKnativeTopologyNodeItems(
-      getEventSourceResponse(EventSourceCronJobModel).data[0],
+      getEventSourceResponse(
+        KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+        'v1alpha1',
+        EVENT_SOURCE_CRONJOB_KIND,
+      ).data[0],
       NodeType.EventSource,
       null,
       MockKnativeResources,
@@ -97,7 +108,11 @@ describe('knative topology utils', () => {
 
   it('expect getEventTopologyEdgeItems to return edge data for event sources', () => {
     const knEventEdge = getEventTopologyEdgeItems(
-      getEventSourceResponse(EventSourceCronJobModel).data[0],
+      getEventSourceResponse(
+        KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+        'v1alpha1',
+        EVENT_SOURCE_CRONJOB_KIND,
+      ).data[0],
       MockKnativeResources.ksservices,
     );
     expect(knEventEdge).toBeDefined();
@@ -153,7 +168,7 @@ describe('knative topology utils', () => {
   it('expect isOperatorBackedKnResource to return true if resource is backing camel connector source', () => {
     jest
       .spyOn(knativefetchutils, 'getDynamicEventSourcesModelRefs')
-      .mockImplementation(() => ['sources.knative.dev~v1alpha1~CamelSource']);
+      .mockImplementation(() => [EVENT_SOURCE_CAMEL_KIND]);
     const isOperatorbacked = isOperatorBackedKnResource(
       sampleDeploymentsCamelConnector.data[0],
       MockKnativeResources,
@@ -213,7 +228,11 @@ describe('Knative Topology Utils', () => {
   it('should return rejected promise if target is not provided', () => {
     return expect(
       createKnativeEventSourceSink(
-        getEventSourceResponse(EventSourceCronJobModel).data[0],
+        getEventSourceResponse(
+          KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+          'v1alpha1',
+          EVENT_SOURCE_CRONJOB_KIND,
+        ).data[0],
         undefined,
       ),
     ).rejects.toBeUndefined();
@@ -230,7 +249,11 @@ describe('Knative Topology Utils', () => {
 
   it('should move sink to the target knServcice', (done) => {
     createKnativeEventSourceSink(
-      getEventSourceResponse(EventSourceCronJobModel).data[0],
+      getEventSourceResponse(
+        KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+        'v1alpha1',
+        EVENT_SOURCE_CRONJOB_KIND,
+      ).data[0],
       MockKnativeResources.ksservices.data[0],
     )
       .then(({ data }) => {
@@ -245,7 +268,11 @@ describe('Knative Topology Utils', () => {
 
   it('should sink to the target sinkUri if the target is of type SinkUri', (done) => {
     createKnativeEventSourceSink(
-      getEventSourceResponse(EventSourceCronJobModel).data[0],
+      getEventSourceResponse(
+        KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+        'v1alpha1',
+        EVENT_SOURCE_CRONJOB_KIND,
+      ).data[0],
       sinkUriObj,
     )
       .then(({ data }) => {
@@ -276,7 +303,11 @@ describe('SinkURI knative topology utils', () => {
 });
 
 describe('event-source-kafka', () => {
-  const kafkaData = getEventSourceResponse(EventSourceKafkaModel).data[0];
+  const kafkaData = getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP,
+    'v1beta1',
+    EVENT_SOURCE_KAFKA_KIND,
+  ).data[0];
   const mockKafkaData = {
     ...kafkaData,
     spec: {

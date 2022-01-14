@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import {
   Plugin,
   ModelDefinition,
@@ -11,7 +10,6 @@ import {
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
 import { FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_SERVING_SERVICE } from './const';
-import * as models from './models';
 import {
   eventSourceBreadcrumbsProvider,
   channelBreadcrumbsProvider,
@@ -35,12 +33,6 @@ type ConsumedExtensions =
   | DetailPageBreadCrumbs;
 
 const plugin: Plugin<ConsumedExtensions> = [
-  {
-    type: 'ModelDefinition',
-    properties: {
-      models: _.values(models),
-    },
-  },
   {
     type: 'Overview/Resource',
     properties: {

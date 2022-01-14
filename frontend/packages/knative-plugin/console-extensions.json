@@ -1124,5 +1124,398 @@
     "flags": {
       "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION", "KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev"
+      },
+      "color": "#005f60"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kafka.strimzi.io"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev"
+      },
+      "color": "#7d1007"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Configuration"
+      },
+      "label": "%knative-plugin~Configuration%",
+      "labelPlural": "%knative-plugin~Configurations%",
+      "abbr": "CFG"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "kind": "KnativeServing"
+      },
+      "color": "#005f60",
+      "label": "%knative-plugin~KnativeServing%",
+      "labelPlural": "%knative-plugin~KnativeServings%",
+      "abbr": "KS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.knative.dev",
+        "kind": "KnativeEventing"
+      },
+      "color": "#7d1007",
+      "label": "%knative-plugin~KnativeEventing%",
+      "labelPlural": "%knative-plugin~KnativeEventings%",
+      "abbr": "KE"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Revision"
+      },
+      "label": "%knative-plugin~Revision%",
+      "labelPlural": "%knative-plugin~Revisions%",
+      "abbr": "REV"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "label": "%knative-plugin~Route%",
+      "labelPlural": "%knative-plugin~Routes%",
+      "abbr": "RT"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1",
+        "kind": "Service"
+      },
+      "label": "%knative-plugin~Service%",
+      "labelPlural": "%knative-plugin~Services%",
+      "abbr": "KSVC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "serving.knative.dev",
+        "version": "v1alpha1",
+        "kind": "DomainMapping"
+      },
+      "label": "%knative-plugin~DomainMapping%",
+      "labelPlural": "%knative-plugin~DomainMappings%",
+      "abbr": "DM"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.eventing.knative.dev",
+        "version": "v1alpha1",
+        "kind": "CronJobSource"
+      },
+      "color": "#005f60",
+      "label": "%knative-plugin~CronJobSource%",
+      "labelPlural": "%knative-plugin~CronJobSources%",
+      "abbr": "CJS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "PingSource"
+      },
+      "label": "%knative-plugin~PingSource%",
+      "labelPlural": "%knative-plugin~PingSources%",
+      "abbr": "PS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "ContainerSource"
+      },
+      "label": "%knative-plugin~ContainerSource%",
+      "labelPlural": "%knative-plugin~ContainerSources%",
+      "abbr": "CS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "ApiServerSource"
+      },
+      "label": "%knative-plugin~ApiServerSource%",
+      "labelPlural": "%knative-plugin~ApiServerSources%",
+      "abbr": "AS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1alpha1",
+        "kind": "CamelSource"
+      },
+      "label": "%knative-plugin~CamelSource%",
+      "labelPlural": "%knative-plugin~CamelSources%",
+      "abbr": "CS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1beta1",
+        "kind": "KafkaSource"
+      },
+      "label": "%knative-plugin~KafkaSource%",
+      "labelPlural": "%knative-plugin~KafkaSources%",
+      "abbr": "KS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "sources.knative.dev",
+        "version": "v1",
+        "kind": "SinkBinding"
+      },
+      "label": "%knative-plugin~SinkBinding%",
+      "labelPlural": "%knative-plugin~SinkBindings%",
+      "abbr": "SBS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Subscription"
+      },
+      "label": "%knative-plugin~Subscription%",
+      "labelPlural": "%knative-plugin~Subscriptions%",
+      "abbr": "S"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "InMemoryChannel"
+      },
+      "label": "%knative-plugin~InMemoryChannel%",
+      "labelPlural": "%knative-plugin~InMemoryChannels%",
+      "abbr": "IMC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1",
+        "kind": "Channel"
+      },
+      "label": "%knative-plugin~Channel%",
+      "labelPlural": "%knative-plugin~Channels%",
+      "abbr": "C"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "messaging.knative.dev",
+        "version": "v1beta1",
+        "kind": "KafkaChannel"
+      },
+      "label": "%knative-plugin~KafkaChannel%",
+      "labelPlural": "%knative-plugin~KafkaChannels%",
+      "abbr": "KC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Broker"
+      },
+      "label": "%knative-plugin~Broker%",
+      "labelPlural": "%knative-plugin~Brokers%",
+      "abbr": "B"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1",
+        "kind": "Trigger"
+      },
+      "label": "%knative-plugin~Trigger%",
+      "labelPlural": "%knative-plugin~Triggers%",
+      "abbr": "T"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1",
+        "kind": "Integration"
+      },
+      "label": "%knative-plugin~Integration%",
+      "labelPlural": "%knative-plugin~Integrations%",
+      "abbr": "I"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kafka.strimzi.io",
+        "version": "v1beta1",
+        "kind": "Kafka"
+      },
+      "label": "%knative-plugin~Kafka%",
+      "labelPlural": "%knative-plugin~Kafkas%",
+      "abbr": "K"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kafka.strimzi.io",
+        "version": "v1beta1",
+        "kind": "KafkaTopic"
+      },
+      "label": "%knative-plugin~KafkaTopic%",
+      "labelPlural": "%knative-plugin~KafkaTopics%",
+      "abbr": "KT"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1alpha1",
+        "kind": "KameletBinding"
+      },
+      "label": "%knative-plugin~KameletBinding%",
+      "labelPlural": "%knative-plugin~KameletBindings%",
+      "abbr": "KB"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1alpha1",
+        "kind": "Kamelet"
+      },
+      "label": "%knative-plugin~Kamelet%",
+      "labelPlural": "%knative-plugin~Kamelets%",
+      "abbr": "K"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "camel.apache.org",
+        "version": "v1",
+        "kind": "IntegrationPlatform"
+      },
+      "label": "%knative-plugin~IntegrationPlatform%",
+      "labelPlural": "%knative-plugin~IntegrationPlatforms%",
+      "abbr": "IP"
+    }
   }
 ]

@@ -4,29 +4,32 @@ import {
   PodKind,
   K8sResourceConditionStatus,
   referenceForModel,
-  K8sKind,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { TopologyDataResources } from '@console/topology/src/topology-types';
-import { SERVERLESS_FUNCTION_LABEL } from '../../const';
 import {
-  ConfigurationModel,
-  RouteModel,
-  RevisionModel,
+  EVENTING_IMC_KIND,
+  EVENT_SOURCE_API_SERVER_KIND,
+  EVENT_SOURCE_CAMEL_KIND,
+  EVENT_SOURCE_KAFKA_KIND,
+  EVENT_SOURCE_SINK_BINDING_KIND,
+  KNATIVE_EVENT_MESSAGE_APIGROUP,
+  KNATIVE_EVENT_SOURCE_APIGROUP,
+  SERVERLESS_FUNCTION_LABEL,
+  EVENT_SOURCE_CONTAINER_KIND,
+  EVENT_SOURCE_CRONJOB_KIND,
+  KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+  EVENT_SOURCE_PING_KIND,
+} from '../../const';
+import {
   ServiceModel,
-  EventSourceCronJobModel,
-  EventSourceContainerModel,
-  EventSourceCamelModel,
-  EventSourceKafkaModel,
-  EventSourcePingModel,
-  EventSourceSinkBindingModel,
-  EventSourceApiServerModel,
+  RevisionModel,
+  RouteModel,
   EventingSubscriptionModel,
-  EventingIMCModel,
   EventingBrokerModel,
   EventingTriggerModel,
   CamelKameletBindingModel,
-  DomainMappingModel,
+  ConfigurationModel,
 } from '../../models';
 import {
   RevisionKind,
@@ -720,14 +723,18 @@ export const sampleKnativeServices: FirehoseResult = {
   data: [knativeServiceObj],
 };
 
-export const getEventSourceResponse = (eventSourceModel: K8sKind): FirehoseResult => {
+export const getEventSourceResponse = (
+  apiGroup: string,
+  apiVersion: string,
+  kind: string,
+): FirehoseResult => {
   return {
     loaded: true,
     loadError: '',
     data: [
       {
-        apiVersion: `${eventSourceModel.apiGroup}/${eventSourceModel.apiVersion}`,
-        kind: eventSourceModel.kind,
+        apiVersion: `${apiGroup}/${apiVersion}`,
+        kind,
         metadata: {
           name: 'overlayimage',
           namespace: 'testproject3',
@@ -785,8 +792,8 @@ export const sampleEventSourceSinkbinding: FirehoseResult = {
   loadError: '',
   data: [
     {
-      apiVersion: `${EventSourceSinkBindingModel.apiGroup}/${EventSourceSinkBindingModel.apiVersion}`,
-      kind: EventSourceSinkBindingModel.kind,
+      apiVersion: `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1`,
+      kind: EVENT_SOURCE_SINK_BINDING_KIND,
       metadata: {
         name: 'bind-wss',
         namespace: 'testproject3',
@@ -940,7 +947,7 @@ export const sampleServices: FirehoseResult = {
         },
         ownerReferences: [
           {
-            apiVersion: `networking.internal.knative.dev/${ServiceModel.apiVersion}`,
+            apiVersion: `networking.internal.knative.dev/v1`,
             kind: 'ServerlessService',
             name: 'overlayimage-9jsl8',
             uid: 'bcf5bfcf-8ce0-11e9-9020-0ab4b49bd478',
@@ -1026,8 +1033,8 @@ export const sampleEventSourceDeployments: FirehoseResult<DeploymentKind[]> = {
         },
         ownerReferences: [
           {
-            apiVersion: `${EventSourceApiServerModel.apiGroup}/${EventSourceApiServerModel.apiVersion}`,
-            kind: EventSourceApiServerModel.kind,
+            apiVersion: `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1`,
+            kind: EVENT_SOURCE_API_SERVER_KIND,
             name: 'testevents',
             uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
             controller: true,
@@ -1085,8 +1092,8 @@ export const EventSubscriptionObj: EventSubscriptionKind = {
   },
   spec: {
     channel: {
-      apiVersion: `${EventingIMCModel.apiGroup}/${EventingIMCModel.apiVersion}`,
-      kind: EventingIMCModel.kind,
+      apiVersion: `${KNATIVE_EVENT_MESSAGE_APIGROUP}/v1`,
+      kind: EVENTING_IMC_KIND,
       name: 'testchannel',
     },
     subscriber: {
@@ -1102,8 +1109,8 @@ export const EventSubscriptionObj: EventSubscriptionKind = {
 };
 
 export const EventIMCObj: EventChannelKind = {
-  apiVersion: `${EventingIMCModel.apiGroup}/${EventingIMCModel.apiVersion}`,
-  kind: EventingIMCModel.kind,
+  apiVersion: `${KNATIVE_EVENT_MESSAGE_APIGROUP}/v1`,
+  kind: EVENTING_IMC_KIND,
   metadata: {
     name: 'testchannel',
     namespace: 'testproject3',
@@ -1206,18 +1213,42 @@ export const MockKnativeResources: TopologyDataResources = {
   ksroutes: sampleKnativeRoutes,
   configurations: sampleKnativeConfigurations,
   revisions: sampleKnativeRevisions,
-  [referenceForModel(EventSourceCronJobModel)]: getEventSourceResponse(EventSourceCronJobModel),
-  [referenceForModel(EventSourceContainerModel)]: getEventSourceResponse(EventSourceContainerModel),
-  [referenceForModel(EventSourceCamelModel)]: getEventSourceResponse(EventSourceCamelModel),
-  [referenceForModel(EventSourceKafkaModel)]: getEventSourceResponse(EventSourceKafkaModel),
-  [referenceForModel(EventSourceSinkBindingModel)]: sampleEventSourceSinkbinding,
-  [referenceForModel(EventSourcePingModel)]: getEventSourceResponse(EventSourcePingModel),
-  [referenceForModel(EventSourceApiServerModel)]: getEventSourceResponse(EventSourceApiServerModel),
+  [EVENT_SOURCE_CRONJOB_KIND]: getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+    'v1alpha1',
+    EVENT_SOURCE_CRONJOB_KIND,
+  ),
+  [EVENT_SOURCE_CONTAINER_KIND]: getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP,
+    'v1',
+    EVENT_SOURCE_CONTAINER_KIND,
+  ),
+  [EVENT_SOURCE_CAMEL_KIND]: getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP,
+    'v1alpha1',
+    EVENT_SOURCE_CAMEL_KIND,
+  ),
+  [EVENT_SOURCE_KAFKA_KIND]: getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP,
+    'v1beta1',
+    EVENT_SOURCE_KAFKA_KIND,
+  ),
+  [EVENT_SOURCE_SINK_BINDING_KIND]: sampleEventSourceSinkbinding,
+  [EVENT_SOURCE_PING_KIND]: getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP,
+    'v1',
+    EVENT_SOURCE_PING_KIND,
+  ),
+  [EVENT_SOURCE_API_SERVER_KIND]: getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP,
+    'v1',
+    EVENT_SOURCE_API_SERVER_KIND,
+  ),
   clusterServiceVersions: sampleClusterServiceVersions,
   triggers: sampleTriggers,
   brokers: sampleBrokers,
-  [CamelKameletBindingModel.plural]: sampleSourceKameletBinding,
-  [DomainMappingModel.plural]: sampleDomainMapping,
+  kameletbindings: sampleSourceKameletBinding,
+  domainmappings: sampleDomainMapping,
 };
 
 export const MockKnativeBuildConfig = {
@@ -1323,7 +1354,11 @@ export const sinkUriUid = '1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri';
 const sinkUri = 'http://overlayimage.testproject3.svc.cluster.local';
 
 export const eventSourceWithSinkUri: K8sResourceKind = {
-  ...getEventSourceResponse(EventSourceCronJobModel).data[0],
+  ...getEventSourceResponse(
+    KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+    'v1alpha1',
+    EVENT_SOURCE_CRONJOB_KIND,
+  ).data[0],
   spec: { sink: { uri: sinkUri } },
 };
 

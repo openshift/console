@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { EventSourceContainerModel } from '../../../models';
+import { EVENT_SOURCE_CONTAINER_KIND } from '../../../const';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSource } from '../EventSource';
 
@@ -15,11 +14,11 @@ describe('EventSourceSpec', () => {
   const eventSourceStatusData = {
     loaded: true,
     eventSource: {
-      uid: EventSourceContainerModel.kind,
-      name: EventSourceContainerModel.kind,
+      uid: EVENT_SOURCE_CONTAINER_KIND,
+      name: EVENT_SOURCE_CONTAINER_KIND,
       description: '',
       icon: {
-        url: getEventSourceIcon(referenceForModel(EventSourceContainerModel)),
+        url: getEventSourceIcon(EVENT_SOURCE_CONTAINER_KIND),
         class: null,
       },
       type: 'EventSource',

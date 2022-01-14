@@ -36,15 +36,10 @@ import {
   CAMEL_SOURCE_INTEGRATION,
   SERVERLESS_FUNCTION_LABEL,
   SERVERLESS_FUNCTION_LABEL_DEPRECATED,
+  EVENT_SOURCE_SINK_BINDING_KIND,
+  EVENT_SOURCE_CAMEL_KIND,
 } from '../const';
-import {
-  EventingBrokerModel,
-  EventSourceCamelModel,
-  EventingTriggerModel,
-  CamelKameletBindingModel,
-  EventSourceSinkBindingModel,
-  EventSourceKafkaModel,
-} from '../models';
+import { EventingBrokerModel, EventingTriggerModel, CamelKameletBindingModel } from '../models';
 import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
@@ -522,7 +517,7 @@ const createKnativeDeploymentItems = (
 ): KnativeServiceOverviewItem => {
   let associatedDeployment = getOwnedResources(resource, resources.deployments.data);
   // form Deployments for camelSource as they are owned by integrations
-  if (resource.kind === EventSourceCamelModel.kind && resources.integrations) {
+  if (resource.kind === EVENT_SOURCE_CAMEL_KIND && resources.integrations) {
     const intgrationsOwnData = getOwnedResources(resource, resources.integrations.data);
     const integrationsOwnedDeployment =
       intgrationsOwnData?.length > 0
@@ -1086,7 +1081,7 @@ export const transformKnNodeData = (
           type,
           getImageForIconClass(`icon-openshift`),
         );
-        if (!(res.kind === EventSourceSinkBindingModel.kind && res.metadata?.ownerReferences)) {
+        if (!(res.kind === EVENT_SOURCE_SINK_BINDING_KIND && res.metadata?.ownerReferences)) {
           const itemData = getOwnedEventSourceData(res, data, resources);
           knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
           knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.ksservices));
@@ -1277,7 +1272,7 @@ export const createEventSourceKafkaConnection = (
       },
     },
   };
-  return k8sUpdate(EventSourceKafkaModel, updatedObjPayload);
+  return k8sUpdate(modelFor(referenceFor(knKafkaSourceObj)), updatedObjPayload);
 };
 
 export const createSinkPubSubConnection = (

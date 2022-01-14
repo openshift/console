@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EventingKafkaChannelModel } from '../../../../models';
+import { EVENTING_KAFKA_CHANNEL_KIND } from '../../../../const';
 import DefaultChannelSection from './DefaultChannelSection';
 import KafkaChannelSection from './KafkaChannelSection';
 
@@ -9,7 +9,7 @@ type FormViewSectionProps = {
 };
 
 const getChannelSection = (kind: string): React.ReactElement | null => {
-  if (kind === EventingKafkaChannelModel.kind) {
+  if (kind === EVENTING_KAFKA_CHANNEL_KIND) {
     return <KafkaChannelSection />;
   }
   return null;

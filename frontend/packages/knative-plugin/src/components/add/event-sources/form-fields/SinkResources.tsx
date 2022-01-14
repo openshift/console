@@ -6,7 +6,8 @@ import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
-import { EventingBrokerModel, EventingChannelModel } from '../../../../models';
+import { EVENTING_CHANNEL_KIND } from '../../../../const';
+import { EventingBrokerModel } from '../../../../models';
 import { getDynamicChannelResourceList } from '../../../../utils/fetch-dynamic-eventsources-utils';
 import {
   knativeServingResourcesServices,
@@ -77,7 +78,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     } = resource;
     return (
       !ownerReferences?.length ||
-      ![EventingChannelModel.kind, EventingBrokerModel.kind].includes(ownerReferences[0].kind)
+      ![EVENTING_CHANNEL_KIND, EventingBrokerModel.kind].includes(ownerReferences[0].kind)
     );
   };
 

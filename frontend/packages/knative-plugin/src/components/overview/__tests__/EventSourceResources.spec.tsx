@@ -10,13 +10,15 @@ import {
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared';
 import {
-  ServiceModel,
-  EventSourceApiServerModel,
-  EventSourceCamelModel,
-  EventingIMCModel,
-  EventSourceContainerModel,
-  EventSourceSinkBindingModel,
-} from '../../../models';
+  EVENTING_IMC_KIND,
+  EVENT_SOURCE_API_SERVER_KIND,
+  EVENT_SOURCE_CAMEL_KIND,
+  EVENT_SOURCE_SINK_BINDING_KIND,
+  KNATIVE_EVENT_MESSAGE_APIGROUP,
+  KNATIVE_EVENT_SOURCE_APIGROUP,
+  EVENT_SOURCE_CONTAINER_KIND,
+} from '../../../const';
+import { ServiceModel } from '../../../models';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import EventSourceOwnedList from '../EventSourceOwnedList';
 import EventSourceResources from '../EventSourceResources';
@@ -126,10 +128,13 @@ describe('EventSinkServicesOverviewList', () => {
   });
 
   it('should show error info if no sink present or sink,kind is incorrect', () => {
-    const mockData = _.omit(_.cloneDeep(getEventSourceResponse(EventSourceCamelModel).data[0]), [
-      'spec',
-      'status',
-    ]);
+    const mockData = _.omit(
+      _.cloneDeep(
+        getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1alpha1', EVENT_SOURCE_CAMEL_KIND)
+          .data[0],
+      ),
+      ['spec', 'status'],
+    );
     const wrapper = shallow(<EventSourceResources obj={mockData} />);
     expect(wrapper.find('span').text()).toBe('No sink found for this resource.');
   });
@@ -137,7 +142,12 @@ describe('EventSinkServicesOverviewList', () => {
   it('should have ResourceLink with proper kind for sink to knSvc', () => {
     podData = noPodData;
     const wrapper = shallow(
-      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
+      <EventSourceResources
+        obj={
+          getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
+            .data[0]
+        }
+      />,
     );
     const findResourceLink = wrapper.find(ResourceLink);
     expect(findResourceLink).toHaveLength(1);
@@ -147,25 +157,27 @@ describe('EventSinkServicesOverviewList', () => {
   it('should have ResourceLink with proper kind for sink to channel', () => {
     const sinkData = {
       sink: {
-        apiVersion: `${EventingIMCModel.apiGroup}/${EventingIMCModel.apiVersion}`,
-        kind: EventingIMCModel.kind,
+        apiVersion: `${KNATIVE_EVENT_MESSAGE_APIGROUP}/v1`,
+        kind: EVENTING_IMC_KIND,
         name: 'testchannel',
       },
     };
     const sinkChannelData = {
-      ...getEventSourceResponse(EventSourceApiServerModel).data[0],
+      ...getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
+        .data[0],
       ...{ spec: sinkData },
     };
     podData = noPodData;
     const wrapper = shallow(<EventSourceResources obj={sinkChannelData} />);
     const findResourceLink = wrapper.find(ResourceLink);
     expect(findResourceLink).toHaveLength(1);
-    expect(findResourceLink.at(0).props().kind).toEqual(referenceForModel(EventingIMCModel));
+    expect(findResourceLink.at(0).props().kind).toEqual('messaging.knative.dev~v1~InMemoryChannel');
   });
 
   it('should have only external link and not ResourceLink for sink to uri', () => {
     const mockData = {
-      ...getEventSourceResponse(EventSourceCamelModel).data[0],
+      ...getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1alpha1', EVENT_SOURCE_CAMEL_KIND)
+        .data[0],
       spec: {
         uri: 'http://overlayimage.testproject3.svc.cluster.local',
       },
@@ -178,14 +190,20 @@ describe('EventSinkServicesOverviewList', () => {
 
   it('should have ExternalLink when sinkUri is present', () => {
     const wrapper = shallow(
-      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
+      <EventSourceResources
+        obj={
+          getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
+            .data[0]
+        }
+      />,
     );
     expect(wrapper.find(ExternalLink)).toHaveLength(1);
   });
 
   it('should not have ExternalLink when no sinkUri is present', () => {
     const mockEventSourceDataNoURI = _.omit(
-      getEventSourceResponse(EventSourceApiServerModel).data[0],
+      getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
+        .data[0],
       'status',
     );
     const wrapper = shallow(<EventSourceResources obj={mockEventSourceDataNoURI} />);
@@ -194,7 +212,12 @@ describe('EventSinkServicesOverviewList', () => {
 
   it('should show Deployment if present', () => {
     const wrapper = shallow(
-      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
+      <EventSourceResources
+        obj={
+          getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
+            .data[0]
+        }
+      />,
     );
     const findResourceLink = wrapper.find(ResourceLink);
     const findSidebarSectionHeading = wrapper.find(SidebarSectionHeading);
@@ -206,7 +229,12 @@ describe('EventSinkServicesOverviewList', () => {
 
   it('should show pods if present', () => {
     const wrapper = shallow(
-      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
+      <EventSourceResources
+        obj={
+          getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
+            .data[0]
+        }
+      />,
     );
     expect(wrapper.find(PodsOverview)).toHaveLength(1);
     expect(wrapper.find(PodsOverview).props().allPodsLink).toEqual(
@@ -217,13 +245,22 @@ describe('EventSinkServicesOverviewList', () => {
   it('should not show owned source if not present', () => {
     podData = noPodData;
     const wrapper = shallow(
-      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
+      <EventSourceResources
+        obj={
+          getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
+            .data[0]
+        }
+      />,
     );
     expect(wrapper.find(EventSourceOwnedList)).toHaveLength(0);
   });
 
   it('should show owned source if present', () => {
-    const sourceData = getEventSourceResponse(EventSourceSinkBindingModel).data[0];
+    const sourceData = getEventSourceResponse(
+      KNATIVE_EVENT_SOURCE_APIGROUP,
+      'v1',
+      EVENT_SOURCE_SINK_BINDING_KIND,
+    ).data[0];
     const ownSourceData: K8sResourceKind[] = [
       {
         ...sourceData,
@@ -246,14 +283,15 @@ describe('EventSinkServicesOverviewList', () => {
     ];
     const wrapper = shallow(
       <EventSourceResources
-        obj={getEventSourceResponse(EventSourceContainerModel).data[0]}
+        obj={
+          getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_CONTAINER_KIND)
+            .data[0]
+        }
         ownedSources={ownSourceData}
       />,
     );
     const findOwnedSourcesList = wrapper.find(EventSourceOwnedList);
     expect(findOwnedSourcesList).toHaveLength(1);
-    expect(findOwnedSourcesList.at(0).props().source.kind).toEqual(
-      EventSourceSinkBindingModel.kind,
-    );
+    expect(findOwnedSourcesList.at(0).props().source.kind).toEqual(EVENT_SOURCE_SINK_BINDING_KIND);
   });
 });
