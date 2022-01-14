@@ -19,7 +19,7 @@ import { getVMStatus } from '../../../statuses/vm/vm-status';
 import { useVmStatusResources } from '../../vm-status/use-vm-status-resources';
 import { VMStatusInventoryItem } from './VMStatusInventoryItem';
 
-import './vm-statuses-section.scss';
+import './virt-overview-inventory-card.scss';
 
 const LoadingElement: React.FC = () => (
   <div className="co-inventory-card__status">

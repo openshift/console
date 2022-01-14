@@ -1,4 +1,6 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
+$skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
+$skeleton-color: #eaedf1;
 
 .kv-inventory-card__body {
   padding: 0;
@@ -39,4 +41,58 @@
 
 .kv-inventory-card__section-header {
   border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+}
+
+// --- Resources section ---
+
+.kv-inventory-card__resources--container {
+  padding: var(--pf-global--spacer--md) 0;
+}
+
+// --- VM status item ---
+
+.kv-inventory-card__status-text {
+  margin-right: 0.35rem;
+}
+
+.kv-inventory-card__status-icon {
+  margin-right: 0.35em;
+}
+
+// --- Status section ---
+
+.kv-inventory-card__statuses-grid {
+  height: 100%;
+  padding-top: var(--pf-c-card--first-child--PaddingTop);
+  padding-bottom: var(--pf-c-card--child--PaddingBottom);
+}
+
+.kv-inventory-card__statuses-grid--left-col {
+  border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+}
+
+.kv-inventory-card__statuses-grid--empty-state {
+  height: 100%;
+}
+
+.skeleton-box {
+  width: 100%;
+}
+
+div.skeleton-status {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  height: 20px;
+  width: 200px;
+  opacity: 0;
+  margin-right: 0.5rem;
+  margin-left: 1.8rem;
+  margin-bottom: var(--pf-global--spacer--md);
+  &::after {
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
 }
