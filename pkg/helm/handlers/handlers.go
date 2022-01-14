@@ -283,7 +283,7 @@ func (h *helmHandlers) HandleIndexFile(user *auth.User, w http.ResponseWriter, r
 		}
 	}
 
-	indexFile, err := proxy.IndexFile(onlyCompatible)
+	indexFile, err := proxy.IndexFile(onlyCompatible, r.URL.Query().Get("namespace"))
 
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to get index file: %v", err)})

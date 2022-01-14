@@ -148,11 +148,15 @@ type fakeProxy struct {
 	error
 	onlyCompatible bool
 	testContext    *testing.T
+	namespace      string
 }
 
-func (p fakeProxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
+func (p fakeProxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFile, error) {
 	if onlyCompatible != p.onlyCompatible {
 		p.testContext.Errorf("Expected compatible flag is %t received %t", p.onlyCompatible, onlyCompatible)
+	}
+	if namespace != p.namespace {
+		p.testContext.Errorf("Expected namespace is %s received %s", p.namespace, namespace)
 	}
 	return p.repo, p.error
 }
@@ -688,6 +692,7 @@ func TestHelmHandlers_Index(t *testing.T) {
 		expectedResponse string
 		urlQuery         string
 		onlyCompatible   bool
+		namespace        string
 	}{
 		{
 			name: "valid repo index file should return correct response",
@@ -776,6 +781,29 @@ func TestHelmHandlers_Index(t *testing.T) {
 			onlyCompatible: true,
 		},
 		{
+			name: "valid repo index file should contain entries from both cluster and namespace helm repositories",
+			indexFile: &repo.IndexFile{
+				APIVersion: "v1",
+				Entries: map[string]repo.ChartVersions{
+					"redhat-chart": {
+						{
+							Metadata: &chart.Metadata{
+								Name:        "redhat-chart",
+								Version:     "v1.0.0",
+								APIVersion:  "v1",
+								KubeVersion: ">v1.16.0",
+							},
+							URLs: []string{"https://redhat-chart.url.com"},
+						},
+					},
+				},
+			},
+			httpStatusCode: http.StatusOK,
+			urlQuery:       "?namespace=test-namespace",
+			onlyCompatible: true,
+			namespace:      "test-namespace",
+		},
+		{
 			name:             "error case should return correct http header",
 			httpStatusCode:   http.StatusInternalServerError,
 			proxyNewError:    errors.New("Fake error"),
@@ -811,6 +839,7 @@ func TestHelmHandlers_Index(t *testing.T) {
 						error:          tt.indexFileError,
 						testContext:    t,
 						onlyCompatible: tt.onlyCompatible,
+						namespace:      tt.namespace,
 					}, tt.proxyNewError
 				},
 			}

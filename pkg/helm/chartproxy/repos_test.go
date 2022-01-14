@@ -11,6 +11,7 @@ import (
 	helmrepo "helm.sh/helm/v3/pkg/repo"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/dynamic"
 	fakeclient "k8s.io/client-go/dynamic/fake"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 	fakeclienttest "k8s.io/client-go/testing"
@@ -37,10 +38,13 @@ func onlyResult(obj interface{}, err error) interface{} {
 
 func TestHelmRepoGetter_List(t *testing.T) {
 	tests := []struct {
-		name                      string
-		HelmChartRepoCRSInCluster int
-		expectedRepoName          []string
-		apiErrors                 []apiError
+		name                        string
+		HelmChartRepoCRSInCluster   int
+		expectedRepoName            []string
+		namespace                   string
+		HelmChartRepoCRSInNamespace int
+		expectedRepoNameInNamespace []string
+		apiErrors                   []apiError
 	}{
 		{
 			name:                      "return 2 repos found in cluster",
@@ -51,6 +55,14 @@ func TestHelmRepoGetter_List(t *testing.T) {
 			name:                      "return 1 repo found in cluster",
 			HelmChartRepoCRSInCluster: 1,
 			expectedRepoName:          []string{"sample-repo-1"},
+		},
+		{
+			name:                        "return 1 repos found in cluster and 1 in namespace",
+			HelmChartRepoCRSInCluster:   1,
+			expectedRepoName:            []string{"sample-cluster-repo-1"},
+			HelmChartRepoCRSInNamespace: 1,
+			expectedRepoNameInNamespace: []string{"sample-namespace-repo-1"},
+			namespace:                   "test-namespace",
 		},
 		{
 			name:                      "return no repos when none are declared in cluster",
@@ -73,28 +85,43 @@ func TestHelmRepoGetter_List(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var indexFileContennts []string
+			var indexFileContentsCluster []string
 			for i := 0; i < tt.HelmChartRepoCRSInCluster; i++ {
-				indexFileContennts = append(indexFileContennts, "")
+				indexFileContentsCluster = append(indexFileContentsCluster, "")
 			}
-			client := fake.K8sDynamicClient(indexFileContennts...)
+			var indexFileContenntsNamespace []string
+			for i := 0; i < tt.HelmChartRepoCRSInNamespace; i++ {
+				indexFileContenntsNamespace = append(indexFileContenntsNamespace, "")
+			}
+			var client dynamic.Interface
+			if len(indexFileContenntsNamespace) > 0 {
+				client = fake.K8sDynamicClientMultipleNamespace(tt.namespace, indexFileContentsCluster, indexFileContenntsNamespace)
+			} else {
+				client = fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", "", indexFileContentsCluster...)
+			}
 			for _, apiError := range tt.apiErrors {
 				client.(*fakeclient.FakeDynamicClient).PrependReactor(apiError.verb, apiError.resource, func(action fakeclienttest.Action) (handled bool, ret runtime.Object, err error) {
 					return true, nil, errors.New(apiError.msg)
 				})
 			}
 			repoGetter := NewRepoGetter(client, nil)
-			repos, err := repoGetter.List()
+			repos, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
 
-			if len(repos) != len(tt.expectedRepoName) {
+			if len(repos) != len(tt.expectedRepoName)+len(tt.expectedRepoNameInNamespace) {
 				t.Errorf("expected num of repos: %d received %d", len(tt.expectedRepoName), len(repos))
 			}
 			for i, expectedName := range tt.expectedRepoName {
 				if repos[i].Name != expectedName {
 					t.Errorf("Repo name mismatch expected is %s received %s", expectedName, repos[i].Name)
+				}
+			}
+			for i, expectedName := range tt.expectedRepoNameInNamespace {
+				index := len(tt.expectedRepoName) + i
+				if repos[index].Name != expectedName {
+					t.Errorf("Repo name mismatch expected is %s received %s", expectedName, repos[index].Name)
 				}
 			}
 		})
@@ -107,6 +134,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 		helmCRS          []*unstructured.Unstructured
 		expectedRepoName []string
 		apiErrors        []apiError
+		namespace        string
 	}{
 		{
 			name: "skip repo that refer non-existent config map",
@@ -250,7 +278,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 				})
 			}
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List()
+			repos, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -303,7 +331,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			repoGetter := &helmRepoGetter{
-				Client: fake.K8sDynamicClient(),
+				Client: fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
 			}
 			url := tt.url
 
@@ -382,6 +410,7 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 		helmCRS       []*unstructured.Unstructured
 		expectedRepos map[string]bool
 		apiErrors     []apiError
+		namespace     string
 	}{
 		{
 			name: "return only enabled helm repos",
@@ -464,7 +493,7 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 			client := fake.K8sDynamicClientFromCRs(tt.helmCRS...)
 			coreClient := k8sfake.NewSimpleClientset()
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List()
+			repos, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
