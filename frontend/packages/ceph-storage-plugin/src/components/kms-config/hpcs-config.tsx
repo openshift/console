@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormGroup, TextInput, Button, ValidatedOptions } from '@patternfly/react-core';
-import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { FormGroup, TextInput, ValidatedOptions } from '@patternfly/react-core';
 import { kmsConfigValidation } from './utils';
 import { KMSConfigureProps } from './providers';
-import { advancedHpcsModal } from '../modals/advanced-kms-modal/advanced-ibm-kms-modal';
-import { HpcsConfig, ProviderNames } from '../../types';
+import { HpcsConfig, HPCSParams, ProviderNames } from '../../types';
 import './kms-config.scss';
+
+const IBM_TOKEN_URL = 'https://iam.cloud.ibm.com/oidc/token';
 
 export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, className }) => {
   const { t } = useTranslation();
@@ -28,47 +27,18 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
       });
   }, [dispatch, kms]);
 
-  const setServiceName = (name: string) => {
-    kmsObj.name.value = name;
-    kmsObj.name.valid = name !== '';
+  const setParams = (param: string, isRequired: boolean = true) => (value: string) => {
+    if (isRequired) {
+      kmsObj[param].value = value;
+      kmsObj[param].valid = value !== '';
+    } else {
+      kmsObj[param] = value;
+    }
     dispatch({
       type: 'securityAndNetwork/setHpcs',
       payload: kmsObj,
     });
   };
-
-  const setInstanceId = (instanceId: string) => {
-    kmsObj.instanceId.value = instanceId;
-    kmsObj.instanceId.valid = instanceId !== '';
-    dispatch({
-      type: 'securityAndNetwork/setHpcs',
-      payload: kmsObj,
-    });
-  };
-
-  const setApiKey = (apiKey: string) => {
-    kmsObj.apiKey.value = apiKey;
-    kmsObj.apiKey.valid = apiKey !== '';
-    dispatch({
-      type: 'securityAndNetwork/setHpcs',
-      payload: kmsObj,
-    });
-  };
-
-  const setRootKey = (rootKey: string) => {
-    kmsObj.rootKey.value = rootKey;
-    kmsObj.rootKey.valid = rootKey !== '';
-    dispatch({
-      type: 'securityAndNetwork/setHpcs',
-      payload: kmsObj,
-    });
-  };
-
-  const openAdvancedModal = () =>
-    advancedHpcsModal({
-      state,
-      dispatch,
-    });
 
   const isValid = (value: boolean) => (value ? ValidatedOptions.default : ValidatedOptions.error);
 
@@ -87,7 +57,7 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
       >
         <TextInput
           value={kms.name?.value}
-          onChange={setServiceName}
+          onChange={setParams(HPCSParams.NAME)}
           type="text"
           id="kms-service-name"
           name="kms-service-name"
@@ -106,7 +76,7 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
       >
         <TextInput
           value={kms.instanceId?.value}
-          onChange={setInstanceId}
+          onChange={setParams(HPCSParams.INSTANCE_ID)}
           type="text"
           id="kms-instance-id"
           name="kms-instance-id"
@@ -125,7 +95,7 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
       >
         <TextInput
           value={kms.apiKey?.value}
-          onChange={setApiKey}
+          onChange={setParams(HPCSParams.API_KEY)}
           type="text"
           id="kms-api-key"
           name="kms-api-key"
@@ -136,7 +106,7 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
       </FormGroup>
       <FormGroup
         fieldId="kms-root-key"
-        label={t('ceph-storage-plugin~Service root key')}
+        label={t('ceph-storage-plugin~Customer root key')}
         className={`${className}__form-body`}
         helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
         validated={isValid(kms.rootKey?.valid)}
@@ -144,7 +114,7 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
       >
         <TextInput
           value={kms.rootKey?.value}
-          onChange={setRootKey}
+          onChange={setParams(HPCSParams.ROOT_KEY)}
           type="text"
           id="kms-root-key"
           name="kms-root-key"
@@ -153,17 +123,40 @@ export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, cl
           data-test="kms-root-key-text"
         />
       </FormGroup>
-      <Button
-        variant="link"
+      <FormGroup
+        fieldId="kms-base-url"
+        label={t('ceph-storage-plugin~IBM Base URL')}
         className={`${className}__form-body`}
-        onClick={openAdvancedModal}
-        data-test="kms-advanced-settings-link"
+        helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
+        validated={isValid(kms.baseUrl?.valid)}
+        isRequired
       >
-        {t('ceph-storage-plugin~Advanced settings')}{' '}
-        {(kms.baseUrl || kms.tokenUrl) && (
-          <PencilAltIcon data-test="edit-icon" size="sm" color={blueInfoColor.value} />
-        )}
-      </Button>
+        <TextInput
+          value={kms.baseUrl?.value}
+          onChange={setParams(HPCSParams.BASE_URL)}
+          type="text"
+          id="kms-base-url"
+          name="kms-base-url"
+          isRequired
+          validated={isValid(kms.baseUrl?.valid)}
+          data-test="kms-base-url"
+        />
+      </FormGroup>
+      <FormGroup
+        fieldId="kms-token-url"
+        label={t('ceph-storage-plugin~IBM Token URL')}
+        className={`${className}__form-body`}
+      >
+        <TextInput
+          value={kms.tokenUrl}
+          onChange={setParams(HPCSParams.TOKEN_URL, false)}
+          placeholder={IBM_TOKEN_URL}
+          type="text"
+          id="kms-token-url"
+          name="kms-token-url"
+          data-test="kms-token-url"
+        />
+      </FormGroup>
     </>
   );
 };
