@@ -212,6 +212,27 @@ describe('useUserSettings', () => {
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
+  it('should return saved value for an known key which contains invalid characters', async () => {
+    // Mock saved ConfigMap
+    const savedDataWithEncodedCharConfigMap: ConfigMapKind = {
+      ...emptyConfigMap,
+      data: {
+        'invalid-char-_-is-replaced-with-an-underline': 'saved value',
+      },
+    };
+    useK8sWatchResourceMock.mockReturnValue([savedDataWithEncodedCharConfigMap, true, null]);
+
+    const { result } = testHook(() =>
+      useUserSettings('invalid-char-:-is-replaced-with-an-underline', 'default value'),
+    );
+
+    // Expect saved value with loaded
+    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
+  });
+
   it('should return default value for an unknown key if data is already loaded (hook is used twice)', async () => {
     // Mock already loaded data
     useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);

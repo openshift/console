@@ -44,7 +44,7 @@ export const useUserSettings = <T>(
   React.useEffect(() => () => (mounted.current = false), []);
 
   // Keys and values
-  const keyRef = React.useRef<string>(key);
+  const keyRef = React.useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));
   const defaultValueRef = React.useRef<T>(defaultValue);
 
   // Settings
