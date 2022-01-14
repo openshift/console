@@ -25,13 +25,18 @@ const NetworkTabSection: React.FC<{ element: GraphElement; renderNull: () => nul
       ]),
     [element, extensionsLoaded, networkAdapterExtensions],
   );
+
+  React.useEffect(() => {
+    if (!networkAdapter) {
+      renderNull();
+    }
+  }, [networkAdapter, renderNull]);
+
   return networkAdapter ? (
     <TopologySideBarTabSection>
       <NetworkingOverview obj={networkAdapter.resource} />
     </TopologySideBarTabSection>
-  ) : (
-    renderNull()
-  );
+  ) : null;
 };
 
 export const getNetworkingSideBarTabSection = (element: GraphElement, renderNull: () => null) => {

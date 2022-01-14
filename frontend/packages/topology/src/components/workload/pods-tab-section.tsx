@@ -35,6 +35,13 @@ const PodsTabSection: React.FC<{ element: GraphElement; renderNull: () => null }
   const handleAdapterResolved = React.useCallback((data) => {
     setPodData({ data, loaded: true });
   }, []);
+
+  React.useEffect(() => {
+    if (!podAdapter) {
+      renderNull();
+    }
+  }, [podAdapter, renderNull]);
+
   return podAdapter ? (
     <TopologySideBarTabSection>
       {podAdapterExtensionResolved && (
@@ -48,9 +55,7 @@ const PodsTabSection: React.FC<{ element: GraphElement; renderNull: () => null }
         <PodsOverviewContent obj={podAdapter.resource} {...podsData} />
       )}
     </TopologySideBarTabSection>
-  ) : (
-    renderNull()
-  );
+  ) : null;
 };
 
 export const getPodsSideBarTabSection = (element: GraphElement, renderNull: () => null) => {
