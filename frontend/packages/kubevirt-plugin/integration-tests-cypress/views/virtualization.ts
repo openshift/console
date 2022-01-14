@@ -1,5 +1,6 @@
 import { VirtualMachineData } from '../types/vm';
 import { ADD_SOURCE, TEMPLATE_ACTION } from '../utils/const/index';
+import { starIcon } from './selector';
 import { wizard } from './wizard';
 
 export const getRow = (templateName: string, within: VoidFunction) =>
@@ -35,17 +36,18 @@ export const virtualization = {
     testProvider: (templateName: string, provider: string) =>
       getRow(templateName, () => cy.byTestID('template-provider').should('include.text', provider)),
     testSupport: (templateName: string, support?: string, parentSupport?: string) => {
-      getRow(templateName, () => cy.byTestID('template-details').click());
       if (support) {
         cy.byTestID('template-support').should('exist');
-        cy.byTestID('template-support').should('include.text', support);
+        getRow(templateName, () => cy.byTestID('template-support').should('include.text', support));
       } else {
         cy.byTestID('template-support').should('exist');
-        cy.byTestID('template-support').should('include.text', '-');
+        getRow(templateName, () => cy.byTestID('template-support').should('include.text', '-'));
       }
       if (parentSupport) {
         cy.byTestID('template-support-parent').should('exist');
-        cy.byTestID('template-support-parent').should('have.text', parentSupport);
+        getRow(templateName, () =>
+          cy.byTestID('template-support').should('include.text', parentSupport),
+        );
       } else {
         cy.byTestID('template-support-parent').should('not.exist');
       }
@@ -54,6 +56,13 @@ export const virtualization = {
       getRow(templateName, () =>
         cy.byTestID('template-source', { timeout: timeOut }).should('contain', sourceStatus),
       ),
+    testStarIcon: (templateName: string, starred: boolean) => {
+      if (starred) {
+        getRow(templateName, () => cy.get(starIcon).should('exist'));
+      } else {
+        getRow(templateName, () => cy.get(starIcon).should('not.exist'));
+      }
+    },
     deleteSource: (statusText: string) => {
       cy.contains('[data-test="status-text"]', statusText).should('be.visible');
       cy.contains('[data-test="status-text"]', statusText).click();

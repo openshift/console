@@ -22,10 +22,12 @@ Cypress.Commands.add('loaded', () => {
 
 Cypress.Commands.add('visitVMsList', () => {
   cy.clickNavLink(['Virtualization', 'VirtualMachines']);
+  cy.get(loadingBox).should('be.visible');
 });
 
 Cypress.Commands.add('visitVMTemplatesList', () => {
   cy.clickNavLink(['Virtualization', 'Templates']);
+  cy.get(loadingBox).should('be.visible');
 });
 
 Cypress.Commands.add('filterByName', (name: string) => {

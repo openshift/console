@@ -132,7 +132,7 @@ export const verifyDiskAttached = (disk: Disk, tag: string) => {
   verifyHotplugLabel(disk.name, tag);
 };
 
-xdescribe('Test UI for VM hotplug disks', () => {
+describe('Test UI for VM hotplug disks', () => {
   before(() => {
     cy.Login();
     cy.createProject(testName);
@@ -148,7 +148,7 @@ xdescribe('Test UI for VM hotplug disks', () => {
 
   after(() => {
     cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
-    cy.deleteResource('Namespace', testName);
+    cy.deleteTestProject(testName);
   });
 
   it('ID(CNV-7284) Hotplug disk behavior on VM stop', () => {
@@ -178,6 +178,7 @@ xdescribe('Test UI for VM hotplug disks', () => {
       .should('exist')
       .should('contain', autoHotplugDisk.name);
     cy.get(tags.modalConfirm).click();
+    waitForVMStatusLabel(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
     waitForVMStatusLabel(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
     cy.get(`[data-id="${autoHotplugDisk.name}"]`).should('not.exist');
     cy.get(`[data-id="${persHotplugDisk.name}"]`).should('exist');

@@ -59,7 +59,7 @@ const pxeTemplate: VirtualMachineData = {
   networkInterfaces: [nic0],
 };
 
-describe('Test template creation', () => {
+xdescribe('Test template creation', () => {
   before(() => {
     cy.Login();
     cy.visit('/');

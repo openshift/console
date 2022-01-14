@@ -20,7 +20,7 @@ const vmiData: VirtualMachineData = {
   namespace: testName,
 };
 
-describe('Test VM/VMI actions', () => {
+xdescribe('Test VM/VMI actions', () => {
   before(() => {
     cy.Login();
     cy.visit('/');

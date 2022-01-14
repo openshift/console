@@ -142,7 +142,7 @@ Cypress.Commands.add('Login', () => {
 });
 
 Cypress.Commands.add('deleteTestProject', (namespace: string) => {
-  cy.exec(`oc delete --ignore-not-found=true project ${namespace}`);
+  cy.exec(`oc delete --ignore-not-found=true --wait=true project ${namespace}`);
 });
 
 Cypress.Commands.add('pauseVM', (vmData: VirtualMachineData) => {

@@ -125,7 +125,7 @@ export const wizard = {
           .contains(flavor)
           .click();
       }
-      if (!sshEnable) {
+      if (sshEnable) {
         cy.get(wizardView.sshCheckbox).click();
       }
       if (!startOnCreation) {

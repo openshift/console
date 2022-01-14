@@ -1,5 +1,8 @@
 import { ObjectEnum } from '../../../src/constants/object-enum';
-import { IMAGE_URL } from './index';
+
+export const IMAGE_URL = Cypress.env('DOWNSTREAM')
+  ? 'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/rhel-images/rhel-86.qcow2'
+  : 'https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img';
 
 export class ProvisionSource extends ObjectEnum<string> {
   static readonly URL = new ProvisionSource('URL', 'URL (creates PVC)', IMAGE_URL);

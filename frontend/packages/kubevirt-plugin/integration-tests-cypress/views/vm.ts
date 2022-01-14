@@ -82,14 +82,22 @@ export const advanceWizardFlow = (vmData: VirtualMachineData) => {
 
 export const vm = {
   create: (vmData: VirtualMachineData, customize = false) => {
-    virtualization.vms.visit();
-    wizard.vm.open();
-    wizard.vm.selectTemplate(vmData);
-    if (customize) {
-      advanceWizardFlow(vmData);
-    } else {
-      wizardFlow(vmData);
-    }
+    cy.visitVMsList();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
+    cy.get('body').then(($body) => {
+      if ($body.text().includes(vmData.name)) {
+        console.log('vm already exist');
+      } else {
+        wizard.vm.open();
+        wizard.vm.selectTemplate(vmData);
+        if (customize) {
+          advanceWizardFlow(vmData);
+        } else {
+          wizardFlow(vmData);
+        }
+      }
+    });
   },
   start: () => {
     waitForStatus(VM_STATUS.Stopped);
@@ -104,12 +112,18 @@ export const vm = {
     waitForStatus(VM_STATUS.Running);
   },
   stop: () => {
-    waitForStatus(VM_STATUS.Running);
-    action(VM_ACTION.Stop);
-    waitForStatus(VM_STATUS.Stopped);
-    // wait for VMI to disappear
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(15000);
+    cy.get('body').then(($body) => {
+      if ($body.text().includes('Stopped')) {
+        console.log('VM is stopped already');
+      } else {
+        waitForStatus(VM_STATUS.Running);
+        action(VM_ACTION.Stop);
+        waitForStatus(VM_STATUS.Stopped);
+        // wait for VMI to disappear
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(15000);
+      }
+    });
   },
   delete: () => {
     cy.get('body').then(($body) => {

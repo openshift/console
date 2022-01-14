@@ -1,56 +1,49 @@
-import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import {
   DEFAULT_VALUES,
   K8S_KIND,
   TEMPLATE,
+  TEST_NS,
+  TEST_VM,
   VM_ACTION,
   VM_ACTION_TIMEOUT,
   VM_STATUS,
-  YAML_VM_NAME,
 } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { detailViewAction } from '../../views/actions';
 import { dashboardTab, resourceStatus } from '../../views/selector';
 import { vm } from '../../views/vm';
 
-const vmData: VirtualMachineData = {
-  name: `test-vm-details-${testName}`,
+const noGAVMData: VirtualMachineData = {
+  name: 'no-guest-agent-vm',
   description: 'rhel8 vm for details',
-  namespace: testName,
-  template: TEMPLATE.RHEL8,
+  namespace: TEST_NS,
+  template: TEMPLATE.FEDORA,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
-  sshEnable: true,
   startOnCreation: true,
 };
 
 describe('Test VM dashboard tab', () => {
   before(() => {
     cy.Login();
-    cy.visit('/');
-    cy.createProject(testName);
     cy.visitVMsList();
-  });
-
-  after(() => {
-    cy.deleteTestProject(testName);
+    cy.selectProject(TEST_NS);
   });
 
   describe('Test VM dashboard which has no guest agent installed', () => {
     before(() => {
-      vm.create(vmData);
+      vm.create(noGAVMData);
+      cy.byLegacyTestID(noGAVMData.name)
+        .should('exist')
+        .click();
     });
 
     after(() => {
-      cy.deleteResource(K8S_KIND.VM, vmData.name, vmData.namespace);
+      cy.deleteResource(K8S_KIND.VM, noGAVMData.name, noGAVMData.namespace);
     });
 
     it('ID(CNV-3332) Guest agent required shows in dashboard tab ', () => {
-      cy.byLegacyTestID(vmData.name)
-        .should('exist')
-        .click();
-
       cy.get(dashboardTab.detailsCardItem)
         .eq(3)
         .should('contain', DEFAULT_VALUES.GUEST_AGENT_REQUIRED); // Hostname
@@ -65,11 +58,12 @@ describe('Test VM dashboard tab', () => {
 
   describe('Test VM dashboard which has guest agent installed', () => {
     before(() => {
-      cy.createDefaultVM();
-    });
-
-    after(() => {
-      cy.deleteResource(K8S_KIND.VM, YAML_VM_NAME, testName);
+      cy.visitVMsList();
+      vm.create(TEST_VM);
+      vm.stop();
+      cy.byLegacyTestID(TEST_VM.name)
+        .should('exist')
+        .click();
     });
 
     it('ID(CNV-3331) Check VM dashboard while VM is off', () => {
@@ -79,10 +73,10 @@ describe('Test VM dashboard tab', () => {
       // Details card
       cy.get(dashboardTab.detailsCardItem)
         .eq(0)
-        .should('contain', YAML_VM_NAME);
+        .should('contain', TEST_VM.name);
       cy.get(dashboardTab.detailsCardItem)
         .eq(1)
-        .should('contain', testName);
+        .should('contain', TEST_NS);
       cy.get(dashboardTab.detailsCardItem)
         .eq(3)
         .should('contain', DEFAULT_VALUES.VM_NOT_RUNNING); // Hostname
@@ -152,13 +146,13 @@ describe('Test VM dashboard tab', () => {
         // Details card
         cy.get(dashboardTab.detailsCardItem)
           .eq(0)
-          .should('contain', YAML_VM_NAME);
+          .should('contain', TEST_VM.name);
         cy.get(dashboardTab.detailsCardItem)
           .eq(1)
-          .should('contain', testName);
+          .should('contain', TEST_NS);
         cy.get(dashboardTab.detailsCardItem)
           .eq(3)
-          .should('contain', YAML_VM_NAME); // Hostname
+          .should('contain', TEST_VM.name); // Hostname
         cy.get(dashboardTab.detailsCardItem)
           .eq(4)
           .should('not.contain', DEFAULT_VALUES.NOT_AVAILABLE); // Node
@@ -199,6 +193,7 @@ describe('Test VM dashboard tab', () => {
 
         // Events card
         cy.get(dashboardTab.eventsCardBody).should('exist');
+        vm.stop(); // stop vm for next test
       }
     });
   });

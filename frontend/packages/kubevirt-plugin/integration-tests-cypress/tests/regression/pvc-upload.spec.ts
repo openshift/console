@@ -86,7 +86,7 @@ describe('kubevirt PVC upload', () => {
         cy.uploadFromCLI(template.dvName, OS_IMAGES_NS, Cypress.env('UPLOAD_IMG'), '1');
 
         cy.visitVMTemplatesList();
-        virtualization.templates.testSource(template.name, 'Unknown');
+        virtualization.templates.testSource(template.name, 'Red Hat');
       }
     });
 

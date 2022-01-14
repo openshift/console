@@ -4,7 +4,7 @@ import { ProvisionSource } from '../../utils/const/provisionSource';
 import * as wizardView from '../../views/selector-wizard';
 import { wizard } from '../../views/wizard';
 
-xdescribe('Import URL examples', () => {
+describe('Import URL examples', () => {
   before(() => {
     cy.Login();
     cy.createProject(testName);

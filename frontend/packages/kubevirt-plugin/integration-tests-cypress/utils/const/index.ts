@@ -1,12 +1,10 @@
 import * as urls from '../../../src/utils/strings';
+import { VirtualMachineData } from '../../types/vm';
+import { ProvisionSource } from './provisionSource';
 
 export const OS_IMAGES_NS = Cypress.env('DOWNSTREAM')
   ? 'openshift-virtualization-os-images'
   : 'kubevirt-os-images';
-
-export const IMAGE_URL = Cypress.env('DOWNSTREAM')
-  ? 'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/cirros-images/cirros-0.4.0-x86_64-disk.raw.xz'
-  : 'https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img';
 
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 export const KUBEVIRT_PROJECT_NAME = Cypress.env('DOWNSTREAM')
@@ -17,7 +15,6 @@ export const EXPECT_LOGIN_SCRIPT_PATH = './utils/expect-login.sh';
 export const TEST_PROVIDER = 'test-provider';
 export const IMPORTING = 'Importing';
 export const ADD_SOURCE = 'Add source';
-export const COMMUNITY = 'Community';
 export const PREPARING_FOR_CUSTOMIZATION = 'Preparing for customization';
 export const READY_FOR_CUSTOMIZATION = 'Ready for customization';
 export const YAML_VM_NAME = 'vm-example';
@@ -151,7 +148,7 @@ export const TEMPLATE = {
     exampleRegUrl: urls.RHEL8_EXAMPLE_CONTAINER,
   },
   RHEL9: {
-    name: 'Red Hat Enterprise Linux 9.0 Alpha VM',
+    name: 'Red Hat Enterprise Linux 9.0 Beta VM',
     dvName: 'rhel9',
     metadataName: 'rhel9-server-small',
     os: 'Red Hat Enterprise Linux 9.0 or higher',
@@ -160,10 +157,10 @@ export const TEMPLATE = {
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
   FEDORA: {
-    name: 'Fedora 32+ VM',
+    name: 'Fedora 34+ VM',
     dvName: 'fedora',
     metadataName: 'fedora-server-small',
-    os: 'Fedora 32 or higher',
+    os: 'Fedora 34 or higher',
     supportLevel: 'Community',
     exampleImgUrl: urls.FEDORA_IMAGE_LINK,
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
@@ -231,4 +228,15 @@ export const TEMPLATE = {
     exampleImgUrl: urls.RHEL_IMAGE_LINK,
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
+};
+
+export const TEST_NS = 'auto-test-ns';
+export const TEST_VM: VirtualMachineData = {
+  name: 'auto-test-vm',
+  namespace: 'auto-test-ns',
+  template: TEMPLATE.RHEL8,
+  provisionSource: ProvisionSource.URL,
+  pvcSize: '30',
+  sshEnable: false,
+  startOnCreation: true,
 };

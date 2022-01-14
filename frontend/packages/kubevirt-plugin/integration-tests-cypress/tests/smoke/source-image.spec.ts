@@ -11,7 +11,7 @@ import { ProvisionSource } from '../../utils/const/provisionSource';
 import { addSource } from '../../views/add-source';
 import { virtualization } from '../../views/virtualization';
 
-const template = TEMPLATE.RHEL8;
+const template = TEMPLATE.RHEL7;
 
 describe('test VM template source image', () => {
   before(() => {
@@ -64,8 +64,7 @@ describe('test VM template source image', () => {
     virtualization.templates.testSource(template.name, ADD_SOURCE);
   });
 
-  // TODO: move this to tier2 as it requires download image, which is likely to fail in prow.
-  xit('ID(CNV-5649) upload image and delete', () => {
+  it('ID(CNV-5649) upload image and delete', () => {
     if (Cypress.env('DOWNSTREAM')) {
       cy.exec(
         `test -f ${Cypress.env(
