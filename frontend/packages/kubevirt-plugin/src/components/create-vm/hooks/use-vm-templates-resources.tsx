@@ -1,9 +1,12 @@
 import * as React from 'react';
+import { isUpstream } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import {
   CDI_APP_LABEL,
+  KUBEVIRT_OS_IMAGES_NS,
+  OPENSHIFT_OS_IMAGES_NS,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
@@ -24,6 +27,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     isList: true,
   });
   const [dataSources] = useK8sWatchResource<DataSourceKind[]>({
+    namespace: isUpstream() ? KUBEVIRT_OS_IMAGES_NS : OPENSHIFT_OS_IMAGES_NS,
     kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
   });

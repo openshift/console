@@ -3,6 +3,7 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match as routerMatch } from 'react-router';
 import { DetailsPage } from '@console/internal/components/factory/details';
+import { isUpstream } from '@console/internal/components/utils';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
@@ -12,6 +13,7 @@ import {
   PodKind,
   TemplateKind,
 } from '@console/internal/module/k8s/types';
+import { KUBEVIRT_OS_IMAGES_NS, OPENSHIFT_OS_IMAGES_NS } from '../../constants';
 import {
   VIRTUALMACHINES_BASE_URL,
   VIRTUALMACHINES_TEMPLATES_BASE_URL,
@@ -65,6 +67,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
     namespace,
   });
   const [dataSources, dataSourcesLoaded] = useK8sWatchResource<DataSourceKind[]>({
+    namespace: isUpstream() ? KUBEVIRT_OS_IMAGES_NS : OPENSHIFT_OS_IMAGES_NS,
     kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
   });

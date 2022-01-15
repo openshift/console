@@ -4,8 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { ListPage, MultiListPage } from '@console/internal/components/factory';
+import { isUpstream } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
-import { CDI_APP_LABEL, VMWizardName } from '../../constants';
+import {
+  CDI_APP_LABEL,
+  KUBEVIRT_OS_IMAGES_NS,
+  OPENSHIFT_OS_IMAGES_NS,
+  VMWizardName,
+} from '../../constants';
 import {
   customizeWizardBaseURLBuilder,
   VIRTUALMACHINES_TEMPLATES_BASE_URL,
@@ -100,6 +106,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       kind: kubevirtReferenceForModel(DataSourceModel),
       isList: true,
       prop: 'dataSources',
+      namespace: isUpstream() ? KUBEVIRT_OS_IMAGES_NS : OPENSHIFT_OS_IMAGES_NS,
       optional: true,
     },
     {
