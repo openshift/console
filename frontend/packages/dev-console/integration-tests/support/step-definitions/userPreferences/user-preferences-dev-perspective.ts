@@ -101,9 +101,6 @@ Then('user can see project {string} is selected', (projectName: string) => {
     'contain.text',
     projectName,
   );
-  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE', projectName)}`, {
-    failOnNonZeroExit: false,
-  });
 });
 
 When('user types project {string} in search bar', (preference: string) => {

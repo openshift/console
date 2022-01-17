@@ -9,6 +9,7 @@ before(() => {
 });
 
 after(() => {
-  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
+  const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+  cy.exec(`oc delete namespace ${namespaces.join(' ')}`, { failOnNonZeroExit: false });
   // cy.logout();
 });

@@ -192,6 +192,11 @@ export const projectNameSpace = {
           cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
           projectNameSpace.enterProjectName(projectName);
           cy.byTestID('confirm-action').click();
+          const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+          if (!namespaces.includes(projectName)) {
+            namespaces.push(projectName);
+          }
+          Cypress.env('NAMESPACES', namespaces);
           app.waitForLoad();
         } else {
           cy.get('[data-test="namespace-dropdown-menu"]')
@@ -205,6 +210,11 @@ export const projectNameSpace = {
               cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
               projectNameSpace.enterProjectName(projectName);
               cy.byTestID('confirm-action').click();
+              const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+              if (!namespaces.includes(projectName)) {
+                namespaces.push(projectName);
+              }
+              Cypress.env('NAMESPACES', namespaces);
               app.waitForLoad();
             }
           });
