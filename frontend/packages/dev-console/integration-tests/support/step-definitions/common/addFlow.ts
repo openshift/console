@@ -69,10 +69,6 @@ When('user clicks Instantiate Template button on side bar', () => {
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
 
-Given('user is at DevFile page', () => {
-  addPage.selectCardFromOptions(addOptions.DevFile);
-});
-
 When('user navigates to Add page', () => {
   navigateTo(devNavigationMenu.Add);
 });

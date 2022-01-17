@@ -1,9 +1,6 @@
 export enum addOptions {
-  // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
-  Git = 'From Git',
+  ImportFromGit = 'Import From Git',
   ContainerImage = 'Container Image',
-  // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
-  DockerFile = 'From Dockerfile',
   YAML = 'YAML',
   DeveloperCatalog = 'From Catalog',
   Database = 'Database',
@@ -11,8 +8,6 @@ export enum addOptions {
   HelmChart = 'Helm Chart',
   Pipeline = 'Pipeline',
   EventSource = 'Event Source',
-  // TODO (ODC-6455): Tests should use latest UI labels like "Import from Git" instead of mapping strings
-  DevFile = 'From Devfile',
   Channel = 'Channel',
   UploadJARFile = 'Upload JAR file',
   Broker = 'Broker',

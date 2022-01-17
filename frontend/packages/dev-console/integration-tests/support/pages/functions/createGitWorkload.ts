@@ -11,7 +11,7 @@ export const createGitWorkload = (
   appName: string = 'nodejs-ex-git-app',
   isPipelineSelected: boolean = false,
 ) => {
-  addPage.selectCardFromOptions(addOptions.Git);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage(gitUrl);
   gitPage.enterComponentName(componentName);

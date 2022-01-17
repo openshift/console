@@ -13,7 +13,7 @@ import {
 import { dockerfilePage } from '../../pages/add-flow/dockerfile-page';
 
 Given('user is at Import from Git form', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 When('user enters Git Repo URL as {string}', (gitUrl: string) => {

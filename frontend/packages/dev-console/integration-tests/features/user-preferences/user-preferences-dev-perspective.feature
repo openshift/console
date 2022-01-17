@@ -107,7 +107,7 @@ Feature: Manage user preferences
              When user clicks on user dropdown on masthead and selects "User Preference"
               And user deselects the checkbox of user preference "Secure Route"
               And user clicks on Add in navigation menu
-              And user clicks on Import from Git card
+              And user clicks on "Import from Git" card
               And user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex.git"
               And user enters name as "node-route" in General section
               And user clicks "Show advanced Routing options" link in Advanced Options section

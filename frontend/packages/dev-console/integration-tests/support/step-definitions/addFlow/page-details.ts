@@ -24,11 +24,10 @@ When('user selects Add option from left side navigation menu', () => {
 });
 
 Then(
-  'page contains From Git, Container Image, From Dockerfile, YAML, From Catalog, Database, Helm Chart cards',
+  'page contains Import From Git, Container Image, YAML, From Catalog, Database, Helm Chart cards',
   () => {
-    addPage.verifyCard(addOptions.Git);
+    addPage.verifyCard(addOptions.ImportFromGit);
     addPage.verifyCard(addOptions.ContainerImage);
-    addPage.verifyCard(addOptions.DockerFile);
     addPage.verifyCard(addOptions.YAML);
     addPage.verifyCard(addOptions.DeveloperCatalog);
     addPage.verifyCard(addOptions.Database);
