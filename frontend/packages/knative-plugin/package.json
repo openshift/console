@@ -35,7 +35,8 @@
       "eventingComponent": "src/components/eventing",
       "knatifyComponent": "src/components/knatify",
       "knativeTopologySidebar": "src/topology/sidebar",
-      "topology": "src/topology"
+      "topology": "src/topology",
+      "eventingContext": "src/topology/eventing-context.ts"
     }
   }
 }

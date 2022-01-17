@@ -4,10 +4,7 @@ import {
   WatchK8sResources,
 } from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '@console/topology/src/models';
-import { fetchBindableServices, getBindableServicesList } from './fetch-bindable-services-utils';
-
-// Used to perform discovery of bindable services on console load since topology data model loader requires models upfront
-fetchBindableServices();
+import { getBindableServicesList } from './fetch-bindable-services-utils';
 
 export const getBindableServiceResources = (namespace: string): WatchK8sResources<any> => {
   const resources = {

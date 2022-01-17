@@ -610,5 +610,15 @@
       },
       "insertAfter": "console.preferredCreateEditMethod"
     }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "serviceBindingContext.ServiceBindingContextProvider" },
+      "useValueHook": { "$codeRef": "serviceBindingContext.useValuesServiceBindingContext" }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
   }
 ]
