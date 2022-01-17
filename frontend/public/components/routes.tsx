@@ -120,7 +120,7 @@ export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({
 
 // Renders LinkAndCopy for non subdomains
 export const RouteLocation: React.FC<RouteHostnameProps> = ({ obj }) => (
-  <div>
+  <div className="co-break-word">
     {isWebRoute(obj) ? (
       <RouteLinkAndCopy route={obj} additionalClassName="co-external-link--block" />
     ) : (
