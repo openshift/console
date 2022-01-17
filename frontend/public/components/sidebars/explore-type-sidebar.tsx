@@ -51,7 +51,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const description = currentSelection
     ? currentSelection.description
     : currentDefinition.description;
-  const required = new Set(currentDefinition.required || []);
+  const required = new Set(currentDefinition?.required || []);
   const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.kind;
   const breadcrumbs = drilldownHistory.length
     ? [kindObj ? kindLabel : t('public~Schema'), ..._.map(drilldownHistory, 'name')]
