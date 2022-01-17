@@ -193,13 +193,13 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [rulesAccess, isRulesAccessLoading] = useAccessReview2({
+  const [rulesAccess] = useAccessReview2({
     group: 'monitoring.coreos.com',
     resource: 'prometheusrules',
     verb: 'list',
   });
   React.useEffect(() => {
-    if (rulesAccess && isRulesAccessLoading) {
+    if (rulesAccess) {
       const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
         dispatch(alertingLoading(key));
         const notificationPoller = (): void => {
@@ -259,7 +259,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     dispatch(
       alertingErrored('notificationAlerts', new Error(t('public~monitoring access not granted'))),
     );
-  }, [dispatch, t, rulesAccess, isRulesAccessLoading]);
+  }, [dispatch, t, rulesAccess]);
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const alertIds = React.useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
