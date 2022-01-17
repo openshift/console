@@ -26,10 +26,13 @@ const CreateConnector: React.FC<CreateConnectorProps> = ({
     setHover(false);
     clearTimeout(unsetHandle.current);
     unsetHandle.current = window.setTimeout(() => {
-      setHover(dragging);
+      if (unsetHandle.current) {
+        setHover(dragging);
+      }
     }, 2000);
     return () => {
       clearTimeout(unsetHandle.current);
+      unsetHandle.current = null;
     };
   }, [endPoint.x, endPoint.y, dragging]);
 

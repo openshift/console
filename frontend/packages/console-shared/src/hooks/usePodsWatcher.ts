@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodRCData } from '../types';
@@ -11,9 +12,9 @@ export const usePodsWatcher = (
   kind?: string,
   namespace?: string,
 ): { loaded: boolean; loadError: string; podData: PodRCData } => {
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>('');
-  const [podData, setPodData] = React.useState<PodRCData>();
+  const [loaded, setLoaded] = useSafetyFirst<boolean>(false);
+  const [loadError, setLoadError] = useSafetyFirst<string>('');
+  const [podData, setPodData] = useSafetyFirst<PodRCData>(undefined);
   const watchKind = kind || resource.kind;
   const watchNS = namespace || resource.metadata.namespace;
   const watchedResources = React.useMemo(() => getResourcesToWatchForPods(watchKind, watchNS), [
@@ -40,7 +41,7 @@ export const usePodsWatcher = (
         setLoaded(true);
       }
     },
-    [watchKind],
+    [setLoadError, setLoaded, setPodData, watchKind],
   );
 
   const debouncedUpdateResources = useDebounceCallback(updateResults, 250);
