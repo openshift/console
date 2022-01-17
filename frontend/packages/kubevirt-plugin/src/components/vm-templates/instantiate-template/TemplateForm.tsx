@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { ActionGroup, Button, Form, TextInput } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation, WithTranslation } from 'react-i18next';
 import {
   ButtonBar,
@@ -93,11 +94,39 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
     return k8sCreate(TemplateInstanceModel, instance);
   };
 
+  const missingParams = Object.entries(parameters).filter(
+    ([, value]) => !value || _.isEmpty(value),
+  );
+  const initValues = getParameterValues();
   const save = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     if (!namespace) {
       setErrorMsg('Please complete all fields.');
       return;
+    }
+
+    const missingRequiredParams = data.parameters.filter(
+      ({ required, name }) =>
+        required && missingParams.find(([key, value]) => name === key && !value),
+    );
+    if (!_.isEmpty(missingRequiredParams)) {
+      const missingParamNames = missingRequiredParams
+        .map(({ displayName, name }) => displayName || name)
+        .join(', ');
+      setErrorMsg(`Please fill missing fields ${missingParamNames}`);
+      return;
+    }
+
+    if (!_.isEmpty(missingParams)) {
+      setParameters((prevState) => {
+        const missingParamsKeys = missingParams.map(([key]) => key);
+        const restoreMissingParams = {};
+        missingParamsKeys.forEach((key) => (restoreMissingParams[key] = initValues[key]));
+        return {
+          ...prevState,
+          ...restoreMissingParams,
+        };
+      });
     }
     setErrorMsg('');
     setInProgress(true);
@@ -157,7 +186,11 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
             }: TemplateParameter) => {
               const paramValue = parameters[name] || '';
               const helpID = description ? `${name}-help` : '';
-              const placeholder = generate ? '(generated if empty)' : '';
+              const placeholder = generate
+                ? '(generated if empty)'
+                : missingParams.find(([key]) => key === name) && !requiredParam
+                ? `(set to ${initValues[name]} if empty)`
+                : '';
               // Only set required for parameters not generated.
               const requiredInput = requiredParam && !generate;
               return (
