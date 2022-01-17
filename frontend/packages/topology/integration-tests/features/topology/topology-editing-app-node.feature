@@ -23,7 +23,7 @@ Feature: Editing an application
                   | Deployment Config | dancer-ex-git-1 | app2                  |
 
 
-        @smoke
+        @smoke @broken-test
         Scenario: Editing a knative service: T-09-TC02
             Given user has installed OpenShift Serverless Operator
               And user is at Add page
@@ -78,7 +78,7 @@ Feature: Editing an application
              Then user will be redirected to Topology with the updated deployment
 
 
-        @smoke
+        @smoke @broken-test
         Scenario Outline: Editing deployment config using form view: T-09-TC06
             Given user has created workload "recreate-update" with resource type "Deployment Config"
              When user right clicks on the workload "recreate-update" to open the Context Menu

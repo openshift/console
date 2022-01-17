@@ -1,4 +1,4 @@
-@crw
+@crw @broken-test
 Feature: Basic Codeready Workspaces usage
     As a developer user, I should be able to easily access CRW from Openshift Web Console.
 

@@ -1,4 +1,4 @@
-@topology
+@topology @broken-test
 Feature: Sidebar in topology
               As a user, I want to check sidebar of workloads
 

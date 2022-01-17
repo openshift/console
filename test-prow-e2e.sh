@@ -67,14 +67,16 @@ export DBUS_SESSION_BUS_ADDRESS
 SCENARIO="${1:-e2e}"
 
 case $SCENARIO in
-  login|olmFull|ceph|kubevirt-gating) ;; # no protractor tests
+  login|olmFull|ceph|kubevirt-gating|nightly-cypress) ;; # no protractor tests
   *) CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO";;
 esac
 
 # Disable color codes in Cypress since they do not render well CI test logs.
 # https://docs.cypress.io/guides/guides/continuous-integration.html#Colors
 export NO_COLOR=1
-if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
+if [ "$SCENARIO" == "nightly-cypress" ]; then
+  ./test-cypress.sh -n true
+elif [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./test-cypress.sh -h true
 elif [ "$SCENARIO" == "login" ]; then
   ./test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.spec.ts' -h true

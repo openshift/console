@@ -1,4 +1,4 @@
-@monitoring
+@monitoring @broken-test
 Feature: Metrics Tab on Observe Page
               As a user, I should be able to run queries to check the usage
 

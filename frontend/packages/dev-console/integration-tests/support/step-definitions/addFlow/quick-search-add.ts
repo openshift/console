@@ -64,12 +64,13 @@ Then('{string} quick start displays in the Add page', (quickStartName: string) =
 });
 
 When('user clicks on Create button in the Import from Git page', () => {
-  devFilePage.verifyValidatedMessage('https://github.com/nodeshift-starters/devfile-sample.git');
+  const gitUrl = 'https://github.com/nodeshift-starters/devfile-sample.git';
+  devFilePage.verifyValidatedMessage(gitUrl);
+  gitPage.enterAppName('devfile-sample-git-app');
   gitPage.enterWorkloadName('devfile-sample-git');
-  cy.get(gitPO.gitRepoUrl).should(
-    'have.value',
-    'https://github.com/nodeshift-starters/devfile-sample.git',
-  );
+  cy.get(gitPO.gitRepoUrl).should('have.value', gitUrl);
+  // re-enter the URL so the actual github request gets mocked
+  gitPage.enterGitUrl(gitUrl);
   gitPage.clickCreate();
 });
 

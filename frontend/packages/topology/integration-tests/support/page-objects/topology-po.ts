@@ -5,7 +5,7 @@ export const topologyPO = {
   search: '[data-test-id="item-filter"]',
   emptyStateIcon: 'div.pf-c-empty-state__icon',
   emptyText: '[data-test="no-resources-found"]',
-  addToApplication: '[data-test-action="devconsole~Add to Application"]',
+  addToApplication: '[data-test-action="add-to-application"]',
   addToApplicationInContext: 'button.pf-topology-context-sub-menu.pf-c-dropdown__menu-item',
   quickSearch: '[data-test="quick-search-bar"]',
   filterByResourceDropDown: '[data-test="filter-by-resource"] button',

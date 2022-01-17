@@ -110,6 +110,9 @@ Cypress.Commands.add('isDropdownVisible', () => {
 
 Cypress.Commands.add('checkErrors', () => {
   cy.get('body').then(($body) => {
+    if (!$body) {
+      return;
+    }
     if ($body.find('[data-test-id="reset-button"]').length !== 0) {
       cy.get('body').then(($body1) => {
         if ($body1.find(formPO.errorAlert).length !== 0) {

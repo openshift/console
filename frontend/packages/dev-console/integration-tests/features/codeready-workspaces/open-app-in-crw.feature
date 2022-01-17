@@ -1,4 +1,4 @@
-@crw
+@crw @broken-test
 Feature: Opening Codeready Workspaces from Topology view for existing app
                 As a developer user, I should be able to open Codeready Workspaces from Topology view
                 with my app's code imported automatically.

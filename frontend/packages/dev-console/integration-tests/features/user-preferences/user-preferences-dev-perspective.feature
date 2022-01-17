@@ -23,7 +23,7 @@ Feature: Manage user preferences
              Then user sees the "Developer" perspective
 
 
-        @regression
+        @regression @broken-test
         Scenario: Setting a preference for a project: UP-01-TC03
             Given user has created project "test-preference111"
              When user selects "All Projects" from the project menu
@@ -34,7 +34,7 @@ Feature: Manage user preferences
              Then user can see project "test-preference111" is selected
 
 
-        @regression
+        @regression @broken-test
         Scenario: Creating project with project preference: UP-01-TC04
              When user clicks on user dropdown on masthead and selects "User Preference"
               And user clicks on "Project" dropdown on User Preferences page
@@ -67,7 +67,7 @@ Feature: Manage user preferences
              Then user can see topology list view
 
 
-        @regression
+        @regression @broken-test
         Scenario: Setting Form preference for Create/Edit resource method: UP-01-TC07
             Given user has created or selected namespace "aut-user-preferences"
              When user clicks on user dropdown on masthead and selects "User Preference"
@@ -91,7 +91,7 @@ Feature: Manage user preferences
              Then user can see YAML view option selected in Install Helm Chart page
 
 
-        @regression
+        @regression @broken-test
         Scenario: Setting a preference for language: UP-01-TC09
             Given user is at admin perspective
              When user clicks on user dropdown on masthead and selects "User Preference"
@@ -101,8 +101,8 @@ Feature: Manage user preferences
              Then user will see the language change to 日本語
 
 
-        @regression @odc-6303
-        Scenario: Setting Routing options preference for import form: UP-01-TC07
+        @regression @odc-6303 @broken-test
+        Scenario: Setting Routing options preference for import form: UP-01-TC10
             Given user has created or selected namespace "aut-user-preferences"
              When user clicks on user dropdown on masthead and selects "User Preference"
               And user deselects the checkbox of user preference "Secure Route"

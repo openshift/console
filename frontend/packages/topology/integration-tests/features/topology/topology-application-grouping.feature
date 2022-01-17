@@ -24,7 +24,7 @@ Feature: Application groupings in topology
              Then user can view Add to Application and Delete Application options
 
 
-        @regression
+        @regression @broken-test
         Scenario: Add to Application in Application grouping from Action menu: T-05-TC03
             Given user is at Topology page
              When user clicks on application groupings "nodejs-ex-git-app"
