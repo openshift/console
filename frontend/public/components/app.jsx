@@ -28,6 +28,7 @@ import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
+import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
@@ -206,6 +207,7 @@ class App_ extends React.PureComponent {
           <div id="modal-container" role="dialog" aria-modal="true" />
         </QuickStartDrawer>
         <ConsoleNotifier location="BannerBottom" />
+        <FeatureFlagExtensionLoader />
       </>
     );
 

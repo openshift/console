@@ -23,7 +23,11 @@ import {
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
 } from '../extensions/dashboards';
-import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
+import {
+  FeatureFlag,
+  ModelFeatureFlag,
+  FeatureFlagHookProvider,
+} from '../extensions/feature-flags';
 import { FileUpload } from '../extensions/file-upload';
 import { HorizontalNavTab } from '../extensions/horizontal-nav-tabs';
 import { ImportEnvironment } from '../extensions/import-environments';
@@ -63,6 +67,7 @@ import { YAMLTemplate } from '../extensions/yaml-templates';
 export type SupportedExtension =
   | FeatureFlag
   | ModelFeatureFlag
+  | FeatureFlagHookProvider
   | ReduxReducer
   | ContextProvider
   | StandaloneRoutePage

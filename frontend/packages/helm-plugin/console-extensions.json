@@ -13,9 +13,22 @@
     }
   },
   {
-    "type": "console.flag",
+    "type": "console.model-metadata",
     "properties": {
-      "handler": { "$codeRef": "helmUtils.detectHelmChartRepositories" }
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "ProjectHelmChartRepository"
+      },
+      "label": "%helm-plugin~Project Helm Chart Repository%",
+      "labelPlural": "%helm-plugin~Project Helm Chart Repositories%",
+      "abbr": "PHCR"
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "helmProviders.useDetectHelmChartRepositories" }
     }
   },
   {

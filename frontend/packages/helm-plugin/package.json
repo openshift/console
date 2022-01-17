@@ -16,7 +16,8 @@
       "helmComponents": "src/components",
       "helmTopology": "src/topology",
       "helmTopologySidebar": "src/topology/sidebar",
-      "helmUtils": "src/utils"
+      "helmUtils": "src/utils",
+      "helmProviders": "src/providers"
     }
   }
 }

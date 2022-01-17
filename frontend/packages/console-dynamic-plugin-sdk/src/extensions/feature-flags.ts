@@ -6,7 +6,7 @@ export type FeatureFlag = ExtensionDeclaration<
   'console.flag',
   {
     /** Used to set/unset arbitrary feature flags. */
-    handler: CodeRef<(callback: SetFeatureFlag) => void>;
+    handler: CodeRef<FeatureFlagHandler>;
   }
 >;
 
@@ -21,6 +21,15 @@ export type ModelFeatureFlag = ExtensionDeclaration<
   }
 >;
 
+/** Gives full control over Console feature flags with hook handlers. */
+export type FeatureFlagHookProvider = ExtensionDeclaration<
+  'console.flag/hookProvider',
+  {
+    /** Used to set/unset arbitrary feature flags. */
+    handler: CodeRef<FeatureFlagHandler>;
+  }
+>;
+
 // Type guards
 
 export const isFeatureFlag = (e: Extension): e is FeatureFlag => e.type === 'console.flag';
@@ -28,6 +37,10 @@ export const isFeatureFlag = (e: Extension): e is FeatureFlag => e.type === 'con
 export const isModelFeatureFlag = (e: Extension): e is ModelFeatureFlag =>
   e.type === 'console.flag/model';
 
+export const isFeatureFlagHookProvider = (e: Extension): e is FeatureFlagHookProvider =>
+  e.type === 'console.flag/hookProvider';
+
 // Support types
 
 export type SetFeatureFlag = (flag: string, enabled: boolean) => void;
+export type FeatureFlagHandler = (callback: SetFeatureFlag) => void;
