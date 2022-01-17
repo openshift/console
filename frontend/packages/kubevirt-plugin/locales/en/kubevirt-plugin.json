@@ -1015,7 +1015,7 @@
   "sata": "sata",
   "Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio. Consider using it for CD-ROM devices": "Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio. Consider using it for CD-ROM devices",
   "scsi": "scsi",
-  "Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio": "Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio",
+  "Paravirtualized iSCSI HDD driver offers similar functionality to the virtio-block device, with some additional enhancements. In particular, this driver supports adding hundreds of devices, and names devices using the standard SCSI device naming scheme": "Paravirtualized iSCSI HDD driver offers similar functionality to the virtio-block device, with some additional enhancements. In particular, this driver supports adding hundreds of devices, and names devices using the standard SCSI device naming scheme",
   "Migration - Pending": "Migration - Pending",
   "Migration - Scheduling": "Migration - Scheduling",
   "Migration - Preparing Target": "Migration - Preparing Target",

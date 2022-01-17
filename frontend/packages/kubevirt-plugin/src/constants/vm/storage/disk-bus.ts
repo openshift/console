@@ -20,9 +20,9 @@ export class DiskBus extends SelectDropdownObjectEnum<string> {
   static readonly SCSI = new DiskBus('scsi', {
     // t('kubevirt-plugin~scsi')
     labelKey: 'kubevirt-plugin~scsi',
-    // t('kubevirt-plugin~Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio')
+    // t('kubevirt-plugin~Paravirtualized iSCSI HDD driver offers similar functionality to the virtio-block device, with some additional enhancements. In particular, this driver supports adding hundreds of devices, and names devices using the standard SCSI device naming scheme')
     descriptionKey:
-      'kubevirt-plugin~Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio.',
+      'kubevirt-plugin~Paravirtualized iSCSI HDD driver offers similar functionality to the virtio-block device, with some additional enhancements. In particular, this driver supports adding hundreds of devices, and names devices using the standard SCSI device naming scheme.',
   });
 
   private static readonly ALL = Object.freeze(
