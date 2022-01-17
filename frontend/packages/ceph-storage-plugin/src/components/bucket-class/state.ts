@@ -10,7 +10,7 @@ export const initialState = {
   writeNamespaceStore: [],
   hubNamespaceStore: null,
   cacheBackingStore: null,
-  timeToLive: 3600000,
+  timeToLive: 0,
   timeUnit: TimeUnits.HOUR,
   description: '',
   tier1Policy: PlacementPolicy.Spread,

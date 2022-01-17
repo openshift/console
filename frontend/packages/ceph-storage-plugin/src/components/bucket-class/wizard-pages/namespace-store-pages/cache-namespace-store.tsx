@@ -114,7 +114,7 @@ export const CacheNamespaceStorePage: React.FC<CacheNamespaceStoreProps> = React
             />
             <p className="nb-create-bc-step-page-form__element--light-text">
               {t(
-                'ceph-storage-plugin~Time to live is the time that an object is stored in a caching system before it is deleted or refreshed. Default: 1 hr, Min: 15 mins, Max: 24 hrs',
+                'ceph-storage-plugin~Time to live is the time that an object is stored in a caching system before it is deleted or refreshed. Default: 0, Max: 24 hrs',
               )}
             </p>
           </FormGroup>
