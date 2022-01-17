@@ -16,6 +16,7 @@
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
+    "@microsoft/tsdoc": "0.13.2",
     "@types/ejs": "3.x",
     "@types/fs-extra": "9.x",
     "ejs": "3.x",

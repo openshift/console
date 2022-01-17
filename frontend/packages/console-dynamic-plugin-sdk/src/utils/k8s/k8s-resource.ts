@@ -74,14 +74,14 @@ type K8sGetResource = (options: OptionsGet) => Promise<Response>;
  * It fetches a resource from the cluster, based on the provided options.
  * If the name is provided it returns one resource else it returns all the resources matching the model.
  * @param options Which are passed as key-value pairs in the map
- * @param options.model k8s model
- * @param options.name The name of the resource, if not provided then it'll look for all the resources matching the model.
- * @param options.ns The namespace to look into, should not be specified for cluster-scoped resources.
- * @param options.path Appends as subpath if provided
- * @param options.queryParams The query parameters to be included in the URL.
- * @param options.requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
+ * @param options.model - k8s model
+ * @param options.name - The name of the resource, if not provided then it'll look for all the resources matching the model.
+ * @param options.ns - The namespace to look into, should not be specified for cluster-scoped resources.
+ * @param options.path - Appends as subpath if provided
+ * @param options.queryParams - The query parameters to be included in the URL.
+ * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @return A promise that resolves to the response as JSON object with a resource if the name is provided
+ * @returns A promise that resolves to the response as JSON object with a resource if the name is provided
  * else it returns all the resources matching the model. In case of failure, the promise gets rejected with HTTP error response.
  * * */
 export const k8sGetResource: K8sGetResource = adapterFunc(k8sGet, [
@@ -98,7 +98,7 @@ export const k8sGetResource: K8sGetResource = adapterFunc(k8sGet, [
  * @param model k8s model
  * @param data The payload for the resource to be created.
  * @param opts The options to pass.
- * @return A promise that resolves to the response of the resource created.
+ * @returns A promise that resolves to the response of the resource created.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
 export const k8sCreate = <R extends K8sResourceCommon>(
@@ -124,11 +124,11 @@ type K8sCreateResource = <R extends K8sResourceCommon>(
 /**
  * It creates a resource in the cluster, based on the provided options.
  * @param options Which are passed as key-value pairs in the map
- * @param options.model k8s model
- * @param options.data payload for the resource to be created
- * @param options.path Appends as subpath if provided
- * @param options.queryParams The query parameters to be included in the URL.
- * @return A promise that resolves to the response of the resource created.
+ * @param options.model - k8s model
+ * @param options.data - payload for the resource to be created
+ * @param options.path - Appends as subpath if provided
+ * @param options.queryParams - The query parameters to be included in the URL.
+ * @returns A promise that resolves to the response of the resource created.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
 export const k8sCreateResource: K8sCreateResource = adapterFunc(k8sCreate, [
@@ -147,7 +147,7 @@ export const k8sCreateResource: K8sCreateResource = adapterFunc(k8sCreate, [
  * @param ns namespace to look into, it should not be specified for cluster-scoped resources.
  * @param name resource name to be updated.
  * @param opts The options to pass
- * @return A promise that resolves to the response of the resource updated.
+ * @returns A promise that resolves to the response of the resource updated.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
 export const k8sUpdate = <R extends K8sResourceCommon>(
@@ -179,13 +179,13 @@ type K8sUpdateResource = <R extends K8sResourceCommon>(
  * When a client needs to replace an existing resource entirely, they can use k8sUpdate.
  * Alternatively can use k8sPatch to perform the partial update.
  * @param options which are passed as key-value pair in the map
- * @param options.model k8s model
- * @param options.data payload for the k8s resource to be updated
- * @param options.ns namespace to look into, it should not be specified for cluster-scoped resources.
- * @param options.name resource name to be updated.
- * @param options.path Appends as subpath if provided
- * @param options.queryParams The query parameters to be included in the URL.
- * @return A promise that resolves to the response of the resource updated.
+ * @param options.model - k8s model
+ * @param options.data - payload for the k8s resource to be updated
+ * @param options.ns - namespace to look into, it should not be specified for cluster-scoped resources.
+ * @param options.name - resource name to be updated.
+ * @param options.path - Appends as subpath if provided
+ * @param options.queryParams - The query parameters to be included in the URL.
+ * @returns A promise that resolves to the response of the resource updated.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
 export const k8sUpdateResource: K8sUpdateResource = adapterFunc(k8sUpdate, [
@@ -206,7 +206,7 @@ export const k8sUpdateResource: K8sUpdateResource = adapterFunc(k8sUpdate, [
  * @param resource The resource to be patched
  * @param data Only the data to be patched on existing resource with the operation, path, and value
  * @param opts The options to pass
- * @return A promise that resolves to the response of the resource patched.
+ * @returns A promise that resolves to the response of the resource patched.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
 export const k8sPatch = <R extends K8sResourceCommon>(
@@ -252,12 +252,12 @@ type K8sPatchResource = <R extends K8sResourceCommon>(
  * Alternatively can use k8sUpdate to replace an existing resource entirely.
  * See more {@link https://datatracker.ietf.org/doc/html/rfc6902}
  * @param options Which are passed as key-value pairs in the map.
- * @param options.model k8s model
- * @param options.resource The resource to be patched.
- * @param options.data Only the data to be patched on existing resource with the operation, path, and value.
- * @param options.path Appends as subpath if provided.
- * @param options.queryParams The query parameters to be included in the URL.
- * @return A promise that resolves to the response of the resource patched.
+ * @param options.model - k8s model
+ * @param options.resource - The resource to be patched.
+ * @param options.data - Only the data to be patched on existing resource with the operation, path, and value.
+ * @param options.path - Appends as subpath if provided.
+ * @param options.queryParams - The query parameters to be included in the URL.
+ * @returns A promise that resolves to the response of the resource patched.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
 export const k8sPatchResource: K8sPatchResource = adapterFunc(k8sPatch, [
@@ -277,10 +277,10 @@ export const k8sPatchResource: K8sPatchResource = adapterFunc(k8sPatch, [
  * @param opts The Options to pass
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @param options.json Can control garbage collection of resource explicitly if provided else will default to model's "propagationPolicy".
+ * @param options.json - Can control garbage collection of resource explicitly if provided else will default to model's "propagationPolicy".
  * @example
  * { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
- * @return A promise that resolves to the response of kind Status.
+ * @returns A promise that resolves to the response of kind Status.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
 export const k8sKill = <R extends K8sResourceCommon>(
@@ -318,18 +318,18 @@ type K8sDeleteResource = <R extends K8sResourceCommon>(
  * It deletes resources from the cluster, based on the provided model, resource.
  * The garbage collection works based on 'Foreground' | 'Background', can be configured with propagationPolicy property in provided model or passed in json.
  * @param options which are passed as key-value pair in the map.
- * @param options.model k8s model
- * @param options.resource The resource to be deleted.
- * @param options.path Appends as subpath if provided
- * @param options.queryParams The query parameters to be included in the URL.
- * @param options.requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
+ * @param options.model - k8s model
+ * @param options.resource - The resource to be deleted.
+ * @param options.path - Appends as subpath if provided
+ * @param options.queryParams - The query parameters to be included in the URL.
+ * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @param options.json Can control garbage collection of resources explicitly if provided else will default to model's "propagationPolicy".
+ * @param options.json - Can control garbage collection of resources explicitly if provided else will default to model's "propagationPolicy".
  * @example
  * { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
- * @return A promise that resolves to the response of kind Status.
+ * @returns A promise that resolves to the response of kind Status.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ *  */
 export const k8sDeleteResource: K8sDeleteResource = adapterFunc(k8sKill, [
   'model',
   'resource',
@@ -347,9 +347,9 @@ export const k8sDeleteResource: K8sDeleteResource = adapterFunc(k8sKill, [
  * and it will have a key "item" which will be an array of Pod kind.
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @return A promise that resolves to the response with the resources in an array.
+ * @returns A promise that resolves to the response with the resources in an array.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ * */
 export const k8sList = (
   model: K8sModel,
   queryParams: { [key: string]: any } = {},
@@ -386,11 +386,11 @@ type K8sListResource = (options: OptionsList) => Promise<Response>;
 /**
  * It lists the resources as an array in the cluster, based on provided options.
  * @param options Which are passed as key-value pairs in the map
- * @param options.model k8s model
- * @param options.queryParams The query parameters to be included in the URL and can pass label selector's as well with key "labelSelector".
- * @param options.requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
+ * @param options.model - k8s model
+ * @param options.queryParams - The query parameters to be included in the URL and can pass label selector's as well with key "labelSelector".
+ * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @return A promise that resolves to the response
+ * @returns A promise that resolves to the response
  * * */
 export const k8sListResource: K8sListResource = adapterFunc(k8sList, [
   'model',
