@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { GraphElement, isEdge } from '@patternfly/react-topology';
+import { GraphElement, isEdge, observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import {
   DetailsTab,
   DetailsTabSection,
+  DetailsTabSectionCallback,
   isDetailsTab,
   isDetailsTabSection,
   useResolvedExtensions,
@@ -15,7 +16,21 @@ import { getResource } from '@console/topology/src/utils';
 import { DefaultResourceSideBar } from '../DefaultResourceSideBar';
 import TopologyEdgeResourcesPanel from '../TopologyEdgeResourcesPanel';
 
-const TabSection: React.FC = ({ children }) => <>{children}</>;
+type TabSectionProps = {
+  element?: GraphElement;
+  sectionCallback?: DetailsTabSectionCallback;
+  renderNull?: () => null;
+};
+const TabSection: React.FC<TabSectionProps> = observer(function TabSection({
+  element,
+  sectionCallback,
+  renderNull,
+}) {
+  if (element && sectionCallback) {
+    return <>{sectionCallback(element, renderNull)}</>;
+  }
+  return null;
+});
 
 type SideBarTabLoaderProps = {
   element: GraphElement;
@@ -58,7 +73,9 @@ const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }
     return resolved
       ? tabSectionExtensions.reduce((tabs, { properties: { tab, section, ...rest } }) => {
           const [index, callback] = renderNull(tab);
-          const resolvedSection = section(element, callback);
+          const resolvedSection = (
+            <TabSection sectionCallback={section} renderNull={callback} element={element} />
+          );
           if (!resolvedSection) {
             renderSection.current[tab][index] = false;
             return tabs;
@@ -86,7 +103,7 @@ const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }
         resolvedSection: React.ReactNode;
         id: string;
       }>(tabSections[id]).map(({ id: tsId, resolvedSection }) => (
-        <TabSection key={tsId}>{resolvedSection}</TabSection>
+        <React.Fragment key={tsId}>{resolvedSection}</React.Fragment>
       ));
       return [...acc, { name: label, component: () => <>{tabContent}</> }];
     }, []);
