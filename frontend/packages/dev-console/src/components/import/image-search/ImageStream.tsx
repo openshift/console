@@ -50,7 +50,8 @@ const ImageStream: React.FC<{
   required?: boolean;
   formContextField?: string;
   dataTest?: string;
-}> = ({ disabled = false, label, required = false, formContextField, dataTest }) => {
+  reloadCount?: number;
+}> = ({ disabled = false, label, required = false, formContextField, dataTest, reloadCount }) => {
   const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
@@ -97,11 +98,19 @@ const ImageStream: React.FC<{
               <ImageStreamNsDropdown disabled={disabled} formContextField={formContextField} />
             </div>
             <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <ImageStreamDropdown disabled={disabled} formContextField={formContextField} />
+              <ImageStreamDropdown
+                disabled={disabled}
+                formContextField={formContextField}
+                reloadCount={reloadCount}
+              />
               <div className="odc-imagestream-separator">/</div>
             </div>
             <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <ImageStreamTagDropdown disabled={disabled} formContextField={formContextField} />
+              <ImageStreamTagDropdown
+                disabled={disabled}
+                formContextField={formContextField}
+                reloadCount={reloadCount}
+              />
               <div className="odc-imagestream-separator">:</div>
             </div>
           </div>
