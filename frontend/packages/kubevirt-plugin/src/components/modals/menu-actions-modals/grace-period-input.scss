@@ -1,0 +1,17 @@
+.grace-period-input {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  height: var(--pf-global--spacer--2xl);
+
+  label {
+    flex: 0 1;
+    min-width: 180px;
+  }
+
+  &__input-group {
+    margin-left: var(--pf-global--spacer--sm);
+    flex: 0 1 150px;
+  }
+}

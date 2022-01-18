@@ -29,6 +29,7 @@ import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { getVolumes } from '../../../selectors/vm/selectors';
 import { VMIKind, VMKind, VMSnapshot } from '../../../types/vm';
+import { GracePeriodInput } from './grace-period-input';
 import { redirectToList } from './utils';
 import { VMIUsersAlert } from './vmi-users-alert';
 
@@ -47,6 +48,7 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
   const [deleteDisks, setDeleteDisks] = React.useState<boolean>(true);
   const [deleteVMImport, setDeleteVMImport] = React.useState<boolean>(true);
   const [snapshots] = useK8sWatchResource<VMSnapshot[]>(snapshotResource);
+  const [gracePeriodSeconds, setGracePeriodSeconds] = React.useState<number>(null);
   const vmHasSnapshots = snapshots.some((snap) => getVmSnapshotVmName(snap) === getName(vm));
 
   const namespace = getNamespace(vmUpToDate);
@@ -69,12 +71,16 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
 
   const submit = (e) => {
     e.preventDefault();
+    let deleteOptions = null;
+
+    if (!_.isNil(gracePeriodSeconds)) deleteOptions = { gracePeriodSeconds };
 
     const promise = deleteVM(vmUpToDate, {
       vmImport,
       deleteVMImport,
       ownedVolumeResources,
       deleteOwnedVolumeResources: deleteDisks,
+      deleteOptions,
     });
 
     return handlePromise(promise, () => {
@@ -96,6 +102,12 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
             namespace <strong>{{ namespace }}</strong>?
           </Trans>
         </p>
+
+        <GracePeriodInput
+          gracePeriodSeconds={gracePeriodSeconds}
+          setGracePeriodSeconds={setGracePeriodSeconds}
+        />
+
         {numOfAllResources > 0 && (
           <p>
             {t(
@@ -131,6 +143,7 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
             </label>
           </div>
         )}
+
         {vmHasSnapshots && (
           <>
             <Trans t={t} ns="kubevirt-plugin">

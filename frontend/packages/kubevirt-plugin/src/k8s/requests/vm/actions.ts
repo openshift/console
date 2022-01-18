@@ -1,5 +1,6 @@
 import { coFetch } from '@console/internal/co-fetch';
 import { groupVersionFor, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
+import { V1DeleteOptions } from 'packages/kubevirt-plugin/src/types/api/V1DeleteOptions';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { getAPIVersion, getName, getNamespace } from '../../../selectors';
@@ -75,11 +76,13 @@ export const deleteVM = async (
     deleteVMImport,
     ownedVolumeResources,
     deleteOwnedVolumeResources,
+    deleteOptions,
   }: {
     vmImport: VMImportKind;
     deleteVMImport: boolean;
     ownedVolumeResources: K8sResourceWithModel[];
     deleteOwnedVolumeResources: boolean;
+    deleteOptions: V1DeleteOptions;
   },
 ) => {
   if (ownedVolumeResources && !deleteOwnedVolumeResources) {
@@ -96,8 +99,8 @@ export const deleteVM = async (
   }
 
   if (vmImport && deleteVMImport) {
-    await cancelVMImport(vmImport, vm);
+    await cancelVMImport(vmImport, vm, deleteOptions);
   } else {
-    await k8sKill(getKubevirtAvailableModel(VirtualMachineModel), vm);
+    await k8sKill(getKubevirtAvailableModel(VirtualMachineModel), vm, null, null, deleteOptions);
   }
 };
