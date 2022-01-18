@@ -3,8 +3,9 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import AdvancedSection from './AdvancedSection';
 import DeploymentStrategySection from './deployment-strategy/DeploymentStrategySection';
-import ImagesSection from './images/ImagesSection';
 import EnvironmentVariablesSection from './EnvironmentVariablesSection';
+import ImagesSection from './images/ImagesSection';
+import NameSection from './NameSection';
 
 export type EditDeploymentFormEditorProps = {
   resourceType: string;
@@ -19,6 +20,7 @@ const EditDeploymentFormEditor: React.FC<EditDeploymentFormEditorProps> = ({
   return (
     <>
       {showYAMLAlert && <SwitchToYAMLAlert onClose={() => setShowYAMLAlert(false)} />}
+      <NameSection />
       <DeploymentStrategySection resourceType={resourceType} resourceObj={resourceObj} />
       <ImagesSection resourceType={resourceType} />
       <EnvironmentVariablesSection resourceObj={resourceObj} />
