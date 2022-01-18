@@ -550,22 +550,24 @@ export const getBuildConfigsForResource = (
   const nativeTriggers = resource?.spec?.triggers;
   const annotatedTriggers = getAnnotatedTriggers(resource);
   const triggers = _.unionWith(nativeTriggers, annotatedTriggers, _.isEqual);
+  const resourceNameLabel = resource.metadata?.labels?.[NAME_LABEL];
   return _.flatMap(triggers, (trigger) => {
     const triggerFrom = trigger.from || (trigger.imageChangeParams?.from ?? {});
     if (triggerFrom.kind !== 'ImageStreamTag') {
       return [];
     }
+    const triggerImageNamespace = triggerFrom.namespace || currentNamespace;
+    const triggerImageName = triggerFrom.name;
     return _.reduce(
       buildConfigs,
       (acc, buildConfig) => {
-        const triggerImageNamespace = triggerFrom.namespace || currentNamespace;
-        const triggerImageName = triggerFrom.name;
         const targetImageNamespace = buildConfig.spec?.output?.to?.namespace ?? currentNamespace;
         const targetImageName = buildConfig.spec?.output?.to?.name;
         if (
           triggerImageNamespace === targetImageNamespace &&
           (triggerImageName === targetImageName ||
-            resource.metadata?.labels?.[NAME_LABEL] === buildConfig.metadata?.labels?.[NAME_LABEL])
+            (!!resourceNameLabel &&
+              resourceNameLabel === buildConfig.metadata?.labels?.[NAME_LABEL]))
         ) {
           const builds = getBuildsForResource(buildConfig, resources);
           return [
