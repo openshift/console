@@ -36,7 +36,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
   const storageProvidersMap: StorageProviderMap = React.useMemo(() => {
     const providers = {
       '0': {
-        name: 'PersistentVolumeClaim',
+        name: t('public~PersistentVolumeClaim'),
         Component: () => import('./attach-pvc-storage').then((m) => m.AttachStorage),
       },
     };
@@ -47,7 +47,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
       };
     });
     return providers;
-  }, [memoizedStorageProviders]);
+  }, [memoizedStorageProviders, t]);
 
   const handleChange = (_checked: boolean, e: React.FormEvent<HTMLInputElement>) => {
     const id = e?.currentTarget?.id;

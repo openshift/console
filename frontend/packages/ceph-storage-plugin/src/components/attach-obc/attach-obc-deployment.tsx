@@ -61,7 +61,7 @@ const AttachStorage: React.FC<AttachStorageProps> = (props) => {
 
   return (
     <Form onSubmit={onSubmit} className="co-m-pane__body-group co-m-pane__form">
-      <FormGroup fieldId="exists" label="ObjectBucketClaim" isRequired>
+      <FormGroup fieldId="exists" label={t('ceph-storage-plugin~ObjectBucketClaim')} isRequired>
         <Radio
           label={t('ceph-storage-plugin~Use existing claim')}
           value="exists"
