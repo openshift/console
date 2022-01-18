@@ -317,7 +317,9 @@ export const RoleBindingsPage = ({
 
   const data = React.useMemo(() => flatten(resources), [resources]);
 
-  const loaded = Object.values(resources).every((r) => r.loaded);
+  const loaded = Object.values(resources)
+    .filter((r) => !r.loadError)
+    .every((r) => r.loaded);
 
   const hasCRBindings =
     resources.ClusterRoleBinding.data?.length > 0 &&
