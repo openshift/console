@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import 'whatwg-fetch';
 import { ConsoleFetchText, ConsoleFetchJSON, ConsoleFetch } from '../../extensions/console-types';
 import { TimeoutError, RetryError } from '../error/http-error';
-import { getCSRFToken, validateStatus, getImpersonateHeaders } from './console-fetch-utils';
+import { getCSRFToken, validateStatus, getConsoleRequestHeaders } from './console-fetch-utils';
 
 const initDefaults = {
   headers: {},
@@ -85,10 +85,7 @@ const consoleFetchCommon = async (
   timeout?: number,
   cluster?: string,
 ) => {
-  const headers = getImpersonateHeaders() || {};
-  if (cluster) {
-    headers['X-Cluster'] = cluster;
-  }
+  const headers = getConsoleRequestHeaders(cluster);
   // Pass headers last to let callers to override Accept.
   const allOptions = _.defaultsDeep({ method }, options, { headers });
   const response = await consoleFetch(url, allOptions, timeout);

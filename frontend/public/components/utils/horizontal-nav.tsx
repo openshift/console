@@ -186,6 +186,12 @@ export const navFactory: NavFactory = {
     nameKey: 'public~Metrics',
     component: component ?? ResourceMetricsDashboard,
   }),
+  terminal: (component) => ({
+    href: 'terminal',
+    // t('public~Terminal')
+    nameKey: 'public~Terminal',
+    component,
+  }),
 };
 
 export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => {

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod';
 import { navFactory, PageComponentProps } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
+import { isWindowsNode } from '@console/shared/src/selectors/node';
 import { nodeStatus } from '../../status/node';
 import { menuActions } from './menu-actions';
 import NodeDashboard from './node-dashboard/NodeDashboard';
@@ -22,9 +22,7 @@ const NodePodsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => (
 );
 
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { editYaml, events, logs, pods } = navFactory;
   const { t } = useTranslation();
-
   const pagesFor = React.useCallback(
     (node: NodeKind) => [
       {
@@ -37,20 +35,13 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
         name: t('console-app~Details'),
         component: NodeDetails,
       },
-      editYaml(),
-      pods(NodePodsPage),
-      logs(NodeLogs),
-      events(ResourceEventStream),
-      ...(!_.some(
-        node?.metadata?.labels,
-        (v, k) =>
-          (k === 'node.openshift.io/os_id' && v === 'Windows') ||
-          (k === 'corev1.LabelOSStable' && v === 'windows'),
-      )
-        ? [{ href: 'terminal', name: t('console-app~Terminal'), component: NodeTerminal }]
-        : []),
+      navFactory.editYaml(),
+      navFactory.pods(NodePodsPage),
+      navFactory.logs(NodeLogs),
+      navFactory.events(ResourceEventStream),
+      ...(!isWindowsNode(node) ? [navFactory.terminal(NodeTerminal)] : []),
     ],
-    [editYaml, events, logs, pods, t],
+    [t],
   );
 
   return (

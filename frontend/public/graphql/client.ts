@@ -9,7 +9,7 @@ import { getK8sResourcePath } from '../module/k8s';
 import { K8sKind, K8sResourceCommon } from '../module/k8s/types';
 import { URLQuery } from './client.gql';
 import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/graphql-schema';
-import { getImpersonateHeaders, coFetch } from '../co-fetch';
+import { getConsoleRequestHeaders, coFetch } from '../co-fetch';
 
 let wssErrors = 0;
 
@@ -43,7 +43,7 @@ export const subsClient = new SubscriptionClient(
   }`,
   {
     reconnect: true,
-    connectionParams: getImpersonateHeaders,
+    connectionParams: getConsoleRequestHeaders,
     reconnectionAttempts: 5,
     connectionCallback: () => {
       graphQLReady.setReady();

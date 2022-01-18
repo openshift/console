@@ -16,7 +16,6 @@ export default (state: UIState, action: UIAction): UIState => {
     return ImmutableMap({
       activeNavSectionId: 'workloads',
       location: pathname,
-      activeCluster: 'local-cluster',
       activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       createProjectMessage: '',
@@ -41,9 +40,6 @@ export default (state: UIState, action: UIAction): UIState => {
   switch (action.type) {
     case ActionType.SetActiveApplication:
       return state.set('activeApplication', action.payload.application);
-
-    case ActionType.SetActiveCluster:
-      return state.set('activeCluster', action.payload.cluster);
 
     case ActionType.SetActiveNamespace:
       if (!action.payload.namespace) {
@@ -146,8 +142,6 @@ export const userStateToProps = (state: RootState) => {
 export const impersonateStateToProps = (state: RootState) => {
   return { impersonate: getImpersonate(state) };
 };
-
-export const getActiveCluster = ({ UI }: RootState): string => UI.get('activeCluster');
 
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
 

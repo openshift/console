@@ -5,7 +5,7 @@ import { K8sResourceCommon, FilterValue } from '../../../extensions/console-type
 import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
 import { k8sWatch } from '../../../utils/k8s/k8s-utils';
-import { getImpersonate } from '../../core/reducers/coreSelectors';
+import { getImpersonate, getActiveCluster } from '../../core/reducers/coreSelectors';
 
 type K8sResourceKind = K8sResourceCommon & {
   spec?: {
@@ -88,7 +88,7 @@ export const watchK8sList = (
   }
 
   if (!query.cluster) {
-    query.cluster = getState()?.UI?.get('activeCluster') ?? 'local-cluster';
+    query.cluster = getActiveCluster(getState());
   }
 
   dispatch(startWatchK8sList(id, query));
@@ -237,7 +237,7 @@ export const watchK8sObject = (
   }
 
   if (!query.cluster) {
-    query.cluster = getState()?.UI?.get('activeCluster') ?? 'local-cluster';
+    query.cluster = getActiveCluster(getState());
   }
 
   const watch = dispatch(startWatchK8sObject(id));

@@ -113,7 +113,6 @@ type Server struct {
 	LogoutRedirect       *url.URL
 	PublicDir            string
 	TectonicVersion      string
-	Auther               *auth.Authenticator
 	Authers              map[string]*auth.Authenticator
 	StaticUser           *auth.User
 	ServiceAccountToken  string
@@ -130,7 +129,7 @@ type Server struct {
 	// Map that contains list of enabled plugins and their endpoints.
 	EnabledConsolePlugins map[string]string
 	PluginProxy           string
-	// A client with the correct TLS setup for communicating with the API server.
+	// Clients with the correct TLS setup for communicating with the API servers.
 	K8sClients                       map[string]*http.Client
 	ThanosProxyConfig                *proxy.Config
 	ThanosTenancyProxyConfig         *proxy.Config
@@ -160,11 +159,11 @@ type Server struct {
 }
 
 func (s *Server) authDisabled() bool {
-	return s.Auther == nil
+	return s.getLocalAuther() == nil
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
-	return s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
+	return len(s.K8sProxyConfigs) == 1 && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {
@@ -179,6 +178,18 @@ func (s *Server) gitopsProxyEnabled() bool {
 	return s.GitOpsProxyConfig != nil
 }
 
+func (s *Server) getLocalAuther() *auth.Authenticator {
+	return s.Authers[serverutils.LocalClusterName]
+}
+
+func (s *Server) getLocalK8sProxyConfig() *proxy.Config {
+	return s.K8sProxyConfigs[serverutils.LocalClusterName]
+}
+
+func (s *Server) getLocalK8sClient() *http.Client {
+	return s.K8sClients[serverutils.LocalClusterName]
+}
+
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 
@@ -188,8 +199,9 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 	}
 
-	localK8sProxyConfig := s.K8sProxyConfigs[serverutils.LocalClusterName]
-	localK8sClient := s.K8sClients[serverutils.LocalClusterName]
+	localAuther := s.getLocalAuther()
+	localK8sProxyConfig := s.getLocalK8sProxyConfig()
+	localK8sClient := s.getLocalK8sClient()
 	k8sProxies := make(map[string]*proxy.Proxy)
 	for cluster, proxyConfig := range s.K8sProxyConfigs {
 		k8sProxies[cluster] = proxy.NewProxy(proxyConfig)
@@ -247,10 +259,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	if !s.authDisabled() {
-		handleFunc(authLoginEndpoint, s.Auther.LoginFunc)
-		handleFunc(authLogoutEndpoint, s.Auther.LogoutFunc)
+		handleFunc(authLoginEndpoint, localAuther.LoginFunc)
+		handleFunc(authLogoutEndpoint, localAuther.LogoutFunc)
 		handleFunc(authLogoutMulticlusterEndpoint, s.handleLogoutMulticluster)
-		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc(fn))
+		handleFunc(AuthLoginCallbackEndpoint, localAuther.CallbackFunc(fn))
 		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
 		for clusterName, clusterAuther := range s.Authers {
 			if clusterAuther != nil {
@@ -664,8 +676,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Clusters:                   clusters,
 	}
 
+	localAuther := s.getLocalAuther()
+
 	if !s.authDisabled() {
-		specialAuthURLs := s.Auther.GetSpecialURLs()
+		specialAuthURLs := localAuther.GetSpecialURLs()
 		jsg.RequestTokenURL = specialAuthURLs.RequestToken
 		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
@@ -684,7 +698,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !s.authDisabled() {
-		s.Auther.SetCSRFCookie(s.BaseURL.Path, &w)
+		localAuther.SetCSRFCookie(s.BaseURL.Path, &w)
 	}
 
 	if s.CustomLogoFile != "" {

@@ -108,7 +108,7 @@ func validateProjectAccessClusterRolesJSON(value string) ([]string, error) {
 	return projectAccessOptions, nil
 }
 
-func ValidateManagedClusterConfig(managedCluster *ManagedClusterConfig) (*ManagedClusterConfig, error) {
+func ValidateManagedClusterConfig(managedCluster ManagedClusterConfig) error {
 	errors := []string{}
 	if managedCluster.Name == "" {
 		errors = append(errors, "Name is required.")
@@ -135,8 +135,8 @@ func ValidateManagedClusterConfig(managedCluster *ManagedClusterConfig) (*Manage
 	}
 
 	if len(errors) > 0 {
-		return nil, fmt.Errorf("\n\t- %s\n", strings.Join(errors, "\n\t- "))
+		return fmt.Errorf("\n\t- %s\n", strings.Join(errors, "\n\t- "))
 	}
 
-	return managedCluster, nil
+	return nil
 }

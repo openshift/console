@@ -7,6 +7,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { inject } from './inject';
 import { makeReduxID, makeQuery } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
+import { getActiveCluster } from '@console/dynamic-plugin-sdk';
 
 const shallowMapEquals = (a, b) => {
   if (a === b || (a.size === 0 && b.size === 0)) {
@@ -114,8 +115,8 @@ const ConnectToState = connect(mapStateToProps)(
 );
 
 const stateToProps = (state, { resources }) => {
-  const { k8s, sdkK8s, UI } = state;
-  const cluster = UI.get('activeCluster');
+  const { k8s, sdkK8s } = state;
+  const cluster = getActiveCluster(state);
   const k8sModels = resources.reduce(
     (models, { kind }) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])),
     ImmutableMap(),

@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64';
 import { withTranslation } from 'react-i18next';
 import { ExpandIcon } from '@patternfly/react-icons';
 import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
-import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { getImpersonate, getActiveCluster } from '@console/dynamic-plugin-sdk';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
@@ -70,7 +70,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
           tty: 1,
           container: activeContainer,
           command: command.map((c) => encodeURIComponent(c)).join('&command='),
-          cluster: store.getState().UI.get('activeCluster'),
+          cluster: getActiveCluster(store.getState()),
         },
       };
 

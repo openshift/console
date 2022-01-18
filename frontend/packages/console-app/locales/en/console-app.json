@@ -255,7 +255,6 @@
   "Kubelet version": "Kubelet version",
   "Kube-Proxy version": "Kube-Proxy version",
   "Overview": "Overview",
-  "Terminal": "Terminal",
   "Pods": "Pods",
   "Labels": "Labels",
   "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} cores / {{totalCores}} cores",

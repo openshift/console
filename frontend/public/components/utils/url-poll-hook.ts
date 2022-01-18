@@ -19,17 +19,17 @@ export const useURLPoll = <R>(
       safeFetch(url)
         .then((data) => {
           setResponse(data);
-          setError(undefined);
-          setLoading(false);
+          setError(null);
         })
         .catch((err) => {
           if (err.name !== 'AbortError') {
+            setResponse(null);
             setError(err);
-            setLoading(false);
             // eslint-disable-next-line no-console
             console.error(`Error polling URL: ${err}`);
           }
-        });
+        })
+        .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }

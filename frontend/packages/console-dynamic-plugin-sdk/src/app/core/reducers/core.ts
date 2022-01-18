@@ -11,7 +11,7 @@ import { ActionType, CoreAction } from '../actions/core';
  * @return The the updated state.
  * * */
 export const coreReducer = (
-  state: CoreState = { user: { identities: [] } },
+  state: CoreState = { user: { identities: [] }, activeCluster: '' },
   action: CoreAction,
 ): CoreState => {
   switch (action.type) {
@@ -42,6 +42,12 @@ export const coreReducer = (
       return {
         ...state,
         user: action.payload.user,
+      };
+
+    case ActionType.SetActiveCluster:
+      return {
+        ...state,
+        activeCluster: action.payload.cluster,
       };
 
     default:

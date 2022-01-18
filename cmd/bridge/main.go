@@ -250,19 +250,19 @@ func main() {
 		K8sClients:                make(map[string]*http.Client),
 	}
 
-	managedClusterConfigs := []*serverconfig.ManagedClusterConfig{}
+	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
 	if *fManagedClusterConfigs != "" {
 		unvalidatedManagedClusters := []serverconfig.ManagedClusterConfig{}
 		if err := json.Unmarshal([]byte(*fManagedClusterConfigs), &unvalidatedManagedClusters); err != nil {
 			klog.Fatalf("Unable to parse managed cluster JSON: %v", *fManagedClusterConfigs)
 		}
-		for _, unvalidatedManagedCluster := range unvalidatedManagedClusters {
-			validatedManagedCluster, err := serverconfig.ValidateManagedClusterConfig(&unvalidatedManagedCluster)
+		for _, managedClusterConfig := range unvalidatedManagedClusters {
+			err := serverconfig.ValidateManagedClusterConfig(managedClusterConfig)
 			if err != nil {
 				klog.Errorf("Error configuring managed cluster. Invalid configuration: %v", err)
 				continue
 			}
-			managedClusterConfigs = append(managedClusterConfigs, validatedManagedCluster)
+			managedClusterConfigs = append(managedClusterConfigs, managedClusterConfig)
 		}
 	}
 
@@ -600,12 +600,10 @@ func main() {
 
 		}
 
-		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
+		srv.Authers = make(map[string]*auth.Authenticator)
+		if srv.Authers[serverutils.LocalClusterName], err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
 			klog.Fatalf("Error initializing authenticator: %v", err)
 		}
-
-		srv.Authers = make(map[string]*auth.Authenticator)
-		srv.Authers[serverutils.LocalClusterName] = srv.Auther
 
 		if len(managedClusterConfigs) > 0 {
 			for _, managedCluster := range managedClusterConfigs {

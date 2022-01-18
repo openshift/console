@@ -27,6 +27,7 @@ import {
   ActionMenu,
   ActionMenuVariant,
   useUserSettingsCompatibility,
+  usePrometheusGate,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
@@ -86,7 +87,6 @@ import {
   Stack,
   PROMETHEUS_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
-  requirePrometheus,
   PrometheusResult,
 } from './graphs';
 import { VolumesTable } from './volumes-table';
@@ -523,7 +523,7 @@ const getNetworkName = (result: PrometheusResult) =>
   result?.metric?.network_name || 'unnamed interface';
 
 // TODO update to use QueryBrowser for each graph
-const PodMetrics = requirePrometheus(({ obj }) => {
+const PodMetrics: React.FC<PodMetricsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <Dashboard className="resource-metrics-dashboard">
@@ -614,7 +614,7 @@ const PodMetrics = requirePrometheus(({ obj }) => {
       </Grid>
     </Dashboard>
   );
-});
+};
 
 const PodStatusPopover: React.FC<PodStatusPopoverProps> = ({
   bodyContent,
@@ -797,8 +797,8 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
     </div>
   </div>
 );
-
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
+  const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -812,8 +812,6 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
       </ActionServiceProvider>
     );
   };
-  // t('public~Terminal')
-  // t('public~Metrics')
   return (
     <DetailsPage
       {...props}
@@ -821,16 +819,12 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
       customActionMenu={customActionMenu}
       pages={[
         navFactory.details(Details),
-        navFactory.metrics(PodMetrics),
+        ...(prometheusIsAvailable ? [navFactory.metrics(PodMetrics)] : []),
         navFactory.editYaml(),
         navFactory.envEditor(PodEnvironmentComponent),
         navFactory.logs(PodLogs),
         navFactory.events(ResourceEventStream),
-        {
-          href: 'terminal',
-          nameKey: 'public~Terminal',
-          component: PodExecLoader,
-        },
+        navFactory.terminal(PodExecLoader),
       ]}
     />
   );
@@ -918,7 +912,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
     if (showMetrics) {
       const updateMetrics = () =>
         fetchPodMetrics(namespace)
-          .then((metrics) => dispatch(UIActions.setPodMetrics(metrics)))
+          .then((result) => dispatch(UIActions.setPodMetrics(result)))
           .catch((e) => {
             // Just log the error here. Showing a warning alert could be more annoying
             // than helpful. It should be obvious there are no metrics in the list, and
@@ -1009,6 +1003,10 @@ type PodContainerTableProps = {
   heading: string;
   containers: ContainerSpec[];
   pod: PodKind;
+};
+
+type PodMetricsProps = {
+  obj: PodKind;
 };
 
 type PodStatusPopoverProps = {

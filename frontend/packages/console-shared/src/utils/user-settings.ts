@@ -1,6 +1,7 @@
 import { coFetch } from '@console/internal/co-fetch';
 import { ConfigMapModel } from '@console/internal/models';
 import { ConfigMapKind, resourceURL } from '@console/internal/module/k8s';
+import { HUB_CLUSTER_NAME } from '@console/shared/src/constants/common';
 
 export const USER_SETTING_CONFIGMAP_NAMESPACE = 'openshift-console-user-settings';
 
@@ -9,7 +10,7 @@ export const createConfigMap = async (): Promise<ConfigMapKind> => {
     const response = await coFetch('/api/console/user-settings', {
       method: 'POST',
       headers: {
-        'X-Cluster': 'local-cluster',
+        'X-Cluster': HUB_CLUSTER_NAME,
       },
     });
     return response.json();
@@ -42,7 +43,7 @@ export const updateConfigMap = async (
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/merge-patch+json;charset=UTF-8',
-        'X-Cluster': 'local-cluster',
+        'X-Cluster': HUB_CLUSTER_NAME,
       },
       body: JSON.stringify(patch),
     });

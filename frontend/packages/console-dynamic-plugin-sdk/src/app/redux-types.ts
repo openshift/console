@@ -15,6 +15,7 @@ export type ImpersonateKind = {
 };
 
 export type CoreState = {
+  activeCluster?: string;
   user?: UserKind;
   impersonate?: ImpersonateKind;
 };

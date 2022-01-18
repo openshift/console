@@ -1,12 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { requirePrometheus } from '@console/internal/components/graphs';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import ConnectedMonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
 import { topWorkloadMetricsQueries } from '../queries';
 
-const WorkloadGraphs = requirePrometheus(({ resource }) => {
+const WorkloadGraphs = ({ resource }) => {
   const { t } = useTranslation();
+  const prometheusIsAvailable = usePrometheusGate();
+  if (!prometheusIsAvailable) {
+    return null;
+  }
+
   const namespace = resource?.metadata?.namespace;
   const workloadName = resource?.metadata?.name;
   const workloadType = resource?.kind?.toLowerCase();
@@ -26,6 +31,6 @@ const WorkloadGraphs = requirePrometheus(({ resource }) => {
       ))}
     </>
   );
-});
+};
 
 export default WorkloadGraphs;

@@ -6,10 +6,10 @@ type DetectClusterProps = {
 };
 
 const DetectCluster: React.FC<DetectClusterProps> = ({ children }) => {
-  const { cluster, setCluster, loaded } = useValuesForClusterContext();
-  return loaded ? (
+  const { cluster, setCluster } = useValuesForClusterContext();
+  return (
     <ClusterContext.Provider value={{ cluster, setCluster }}>{children}</ClusterContext.Provider>
-  ) : null;
+  );
 };
 
 export default DetectCluster;
