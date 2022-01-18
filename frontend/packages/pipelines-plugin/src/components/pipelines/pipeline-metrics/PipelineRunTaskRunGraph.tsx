@@ -19,7 +19,7 @@ import { LineChart } from './charts/lineChart';
 import {
   PipelineMetricsGraphProps,
   getRangeVectorData,
-  getYaxisValues,
+  getDuration,
 } from './pipeline-metrics-utils';
 
 import './pipeline-chart.scss';
@@ -125,7 +125,7 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
           <LineChart
             ariaDesc={t('pipelines-plugin~Pipeline task run duration chart')}
             data={_.values(finalObj)}
-            yTickFormatter={(seconds) => getYaxisValues(seconds)}
+            yTickFormatter={(seconds) => getDuration(seconds)}
             events={getEvents()}
             hiddenSeries={hiddenSeries}
             tickValues={tickValues}

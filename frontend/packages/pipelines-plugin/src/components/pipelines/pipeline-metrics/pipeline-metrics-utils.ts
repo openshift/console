@@ -119,13 +119,43 @@ export const getXaxisValues = (timespan: number): number[] => {
   return xValues.slice(0, numDays);
 };
 
-export const getYaxisValues = (seconds: number): string => {
-  if (seconds < 60) {
-    return `${seconds}s`;
+export const getDuration = (seconds: number, long?: boolean): string => {
+  if (seconds === 0) {
+    return i18next.t('pipelines-plugin~less than a sec');
   }
-  const minutes = Math.floor(seconds / 60);
-  return `${minutes}m`;
+  let sec = Math.round(seconds);
+  let min = 0;
+  let hr = 0;
+  let duration = '';
+  if (sec >= 60) {
+    min = Math.floor(sec / 60);
+    sec %= 60;
+  }
+  if (min >= 60) {
+    hr = Math.floor(min / 60);
+    min %= 60;
+  }
+  if (hr > 0) {
+    duration += long
+      ? i18next.t('pipelines-plugin~{{count}} hour', { count: hr })
+      : i18next.t('pipelines-plugin~{{hr}}h', { hr });
+    duration += ' ';
+  }
+  if (min > 0) {
+    duration += long
+      ? i18next.t('pipelines-plugin~{{count}} minute', { count: min })
+      : i18next.t('pipelines-plugin~{{min}}m', { min });
+    duration += ' ';
+  }
+  if (sec > 0) {
+    duration += long
+      ? i18next.t('pipelines-plugin~{{count}} second', { count: sec })
+      : i18next.t('pipelines-plugin~{{sec}}s', { sec });
+  }
+
+  return duration.trim();
 };
+
 export const PipelineMetricsTimeRangeOptions = () => ({
   '1d': i18next.t('pipelines-plugin~1 day'),
   '3d': i18next.t('pipelines-plugin~3 days'),

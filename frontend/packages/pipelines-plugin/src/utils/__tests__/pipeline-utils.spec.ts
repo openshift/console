@@ -18,7 +18,7 @@ import {
   getPipelineRunParams,
   pipelineRunDuration,
   getSecretAnnotations,
-  calculateRelativeTime,
+  calculateDuration,
   LatestPipelineRunStatus,
   updateServiceAccount,
   appendPipelineRunStatus,
@@ -117,8 +117,9 @@ describe('pipeline-utils ', () => {
   it('expect duration to be a time formatted string for PipelineRun with start and end Time', () => {
     const duration = pipelineRunDuration(mockRunDurationTest[2]);
     expect(duration).not.toBeNull();
-    expect(duration).toBe('about a minute');
+    expect(duration).toEqual('1 minute 13 second');
   });
+
   it('expect annotation to return an empty object if keyValue pair is not passed', () => {
     const annotation = getSecretAnnotations(null);
     expect(annotation).toEqual({});
@@ -193,29 +194,17 @@ describe('pipeline-utils ', () => {
     });
   });
 
-  it('expected relative time should be "a few seconds"', () => {
-    const relativeTime = calculateRelativeTime('2020-05-22T11:57:53Z', '2020-05-22T11:57:57Z');
-    expect(relativeTime).toBe('a few seconds');
-  });
-
-  it('expected relative time should be "about a minute"', () => {
-    const relativeTime = calculateRelativeTime('2020-05-22T10:57:00Z', '2020-05-22T10:57:57Z');
-    expect(relativeTime).toBe('about a minute');
-  });
-
-  it('expected relative time should be "about 4 minutes"', () => {
-    const relativeTime = calculateRelativeTime('2020-05-22T11:57:53Z', '2020-05-22T12:02:20Z');
-    expect(relativeTime).toBe('about 4 minutes');
-  });
-
-  it('expected relative time should be "about an hour"', () => {
-    const relativeTime = calculateRelativeTime('2020-05-22T11:57:53Z', '2020-05-22T12:57:57Z');
-    expect(relativeTime).toBe('about an hour');
-  });
-
-  it('expected relative time should be "about 2 hours"', () => {
-    const relativeTime = calculateRelativeTime('2020-05-22T10:57:53Z', '2020-05-22T12:57:57Z');
-    expect(relativeTime).toBe('about 2 hours');
+  it('should return definite duration', () => {
+    let duration = calculateDuration('2020-05-22T11:57:53Z', '2020-05-22T11:57:57Z');
+    expect(duration).toEqual('4s');
+    duration = calculateDuration('2020-05-22T11:57:53Z', '2020-05-22T11:57:57Z', true);
+    expect(duration).toEqual('4 second');
+    duration = calculateDuration('2020-05-22T11:57:53Z', '2020-05-22T12:02:20Z');
+    expect(duration).toBe('4m 27s');
+    duration = calculateDuration('2020-05-22T11:57:53Z', '2020-05-22T12:02:20Z', true);
+    expect(duration).toBe('4 minute 27 second');
+    duration = calculateDuration('2020-05-22T10:57:53Z', '2020-05-22T12:57:57Z');
+    expect(duration).toBe('2h 4s');
   });
 
   it('should return PVCs correctly matched with name and kind', () => {
