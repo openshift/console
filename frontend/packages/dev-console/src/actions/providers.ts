@@ -21,6 +21,7 @@ import {
 import { useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
+import { ServiceBindingModel } from '@console/topology/src/models';
 import { AddActions, disabledActionsFilter } from './add-resources';
 import { DeleteApplicationAction } from './context-menu';
 import { EditImportApplication } from './creators';
@@ -78,6 +79,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   const secretAccess = useAccessReview(resourceAttributes(SecretModel, namespace));
   const routeAccess = useAccessReview(resourceAttributes(RouteModel, namespace));
   const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, namespace));
+  const serviceBindingAccess = useAccessReview(resourceAttributes(ServiceBindingModel, namespace));
   const isImportResourceAccess =
     buildConfigsAccess &&
     imageStreamAccess &&
@@ -103,7 +105,14 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
               '',
               !isCatalogImageResourceAccess,
             ),
-            AddActions.OperatorBacked(namespace, undefined, sourceReference, ''),
+            AddActions.OperatorBacked(
+              namespace,
+              undefined,
+              sourceReference,
+              '',
+              null,
+              serviceBindingAccess,
+            ),
             AddActions.UploadJarFile(
               namespace,
               undefined,
@@ -148,7 +157,14 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
       return [actions, true, undefined];
     }
     return [[], true, undefined];
-  }, [element, connectorSource, namespace, isImportResourceAccess, isCatalogImageResourceAccess]);
+  }, [
+    element,
+    connectorSource,
+    namespace,
+    isImportResourceAccess,
+    isCatalogImageResourceAccess,
+    serviceBindingAccess,
+  ]);
 };
 
 export const useTopologyApplicationActionProvider: TopologyActionProvider = ({

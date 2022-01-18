@@ -1,4 +1,4 @@
-import { K8sKind } from '@console/internal/module/k8s';
+import { K8sModel as K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export const ServiceBindingModel: K8sKind = {
   id: 'servicebinding',
