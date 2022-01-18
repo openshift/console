@@ -126,6 +126,7 @@
     "@patternfly/react-catalog-view-extension": "4.26.4",
     "@patternfly/react-charts": "6.28.4",
     "@patternfly/react-core": "4.175.4",
+    "@patternfly/react-log-viewer": "4.29.2",
     "@patternfly/react-table": "4.44.4",
     "@patternfly/react-tokens": "4.27.4",
     "@patternfly/react-topology": "4.22.4",

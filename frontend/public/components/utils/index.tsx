@@ -4,7 +4,6 @@ export * from './kebab';
 export * from './selector';
 export * from './selector-input';
 export * from './label-list';
-export * from './log-window';
 export * from './resource-icon';
 export * from './resource-link';
 export * from './resource-log';

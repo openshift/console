@@ -9,6 +9,7 @@ import {
   SelectOption,
   Title,
 } from '@patternfly/react-core';
+import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
@@ -28,6 +29,118 @@ import './node-logs.scss';
 
 type NodeLogsProps = {
   obj: NodeKind;
+};
+
+type LogControlsProps = {
+  onTogglePath: () => void;
+  onChangePath: (event: React.ChangeEvent<HTMLInputElement>, newAPI: string) => void;
+  path: string;
+  isPathOpen: boolean;
+  pathItems: string[];
+  isJournal: boolean;
+  onChangeUnit: (value: string) => void;
+  unit: string;
+  isLoadingFilenames: boolean;
+  logFilenamesExist: boolean;
+  onToggleFilename: () => void;
+  onChangeFilename: (event: React.ChangeEvent<HTMLInputElement>, newFilename: string) => void;
+  logFilename: string;
+  isFilenameOpen: boolean;
+  logFilenames: string[];
+  isWrapLines: boolean;
+  setWrapLines: (wrapLines: boolean) => void;
+  showSearch: boolean;
+};
+
+const LogControls: React.FC<LogControlsProps> = ({
+  onTogglePath,
+  onChangePath,
+  path,
+  isPathOpen,
+  pathItems,
+  isJournal,
+  onChangeUnit,
+  unit,
+  isLoadingFilenames,
+  logFilenamesExist,
+  onToggleFilename,
+  onChangeFilename,
+  logFilename,
+  isFilenameOpen,
+  logFilenames,
+  isWrapLines,
+  setWrapLines,
+  showSearch,
+}) => {
+  const options = (items) =>
+    items.map((value) => {
+      return (
+        <SelectOption
+          key={value}
+          value={value}
+          className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
+        />
+      );
+    });
+  const { t } = useTranslation();
+  const logLabel = t('public~Select a log file');
+  return (
+    <div className="co-toolbar">
+      <div className="co-toolbar__group co-toolbar__group--left">
+        <div className="co-toolbar__item">
+          <Select
+            aria-label={t('public~Select a path')}
+            onToggle={onTogglePath}
+            onSelect={onChangePath}
+            selections={path}
+            isOpen={isPathOpen}
+          >
+            {options(pathItems)}
+          </Select>
+        </div>
+        {isJournal && <NodeLogsFilterUnit onChangeUnit={onChangeUnit} unit={unit} />}
+        {!isJournal && (
+          <div className="co-toolbar__item">
+            {isLoadingFilenames ? (
+              <LoadingInline />
+            ) : (
+              logFilenamesExist && (
+                <Select
+                  aria-label={logLabel}
+                  placeholderText={logLabel}
+                  onToggle={onToggleFilename}
+                  onSelect={onChangeFilename}
+                  selections={logFilename}
+                  isOpen={isFilenameOpen}
+                  className="co-node-logs__log-select"
+                >
+                  {options(logFilenames)}
+                </Select>
+              )
+            )}
+          </div>
+        )}
+        {showSearch && (
+          <div className="co-toolbar__item">
+            <LogViewerSearch placeholder="Search" />
+          </div>
+        )}
+      </div>
+      <div className="co-toolbar__group co-toolbar__group--right">
+        <div className="co-toolbar__item">
+          <Checkbox
+            label={t('public~Wrap lines')}
+            id="wrapLogLines"
+            isChecked={isWrapLines}
+            data-checked-state={isWrapLines}
+            onChange={(checked: boolean) => {
+              setWrapLines(checked);
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
@@ -183,73 +296,36 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     trimmedContent = '';
   };
   const onToggleFilename = () => setFilenameOpen(!isFilenameOpen);
-  const options = (items) =>
-    items.map((value) => {
-      return (
-        <SelectOption
-          key={value}
-          value={value}
-          className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
-        />
-      );
-    });
-  const logLabel = t('public~Select a log file');
   const errorExists = error.length > 0;
   const logFilenamesExist = logFilenames.length > 0;
+
+  const logControls = (
+    <LogControls
+      onTogglePath={onTogglePath}
+      onChangePath={onChangePath}
+      path={path}
+      isPathOpen={isPathOpen}
+      pathItems={pathItems}
+      isJournal={isJournal}
+      onChangeUnit={onChangeUnit}
+      unit={unit}
+      isLoadingFilenames={isLoadingFilenames}
+      logFilenamesExist={logFilenamesExist}
+      onToggleFilename={onToggleFilename}
+      onChangeFilename={onChangeFilename}
+      logFilename={logFilename}
+      isFilenameOpen={isFilenameOpen}
+      logFilenames={logFilenames}
+      isWrapLines={isWrapLines}
+      setWrapLines={setWrapLines}
+      showSearch={!isLoadingLog && !errorExists}
+    />
+  );
 
   return (
     <div className="co-m-pane__body co-m-pane__body--full-height">
       <div className="log-window-wrapper">
-        <div className="co-toolbar">
-          <div className="co-toolbar__group co-toolbar__group--left">
-            <div className="co-toolbar__item">
-              <Select
-                aria-label={t('public~Select a path')}
-                onToggle={onTogglePath}
-                onSelect={onChangePath}
-                selections={path}
-                isOpen={isPathOpen}
-              >
-                {options(pathItems)}
-              </Select>
-            </div>
-            {isJournal && <NodeLogsFilterUnit onChangeUnit={onChangeUnit} unit={unit} />}
-            {!isJournal && (
-              <div className="co-toolbar__item">
-                {isLoadingFilenames ? (
-                  <LoadingInline />
-                ) : (
-                  logFilenamesExist && (
-                    <Select
-                      aria-label={logLabel}
-                      placeholderText={logLabel}
-                      onToggle={onToggleFilename}
-                      onSelect={onChangeFilename}
-                      selections={logFilename}
-                      isOpen={isFilenameOpen}
-                      className="co-node-logs__log-select"
-                    >
-                      {options(logFilenames)}
-                    </Select>
-                  )
-                )}
-              </div>
-            )}
-          </div>
-          <div className="co-toolbar__group co-toolbar__group--right">
-            <div className="co-toolbar__item">
-              <Checkbox
-                label={t('public~Wrap lines')}
-                id="wrapLogLines"
-                isChecked={isWrapLines}
-                data-checked-state={isWrapLines}
-                onChange={(checked: boolean) => {
-                  setWrapLines(checked);
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        {(isLoadingLog || errorExists) && logControls}
         {trimmedContent?.length > 0 && !isLoadingLog && (
           <Alert
             isInline
@@ -285,19 +361,12 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         ) : errorExists ? (
           <Alert variant="danger" isInline title={error} className="co-alert" />
         ) : (
-          <div className="log-window log-window--full-height">
-            <div className="log-window__body log-window__body--full-height">
-              <div className="log-window__scroll-pane">
-                <div
-                  className={classnames('log-window__lines', {
-                    'log-window__lines--wrap': isWrapLines,
-                  })}
-                >
-                  {trimmedContent || content}
-                </div>
-              </div>
-            </div>
-          </div>
+          <LogViewer
+            isTextWrapped={isWrapLines}
+            data={trimmedContent || content}
+            toolbar={logControls}
+            theme="dark"
+          />
         )}
       </div>
     </div>

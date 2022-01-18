@@ -3,13 +3,11 @@ export const LINE_PATTERN = /^.*(\n|$)/gm;
 const TRUNCATE_LENGTH = 1024;
 
 export class LineBuffer {
-  private _maxSize: number;
   private _buffer: string[];
   private _tail: string;
   private _hasTruncated: boolean;
 
-  constructor(maxSize) {
-    this._maxSize = maxSize;
+  constructor() {
     this._buffer = [];
     this._tail = '';
     this._hasTruncated = false;
@@ -24,9 +22,6 @@ export class LineBuffer {
         this._hasTruncated = true;
       }
       if (/\n$/.test(line)) {
-        if (this._buffer.length === this._maxSize) {
-          this._buffer.shift();
-        }
         this._buffer.push(_.truncate(next, { length: TRUNCATE_LENGTH }).trimEnd());
         lineCount++;
         this._tail = '';

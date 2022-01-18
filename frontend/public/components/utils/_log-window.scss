@@ -1,57 +1,18 @@
-$color-log-window-body-bg: $pf-color-black-1000;
 $color-log-window-header-bg: $pf-color-black-900;
 $color-log-window-text: $pf-color-black-150;
-$font-family-log-window-body: $font-family-monospace;
-$color-log-window-divider: $color-log-window-header-bg;
-
-.log-window {
-  color: $color-log-window-text;
-  background-color: $color-log-window-body-bg;
-
-  &--full-height {
-    height: 100%;
-    position: relative;
-  }
-}
 
 .log-window__header {
+  color: $color-log-window-text;
   background-color: $color-log-window-header-bg;
   padding: 8px 10px 5px 10px;
-}
-
-.log-window__body {
-  background-color: $color-log-window-body-bg;
-  font-family: $font-family-log-window-body;
-
-  &--full-height {
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-}
-
-.log-window__scroll-pane {
-  overflow: auto;
-  padding-top: 10px;
-}
-
-.log-window__lines {
-  padding-left: 10px;
-  padding-right: 10px;
-  white-space: pre;
-  width: 0;
-}
-
-.log-window__lines--wrap {
-  white-space: pre-wrap;
-  width: inherit;
 }
 
 .log-window-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.log-window__footer--hidden {
+  visibility: hidden;
 }
