@@ -31,7 +31,7 @@ const reactPropFix = {
   translate: 'no',
 };
 
-export const ImportYAMLPageStatus: React.FC<ImportYAMLStatusProps> = ({ errors, inFlight }) => {
+export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ errors, inFlight }) => {
   const { t } = useTranslation();
   let StatusBlock: React.ReactNode;
 
@@ -88,7 +88,7 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
   retryFailed,
 }) => {
   const { t } = useTranslation();
-  const [importStatus, setImportStatus] = React.useState<ImportYAMLResourceStatusProps[]>(
+  const [importStatus, setImportStatus] = React.useState<ImportYAMLStatus[]>(
     importResources.map(() => ({
       creating: true,
       message: t('public~Creating'),
@@ -102,7 +102,7 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
       setImportStatus(
         results.map((result) => {
           if (result.status === 'fulfilled') {
-            return { creating: false, message: t('public~Created') };
+            return { creating: false, result: result.result, message: t('public~Created') };
           }
           if (result.status === 'rejected') {
             return {
@@ -150,32 +150,36 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
               </Tr>
             </Thead>
             <Tbody {...reactPropFix}>
-              {importResources.map((resource, index) => (
-                <Tr key={`${resource.metadata.name}-${resource.kind}`} {...reactPropFix}>
-                  <Td {...reactPropFix}>
-                    <ResourceLink
-                      kind={referenceFor(resource) || resource.kind}
-                      name={resource.metadata.name}
-                      namespace={resource.metadata?.namespace}
-                      linkTo={!inFlight && !importStatus[index].error}
-                    />
-                  </Td>
-                  <Td {...reactPropFix}>
-                    {resource.metadata?.namespace ? (
-                      <ResourceLink kind="Namespace" name={resource.metadata.namespace} />
-                    ) : (
-                      '-'
-                    )}
-                  </Td>
-                  <Td {...reactPropFix}>
-                    <ImportYAMLResourceStatus
-                      creating={importStatus[index].creating}
-                      error={importStatus[index].error}
-                      message={importStatus[index].message}
-                    />
-                  </Td>
-                </Tr>
-              ))}
+              {importResources.map((importResource, index) => {
+                const status = importStatus[index];
+                const resource = status.result || importResource;
+                const name =
+                  !resource.metadata.name && resource.metadata.generateName
+                    ? `${resource.metadata.generateName}...`
+                    : resource.metadata.name;
+                return (
+                  <Tr key={index} {...reactPropFix}>
+                    <Td {...reactPropFix}>
+                      <ResourceLink
+                        kind={referenceFor(resource) || resource.kind}
+                        name={name}
+                        namespace={resource.metadata?.namespace}
+                        linkTo={!inFlight && !importStatus[index].error}
+                      />
+                    </Td>
+                    <Td {...reactPropFix}>
+                      {resource.metadata?.namespace ? (
+                        <ResourceLink kind="Namespace" name={resource.metadata.namespace} />
+                      ) : (
+                        '-'
+                      )}
+                    </Td>
+                    <Td {...reactPropFix}>
+                      <ImportYAMLResourceStatus {...status} />
+                    </Td>
+                  </Tr>
+                );
+              })}
             </Tbody>
           </TableComposable>
           {!inFlight && (
@@ -210,7 +214,13 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
   );
 };
 
-type ImportYAMLStatusProps = {
+type ImportYAMLStatus = {
+  creating: boolean;
+  result?: any;
+  error?: boolean;
+  message: string;
+};
+type ImportYAMLPageStatusProps = {
   errors?: boolean;
   inFlight: boolean;
 };
