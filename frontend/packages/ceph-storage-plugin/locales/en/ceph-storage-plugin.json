@@ -97,7 +97,7 @@
   "Backing store": "Backing store",
   "a local backing store is recommended for better performance": "a local backing store is recommended for better performance",
   "Time to live": "Time to live",
-  "Time to live is the time that an object is stored in a caching system before it is deleted or refreshed. Default: 1 hr, Min: 15 mins, Max: 24 hrs": "Time to live is the time that an object is stored in a caching system before it is deleted or refreshed. Default: 1 hr, Min: 15 mins, Max: 24 hrs",
+  "Time to live is the time that an object is stored in a caching system before it is deleted or refreshed. Default: 0, Max: 24 hrs": "Time to live is the time that an object is stored in a caching system before it is deleted or refreshed. Default: 0, Max: 24 hrs",
   "Read NamespaceStores": "Read NamespaceStores",
   "Select a list of NamespaceStores that defines the read targets of the namespace bucket.": "Select a list of NamespaceStores that defines the read targets of the namespace bucket.",
   "Create NamespaceStore": "Create NamespaceStore",

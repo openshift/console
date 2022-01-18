@@ -11,7 +11,7 @@ export const validateBucketClassName = (name: string): boolean =>
   bucketClassNameRegex.test(name) &&
   !consecutivePeriodsAndHyphensRegex.test(name);
 
-export const validateDuration = (ms: number): boolean => ms >= 900000 && ms <= 86400000;
+export const validateDuration = (ms: number): boolean => ms >= 0 && ms <= 86400000;
 
 export const convertToMS = ({ unit, value }) =>
   unit === TimeUnits.HOUR ? parseInt(value, 10) * 3600000 : parseInt(value, 10) * 60000;

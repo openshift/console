@@ -14,7 +14,7 @@ export const TimeDurationDropdown: React.FC<TimeDurationDropdownProps> = ({
   inputID,
 }) => {
   const [unit, setUnit] = React.useState(TimeUnits.HOUR);
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(0);
   const [validated, setValidated] = React.useState(ValidatedOptions.success);
 
   const onValueChange = (val) => {
