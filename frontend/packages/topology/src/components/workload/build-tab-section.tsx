@@ -37,6 +37,13 @@ const BuildTabSection: React.FC<{ element: GraphElement; renderNull: () => null 
   const handleAdapterResolved = React.useCallback((data) => {
     setBuildConfigsData({ data, loaded: true });
   }, []);
+
+  React.useEffect(() => {
+    if (!buildAdapter) {
+      renderNull();
+    }
+  }, [buildAdapter, renderNull]);
+
   return buildAdapter ? (
     <TopologySideBarTabSection>
       {extensionsResolved && (
@@ -48,9 +55,7 @@ const BuildTabSection: React.FC<{ element: GraphElement; renderNull: () => null 
       )}
       {buildConfigsDataLoaded && <BuildOverview buildConfigs={buildConfigs.buildConfigs} />}
     </TopologySideBarTabSection>
-  ) : (
-    renderNull()
-  );
+  ) : null;
 };
 
 export const getBuildsSideBarTabSection = (element: GraphElement, renderNull: () => null) => {
