@@ -69,7 +69,6 @@ export const k8sGet = (
  * @param options.queryParams The query parameters to be included in the URL.
  * @param options.requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @param options.cluster The cluster to which the request should be proxied. Defaults to host cluster.
  * @return A promise that resolves to the response as JSON object with a resource if the name is provided
  * else it returns all the resources matching the model. In case of failure, the promise gets rejected with HTTP error response.
  * * */
@@ -104,7 +103,6 @@ export const k8sCreate = <R extends K8sResourceCommon>(
  * @param options.data payload for the resource to be created
  * @param options.path Appends as subpath if provided
  * @param options.queryParams The query parameters to be included in the URL.
- * @param options.cluster The cluster to which the request should be proxied. Defaults to host cluster.
  * @return A promise that resolves to the response of the resource created.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
@@ -150,7 +148,6 @@ export const k8sUpdate = <R extends K8sResourceCommon>(
  * @param options.data payload for the resource to be updated
  * @param options.path Appends as subpath if provided
  * @param options.queryParams The query parameters to be included in the URL.
- * @param options.cluster The cluster to which the request should be proxied. Defaults to host cluster.
  * @return A promise that resolves to the response of the resource updated.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
@@ -209,7 +206,6 @@ export const k8sPatch = <R extends K8sResourceCommon>(
  * @param options.data Only the data to be patched on existing resource with the operation, path, and value.
  * @param options.path Appends as subpath if provided.
  * @param options.queryParams The query parameters to be included in the URL.
- * @param options.cluster The cluster to which the request should be proxied. Defaults to host cluster.
  * @return A promise that resolves to the response of the resource patched.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
@@ -265,7 +261,6 @@ export const k8sKill = <R extends K8sResourceCommon>(
  * @param options.json Can control garbage collection of resources explicitly if provided else will default to model's "propagationPolicy".
  * @example
  * { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
- * @param options.cluster The cluster to which the request should be proxied. Defaults to host cluster.
  * @return A promise that resolves to the response of kind Status.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
@@ -285,7 +280,6 @@ export const k8sDeleteResource = adapterFunc(k8sKill, [
  * and it will have a key "item" which will be an array of Pod kind.
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @param cluster The optional name of the cluster to which the request should be proxied. Defaults to host cluster.
  * @return A promise that resolves to the response with the resources in an array.
  * In case of failure promise gets rejected with HTTP error response.
  * * */
@@ -324,7 +318,6 @@ export const k8sList = (
  * @param options.queryParams The query parameters to be included in the URL and can pass label selector's as well with key "labelSelector".
  * @param options.requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @param options.cluster The optional name of the cluster to which the request should be proxied. Defaults to host cluster.
  * @return A promise that resolves to the response
  * * */
 export const k8sListResource = adapterFunc(k8sList, [

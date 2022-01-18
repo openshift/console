@@ -9,7 +9,7 @@ import {
   Separator as PluginNavSeparator,
 } from '@console/dynamic-plugin-sdk/src';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { FLAGS, useActiveNamespace } from '@console/shared';
+import { FLAGS, useActiveNamespace, usePrometheusGate } from '@console/shared';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { NavItemSeparator, NavList } from '@patternfly/react-core';
@@ -104,6 +104,7 @@ export type AdminNavProps = {
 };
 
 const AdminNav: React.FC<AdminNavProps> = ({ pluginNavItems }) => {
+  const prometheusIsAvailable = usePrometheusGate();
   const lastNamespace = useActiveNamespace()[0];
   // In OpenShift, machines are created in the openshift-machine-api namespace.
   // Switch to that namespace so the list isn't empty.
@@ -113,13 +114,15 @@ const AdminNav: React.FC<AdminNavProps> = ({ pluginNavItems }) => {
   return (
     <NavList>
       <NavSection id="home" title={t('public~Home')} data-quickstart-id="qs-nav-home">
-        <HrefLink
-          id="dashboards"
-          href="/dashboards"
-          activePath="/dashboards/"
-          name={t('public~Overview')}
-          required={[FLAGS.CAN_GET_NS, FLAGS.OPENSHIFT]}
-        />
+        {prometheusIsAvailable && (
+          <HrefLink
+            id="dashboards"
+            href="/dashboards"
+            activePath="/dashboards/"
+            name={t('public~Overview')}
+            required={[FLAGS.CAN_GET_NS, FLAGS.OPENSHIFT]}
+          />
+        )}
         <ResourceClusterLink
           id="projects"
           resource="projects"
