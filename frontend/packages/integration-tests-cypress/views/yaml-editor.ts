@@ -17,7 +17,7 @@ export const isLoaded = () => cy.get("[class='mtk26']").should('exist');
 // adding a check for the 1st line number, AND providing a wait allowed the load of the full component
 export const isImportLoaded = () => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(4000);
+  cy.wait(5000);
   cy.get('.monaco-editor textarea:first').should('exist');
 };
 export const clickSaveCreateButton = () => cy.byTestID('save-changes').click();
