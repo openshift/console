@@ -20,7 +20,7 @@ import {
   Title,
   TextInput,
 } from '@patternfly/react-core';
-import { VirtualizedGrid } from '@console/shared';
+import { getURLWithParams, VirtualizedGrid } from '@console/shared';
 
 import { history } from './router';
 import { isModalOpen } from '../modals';
@@ -696,6 +696,7 @@ export class TileViewPage extends React.Component {
         hasActiveDescendant={hasActiveDescendant(selectedCategoryId, category)}
         shown={shown}
         data-test={id}
+        href={getURLWithParams(FilterTypes.category, id)}
       >
         {subcategories && (
           <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryId, category)}>

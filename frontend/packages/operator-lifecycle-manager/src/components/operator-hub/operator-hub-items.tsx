@@ -23,6 +23,8 @@ import {
   Modal,
   useUserSettingsCompatibility,
 } from '@console/shared';
+import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
+import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
@@ -352,7 +354,12 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       icon={icon}
       vendor={vendor}
       description={description}
-      onClick={() => onClick(item)}
+      onClick={(e: React.MouseEvent<HTMLElement>) => {
+        if (isModifiedEvent(e)) return;
+        e.preventDefault();
+        onClick(item);
+      }}
+      href={getURLWithParams('details-item', item.uid)}
       footer={
         installed && !item.isInstalling ? (
           <span>
