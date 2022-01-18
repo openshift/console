@@ -482,7 +482,8 @@ export const EditYAML_ = connect(stateToProps)(
             });
             if (!hasErrors) {
               //Check for duplicate name/kinds. ~ is not a valid name character, so use it to separate the fields
-              const uniqueEntries = _.uniqBy(objs, (obj) =>
+              const filteredEntried = _.filter(objs, (obj) => !obj.metadata.generateName);
+              const uniqueEntries = _.uniqBy(filteredEntried, (obj) =>
                 [
                   obj.metadata.name,
                   obj.metadata.namespace,
@@ -490,7 +491,7 @@ export const EditYAML_ = connect(stateToProps)(
                   groupVersionFor(obj.apiVersion).group,
                 ].join('~'),
               );
-              if (uniqueEntries.length !== objs.length) {
+              if (uniqueEntries.length !== filteredEntried.length) {
                 this.handleError(
                   t('public~Resources in the same namespace and API group must have unique names'),
                 );
