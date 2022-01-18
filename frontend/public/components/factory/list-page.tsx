@@ -129,9 +129,7 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
   const memoizedIds = useDeepCompareMemoize(reduxIDs);
 
   React.useEffect(() => {
-    if (nameFilter) {
-      memoizedIds.forEach((id) => dispatch(filterList(id, 'name', { selected: [nameFilter] })));
-    }
+    memoizedIds.forEach((id) => dispatch(filterList(id, 'name', { selected: [nameFilter] })));
   }, [dispatch, nameFilter, memoizedIds]);
 
   const data = flatten ? flatten(resources) : [];
