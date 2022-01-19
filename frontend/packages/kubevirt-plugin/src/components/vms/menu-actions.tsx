@@ -14,7 +14,7 @@ import {
 } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { VMPrintableStatusSimpleLabel } from '../../constants/vm/vm-status';
-import { restartVM, startVM, stopVM } from '../../k8s/requests/vm';
+import { restartVM, startVM } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { pauseVMI, unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { cancelMigration } from '../../k8s/requests/vmim';
@@ -39,6 +39,7 @@ import { cloneVMModal } from '../modals/clone-vm-modal';
 import { confirmVMIModal } from '../modals/menu-actions-modals/confirm-vmi-modal';
 import { deleteVMModal } from '../modals/menu-actions-modals/delete-vm-modal';
 import { deleteVMIModal } from '../modals/menu-actions-modals/delete-vmi-modal';
+import { stopVMModal } from '../modals/menu-actions-modals/stop-vm-modal';
 import { RemovalDiskAlert } from '../vm-disks/RemovalDiskAlert';
 import { ActionMessage } from './ActionMessage';
 
@@ -100,21 +101,9 @@ export const VmActionFactory = {
         vm?.status?.printableStatus === VMPrintableStatusSimpleLabel.Stopping,
       label: i18next.t('kubevirt-plugin~Stop'),
       cta: () =>
-        confirmVMIModal({
+        stopVMModal({
+          vm,
           vmi,
-          title: i18next.t('kubevirt-plugin~Stop'),
-          alertTitle: i18next.t('kubevirt-plugin~Stop alert'),
-          message: (
-            <ActionMessage obj={vm} action={i18next.t('kubevirt-plugin~stop')}>
-              <StackItem>
-                <RemovalDiskAlert
-                  hotplugDiskNames={getAutoRemovedOrPersistentDiskName(vm, vmi, true)}
-                />
-              </StackItem>
-            </ActionMessage>
-          ),
-          btnTextKey: i18next.t('kubevirt-plugin~Stop'),
-          executeFn: () => stopVM(vm),
         }),
       accessReview: asAccessReview(kindObj, vm, 'patch'),
     };

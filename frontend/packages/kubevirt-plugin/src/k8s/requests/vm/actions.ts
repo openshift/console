@@ -1,10 +1,11 @@
 import { coFetch } from '@console/internal/co-fetch';
 import { groupVersionFor, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
-import { V1DeleteOptions } from 'packages/kubevirt-plugin/src/types/api/V1DeleteOptions';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { getAPIVersion, getName, getNamespace } from '../../../selectors';
 import { V1AddVolumeOptions, V1RemoveVolumeOptions } from '../../../types/api';
+import { V1DeleteOptions } from '../../../types/api/V1DeleteOptions';
+import { V1StopOptions } from '../../../types/api/V1StopOptions';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
 import { VMKind } from '../../../types/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
@@ -23,7 +24,7 @@ export enum VMActionType {
 const VMActionRequest = async (
   vm: VMKind,
   action: VMActionType,
-  body?: V1AddVolumeOptions | V1RemoveVolumeOptions,
+  body?: V1AddVolumeOptions | V1RemoveVolumeOptions | V1StopOptions,
 ) => {
   const method = 'PUT';
   let url = resourceURL(
@@ -61,7 +62,8 @@ export const VMActionWithBootOrderRequest = async (vm: VMKind, action: VMActionT
 };
 
 export const startVM = async (vm: VMKind) => VMActionWithBootOrderRequest(vm, VMActionType.Start);
-export const stopVM = async (vm: VMKind) => VMActionRequest(vm, VMActionType.Stop);
+export const stopVM = async (vm: VMKind, stopOptions?: V1StopOptions) =>
+  VMActionRequest(vm, VMActionType.Stop, stopOptions);
 export const restartVM = async (vm: VMKind) =>
   VMActionWithBootOrderRequest(vm, VMActionType.Restart);
 export const addHotplugPersistent = async (vm: VMKind, body: V1AddVolumeOptions) =>
