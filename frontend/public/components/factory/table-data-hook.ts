@@ -124,7 +124,7 @@ export const useTableData = ({
       const sortFunc = currentSortFunc || defaultSortFunc;
       const sortField = currentSortField || (currentSortFunc ? undefined : defaultSortField);
       if (sortField) {
-        sortBy = (resource) => sorts.string(_.get(resource, currentSortField, ''));
+        sortBy = (resource) => sorts.string(_.get(resource, sortField, ''));
       } else if (sortFunc && customSorts?.[sortFunc]) {
         // Sort resources by a function in the 'customSorts' prop
         sortBy = customSorts[sortFunc];
