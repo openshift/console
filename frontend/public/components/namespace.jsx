@@ -324,7 +324,12 @@ const namespacesRowStateToProps = ({ UI }) => ({
 });
 
 const NamespacesTableRow = connect(namespacesRowStateToProps)(
-  withTranslation()(({ obj: ns, metrics, customData: { tableColumns }, t }) => {
+  withTranslation()(function NamespacesTableRow({
+    obj: ns,
+    metrics,
+    customData: { tableColumns },
+    t,
+  }) {
     const name = getName(ns);
     const requester = getRequester(ns);
     const bytes = metrics?.memory?.[name];
@@ -421,7 +426,7 @@ export const NamespacesList = connect(
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
     true,
-  )(({ userSettingState: tableColumns, ...props }) => {
+  )(function NamespacesList({ userSettingState: tableColumns, ...props }) {
     const { setNamespaceMetrics } = props;
     React.useEffect(() => {
       const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
@@ -473,7 +478,7 @@ export const NamespacesPage = withUserSettingsCompatibility(
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   undefined,
   true,
-)(({ userSettingState: tableColumns, ...props }) => {
+)(function NamespacesPage({ userSettingState: tableColumns, ...props }) {
   const { t } = useTranslation();
   const selectedColumns =
     tableColumns?.[NamespacesColumnManagementID]?.length > 0
@@ -590,7 +595,7 @@ const getProjectSelectedColumns = ({ showMetrics, showActions }) => {
 
 const ProjectLink = connect(null, {
   filterList: k8sActions.filterList,
-})(({ project, filterList }) => {
+})(function ProjectLink({ project, filterList }) {
   const [, setLastNamespace] = useUserSettingsCompatibility(
     LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
     LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
@@ -639,7 +644,7 @@ const projectRowStateToProps = ({ UI }) => ({
 });
 
 const ProjectTableRow = connect(projectRowStateToProps)(
-  withTranslation()(({ obj: project, customData = {}, metrics, t }) => {
+  withTranslation()(function ProjectTableRow({ obj: project, customData = {}, metrics, t }) {
     const name = getName(project);
     const requester = getRequester(project);
     const {
@@ -749,7 +754,6 @@ const ProjectTableRow = connect(projectRowStateToProps)(
     );
   }),
 );
-ProjectTableRow.displayName = 'ProjectTableRow';
 
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
@@ -785,7 +789,13 @@ const ProjectList_ = connectToFlags(
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
     true,
-  )(({ data, flags, setNamespaceMetrics, userSettingState: tableColumns, ...tableProps }) => {
+  )(function ProjectList_({
+    data,
+    flags,
+    setNamespaceMetrics,
+    userSettingState: tableColumns,
+    ...tableProps
+  }) {
     const canGetNS = flags[FLAGS.CAN_GET_NS];
     const showMetrics = PROMETHEUS_BASE_PATH && canGetNS && window.screen.width >= 1200;
     /* eslint-disable react-hooks/exhaustive-deps */
@@ -803,12 +813,6 @@ const ProjectList_ = connectToFlags(
       tableColumns?.[projectColumnManagementID]?.length > 0
         ? new Set(tableColumns[projectColumnManagementID])
         : null;
-
-    // Don't render the table until we know whether we can get metrics. It's
-    // not possible to change the table headers once the component is mounted.
-    if (flagPending(canGetNS)) {
-      return null;
-    }
 
     const ProjectEmptyMessage = () => (
       <MsgBox
@@ -835,6 +839,12 @@ const ProjectList_ = connectToFlags(
       }),
       [showMetrics, tableColumns],
     );
+
+    // Don't render the table until we know whether we can get metrics. It's
+    // not possible to change the table headers once the component is mounted.
+    if (flagPending(canGetNS)) {
+      return null;
+    }
 
     return (
       <Table
@@ -866,7 +876,7 @@ export const ProjectsPage = connectToFlags(
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
     true,
-  )(({ flags, userSettingState: tableColumns, ...rest }) => {
+  )(function ProjectsPage({ flags, userSettingState: tableColumns, ...rest }) {
     // Skip self-subject access review for projects since they use a special project request API.
     // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
     const canGetNS = flags[FLAGS.CAN_GET_NS];

@@ -229,7 +229,7 @@ class App_ extends React.PureComponent {
   }
 }
 
-const AppWithExtensions = withTranslation()((props) => {
+const AppWithExtensions = withTranslation()(function AppWithExtensions(props) {
   const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions(isReduxReducer);
   const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
 
@@ -265,7 +265,7 @@ const AppRouter = () => {
   );
 };
 
-const CaptureTelemetry = React.memo(() => {
+const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   const fireTelemetryEvent = useTelemetry();
 
   // notify of identity change
@@ -300,7 +300,7 @@ const CaptureTelemetry = React.memo(() => {
   return null;
 });
 
-const PollConsoleUpdates = React.memo(() => {
+const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const toastContext = useToast();
   const { t } = useTranslation();
 

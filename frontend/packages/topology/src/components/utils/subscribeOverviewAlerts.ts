@@ -1,13 +1,13 @@
 import { Alert } from '@console/internal/components/monitoring/types';
 import { fetchMonitoringAlerts } from '@console/internal/components/overview/metricUtils';
 
-type StopOverviewAUpdater = () => void;
+type UnsubscribeCallback = () => void;
 
-export const useOverviewAlertsUpdater = (
+export const subscribeOverviewAlerts = (
   namespace: string,
   updateMonitoringAlerts: (alerts: Alert[]) => void,
   interval: number = 15 * 1000,
-): StopOverviewAUpdater => {
+): UnsubscribeCallback => {
   let alertsInterval: any = null;
 
   const fetchAlerts = (): void => {

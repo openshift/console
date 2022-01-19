@@ -7,14 +7,14 @@ import {
 } from '@console/internal/components/overview/metricUtils';
 import { METRICS_POLL_INTERVAL } from '@console/shared/src';
 
-type StopOverviewMetricsUpdater = () => void;
+type UnsubscribeCallback = () => void;
 
-export const useOverviewMetricsUpdater = (
+export const subscribeOverviewMetrics = (
   namespace: string,
   metrics: OverviewMetrics,
   updateMetrics: (metrics: OverviewMetrics) => void,
   interval: number = METRICS_POLL_INTERVAL,
-): StopOverviewMetricsUpdater => {
+): UnsubscribeCallback => {
   let metricsInterval = null;
 
   const fetchMetrics = () => {
