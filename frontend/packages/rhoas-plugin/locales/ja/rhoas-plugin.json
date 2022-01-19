@@ -8,6 +8,7 @@
   "Managed Services": "マネージドサービス",
   "Discover managed services to simplify deployments and reduce operational overhead & complexities": "デプロイメントを単純化し、運用のオーバーヘッドや複雑性を軽減するためのマネージドサービスの検出",
   "Browse managed services to connect applications and microservices to support services to create a full solution.": "マネージドサービスを参照して、アプリケーションとマイクロサービスをサポートサービスに接続し、完全なソリューションを作成します。",
+  "Application Services": "アプリケーションサービス",
   "Create a Kafka connector": "Kafka コネクターの作成",
   "Unlock with token": "トークンを使用したロック解除",
   "Unlocked": "ロック解除",

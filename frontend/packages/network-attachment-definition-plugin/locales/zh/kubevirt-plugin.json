@@ -9,5 +9,13 @@
   "Network attachment definition name must start/end with alphanumeric character": "网络附加定义名必须使用字母数字字符开始和结束",
   "Network attachment definition name cannot contain uppercase characters": "网络附加定义名不能包含大写字符",
   "Network attachment definition name is too long": "网络附加定义名太长",
-  "Network attachment definition name is too short": "网络附加定义名太短"
+  "Network attachment definition name is too short": "网络附加定义名太短",
+  "Create Network Attachment Definition": "创建网络附加定义",
+  "Edit YAML": "编辑 YAML",
+  "Name": "名称",
+  "Description": "描述",
+  "Network Type": "网络类型",
+  "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "<0>OpenShift Virtualization Operator</0> 或 <3>SR-IOV Network Operator</3> 需要在集群中安装，以便选择网络类型。",
+  "Create": "创建",
+  "Cancel": "取消"
 }

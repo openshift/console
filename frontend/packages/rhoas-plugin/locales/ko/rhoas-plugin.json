@@ -8,6 +8,7 @@
   "Managed Services": "관리 서비스",
   "Discover managed services to simplify deployments and reduce operational overhead & complexities": "배포를 단순화하고 운영 오버 헤드 및 복잡성을 줄이는 관리 서비스 검색",
   "Browse managed services to connect applications and microservices to support services to create a full solution.": "관리 서비스를 검색하여 애플리케이션과 마이크로 서비스를 지원 서비스에 연결하여 완전한 솔루션을 만듭니다.",
+  "Application Services": "애플리케이션 서비스",
   "Create a Kafka connector": "Kafka 커넥터 만들기",
   "Unlock with token": "토큰으로 잠금 해제",
   "Unlocked": "잠금 해제",

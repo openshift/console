@@ -31,6 +31,7 @@
   "Disk Type": "ディスクタイプ",
   "Advanced": "詳細",
   "Volume Mode": "ボリュームモード",
+  "File System Type": "ファイルシステムタイプ",
   "Disk Size": "ディスクサイズ",
   "Min": "最小",
   "Please enter a positive Integer": "正の整数を入力してください。",

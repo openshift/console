@@ -1,0 +1,7 @@
+{
+  "View {{title}} metrics in query browser": "쿼리 브라우저에서 {{title}} 메트릭보기",
+  "Not available": "사용할 수 없음",
+  "{{humanAvailable}} available of {{humanLimit}} total limit": "{{humanAvailable}} 사용 가능 (총 한도 {{humanLimit}})",
+  "{{humanAvailable}} available of {{humanMax}}": "{{humanAvailable}} 사용 가능 (총 {{humanMax}})",
+  "{{humanAvailable}} available": "{{humanAvailable}} 사용 가능"
+}

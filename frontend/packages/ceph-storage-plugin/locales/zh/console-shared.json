@@ -1,0 +1,7 @@
+{
+  "View {{title}} metrics in query browser": "在查询浏览器中查看 {{title}} 指标",
+  "Not available": "不可用",
+  "{{humanAvailable}} available of {{humanLimit}} total limit": "{{humanAvailable}} 可用（{{humanLimit}}总限制）",
+  "{{humanAvailable}} available of {{humanMax}}": "{{humanAvailable}} 可用（总共 {{humanMax}}）",
+  "{{humanAvailable}} available": "{{humanAvailable}} 可用"
+}
