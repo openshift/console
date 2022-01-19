@@ -3,7 +3,7 @@ import { ChartLabel } from '@patternfly/react-charts';
 import * as classNames from 'classnames';
 import i18next, { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';
 import {
   K8sResourceKind,

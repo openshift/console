@@ -10,6 +10,7 @@ import {
   ImpersonateKind,
   getActiveCluster,
   getImpersonate,
+  useSafetyFirst,
 } from '@console/dynamic-plugin-sdk';
 import {
   AccessReviewResourceAttributes,
@@ -20,7 +21,6 @@ import {
   SelfSubjectAccessReviewKind,
 } from '../../module/k8s';
 import { ProjectModel, SelfSubjectAccessReviewModel } from '../../models';
-import { useSafetyFirst } from '../../components/safety-first';
 
 // Memoize the result so we only make the request once for each access review.
 // This does mean that the user will have to refresh the page to see updates.

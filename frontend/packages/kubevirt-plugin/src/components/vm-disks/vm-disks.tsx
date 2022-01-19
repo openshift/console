@@ -2,13 +2,13 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import {
   Flatten,
   MultiListPage,
   RowFunctionArgs,
   Table,
 } from '@console/internal/components/factory';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
   FieldLevelHelp,
   FirehoseResult,

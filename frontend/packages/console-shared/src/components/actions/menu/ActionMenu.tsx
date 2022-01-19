@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { Action } from '@console/dynamic-plugin-sdk';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { Action, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils';
 import { ActionMenuVariant, MenuOption } from '../types';
 import ActionMenuContent from './ActionMenuContent';

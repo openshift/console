@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import * as _ from 'lodash';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
   K8sKind,
   kindToAbbr,
