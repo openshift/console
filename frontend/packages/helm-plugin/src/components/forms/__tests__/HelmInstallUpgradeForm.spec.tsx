@@ -54,6 +54,7 @@ const props: React.ComponentProps<typeof HelmInstallUpgradeForm> = {
   ...componentProps,
   ...formikFormProps,
   values: formValues,
+  namespace: 'xyz',
 };
 
 describe('HelmInstallUpgradeForm', () => {

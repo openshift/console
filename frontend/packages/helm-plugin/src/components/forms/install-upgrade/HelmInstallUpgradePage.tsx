@@ -240,6 +240,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             helmActionConfig={config}
             onVersionChange={setChartData}
             chartError={chartError}
+            namespace={namespace}
           />
         )}
       </Formik>

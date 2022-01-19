@@ -30,18 +30,20 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
     // TODO remove when adopting https://github.com/patternfly/patternfly-react/issues/5139
     const dummyProps = {} as any;
     return (
-      <FilterSidePanelCategoryItem
-        key={filterName}
-        count={count}
-        checked={active}
-        onClick={(e: React.ChangeEvent<HTMLInputElement>) =>
-          onFilterChange(groupName, filterName, e.target.checked)
-        }
-        data-test={`${groupName}-${_.kebabCase(filterName)}`}
-        {...dummyProps}
-      >
-        {label}
-      </FilterSidePanelCategoryItem>
+      label && (
+        <FilterSidePanelCategoryItem
+          key={filterName}
+          count={count}
+          checked={active}
+          onClick={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onFilterChange(groupName, filterName, e.target.checked)
+          }
+          data-test={`${groupName}-${_.kebabCase(filterName)}`}
+          {...dummyProps}
+        >
+          {label}
+        </FilterSidePanelCategoryItem>
+      )
     );
   };
 
