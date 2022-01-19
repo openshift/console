@@ -1,3 +1,4 @@
+import { Map as ImmutableMap } from 'immutable';
 import { useSelector } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import { K8sModel } from '../../../api/common-types';
@@ -16,6 +17,8 @@ import { UseK8sModels } from '../../../extensions/console-types';
  * ```
  */
 export const useK8sModels: UseK8sModels = () => [
-  useSelector<RootState, K8sModel[]>(({ k8s }) => k8s.getIn(['RESOURCES', 'models']))?.toJS() ?? {},
+  useSelector<RootState, ImmutableMap<string, K8sModel>>(({ k8s }) =>
+    k8s.getIn(['RESOURCES', 'models']),
+  )?.toJS() ?? {},
   useSelector<RootState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
 ];

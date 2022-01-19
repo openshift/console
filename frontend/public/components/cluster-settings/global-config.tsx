@@ -210,7 +210,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   );
 };
 
-export const GlobalConfigPage = connect(stateToProps)((props) => {
+export const GlobalConfigPage: any = connect(stateToProps)((props) => {
   const [resolvedExtensions] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
   return <GlobalConfigPage_ globalConfigs={resolvedExtensions} {...props} />;
 });

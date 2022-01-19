@@ -12,6 +12,7 @@ type FormBodyProps = {
 const FormBody: React.FC<FormBodyProps & React.HTMLProps<HTMLDivElement>> = ({
   children,
   className,
+  inputMode,
   style,
   disablePaneBody = false,
   flexLayout = false,

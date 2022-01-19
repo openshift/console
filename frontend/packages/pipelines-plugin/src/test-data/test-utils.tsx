@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
-import { Store } from 'react-redux';
+import { Store } from 'redux';
 
 interface StoreProps<S> {
   store?: Store<S>;

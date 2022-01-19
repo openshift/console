@@ -341,7 +341,7 @@ const SeriesButton: React.FC<SeriesButtonProps> = ({ index, labels }) => {
           'query-browser__series-btn--disabled': isDisabled,
         })}
         onClick={toggleSeries}
-        style={colorIndex === null ? undefined : { backgroundColor: colors[colorIndex] }}
+        style={colorIndex === null ? undefined : { backgroundColor: colors[colorIndex as number] }}
         title={title}
         type="button"
         variant="plain"

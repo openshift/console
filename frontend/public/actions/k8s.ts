@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import { Dispatch } from 'react-redux';
+/* eslint-disable-next-line import/named */
+import { Dispatch } from 'redux';
 import { ActionType as Action } from 'typesafe-actions';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 

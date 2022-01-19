@@ -1,4 +1,4 @@
-import { safeDump } from 'js-yaml';
+import { dump } from 'js-yaml';
 import * as _ from 'lodash';
 import * as utils from '@console/internal/components/utils';
 import * as k8sModels from '@console/internal/module/k8s';
@@ -40,7 +40,7 @@ describe('Create knative Utils', () => {
     const defaultEventingData = getDefaultEventingData(EVENT_SOURCE_CAMEL_KIND);
     const mockData = {
       ...defaultEventingData,
-      yamlData: safeDump(getEventSourcesDepResource(defaultEventingData.formData)),
+      yamlData: dump(getEventSourcesDepResource(defaultEventingData.formData)),
     };
     const knEventingResource: k8sModels.K8sResourceKind = loadYamlData(mockData);
     expect(knEventingResource.kind).toBe(EVENT_SOURCE_CAMEL_KIND);
@@ -54,7 +54,7 @@ describe('Create knative Utils', () => {
     defaultEventingData.formData.project.name = '';
     const mockData = {
       ...getDefaultEventingData(EVENT_SOURCE_CAMEL_KIND),
-      yamlData: safeDump(getEventSourcesDepResource(defaultEventingData.formData)),
+      yamlData: dump(getEventSourcesDepResource(defaultEventingData.formData)),
     };
     const knEventingResource: k8sModels.K8sResourceKind = loadYamlData(mockData);
     expect(knEventingResource.kind).toBe(EVENT_SOURCE_CAMEL_KIND);

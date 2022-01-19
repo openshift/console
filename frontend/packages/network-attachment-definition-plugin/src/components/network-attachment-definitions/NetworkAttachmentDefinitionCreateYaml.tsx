@@ -24,7 +24,7 @@ const CreateNetAttachDefYAMLConnected = connectToPlural(
     }
 
     const template = NetworkAttachmentDefinitionsYAMLTemplates.getIn(['default']);
-    const obj = load(template);
+    const obj: K8sResourceKind = load(template);
     obj.kind = kindObj.kind;
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = match.params.ns || 'default';

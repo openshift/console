@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+/* eslint-disable import/named */
 import {
   Accordion,
   AccordionContent,
@@ -15,6 +16,7 @@ import {
   ToolbarFilter,
   ToolbarItem,
 } from '@patternfly/react-core';
+/* eslint-enable import/named */
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType, usePinnedResources } from '@console/shared';
 import { connectToModel } from '../kinds';
@@ -29,6 +31,7 @@ import {
   modelFor,
   referenceForModel,
   K8sResourceKindReference,
+  K8sKind,
 } from '../module/k8s';
 import {
   LoadingBox,
@@ -60,7 +63,7 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
     resourceListPageExtensions,
     dynamicResourceListPageExtensions,
   ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
-  const ns = kindObj.namespaced ? namespace : undefined;
+  const ns = (kindObj as K8sKind).namespaced ? namespace : undefined;
 
   return (
     <AsyncComponent
@@ -68,12 +71,12 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       namespace={ns}
       selector={selector}
       nameFilter={nameFilter}
-      kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
+      kind={(kindObj as K8sKind).crd ? referenceForModel(kindObj) : (kindObj as K8sKind).kind}
       showTitle={false}
       hideTextFilter
       autoFocus={false}
       mock={mock}
-      badge={getBadgeFromType(kindObj.badge)}
+      badge={getBadgeFromType((kindObj as K8sKind).badge)}
       hideNameLabelFilters
       hideColumnManagement
     />

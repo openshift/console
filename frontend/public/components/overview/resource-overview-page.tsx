@@ -79,11 +79,11 @@ const DefaultSideBar: React.FC<{
   );
 };
 
-export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActions }) => {
-  if (!kindObj && !item?.obj) {
+export const ResourceOverviewPage: any = connectToModel(({ kindObj, item, customActions }) => {
+  if (!kindObj && !(item as OverviewItem)?.obj) {
     return null;
   }
-  const resourceModel = kindObj || modelFor(referenceFor(item.obj));
+  const resourceModel = kindObj || modelFor(referenceFor((item as OverviewItem).obj));
   const ref = referenceForModel(resourceModel);
   const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultSideBar));
   return (

@@ -59,7 +59,7 @@ export const safeOmit = (object: PipelineKind, path: string): PipelineKind => {
       });
     }
   }
-  return _.omit(object, path);
+  return _.omit(object, path) as PipelineKind;
 };
 
 export const getValidatedFormAndYaml = (

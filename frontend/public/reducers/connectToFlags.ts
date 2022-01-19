@@ -15,11 +15,13 @@ export type WithFlagsProps = {
   flags: FlagsObject;
 };
 
-// FIXME: Andrew Ballantyne is trying to see if there is a way to do this
-// that avoids typing with any.
 export type ConnectToFlags = <P extends WithFlagsProps>(
   ...flags: (FLAGS | string)[]
-) => (C: React.ComponentType<P>) => any;
+) => (
+  component: React.ComponentType<P>,
+) => React.ComponentType<any> & {
+  WrappedComponent: React.ComponentType<any>;
+};
 
 export const connectToFlags: ConnectToFlags = (...flags) =>
   connect((state: RootState) => stateToProps(state.FLAGS, flags), null, null, {

@@ -10,9 +10,11 @@ import { iGet, toJS, toShallowJS } from '../../../../../../utils/immutable';
 import { VMWizardStorageType } from '../../../../types';
 import { cloudInitActions } from '../redux/actions';
 
+type LoadedObject = { [key: string]: string[] };
+
 const cleanUserData = (userData: string): string => {
   try {
-    const userDataJS = userData && yamlParser.load(userData);
+    const userDataJS = userData && (yamlParser.load(userData) as LoadedObject);
     if (isEmpty(userDataJS?.ssh_authorized_keys?.[0])) {
       return yamlParser.dump(omit(userDataJS, 'ssh_authorized_keys'));
     }

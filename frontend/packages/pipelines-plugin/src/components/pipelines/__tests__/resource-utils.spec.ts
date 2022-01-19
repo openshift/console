@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import { taskTestData } from '../../../test-data/pipeline-data';
-import { getTaskParameters, getTaskResources } from '../resource-utils';
+import { getTaskParameters, getTaskResources, TaskKindAlpha } from '../resource-utils';
 
 describe('getTaskResources gets back valid structures', () => {
   it('expect always to get a non-null value', () => {
@@ -9,7 +9,7 @@ describe('getTaskResources gets back valid structures', () => {
     const alphaTask = omit(taskTestData.v1alpha1.buildah, [
       'spec.inputs.resources',
       'spec.outputs.resources',
-    ]);
+    ]) as TaskKindAlpha;
     expect(getTaskResources(alphaTask)).toEqual({ inputs: undefined, outputs: undefined });
 
     const betaTask = omit(taskTestData.v1beta1.buildah, 'spec.resources');

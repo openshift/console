@@ -38,6 +38,8 @@ type CloudinitProps = {
   wizardReduxID: string;
 };
 
+type LoadedObject = { [key: string]: string[] };
+
 const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -66,9 +68,8 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
     (fn) =>
       setYaml((data) => {
         try {
-          const loadedYaml = yamlParser?.load(data);
+          const loadedYaml = yamlParser?.load(data) as LoadedObject;
           const keys = fn instanceof Function ? fn(loadedYaml?.ssh_authorized_keys) : fn;
-          // eslint-disable-next-line @typescript-eslint/camelcase
           return yamlParser.dump({ ...loadedYaml, ssh_authorized_keys: keys });
         } catch (e) {
           // eslint-disable-next-line no-console
@@ -94,9 +95,8 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
     if (view === ViewComponent.editor) {
       try {
         const nonEmptyKeys = yamlAsJS?.ssh_authorized_keys?.filter((key: string) => !isEmpty(key));
-        const loadedYaml = yamlParser?.load(yaml);
+        const loadedYaml = yamlParser?.load(yaml) as LoadedObject;
         if (!isEmpty(nonEmptyKeys)) {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           loadedYaml.ssh_authorized_keys = nonEmptyKeys;
         } else {
           delete loadedYaml?.ssh_authorized_keys;

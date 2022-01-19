@@ -6,6 +6,7 @@ type FlexFormProps = {
 
 const FlexForm: React.FC<FlexFormProps & React.HTMLProps<HTMLFormElement>> = ({
   children,
+  inputMode,
   ...props
 }) => (
   <form {...props} style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>

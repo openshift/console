@@ -10,6 +10,7 @@ import { HelmChartRepositoryModel } from '../../models';
 import { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
 
+type JSONType = { entries: HelmChartEntries };
 const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
@@ -33,7 +34,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
       .then(async (res) => {
         if (mounted) {
           const yaml = await res.text();
-          const json = load(yaml);
+          const json = load(yaml) as JSONType;
           setHelmCharts(json.entries);
         }
       })

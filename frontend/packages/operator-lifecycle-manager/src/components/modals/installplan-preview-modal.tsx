@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { safeDump } from 'js-yaml';
+import { dump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -25,7 +25,7 @@ const InstallPlanPreview: React.FC<InstallPlanPreviewModalProps> = ({ cancel, st
         />
       </ModalTitle>
       <ModalBody>
-        <CopyToClipboard value={safeDump(JSON.parse(stepResource.manifest))} />
+        <CopyToClipboard value={dump(JSON.parse(stepResource.manifest))} />
       </ModalBody>
       <ModalFooter inProgress={false}>
         <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">

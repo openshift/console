@@ -38,6 +38,8 @@ export type HelmChartVersionDropdownProps = {
 };
 type ModalCallback = () => void;
 
+type JSONType = { entries: HelmChartEntries };
+
 const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdownProps> = ({
   chartVersion,
   chartName,
@@ -109,12 +111,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     let ignore = false;
 
     const fetchChartVersions = async () => {
-      let json: { entries: HelmChartEntries };
+      let json: JSONType;
 
       try {
         const response = await coFetch(`/api/helm/charts/index.yaml?namespace=${namespace}`);
         const yaml = await response.text();
-        json = load(yaml);
+        json = load(yaml) as JSONType;
       } catch {
         if (ignore) return;
       }

@@ -17,6 +17,7 @@ import { pluginStore } from '../../plugins';
 import { isModelDefinition, LoadedExtension } from '@console/plugin-sdk';
 import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { RootState } from '@console/internal/redux';
 
 const modelKey = (model: K8sKind): string => {
   // TODO: Use `referenceForModel` even for known API objects
@@ -139,9 +140,7 @@ export const useModelFinder = () => {
   const referenceForGroupVersionPlural = (group: string) => (version: string) => (plural: string) =>
     [group || 'core', version, plural].join('~');
 
-  const models: ImmutableMap<string, K8sKind> = useSelector(({ k8s }) =>
-    k8s.getIn(['RESOURCES', 'models']),
-  );
+  const models = useSelector<RootState, K8sKind[]>(({ k8s }) => k8s.getIn(['RESOURCES', 'models']));
   const pluralsToModelMap = models.reduce((acc, curr) => {
     const ref = referenceForGroupVersionPlural(curr.apiGroup)(curr.apiVersion)(curr.plural);
     acc[ref] = curr;

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { safeDump } from 'js-yaml';
+import { dump } from 'js-yaml';
 import * as _ from 'lodash';
-import { CreateYAML } from '@console/internal/components/create-yaml';
+import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
@@ -75,7 +75,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
 
   it('passes correct YAML to YAML editor', () => {
     const data = _.cloneDeep(testClusterServiceVersion);
-    const testResourceInstanceYAML = safeDump(testResourceInstance);
+    const testResourceInstanceYAML = dump(testResourceInstance);
     data.metadata.annotations = { 'alm-examples': JSON.stringify([testResourceInstance]) };
     wrapper = wrapper.setProps({ csv: data, loaded: true, loadError: null });
     expect(wrapper.find(OperandYAML).props().initialYAML).toEqual(testResourceInstanceYAML);
@@ -229,6 +229,6 @@ describe(OperandYAML.displayName, () => {
   });
 
   it('renders `CreateYAML` component with correct props', () => {
-    expect(wrapper.find(CreateYAML).props().hideHeader).toBe(true);
+    expect((wrapper.find(CreateYAML).props() as CreateYAMLProps).hideHeader).toBe(true);
   });
 });

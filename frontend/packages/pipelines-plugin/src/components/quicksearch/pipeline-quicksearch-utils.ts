@@ -3,7 +3,7 @@ import { load } from 'js-yaml';
 import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
-import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterTaskModel, TaskModel } from '../../models';
 import { TektonTaskAnnotation } from '../pipelines/const';
 import { CTALabel, TEKTONHUB } from './const';
@@ -94,7 +94,7 @@ export const updateTask = async (
   return coFetch(url)
     .then(async (res) => {
       const yaml = await res.text();
-      const task = load(yaml);
+      const task: K8sResourceKind = load(yaml);
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,
@@ -114,7 +114,7 @@ export const createTask = (url: string, namespace: string) => {
   return coFetch(url)
     .then(async (res) => {
       const yaml = await res.text();
-      const task = load(yaml);
+      const task: K8sResourceKind = load(yaml);
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,

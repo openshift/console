@@ -102,7 +102,12 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
                             data: { key, style },
                           } = gridProps;
                           return (
-                            <Cell {...gridProps} key={key} style={style} renderCell={renderCell} />
+                            <Cell
+                              {...gridProps}
+                              key={key}
+                              style={style as React.CSSProperties}
+                              renderCell={renderCell}
+                            />
                           );
                         }}
                       </Grid>

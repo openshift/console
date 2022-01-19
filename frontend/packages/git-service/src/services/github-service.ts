@@ -1,4 +1,4 @@
-import * as Octokit from '@octokit/rest';
+import { Octokit } from '@octokit/rest';
 import * as GitUrlParse from 'git-url-parse';
 import {
   GitSource,

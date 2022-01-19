@@ -1,6 +1,6 @@
 import * as fuzzy from 'fuzzysearch';
 import { TFunction } from 'i18next';
-import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
+import { loadAll, dump, DEFAULT_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { Flatten } from '@console/internal/components/factory/list-page';
@@ -255,14 +255,14 @@ export const getChartValuesYAML = (chart: HelmChart): string => {
 
   if (orderedValues) return orderedValues;
 
-  return !_.isEmpty(chart?.values) ? safeDump(chart?.values) : '';
+  return !_.isEmpty(chart?.values) ? dump(chart?.values) : '';
 };
 
 export const loadHelmManifestResources = (release: HelmRelease): K8sResourceKind[] => {
   if (!release || !release.manifest) {
     return [];
   }
-  const manifests = loadAll(release.manifest, null, { schema: DEFAULT_SAFE_SCHEMA, json: true });
+  const manifests = loadAll(release.manifest, null, { schema: DEFAULT_SCHEMA, json: true });
   return manifests.filter(Boolean);
 };
 

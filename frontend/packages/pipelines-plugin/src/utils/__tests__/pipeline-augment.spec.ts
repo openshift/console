@@ -9,7 +9,7 @@ import {
   TriggerBindingModel,
 } from '../../models';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test-data/pipeline-data';
-import { PipelineKind } from '../../types';
+import { PipelineKind, PipelineRunKind } from '../../types';
 import {
   getResources,
   augmentRunsToData,
@@ -435,7 +435,7 @@ describe('Pipelinerun graph to show the executed pipeline structure', () => {
 
   it('expect to return null, if pipelinerun does not have pipeline labels or name in the metadata field', () => {
     const executedPipeline = getPipelineFromPipelineRun(
-      _.omit(testPipelineRun, ['metadata.labels', 'metadata.name']),
+      _.omit(testPipelineRun, ['metadata.labels', 'metadata.name']) as PipelineRunKind,
     );
     expect(executedPipeline).toBe(null);
   });

@@ -48,7 +48,7 @@ const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({
     podData?.metadata &&
     `${resourcePath(PodModel.kind, podData?.metadata.name, podData?.metadata.namespace)}/logs`;
 
-  const viewLog = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const viewLog = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (isModifiedEvent(e)) {
       return;
     }

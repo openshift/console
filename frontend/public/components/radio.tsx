@@ -9,6 +9,7 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
     'desc',
     'children',
     'inline',
+    'capture',
   ]);
   const inputElement = (
     <>

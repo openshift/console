@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import { safeDump } from 'js-yaml';
+import { dump } from 'js-yaml';
 import * as _ from 'lodash';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { ResultContentType } from '../../../k8s/enhancedK8sMethods/types';
@@ -27,7 +27,7 @@ export const resultContentToString = (data, type: ResultContentType) => {
   switch (type) {
     case ResultContentType.YAML:
       try {
-        return safeDump(data);
+        return dump(data);
       } catch (ignored) {} // eslint-disable-line no-empty
     case ResultContentType.JSON: // eslint-disable-line no-fallthrough
       return JSON.stringify(data, null, 1);

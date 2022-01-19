@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 import { k8sGet, k8sList, StorageClassResourceKind, ListKind } from '@console/internal/module/k8s';
 import {
   ClusterServiceVersionModel,

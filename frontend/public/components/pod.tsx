@@ -97,6 +97,7 @@ import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { RootState } from '@console/internal/redux';
 
 // Key translations for oauth login templates
 // t('public~Log in to your account')
@@ -342,11 +343,11 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
 }) => {
   const { t } = useTranslation();
   const { name, namespace, creationTimestamp, labels } = pod.metadata;
-  const bytes: number = useSelector(({ UI }) => {
+  const bytes: number = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.memory?.[namespace]?.[name];
   });
-  const cores: number = useSelector(({ UI }) => {
+  const cores: number = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.cpu?.[namespace]?.[name];
   });

@@ -3,7 +3,7 @@ import * as React from 'react';
 export const useResizeObserver = (
   callback: ResizeObserverCallback,
   targetElement?: HTMLElement | null,
-  observerOptions: ResizeObserverObserveOptions = undefined,
+  observerOptions = undefined,
 ): void => {
   const element = React.useMemo(() => targetElement ?? document.querySelector('body'), [
     targetElement,

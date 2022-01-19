@@ -14,7 +14,7 @@ import {
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
-import { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
+import { EventKind, MachineKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import ActivityBody, {
   RecentEventsBody,
@@ -51,7 +51,7 @@ const hostEventsFilter = (
   matchesInvolvedObject(NodeModel.kind, getMachineNodeName(machine), null, event);
 
 const getHostEventsFilter = (
-  host: K8sResourceKind,
+  host: BareMetalHostKind,
   machine: MachineKind,
 ): ((event: EventKind) => boolean) => _.partial(hostEventsFilter, host, machine);
 

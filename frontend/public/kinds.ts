@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
+/* eslint-disable-next-line import/named */
 import { match } from 'react-router-dom';
 
 import {
@@ -33,7 +34,7 @@ type WithPluralProps = {
 };
 
 export type ConnectToPlural = <P extends WithPluralProps>(
-  C: React.ComponentType<P>,
+  component: React.ComponentType,
 ) => React.ComponentType<Omit<P, keyof WithPluralProps>> & {
   WrappedComponent: React.ComponentType<P>;
 };
@@ -42,7 +43,7 @@ export type ConnectToPlural = <P extends WithPluralProps>(
  * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
  * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
  */
-export const connectToPlural: ConnectToPlural = connect(
+export const connectToPlural: any = connect(
   (
     state: RootState,
     props: {

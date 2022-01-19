@@ -47,7 +47,7 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
       />
     );
   }
-  const { labelPlural: projectLabelPlural } = kindObj;
+  const { labelPlural: projectLabelPlural } = kindObj as K8sKind;
   return (
     <>
       <Helmet>

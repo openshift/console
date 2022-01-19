@@ -37,7 +37,7 @@ export const migratePipelineRun = (pipelineRun: PipelineRunKind): PipelineRunKin
     // .spec.serviceAccount was removed for .spec.serviceAccountName in 0.9.x
     // Note: apiVersion was not updated for this change and thus we cannot gate this change behind a version number
     const serviceAccountName = _.get(newPipelineRun, serviceAccountPath);
-    newPipelineRun = _.omit(newPipelineRun, [serviceAccountPath]);
+    newPipelineRun = _.omit(newPipelineRun, [serviceAccountPath]) as PipelineRunKind;
     newPipelineRun = _.merge(newPipelineRun, {
       spec: {
         serviceAccountName,

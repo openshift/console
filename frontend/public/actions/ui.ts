@@ -315,7 +315,7 @@ export const setUtilizationDurationEndTime = (endTime) =>
   action(ActionType.SetUtilizationDurationEndTime, { endTime });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
-const uiActions = {
+const uiActions: any = {
   setCurrentLocation,
   setActiveApplication,
   setActiveNamespace,

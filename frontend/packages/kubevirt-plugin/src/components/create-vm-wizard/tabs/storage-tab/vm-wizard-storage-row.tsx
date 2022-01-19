@@ -72,9 +72,9 @@ export const VmWizardStorageRow: React.FC<RowFunctionArgs<
     <DiskSimpleRow
       data={{ ...restData, name }}
       validation={{
-        name: validations.name || validations.url || validations.container || validations.pvc,
-        size: validations.size,
-        diskInterface: validations.diskInterface,
+        name: validations?.name || validations?.url || validations?.container || validations?.pvc,
+        size: validations?.size,
+        diskInterface: validations?.diskInterface,
       }}
       columnClasses={columnClasses}
       actionsComponent={

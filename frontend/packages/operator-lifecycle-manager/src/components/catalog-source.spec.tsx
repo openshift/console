@@ -6,7 +6,7 @@ import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create
 import { DetailsPage } from '@console/internal/components/factory';
 import { Firehose, LoadingBox, DetailsItem } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../mocks';
 import {
@@ -161,7 +161,7 @@ describe(CreateSubscriptionYAML.displayName, () => {
       .find(ErrorBoundary)
       .childAt(0)
       .dive<CreateYAMLProps, {}>();
-    const subTemplate = load(createYAML.props().template);
+    const subTemplate: K8sResourceKind = load(createYAML.props().template);
 
     window.location.search = `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`;
 

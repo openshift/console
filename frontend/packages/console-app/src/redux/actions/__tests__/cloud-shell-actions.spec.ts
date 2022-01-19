@@ -1,4 +1,4 @@
-import { Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 import cloudShellConfirmationModal from '../../../components/cloud-shell/cloudShellConfirmationModal';
 import {
   setCloudShellExpanded,

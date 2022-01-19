@@ -52,7 +52,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     let pipeline: PipelineKind;
     if (values.editorType === EditorType.YAML) {
       try {
-        pipeline = load(values.yamlData);
+        pipeline = load(values.yamlData) as PipelineKind;
         if (!pipeline.metadata?.namespace) {
           pipeline.metadata.namespace = ns;
         }

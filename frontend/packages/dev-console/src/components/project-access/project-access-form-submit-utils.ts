@@ -9,15 +9,15 @@ export const getRolesWithNameChange = (
   removeRoles: UserRoleBinding[],
 ): UserRoleBinding[] => {
   const createRoles = _.filter(newRoles, 'roleBindingName');
-  const deleteRoles = _.filter(removeRoles, (o1) =>
-    createRoles.find((o2) => o1.roleBindingName === o2.roleBindingName),
+  const deleteRoles = _.filter(removeRoles, (o1: UserRoleBinding) =>
+    createRoles.find((o2: UserRoleBinding) => o1.roleBindingName === o2.roleBindingName),
   );
-  const rolesWithNameChange = _.filter(createRoles, (o1) =>
+  const rolesWithNameChange = _.filter(createRoles, (o1: UserRoleBinding) =>
     deleteRoles.find(
-      (o2) =>
+      (o2: UserRoleBinding) =>
         o1.roleBindingName === o2.roleBindingName && o1.user !== o2.user && o1.role === o2.role,
     ),
-  );
+  ) as UserRoleBinding[];
   return rolesWithNameChange;
 };
 

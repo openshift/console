@@ -113,7 +113,6 @@ const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi, se
     <SerialConsole
       fontFamily="monospace"
       fontSize={12}
-      id="serial-console"
       onConnect={onConnect}
       onData={onData}
       onDisconnect={onBackendDisconnected}

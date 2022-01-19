@@ -72,7 +72,7 @@ const FormWithEditor: React.FC<FormWithEditorProps> = ({
 
   React.useEffect(() => {
     try {
-      data && onChange && onChange(data, yamlParser.load(data));
+      data && onChange && onChange(data, yamlParser.load(data) as object);
       setIsYamlValid && setIsYamlValid(true);
     } catch (e) {
       setIsYamlValid && setIsYamlValid(false);

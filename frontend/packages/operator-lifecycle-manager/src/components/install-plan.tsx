@@ -259,7 +259,7 @@ export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProp
   installPlan,
 }) => {
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
-  const user = useSelector<RootState, object>(getUser);
+  const user = useSelector<RootState, UserKind>(getUser);
 
   const [username, setUsername] = React.useState(updateUser(isOpenShift, user));
 

@@ -20,14 +20,14 @@ import { useUserSettings } from './useUserSettings';
 */
 export const useNotificationAlerts = (
   overrideMatchLabels?: ObjectMetadata['labels'],
-): [Alert[], boolean, Error] => {
+): [Alert[], boolean, { message?: string }] => {
   const [hideUserWorkloadNotifications] = useUserSettings(
     HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
     true,
     true,
   );
-  const { data: alerts, loaded, loadError } = useSelector<NotificationAlerts>(
-    ({ observe }: RootState) => observe.get('notificationAlerts') ?? {},
+  const { data: alerts, loaded, loadError } = useSelector<RootState, NotificationAlerts>(
+    ({ observe }) => observe.get('notificationAlerts') ?? {},
   );
 
   const [filteredAlerts, setFilteredAlerts] = React.useState<Alert[]>([]);
