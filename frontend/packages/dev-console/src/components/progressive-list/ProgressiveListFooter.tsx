@@ -1,43 +1,45 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
+import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 export interface ProgressiveListFooterProps {
   items: string[];
-  text: string;
   onShowItem: (item: string) => void;
 }
 
-const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({
-  text,
-  items,
-  onShowItem,
-}) => {
+const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({ items, onShowItem }) => {
   if (!items || items.length === 0) {
     return null;
   }
+
+  const formattedString = new Intl.ListFormat(getLastLanguage() || 'en', {
+    style: 'long',
+    type: 'conjunction',
+  }).format(items);
+
+  let lastIdx = 0;
+  let lastLen = 0;
+
   return (
-    <div>
-      {text}
-      {items.map((opt, index) => {
-        let preText = ' ';
-        let postText = '';
-        if (items.length - 1 === index) {
-          preText = items.length !== 1 ? ' and ' : ' ';
-          postText = '.';
-        } else {
-          postText = items.length - 2 !== index ? ',' : '';
-        }
-        return (
-          <React.Fragment key={opt}>
-            {preText}
-            <Button variant="link" isInline onClick={() => onShowItem(opt)}>
-              {opt}
+    <>
+      {items.map((item) => {
+        const currentIdx = formattedString.indexOf(item);
+
+        const element = (
+          <React.Fragment key={item}>
+            {formattedString.slice(lastIdx + lastLen, currentIdx)}
+            <Button variant="link" isInline onClick={() => onShowItem(item)}>
+              {item}
             </Button>
-            {postText}
           </React.Fragment>
         );
+
+        lastIdx = currentIdx;
+        lastLen = item.length;
+
+        return element;
       })}
-    </div>
+    </>
   );
 };
 

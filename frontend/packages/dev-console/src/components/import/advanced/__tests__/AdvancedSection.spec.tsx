@@ -38,15 +38,17 @@ describe('AdvancedSection', () => {
 
   it('Should render advance section for Kubernetes(D) resource and not serverless sections', () => {
     const wrapper = shallow(<AdvancedSection {...advanceSectionProps} />);
+    const list = wrapper.find('List');
+    const listItems = list.shallow();
     expect(wrapper.find(RouteSection).exists()).toBe(true);
-    expect(wrapper.find(HealthChecks).exists()).toBe(true);
-    expect(wrapper.find(BuildConfigSection).exists()).toBe(true);
-    expect(wrapper.find(DeploymentConfigSection).exists()).toBe(true);
-    expect(wrapper.find(ScalingSection).exists()).toBe(true);
-    expect(wrapper.find(ResourceLimitSection).exists()).toBe(true);
-    expect(wrapper.find(LabelSection).exists()).toBe(true);
+    expect(listItems.find(HealthChecks).exists()).toBe(true);
+    expect(listItems.find(BuildConfigSection).exists()).toBe(true);
+    expect(listItems.find(DeploymentConfigSection).exists()).toBe(true);
+    expect(listItems.find(ScalingSection).exists()).toBe(true);
+    expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
 
-    expect(wrapper.find(ServerlessScalingSection).exists()).toBe(false);
+    expect(listItems.find(LabelSection).exists()).toBe(true);
+    expect(listItems.find(ServerlessScalingSection).exists()).toBe(false);
   });
 
   it('Should render advance section for openshift(DC) resource and not show BuildConfigSection if pipelines enabled', () => {
@@ -60,16 +62,19 @@ describe('AdvancedSection', () => {
         },
       },
     };
-    const wrapper = shallow(<AdvancedSection {...newAdvanceSectionProps} />);
-    expect(wrapper.find(RouteSection).exists()).toBe(true);
-    expect(wrapper.find(HealthChecks).exists()).toBe(true);
-    expect(wrapper.find(DeploymentConfigSection).exists()).toBe(true);
-    expect(wrapper.find(ScalingSection).exists()).toBe(true);
-    expect(wrapper.find(ResourceLimitSection).exists()).toBe(true);
-    expect(wrapper.find(LabelSection).exists()).toBe(true);
 
-    expect(wrapper.find(BuildConfigSection).exists()).toBe(false);
-    expect(wrapper.find(ServerlessScalingSection).exists()).toBe(false);
+    const wrapper = shallow(<AdvancedSection {...newAdvanceSectionProps} />);
+    const list = wrapper.find('List');
+    const listItems = list.shallow();
+    expect(wrapper.find(RouteSection).exists()).toBe(true);
+    expect(listItems.find(HealthChecks).exists()).toBe(true);
+    expect(listItems.find(DeploymentConfigSection).exists()).toBe(true);
+    expect(listItems.find(ScalingSection).exists()).toBe(true);
+    expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
+    expect(listItems.find(LabelSection).exists()).toBe(true);
+
+    expect(listItems.find(BuildConfigSection).exists()).toBe(false);
+    expect(listItems.find(ServerlessScalingSection).exists()).toBe(false);
   });
 
   it('Should render advance section specifiic for knative(KSVC) resource', () => {
@@ -81,13 +86,15 @@ describe('AdvancedSection', () => {
       },
     };
     const wrapper = shallow(<AdvancedSection {...newAdvanceSectionProps} />);
+    const list = wrapper.find('List');
+    const listItems = list.shallow();
     expect(wrapper.find(RouteSection).exists()).toBe(true);
-    expect(wrapper.find(HealthChecks).exists()).toBe(true);
-    expect(wrapper.find(BuildConfigSection).exists()).toBe(true);
-    expect(wrapper.find(DeploymentConfigSection).exists()).toBe(true);
-    expect(wrapper.find(ServerlessScalingSection).exists()).toBe(true);
-    expect(wrapper.find(ResourceLimitSection).exists()).toBe(true);
-    expect(wrapper.find(LabelSection).exists()).toBe(true);
+    expect(listItems.find(HealthChecks).exists()).toBe(true);
+    expect(listItems.find(BuildConfigSection).exists()).toBe(true);
+    expect(listItems.find(DeploymentConfigSection).exists()).toBe(true);
+    expect(listItems.find(ServerlessScalingSection).exists()).toBe(true);
+    expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
+    expect(listItems.find(LabelSection).exists()).toBe(true);
 
     expect(wrapper.find(ScalingSection).exists()).toBe(false);
   });
