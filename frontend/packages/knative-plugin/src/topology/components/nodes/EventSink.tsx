@@ -13,6 +13,8 @@ import {
   createSvgIdUrl,
   WithCreateConnectorProps,
   Edge,
+  useAnchor,
+  AnchorEnd,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import {
@@ -31,7 +33,8 @@ import {
 } from '@console/topology/src/filters';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
-import { TYPE_KAFKA_CONNECTION_LINK } from '../../const';
+import { TYPE_EVENT_SINK_LINK, TYPE_KAFKA_CONNECTION_LINK } from '../../const';
+import EventSinkTargetAnchor from '../anchors/EventSinkTargetAnchor';
 
 import './EventSource.scss';
 
@@ -59,6 +62,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   onHideCreateConnector,
 }) => {
   const svgAnchorRef = useSvgAnchor();
+  useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const { data, resources, resource } = element.getData();
@@ -72,7 +76,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   const isKafkaConnectionLinkPresent =
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
       .length > 0;
-  const revisionIds = resources.revisions.map((revision) => revision.metadata.uid);
+  const revisionIds = resources.revisions?.map((revision) => revision.metadata.uid);
   const { loaded, loadError, pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
   const donutStatus = React.useMemo(() => {
     if (loaded && !loadError) {

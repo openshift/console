@@ -100,7 +100,7 @@ export const getKnativeTopologyDataModel = (
     if (n.type === NodeType.KnService) {
       if (
         camelSinkKameletBindings.findIndex((binding) =>
-          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION].startsWith(
+          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
             binding.metadata?.name,
           ),
         ) > -1
@@ -112,7 +112,7 @@ export const getKnativeTopologyDataModel = (
     if (n.type === NodeType.Revision) {
       if (
         camelSinkKameletBindings.findIndex((binding) =>
-          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION].startsWith(
+          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
             binding.metadata?.name,
           ),
         ) > -1

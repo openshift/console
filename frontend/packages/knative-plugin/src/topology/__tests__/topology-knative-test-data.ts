@@ -7,7 +7,6 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { TopologyDataResources } from '@console/topology/src/topology-types';
-import { CamelKameletModel, DomainMappingModel } from '../..';
 import {
   SERVERLESS_FUNCTION_LABEL,
   EVENTING_IMC_KIND,
@@ -23,6 +22,8 @@ import {
   EVENT_SOURCE_PING_KIND,
 } from '../../const';
 import {
+  CamelKameletModel,
+  DomainMappingModel,
   ServiceModel,
   RevisionModel,
   RouteModel,

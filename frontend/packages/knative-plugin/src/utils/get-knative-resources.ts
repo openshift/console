@@ -3,9 +3,9 @@ import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
-import { CamelKameletModel, GLOBAL_OPERATOR_NS } from '..';
-import { KNATIVE_SERVING_LABEL } from '../const';
+import { GLOBAL_OPERATOR_NS, KNATIVE_SERVING_LABEL } from '../const';
 import {
+  CamelKameletModel,
   ServiceModel,
   RevisionModel,
   ConfigurationModel,

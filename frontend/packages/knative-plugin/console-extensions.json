@@ -1570,6 +1570,9 @@
       "adapt": {
         "$codeRef": "knativeTopologySidebar.getEventSinkPodsApdapter"
       }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
     }
   }
 ]

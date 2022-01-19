@@ -54,7 +54,7 @@ export const getKnativeSidepanelEventSinkSection = (element: GraphElement) => {
 export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
   const { t } = useTranslation();
   const { pods, loaded, loadError } = usePodsForRevisions(
-    data?.revisions.map((r) => r.metadata.uid) ?? '',
+    data?.revisions?.map((r) => r.metadata.uid) ?? '',
     resource.metadata.namespace,
   );
   return React.useMemo(

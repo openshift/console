@@ -9,7 +9,7 @@ type EventSinkLinkProps = {
 };
 
 const EventSinkLink: React.FC<EventSinkLinkProps> = ({ element, ...others }) => {
-  const markerPoint = element.getStartPoint();
+  const markerPoint = element.getEndPoint();
 
   return (
     <BaseEdge className="odc-event-source-link" element={element} {...others}>
