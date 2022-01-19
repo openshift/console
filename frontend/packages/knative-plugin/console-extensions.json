@@ -1517,5 +1517,15 @@
       "labelPlural": "%knative-plugin~IntegrationPlatforms%",
       "abbr": "IP"
     }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "eventingContext.EventingContextProvider" },
+      "useValueHook": { "$codeRef": "eventingContext.useValuesEventingContext" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
   }
 ]

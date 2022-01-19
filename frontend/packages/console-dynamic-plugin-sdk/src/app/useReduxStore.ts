@@ -22,7 +22,7 @@ const composeEnhancers =
  * }
  * ```
  */
-export const useReduxStore = (): { store: Store<SDKStoreState>; storeContextPresent: boolean } => {
+export const useReduxStore = (): { store: Store<any>; storeContextPresent: boolean } => {
   const storeContext = useStore();
   const [storeContextPresent, setStoreContextPresent] = React.useState(false);
   const store = React.useMemo(() => {

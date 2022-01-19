@@ -15,19 +15,7 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
 } from '../const';
-import { fetchEventSourcesCrd, fetchChannelsCrd } from '../utils/fetch-dynamic-eventsources-utils';
 import { getKnativeResources } from '../utils/get-knative-resources';
-
-// Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
-// TODO: Remove this toplevel api calls which are triggered as soon as this file is loaded.
-fetchEventSourcesCrd().catch((err) => {
-  // eslint-disable-next-line no-console
-  console.warn('Error fetching CRDs for dynamic event sources', err);
-});
-fetchChannelsCrd().catch((err) => {
-  // eslint-disable-next-line no-console
-  console.warn('Error fetching CRDs for dynamic channel model refs', err);
-});
 
 const getKnativeTopologyDataModel = () =>
   import('./data-transformer' /* webpackChunkName: "knative-components" */).then(

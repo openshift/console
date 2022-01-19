@@ -9,7 +9,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
 import { withTranslation, useTranslation } from 'react-i18next';
-import { coFetchJSON } from '../co-fetch';
+import { coFetchJSON, appInternalFetch } from '../co-fetch';
 
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
@@ -241,8 +241,6 @@ const AppWithExtensions = withTranslation()((props) => {
   return <LoadingBox />;
 });
 
-initConsolePlugins(pluginStore, store);
-
 render(<LoadingBox />, document.getElementById('app'));
 
 const AppRouter = () => {
@@ -418,24 +416,28 @@ const updateSwaggerDefinitionContinual = () => {
   }, 5 * 60 * 1000);
 };
 
-graphQLReady.onReady(() => {
-  // Load cached API resources from localStorage to speed up page load.
+const initPlugins = (storeInstance) => {
+  return initConsolePlugins(pluginStore, storeInstance);
+};
+// Load cached API resources from localStorage to speed up page load.
+const initApiDiscovery = (storeInstance) => {
   getCachedResources()
     .then((resources) => {
       if (resources) {
-        store.dispatch(receivedResources(resources));
+        storeInstance.dispatch(receivedResources(resources));
       }
       // Still perform discovery to refresh the cache.
-      store.dispatch(startAPIDiscovery());
+      storeInstance.dispatch(startAPIDiscovery());
     })
-    .catch(() => store.dispatch(startAPIDiscovery()));
+    .catch(() => storeInstance.dispatch(startAPIDiscovery()));
+  updateSwaggerDefinitionContinual();
+};
 
+graphQLReady.onReady(() => {
   store.dispatch(detectFeatures());
 
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
-
-  updateSwaggerDefinitionContinual();
 
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
@@ -485,7 +487,13 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
-        <AppInitSDK>
+        <AppInitSDK
+          configurations={{
+            appFetch: appInternalFetch,
+            apiDiscovery: initApiDiscovery,
+            initPlugins,
+          }}
+        >
           <CaptureTelemetry />
           <ToastProvider>
             <PollConsoleUpdates />
