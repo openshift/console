@@ -52,7 +52,7 @@ const ServiceMonitor: React.FC<{ target: Target }> = ({ target }) => {
     monitors,
     ({ spec }) =>
       service &&
-      (spec.selector.matchLabels === undefined ||
+      ((spec.selector.matchLabels === undefined && spec.selector.matchExpressions === undefined) ||
         new LabelSelector(spec.selector).matchesLabels(service.metadata.labels ?? {})) &&
       (spec.namespaceSelector?.matchNames === undefined ||
         _.includes(spec.namespaceSelector?.matchNames, service.metadata.namespace)),
