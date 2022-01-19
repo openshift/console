@@ -25,6 +25,12 @@ export const operatorsPage = {
     detailsPage.titleShouldContain(pageTitle.Eventing);
   },
 
+  navigateToCustomResourceDefinitions: () => {
+    cy.get(operatorsPO.nav.administration).click();
+    cy.get(operatorsPO.nav.customResourceDefinitions).click({ force: true });
+    detailsPage.titleShouldContain(pageTitle.CustomResourceDefinitions);
+  },
+
   selectSourceType: (sourceType: string = 'redHat') => {
     if (sourceType === 'redHat') {
       cy.get(operatorsPO.operatorHub.redHatSourceType)

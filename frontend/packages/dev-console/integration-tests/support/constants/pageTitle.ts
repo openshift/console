@@ -47,4 +47,5 @@ export const pageTitle = {
   KnativeServings: 'KnativeServings',
   KnativeEventings: 'KnativeEventings',
   CreateRepository: 'Create Repository',
+  CustomResourceDefinitions: 'CustomResourceDefinitions',
 };

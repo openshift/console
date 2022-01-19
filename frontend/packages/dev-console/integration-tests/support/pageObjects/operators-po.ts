@@ -9,6 +9,8 @@ export const operatorsPO = {
     menuItems: '#page-sidebar ul li',
     serverless: '[data-quickstart-id="qs-nav-serverless"]',
     eventing: 'a[href="/eventing"]',
+    administration: '[data-quickstart-id="qs-nav-administration"]',
+    customResourceDefinitions: 'a[href="/k8s/cluster/customresourcedefinitions"]',
   },
   operatorHub: {
     numOfItems: 'div.co-catalog-page__num-items',

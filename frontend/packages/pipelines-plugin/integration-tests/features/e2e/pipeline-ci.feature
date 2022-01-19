@@ -28,7 +28,7 @@ Feature: Entire pipeline flow from Builder page
              Then user will be redirected to Pipeline Details page with header name "flow"
               And user will see workspace mentioned as "git" in the Workspaces section of Pipeline Details page
 
-
+        @to-do
         Scenario: Pipelines page details
             Given user is at pipelines page
              When user searches pipeline "flow" in pipelines page
@@ -39,7 +39,7 @@ Feature: Entire pipeline flow from Builder page
             #   And Create Pipeline button is enabled
               And kebab menu contains options Start, Add Trigger, Edit Pipeline, Delete Pipeline
 
-
+        @to-do
         Scenario: Pipelines Details page
             Given user is at pipelines page
              When user clicks pipeline name "flow" on Pipelines page
@@ -49,7 +49,7 @@ Feature: Entire pipeline flow from Builder page
               And Actions dropdown display in the top right corner of the page
               And Actions menu contains options Start, Add Trigger, Edit Pipeline, Delete Pipeline
 
-
+        @to-do
         Scenario: Add the task by editing the pipeline
             Given user is at pipelines page
              When user selects "Edit Pipeline" option from kebab menu of "flow"
@@ -57,7 +57,7 @@ Feature: Entire pipeline flow from Builder page
               And user clicks save on edit pipeline page
              Then user will be redirected to Pipeline Details page with header name "flow"
 
-
+        @to-do
         Scenario: Start the pipeline with workspace
             Given user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "flow"
@@ -70,7 +70,7 @@ Feature: Entire pipeline flow from Builder page
               And user is able to see the pipelineRuns with status as Succeeded
               And user will see VolumeClaimTemplate Workspace in Pipeline Run Details page
 
-
+        @to-do
         Scenario: Pipeline Run Details page
             Given user is at pipelines page
              When user clicks Last Run value of the pipeline "flow"
@@ -80,7 +80,7 @@ Feature: Entire pipeline flow from Builder page
               And user is able to see the pipelineRuns with status as Succeeded
               And Actions menu contains options "Rerun", "Delete PipelineRun"
 
-
+        @to-do
         Scenario: Rerun the Pipeline Run from pipeline runs page: P-07-TC07
             Given user is at pipelines page
              When user selects the Pipeline Run for "flow"
@@ -88,7 +88,7 @@ Feature: Entire pipeline flow from Builder page
               And user selects Rerun option from kebab menu of "flow"
              Then user will remain on pipeline runs page
 
-
+        @to-do
         Scenario: Add secret to pipeline with authentication type as Basic Authentication: P-08-TC02
             Given user is at Start Pipeline modal for pipeline "flow"
              When user clicks on Show Credentials link present in Start Pipeline modal
@@ -101,7 +101,7 @@ Feature: Entire pipeline flow from Builder page
               And user clicks on tick mark
              Then "basic-secret" is added under secrets section
 
-
+        @to-do
         Scenario: Add trigger to the pipeline: P-09-TC02
             Given user is at pipelines page
              When user selects "Add Trigger" from the kebab menu for "flow"
@@ -110,7 +110,7 @@ Feature: Entire pipeline flow from Builder page
              Then pipelines page is displayed
               And "Remove Trigger" is displayed in kebab menu for "flow"
 
-
+        @to-do
         Scenario: Remove the trigger from pipelines page: P-09-TC08
             Given user is at pipelines page
              When user selects "Remove Trigger" from the kebab menu for "flow"
@@ -118,7 +118,7 @@ Feature: Entire pipeline flow from Builder page
               And user clicks on Remove button
              Then option "Remove Trigger" is not available in kebab menu for "flow"
 
-
+        @to-do
         Scenario: Delete the Pipeline Run
             Given user is at pipelines page
              When user selects the Pipeline Run for "flow"
@@ -128,7 +128,7 @@ Feature: Entire pipeline flow from Builder page
              Then page will be redirected to pipeline runs page
               And pipeline run is deleted from pipeline runs page
 
-
+        @to-do
         Scenario: Delete the Pipeline from pipelines page: P-06-TC10
             Given user is at pipelines page
              When user selects "Delete Pipeline" from the kebab menu for "flow"
