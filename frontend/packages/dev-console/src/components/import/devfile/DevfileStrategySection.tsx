@@ -14,7 +14,6 @@ import './DevfileStrategySection.scss';
 const DevfileStrategySection: React.FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const ODC_TELEMETRY_CLIENT_NAME = 'openshift-console';
   const fireTelemetryEvent = useTelemetry();
   const {
     import: { showEditImportStrategy, strategies, recommendedStrategy },
@@ -51,7 +50,7 @@ const DevfileStrategySection: React.FC = () => {
       setValidated(ValidatedOptions.error);
     } else {
       fireTelemetryEvent('Download Devfile from Git', {
-        client: ODC_TELEMETRY_CLIENT_NAME,
+        client: 'openshift-console',
         devfileName: selectedSample.name,
       });
       setFieldValue('devfile.devfileContent', devfileContents);
