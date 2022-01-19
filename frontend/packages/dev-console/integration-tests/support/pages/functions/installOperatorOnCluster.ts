@@ -26,14 +26,6 @@ export const installOperator = (operatorName: operators) => {
       cy.get(operatorsPO.operatorHub.installingOperatorModal).should('be.visible');
       app.waitForLoad();
       cy.byTestID('success-icon').should('be.visible');
-      // Added below cy.request to verify the pipelines subscriptions
-      if (operatorName === operators.PipelinesOperator) {
-        cy.request(
-          'api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions/openshift-pipelines-operator-rh',
-        ).then((resp) => {
-          expect(resp.status).toEqual(200);
-        });
-      }
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
@@ -99,6 +91,11 @@ export const verifyAndInstallOperator = (operator: operators, namespace?: string
 export const verifyAndInstallPipelinesOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.PipelinesOperator);
+  cy.request(
+    'api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions/openshift-pipelines-operator-rh',
+  ).then((resp) => {
+    expect(resp.status).toEqual(200);
+  });
 };
 
 export const verifyAndInstallKnativeOperator = () => {
