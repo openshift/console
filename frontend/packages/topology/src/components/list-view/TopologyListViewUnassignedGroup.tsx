@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   DataListCell,
-  DataListContent,
+  DataList,
   DataListItem,
   DataListItemCells,
   DataListItemRow,
@@ -32,7 +32,7 @@ const TopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassignedGroupP
   const { kindsMap, kindKeys } = getChildKinds(items);
 
   const unassignedContent = (
-    <DataListContent aria-label="unassigned items" id="unassigned-items" isHidden={false}>
+    <DataList aria-label="unassigned items" id="unassigned-items">
       {kindKeys.map((key) => (
         <TopologyListViewKindGroup
           key={key}
@@ -42,7 +42,7 @@ const TopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassignedGroupP
           onSelect={onSelect}
         />
       ))}
-    </DataListContent>
+    </DataList>
   );
 
   if (!showCategory) {
