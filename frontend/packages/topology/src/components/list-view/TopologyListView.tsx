@@ -245,6 +245,12 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       }
     };
 
+    const onEnter = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const entity = target?.id && visualization.getElementById(target.id);
+      entity && onSelect(entity);
+    };
+
     const selectNext = () => {
       const flattenedItems = getFlattenedItems();
       const index = flattenedItems.findIndex((item) => selectedId === item.getId());
@@ -269,6 +275,10 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
         case 'Escape':
           stopEvent(e);
           onSelect();
+          break;
+        case 'Enter':
+          stopEvent(e);
+          onEnter(e);
           break;
         case 'k':
         case 'ArrowUp':
