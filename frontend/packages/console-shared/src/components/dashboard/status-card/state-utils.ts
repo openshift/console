@@ -57,6 +57,9 @@ export const getOperatorsHealthState = (
   healthStatuses: OperatorHealth[],
   t: TFunction,
 ): { health: HealthState; detailMessage: string } => {
+  if (!healthStatuses.length) {
+    return { health: HealthState.OK, detailMessage: undefined };
+  }
   if (healthStatuses.some((s) => s.health === HealthState.NOT_AVAILABLE)) {
     return { health: HealthState.NOT_AVAILABLE, detailMessage: undefined };
   }

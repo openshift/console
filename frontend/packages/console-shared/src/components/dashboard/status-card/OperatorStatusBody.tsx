@@ -27,6 +27,10 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
   );
   const operatorsHealthy = sortedOperatorStatuses.every((o) => o.status.health === HealthState.OK);
   const RowLoading = React.useCallback(() => <div className="co-status__operator-skeleton" />, []);
+  if (!operatorStatuses.length) {
+    return null;
+  }
+
   return (
     <StatusPopupSection
       firstColumn={

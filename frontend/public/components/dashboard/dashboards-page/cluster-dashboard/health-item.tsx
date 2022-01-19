@@ -147,6 +147,9 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
         return { health: HealthState.LOADING };
       }
       const operatorStatuses = o.getOperatorsWithStatuses(operatorResources);
+      if (!operatorStatuses.length) {
+        return { health: HealthState.OK };
+      }
       const importantStatuses = getMostImportantStatuses(operatorStatuses);
       return {
         health: importantStatuses[0].status.health,
