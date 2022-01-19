@@ -1,5 +1,5 @@
 {
-  "integrationFolder": "tests",
+  "integrationFolder": "tests/smoke",
   "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
   "videosFolder": "../../../gui_test_screenshots/cypress/videos",
   "video": true,
