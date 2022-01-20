@@ -12,7 +12,7 @@ const FooComponent: React.FC = () => <div id="foo">Foo Component</div>;
 describe(ProgressiveList.displayName, () => {
   it('component should exist', () => {
     const wrapper = shallow(
-      <ProgressiveList text="dummy text" visibleItems={[]} onVisibleItemChange={() => {}}>
+      <ProgressiveList visibleItems={[]} onVisibleItemChange={() => {}}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
         </ProgressiveListItem>
@@ -23,11 +23,7 @@ describe(ProgressiveList.displayName, () => {
 
   it('should only display component related to item name mentioned in the visibleItems array', () => {
     const wrapper = shallow(
-      <ProgressiveList
-        text="dummy text"
-        visibleItems={['Bar', 'Foo']}
-        onVisibleItemChange={() => {}}
-      >
+      <ProgressiveList visibleItems={['Bar', 'Foo']} onVisibleItemChange={() => {}}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
         </ProgressiveListItem>
@@ -50,7 +46,7 @@ describe(ProgressiveList.displayName, () => {
       visibleItems.push(item);
     };
     const wrapper = shallow(
-      <ProgressiveList text="dummy text" visibleItems={visibleItems} onVisibleItemChange={callback}>
+      <ProgressiveList visibleItems={visibleItems} onVisibleItemChange={callback}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
         </ProgressiveListItem>

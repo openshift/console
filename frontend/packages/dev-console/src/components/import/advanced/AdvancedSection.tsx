@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormikValues } from 'formik';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { AppResources } from '../../edit-application/edit-application-types';
 import HealthChecks from '../../health-checks/HealthChecks';
 import ProgressiveList from '../../progressive-list/ProgressiveList';
@@ -15,58 +15,68 @@ import RouteSection from './RouteSection';
 import ScalingSection from './ScalingSection';
 import ServerlessScalingSection from './ServerlessScalingSection';
 
-export interface AdvancedSectionProps {
+type AdvancedSectionProps = {
   values: FormikValues;
   appResources?: AppResources;
-}
+};
 
-const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources }) => {
+const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
   const { t } = useTranslation();
+
   const [visibleItems, setVisibleItems] = React.useState([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };
 
   return (
-    <FormSection title={t('devconsole~Advanced options')}>
-      <RouteSection route={values.route} resources={values.resources} />
-      <ProgressiveList
-        text={t('devconsole~Click on the names to access advanced options for')}
-        visibleItems={visibleItems}
-        onVisibleItemChange={handleVisibleItemChange}
-      >
-        <ProgressiveListItem name={t('devconsole~Health checks')}>
-          <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
-        </ProgressiveListItem>
-        {/* Hide Build for Deploy Image or when a Pipeline is added */}
-        {values.isi || values.pipeline?.enabled ? null : (
-          <ProgressiveListItem name={t('devconsole~Build configuration')}>
-            <BuildConfigSection
-              namespace={values.project.name}
-              resource={appResources?.buildConfig?.data}
-            />
-          </ProgressiveListItem>
-        )}
-        <ProgressiveListItem name={t('devconsole~Deployment')}>
-          <DeploymentConfigSection
+    <ProgressiveList visibleItems={visibleItems} onVisibleItemChange={handleVisibleItemChange}>
+      <ProgressiveListItem name={t('devconsole~Health checks')}>
+        <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
+      </ProgressiveListItem>
+      {/* Hide Build for Deploy Image or when a Pipeline is added */}
+      {values.isi || values.pipeline?.enabled ? null : (
+        <ProgressiveListItem name={t('devconsole~Build configuration')}>
+          <BuildConfigSection
             namespace={values.project.name}
-            resource={appResources?.editAppResource?.data}
+            resource={appResources?.buildConfig?.data}
           />
         </ProgressiveListItem>
-        <ProgressiveListItem name={t('devconsole~Scaling')}>
-          {values.resources === Resources.KnativeService ? (
-            <ServerlessScalingSection />
-          ) : (
-            <ScalingSection name="deployment.replicas" />
-          )}
-        </ProgressiveListItem>
-        <ProgressiveListItem name={t('devconsole~Resource limits')}>
-          <ResourceLimitSection />
-        </ProgressiveListItem>
-        <ProgressiveListItem name={t('devconsole~Labels')}>
-          <LabelSection />
-        </ProgressiveListItem>
-      </ProgressiveList>
+      )}
+      <ProgressiveListItem name={t('devconsole~Deployment')}>
+        <DeploymentConfigSection
+          namespace={values.project.name}
+          resource={appResources?.editAppResource?.data}
+        />
+      </ProgressiveListItem>
+      <ProgressiveListItem name={t('devconsole~Scaling')}>
+        {values.resources === Resources.KnativeService ? (
+          <ServerlessScalingSection />
+        ) : (
+          <ScalingSection name="deployment.replicas" />
+        )}
+      </ProgressiveListItem>
+      <ProgressiveListItem name={t('devconsole~Resource limits')}>
+        <ResourceLimitSection />
+      </ProgressiveListItem>
+      <ProgressiveListItem name={t('devconsole~Labels')}>
+        <LabelSection />
+      </ProgressiveListItem>
+    </ProgressiveList>
+  );
+};
+
+const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources }) => {
+  const { t } = useTranslation();
+
+  return (
+    <FormSection title={t('devconsole~Advanced options')}>
+      <RouteSection route={values.route} resources={values.resources} />
+      <div>
+        <Trans ns="devconsole">
+          {'Click on the names to access advanced options for '}
+          <List appResources={appResources} values={values} />.
+        </Trans>
+      </div>
     </FormSection>
   );
 };
