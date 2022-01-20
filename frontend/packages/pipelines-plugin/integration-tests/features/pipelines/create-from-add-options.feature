@@ -8,7 +8,7 @@ Feature: Create Pipeline from Add Options
 
         @regression
         Scenario: Pipelines section on git form: P-01-TC01
-             When user clicks From Git card on the Add page
+             When user clicks Import From Git card on the Add page
              Then user will be redirected to Import from Git form
               And pipeline section is displayed with message "Select a Builder Image and resource to see if there is a pipeline template available for this runtime."
 

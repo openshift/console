@@ -3,7 +3,7 @@ import { addOptions } from '../../constants';
 import { gitPage, addPage, devFilePage } from '../../pages';
 
 Given('user is on Import from Git form', () => {
-  addPage.selectCardFromOptions(addOptions.DockerFile);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 When('user enters Git Repo URL as {string}', (gitUrl: string) => {

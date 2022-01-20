@@ -1,9 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { addOptions, pageTitle, sideBarTabs, nodeActions } from '../../constants';
+import { pageTitle, sideBarTabs, nodeActions } from '../../constants';
 import { monitoringPO, topologyPO, addHealthChecksPO } from '../../pageObjects';
 import {
-  addPage,
   addHealthChecksPage,
   createGitWorkload,
   createHelmChartFromAddPage,
@@ -70,10 +69,6 @@ Then('page redirected to the Monitoring page', () => {
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
   createHelmChartFromAddPage(helmReleaseName);
   topologyPage.clickOnHelmWorkload();
-});
-
-When('user clicks on From Git card', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
 });
 
 When('user clicks on Add Readiness Probe', () => {

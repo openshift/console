@@ -24,8 +24,8 @@ Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
 });
 
-When('user clicks From Git card on the Add page', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
+When('user clicks Import From Git card on the Add page', () => {
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 Then('user will be redirected to Import from git form', () => {
@@ -33,15 +33,11 @@ Then('user will be redirected to Import from git form', () => {
 });
 
 Given('user is at Import from Git form', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 Then('user will be redirected to Import from Git form', () => {
   detailsPage.titleShouldContain('Import from Git');
-});
-
-Then('user will be redirected to Import from Dockerfile form', () => {
-  detailsPage.titleShouldContain('Import from Dockerfile');
 });
 
 Then('pipeline section is displayed with message {string}', (message: string) => {
@@ -74,12 +70,8 @@ When('user enters Git Repo url in builder image as {string}', (gitRepoUrl: strin
   cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
 });
 
-When('user clicks From Dockerfile card on the Add page', () => {
-  addPage.selectCardFromOptions(addOptions.DockerFile);
-});
-
 Given('user is on Import from Git form', () => {
-  addPage.selectCardFromOptions(addOptions.DockerFile);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 Then('Add pipeline section is displayed', () => {
@@ -150,7 +142,7 @@ Then('pipeline {string} is displayed in pipelines page', (pipelineName: string) 
 
 Given('user created workload {string} from add page with pipeline', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Add);
-  addPage.selectCardFromOptions(addOptions.Git);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
   gitPage.verifyValidatedMessage('https://github.com/sclorg/nodejs-ex.git');
   gitPage.enterComponentName(pipelineName);
@@ -201,8 +193,8 @@ Then('user is able to see workload {string} in topology page', (workloadName: st
   topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });
 
-When('user clicks From Git card on the Add page', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
+When('user clicks Import From Git card on the Add page', () => {
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 Then('user will be redirected to Import from Git form', () => {

@@ -24,20 +24,12 @@ Given('builder images are displayed', () => {
   catalogPage.selectCatalogType(catalogTypes.BuilderImage);
 });
 
-When('user clicks on From git card', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
-});
-
 When('user enters S2I Git Repo url as {string}', (s2iGitRepoUrl: string) => {
   gitPage.enterGitUrl(s2iGitRepoUrl);
 });
 
 When('user clicks on Container Image card', () => {
   addPage.selectCardFromOptions(addOptions.ContainerImage);
-});
-
-When('user clicks on From Dockerfile card', () => {
-  addPage.selectCardFromOptions(addOptions.DockerFile);
 });
 
 When('user clicks on From Catalog card', () => {
@@ -89,7 +81,7 @@ Then('Knative Service option is displayed under Resources section', () => {
 });
 
 Given('user is on Import from Git form', () => {
-  addPage.selectCardFromOptions(addOptions.DockerFile);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 When('user enters Image name from external registry as {string}', (imageName: string) => {

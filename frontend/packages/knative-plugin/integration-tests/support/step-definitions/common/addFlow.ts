@@ -21,7 +21,7 @@ Given('user is at Add page', () => {
 });
 
 Given('user is at Import from Git form', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 Given('user has opened application {string} in topology page', (componentName: string) => {
@@ -47,10 +47,6 @@ Given('user is at Developer Catalog page', () => {
 
 When('user clicks Instantiate Template button on side bar', () => {
   catalogPage.clickButtonOnCatalogPageSidePane();
-});
-
-Given('user is at DevFile page', () => {
-  addPage.selectCardFromOptions(addOptions.DevFile);
 });
 
 When('user navigates to Add page', () => {

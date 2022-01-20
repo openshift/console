@@ -22,7 +22,7 @@ import {
 let numOfAnnotationsBeforeAdd: number;
 
 Given('user is at Import from git page', () => {
-  addPage.selectCardFromOptions(addOptions.Git);
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
 Given(
