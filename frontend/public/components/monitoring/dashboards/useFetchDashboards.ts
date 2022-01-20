@@ -37,6 +37,7 @@ export const useFetchDashboards = (namespace: string): [Board[], boolean, string
                 dashboard: item.metadata.name,
               }),
             );
+            return { data: undefined, name: item?.metadata?.name };
           }
         };
 

@@ -327,7 +327,7 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
     const OptionComponent = ({ itemKey }) => (
       <SelectOption className="monitoring-dashboards__dashboard_dropdown_item" value={itemKey}>
         {items[itemKey]?.title}
-        {items[itemKey]?.tags.map((tag, i) => (
+        {items[itemKey]?.tags?.map((tag, i) => (
           <Tag
             color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
             key={i}
@@ -649,9 +649,9 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 
   const boardItems = React.useMemo(
     () =>
-      _.mapValues(_.mapKeys(boards, 'name'), (b) => ({
-        tags: b.data.tags,
-        title: b.data.title,
+      _.mapValues(_.mapKeys(boards, 'name'), (b, name) => ({
+        tags: b.data?.tags,
+        title: b.data?.title ?? name,
       })),
     [boards],
   );
