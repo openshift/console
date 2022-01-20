@@ -122,6 +122,14 @@ export const topologyActions = {
         detailsPage.titleShouldContain(action);
         break;
       }
+      case 'Create Service Binding':
+      case nodeActions.CreateServiceBinding: {
+        cy.byTestActionID(action)
+          .scrollIntoView()
+          .should('be.visible')
+          .click();
+        break;
+      }
       case 'Delete Application':
       case applicationGroupingsActions.DeleteApplication: {
         cy.byTestActionID(action)

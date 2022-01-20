@@ -137,6 +137,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.gitopsPrimer).click();
         break;
       }
+      case 'Service Binding':
+      case operators.ServiceBinding: {
+        cy.get(operatorsPO.operatorHub.serviceBinding).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }

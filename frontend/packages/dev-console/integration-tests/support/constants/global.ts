@@ -32,6 +32,7 @@ export enum operators {
   ApacheKafka = 'Red Hat Integration - AMQ Streams',
   RedHatCodereadyWorkspaces = 'Red Hat CodeReady Workspaces',
   GitopsPrimer = 'gitops-primer',
+  ServiceBinding = 'Service Binding Operator',
 }
 
 export enum authenticationType {

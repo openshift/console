@@ -1,13 +1,30 @@
 import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nav } from '@console/cypress-integration-tests/views/nav';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
 import {
   devNavigationMenu,
+  operators,
   resources,
+  switchPerspective,
 } from '@console/dev-console/integration-tests/support/constants/global';
-import { createGitWorkload } from '@console/dev-console/integration-tests/support/pages';
-import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
+import {
+  createGitWorkload,
+  verifyAndInstallOperator,
+} from '@console/dev-console/integration-tests/support/pages';
+import {
+  app,
+  navigateTo,
+  perspective,
+} from '@console/dev-console/integration-tests/support/pages/app';
 import { topologyPO, typeOfWorkload } from '../../page-objects/topology-po';
-import { topologyHelper, topologyPage, topologySidePane } from '../../pages/topology';
+import {
+  topologyActions,
+  topologyHelper,
+  topologyPage,
+  topologySidePane,
+} from '../../pages/topology';
 
 When('user navigates to Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
@@ -181,3 +198,37 @@ Then(
     cy.log(workloadName, 'sidebar is open'); // to avoid lint issues
   },
 );
+
+Given('user has installed Service Binding operator', () => {
+  verifyAndInstallOperator(operators.ServiceBinding);
+});
+
+Given('user is at developer perspective', () => {
+  perspective.switchTo(switchPerspective.Developer);
+  guidedTour.close();
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
+});
+
+When('user right clicks on workload {string}', (appName: string) => {
+  topologyPage.rightClickOnNode(appName);
+});
+
+When('user clicks on {string} option from context menu', (actionItem: string) => {
+  app.waitForLoad();
+  topologyActions.selectAction(actionItem);
+});
+
+Then('user will see {string} modal', (modalName: string) => {
+  app.waitForLoad();
+  cy.get('[aria-label="Modal"]')
+    .should('be.visible')
+    .should('contain', modalName);
+});
+
+Then('user will see alert {string}', (alertName: string) => {
+  app.waitForDocumentLoad();
+  cy.get('[aria-label="Default Alert"]')
+    .should('be.visible')
+    .should('contain', alertName);
+  modal.cancel();
+});
