@@ -75,8 +75,8 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
 
   static getBasicWizardSources = () => [
     ProvisionSource.DISK,
-    ProvisionSource.URL,
     ProvisionSource.CONTAINER,
+    ProvisionSource.URL,
   ];
 
   static getVMTemplateBaseImageSources = () => [

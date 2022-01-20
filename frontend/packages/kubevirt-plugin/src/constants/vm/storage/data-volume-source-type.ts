@@ -10,21 +10,21 @@ export class DataVolumeSourceType extends SelectDropdownObjectEnum<string> {
     descriptionKey: 'kubevirt-plugin~Create an empty disk.',
   });
   static readonly HTTP = new DataVolumeSourceType('http', {
-    // t('kubevirt-plugin~Import via URL (creates PVC)')
-    labelKey: 'kubevirt-plugin~Import via URL (creates PVC)',
+    // t('kubevirt-plugin~URL (creates PVC)')
+    labelKey: 'kubevirt-plugin~URL (creates PVC)',
     // t('kubevirt-plugin~Import content via URL (HTTP or S3 endpoint).')
     descriptionKey: 'kubevirt-plugin~Import content via URL (HTTP or S3 endpoint).',
   });
   static readonly PVC = new DataVolumeSourceType('pvc', {
-    // t('kubevirt-plugin~Clone existing PVC (creates PVC)')
-    labelKey: 'kubevirt-plugin~Clone existing PVC (creates PVC)',
+    // t('kubevirt-plugin~PVC (creates PVC)')
+    labelKey: 'kubevirt-plugin~PVC (creates PVC)',
     // t('kubevirt-plugin~Select an existing persistent volume claim already available on the cluster and clone it.')
     descriptionKey:
       'kubevirt-plugin~Select an existing persistent volume claim already available on the cluster and clone it.',
   });
   static readonly REGISTRY = new DataVolumeSourceType('registry', {
-    // t('kubevirt-plugin~Import via Registry (creates PVC)')
-    labelKey: 'kubevirt-plugin~Import via Registry (creates PVC)',
+    // t('kubevirt-plugin~Registry (creates PVC)')
+    labelKey: 'kubevirt-plugin~Registry (creates PVC)',
     // t('kubevirt-plugin~Import content via container registry.')
     descriptionKey: 'kubevirt-plugin~Import content via container registry.',
   });
