@@ -54,6 +54,8 @@ export const titleKeyResolver: RenderableFieldResolver = {
     'kubevirt-plugin~Clone available operating system source to this Virtual Machine Template',
   // t('kubevirt-plugin~Mount Windows guest tools')
   [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: 'kubevirt-plugin~Mount Windows guest tools',
+  // t('kubevirt-plugin~This is a CD-ROM boot source')
+  [VMSettingsField.IS_CDROM_BOOT_SOURCE]: 'kubevirt-plugin~This is a CD-ROM boot source',
   // t('kubevirt-plugin~Flavor')
   [VMSettingsField.FLAVOR]: 'kubevirt-plugin~Flavor',
   // t('kubevirt-plugin~Memory')

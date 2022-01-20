@@ -243,6 +243,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
   );
 
+  const isCDRomBootSource = iGetVmSettingValue(state, id, VMSettingsField.IS_CDROM_BOOT_SOURCE);
   const relevantOptions = iGetRelevantTemplateSelectors(state, id);
   const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
@@ -274,7 +275,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
       return getUrlStorage(
         diskBus,
         tmpDiskSize ?? source.size,
-        source.cdRom ? DiskType.CDROM : DiskType.DISK,
+        source.cdRom || isCDRomBootSource ? DiskType.CDROM : DiskType.DISK,
         source.url,
         accessMode,
         volumeMode,
@@ -283,7 +284,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     return getUrlStorage(
       diskBus,
       tmpDiskSize ?? source.size,
-      undefined,
+      isCDRomBootSource ? DiskType.CDROM : undefined,
       undefined,
       accessMode,
       volumeMode,
@@ -294,7 +295,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
       return getContainerStorage(
         diskBus,
         tmpDiskSize ?? source.size,
-        source.cdRom ? DiskType.CDROM : DiskType.DISK,
+        source.cdRom || isCDRomBootSource ? DiskType.CDROM : DiskType.DISK,
         source.container,
         accessMode,
         volumeMode,
@@ -303,7 +304,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     return getContainerStorage(
       diskBus,
       tmpDiskSize ?? source?.size,
-      undefined,
+      isCDRomBootSource ? DiskType.CDROM : undefined,
       undefined,
       accessMode,
       volumeMode,

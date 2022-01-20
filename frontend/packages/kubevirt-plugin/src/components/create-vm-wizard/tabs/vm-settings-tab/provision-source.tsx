@@ -36,11 +36,6 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
                 step.
               </Trans>
             </div>
-            <div className="pf-c-form__helper-text" aria-live="polite">
-              {t(
-                'kubevirt-plugin~To boot this source from a CD-ROM, edit the disk in the storage step and change to type: CD-ROM',
-              )}
-            </div>
           </TextContent>
         );
       case ProvisionSource.CONTAINER:

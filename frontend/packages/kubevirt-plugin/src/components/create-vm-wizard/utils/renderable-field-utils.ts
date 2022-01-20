@@ -50,6 +50,7 @@ const renderableFieldOrder: { [key in RenderableField]: number } = {
   [VMSettingsField.IMAGE_URL]: 33,
   [VMSettingsField.START_VM]: 34,
   [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE_TEMPLATE]: 35,
+  [VMSettingsField.IS_CDROM_BOOT_SOURCE]: 36,
 };
 
 const idResolver: RenderableFieldResolver = {
@@ -89,6 +90,7 @@ const idResolver: RenderableFieldResolver = {
   [VMSettingsField.TEMPLATE_SUPPORTED]: 'template-supported',
   [VMSettingsField.CLONE_PVC_NS]: 'clone-pvc-ns',
   [VMSettingsField.CLONE_PVC_NAME]: 'clone-pvc-name',
+  [VMSettingsField.IS_CDROM_BOOT_SOURCE]: 'cdrom-boot-source-checkbox',
 };
 
 export const getFieldId = (key: RenderableField) => idResolver[key];
