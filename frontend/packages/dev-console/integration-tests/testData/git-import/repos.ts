@@ -8,6 +8,12 @@ export const gitImportRepos: GithubRepo[] = [
   { url: 'https://github.com/sclorg/django-ex', folder: 'django-ex' },
   { url: 'https://github.com/spring-projects/spring-boot', folder: 'spring-boot' },
   { url: 'https://github.com/sclorg/nodejs-ex', folder: 'nodejs-ex' },
+  { url: 'https://github.com/redhat-developer/s2i-dotnetcore-ex', folder: 's2i-dotnetcore-ex' },
+  { url: 'https://github.com/nodeshift-starters/devfile-sample', folder: 'devfile-sample' },
+  {
+    url: 'https://github.com/rohitkrai03/flask-dockerfile-example',
+    folder: 'flask-dockerfile-example',
+  },
 ];
 
 interface GithubRepo {
