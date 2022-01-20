@@ -44,15 +44,15 @@ type WizardContext = {
   goToStepById: (id: number | string) => void;
 };
 type CreateVMWizardFooterComponentProps = {
-  goToStep: VMWizardTab; // go to this step when not null
-  isLastTabErrorFatal: boolean;
-  isWizardEmpty: boolean;
-  steps: VMWizardTabsMetadata;
-  isCreateTemplate: boolean;
-  isProviderImport: boolean;
-  isSimpleView: boolean;
-  isInvalidUserTemplate: boolean;
-  onEdit: (activeStepID: VMWizardTab) => void;
+  goToStep?: VMWizardTab; // go to this step when not null
+  isLastTabErrorFatal?: boolean;
+  isWizardEmpty?: boolean;
+  steps?: VMWizardTabsMetadata;
+  isCreateTemplate?: boolean;
+  isProviderImport?: boolean;
+  isSimpleView?: boolean;
+  isInvalidUserTemplate?: boolean;
+  onEdit?: (activeStepID: VMWizardTab) => void;
 };
 
 const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps> = ({

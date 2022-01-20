@@ -27,9 +27,9 @@ import './wizard-errors.scss';
 type ErrorsProps = {
   hasAllRequiredFilled?: boolean;
   isValid?: boolean;
-  errors: Error[];
-  goToStep: (stepID: VMWizardTab) => void;
-  setTabLocked: (isLocked: boolean) => void;
+  errors?: Error[];
+  goToStep?: (stepID: VMWizardTab) => void;
+  setTabLocked?: (isLocked: boolean) => void;
 };
 
 const Errors: React.FC<ErrorsProps> = ({

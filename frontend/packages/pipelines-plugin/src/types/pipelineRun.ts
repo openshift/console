@@ -23,8 +23,8 @@ export type PLRTaskRunStep = {
 };
 
 export type PLRTaskRunData = {
-  pipelineTaskName: string;
-  status: {
+  pipelineTaskName?: string;
+  status?: {
     completionTime?: string;
     conditions: Condition[];
     /** Can be empty */

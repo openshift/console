@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+// eslint-disable-next-line import/named
 import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { Button, TextContent } from '@patternfly/react-core';
@@ -45,7 +46,7 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
   );
 };
 
-const UserKebab = connect<{}, UserKebabDispatchProps, UserKebabProps>(null, {
+const UserKebab = connect<any>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserKebab_);
 
@@ -203,7 +204,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
 };
 
 type UserKebabDispatchProps = {
-  startImpersonate: (kind: string, name: string) => (dispatch, store) => Promise<void>;
+  startImpersonate?: (kind: string, name: string) => (dispatch, store) => Promise<void>;
 };
 
 type UserKebabProps = {
@@ -233,7 +234,7 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
   );
 };
 
-export const UserDetailsPage = connect<{}, UserKebabDispatchProps, UserDetailsPageProps>(null, {
+export const UserDetailsPage = connect<any>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserDetailsPage_);
 

@@ -69,7 +69,7 @@ export const usePrometheusQueries = <R extends any>(
     selectors,
   ]);
 
-  const queryResults = useSelector<RootState, ImmutableMap<string, any>>(querySelector);
+  const queryResults = useSelector<RootState, any>(querySelector);
 
   const results = React.useMemo<UsePrometheusQueriesResult<R>>(() => {
     if (_.isEmpty(queryResults?.[0])) {

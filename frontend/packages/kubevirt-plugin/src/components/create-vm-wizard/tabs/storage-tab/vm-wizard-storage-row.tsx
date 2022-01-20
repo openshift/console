@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
+import { ValidationObject } from '../../../../selectors';
 import { DiskSimpleRow } from '../../../vm-disks/disk-row';
 import { VMWizardStorage } from '../../types';
 import {
@@ -52,6 +53,15 @@ export const getActions = (
   opts: VMWizardStorageRowActionOpts,
 ) => [menuActionEdit, menuActionRemove].map((a) => a(wizardStorageData, opts));
 
+export type Validations = {
+  name?: ValidationObject;
+  url?: ValidationObject;
+  container?: ValidationObject;
+  pvc?: ValidationObject;
+  size?: ValidationObject;
+  diskInterface?: ValidationObject;
+};
+
 export const VmWizardStorageRow: React.FC<RowFunctionArgs<
   VMWizardStorageBundle,
   VMWizardStorageRowCustomData
@@ -67,7 +77,7 @@ export const VmWizardStorageRow: React.FC<RowFunctionArgs<
     isUpdateDisabled,
   },
 }) => {
-  const validations = _.get(wizardStorageData, ['validation', 'validations'], {});
+  const validations: Validations = _.get(wizardStorageData, ['validation', 'validations'], {});
   return (
     <DiskSimpleRow
       data={{ ...restData, name }}

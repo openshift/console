@@ -57,7 +57,10 @@ const Endpoints: React.FC<SpecCapabilityProps> = ({ description, label, obj, ful
 type LabelObject = { [key: string]: string };
 
 function isLabelObject(value: object): value is LabelObject {
-  return typeof value.key === 'string';
+  if ((value as LabelObject).key) {
+    return true;
+  }
+  return false;
 }
 
 const Label: React.FC<SpecCapabilityProps> = ({

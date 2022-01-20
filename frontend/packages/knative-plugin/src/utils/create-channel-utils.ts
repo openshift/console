@@ -161,6 +161,8 @@ export const getChannelData = (kind: string) => {
   return channelData[kind];
 };
 
+type LoadedObject = { [key: string]: any };
+
 export const useDefaultChannelConfiguration = (namespace: string): [string, boolean] => {
   const CHANNEL_CONFIGMAP_NAME = 'default-ch-webhook';
   const CHANNEL_CONFIGMAP_NAMESPACE = 'knative-eventing';
@@ -172,7 +174,7 @@ export const useDefaultChannelConfiguration = (namespace: string): [string, bool
   );
   let defaultConfiguredChannel = EVENTING_IMC_KIND;
   if (configMap && defaultConfiguredChannelLoaded) {
-    const cfg = load(configMap.data?.['default-ch-config']);
+    const cfg = load(configMap.data?.['default-ch-config']) as LoadedObject;
 
     defaultConfiguredChannel = _.hasIn(cfg?.namespaceDefaults, namespace)
       ? cfg?.namespaceDefaults[namespace].kind

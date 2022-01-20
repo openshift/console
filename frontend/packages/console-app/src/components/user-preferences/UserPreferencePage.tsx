@@ -105,7 +105,7 @@ const UserPreferencePage: React.FC<UserPreferencePageProps> = ({ match }) => {
 
   // utils and callbacks
   const handleTabClick = (event: React.MouseEvent<HTMLElement>, eventKey: string) => {
-    if (isModifiedEvent(event)) {
+    if (isModifiedEvent(event as any)) {
       return;
     }
     event.preventDefault();

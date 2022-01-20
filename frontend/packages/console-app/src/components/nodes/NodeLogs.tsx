@@ -78,18 +78,19 @@ const LogControls: React.FC<LogControlsProps> = ({
         <SelectOption
           key={value}
           value={value}
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
         />
       );
     });
   const { t } = useTranslation();
-  const logLabel = t('public~Select a log file');
+  const logLabel = t('console-app~Select a log file');
   return (
     <div className="co-toolbar">
       <div className="co-toolbar__group co-toolbar__group--left">
         <div className="co-toolbar__item">
           <Select
-            aria-label={t('public~Select a path')}
+            aria-label={t('console-app~Select a path')}
             onToggle={onTogglePath}
             onSelect={onChangePath}
             selections={path}
@@ -122,14 +123,14 @@ const LogControls: React.FC<LogControlsProps> = ({
         )}
         {showSearch && (
           <div className="co-toolbar__item">
-            <LogViewerSearch placeholder="Search" />
+            <LogViewerSearch placeholder={t('console-app~Search')} minSearchChars={1} />
           </div>
         )}
       </div>
       <div className="co-toolbar__group co-toolbar__group--right">
         <div className="co-toolbar__item">
           <Checkbox
-            label={t('public~Wrap lines')}
+            label={t('console-app~Wrap lines')}
             id="wrapLogLines"
             isChecked={isWrapLines}
             data-checked-state={isWrapLines}
@@ -190,7 +191,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         })
         .catch((e) => {
           setLoadingLog(false);
-          setError(t('public~Error fetching logs: {{message}}', { message: e.message }));
+          setError(t('console-app~Error fetching logs: {{message}}', { message: e.message }));
         });
     },
     [t],
@@ -246,7 +247,9 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         .catch((e) => {
           setLoadingLog(false);
           setLoadingFilenames(false);
-          setError(t('public~Error fetching log filenames: {{message}}', { message: e.message }));
+          setError(
+            t('console-app~Error fetching log filenames: {{message}}', { message: e.message }),
+          );
         });
     }
   }, [kind, name, ns, path, isJournal, isWindows, logFilename, getLogURL, t, unit]);
@@ -331,9 +334,9 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
             isInline
             className="co-alert co-alert--margin-bottom-sm"
             variant="warning"
-            title={t('public~The log is abridged due to length.')}
+            title={t('console-app~The log is abridged due to length.')}
           >
-            <Trans ns="public" t={t}>
+            <Trans ns="console-app" t={t}>
               To view unabridged log content,{' '}
               <ExternalLink href={logURL}>open the raw file in another window</ExternalLink>.
             </Trans>
@@ -346,13 +349,13 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
                 {isLoadingFilenames ? (
                   <LoadingInline />
                 ) : logFilenamesExist ? (
-                  t('public~No log file selected')
+                  t('console-app~No log file selected')
                 ) : (
-                  t('public~No log files exist')
+                  t('console-app~No log files exist')
                 )}
               </Title>
               {logFilenamesExist && (
-                <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>
+                <EmptyStateBody>{t('console-app~Select a log file above')}</EmptyStateBody>
               )}
             </EmptyState>
           ) : (

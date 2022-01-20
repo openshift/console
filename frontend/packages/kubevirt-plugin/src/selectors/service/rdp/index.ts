@@ -15,7 +15,7 @@ export const getRdpAddressPort = (
   }
 
   let { port } = rdpPortObj;
-  let address: number;
+  let address: string;
   switch (rdpService.spec?.type) {
     case 'LoadBalancer':
       address = rdpService.spec.externalIPs?.[0];

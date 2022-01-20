@@ -31,6 +31,7 @@ import * as WebhookForm from './webhook-receiver-form';
 import * as EmailForm from './email-receiver-form';
 import * as SlackForm from './slack-receiver-form';
 import { coFetchJSON } from '../../../co-fetch';
+import { LoadedObject } from '../types';
 
 /**
  * Converts routes of a specific Receiver:
@@ -565,7 +566,7 @@ export const SendResolvedAlertsCheckbox = ({ formField, formValues, dispatchForm
 
 const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, ...props }) => {
   const { alertManagerBaseURL } = window.SERVER_FLAGS;
-  const [alertmanagerGlobals, setAlertmanagerGlobals] = React.useState();
+  const [alertmanagerGlobals, setAlertmanagerGlobals] = React.useState<string[]>();
   const [loaded, setLoaded] = React.useState(false);
   const [loadError, setLoadError] = React.useState<APIError>();
 
@@ -581,7 +582,7 @@ const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, 
           setLoadError({ message: 'alertmanager.v2.status.config.original not found.' });
         } else {
           try {
-            const { global } = load(originalAlertmanagerConfigJSON);
+            const { global } = load(originalAlertmanagerConfigJSON) as LoadedObject;
             setAlertmanagerGlobals(global);
             setLoaded(true);
           } catch (error) {

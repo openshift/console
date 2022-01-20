@@ -248,12 +248,13 @@ export const LogControls: React.FC<LogControlsProps> = ({
         <div className="co-toolbar__item">{logTypeSelect(!hasPreviousLog)}</div>
         <div className="co-toolbar__item">
           <LogViewerSearch
+            minSearchChars={1}
             onFocus={() => {
               if (status === STREAM_ACTIVE) {
                 toggleStreaming();
               }
             }}
-            placeholder="Search"
+            placeholder={t('public~Search')}
           />
         </div>
         {showDebugAction(resource, containerName) && !isWindowsPod(resource) && (
@@ -603,7 +604,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
         ref={resourceLogRef}
         className={classnames('resource-log', { 'resource-log--fullscreen': isFullscreen })}
       >
-        <div className={classNames('resource-log__alert-wrapper')}>
+        <div className={classnames('resource-log__alert-wrapper')}>
           {error && (
             <Alert
               isInline
@@ -650,7 +651,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             </Alert>
           )}
         </div>
-        <div className={classNames('resource-log__log-viewer-wrapper')}>
+        <div className={classnames('resource-log__log-viewer-wrapper')}>
           <LogViewer
             header={
               <div className="log-window__header">
@@ -665,7 +666,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             toolbar={logControls}
             footer={
               <FooterButton
-                className={classNames('log-window__footer', {
+                className={classnames('log-window__footer', {
                   'log-window__footer--hidden': status !== STREAM_PAUSED,
                 })}
                 setStatus={setStatus}

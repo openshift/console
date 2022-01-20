@@ -40,7 +40,7 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
     <PfCatalogTile
       className="odc-catalog-tile co-catalog-tile"
       onClick={(e: React.MouseEvent<HTMLElement>) => {
-        if (isModifiedEvent(e)) return;
+        if (isModifiedEvent(e as any)) return;
         e.preventDefault();
         if (onClick) {
           onClick(item);

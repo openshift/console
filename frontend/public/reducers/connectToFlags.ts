@@ -18,8 +18,8 @@ export type WithFlagsProps = {
 export type ConnectToFlags = <P extends WithFlagsProps>(
   ...flags: (FLAGS | string)[]
 ) => (
-  component: React.ComponentType<P>,
-) => React.ComponentType<any> & {
+  component: React.ComponentType<any>,
+) => React.ComponentType<P | any> & {
   WrappedComponent: React.ComponentType<any>;
 };
 

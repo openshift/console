@@ -14,7 +14,7 @@ export type Error = {
 };
 
 type ErrorsProps = {
-  errors: Error[];
+  errors?: Error[];
   endMargin?: boolean;
 };
 

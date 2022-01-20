@@ -7,7 +7,8 @@ import {
   FireMan,
   MultiListPage,
 } from '../../../public/components/factory/list-page';
-import { Firehose, PageHeading } from '../../../public/components/utils';
+import { Firehose, FirehoseResource, PageHeading } from '../../../public/components/utils';
+import { NodeModel } from '../../../public/models';
 
 jest.mock('react-redux', () => {
   const ActualReactRedux = require.requireActual('react-redux');
@@ -70,10 +71,11 @@ describe(TextFilter.displayName, () => {
 
 describe(FireMan.displayName, () => {
   let wrapper: ShallowWrapper<any>;
+  const Component: React.ComponentType<any> = Firehose.WrappedComponent as any;
 
   beforeEach(() => {
-    const resources = [{ kind: 'Node' }];
-    wrapper = shallow(<FireMan.WrappedComponent resources={resources} />);
+    const resources: FirehoseResource[] = [{ kind: NodeModel.kind, prop: 'Node' }];
+    wrapper = shallow(<Component resources={resources} />);
   });
 
   it('renders `title` if given `title`', () => {

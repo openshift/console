@@ -23,6 +23,8 @@ export {
   AlertStates,
 };
 
+export type LoadedObject = { [key: string]: string[] };
+
 // prettier 1.x doesn't support TS 3.8 syntax
 // eslint-disable-next-line prettier/prettier
 export type {
