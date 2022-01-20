@@ -87,8 +87,10 @@ spec:
     port: 9001
     basePath: '/'
   proxy:
-    services:
-      - name: thanos-querier
+    - type: Service
+      alias: thanos-querier
+      authorize: true
+      service:
+        name: thanos-querier
         namespace: openshift-monitoring
         port: 9091
-        authorize: true
