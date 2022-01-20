@@ -146,7 +146,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     let humanMax: string;
     let humanAvailable: string;
-    if (current && max) {
+    if (!_.isNil(current) && max) {
       humanMax = humanizeValue(max).string;
       const percentage = (100 * current) / max;
 
