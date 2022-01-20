@@ -108,7 +108,7 @@ export const getVMWizardCreateLink = ({
     const { name: templateName, namespace: templateNS } = template?.metadata;
     return instantiateTemplateBaseURLBuilder(
       namespace,
-      `?template-ns=${templateNS}&template-name=${templateName}`,
+      `?template-ns=${templateNS}&template-name=${templateName}&mode=${mode}`,
     );
   }
 

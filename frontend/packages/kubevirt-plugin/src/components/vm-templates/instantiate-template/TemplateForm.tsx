@@ -11,7 +11,7 @@ import {
   NsDropdown,
   resourcePath,
 } from '@console/internal/components/utils';
-import { SecretModel, TemplateInstanceModel } from '@console/internal/models';
+import { SecretModel, TemplateInstanceModel, TemplateModel } from '@console/internal/models';
 import {
   k8sCreate,
   K8sResourceKind,
@@ -19,7 +19,10 @@ import {
   TemplateKind,
   TemplateParameter,
 } from '@console/internal/module/k8s';
-import { TEMPLATE_PARAM_VM_NAME } from '../../../constants';
+import { TEMPLATE_PARAM_VM_NAME, VMWizardMode } from '../../../constants';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../../constants/url-params';
+import { initSapHanaMetadata } from '../../../k8s/requests/vm/create/common';
+import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
 import { VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { FormRow } from '../../form/form-row';
@@ -31,11 +34,13 @@ export type TemplateFormProps = {
     loaded: boolean;
     loadError: any;
   };
+  mode: VMWizardMode;
   preselectedNamespace: string;
 } & WithTranslation;
 
 export const TemplateForm: React.FC<TemplateFormProps> = ({
   obj,
+  mode,
   preselectedNamespace = 'default',
 }) => {
   const { t } = useTranslation();
@@ -44,6 +49,8 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
 
   const [inProgress, setInProgress] = React.useState<boolean>(false);
   const [errorMsg, setErrorMsg] = React.useState<string>('');
+
+  const isCreateTemplate = React.useMemo(() => mode === VMWizardMode.TEMPLATE, [mode]);
 
   const getParameterValues = () => {
     const templateParameters: TemplateParameter[] = data?.parameters || [];
@@ -54,6 +61,23 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
   };
 
   const [parameters, setParameters] = React.useState<{}>(getParameterValues());
+
+  const missingParams = Object.entries(parameters).filter(
+    ([, value]) => !value || _.isEmpty(value),
+  );
+  const initValues = React.useMemo(() => getParameterValues(), [data]);
+
+  const finalTemplate = React.useMemo(() => {
+    const temp = new VMTemplateWrapper().init({
+      name: parameters[TEMPLATE_PARAM_VM_NAME],
+      namespace,
+      objects: [new VMTemplateWrapper(data, true).getVM().asResource()],
+      parameters: [...data?.parameters],
+    });
+    initSapHanaMetadata(temp, data);
+    return temp;
+  }, [parameters, data]);
+
   const onParameterChanged = (value, event) => {
     const { id } = event.target;
     setParameters((prevState) => ({
@@ -94,10 +118,6 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
     return k8sCreate(TemplateInstanceModel, instance);
   };
 
-  const missingParams = Object.entries(parameters).filter(
-    ([, value]) => !value || _.isEmpty(value),
-  );
-  const initValues = getParameterValues();
   const save = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     if (!namespace) {
@@ -132,14 +152,20 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
     setInProgress(true);
 
     createTemplateSecret()
-      .then((secret: K8sResourceKind) => createTemplateInstance(secret))
+      .then((secret: K8sResourceKind) =>
+        isCreateTemplate
+          ? k8sCreate(TemplateModel, finalTemplate?.asResource())
+          : createTemplateInstance(secret),
+      )
       .then(() => {
         setInProgress(false);
-        const url = resourcePath(
-          kubevirtReferenceForModel(VirtualMachineModel),
-          parameters[TEMPLATE_PARAM_VM_NAME],
-          namespace,
-        );
+        const url = isCreateTemplate
+          ? `/k8s/ns/${namespace}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/${parameters[TEMPLATE_PARAM_VM_NAME]}`
+          : resourcePath(
+              kubevirtReferenceForModel(VirtualMachineModel),
+              parameters[TEMPLATE_PARAM_VM_NAME],
+              namespace,
+            );
         history.push(url);
       })
       .catch((err) => {
@@ -169,7 +195,7 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
   return (
     <div className="row">
       <div className="col-md-7 col-md-push-5">
-        <TemplateInfo template={data} />
+        <TemplateInfo template={data} isCreateTemplate={isCreateTemplate} />
       </div>
       <div className="col-md-5 col-md-pull-7">
         <Form className="kv-template-form-list" onSubmit={save}>
@@ -211,6 +237,7 @@ export const TemplateForm: React.FC<TemplateFormProps> = ({
                   {description && (
                     <div className="help-block" id={helpID}>
                       {description}
+                      {isCreateTemplate && name === 'NAME' && ' template'}
                     </div>
                   )}
                 </FormRow>

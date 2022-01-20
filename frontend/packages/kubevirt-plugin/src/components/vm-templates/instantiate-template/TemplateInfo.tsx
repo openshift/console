@@ -12,9 +12,10 @@ import './template-form.scss';
 
 export type TemplateInfoProps = {
   template: TemplateKind;
+  isCreateTemplate: boolean;
 };
 
-export const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
+export const TemplateInfo: React.FC<TemplateInfoProps> = ({ template, isCreateTemplate }) => {
   const { t } = useTranslation();
   const { annotations, name } = template.metadata;
   const { description } = annotations;
@@ -64,7 +65,7 @@ export const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
         </div>
       </div>
       {description && <p>{description}</p>}
-      <TemplateResourceDetails template={template} />
+      <TemplateResourceDetails template={template} isCreateTemplate={isCreateTemplate} />
     </div>
   );
 };

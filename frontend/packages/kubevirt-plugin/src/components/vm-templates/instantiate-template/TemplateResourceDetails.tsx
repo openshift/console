@@ -6,11 +6,17 @@ import { TemplateKind } from '@console/internal/module/k8s';
 
 export type TemplateResourceDetailsProps = {
   template: TemplateKind;
+  isCreateTemplate: boolean;
 };
 
-export const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
+export const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({
+  template,
+  isCreateTemplate,
+}) => {
   const { t } = useTranslation();
-  const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
+  const resources = isCreateTemplate
+    ? [template?.kind]
+    : _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
   if (_.isEmpty(resources)) {
     return null;
   }

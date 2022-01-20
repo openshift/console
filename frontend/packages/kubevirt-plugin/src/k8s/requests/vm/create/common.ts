@@ -23,7 +23,7 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../../constants/vm';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
-import { getAnnotations, getName, getNamespace } from '../../../../selectors/selectors';
+import { getAnnotations, getLabel, getName, getNamespace } from '../../../../selectors/selectors';
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
@@ -148,5 +148,43 @@ export const initializeCommonTemplateMetadata = (
     TemplateSupport.FULL_SUPPORT
   ) {
     entity.addAnotation(TEMPLATE_SUPPORT_LEVEL, TemplateSupport.FULL_SUPPORT.getValue());
+  }
+};
+
+export const initSapHanaMetadata = (finalTemplate: VMTemplateWrapper, template?: TemplateKind) => {
+  const annotations = getAnnotations(template);
+  const validations = annotations?.[ANNOTATION_VALIDATIONS];
+
+  const tempWrapper = new VMTemplateWrapper(template);
+  const flavor = tempWrapper.getFlavor();
+  const os = tempWrapper.getOperatingSystem();
+  const workload = tempWrapper.getWorkloadProfile();
+  const osName = getLabel(template, `${TEMPLATE_OS_NAME_ANNOTATION}/${os}`);
+
+  if (template) {
+    flavor && finalTemplate.addLabel(`${TEMPLATE_FLAVOR_LABEL}/${flavor}`, 'true');
+    os && finalTemplate.addLabel(`${TEMPLATE_OS_LABEL}/${os}`, 'true');
+    workload && finalTemplate.addLabel(`${TEMPLATE_WORKLOAD_LABEL}/${workload}`, 'true');
+    finalTemplate.addLabel(LABEL_USED_TEMPLATE_NAME, tempWrapper.getName());
+    finalTemplate.addLabel(LABEL_USED_TEMPLATE_NAMESPACE, tempWrapper.getNamespace());
+    finalTemplate.addLabel(TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM);
+    os && osName && finalTemplate.addAnotation(`${TEMPLATE_OS_NAME_ANNOTATION}/${os}`, osName);
+  }
+
+  validations && finalTemplate.addAnotation(ANNOTATION_VALIDATIONS, validations);
+
+  const iconClass = annotations?.[ANNOTATION_ICON];
+  iconClass && finalTemplate.addAnotation(ANNOTATION_ICON, iconClass);
+
+  const provider = annotations?.[TEMPLATE_PROVIDER_ANNOTATION];
+  const supportLevel = annotations?.[TEMPLATE_SUPPORT_LEVEL];
+
+  if (provider && supportLevel) {
+    finalTemplate.addAnotation(TEMPLATE_PARENT_SUPPORT_LEVEL, supportLevel);
+    finalTemplate.addAnotation(TEMPLATE_PARENT_PROVIDER_ANNOTATION, provider);
+    const providerURL = annotations?.[TEMPLATE_PROVIDER_URL];
+    if (providerURL) {
+      finalTemplate.addAnotation(TEMPLATE_PARENT_PROVIDER_URL, providerURL);
+    }
   }
 };
