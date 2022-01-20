@@ -80,7 +80,7 @@ describe('Test VM creation', () => {
     });
   });
 
-  it('ID(CNV-771): create VM from PXE', () => {
+  xit('ID(CNV-771): create VM from PXE', () => {
     if (Cypress.env('DOWNSTREAM')) {
       cy.visitVMsList();
       vm.create(pxeVM, true);

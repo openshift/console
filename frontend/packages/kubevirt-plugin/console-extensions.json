@@ -65,7 +65,7 @@
         "kind": "VirtualMachine",
         "version": "v1"
       },
-      "component": { "$codeRef": "VirtualizationPage.VirtualizationPage" }
+      "component": { "$codeRef": "VirtualMachinesPage.VirtualMachinesPage" }
     },
     "flags": {
       "required": ["KUBEVIRT_HAS_v1_API"]
@@ -592,13 +592,6 @@
         },
         "dataVolumes": {
           "model": { "kind": "DataVolume", "group": "cdi.kubevirt.io" },
-          "opts": {
-            "isList": true,
-            "optional": true
-          }
-        },
-        "vmImports": {
-          "model": { "kind": "VirtualMachineImport", "group": "v2v.kubevirt.io" },
           "opts": {
             "isList": true,
             "optional": true

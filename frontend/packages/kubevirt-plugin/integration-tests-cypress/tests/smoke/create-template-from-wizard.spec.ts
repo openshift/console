@@ -1,14 +1,16 @@
 import { testName } from '../../support';
-import { Network, Template, VirtualMachineData } from '../../types/vm';
+import { Template, VirtualMachineData } from '../../types/vm';
 import { NAD_NAME, K8S_KIND, TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
 
+/* Temporary remove PXE because of network issues in CI infra 
 const nic0: Network = {
   name: 'nic-1',
   nad: NAD_NAME,
 };
+*/
 
 const urlTemplate: VirtualMachineData = {
   name: `url-template-${testName}`,
@@ -47,6 +49,7 @@ const pvcTemplate: VirtualMachineData = {
   pvcNS: testName,
 };
 
+/* Temporary remove PXE because of network issues in CI infra 
 const pxeTemplate: VirtualMachineData = {
   name: `pxe-template-${testName}`,
   description: 'ID(CNV-4094): create template from PXE',
@@ -58,6 +61,7 @@ const pxeTemplate: VirtualMachineData = {
   provisionSource: ProvisionSource.PXE,
   networkInterfaces: [nic0],
 };
+*/
 
 describe('Test template creation', () => {
   before(() => {
@@ -69,7 +73,7 @@ describe('Test template creation', () => {
   });
 
   after(() => {
-    [urlTemplate, registryTemplate, pvcTemplate, pxeTemplate].forEach((data) => {
+    [urlTemplate, registryTemplate, pvcTemplate].forEach((data) => {
       cy.deleteResource(K8S_KIND.Template, data.name, data.namespace);
     });
 
@@ -94,6 +98,7 @@ describe('Test template creation', () => {
     });
   });
 
+  /* Temporary remove PXE because of network issues in CI infra 
   it('ID(CNV-4094): create template from PXE', () => {
     cy.visitVMTemplatesList();
     virtualization.templates.createTemplateFromWizard(pxeTemplate);
@@ -108,4 +113,5 @@ describe('Test template creation', () => {
     vm.create(vmData);
     vm.delete();
   });
+  */
 });

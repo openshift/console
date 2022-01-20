@@ -3,7 +3,7 @@ import { CNV_25 } from './common';
 export const OperatingSystem = {
   RHEL7: 'Red Hat Enterprise Linux 7.0 or higher',
   RHEL8: 'Red Hat Enterprise Linux 8.0 or higher',
-  FEDORA: CNV_25 ? 'Fedora 31 or higher' : 'Fedora 32 or higher',
+  FEDORA: CNV_25 ? 'Fedora 31 or higher' : 'Fedora 34 or higher',
   CENTOS7: 'CentOS 7 or higher',
   WINDOWS_10: 'Microsoft Windows 10',
   VALIDATION_TEST: 'Validation Test',
@@ -36,7 +36,7 @@ export const TemplateByName = {
   RHEL6: 'Red Hat Enterprise Linux 6.0+ VM',
   RHEL7: 'Red Hat Enterprise Linux 7.0+ VM',
   RHEL8: 'Red Hat Enterprise Linux 8.0+ VM',
-  FEDORA: 'Fedora 32+ VM',
+  FEDORA: 'Fedora 34+ VM',
   WINDOWS_10: 'Microsoft Windows 10 VM',
 };
 

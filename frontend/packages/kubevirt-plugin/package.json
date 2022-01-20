@@ -55,6 +55,7 @@
       "VirtualMachinesDetailsPage": "src/components/vms/vm-details-page.tsx",
       "VirtualMachinesInstanceDetailsPage": "src/components/vms/vmi-details-page.tsx",
       "VirtualizationPage": "src/components/vms/virtualization.tsx",
+      "VirtualMachinesPage": "src/components/vms/VirtualMachinesPage.tsx",
       "VMTemplateDetailsPage": "src/components/vm-templates/vm-template-details-page.tsx",
       "VirtualMachineTemplatesPage": "src/components/vm-templates/vm-template.tsx",
       "SnapshotDetailsPage": "src/components/vm-snapshots/vm-snapshot-details.tsx",

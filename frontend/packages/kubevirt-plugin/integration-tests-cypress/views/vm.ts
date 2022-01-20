@@ -119,6 +119,7 @@ export const vm = {
         action(VM_ACTION.Delete);
       }
     });
+    cy.reload(true);
     cy.byTestID('create-vm-empty').should('be.visible');
   },
   resume: () => {

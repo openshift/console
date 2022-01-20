@@ -3,49 +3,17 @@ import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patte
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav, useAccessReview2 } from '@console/internal/components/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
-import {
-  VIRTUALMACHINES_BASE_URL,
-  VIRTUALMACHINES_TEMPLATES_BASE_URL,
-} from '../../constants/url-params';
-import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../flags/const';
 import { VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVMWizardCreateLink } from '../../utils/url';
 import MigrationTool from './migration-tool/MigrationTool';
 import { VirtualMachinesPage } from './vm';
-import { VirtualMachinesPage as NewVirtualMachinesPage } from './vm-page-new';
+
 import './virtualization.scss';
-
-export const RedirectToVirtualizationPage: React.FC<RouteComponentProps<{ ns: string }>> = (
-  props,
-) => (
-  <Redirect
-    to={{
-      pathname: props.match.params.ns
-        ? `/k8s/ns/${props.match.params.ns}/${VIRTUALMACHINES_BASE_URL}`
-        : `/k8s/all-namespaces/${VIRTUALMACHINES_BASE_URL}`,
-      search: decodeURI(props.location.search),
-    }}
-  />
-);
-
-export const RedirectToVirtualizationTemplatePage: React.FC<RouteComponentProps<{ ns: string }>> = (
-  props,
-) => (
-  <Redirect
-    to={{
-      pathname: props.match.params.ns
-        ? `/k8s/ns/${props.match.params.ns}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`
-        : `/k8s/all-namespaces/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`,
-      search: decodeURI(props.location.search),
-    }}
-  />
-);
 
 const vmMenuItems = (t: TFunction) => [
   {
@@ -65,7 +33,6 @@ const vmMenuItems = (t: TFunction) => [
 export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => {
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
-  const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
 
   const namespace = props.match.params.ns;
 
@@ -81,7 +48,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
     {
       href: '',
       name: t('kubevirt-plugin~Virtual Machines'),
-      component: printableVmStatusFlag ? NewVirtualMachinesPage : VirtualMachinesPage,
+      component: VirtualMachinesPage,
     },
   ];
 

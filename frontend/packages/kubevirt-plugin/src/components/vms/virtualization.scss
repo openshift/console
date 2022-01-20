@@ -10,3 +10,8 @@
 .kv-dropdown-group--separator {
   padding-top: 0 !important;
 }
+
+.kv-conditions-list--popover {
+  color: var(--pf-global--warning-color--100);
+  cursor: pointer;
+}

@@ -160,10 +160,10 @@ export const TEMPLATE = {
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
   FEDORA: {
-    name: 'Fedora 32+ VM',
+    name: 'Fedora 34+ VM',
     dvName: 'fedora',
     metadataName: 'fedora-server-small',
-    os: 'Fedora 32 or higher',
+    os: 'Fedora 34 or higher',
     supportLevel: 'Community',
     exampleImgUrl: urls.FEDORA_IMAGE_LINK,
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
