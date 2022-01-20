@@ -12,8 +12,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       // t('insights-plugin~Insights')
       title: '%insights-plugin~Insights%',
       queries: [
-        "health_statuses_insights{metric=~'low|moderate|important|critical'}",
-        'insightsclient_request_send_total',
+        'health_statuses_insights{metric=~"low|moderate|important|critical"}',
+        'cluster_operator_conditions{name="insights", condition="Disabled"}',
       ],
       healthHandler: getClusterInsightsStatus,
       additionalResource: {
