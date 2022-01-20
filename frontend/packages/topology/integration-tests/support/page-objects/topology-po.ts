@@ -85,7 +85,7 @@ export const topologyPO = {
       routeLink: '[data-test-id="route-link"]',
     },
     monitoringTab: {
-      viewMonitoringDashBoardLink: '',
+      viewMonitoringDashBoardLink: '[data-test="observe-dashboard-link"]',
     },
     releaseNotesTab: {},
   },

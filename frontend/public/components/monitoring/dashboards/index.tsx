@@ -267,7 +267,10 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
   });
 
   return (
-    <div className="form-group monitoring-dashboards__dropdown-wrap">
+    <div
+      className="form-group monitoring-dashboards__dropdown-wrap"
+      data-test={`${name.toLowerCase()}-dropdown`}
+    >
       <label htmlFor={`${id}-dropdown`} className="monitoring-dashboards__dropdown-title">
         {name}
       </label>
@@ -340,7 +343,10 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
     const selectItems = _.mapValues(items, 'title');
 
     return (
-      <div className="form-group monitoring-dashboards__dropdown-wrap">
+      <div
+        className="form-group monitoring-dashboards__dropdown-wrap"
+        data-test="dashboard-dropdown"
+      >
         <label
           className="monitoring-dashboards__dropdown-title"
           htmlFor="monitoring-board-dropdown"
@@ -538,6 +544,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
         className={classNames('monitoring-dashboards__card', {
           'co-overview-card--gradient': panel.type === 'grafana-piechart-panel',
         })}
+        data-test={`${panel.title.toLowerCase().replace(/\s+/g, '-')}-chart`}
       >
         <CardHeader className="monitoring-dashboards__card-header">
           <CardTitle>{panel.title}</CardTitle>

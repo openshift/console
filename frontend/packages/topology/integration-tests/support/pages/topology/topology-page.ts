@@ -190,6 +190,12 @@ export const topologyPage = {
       .should('be.visible')
       .contains(nodeName);
   },
+  getDeploymentNode: (nodeName: string) => {
+    return cy
+      .get(topologyPO.graph.nodeLabel)
+      .should('be.visible')
+      .contains(new RegExp(`Deployment.*${nodeName}`));
+  },
   rightClickOnNode: (releaseName: string) => {
     topologyPage.getNode(releaseName).trigger('contextmenu', { force: true });
   },
@@ -202,6 +208,9 @@ export const topologyPage = {
   },
   clickOnNode: (releaseName: string) => {
     topologyPage.getNode(releaseName).click({ force: true });
+  },
+  clickOnDeploymentNode: (nodeName: string) => {
+    topologyPage.getDeploymentNode(nodeName).click();
   },
   clickOnApplicationGroupings: (appName: string) => {
     const id = `[data-id="group:${appName}"] [data-test="icon application"]`;

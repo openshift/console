@@ -17,13 +17,18 @@ export const topologySidePane = {
       .get(topologyPO.sidePane.tabName)
       .contains(tabName)
       .should('be.visible'),
+  verifyTabNotVisible: (tabName: string) =>
+    cy
+      .get(topologyPO.sidePane.tabName)
+      .contains(tabName)
+      .should('not.be.visible'),
   verifyActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).should('be.visible'),
   clickActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).click(),
   selectTab: (tabName: string) => {
-    app.waitForLoad();
+    app.waitForLoad(160000, true);
     cy.get(topologyPO.sidePane.tabName)
       .contains(tabName)
-      .click();
+      .click({ force: true });
   },
   verifySection: (sectionTitle: string) => {
     cy.get(topologyPO.sidePane.dialog).within(() => {

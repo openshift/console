@@ -139,6 +139,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
                     }?dashboard=grafana-dashboard-k8s-resources-workload&workload=${
                       resource?.metadata?.name
                     }&type=${resource?.kind?.toLowerCase()}`}
+                    data-test="observe-dashboard-link"
                   >
                     {t('devconsole~View dashboard')}
                   </Link>
