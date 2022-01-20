@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FileUpload, Text, TextVariants } from '@patternfly/react-core';
+import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
@@ -38,8 +39,12 @@ const SysprepFileField: React.FC<SysprepFileFieldProps> = ({ id }) => {
         fileName,
       }));
 
-      xml.parseString(value || '', (parseError, parseResult) => {
-        parseResult && dispatch(SysprepActions[SysprepActionsNames.updateValue]({ [id]: value }));
+      xml.parseString(value, (parseError) => {
+        dispatch(
+          SysprepActions[SysprepActionsNames.updateValue]({
+            [id]: !parseError && !isEmpty(value) ? value : null,
+          }),
+        );
         setData((currentSysprepFile) => ({
           ...currentSysprepFile,
           validated: parseError ? ValidatedOptions.error : ValidatedOptions.default,
