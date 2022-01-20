@@ -37,10 +37,10 @@ Backend binaries are output to `./bin`.
 
 The following instructions assume you have an existing cluster you can connect
 to. OpenShift 4.x clusters can be installed using the
-[OpenShift Installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/).
-You can also use [CodeReady Containers](https://github.com/code-ready/crc)
-for local installs. More information about installing OpenShift can be found at
+[OpenShift Installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/). More information about installing OpenShift can be found at
 <https://try.openshift.com/>.
+You can also use [CodeReady Containers](https://github.com/code-ready/crc)
+for local installs, or native Kubernetes clusters.
 
 #### OpenShift (no authentication)
 
@@ -92,6 +92,25 @@ Finally run the console and visit [localhost:9000](http://localhost:9000):
 
 ```
 ./examples/run-bridge.sh
+```
+
+#### CodeReady Containers
+
+If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/crc/#setting-up-codeready-containers_gsg), and the [OpenShift cluster is started](https://crc.dev/crc/#starting-the-virtual-machine_gsg).
+
+To login to the cluster's API server, you can use the following command:
+
+```shell
+oc login -u kubeadmin -p $(cat ~/.crc/machines/crc/kubeadmin-password) https://api.crc.testing:6443
+```
+
+&hellip; or, alternatively, use the CRC daemon UI (*Copy OC Login Command --> kubeadmin*) to get the cluster-specific command.
+
+Finally, prepare the environment, and run the console:
+
+```shell
+source ./contrib/environment.sh
+./bin/bridge
 ```
 
 #### Native Kubernetes
