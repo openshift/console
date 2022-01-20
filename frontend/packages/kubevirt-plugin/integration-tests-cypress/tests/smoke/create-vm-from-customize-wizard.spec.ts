@@ -13,7 +13,7 @@ const urlVM: VirtualMachineData = {
   name: `url-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-869): create VM from URL',
   namespace: testName,
-  template: TEMPLATE.RHEL8,
+  template: TEMPLATE.WIN10,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,
