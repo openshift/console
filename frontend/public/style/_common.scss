@@ -276,8 +276,6 @@ dl.co-inline {
 }
 
 .co-external-link-with-copy {
-  display: inline-block;
-  padding-right: $co-external-link-padding-right;
   &__icon {
     color: var(--pf-global--link--Color);
     cursor: pointer;
@@ -291,6 +289,12 @@ dl.co-inline {
   &__copyicon {
     margin-left: var(--pf-global--spacer--md);
   }
+}
+
+// Prevent inline appended icons from wrapping separately without its associated text
+.co-icon-nowrap {
+  display: inline;
+  white-space: nowrap;
 }
 
 .co-goto-arrow::after {

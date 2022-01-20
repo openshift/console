@@ -107,24 +107,27 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   ];
 
   return (
-    <div className={classNames('co-external-link-with-copy', additionalClassName)}>
+    <div className={classNames(additionalClassName)}>
       <a href={link} target="_blank" rel="noopener noreferrer" data-test-id={dataTestID}>
         {text ?? link}
+      </a>
+      <span className="co-icon-nowrap">
+        &nbsp;
         <span className="co-external-link-with-copy__icon co-external-link-with-copy__externallinkicon">
           <ExternalLinkAltIcon />
         </span>
-      </a>
-      <Tooltip content={tooltipContent} trigger="click mouseenter focus" exitDelay={1250}>
-        <CTC text={link} onCopy={() => setCopied(true)}>
-          <span
-            onMouseEnter={() => setCopied(false)}
-            className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
-          >
-            <CopyIcon />
-            <span className="sr-only">{t('public~Copy to clipboard')}</span>
-          </span>
-        </CTC>
-      </Tooltip>
+        <Tooltip content={tooltipContent} trigger="click mouseenter focus" exitDelay={1250}>
+          <CTC text={link} onCopy={() => setCopied(true)}>
+            <span
+              onMouseEnter={() => setCopied(false)}
+              className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
+            >
+              <CopyIcon />
+              <span className="sr-only">{t('public~Copy to clipboard')}</span>
+            </span>
+          </CTC>
+        </Tooltip>
+      </span>
     </div>
   );
 };
