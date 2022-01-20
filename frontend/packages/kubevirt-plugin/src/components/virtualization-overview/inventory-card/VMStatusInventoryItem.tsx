@@ -3,7 +3,7 @@ import { OffIcon, PausedIcon, SyncAltIcon, InProgressIcon } from '@patternfly/re
 import { Link } from 'react-router-dom';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
-import './vm-status-inventory-item.scss';
+import './virt-overview-inventory-card.scss';
 
 const iconMap = {
   Running: SyncAltIcon,
