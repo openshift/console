@@ -112,4 +112,8 @@ type Endpoint struct {
 	// +kubebuilder:pruning:PreserveUnknownFields
 	// +kubebuilder:validation:Schemaless
 	Attributes attributes.Attributes `json:"attributes,omitempty"`
+
+	// +optional
+	// Annotations to be added to Kubernetes Ingress or Openshift Route
+	Annotations map[string]string `json:"annotation,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }

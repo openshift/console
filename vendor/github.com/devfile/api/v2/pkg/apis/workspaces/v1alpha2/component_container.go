@@ -7,6 +7,17 @@ type ContainerComponent struct {
 	Endpoints     []Endpoint `json:"endpoints,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 }
 
+// Annotation specifies the annotations to be added to specific resources
+type Annotation struct {
+	// +optional
+	// Annotations to be added to deployment
+	Deployment map[string]string `json:"deployment,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
+
+	// +optional
+	// Annotations to be added to service
+	Service map[string]string `json:"service,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
+}
+
 // +devfile:getter:generate
 type Container struct {
 	Image string `json:"image"`
@@ -22,6 +33,10 @@ type Container struct {
 	//
 	//  - `$PROJECT_SOURCE`
 	Env []EnvVar `json:"env,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
+
+	// +optional
+	// Annotations that should be added to specific resources for this container
+	Annotation *Annotation `json:"annotation,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
 
 	// +optional
 	// List of volumes mounts that should be mounted is this container.
