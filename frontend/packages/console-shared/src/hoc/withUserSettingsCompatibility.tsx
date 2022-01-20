@@ -16,14 +16,19 @@ export const withUserSettingsCompatibility = <
   sync: boolean = false,
 ) => (
   WrappedComponent: React.ComponentType<Props>,
-): React.FC<Omit<Props, keyof WithUserSettingsCompatibilityProps<T>>> => (props: Props) => {
-  const [state, setState, loaded] = useUserSettingsCompatibility(
-    configStorageKey,
-    localStoragekey,
-    defaultvalue,
-    sync,
-  );
-  return loaded ? (
-    <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
-  ) : null;
+): React.FC<Omit<Props, keyof WithUserSettingsCompatibilityProps<T>>> => {
+  const Component = (props: Props) => {
+    const [state, setState, loaded] = useUserSettingsCompatibility(
+      configStorageKey,
+      localStoragekey,
+      defaultvalue,
+      sync,
+    );
+    return loaded ? (
+      <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+    ) : null;
+  };
+  Component.displayName = `withUserSettingsCompatibility(${WrappedComponent.displayName ||
+    WrappedComponent.name})`;
+  return Component;
 };

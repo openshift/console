@@ -13,7 +13,7 @@ interface ListElementWrapperProps {
 
 // in a separate component so that changes to behaviors do not re-render children
 const ListElementComponent: React.FC<ListElementWrapperProps> = observer(
-  ({ item, selectedIds, onSelect, children }) => {
+  function ListElementComponent({ item, selectedIds, onSelect, children }) {
     const type = item.getType();
 
     const Component = React.useMemo(() => listViewNodeComponentFactory(type), [type]);
@@ -26,38 +26,44 @@ const ListElementComponent: React.FC<ListElementWrapperProps> = observer(
 );
 
 const ListElementChildren: React.FC<ListElementWrapperProps> = observer(
-  ({ item, selectedIds, onSelect }) => (
-    <>
-      {item
-        .getChildren()
-        .filter(isNode)
-        .sort((a, b) =>
-          labelForNodeKind(getResourceKind(a)).localeCompare(labelForNodeKind(getResourceKind(b))),
-        )
-        .map((e) => (
-          <ListElementWrapper
-            key={e.getId()}
-            item={e as Node}
-            onSelect={onSelect}
-            selectedIds={selectedIds}
-          />
-        ))}
-    </>
-  ),
-);
-
-const ListElementWrapper: React.FC<ListElementWrapperProps> = observer(
-  ({ item, selectedIds, onSelect }) => {
-    if (!item.isVisible()) {
-      return null;
-    }
-
+  function ListElementChildren({ item, selectedIds, onSelect }) {
     return (
-      <ListElementComponent item={item} onSelect={onSelect} selectedIds={selectedIds}>
-        <ListElementChildren item={item} onSelect={onSelect} selectedIds={selectedIds} />
-      </ListElementComponent>
+      <>
+        {item
+          .getChildren()
+          .filter(isNode)
+          .sort((a, b) =>
+            labelForNodeKind(getResourceKind(a)).localeCompare(
+              labelForNodeKind(getResourceKind(b)),
+            ),
+          )
+          .map((e) => (
+            <ListElementWrapper
+              key={e.getId()}
+              item={e as Node}
+              onSelect={onSelect}
+              selectedIds={selectedIds}
+            />
+          ))}
+      </>
     );
   },
 );
+
+const ListElementWrapper: React.FC<ListElementWrapperProps> = observer(function ListElementWrapper({
+  item,
+  selectedIds,
+  onSelect,
+}) {
+  if (!item.isVisible()) {
+    return null;
+  }
+
+  return (
+    <ListElementComponent item={item} onSelect={onSelect} selectedIds={selectedIds}>
+      <ListElementChildren item={item} onSelect={onSelect} selectedIds={selectedIds} />
+    </ListElementComponent>
+  );
+});
 
 export default ListElementWrapper;

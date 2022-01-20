@@ -11,9 +11,14 @@ export const withUserSettings = <Props extends WithUserSettingsProps<T>, T = str
   defaultvalue?: T,
 ) => (
   WrappedComponent: React.ComponentType<Props>,
-): React.FC<Omit<Props, keyof WithUserSettingsProps<T>>> => (props: Props) => {
-  const [state, setState, loaded] = useUserSettings(configStorageKey, defaultvalue);
-  return loaded ? (
-    <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
-  ) : null;
+): React.FC<Omit<Props, keyof WithUserSettingsProps<T>>> => {
+  const Component = (props: Props) => {
+    const [state, setState, loaded] = useUserSettings(configStorageKey, defaultvalue);
+    return loaded ? (
+      <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+    ) : null;
+  };
+  Component.displayName = `withUserSettings(${WrappedComponent.displayName ||
+    WrappedComponent.name})`;
+  return Component;
 };

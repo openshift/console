@@ -53,7 +53,13 @@ export const podSetInnerRadius = (size: number, data: PodRCData) => {
   return radius - innerStrokeWidth - podStatusInset;
 };
 
-const PodSet: React.FC<PodSetProps> = React.memo(({ size, data, x = 0, y = 0, showPodCount }) => {
+const PodSet: React.FC<PodSetProps> = React.memo(function PodSet({
+  size,
+  data,
+  x = 0,
+  y = 0,
+  showPodCount,
+}) {
   const { t } = useTranslation();
   const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
     size,

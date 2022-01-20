@@ -20,7 +20,7 @@ interface TopologyPageToolbarProps {
 }
 
 const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
-  ({ viewType, onViewChange }) => {
+  function TopologyPageToolbar({ viewType, onViewChange }) {
     const { t } = useTranslation();
     const isMobile = useIsMobile();
     const { extensions } = React.useContext<FileUploadContextType>(FileUploadContext);
