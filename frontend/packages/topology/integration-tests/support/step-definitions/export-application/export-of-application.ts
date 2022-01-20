@@ -69,11 +69,6 @@ Then(
     cy.get(exportModalButton(el3)).should('be.visible');
     cy.get(exportModalButton(el4)).should('be.visible');
     cy.get(exportModalButton('Ok')).click();
-    // Need to handle below deletion of namespace better with task ODC-6453
-    cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, {
-      failOnNonZeroExit: false,
-      timeout: 180000,
-    });
   },
 );
 

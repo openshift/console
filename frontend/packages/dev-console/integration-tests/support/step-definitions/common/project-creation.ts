@@ -6,7 +6,13 @@ When('user enters project name as {string} in Create Project modal', (projectNam
   const d = new Date();
   const timestamp = d.getTime();
   projectNameSpace.enterProjectName(`${projectName}-${timestamp}-ns`);
-  Cypress.env('NAMESPACE', `${projectName}-${timestamp}-ns`);
+  const finalName = `${projectName}-${timestamp}-ns`;
+  Cypress.env('NAMESPACE', finalName);
+  const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+  if (!namespaces.includes(finalName)) {
+    namespaces.push(finalName);
+  }
+  Cypress.env('NAMESPACES', namespaces);
 });
 
 When('user clicks Create button present in Create Project modal', () => {
