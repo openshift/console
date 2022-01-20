@@ -7,6 +7,7 @@ import {
   ActionMenu,
   ActionMenuVariant,
   LazyActionMenu,
+  usePrometheusGate,
 } from '@console/shared';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../module/k8s';
 import { ResourceEventStream } from './events';
@@ -115,16 +116,8 @@ const StatefulSetPods: React.FC<StatefulSetPodsProps> = (props) => (
   <PodsComponent {...props} showNodes />
 );
 
-const pages = [
-  navFactory.details(StatefulSetDetails),
-  navFactory.metrics(),
-  navFactory.editYaml(),
-  navFactory.pods(StatefulSetPods),
-  navFactory.envEditor(EnvironmentTab),
-  navFactory.events(ResourceEventStream),
-];
-
 export const StatefulSetsDetailsPage: React.FC<StatefulSetsDetailsPageProps> = (props) => {
+  const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -138,7 +131,21 @@ export const StatefulSetsDetailsPage: React.FC<StatefulSetsDetailsPageProps> = (
       </ActionServiceProvider>
     );
   };
-  return <DetailsPage {...props} kind={kind} customActionMenu={customActionMenu} pages={pages} />;
+  return (
+    <DetailsPage
+      {...props}
+      kind={kind}
+      customActionMenu={customActionMenu}
+      pages={[
+        navFactory.details(StatefulSetDetails),
+        ...(prometheusIsAvailable ? [navFactory.metrics()] : []),
+        navFactory.editYaml(),
+        navFactory.pods(StatefulSetPods),
+        navFactory.envEditor(EnvironmentTab),
+        navFactory.events(ResourceEventStream),
+      ]}
+    />
+  );
 };
 
 type EnvironmentPageProps = {

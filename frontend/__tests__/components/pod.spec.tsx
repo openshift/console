@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
+import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
+import store from '@console/internal/redux';
 
 import { ContainerRow, PodsDetailsPage } from '../../public/components/pod';
 import { DetailsPage } from '../../public/components/factory';
 
 describe(PodsDetailsPage.displayName, () => {
-  let wrapper: ShallowWrapper;
+  let wrapper: ReactWrapper;
 
   beforeEach(() => {
-    wrapper = shallow(
+    wrapper = mount(
       <PodsDetailsPage
         match={{
           url: '/k8s/ns/default/pods/example',
@@ -18,6 +20,9 @@ describe(PodsDetailsPage.displayName, () => {
         }}
         kind="Pod"
       />,
+      {
+        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+      },
     );
   });
 

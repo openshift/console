@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import { HttpError, RetryError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { authSvc } from './module/auth';
+import { getActiveCluster } from '@console/dynamic-plugin-sdk/src';
+import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 
 // set required headers for console
 const getCSRFToken = () => {
@@ -72,7 +74,7 @@ export const validateStatus = async (
   }
 
   if (response.status === 401 && shouldLogout(url)) {
-    authSvc.logout(window.location.pathname);
+    authSvc.logout(window.location.pathname, getActiveCluster(storeHandler.getStore()?.getState()));
   }
 
   const contentType = response.headers.get('content-type');
@@ -158,5 +160,5 @@ export {
   consoleFetch as coFetch,
   consoleFetchJSON as coFetchJSON,
   consoleFetchText as coFetchText,
-  getImpersonateHeaders,
+  getConsoleRequestHeaders,
 } from '@console/dynamic-plugin-sdk/src/utils/fetch';

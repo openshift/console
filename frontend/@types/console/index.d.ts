@@ -46,8 +46,8 @@ declare interface Window {
     addPage: string; // JSON encoded configuration
     consolePlugins: string[]; // Console dynamic plugins enabled on the cluster
     quickStarts: string;
-    clusters: string[];
     projectAccessClusterRoles: string;
+    clusters: string[];
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;

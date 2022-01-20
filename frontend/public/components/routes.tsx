@@ -7,7 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import i18next from 'i18next';
 
-import { Status } from '@console/shared';
+import { Status, usePrometheusGate } from '@console/shared';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
   CopyToClipboard,
@@ -491,19 +491,22 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   );
 };
 
-export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    getResourceStatus={routeStatus}
-    kind={RoutesReference}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(detailsPage(RouteDetails)),
-      navFactory.metrics(RouteMetrics),
-      navFactory.editYaml(),
-    ]}
-  />
-);
+export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => {
+  const prometheusIsAvailable = usePrometheusGate();
+  return (
+    <DetailsPage
+      {...props}
+      getResourceStatus={routeStatus}
+      kind={RoutesReference}
+      menuActions={menuActions}
+      pages={[
+        navFactory.details(detailsPage(RouteDetails)),
+        ...(prometheusIsAvailable ? [navFactory.metrics(RouteMetrics)] : []),
+        navFactory.editYaml(),
+      ]}
+    />
+  );
+};
 
 export const RoutesList: React.FC = (props) => {
   const { t } = useTranslation();

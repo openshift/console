@@ -70,8 +70,10 @@ const fetchPeriodically: FetchPeriodically = async (
     dispatch(updateWatchInFlight(type, key, true));
     const data = await fetch(getURL());
     dispatch(setData(type, key, data));
+    dispatch(setError(type, key, null));
   } catch (error) {
     dispatch(setError(type, key, error));
+    dispatch(setData(type, key, null));
   } finally {
     dispatch(updateWatchInFlight(type, key, false));
     const timeout = setTimeout(

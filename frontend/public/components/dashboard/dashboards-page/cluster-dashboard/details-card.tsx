@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { InProgressIcon } from '@patternfly/react-icons';
 import {
   BlueArrowCircleUpIcon,
@@ -7,6 +6,7 @@ import {
   getInfrastructureAPIURL,
   getInfrastructurePlatform,
   isSingleNode,
+  useFlag,
 } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
@@ -29,14 +29,14 @@ import {
   ClusterUpdateStatus,
   getOCMLink,
 } from '../../../../module/k8s';
-import { flagPending, featureReducerName } from '../../../../reducers/features';
+import { flagPending } from '../../../../reducers/features';
 import { ExternalLink, useAccessReview, LoadingInline } from '../../../utils';
-import { RootState } from '../../../../redux';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
 
 const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
+  const { t } = useTranslation();
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
@@ -47,7 +47,6 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       verb: 'patch',
       name: 'version',
     }) && window.SERVER_FLAGS.branding !== 'dedicated';
-  const { t } = useTranslation();
 
   switch (status) {
     case ClusterUpdateStatus.Updating:
@@ -92,19 +91,15 @@ const clusterVersionResource: WatchK8sResource = {
   isList: false,
 };
 
-const mapStateToProps = (state: RootState) => ({
-  openshiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
-});
-
-export const DetailsCard_ = connect(mapStateToProps)(
-  ({ watchK8sResource, stopWatchK8sResource, openshiftFlag }: DetailsCardProps) => {
+export const DetailsCard = withDashboardResources(
+  ({ watchK8sResource, stopWatchK8sResource }: DetailsCardProps) => {
     const { t } = useTranslation();
+    const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
     const { infrastructure, infrastructureLoaded, infrastructureError } = React.useContext(
       ClusterDashboardContext,
     );
     const [k8sVersion, setK8sVersion] = React.useState<Response>();
     const [k8sVersionError, setK8sVersionError] = React.useState();
-
     const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
       ClusterVersionKind
     >(clusterVersionResource);
@@ -220,8 +215,6 @@ export const DetailsCard_ = connect(mapStateToProps)(
     );
   },
 );
-
-export const DetailsCard = withDashboardResources(DetailsCard_);
 
 type DetailsCardProps = DashboardItemProps & {
   openshiftFlag: boolean;

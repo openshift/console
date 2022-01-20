@@ -142,6 +142,7 @@ export const userStateToProps = (state: RootState) => {
 export const impersonateStateToProps = (state: RootState) => {
   return { impersonate: getImpersonate(state) };
 };
+
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
 
 export const getActiveApplication = ({ UI }: RootState): string => UI.get('activeApplication');

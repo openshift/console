@@ -5,7 +5,7 @@ import { K8sResourceCommon, FilterValue } from '../../../extensions/console-type
 import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
 import { k8sWatch } from '../../../utils/k8s/k8s-utils';
-import { getImpersonate } from '../../core/reducers/coreSelectors';
+import { getImpersonate, getActiveCluster } from '../../core/reducers/coreSelectors';
 
 type K8sResourceKind = K8sResourceCommon & {
   spec?: {
@@ -98,6 +98,9 @@ export const watchK8sList = (
     return _.noop;
   }
 
+  if (!query.cluster) {
+    query.cluster = getActiveCluster(getState());
+  }
   dispatch(startWatchK8sList(id, query));
   REF_COUNTS[id] = 1;
 
@@ -123,6 +126,7 @@ export const watchK8sList = (
       },
       true,
       requestOptions,
+      query.cluster,
     );
 
     if (!REF_COUNTS[id]) {
@@ -251,6 +255,10 @@ export const watchK8sObject = (
   const watch = dispatch(startWatchK8sObject(id));
   REF_COUNTS[id] = 1;
 
+  if (!query.cluster) {
+    query.cluster = getActiveCluster(getState());
+  }
+
   if (query.name) {
     query.fieldSelector = `metadata.name=${query.name}`;
     delete query.name;
@@ -263,7 +271,7 @@ export const watchK8sObject = (
     : {};
 
   const poller = () => {
-    k8sGet(k8sType, name, namespace, null, requestOptions)
+    k8sGet(k8sType, name, namespace, { cluster: query.cluster }, requestOptions)
       .then(
         (o) => dispatch(modifyObject(id, o)),
         (e) => dispatch(errored(id, e)),

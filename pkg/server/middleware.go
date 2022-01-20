@@ -8,28 +8,39 @@ import (
 	"strings"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/serverutils"
 
 	"k8s.io/klog"
 )
 
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
-func authMiddleware(a *auth.Authenticator, hdlr http.HandlerFunc) http.Handler {
+func authMiddleware(authers map[string]*auth.Authenticator, hdlr http.HandlerFunc) http.Handler {
 	f := func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		hdlr.ServeHTTP(w, r)
 	}
-	return authMiddlewareWithUser(a, f)
+	return authMiddlewareWithUser(authers, f)
 }
 
-func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.Handler {
+func authMiddlewareWithUser(authers map[string]*auth.Authenticator, handlerFunc func(user *auth.User, w http.ResponseWriter, r *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user, err := a.Authenticate(r)
+		// Get the correct Auther for the cluster.
+		cluster := serverutils.GetCluster(r)
+		auther, autherFound := authers[cluster]
+
+		if !autherFound {
+			klog.Errorf("Bad Request. Invalid cluster: %v", cluster)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(fmt.Sprintf("Bad Request. Invalid cluster: %v", cluster)))
+			return
+		}
+
+		user, err := auther.Authenticate(r)
 		if err != nil {
 			klog.V(4).Infof("authentication failed: %v", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-
 		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 
 		safe := false
@@ -42,13 +53,13 @@ func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.U
 			safe = true
 		}
 		if !safe {
-			if err := a.VerifySourceOrigin(r); err != nil {
+			if err := auther.VerifySourceOrigin(r); err != nil {
 				klog.Errorf("invalid source origin: %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
 
-			if err := a.VerifyCSRFToken(r); err != nil {
+			if err := auther.VerifyCSRFToken(r); err != nil {
 				klog.Errorf("invalid CSRFToken: %v", err)
 				w.WriteHeader(http.StatusForbidden)
 				return

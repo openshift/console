@@ -107,3 +107,36 @@ func validateProjectAccessClusterRolesJSON(value string) ([]string, error) {
 
 	return projectAccessOptions, nil
 }
+
+func ValidateManagedClusterConfig(managedCluster ManagedClusterConfig) error {
+	errors := []string{}
+	if managedCluster.Name == "" {
+		errors = append(errors, "Name is required.")
+	}
+
+	if managedCluster.APIServer.URL == "" {
+		errors = append(errors, "APIServer.URL is required.")
+	}
+
+	if managedCluster.APIServer.CAFile == "" {
+		errors = append(errors, "APIServer.CAFile is required.")
+	}
+
+	if managedCluster.OAuth.ClientID == "" {
+		errors = append(errors, "Oauth.ClientID is required.")
+	}
+
+	if managedCluster.OAuth.ClientSecret == "" {
+		errors = append(errors, "OAuth.ClientSecret is required.")
+	}
+
+	if managedCluster.OAuth.CAFile == "" {
+		errors = append(errors, "OAuth.CAFile is required.")
+	}
+
+	if len(errors) > 0 {
+		return fmt.Errorf("\n\t- %s\n", strings.Join(errors, "\n\t- "))
+	}
+
+	return nil
+}

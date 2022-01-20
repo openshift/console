@@ -12,6 +12,7 @@ export type OpenShiftReduxRootState = any;
 export type GetIDAndDispatch<StoreData extends SDKStoreState> = (
   resource: WatchK8sResource,
   k8sModel: K8sModel,
+  cluster?: string,
 ) => { id: string; dispatch: (dispatch: Dispatch, getState: () => StoreData) => void };
 
 export type Query = { [key: string]: any };

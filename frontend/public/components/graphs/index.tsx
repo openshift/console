@@ -11,7 +11,6 @@ export const ALERTMANAGER_TENANCY_BASE_PATH = 'api/alertmanager-tenancy'; // rem
 export const DEFAULT_PROMETHEUS_SAMPLES = 60;
 export const DEFAULT_PROMETHEUS_TIMESPAN = ONE_HOUR;
 // Components
-export * from './require-prometheus';
 export { errorStatus, Status } from './status';
 export const Area = (props) => (
   <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Area)} {...props} />
