@@ -223,10 +223,10 @@ export const Firehose = connect(
           });
       }
 
-      firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) =>
+      firehoses.forEach(({ id, query, k8sKind, isList, name, namespace, partialMetadata }) =>
         isList
-          ? watchK8sList(id, query, k8sKind)
-          : watchK8sObject(id, name, namespace, query, k8sKind),
+          ? watchK8sList(id, query, k8sKind, null, partialMetadata)
+          : watchK8sObject(id, name, namespace, query, k8sKind, partialMetadata),
       );
       this.setState({ firehoses });
     }
@@ -281,6 +281,7 @@ Firehose.propTypes = {
       isList: PropTypes.bool,
       optional: PropTypes.bool, // do not block children-rendering while resource is still being loaded; do not fail if resource is missing (404)
       limit: PropTypes.number,
+      partialMetadata: PropTypes.bool,
     }),
   ).isRequired,
 };

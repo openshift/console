@@ -5,6 +5,10 @@ export const getHelmWatchedResources = (namespace: string) => {
       kind: 'Secret',
       namespace,
       optional: true,
+      selector: {
+        matchLabels: { owner: 'helm' },
+        matchExpressions: [{ key: 'status', operator: 'NotEquals', values: ['superseded'] }],
+      },
       partialMetadata: true,
     },
   };

@@ -36,16 +36,18 @@ export const getHelmReleasePanelDetailsTabSection = (element: GraphElement) => {
 export const getHelmReleasePanelResourceTabSection = (element: GraphElement) => {
   if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
   const { manifestResources } = element.getData().data;
-  const { namespace } = getResource(element).metadata;
+  const resource = getResource(element);
+  if (!manifestResources || !resource?.metadata) return null;
+  const { namespace } = resource.metadata;
 
-  return manifestResources ? (
+  return (
     <div className="overview__sidebar-pane-body">
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
         releaseNamespace={namespace}
       />
     </div>
-  ) : null;
+  );
 };
 
 export const getHelmReleasePanelReleaseNotesTabSection = (element: GraphElement) => {
