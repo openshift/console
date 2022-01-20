@@ -27,9 +27,7 @@ export const topologySidePane = {
   },
   verifySection: (sectionTitle: string) => {
     cy.get(topologyPO.sidePane.dialog).within(() => {
-      cy.get(topologyPO.sidePane.sectionTitle)
-        .contains(sectionTitle)
-        .should('be.visible');
+      cy.contains(topologyPO.sidePane.sectionTitle, sectionTitle).should('be.visible');
     });
   },
   verifyActions: (...actions: string[]) => {

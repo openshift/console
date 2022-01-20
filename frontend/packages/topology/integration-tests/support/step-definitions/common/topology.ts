@@ -19,6 +19,7 @@ import {
 import {
   verifyAndInstallGitopsPrimerOperator,
   verifyAndInstallKnativeOperator,
+  verifyAndInstallPipelinesOperator,
 } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
@@ -200,4 +201,8 @@ When('user enters Name as {string}', (name: string) => {
 
 Given('user has installed Gitops primer Operator', () => {
   verifyAndInstallGitopsPrimerOperator();
+});
+
+Given('user has installed OpenShift Pipelines Operator', () => {
+  verifyAndInstallPipelinesOperator();
 });
