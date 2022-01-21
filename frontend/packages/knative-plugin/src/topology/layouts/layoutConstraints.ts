@@ -12,6 +12,7 @@ import {
   TYPE_EVENT_PUB_SUB,
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_SINK_URI,
+  TYPE_EVENT_SINK_LINK,
 } from '../const';
 
 const getNodeTimeStamp = (node: ColaNode): Date => {
@@ -37,7 +38,9 @@ const alignNodeConnector = (
         e.element.getType() === type &&
         !e.target.isFixed &&
         !e.source.isFixed &&
-        (e.target.element === g.element || e.target.element.getParent() === g.element),
+        (e.target.element === g.element ||
+          e.source.element === g.element ||
+          e.target.element.getParent() === g.element),
     )
     .sort((l1: ColaLink, l2: ColaLink) => nodeSorter(l1.source, l2.source));
   if (connectorLinks.length) {
@@ -68,14 +71,26 @@ const alignNodeConnector = (
           offset: nextOffset + link.source.height / 2,
         });
       }
-      // Keep the event sources to the left
-      constraints.push({
-        axis: 'x',
-        left: link.source.index,
-        right: filteredNode.index,
-        gap: serviceDistance + link.source.width / 2 + options.linkDistance,
-        equality: true,
-      });
+
+      if (type === TYPE_EVENT_SINK_LINK) {
+        // Keep the event sink to the right
+        constraints.push({
+          axis: 'x',
+          left: link.source.index,
+          right: link.target.index,
+          gap: serviceDistance + link.source.width / 2 + options.linkDistance,
+          equality: true,
+        });
+      } else {
+        // Keep the event sources to the left
+        constraints.push({
+          axis: 'x',
+          left: link.source.index,
+          right: filteredNode.index,
+          gap: serviceDistance + link.source.width / 2 + options.linkDistance,
+          equality: true,
+        });
+      }
       nextOffset += link.source.height;
     });
     constraints.push(linkNodeConstraint);
@@ -142,7 +157,21 @@ export const layoutConstraints = (
         options,
         filteredNode,
       );
-      constraints = [...constraints, ...pubSubLinksConnector, ...eventSourceLinksConnector];
+
+      const eventSinkLinksConnector = alignNodeConnector(
+        edges,
+        TYPE_EVENT_SINK_LINK,
+        g,
+        options,
+        filteredNode,
+      );
+
+      constraints = [
+        ...constraints,
+        ...eventSourceLinksConnector,
+        ...pubSubLinksConnector,
+        ...eventSinkLinksConnector,
+      ];
     });
   return constraints;
 };

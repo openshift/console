@@ -40,6 +40,8 @@ import {
   EventingBrokerModel,
   EventingSubscriptionModel,
 } from '../../../models';
+import { TYPE_EVENT_SINK_LINK } from '../../const';
+import EventSinkSourceAnchor from '../anchors/EventSinkSourceAnchor';
 import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
 import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
 
@@ -76,6 +78,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   useAnchor(PubSubTargetAnchor, AnchorEnd.target);
   useAnchor(RectAnchor, AnchorEnd.source, TYPE_AGGREGATE_EDGE);
   useAnchor(RectAnchor, AnchorEnd.target, TYPE_AGGREGATE_EDGE);
+  useAnchor(EventSinkSourceAnchor, AnchorEnd.source, TYPE_EVENT_SINK_LINK);
   const [hover, hoverRef] = useHover();
 
   const { t } = useTranslation();

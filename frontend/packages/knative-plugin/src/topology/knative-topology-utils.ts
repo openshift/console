@@ -8,6 +8,7 @@ import {
   K8sResourceKind,
   apiVersionForModel,
   referenceFor,
+  referenceForModel,
   modelFor,
   k8sUpdate,
   kindForReference,
@@ -60,6 +61,7 @@ import {
   KnativeServiceOverviewItem,
   KnativeDeploymentOverviewItem,
   KnativeTopologyDataObject,
+  KameletType,
 } from './topology-types';
 
 export const getKnNodeModelProps = (type: string) => {
@@ -742,6 +744,33 @@ const getEventSourcesData = (sinkUri: string, resources) => {
 };
 
 const getApiGroup = (apiVersion: string) => groupVersionFor(apiVersion)?.group;
+
+export const getEventSinkTopologyEdgeItems = (resource: K8sResourceKind, resources) => {
+  const targetUid = resource?.metadata?.uid;
+  const source = resource?.spec?.source?.ref;
+  if (!targetUid || !source) return [];
+  let sinkSource;
+  const targetRef = referenceFor(source);
+  if (source?.kind === EventingBrokerModel.kind) {
+    sinkSource = resources.brokers.data.find((broker) => broker.metadata.name === source.name);
+  } else {
+    sinkSource = resources[targetRef].data.find((res) => res.metadata.name === source.name);
+  }
+
+  if (sinkSource) {
+    return [
+      {
+        id: `${sinkSource.metadata.uid}_${targetUid}`,
+        type: EdgeType.EventSink,
+        label: i18next.t('knative-plugin~Event sink connector'),
+        target: targetUid,
+        source: sinkSource.metadata.uid,
+      },
+    ];
+  }
+  return [];
+};
+
 /**
  * Form Edge data for event sources
  */
@@ -1018,6 +1047,29 @@ const getOwnedEventSourceData = (
   };
 };
 
+const getOwnedEventSinkData = (resource: K8sResourceKind, data: TopologyDataObject, resources) => {
+  const ownedIntegrationData = getOwnedResources(resource, resources.integrations.data);
+  const ownedServiceData = getOwnedResources(ownedIntegrationData[0], resources.ksservices.data);
+  const ownedDeploymentData = getOwnedResources(
+    ownedIntegrationData[0],
+    resources.deployments.data,
+  );
+  let knServiceData = {};
+  if (ownedServiceData.length > 0) {
+    knServiceData = getKnativeServiceData(ownedServiceData[0], resources);
+  }
+  return {
+    ...data,
+    resources: {
+      ...data.resources,
+      integrations: ownedIntegrationData,
+      services: ownedServiceData,
+      deployments: ownedDeploymentData,
+      ...knServiceData,
+    },
+  };
+};
+
 const sinkURIDataModel = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
@@ -1064,6 +1116,27 @@ const sinkURIDataModel = (
   knDataModel.edges.push(...getEventTopologyEdgeItems(resource, resources.brokers));
 };
 
+export const createEventSinkTopologyNodeData = (
+  resource: K8sResourceKind,
+  overviewItem: OverviewItem,
+  type: string,
+  operatorBackedService: boolean = false,
+): TopologyDataObject => {
+  const dcUID = _.get(resource, 'metadata.uid');
+  return {
+    id: dcUID,
+    name: resource?.metadata.name,
+    type,
+    resource,
+    resources: { ...overviewItem, isOperatorBackedService: operatorBackedService },
+    data: {
+      kind: referenceFor(resource),
+      isKnativeResource: type === NodeType.EventSink,
+      kameletType: KameletType.Sink,
+    },
+  };
+};
+
 export const transformKnNodeData = (
   knResourcesData: K8sResourceKind[],
   type: string,
@@ -1074,6 +1147,15 @@ export const transformKnNodeData = (
   _.forEach(knResourcesData, (res) => {
     const item = createKnativeDeploymentItems(res, resources, utils);
     switch (type) {
+      case NodeType.EventSink: {
+        const data = createEventSinkTopologyNodeData(res, item, type);
+        const itemData = getOwnedEventSinkData(res, data, resources);
+        knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
+        knDataModel.edges.push(...getEventSinkTopologyEdgeItems(res, resources));
+        const newGroup = getTopologyGroupItems(res);
+        mergeGroup(newGroup, knDataModel.nodes);
+        break;
+      }
       case NodeType.EventSource: {
         const data = createTopologyNodeData(
           res,
@@ -1081,6 +1163,12 @@ export const transformKnNodeData = (
           type,
           getImageForIconClass(`icon-openshift`),
         );
+        if (referenceFor(res) === referenceForModel(CamelKameletBindingModel)) {
+          data.data = {
+            ...data.data,
+            kameletType: KameletType.Source,
+          };
+        }
         if (!(res.kind === EVENT_SOURCE_SINK_BINDING_KIND && res.metadata?.ownerReferences)) {
           const itemData = getOwnedEventSourceData(res, data, resources);
           knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
@@ -1200,6 +1288,38 @@ export const isOperatorBackedKnResource = (
 ) => {
   const eventSourceProps = getDynamicEventSourcesModelRefs();
   return !!_.find(getKnativeDynamicResources(resources, eventSourceProps), (evsrc) =>
+    obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
+  );
+};
+
+export const getKameletSinkAndSourceBindings = (resources) => {
+  const camelKameletBindingResources: K8sResourceKind[] = resources?.kameletbindings?.data ?? [];
+  const camelKameletResources: K8sResourceKind[] =
+    resources?.kamelets?.data?.length > 0
+      ? resources.kamelets.data
+      : resources?.kameletGlobalNS?.data ?? [];
+  const sinkCamelKameletResources: K8sResourceKind[] = camelKameletResources.filter(
+    (camelKamelet) => camelKamelet.metadata.labels['camel.apache.org/kamelet.type'] === 'sink',
+  );
+  return camelKameletBindingResources.reduce(
+    ({ camelSinkKameletBindings: sink, camelSourceKameletBindings: source }, binding) => {
+      const sinkResource = binding?.spec?.sink?.ref?.name;
+      sinkCamelKameletResources.findIndex(
+        (kameletSink) => kameletSink.metadata.name === sinkResource,
+      ) > -1
+        ? sink.push(binding)
+        : source.push(binding);
+      return { camelSinkKameletBindings: sink, camelSourceKameletBindings: source };
+    },
+    { camelSinkKameletBindings: [], camelSourceKameletBindings: [] },
+  );
+};
+
+export const isOperatorBackedKnSinkService = (
+  obj: K8sResourceKind,
+  knEventSinks: K8sResourceKind[],
+) => {
+  return !!_.find(knEventSinks, (evsrc) =>
     obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
   );
 };

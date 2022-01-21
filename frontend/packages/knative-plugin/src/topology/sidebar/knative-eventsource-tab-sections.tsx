@@ -8,15 +8,17 @@ import EventSourceResources from '../../components/overview/EventSourceResources
 import { CamelKameletBindingModel } from '../../models';
 import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 import { TYPE_SINK_URI } from '../const';
+import { KameletType } from '../topology-types';
 
 export const getKnativeSidepanelSinkSection = (element: GraphElement) => {
   const resource = getResource(element);
+  const data = element.getData();
   if (!resource) {
     return undefined;
   }
   if (
     isDynamicEventResourceKind(referenceFor(resource)) ||
-    resource.kind === CamelKameletBindingModel.kind
+    (resource.kind === CamelKameletBindingModel.kind && data.kameletType === KameletType.Source)
   ) {
     return (
       <TopologySideBarTabSection>
