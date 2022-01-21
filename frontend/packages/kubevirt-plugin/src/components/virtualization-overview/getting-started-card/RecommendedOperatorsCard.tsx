@@ -23,13 +23,11 @@ export const RecommendedOperatorsCard: React.FC = () => {
       id: 'openshift-virtualization-ocs',
       title: t('kubevirt-plugin~OpenShift Container Storage'),
       href: '/operatorhub/all-namespaces?keyword=OCS',
-      external: true,
     },
     {
       id: 'openshift-virtualization-mtv',
       title: t('kubevirt-plugin~Migration Toolkit for Virtualization'),
       href: '/operatorhub/all-namespaces?keyword=MTV',
-      external: true,
     },
   ];
 
