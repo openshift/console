@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
-import { FirehoseResult, isUpstream } from '@console/internal/components/utils';
+import { FirehoseResult } from '@console/internal/components/utils';
 import { NodeModel, TemplateModel } from '@console/internal/models';
 import { K8sResourceCommon, K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { KUBEVIRT_OS_IMAGES_NS, OPENSHIFT_OS_IMAGES_NS } from '../../../constants';
 import { VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types';
+import { getOSImagesNS } from '../../../utils/common';
 import { flattenTemplates } from '../../vm-templates/utils';
 
 import './virt-overview-inventory-card.scss';
@@ -27,11 +27,7 @@ export type ResourcesSectionProps = {
 
 export const ResourcesSection: React.FC<ResourcesSectionProps> = ({ resources }) => {
   const templates = React.useMemo(() => getTemplates(resources), [resources]);
-
-  const dataSourceNS = React.useMemo(
-    () => (isUpstream() ? KUBEVIRT_OS_IMAGES_NS : OPENSHIFT_OS_IMAGES_NS),
-    [],
-  );
+  const dataSourceNS = React.useMemo(() => getOSImagesNS(), []);
 
   return (
     <Stack hasGutter className="kv-inventory-card__resources--container">

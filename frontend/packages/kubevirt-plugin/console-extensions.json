@@ -54,7 +54,7 @@
       "prefixNamespaced": false
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"]
     }
   },
   {
@@ -216,7 +216,7 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"]
     }
   },
   {

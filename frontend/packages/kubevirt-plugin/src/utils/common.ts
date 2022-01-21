@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import { isUpstream } from '@console/internal/components/utils';
+import { KUBEVIRT_OS_IMAGES_NS, OPENSHIFT_OS_IMAGES_NS } from '../constants';
 
 export const omitEmpty = (obj, justUndefined = false) => {
   const omit = (o) => {
@@ -27,3 +29,6 @@ export const omitEmpty = (obj, justUndefined = false) => {
 
 export const isSetEqual = (set: Set<any>, otherSet: Set<any>) =>
   set.size === otherSet.size && [...set].every((s) => otherSet.has(s));
+
+export const getOSImagesNS = (): string =>
+  isUpstream() ? KUBEVIRT_OS_IMAGES_NS : OPENSHIFT_OS_IMAGES_NS;
