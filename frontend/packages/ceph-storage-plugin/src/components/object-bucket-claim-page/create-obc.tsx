@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
+/* eslint-disable-next-line import/named */
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
 import {

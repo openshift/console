@@ -1,4 +1,5 @@
 /* eslint-env node */
+// eslint-disable-next-line import/named
 import { TFunction } from 'i18next';
 
 const i18next = require.requireActual('i18next');
