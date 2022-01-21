@@ -33,7 +33,8 @@ import {
 import { RootState } from '@console/internal/redux';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { NetworkAddonsConfigModel } from '../../models';
+import { NetworkAddonsConfigModel } from '../../../models';
+import { StorageHealthItem } from './StorageHealthItem';
 
 export const NetworkAddonsConfigResource: FirehoseResource = {
   kind: referenceForModel(NetworkAddonsConfigModel),
@@ -116,6 +117,11 @@ export const VirtOverviewStatusCard = connect<VirtOverviewStatusCardProps>(mapSt
     virtStatusItems.push({
       title: t('kubevirt-plugin~Networking'),
       Component: <NetworkingHealthItem nac={clusterNAC} />,
+    });
+
+    virtStatusItems.push({
+      title: t('kubevirt-plugin~Storage'),
+      Component: <StorageHealthItem />,
     });
 
     return (

@@ -22,7 +22,7 @@ export const VirtOverviewDetailsCard: React.FC = () => {
     loaded,
     loadError,
   } = kvCsvDetails;
-  const isLoading = !loaded && !loadError;
+  const isLoading = !loaded && !loadError && !kubevirtSub;
 
   return (
     <Card data-test-id="kubevirt-overview-dashboard--details-card">
