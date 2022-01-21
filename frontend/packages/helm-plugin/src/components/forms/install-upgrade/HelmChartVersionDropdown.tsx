@@ -34,6 +34,7 @@ export type HelmChartVersionDropdownProps = {
   chartName: string;
   helmAction: string;
   onVersionChange: (chart: HelmChart) => void;
+  namespace: string;
 };
 type ModalCallback = () => void;
 
@@ -42,6 +43,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   chartName,
   helmAction,
   onVersionChange,
+  namespace,
 }) => {
   const { t } = useTranslation();
   const {
@@ -110,7 +112,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       let json: { entries: HelmChartEntries };
 
       try {
-        const response = await coFetch('/api/helm/charts/index.yaml');
+        const response = await coFetch(`/api/helm/charts/index.yaml?namespace=${namespace}`);
         const yaml = await response.text();
         json = safeLoad(yaml);
       } catch {
@@ -130,7 +132,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     return () => {
       ignore = true;
     };
-  }, [chartName, chartRepoName, chartRepositories, t]);
+  }, [chartName, chartRepoName, chartRepositories, t, namespace]);
 
   const onChartVersionChange = (value: string) => {
     const [version, repoName] = value.split('--');
