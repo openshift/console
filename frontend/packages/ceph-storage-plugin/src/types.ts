@@ -1,4 +1,4 @@
-import { IRow } from '@patternfly/react-table';
+import { DiskMetadata } from 'packages/local-storage-operator-plugin/src/components/disks-list/types';
 import {
   K8sResourceKind,
   K8sResourceCommon,
@@ -7,8 +7,7 @@ import {
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { TableProps } from '@console/internal/components/factory';
-
-import { DiskMetadata } from 'packages/local-storage-operator-plugin/src/components/disks-list/types';
+import { IRow } from '@patternfly/react-table';
 import {
   PROVIDERS_NOOBAA_MAP,
   NOOBAA_TYPE_MAP,

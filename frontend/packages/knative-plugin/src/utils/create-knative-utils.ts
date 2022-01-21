@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { NameValuePair } from 'packages/console-shared/src';
 import { getProbesData } from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
 import {
   DeployImageFormData,
@@ -14,7 +15,6 @@ import {
   k8sUpdate,
   k8sKill,
 } from '@console/internal/module/k8s';
-import { NameValuePair } from 'packages/console-shared/src';
 import { ServiceModel, DomainMappingModel } from '../models';
 import { DomainMappingResponse, DomainMappingResponseAction } from '../types';
 

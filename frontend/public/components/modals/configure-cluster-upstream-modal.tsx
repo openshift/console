@@ -11,6 +11,7 @@ import {
 } from '../factory/modal';
 import { ExternalLink, HandlePromiseProps, withHandlePromise } from '../utils';
 import { useTranslation } from 'react-i18next';
+/* eslint-disable-next-line import/named */
 import { TFunction } from 'i18next';
 import { RadioInput } from '../radio';
 import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';

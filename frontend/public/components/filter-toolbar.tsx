@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch } from 'react-redux';
+/* eslint-disable import/named */
 import {
   Badge,
   Button,
@@ -18,6 +19,7 @@ import {
   ToolbarItem,
   Tooltip,
 } from '@patternfly/react-core';
+/* eslint-enable import/named */
 import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import {
   RowFilterItem,

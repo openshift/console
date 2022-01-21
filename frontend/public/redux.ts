@@ -1,3 +1,4 @@
+/* eslint-disable-next-line import/named */
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
 import * as _ from 'lodash-es';
 import thunk from 'redux-thunk';

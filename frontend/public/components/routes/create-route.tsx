@@ -5,6 +5,7 @@ import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 /* eslint-disable-next-line */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
+/* eslint-disable-next-line import/named */
 import { TFunction } from 'i18next';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';

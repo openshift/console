@@ -1,4 +1,5 @@
 import * as React from 'react';
+/* eslint-disable-next-line import/named */
 import { match as RouterMatch } from 'react-router';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
 import { AsyncComponent } from './utils';

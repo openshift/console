@@ -38,6 +38,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [selectedVersion, setSelectedVersion] = React.useState<string>();
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   const versions = selectedItem?.attributes?.versions ?? [];
 
   React.useEffect(() => {

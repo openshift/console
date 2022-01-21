@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+/* eslint-disable-next-line import/named */
 import { match as Match } from 'react-router';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';

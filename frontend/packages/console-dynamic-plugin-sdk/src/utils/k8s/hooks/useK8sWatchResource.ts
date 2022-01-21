@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch } from 'react-redux';
 import { getActiveCluster } from '@console/dynamic-plugin-sdk/src/app';
 import * as k8sActions from '../../../app/k8s/actions/k8s';

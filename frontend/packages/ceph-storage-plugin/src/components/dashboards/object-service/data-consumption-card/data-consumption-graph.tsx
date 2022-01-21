@@ -126,7 +126,8 @@ const DataConsumptionGraph: React.FC<DataConsumptionGraphProps> = ({
           />
           <ChartGroup offset={metric === Metrics.EGRESS ? 0 : 11}>
             {chartData.map((data, i) => (
-              <ChartBar key={`chartbar-${i}`} data={data} /> // eslint-disable-line react/no-array-index-key
+              // eslint-disable-next-line react/no-array-index-key
+              <ChartBar key={`chartbar-${i}`} data={data} />
             ))}
           </ChartGroup>
         </Chart>

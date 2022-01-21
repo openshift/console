@@ -1,4 +1,5 @@
 import * as React from 'react';
+/* eslint-disable-next-line import/named */
 import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';

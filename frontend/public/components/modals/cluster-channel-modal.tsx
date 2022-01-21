@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+/* eslint-disable-next-line import/named */
 import { TFunction } from 'i18next';
 import { TextInput } from '@patternfly/react-core';
 import * as semver from 'semver';

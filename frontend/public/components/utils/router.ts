@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+/* eslint-disable-next-line import/named */
 import { createBrowserHistory, createMemoryHistory, History } from 'history';
 
 type AppHistory = History & { pushPath: History['push'] };

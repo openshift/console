@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
+/* eslint-disable-next-line import/named */
 import { match as RMatch } from 'react-router-dom';
 
 import { connectToFlags } from '../reducers/connectToFlags';

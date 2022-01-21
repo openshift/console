@@ -59,6 +59,7 @@ export const source = {
                     'f:resources': {},
                     'f:env': {
                       '.': {},
+                      /* eslint-disable-next-line @typescript-eslint/naming-convention */
                       'k:{"name":"SPRING_PROFILES_ACTIVE"}': {
                         '.': {},
                         'f:name': {},
@@ -102,6 +103,7 @@ export const source = {
                 'f:containers': {
                   'k:{"name":"application"}': {
                     'f:env': {
+                      /* eslint-disable-next-line @typescript-eslint/naming-convention */
                       'k:{"name":"SERVICE_BINDING_ROOT"}': {
                         '.': {},
                         'f:name': {},

@@ -58,7 +58,8 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
       const chartData = getGraphVectorStats(sortedResult, metricType, maxCapacityConverted.unit);
 
       const chartLineList = chartData.map((data, i) => (
-        <ChartLine key={i} data={data as DataPoint[]} /> // eslint-disable-line react/no-array-index-key
+        // eslint-disable-next-line react/no-array-index-key
+        <ChartLine key={i} data={data as DataPoint[]} />
       ));
       return (
         <>

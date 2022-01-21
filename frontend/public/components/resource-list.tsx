@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+/* eslint-disable-next-line import/named */
 import { match } from 'react-router-dom';
 import { getBadgeFromType } from '@console/shared';
 import { connectToPlural } from '../kinds';

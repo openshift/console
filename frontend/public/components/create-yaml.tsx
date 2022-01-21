@@ -1,4 +1,5 @@
 import * as React from 'react';
+/* eslint-disable-next-line import/named */
 import { match as RouterMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';

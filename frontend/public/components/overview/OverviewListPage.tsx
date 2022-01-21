@@ -1,4 +1,5 @@
 import * as React from 'react';
+/* eslint-disable-next-line import/named */
 import { match as RMatch } from 'react-router';
 import { STORAGE_PREFIX } from '@console/shared';
 import TopologyPage from '@console/topology/src/components/page/TopologyPage';

@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -79,7 +79,7 @@ import './vm.scss';
 
 const tableColumnClasses = (showNamespace: boolean) => [
   'pf-u-w-16-on-xl pf-u-w-50-on-xs',
-  classNames('pf-m-hidden', { 'pf-m-visible-on-lg': showNamespace }),
+  classnames('pf-m-hidden', { 'pf-m-visible-on-lg': showNamespace }),
   '',
   'pf-m-hidden pf-m-visible-on-xl',
   'pf-m-hidden pf-m-visible-on-lg',

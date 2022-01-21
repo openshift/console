@@ -1,4 +1,5 @@
 import * as React from 'react';
+/* eslint-disable-next-line import/named */
 import { match } from 'react-router';
 import { DetailsPageBreadCrumbsHook } from '@console/plugin-sdk';
 import { K8sKind } from '@console/internal/module/k8s';

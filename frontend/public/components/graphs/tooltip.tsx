@@ -3,6 +3,7 @@ import * as React from 'react';
 import { defaults } from 'lodash';
 //@ts-ignore
 import { Helpers } from 'victory-core';
+/* eslint-disable import/named */
 import {
   ChartLegend,
   ChartLabel,
@@ -18,6 +19,7 @@ import {
   ChartCursorTooltip,
   ChartTooltip,
 } from '@patternfly/react-charts';
+/* eslint-enable import/named */
 
 import { DataPoint } from '.';
 

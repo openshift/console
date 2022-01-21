@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { DiskMetadata } from 'packages/local-storage-operator-plugin/src/components/disks-list/types';
 import { TableData } from '@console/internal/components/factory';
 import { KebabOption, Kebab } from '@console/internal/components/utils';
-import { DiskMetadata } from 'packages/local-storage-operator-plugin/src/components/disks-list/types';
 import { OCSColumnStateAction, OCSColumnState } from './state-reducer';
 import { diskReplacementModal } from '../modals/disk-replacement-modal';
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { MatchLabels } from 'public/module/k8s';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { cloneDeepWithEnum } from '../../../src/constants/object-enum';
 import { VirtualMachineModel } from '../../../src/models';
 import { click, waitForStringNotInElement } from '../../utils/shared-utils';

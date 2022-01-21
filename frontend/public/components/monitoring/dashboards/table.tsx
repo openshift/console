@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+/* eslint-disable import/named */
 import {
   ISortBy,
   sortable,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableVariant,
 } from '@patternfly/react-table';
+/* eslint-enable import/named */
 
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import ErrorAlert from '@console/shared/src/components/alerts/error';

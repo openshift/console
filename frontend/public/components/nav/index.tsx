@@ -1,4 +1,5 @@
 import * as React from 'react';
+/* eslint-disable-next-line import/named */
 import { Nav, NavProps, PageSidebar } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import i18n from 'i18next';
+/* eslint-disable import/named */
 import {
   Chart,
   ChartArea,
@@ -12,6 +13,7 @@ import {
   ChartGroup,
   ChartAreaProps,
 } from '@patternfly/react-charts';
+/* eslint-enable import/named */
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';

@@ -63,7 +63,6 @@ describe('NetworkPolicyPeerIPBlock with unknown network features', () => {
 });
 
 describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
-  // eslint-disable-next-line @typescript-eslint/camelcase
   const cm = { data: { policy_egress: 'false', policy_peer_ipblock_exceptions: 'false' } };
   (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(networkPolicyPeerIPBlock);
@@ -85,7 +84,6 @@ describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
 });
 
 describe('NetworkPolicyPeerIPBlock with OVN Kubernetes CNI type', () => {
-  // eslint-disable-next-line @typescript-eslint/camelcase
   const cm = { data: { policy_egress: 'true', policy_peer_ipblock_exceptions: 'true' } };
   (useK8sGet as jest.Mock).mockReturnValue([cm, true, null]);
   const wrapper = mount(networkPolicyPeerIPBlock);

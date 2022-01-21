@@ -1,4 +1,5 @@
 import * as React from 'react';
+/* eslint-disable-next-line import/named */
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { useActiveNamespace } from '@console/shared/src';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';

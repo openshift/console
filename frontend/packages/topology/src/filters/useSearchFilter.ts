@@ -10,6 +10,7 @@ const useSearchFilter = (
 ): [boolean, string] => {
   const queryParams = useQueryParams();
   const searchQuery = queryParams.get('searchQuery');
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   const labelsQuery = queryParams.get('labels')?.split(',') ?? [];
   const labelsString = Object.entries(labels).map((label) => label.join('='));
 

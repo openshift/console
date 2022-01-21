@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import { plural } from 'pluralize';
+/* eslint-disable-next-line import/named */
 import i18next, { TFunction } from 'i18next';
 
 import { K8sKind, K8sVerb } from '../../module/k8s';
