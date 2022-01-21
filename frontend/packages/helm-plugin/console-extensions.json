@@ -103,7 +103,7 @@
     "properties": {
       "type": "HelmChart",
       "title": "%helm-plugin~Helm Charts%",
-      "catalogDescription": "%helm-plugin~Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.%",
+      "catalogDescription": { "$codeRef": "helmCatalog.getHelmCatalogTypeDescription" },
       "typeDescription": "%helm-plugin~**Helm Charts** are packages for deploying an Application or components of a larger Application.%",
       "filters": [
         {

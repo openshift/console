@@ -10,7 +10,7 @@ export type CatalogItemType = ExtensionDeclaration<
     /** Title for the catalog item. */
     title: string;
     /** Description for the type specific catalog. */
-    catalogDescription?: string;
+    catalogDescription?: string | CodeRef<React.ReactNode>;
     /** Description for the catalog item type. */
     typeDescription?: string;
     /** Custom filters specific to the catalog item.  */

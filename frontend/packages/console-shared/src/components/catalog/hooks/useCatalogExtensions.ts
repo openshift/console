@@ -10,7 +10,6 @@ import {
   isCatalogItemType,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { useExtensions } from '@console/plugin-sdk';
 
 const useCatalogExtensions = (
   catalogId: string,
@@ -21,7 +20,13 @@ const useCatalogExtensions = (
   ResolvedExtension<CatalogItemFilter>[],
   boolean,
 ] => {
-  const itemTypeExtensions = useExtensions<CatalogItemType>(isCatalogItemType);
+  const [itemTypeExtensions, itemTypesResolved] = useResolvedExtensions<CatalogItemType>(
+    React.useCallback(
+      (e): e is CatalogItemType =>
+        isCatalogItemType(e) && (!catalogType || e.properties.type === catalogType),
+      [catalogType],
+    ),
+  );
 
   const [catalogProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
     React.useCallback(
@@ -61,7 +66,7 @@ const useCatalogExtensions = (
     catalogTypeExtensions,
     catalogProviderExtensions,
     catalogFilterExtensions,
-    providersResolved && filtersResolved,
+    providersResolved && filtersResolved && itemTypesResolved,
   ];
 };
 
