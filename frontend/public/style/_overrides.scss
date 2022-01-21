@@ -21,7 +21,7 @@ form.pf-c-form {
   }
 }
 
-.co-installed-operators .pf-c-table tbody>tr>* {
+.co-installed-operators .pf-c-table tbody > tr > * {
   vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
 }
 
@@ -139,7 +139,6 @@ form.pf-c-form {
 
 // Page
 .pf-c-page {
-
   &__header-brand-link {
     flex: 0 1 auto !important; // so link doesn't grow larger than logo
   }
@@ -308,4 +307,8 @@ ul.pf-c-select__menu,
 ul.pf-c-simple-list__list,
 ul.pf-c-tree-view__list {
   list-style: none !important;
+}
+
+.pfext-quick-start-content {
+  font-size: $font-size-base !important;
 }

@@ -221,6 +221,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   //   t('console-app~Your progress will be saved.'),
   // ];
   return {
+    useLegacyHeaderColors: true,
     language,
     resourceBundle: processedResourceBundle,
     activeQuickStartID,

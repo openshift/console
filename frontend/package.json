@@ -122,7 +122,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
     "@patternfly/patternfly": "4.159.1",
-    "@patternfly/quickstarts": "1.2.3",
+    "@patternfly/quickstarts": "2.0.1",
     "@patternfly/react-catalog-view-extension": "4.26.4",
     "@patternfly/react-charts": "6.28.4",
     "@patternfly/react-core": "4.175.4",
