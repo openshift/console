@@ -6,7 +6,7 @@ import { operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
   name: 'Red Hat CodeReady Workspaces',
-  operatorHubCardTestID: 'codeready-workspaces-redhat-operators-openshift-marketplace',
+  operatorHubCardTestID: 'codeready-workspaces2-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
 
