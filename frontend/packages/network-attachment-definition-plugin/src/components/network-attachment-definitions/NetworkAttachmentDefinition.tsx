@@ -167,6 +167,7 @@ export const NetworkAttachmentDefinitionsList: React.FC<React.ComponentProps<typ
       Row={NetworkAttachmentDefinitionsRow}
       virtualize
       loaded={props.loaded}
+      loadError={props.loadError}
       label={props.label}
       EmptyMsg={NADListEmpty}
     />

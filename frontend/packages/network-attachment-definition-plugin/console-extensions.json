@@ -1,11 +1,5 @@
 [
   {
-    "type": "console.flag",
-    "properties": {
-      "handler": { "$codeRef": "nadFlags.checkNadPermissions" }
-    }
-  },
-  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "id": "networkattachmentdefinitions",
@@ -18,7 +12,7 @@
       }
     },
     "flags": {
-      "required": ["NET_ATTACH_DEF", "KUBEVIRT", "CAN_VIEW_NADS"]
+      "required": ["NET_ATTACH_DEF", "KUBEVIRT"]
     }
   },
   {
