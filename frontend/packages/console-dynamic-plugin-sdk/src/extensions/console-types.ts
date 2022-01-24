@@ -73,9 +73,21 @@ export type AccessReviewResourceAttributes = {
   namespace?: string;
 };
 
+export enum Operator {
+  Exists = 'Exists',
+  DoesNotExist = 'DoesNotExist',
+  In = 'In',
+  NotIn = 'NotIn',
+  Equals = 'Equals',
+  NotEqual = 'NotEqual',
+  GreaterThan = 'GreaterThan',
+  LessThan = 'LessThan',
+  NotEquals = 'NotEquals',
+}
+
 export type MatchExpression = {
   key: string;
-  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
+  operator: Operator | string;
   values?: string[];
   value?: string;
 };

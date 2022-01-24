@@ -59,9 +59,21 @@ export type K8sKind = {
   legacyPluralURL?: boolean;
 };
 
+enum Operator {
+  Exists = 'Exists',
+  DoesNotExist = 'DoesNotExist',
+  In = 'In',
+  NotIn = 'NotIn',
+  Equals = 'Equals',
+  NotEqual = 'NotEqual',
+  GreaterThan = 'GreaterThan',
+  LessThan = 'LessThan',
+  NotEquals = 'NotEquals',
+}
+
 type MatchExpression = {
   key: string;
-  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
+  operator: Operator | string;
   values?: string[];
   value?: string;
 };

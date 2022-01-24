@@ -182,7 +182,20 @@
       "id": "helm-topology-model-factory",
       "priority": 400,
       "resources": {
-        "secrets": { "opts": { "isList": true, "kind": "Secret", "optional": true } }
+        "secrets": {
+          "opts": {
+            "isList": true,
+            "kind": "Secret",
+            "optional": true,
+            "selector": {
+              "matchLabels": { "owner": "helm" },
+              "matchExpressions": [
+                { "key": "status", "operator": "NotEquals", "values": ["superseded"] }
+              ]
+            },
+            "partialMetadata": true
+          }
+        }
       },
       "getDataModel": { "$codeRef": "helmTopology.getHelmTopologyDataModel" },
       "isResourceDepicted": { "$codeRef": "helmTopology.isHelmResourceInModel" }
