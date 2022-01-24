@@ -212,7 +212,7 @@ export interface TLSData {
   termination: string;
   insecureEdgeTerminationPolicy: string;
   certificate: string;
-  privateKey: string;
+  key: string;
   caCertificate: string;
   destinationCACertificate: string;
 }

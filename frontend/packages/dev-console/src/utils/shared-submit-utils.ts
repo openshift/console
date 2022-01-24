@@ -167,7 +167,7 @@ export const createRoute = (
         kind: 'Service',
         name,
       },
-      ...(secure ? { tls } : {}),
+      tls: secure ? tls : null,
       host: hostname,
       path,
       // The service created by `createService` uses the same port as the container port.

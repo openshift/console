@@ -102,7 +102,7 @@ const DeployImage: React.FC<Props> = ({
         caCertificate: '',
         certificate: '',
         destinationCACertificate: '',
-        privateKey: '',
+        key: '',
       },
     },
     resources: Resources.Kubernetes,
