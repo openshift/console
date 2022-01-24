@@ -6,12 +6,10 @@ import useDevfileSamples from '../useDevfileSamples';
 import { devfileSamples, expectedCatalogItems } from './useDevfileSamples.data';
 
 jest.mock('@console/internal/co-fetch', () => ({
-  coFetchJSON: {
-    put: jest.fn(),
-  },
+  coFetchJSON: jest.fn(),
 }));
 
-const putMock = coFetchJSON.put as jest.Mock;
+const getMock = (coFetchJSON as unknown) as jest.Mock;
 
 beforeEach(() => {
   jest.resetAllMocks();
@@ -20,14 +18,14 @@ beforeEach(() => {
 describe('useDevfileSamples:', () => {
   it('should return loaded false until data are loaded', async () => {
     let resolver: (samples: DevfileSample[]) => void;
-    putMock.mockReturnValue(new Promise((resolve) => (resolver = resolve)));
+    getMock.mockReturnValue(new Promise((resolve) => (resolver = resolve)));
 
     const { result } = testHook(() => useDevfileSamples({}));
 
-    expect(putMock).toHaveBeenCalledTimes(1);
-    expect(putMock).toHaveBeenLastCalledWith('/api/devfile/samples', {
-      registry: 'sample-placeholder',
-    });
+    expect(getMock).toHaveBeenCalledTimes(1);
+    expect(getMock).toHaveBeenLastCalledWith(
+      '/api/devfile/samples/?registry=https://registry.devfile.io',
+    );
 
     expect(result.current).toEqual([[], false, undefined]);
 
@@ -38,14 +36,14 @@ describe('useDevfileSamples:', () => {
 
   it('should return loaded false until fetch fails', async () => {
     let rejector: (error: Error) => void;
-    putMock.mockReturnValue(new Promise((_, reject) => (rejector = reject)));
+    getMock.mockReturnValue(new Promise((_, reject) => (rejector = reject)));
 
     const { result } = testHook(() => useDevfileSamples({}));
 
-    expect(putMock).toHaveBeenCalledTimes(1);
-    expect(putMock).toHaveBeenLastCalledWith('/api/devfile/samples', {
-      registry: 'sample-placeholder',
-    });
+    expect(getMock).toHaveBeenCalledTimes(1);
+    expect(getMock).toHaveBeenLastCalledWith(
+      '/api/devfile/samples/?registry=https://registry.devfile.io',
+    );
 
     expect(result.current).toEqual([[], false, undefined]);
 

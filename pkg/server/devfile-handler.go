@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"path"
+	"strconv"
 
 	buildv1 "github.com/openshift/api/build/v1"
 	imagev1 "github.com/openshift/api/image/v1"
@@ -25,19 +26,12 @@ import (
 
 func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 
-	var data devfileSamplesForm
-	registry := devfilePkg.DEVFILE_REGISTRY_PLACEHOLDER_URL
-
-	err := json.NewDecoder(r.Body).Decode(&data)
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to decode response: %v", err)
+	registry := r.URL.Query().Get("registry")
+	if registry == "" {
+		errMsg := "The registry parameter is missing"
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
-	}
-
-	if data.Registry != "" {
-		registry = data.Registry
 	}
 
 	sampleIndex, err := devfilePkg.GetRegistrySamples(registry)
@@ -47,7 +41,6 @@ func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(sampleIndex)
 }
@@ -68,7 +61,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Get devfile content and parse it using a library call in the future
 	devfileContentBytes := []byte(data.Devfile.DevfileContent)
-	devfileObj, err = devfile.ParseFromDataAndValidate(devfileContentBytes)
+	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes})
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to parse devfile: %v", err)
 		klog.Error(errMsg)
@@ -77,20 +70,20 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filterOptions := common.DevfileOptions{
-		Filter: map[string]interface{}{
-			"tool": "console-import",
+		ComponentOptions: common.ComponentOptions{
+			ComponentType: devfilev1.ImageComponentType,
 		},
 	}
 
-	containerComponents, err := devfileObj.Data.GetDevfileContainerComponents(filterOptions) //For Dev Preview, if there is more than one component container err out
+	imageComponents, err := devfileObj.Data.GetComponents(filterOptions) //For Dev Preview, if there is more than one image component err out
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the container component from devfile with attribute 'tool: console-import': %v", err)
+		errMsg := fmt.Sprintf("Failed to get the image component from devfile: %v", err)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
-	if len(containerComponents) != 1 {
-		errMsg := "Console Devfile Import Dev Preview, supports only one component container with attribute 'tool: console-import'"
+	if len(imageComponents) != 1 {
+		errMsg := fmt.Sprintf("Console Devfile Import Dev Preview, supports only one image component, now has %v", len(imageComponents))
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
@@ -104,27 +97,29 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	service, err := getService(devfileObj, filterOptions)
+	dockerfileRelativePath := imageComponents[0].Image.Dockerfile.Uri
+	if dockerfileRelativePath == "" {
+		errMsg := fmt.Sprintf("Failed to get the Dockerfile location, dockerfile uri is not defined by image component %v", imageComponents[0].Name)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	dockerRelativeSrcContext := imageComponents[0].Image.Dockerfile.BuildContext
+	if dockerRelativeSrcContext == "" {
+		errMsg := fmt.Sprintf("Failed to get the dockefile context location, dockerfile buildcontext is not defined by image component %v", imageComponents[0].Name)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	dockerImagePort := devfileObj.Data.GetMetadata().Attributes.GetString("alpha.dockerimage-port", &err)
+
+	service, err := getService(devfileObj, filterOptions, dockerImagePort)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get service for the devfile: %v", err)
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
-		return
-	}
-
-	dockerfileRelativePath := devfileObj.Data.GetMetadata().Attributes.GetString("alpha.build-dockerfile", &err)
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the Dockerfile location from devfile metadata attribute 'alpha.build-dockerfile': %v", err)
-		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
-		return
-	}
-
-	dockerRelativeSrcContext := devfileObj.Data.GetMetadata().Attributes.GetString("alpha.build-context", &err)
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the Dockerfile location from devfile metadata attribute 'alpha.build-context': %v", err)
-		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
 
@@ -135,7 +130,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		BuildResource:  getBuildResource(data, dockerfileRelativePath, dockerContextDir),
 		DeployResource: deploymentResource,
 		Service:        service,
-		Route:          getRoutes(data, containerComponents),
+		Route:          getRouteForDockerImage(data, dockerImagePort),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -193,7 +188,7 @@ func getDeployResource(data devfileForm, devfileObj parser.DevfileObj, filterOpt
 	return *deployment, nil
 }
 
-func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOptions) (corev1.Service, error) {
+func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOptions, imagePort string) (corev1.Service, error) {
 
 	serviceParams := generator.ServiceParams{
 		TypeMeta: generator.GetTypeMeta("Service", "v1"),
@@ -204,41 +199,32 @@ func getService(devfileObj parser.DevfileObj, filterOptions common.DevfileOption
 		return corev1.Service{}, err
 	}
 
+	portNumber, err := strconv.Atoi(imagePort)
+	if err != nil {
+		return corev1.Service{}, err
+	}
+
+	svcPort := corev1.ServicePort{
+		Name:       fmt.Sprintf("http-%v", imagePort),
+		Port:       int32(portNumber),
+		TargetPort: intstr.FromString(imagePort),
+	}
+	service.Spec.Ports = append(service.Spec.Ports, svcPort)
+
 	return *service, nil
 }
 
-func getRoutes(data devfileForm, containerComponents []devfilev1.Component) routev1.Route {
+func getRouteForDockerImage(data devfileForm, imagePort string) routev1.Route {
 
-	var routes []routev1.Route
-
-	for _, comp := range containerComponents {
-		for _, endpoint := range comp.Container.Endpoints {
-			if endpoint.Exposure == devfilev1.NoneEndpointExposure || endpoint.Exposure == devfilev1.InternalEndpointExposure {
-				continue
-			}
-			secure := false
-			if endpoint.Secure || endpoint.Protocol == "https" || endpoint.Protocol == "wss" {
-				secure = true
-			}
-			path := "/"
-			if endpoint.Path != "" {
-				path = endpoint.Path
-			}
-
-			routeParams := generator.RouteParams{
-				TypeMeta: generator.GetTypeMeta("Route", "route.openshift.io/v1"),
-				RouteSpecParams: generator.RouteSpecParams{
-					ServiceName: data.Name,
-					PortNumber:  intstr.FromInt(endpoint.TargetPort),
-					Path:        path,
-					Secure:      secure,
-				},
-			}
-
-			route := generator.GetRoute(routeParams)
-			routes = append(routes, *route)
-		}
+	routeParams := generator.RouteParams{
+		TypeMeta: generator.GetTypeMeta("Route", "route.openshift.io/v1"),
+		RouteSpecParams: generator.RouteSpecParams{
+			ServiceName: data.Name,
+			PortNumber:  intstr.FromString(imagePort),
+			Path:        "/",
+			Secure:      false,
+		},
 	}
 
-	return routes[0]
+	return *generator.GetRoute(routeParams)
 }
