@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
 import { Stack, StackItem } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -22,6 +23,20 @@ const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
   return <Icon x={x} y={y - 5} fill={legendColorScale[datum.id]} />;
 };
 
+const LabelComponent = ({ clusterID, ...props }) => (
+  <ExternalLink
+    href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${riskSorting[
+      props.datum.id
+    ] + 1}`}
+  >
+    <ChartLabel {...props} style={{ fill: 'var(--pf-global--link--Color)' }} />
+  </ExternalLink>
+);
+
+const SubTitleComponent = (props) => (
+  <ChartLabel {...props} style={{ fill: 'var(--pf-chart-color-black-500)' }} />
+);
+
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
   const [
     { response: metricsResponse, error: metricsError },
@@ -31,7 +46,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const metrics = mapMetrics(metricsResponse);
   const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
   const riskEntries = Object.entries(metrics).sort(
-    ([k1], [k2]) => riskSorting[k1] - riskSorting[k2],
+    ([k1], [k2]) => riskSorting[k2] - riskSorting[k1],
   );
   const numberOfIssues = Object.values(metrics).reduce((acc, cur) => acc + cur, 0);
   const waiting = isWaiting(metrics) || !metricsResponse || !operatorStatusResponse;
@@ -72,39 +87,46 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         <StackItem>
           <div>
             <ChartDonut
+              innerRadius={67}
+              ariaTitle="Insights recommendations chart"
+              ariaDesc="Donut chart that shows Insights recommendations divided by severities"
               data={riskEntries.map(([k, v]) => ({
-                label: `${v} ${k}`,
-                x: k,
+                x: `${_.capitalize(t(riskKeys[k]))}`,
                 y: v,
               }))}
               title={`${numberOfIssues}`}
               subTitle={t('insights-plugin~Total issue', { count: numberOfIssues })}
-              legendData={Object.entries(metrics).map(([k, v]) => ({ name: `${k}: ${v}` }))}
               legendOrientation="vertical"
-              width={304}
-              height={152}
+              width={320}
+              height={180}
+              radius={80}
               colorScale={colorScale}
+              subTitleComponent={<SubTitleComponent />}
               constrainToVisibleArea
               legendComponent={
                 <ChartLegend
-                  title={t('insights-plugin~Total Risk')}
+                  title={t('insights-plugin~Total risk')}
                   titleComponent={
-                    <ChartLabel dx={13} style={{ fontWeight: 'bold', fontSize: '14px' }} />
+                    <ChartLabel dx={13} dy={-10} style={{ fontWeight: 'bold', fontSize: '14px' }} />
                   }
                   data={riskEntries.map(([k, v]) => ({
-                    name: `${v} ${t(riskKeys[k])}`,
+                    name: `${v} ${_.capitalize(t(riskKeys[k]))}`,
                     id: k,
                   }))}
                   dataComponent={<DataComponent />}
-                  x={-13}
+                  labelComponent={<LabelComponent clusterID={clusterID} />}
+                  x={-10}
+                  rowGutter={-3}
                 />
               }
               padding={{
-                bottom: 20,
-                left: 145,
-                right: 20, // Adjusted to accommodate legend
+                bottom: 0,
+                left: 135,
+                right: 10, // Adjusted to accommodate legend
                 top: 0,
               }}
+              labels={({ datum }) => `${datum.x}: ${datum.y}`}
+              padAngle={0}
             />
           </div>
           {clusterID ? (
@@ -112,16 +134,16 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
               <div>
                 <ExternalLink
-                  href={`https://console.redhat.com/openshift/details/${clusterID}#insights`}
-                  text={t('insights-plugin~View all in OpenShift Cluster Manager')}
+                  href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}`}
+                  text={t('insights-plugin~View all recommendations in Insights Advisor')}
                 />
               </div>
             </>
           ) : (
             <div>
               <ExternalLink
-                href={`https://console.redhat.com/openshift/`}
-                text={t('insights-plugin~Go to OpenShift Cluster Manager')}
+                href={`https://console.redhat.com/openshift/insights/advisor`}
+                text={t('insights-plugin~View more in Insights Advisor')}
               />
             </div>
           )}

@@ -15,7 +15,7 @@ export const riskIcons = {
   critical: CriticalIcon,
 };
 
-export const colorScale = [blue50.value, gold400.value, orange300.value, red200.value];
+export const colorScale = [red200.value, orange300.value, gold400.value, blue50.value];
 
 export const legendColorScale = {
   low: blue300.value,
