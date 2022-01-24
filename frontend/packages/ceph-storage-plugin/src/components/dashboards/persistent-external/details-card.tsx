@@ -85,9 +85,9 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem title={t('ceph-storage-plugin~Service Name')}>{serviceName}</DetailItem>
+          <DetailItem title={t('ceph-storage-plugin~Service name')}>{serviceName}</DetailItem>
           <DetailItem
-            title={t('ceph-storage-plugin~Cluster Name')}
+            title={t('ceph-storage-plugin~Cluster name')}
             error={!!ocsError}
             isLoading={!ocsLoaded}
             data-test-id="cluster-name"
