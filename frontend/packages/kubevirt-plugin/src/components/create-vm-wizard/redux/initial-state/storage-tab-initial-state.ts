@@ -4,6 +4,8 @@ import {
   ROOT_DISK_NAME,
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
 } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import {
@@ -310,8 +312,12 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     );
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
-    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
-    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
+    const pvcName =
+      iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
+      iGetPrameterValue(iTemplate, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
+    const pvcNamespace =
+      iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
+      iGetPrameterValue(iTemplate, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER);
 
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
       .valueSeq()

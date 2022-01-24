@@ -20,6 +20,8 @@ import {
   TEMPLATE_TYPE_VM,
   TEMPLATE_VERSION_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
+  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
 } from '../../constants/vm';
 import {
   CloudInitDataFormKeys,
@@ -124,8 +126,12 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
-        baseImageName: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER),
-        baseImageNamespace: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
+        baseImageName:
+          getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
+          getParameterValue(template, TEMPLATE_DATA_SOURCE_NAME_PARAMETER),
+        baseImageNamespace:
+          getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
+          getParameterValue(template, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER),
         baseImageRecomendedSize: dv && stringValueUnitSplit(getDataVolumeStorageSize(dv)),
       };
     }),

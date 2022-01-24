@@ -47,6 +47,7 @@ import {
   TemplateKind,
 } from '@console/internal/module/k8s';
 import {
+  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
@@ -574,7 +575,11 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
     const goldenNamespaces = [
       ...new Set(
         (commonTemplates || [])
-          .map((template) => getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER))
+          .map(
+            (template) =>
+              getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
+              getParameterValue(template, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER),
+          )
           .filter((ns) => !!ns),
       ),
     ];
@@ -593,7 +598,8 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
       (accessReview) =>
         accessReview.allowed &&
         accessReview.resourceAttributes.namespace ===
-          getParameterValue(tmp, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
+          (getParameterValue(tmp, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
+            getParameterValue(tmp, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER)),
     ),
   );
 

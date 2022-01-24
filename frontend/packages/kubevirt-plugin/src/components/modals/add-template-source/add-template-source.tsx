@@ -17,6 +17,8 @@ import { k8sCreate, StorageClassResourceKind, TemplateKind } from '@console/inte
 import {
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
 } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useErrorTranslation } from '../../../hooks/use-error-translation';
@@ -87,8 +89,13 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
   uploadProxyURL,
 }) => {
   const { t } = useTranslation();
-  const baseImageName = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
-  const baseImageNamespace = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
+  const baseImageName =
+    getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
+    getParameterValue(template, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
+  const baseImageNamespace =
+    getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
+    getParameterValue(template, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER);
+
   const upload = uploads.find(
     (upl) => upl.pvcName === baseImageName && upl.namespace === baseImageNamespace,
   );

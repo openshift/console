@@ -10,6 +10,8 @@ import {
   TEMPLATE_PROVIDER_ANNOTATION,
   RED_HAT,
   VolumeType,
+  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
 } from '../../constants';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
@@ -53,8 +55,12 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
   dataSources,
 }) => {
   if (isCommonTemplate(template)) {
-    const baseImageName = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
-    const baseImageNs = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
+    const baseImageName =
+      getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
+      getParameterValue(template, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
+    const baseImageNs =
+      getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
+      getParameterValue(template, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER);
     if (!baseImageName || !baseImageNs) {
       return null;
     }

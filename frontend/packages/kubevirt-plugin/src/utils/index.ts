@@ -13,7 +13,11 @@ import {
   referenceFor,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER, VM_TEMPLATE_NAME_PARAMETER } from '../constants';
+import {
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
+  VM_TEMPLATE_NAME_PARAMETER,
+} from '../constants';
 import {
   getAPIVersion,
   getKind,
@@ -441,14 +445,18 @@ export const compareOwnerReference = (
   );
 };
 
-export const generateVMName = (template: TemplateKind): string =>
-  alignWithDNS1123(
-    `${getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
-      getTemplateName(template)}-${uniqueNamesGenerator({
+export const generateVMName = (template: TemplateKind): string => {
+  const pvcName =
+    getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
+    getParameterValue(template, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
+
+  return alignWithDNS1123(
+    `${pvcName || getTemplateName(template)}-${uniqueNamesGenerator({
       dictionaries: [adjectives, animals],
       separator: '-',
     })}`,
   );
+};
 
 export const getDialogUIError = (hasAllRequiredFilled, t: TFunction) =>
   hasAllRequiredFilled

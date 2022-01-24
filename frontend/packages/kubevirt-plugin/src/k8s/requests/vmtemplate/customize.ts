@@ -23,6 +23,8 @@ import {
   VM_CUSTOMIZE_LABEL,
   VM_TEMPLATE_NAME_PARAMETER,
   VolumeMode,
+  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
 } from '../../../constants';
 import { TemplateSupport } from '../../../constants/vm-templates/support';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
@@ -204,6 +206,8 @@ export const createVMForCustomization = async (
     TemplateSupport.fromString(support) === TemplateSupport.FULL_SUPPORT ? support : undefined;
 
   if (isCommonTemplate(template)) {
+    templateWrapper.removeParameter(TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
+    templateWrapper.removeParameter(TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER);
     templateWrapper.removeParameter(TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
     templateWrapper.removeParameter(TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
 
