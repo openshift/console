@@ -54,7 +54,7 @@ export const DeleteVMTemplateModal = withHandlePromise((props: DeleteVMTemplateM
 
     return handlePromise(promise, () => {
       close();
-      redirectToList(vmTemplateUpToDate, 'templates');
+      redirectToList(vmTemplateUpToDate, true);
     });
   };
 
