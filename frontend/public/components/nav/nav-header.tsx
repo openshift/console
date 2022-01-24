@@ -8,11 +8,15 @@ import { Perspective, isPerspective, useActivePerspective } from '@console/dynam
 import { useExtensions } from '@console/plugin-sdk';
 import { history } from '../utils';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useActiveCluster, useActiveNamespace } from '@console/shared';
+import { useActiveCluster, useActiveNamespace, ACM_LINK_ID } from '@console/shared';
 import { formatNamespaceRoute } from '@console/internal/actions/ui';
 import { detectFeatures, clearSSARFlags } from '@console/internal/actions/features';
 import { useTranslation } from 'react-i18next';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ConsoleLinkModel } from '@console/internal/models';
+import * as acmIcon from '../../imgs/ACM-icon.svg';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
@@ -53,24 +57,40 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
   );
 };
 
-const ClusterIcon: React.FC<{}> = () => <span className="co-m-resource-icon">C</span>;
+const ClusterIcon: React.FC = () => <span className="co-m-resource-icon">C</span>;
 
 const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const fireTelemetryEvent = useTelemetry();
   const [activeCluster, setActiveCluster] = useActiveCluster();
   const [activeNamespace] = useActiveNamespace();
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isClusterDropdownOpen, setClusterDropdownOpen] = React.useState(false);
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
-  const { t } = useTranslation();
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
+
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen((isOpen) => !isOpen);
   }, []);
 
-  const fireTelemetryEvent = useTelemetry();
-
-  const acmPerspectiveExtension = perspectiveExtensions?.find((p) => p.properties.id === 'acm');
+  const acmLink = React.useMemo(
+    () =>
+      consoleLinks.find(
+        (link: K8sResourceKind) =>
+          link.spec.location === 'ApplicationMenu' && link.metadata.name === ACM_LINK_ID,
+      ),
+    [consoleLinks],
+  );
+  const acmPerspectiveExtension = React.useMemo(
+    () => perspectiveExtensions?.find((p) => p.properties.id === 'acm'),
+    [perspectiveExtensions],
+  );
   const showMultiClusterDropdown = acmPerspectiveExtension || isMultiClusterEnabled();
 
   const onPerspectiveSelect = React.useCallback(
@@ -202,7 +222,31 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
                 </Title>
               </DropdownToggle>
             }
-            dropdownItems={perspectiveItems}
+            dropdownItems={[
+              ...perspectiveItems,
+              ...(!acmPerspectiveExtension && acmLink
+                ? [
+                    <DropdownItem
+                      key={ACM_LINK_ID}
+                      onClick={() => {
+                        window.location.href = acmLink.spec.href;
+                      }}
+                      isHovered={ACM_LINK_ID === activePerspective}
+                    >
+                      <Title
+                        headingLevel="h2"
+                        size="md"
+                        data-test-id="perspective-switcher-menu-option"
+                      >
+                        <span className="oc-nav-header__icon">
+                          <img src={acmIcon} height="12em" width="12em" alt="" />
+                        </span>
+                        {t('public~Advanced Cluster Management')}
+                      </Title>
+                    </DropdownItem>,
+                  ]
+                : []),
+            ]}
             data-test-id="perspective-switcher-menu"
           />
         </div>

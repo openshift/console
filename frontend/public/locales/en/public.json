@@ -1194,6 +1194,7 @@
   "Are you sure you want to remove <1>{{label}}</1> from navigation?": "Are you sure you want to remove <1>{{label}}</1> from navigation?",
   "Nav": "Nav",
   "All Clusters": "All Clusters",
+  "Advanced Cluster Management": "Advanced Cluster Management",
   "Unpin": "Unpin",
   "Target pods": "Target pods",
   "To ports": "To ports",
