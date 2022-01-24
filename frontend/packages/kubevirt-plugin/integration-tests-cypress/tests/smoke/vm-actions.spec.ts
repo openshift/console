@@ -1,8 +1,10 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { K8S_KIND, TEMPLATE, VM_STATUS } from '../../utils/const/index';
+import { K8S_KIND, TEMPLATE, VM_ACTION, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
+import { selectActionFromDropdown } from '../../views/actions';
+import { actionButtons, modalCancel, modalConfirm } from '../../views/selector';
 import { vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
@@ -97,7 +99,68 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-4021) Deletes VM', () => {
+      cy.intercept('DELETE', `**/${vmData.name}`).as('apiCheck');
       vm.delete();
+
+      cy.get('@apiCheck')
+        .its('request.body')
+        .should('eq', '');
+    });
+  });
+
+  describe('Test VM with grace period', () => {
+    before(() => {
+      vm.create(vmData);
+      cy.visitVMsList();
+      vm.start();
+    });
+
+    it('ID(CNV-8102) stop VM', () => {
+      const gracePeriod = 1234;
+
+      cy.intercept('PUT', `**/${vmData.name}/stop`).as('apiCheck');
+
+      selectActionFromDropdown(VM_ACTION.Stop, actionButtons.kebabButton);
+      cy.byTestID('grace-period-checkbox').check();
+      cy.byTestID('grace-period-seconds-input')
+        .type('{selectall}')
+        .type(gracePeriod.toString());
+
+      cy.get(modalConfirm).click();
+      cy.get(modalCancel).should('not.exist');
+
+      waitForStatus(VM_STATUS.Stopped);
+
+      cy.wait('@apiCheck')
+        .its('request.body')
+        .should(
+          'deep.equal',
+          JSON.stringify({
+            gracePeriodSeconds: gracePeriod,
+          }),
+        );
+    });
+
+    it('ID(CNV-8101) Deletes VM', () => {
+      const gracePeriod = 1234;
+
+      cy.intercept('DELETE', `**/${vmData.name}`).as('apiCheck');
+
+      selectActionFromDropdown(VM_ACTION.Delete, actionButtons.kebabButton);
+      cy.byTestID('grace-period-checkbox').check();
+      cy.byTestID('grace-period-seconds-input')
+        .type('{selectall}')
+        .type(gracePeriod.toString());
+      cy.get(modalConfirm).click();
+      cy.get(modalCancel).should('not.exist');
+
+      cy.byTestID('create-vm-empty').should('be.visible');
+
+      cy.get('@apiCheck')
+        .its('request.body')
+        .should('deep.equal', {
+          gracePeriodSeconds: gracePeriod,
+        });
     });
   });
 
