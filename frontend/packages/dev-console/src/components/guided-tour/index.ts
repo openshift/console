@@ -61,9 +61,9 @@ export const getGuidedTour = (): TourDataType => ({
       placement: 'bottom',
       // t('devconsole~User Preferences')
       heading: '%devconsole~User Preferences%',
-      // t('devconsole~Set individual preferences for your default screens, language preferences, import settings, and notifications.')
+      // t('devconsole~Set your individual console preferences including default views, language, import settings, and more.')
       content:
-        '%devconsole~Set individual preferences for your default screens, language preferences, import settings, and notifications.%',
+        '%devconsole~Set your individual console preferences including default views, language, import settings, and more.%',
       selector: getSelector('tour-user-button'),
     },
   ],
