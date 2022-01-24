@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
@@ -31,8 +32,20 @@ describe('Get knative resources', () => {
       expect(knServingRevResource.revisions).toHaveLength(1);
     });
     it('expect getKnativeServingRevisions to return revision as undefined', () => {
-      const knServingResource = getKnativeServingRevisions(deploymentData, MockResources);
-      expect(knServingResource).toBeUndefined();
+      const knServingRevResource = getKnativeServingRevisions(deploymentData, MockResources);
+      expect(knServingRevResource).toBeUndefined();
+    });
+    it('expect getKnativeServingRevisions to return revision as undefined when deployment contains an empty owner reference', () => {
+      const deployment = _.cloneDeep(deploymentKnativeData);
+      deployment.metadata.ownerReferences = [];
+      const knServingRevResource = getKnativeServingRevisions(deployment, MockKnativeResources);
+      expect(knServingRevResource).toBeUndefined();
+    });
+    it('expect getKnativeServingRevisions to return revision as undefined when deployment contains no owner reference array', () => {
+      const deployment = _.cloneDeep(deploymentKnativeData);
+      delete deployment.metadata.ownerReferences;
+      const knServingRevResource = getKnativeServingRevisions(deployment, MockKnativeResources);
+      expect(knServingRevResource).toBeUndefined();
     });
     it('expect getKnativeServingConfigurations to return configuration data', () => {
       const knServingResource = getKnativeServingConfigurations(
