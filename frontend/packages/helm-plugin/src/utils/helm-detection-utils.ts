@@ -1,3 +1,4 @@
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
 import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { K8sResourceKind, ListKind } from '@console/internal/module/k8s';
@@ -14,6 +15,10 @@ const checkDisabledHelmCharts = (helmChartRepositories: K8sResourceKind[]): bool
 
 export const detectHelmChartRepositories = async (setFeatureFlag: SetFeatureFlag) => {
   let id = null;
+  if (isMultiClusterEnabled()) {
+    setFeatureFlag(FLAG_OPENSHIFT_HELM, false);
+    return;
+  }
   const fetchHelmChartRepositories = () =>
     fetchK8s<ListKind<K8sResourceKind>>(HelmChartRepositoryModel)
       .then((list) => {

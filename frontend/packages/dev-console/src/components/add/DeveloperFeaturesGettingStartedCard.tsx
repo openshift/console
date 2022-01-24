@@ -2,7 +2,12 @@ import * as React from 'react';
 import { FlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-import { ALL_NAMESPACES_KEY, useActiveNamespace, useOpenShiftVersion } from '@console/shared/src';
+import {
+  ALL_NAMESPACES_KEY,
+  useActiveNamespace,
+  useFlag,
+  useOpenShiftVersion,
+} from '@console/shared/src';
 import {
   GettingStartedLink,
   GettingStartedCard,
@@ -12,6 +17,7 @@ import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
+  const isHelmEnabled = useFlag('OPENSHIFT_HELM');
   const parsed = semver.parse(useOpenShiftVersion());
   // Show only major and minor version.
   const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
@@ -19,7 +25,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const links: GettingStartedLink[] = [];
 
   const disabledAddActions = getDisabledAddActions();
-  if (!disabledAddActions?.includes('helm')) {
+  if (isHelmEnabled && !disabledAddActions?.includes('helm')) {
     links.push({
       id: 'helm-charts',
       title: t('devconsole~Discover certified Helm Charts'),
