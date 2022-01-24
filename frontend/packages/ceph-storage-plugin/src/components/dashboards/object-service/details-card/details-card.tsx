@@ -104,7 +104,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
         <DetailsBody>
           <DetailItem
             key="service_name"
-            title={t('ceph-storage-plugin~Service Name')}
+            title={t('ceph-storage-plugin~Service name')}
             error={false}
             isLoading={false}
           >
@@ -112,7 +112,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
           </DetailItem>
           <DetailItem
             key="system_name"
-            title={t('ceph-storage-plugin~System Name')}
+            title={t('ceph-storage-plugin~System name')}
             isLoading={!systemResult || !dashboardLinkResult}
             error={systemLoadError || dashboardLinkLoadError || !systemName || !systemLink}
           >
