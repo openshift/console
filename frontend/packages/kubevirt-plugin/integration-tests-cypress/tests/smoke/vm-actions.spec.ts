@@ -42,7 +42,11 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-4015) Stops VM', () => {
+      cy.intercept('PUT', `**/${vmData.name}/stop`).as('apiCheck');
       vm.stop();
+      cy.get('@apiCheck')
+        .its('request.body')
+        .should('eq', '');
     });
 
     it('ID(CNV-4013) Starts VM', () => {
@@ -59,7 +63,11 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-4016) Deletes VM', () => {
+      cy.intercept('DELETE', `**/${vmData.name}`).as('apiCheck');
       vm.delete();
+      cy.get('@apiCheck')
+        .its('request.body')
+        .should('eq', '');
     });
   });
 
@@ -74,7 +82,11 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-4020) Stops VM', () => {
+      cy.intercept('PUT', `**/${vmData.name}/stop`).as('apiCheck');
       vm.stop();
+      cy.get('@apiCheck')
+        .its('request.body')
+        .should('eq', '');
     });
 
     it('ID(CNV-4017) Starts VM', () => {
