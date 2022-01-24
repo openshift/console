@@ -5,11 +5,7 @@ import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import {
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
-} from '../../../constants/vm/constants';
-import { getParameterValue } from '../../../selectors/selectors';
+import { getPVCName } from '../../../selectors/selectors';
 import { getTemplateName } from '../../../selectors/vm-template/basic';
 import { TemplateItem } from '../../../types/template';
 import { BootSourceForm } from '../forms/boot-source-form';
@@ -28,9 +24,7 @@ export const BootSource: React.FC<BootSourceProps> = ({ template, state, dispatc
 
   const firstVariant = template?.variants[0];
   const name = getTemplateName(firstVariant);
-  const baseImageName =
-    getParameterValue(firstVariant, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
-    getParameterValue(firstVariant, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
+  const baseImageName = getPVCName(firstVariant);
 
   const [scAllowed, scAllowedLoading] = useAccessReview2({
     group: StorageClassModel.apiGroup,

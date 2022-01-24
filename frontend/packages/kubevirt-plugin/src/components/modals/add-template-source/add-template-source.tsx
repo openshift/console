@@ -14,18 +14,12 @@ import { LoadingBox, useAccessReview2 } from '@console/internal/components/utils
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
 import { k8sCreate, StorageClassResourceKind, TemplateKind } from '@console/internal/module/k8s';
-import {
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
-  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
-} from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useErrorTranslation } from '../../../hooks/use-error-translation';
 import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create';
 import { DataVolumeModel } from '../../../models';
-import { getParameterValue } from '../../../selectors/selectors';
+import { getPVCName, getPVCNamespace } from '../../../selectors/selectors';
 import { CDIUploadContextProps } from '../../cdi-upload-provider/cdi-upload-provider';
 import {
   CDI_BIND_REQUESTED_ANNOTATION,
@@ -89,12 +83,8 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
   uploadProxyURL,
 }) => {
   const { t } = useTranslation();
-  const baseImageName =
-    getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
-    getParameterValue(template, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
-  const baseImageNamespace =
-    getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
-    getParameterValue(template, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER);
+  const baseImageName = getPVCName(template);
+  const baseImageNamespace = getPVCNamespace(template);
 
   const upload = uploads.find(
     (upl) => upl.pvcName === baseImageName && upl.namespace === baseImageNamespace,

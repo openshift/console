@@ -5,6 +5,12 @@ import {
   NodeKind,
   K8sResourceCommon,
 } from '@console/internal/module/k8s';
+import {
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
+  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
+} from '../constants';
 
 export const getKind = (value) => _.get(value, 'kind') as K8sResourceKind['kind'];
 
@@ -73,6 +79,14 @@ export const getAnnotation = (
 export const getParameterValue = (obj, name: string, defaultValue = null): string =>
   _.get(obj, ['parameters'], []).find((parameter) => parameter.name === name)?.value ||
   defaultValue;
+
+export const getPVCNamespace = (obj): string =>
+  getParameterValue(obj, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
+  getParameterValue(obj, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER);
+
+export const getPVCName = (obj): string =>
+  getParameterValue(obj, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
+  getParameterValue(obj, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
 
 export const getAnnotationKeySuffix = (
   entity: K8sResourceKind,

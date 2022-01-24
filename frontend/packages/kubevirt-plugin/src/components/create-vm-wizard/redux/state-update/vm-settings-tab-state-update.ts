@@ -1,14 +1,12 @@
 import { FLAGS } from '@console/shared';
-import {
-  CUSTOM_FLAVOR,
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-  TEMPLATE_DATA_SOURCE_NAME_PARAMETER,
-  TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER,
-} from '../../../../constants/vm';
+import { CUSTOM_FLAVOR } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
-import { iGetAnnotation, iGetPrameterValue } from '../../../../selectors/immutable/common';
+import {
+  iGetAnnotation,
+  iGetPVCName,
+  iGetPVCNamespace,
+} from '../../../../selectors/immutable/common';
 import {
   getITemplateDefaultFlavor,
   getITemplateDefaultWorkload,
@@ -165,12 +163,8 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     const relevantOptions = iGetRelevantTemplateSelectors(state, id);
     const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
-    const pvcName =
-      iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
-      iGetPrameterValue(iTemplate, TEMPLATE_DATA_SOURCE_NAME_PARAMETER);
-    const pvcNamespace =
-      iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER) ||
-      iGetPrameterValue(iTemplate, TEMPLATE_DATA_SOURCE_NAMESPACE_PARAMETER);
+    const pvcName = iGetPVCName(iTemplate);
+    const pvcNamespace = iGetPVCNamespace(iTemplate);
 
     const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
     iBaseImage =
