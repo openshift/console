@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
-import { RedExclamationCircleIcon, useActivePerspective } from '@console/shared';
+import { RedExclamationCircleIcon } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -51,11 +51,12 @@ import {
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
   Panel,
   Row,
+  TimeDropdownsProps,
 } from './types';
 import { useBoolean } from '../hooks/useBoolean';
 import { useIsVisible } from '../hooks/useIsVisible';
 import { useFetchDashboards } from './useFetchDashboards';
-import { getAllVariables } from './monitoring-dashboard-utils';
+import { getActivePerspective, getAllVariables } from './monitoring-dashboard-utils';
 
 const NUM_SAMPLES = 30;
 
@@ -160,9 +161,9 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
 
 const VariableOption = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
 
-const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
+const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace }) => {
   const { t } = useTranslation();
-  const [activePerspective] = useActivePerspective();
+  const activePerspective = getActivePerspective(namespace);
 
   const timespan = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
@@ -276,15 +277,16 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   );
 };
 
-const AllVariableDropdowns = ({ namespace }) => {
+const AllVariableDropdowns = () => {
+  const namespace = React.useContext(NamespaceContext);
   const variables = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', namespace ? 'dev' : 'admin', 'variables']),
+    UI.getIn(['monitoringDashboards', getActivePerspective(namespace), 'variables']),
   );
 
   return (
     <>
       {variables.keySeq().map((name: string) => (
-        <VariableDropdown key={name} id={name} name={name} />
+        <VariableDropdown key={name} id={name} name={name} namespace={namespace} />
       ))}
     </>
   );
@@ -340,10 +342,10 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
   },
 );
 
-export const PollIntervalDropdown: React.FC = () => {
+export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
-  const [activePerspective] = useActivePerspective();
+  const activePerspective = getActivePerspective(namespace);
   const interval = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', activePerspective, 'pollInterval']),
   );
@@ -375,12 +377,15 @@ export const PollIntervalDropdown: React.FC = () => {
   );
 };
 
-const TimeDropdowns: React.FC = React.memo(() => (
-  <div className="monitoring-dashboards__options">
-    <TimespanDropdown />
-    <PollIntervalDropdown />
-  </div>
-));
+const TimeDropdowns: React.FC<{}> = React.memo(() => {
+  const namespace = React.useContext(NamespaceContext);
+  return (
+    <div className="monitoring-dashboards__options">
+      <TimespanDropdown namespace={namespace} />
+      <PollIntervalDropdown namespace={namespace} />
+    </div>
+  );
+});
 
 const HeaderTop: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -450,7 +455,8 @@ const getPanelClassModifier = (panel: Panel): string => {
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
 
 const Card: React.FC<CardProps> = React.memo(({ panel }) => {
-  const [activePerspective] = useActivePerspective();
+  const namespace = React.useContext(NamespaceContext);
+  const activePerspective = getActivePerspective(namespace);
   const pollInterval = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', activePerspective, 'pollInterval']),
   );
@@ -605,7 +611,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 
   const dispatch = useDispatch();
   const namespace = match.params?.ns;
-  const activePerspective = namespace ? 'dev' : 'admin';
+  const activePerspective = getActivePerspective(namespace);
   const [board, setBoard] = React.useState<string>();
   const [boards, isLoading, error] = useFetchDashboards(namespace);
   // Clear queries on unmount
@@ -720,19 +726,19 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
           <title>{t('public~Metrics dashboards')}</title>
         </Helmet>
       )}
-      <div className="co-m-nav-title co-m-nav-title--detail">
-        {!namespace && <HeaderTop />}
-        <div className="monitoring-dashboards__variables">
-          <div className="monitoring-dashboards__dropdowns">
-            {!_.isEmpty(boardItems) && (
-              <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
-            )}
-            <AllVariableDropdowns key={board} namespace={namespace} />
-          </div>
-          {namespace && <TimeDropdowns />}
-        </div>
-      </div>
       <NamespaceContext.Provider value={namespace}>
+        <div className="co-m-nav-title co-m-nav-title--detail">
+          {!namespace && <HeaderTop />}
+          <div className="monitoring-dashboards__variables">
+            <div className="monitoring-dashboards__dropdowns">
+              {!_.isEmpty(boardItems) && (
+                <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
+              )}
+              <AllVariableDropdowns key={board} />
+            </div>
+            {namespace && <TimeDropdowns />}
+          </div>
+        </div>
         <Dashboard>{isLoading ? <LoadingInline /> : <Board key={board} rows={rows} />}</Dashboard>
       </NamespaceContext.Provider>
     </>
@@ -757,6 +763,7 @@ type FilterSelectProps = {
 type VariableDropdownProps = {
   id: string;
   name: string;
+  namespace?: string;
 };
 
 type DashboardDropdownProps = {
