@@ -1,102 +1,124 @@
 import * as React from 'react';
-import { ChartDonut, ChartLabel, ChartLegend } from '@patternfly/react-charts';
+import { ChartDonut } from '@patternfly/react-charts';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LABEL_USED_TEMPLATE_NAME } from '../../../constants';
-import { VirtualMachineModel } from '../../../models';
-import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
-import { VMKind } from '../../../types';
+import { useRunningVMsPerTemplateResources } from '../../../hooks/use-running-vms-per-template-resources';
+import { getName, getNamespace } from '../../../selectors';
+import { VMsChartLegend } from './RunningVMsChartLegend';
+import { RunningVMsChartLegendLabelItem } from './RunningVMsChartLegendLabel';
+import { getColorList } from './utils';
 
 import './running-vms-per-template-card.scss';
 
-const getVMsPerTemplateMap = (vms, vmsLoaded) => {
-  const map = new Map();
+const getTemplateNS = (templateName, templates) => {
+  const template = templates.find((temp) => getName(temp) === templateName);
+  return template ? getNamespace(template) : null;
+};
 
-  if (vmsLoaded) {
+const getTemplateToVMCountMap = (resources) => {
+  const loaded = resources?.loaded;
+  const vms = loaded && resources?.vms;
+  const templates = loaded && resources?.templates;
+
+  const templateToVMCountMap = new Map();
+  const numVMs = vms.length;
+
+  if (loaded) {
     vms.forEach((vm) => {
       const template = vm?.metadata?.labels[LABEL_USED_TEMPLATE_NAME];
-      const value = map.has(template) ? map.get(template) + 1 : 1;
-      map.set(template, value);
+      const value = templateToVMCountMap.has(template)
+        ? templateToVMCountMap.get(template).vmCount + 1
+        : 1;
+      templateToVMCountMap.set(template, { vmCount: value });
     });
   }
 
-  const numVMs = map.size;
+  const numTemplates = templateToVMCountMap.size;
+  const colorListIter = getColorList(numTemplates).values();
 
-  const vmCount = [];
-  const legendLabel = [];
-  const dataMap = [];
-
-  for (const [templateName, count] of map) {
-    const percent = Math.round((count / numVMs) * 100);
-    dataMap.push({ x: templateName, y: percent });
-    vmCount.push(count);
-    legendLabel.push({ name: `${count}: ${templateName}` });
+  for (const key of templateToVMCountMap.keys()) {
+    const templateChartData = templateToVMCountMap.get(key);
+    const additionalData = {
+      percentage: Math.round((templateChartData.vmCount / numVMs) * 100),
+      color: colorListIter.next().value,
+      namespace: getTemplateNS(key, templates),
+    };
+    templateToVMCountMap.set(key, { ...templateChartData, ...additionalData });
   }
 
-  return { data: vmCount, legend: legendLabel, map: dataMap };
+  return templateToVMCountMap;
 };
 
-const LegendLabel = ({ values, ...rest }) => (
-  <ChartLabel {...rest} className="kv-running-vms-card__chart-label" text={rest.text} />
-);
+const getChartData = (templateToVMCountMap) => {
+  const chartData = [];
+  templateToVMCountMap.forEach((data, templateName) => {
+    chartData.push({
+      x: templateName,
+      y: data.percentage,
+      fill: data.color,
+    });
+  });
+  return chartData;
+};
 
-// Custom legend component
-const getLegend = (legendData, values) => (
-  <ChartLegend
-    data={legendData}
-    orientation="horizontal"
-    gutter={5}
-    rowGutter={5}
-    itemsPerRow={2}
-    labelComponent={<LegendLabel lineHeight={1.5} values={values} />}
-  />
-);
+const getLegendItems = (templateToVMCountMap): RunningVMsChartLegendLabelItem[] => {
+  const legendItems = [];
+  templateToVMCountMap.forEach((data, templateName) => {
+    legendItems.push({
+      name: templateName,
+      vmCount: data.vmCount,
+      color: data.color,
+      namespace: data.namespace,
+    });
+  });
+  return legendItems;
+};
 
 export const RunningVMsPerTemplateCard = () => {
   const { t } = useTranslation();
+  const resources = useRunningVMsPerTemplateResources();
+  const templateToVMCountMap = React.useMemo(() => getTemplateToVMCountMap(resources), [resources]);
 
-  const [vms, vmsLoaded] = useK8sWatchResource<VMKind[]>({
-    kind: kubevirtReferenceForModel(VirtualMachineModel),
-    isList: true,
-    namespaced: false,
-  });
-
-  const graphData = React.useMemo(() => getVMsPerTemplateMap(vms, vmsLoaded), [vms, vmsLoaded]);
-  const vmsPerTemplateMap = graphData.data;
-  const legendData = graphData.legend;
-  const dataMap = graphData.map;
+  const chartData = getChartData(templateToVMCountMap);
+  const legendItems = getLegendItems(templateToVMCountMap);
 
   const chart = (
     <div>
       <ChartDonut
         ariaDesc={t('kubevirt-plugin~Running VMs per template')}
         ariaTitle={t('kubevirt-plugin~Running VMs per template donut chart')}
-        data={dataMap}
-        height={200}
+        data={chartData}
+        height={150}
         labels={({ datum }) => `${datum.x}: ${datum.y}%`}
-        legendComponent={getLegend(legendData, vmsPerTemplateMap)}
         legendPosition="bottom"
         padding={{
-          bottom: 65, // Adjusted to accommodate legend
+          bottom: 20,
           left: 20,
           right: 20,
           top: 20,
         }}
         subTitle={t('kubevirt-plugin~VMs')}
-        title={t('kubevirt-plugin~{{count}}', { count: vms?.length })}
+        title={resources?.vms?.length?.toString()}
         width={300}
-        themeColor="multi"
+        style={{
+          data: {
+            fill: ({ datum }) => datum.fill,
+          },
+        }}
       />
     </div>
   );
 
   return (
-    <Card className="kv-running-vms-card--gradient" data-test-id="kv-running-vms-per-template-card">
+    <Card className="kv-running-vms-card__gradient" data-test-id="kv-running-vms-per-template-card">
       <CardHeader>
         <CardTitle>{t('kubevirt-plugin~Running VMs per template')}</CardTitle>
       </CardHeader>
-      <CardBody>{chart}</CardBody>
+      <CardBody>
+        {chart}
+        <VMsChartLegend legendItems={legendItems} />
+      </CardBody>
     </Card>
   );
 };
