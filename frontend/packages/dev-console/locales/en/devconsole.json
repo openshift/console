@@ -231,6 +231,8 @@
   "Use command line tools directly from the Console. CLIs are pre-installed and fully authenticated when you need them.": "Use command line tools directly from the Console. CLIs are pre-installed and fully authenticated when you need them.",
   "Help": "Help",
   "Restart this tour or access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console.": "Restart this tour or access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console.",
+  "User Preferences": "User Preferences",
+  "Set your individual console preferences including default views, language, import settings, and more.": "Set your individual console preferences including default views, language, import settings, and more.",
   "You’re ready to go!": "You’re ready to go!",
   "Edit health checks": "Edit health checks",
   "Add health checks": "Add health checks",

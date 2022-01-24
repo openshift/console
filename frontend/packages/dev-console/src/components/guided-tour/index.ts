@@ -57,6 +57,15 @@ export const getGuidedTour = (): TourDataType => ({
         '%devconsole~Restart this tour or access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console.%',
       selector: getSelector('tour-help-button'),
     },
+    {
+      placement: 'bottom',
+      // t('devconsole~User Preferences')
+      heading: '%devconsole~User Preferences%',
+      // t('devconsole~Set your individual console preferences including default views, language, import settings, and more.')
+      content:
+        '%devconsole~Set your individual console preferences including default views, language, import settings, and more.%',
+      selector: getSelector('tour-user-button'),
+    },
   ],
   end: {
     // t('devconsole~You’re ready to go!')

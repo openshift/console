@@ -596,6 +596,7 @@ class MastheadToolbarContents_ extends React.Component {
         onToggle={this._onUserDropdownToggle}
         isOpen={isUserDropdownOpen}
         items={this._renderApplicationItems(actions)}
+        data-tour-id="tour-user-button"
         data-quickstart-id="qs-masthead-usermenu"
         position="right"
         toggleIcon={userToggle}
