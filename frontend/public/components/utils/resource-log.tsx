@@ -29,10 +29,13 @@ import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
-import { k8sGet, k8sList, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { usePrevious } from '@console/shared/src/hooks/previous';
+import { Link } from 'react-router-dom';
+import { resourcePath } from './resource-link';
+import { isWindowsPod } from '../../module/k8s/pods';
 
 export const STREAM_EOF = 'eof';
 export const STREAM_LOADING = 'loading';
@@ -116,6 +119,25 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
       &nbsp;{resumeText}
     </Button>
   );
+};
+const showDebugAction = (pod: PodKind, containerName: string) => {
+  const containerStatus = pod?.status?.containerStatuses?.find((c) => c.name === containerName);
+  if (pod?.status?.phase === 'Succeeded' || pod?.status?.phase === 'Pending') {
+    return false;
+  }
+  if (pod?.metadata?.annotations?.['openshift.io/build.name']) {
+    return false;
+  }
+  if (pod?.metadata?.annotations?.['debug.openshift.io/source-container']) {
+    return false;
+  }
+
+  const waitingReason = containerStatus?.state?.waiting?.reason;
+  if (waitingReason === 'ImagePullBackOff' || waitingReason === 'ErrImagePull') {
+    return false;
+  }
+
+  return !containerStatus?.state?.running || !containerStatus.ready;
 };
 
 // Component for log stream controls
@@ -209,13 +231,12 @@ export const LogControls: React.FC<LogControlsProps> = ({
       </Tooltip>
     );
   };
-
+  const label = t('public~Debug container');
   return (
     <div className="co-toolbar">
       <div className="co-toolbar__group co-toolbar__group--left">
         <div className="co-toolbar__item">{showStatus()}</div>
         {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
-
         <div className="co-toolbar__item">{logTypeSelect(!hasPreviousLog)}</div>
         <div className="co-toolbar__item">
           <LogViewerSearch
@@ -227,6 +248,26 @@ export const LogControls: React.FC<LogControlsProps> = ({
             placeholder="Search"
           />
         </div>
+        {showDebugAction(resource, containerName) && !isWindowsPod(resource) && (
+          <Link
+            to={`${resourcePath(
+              'Pod',
+              resource.metadata.name,
+              resource.metadata.namespace,
+            )}/containers/${containerName}/debug`}
+          >
+            {label}
+          </Link>
+        )}
+        {showDebugAction(resource, containerName) && isWindowsPod(resource) && (
+          <Tooltip
+            content={t(
+              'public~Debug in terminal is not currently available for windows containers.',
+            )}
+          >
+            <span className="text-muted">{label}</span>
+          </Tooltip>
+        )}
       </div>
       <div className="co-toolbar__group co-toolbar__group--right">
         {!_.isEmpty(podLogLinks) &&

@@ -701,6 +701,14 @@ const AppContents: React.FC<{}> = () => {
             <Route path="/k8s/cluster/:plural/~new" exact component={CreateResource} />
             <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
             <LazyRoute
+              path="/k8s/ns/:ns/pods/:podName/containers/:name/debug"
+              loader={() =>
+                import('./debug-terminal' /* webpackChunkName: "debug-terminal" */).then(
+                  (m) => m.DebugTerminalPage,
+                )
+              }
+            />
+            <LazyRoute
               path="/k8s/ns/:ns/pods/:podName/containers/:name"
               loader={() => import('./container').then((m) => m.ContainersDetailsPage)}
             />
