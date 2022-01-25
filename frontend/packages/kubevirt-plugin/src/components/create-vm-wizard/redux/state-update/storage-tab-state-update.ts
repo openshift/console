@@ -24,7 +24,7 @@ import { getVolumeContainerImage } from '../../../../selectors/vm/volume';
 import { isWinToolsImage } from '../../../../selectors/vm/winimage';
 import { V1alpha1DataVolume } from '../../../../types/api/V1alpha1DataVolume';
 import { toShallowJS } from '../../../../utils/immutable';
-import { getEmptyInstallStorage } from '../../../../utils/storage';
+import { getEmptyAdditionalStorage, getEmptyInstallStorage } from '../../../../utils/storage';
 import { getNextIDResolver } from '../../../../utils/utils';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
@@ -101,8 +101,9 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
 
   if (newType !== oldType || baseDiskImageChanged) {
     const additionalStorage = iGetProvisionSourceAdditionalStorage(state, id)?.toJSON();
+    const isCdRom = iGetVmSettingValue(state, id, VMSettingsField.IS_CDROM_BOOT_SOURCE);
     if (!newSourceStorage) {
-      if (additionalStorage) {
+      if (additionalStorage && !isCdRom) {
         dispatch(
           vmWizardInternalActions[InternalActionType.RemoveStorage](id, additionalStorage.id),
         );
@@ -134,7 +135,7 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
         };
 
         dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, emptyDisk));
-      } else if (additionalStorage) {
+      } else if (additionalStorage && !isCdRom) {
         dispatch(
           vmWizardInternalActions[InternalActionType.RemoveStorage](id, additionalStorage.id),
         );
@@ -436,6 +437,93 @@ const initialStorageCdromImportUpdater = ({ id, prevState, dispatch, getState }:
   }
 };
 
+const cdromImportUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  const isCdRom = iGetVmSettingValue(state, id, VMSettingsField.IS_CDROM_BOOT_SOURCE);
+
+  if (
+    !hasStoragesChanged(prevState, state, id) &&
+    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.IS_CDROM_BOOT_SOURCE)
+  ) {
+    return;
+  }
+
+  const storages = getStorages(state, id);
+  // This is relevant when cdRom comes as false (unchecked in simple wizard)
+  // And we set the checkbox to true on advanced wizard
+  const rootStorage = storages?.find(
+    ({ type, disk }) =>
+      type === VMWizardStorageType.PROVISION_SOURCE_DISK && disk?.name === ROOT_DISK_NAME,
+  );
+  // This is relevant when cdRom comes as true (checked in simple wizard)
+  const additionalDiskStorage = storages?.find(
+    ({ type, disk }) =>
+      type === VMWizardStorageType.PROVISION_SOURCE_ADDITIONAL_DISK &&
+      disk?.name === ROOT_DISK_NAME,
+  );
+  const installCdromStorage = storages?.find(
+    ({ type, disk }) =>
+      type === VMWizardStorageType.PROVISION_SOURCE_DISK &&
+      disk?.name === ROOT_DISK_INSTALL_NAME &&
+      disk?.cdrom,
+  );
+  if (isCdRom && rootStorage) {
+    const disk = new DiskWrapper(rootStorage?.disk)
+      .setType(DiskType.CDROM, { bus: DiskBus.SATA })
+      .setName(ROOT_DISK_INSTALL_NAME)
+      .asResource();
+    const volume = new VolumeWrapper(rootStorage?.volume)
+      .setName(ROOT_DISK_INSTALL_NAME)
+      .asResource();
+
+    // Modify rootdisk storage to CD-ROM
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+        ...rootStorage,
+        volume,
+        disk,
+      }),
+    );
+    // Add additional storage
+    if (!additionalDiskStorage) {
+      const dvWrapper = new DataVolumeWrapper(rootStorage?.dataVolume, true);
+      dispatch(
+        vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+          id: getNextIDResolver(storages),
+          type: VMWizardStorageType.PROVISION_SOURCE_ADDITIONAL_DISK,
+          ...getEmptyAdditionalStorage(
+            dvWrapper.getStorageClassName(),
+            [AccessMode.fromString(dvWrapper?.getAccessModes()?.[0])],
+            VolumeMode.fromString(dvWrapper?.getVolumeMode()),
+          ),
+        }),
+      );
+    }
+  } else if (!isCdRom && installCdromStorage) {
+    if (additionalDiskStorage) {
+      dispatch(
+        vmWizardInternalActions[InternalActionType.RemoveStorage](id, additionalDiskStorage.id),
+      );
+    }
+    const disk = new DiskWrapper(installCdromStorage?.disk)
+      .setType(DiskType.DISK, { bus: DiskBus.VIRTIO.getValue() })
+      .setName(ROOT_DISK_NAME)
+      .asResource();
+    const volume = new VolumeWrapper(installCdromStorage?.volume)
+      .setName(ROOT_DISK_NAME)
+      .asResource();
+
+    // Modify rootdisk storage to CD-ROM
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+        ...installCdromStorage,
+        volume,
+        disk,
+      }),
+    );
+  }
+};
+
 export const updateStorageTabState = (options: UpdateOptions) =>
   [
     prefillInitialDiskUpdater,
@@ -446,6 +534,7 @@ export const updateStorageTabState = (options: UpdateOptions) =>
     initialStorageDiskUpdater,
     initialStorageWindowsPVCUpdater,
     initialStorageCdromImportUpdater,
+    cdromImportUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });

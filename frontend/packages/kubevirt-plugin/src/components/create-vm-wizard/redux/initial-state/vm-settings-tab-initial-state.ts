@@ -51,6 +51,10 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
       value: false,
       isHidden: asHidden(true, VMSettingsField.OPERATING_SYSTEM),
     },
+    [VMSettingsField.IS_CDROM_BOOT_SOURCE]: {
+      value: initialData?.source?.cdRom || false,
+      isHidden: asHidden(isCreateTemplate),
+    },
     [VMSettingsField.FLAVOR]: {
       isRequired: asRequired(true),
     },
