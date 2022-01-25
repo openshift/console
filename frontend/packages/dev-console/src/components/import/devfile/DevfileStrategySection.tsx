@@ -49,10 +49,13 @@ const DevfileStrategySection: React.FC = () => {
       setFieldValue('devfile.devfileHasError', true);
       setValidated(ValidatedOptions.error);
     } else {
-      fireTelemetryEvent('Download Devfile from Git', {
-        client: 'openshift-console',
-        devfileName: selectedSample.name,
-      });
+      if (selectedSample != null) {
+        fireTelemetryEvent('Download Devfile from Git', {
+          client: 'openshift-console',
+          devfileName: selectedSample.name,
+        });
+      }
+
       setFieldValue('devfile.devfileContent', devfileContents);
       setFieldValue('devfile.devfileHasError', false);
       setValidated(ValidatedOptions.success);
