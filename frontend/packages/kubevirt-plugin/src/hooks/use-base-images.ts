@@ -3,10 +3,9 @@ import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-import { TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER } from '../constants';
 import { DataVolumeModel } from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
-import { getParameterValue } from '../selectors/selectors';
+import { getPVCNamespace } from '../selectors/selectors';
 import { V1alpha1DataVolume } from '../types/api';
 
 type BaseImages = [PersistentVolumeClaimKind[], boolean, any, V1alpha1DataVolume[], PodKind[]];
@@ -18,9 +17,7 @@ export const useBaseImages = (
   const [pvcWatches, dvWatches, podWatches] = React.useMemo(() => {
     const namespaces = [
       ...new Set(
-        (commonTemplates || [])
-          .map((template) => getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER))
-          .filter((ns) => !!ns),
+        (commonTemplates || []).map((template) => getPVCNamespace(template)).filter((ns) => !!ns),
       ),
     ];
 
