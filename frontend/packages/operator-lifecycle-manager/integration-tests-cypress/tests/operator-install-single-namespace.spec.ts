@@ -5,7 +5,7 @@ import { nav } from '../../../integration-tests-cypress/views/nav';
 import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
-  name: 'Red Hat CodeReady Workspaces',
+  name: 'Red Hat CodeReady Workspaces for Devfile v1 and v2',
   operatorHubCardTestID: 'codeready-workspaces-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
