@@ -47,7 +47,6 @@ import {
   TemplateKind,
 } from '@console/internal/module/k8s';
 import {
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_VM_COMMON_NAMESPACE,
@@ -63,7 +62,7 @@ import {
 import { DataVolumeModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
-import { getName, getNamespace, getParameterValue } from '../../../selectors/selectors';
+import { getName, getNamespace, getPVCNamespace } from '../../../selectors/selectors';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { OperatingSystemRecord } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
@@ -573,9 +572,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const goldenNamespacesResources = React.useMemo(() => {
     const goldenNamespaces = [
       ...new Set(
-        (commonTemplates || [])
-          .map((template) => getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER))
-          .filter((ns) => !!ns),
+        (commonTemplates || []).map((template) => getPVCNamespace(template)).filter((ns) => !!ns),
       ),
     ];
 
@@ -591,9 +588,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const allowedTemplates = commonTemplates.filter((tmp) =>
     goldenAccessReviews.some(
       (accessReview) =>
-        accessReview.allowed &&
-        accessReview.resourceAttributes.namespace ===
-          getParameterValue(tmp, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
+        accessReview.allowed && accessReview.resourceAttributes.namespace === getPVCNamespace(tmp),
     ),
   );
 

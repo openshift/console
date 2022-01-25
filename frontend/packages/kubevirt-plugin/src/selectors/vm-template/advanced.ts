@@ -11,8 +11,6 @@ import {
   LABEL_CDROM_SOURCE,
   OS_WINDOWS_PREFIX,
   ROOT_DISK_NAME,
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
@@ -37,7 +35,8 @@ import {
   getAnnotation,
   getAnnotations,
   getLabels,
-  getParameterValue,
+  getPVCName,
+  getPVCNamespace,
 } from '../selectors';
 import { getFlavorData } from '../vm/flavor-data';
 import {
@@ -124,8 +123,8 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
-        baseImageName: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER),
-        baseImageNamespace: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
+        baseImageName: getPVCName(template),
+        baseImageNamespace: getPVCNamespace(template),
         baseImageRecomendedSize: dv && stringValueUnitSplit(getDataVolumeStorageSize(dv)),
       };
     }),

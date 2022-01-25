@@ -5,8 +5,6 @@ import {
   DataVolumeSourceType,
   LABEL_CDROM_SOURCE,
   NetworkType,
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_PROVIDER_ANNOTATION,
   RED_HAT,
   VolumeType,
@@ -17,7 +15,7 @@ import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { getCreationTimestamp } from '../../selectors';
 import { getPvcImportPodName, getPvcUploadPodName } from '../../selectors/pvc/selectors';
-import { getAnnotation, getParameterValue } from '../../selectors/selectors';
+import { getAnnotation, getPVCName, getPVCNamespace } from '../../selectors/selectors';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { V1alpha1DataVolume } from '../../types/api';
 import { DataSourceKind } from '../../types/vm/index';
@@ -53,8 +51,8 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
   dataSources,
 }) => {
   if (isCommonTemplate(template)) {
-    const baseImageName = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
-    const baseImageNs = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
+    const baseImageName = getPVCName(template);
+    const baseImageNs = getPVCNamespace(template);
     if (!baseImageName || !baseImageNs) {
       return null;
     }

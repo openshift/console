@@ -1,10 +1,5 @@
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
-import {
-  DUMMY_VM_NAME,
-  ROOT_DISK_NAME,
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-} from '../../../../constants/vm';
+import { DUMMY_VM_NAME, ROOT_DISK_NAME } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import {
   AccessMode,
@@ -17,7 +12,7 @@ import {
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { iGetPrameterValue } from '../../../../selectors/immutable/common';
+import { iGetPVCName, iGetPVCNamespace } from '../../../../selectors/immutable/common';
 import {
   iGetCommonTemplateDataVolumeSize,
   iGetCommonTemplateDiskBus,
@@ -311,8 +306,8 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     );
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
-    const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
-    const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
+    const pvcName = iGetPVCName(iTemplate);
+    const pvcNamespace = iGetPVCNamespace(iTemplate);
 
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
       .valueSeq()

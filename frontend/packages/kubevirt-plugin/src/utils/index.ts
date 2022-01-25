@@ -13,15 +13,8 @@ import {
   referenceFor,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER, VM_TEMPLATE_NAME_PARAMETER } from '../constants';
-import {
-  getAPIVersion,
-  getKind,
-  getName,
-  getNamespace,
-  getParameterValue,
-  getUID,
-} from '../selectors';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../constants';
+import { getAPIVersion, getKind, getName, getNamespace, getPVCName, getUID } from '../selectors';
 import { ValidationObject, asValidationObject, ValidationErrorType } from '../selectors/types';
 // eslint-disable-next-line import/order
 import { getTemplateName } from '../selectors/vm-template/basic';
@@ -441,14 +434,16 @@ export const compareOwnerReference = (
   );
 };
 
-export const generateVMName = (template: TemplateKind): string =>
-  alignWithDNS1123(
-    `${getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
-      getTemplateName(template)}-${uniqueNamesGenerator({
+export const generateVMName = (template: TemplateKind): string => {
+  const pvcName = getPVCName(template);
+
+  return alignWithDNS1123(
+    `${pvcName || getTemplateName(template)}-${uniqueNamesGenerator({
       dictionaries: [adjectives, animals],
       separator: '-',
     })}`,
   );
+};
 
 export const getDialogUIError = (hasAllRequiredFilled, t: TFunction) =>
   hasAllRequiredFilled
