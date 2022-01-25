@@ -46,15 +46,17 @@ const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
         volumeWrapper.appendTypeData({ name: dataVolumeWrapper.getName() });
       }
     }
-
     if (volumeWrapper.getCloudInitNoCloud()) {
-      const cloudConfigHeader = volumeWrapper
+      const cloudInitNoCloudUserData = volumeWrapper
         .getCloudInitNoCloud()
-        ?.userData?.includes('#cloud-config');
-      !cloudConfigHeader &&
-        volumeWrapper.setCloudInitNoCloud({
-          userData: ['#cloud-config', volumeWrapper.getCloudInitNoCloud().userData].join('\n'),
-        });
+        ?.userData?.replace(/(password:\s)'(.*)'(\s)/g, '$1$2$3'); // remove extra single quotation marks
+
+      const cloudConfigHeader = cloudInitNoCloudUserData?.includes('#cloud-config');
+      volumeWrapper.setCloudInitNoCloud({
+        userData: cloudConfigHeader
+          ? cloudInitNoCloudUserData
+          : ['#cloud-config', cloudInitNoCloudUserData].join('\n'),
+      });
     }
 
     return {
