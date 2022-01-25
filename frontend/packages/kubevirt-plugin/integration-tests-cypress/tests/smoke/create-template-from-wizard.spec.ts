@@ -77,7 +77,7 @@ describe('Test template creation', () => {
     cy.deleteTestProject(testName);
   });
 
-  [urlTemplate, registryTemplate, pvcTemplate, pxeTemplate].forEach((data) => {
+  [urlTemplate, registryTemplate, pvcTemplate].forEach((data) => {
     it(`${data.description}`, () => {
       cy.visitVMTemplatesList();
       virtualization.templates.createTemplateFromWizard(data);
@@ -86,10 +86,26 @@ describe('Test template creation', () => {
         name: `vm-from-${data.name}`,
         template: vmt,
         sourceAvailable: true,
+        startOnCreation: true,
       };
       cy.visitVMsList();
       vm.create(vmData);
       vm.delete();
     });
+  });
+
+  it('ID(CNV-4094): create template from PXE', () => {
+    cy.visitVMTemplatesList();
+    virtualization.templates.createTemplateFromWizard(pxeTemplate);
+    const vmt: Template = { name: pxeTemplate.name };
+    const vmData: VirtualMachineData = {
+      name: `vm-from-${pxeTemplate.name}`,
+      template: vmt,
+      sourceAvailable: true,
+      startOnCreation: false,
+    };
+    cy.visitVMsList();
+    vm.create(vmData);
+    vm.delete();
   });
 });

@@ -12,7 +12,7 @@ const vmData: VirtualMachineData = {
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
-  startOnCreation: false,
+  startOnCreation: true,
 };
 
 const vmiData: VirtualMachineData = {
@@ -36,8 +36,11 @@ describe('Test VM/VMI actions', () => {
   describe('Test VM list view action', () => {
     before(() => {
       vm.create(vmData);
-      cy.visitVMsList();
-      waitForStatus(VM_STATUS.Stopped);
+      waitForStatus(VM_STATUS.Running);
+    });
+
+    it('ID(CNV-4015) Stops VM', () => {
+      vm.stop();
     });
 
     it('ID(CNV-4013) Starts VM', () => {
@@ -53,10 +56,6 @@ describe('Test VM/VMI actions', () => {
       vm.resume();
     });
 
-    it('ID(CNV-4015) Stops VM', () => {
-      vm.stop();
-    });
-
     it('ID(CNV-4016) Deletes VM', () => {
       vm.delete();
     });
@@ -69,7 +68,11 @@ describe('Test VM/VMI actions', () => {
         .should('exist')
         .click();
       cy.byLegacyTestID('horizontal-link-Details').click();
-      waitForStatus(VM_STATUS.Stopped);
+      waitForStatus(VM_STATUS.Running);
+    });
+
+    it('ID(CNV-4020) Stops VM', () => {
+      vm.stop();
     });
 
     it('ID(CNV-4017) Starts VM', () => {
@@ -91,10 +94,6 @@ describe('Test VM/VMI actions', () => {
       cy.get(`button[id=${vmData.namespace}-${vmData.name}-status-edit]`).click();
       cy.byTestID('confirm-action').click();
       waitForStatus(VM_STATUS.Running);
-    });
-
-    it('ID(CNV-4020) Stops VM', () => {
-      vm.stop();
     });
 
     it('ID(CNV-4021) Deletes VM', () => {
