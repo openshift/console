@@ -112,6 +112,7 @@ export const catalogPO = {
   cardList: '[role="grid"]',
   cardHeader: '.pf-c-badge.pf-m-read',
   groupByMenu: 'pf-c-dropdown__menu',
+  chartRepositoryGroup: '[data-test-group-name="chartRepositoryTitle"]',
   catalogTypeLink: 'li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty',
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
