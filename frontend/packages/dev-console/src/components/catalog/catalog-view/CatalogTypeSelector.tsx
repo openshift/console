@@ -21,8 +21,14 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
 
   const typeDescriptions = React.useMemo(
     () =>
-      catalogTypes.map((type) => <SyncMarkdownView key={type.value} content={type.description} />),
-    [catalogTypes],
+      catalogTypes.map(
+        (type) =>
+          type.description &&
+          catalogTypeCounts[type.value] > 0 && (
+            <SyncMarkdownView key={type.value} content={type.description} />
+          ),
+      ),
+    [catalogTypes, catalogTypeCounts],
   );
 
   const info = (
