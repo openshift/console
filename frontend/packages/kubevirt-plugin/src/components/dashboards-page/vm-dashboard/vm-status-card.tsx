@@ -27,7 +27,11 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
       <CardBody className="VMStatusCard-body">
         <HealthBody>
           <Gallery className="VMStatusCard co-overview-status__health" hasGutter>
-            <VMStatusHealth vmStatusBundle={vmStatusBundle} icon={<StatusIcon />} />
+            <VMStatusHealth
+              vmStatusBundle={vmStatusBundle}
+              icon={<StatusIcon />}
+              printableStatus={vm?.status?.printableStatus}
+            />
             <GuestAgentStatusHealth vmi={vmi} />
           </Gallery>
         </HealthBody>
