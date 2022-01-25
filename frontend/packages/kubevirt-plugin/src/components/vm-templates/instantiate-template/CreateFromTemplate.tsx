@@ -12,6 +12,7 @@ export const CreateFromTemplate: React.FC<any> = (props) => {
   const urlParams = new URLSearchParams(props.location.search);
   const templateNS = urlParams.get('template-ns');
   const templateName = urlParams.get('template-name');
+  const mode = urlParams.get('mode');
   const [template, templateLoaded, templateError] = useK8sWatchResource<TemplateKind>({
     kind: TemplateModel.kind,
     namespace: templateNS,
@@ -34,6 +35,7 @@ export const CreateFromTemplate: React.FC<any> = (props) => {
               loaded: templateLoaded,
               loadError: templateError,
             }}
+            mode={mode}
           />
         </div>
       )}
