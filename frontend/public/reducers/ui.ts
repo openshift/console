@@ -218,7 +218,11 @@ export default (state: UIState, action: UIAction): UIState => {
       const firingAlerts = _.filter(alerts?.data, isAlertFiring);
       silenceFiringAlerts(firingAlerts, silences);
       silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
-      notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
+      if (notificationAlerts) {
+        notificationAlerts.data = _.reject(notificationAlerts?.data, {
+          state: AlertStates.Silenced,
+        });
+      }
       state = state.setIn(['monitoring', alertKey], alerts);
       state = state.setIn(['monitoring', 'notificationAlerts'], notificationAlerts);
 
