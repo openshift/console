@@ -61,6 +61,7 @@ const (
 	localesEndpoint                  = "/locales/resource.json"
 	updatesEndpoint                  = "/api/check-updates"
 	operandsListEndpoint             = "/api/list-operands/"
+	accountManagementEndpoint        = "/api/accounts_mgmt/"
 	sha256Prefix                     = "sha256~"
 )
 
@@ -136,6 +137,7 @@ type Server struct {
 	TerminalProxyTLSConfig           *tls.Config
 	PluginsProxyTLSConfig            *tls.Config
 	GitOpsProxyConfig                *proxy.Config
+	ClusterManagementProxyConfig     *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -420,6 +422,14 @@ func (s *Server) HTTPHandler() http.Handler {
 			})),
 		)
 	}
+
+	clusterManagementProxy := proxy.NewProxy(s.ClusterManagementProxyConfig)
+	handle(accountManagementEndpoint, http.StripPrefix(
+		s.BaseURL.Path,
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			clusterManagementProxy.ServeHTTP(w, r)
+		})),
+	)
 
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
