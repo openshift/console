@@ -5,7 +5,6 @@ import { match } from 'react-router-dom';
 import {
   K8sKind,
   K8sResourceKindReference,
-  kindForReference,
   GroupVersionKind,
   isGroupVersionKind,
   allModels,
@@ -13,18 +12,7 @@ import {
 } from './module/k8s';
 import { RootState } from './redux';
 
-export const connectToModel = connect(
-  (state: RootState, props: { kind: K8sResourceKindReference } & any) => {
-    const kind: string = props.kind || _.get(props, 'match.params.plural');
-
-    const kindObj: K8sKind = !_.isEmpty(kind)
-      ? state.k8s.getIn(['RESOURCES', 'models', kind]) ||
-        state.k8s.getIn(['RESOURCES', 'models', kindForReference(kind)])
-      : null;
-
-    return { kindObj, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']) } as any;
-  },
-);
+export { connectToModel } from '@console/dynamic-plugin-sdk/src/app/kinds';
 
 type WithPluralProps = {
   kindObj?: K8sKind;

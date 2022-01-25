@@ -22,11 +22,11 @@ import {
   HorizontalNav,
   PageHeading,
   FirehoseResource,
-  KebabOptionsCreator,
   Page,
   AsyncComponent,
   PageComponentProps,
 } from '../utils';
+import { KebabOptionsCreator } from '@console/dynamic-plugin-sdk/src/app/components/utils/headings';
 import {
   K8sResourceKindReference,
   K8sResourceKind,

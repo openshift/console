@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { PageHeading } from '@console/internal/components/utils/headings';
 import { ListPageHeaderProps } from '../../../../extensions/console-types';
+import { PageHeading } from '../../utils/headings';
 
 const ListPageHeader: React.FC<ListPageHeaderProps> = ({ helpText, title, children, badge }) => (
   <>

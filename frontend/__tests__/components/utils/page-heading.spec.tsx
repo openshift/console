@@ -7,7 +7,7 @@ import {
   PageHeadingProps,
   BreadCrumbs,
   BreadCrumbsProps,
-} from '../../../public/components/utils/headings';
+} from '@console/dynamic-plugin-sdk/src/app/components/utils/headings';
 import { ResourceIcon } from '../../../public/components/utils';
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 

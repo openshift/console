@@ -7,7 +7,7 @@ import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
 import { k8sWatch } from '../../../utils/k8s/k8s-utils';
 import { getImpersonate, getActiveCluster } from '../../core/reducers/coreSelectors';
 
-type K8sResourceKind = K8sResourceCommon & {
+export type K8sResourceKind = K8sResourceCommon & {
   spec?: {
     selector?: Selector | MatchLabels;
     [key: string]: any;
