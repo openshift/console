@@ -1,6 +1,7 @@
 import * as yamlEditor from './yaml-editor';
 
 export const listPage = {
+  searchInList: (searchTerm: string) => cy.byTestID('name-filter-input').type(searchTerm),
   titleShouldHaveText: (title: string) =>
     cy.byLegacyTestID('resource-title').should('have.text', title),
   clickCreateYAMLdropdownButton: () => {

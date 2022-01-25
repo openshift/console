@@ -1,35 +1,43 @@
 import { wizard } from '@console/cypress-integration-tests/views/wizard';
 import { ServiceAccountKind } from '@console/internal/module/k8s';
 import '../../../integration-tests-cypress/support/index.ts';
-import { CATALOG, PULL_SECRET_PATH, ocsCatalogSource } from '../mocks/install';
+import { CATALOG, PULL_SECRET_PATH, odfCatalogSource } from '../mocks/install';
 import { NS } from '../utils/consts';
 import { commonFlows } from './common';
+
+export const patchOperatorHubConfig = () => {
+  cy.log(`Patch operatorhub config`);
+  cy.exec(
+    `oc patch operatorhub.config.openshift.io/cluster -p='{"spec":{"sources":[{"disabled":true,"name":"redhat-operators"}]}}' --type=merge`,
+  );
+};
 
 export const createImagePullSecret = (namespace: string) => {
   cy.log(`Create ${CATALOG.SECRET} in ${namespace}`);
   cy.exec(
-    `oc create secret generic ocs-secret --from-file=.dockerconfigjson=${PULL_SECRET_PATH} --type=kubernetes.io/dockerconfigjson -n ${namespace}`,
+    `oc create secret generic ocs-image-secret --from-file=.dockerconfigjson=${PULL_SECRET_PATH} --type=kubernetes.io/dockerconfigjson -n ${namespace}`,
   );
 };
 
 export const createCustomCatalogSource = () => {
-  cy.log('Create custom catalog source with latest stable image of OCS');
-  cy.exec(`echo '${JSON.stringify(ocsCatalogSource)}' | kubectl apply -f -`);
+  cy.log('Create custom catalog source with latest stable image of ODF');
+  cy.exec(`echo '${JSON.stringify(odfCatalogSource)}' | kubectl apply -f -`);
 };
 
 export const subscribeToOperator = () => {
   cy.log('Search in Operator Hub');
   cy.clickNavLink(['Operators', 'OperatorHub']);
-  cy.byTestID('search-operatorhub').type('Openshift Container Storage');
-  cy.byTestID('ocs-operator-ocs-catalogsource-openshift-marketplace', { timeout: 120000 }).click();
-  cy.log('Subscribe to OCS Operator');
+  cy.byTestID('search-operatorhub').type('Openshift Data Foundation');
+  cy.byTestID('odf-operator-redhat-operators-openshift-marketplace', { timeout: 120000 }).click();
+  cy.log('Subscribe to ODF Operator');
   cy.byLegacyTestID('operator-install-btn').click({ force: true });
   cy.byTestID('Operator recommended Namespace:-radio-input').should('be.checked');
+  cy.byTestID('Enable-radio-input').should('be.checked');
   cy.byTestID('install-operator').click();
 };
 
-export const linkPullSecretToPods = () => {
-  createImagePullSecret(NS);
+export const linkPullSecretToPods = (createSecret = true) => {
+  if (createSecret) createImagePullSecret(NS);
   cy.log(`Add ${CATALOG.SECRET} to all service accounts in ${NS} namespace`);
   cy.exec(`oc get serviceaccounts -n ${NS} -o json`).then((res) => {
     const { items: saList } = JSON.parse(res.stdout);

@@ -1,5 +1,5 @@
+import { ODFCommon } from '../../../integration-tests-cypress/views/common';
 import { bucketStore, namespaceStore } from '../mocks/bucket-class';
-import { commonFlows } from './common';
 import { StoreType } from './store';
 
 export const bcName = 'test-bucketclass';
@@ -210,7 +210,7 @@ export const deleteBucketClass = () => {
 
 export const visitBucketClassPage = () => {
   cy.visit('/');
-  commonFlows.navigateToOCS();
+  ODFCommon.visitStorageDashboard();
   cy.byLegacyTestID('horizontal-link-Bucket Class').click();
   cy.byTestID('item-create').click();
 };

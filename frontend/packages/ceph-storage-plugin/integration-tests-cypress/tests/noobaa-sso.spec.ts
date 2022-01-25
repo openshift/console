@@ -1,14 +1,20 @@
-import { checkErrors } from '../../../integration-tests-cypress/support';
+import { ODFCommon } from '../../../integration-tests-cypress/views/common';
+import { listPage } from '../../../integration-tests-cypress/views/list-page';
+import { STORAGE_SYSTEM_NAME } from '../consts';
 
 describe('Check noobaa link in obejct service dashboard and perform SSO', () => {
   before(() => {
     cy.login();
     cy.install();
-    cy.visit('/ocs-dashboards/object');
-  });
-
-  afterEach(() => {
-    checkErrors();
+    ODFCommon.visitStorageSystemList();
+    listPage.searchInList(STORAGE_SYSTEM_NAME);
+    // Todo(bipuladh): Add a proper data-selector once the list page is migrated
+    // eslint-disable-next-line cypress/require-data-selectors
+    cy.get('a')
+      .contains(STORAGE_SYSTEM_NAME)
+      .click();
+    cy.contains('Object');
+    cy.byLegacyTestID('horizontal-link-Object').click();
   });
 
   after(() => {

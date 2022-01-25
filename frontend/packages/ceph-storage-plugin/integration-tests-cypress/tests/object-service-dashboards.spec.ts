@@ -1,3 +1,6 @@
+import { ODFCommon } from '../../../integration-tests-cypress/views/common';
+import { listPage } from '../../../integration-tests-cypress/views/list-page';
+import { STORAGE_SYSTEM_NAME } from '../consts';
 import { testBucket } from '../utils/consts';
 
 describe('Tests Buckets, Status, Object Storage Efficiency, and Resource Providers Cards', () => {
@@ -5,10 +8,14 @@ describe('Tests Buckets, Status, Object Storage Efficiency, and Resource Provide
     cy.login();
     cy.visit('/');
     cy.install();
-  });
-
-  beforeEach(() => {
-    cy.visit('/ocs-dashboards');
+    ODFCommon.visitStorageSystemList();
+    listPage.searchInList(STORAGE_SYSTEM_NAME);
+    // Todo(bipuladh): Add a proper data-selector once the list page is migrated
+    // eslint-disable-next-line cypress/require-data-selectors
+    cy.get('a')
+      .contains(STORAGE_SYSTEM_NAME)
+      .click();
+    cy.contains('Object');
     cy.byLegacyTestID('horizontal-link-Object').click();
   });
 

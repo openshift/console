@@ -1,7 +1,14 @@
 import * as _ from 'lodash';
-import { checkErrors } from '../../../integration-tests-cypress/support';
+import { ODFCommon } from '../../../integration-tests-cypress/views/common';
+import { listPage } from '../../../integration-tests-cypress/views/list-page';
 import { modal } from '../../../integration-tests-cypress/views/modal';
-import { CLUSTER_STATUS } from '../../integration-tests/utils/consts';
+import {
+  CLUSTER_STATUS,
+  STORAGE_SYSTEM_NAME,
+  STORAGE_CLUSTER_NAME,
+  NS as CLUSTER_NAMESPACE,
+  CEPH_CLUSTER_NAME,
+} from '../consts';
 import {
   createOSDTreeMap,
   getDeviceCount,
@@ -14,7 +21,8 @@ import {
   getPresentPod,
   getPodName,
 } from '../helpers';
-import { commonFlows } from '../views/common';
+
+const ROOK_CONF_PATH = '/var/lib/rook/openshift-storage/openshift-storage.config';
 
 describe('OCS Operator Expansion of Storage Class Test', () => {
   before(() => {
@@ -25,10 +33,6 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
 
   beforeEach(() => {
     cy.visit('/');
-  });
-
-  afterEach(() => {
-    checkErrors();
   });
 
   after(() => {
@@ -45,11 +49,13 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
       osdIDs: null,
     };
 
-    cy.exec('oc get storagecluster ocs-storagecluster -n openshift-storage -o json').then((res) => {
-      const storageCluster = JSON.parse(res.stdout);
-      _.set(initialState, 'storageCluster', storageCluster);
-    });
-    cy.exec('oc get cephCluster ocs-storagecluster-cephcluster -n openshift-storage -o json').then(
+    cy.exec(`oc get storagecluster ${STORAGE_CLUSTER_NAME} -n ${CLUSTER_NAMESPACE} -o json`).then(
+      (res) => {
+        const storageCluster = JSON.parse(res.stdout);
+        _.set(initialState, 'storageCluster', storageCluster);
+      },
+    );
+    cy.exec(`oc get cephCluster ${CEPH_CLUSTER_NAME} -n ${CLUSTER_NAMESPACE} -o json`).then(
       (res) => {
         const cephCluster = JSON.parse(res.stdout);
         _.set(initialState, 'cephCluster', cephCluster);
@@ -59,7 +65,7 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
       },
     );
     cy.exec(
-      `oc -n openshift-storage rsh $(oc get po -n openshift-storage | grep ceph-operator | awk '{print$1}') ceph --conf=/var/lib/rook/openshift-storage/openshift-storage.config osd tree --format=json`,
+      `oc -n ${CLUSTER_NAMESPACE} rsh $(oc get po -n ${CLUSTER_NAMESPACE} | grep ceph-operator | awk '{print$1}') ceph --conf=${ROOK_CONF_PATH} osd tree --format=json`,
       { timeout: 120000 },
     ).then((res) => {
       const osdTree = JSON.parse(res.stdout);
@@ -71,47 +77,63 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
       const osdIDs = getIds(osdTree.nodes, 'osd');
       _.set(initialState, 'osdIDs', osdIDs);
     });
-    cy.exec('oc get po -n openshift-storage -o json').then((res) => {
+    cy.exec(`oc get po -n ${CLUSTER_NAMESPACE} -o json`).then((res) => {
       const pods = JSON.parse(res.stdout);
       _.set(initialState, 'pods', pods);
 
-      commonFlows.navigateToOCS();
-
-      cy.byLegacyTestID('horizontal-link-Storage Cluster').click();
+      ODFCommon.visitStorageDashboard();
+      ODFCommon.visitStorageSystemList();
+      listPage.searchInList(STORAGE_SYSTEM_NAME);
+      // Todo(bipuladh): Add a proper data-selector once the list page is migrated
+      // eslint-disable-next-line cypress/require-data-selectors
+      cy.get('a')
+        .contains(STORAGE_SYSTEM_NAME)
+        .should('exist');
       cy.byLegacyTestID('kebab-button').click();
       cy.byTestActionID('Add Capacity').click();
       modal.shouldBeOpened();
 
-      const initialCapcity =
+      const initialCapacity =
         SIZE_MAP[
           initialState.storageCluster?.spec?.storageDeviceSets?.[0]?.dataPVCTemplate?.spec
             ?.resources?.requests?.storage
         ];
-      cy.byLegacyTestID('requestSize').should('have.value', String(initialCapcity));
+      cy.byLegacyTestID('requestSize').should('have.value', String(initialCapacity));
       cy.byTestID('provisioned-capacity').contains(
-        `${String((initialCapcity * 3).toFixed(2))} TiB`,
+        `${String((initialCapacity * 3).toFixed(0))} TiB`,
       );
       cy.byTestID('add-cap-sc-dropdown', { timeout: 10000 }).should('be.visible');
       modal.submit();
       modal.shouldBeClosed();
 
+      cy.clickNavLink(['Operators', 'Installed Operators']);
+      cy.byLegacyTestID('item-filter').type('Openshift Data Foundation');
+      cy.byTestRows('resource-row')
+        .get('td')
+        .first()
+        .click();
+      cy.byLegacyTestID('horizontal-link-Storage System').click();
+      cy.contains(STORAGE_SYSTEM_NAME).click();
+      cy.contains('Resources').click();
+      cy.byTestOperandLink(STORAGE_CLUSTER_NAME).click();
       // Wait for the storage cluster to reach Ready
       // Storage Cluster CR flickers so wait for 10 seconds
       // Disablng until ocs-operator fixes above issue
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(10000);
-      cy.byTestOperandLink('ocs-storagecluster').click();
       cy.byTestID('resource-status').contains('Ready', { timeout: 900000 });
     });
-    cy.exec('oc get storagecluster ocs-storagecluster -n openshift-storage -o json').then((res) => {
-      const storageCluster = JSON.parse(res.stdout);
-      // Assertion of increment of device count
-      cy.log('Check cluster deivce set count has increased');
-      expect(getDeviceCount(initialState.storageCluster)).toEqual(
-        getDeviceCount(storageCluster) - 1,
-      );
-    });
-    cy.exec('oc get cephCluster ocs-storagecluster-cephcluster -n openshift-storage -o json').then(
+    cy.exec(`oc get storagecluster ${STORAGE_CLUSTER_NAME} -n ${CLUSTER_NAMESPACE} -o json`).then(
+      (res) => {
+        const storageCluster = JSON.parse(res.stdout);
+        // Assertion of increment of device count
+        cy.log('Check cluster device set count has increased');
+        expect(getDeviceCount(initialState.storageCluster)).toEqual(
+          getDeviceCount(storageCluster) - 1,
+        );
+      },
+    );
+    cy.exec(`oc get cephCluster ${CEPH_CLUSTER_NAME} -n ${CLUSTER_NAMESPACE} -o json`).then(
       (res) => {
         const cephCluster = JSON.parse(res.stdout);
 
@@ -119,7 +141,7 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
         expect(cephCluster.status.ceph.health).not.toBe(CLUSTER_STATUS.HEALTH_ERROR);
       },
     );
-    cy.exec('oc get po -n openshift-storage -o json').then((res) => {
+    cy.exec(`oc get po -n ${CLUSTER_NAMESPACE} -o json`).then((res) => {
       const pods = JSON.parse(res.stdout);
 
       cy.log('Check Pods have not restarted unexpectedly');
@@ -133,7 +155,7 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
       });
     });
     cy.exec(
-      `oc -n openshift-storage rsh $(oc get po -n openshift-storage | grep ceph-operator | awk '{print$1}') ceph --conf=/var/lib/rook/openshift-storage/openshift-storage.config osd tree --format=json`,
+      `oc -n ${CLUSTER_NAMESPACE} rsh $(oc get po -n ${CLUSTER_NAMESPACE} | grep ceph-operator | awk '{print$1}') ceph --conf=${ROOK_CONF_PATH} osd tree --format=json`,
       { timeout: 120000 },
     ).then((res) => {
       const osdTree = JSON.parse(res.stdout);

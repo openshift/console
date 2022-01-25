@@ -1,4 +1,3 @@
-import { checkErrors } from '../../../integration-tests-cypress/support';
 import {
   createBucketClass,
   Tier,
@@ -28,7 +27,6 @@ describe('Tests creation of Standard Bucket Class', () => {
   afterEach(() => {
     verifyBucketClass();
     deleteBucketClass();
-    checkErrors();
   });
 
   after(() => {
@@ -76,7 +74,6 @@ describe('Tests creation of Namespace Bucket Class', () => {
   afterEach(() => {
     verifyBucketClass();
     deleteBucketClass();
-    checkErrors();
   });
 
   after(() => {

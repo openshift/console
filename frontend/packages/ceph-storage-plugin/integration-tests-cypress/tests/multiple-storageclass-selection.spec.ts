@@ -1,7 +1,9 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ODFCommon } from '../../../integration-tests-cypress/views/common';
+import { listPage } from '../../../integration-tests-cypress/views/list-page';
 import { getCurrentDeviceSetIndex } from '../../src/utils/add-capacity';
+import { STORAGE_SYSTEM_NAME } from '../consts';
 import { testEbsSC, testNoProvisionerSC, getPVJSON } from '../mocks/storageclass';
-import { commonFlows } from '../views/common';
 import {
   withJSONResult,
   fetchStorageClusterJson,
@@ -35,8 +37,14 @@ describe('Add capacity using multiple storage classes', () => {
         cy.exec(`echo '${JSON.stringify(getPVJSON(id, nodeName, scName))}' | kubectl apply -f -`);
       });
     });
-    commonFlows.navigateToOCS();
-    cy.byLegacyTestID('horizontal-link-Storage Cluster').click();
+    ODFCommon.visitStorageDashboard();
+    ODFCommon.visitStorageSystemList();
+    listPage.searchInList(STORAGE_SYSTEM_NAME);
+    // Todo(bipuladh): Add a proper data-selector once the list page is migrated
+    // eslint-disable-next-line cypress/require-data-selectors
+    cy.get('a')
+      .contains(STORAGE_SYSTEM_NAME)
+      .should('exist');
   });
 
   beforeEach(() => {

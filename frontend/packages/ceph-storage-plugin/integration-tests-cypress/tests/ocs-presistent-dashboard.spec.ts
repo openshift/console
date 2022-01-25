@@ -1,4 +1,6 @@
-import { checkErrors } from '../../../integration-tests-cypress/support';
+import { ODFCommon } from '../../../integration-tests-cypress/views/common';
+import { listPage } from '../../../integration-tests-cypress/views/list-page';
+import { STORAGE_SYSTEM_NAME } from '../consts';
 import { getPVCJSON } from '../helpers/pvc';
 
 describe('Check OCS Dashboards', () => {
@@ -6,11 +8,13 @@ describe('Check OCS Dashboards', () => {
     cy.login();
     cy.visit('/');
     cy.install();
-    cy.visit('/ocs-dashboards/block-file');
-  });
-
-  afterEach(() => {
-    checkErrors();
+    ODFCommon.visitStorageSystemList();
+    listPage.searchInList(STORAGE_SYSTEM_NAME);
+    // Todo(bipuladh): Add a proper data-selector once the list page is migrated
+    // eslint-disable-next-line cypress/require-data-selectors
+    cy.get('a')
+      .contains(STORAGE_SYSTEM_NAME)
+      .click();
   });
 
   after(() => {
@@ -30,7 +34,7 @@ describe('Check OCS Dashboards', () => {
 
   it('Check Details card is correct', () => {
     cy.byTestID('ocs-link')
-      .contains('OpenShift Container Storage')
+      .contains('OpenShift Data Foundation')
       .scrollIntoView()
       .should('be.visible');
     cy.contains('ocs-storagecluster')
@@ -43,11 +47,11 @@ describe('Check OCS Dashboards', () => {
     cy.get('.skeleton-activity').should('not.exist');
     cy.byTestID('inventory-nodes')
       .invoke('text')
-      .then((text) => {
+      .then(() => {
         cy.exec(
           `oc get nodes -l cluster.ocs.openshift.io/openshift-storage -o json | jq '.items | length'`,
         ).then(({ stdout }) => {
-          expect(text).toEqual(`${stdout.trim()} Nodes`);
+          cy.byTestID('inventory-nodes').contains(`${stdout.trim()} Nodes`);
         });
       });
 

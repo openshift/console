@@ -1,5 +1,26 @@
 export const OCS_OP = 'OpenShift Container Storage';
+export const ODF_OP = 'Openshift Data Foundation';
+export const ODF_PLUGIN_NAME = 'odf-console';
+export const STORAGE_SYSTEM_NAME = 'ocs-storagecluster-storagesystem';
+export const STORAGE_CLUSTER_NAME = 'ocs-storagecluster';
+export const CEPH_CLUSTER_NAME = `${STORAGE_CLUSTER_NAME}-cephcluster`;
 export const NS = 'openshift-storage';
+
+/* OCS_SC_STATE is divided up into sub-strings for better readability
+ * as OCS_SC_JSONPATH uses some escape sequences in order to fetch the
+ * StorageCluster's status.
+ */
+const CLUSTER_PHASE_QUERY = (name: string) => {
+  // eslint-disable-next-line
+  return `{range .items[*]}{.metadata.name==${name}\"}{.status.phase}{\"\\n\"}{end}`;
+};
+const STORAGECLUSTER_PHASE = `"$(oc get storageclusters -n openshift-storage -o=jsonpath='${CLUSTER_PHASE_QUERY(
+  STORAGE_CLUSTER_NAME,
+)}')"`;
+export const OCS_SC_STATE = `until [ ${STORAGECLUSTER_PHASE} = "Ready" ]; do sleep 1; done;`;
+
+const ODF_CONSOLE_PHASE = `"$(oc get pod -l app=odf-console -n openshift-storage -o jsonpath='{.items[0].status.phase}')"`;
+export const ODF_CONSOLE_STATE = `until [ ${ODF_CONSOLE_PHASE} = "Running" ]; do sleep 1; done;`;
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -38,7 +59,6 @@ export const EXPAND_WAIT = 15 * MINUTE;
 export const CAPACITY_UNIT = 'TiB';
 export const CAPACITY_VALUE = '2';
 export const OCS_OPERATOR_NAME = 'ocs-operatorv4';
-export const STORAGE_CLUSTER_NAME = 'ocs-storagecluster';
 export const HOST = 'host';
 export const ZONE = 'zone';
 export const OSD = 'osd';

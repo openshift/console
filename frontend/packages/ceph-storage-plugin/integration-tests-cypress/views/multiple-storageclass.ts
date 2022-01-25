@@ -1,4 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { modal } from '../../../integration-tests-cypress/views/modal';
 import { OCS_INTERNAL_CR_NAME } from '../../src/constants';
 import { DeviceSet } from '../../src/types';
 import { getCurrentDeviceSetIndex } from '../../src/utils/add-capacity';
@@ -19,6 +20,7 @@ export const fetchWorkerNodesJson = () =>
 export const addCapacity = (uid: string, scName: string) => {
   cy.byLegacyTestID('kebab-button').click(); // 'data-test-id'
   cy.byTestActionID('Add Capacity').click(); // 'data-test-action'
+  modal.shouldBeOpened();
   cy.byTestID('add-cap-sc-dropdown').click(); // 'data-test'
   cy.byTestID('dropdown-menu-item-link')
     .contains(scName)

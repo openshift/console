@@ -21,6 +21,7 @@ declare global {
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
       ): Chainable<Element>;
       byTestDropDownMenu(selector: string): Chainable<Element>;
+      byTestRows(selector: string): Chainable<Element>;
       byTestOperatorRow(
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
@@ -64,6 +65,8 @@ Cypress.Commands.add(
 Cypress.Commands.add('byTestDropDownMenu', (selector: string) =>
   cy.get(`[data-test-dropdown-menu="${selector}"]`),
 );
+
+Cypress.Commands.add('byTestRows', (selector: string) => cy.get(`[data-test-rows="${selector}"]`));
 
 Cypress.Commands.add('byTestOperatorRow', (selector: string, options?: object) =>
   cy.get(`[data-test-operator-row="${selector}"]`, options),

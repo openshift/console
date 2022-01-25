@@ -1,5 +1,4 @@
-import { checkErrors } from '../../../integration-tests-cypress/support';
-import { commonFlows } from '../views/common';
+import { ODFCommon } from '../../../integration-tests-cypress/views/common';
 import { createStore, Providers, testName } from '../views/store';
 
 describe('Tests creation of Backing Stores', () => {
@@ -17,12 +16,11 @@ describe('Tests creation of Backing Stores', () => {
     cy.byLegacyTestID('actions-menu-button').click();
     cy.byTestActionID('Delete Backing Store').click();
     cy.byTestID('confirm-action').click();
-    checkErrors();
   });
 
   beforeEach(() => {
     cy.visit('/');
-    commonFlows.navigateToOCS();
+    ODFCommon.visitStorageDashboard();
     cy.byLegacyTestID('horizontal-link-Backing Store').click();
     cy.byTestID('item-create').click();
   });
