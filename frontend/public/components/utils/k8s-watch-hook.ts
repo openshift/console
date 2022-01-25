@@ -37,8 +37,15 @@ const getIDAndDispatch: GetIDAndDispatch = (resource, k8sModel) => {
   );
   const id = makeReduxID(k8sModel, query);
   const dispatch = resource.isList
-    ? k8sActions.watchK8sList(id, query, k8sModel)
-    : k8sActions.watchK8sObject(id, resource.name, resource.namespace, query, k8sModel);
+    ? k8sActions.watchK8sList(id, query, k8sModel, null, resource.partialMetadata)
+    : k8sActions.watchK8sObject(
+        id,
+        resource.name,
+        resource.namespace,
+        query,
+        k8sModel,
+        resource.partialMetadata,
+      );
   return { id, dispatch };
 };
 
