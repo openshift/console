@@ -31,6 +31,7 @@
   "Disk Type": "磁盘类型",
   "Advanced": "高级",
   "Volume Mode": "卷模式",
+  "File System Type": "文件系统类型",
   "Disk Size": "磁盘大小",
   "Min": "最小",
   "Please enter a positive Integer": "请输入一个正的整数",

@@ -440,6 +440,7 @@
   "Edit source code": "소스 코드 편집",
   "Hide advanced Routing options": "고급 라우팅 옵션 숨기기",
   "Show advanced Routing options": "고급 라우팅 옵션 표시",
+  "Additional labels which are only added to the Route resource.": "라우팅 리소스에만 추가되는 추가 레이블입니다.",
   "Select the checkbox \"Create a route to the application\" to edit advanced routing options": "고급 라우팅 옵션을 편집하려면 “애플리케이션 경로 만들기” 확인란을 선택합니다.",
   "Hostname": "호스트 이름",
   "Public hostname for the route. If not specified, a hostname is generated.": "경로의 공개 호스트 이름입니다. 지정되지 않은 경우 호스트 이름이 생성됩니다.",
@@ -571,6 +572,8 @@
   "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.": "프로젝트를 선택하여 {{projectLabelPlural}} 목록을 보거나 <4>프로젝트를 생성</4>합니다.",
   "Select a Project to search inside or <2>create a Project</2>.": "프로젝트를 선택하여 내부를 검색하거나 <2>프로젝트를 생성</2>합니다.",
   "BindableKinds": "BindableKinds",
+  "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.": "아래 기본값은 배포 또는 배포 구성을 생성할 때 Git에서 가져오기 및 이미지 배포 양식에만 적용됩니다.",
+  "Secure route": "보안 경로",
   "Image name from external registry": "외부 레지스트리의 이미지 이름",
   "Image stream tag from internal registry": "내부 레지스트리의 이미지 스트림 태그"
 }

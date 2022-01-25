@@ -9,5 +9,13 @@
   "Network attachment definition name must start/end with alphanumeric character": "ネットワーク接続定義名は英数字で開始/終了する必要があります",
   "Network attachment definition name cannot contain uppercase characters": "ネットワーク接続定義名に大文字は使用できません",
   "Network attachment definition name is too long": "ネットワーク接続定義名が長すぎます",
-  "Network attachment definition name is too short": "ネットワーク接続定義名が短すぎます"
+  "Network attachment definition name is too short": "ネットワーク接続定義名が短すぎます",
+  "Create Network Attachment Definition": "ネットワーク接続定義の作成",
+  "Edit YAML": "YAML の編集",
+  "Name": "名前",
+  "Description": "説明",
+  "Network Type": "ネットワークタイプ",
+  "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "ネットワークタイプを選択するには、<0>OpenShift Virtualization Operator</0> または <3>SR-IOV Network Operator</3> がクラスターにインストールされている必要があります。",
+  "Create": "作成",
+  "Cancel": "キャンセル"
 }

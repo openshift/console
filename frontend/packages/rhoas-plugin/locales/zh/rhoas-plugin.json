@@ -8,6 +8,7 @@
   "Managed Services": "受管服务",
   "Discover managed services to simplify deployments and reduce operational overhead & complexities": "发现受管服务以简化部署并减少操作开销和复杂性",
   "Browse managed services to connect applications and microservices to support services to create a full solution.": "浏览管理的服务将应用程序和微服务连接到支持服务，以创建一个完整的解决方案。",
+  "Application Services": "应用程序服务",
   "Create a Kafka connector": "创建一个 Kafka 连接器",
   "Unlock with token": "使用令牌解锁",
   "Unlocked": "未锁定",

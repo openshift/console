@@ -440,6 +440,7 @@
   "Edit source code": "编辑源代码",
   "Hide advanced Routing options": "隐藏高级路由选项",
   "Show advanced Routing options": "显示高级路由选项",
+  "Additional labels which are only added to the Route resource.": "仅添加到路由资源的额外标签。",
   "Select the checkbox \"Create a route to the application\" to edit advanced routing options": "选择\"创建到应用程序的路由\"复选框来编辑高级路由选项",
   "Hostname": "主机名",
   "Public hostname for the route. If not specified, a hostname is generated.": "路由的公共主机名。如果没有指定，则会生成一个主机名。",
@@ -571,6 +572,8 @@
   "Select a Project to view the list of {{projectLabelPlural}} or <4>create a Project</4>.": "选择一个项目来查看 {{projectLabelPlural}} 列表或<4>创建一个项目</4>。",
   "Select a Project to search inside or <2>create a Project</2>.": "选择一个项目在其中搜索或<2>创建一个项目</2>。",
   "BindableKinds": "可绑定类型",
+  "The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.": "以下默认值仅适用于在创建部署或部署配置时从 Git 和部署镜像导入。",
+  "Secure route": "安全路由",
   "Image name from external registry": "来自外部容器镜像仓库的镜像名称",
   "Image stream tag from internal registry": "内部容器镜像仓库的镜像流标签"
 }
