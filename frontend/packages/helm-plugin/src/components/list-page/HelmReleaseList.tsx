@@ -43,7 +43,10 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
       kind: SecretModel.kind,
       namespaced: true,
       optional: true,
-      selector: { matchLabels: { owner: 'helm' } },
+      selector: {
+        matchLabels: { owner: 'helm' },
+        matchExpressions: [{ key: 'status', operator: 'NotEquals', values: ['superseded'] }],
+      },
       partialMetadata: true,
     }),
     [namespace],

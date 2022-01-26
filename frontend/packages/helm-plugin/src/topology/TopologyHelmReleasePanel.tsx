@@ -48,7 +48,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
   const secret = helmRelease.getData().resources.obj;
   const { manifestResources, releaseNotes } = helmRelease.getData().data;
   const name = helmRelease.getLabel();
-  const { namespace } = getResource(helmRelease).metadata;
+  const { namespace } = getResource(helmRelease)?.metadata;
 
   const detailsComponent = !secret
     ? () => (
@@ -64,7 +64,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
     : navFactory.details(HelmReleaseOverview).component;
 
   const resourcesComponent = () =>
-    manifestResources ? (
+    namespace && manifestResources ? (
       <div className="overview__sidebar-pane-body">
         <TopologyGroupResourcesPanel
           manifestResources={manifestResources}
@@ -82,7 +82,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <ResourceIcon className="co-m-resource-icon--lg" kind="HelmRelease" />
-            {name && (
+            {namespace && name && (
               <Link
                 to={`/helm-releases/ns/${namespace}/release/${name}`}
                 className="co-resource-item__resource-name"
