@@ -12,10 +12,7 @@ import {
   OPENSHIFT_OS_IMAGES_NS,
   VMWizardName,
 } from '../../constants';
-import {
-  customizeWizardBaseURLBuilder,
-  VIRTUALMACHINES_TEMPLATES_BASE_URL,
-} from '../../constants/url-params';
+import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
@@ -144,17 +141,9 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       [VMWizardName.YAML]: t('kubevirt-plugin~With YAML'),
     },
     createLink: (itemName: string) => {
-      const baseUrlWizard = customizeWizardBaseURLBuilder(namespace);
-      const baseURLYaml = `/k8s/ns/${namespace || 'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}`;
-
-      switch (itemName) {
-        case VMWizardName.WIZARD:
-          return `${baseUrlWizard}?mode=template`;
-        case VMWizardName.YAML:
-          return `${baseURLYaml}/~new?mode=template`;
-        default:
-          return `${baseUrlWizard}?mode=template`;
-      }
+      const customize = itemName === VMWizardName.WIZARD ? '/customize' : '';
+      return `/k8s/ns/${namespace ||
+        'default'}/${VIRTUALMACHINES_TEMPLATES_BASE_URL}/~new${customize}?mode=template`;
     },
   };
 

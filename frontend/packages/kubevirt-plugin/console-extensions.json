@@ -148,6 +148,19 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
+      "path": ["/k8s/ns/:ns/virtualmachinetemplates/~new/customize"],
+      "component": {
+        "$codeRef": "CreateVMWizardPage.CreateVMWizardPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
       "path": ["/k8s/ns/:ns/virtualmachinetemplates/~new"],
       "component": {
         "$codeRef": "VMCreateYAML.VMCreateYAML"
