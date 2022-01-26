@@ -27,6 +27,7 @@ import {
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
+  iGetNamespace,
 } from '../../selectors/immutable/selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import {
@@ -42,6 +43,7 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../types';
+import { findDataSourcePVC } from '../../utils/utils';
 import { InitialStepStateGetter } from './types';
 
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -308,13 +310,24 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const pvcName = iGetPVCName(iTemplate);
     const pvcNamespace = iGetPVCNamespace(iTemplate);
-
+    const dataSources = iGetCommonData(state, id, VMWizardProps.dataSources);
+    const pvcs = iGetCommonData(state, id, VMWizardProps.pvcs);
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
       .valueSeq()
       .find((iPVC) => iGetName(iPVC) === pvcName);
-    const pvcSize = iGetIn(iBaseImage, ['spec', `resources`, `requests`, `storage`]);
 
-    return getBaseImageStorage(pvcName, pvcNamespace, pvcSize, diskBus, accessMode, volumeMode);
+    const dsBaseImage = findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
+    const image = dsBaseImage || iBaseImage;
+    const pvcSize = iGetIn(image, ['spec', `resources`, `requests`, `storage`]);
+
+    return getBaseImageStorage(
+      iGetName(image),
+      iGetNamespace(image),
+      pvcSize,
+      diskBus,
+      accessMode,
+      volumeMode,
+    );
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate) {
     const iOldSourceStorage = iGetProvisionSourceStorage(state, id);

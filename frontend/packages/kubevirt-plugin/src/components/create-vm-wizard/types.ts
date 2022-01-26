@@ -23,6 +23,8 @@ export enum VMWizardProps {
   isTemplateInitialized = 'isTemplateInitialized',
   userTemplates = 'userTemplates',
   dataVolumes = 'dataVolumes',
+  dataSources = 'dataSources',
+  pvcs = 'pvcs',
   userTemplate = 'userTemplate',
   activeNamespace = 'activeNamespace',
   openshiftFlag = 'openshiftFlag',
@@ -240,6 +242,8 @@ export type ChangedCommonDataProp =
   | VMWizardProps.cdRom
   | VMWizardProps.openshiftCNVBaseImages
   | VMWizardProps.dataVolumes
+  | VMWizardProps.dataSources
+  | VMWizardProps.pvcs
   | VMWizardProps.storageClassConfigMap
   | VMWizardProps.nads
   | VMWareProviderProps.deployment
@@ -274,6 +278,8 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.storageClassConfigMap,
   VMWizardProps.openshiftCNVBaseImages,
   VMWizardProps.dataVolumes,
+  VMWizardProps.dataSources,
+  VMWizardProps.pvcs,
   VMWizardProps.nads,
   VMWareProviderProps.deployment,
   VMWareProviderProps.deploymentPods,

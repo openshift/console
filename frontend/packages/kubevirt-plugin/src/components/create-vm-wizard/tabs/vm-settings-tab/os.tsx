@@ -35,7 +35,7 @@ import { iGetFieldValue } from '../../selectors/immutable/field';
 import { iGetName, iGetNamespace } from '../../selectors/immutable/selectors';
 import { VMSettingsField } from '../../types';
 import { getFieldId } from '../../utils/renderable-field-utils';
-import { nullOnEmptyChange } from '../../utils/utils';
+import { findDataSourcePVC, nullOnEmptyChange } from '../../utils/utils';
 
 export const OS: React.FC<OSProps> = React.memo(
   ({
@@ -48,6 +48,8 @@ export const OS: React.FC<OSProps> = React.memo(
     flavor,
     workloadProfile,
     cnvBaseImages,
+    dataSources,
+    pvcs,
     onChange,
     openshiftFlag,
     goToStorageStep,
@@ -131,9 +133,10 @@ export const OS: React.FC<OSProps> = React.memo(
       (operatingSystem: OperatingSystemRecord) => {
         const pvcName = operatingSystem?.baseImageName;
         const pvcNamespace = operatingSystem?.baseImageNamespace;
-        const baseImageFoundInCluster = loadedBaseImages?.find(
-          (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
-        );
+        const baseImageFoundInCluster =
+          loadedBaseImages?.find(
+            (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
+          ) || findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
         const isBaseImageUploading =
           iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) ===
           CDI_PVC_PHASE_RUNNING;
@@ -315,6 +318,8 @@ type OSProps = {
   mountWindowsGuestToolsField: any;
   workloadProfile: string;
   cnvBaseImages: any;
+  dataSources: any;
+  pvcs: any;
   openshiftFlag: boolean;
   onChange: (key: string, value: string | boolean) => void;
   goToStorageStep: () => void;
