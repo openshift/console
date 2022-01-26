@@ -162,11 +162,11 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
     if (selectorError) {
       return { error: selectorError };
     }
-    if (!watchPodLoaded) {
-      return { pods: [], total: 0 };
-    }
     if (watchPodError) {
       return { error: watchPodError };
+    }
+    if (!watchPodLoaded) {
+      return { pods: [], total: 0 };
     }
     // If there is a defined namespace selector, filter pods to remove
     // those from non-matching namespaces
@@ -234,7 +234,7 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
       isInline
       title={t("public~Can't preview pods")}
     >
-      <p>{preview.error}</p>
+      <p>{String(preview.error)}</p>
     </Alert>
   ) : (
     <>
