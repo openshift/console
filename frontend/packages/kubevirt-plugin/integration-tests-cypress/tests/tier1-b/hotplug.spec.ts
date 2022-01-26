@@ -190,7 +190,7 @@ xdescribe('Test UI for VM hotplug disks', () => {
     persHotplugDiskClone,
     persHotplugDiskPVC,
   ].forEach((disk) => {
-    it(`${disk.description}`, () => {
+    xit(`${disk.description}`, () => {
       verifyDiskAttached(disk, 'PersistingHotplug');
       deleteRow(disk.name);
       cy.get(`[data-id="${disk.name}"]`).should('not.exist');
@@ -204,7 +204,7 @@ xdescribe('Test UI for VM hotplug disks', () => {
     autoHotplugDiskClone,
     autoHotplugDiskPVC,
   ].forEach((disk) => {
-    it(`${disk.description}`, () => {
+    xit(`${disk.description}`, () => {
       verifyDiskAttached(disk, 'AutoDetachHotplug');
       deleteRow(disk.name);
       cy.get(`[data-id="${disk.name}"]`).should('not.exist');

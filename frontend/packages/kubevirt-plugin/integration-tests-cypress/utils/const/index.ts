@@ -232,3 +232,5 @@ export const TEMPLATE = {
     exampleRegUrl: urls.FEDORA_EXAMPLE_CONTAINER,
   },
 };
+
+export const adminOnlyDescribe = Cypress.env('NON_PRIV') ? xdescribe : describe;
