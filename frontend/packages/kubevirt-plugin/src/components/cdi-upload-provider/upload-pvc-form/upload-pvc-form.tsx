@@ -202,7 +202,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           source: {
             upload: {},
           },
-          pvc: {
+          storage: {
             storageClassName,
             accessModes: [accessMode],
             volumeMode,
@@ -217,7 +217,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 
       return obj;
     };
-    onChange(updateDV);
+    onChange(updateDV());
   }, [
     accessMode,
     volumeMode,
