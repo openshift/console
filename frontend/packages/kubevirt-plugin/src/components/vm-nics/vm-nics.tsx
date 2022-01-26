@@ -159,7 +159,7 @@ export const VMNics: React.FC<VMTabProps> = ({
               }
               isDisabled={isLocked || isCommonTemplate || !canCreate}
             >
-              {t('kubevirt-plugin~Add Network Interface')}
+              {t('kubevirt-plugin~Add network interface')}
             </Button>
           </div>
         </div>

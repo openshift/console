@@ -92,7 +92,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
         {showNetworks && !isCreateDisabled && (
           <SplitItem>
             <Button {...addButtonProps} variant={ButtonVariant.secondary}>
-              {t('kubevirt-plugin~Add Network Interface')}
+              {t('kubevirt-plugin~Add network interface')}
             </Button>
           </SplitItem>
         )}
@@ -130,7 +130,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
             </Title>
             {!isCreateDisabled && (
               <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-                {t('kubevirt-plugin~Add Network Interface')}
+                {t('kubevirt-plugin~Add network interface')}
               </Button>
             )}
           </EmptyState>
