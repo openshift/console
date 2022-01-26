@@ -49,6 +49,8 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   commonTemplates,
   commonTemplateName,
   cnvBaseImages,
+  dataSources,
+  pvcs,
   provisionSourceStorage,
   updateStorage,
   openshiftFlag,
@@ -179,6 +181,8 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         mountWindowsGuestToolsField={getField(VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS)}
         workloadProfile={getFieldValue(VMSettingsField.WORKLOAD_PROFILE)}
         cnvBaseImages={cnvBaseImages}
+        dataSources={dataSources}
+        pvcs={pvcs}
         onChange={onFieldChange}
         openshiftFlag={openshiftFlag}
         goToStorageStep={
@@ -250,6 +254,8 @@ const stateToProps = (state, { wizardReduxID }) => ({
   commonTemplateName: getInitialData(state, wizardReduxID).commonTemplateName,
   cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
   dataVolumes: iGetCommonData(state, wizardReduxID, VMWizardProps.dataVolumes),
+  dataSources: iGetCommonData(state, wizardReduxID, VMWizardProps.dataSources),
+  pvcs: iGetCommonData(state, wizardReduxID, VMWizardProps.pvcs),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
@@ -268,6 +274,8 @@ type VMSettingsTabComponentProps = {
   iUserTemplate: any;
   commonTemplateName: string;
   cnvBaseImages: any;
+  dataSources: any;
+  pvcs: any;
   openshiftFlag: boolean;
   isCreateTemplate: boolean;
   goToStep: (stepID: VMWizardTab) => void;

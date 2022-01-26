@@ -8,8 +8,8 @@ import { match as RouterMatch } from 'react-router';
 import { compose } from 'redux';
 import { Firehose, history } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { TemplateModel } from '@console/internal/models';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, referenceForModel } from '@console/internal/module/k8s';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { featureReducerName, FlagsObject } from '@console/internal/reducers/features';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
@@ -26,13 +26,16 @@ import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-confi
 import { useBaseImages } from '../../hooks/use-base-images';
 import { usePrevious } from '../../hooks/use-previous';
 import { useUpdateStorages } from '../../hooks/use-update-data-volume';
-import { DataVolumeModel, VirtualMachineModel } from '../../models';
+import { DataSourceModel, DataVolumeModel, VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getTemplateName } from '../../selectors/vm-template/basic';
 import { isWindows } from '../../selectors/vm/combined';
+import { DataSourceKind } from '../../types';
 import { FirehoseResourceEnhanced } from '../../types/custom';
 import { ITemplate } from '../../types/template';
 import { VMWizardInitialData } from '../../types/url';
 import { getResource } from '../../utils';
+import { getOSImagesNS } from '../../utils/common';
 import { iGetLoadedData, immutableListToShallowJS } from '../../utils/immutable';
 import { withReduxID } from '../../utils/redux/common';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
@@ -366,6 +369,8 @@ const wizardDispatchToProps = (dispatch, props) => ({
           storageClassConfigMap: undefined,
           openshiftCNVBaseImages: undefined,
           dataVolumes: props.dataVolumes,
+          dataSources: props.dataSources,
+          pvcs: props.pvcs,
           isSimpleView: props.isSimpleView,
         },
         dataIDReferences: props.dataIDReferences,
@@ -406,6 +411,8 @@ const CreateVMWizard = connect(wizardStateToProps, wizardDispatchToProps, null, 
     }),
 })(CreateVMWizardComponent);
 
+const imagesNamespace = getOSImagesNS();
+
 export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentProps> = ({
   reduxID,
   match,
@@ -420,6 +427,16 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   const userMode = searchParams.get(VMWizardURLParams.MODE) || VMWizardMode.VM;
   const [dataVolumes] = useK8sWatchResource({
     kind: referenceForModel(DataVolumeModel),
+    isList: true,
+  });
+  const [pvcs] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
+    namespace: imagesNamespace,
+    kind: PersistentVolumeClaimModel.kind,
+    isList: true,
+  });
+  const [dataSources] = useK8sWatchResource<DataSourceKind[]>({
+    namespace: imagesNamespace,
+    kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
   });
   const initialData = parseVMWizardInitialData(searchParams);
@@ -522,6 +539,8 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         storageClassConfigMap={storageClassConfigMap}
         openshiftCNVBaseImages={openshiftCNVBaseImages}
         dataVolumes={dataVolumes}
+        dataSources={dataSources}
+        pvcs={pvcs}
         reduxID={reduxID}
         onClose={history.goBack}
         initialData={initialData}

@@ -38,7 +38,7 @@ import {
   iGetVmSettingValue,
 } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardProps, VMWizardStorage } from '../../types';
-import { asDisabled, asHidden, asRequired } from '../../utils/utils';
+import { asDisabled, asHidden, asRequired, findDataSourcePVC } from '../../utils/utils';
 import { vmWizardInternalActions } from '../internal-actions';
 import { InternalActionType, UpdateOptions } from '../types';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
@@ -165,6 +165,8 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
     const pvcName = iGetPVCName(iTemplate);
     const pvcNamespace = iGetPVCNamespace(iTemplate);
+    const dataSources = iGetCommonData(state, id, VMWizardProps.dataSources);
+    const pvcs = iGetCommonData(state, id, VMWizardProps.pvcs);
 
     const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
     iBaseImage =
@@ -175,6 +177,10 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
         .find((iPVC) => iGetName(iPVC) === pvcName && iGetNamespace(iPVC) === pvcNamespace);
     iBaseImageUploading =
       iGetAnnotation(iBaseImage, CDI_UPLOAD_POD_ANNOTATION) === CDI_PVC_PHASE_RUNNING;
+
+    if (!iBaseImage) {
+      iBaseImage = findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
+    }
   }
 
   dispatch(
