@@ -8,15 +8,20 @@ import { ImporterPods } from '../../../vm-status/vm-status';
 type VMStatusHealthProps = {
   vmStatusBundle: VMStatusBundle;
   icon: React.ReactNode;
+  printableStatus: string;
 };
 
-const VMStatusHealth: React.FC<VMStatusHealthProps> = ({ vmStatusBundle, icon }) => {
+const VMStatusHealth: React.FC<VMStatusHealthProps> = ({
+  vmStatusBundle,
+  icon,
+  printableStatus,
+}) => {
   const { t } = useTranslation();
 
   const { status, importerPodsStatuses } = vmStatusBundle;
   const message = vmStatusBundle?.message || vmStatusBundle?.detailedMessage;
 
-  const simpleLabel = status.getSimpleLabel();
+  const simpleLabel = printableStatus ?? status.getSimpleLabel();
 
   return (
     <HealthItem
