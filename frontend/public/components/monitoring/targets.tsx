@@ -50,8 +50,9 @@ const ServiceMonitor: React.FC<{ target: Target }> = ({ target }) => {
   // Now find the service monitor that corresponds to the service
   const monitor = _.find(
     monitors,
-    ({ spec }) =>
+    ({ metadata, spec }) =>
       service &&
+      target.scrapePool.includes(`/${metadata.namespace}/${metadata.name}/`) &&
       ((spec.selector.matchLabels === undefined && spec.selector.matchExpressions === undefined) ||
         new LabelSelector(spec.selector).matchesLabels(service.metadata.labels ?? {})) &&
       (spec.namespaceSelector?.matchNames === undefined ||
