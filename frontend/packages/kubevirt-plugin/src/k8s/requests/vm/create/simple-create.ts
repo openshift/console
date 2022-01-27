@@ -143,7 +143,7 @@ export const prepareVM = async (
     let rootDataVolume;
     let isCDRom: boolean;
 
-    if (customSource?.dataSource?.value) {
+    if (customSource?.dataSource?.value && !sourceStatus) {
       isCDRom = customSource.cdRom?.value;
       rootDataVolume = getRootDataVolume({
         name: rootVolume.getDataVolumeName(),

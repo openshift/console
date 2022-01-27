@@ -172,7 +172,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
 
   let source: React.ReactNode;
   let cdRom = false;
-  if (customSource?.dataSource) {
+  if (customSource?.dataSource && !sourceStatus) {
     cdRom = customSource.cdRom?.value;
     switch (DataVolumeSourceType.fromString(customSource.dataSource?.value)) {
       case DataVolumeSourceType.HTTP:
