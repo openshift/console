@@ -10,6 +10,7 @@ type BaseOptions = {
   ns?: string;
   path?: string;
   queryParams?: QueryParams;
+  cluster?: string;
 };
 
 type AdapterFunc = <D extends BaseOptions>(
@@ -28,12 +29,13 @@ const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
     const args = knownArgs.map((arg) => {
       // forming opts to match underlying API signature if it's there in knownArgs
       if (arg === 'opts') {
-        const { name, ns, path, queryParams } = options || {};
+        const { name, ns, path, queryParams, cluster } = options || {};
         return {
           ...(name && { name }),
           ...(ns && { ns }),
           ...(path && { path }),
           ...(queryParams && { queryParams }),
+          ...(cluster && { cluster }),
         };
       }
       return options[arg];
@@ -61,7 +63,14 @@ export const k8sGet = (
   ns?: string,
   opts?: Options,
   requestInit?: RequestInit,
-) => coFetchJSON(resourceURL(model, Object.assign({ ns, name }, opts)), 'GET', requestInit);
+) =>
+  coFetchJSON(
+    resourceURL(model, Object.assign({ ns, name }, opts)),
+    'GET',
+    requestInit,
+    null,
+    opts?.cluster,
+  );
 
 type OptionsGet = BaseOptions & {
   model: K8sModel;
@@ -109,6 +118,9 @@ export const k8sCreate = <R extends K8sResourceCommon>(
   return coFetchJSON.post(
     resourceURL(model, Object.assign({ ns: data?.metadata?.namespace }, opts)),
     data,
+    null,
+    null,
+    opts.cluster,
   );
 };
 
@@ -164,6 +176,9 @@ export const k8sUpdate = <R extends K8sResourceCommon>(
       ...opts,
     }),
     data,
+    null,
+    null,
+    opts?.cluster,
   );
 
 type OptionsUpdate<R> = BaseOptions & {
@@ -233,6 +248,9 @@ export const k8sPatch = <R extends K8sResourceCommon>(
       ),
     ),
     patches,
+    null,
+    null,
+    opts.cluster,
   );
 };
 
@@ -300,6 +318,8 @@ export const k8sKill = <R extends K8sResourceCommon>(
     ),
     jsonData,
     requestInit,
+    null,
+    opts.cluster,
   );
 };
 
@@ -355,6 +375,7 @@ export const k8sList = (
   queryParams: { [key: string]: any } = {},
   raw = false,
   requestInit: RequestInit = {},
+  cluster?: string,
 ) => {
   const query = _.map(_.omit(queryParams, 'ns'), (v, k) => {
     let newVal;
@@ -365,7 +386,7 @@ export const k8sList = (
   }).join('&');
 
   const listURL = resourceURL(model, { ns: queryParams.ns });
-  return coFetchJSON(`${listURL}?${query}`, 'GET', requestInit).then((result) => {
+  return coFetchJSON(`${listURL}?${query}`, 'GET', requestInit, null, cluster).then((result) => {
     const typedItems = result.items?.map((i) => ({
       kind: model.kind,
       apiVersion: result.apiVersion,
@@ -397,4 +418,5 @@ export const k8sListResource: K8sListResource = adapterFunc(k8sList, [
   'queryParams',
   'raw',
   'requestInit',
+  'cluster',
 ]);

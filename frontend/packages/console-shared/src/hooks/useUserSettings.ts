@@ -8,6 +8,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ConfigMapModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
+import { HUB_CLUSTER_NAME } from '@console/shared/src/constants/common';
 import {
   createConfigMap,
   deseralizeData,
@@ -101,6 +102,7 @@ export const useUserSettings = <T>(
             namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
             isList: false,
             name: `user-settings-${userUid}`,
+            cluster: HUB_CLUSTER_NAME,
           },
     [userUid, isLocalStorage],
   );

@@ -53,7 +53,6 @@ func Parse(fs *flag.FlagSet, args []string, envPrefix string) error {
 	}
 
 	configFile := fs.Lookup("config").Value.String()
-
 	if configFile != "" {
 		if err := SetFlagsFromConfig(fs, configFile); err != nil {
 			klog.Fatalf("Failed to load config: %v", err)
@@ -99,6 +98,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
+	addManagedClusters(fs, config.ManagedClusterConfigFile)
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
 		return err
@@ -309,5 +309,34 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 func addPlugins(fs *flag.FlagSet, plugins map[string]string) {
 	for pluginName, pluginEndpoint := range plugins {
 		fs.Set("plugins", fmt.Sprintf("%s=%s", pluginName, pluginEndpoint))
+	}
+}
+
+func addManagedClusters(fs *flag.FlagSet, fileName string) {
+	if fileName != "" {
+		klog.V(4).Info("Setting managed-clusters flag from config file")
+		content, err := ioutil.ReadFile(fileName)
+		if err != nil {
+			klog.Fatalf("Error reading managed cluster config: %v", err)
+		}
+
+		managedClusterConfigs := []ManagedClusterConfig{}
+		err = yaml.Unmarshal(content, &managedClusterConfigs)
+		if err != nil {
+			klog.Fatalf("Error unmarshalling managed cluster yaml: %v", err)
+		}
+
+		if len(managedClusterConfigs) == 0 {
+			klog.V(4).Info("Managed cluster config is empty.")
+			return
+		}
+
+		configJSON, err := json.Marshal(managedClusterConfigs)
+		if err != nil {
+			klog.Fatalf("Error marshalling managed cluster config into JSON: %v", err)
+		}
+
+		klog.Infof("Successfully parsed configs for %v managed cluster(s).", len(managedClusterConfigs))
+		fs.Set("managed-clusters", string(configJSON))
 	}
 }

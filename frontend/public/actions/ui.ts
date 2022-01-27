@@ -126,7 +126,12 @@ export const getPVCMetric = (pvc: K8sResourceKind, metric: string): number => {
   return metrics?.[metric]?.[pvc.metadata.namespace]?.[pvc.metadata.name] ?? 0;
 };
 
-export const formatNamespaceRoute = (activeNamespace, originalPath, location?) => {
+export const formatNamespaceRoute = (
+  activeNamespace,
+  originalPath,
+  location?,
+  forceList?: boolean,
+) => {
   let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
 
   let parts = path.split('/').filter((p) => p);
@@ -148,7 +153,8 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location?) =
   if (
     (previousNS !== activeNamespace &&
       (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) ||
-    (activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new')
+    (activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new') ||
+    forceList
   ) {
     // a given resource will not exist when we switch namespaces, so pop off the tail end
     parts = parts.slice(0, 1);

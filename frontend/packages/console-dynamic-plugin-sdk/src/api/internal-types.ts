@@ -191,4 +191,5 @@ export type Options = {
   name?: string;
   path?: string;
   queryParams?: QueryParams;
+  cluster?: string;
 };

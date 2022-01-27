@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from '@patternfly/react-core';
 
-import { ONE_HOUR, ONE_MINUTE, Status } from '@console/shared';
+import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   K8sResourceKindReference,
@@ -49,7 +49,7 @@ import {
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
-import { Area, requirePrometheus } from './graphs';
+import { Area } from './graphs';
 import { BuildModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
@@ -146,11 +146,9 @@ export const BuildNumberLink = ({ build }) => {
 };
 
 // TODO update to use QueryBrowser for each graph
-const BuildMetrics = requirePrometheus(({ obj }) => {
+const BuildMetrics = ({ obj }) => {
+  const { t } = useTranslation();
   const podName = obj.metadata.annotations?.['openshift.io/build.pod-name'];
-  if (!podName) {
-    return null;
-  }
   const endTime = obj.status.completionTimestamp
     ? new Date(obj.status.completionTimestamp).getTime()
     : Date.now();
@@ -172,8 +170,7 @@ const BuildMetrics = requirePrometheus(({ obj }) => {
     [domain, endTime, namespace, timespan],
   );
 
-  const { t } = useTranslation();
-  return (
+  return podName ? (
     <Dashboard className="resource-metrics-dashboard">
       <Grid hasGutter>
         <GridItem xl={6} lg={12}>
@@ -223,8 +220,8 @@ const BuildMetrics = requirePrometheus(({ obj }) => {
       </Grid>
       <br />
     </Dashboard>
-  );
-});
+  ) : null;
+};
 
 export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
   const { t } = useTranslation();
@@ -380,23 +377,24 @@ export const BuildEnvironmentComponent = (props) => {
   );
 };
 
-const pages = [
-  navFactory.details(BuildsDetails),
-  {
-    href: 'metrics',
-    // t('public~Metrics')
-    nameKey: 'public~Metrics',
-    component: BuildMetrics,
-  },
-  navFactory.editYaml(),
-  navFactory.envEditor(BuildEnvironmentComponent),
-  navFactory.logs(BuildLogs),
-  navFactory.events(ResourceEventStream),
-];
-
-export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = (props) => (
-  <DetailsPage {...props} kind={BuildsReference} menuActions={menuActions} pages={pages} />
-);
+export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = (props) => {
+  const prometheusIsAvailable = usePrometheusGate();
+  return (
+    <DetailsPage
+      {...props}
+      kind={BuildsReference}
+      menuActions={menuActions}
+      pages={[
+        navFactory.details(BuildsDetails),
+        ...(prometheusIsAvailable ? [navFactory.metrics(BuildMetrics)] : []),
+        navFactory.editYaml(),
+        navFactory.envEditor(BuildEnvironmentComponent),
+        navFactory.logs(BuildLogs),
+        navFactory.events(ResourceEventStream),
+      ]}
+    />
+  );
+};
 BuildsDetailsPage.displayName = 'BuildsDetailsPage';
 
 const tableColumnClasses = [

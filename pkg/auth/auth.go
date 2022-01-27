@@ -113,6 +113,7 @@ type Config struct {
 	// cookiePath is an abstraction leak. (unfortunately, a necessary one.)
 	CookiePath    string
 	SecureCookies bool
+	ClusterName   string
 }
 
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
@@ -186,8 +187,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			a.userFunc = getOpenShiftUser
 			authSourceFunc = func() (oauth2.Endpoint, loginMethod, error) {
 				// Use the k8s CA for OAuth metadata discovery.
-				// Don't include system roots when talking to the API server.
-				k8sClient, errK8Client := newHTTPClient(c.K8sCA, false)
+				k8sClient, errK8Client := newHTTPClient(c.K8sCA, true)
 				if errK8Client != nil {
 					return oauth2.Endpoint{}, nil, errK8Client
 				}
@@ -198,6 +198,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 					issuerURL:     c.IssuerURL,
 					cookiePath:    c.CookiePath,
 					secureCookies: c.SecureCookies,
+					clusterName:   c.ClusterName,
 				})
 			}
 		default:
@@ -327,6 +328,8 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 		Value:    state,
 		HttpOnly: true,
 		Secure:   a.secureCookies,
+		// Make sure cookie path matches multi-cluster login paths
+		Path: "/",
 	}
 	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, a.getOAuth2Config().AuthCodeURL(state), http.StatusSeeOther)
@@ -485,4 +488,8 @@ func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
 	}
 
 	return fmt.Errorf("CSRF token does not match CSRF cookie")
+}
+
+func (a *Authenticator) GetCookiePath() string {
+	return a.cookiePath
 }

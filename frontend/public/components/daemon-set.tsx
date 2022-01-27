@@ -11,6 +11,7 @@ import {
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
+  usePrometheusGate,
 } from '@console/shared';
 import { K8sResourceKind, referenceFor, referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -174,7 +175,6 @@ const DaemonSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: da
   );
 };
 
-const { details, pods, editYaml, envEditor, events, metrics } = navFactory;
 export const DaemonSets: React.FC = (props) => {
   const { t } = useTranslation();
   const DaemonSetTableHeader = () => [
@@ -235,6 +235,7 @@ const DaemonSetPods: React.FC<DaemonSetPodsProps> = (props) => (
 );
 
 export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => {
+  const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -254,12 +255,12 @@ export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (prop
       kind={kind}
       customActionMenu={customActionMenu}
       pages={[
-        details(detailsPage(DaemonSetDetails)),
-        metrics(),
-        editYaml(),
-        pods(DaemonSetPods),
-        envEditor(EnvironmentTab),
-        events(ResourceEventStream),
+        navFactory.details(detailsPage(DaemonSetDetails)),
+        ...(prometheusIsAvailable ? [navFactory.metrics()] : []),
+        navFactory.editYaml(),
+        navFactory.pods(DaemonSetPods),
+        navFactory.envEditor(EnvironmentTab),
+        navFactory.events(ResourceEventStream),
       ]}
     />
   );

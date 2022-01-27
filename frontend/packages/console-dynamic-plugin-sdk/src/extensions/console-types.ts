@@ -158,6 +158,7 @@ export type WatchK8sResource = {
   fieldSelector?: string;
   optional?: boolean;
   partialMetadata?: boolean;
+  cluster?: string;
 };
 
 export type ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
@@ -228,14 +229,45 @@ export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
   timeout?: number,
+  cluster?: string,
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
-  (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
-  delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
-  post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
-  put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
-  patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  (
+    url: string,
+    method?: string,
+    options?: RequestInit,
+    timeout?: number,
+    cluster?: string,
+  ): Promise<T>;
+  delete(
+    url: string,
+    json?: any,
+    options?: RequestInit,
+    timeout?: number,
+    cluster?: string,
+  ): Promise<T>;
+  post(
+    url: string,
+    json: any,
+    options?: RequestInit,
+    timeout?: number,
+    cluster?: string,
+  ): Promise<T>;
+  put(
+    url: string,
+    json: any,
+    options?: RequestInit,
+    timeout?: number,
+    cluster?: string,
+  ): Promise<T>;
+  patch(
+    url: string,
+    json: any,
+    options?: RequestInit,
+    timeout?: number,
+    cluster?: string,
+  ): Promise<T>;
 };
 
 export type ConsoleFetchText = (...args: Parameters<ConsoleFetch>) => Promise<string>;

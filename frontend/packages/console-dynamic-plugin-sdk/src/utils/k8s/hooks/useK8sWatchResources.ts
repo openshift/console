@@ -4,6 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { getActiveCluster, SDKStoreState } from '@console/dynamic-plugin-sdk/src/app';
 import { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { UseK8sWatchResources } from '../../../extensions/console-types';
@@ -37,6 +38,7 @@ import { usePrevious } from './usePrevious';
  * ```
  */
 export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
+  const cluster = useSelector((state: SDKStoreState) => getActiveCluster(state));
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 
@@ -88,7 +90,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
                 noModel: true,
               };
             } else {
-              const idAndDispatch = getIDAndDispatch(resources[key], resourceModel);
+              const idAndDispatch = getIDAndDispatch(resources[key], resourceModel, cluster);
               if (idAndDispatch) {
                 ids[key] = idAndDispatch;
               }
@@ -96,7 +98,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
             return ids;
           }, {})
         : null,
-    [k8sModels, modelsLoaded, resources],
+    [k8sModels, modelsLoaded, resources, cluster],
   );
 
   const dispatch = useDispatch();

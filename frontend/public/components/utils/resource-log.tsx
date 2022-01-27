@@ -1,4 +1,8 @@
 import * as React from 'react';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
 import {
   Alert,
@@ -31,11 +35,13 @@ import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
+import { RootState } from '../../redux';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 import { Link } from 'react-router-dom';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
+import { getActiveCluster } from '@console/dynamic-plugin-sdk';
 
 export const STREAM_EOF = 'eof';
 export const STREAM_LOADING = 'loading';
@@ -77,6 +83,7 @@ const replaceVariables = (template: string, values: any): string => {
 
 // Build a log API url for a given resource
 const getResourceLogURL = (
+  cluster: string,
   resource: K8sResourceKind,
   containerName?: string,
   tailLines?: number,
@@ -89,6 +96,7 @@ const getResourceLogURL = (
     ns: resource.metadata.namespace,
     path: 'log',
     queryParams: {
+      cluster,
       container: containerName || '',
       ...(tailLines && { tailLines: `${tailLines}` }),
       ...(follow && { follow: `${follow}` }),
@@ -359,6 +367,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   resourceStatus,
 }) => {
   const { t } = useTranslation();
+  const cluster = useSelector((state: RootState) => getActiveCluster(state));
   const buffer = React.useRef(new LineBuffer()); // TODO Make this a hook
   const ws = React.useRef<any>(); // TODO Make this a hook
   const resourceLogRef = React.useRef();
@@ -381,8 +390,8 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   const previousResourceStatus = usePrevious(resourceStatus);
   const previousTotalLineCount = usePrevious(totalLineCount);
-  const linkURL = getResourceLogURL(resource, containerName);
-  const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
+  const linkURL = getResourceLogURL(cluster, resource, containerName);
+  const watchURL = getResourceLogURL(cluster, resource, containerName, null, true, logType);
   const [wrapLines, setWrapLines] = useUserSettings<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
