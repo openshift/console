@@ -49,6 +49,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
     cancel,
     isVMRunningOrExpectedRunning,
     snapshots,
+    isHotplugExists,
   } = props;
   const { t } = useTranslation();
   const vmName = getName(vmLikeEntity);
@@ -64,6 +65,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
   const hasUnsupportedVolumes = unsupportedVolumes.length > 0;
 
   const userNeedsToAckWarning = hasUnsupportedVolumes || isVMRunningOrExpectedRunning;
+  const isLiveSnapshotBlocked = isHotplugExists && isVMRunningOrExpectedRunning;
 
   const submit = async (e) => {
     e.preventDefault();
@@ -87,9 +89,15 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
       <ModalBody>
         {hasSupportedVolumes && (
           <Alert
-            title={t(
-              'kubevirt-plugin~Snapshot only includes disks backed by a snapshot-supported storage class',
-            )}
+            title={
+              isLiveSnapshotBlocked
+                ? t(
+                    'kubevirt-plugin~Can not create virtual machine snapshot which includes hotplug volume while VM is running',
+                  )
+                : t(
+                    'kubevirt-plugin~Snapshot only includes disks backed by a snapshot-supported storage class',
+                  )
+            }
             isInline
             variant={AlertVariant.info}
             className="co-m-form-row"
@@ -97,7 +105,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
         )}
 
         <Form onSubmit={submit}>
-          {hasSupportedVolumes && (
+          {hasSupportedVolumes && !isLiveSnapshotBlocked && (
             <>
               <FormRow title={t('kubevirt-plugin~Snapshot Name')} fieldId={asId('name')} isRequired>
                 <TextInput
@@ -135,7 +143,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
             </FormRow>
           )}
 
-          {hasSupportedVolumes && userNeedsToAckWarning && (
+          {hasSupportedVolumes && userNeedsToAckWarning && !isLiveSnapshotBlocked && (
             <FormRow fieldId="unsupported-approve-checkbox">
               <Checkbox
                 id="approve-checkbox"
@@ -153,7 +161,10 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
         submitButtonText={t('kubevirt-plugin~Save')}
         errorMessage={errorMessage}
         isDisabled={
-          inProgress || (hasUnsupportedVolumes && !approveUnsupported) || !hasSupportedVolumes
+          inProgress ||
+          (hasUnsupportedVolumes && !approveUnsupported) ||
+          !hasSupportedVolumes ||
+          isLiveSnapshotBlocked
         }
         inProgress={inProgress}
         onSubmit={submit}
@@ -172,5 +183,6 @@ export type SnapshotsModalProps = {
   vmLikeEntity: VMLikeEntityKind;
   isVMRunningOrExpectedRunning: boolean;
   snapshots: VMSnapshot[];
+  isHotplugExists: boolean;
 } & ModalComponentProps &
   HandlePromiseProps;
