@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { browser, $ } from 'protractor';
 import { execSync } from 'child_process';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
