@@ -218,7 +218,7 @@ export const checkLogs = async () => {
 };
 
 function hasError() {
-  return window.windowError;
+  return (window as any).windowError;
 }
 export const checkErrors = async () =>
   await browser.executeScript(hasError).then((err) => {

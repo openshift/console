@@ -35,7 +35,7 @@ describe('Cluster Dashboard', () => {
       expectedItems.forEach((label: string, i: number) => {
         expect(items.get(i).getText()).toBe(label);
         const text = values.get(i).getText();
-        expect(text.length).not.toBe(0);
+        expect(text).not.toBe('');
         // `Update Channel` is expected to be `Not available` in CI.
         if (label !== 'Update channel') {
           expect(text).not.toBe('Not available');
