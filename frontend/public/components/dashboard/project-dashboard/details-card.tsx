@@ -25,7 +25,9 @@ export const DetailsCard: React.FC = () => {
       <CardHeader>
         <CardTitle>{t('public~Details')}</CardTitle>
         <CardActions className="co-overview-card__actions">
-          <Link to={detailsLink}>{t('public~View all')}</Link>
+          <Link to={detailsLink} data-test="details-card-view-all">
+            {t('public~View all')}
+          </Link>
         </CardActions>
       </CardHeader>
       <CardBody>

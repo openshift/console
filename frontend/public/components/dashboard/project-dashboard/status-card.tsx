@@ -44,7 +44,7 @@ export const StatusCard: React.FC = () => {
         <>
           <HealthBody>
             <Gallery className="co-overview-status__health" hasGutter>
-              <div className="co-status-card__health-item">
+              <div className="co-status-card__health-item" data-test="project-status">
                 <Status status={obj.status.phase} className="co-icon-and-text--lg" />
               </div>
               {subsystem && (

@@ -7,6 +7,7 @@ const LauncherItem: React.FC<LauncherItemProps> = ({ consoleLink }) => (
     additionalClassName="co-launcher-card__item"
     href={consoleLink.spec.href}
     text={consoleLink.spec.text}
+    dataTestID="launcher-item"
   />
 );
 

@@ -250,7 +250,7 @@ export const QuotaGaugeCharts = ({
     return (
       <div className="co-resource-quota-chart-row">
         {resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu') ? (
-          <div className="co-resource-quota-gauge-chart">
+          <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
             <DonutChart
               ariaDescription={t(
                 'public~Percentage of CPU used by current namespace vs. other namespaces',
@@ -280,7 +280,7 @@ export const QuotaGaugeCharts = ({
           </div>
         )}
         {resourceTypesSet.has('limits.cpu') ? (
-          <div className="co-resource-quota-gauge-chart">
+          <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
             <DonutChart
               ariaDescription={t(
                 'public~Percentage of CPU limit used by current namespace vs. other namespaces',
@@ -310,7 +310,7 @@ export const QuotaGaugeCharts = ({
           </div>
         )}
         {resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory') ? (
-          <div className="co-resource-quota-gauge-chart">
+          <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
             <DonutChart
               ariaDescription={t(
                 'public~Percentage of memory requests used by current namespace vs. other namespaces',
@@ -340,7 +340,7 @@ export const QuotaGaugeCharts = ({
           </div>
         )}
         {resourceTypesSet.has('limits.memory') ? (
-          <div className="co-resource-quota-gauge-chart">
+          <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
             <DonutChart
               ariaDescription={t(
                 'public~Percentage of memory limits used by current namespace vs. other namespaces',
@@ -386,7 +386,7 @@ export const QuotaGaugeCharts = ({
   return (
     <div className="co-resource-quota-chart-row">
       {resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu') ? (
-        <div className="co-resource-quota-gauge-chart">
+        <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
           <GaugeChart
             data={{
               x: `${cpuRequestUsagePercent}%`,
@@ -403,7 +403,7 @@ export const QuotaGaugeCharts = ({
         </div>
       )}
       {resourceTypesSet.has('limits.cpu') ? (
-        <div className="co-resource-quota-gauge-chart">
+        <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
           <GaugeChart
             data={{ x: `${cpuLimitUsagePercent}%`, y: cpuLimitUsagePercent }}
             thresholds={gaugeChartThresholds}
@@ -417,7 +417,7 @@ export const QuotaGaugeCharts = ({
         </div>
       )}
       {resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory') ? (
-        <div className="co-resource-quota-gauge-chart">
+        <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
           <GaugeChart
             data={{
               x: `${memoryRequestUsagePercent}%`,
@@ -434,7 +434,7 @@ export const QuotaGaugeCharts = ({
         </div>
       )}
       {resourceTypesSet.has('limits.memory') ? (
-        <div className="co-resource-quota-gauge-chart">
+        <div className="co-resource-quota-gauge-chart" data-test="resource-quota-gauge-chart">
           <GaugeChart
             data={{ x: `${memoryLimitUsagePercent}%`, y: memoryLimitUsagePercent }}
             thresholds={gaugeChartThresholds}
@@ -647,6 +647,7 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
               : rq.metadata.namespace
           }
           className="co-resource-item__resource-name"
+          dataTest="resource-quota-link"
         />
       </TableData>
       <TableData
