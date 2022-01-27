@@ -1014,9 +1014,9 @@ export const createTopologyPubSubNodeData = (
 };
 
 /**
- * get the route data
+ * Get the route URL for the matching revision name
  */
-export const getRouteData = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
+export const getRoutesURL = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
   if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
     const trafficData: { [x: string]: any } = _.find(ksroutes[0].status.traffic, {
       revisionName: resource.metadata.name,

@@ -25,6 +25,7 @@ import {
   getPodLabels,
   mergeData,
   getCommonAnnotations,
+  getRouteAnnotations,
   getTriggerAnnotation,
 } from '../../utils/resource-label-utils';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
@@ -165,9 +166,9 @@ export const createOrUpdateDeployment = (
     healthChecks,
   } = formData;
 
-  const annotations = getCommonAnnotations();
   const defaultAnnotations = {
-    ...annotations,
+    ...getCommonAnnotations(),
+    ...getRouteAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(
       name,
@@ -177,6 +178,7 @@ export const createOrUpdateDeployment = (
       imageStreamTag,
     ),
   };
+  const templateAnnotations = getCommonAnnotations();
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
 
@@ -204,7 +206,7 @@ export const createOrUpdateDeployment = (
       template: {
         metadata: {
           labels: { ...userLabels, ...podLabels },
-          annotations,
+          annotations: templateAnnotations,
         },
         spec: {
           volumes,
@@ -249,7 +251,13 @@ export const createOrUpdateDeploymentConfig = (
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
-  const annotations = getCommonAnnotations();
+
+  const defaultAnnotations = {
+    ...getCommonAnnotations(),
+    ...getRouteAnnotations(),
+  };
+  const templateAnnotations = getCommonAnnotations();
+
   const newDeploymentConfig = {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
@@ -257,7 +265,7 @@ export const createOrUpdateDeploymentConfig = (
       name,
       namespace,
       labels,
-      annotations,
+      annotations: defaultAnnotations,
     },
     spec: {
       replicas,
@@ -265,7 +273,7 @@ export const createOrUpdateDeploymentConfig = (
       template: {
         metadata: {
           labels: { ...userLabels, ...podLabels },
-          annotations,
+          annotations: templateAnnotations,
         },
         spec: {
           volumes,
@@ -423,10 +431,18 @@ export const createOrUpdateDeployImageResources = async (
       imageChange,
       imageStreamTag,
     );
-    const annotations = {
-      ...originalAnnotations,
-      ...triggerAnnotations,
-    };
+    const annotations =
+      Object.keys(originalAnnotations).length > 0
+        ? {
+            ...originalAnnotations,
+            ...triggerAnnotations,
+          }
+        : {
+            ...getCommonAnnotations(),
+            ...getRouteAnnotations(),
+            ...originalAnnotations,
+            ...triggerAnnotations,
+          };
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamUrl,
