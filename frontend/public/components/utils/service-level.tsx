@@ -184,8 +184,7 @@ const useGetServiceLevel = (
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 
   React.useEffect(() => {
-    if (clusterID !== clusterIDParam) {
-      // only load if clusterID passed is different than what is in Redux store
+    if (clusterID !== clusterIDParam && !loadingSecret && !loadingServiceLevel) {
       loadServiceLevel(clusterIDParam);
     }
     // only on clusterID change
@@ -271,14 +270,20 @@ export const useServiceLevelTitle = (): string => {
   return t('public~Service Level Agreement (SLA)');
 };
 
+export const useShowServiceLevelNotifications = (clusterID: string): boolean => {
+  const { level } = useGetServiceLevel(clusterID);
+  return level && (level === 'Eval' || level === 'None');
+};
+
 export const ServiceLevelNotification: React.FC<{
   clusterID?: string;
   toggleNotificationDrawer: () => void;
 }> = ({ clusterID, toggleNotificationDrawer }) => {
   const { t } = useTranslation();
   const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID);
+  const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
 
-  if (!level || (level !== 'Eval' && level !== 'None')) {
+  if (!showServiceLevelNotification) {
     return null;
   }
   let notificationStart = '';
