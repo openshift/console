@@ -30,8 +30,12 @@ import { referenceForGroupVersionKind } from '../module/k8s';
 import { referenceForModel } from '../module/k8s/k8s-ref';
 import { RootState } from '../redux';
 import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { FeatureState } from '@console/dynamic-plugin-sdk/src/app/features';
 import { FeatureAction, ActionType } from '../actions/features';
 import { pluginStore } from '../plugins';
+
+// eslint-disable-next-line prettier/prettier
+export type { FeatureState };
 
 export const defaults = _.mapValues(FLAGS, (flag) =>
   flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
@@ -87,8 +91,6 @@ subscribeToExtensions<DynamicModelFeatureFlag>(
   }),
   isDynamicModelFeatureFlag,
 );
-
-export type FeatureState = ImmutableMap<string, boolean>;
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {
