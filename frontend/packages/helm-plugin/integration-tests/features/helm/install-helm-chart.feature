@@ -2,8 +2,10 @@
 Feature: Install the Helm Release
               As a user, I want to install the helm release
 
+
         Background:
             Given user has created or selected namespace "aut-helm"
+
 
 
         @smoke
@@ -117,3 +119,38 @@ Feature: Install the Helm Release
              When user selects "Helm Chart" card from Add page
               And user clicks on helm chart with blue tick
              Then user will see Blue certified badge associated with heading of the helm chart
+
+
+        @regression @odc-5713
+        Scenario Outline: Namespace-scoped Helm Chart Repositories in the dev catalog: HR-06-TC12
+            Given user is at Add page
+            # Uncomment below for cluster not having projecthelmchartrepositories CRD
+            #   And user has applied namespaced CRD yaml "<crd_yaml>"
+              And user has added namespaced helm chart repo yaml "<cr_yaml>" in namespace "aut-helm"
+             When user selects Helm Chart card from Add page
+             Then user will see "Ibm Repo" under Chart repositories filter
+              And user will not see "Ibm Repo" under Chart repositories filter in a new namespace "test-helm1"
+
+        Examples:
+                  | crd_yaml                           | cr_yaml                                         |
+                  | test-data/namespaced-helm-crd.yaml | test-data/namespaced-helm-chart-repository.yaml |
+
+
+        @regression @manual @odc-5713
+        Scenario: Creating projecthelmchartrepository by non-admin user: HR-06-TC13
+            Given user is at Add page
+            # Uncomment below for cluster not having projecthelmchartrepositories CRD
+            #   And user has applied namespaced CRD yaml "namespaced-helm-chart-repository.yaml"
+              And user has logged in as consoledeveloper
+             When user adds projecthelmchartrepository CR with yaml "namespaced-helm-crd"
+              And user selects Helm Chart card from Add page
+             Then user will see "Ibm Repo" under Chart repositories filter
+              And user will not see "Ibm Repo" under Chart repositories filter in a new namespace "test-helm2"
+
+
+        @regression @odc-5713
+        Scenario: Quick starts link in the helm dev catalog description: HR-06-TC14
+            Given user is at Add page
+             When user selects Helm Chart card from Add page
+              And user clicks on quick start link in helm catalog description
+             Then user will see "Add Helm Chart Repositories to extend the Developer Catalog for your project" quick start

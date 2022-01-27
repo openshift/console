@@ -1,0 +1,8 @@
+apiVersion: helm.openshift.io/v1beta1
+kind: ProjectHelmChartRepository
+metadata:
+  name: ibm-repo
+  namespace: aut-helm
+spec:
+  connectionConfig:
+    url: https://raw.githubusercontent.com/IBM/charts/master/repo/community/index.yaml

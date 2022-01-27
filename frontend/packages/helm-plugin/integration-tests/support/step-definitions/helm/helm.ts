@@ -1,17 +1,24 @@
-import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import {
   pageTitle,
   devNavigationMenu,
+  addOptions,
 } from '@console/dev-console/integration-tests/support/constants';
-import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import {
+  catalogPO,
+  quickStartSidebarPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   catalogPage,
   catalogInstallPageObj,
   topologyHelper,
   createHelmReleaseWithName,
   navigateTo,
+  addPage,
+  projectNameSpace,
+  app,
 } from '@console/dev-console/integration-tests/support/pages';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 
 When('user selects YAML view', () => {
   cy.document()
@@ -72,4 +79,48 @@ Then('user will see Filter by Keyword field', () => {
 
 Then('user will see A-Z, Z-A sort by dropdown', () => {
   catalogPage.verifySortDropdown();
+});
+
+Given('user is at Add page', () => {
+  navigateTo(devNavigationMenu.Add);
+});
+
+Given('user has applied namespaced CRD yaml {string}', (yamlFile: string) => {
+  cy.exec(`oc apply -f ${yamlFile}`, { failOnNonZeroExit: false });
+});
+
+Given(
+  'user has created namespaced helm chart repo with yaml {string} in namespace {string}',
+  (yamlFile: string, namespace: string) => {
+    cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, { failOnNonZeroExit: false });
+  },
+);
+
+When('user selects Helm Chart card from Add page', () => {
+  addPage.selectCardFromOptions(addOptions.HelmChart);
+});
+
+Then('user will see {string} under Chart repositories filter', (chartRepo: string) => {
+  catalogPage.verifyChartRepoAvailable(chartRepo);
+});
+
+Then(
+  'user will not see {string} under Chart repositories filter in a new namespace {string}',
+  (chartRepo: string, namespace: string) => {
+    projectNameSpace.selectOrCreateProject(namespace);
+    catalogPage.verifyChartRepoNotAvailable(chartRepo);
+  },
+);
+
+When('user clicks on quick start link in helm catalog description', () => {
+  cy.get('[data-test-id="catalog-page-description"]>a')
+    .should('be.visible')
+    .click();
+});
+
+Then('user will see {string} quick start', (quickStartName: string) => {
+  app.waitForDocumentLoad();
+  cy.get(quickStartSidebarPO.quickStartSidebar)
+    .should('be.visible')
+    .should('contain', quickStartName);
 });

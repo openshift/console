@@ -186,6 +186,26 @@ export const catalogPage = {
         expect('Helm Charts').toContain($el.text());
       });
   },
+  verifyChartRepoAvailable: (helmRepo: string) => {
+    const repo = helmRepo
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/\s+/g, '-')
+      .toLowerCase()
+      .trim();
+    cy.get(catalogPO.chartRepositoryGroup).within(() => {
+      cy.get(`[data-test="chartRepositoryTitle${repo}"]`).should('be.visible');
+    });
+  },
+  verifyChartRepoNotAvailable: (helmRepo: string) => {
+    const repo = helmRepo
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/\s+/g, '-')
+      .toLowerCase()
+      .trim();
+    cy.get(catalogPO.chartRepositoryGroup).within(() => {
+      cy.get(`[data-test="chartRepositoryTitle${repo}"]`).should('not.exist');
+    });
+  },
   verifyFilterByKeywordField: () => {
     cy.get('.pf-c-search-input__text-input').should('be.visible');
   },
