@@ -701,8 +701,6 @@
   "Running VMs per template": "Running VMs per template",
   "Running VMs per template donut chart": "Running VMs per template donut chart",
   "VMs": "VMs",
-  "{{count}}": "{{count}}",
-  "{{count}}_plural": "{{count}}s",
   "Metrics are collected by the OpenShift Monitoring Operator.": "Metrics are collected by the OpenShift Monitoring Operator.",
   "To see the vCPU metric, you must set the schedstats=enable kernel argument in the MachineConfig object.": "To see the vCPU metric, you must set the schedstats=enable kernel argument in the MachineConfig object.",
   "No data available": "No data available",

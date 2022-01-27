@@ -2,7 +2,7 @@
   font-size: 10px;
 }
 
-.kv-running-vms-card--gradient {
+.kv-running-vms-card__gradient {
   position: relative;
   &:after {
     background: linear-gradient(rgba(255, 255, 255, 0), var(--pf-global--BackgroundColor--100));
@@ -14,4 +14,18 @@
     position: absolute;
     width: calc(100% - var(--pf-global--spacer--lg));
   }
+}
+
+.kv-running-vms-card__chart-legend {
+  overflow: auto;
+  height: 90px;
+}
+
+.kv-running-vms-card__legend-label--color {
+  margin-right: var(--pf-global--spacer--xs);
+  overflow: auto;
+}
+
+.kv-running-vms-card__legend-label--count {
+  font-weight: 700;
 }
