@@ -527,20 +527,6 @@
     }
   },
   {
-    "type": "console.dashboards/overview/activity/resource",
-    "properties": {
-      "component": { "$codeRef": "dashboardActivity.V2VImportActivity" },
-      "getTimestamp": { "$codeRef": "dashboardActivity.getTimestamp" },
-      "isActivity": { "$codeRef": "dashboardActivity.isPodActivity" },
-      "k8sResource": {
-        "$codeRef": "dashboardActivity.k8sPodResource"
-      }
-    },
-    "flags": {
-      "required": ["KUBEVIRT"]
-    }
-  },
-  {
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
@@ -592,13 +578,6 @@
         },
         "dataVolumes": {
           "model": { "kind": "DataVolume", "group": "cdi.kubevirt.io" },
-          "opts": {
-            "isList": true,
-            "optional": true
-          }
-        },
-        "vmImports": {
-          "model": { "kind": "VirtualMachineImport", "group": "v2v.kubevirt.io" },
           "opts": {
             "isList": true,
             "optional": true
