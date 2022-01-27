@@ -164,7 +164,7 @@ export const createVM = async (params: CreateVMParams) => {
     const processedTemplate = await k8sCreate<TemplateKind>(
       ProcessedTemplatesModel,
       template.asResource(),
-      null,
+      undefined,
       { disableHistory: true },
     ); // temporary
 
