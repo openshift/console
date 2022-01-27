@@ -27,7 +27,7 @@ import { useModelsLoaded } from './useModelsLoaded';
  * ```
  */
 export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
-  const cluster = useSelector((state) => getActiveCluster(state));
+  const cluster = useSelector<SDKStoreState, string>((state) => getActiveCluster(state));
   const resource = useDeepCompareMemoize(initResource, true);
   const modelsLoaded = useModelsLoaded();
 

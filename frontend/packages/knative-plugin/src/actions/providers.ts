@@ -277,7 +277,7 @@ export const topologyServerlessActionsFilter = (
 };
 
 export const useKnativeEventSinkActionProvider = (element: Node) => {
-  const resource = element.getData()?.resources?.obj || {};
+  const resource = React.useMemo(() => element.getData()?.resources?.obj || {}, [element]);
   const [k8sModel] = useK8sModel(referenceFor(resource));
   const actions = React.useMemo(() => {
     const type = element.getType();

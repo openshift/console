@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 /* eslint-disable-next-line import/named */
 import { match as Match } from 'react-router';
 import { Radio } from '@patternfly/react-core';

@@ -344,14 +344,14 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         </span>
       </TableData>
       <TableData
-        className={classNames(namespaceColumnInfo.status.classes, 'co-break-word')}
+        className={classnames(namespaceColumnInfo.status.classes, 'co-break-word')}
         columns={columns}
         columnID={namespaceColumnInfo.status.id}
       >
         <Status status={ns.status.phase} />
       </TableData>
       <TableData
-        className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+        className={classnames(namespaceColumnInfo.requester.classes, 'co-break-word')}
         columns={columns}
         columnID={namespaceColumnInfo.requester.id}
       >
@@ -653,41 +653,6 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
           <span className="co-resource-item">
             <ResourceLink kind="Project" name={project.metadata.name} />
           </span>
-<<<<<<< HEAD
-=======
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.status.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.status.id}
-        >
-          <Status status={project.status.phase} />
-        </TableData>
-        <TableData
-          className={classnames(namespaceColumnInfo.requester.classes, 'co-break-word')}
-          columns={columns}
-          columnID={namespaceColumnInfo.requester.id}
-        >
-          {requester || <span className="text-muted">{t('public~No requester')}</span>}
-        </TableData>
-        {showMetrics && (
-          <>
-            <TableData
-              className={namespaceColumnInfo.memory.classes}
-              columns={columns}
-              columnID={namespaceColumnInfo.memory.id}
-            >
-              {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-            </TableData>
-            <TableData
-              className={namespaceColumnInfo.cpu.classes}
-              columns={columns}
-              columnID={namespaceColumnInfo.cpu.id}
-            >
-              {cores ? t('public~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
-            </TableData>
-          </>
->>>>>>> Fix new TS build errors
         )}
       </TableData>
       <TableData
@@ -709,7 +674,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
         <Status status={project.status.phase} />
       </TableData>
       <TableData
-        className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+        className={classnames(namespaceColumnInfo.requester.classes, 'co-break-word')}
         columns={columns}
         columnID={namespaceColumnInfo.requester.id}
       >

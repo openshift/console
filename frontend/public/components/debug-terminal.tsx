@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';

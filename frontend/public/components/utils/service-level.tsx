@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Alert, Skeleton, Label } from '@patternfly/react-core';
 import { NotificationEntry, NotificationTypes } from '@console/patternfly';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
