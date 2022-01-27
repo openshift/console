@@ -61,6 +61,8 @@ export const OS: React.FC<OSProps> = React.memo(
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
     const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
     const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
+    const [dataSourcesData] = dataSources;
+    const [pvcsData] = pvcs;
 
     const params = {
       flavor,
@@ -136,7 +138,7 @@ export const OS: React.FC<OSProps> = React.memo(
         const baseImageFoundInCluster =
           loadedBaseImages?.find(
             (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
-          ) || findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
+          ) || findDataSourcePVC(dataSourcesData, pvcsData, pvcName, pvcNamespace);
         const isBaseImageUploading =
           iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) ===
           CDI_PVC_PHASE_RUNNING;

@@ -429,12 +429,12 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     kind: referenceForModel(DataVolumeModel),
     isList: true,
   });
-  const [pvcs] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
+  const pvcs = useK8sWatchResource<PersistentVolumeClaimKind[]>({
     namespace: imagesNamespace,
     kind: PersistentVolumeClaimModel.kind,
     isList: true,
   });
-  const [dataSources] = useK8sWatchResource<DataSourceKind[]>({
+  const dataSources = useK8sWatchResource<DataSourceKind[]>({
     namespace: imagesNamespace,
     kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
