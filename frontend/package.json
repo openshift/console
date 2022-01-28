@@ -298,7 +298,7 @@
     "mochawesome-report-generator": "^5.1.0",
     "mock-socket": "^9.0.3",
     "monaco-editor-core": "0.20.0",
-    "monaco-editor-webpack-plugin": "7.0.1",
+    "monaco-editor-webpack-plugin": "1.9.0",
     "null-loader": "^3.0.0",
     "prettier": "1.19.1",
     "protractor": "^5.4.4",
@@ -335,7 +335,9 @@
     "@types/jest": "22.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
-    "@types/react": "16.9.0"
+    "@types/react": "16.9.0",
+    "monaco-editor-core": "0.20.0",
+    "monaco-editor": "0.20.0"
   },
   "husky": {
     "hooks": {
