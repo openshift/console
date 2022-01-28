@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   DataListCell,
-  DataListContent,
+  DataList,
   DataListItem,
   DataListItemCells,
   DataListItemRow,
@@ -76,7 +76,6 @@ const TopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> = ({
     <DataListItem
       className="odc-topology-list-view__application"
       key={id}
-      id={id}
       aria-labelledby={`${id}_label`}
       isExpanded
     >
@@ -84,7 +83,7 @@ const TopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> = ({
         <DataListItemCells dataListCells={cells} />
       </DataListItemRow>
       {!collapsed && (
-        <DataListContent aria-label={id} id={id} isHidden={false}>
+        <DataList aria-label={id} id={id}>
           {kindKeys.map((key) => (
             <TopologyListViewKindGroup
               key={key}
@@ -94,7 +93,7 @@ const TopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> = ({
               onSelect={onSelect}
             />
           ))}
-        </DataListContent>
+        </DataList>
       )}
     </DataListItem>
   );
