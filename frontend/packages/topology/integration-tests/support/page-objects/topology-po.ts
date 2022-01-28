@@ -167,6 +167,7 @@ export const topologyPO = {
     projectDropDown: '[id="form-ns-dropdown-formData-imageStream-namespace-field"]',
     imageStream: '[id="form-ns-dropdown-formData-imageStream-image-field"]',
     tag: '[id="form-dropdown-formData-imageStream-tag-field"]',
+    envRow: '[data-test="pairs-list-row"]',
     envName: '[data-test="pairs-list-name"]',
     envValue: '[data-test="pairs-list-value"]',
     advancedOptions: 'button.pf-c-button.pf-m-link.pf-m-inline',

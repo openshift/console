@@ -7,6 +7,7 @@ import {
   topologyActions,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
+  topologyHelper,
   topologyPage,
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
@@ -64,6 +65,14 @@ When('user clicks {string} from action menu', (actionItem: string) => {
   topologyActions.selectAction(actionItem);
 });
 
+When('user deletes the existing annotation for route', () => {
+  cy.get(topologyPO.deploymentStrategy.envRow)
+    .eq(1)
+    .within(() => {
+      cy.get('[data-test="delete-button"]').click();
+    });
+});
+
 When('user enters key as {string}', (annotationKey: string) => {
   cy.get(topologyPO.graph.addNewAnnotations).click();
   cy.get(topologyPO.deploymentStrategy.envName)
@@ -80,24 +89,19 @@ When('user enters value as {string}', (annotationValue: string) => {
   cy.get(topologyPO.graph.deleteWorkload).click();
 });
 
-Then('user can see the route link in Resource section has been removed', () => {
-  // Uncomment this after the feature work for epic ODC-6361 is complete
-  // cy.get(topologyPO.sidePane.resourcesTab.routeLink)
-  //   .scrollIntoView()
-  //   .should('not.be.visible');
+Then('user can see route decorator has been hidden for workload {string}', (appName: string) => {
+  topologyHelper.search(appName);
+  cy.get(topologyPO.graph.reset).click();
+  cy.get(topologyPO.highlightNode)
+    .should('be.visible')
+    .within(() => {
+      cy.get(topologyPO.graph.routeDecorator).should('not.exist');
+    });
 });
 
-Then('user can see route decorator has been hidden', () => {
-  // Uncomment this after the feature work for epic ODC-6361 is complete
-  // cy.get(topologyPO.graph.routeDecorator)
-  //   .scrollIntoView()
-  //   .should('not.be.visible');
-});
-
-Then('user can see the new route link in Resource section be {string}', (value: string) => {
-  // Uncomment this after the feature work for epic ODC-6361 is complete
-  // cy.get(topologyPO.sidePane.resourcesTab.routeLink)
-  //   .scrollIntoView()
-  //   .should('contain.text', value);
-  cy.log(value); // to avoid lint issue
+Then('user can see the new route href in route decorator be {string}', (value: string) => {
+  cy.get(topologyPO.graph.routeDecorator)
+    .scrollIntoView()
+    .parents()
+    .should('have.attr', 'href', value);
 });
