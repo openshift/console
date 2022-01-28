@@ -44,17 +44,22 @@ export const getAppLabels = ({
   return labels;
 };
 
+export const getCommonAnnotations = () => {
+  return {
+    'openshift.io/generated-by': 'OpenShiftWebConsole',
+  };
+};
+
+export const getRouteAnnotations = () => {
+  return {
+    [ROUTE_DISABLED_ANNOTATION]: 'false',
+  };
+};
+
 export const getGitAnnotations = (gitURL: string, gitRef?: string) => {
   return {
     'app.openshift.io/vcs-uri': gitURL,
     'app.openshift.io/vcs-ref': gitRef || '',
-  };
-};
-
-export const getCommonAnnotations = () => {
-  return {
-    'openshift.io/generated-by': 'OpenShiftWebConsole',
-    [ROUTE_DISABLED_ANNOTATION]: 'false',
   };
 };
 

@@ -18,6 +18,7 @@ import {
   getAppLabels,
   getCommonAnnotations,
   getPodLabels,
+  getRouteAnnotations,
   getTemplateLabels,
   getTriggerAnnotation,
   mergeData,
@@ -67,8 +68,10 @@ export const createOrUpdateDeployment = (
   const imageName = name;
   const annotations = {
     ...getCommonAnnotations(),
+    ...getRouteAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(name, imageName, namespace, imageChange),
+    jarFileName: fileName,
   };
   const podLabels = getPodLabels(name);
   const templateLabels = getTemplateLabels(originalDeployment);
@@ -91,7 +94,7 @@ export const createOrUpdateDeployment = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: { ...annotations, jarFileName: fileName },
+      annotations,
     },
     spec: {
       selector: {
@@ -409,10 +412,18 @@ export const createOrUpdateJarFile = async (
       namespace,
       imageChange,
     );
-    const annotations = {
-      ...originalAnnotations,
-      ...triggerAnnotations,
-    };
+    const annotations =
+      Object.keys(originalAnnotations).length > 0
+        ? {
+            ...originalAnnotations,
+            ...triggerAnnotations,
+          }
+        : {
+            ...getCommonAnnotations(),
+            ...getRouteAnnotations(),
+            ...originalAnnotations,
+            ...triggerAnnotations,
+          };
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamURL,
