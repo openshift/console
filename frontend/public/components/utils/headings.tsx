@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -15,12 +16,22 @@ import {
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { ActionsMenu, KebabAction, ResourceIcon, resourcePath } from './index';
 import { K8sKind, referenceForModel } from '../../module/k8s';
+import { PageHeading as PageHeadingCommon } from '@console/dynamic-plugin-sdk/src/app/components/utils/headings';
+import { ManagedByOperatorLink } from './managed-by';
 
 export {
   BreadCrumbs,
   ActionButtons,
-  PageHeading,
 } from '@console/dynamic-plugin-sdk/src/app/components/utils/headings';
+
+export const PageHeading = (props) => {
+  const data = _.get(props.obj, 'data');
+  const managedByComponent =
+    data?.metadata?.namespace && data?.metadata?.ownerReferences?.length ? (
+      <ManagedByOperatorLink obj={data} />
+    ) : null;
+  return <PageHeadingCommon {...props} managedByComponent={managedByComponent} />;
+};
 
 export const ResourceItemDeleting = () => {
   const { t } = useTranslation();

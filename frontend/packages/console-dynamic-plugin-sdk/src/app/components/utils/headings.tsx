@@ -4,7 +4,6 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { ActionsMenu, ResourceIcon } from '@console/internal/components/utils'; // ??! TODO use direct imports instead
-import { ManagedByOperatorLink } from '@console/internal/components/utils/managed-by'; // ??! TODO add user-defined callback allowing to pass this
 import { K8sKind } from '../../../api/common-types';
 import {
   FirehoseResult,
@@ -68,6 +67,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     kindObj,
     detail,
     title,
+    managedByComponent,
     menuActions,
     buttonActions,
     customActionMenu,
@@ -131,9 +131,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
               <span data-test-id="resource-title" className="co-resource-item__resource-name">
                 {resourceTitle}
-                {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
-                  <ManagedByOperatorLink obj={data} />
-                )}
+                {managedByComponent}
               </span>
               {resourceStatus && (
                 <ResourceStatus additionalClassNames="hidden-xs">
@@ -193,6 +191,7 @@ export type PageHeadingProps = {
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  managedByComponent?: JSX.Element;
   customActionMenu?:
     | React.ReactNode
     | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
