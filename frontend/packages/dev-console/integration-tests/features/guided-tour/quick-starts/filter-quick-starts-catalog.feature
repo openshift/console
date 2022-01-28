@@ -32,7 +32,7 @@ Feature: Add ability to filter Quick Starts catalog
              Then user can see Complete, In progress and Not started categories
 
 
-        @regression
+        @regression @broken-test
         Scenario: Apply Filter based on status: QS-01-TC04
             Given user is at Quick Starts catalog page
               And user has completed "Get started with a sample application" Quick Start

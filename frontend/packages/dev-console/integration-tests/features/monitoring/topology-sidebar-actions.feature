@@ -1,4 +1,4 @@
-@monitoring
+@monitoring @broken-test
 Feature: Observe tab on the topology Sidebar
               As a user, I should be able to see Observe tab on the sidebar of topology page and add Health Checks
 

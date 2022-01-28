@@ -11,21 +11,23 @@ function generateReport {
 }
 trap generateReport EXIT
 
-while getopts p:s:h:l: flag
+while getopts p:s:h:l:n: flag
 do
   case "${flag}" in
     p) pkg=${OPTARG};;
     s) spec=${OPTARG};;
     h) headless=${OPTARG};;
+    n) nightly=${OPTARG};;
   esac
 done
 
 if [ $# -eq 0 ]; then
     echo "Runs Cypress tests in Test Runner or headless mode"
-    echo "Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]"
+    echo "Usage: test-cypress [-p] <package> [-s] <filemask> [-h true] [-n true/false]"
     echo "  '-p <package>' may be 'console, 'olm', 'ceph' or 'devconsole'"
     echo "  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified."
     echo "  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner"
+    echo "  '-n true' runs the 'nightly' suite, all specs from selected packages in headless mode"
     echo "Examples:"
     echo "  test-cypress.sh                                       // displays this help text"
     echo "  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests"
@@ -38,8 +40,26 @@ if [ $# -eq 0 ]; then
     echo "  test-cypress.sh -h true                               // runs all packages in headless mode"
     echo "  test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode"
     echo "  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode"
+    echo "  test-cypress.sh -n true                               // runs the whole nightly suite"
     trap EXIT
     exit;
+fi
+
+if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
+  # do not fail fast, let all suites run
+  set +e
+  err=0
+  trap 'err=1' ERR
+
+  yarn run test-cypress-dev-console-nightly
+  yarn run test-cypress-helm-nightly
+  # heavily unstable/outdated tests in pipelines
+  # yarn run test-cypress-pipelines-nightly
+  yarn run test-cypress-topology-nightly
+  # disabled due to serverless operator not being available
+  # yarn run test-cypress-knative-nightly
+
+  exit $err;
 fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
@@ -59,11 +79,13 @@ if [ -n "${pkg-}" ]; then
     yarn_script="$yarn_script-$pkg"
 fi
 
-if [ -n "${headless-}" ]; then
+if [ -n "$nightly-" ]; then
+  yarn_script="$yarn_script-nightly"
+elif [ -n "${headless-}" ]; then
   yarn_script="$yarn_script-headless"
 fi
 
-if [ -n "${spec-}" ]; then
+if [ -n "${spec-}" ] && [ -z "${nightly-}"]; then
   yarn_script="$yarn_script --spec '$spec'"
 fi
 

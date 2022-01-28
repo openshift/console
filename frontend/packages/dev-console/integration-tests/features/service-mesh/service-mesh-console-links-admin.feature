@@ -1,4 +1,4 @@
-@service-mesh
+@service-mesh @broken-test
 Feature: Admin user created Service Mesh Control Plane to get the Kiali dashboard link on the Topology filterbar
               As an Admin user I want to launch Kiali from the Topology graph
 

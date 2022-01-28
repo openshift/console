@@ -91,7 +91,10 @@ export const operatorsPage = {
       }
       case 'OpenShift Serverless Operator':
       case operators.ServerlessOperator: {
-        cy.get(operatorsPO.operatorHub.serverlessOperatorCard).click();
+        // cy.get(operatorsPO.operatorHub.serverlessOperatorCard).click();
+        cy.get(
+          '[data-test="serverless-operator-serverless-operator-openshift-marketplace"]',
+        ).click();
         break;
       }
       case 'OpenShift Virtualization':

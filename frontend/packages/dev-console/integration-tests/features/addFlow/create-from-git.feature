@@ -210,8 +210,8 @@ Feature: Create Application from git form
                   | https://github.com/sclorg/nginx-ex.git |
 
 
-        @regression
-        Scenario: Provide custom build environments for nodejs git import
+        @regression @broken-test
+        Scenario: Provide custom build environments for nodejs git import: A-06-TC15
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex"
               And user enters run command for "NPM_RUN" as "build1"
@@ -222,8 +222,8 @@ Feature: Create Application from git form
               And see environment variable "NPM_RUN" with value "build1" in Environment tab of details page
 
 
-        @regression
-        Scenario: Update custom build environment in nodejs application edit page
+        @regression @broken-test
+        Scenario: Update custom build environment in nodejs application edit page: A-06-TC16
             Given user is at Topology page
              When user edits the application "nodejs-env"
               And user enters run command for "NPM_RUN" as "build2"
@@ -235,8 +235,8 @@ Feature: Create Application from git form
               And see environment variable "NPM_RUN" with value "build2" in Environment tab of details page
 
 
-        @regression @odc-6303
-        Scenario: Checking Secure Route option in import form: A-06-TC05
+        @regression @odc-6303 @broken-test
+        Scenario: Checking Secure Route option in import form: A-06-TC17
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex.git"
               And user enters name as "nodejs-route" in General section

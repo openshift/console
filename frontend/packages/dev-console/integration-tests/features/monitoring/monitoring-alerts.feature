@@ -1,4 +1,4 @@
-@monitoring
+@monitoring @broken-test
 Feature: Filter for Alert state and Severity
     User should be able to filter out alerts as per Alert State and Severity
 

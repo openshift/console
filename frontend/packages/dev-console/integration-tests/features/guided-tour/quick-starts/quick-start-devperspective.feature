@@ -1,4 +1,4 @@
-@guided-tour
+@guided-tour @broken-test
 Feature: Build with guided documentation card in developer console
               As a user, I want to view Build with guided documentation card in Add page
 

@@ -7,7 +7,7 @@ Feature: Topology chart area
               And user has created or selected namespace "aut-topology-delete-workload"
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Empty state of topology: T-06-TC01
              When user navigates to Topology page
              Then user sees Topology page with message "No resources found"
@@ -307,7 +307,7 @@ Feature: Topology chart area
 
 
         @regression @odc-6361
-        Scenario: Check last selected node in topology per project per session: T-06-TC26
+        Scenario: Check last selected node in topology per project per session: T-06-TC27
             Given user has created a deployment workload "nodejs-1"
               And user has created a deployment workload "nodejs-2"
               And user is at Topology page chart view
@@ -317,7 +317,7 @@ Feature: Topology chart area
              Then user will see the the workload "nodejs-2" selected with sidebar open
 
 
-        @regression @odc-5947
+        @regression @odc-5947 @broken-test
         Scenario: Create Service Binding option in nodes actions menu: T-06-TC27
             Given user has installed Service Binding operator
               And user is at developer perspective
