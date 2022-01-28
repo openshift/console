@@ -272,6 +272,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
+	handleFunc(terminal.InstalledNamespaceEndpoint, terminalProxy.HandleTerminalInstalledNamespace)
 
 	graphQLSchema, err := ioutil.ReadFile("pkg/graphql/schema.graphql")
 	if err != nil {
