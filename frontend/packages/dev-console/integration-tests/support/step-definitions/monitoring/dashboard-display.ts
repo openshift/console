@@ -1,14 +1,29 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { resourceTypes } from '../../constants';
 import { devNavigationMenu } from '../../constants/global';
 import { monitoringPO } from '../../pageObjects/monitoring-po';
-import { monitoringPage, topologyPage, navigateTo } from '../../pages';
+import {
+  monitoringPage,
+  topologyPage,
+  navigateTo,
+  createGitWorkloadIfNotExistsOnTopologyPage,
+} from '../../pages';
 
 Given('user opened the url of the workload {string} in topology page', (workloadName: string) => {
   topologyPage.clickWorkloadUrl(workloadName);
 });
 
 Given('user has workloads of all resource types', () => {
-  // TODO: implement step
+  const name = 'observe-nodejs';
+  const app = 'observe-nodejs-app';
+  const url = 'https://github.com/sclorg/nodejs-ex';
+  createGitWorkloadIfNotExistsOnTopologyPage(url, `${name}-d`, resourceTypes.Deployment, app);
+  createGitWorkloadIfNotExistsOnTopologyPage(
+    url,
+    `${name}-dc`,
+    resourceTypes.DeploymentConfig,
+    app,
+  );
 });
 
 When('user navigates to Monitoring page', () => {
@@ -20,7 +35,14 @@ When('user selects the workload {string} from the dropdown', (workloadName: stri
 });
 
 When('user clicks on Resources dropdown', () => {
-  // TODO: implement step
+  cy.contains('.pf-c-select__toggle', 'Resources').click();
+});
+
+When('user selects {string}', (resourceType: string) => {
+  cy.get('.pf-m-search')
+    .clear()
+    .type(resourceType);
+  cy.contains('.co-resource-item__resource-name', resourceType).click();
 });
 
 When('user selects Service', () => {
@@ -36,17 +58,17 @@ When('user selects DeploymentConfig', () => {
 });
 
 When('user clicks on Types dropdown', () => {
-  // TODO: implement step
+  cy.get('[data-test="type-dropdown"]').click();
 });
 
 When('user selects {string} from Types dropdown', (typeName: string) => {
-  // TODO: implement step
-  cy.log(typeName);
+  cy.contains('.pf-c-dropdown__menu-item', typeName).click();
 });
 
 When('user enters {string} in the Filter field', (filterCriteria: string) => {
-  // TODO: implement step
-  cy.log(filterCriteria);
+  cy.byLegacyTestID('item-filter')
+    .clear()
+    .type(filterCriteria);
 });
 
 Then('user will see Dashboard, Metrics, Alerts, Events tabs', () => {
@@ -114,19 +136,23 @@ Then('user will see events related to all resources and all types', () => {
 });
 
 Then('user will see events for Service, Deployment and DeploymentConfig type resources', () => {
-  // TODO: implement step
+  cy.get('.co-m-loader').should('not.exist');
+  cy.get('.co-sysevent').each((element) => {
+    cy.wrap(element)
+      .find('.sr-only')
+      .first()
+      .invoke('text')
+      .should('be.oneOf', ['Service', 'Deployment', 'DeploymentConfig']);
+  });
 });
 
-Then('user will see normal types of events', () => {
+Then('user will see {string} types of events', (type: string) => {
   // TODO: implement step
-});
-
-Then('user will see warning types of events', () => {
-  // TODO: implement step
+  cy.log(type);
 });
 
 Then('user will see events having Scaled Up message', () => {
-  // TODO: implement step
+  cy.contains('.co-sysevent', 'Scaled up').should('have.length.at.least', 1);
 });
 
 Then('user is able to see Name, Severity, Alert State and Notifications', () => {
@@ -207,4 +233,73 @@ When('user can see {string} and {string} option', (option1: string, option2: str
   //   .should('contain', option1)
   //   .and('contain', option2);
   cy.log(option1, option2); // to avoid lint issues
+});
+
+function chartTitleToTestId(chartTitle: string): string {
+  return chartTitle.toLowerCase().replace(/\s+/g, '-');
+}
+
+Then('user will see {string} chart', (chartTitle: string) => {
+  cy.get(`[data-test="${chartTitle.toLowerCase().replace(/\s+/g, '-')}-chart"]`)
+    .scrollIntoView()
+    .should('be.visible')
+    // also wait for the chart to load
+    .find('.co-m-loader')
+    .should('not.exist');
+});
+
+Then('user will see {string} charts', (chartsGroup: string) => {
+  cy.get(
+    `[data-test-id="panel-${chartsGroup
+      .toLowerCase()
+      .replace(/\)/, '')
+      .replace(/[^\w\s]/g, ' ')
+      .replace(/\s+/g, '-')}"]`,
+  )
+    .scrollIntoView()
+    .should('be.visible')
+    .find('.co-m-loader')
+    .should('not.exist');
+});
+
+When('user clicks on Workload dropdown', () => {
+  cy.get(monitoringPO.dashboardTab.workloadsDropdown).click();
+});
+
+When('user clicks on Dashboard dropdown', () => {
+  cy.get(monitoringPO.dashboardTab.dashboardDropdown).click();
+});
+
+When('user clicks on Type dropdown', () => {
+  cy.get(monitoringPO.dashboardTab.typeDropdown).click();
+});
+
+When('user clicks on Pod dropdown', () => {
+  cy.get(monitoringPO.dashboardTab.podDropdown).click();
+});
+
+When('user selects {string} option from the dropdown', (workloadName: string) => {
+  cy.contains('.pf-c-select__menu-item', workloadName).click();
+});
+
+When('user selects the first option from the dropdown', () => {
+  cy.get('.pf-c-select__menu-item')
+    .first()
+    .click();
+});
+
+When('user clicks on Inspect on {string} chart', (chartTitle: string) => {
+  cy.get(`[data-test="${chartTitleToTestId(chartTitle)}-chart"]`)
+    .find(`.co-dashboard-card__link`)
+    .click();
+});
+
+Then('user will see Metrics tab in Observe page', () => {
+  cy.get('.co-m-horizontal-nav-item--active')
+    .find(monitoringPO.tabs.metrics)
+    .should('be.visible');
+});
+
+Then('{string} option selected by default', (metric) => {
+  cy.get(monitoringPO.metricsTab.selectQuery).should('contain.text', metric);
 });

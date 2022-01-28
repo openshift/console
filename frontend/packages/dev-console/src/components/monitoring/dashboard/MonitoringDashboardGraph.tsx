@@ -69,7 +69,10 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
     [dispatch],
   );
   return (
-    <Card className="monitoring-dashboards__card odc-monitoring-dashboard-graph">
+    <Card
+      className="monitoring-dashboards__card odc-monitoring-dashboard-graph"
+      data-test={title.toLowerCase().replace(/\s+/g, '-')}
+    >
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardActions className="co-overview-card__actions">

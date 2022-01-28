@@ -19,6 +19,7 @@ import {
   navigateTo,
   topologySidePane,
   app,
+  createGitWorkloadIfNotExistsOnTopologyPage,
 } from '../../pages';
 
 Given('user is at Add page', () => {
@@ -32,7 +33,7 @@ Given('user is at Topology page', () => {
 Given(
   'user has created workload {string} with resource type {string}',
   (componentName: string, resourceType: string = 'Deployment') => {
-    createGitWorkload(
+    createGitWorkloadIfNotExistsOnTopologyPage(
       'https://github.com/sclorg/nodejs-ex.git',
       componentName,
       resourceType,

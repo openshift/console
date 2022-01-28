@@ -80,3 +80,7 @@ When('user is at namespace {string}', (projectName: string) => {
   perspective.switchTo(switchPerspective.Developer);
   projectNameSpace.selectOrCreateProject(projectName);
 });
+
+When('user refreshes the page', () => {
+  cy.reload();
+});

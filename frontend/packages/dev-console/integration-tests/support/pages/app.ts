@@ -12,8 +12,22 @@ export const app = {
       .its('readyState')
       .should('eq', 'complete');
   },
-  waitForLoad: (timeout: number = 160000) => {
-    cy.get('.co-m-loader', { timeout }).should('not.exist');
+  waitForLoad: (timeout: number = 160000, skipInline = false) => {
+    // observe dashboard contains lots of loaders that only disappear when scrolled into view
+    // skip these, otherwise wait as normal
+    cy.url().then((url) => {
+      if (url.includes('/dev-monitoring/') || skipInline) {
+        cy.get('body').then((body) => {
+          body.find('.co-m-loader').each(function() {
+            if (!this.className.includes('co-m-loader--inline')) {
+              cy.wrap(this).should('not.exist');
+            }
+          });
+        });
+      } else {
+        cy.get('.co-m-loader', { timeout }).should('not.exist');
+      }
+    });
     cy.get('.pf-c-spinner', { timeout }).should('not.exist');
     cy.get('.skeleton-catalog--grid', { timeout }).should('not.exist');
     cy.get('.loading-skeleton--table', { timeout }).should('not.exist');

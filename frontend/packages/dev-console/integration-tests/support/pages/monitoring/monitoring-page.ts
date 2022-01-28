@@ -17,15 +17,29 @@ export const monitoringPage = {
       cy.byLegacyTestID('dropdown-text-filter').type(workloadName);
       cy.get(`[id="${workloadName}-link"]`).click();
     },
-    verifySection: () => cy.get(monitoringPO.dashboardTab.dashboard).should('be.visible'),
-    verifyCpuUsageGraph: () => {},
-    verifyMemoryUsageGraph: () => {},
-    verifyReceiveBandwidthGraph: () => {},
-    verifyTransmitBandwidthGraph: () => {},
-    verifyRateOfReceivedPacketsGraph: () => {},
-    verifyRateOfTransmittedPacketsGraph: () => {},
-    verifyRateOfReceivedPacketsDroppedGraph: () => {},
-    verifyRateOfTransmittedPacketsDroppedGraph: () => {},
+    selectDashboard: (dashboardName: string) => {
+      cy.get(monitoringPO.dashboardTab.dashboardDropdown).click();
+      cy.get('input.pf-m-search').type(dashboardName);
+      cy.get('button.monitoring-dashboards__dashboard_dropdown_item')
+        .first()
+        .click();
+    },
+    verifySection: () => cy.get(monitoringPO.dashboardTab.dashboard).should('exist'),
+    verifyCpuUsageGraph: () => cy.get(monitoringPO.dashboardTab.sections.cpuUsage).should('exist'),
+    verifyMemoryUsageGraph: () =>
+      cy.get(monitoringPO.dashboardTab.sections.memoryUsage).should('exist'),
+    verifyReceiveBandwidthGraph: () =>
+      cy.get(monitoringPO.dashboardTab.sections.receiveBandwidth).should('exist'),
+    verifyTransmitBandwidthGraph: () =>
+      cy.get(monitoringPO.dashboardTab.sections.transmitBandwidth).should('exist'),
+    verifyRateOfReceivedPacketsGraph: () =>
+      cy.get(monitoringPO.dashboardTab.sections.rateOfReceivedPackets).should('exist'),
+    verifyRateOfTransmittedPacketsGraph: () =>
+      cy.get(monitoringPO.dashboardTab.sections.rateOfTransmittedPackets).should('exist'),
+    verifyRateOfReceivedPacketsDroppedGraph: () =>
+      cy.get(monitoringPO.dashboardTab.sections.rateOfReceivedPacketsDropped).should('exist'),
+    verifyRateOfTransmittedPacketsDroppedGraph: () =>
+      cy.get(monitoringPO.dashboardTab.sections.rateOfTransmittedPacketsDropped).should('exist'),
   },
   metrics: {
     enterQuery: (query: string) => {
