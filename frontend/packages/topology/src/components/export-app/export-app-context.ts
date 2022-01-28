@@ -2,9 +2,12 @@ import * as React from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { USERSETTINGS_PREFIX, useToast, useUserSettings } from '@console/shared/src';
+import { ExportModel } from '../../models';
 import { ExportAppUserSettings } from './types';
 
 export const ExportAppContext = React.createContext({});
@@ -21,13 +24,13 @@ export const useExportAppFormToast = () => {
     ExportAppUserSettings
   >(`${USERSETTINGS_PREFIX}.exportApp`, {}, true);
 
-  const exportAppWatchResources = React.useMemo(() => {
-    if (!exportAppToastLoaded && _.isEmpty(exportAppToast)) return {};
+  const exportAppWatchResources = React.useMemo<Record<string, WatchK8sResource>>(() => {
+    if (!exportAppToastLoaded || _.isEmpty(exportAppToast)) return {};
     const keys = Object.keys(exportAppToast);
     const watchRes = keys.reduce((acc, k) => {
-      const { kind, name, namespace: resNamespace } = exportAppToast[k];
+      const { groupVersionKind, name, namespace: resNamespace } = exportAppToast[k];
       acc[k] = {
-        kind,
+        groupVersionKind: groupVersionKind || getGroupVersionKindForModel(ExportModel),
         name,
         namespace: resNamespace,
         namespaced: true,
@@ -35,7 +38,7 @@ export const useExportAppFormToast = () => {
         optional: true,
       };
       return acc;
-    }, {});
+    }, {} as Record<string, WatchK8sResource>);
     return watchRes;
   }, [exportAppToast, exportAppToastLoaded]);
 

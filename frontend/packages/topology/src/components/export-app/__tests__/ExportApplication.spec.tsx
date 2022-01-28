@@ -4,7 +4,6 @@ import { act } from 'react-dom/test-utils';
 import * as utils from '@console/internal/components/utils';
 import * as k8s from '@console/internal/module/k8s';
 import * as shared from '@console/shared';
-import { EXPORT_CR_NAME } from '../../../const';
 import { ExportModel } from '../../../models';
 import ExportApplication from '../ExportApplication';
 import { mockExportData } from './export-data';
@@ -70,7 +69,7 @@ describe('ExportApplication', () => {
     });
 
     expect(spyk8sGet).toHaveBeenCalledTimes(1);
-    expect(spyk8sGet).toHaveBeenCalledWith(ExportModel, EXPORT_CR_NAME, 'my-app');
+    expect(spyk8sGet).toHaveBeenCalledWith(ExportModel, 'primer', 'my-app');
     expect(spyk8sKill).toHaveBeenCalledTimes(1);
     expect(spyk8sKill).toHaveBeenCalledWith(ExportModel, mockExportData);
     expect(spyk8sCreate).toHaveBeenCalledTimes(1);
