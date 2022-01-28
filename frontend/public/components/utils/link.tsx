@@ -32,9 +32,17 @@ export const namespacedPrefixes = [
   '/provisionedservices',
   '/search',
   '/status',
+  '/cluster/:cluster/k8s',
 ];
 
 export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
+
+export const getCluster = (path: string): string => {
+  const strippedPath = stripBasePath(path);
+  const split = strippedPath.split('/').filter((x) => x);
+
+  return split[0] === 'cluster' ? split[1] : null;
+};
 
 export const getNamespace = (path: string): string => {
   path = stripBasePath(path);
@@ -49,6 +57,8 @@ export const getNamespace = (path: string): string => {
     ns = split[3];
   } else if (split[1] === 'ns' && split[2]) {
     ns = split[2];
+  } else if (split[0] === 'cluster' && split[3] === 'ns' && split[4]) {
+    ns = split[4];
   } else {
     return;
   }

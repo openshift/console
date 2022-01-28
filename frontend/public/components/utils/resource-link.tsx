@@ -2,9 +2,11 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
-
 import { FLAGS } from '@console/shared/src/constants';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
+import { getActiveCluster } from '@console/internal/actions/ui';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
+
 import { ResourceIcon } from './resource-icon';
 import {
   modelFor,
@@ -19,10 +21,21 @@ import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref'
 
 const unknownKinds = new Set();
 
-export const resourcePathFromModel = (model: K8sKind, name?: string, namespace?: string) => {
+export const resourcePathFromModel = (
+  model: K8sKind,
+  name?: string,
+  namespace?: string,
+  cluster?: string,
+) => {
   const { plural, namespaced, crd } = model;
+  const targetCluster = cluster || getActiveCluster();
 
-  let url = '/k8s/';
+  let url = '';
+  if (targetCluster && isMultiClusterEnabled()) {
+    url += `/cluster/${targetCluster}`;
+  }
+
+  url += '/k8s/';
 
   if (!namespaced) {
     url += 'cluster/';

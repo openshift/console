@@ -10,6 +10,7 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
+// import { multiClusterRoutePrefixes } from '@console/app/src/components/detect-cluster/cluster'
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
@@ -131,10 +132,23 @@ export const formatNamespaceRoute = (
   originalPath,
   location?,
   forceList?: boolean,
+  activeCluster?: string,
 ) => {
   let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
 
   let parts = path.split('/').filter((p) => p);
+
+  if (parts[0] === 'cluster') {
+    // The url pattern that includes the cluster name starts  with /cluster/:clusterName
+    parts.splice(0, 2);
+  }
+
+  const multiClusterRoutePrefixes = ['/k8s/all-namespaces', '/k8s/cluster', '/k8s/ns'];
+  const clusterPathPart =
+    activeCluster && multiClusterRoutePrefixes.includes(`/${parts[0]}/${parts[1]}`)
+      ? `/cluster/${activeCluster}`
+      : '';
+
   const prefix = parts.shift();
 
   let previousNS;
@@ -147,7 +161,7 @@ export const formatNamespaceRoute = (
   }
 
   if (!previousNS) {
-    return originalPath;
+    return `${clusterPathPart}${originalPath}`;
   }
 
   if (
@@ -172,7 +186,7 @@ export const formatNamespaceRoute = (
     path += `${location.search}${location.hash}`;
   }
 
-  return path;
+  return `${clusterPathPart}${path}`;
 };
 
 export const setCurrentLocation = (location: string) =>
@@ -202,6 +216,7 @@ export const setActiveNamespace = (namespace: string = '') => {
   // make it noop when new active namespace is the same
   // otherwise users will get page refresh and cry about
   // broken direct links and bookmarks
+
   if (namespace !== getActiveNamespace()) {
     const oldPath = window.location.pathname;
     const newPath = formatNamespaceRoute(namespace, oldPath, window.location);
