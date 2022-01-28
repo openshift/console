@@ -1797,10 +1797,19 @@ const PollerPages = () => {
   );
 };
 
+// Handles links that have the Prometheus UI's URL format (expected for links in alerts sent by
+// Alertmanager). The Prometheus UI specifies the PromQL query with the GET param `g0.expr`, so we
+// use that if it exists. Otherwise, just go to the query browser page with no query.
+const PrometheusUIRedirect = () => {
+  const params = getURLSearchParams();
+  return <Redirect to={`/monitoring/query-browser?query0=${params['g0.expr'] || ''}`} />;
+};
+
 export const MonitoringUI = () => (
   <Switch>
     <Redirect from="/monitoring" exact to="/monitoring/alerts" />
     <Route path="/monitoring/dashboards/:board?" exact component={MonitoringDashboardsPage} />
+    <Route path="/monitoring/graph" exact component={PrometheusUIRedirect} />
     <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
     <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
     <Route path="/monitoring/targets" component={TargetsUI} />
