@@ -263,7 +263,7 @@ export const detectFeatures = () => (dispatch: Dispatch) => {
   ].forEach((detect) => detect(dispatch));
 };
 
-const featureFlagController: SetFeatureFlag = (flag, enabled) => {
+export const featureFlagController: SetFeatureFlag = (flag, enabled) => {
   store.dispatch(setFlag(flag, enabled));
 };
 
