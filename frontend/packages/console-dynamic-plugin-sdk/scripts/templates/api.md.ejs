@@ -1,0 +1,42 @@
+# OpenShift Console API
+
+<%# Table of contents _%>
+<% apis.map((api) => api.name).forEach((component, index) => { _%>
+<%- index + 1 %>. [`<%- component %>`](#<%- toLowerCase(component) %>)
+<% }); _%>
+
+<%# Generate one section per extension type _%>
+<% apis.forEach((api) => { _%>
+---
+
+## `<%- api.name %>`
+
+### Summary
+
+<%- printComments(api.doc.summary) || '(not available)' %>
+
+<% if(api.doc.example) { %>
+
+### Example
+
+<%- api.doc.example  %>
+
+<% } %>
+
+<% if(api.doc.paramters) { %>
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ------------------------------------ |
+<% api.doc.parameters.forEach((param) => { _%>
+| `<%- param.parameterName %>` | <%- removeNewLines(param.description) %> |
+<% }); _%>
+<% } %>
+
+<% if(api.doc.returns) { %>
+### Returns
+
+<%- printComments(api.doc.returns) %>
+
+<% } %>
+<% }); _%>

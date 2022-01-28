@@ -29,6 +29,7 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
  * A component that creates a Navigation bar. It takes array of NavPage objects and renderes a NavBar.
  * Routing is handled as part of the component.
  * @example
+ * ```ts
  * const HomePage: React.FC = (props) => {
  *     const page = {
  *       href: '/home',
@@ -37,6 +38,7 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
  *     }
  *     return <HorizontalNav match={props.match} pages={[page]} />
  * }
+ * ```
  *
  * @param {object=} resource - The resource associated with this Navigation, an object of K8sResourceCommon type
  * @param {NavPage[]} pages - An array of page objects

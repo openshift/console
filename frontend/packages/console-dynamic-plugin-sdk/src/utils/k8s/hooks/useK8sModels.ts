@@ -5,7 +5,8 @@ import { UseK8sModels } from '../../../extensions/console-types';
 
 /**
  * Hook that retrieves all current k8s models from redux.
- * @return An array with the first item as the list of k8s model and second item as inFlight status
+ *
+ * @returns An array with the first item as the list of k8s model and second item as inFlight status
  * @example
  * ```ts
  * const Component: React.FC = () => {
