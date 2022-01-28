@@ -110,9 +110,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       loadError: null,
       strategies: [],
       selectedStrategy: {
-        name: 'Devfile',
-        type: ImportStrategy.DEVFILE,
-        priority: 2,
+        name: 'Builder Image',
+        type: ImportStrategy.S2I,
+        priority: 0,
         detectedFiles: [],
       },
       recommendedStrategy: null,
