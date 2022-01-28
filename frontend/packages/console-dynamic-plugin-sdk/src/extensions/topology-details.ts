@@ -37,9 +37,7 @@ export type DetailsTabSection = ExtensionDeclaration<
      * @param renderNull should be used for section that defines Adapter to
      *  determine if adapter component renders null or not
      * */
-    section: CodeRef<
-      (element: GraphElement, renderNull?: () => null) => React.Component | undefined
-    >;
+    section: CodeRef<DetailsTabSectionCallback>;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -169,3 +167,8 @@ export type PodsAdapterDataType<E = K8sResourceCommon> = {
 export type NetworkAdapterType = {
   resource: K8sResourceCommon;
 };
+
+export type DetailsTabSectionCallback = (
+  element: GraphElement,
+  renderNull?: () => null,
+) => React.Component | undefined;
