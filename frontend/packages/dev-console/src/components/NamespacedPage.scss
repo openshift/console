@@ -10,6 +10,7 @@
     flex-direction: column;
     background-color: var(--pf-global--Color--light-200);
     position: relative;
+    overflow: auto;
 
     &.is-light {
       background-color: var(--pf-global--Color--light-100);
