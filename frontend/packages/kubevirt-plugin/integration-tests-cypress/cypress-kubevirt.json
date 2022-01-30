@@ -1,5 +1,7 @@
 {
   "integrationFolder": "tests/smoke",
+  "viewportWidth": 1920,
+  "viewportHeight": 1080,
   "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
   "videosFolder": "../../../gui_test_screenshots/cypress/videos",
   "video": true,
@@ -7,17 +9,15 @@
   "reporterOptions": {
     "configFile": "reporter-config.json"
   },
+  "supportFile": "./support/index.ts",
+  "pluginsFile": "../../integration-tests-cypress/plugins/index.js",
   "ignoreTestFiles": "*.includes.ts",
-  "supportFile": "support/index.ts",
-  "pluginsFile": "plugins/index.js",
   "fixturesFolder": "fixtures",
   "defaultCommandTimeout": 120000,
   "retries": {
     "runMode": 2,
     "openMode": 0
   },
-  "viewportWidth": 1536,
-  "viewportHeight": 960,
   "env": {
     "UPLOAD_IMG": "/tmp/cirros.img",
     "DOWNSTREAM": false,

@@ -79,7 +79,7 @@ if [ -n "${pkg-}" ]; then
     yarn_script="$yarn_script-$pkg"
 fi
 
-if [ -n "$nightly-" ]; then
+if [ -n "${nightly-}" ]; then
   yarn_script="$yarn_script-nightly"
 elif [ -n "${headless-}" ]; then
   yarn_script="$yarn_script-headless"
