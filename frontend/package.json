@@ -269,7 +269,6 @@
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-graphql": "^4.0.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-tsdoc": "^0.2.14",
     "file-loader": "1.x",
     "find-up": "4.x",
     "fork-ts-checker-webpack-plugin": "6.x",

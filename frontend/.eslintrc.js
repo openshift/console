@@ -19,7 +19,6 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json',
     comment: true,
     ecmaFeatures: {
       jsx: true,
@@ -29,7 +28,7 @@ module.exports = {
     sourceType: 'module',
     tsconfigRootDir: './',
   },
-  plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql', 'eslint-plugin-tsdoc'],
+  plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql'],
   rules: {
     camelcase: [
       'error',
@@ -86,7 +85,6 @@ module.exports = {
         schemaString: fs.readFileSync('../pkg/graphql/schema.graphql', 'utf-8'),
       },
     ],
-    'tsdoc/syntax': 'warn',
   },
   settings: {
     'import/extensions': ['.js', '.jsx'],
