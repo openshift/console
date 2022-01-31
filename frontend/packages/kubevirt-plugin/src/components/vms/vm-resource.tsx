@@ -114,7 +114,7 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~Operating System')}
+        title={t('kubevirt-plugin~Operating system')}
         idValue={prefixedID(id, 'os')}
         isNotAvail={!(operatingSystem || os)}
       >
@@ -200,7 +200,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~Boot Order')}
+        title={t('kubevirt-plugin~Boot order')}
         canEdit={canEditWhileVMRunning}
         dataTest="boot-order-details-item"
         editButtonId={prefixedID(id, 'boot-order-edit')}
@@ -216,7 +216,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~IP Address')}
+        title={t('kubevirt-plugin~IP address')}
         idValue={prefixedID(id, 'ip-addresses')}
         isNotAvail={!launcherPod || !ipAddrs}
       >
@@ -233,7 +233,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~Time Zone')}
+        title={t('kubevirt-plugin~Time zone')}
         idValue={prefixedID(id, 'timezone')}
         isNotAvail={!timeZone}
         isNotAvailMessage={guestAgentFieldNotAvailMsg}
@@ -250,7 +250,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~Workload Profile')}
+        title={t('kubevirt-plugin~Workload profile')}
         idValue={prefixedID(id, 'workload-profile')}
         isNotAvail={!workloadProfile}
       >
@@ -275,7 +275,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
             </ClipboardCopy>
             {!sshServicesRunning && (
               <span className="kubevirt-menu-actions__secondary-title">
-                {t('kubevirt-plugin~Requires SSH Service')}
+                {t('kubevirt-plugin~Requires SSH service')}
               </span>
             )}
           </>
@@ -285,7 +285,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~SSH Access')}
+        title={t('kubevirt-plugin~SSH access')}
         dataTest="ssh-access-details-item"
         idValue={prefixedID(id, 'ssh-access')}
         canEdit={vmiReady}
@@ -296,7 +296,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
             sshServicesRunning ? (
               t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
             ) : (
-              t('kubevirt-plugin~SSH Service disabled')
+              t('kubevirt-plugin~SSH service disabled')
             )
           ) : (
             <div className="text-secondary">{t('kubevirt-plugin~Virtual machine not running')}</div>
@@ -428,7 +428,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
       <div className="col-sm-6">
         <dl className="co-m-pane__details">
           <VMDetailsItem
-            title={t('kubevirt-plugin~Node Selector')}
+            title={t('kubevirt-plugin~Node selector')}
             idValue={prefixedID(id, 'node-selector')}
             editButtonId={prefixedID(id, 'node-selector-edit')}
           >
@@ -464,7 +464,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
           </VMDetailsItem>
 
           <VMDetailsItem
-            title={t('kubevirt-plugin~Affinity Rules')}
+            title={t('kubevirt-plugin~Affinity rules')}
             idValue={prefixedID(id, 'affinity')}
             editButtonId={prefixedID(id, 'affinity-edit')}
           >
@@ -521,7 +521,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
           </VMDetailsItem>
 
           <VMDetailsItem
-            title={t('kubevirt-plugin~Dedicated Resources')}
+            title={t('kubevirt-plugin~Dedicated resources')}
             idValue={prefixedID(id, 'dedicated-resources')}
             editButtonId={prefixedID(id, 'dedicated-resources-edit')}
           >
@@ -538,7 +538,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
           </VMDetailsItem>
 
           <VMDetailsItem
-            title={t('kubevirt-plugin~Eviction Strategy')}
+            title={t('kubevirt-plugin~Eviction strategy')}
             idValue={prefixedID(id, 'eviction-strategy')}
             editButtonId={prefixedID(id, 'eviction-strategy-edit')}
           >
@@ -548,7 +548,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
                 evictionStrategyModal({ vmLikeEntity: vm, evictionStrategy, blocking: true })
               }
             >
-              {evictionStrategy || t('kubevirt-plugin~No Eviction Strategy')}
+              {evictionStrategy || t('kubevirt-plugin~No eviction strategy')}
             </VMEditWithPencil>
           </VMDetailsItem>
         </dl>
