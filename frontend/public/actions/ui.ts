@@ -104,6 +104,7 @@ export const getNamespacedResources = () => {
   return namespacedResources;
 };
 
+export const getActiveCluster = (): string => store.getState().UI.get('activeCluster'); // TODO: Don't use this = use from '@console/dynamic-plugin-sdk'
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
 export const getActiveUserName = (): string => getUser(store.getState())?.metadata?.name;
 

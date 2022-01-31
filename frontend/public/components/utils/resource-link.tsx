@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { FLAGS } from '@console/shared/src/constants';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
-import { getActiveCluster } from '@console/internal/actions/ui';
+import { getActiveCluster } from '@console/internal/actions/ui'; // TODO: Don't use this = use from '@console/dynamic-plugin-sdk'
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
 
 import { ResourceIcon } from './resource-icon';
