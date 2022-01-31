@@ -137,7 +137,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
               )
             }
           >
-            {t('kubevirt-plugin~Open Console in New Window')}
+            {t('kubevirt-plugin~Open console in new window')}
           </Button>
         </StackItem>
       )}

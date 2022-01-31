@@ -159,7 +159,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
                 )
               }
             >
-              {t('kubevirt-plugin~Take Snapshot')}
+              {t('kubevirt-plugin~Take snapshot')}
             </Button>
           </div>
         </div>
