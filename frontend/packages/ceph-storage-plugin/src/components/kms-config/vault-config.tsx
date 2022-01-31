@@ -286,7 +286,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
       </div>
       {isWizardFlow && (
         <Component
-          {...{ t, className: `${className}__form-body`, vaultState, setAuthValue, isValid }}
+          {...{ t, className: `${className}__form-body`, vaultState, setAuthValue, isValid, state }}
         />
       )}
       <Button

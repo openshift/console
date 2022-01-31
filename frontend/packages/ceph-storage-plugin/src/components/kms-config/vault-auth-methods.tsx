@@ -11,6 +11,9 @@ import {
 } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { VaultConfig } from '../../types';
+import { State } from '../ocs-install/attached-devices-mode/reducer';
+import { InternalClusterState } from '../ocs-install/internal-mode/reducer';
+import { WizardState } from '../create-storage-system/reducer';
 
 export const VaultTokenConfigure: React.FC<VaultAuthMethodProps> = ({
   t,
@@ -18,9 +21,10 @@ export const VaultTokenConfigure: React.FC<VaultAuthMethodProps> = ({
   vaultState,
   setAuthValue,
   isValid,
+  state,
 }) => {
   const [revealToken, setRevealToken] = React.useState(false);
-
+  const { encryption } = state;
   return (
     <FormGroup
       fieldId="vault-token"
@@ -28,9 +32,13 @@ export const VaultTokenConfigure: React.FC<VaultAuthMethodProps> = ({
       className={className}
       helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
       validated={isValid(vaultState.authValue?.valid)}
-      helperText={t(
-        'ceph-storage-plugin~Create a secret with the token for every namespace using encrypted PVCs.',
-      )}
+      helperText={
+        encryption.storageClass
+          ? t(
+              'ceph-storage-plugin~Create a secret with the token for every namespace using encrypted PVCs.',
+            )
+          : ' '
+      }
       isRequired
     >
       <InputGroup className="ocs-install-kms__form-token">
@@ -89,6 +97,10 @@ export const VaultServiceAccountConfigure: React.FC<VaultAuthMethodProps> = ({
 };
 
 export type VaultAuthMethodProps = {
+  state:
+    | InternalClusterState
+    | State
+    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
   className: string;
   vaultState: VaultConfig;
   t: TFunction;
