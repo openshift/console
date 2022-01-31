@@ -17,7 +17,13 @@ import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
 import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
-import { DataVolumeSourceType, VMWizardMode, VMWizardName, VolumeType } from '../../constants';
+import {
+  DataVolumeSourceType,
+  NAMESPACE_OPENSHIFT,
+  VMWizardMode,
+  VMWizardName,
+  VolumeType,
+} from '../../constants';
 import { instantiateTemplateBaseURLBuilder } from '../../constants/url-params';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
@@ -176,6 +182,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location && location.search);
   const initData = parseVMWizardInitialData(searchParams);
+  const templateNS = initData.commonTemplateName ? NAMESPACE_OPENSHIFT : initData.userTemplateNs;
   const [namespace, setNamespace] = React.useState(match?.params?.ns);
   const [state, dispatch] = React.useReducer(formReducer, initFormState(namespace));
   const [isCreating, setCreating] = React.useState(false);
@@ -211,7 +218,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
     baseTemplates,
     resourcesLoaded,
     resourcesLoadError,
-  } = useVmTemplatesResources(namespace);
+  } = useVmTemplatesResources(templateNS);
 
   const templates = filterTemplates([...userTemplates, ...baseTemplates]);
 
@@ -230,11 +237,10 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
   React.useEffect(() => {
     if ((initData.commonTemplateName || initData.userTemplateName) && !selectedTemplate && loaded) {
       const name = initData.commonTemplateName ?? initData.userTemplateName;
-      const ns = initData.commonTemplateName ? 'openshift' : initData.userTemplateNs;
       let templateVariant: TemplateKind;
       const templateItem = templates?.find((tItem) => {
         templateVariant = tItem.variants.find(
-          (v) => v.metadata.name === name && v.metadata.namespace === ns,
+          (v) => v.metadata.name === name && v.metadata.namespace === templateNS,
         );
         return !!templateVariant;
       });
@@ -246,7 +252,7 @@ export const CreateVM: React.FC<RouteComponentProps<{ ns: string }>> = ({ match,
         setTemplatePreselectError('kubevirt-plugin~Requested template could not be found');
       }
     }
-  }, [loaded, initData, templates, userTemplates, selectedTemplate, t]);
+  }, [loaded, initData, templates, userTemplates, selectedTemplate, t, templateNS]);
 
   React.useEffect(() => {
     const vm = new VMWrapper(selectVM(selectedTemplate?.variants?.[0]));
