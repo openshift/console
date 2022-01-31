@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path"
 	"strconv"
+	"strings"
 
 	buildv1 "github.com/openshift/api/build/v1"
 	imagev1 "github.com/openshift/api/image/v1"
@@ -63,7 +64,13 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	devfileContentBytes := []byte(data.Devfile.DevfileContent)
 	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes})
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to parse devfile: %v", err)
+		errMsg := fmt.Sprintf("Failed to parse devfile:")
+		if strings.Contains(err.Error(), "schemaVersion not present in devfile") {
+			errMsg = fmt.Sprintf("%v schemaVersion not present in devfile. Only devfile 2.2.0 or above is supported. The devfile needs to have the schemaVersion set in the metadata section with a value of 2.2.0 or above.", errMsg)
+		} else {
+			errMsg = fmt.Sprintf("%v %v", errMsg, err)
+		}
+
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
@@ -83,7 +90,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(imageComponents) != 1 {
-		errMsg := fmt.Sprintf("Console Devfile Import Dev Preview, supports only one image component, now has %v", len(imageComponents))
+		errMsg := fmt.Sprintf("Only devfile 2.2.0 or above with one image component is supported. ")
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
