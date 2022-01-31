@@ -6,7 +6,6 @@ import { MastheadToolbar } from './masthead-toolbar';
 import { history } from './utils';
 import okdLogoImg from '../imgs/okd-logo.svg';
 import openshiftLogoImg from '../imgs/openshift-logo.svg';
-import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
 
@@ -19,8 +18,8 @@ export const getBrandingDetails = () => {
       productName = 'Red Hat OpenShift';
       break;
     case 'ocp':
-      logoImg = ocpLogoImg;
-      productName = 'Red Hat OpenShift Container Platform';
+      logoImg = openshiftLogoImg;
+      productName = 'Red Hat OpenShift';
       break;
     case 'online':
       logoImg = onlineLogoImg;
