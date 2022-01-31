@@ -30,6 +30,11 @@ body,
   height: 100%; // doesn't work on safari without height
 }
 
+.co-m-app__content > .pf-c-page {
+  height: 0;
+  flex: 1;
+}
+
 .co-p-has-sidebar {
   position: relative;
   display: flex;
