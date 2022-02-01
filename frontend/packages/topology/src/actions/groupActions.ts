@@ -32,7 +32,10 @@ const cleanUpWorkloadNode = async (workload: OdcNodeModel): Promise<K8sResourceK
 const deleteGroup = (application: TopologyApplicationObject) => {
   // accessReview needs a resource but group is not a k8s resource,
   // so currently picking the first resource to do the rbac checks (might change in future)
-  const primaryResource = application.resources[0].resource;
+  const primaryResource = application.resources?.find((node) => node.resource)?.resource;
+  if (!primaryResource) {
+    return null;
+  }
   const resourceModel = modelFor(primaryResource.kind)
     ? modelFor(primaryResource.kind)
     : modelFor(referenceFor(primaryResource));
@@ -62,7 +65,10 @@ const addResourcesMenu = (
   application: TopologyApplicationObject,
   connectorSource?: Node,
 ) => {
-  const primaryResource = application.resources[0].resource;
+  const primaryResource = application.resources?.find((node) => node.resource)?.resource;
+  if (!primaryResource) {
+    return [];
+  }
   const connectorSourceObj = getResource(connectorSource) || {};
   let resourceMenu: MenuOptions = addGroupResourceMenu;
   resourceMenu = getKnativeContextMenuAction(graphData, resourceMenu, connectorSource, true);
@@ -95,6 +101,7 @@ export const groupActions = (
   application: TopologyApplicationObject,
   connectorSource?: Node,
 ): KebabOption[] => {
+  const deleteItem = deleteGroup(application);
   const addItems = graphData ? addResourcesMenu(graphData, application, connectorSource) : [];
-  return !connectorSource ? [deleteGroup(application), ...addItems] : addItems;
+  return !connectorSource && deleteItem ? [deleteItem, ...addItems] : addItems;
 };
