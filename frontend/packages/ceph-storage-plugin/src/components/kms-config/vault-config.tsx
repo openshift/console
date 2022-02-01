@@ -217,7 +217,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
   const isValid = (value: boolean) => (value ? ValidatedOptions.default : ValidatedOptions.error);
 
   const { encryption } = state;
-  const isSCencryption = encryption.storageClass;
+  const isScEncryption = encryption.storageClass;
 
   return (
     <>
@@ -295,7 +295,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
             vaultState,
             setAuthValue,
             isValid,
-            isSCencryption,
+            isScEncryption,
           }}
         />
       )}

@@ -18,7 +18,7 @@ export const VaultTokenConfigure: React.FC<VaultAuthMethodProps> = ({
   vaultState,
   setAuthValue,
   isValid,
-  isSCencryption,
+  isScEncryption,
 }) => {
   const [revealToken, setRevealToken] = React.useState(false);
 
@@ -30,7 +30,7 @@ export const VaultTokenConfigure: React.FC<VaultAuthMethodProps> = ({
       helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
       validated={isValid(vaultState.authValue?.valid)}
       helperText={
-        isSCencryption &&
+        isScEncryption &&
         t(
           'ceph-storage-plugin~Create a secret with the token for every namespace using encrypted PVCs.',
         )
@@ -93,7 +93,7 @@ export const VaultServiceAccountConfigure: React.FC<VaultAuthMethodProps> = ({
 };
 
 export type VaultAuthMethodProps = {
-  isSCencryption: boolean;
+  isScEncryption?: boolean;
   className: string;
   vaultState: VaultConfig;
   t: TFunction;
