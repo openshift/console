@@ -69,7 +69,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~Operating System')}
+        title={t('kubevirt-plugin~Operating system')}
         idValue={prefixedID(id, 'os')}
         isNotAvail={!os}
       >
@@ -77,7 +77,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~Workload Profile')}
+        title={t('kubevirt-plugin~Workload profile')}
         idValue={prefixedID(id, 'workload-profile')}
         isNotAvail={!workloadProfile}
       >
@@ -85,7 +85,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={t('kubevirt-plugin~Base Template')}
+        title={t('kubevirt-plugin~Base template')}
         idValue={prefixedID(id, 'base-template')}
         isNotAvail={!templateNamespacedName}
       >
@@ -146,7 +146,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   return (
     <dl className="co-m-pane__details">
       <VMDetailsItem
-        title={t('kubevirt-plugin~Boot Order')}
+        title={t('kubevirt-plugin~Boot order')}
         canEdit={!isCommonTemplate(template)}
         editButtonId={prefixedID(id, 'boot-order-edit')}
         onEditClick={() => BootOrderModal({ vmLikeEntity: template, modalClassName: 'modal-lg' })}
@@ -255,7 +255,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
         <dl className="co-m-pane__details">
           <VMDetailsItem
             canEdit={canUpdateTemplate}
-            title={t('kubevirt-plugin~Node Selector')}
+            title={t('kubevirt-plugin~Node selector')}
             idValue={prefixedID(id, 'node-selector')}
             editButtonId={prefixedID(id, 'node-selector-edit')}
             onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
@@ -281,7 +281,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
 
           <VMDetailsItem
             canEdit={canUpdateTemplate}
-            title={t('kubevirt-plugin~Affinity Rules')}
+            title={t('kubevirt-plugin~Affinity rules')}
             idValue={prefixedID(id, 'affinity')}
             editButtonId={prefixedID(id, 'affinity-edit')}
             onEditClick={() =>
@@ -310,7 +310,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
           </VMDetailsItem>
 
           <VMDetailsItem
-            title={t('kubevirt-plugin~Dedicated Resources')}
+            title={t('kubevirt-plugin~Dedicated resources')}
             idValue={prefixedID(id, 'dedicated-resources')}
             canEdit={canUpdateTemplate}
             onEditClick={() =>
@@ -326,7 +326,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
               : t('kubevirt-plugin~No Dedicated resources applied')}
           </VMDetailsItem>
           <VMDetailsItem
-            title={t('kubevirt-plugin~Eviction Strategy')}
+            title={t('kubevirt-plugin~Eviction strategy')}
             idValue={prefixedID(id, 'eviction-strategy')}
             canEdit={canUpdateTemplate}
             onEditClick={() =>
@@ -335,7 +335,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             editButtonId={prefixedID(id, 'eviction-strategy-edit')}
           >
             {evictionStrategy || (
-              <p className="text-muted">{t('kubevirt-plugin~No Eviction Strategy')}</p>
+              <p className="text-muted">{t('kubevirt-plugin~No eviction strategy')}</p>
             )}
           </VMDetailsItem>
         </dl>
