@@ -3,7 +3,8 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useLocation, Link } from 'react-router-dom';
 
-import { useDeepCompareMemoize, StatusIconAndText, Status } from '@console/shared';
+import { useDeepCompareMemoize, Status } from '@console/shared';
+import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { sortable, wrappable } from '@patternfly/react-table';
 import { Tooltip } from '@patternfly/react-core';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';

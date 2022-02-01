@@ -4,10 +4,10 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { PrometheusResponse } from '@console/internal/module/k8s';
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import { Humanize } from '@console/internal/components/utils';
+import { ColoredIconProps } from '@console/dynamic-plugin-sdk/src/app/components/status/icons';
 import {
   YellowExclamationTriangleIcon,
   RedExclamationCircleIcon,
-  ColoredIconProps,
 } from '@console/shared/src/components/status';
 import { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';

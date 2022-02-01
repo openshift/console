@@ -1,6 +1,16 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 
+type PopoverStatusProps = {
+  statusBody: React.ReactNode;
+  onHide?: () => void;
+  onShow?: () => void;
+  title?: string;
+  hideHeader?: boolean;
+  isVisible?: boolean;
+  shouldClose?: (hideFunction: any) => void;
+};
+
 const PopoverStatus: React.FC<PopoverStatusProps> = ({
   hideHeader,
   children,
@@ -27,16 +37,6 @@ const PopoverStatus: React.FC<PopoverStatusProps> = ({
       </Button>
     </Popover>
   );
-};
-
-type PopoverStatusProps = {
-  statusBody: React.ReactNode;
-  onHide?: () => void;
-  onShow?: () => void;
-  title?: string;
-  hideHeader?: boolean;
-  isVisible?: boolean;
-  shouldClose?: (hideFunction: any) => void;
 };
 
 export default PopoverStatus;

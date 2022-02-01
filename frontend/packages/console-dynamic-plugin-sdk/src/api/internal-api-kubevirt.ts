@@ -5,6 +5,7 @@
 /* eslint-disable global-require */
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import { StatusComponentProps, K8sResourceCommon } from '../extensions/console-types';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   AccessReviewResourceAttributes,
@@ -12,7 +13,6 @@ import {
   K8sResourceKindReference,
   PageComponentProps,
 } from '../extensions';
-import { K8sResourceCommon } from '../extensions/console-types';
 import { DisplayFilters } from '../extensions/topology-types';
 import { K8sModel, MatchLabels, Selector as SelectorKind } from './common-types';
 import { RootState } from '@console/internal/redux';
@@ -356,9 +356,7 @@ export const Timestamp = React.lazy(() =>
   })),
 );
 
-export const GenericStatus = React.lazy(() =>
-  import('@console/shared/src/components/status/GenericStatus'),
-);
+export { default as GenericStatus } from '../app/components/status/GenericStatus';
 
 export const EventItem = React.lazy(() =>
   import('@console/shared/src/components/dashboard/activity-card/EventItem'),
@@ -484,14 +482,6 @@ type ColoredIconProps = {
   className?: string;
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
-};
-
-type StatusComponentProps = {
-  title?: string;
-  iconOnly?: boolean;
-  noTooltip?: boolean;
-  className?: string;
-  popoverTitle?: string;
 };
 
 type ModalComponentProps = {

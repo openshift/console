@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   SectionHeading,
   Timestamp,
@@ -21,7 +22,6 @@ import {
   getMachineNodeName,
   getNamespace,
   getMachineRole,
-  StatusIconAndText,
   DetailPropertyList,
   DetailPropertyListItem,
   SecondaryStatus,

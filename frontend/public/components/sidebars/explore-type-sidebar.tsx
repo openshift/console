@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Breadcrumb, BreadcrumbItem, Button, TextContent } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
+import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
   getDefinitionKey,
   getSwaggerDefinitions,
@@ -11,7 +11,7 @@ import {
   SwaggerDefinition,
   SwaggerDefinitions,
 } from '../../module/k8s';
-import { CamelCaseWrap, EmptyBox, LinkifyExternal } from '../utils';
+import { EmptyBox, LinkifyExternal } from '../utils';
 
 const getRef = (definition: SwaggerDefinition): string => {
   const ref = definition.$ref || _.get(definition, 'items.$ref');

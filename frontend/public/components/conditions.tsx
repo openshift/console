@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import { LinkifyExternal, Timestamp } from './utils';
-import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
 
 /**

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
+import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { BuildLogLink, BuildNumberLink } from '@console/internal/components/build';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import {
@@ -13,7 +14,7 @@ import { fromNow } from '@console/internal/components/utils/datetime';
 import { BuildConfigModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { BuildPhase, startBuild } from '@console/internal/module/k8s/builds';
-import { LogSnippet, Status, StatusIconAndText, BuildConfigOverviewItem } from '@console/shared';
+import { LogSnippet, Status, BuildConfigOverviewItem } from '@console/shared';
 
 const StatusTitle = ({ build }: { build: K8sResourceKind }) => {
   const { t } = useTranslation();
