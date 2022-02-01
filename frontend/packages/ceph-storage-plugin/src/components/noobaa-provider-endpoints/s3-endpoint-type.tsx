@@ -1,26 +1,24 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dropdown, Firehose } from '@console/internal/components/utils';
+import { Dropdown } from '@console/internal/components/utils';
 import { Button, FormGroup, TextInput, InputGroup } from '@patternfly/react-core';
-import { SecretModel } from '@console/internal/models';
-import { ResourceDropdown } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import {
+  DefaultSecretDropdown,
+  OSDSecretDropdown,
+  SecretDropdownProps,
+} from './noobaa-secret-dropdown';
+import { ProviderDataState, StoreAction } from '../namespace-store/reducer';
+import { ODF_MANAGED_FLAG } from '../../features';
 import { BC_PROVIDERS, AWS_REGIONS } from '../../constants';
 import { endpointsSupported, awsRegionItems } from '../../utils/noobaa-utils';
 import { StoreType } from '../../constants/common';
-import { ProviderDataState, StoreAction } from '../namespace-store/reducer';
 import './noobaa-provider-endpoints.scss';
-
-type S3EndpointTypeProps = {
-  type: StoreType;
-  state: ProviderDataState;
-  dispatch: React.Dispatch<StoreAction>;
-  provider: BC_PROVIDERS;
-  namespace: string;
-};
 
 export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
   const { t } = useTranslation();
 
+  const isOdfManaged = useFlag(ODF_MANAGED_FLAG);
   const [showSecret, setShowSecret] = React.useState(true);
   const { provider, namespace, state, dispatch, type } = props;
 
@@ -36,14 +34,9 @@ export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
     provider === BC_PROVIDERS.AZURE
       ? t('ceph-storage-plugin~Account key')
       : t('ceph-storage-plugin~Secret key');
-  const resources = [
-    {
-      isList: true,
-      namespace,
-      kind: SecretModel.kind,
-      prop: 'secrets',
-    },
-  ];
+  const Component: React.FC<SecretDropdownProps> = isOdfManaged
+    ? OSDSecretDropdown
+    : DefaultSecretDropdown;
 
   const switchToSecret = () => {
     setShowSecret(true);
@@ -54,6 +47,7 @@ export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
   const switchToCredentials = () => {
     setShowSecret(false);
     dispatch({ type: 'setSecretName', value: '' });
+    dispatch({ type: 'setSecretNamespace', value: '' });
   };
 
   return (
@@ -108,17 +102,7 @@ export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           isRequired
         >
           <InputGroup>
-            <Firehose resources={resources}>
-              <ResourceDropdown
-                id="secret-dropdown"
-                selectedKey={state.secretName}
-                placeholder={t('ceph-storage-plugin~Select Secret')}
-                className="nb-endpoints-form-entry__dropdown nb-endpoints-form-entry__dropdown--full-width"
-                buttonClassName="nb-endpoints-form-entry__dropdown"
-                dataSelector={['metadata', 'name']}
-                onChange={(e) => dispatch({ type: 'setSecretName', value: e })}
-              />
-            </Firehose>
+            <Component state={state} dispatch={dispatch} namespace={namespace} />
             <Button variant="plain" data-test="switch-to-creds" onClick={switchToCredentials}>
               {t('ceph-storage-plugin~Switch to Credentials')}
             </Button>
@@ -176,4 +160,12 @@ export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
       </FormGroup>
     </>
   );
+};
+
+type S3EndpointTypeProps = {
+  type: StoreType;
+  state: ProviderDataState;
+  dispatch: React.Dispatch<StoreAction>;
+  provider: BC_PROVIDERS;
+  namespace: string;
 };

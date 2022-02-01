@@ -2,6 +2,7 @@ import { AWS_REGIONS } from '../../constants/providers';
 
 export type StoreAction =
   | { type: 'setSecretName'; value: string }
+  | { type: 'setSecretNamespace'; value: string }
   | { type: 'setSecretKey'; value: string }
   | { type: 'setAccessKey'; value: string }
   | { type: 'setRegion'; value: string }
@@ -10,6 +11,7 @@ export type StoreAction =
 
 export type ProviderDataState = {
   secretName: string;
+  secretNamespace: string;
   secretKey: string;
   accessKey: string;
   region: string;
@@ -19,6 +21,7 @@ export type ProviderDataState = {
 
 export const initialState: ProviderDataState = {
   secretName: '',
+  secretNamespace: '',
   secretKey: '',
   accessKey: '',
   region: AWS_REGIONS[0],
@@ -31,6 +34,8 @@ export const providerDataReducer = (state: ProviderDataState, action: StoreActio
   switch (action.type) {
     case 'setSecretName':
       return Object.assign({}, state, { secretName: value });
+    case 'setSecretNamespace':
+      return Object.assign({}, state, { secretNamespace: value });
     case 'setSecretKey':
       return Object.assign({}, state, { secretKey: value });
     case 'setAccessKey':

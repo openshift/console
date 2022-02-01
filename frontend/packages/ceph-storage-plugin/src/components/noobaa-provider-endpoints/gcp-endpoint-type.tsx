@@ -11,9 +11,14 @@ import {
   Popover,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import { ExternalLink, Firehose } from '@console/internal/components/utils';
-import { ResourceDropdown } from '@console/shared';
-import { SecretModel } from '@console/internal/models';
+import { ExternalLink } from '@console/internal/components/utils';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import {
+  DefaultSecretDropdown,
+  OSDSecretDropdown,
+  SecretDropdownProps,
+} from './noobaa-secret-dropdown';
+import { ODF_MANAGED_FLAG } from '../../features';
 import {
   BackingStoreProviderDataState,
   BackingStoreAction,
@@ -33,15 +38,10 @@ export const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
   const [inputData, setInputData] = React.useState('');
   const [showSecret, setShowSecret] = React.useState(false);
   const { state, dispatch, namespace } = props;
-
-  const resources = [
-    {
-      isList: true,
-      namespace,
-      kind: SecretModel.kind,
-      prop: 'secrets',
-    },
-  ];
+  const isOdfManaged = useFlag(ODF_MANAGED_FLAG);
+  const Component: React.FC<SecretDropdownProps> = isOdfManaged
+    ? OSDSecretDropdown
+    : DefaultSecretDropdown;
 
   const toggleShowSecret = () => setShowSecret((isShown) => !isShown);
 
@@ -134,17 +134,7 @@ export const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
           </InputGroup>
         ) : (
           <InputGroup>
-            <Firehose resources={resources}>
-              <ResourceDropdown
-                selectedKey={state.secretName}
-                placeholder={t('ceph-storage-plugin~Select Secret')}
-                className="nb-endpoints-form-entry__dropdown nb-endpoints-form-entry__dropdown--full-width"
-                buttonClassName="nb-endpoints-form-entry__dropdown"
-                dataSelector={['metadata', 'name']}
-                ariaLabel={t('ceph-storage-plugin~Select Secret')}
-                onChange={(e) => dispatch({ type: 'setSecretName', value: e })}
-              />
-            </Firehose>
+            <Component state={state} dispatch={dispatch} namespace={namespace} />
             <Button
               variant="plain"
               onClick={toggleShowSecret}

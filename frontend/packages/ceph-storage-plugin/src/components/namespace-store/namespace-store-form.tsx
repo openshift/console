@@ -14,6 +14,7 @@ import {
   PersistentVolumeClaimKind,
   SecretKind,
 } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
 import { CEPH_STORAGE_NAMESPACE } from '@console/ceph-storage-plugin/src/constants';
 import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
@@ -24,7 +25,9 @@ import {
   NOOBAA_TYPE_MAP,
   PROVIDERS_NOOBAA_MAP,
   BUCKET_LABEL_NOOBAA_MAP,
+  DEDICATED_ADMIN,
 } from '../../constants';
+import { ODF_MANAGED_FLAG } from '../../features';
 import { getExternalProviders, getProviders, secretPayloadCreator } from '../../utils/noobaa-utils';
 import { Payload, NamespaceStoreKind } from '../../types';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
@@ -46,6 +49,7 @@ const NamespaceStoreForm: React.FC<NamespaceStoreFormProps> = withHandlePromise<
     providerDataReducer,
     initialState,
   );
+  const isOdfManaged = useFlag(ODF_MANAGED_FLAG);
 
   const handleNsNameTextInputChange = (strVal: string) => setNsName(strVal);
   const {
@@ -66,13 +70,8 @@ const NamespaceStoreForm: React.FC<NamespaceStoreFormProps> = withHandlePromise<
     if (!secretName) {
       secretName = nsName.concat('-secret');
       const { secretKey, accessKey } = providerDataState;
-      const secretPayload = secretPayloadCreator(
-        provider,
-        namespace,
-        secretName,
-        accessKey,
-        secretKey,
-      );
+      const ns = isOdfManaged ? DEDICATED_ADMIN : namespace;
+      const secretPayload = secretPayloadCreator(provider, ns, secretName, accessKey, secretKey);
       providerDataDispatch({ type: 'setSecretName', value: secretName });
       promises.push(k8sCreate(SecretModel, secretPayload));
     }
@@ -90,13 +89,17 @@ const NamespaceStoreForm: React.FC<NamespaceStoreFormProps> = withHandlePromise<
       },
     };
     if (externalProviders.includes(provider)) {
+      const osdSpecificNs = providerDataState.secretNamespace
+        ? providerDataState.secretNamespace
+        : DEDICATED_ADMIN;
+      const ns = isOdfManaged ? osdSpecificNs : namespace;
       nsPayload.spec = {
         ...nsPayload.spec,
         [PROVIDERS_NOOBAA_MAP[provider]]: {
           [BUCKET_LABEL_NOOBAA_MAP[provider]]: providerDataState.target,
           secret: {
             name: secretName,
-            namespace,
+            namespace: ns,
           },
         },
       };
