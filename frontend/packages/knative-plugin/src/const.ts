@@ -26,4 +26,5 @@ export const KNATIVE_MAXSCALE_ANNOTATION = `${KNATIVE_AUTOSCALING_APIGROUP}/maxS
 export const KNATIVE_CONCURRENCYTARGET_ANNOTATION = `${KNATIVE_AUTOSCALING_APIGROUP}/target`;
 export const KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION = `${KNATIVE_AUTOSCALING_APIGROUP}/targetUtilizationPercentage`;
 export const KNATIVE_AUTOSCALEWINDOW_ANNOTATION = `${KNATIVE_AUTOSCALING_APIGROUP}/window`;
-export const SERVERLESS_FUNCTION_LABEL = 'boson.dev/function';
+export const SERVERLESS_FUNCTION_LABEL_DEPRECATED = 'boson.dev/function'; // TODO: remove deprecated label for serverless function
+export const SERVERLESS_FUNCTION_LABEL = 'function.knative.dev';
