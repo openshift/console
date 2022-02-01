@@ -11,10 +11,10 @@ import { GettingStartedContainerCard } from './getting-started-card/GettingStart
 import { VirtOverviewInventoryCard } from './inventory-card/VirtOverviewInventoryCard';
 import { VirtOverviewPermissionsCard } from './permissions-card/VirtOverviewPermissionsCard';
 import { RunningVMsPerTemplateCard } from './running-vms-per-template-card/RunningVMsPerTemplateCard';
+import { VirtOverviewStatusCard } from './status-card/VirtOverviewStatusCard';
 import { VirtOverviewTopConsumersCard } from './top-consumers-card/VirtOverviewTopConsumersCard';
 import { VirtOverviewActivityCard } from './VirtOverviewActivityCard';
 import { VirtOverviewDetailsCard } from './VirtOverviewDetailsCard';
-import { VirtOverviewStatusCard } from './VirtOverviewStatusCard';
 
 const leftCards = [{ Card: VirtOverviewDetailsCard }, { Card: RunningVMsPerTemplateCard }];
 const mainCards = [{ Card: VirtOverviewStatusCard }, { Card: VirtOverviewInventoryCard }];
