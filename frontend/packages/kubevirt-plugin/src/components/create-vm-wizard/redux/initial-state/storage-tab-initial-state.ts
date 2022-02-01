@@ -310,8 +310,8 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const pvcName = iGetPVCName(iTemplate);
     const pvcNamespace = iGetPVCNamespace(iTemplate);
-    const dataSources = iGetCommonData(state, id, VMWizardProps.dataSources);
-    const pvcs = iGetCommonData(state, id, VMWizardProps.pvcs);
+    const [dataSources] = iGetCommonData(state, id, VMWizardProps.dataSources);
+    const [pvcs] = iGetCommonData(state, id, VMWizardProps.pvcs);
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
       .valueSeq()
       .find((iPVC) => iGetName(iPVC) === pvcName);

@@ -144,12 +144,16 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   if (iGetCommonData(state, id, VMWizardProps.isProviderImport)) {
     return;
   }
+  const [dataSources, dataSourcesLoaded] = iGetCommonData(state, id, VMWizardProps.dataSources);
+  const [pvcs, pvcsLoaded] = iGetCommonData(state, id, VMWizardProps.pvcs);
   if (
     // Note(Yaacov Sep-16): We it is not allowd to change baseImage when changing the flavor
     // or workload, user should not see that we have a bug settings the image:
     // we are incurrectly setting the base image using templates instead of using just the os.
     // we should fix that in the future, but currently we should not expose users to that.
-    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)
+    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM) &&
+    !pvcsLoaded &&
+    !dataSourcesLoaded
   ) {
     return;
   }
@@ -165,8 +169,6 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
     const pvcName = iGetPVCName(iTemplate);
     const pvcNamespace = iGetPVCNamespace(iTemplate);
-    const dataSources = iGetCommonData(state, id, VMWizardProps.dataSources);
-    const pvcs = iGetCommonData(state, id, VMWizardProps.pvcs);
 
     const iBaseImages = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages);
     iBaseImage =

@@ -3,7 +3,7 @@ import { V1alpha1DataVolume, V1Disk, V1PersistentVolumeClaim, V1Volume } from '.
 import { UINetworkEditConfig, UINetworkInterfaceValidation } from '../../types/ui/nic';
 import { UIStorageEditConfig, UIStorageValidation } from '../../types/ui/storage';
 import { VMWizardInitialData } from '../../types/url';
-import { V1Network, V1NetworkInterface } from '../../types/vm';
+import { DataSourceKind, V1Network, V1NetworkInterface } from '../../types/vm';
 import { IDReferences } from '../../utils/redux/id-reference';
 
 export enum VMWizardTab {
@@ -263,6 +263,8 @@ export type CommonDataProp =
   | VMWizardProps.isProviderImport
   | VMWizardProps.isTemplateInitialized
   | VMWizardProps.dataVolumes
+  | VMWizardProps.dataSources
+  | VMWizardProps.pvcs
   | VMWizardProps.initialData
   | ChangedCommonDataProp;
 
@@ -297,6 +299,8 @@ export const DirectCommonDataProps = new Set<ChangedCommonDataProp>([
   VMWizardProps.storageClassConfigMap,
   VMWizardProps.openshiftCNVBaseImages,
   VMWizardProps.dataVolumes,
+  VMWizardProps.dataSources,
+  VMWizardProps.pvcs,
 ]);
 
 export type CommonData = {
@@ -316,6 +320,8 @@ export type CommonData = {
       data: PersistentVolumeClaimKind[];
     };
     [VMWizardProps.dataVolumes]?: {};
+    [VMWizardProps.dataSources]?: [DataSourceKind[], boolean, string];
+    [VMWizardProps.pvcs]?: [PersistentVolumeClaimKind[], boolean, string];
     initialData: VMWizardInitialData;
   };
   dataIDReferences?: IDReferences;
