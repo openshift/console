@@ -73,8 +73,15 @@ Then('user is able to see the pipelineRuns with status as Running', () => {
 });
 
 Then('user is able to see the pipelineRuns with status as Succeeded', () => {
-  pipelineRunDetailsPage.fieldDetails('Status', 'Succeeded');
+  pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
 });
+
+Then(
+  'Details tab is displayed with field names Name, Labels, Annotations, Created At, Owner and Pipelines',
+  () => {
+    pipelineRunDetailsPage.verifyFields();
+  },
+);
 
 Then('pipeline run details for {string} display in Pipelines page', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Pipelines);
@@ -225,6 +232,10 @@ Then('user will be redirected to Pipeline Run Details page', () => {
 });
 
 Then('page will be redirected to pipeline runs page', () => {
+  pipelineRunsPage.verifyTitle();
+});
+
+Then('user will remain on pipeline runs page', () => {
   pipelineRunsPage.verifyTitle();
 });
 

@@ -26,7 +26,7 @@ Feature: Perform the actions on Pipelines page
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user searches pipeline "<pipeline_name>" in pipelines page
              Then pipelines table displayed with column names Name, Last Run, Task Status, Last Run Status and Last Run Time
-              And column Name display with value "<pipeline_name>"
+              And pipelines column Name display with value "<pipeline_name>"
               And columns Last Run, Task Run Status, Last Run Status, Last Run Time with values display "-"
               And Create Pipeline button is enabled
               And kebab menu button is displayed
@@ -58,6 +58,7 @@ Feature: Perform the actions on Pipelines page
              Then Actions menu display with options Start, Add Trigger, Edit Pipeline, Delete Pipeline
 
 
+        @to-do
         Scenario Outline: Details of completed pipeline run: P-06-TC06
             Given pipeline run is available for "<pipeline_name>"
              When user clicks pipeline run of pipeline "<pipeline_name>"
@@ -85,6 +86,7 @@ Feature: Perform the actions on Pipelines page
                   | pipelines-ccc |
 
 
+        @to-do
         Scenario Outline: Add the task by editing the pipeline: P-06-TC08
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user selects "Edit Pipeline" option from kebab menu of "<pipeline_name>"

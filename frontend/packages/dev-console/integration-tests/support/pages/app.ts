@@ -118,7 +118,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
       break;
     }
     case devNavigationMenu.Pipelines: {
-      cy.get(devNavigationMenuPO.pipelines).click();
+      cy.get(devNavigationMenuPO.pipelines, { timeout: 80000 }).click();
       detailsPage.titleShouldContain(pageTitle.Pipelines);
       // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
       // cy.testA11y('Pipelines Page in dev perspective');

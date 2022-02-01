@@ -25,6 +25,12 @@ export const operatorsPage = {
     detailsPage.titleShouldContain(pageTitle.Eventing);
   },
 
+  navigateToCustomResourceDefinitions: () => {
+    cy.get(operatorsPO.nav.administration).click();
+    cy.get(operatorsPO.nav.customResourceDefinitions).click({ force: true });
+    detailsPage.titleShouldContain(pageTitle.CustomResourceDefinitions);
+  },
+
   selectSourceType: (sourceType: string = 'redHat') => {
     if (sourceType === 'redHat') {
       cy.get(operatorsPO.operatorHub.redHatSourceType)
@@ -63,7 +69,7 @@ export const operatorsPage = {
       .clear()
       .type(operatorName);
     cy.get(operatorsPO.installOperators.operatorStatus, {
-      timeout: 50000,
+      timeout: 100000,
     }).should('contain.text', 'Succeeded');
   },
 

@@ -1,6 +1,6 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pageTitle, operators, switchPerspective } from '../../constants';
-import { devNavigationMenuPO, operatorsPO } from '../../pageObjects';
+import { operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';
 import { operatorsPage } from '../operators-page';
 import { installCRW, waitForCRWToBeAvailable } from './installCRW';
@@ -57,6 +57,25 @@ const installIfNotInstalled = (operator: operators, tries: number = 4, polling: 
   });
 };
 
+export const waitForCRDs = (operator: operators) => {
+  switch (operator) {
+    case operators.PipelinesOperator:
+      cy.log(`Verify the CRD's for the "${operator}"`);
+      operatorsPage.navigateToCustomResourceDefinitions();
+      cy.byTestID('name-filter-input')
+        .clear()
+        .type('Pipeline');
+      cy.get('tr[data-test-rows="resource-row"]', { timeout: 300000 }).should('have.length', 4);
+      cy.get('[data-test-id="TektonPipeline"]', { timeout: 80000 }).should('be.visible');
+      cy.get('[data-test-id="PipelineResource"]', { timeout: 80000 }).should('be.visible');
+      cy.get('[data-test-id="PipelineRun"]', { timeout: 80000 }).should('be.visible');
+      cy.get('[data-test-id="Pipeline"]', { timeout: 80000 }).should('be.visible');
+      break;
+    default:
+      cy.log(`waiting for CRC's is not applicable for this ${operator} operator`);
+  }
+};
+
 const performPostInstallationSteps = (operator: operators): void => {
   switch (operator) {
     case operators.ServerlessOperator:
@@ -68,6 +87,15 @@ const performPostInstallationSteps = (operator: operators): void => {
       cy.log(`Performing CRW post-installation steps`);
       installCRW();
       waitForCRWToBeAvailable();
+      break;
+    case operators.PipelinesOperator:
+      cy.log(`Performing Pipelines post-installation steps`);
+      cy.request(
+        'api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions/openshift-pipelines-operator-rh',
+      ).then((resp) => {
+        expect(resp.status).toEqual(200);
+      });
+      waitForCRDs(operators.PipelinesOperator);
       break;
     default:
       cy.log(`Nothing to do in post-installation steps`);
@@ -88,36 +116,16 @@ export const verifyAndInstallOperator = (operator: operators, namespace?: string
   performPostInstallationSteps(operator);
 };
 
-// If pipelines not available in left side navigation menu of developer navigation menu, then install from Operator Hub
 export const verifyAndInstallPipelinesOperator = () => {
-  perspective.switchTo(switchPerspective.Developer);
-  app.waitForNameSpacesToLoad();
-  app.waitForLoad();
-  cy.get(devNavigationMenuPO.pageSideBar).then(($ele) => {
-    if ($ele.find(devNavigationMenuPO.pipelines).length) {
-      cy.log(`${operators.PipelinesOperator} operator is already installed in the cluster`);
-    } else {
-      perspective.switchTo(switchPerspective.Administrator);
-      operatorsPage.navigateToInstallOperatorsPage();
-      operatorsPage.searchOperatorInInstallPage(operators.PipelinesOperator);
-      cy.get('body', {
-        timeout: 50000,
-      }).then(($body) => {
-        if ($body.find(operatorsPO.installOperators.noOperatorsFound)) {
-          installOperator(operators.PipelinesOperator);
-          // After https://issues.redhat.com/browse/SRVKP-1379 issue fix, will remove below wait time
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(30000);
-        }
-      });
-      perspective.switchTo(switchPerspective.Developer);
-    }
-  });
+  perspective.switchTo(switchPerspective.Administrator);
+  verifyAndInstallOperator(operators.PipelinesOperator);
+  performPostInstallationSteps(operators.PipelinesOperator);
 };
 
 export const verifyAndInstallKnativeOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.ServerlessOperator);
+  performPostInstallationSteps(operators.ServerlessOperator);
 };
 
 export const verifyAndInstallGitopsPrimerOperator = () => {

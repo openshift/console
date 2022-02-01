@@ -23,7 +23,7 @@ Feature: Create the pipeline from builder page
               And Create button is in disabled state
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Create a pipeline with series tasks: P-02-TC02
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -39,7 +39,7 @@ Feature: Create the pipeline from builder page
                   | p-one         | kn                | openshift-client    |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Create a pipeline with parallel tasks: P-02-TC03
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -55,7 +55,7 @@ Feature: Create the pipeline from builder page
                   | p-two         | kn                | openshift-client    |
 
 
-        @smoke
+        @smoke @to-do
         Scenario Outline: Create a basic pipeline from pipeline builder page: P-02-TC04
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -178,7 +178,8 @@ Feature: Create the pipeline from builder page
              When user enters pipeline name as "pipeline-workspace"
               And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
-              And user clicks on Add in "git-clone" task
+              And user selects "git-clone" from git community
+              And user clicks on Install and add button
               And user selects the "git-clone" node
               And user adds the git url in the url Parameter in cluster task sidebar
               And user clicks on Add workspace
@@ -196,7 +197,8 @@ Feature: Create the pipeline from builder page
              When user enters pipeline name as "pipe-opt-workspace"
               And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
-              And user clicks on Add in "git-clone" task
+              And user selects "git-clone" from git community
+              And user clicks on Add button
               And user selects the "git-clone" node
               And user adds the git url in the url Parameter in cluster task sidebar
               And user clicks on Add workspace
@@ -225,7 +227,7 @@ Feature: Create the pipeline from builder page
               And user sees "Add finally task" option below "git-clone" task
 
 
-        @regression
+        @regression @to-do
         Scenario: Create a pipeline with finally task node: P-02-TC15
             Given user is at Pipeline Builder page
              When user enters pipeline name "pipeline-finally"
@@ -276,7 +278,7 @@ Feature: Create the pipeline from builder page
               And user will see tooltip saying "When expression" while scrolling over diamond structure before conditional task
 
 
-        @regression
+        @regression @to-do
         Scenario: Code assistance for referencing params in the Pipeline Builder: P-02-TC18
             Given user is at Pipeline Builder page
              When user clicks on Add task

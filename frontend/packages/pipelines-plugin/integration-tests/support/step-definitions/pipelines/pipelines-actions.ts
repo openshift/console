@@ -44,7 +44,7 @@ Then(
   },
 );
 
-Then('column Name display with value {string}', (pipelineName: string) => {
+Then('pipelines column Name display with value {string}', (pipelineName: string) => {
   pipelinesPage.verifyNameInPipelinesTable(pipelineName);
 });
 
