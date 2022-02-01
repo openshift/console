@@ -2,6 +2,10 @@ import { K8sModel } from '../../../api/common-types';
 import * as k8sUtil from '../../fetch';
 import { k8sGet, k8sList, k8sGetResource } from '../k8s-resource';
 
+jest.mock('../../fetch', () => ({
+  consoleFetchJSON: jest.fn(),
+}));
+
 describe('k8s-Resource', () => {
   const MockPodModel: K8sModel = {
     apiVersion: 'v1',

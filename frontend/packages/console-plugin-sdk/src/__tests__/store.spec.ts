@@ -1,4 +1,4 @@
-import * as Combinatorics from 'js-combinatorics';
+import Combinatorics from 'js-combinatorics';
 import * as _ from 'lodash';
 import {
   getPluginManifest,
