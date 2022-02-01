@@ -2,16 +2,18 @@ import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import i18next from 'i18next';
 
-import { ClusterVersionModel } from '../../models';
+import { ClusterVersionModel, MachineConfigPoolModel } from '../../models';
 import { referenceForModel } from './k8s-ref';
 import {
-  ClusterVersionKind,
   ClusterUpdate,
-  ClusterVersionConditionType,
-  K8sResourceConditionStatus,
   ClusterVersionCondition,
+  ClusterVersionConditionType,
+  ClusterVersionKind,
+  k8sPatch,
+  K8sResourceConditionStatus,
   UpdateHistory,
 } from '.';
+import { MachineConfigPoolKind } from './types';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
@@ -256,3 +258,38 @@ export const getConditionUpgradeableFalse = (resource) =>
 
 export const getNotUpgradeableResources = (resources) =>
   resources.filter((resource) => getConditionUpgradeableFalse(resource));
+
+export enum NodeTypes {
+  master = 'master',
+  worker = 'worker',
+}
+
+/**
+ * Intentionally not translated as they are capitalized versions
+ * of the Node names for display purposes
+ */
+export enum NodeTypeNames {
+  Master = 'Master',
+  Worker = 'Worker',
+}
+
+export const isMCPMaster = (mcp: MachineConfigPoolKind) => mcp.metadata.name === NodeTypes.master;
+
+export const isMCPWorker = (mcp: MachineConfigPoolKind) => mcp.metadata.name === NodeTypes.worker;
+
+export const isMCPPaused = (mcp: MachineConfigPoolKind) => mcp.spec.paused;
+
+export const sortMCPsByCreationTimestamp = (a: MachineConfigPoolKind, b: MachineConfigPoolKind) =>
+  a.metadata.creationTimestamp.localeCompare(b.metadata.creationTimestamp);
+
+export const clusterIsUpToDateOrUpdateAvailable = (status: ClusterUpdateStatus) =>
+  status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable;
+
+export const getMCPsToPausePromises = (
+  machineConfigPools: MachineConfigPoolKind[],
+  paused: boolean,
+) =>
+  machineConfigPools.map((mcp) => {
+    const patch = [{ op: 'add', path: '/spec/paused', value: paused }];
+    return k8sPatch(MachineConfigPoolModel, mcp, patch);
+  });
