@@ -72,6 +72,12 @@
     "memsource-download": "./i18n-scripts/memsource-download.sh"
   },
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "isolatedModules": true
+      }
+    },
+    "testEnvironment": "jsdom",
     "moduleFileExtensions": [
       "js",
       "jsx",
@@ -81,15 +87,18 @@
       "gql",
       "graphql"
     ],
+    "preset": "ts-jest",
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
       "^dnd-core$": "dnd-core/dist/cjs",
       "^react-dnd$": "react-dnd/dist/cjs",
-      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
+      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs",
+      "react-i18next": "<rootDir>/__mocks__react-i18next.tsx",
+      "i18next": "<rootDir>/__mocks__/i18next.ts"
     },
     "transform": {
-      "^.+\\.(ts|tsx|js|jsx)$": "./node_modules/ts-jest/preprocessor.js",
+      "^.+\\.(ts|tsx|js|jsx)$": "ts-jest",
       "^.+\\.(gql|graphql)$": "jest-transform-graphql"
     },
     "transformIgnorePatterns": [
@@ -231,7 +240,7 @@
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
     "@types/jasminewd2": "2.0.x",
-    "@types/jest": "22.x",
+    "@types/jest": "27.x",
     "@types/json-schema": "^7.0.7",
     "@types/lodash-es": "4.17.x",
     "@types/node": "10.x",
@@ -283,8 +292,8 @@
     "jasmine-console-reporter": "2.x",
     "jasmine-core": "2.x",
     "jasmine-reporters": "2.x",
-    "jest": "^22.x",
-    "jest-cli": "^22.x",
+    "jest": "^27.x",
+    "jest-cli": "^27.x",
     "jest-junit": "^11.1.0",
     "jest-resolve": "^26.4.0",
     "jest-transform-graphql": "^2.1.0",
@@ -311,10 +320,10 @@
     "sass-loader": "^10.1.1",
     "style-loader": "^2.0.0",
     "thread-loader": "^3.0.4",
-    "ts-jest": "22.x",
+    "ts-jest": "27.1",
     "ts-loader": "~8.3.0",
     "ts-node": "10.x",
-    "typescript": "^4.2.4",
+    "typescript": "^4.2.x",
     "umd-compat-loader": "^2.1.2",
     "webpack": "^4.46.0",
     "webpack-bundle-analyzer": "3.9.x",
@@ -331,7 +340,7 @@
     "lodash-es": "^4.17.21",
     "minimist": "1.2.5",
     "ua-parser-js": "^0.7.24",
-    "@types/jest": "22.x",
+    "@types/jest": "27.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
     "@types/react": "16.9.0",

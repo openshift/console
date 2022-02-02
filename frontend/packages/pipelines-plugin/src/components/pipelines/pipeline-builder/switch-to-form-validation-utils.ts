@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import i18next from 'i18next';
 import * as yup from 'yup';
 import { nameValidationSchema } from '@console/shared';
 import { PipelineTask } from '../../../types';
@@ -18,7 +18,7 @@ export const validRunAfter = (formData: PipelineBuilderFormValues, thisTask: Pip
   return yup.array().of(
     yup
       .string()
-      .test('tasks-matches-runAfters', i18n.t('pipelines-plugin~Invalid runAfter'), function(
+      .test('tasks-matches-runAfters', i18next.t('pipelines-plugin~Invalid runAfter'), function(
         runAfter: string,
       ) {
         return runAfterMatches(formData, [runAfter], thisTask.name);
@@ -31,7 +31,7 @@ const taskValidationYAMLSchema = (formData: PipelineBuilderFormValues) => {
     yup.lazy((taskObject) =>
       yup
         .object({
-          name: nameValidationSchema((tKey) => i18n.t(tKey)),
+          name: nameValidationSchema((tKey) => i18next.t(tKey)),
           taskRef: yup
             .object({
               name: yup.string(),
@@ -72,7 +72,7 @@ const taskValidationYAMLSchema = (formData: PipelineBuilderFormValues) => {
         })
         .test(
           'taskRef-or-taskSpec',
-          i18n.t('pipelines-plugin~TaskSpec or TaskRef must be provided.'),
+          i18next.t('pipelines-plugin~TaskSpec or TaskRef must be provided.'),
           function(task: PipelineTask) {
             return !!task.taskRef || !!task.taskSpec;
           },

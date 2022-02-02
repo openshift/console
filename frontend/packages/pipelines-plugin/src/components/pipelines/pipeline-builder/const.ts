@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import i18next from 'i18next';
 // eslint-disable-next-line import/no-cycle
 import { PipelineBuilderFormValues } from './types';
 
@@ -40,15 +40,15 @@ export const TASK_FIELD_ERROR_TYPE_MAPPING: { [key in TaskErrorType]: string[] }
 export const getTaskErrorString = (errorType: TaskErrorType): string => {
   switch (errorType) {
     case TaskErrorType.NAME_ERROR:
-      return i18n.t('pipelines-plugin~Invalid name');
+      return i18next.t('pipelines-plugin~Invalid name');
     case TaskErrorType.MISSING_REQUIRED_PARAMS:
-      return i18n.t('pipelines-plugin~Missing parameters');
+      return i18next.t('pipelines-plugin~Missing parameters');
     case TaskErrorType.MISSING_RESOURCES:
-      return i18n.t('pipelines-plugin~Missing resources');
+      return i18next.t('pipelines-plugin~Missing resources');
     case TaskErrorType.MISSING_WORKSPACES:
-      return i18n.t('pipelines-plugin~Missing workspaces');
+      return i18next.t('pipelines-plugin~Missing workspaces');
     case TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS:
-      return i18n.t('pipelines-plugin~Invalid when expressions');
+      return i18next.t('pipelines-plugin~Invalid when expressions');
     default:
       throw new Error(`Unknown errorType, ${errorType}`);
   }
