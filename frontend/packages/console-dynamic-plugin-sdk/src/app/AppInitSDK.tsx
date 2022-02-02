@@ -2,12 +2,14 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
 import { setUtilsConfig, UtilsConfig } from './configSetup';
+import { initApiDiscovery } from './k8s/api-discovery/api-discovery';
+import { InitApiDiscovery } from './k8s/api-discovery/api-discovery-types';
 import { useReduxStore } from './useReduxStore';
 
 type AppInitSDKProps = {
   children: React.ReactNode;
   configurations: {
-    apiDiscovery: (store: Store<any>) => void;
+    apiDiscovery?: InitApiDiscovery;
     appFetch: UtilsConfig['appFetch'];
     /** @deprecated - will be removed later when we have an interface for plugin */
     initPlugins?: (store: Store<any>) => void;
@@ -34,15 +36,14 @@ type AppInitSDKProps = {
  */
 const AppInitSDK: React.FC<AppInitSDKProps> = ({ children, configurations }) => {
   const { store, storeContextPresent } = useReduxStore();
-
   React.useEffect(() => {
-    const { appFetch, apiDiscovery, initPlugins } = configurations;
+    const { appFetch, initPlugins, apiDiscovery = initApiDiscovery } = configurations;
     try {
       setUtilsConfig({ appFetch });
-      apiDiscovery(store);
       if (initPlugins) {
         initPlugins(store);
       }
+      apiDiscovery(store);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.warn(e);
