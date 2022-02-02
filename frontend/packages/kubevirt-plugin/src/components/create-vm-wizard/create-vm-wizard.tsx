@@ -25,7 +25,6 @@ import {
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { usePrevious } from '../../hooks/use-previous';
-import { useUpdateStorages } from '../../hooks/use-update-data-volume';
 import { DataSourceModel, DataVolumeModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getTemplateName } from '../../selectors/vm-template/basic';
@@ -508,7 +507,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     [commonTemplates, userMode],
   );
 
-  useUpdateStorages(reduxID);
   const openshiftCNVBaseImagesListResult = useBaseImages(loadedCommonTemplates);
   // TODO integrate the list of watches into the redux store to prevent unnecessary copying of data
   const openshiftCNVBaseImages = React.useMemo(
