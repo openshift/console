@@ -10,7 +10,7 @@ export const getModifyApplicationAction = (
 ): Action => {
   return {
     id: 'modify-application',
-    label: i18next.t('topology~Edit Application grouping'),
+    label: i18next.t('topology~Edit application grouping'),
     insertBefore: insertBefore ?? 'edit-pod-count',
     cta: () =>
       editApplicationModal({

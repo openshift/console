@@ -13,7 +13,7 @@ const RegroupHint: React.FC = () => {
       <span className="odc-regroup-hint__text">
         <ShortcutTable>
           <Shortcut shift drag>
-            {t('topology~Edit Application grouping')}
+            {t('topology~Edit application grouping')}
           </Shortcut>
         </ShortcutTable>
       </span>

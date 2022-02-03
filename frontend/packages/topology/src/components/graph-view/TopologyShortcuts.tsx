@@ -21,7 +21,7 @@ export const getTopologyShortcuts = (t: TFunction, options: Options): React.Reac
           {allImportAccess && (
             <>
               <Shortcut data-test-id="edit-application-grouping" shift drag>
-                {t('topology~Edit Application grouping')}
+                {t('topology~Edit application grouping')}
               </Shortcut>
               <Shortcut data-test-id="context-menu" rightClick>
                 {t('topology~Access context menu')}

@@ -15,7 +15,7 @@ export const DeleteApplicationAction = (
   const primaryResource = application.resources[0].resource;
   return {
     id: 'delete-application',
-    label: i18next.t('devconsole~Delete Application'),
+    label: i18next.t('devconsole~Delete application'),
     cta: () => {
       const reqs = [];
       deleteResourceModal({

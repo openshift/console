@@ -23,7 +23,7 @@
   "EventListeners": "EventListeners",
   "Repository": "Repository",
   "Repositories": "Repositories",
-  "Create a Tekton Pipeline to automate delivery of your Application": "Create a Tekton Pipeline to automate delivery of your Application",
+  "Create a Tekton Pipeline to automate delivery of your application": "Create a Tekton Pipeline to automate delivery of your application",
   "Triggers": "Triggers",
   "Red Hat": "Red Hat",
   "Browse for openshift pipeline tasks available in the cluster.": "Browse for openshift pipeline tasks available in the cluster.",

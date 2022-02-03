@@ -125,7 +125,7 @@ export const topologySidePane = {
     cy.byTestID(deploymentName).should('be.visible');
   },
   verifyActionsOnApplication: () => {
-    cy.byTestActionID('Delete Application').should('be.visible');
+    cy.byTestActionID('Delete application').should('be.visible');
     cy.get(topologyPO.addToApplicationInContext).should('be.visible');
   },
   selectResource: (opt: resources | string, namespace: string, name: string) => {

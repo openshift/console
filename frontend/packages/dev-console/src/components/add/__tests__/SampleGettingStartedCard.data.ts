@@ -172,7 +172,7 @@ export const loadedCatalogService: CatalogService = {
         class: null,
       },
       cta: {
-        label: 'Create Application',
+        label: 'Create application',
         href: '/samples/ns/active-namespace/dotnet/openshift',
       },
     },
@@ -249,7 +249,7 @@ export const loadedCatalogService: CatalogService = {
         class: null,
       },
       cta: {
-        label: 'Create Application',
+        label: 'Create application',
         href: '/samples/ns/active-namespace/golang/openshift',
       },
     },
@@ -266,7 +266,7 @@ export const loadedCatalogService: CatalogService = {
         class: null,
       },
       cta: {
-        label: 'Create Application',
+        label: 'Create application',
         href: '/samples/ns/active-namespace/httpd/openshift',
       },
     },
@@ -282,7 +282,7 @@ export const loadedCatalogService: CatalogService = {
         class: null,
       },
       cta: {
-        label: 'Create Application',
+        label: 'Create application',
         href: '/samples/ns/active-namespace/java/openshift',
       },
     },
@@ -299,7 +299,7 @@ export const loadedCatalogService: CatalogService = {
         class: null,
       },
       cta: {
-        label: 'Create Application',
+        label: 'Create application',
         href: '/samples/ns/active-namespace/nginx/openshift',
       },
     },

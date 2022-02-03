@@ -123,9 +123,9 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <Helmet>
-        <title>{t('devconsole~Create Sample Application')}</title>
+        <title>{t('devconsole~Create Sample application')}</title>
       </Helmet>
-      <PageHeading title={t('devconsole~Create Sample Application')} />
+      <PageHeading title={t('devconsole~Create Sample application')} />
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

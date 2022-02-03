@@ -543,7 +543,7 @@
       "groupId": "pipelines",
       "href": "/k8s/ns/:namespace/tekton.dev~v1beta1~Pipeline/~new/builder",
       "label": "%pipelines-plugin~Pipelines%",
-      "description": "%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your Application%",
+      "description": "%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application%",
       "icon": { "$codeRef": "icons.pipelineIconSVG" },
       "accessReview": [
         {

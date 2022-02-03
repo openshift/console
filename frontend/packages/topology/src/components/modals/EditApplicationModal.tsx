@@ -44,7 +44,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   const dirty = _.get(values, 'application.selectedKey') !== initialApplication;
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>{t('topology~Edit Application grouping')}</ModalTitle>
+      <ModalTitle>{t('topology~Edit application grouping')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
           <Trans ns="topology">

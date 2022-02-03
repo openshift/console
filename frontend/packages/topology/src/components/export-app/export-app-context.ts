@@ -82,7 +82,7 @@ export const useExportAppFormToast = () => {
     (expNamespace: string, routeUrl: string, key: string) => {
       const toastId = toast.addToast({
         variant: AlertVariant.info,
-        title: t('topology~Export Application'),
+        title: t('topology~Export application'),
         content: t(
           'topology~All the resources are exported successfully from {{namespace}}. Click below to download it.',
           {

@@ -35,8 +35,8 @@ const NamespaceBarApplicationSelector: React.FC<Props> = ({
   disabled,
 }) => {
   const { t } = useTranslation();
-  const allApplicationsTitle = t('topology~all applications');
-  const noApplicationsTitle = t('topology~no application group');
+  const allApplicationsTitle = t('topology~All applications');
+  const noApplicationsTitle = t('topology~No application group');
   const dropdownTitle: string =
     application === ALL_APPLICATIONS_KEY
       ? allApplicationsTitle

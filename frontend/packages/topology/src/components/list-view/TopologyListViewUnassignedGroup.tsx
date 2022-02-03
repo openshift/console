@@ -56,7 +56,7 @@ const TopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassignedGroupP
       className="odc-topology-list-view__unassigned-label"
       id="unassigned_label"
     >
-      {t('topology~no application group')}
+      {t('topology~No application group')}
     </DataListCell>,
   );
 

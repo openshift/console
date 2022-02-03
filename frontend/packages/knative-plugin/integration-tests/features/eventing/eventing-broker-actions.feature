@@ -49,7 +49,7 @@ Feature: Perform actions on Broker
              When user right clicks on "default" broker to open the context menu
               And user clicks on "Edit Application grouping"
               And user will click on Application drop down on the modal
-              And user selects "Create Application" from Application drop down
+              And user selects "Create application" from Application drop down
               And user enters application name as "new-app"
               And user clicks on Save button
              Then user will see "new-app" application created

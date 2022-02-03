@@ -130,14 +130,14 @@ export const topologyActions = {
           .click();
         break;
       }
-      case 'Delete Application':
+      case 'Delete application':
       case applicationGroupingsActions.DeleteApplication: {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         break;
       }
-      case 'Add to Application':
+      case 'Add to application':
       case applicationGroupingsActions.AddtoApplication: {
         cy.get(topologyPO.addToApplication)
           .should('be.visible')

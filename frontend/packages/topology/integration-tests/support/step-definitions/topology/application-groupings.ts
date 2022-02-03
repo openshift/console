@@ -46,7 +46,7 @@ Then('user can see {string} workload', (workloadName: string) => {
 });
 
 When(
-  'user enters the name {string} in the Delete Application modal and clicks on Delete button',
+  'user enters the name {string} in the Delete application modal and clicks on Delete button',
   (appName: string) => {
     topologyPage.deleteApplication(appName);
   },

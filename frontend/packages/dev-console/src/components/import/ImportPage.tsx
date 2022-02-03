@@ -24,7 +24,7 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   },
   s2i: {
     type: ImportTypes.s2i,
-    title: t('devconsole~Create Source-to-Image Application'),
+    title: t('devconsole~Create Source-to-Image application'),
     buildStrategy: 'Source',
     loader: () =>
       import('./SourceToImageForm' /* webpackChunkName: "source-to-image-form" */).then(

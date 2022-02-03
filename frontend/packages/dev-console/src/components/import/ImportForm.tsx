@@ -68,7 +68,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     application: {
       ...initialBaseValues.application,
       selectedKey:
-        activeApplication === t('devconsole~no application group')
+        activeApplication === t('devconsole~No application group')
           ? UNASSIGNED_KEY
           : activeApplication,
       isInContext: !!sanitizeApplicationValue(activeApplication),

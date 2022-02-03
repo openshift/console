@@ -169,13 +169,13 @@ When('user enters {string} builder image in Quick Search bar', (searchItem: stri
   cy.get(topologyPO.quickSearch).type(searchItem);
 });
 
-When('user clicks Create Application on Quick Search Dialog', () => {
+When('user clicks Create application on Quick Search Dialog', () => {
   cy.get('.pf-c-spinner__tail-ball').should('not.exist');
   cy.get('ul[aria-label="Quick search list"] li')
     .contains('Builder Images', { timeout: 60000 })
     .click();
   cy.get('button')
-    .contains('Create Application')
+    .contains('Create application')
     .click();
 });
 

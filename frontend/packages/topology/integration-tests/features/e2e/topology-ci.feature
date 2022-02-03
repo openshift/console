@@ -21,7 +21,7 @@ Feature: Perform actions on topology
             Given user is at Topology Graph view
              When user clicks Start building your application
               And user enters ".NET" builder image in Quick Search bar
-              And user clicks Create Application on Quick Search Dialog
+              And user clicks Create application on Quick Search Dialog
               And user enters Git Repo URL as "https://github.com/redhat-developer/s2i-dotnetcore-ex" in Create Source-to-Image Application
               And user enters Application Name as "dotnet-app"
               And user enters Name as "dotnet"

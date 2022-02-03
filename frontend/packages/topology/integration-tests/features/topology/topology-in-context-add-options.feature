@@ -21,12 +21,12 @@ Feature: Add in context from the Developer Catalog
         @regression @to-do
         Scenario: Add to Application in Context: T-10-TC02
              When user right clicks on Application Grouping "aut-knative-demos"
-              And user clicks on Add to Application
+              And user clicks on Add to application
              Then user can see in context options Import from Git, Container Image, Event Source, Channel
 
 
         @regression @to-do
-        Scenario: Delete Application from the Context options: T-10-TC03
+        Scenario: Delete application from the Context options: T-10-TC03
              When user right clicks on Application Grouping "aut-knative-demos"
-              And user clicks on Delete Application
+              And user clicks on Delete application
              Then user won't be able to see the "aut-knative-demos" Application Groupings

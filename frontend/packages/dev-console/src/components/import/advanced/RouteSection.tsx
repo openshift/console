@@ -19,8 +19,8 @@ const RouteSection: React.FC<RouteSectionProps> = ({ route, resources }) => {
       <PortInputField defaultPort={defaultUnknownPort} />
       <CheckboxField
         name="route.create"
-        label={t('devconsole~Create a route to the Application')}
-        helpText={t('devconsole~Exposes your Application at a public URL')}
+        label={t('devconsole~Create a route to the application')}
+        helpText={t('devconsole~Exposes your application at a public URL')}
         isDisabled={disable}
       />
       <AdvancedRouteOptions canCreateRoute={create} resources={resources} />
