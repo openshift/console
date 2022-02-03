@@ -19,7 +19,7 @@ const shallowMapEquals = (a, b) => {
   return a.every((v, k) => b.get(k) === v);
 };
 
-const processReduxId = ({ k8s }, props) => {
+export const processReduxId = ({ k8s }, props) => {
   const { reduxID, isList, filters } = props;
 
   if (!reduxID) {
