@@ -75,8 +75,7 @@ describe('getReduxData', () => {
     const secondTime = getReduxData(immutableData, resource);
     expect(firstTime).toEqual({ a: 1, b: 2, c: 3 });
     expect(secondTime).toEqual({ a: 1, b: 2, c: 3 });
-    // TODO: Should be the same data
-    expect(firstTime).not.toBe(secondTime);
+    expect(firstTime).toBe(secondTime);
   });
 
   it('should return a new JSON object if the data has changed', () => {
@@ -102,11 +101,10 @@ describe('getReduxData', () => {
     expect(firstTime).toEqual([{ a: 1 }, { b: 2 }, { c: 3 }]);
     expect(secondTime).toEqual([{ a: 1 }, { b: 2 }, { c: 3 }]);
     // The array instance should be the same
-    expect(firstTime).not.toBe(secondTime);
-    // TODO: All included objects could be reused.
-    expect(firstTime[0]).not.toBe(secondTime[0]);
-    expect(firstTime[1]).not.toBe(secondTime[1]);
-    expect(firstTime[2]).not.toBe(secondTime[2]);
+    expect(firstTime).not.toBe(secondTime); // TODO???
+    expect(firstTime[0]).toBe(secondTime[0]);
+    expect(firstTime[1]).toBe(secondTime[1]);
+    expect(firstTime[2]).toBe(secondTime[2]);
   });
 
   it('should return the same JSON array and child objects for unchanged data ', () => {
@@ -123,9 +121,9 @@ describe('getReduxData', () => {
     expect(secondTime).toEqual([{ a: 1 }, { b: 2 }, { c: 4 }]);
     // The array should be changed
     expect(firstTime).not.toBe(secondTime);
-    // TODO: But the included object data should return the same instance
-    expect(firstTime[0]).not.toBe(secondTime[0]);
-    expect(firstTime[1]).not.toBe(secondTime[1]);
+    // But the included object data should return the same instance
+    expect(firstTime[0]).toBe(secondTime[0]);
+    expect(firstTime[1]).toBe(secondTime[1]);
     // Except for the changed object obviously
     expect(firstTime[2]).not.toBe(secondTime[2]);
   });
