@@ -1,5 +1,5 @@
 import { Node, Edge, GraphElement } from '@patternfly/react-topology';
-import * as GitUrlParse from 'git-url-parse';
+import GitUrlParse, { GitUrl } from 'git-url-parse';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { getRouteWebURL } from '@console/internal/components/routes';
@@ -44,7 +44,7 @@ export const getCheDecoratorData = (consoleLinks: K8sResourceKind[]): CheDecorat
   };
 };
 
-const getFullGitURL = (gitUrl: GitUrlParse.GitUrl, branch?: string) => {
+const getFullGitURL = (gitUrl: GitUrl, branch?: string) => {
   const baseUrl = `https://${gitUrl.resource}/${gitUrl.owner}/${gitUrl.name}`;
   if (!branch) {
     return baseUrl;
