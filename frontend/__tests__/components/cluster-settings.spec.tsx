@@ -37,15 +37,6 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-jest.mock('react-redux', () => {
-  const ActualReactRedux = require.requireActual('react-redux');
-  return {
-    ...ActualReactRedux,
-    useSelector: jest.fn(),
-    useDispatch: jest.fn(),
-  };
-});
-
 describe('Cluster Settings page', () => {
   let wrapper: ShallowWrapper<any>;
   const match = { url: '/settings/cluster', params: {}, isExact: true, path: '/settings/cluster' };
