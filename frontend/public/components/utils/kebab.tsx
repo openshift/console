@@ -31,7 +31,7 @@ import {
   referenceForModel,
   VolumeSnapshotKind,
 } from '../../module/k8s';
-import { impersonateStateToProps } from '../../reducers/ui';
+import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { connectToModel } from '../../kinds';
 import {
   BuildConfigModel,
@@ -39,7 +39,6 @@ import {
   DeploymentModel,
   VolumeSnapshotModel,
 } from '../../models';
-import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};

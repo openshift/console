@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
 import { useUserSettingsCompatibility } from '@console/shared';
+import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 
-import { impersonateStateToProps } from '../../reducers/ui';
 import { checkAccess } from './rbac';
 import { history } from './router';
 import { KebabItems } from './kebab';
