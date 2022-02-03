@@ -875,18 +875,18 @@ describe('Firehose', () => {
     // pods 'resource' object (with data, loaded, etc.) object
     expect(propsChildA.pods).toEqual(propsChildB.pods);
     expect(propsChildA.pods).not.toBe(propsChildB.pods); // Could be the same?
-    expect(propsChildA.pods.data).not.toBe(propsChildB.pods.data); // TODO: Should be the same!
-    expect(propsChildA.pods.data[0]).not.toBe(propsChildB.pods.data[0]); // TODO: Should be the same!
+    expect(propsChildA.pods.data).toBe(propsChildB.pods.data);
+    expect(propsChildA.pods.data[0]).toBe(propsChildB.pods.data[0]);
 
     expect(propsChildA.resources.pods).toEqual(propsChildB.resources.pods);
     expect(propsChildA.resources.pods).not.toBe(propsChildB.resources.pods); // Could be the same?
-    expect(propsChildA.resources.pods.data).not.toBe(propsChildB.resources.pods.data); // TODO: Should be the same!
-    expect(propsChildA.resources.pods.data[0]).not.toBe(propsChildB.resources.pods.data[0]); // TODO: Should be the same!
+    expect(propsChildA.resources.pods.data).toBe(propsChildB.resources.pods.data);
+    expect(propsChildA.resources.pods.data[0]).toBe(propsChildB.resources.pods.data[0]);
 
     // pod 'resource' object (with data, loaded, etc.) object
-    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Could be the same?
-    expect(propsChildA.pod.data).not.toBe(propsChildB.pod.data); // TODO: Should be the same!
-    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Should be the same!
-    expect(propsChildA.resources.pod.data).not.toBe(propsChildB.resources.pod.data); // TODO: Should be the same!
+    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Should be the same?
+    expect(propsChildA.data).not.toBe(propsChildB.pod.data); // Should be the same?
+    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Should be the same?
+    expect(propsChildA.resources.pod.data).not.toBe(propsChildB.resources.pod.data); // Should be the same?
   });
 });

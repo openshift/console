@@ -426,7 +426,7 @@ describe('useK8sWatchResource', () => {
     const itemWatcher1 = resourceUpdate.mock.calls[0][0];
     const itemWatcher2 = resourceUpdate.mock.calls[1][0];
     expect(itemWatcher1).toEqual(itemWatcher2);
-    expect(itemWatcher1).not.toBe(itemWatcher2);
+    expect(itemWatcher1).toBe(itemWatcher2);
 
     resourceUpdate.mockClear();
   });
