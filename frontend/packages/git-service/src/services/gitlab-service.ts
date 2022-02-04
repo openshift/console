@@ -1,4 +1,4 @@
-import * as GitUrlParse from 'git-url-parse';
+import GitUrlParse from 'git-url-parse';
 import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
 import {

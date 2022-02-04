@@ -133,7 +133,7 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
           t('metal3-plugin~Name "${value}" is already taken.'), // eslint-disable-line no-template-curly-in-string
           (value) => !hostNames.includes(value),
         )
-        .concat(nameValidationSchema(t)),
+        .concat(nameValidationSchema()),
       BMCAddress: enablePowerManagement
         ? Yup.string()
             .matches(

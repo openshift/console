@@ -18,7 +18,7 @@ jest.mock('../../user-preferences/perspective/usePreferredPerspective', () => ({
 }));
 
 jest.mock('react', () => {
-  const reactModule = require.requireActual('react');
+  const reactModule = jest.requireActual('react');
   return {
     ...reactModule,
     useState: jest.fn(),

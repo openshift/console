@@ -1,4 +1,3 @@
-import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { nameValidationSchema, nameRegex } from '@console/shared';
@@ -20,22 +19,22 @@ import {
   devfileValidationSchema,
 } from './validation-schema';
 
-export const validationSchema = (t: TFunction) =>
+export const validationSchema = () =>
   yup.object().shape({
-    name: nameValidationSchema(t),
+    name: nameValidationSchema(),
     project: projectNameValidationSchema,
     application: applicationNameValidationSchema,
-    image: imageValidationSchema(t),
-    git: gitValidationSchema(t),
-    docker: dockerValidationSchema(t),
-    devfile: devfileValidationSchema(t),
-    deployment: deploymentValidationSchema(t),
-    serverless: serverlessValidationSchema(t),
-    route: routeValidationSchema(t),
-    limits: limitsValidationSchema(t),
+    image: imageValidationSchema(),
+    git: gitValidationSchema(),
+    docker: dockerValidationSchema(),
+    devfile: devfileValidationSchema(),
+    deployment: deploymentValidationSchema(),
+    serverless: serverlessValidationSchema(),
+    route: routeValidationSchema(),
+    limits: limitsValidationSchema(),
     build: buildValidationSchema,
     resources: resourcesValidationSchema,
-    healthChecks: healthChecksProbesValidationSchema(t),
+    healthChecks: healthChecksProbesValidationSchema(),
   });
 
 const hasDomain = (url: string, domain: string): boolean => {

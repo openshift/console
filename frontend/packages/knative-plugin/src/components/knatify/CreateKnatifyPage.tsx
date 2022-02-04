@@ -139,7 +139,7 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
             namespace,
             resources?.imageStream?.data as K8sResourceKind[],
           )}
-          validationSchema={deployValidationSchema(t)}
+          validationSchema={deployValidationSchema()}
           onSubmit={handleSubmit}
           onReset={history.goBack}
         >

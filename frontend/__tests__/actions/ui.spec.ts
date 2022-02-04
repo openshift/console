@@ -11,9 +11,9 @@ const setActiveNamespace = (ns) => store.dispatch(UIActions.setActiveNamespace(n
 const getNamespacedRoute = (path) =>
   UIActions.formatNamespaceRoute(getActiveNamespace(store.getState()), path);
 
-const oldLocation = global.window.location;
-delete global.window.location;
-global.window.location = { ...oldLocation };
+const oldLocation = (global as any).window.location;
+delete (global as any).window.location;
+(global as any).window.location = { ...oldLocation };
 
 describe('ui-actions', () => {
   describe('UIActions.formatNamespaceRoute', () => {

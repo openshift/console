@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import {
   WatchK8sResultsObject,
   Perspective,
@@ -39,7 +38,6 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
 }) => {
   const postFormCallback = usePostFormSubmitAction();
   const toastCallback = useUploadJarFormToast();
-  const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const application = forApplication || '';
@@ -101,7 +99,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
-      validationSchema={validationSchema(t)}
+      validationSchema={validationSchema()}
     >
       {(formikProps) => (
         <UploadJarForm

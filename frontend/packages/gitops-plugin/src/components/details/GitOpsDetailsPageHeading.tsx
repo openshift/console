@@ -39,7 +39,7 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
         {badge && <span className="co-m-pane__heading-badge">{badge}</span>}
       </h1>
       <ExternalLink href={manifestURL} additionalClassName={'co-break-all'}>
-        {routeDecoratorIcon(manifestURL, 12, t)}&nbsp;
+        {routeDecoratorIcon(manifestURL, 12)}&nbsp;
         {manifestURL}&nbsp;
       </ExternalLink>
     </div>

@@ -13,7 +13,7 @@ describe('Spotlight', () => {
     getAttribute: jest.fn().mockReturnValue('false'),
   };
   beforeEach(() => {
-    jest.spyOn(document, 'querySelector').mockImplementation(() => uiElement);
+    jest.spyOn(document, 'querySelector').mockImplementation((() => uiElement) as any);
   });
   afterEach(() => {
     jest.restoreAllMocks();

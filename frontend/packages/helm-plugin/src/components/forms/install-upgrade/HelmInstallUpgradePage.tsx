@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import { Formik } from 'formik';
 import { dump, load } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
@@ -82,11 +82,10 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
         helmAction,
         initialReleaseName,
         namespace,
-        t,
         helmActionOrigin,
         initialChartURL,
       ),
-    [helmAction, helmActionOrigin, initialChartURL, initialReleaseName, namespace, t],
+    [helmAction, helmActionOrigin, initialChartURL, initialReleaseName, namespace],
   );
 
   React.useEffect(() => {

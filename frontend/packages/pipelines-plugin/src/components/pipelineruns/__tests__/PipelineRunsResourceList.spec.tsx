@@ -18,7 +18,9 @@ describe('PipelineRunsResourceList:', () => {
       canCreate: false,
     };
     wrapper = shallow(<PipelineRunsResourceList {...pipelineRunsResourceListProps} />);
-    jest.spyOn(operatorUtils, 'usePipelineOperatorVersion').mockReturnValue({ version: '1.3.1' });
+    jest
+      .spyOn(operatorUtils, 'usePipelineOperatorVersion')
+      .mockReturnValue({ version: '1.3.1' } as any);
   });
 
   it('Should render the badge in the list page', () => {
@@ -34,7 +36,7 @@ describe('PipelineRunsResourceList:', () => {
   it('Should not render the badge in the list page if the pipeline GA operator is installed', () => {
     jest
       .spyOn(operatorUtils, 'usePipelineOperatorVersion')
-      .mockReturnValue({ version: PIPELINE_GA_VERSION });
+      .mockReturnValue({ version: PIPELINE_GA_VERSION } as any);
     wrapper.setProps({ hideBadge: false });
     expect(wrapper.find(ListPage).props().badge).toBeNull();
   });

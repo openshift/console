@@ -28,7 +28,7 @@ const EditDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y 
   const { editURL, vcsURI, vcsRef } = workloadData;
   const cheEnabled = !!cheURL;
   const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
-  const repoIcon = routeDecoratorIcon(editUrl, radius, t, cheEnabled, cheIconURL);
+  const repoIcon = routeDecoratorIcon(editUrl, radius, cheEnabled, cheIconURL);
 
   if (!repoIcon) {
     return null;

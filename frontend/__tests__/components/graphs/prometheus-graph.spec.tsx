@@ -16,6 +16,7 @@ import {
 import store from '@console/internal/redux';
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 

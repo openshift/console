@@ -5,6 +5,7 @@ import MarkdownExecuteSnippet, { ExecuteSnippet } from '../MarkdownExecuteSnippe
 import { htmlDocumentForExecuteButton } from './test-data';
 
 jest.mock('@console/app/src/components/cloud-shell/useCloudShellAvailable', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -34,7 +33,6 @@ const DeployImage: React.FC<Props> = ({
   contextualSource,
 }) => {
   const postFormCallback = usePostFormSubmitAction();
-  const { t } = useTranslation();
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -185,7 +183,7 @@ const DeployImage: React.FC<Props> = ({
       initialValues={initialVals}
       onSubmit={handleSubmit}
       onReset={history.goBack}
-      validationSchema={deployValidationSchema(t)}
+      validationSchema={deployValidationSchema()}
     >
       {(formikProps) => <DeployImageForm {...formikProps} projects={projects} />}
     </Formik>

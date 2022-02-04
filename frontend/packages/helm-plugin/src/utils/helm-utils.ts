@@ -1,5 +1,5 @@
 import * as fuzzy from 'fuzzysearch';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import { loadAll, dump, DEFAULT_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
@@ -136,29 +136,27 @@ export const getChartEntriesByName = (
 export const concatVersions = (
   chartVersion: string,
   appVersion: string,
-  t: TFunction,
   chartRepoName?: string,
 ): string => {
   let title = chartVersion.split('--')[0];
   if (appVersion) {
-    title += t('helm-plugin~ / App Version {{appVersion}}', { appVersion });
+    title += i18next.t('helm-plugin~ / App Version {{appVersion}}', { appVersion });
   }
   if (chartRepoName) {
-    title += t('helm-plugin~ (Provided by {{chartRepoName}})', {
+    title += i18next.t('helm-plugin~ (Provided by {{chartRepoName}})', {
       chartRepoName: toTitleCase(chartRepoName),
     });
   }
   return title;
 };
 
-export const getChartVersions = (chartEntries: HelmChartMetaData[], t: TFunction) => {
+export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
   const chartVersions = _.reduce(
     chartEntries,
     (obj, chart) => {
       obj[`${chart.version}--${chart.repoName}`] = concatVersions(
         chart.version,
         chart.appVersion,
-        t,
         chart.repoName,
       );
       return obj;
@@ -189,7 +187,6 @@ export const getHelmActionConfig = (
   helmAction: HelmActionType,
   releaseName: string,
   namespace: string,
-  t: TFunction,
   actionOrigin?: HelmActionOrigins,
   chartURL?: string,
 ): HelmActionConfigType | undefined => {
@@ -197,12 +194,12 @@ export const getHelmActionConfig = (
     case HelmActionType.Install:
       return {
         type: HelmActionType.Install,
-        title: t('helm-plugin~Install Helm Chart'),
+        title: i18next.t('helm-plugin~Install Helm Chart'),
         subTitle: {
-          form: t(
+          form: i18next.t(
             'helm-plugin~The Helm Chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
           ),
-          yaml: t(
+          yaml: i18next.t(
             'helm-plugin~The Helm Chart can be installed by manually entering YAML or JSON definitions.',
           ),
         },
@@ -213,12 +210,12 @@ export const getHelmActionConfig = (
     case HelmActionType.Upgrade:
       return {
         type: HelmActionType.Upgrade,
-        title: t('helm-plugin~Upgrade Helm Release'),
+        title: i18next.t('helm-plugin~Upgrade Helm Release'),
         subTitle: {
-          form: t(
+          form: i18next.t(
             'helm-plugin~Upgrade by selecting a new chart version or manually changing the form values.',
           ),
-          yaml: t(
+          yaml: i18next.t(
             'helm-plugin~Upgrade by selecting a new chart version or manually changing YAML.',
           ),
         },
@@ -230,7 +227,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Rollback:
       return {
         type: HelmActionType.Rollback,
-        title: t('helm-plugin~Rollback Helm Release'),
+        title: i18next.t('helm-plugin~Rollback Helm Release'),
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.patch,
@@ -271,10 +268,10 @@ export const getChartReadme = (chart: HelmChart): string => {
   return (readmeFile?.data && atob(readmeFile?.data)) ?? '';
 };
 
-export const helmActionString = (t: TFunction) => ({
-  Install: t('helm-plugin~Install'),
-  Upgrade: t('helm-plugin~Upgrade'),
-  Rollback: t('helm-plugin~Rollback'),
+export const helmActionString = () => ({
+  Install: i18next.t('helm-plugin~Install'),
+  Upgrade: i18next.t('helm-plugin~Upgrade'),
+  Rollback: i18next.t('helm-plugin~Rollback'),
 });
 
 export const fetchHelmReleaseHistory = (

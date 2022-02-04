@@ -32,7 +32,7 @@ describe('Imagestream', () => {
   beforeEach(() => {
     spyGetImageStreamTags.mockReturnValue({ 3.6: 3.6 });
     spyUseReducer.mockImplementation(() => [mockReducerState, jest.fn()]);
-    spyUseField.mockImplementation(() => [{ value: '' }, {}]);
+    spyUseField.mockImplementation(() => [{ value: '' }, {}] as any);
     spyUseState.mockReturnValue([true, jest.fn()]);
     spyUseFormikContext.mockReturnValue({
       ...formikFormProps,

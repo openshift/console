@@ -10,10 +10,12 @@ import useCloudShellWorkspace from '../useCloudShellWorkspace';
 import { user } from './cloud-shell-test-data';
 
 jest.mock('../useCloudShellWorkspace', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 
 jest.mock('../useCloudShellNamespace', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 
@@ -31,7 +33,7 @@ jest.mock('@console/shared', () => {
   const originalModule = (jest as any).requireActual('@console/shared');
   return {
     ...originalModule,
-    useFlag: jest.fn<boolean>(),
+    useFlag: jest.fn(),
   };
 });
 

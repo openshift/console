@@ -63,7 +63,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
       <TableData className={classnames(tableColumnClasses[1])}>
         <ExternalLink href={repoUrl} additionalClassName={'co-break-all'}>
           <span style={{ marginRight: 'var(--pf-global--spacer--xs)' }}>
-            {routeDecoratorIcon(repoUrl, 12, t)}
+            {routeDecoratorIcon(repoUrl, 12)}
           </span>
           <span style={{ marginRight: 'var(--pf-global--spacer--xs)' }}>{repoUrl}</span>
         </ExternalLink>

@@ -72,7 +72,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
           }
 
           setValidating(true);
-          nameValidationSchema(t, 63)
+          nameValidationSchema(63)
             .validate(value)
             .then(() => {
               clearErrorState();

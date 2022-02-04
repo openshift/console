@@ -77,7 +77,9 @@ describe('coFetch', () => {
   });
 
   it('should retry up to 3 times when RetryError is thrown', async () => {
-    window.fetch = jest.fn(() => Promise.resolve({ status: 404, headers: emptyHeaders }));
+    (window.fetch as jest.Mock) = jest.fn(() =>
+      Promise.resolve({ status: 404, headers: emptyHeaders }),
+    );
     setUtilsConfig({ appFetch: appInternalFetch });
     try {
       await consoleFetch('');
@@ -87,7 +89,9 @@ describe('coFetch', () => {
     expect(window.fetch).toHaveBeenCalledTimes(1);
 
     (window.fetch as jest.Mock).mockClear();
-    window.fetch = jest.fn(() => Promise.resolve({ status: 429, headers: emptyHeaders }));
+    (window.fetch as jest.Mock) = jest.fn(() =>
+      Promise.resolve({ status: 429, headers: emptyHeaders }),
+    );
     try {
       await consoleFetch('');
     } catch {
@@ -96,7 +100,7 @@ describe('coFetch', () => {
     expect(window.fetch).toHaveBeenCalledTimes(3);
 
     (window.fetch as jest.Mock).mockClear();
-    window.fetch = jest.fn(() => Promise.resolve({ status: 409, json, headers }));
+    (window.fetch as jest.Mock) = jest.fn(() => Promise.resolve({ status: 409, json, headers }));
     try {
       await consoleFetch('', { method: 'POST' });
     } catch {

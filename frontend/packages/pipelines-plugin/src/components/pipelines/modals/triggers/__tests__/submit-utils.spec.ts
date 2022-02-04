@@ -18,7 +18,9 @@ describe('submitTrigger', () => {
   });
 
   it('expect to use template.name when pipeline GA operator is not installed', async () => {
-    jest.spyOn(operatorUtils, 'getPipelineOperatorVersion').mockReturnValue({ version: '1.3.1' });
+    jest
+      .spyOn(operatorUtils, 'getPipelineOperatorVersion')
+      .mockReturnValue({ version: '1.3.1' } as any);
     try {
       const resources = await submitUtils.submitTrigger(pipelineData.pipeline, formValues);
       expect(resources).toHaveLength(2);
@@ -35,7 +37,7 @@ describe('submitTrigger', () => {
   it('expect to use template.ref when pipeline GA operator is installed', async () => {
     jest
       .spyOn(operatorUtils, 'getPipelineOperatorVersion')
-      .mockReturnValue({ version: PIPELINE_GA_VERSION });
+      .mockReturnValue({ version: PIPELINE_GA_VERSION } as any);
     try {
       const resources = await submitUtils.submitTrigger(pipelineData.pipeline, formValues);
       expect(resources).toHaveLength(2);

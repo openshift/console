@@ -16,7 +16,8 @@ describe('startAPIDiscovery', () => {
     const dispatch = jest.fn();
     jest.useFakeTimers();
     jest.spyOn(console, 'log');
-    jest.spyOn(k8sActions, 'getResources').mockImplementation(() => {});
+    const fn = () => {};
+    jest.spyOn(k8sActions, 'getResources').mockImplementation(fn as any);
     await k8sActions.startAPIDiscovery()(dispatch);
     expect(k8sActions.getResources).toHaveBeenCalledTimes(1);
     expect(window.setTimeout).toHaveBeenCalledTimes(1);
@@ -32,7 +33,7 @@ describe('startAPIDiscovery', () => {
     const crdReduxID = makeReduxID(CustomResourceDefinitionModel, {});
     const dispatch = jest.fn();
     jest.spyOn(console, 'log');
-    jest.spyOn(sdkK8sActions, 'watchK8sList').mockImplementation(() => {});
+    jest.spyOn(sdkK8sActions, 'watchK8sList').mockImplementation((() => {}) as any);
     await k8sActions.startAPIDiscovery()(dispatch);
     expect(sdkK8sActions.watchK8sList).toHaveBeenCalledTimes(1);
     expect(sdkK8sActions.watchK8sList).toHaveBeenCalledWith(

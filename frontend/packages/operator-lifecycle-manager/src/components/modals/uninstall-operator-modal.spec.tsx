@@ -24,14 +24,6 @@ jest.mock('@console/shared/src/hooks/useOperands', () => ({
   useOperands: jest.fn(),
 }));
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    Trans: () => null,
-  };
-});
-
 describe(UninstallOperatorModal.name, () => {
   let wrapper: ReactWrapper<UninstallOperatorModalProps>;
   let k8sKill: Spy;

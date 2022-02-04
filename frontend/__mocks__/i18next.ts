@@ -1,7 +1,7 @@
 /* eslint-env node */
 const interpolationPattern = /{{([A-Za-z0-9]+)}}/;
 
-export const t = (key: string, interpolation: Record<string, string>) => {
+export const t = (key: string, interpolation?: Record<string, string>) => {
   let result = key.includes('~') ? key.substring(key.indexOf('~') + 1) : key;
   while (interpolation && result.match(interpolationPattern)) {
     result = result.replace(interpolationPattern, (_, variable) => interpolation[variable] || '');

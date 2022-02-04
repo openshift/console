@@ -10,7 +10,7 @@ describe('initSharedPluginModules', () => {
   it('is consistent with sharedPluginModules definition', () => {
     const [, entryModule] = getEntryModuleMocks({});
 
-    initSharedPluginModules(entryModule);
+    initSharedPluginModules(entryModule as any);
 
     expect(entryModule.init).toHaveBeenCalledTimes(1);
 
@@ -21,7 +21,7 @@ describe('initSharedPluginModules', () => {
     const [, entryModule] = getEntryModuleMocks({});
     entryModule.override = jest.fn();
 
-    initSharedPluginModules(entryModule);
+    initSharedPluginModules(entryModule as any);
 
     expect(entryModule.override).toHaveBeenCalledTimes(1);
     expect(entryModule.init).not.toHaveBeenCalled();

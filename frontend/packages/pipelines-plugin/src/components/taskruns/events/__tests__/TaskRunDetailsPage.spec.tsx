@@ -26,7 +26,10 @@ describe('TaskRunDetailsPage:', () => {
         },
       },
     };
-    breadCrumbs.mockReturnValue([{ label: 'TaskRuns' }, { label: 'TaskRuns Details' }]);
+    breadCrumbs.mockReturnValue([
+      { name: 'TaskRuns', path: '' },
+      { name: 'TaskRuns Details', path: '' },
+    ]);
   });
 
   it('Should render a DetailsPage component', () => {

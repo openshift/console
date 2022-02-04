@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { limitsValidationSchema } from '@console/dev-console/src/components/import/validation-schema';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
@@ -15,14 +13,12 @@ export type ResourceLimitsModalLauncherProps = {
   close?: () => void;
 } & ModalComponentProps;
 
-const rlValidationSchema = (t: TFunction) =>
+const rlValidationSchema = () =>
   yup.object().shape({
-    limits: limitsValidationSchema(t),
+    limits: limitsValidationSchema(),
   });
 
 const ResourceLimitsModalLauncher: React.FC<ResourceLimitsModalLauncherProps> = (props) => {
-  const { t } = useTranslation();
-
   const handleSubmit = (values, actions) => {
     const {
       limits: { cpu, memory },
@@ -53,7 +49,7 @@ const ResourceLimitsModalLauncher: React.FC<ResourceLimitsModalLauncherProps> = 
     <Formik
       initialValues={currentValues}
       onSubmit={handleSubmit}
-      validationSchema={rlValidationSchema(t)}
+      validationSchema={rlValidationSchema()}
     >
       {(formikProps) => <ResourceLimitsModal {...formikProps} {...props} />}
     </Formik>

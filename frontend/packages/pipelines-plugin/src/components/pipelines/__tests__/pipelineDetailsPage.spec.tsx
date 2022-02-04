@@ -33,7 +33,12 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  __esModule: true,
   default: jest.fn(),
+}));
+
+jest.mock('../../pipelineruns/triggered-by', () => ({
+  useMenuActionsWithUserAnnotation: jest.fn(),
 }));
 
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
@@ -59,7 +64,10 @@ describe('PipelineDetailsPage:', () => {
       },
     };
     menuActions.mockReturnValue(getPipelineKebabActions(pipelineRuns[0], true));
-    breadCrumbs.mockReturnValue([{ label: 'Pipelines' }, { label: 'Pipeline Details' }]);
+    breadCrumbs.mockReturnValue([
+      { name: 'Pipelines', path: '' },
+      { name: 'Pipeline Details', path: '' },
+    ]);
     templateNames.mockReturnValue([]);
     latestPipelineRun.mockReturnValue(null);
     (useK8sGet as jest.Mock).mockReturnValue([mockData.pipeline, true, null]);

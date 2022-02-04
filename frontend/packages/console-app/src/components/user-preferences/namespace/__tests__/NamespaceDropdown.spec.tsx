@@ -21,7 +21,7 @@ jest.mock('../usePreferredNamespace', () => ({
 }));
 
 jest.mock('fuzzysearch', () => {
-  return { default: jest.fn() };
+  return { __esModule: true, default: jest.fn() };
 });
 
 const mockProjectOrNamespaceModel = useProjectOrNamespaceModel as jest.Mock;

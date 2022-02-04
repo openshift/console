@@ -4,15 +4,21 @@ import { GettingStartedCard } from '@console/shared/src/components/getting-start
 
 import { ExploreAdminFeaturesGettingStartedCard } from '../explore-admin-features-getting-started-card';
 
-jest.mock('react', () => ({
-  ...require.requireActual('react'),
-  useLayoutEffect: require.requireActual('react').useEffect,
-}));
+jest.mock('react', () => {
+  const React = jest.requireActual('react');
+  return {
+    ...React,
+    useLayoutEffect: React.useEffect,
+  };
+});
 
-jest.mock('@console/shared/src', () => ({
-  ...require.requireActual('@console/shared/src'),
-  useOpenShiftVersion: () => '4.8.0',
-}));
+jest.mock('@console/shared/src', () => {
+  const shared = jest.requireActual('@console/shared/src');
+  return {
+    ...shared,
+    useOpenShiftVersion: () => '4.8.0',
+  };
+});
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({

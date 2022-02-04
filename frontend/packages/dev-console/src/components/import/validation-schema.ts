@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { convertToBaseValue } from '@console/internal/components/utils';
@@ -48,23 +48,23 @@ export const applicationNameValidationSchema = yup.object().shape({
     }),
 });
 
-export const deploymentValidationSchema = (t: TFunction) =>
+export const deploymentValidationSchema = () =>
   yup.object().shape({
     replicas: yup
       .number()
       .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-      .test(isInteger(t('devconsole~Replicas must be an integer.')))
-      .min(0, t('devconsole~Replicas must be greater than or equal to 0.'))
+      .test(isInteger(i18next.t('devconsole~Replicas must be an integer.')))
+      .min(0, i18next.t('devconsole~Replicas must be greater than or equal to 0.'))
       .max(
         Number.MAX_SAFE_INTEGER,
-        t('devconsole~Replicas must be lesser than or equal to {{maxSafeInteger}}.', {
+        i18next.t('devconsole~Replicas must be lesser than or equal to {{maxSafeInteger}}.', {
           maxSafeInteger: Number.MAX_SAFE_INTEGER,
         }),
       )
       .test({
         name: 'isEmpty',
         test: (value) => value !== undefined,
-        message: t('devconsole~This field cannot be empty.'),
+        message: i18next.t('devconsole~This field cannot be empty.'),
       }),
   });
 
@@ -73,7 +73,7 @@ export const resourcesValidationSchema = yup
   .oneOf([Resources.OpenShift, Resources.Kubernetes, Resources.KnativeService])
   .required();
 
-export const serverlessValidationSchema = (t: TFunction) =>
+export const serverlessValidationSchema = () =>
   yup.object().when('resources', {
     is: Resources.KnativeService,
     then: yup.object().shape({
@@ -81,22 +81,22 @@ export const serverlessValidationSchema = (t: TFunction) =>
         minpods: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Min Pods must be an integer.')))
-          .min(0, t('devconsole~Min Pods must be greater than or equal to 0.'))
+          .test(isInteger(i18next.t('devconsole~Min Pods must be an integer.')))
+          .min(0, i18next.t('devconsole~Min Pods must be greater than or equal to 0.'))
           .max(
             Number.MAX_SAFE_INTEGER,
-            t('devconsole~Min Pods must be lesser than or equal to {{maxSafeInteger}}.', {
+            i18next.t('devconsole~Min Pods must be lesser than or equal to {{maxSafeInteger}}.', {
               maxSafeInteger: Number.MAX_SAFE_INTEGER,
             }),
           ),
         maxpods: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Max Pods must be an integer.')))
-          .min(1, t('devconsole~Max Pods must be greater than or equal to 1.'))
+          .test(isInteger(i18next.t('devconsole~Max Pods must be an integer.')))
+          .min(1, i18next.t('devconsole~Max Pods must be greater than or equal to 1.'))
           .max(
             Number.MAX_SAFE_INTEGER,
-            t('devconsole~Max Pods must be lesser than or equal to {{maxSafeInteger}}.', {
+            i18next.t('devconsole~Max Pods must be lesser than or equal to {{maxSafeInteger}}.', {
               maxSafeInteger: Number.MAX_SAFE_INTEGER,
             }),
           )
@@ -105,35 +105,41 @@ export const serverlessValidationSchema = (t: TFunction) =>
               const { minpods } = this.parent;
               return limit ? limit >= minpods : true;
             },
-            message: t('devconsole~Max Pods must be greater than or equal to Min Pods.'),
+            message: i18next.t('devconsole~Max Pods must be greater than or equal to Min Pods.'),
           }),
         concurrencytarget: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Concurrency target must be an integer.')))
-          .min(0, t('devconsole~Concurrency target must be greater than or equal to 0.'))
+          .test(isInteger(i18next.t('devconsole~Concurrency target must be an integer.')))
+          .min(0, i18next.t('devconsole~Concurrency target must be greater than or equal to 0.'))
           .max(
             Number.MAX_SAFE_INTEGER,
-            t('devconsole~Concurrency target must be lesser than or equal to {{maxSafeInteger}}.', {
-              maxSafeInteger: Number.MAX_SAFE_INTEGER,
-            }),
+            i18next.t(
+              'devconsole~Concurrency target must be lesser than or equal to {{maxSafeInteger}}.',
+              {
+                maxSafeInteger: Number.MAX_SAFE_INTEGER,
+              },
+            ),
           ),
         concurrencylimit: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Concurrency limit must be an integer.')))
-          .min(0, t('devconsole~Concurrency limit must be greater than or equal to 0.'))
+          .test(isInteger(i18next.t('devconsole~Concurrency limit must be an integer.')))
+          .min(0, i18next.t('devconsole~Concurrency limit must be greater than or equal to 0.'))
           .max(
             Number.MAX_SAFE_INTEGER,
-            t('devconsole~Concurrency limit must be lesser than or equal to {{maxSafeInteger}}.', {
-              maxSafeInteger: Number.MAX_SAFE_INTEGER,
-            }),
+            i18next.t(
+              'devconsole~Concurrency limit must be lesser than or equal to {{maxSafeInteger}}.',
+              {
+                maxSafeInteger: Number.MAX_SAFE_INTEGER,
+              },
+            ),
           ),
         concurrencyutilization: yup
           .number()
           .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .min(0, t('devconsole~Concurrency utilization must be between 0 and 100.'))
-          .max(100, t('devconsole~Concurrency utilization must be between 0 and 100.')),
+          .min(0, i18next.t('devconsole~Concurrency utilization must be between 0 and 100.'))
+          .max(100, i18next.t('devconsole~Concurrency utilization must be between 0 and 100.')),
         autoscale: yup.object().shape({
           autoscalewindow: yup
             .number()
@@ -147,7 +153,7 @@ export const serverlessValidationSchema = (t: TFunction) =>
                 }
                 return true;
               },
-              message: t('devconsole~Autoscale window must be between 6s and 1h.'),
+              message: i18next.t('devconsole~Autoscale window must be between 6s and 1h.'),
             }),
         }),
       }),
@@ -156,14 +162,16 @@ export const serverlessValidationSchema = (t: TFunction) =>
           .string()
           .transform(removeKsvcInfoFromDomainMapping)
           .matches(hostnameRegex, {
-            message: t(
+            message: i18next.t(
               'devconsole~Domain name must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
             ),
             excludeEmptyString: true,
           })
           .test(
             'domainname-has-segements',
-            t('devconsole~Domain name must consist of at least two segments separated by dots.'),
+            i18next.t(
+              'devconsole~Domain name must consist of at least two segments separated by dots.',
+            ),
             function(domainName: string) {
               return domainName.split('.').length >= 2;
             },
@@ -172,43 +180,45 @@ export const serverlessValidationSchema = (t: TFunction) =>
     }),
   });
 
-export const routeValidationSchema = (t: TFunction) =>
+export const routeValidationSchema = () =>
   yup.object().shape({
     secure: yup.boolean(),
     tls: yup.object().when('secure', {
       is: true,
       then: yup.object({
-        termination: yup.string().required(t('devconsole~Please select a termination type.')),
+        termination: yup
+          .string()
+          .required(i18next.t('devconsole~Please select a termination type.')),
       }),
     }),
     hostname: yup
       .string()
       .matches(hostnameRegex, {
-        message: t(
+        message: i18next.t(
           'devconsole~Hostname must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
         ),
         excludeEmptyString: true,
       })
-      .max(253, t('devconsole~Cannot be longer than 253 characters.')),
+      .max(253, i18next.t('devconsole~Cannot be longer than 253 characters.')),
     path: yup.string().matches(pathRegex, {
-      message: t('devconsole~Path must start with /.'),
+      message: i18next.t('devconsole~Path must start with /.'),
       excludeEmptyString: true,
     }),
     unknownTargetPort: yup
       .number()
-      .typeError(t('devconsole~Port must be an integer.'))
-      .integer(t('devconsole~Port must be an integer.'))
-      .min(1, t('devconsole~Port must be between 1 and 65535.'))
-      .max(65535, t('devconsole~Port must be between 1 and 65535.')),
+      .typeError(i18next.t('devconsole~Port must be an integer.'))
+      .integer(i18next.t('devconsole~Port must be an integer.'))
+      .min(1, i18next.t('devconsole~Port must be between 1 and 65535.'))
+      .max(65535, i18next.t('devconsole~Port must be between 1 and 65535.')),
   });
 
-export const limitsValidationSchema = (t: TFunction) =>
+export const limitsValidationSchema = () =>
   yup.object().shape({
     cpu: yup.object().shape({
       request: yup
         .number()
         .transform((request) => (_.isNaN(request) ? undefined : request))
-        .min(0, t('devconsole~Request must be greater than or equal to 0.'))
+        .min(0, i18next.t('devconsole~Request must be greater than or equal to 0.'))
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
@@ -220,14 +230,14 @@ export const limitsValidationSchema = (t: TFunction) =>
             }
             return true;
           },
-          message: t('devconsole~CPU request must be less than or equal to limit.'),
+          message: i18next.t('devconsole~CPU request must be less than or equal to limit.'),
         }),
-      requestUnit: yup.string(t('devconsole~Unit must be millicores or cores.')).ensure(),
-      limitUnit: yup.string(t('devconsole~Unit must be millicores or cores.')).ensure(),
+      requestUnit: yup.string(i18next.t('devconsole~Unit must be millicores or cores.')).ensure(),
+      limitUnit: yup.string(i18next.t('devconsole~Unit must be millicores or cores.')).ensure(),
       limit: yup
         .number()
         .transform((limit) => (_.isNaN(limit) ? undefined : limit))
-        .min(0, t('devconsole~Limit must be greater than or equal to 0.'))
+        .min(0, i18next.t('devconsole~Limit must be greater than or equal to 0.'))
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
@@ -239,14 +249,14 @@ export const limitsValidationSchema = (t: TFunction) =>
             }
             return true;
           },
-          message: t('devconsole~CPU limit must be greater than or equal to request.'),
+          message: i18next.t('devconsole~CPU limit must be greater than or equal to request.'),
         }),
     }),
     memory: yup.object().shape({
       request: yup
         .number()
         .transform((request) => (_.isNaN(request) ? undefined : request))
-        .min(0, t('devconsole~Request must be greater than or equal to 0.'))
+        .min(0, i18next.t('devconsole~Request must be greater than or equal to 0.'))
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
@@ -258,13 +268,13 @@ export const limitsValidationSchema = (t: TFunction) =>
             }
             return true;
           },
-          message: t('devconsole~Memory request must be less than or equal to limit.'),
+          message: i18next.t('devconsole~Memory request must be less than or equal to limit.'),
         }),
-      requestUnit: yup.string(t('devconsole~Unit must be Mi or Gi.')),
+      requestUnit: yup.string(i18next.t('devconsole~Unit must be Mi or Gi.')),
       limit: yup
         .number()
         .transform((limit) => (_.isNaN(limit) ? undefined : limit))
-        .min(0, t('devconsole~Limit must be greater than or equal to 0.'))
+        .min(0, i18next.t('devconsole~Limit must be greater than or equal to 0.'))
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
@@ -276,54 +286,56 @@ export const limitsValidationSchema = (t: TFunction) =>
             }
             return true;
           },
-          message: t('devconsole~Memory limit must be greater than or equal to request.'),
+          message: i18next.t('devconsole~Memory limit must be greater than or equal to request.'),
         }),
-      limitUnit: yup.string(t('devconsole~Unit must be Mi or Gi.')),
+      limitUnit: yup.string(i18next.t('devconsole~Unit must be Mi or Gi.')),
     }),
   });
 
-export const imageValidationSchema = (t: TFunction) =>
+export const imageValidationSchema = () =>
   yup.object().when('build', {
     is: (build) => build.strategy === 'Source',
     then: yup.object().shape({
-      selected: yup.string().required(t('devconsole~Required')),
-      tag: yup.string().required(t('devconsole~Required')),
+      selected: yup.string().required(i18next.t('devconsole~Required')),
+      tag: yup.string().required(i18next.t('devconsole~Required')),
     }),
   });
 
-export const gitValidationSchema = (t: TFunction) =>
+export const gitValidationSchema = () =>
   yup.object().shape({
     url: yup
       .string()
-      .max(2000, t('devconsole~Please enter a URL that is less then 2000 characters.'))
-      .matches(gitUrlRegex, t('devconsole~Invalid Git URL.'))
-      .required(t('devconsole~Required')),
+      .max(2000, i18next.t('devconsole~Please enter a URL that is less then 2000 characters.'))
+      .matches(gitUrlRegex, i18next.t('devconsole~Invalid Git URL.'))
+      .required(i18next.t('devconsole~Required')),
     type: yup.string().when('showGitType', {
       is: true,
       then: yup
         .string()
-        .required(t('devconsole~We failed to detect the Git type. Please choose a Git type.')),
+        .required(
+          i18next.t('devconsole~We failed to detect the Git type. Please choose a Git type.'),
+        ),
     }),
     showGitType: yup.boolean(),
   });
 
-export const dockerValidationSchema = (t: TFunction) =>
+export const dockerValidationSchema = () =>
   yup.object().when('build', {
     is: (build) => build.strategy === 'Docker',
     then: yup.object().shape({
       containerPort: yup
         .number()
-        .test(isInteger(t('devconsole~Container port should be an integer'))),
-      dockerfilePath: yup.string().required(t('devconsole~Required')),
+        .test(isInteger(i18next.t('devconsole~Container port should be an integer'))),
+      dockerfilePath: yup.string().required(i18next.t('devconsole~Required')),
     }),
   });
 
-export const devfileValidationSchema = (t: TFunction) =>
+export const devfileValidationSchema = () =>
   yup.object().when('build', {
     is: (build) => build.strategy === 'Devfile',
     then: yup.object().shape({
       devfileHasError: yup.boolean().oneOf([false]),
-      devfilePath: yup.string().required(t('devconsole~Required')),
+      devfilePath: yup.string().required(i18next.t('devconsole~Required')),
     }),
   });
 
@@ -331,13 +343,13 @@ export const buildValidationSchema = yup.object().shape({
   strategy: yup.string(),
 });
 
-export const searchTermValidationSchema = (t: TFunction) =>
-  yup.string().required(t('devconsole~Required'));
+export const searchTermValidationSchema = () =>
+  yup.string().required(i18next.t('devconsole~Required'));
 
-export const isiValidationSchema = (t: TFunction) =>
+export const isiValidationSchema = () =>
   yup.object().shape({
-    name: yup.string().required(t('devconsole~Required')),
-    image: yup.object().required(t('devconsole~Required')),
+    name: yup.string().required(i18next.t('devconsole~Required')),
+    image: yup.object().required(i18next.t('devconsole~Required')),
     tag: yup.string(),
-    status: yup.string().required(t('devconsole~Required')),
+    status: yup.string().required(i18next.t('devconsole~Required')),
   });

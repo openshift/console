@@ -7,10 +7,10 @@ import { PipelinesPage } from '../PipelinesPage';
 import PipelineTabbedPage, { PageContents } from '../PipelineTabbedPage';
 
 jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+  const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
-    useFlag: jest.fn<boolean>(),
+    useFlag: jest.fn(),
   };
 });
 

@@ -35,7 +35,7 @@ const MetricsQueryInput: React.FC = () => {
   const DEFAULT_TITLE = t('devconsole~Select query');
   const params = getURLSearchParams();
   const query = params.query0;
-  const items = metricsQuery(t);
+  const items = metricsQuery();
   const autocompleteFilter = (strText, item) => fuzzy(strText, item);
   const defaultActionItem = [
     {
@@ -60,7 +60,7 @@ const MetricsQueryInput: React.FC = () => {
   React.useEffect(() => {
     const runQueries = () => dispatch(queryBrowserRunQueries());
     const patchQuery = (v: QueryObj) => dispatch(queryBrowserPatchQuery(0, v));
-    const queryMetrics = metric && getTopMetricsQueries(namespace, t)[metric];
+    const queryMetrics = metric && getTopMetricsQueries(namespace)[metric];
     patchQuery({ text: queryMetrics || query || '' });
     runQueries();
   }, [dispatch, metric, query, namespace, changeKey, t]);
@@ -76,7 +76,7 @@ const MetricsQueryInput: React.FC = () => {
 
   React.useEffect(() => {
     if (query) {
-      const topMetricsQueries = getTopMetricsQueries(namespace, t);
+      const topMetricsQueries = getTopMetricsQueries(namespace);
       const selectedQuery = _.findKey(topMetricsQueries, (topQuery) => topQuery === query);
       const sKey = _.findKey(items, (item) => item === selectedQuery);
       setMetric(selectedQuery);
@@ -105,21 +105,21 @@ const MetricsQueryInput: React.FC = () => {
 
   const onChange = React.useCallback(
     (selectedValue: string) => {
-      setMetric(metricsQuery(t)[selectedValue]);
+      setMetric(metricsQuery()[selectedValue]);
       setChangeKey(!changeKey);
       if (selectedValue && selectedValue === ADD_NEW_QUERY) {
         setTitle(CUSTOM_QUERY);
         setIsPromQlDisabled(true);
         setShowPromQl(true);
       } else {
-        setTitle(metricsQuery(t)[selectedValue]);
+        setTitle(metricsQuery()[selectedValue]);
         setIsPromQlDisabled(false);
       }
       if (query) {
         removeQueryArgument('query0');
       }
     },
-    [CUSTOM_QUERY, changeKey, query, t],
+    [CUSTOM_QUERY, changeKey, query],
   );
 
   return (

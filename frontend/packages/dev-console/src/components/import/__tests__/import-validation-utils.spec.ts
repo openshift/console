@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
-import { t } from '../../../../../../__mocks__/i18next';
 import { mockFormData } from '../__mocks__/import-validation-mock';
 import { GitTypes } from '../import-types';
 import {
@@ -74,7 +73,7 @@ describe('ValidationUtils', () => {
   describe('Validation Schema', () => {
     it('should validate the form data', async () => {
       const mockData = cloneDeep(mockFormData);
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -82,10 +81,10 @@ describe('ValidationUtils', () => {
     it('should throw an error if url is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'something.com';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => expect(err.message).toBe('Invalid Git URL.'));
     });
@@ -94,11 +93,11 @@ describe('ValidationUtils', () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'https://something.com/test/repo';
       mockData.git.type = GitTypes.invalid;
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
       mockData.git.showGitType = true;
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('We failed to detect the Git type. Please choose a Git type.');
@@ -108,10 +107,10 @@ describe('ValidationUtils', () => {
     it('should throw an error if project name is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.project.name = 'project-!';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) =>
           expect(err.message).toBe(
@@ -123,10 +122,10 @@ describe('ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.name = '';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Required');
@@ -137,7 +136,7 @@ describe('ValidationUtils', () => {
     it('should convert the detected name to lower case', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'https://github.com/openshift-evangelists/Wild-West-Frontend';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
       const name = detectGitRepoName(mockData.git.url);
@@ -168,10 +167,10 @@ describe('ValidationUtils', () => {
     it('should throw an error if name is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.name = 'app_name';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
@@ -184,10 +183,10 @@ describe('ValidationUtils', () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = CREATE_APPLICATION_KEY;
       mockData.application.name = '';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Required');
@@ -198,7 +197,7 @@ describe('ValidationUtils', () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = UNASSIGNED_KEY;
       mockData.application.name = '';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -207,7 +206,7 @@ describe('ValidationUtils', () => {
       const mockData = cloneDeep(mockFormData);
       mockData.application.selectedKey = '';
       mockData.application.name = '';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -215,10 +214,10 @@ describe('ValidationUtils', () => {
     it('should throw an error if path is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.route.path = 'path';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Path must start with /.');
@@ -228,10 +227,10 @@ describe('ValidationUtils', () => {
     it('should throw an error if hostname is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.route.hostname = 'host_name';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
@@ -246,10 +245,10 @@ describe('ValidationUtils', () => {
       mockData.limits.cpu.requestUnit = 'm';
       mockData.limits.cpu.limit = 2;
       mockData.limits.cpu.limitUnit = 'm';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('CPU limit must be greater than or equal to request.');
@@ -262,10 +261,10 @@ describe('ValidationUtils', () => {
       mockData.limits.memory.requestUnit = 'Gi';
       mockData.limits.memory.limit = 3;
       mockData.limits.memory.limitUnit = 'Mi';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Memory limit must be greater than or equal to request.');
@@ -276,10 +275,10 @@ describe('ValidationUtils', () => {
       const mockData = cloneDeep(mockFormData);
       mockData.limits.cpu.request = 3;
       mockData.limits.cpu.requestUnit = 'm';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('');
@@ -290,10 +289,10 @@ describe('ValidationUtils', () => {
       const mockData = cloneDeep(mockFormData);
       mockData.build.strategy = 'Docker';
       mockData.route.unknownTargetPort = '808.5';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await validationSchema(t)
+      await validationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Port must be an integer.');
@@ -304,15 +303,15 @@ describe('ValidationUtils', () => {
       const mockData = cloneDeep(mockFormData);
       mockData.image.selected = '';
       mockData.build.strategy = 'Docker';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
       mockData.build.strategy = 'Source';
-      await validationSchema(t)
+      await validationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
     });
 
-    serverlessCommonTests(mockFormData, validationSchema(t));
+    serverlessCommonTests(mockFormData, validationSchema());
   });
 });

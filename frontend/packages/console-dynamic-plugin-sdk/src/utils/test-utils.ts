@@ -28,14 +28,14 @@ export const getEntryModuleMocks = (requestedModule: {}): [
   ModuleFactoryMock,
   RemoteEntryModuleMock,
 ] => {
-  const moduleFactory = jest.fn<VoidFunction>(() => requestedModule);
+  const moduleFactory = jest.fn(() => requestedModule);
 
   const entryModule = {
     get: jest.fn(async () => moduleFactory),
-    init: jest.fn<void>(),
+    init: jest.fn(),
   };
 
-  return [moduleFactory, entryModule];
+  return [moduleFactory as any, entryModule];
 };
 
 export type ModuleFactoryMock = jest.Mock<VoidFunction>;

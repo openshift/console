@@ -152,8 +152,10 @@ describe('Import Submit Utils', () => {
           }),
         );
 
-      jest.spyOn(knativeUtils, 'getDomainMappingRequests').mockImplementation(() => []);
-      jest.spyOn(knativeUtils, 'getKnativeServiceDepResource').mockImplementation(() => {});
+      jest.spyOn(knativeUtils, 'getDomainMappingRequests').mockImplementation(() => [] as any);
+      jest
+        .spyOn(knativeUtils, 'getKnativeServiceDepResource')
+        .mockImplementation((() => {}) as any);
 
       const returnValue = await createOrUpdateResources(t, mockData, buildImage.obj, false);
       // createImageStream is called as separate entity
@@ -189,7 +191,7 @@ describe('Import Submit Utils', () => {
 
       const createPipelineResourceSpy = jest
         .spyOn(pipelineUtils, 'createPipelineForImportFlow')
-        .mockImplementation((name, namespace) => {
+        .mockImplementation(((name, namespace) => {
           return {
             metadata: {
               name,
@@ -202,7 +204,7 @@ describe('Import Submit Utils', () => {
               tasks: [],
             },
           };
-        });
+        }) as any);
       const createPipelineRunResourceSpy = jest
         .spyOn(pipelineUtils, 'createPipelineRunForImportFlow')
         .mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub

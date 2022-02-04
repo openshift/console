@@ -1,7 +1,4 @@
-// Avoid problems seen after upgrading TypeScript;
-// see https://github.com/ajv-validator/ajv/issues/1230
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import Ajv = require('ajv');
+import Ajv from 'ajv';
 import { ValidationAssertions } from './ValidationAssertions';
 import { ValidationResult } from './ValidationResult';
 

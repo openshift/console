@@ -12,15 +12,15 @@ import { usePreferredNamespace } from '../../user-preferences/namespace';
 import { useValuesForNamespaceContext } from '../namespace';
 import { useLastNamespace } from '../useLastNamespace';
 
-jest.mock('react-redux', () => ({
-  ...require.requireActual('react-redux'),
-  useDispatch: jest.fn(),
-}));
+jest.mock('react-redux', () => {
+  const reactRedux = jest.requireActual('react-redux');
+  return { ...reactRedux, useDispatch: jest.fn() };
+});
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
-  useLocation: jest.fn(),
-}));
+jest.mock('react-router-dom', () => {
+  const reactRouter = jest.requireActual('react-router-dom');
+  return { ...reactRouter, useLocation: jest.fn() };
+});
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: jest.fn(),

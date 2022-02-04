@@ -11,6 +11,7 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
 }));
 
 jest.mock('@console/app/src/components/quick-starts/loader/QuickStartsLoader', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 

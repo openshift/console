@@ -175,7 +175,7 @@ export const EventSource: React.FC<Props> = ({
       onReset={history.goBack}
       validateOnBlur={false}
       validateOnChange={false}
-      validationSchema={eventSourceValidationSchema(t)}
+      validationSchema={eventSourceValidationSchema()}
     >
       {(formikProps) => (
         <EventSourceForm

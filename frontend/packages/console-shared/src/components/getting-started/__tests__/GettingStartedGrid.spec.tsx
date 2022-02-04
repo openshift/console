@@ -2,15 +2,6 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { GettingStartedGrid } from '../GettingStartedGrid';
 
-jest.mock('react', () => ({
-  ...require.requireActual('react'),
-  // Set useLayoutEffect to useEffect to solve react warning
-  // "useLayoutEffect does nothing on the server, ..." while
-  // running this test. useLayoutEffect was used internally by
-  // the PatternFly Popover component which is used here.
-  useLayoutEffect: require.requireActual('react').useEffect,
-}));
-
 describe('GettingStartedCard', () => {
   it('should render the card with title', () => {
     const wrapper = shallow(<GettingStartedGrid />);

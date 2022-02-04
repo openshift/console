@@ -5,7 +5,7 @@ import TextColumnItemContent from '../TextColumnItemContent';
 import TextColumnItemWithDnd from '../TextColumnItemWithDnd';
 
 jest.mock('react-dnd', () => {
-  const reactDnd = require.requireActual('react-dnd');
+  const reactDnd = jest.requireActual('react-dnd');
   return {
     ...reactDnd,
     useDrag: jest.fn(() => [{}, {}]),

@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/rest';
-import * as GitUrlParse from 'git-url-parse';
+import GitUrlParse from 'git-url-parse';
 import {
   GitSource,
   SecretType,

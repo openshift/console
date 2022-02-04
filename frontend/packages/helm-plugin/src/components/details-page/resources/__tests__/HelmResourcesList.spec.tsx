@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Table, ComponentProps } from '@console/internal/components/factory';
-import { t } from '../../../../../../../__mocks__/i18next';
 import HelmReleaseResourcesHeader from '../HelmReleaseResourcesHeader';
 import HelmResourcesList from '../HelmReleaseResourcesList';
 import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
@@ -14,7 +13,7 @@ describe('HelmResourcesList', () => {
   beforeEach(() => {
     helmResourcesList = shallow(
       <HelmResourcesList
-        Header={HelmReleaseResourcesHeader(t)}
+        Header={HelmReleaseResourcesHeader()}
         Row={HelmReleaseResourcesRow}
         aria-label="Resources"
       />,

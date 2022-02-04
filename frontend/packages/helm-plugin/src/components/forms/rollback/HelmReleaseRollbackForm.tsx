@@ -70,7 +70,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={helmActionString(t)[helmAction]}
+        submitLabel={helmActionString()[helmAction]}
         disableSubmit={isSubmitting || !dirty || !_.isEmpty(errors)}
         resetLabel={t('helm-plugin~Cancel')}
         sticky

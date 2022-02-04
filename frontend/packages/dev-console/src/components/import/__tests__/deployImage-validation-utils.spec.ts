@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
-import { t } from '../../../../../../__mocks__/i18next';
 import { mockDeployImageFormData } from '../__mocks__/deployImage-validation-mock';
 import { deployValidationSchema } from '../deployImage-validation-utils';
 import { serverlessCommonTests } from './serverless-common-tests';
@@ -9,7 +8,7 @@ describe('Deploy Image ValidationUtils', () => {
   describe('Validation Schema', () => {
     it('should validate the form data', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -17,10 +16,10 @@ describe('Deploy Image ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.name = '';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Required');
@@ -31,10 +30,10 @@ describe('Deploy Image ValidationUtils', () => {
     it('should throw an error if name is invalid', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.name = 'app_name';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
@@ -47,10 +46,10 @@ describe('Deploy Image ValidationUtils', () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.application.selectedKey = CREATE_APPLICATION_KEY;
       mockData.application.name = '';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Required');
@@ -61,7 +60,7 @@ describe('Deploy Image ValidationUtils', () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.application.selectedKey = UNASSIGNED_KEY;
       mockData.application.name = '';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -70,7 +69,7 @@ describe('Deploy Image ValidationUtils', () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.application.selectedKey = '';
       mockData.application.name = '';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -78,10 +77,10 @@ describe('Deploy Image ValidationUtils', () => {
     it('should throw an error if path is invalid', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.route.path = 'path';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Path must start with /.');
@@ -91,10 +90,10 @@ describe('Deploy Image ValidationUtils', () => {
     it('should throw an error if hostname is invalid', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.route.hostname = 'host_name';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
@@ -109,10 +108,10 @@ describe('Deploy Image ValidationUtils', () => {
       mockData.limits.cpu.requestUnit = 'm';
       mockData.limits.cpu.limit = 2;
       mockData.limits.cpu.limitUnit = 'm';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('CPU limit must be greater than or equal to request.');
@@ -125,10 +124,10 @@ describe('Deploy Image ValidationUtils', () => {
       mockData.limits.memory.requestUnit = 'Gi';
       mockData.limits.memory.limit = 3;
       mockData.limits.memory.limitUnit = 'Mi';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Memory limit must be greater than or equal to request.');
@@ -139,10 +138,10 @@ describe('Deploy Image ValidationUtils', () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.limits.cpu.request = 3;
       mockData.limits.cpu.requestUnit = 'm';
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('');
@@ -152,10 +151,10 @@ describe('Deploy Image ValidationUtils', () => {
     it('should throw an error if deployment replicas is not an integer', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.deployment.replicas = 3.2;
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Replicas must be an integer.');
@@ -165,10 +164,10 @@ describe('Deploy Image ValidationUtils', () => {
     it('should throw an error if deployment replicas is less than 0', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.deployment.replicas = -5;
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe('Replicas must be greater than or equal to 0.');
@@ -178,10 +177,10 @@ describe('Deploy Image ValidationUtils', () => {
     it('should throw an error if deployment replicas is greater than MAX_SAFE_INTEGER', async () => {
       const mockData = cloneDeep(mockDeployImageFormData);
       mockData.deployment.replicas = Number.MAX_SAFE_INTEGER + 1;
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
-      await deployValidationSchema(t)
+      await deployValidationSchema()
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
@@ -190,6 +189,6 @@ describe('Deploy Image ValidationUtils', () => {
         });
     });
 
-    serverlessCommonTests(mockDeployImageFormData, deployValidationSchema(t));
+    serverlessCommonTests(mockDeployImageFormData, deployValidationSchema());
   });
 });

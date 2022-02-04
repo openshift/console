@@ -31,8 +31,11 @@ describe('PipelineRunDetailsPage:', () => {
         },
       },
     };
-    menuActions.mockReturnValue([getPipelineRunKebabActions(true)]);
-    breadCrumbs.mockReturnValue([{ label: 'PipelineRuns' }, { label: 'PipelineRuns Details' }]);
+    menuActions.mockReturnValue(getPipelineRunKebabActions(true));
+    breadCrumbs.mockReturnValue([
+      { name: 'PipelineRuns', path: '' },
+      { name: 'PipelineRuns Details', path: '' },
+    ]);
     wrapper = shallow(<PipelineRunDetailsPage {...pipelineRunDetailsPageProps} />);
   });
 

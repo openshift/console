@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { toLower } from 'lodash';
 import { useQueryParams } from '@console/shared/src';
 

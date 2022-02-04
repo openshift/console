@@ -8,7 +8,7 @@ import {
 import { useEventListenerURL } from '../../utils/triggers';
 import EventListenerURL from '../EventListenerURL';
 
-jest.mock('../../utils/triggers', () => ({ useEventListenerURL: jest.fn<string | null>() }));
+jest.mock('../../utils/triggers', () => ({ useEventListenerURL: jest.fn() }));
 
 type EventListenerURLProps = React.ComponentProps<typeof EventListenerURL>;
 

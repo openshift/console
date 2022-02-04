@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import CheIcon from './CheIcon';
 import { GitTypes } from './import-types';
 import { detectGitType } from './import-validation-utils';
@@ -8,7 +8,6 @@ import { detectGitType } from './import-validation-utils';
 export const routeDecoratorIcon = (
   routeURL: string,
   radius: number,
-  t: TFunction,
   cheEnabled?: boolean,
   cheIconURL?: string,
 ): React.ReactElement => {
@@ -24,14 +23,23 @@ export const routeDecoratorIcon = (
       // Not a valid url and thus not safe to use
       return null;
     case GitTypes.github:
-      return <GithubIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
+      return (
+        <GithubIcon style={{ fontSize: radius }} title={i18next.t('devconsole~Edit source code')} />
+      );
     case GitTypes.bitbucket:
       return (
-        <BitbucketIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />
+        <BitbucketIcon
+          style={{ fontSize: radius }}
+          title={i18next.t('devconsole~Edit source code')}
+        />
       );
     case GitTypes.gitlab:
-      return <GitlabIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
+      return (
+        <GitlabIcon style={{ fontSize: radius }} title={i18next.t('devconsole~Edit source code')} />
+      );
     default:
-      return <GitAltIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
+      return (
+        <GitAltIcon style={{ fontSize: radius }} title={i18next.t('devconsole~Edit source code')} />
+      );
   }
 };

@@ -9,21 +9,27 @@ import { BuildStrategyType } from '../../types';
 import SourceSection, { SourceSectionFormData } from '../SourceSection';
 
 // Skip Firehose fetching and render just the children
-jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...require.requireActual('@console/internal/components/utils/firehose'),
-  Firehose: ({ children }) => children,
-}));
+jest.mock('@console/internal/components/utils/firehose', () => {
+  const firehoseUtil = jest.requireActual('@console/internal/components/utils/firehose');
+  return {
+    ...firehoseUtil,
+    Firehose: ({ children }) => children,
+  };
+});
 
 // Skip network calls to any external git service
-jest.mock('@console/git-service', () => ({
-  ...require.requireActual('@console/git-service'),
-  getGitService: function mockedGetGitService() {
-    return null;
-  },
-}));
+jest.mock('@console/git-service', () => {
+  const gitService = jest.requireActual('@console/git-service');
+  return {
+    ...gitService,
+    getGitService: function mockedGetGitService() {
+      return null;
+    },
+  };
+});
 
 jest.mock('../EditorField', () =>
-  require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
+  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
 configure({ testIdAttribute: 'data-test' });

@@ -4,25 +4,27 @@ import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/Q
 import { loadingQuickStarts } from '@console/shared/src/components/getting-started/__tests__/QuickStartGettingStartedCard.data';
 import HelmCatalogTypeDescription from '../HelmCatalogTypeDescription';
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
-  useLocation: () => {
-    return {
-      pathname: ' /catalog/ns/my-namespace',
-      search: '?catalogType=myCatalog',
-    };
-  },
-}));
-
-jest.mock('@console/app/src/components/quick-starts/loader/QuickStartsLoader', () => ({
-  default: jest.fn(),
-}));
-
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
+jest.mock('react-router-dom', () => {
+  const reactRouterDom = jest.requireActual('react-router-dom');
   return {
-    ...reactI18next,
-    Trans: () => null,
+    ...reactRouterDom,
+    useLocation: () => {
+      return {
+        pathname: ' /catalog/ns/my-namespace',
+        search: '?catalogType=myCatalog',
+      };
+    },
+  };
+});
+
+jest.mock('@console/app/src/components/quick-starts/loader/QuickStartsLoader', () => {
+  const quickStartsLoader = jest.requireActual(
+    '@console/app/src/components/quick-starts/loader/QuickStartsLoader',
+  );
+  return {
+    ...quickStartsLoader,
+    __esModule: true,
+    default: jest.fn(),
   };
 });
 
@@ -30,7 +32,9 @@ const QuickStartsLoaderMock = QuickStartsLoader as jest.Mock;
 
 describe('HelmCatalogTypeDescription', () => {
   it('should not return the Quick starts link if the quick starts are not loaded', () => {
-    QuickStartsLoaderMock.mockImplementation((props) => props.children(loadingQuickStarts, false));
+    (QuickStartsLoaderMock as jest.Mock).mockReturnValue((props) =>
+      props.children(loadingQuickStarts, false),
+    );
     const helmCatalogTypeDescription = shallow(<HelmCatalogTypeDescription />).shallow();
 
     expect(

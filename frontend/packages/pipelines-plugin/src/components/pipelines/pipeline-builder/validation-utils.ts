@@ -432,9 +432,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
  */
 const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues) => {
   return yup.object({
-    name: nameValidationSchema((tKey) => i18n.t(tKey)).required(
-      i18n.t('pipelines-plugin~Required'),
-    ),
+    name: nameValidationSchema(),
     params: yup.array().of(
       yup.object({
         name: yup.string().required(i18n.t('pipelines-plugin~Required')),

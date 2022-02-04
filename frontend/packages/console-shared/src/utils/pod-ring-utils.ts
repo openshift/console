@@ -60,7 +60,6 @@ const getTitleAndSubtitle = (
   isPending: boolean,
   currentPodCount: number,
   desiredPodCount: number,
-  t: TFunction,
 ) => {
   let titlePhrase;
   let subTitlePhrase = '';
@@ -69,10 +68,10 @@ const getTitleAndSubtitle = (
 
   // handles the initial state when the first pod is coming up and the state for no pods(scaled to zero)
   if (!currentPodCount) {
-    titlePhrase = isPending ? '0' : t('console-shared~Scaled to 0');
+    titlePhrase = isPending ? '0' : i18next.t('console-shared~Scaled to 0');
     longTitle = !isPending;
     if (desiredPodCount) {
-      subTitlePhrase = t('console-shared~Scaling to {{podSubTitle}}', {
+      subTitlePhrase = i18next.t('console-shared~Scaling to {{podSubTitle}}', {
         podSubTitle: desiredPodCount,
       });
       longSubtitle = true;
@@ -85,7 +84,7 @@ const getTitleAndSubtitle = (
     if (currentPodCount === desiredPodCount) {
       subTitlePhrase = podKindString(currentPodCount);
     } else {
-      subTitlePhrase = t('console-shared~Scaling to {{podSubTitle}}', {
+      subTitlePhrase = i18next.t('console-shared~Scaling to {{podSubTitle}}', {
         podSubTitle: desiredPodCount,
       });
       longSubtitle = true;
@@ -119,7 +118,6 @@ export const podRingLabel = (
   obj: K8sResourceKind,
   ownerKind: string,
   pods: ExtPodKind[],
-  t: TFunction,
 ): PodRingLabelData => {
   let currentPodCount;
   let desiredPodCount;
@@ -140,7 +138,7 @@ export const podRingLabel = (
       desiredPodCount = obj.status?.desiredNumberScheduled;
       desiredPodCount = obj.status?.desiredNumberScheduled;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
-      titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount, t);
+      titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount);
       podRingLabelData.title = titleData.title;
       podRingLabelData.subTitle = titleData.subTitle;
       podRingLabelData.longSubtitle = titleData.longSubtitle;
@@ -150,14 +148,14 @@ export const podRingLabel = (
       desiredPodCount = obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       if (!isPending && !desiredPodCount) {
-        podRingLabelData.title = t('console-shared~Autoscaled');
-        podRingLabelData.subTitle = t('console-shared~to 0');
+        podRingLabelData.title = i18next.t('console-shared~Autoscaled');
+        podRingLabelData.subTitle = i18next.t('console-shared~to 0');
         podRingLabelData.reversed = true;
         break;
       }
       if (isPending) {
         podRingLabelData.title = '0';
-        podRingLabelData.subTitle = t('console-shared~Scaling to {{podSubTitle}}', {
+        podRingLabelData.subTitle = i18next.t('console-shared~Scaling to {{podSubTitle}}', {
           podSubTitle: desiredPodCount,
         });
       } else {
@@ -178,7 +176,7 @@ export const podRingLabel = (
       currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
       desiredPodCount = obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
-      titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount, t);
+      titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount);
       podRingLabelData.title = titleData.title;
       podRingLabelData.subTitle = titleData.subTitle;
       podRingLabelData.longTitle = titleData.longTitle;
@@ -219,7 +217,7 @@ export const usePodRingLabel = (
 ): PodRingLabelType => {
   const podRingLabelData = hpaControlledScaling
     ? hpaPodRingLabel(obj, hpa, pods, t)
-    : podRingLabel(obj, ownerKind, pods, t);
+    : podRingLabel(obj, ownerKind, pods);
   const { title, subTitle, longTitle, longSubtitle, reversed } = podRingLabelData;
 
   return React.useMemo(

@@ -5,6 +5,7 @@ import { Map } from 'immutable';
 import * as redux from 'react-redux';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import * as prometheusHook from '@console/internal/components/graphs/prometheus-rules-hook';
+import { AlertStates, RuleStates } from '@console/internal/components/monitoring/types';
 import { EmptyBox } from '@console/internal/components/utils';
 import { MonitoringAlerts } from '../MonitoringAlerts';
 
@@ -31,16 +32,18 @@ describe('MonitoringAlerts', () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const spyDispatch = jest.spyOn(redux, 'useDispatch');
-  spyDispatch.mockReturnValue(() => {});
+  spyDispatch.mockReturnValue((() => {}) as any);
 
   it('should render monitoring alerts', () => {
     const spyPrometheusRulesPoll = jest.spyOn(prometheusHook, 'usePrometheusRulesPoll');
     spyPrometheusRulesPoll.mockReturnValueOnce([
       {
+        status: '',
         data: {
           groups: [
             {
               name: 'kubernetes.rules',
+              file: '',
               rules: [
                 {
                   alerts: [
@@ -53,7 +56,7 @@ describe('MonitoringAlerts', () => {
                         alertname: 'AlertmanagerReceiversNotConfigured',
                         severity: 'warning',
                       },
-                      state: 'firing',
+                      state: AlertStates.Firing,
                     },
                   ],
                   annotations: {
@@ -63,8 +66,9 @@ describe('MonitoringAlerts', () => {
                   labels: { prometheus: 'openshift-monitoring/k8s', severity: 'warning' },
                   name: 'AlertmanagerReceiversNotConfigured',
                   query: 'cluster:alertmanager_routing_enabled:max == 0',
-                  state: 'firing',
+                  state: RuleStates.Firing,
                   type: 'alerting',
+                  duration: 1,
                 },
                 {
                   alerts: [],
@@ -76,8 +80,9 @@ describe('MonitoringAlerts', () => {
                   name: 'ClusterMonitoringOperatorReconciliationErrors',
                   query:
                     'rate(cluster_monitoring_operator_reconcile_errors_total[15m]) * 100 / rate(cluster_monitoring_operator_reconcile_attempts_total[15m]) > 10',
-                  state: 'inactive',
+                  state: RuleStates.Inactive,
                   type: 'alerting',
+                  duration: 1,
                 },
               ],
             },
@@ -95,7 +100,7 @@ describe('MonitoringAlerts', () => {
   });
   it('should show empty state message', () => {
     const spyPrometheusRulesPoll = jest.spyOn(prometheusHook, 'usePrometheusRulesPoll');
-    spyPrometheusRulesPoll.mockReturnValueOnce([{}, null, false]);
+    spyPrometheusRulesPoll.mockReturnValueOnce([{}, null, false] as any);
     const wrapper = shallow(<MonitoringAlerts {...monitoringAlertsProps} />);
     expect(wrapper.find(EmptyBox).exists()).toBe(true);
   });

@@ -16,7 +16,7 @@ describe('ExportApplication', () => {
   const spyUseUserSettings = jest.spyOn(shared, 'useUserSettings');
 
   beforeEach(() => {
-    spyUseToast.mockReturnValue({ addToast: (v) => ({ v }) });
+    spyUseToast.mockReturnValue({ addToast: (v) => ({ v }) } as any);
     spyUseUserSettings.mockReturnValue([{}, jest.fn(), false]);
   });
 

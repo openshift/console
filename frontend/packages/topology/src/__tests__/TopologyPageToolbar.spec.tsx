@@ -5,7 +5,7 @@ import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
 import { TopologyViewType } from '../topology-types';
 
 jest.mock('react', () => {
-  const ActualReact = require.requireActual('react');
+  const ActualReact = jest.requireActual('react');
   return {
     ...ActualReact,
     useContext: () => jest.fn(),
@@ -13,7 +13,7 @@ jest.mock('react', () => {
 });
 
 jest.mock('react-redux', () => {
-  const ActualReactRedux = require.requireActual('react-redux');
+  const ActualReactRedux = jest.requireActual('react-redux');
   return {
     ...ActualReactRedux,
     useSelector: jest.fn(),
@@ -22,7 +22,7 @@ jest.mock('react-redux', () => {
 });
 
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = jest.requireActual('@console/shared');
   return {
     ...ActualShared,
     useQueryParams: () => new Map(),

@@ -4,7 +4,7 @@ import { getTestSuitesForPluginPackage, mergeTestSuites } from '../plugin-integr
 import { PluginPackage } from '../plugin-resolver';
 
 describe('getTestSuitesForPluginPackage', () => {
-  let globMock: jest.SpyInstance<typeof glob.sync>;
+  let globMock: jest.SpyInstance;
 
   beforeEach(() => {
     globMock = jest.spyOn(glob, 'sync');

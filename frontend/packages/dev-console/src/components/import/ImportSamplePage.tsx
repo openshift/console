@@ -130,7 +130,7 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
         initialValues={initialValues}
         onSubmit={handleSubmit}
         onReset={history.goBack}
-        validationSchema={validationSchema(t)}
+        validationSchema={validationSchema()}
       >
         {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}
       </Formik>

@@ -22,7 +22,7 @@ describe('SinkResources', () => {
     jest.spyOn(coFetch, 'coFetch').mockImplementation(() =>
       Promise.resolve({
         json: () => mockChannelCRDData,
-      }),
+      } as any),
     );
   });
 

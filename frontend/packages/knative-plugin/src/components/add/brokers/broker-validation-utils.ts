@@ -1,4 +1,3 @@
-import { TFunction } from 'i18next';
 import * as yup from 'yup';
 import {
   projectNameValidationSchema,
@@ -7,7 +6,7 @@ import {
 import { nameValidationSchema } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 
-export const brokerValidationSchema = (t: TFunction) =>
+export const brokerValidationSchema = () =>
   yup.object().shape({
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
@@ -15,7 +14,7 @@ export const brokerValidationSchema = (t: TFunction) =>
       then: yup.object().shape({
         project: projectNameValidationSchema,
         application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
+        name: nameValidationSchema(),
       }),
     }),
     yamlData: yup.string(),

@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import * as yup from 'yup';
 import {
   projectNameValidationSchema,
@@ -8,43 +8,45 @@ import { isValidUrl, nameValidationSchema } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { EventSources, SinkType } from './import-types';
 
-export const sinkTypeUriValidation = (t: TFunction) =>
+export const sinkTypeUriValidation = () =>
   yup.object().shape({
     uri: yup
       .string()
-      .max(2000, t('knative-plugin~Please enter a URI that is less then 2000 characters.'))
-      .test('validate-uri', t('knative-plugin~Invalid URI.'), function(value) {
+      .max(2000, i18next.t('knative-plugin~Please enter a URI that is less then 2000 characters.'))
+      .test('validate-uri', i18next.t('knative-plugin~Invalid URI.'), function(value) {
         return isValidUrl(value);
       })
-      .required(t('knative-plugin~Required')),
+      .required(i18next.t('knative-plugin~Required')),
   });
 
-const sinkServiceSchema = (t: TFunction) =>
+const sinkServiceSchema = () =>
   yup
     .object()
     .when('sinkType', {
       is: SinkType.Resource,
       then: yup.object().shape({
-        name: yup.string().required(t('knative-plugin~Required')),
+        name: yup.string().required(i18next.t('knative-plugin~Required')),
       }),
     })
     .when('sinkType', {
       is: SinkType.Uri,
-      then: sinkTypeUriValidation(t),
+      then: sinkTypeUriValidation(),
     });
 
-export const sourceDataSpecSchema = (t: TFunction) =>
+export const sourceDataSpecSchema = () =>
   yup
     .object()
     .when('type', {
       is: EventSources.CronJobSource,
       then: yup.object().shape({
         [EventSources.CronJobSource]: yup.object().shape({
-          data: yup.string().max(253, t('knative-plugin~Cannot be longer than 253 characters.')),
+          data: yup
+            .string()
+            .max(253, i18next.t('knative-plugin~Cannot be longer than 253 characters.')),
           schedule: yup
             .string()
-            .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-            .required(t('knative-plugin~Required')),
+            .max(253, i18next.t('knative-plugin~Cannot be longer than 253 characters.'))
+            .required(i18next.t('knative-plugin~Required')),
         }),
       }),
     })
@@ -52,11 +54,13 @@ export const sourceDataSpecSchema = (t: TFunction) =>
       is: EventSources.PingSource,
       then: yup.object().shape({
         [EventSources.PingSource]: yup.object().shape({
-          data: yup.string().max(253, t('knative-plugin~Cannot be longer than 253 characters.')),
+          data: yup
+            .string()
+            .max(253, i18next.t('knative-plugin~Cannot be longer than 253 characters.')),
           schedule: yup
             .string()
-            .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-            .required(t('knative-plugin~Required')),
+            .max(253, i18next.t('knative-plugin~Cannot be longer than 253 characters.'))
+            .required(i18next.t('knative-plugin~Required')),
         }),
       }),
     })
@@ -70,16 +74,16 @@ export const sourceDataSpecSchema = (t: TFunction) =>
             }),
             name: yup.string().when('selector.matchLabels', {
               is: (obj: object) => !obj,
-              then: yup.string().required(t('knative-plugin~Required')),
+              then: yup.string().required(i18next.t('knative-plugin~Required')),
             }),
             apiVersion: yup
               .string()
-              .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-              .required(t('knative-plugin~Required')),
+              .max(253, i18next.t('knative-plugin~Cannot be longer than 253 characters.'))
+              .required(i18next.t('knative-plugin~Required')),
             kind: yup
               .string()
-              .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-              .required(t('knative-plugin~Required')),
+              .max(253, i18next.t('knative-plugin~Cannot be longer than 253 characters.'))
+              .required(i18next.t('knative-plugin~Required')),
           }),
         }),
       }),
@@ -92,11 +96,11 @@ export const sourceDataSpecSchema = (t: TFunction) =>
             .array()
             .of(
               yup.object({
-                apiVersion: yup.string().required(t('knative-plugin~Required')),
-                kind: yup.string().required(t('knative-plugin~Required')),
+                apiVersion: yup.string().required(i18next.t('knative-plugin~Required')),
+                kind: yup.string().required(i18next.t('knative-plugin~Required')),
               }),
             )
-            .required(t('knative-plugin~Required')),
+            .required(i18next.t('knative-plugin~Required')),
         }),
       }),
     })
@@ -107,12 +111,12 @@ export const sourceDataSpecSchema = (t: TFunction) =>
           bootstrapServers: yup
             .array()
             .of(yup.string())
-            .min(1, t('knative-plugin~Required')),
-          consumerGroup: yup.string().required(t('knative-plugin~Required')),
+            .min(1, i18next.t('knative-plugin~Required')),
+          consumerGroup: yup.string().required(i18next.t('knative-plugin~Required')),
           topics: yup
             .array()
             .of(yup.string())
-            .min(1, t('knative-plugin~Required')),
+            .min(1, i18next.t('knative-plugin~Required')),
           net: yup.object().shape({
             sasl: yup.object().shape({
               enable: yup.boolean(),
@@ -162,7 +166,7 @@ export const sourceDataSpecSchema = (t: TFunction) =>
             spec: yup.object({
               containers: yup.array().of(
                 yup.object({
-                  image: yup.string().required(t('knative-plugin~Required')),
+                  image: yup.string().required(i18next.t('knative-plugin~Required')),
                 }),
               ),
             }),
@@ -171,7 +175,7 @@ export const sourceDataSpecSchema = (t: TFunction) =>
       }),
     });
 
-export const eventSourceValidationSchema = (t: TFunction) =>
+export const eventSourceValidationSchema = () =>
   yup.object().shape({
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
@@ -179,15 +183,15 @@ export const eventSourceValidationSchema = (t: TFunction) =>
       then: yup.object().shape({
         project: projectNameValidationSchema,
         application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
-        sink: sinkServiceSchema(t),
-        data: sourceDataSpecSchema(t),
+        name: nameValidationSchema(),
+        sink: sinkServiceSchema(),
+        data: sourceDataSpecSchema(),
       }),
     }),
     yamlData: yup.string(),
   });
 
-export const addChannelValidationSchema = (t: TFunction) =>
+export const addChannelValidationSchema = () =>
   yup.object().shape({
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
@@ -195,7 +199,7 @@ export const addChannelValidationSchema = (t: TFunction) =>
       then: yup.object().shape({
         project: projectNameValidationSchema,
         application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
+        name: nameValidationSchema(),
         data: yup.object(),
         type: yup.string(),
       }),

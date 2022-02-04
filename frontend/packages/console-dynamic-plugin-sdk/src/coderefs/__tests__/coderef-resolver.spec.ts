@@ -95,11 +95,11 @@ describe('loadReferencedObject', () => {
       moduleFactory: ModuleFactoryMock,
     ) => void,
   ) => {
-    const errorCallback = jest.fn<void>();
+    const errorCallback = jest.fn();
     const [moduleFactory, entryModule] = getEntryModuleMocks(requestedModule);
     beforeResult(entryModule, moduleFactory);
 
-    const result = await loadReferencedObject(ref, entryModule, 'Test@1.2.3', errorCallback);
+    const result = await loadReferencedObject(ref, entryModule as any, 'Test@1.2.3', errorCallback);
     afterResult(result, errorCallback, entryModule, moduleFactory);
   };
 
@@ -230,7 +230,7 @@ describe('resolveEncodedCodeRefs', () => {
 
     const resolvedExtensions = resolveEncodedCodeRefs(
       extensions,
-      entryModule,
+      entryModule as any,
       'Test@1.2.3',
       errorCallback,
     );
@@ -257,7 +257,7 @@ describe('resolveEncodedCodeRefs', () => {
 
     const resolvedExtensions = resolveEncodedCodeRefs(
       extensions,
-      entryModule,
+      entryModule as any,
       'Test@1.2.3',
       errorCallback,
     );

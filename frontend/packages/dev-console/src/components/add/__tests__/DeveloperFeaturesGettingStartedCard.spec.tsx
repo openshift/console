@@ -4,12 +4,15 @@ import { ALL_NAMESPACES_KEY, useActiveNamespace, useFlag } from '@console/shared
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
-jest.mock('@console/shared/src', () => ({
-  ...require.requireActual('@console/shared/src'),
-  useActiveNamespace: jest.fn(),
-  useOpenShiftVersion: () => '4.8.0',
-  useFlag: jest.fn<boolean>(),
-}));
+jest.mock('@console/shared/src', () => {
+  const shared = jest.requireActual('@console/shared/src');
+  return {
+    ...shared,
+    useActiveNamespace: jest.fn(),
+    useOpenShiftVersion: () => '4.8.0',
+    useFlag: jest.fn(),
+  };
+});
 
 // Workaround because getting-started exports also useGettingStartedShowState
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({

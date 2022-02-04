@@ -29,7 +29,7 @@ describe('TaskRunEvents:', () => {
     };
     spyUseTaskRunRelatedResources.mockReturnValue({
       pods: { data: pods, loaded: true },
-    });
+    } as any);
   });
 
   it('Should render a ResourcesEventStream', () => {

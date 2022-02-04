@@ -84,7 +84,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should call only k8sCreate when call "dry-run create"', async () => {
-      k8sCreate.mockReturnValue(mockImageStreamData);
+      k8sCreate.mockReturnValue(mockImageStreamData as any);
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
@@ -103,7 +103,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should call only k8sUpdate when call "dry-run update"', async () => {
-      k8sUpdate.mockReturnValue(mockImageStreamData);
+      k8sUpdate.mockReturnValue(mockImageStreamData as any);
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
@@ -120,7 +120,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should call k8sCreate and k8sWaitForUpdate when call "non-dry-run create"', async () => {
-      k8sCreate.mockReturnValue(mockImageStreamData);
+      k8sCreate.mockReturnValue(mockImageStreamData as any);
       k8sWaitForUpdate.mockReturnValue(Promise.resolve(mockImageStreamData));
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
@@ -144,7 +144,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should call only k8sUpdate when call "non-dry-run update"', async () => {
-      k8sUpdate.mockReturnValue(mockImageStreamData);
+      k8sUpdate.mockReturnValue(mockImageStreamData as any);
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
@@ -312,11 +312,14 @@ describe('DeployImage Submit Utils', () => {
 
       const imageStreamSpy = jest
         .spyOn(submitUtils, 'createOrUpdateImageStream')
-        .mockImplementation(() => ({
-          status: {
-            dockerImageReference: 'test:1234',
-          },
-        }));
+        .mockImplementation(
+          () =>
+            ({
+              status: {
+                dockerImageReference: 'test:1234',
+              },
+            } as any),
+        );
 
       createOrUpdateDeployImageResources(mockData, false)
         .then((returnValue) => {

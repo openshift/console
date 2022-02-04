@@ -11,6 +11,7 @@ const setPinnedResourcesMock = jest.fn();
 
 jest.mock('@console/plugin-sdk', () => ({ useExtensions: jest.fn() }));
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 jest.mock('../useUserSettingsCompatibility', () => ({ useUserSettingsCompatibility: jest.fn() }));

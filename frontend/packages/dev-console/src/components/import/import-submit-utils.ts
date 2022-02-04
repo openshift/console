@@ -1,4 +1,4 @@
-import * as GitUrlParse from 'git-url-parse';
+import GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Perspective } from '@console/dynamic-plugin-sdk';

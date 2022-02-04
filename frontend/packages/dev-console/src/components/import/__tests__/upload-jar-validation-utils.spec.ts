@@ -1,12 +1,11 @@
 import { cloneDeep } from 'lodash';
-import { t } from '../../../../../../__mocks__/i18next';
 import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
 import { fileNameRegex, getAppName, validationSchema } from '../upload-jar-validation-utils';
 
 describe('Validation Schema: upload jar validation utils', () => {
   it('should validate uploadJar form', async () => {
     const mockData = cloneDeep(uploadJarMockFormData);
-    await validationSchema(t)
+    await validationSchema()
       .isValid(mockData)
       .then((valid) => expect(valid).toEqual(true));
   });
@@ -14,10 +13,10 @@ describe('Validation Schema: upload jar validation utils', () => {
   it('should not validate fom and show fileUpload name is not suported', async () => {
     const mockData = cloneDeep(uploadJarMockFormData);
     mockData.fileUpload.name = 'test.png';
-    await validationSchema(t)
+    await validationSchema()
       .isValid(mockData)
       .then((valid) => expect(valid).toEqual(false));
-    await validationSchema(t)
+    await validationSchema()
       .validate(mockData)
       .catch((err) => {
         expect(err.message).toBe('Must be a JAR file.');

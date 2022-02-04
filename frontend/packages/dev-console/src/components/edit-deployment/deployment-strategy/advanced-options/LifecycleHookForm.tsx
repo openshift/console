@@ -37,8 +37,8 @@ const LifecycleHookForm: React.FC<LifecycleHookFormProps> = ({
           required
           options={[
             {
-              label: lifecycleActionType(t).execNewPod.label,
-              value: lifecycleActionType(t).execNewPod.value,
+              label: lifecycleActionType().execNewPod.label,
+              value: lifecycleActionType().execNewPod.value,
               activeChildren: (
                 <ExecNewPodForm
                   resourceObj={resourceObj}
@@ -48,8 +48,8 @@ const LifecycleHookForm: React.FC<LifecycleHookFormProps> = ({
               ),
             },
             {
-              label: lifecycleActionType(t).tagImages.label,
-              value: lifecycleActionType(t).tagImages.value,
+              label: lifecycleActionType().tagImages.label,
+              value: lifecycleActionType().tagImages.value,
               activeChildren: <TagImagesForm lifecycleHook={lifecycleHook} />,
             },
           ]}

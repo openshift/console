@@ -47,7 +47,7 @@ jest.mock(
   }),
 );
 
-const mockedContainerField = ContainerField as jest.Mock<React.FC>;
+const mockedContainerField = ContainerField as jest.Mock;
 
 const handleSubmit = jest.fn();
 const handleCancel = jest.fn();

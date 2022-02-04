@@ -16,7 +16,7 @@ describe('Metrics Query Input', () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const spyDispatch = jest.spyOn(redux, 'useDispatch');
-  spyDispatch.mockReturnValue(() => {});
+  spyDispatch.mockReturnValue((() => {}) as any);
   it('should render Dropdown with default title', () => {
     const wrapper = shallow(<MetricsQueryInput />);
     expect(wrapper.find(Dropdown)).toHaveLength(1);

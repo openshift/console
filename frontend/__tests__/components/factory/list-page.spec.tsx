@@ -11,7 +11,7 @@ import { Firehose, FirehoseResource, PageHeading } from '../../../public/compone
 import { NodeModel } from '../../../public/models';
 
 jest.mock('react-redux', () => {
-  const ActualReactRedux = require.requireActual('react-redux');
+  const ActualReactRedux = jest.requireActual('react-redux');
   return {
     ...ActualReactRedux,
     useDispatch: jest.fn(),

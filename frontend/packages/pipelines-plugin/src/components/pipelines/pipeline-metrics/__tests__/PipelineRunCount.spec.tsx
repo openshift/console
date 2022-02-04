@@ -34,25 +34,25 @@ describe('Pipeline Run Count Graph', () => {
   });
 
   it('Should render an LoadingInline if query result is loading', () => {
-    pipelineRunSpy.mockReturnValue([{ data: { result: [{ x: 'x' }] } }, false, true]);
+    pipelineRunSpy.mockReturnValue([{ data: { result: [{ x: 'x' }] } }, false, true] as any);
     const PipelineRunCountWrapper = shallow(<PipelineRunCount {...PipelineRunCountProps} />);
     expect(PipelineRunCountWrapper.find(LoadingInline).exists()).toBe(true);
   });
 
   it('Should render an empty state if query result is empty', () => {
-    pipelineRunSpy.mockReturnValue([{ data: { result: [] } }, false, false]);
+    pipelineRunSpy.mockReturnValue([{ data: { result: [] } }, false, false] as any);
     const PipelineRunCountWrapper = shallow(<PipelineRunCount {...PipelineRunCountProps} />);
     expect(PipelineRunCountWrapper.find(GraphEmpty).exists()).toBe(true);
   });
 
   it('Should render an empty state if query resulted in error', () => {
-    pipelineRunSpy.mockReturnValue([{ data: { result: [] } }, true, false]);
+    pipelineRunSpy.mockReturnValue([{ data: { result: [] } }, true, false] as any);
     const PipelineRunCountWrapper = shallow(<PipelineRunCount {...PipelineRunCountProps} />);
     expect(PipelineRunCountWrapper.find(GraphEmpty).exists()).toBe(true);
   });
 
   it('Should render an TimeSeriesChart if data is available', () => {
-    pipelineRunSpy.mockReturnValue([{ data: { result: [{ x: 'x' }] } }, false, false]);
+    pipelineRunSpy.mockReturnValue([{ data: { result: [{ x: 'x' }] } }, false, false] as any);
     const PipelineRunCountWrapper = shallow(<PipelineRunCount {...PipelineRunCountProps} />);
     expect(PipelineRunCountWrapper.find(LoadingInline).exists()).toBe(false);
     expect(PipelineRunCountWrapper.find(GraphEmpty).exists()).toBe(false);

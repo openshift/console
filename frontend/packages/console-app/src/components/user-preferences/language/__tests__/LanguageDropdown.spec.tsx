@@ -6,26 +6,10 @@ import LanguageDropdown from '../LanguageDropdown';
 import { usePreferredLanguage } from '../usePreferredLanguage';
 
 jest.mock('react', () => {
-  const reactActual = require.requireActual('react');
+  const react = jest.requireActual('react');
   return {
-    ...reactActual,
-    useContext: () => jest.fn(),
-  };
-});
-
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({
-      t: (key: string) => key,
-      i18n: {
-        getResourceBundle: jest.fn(),
-        on: jest.fn(),
-        off: jest.fn(),
-        changeLanguage: jest.fn(),
-      },
-    }),
+    ...react,
+    useContext: () => ({ state: { getProcessedResourceBundle: jest.fn() } }),
   };
 });
 
@@ -51,7 +35,6 @@ describe('LanguageDropdown', () => {
   it('should render skeleton if user preferences have not loaded', () => {
     usePreferredLanguageMock.mockReturnValue(['', jest.fn(), false]);
     getLastLanguageMock.mockReturnValue(['']);
-    spyOn(React, 'useContext').and.returnValue({ getProcessedResourceBundle: jest.fn() });
     wrapper = shallow(<LanguageDropdown />);
     expect(
       wrapper.find('[data-test="dropdown skeleton console.preferredLanguage"]').exists(),
@@ -61,7 +44,6 @@ describe('LanguageDropdown', () => {
   it('should render checkbox in checked state and select in disabled state if user preferences have loaded and preferred language is not defined', () => {
     usePreferredLanguageMock.mockReturnValue([undefined, jest.fn(), true]);
     getLastLanguageMock.mockReturnValue(['']);
-    spyOn(React, 'useContext').and.returnValue({ getProcessedResourceBundle: jest.fn() });
     wrapper = shallow(<LanguageDropdown />);
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find(Checkbox).props().isChecked).toBe(true);
@@ -72,7 +54,6 @@ describe('LanguageDropdown', () => {
   it('should render checkbox in unchecked state and select in enabled state if user preferences have loaded and preferred language is defined', () => {
     usePreferredLanguageMock.mockReturnValue([preferredLanguageValue, jest.fn(), true]);
     getLastLanguageMock.mockReturnValue(['']);
-    spyOn(React, 'useContext').and.returnValue({ getProcessedResourceBundle: jest.fn() });
     wrapper = shallow(<LanguageDropdown />);
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find(Checkbox).props().isChecked).toBe(false);
@@ -83,7 +64,6 @@ describe('LanguageDropdown', () => {
   it('should render select with value corresponding to preferred language if user preferences have loaded and preferred language is defined', () => {
     usePreferredLanguageMock.mockReturnValue([preferredLanguageValue, jest.fn(), true]);
     getLastLanguageMock.mockReturnValue(['']);
-    spyOn(React, 'useContext').and.returnValue({ getProcessedResourceBundle: jest.fn() });
     wrapper = shallow(<LanguageDropdown />);
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find('[data-test="dropdown console.preferredLanguage"]').exists()).toBeTruthy();

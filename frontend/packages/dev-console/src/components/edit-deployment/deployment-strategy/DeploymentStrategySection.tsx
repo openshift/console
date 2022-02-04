@@ -77,8 +77,8 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
       <DropdownField
         name="formData.deploymentStrategy.type"
         label={t('devconsole~Strategy type')}
-        items={getDeploymentStrategyItems(resourceType, t)}
-        helpText={getDeploymentStrategyHelpText(resourceType, deploymentStrategy.type, t)}
+        items={getDeploymentStrategyItems(resourceType)}
+        helpText={getDeploymentStrategyHelpText(resourceType, deploymentStrategy.type)}
         onChange={onChange}
         fullWidth
       />

@@ -128,7 +128,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         chartRepositories,
       );
       setHelmChartEntries(chartEntries);
-      setHelmChartVersions(getChartVersions(chartEntries, t));
+      setHelmChartVersions(getChartVersions(chartEntries));
     };
     fetchChartVersions();
     return () => {
@@ -190,7 +190,6 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         concatVersions(
           chartVersion,
           appVersion,
-          t,
           getChartRepositoryTitle(chartRepositories, chartRepoName),
         );
 

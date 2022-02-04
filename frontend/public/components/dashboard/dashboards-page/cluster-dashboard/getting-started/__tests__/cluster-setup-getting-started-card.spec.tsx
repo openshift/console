@@ -6,10 +6,13 @@ import { ClusterSetupGettingStartedCard } from '../cluster-setup-getting-started
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 
-jest.mock('react', () => ({
-  ...require.requireActual('react'),
-  useLayoutEffect: require.requireActual('react').useEffect,
-}));
+jest.mock('react', () => {
+  const React = jest.requireActual('react');
+  return {
+    ...React,
+    useLayoutEffect: React.useEffect,
+  };
+});
 
 jest.mock('../cluster-setup-identity-provider-link', () => ({
   useIdentityProviderLink: jest.fn(),

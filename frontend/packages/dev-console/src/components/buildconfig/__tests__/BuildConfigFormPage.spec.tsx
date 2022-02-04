@@ -22,7 +22,7 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
 }));
 
 jest.mock('../sections/EditorField', () =>
-  require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
+  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({

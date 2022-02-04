@@ -50,7 +50,7 @@ describe('isPluginPackage', () => {
 });
 
 describe('readPackages', () => {
-  let readPkgMock: jest.SpyInstance<typeof readPkg.sync>;
+  let readPkgMock: jest.SpyInstance;
 
   beforeEach(() => {
     readPkgMock = jest.spyOn(readPkg, 'sync');

@@ -133,16 +133,19 @@ describe('Upload Jar Submit Utils', () => {
       mockData.resources = Resources.KnativeService;
       const imageStreamSpy = jest
         .spyOn(importSubmitUtils, 'createOrUpdateImageStream')
-        .mockImplementation(() => ({
-          apiVersion: 'image.openshift.io/v1',
-          kind: 'ImageStream',
-          metadata: {
-            name: 'test',
-          },
-          status: {
-            dockerImageReference: 'test:1234',
-          },
-        }));
+        .mockImplementation(
+          () =>
+            ({
+              apiVersion: 'image.openshift.io/v1',
+              kind: 'ImageStream',
+              metadata: {
+                name: 'test',
+              },
+              status: {
+                dockerImageReference: 'test:1234',
+              },
+            } as any),
+        );
 
       const returnValue = await createOrUpdateJarFile(mockData, buildImage.obj, false);
       expect(imageStreamSpy).toHaveBeenCalled();

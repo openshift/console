@@ -10,15 +10,21 @@ import {
 
 import { GettingStartedSection } from '../getting-started-section';
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...require.requireActual('@console/shared/src/hooks/flag'),
-  useFlag: jest.fn(),
-}));
+jest.mock('@console/shared/src/hooks/flag', () => {
+  const flag = jest.requireActual('@console/shared/src/hooks/flag');
+  return {
+    ...flag,
+    useFlag: jest.fn(),
+  };
+});
 
-jest.mock('@console/shared/src/components/getting-started', () => ({
-  ...require.requireActual('@console/shared/src/components/getting-started'),
-  useGettingStartedShowState: jest.fn(),
-}));
+jest.mock('@console/shared/src/components/getting-started', () => {
+  const gettingStarted = jest.requireActual('@console/shared/src/components/getting-started');
+  return {
+    ...gettingStarted,
+    useGettingStartedShowState: jest.fn(),
+  };
+});
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({

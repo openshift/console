@@ -212,7 +212,9 @@ describe('knative topology utils', () => {
 
 describe('Knative Topology Utils', () => {
   beforeAll(() => {
-    jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => Promise.resolve({ data }));
+    jest
+      .spyOn(k8s, 'k8sUpdate')
+      .mockImplementation((model, data) => Promise.resolve({ data } as any));
   });
 
   afterAll(() => {

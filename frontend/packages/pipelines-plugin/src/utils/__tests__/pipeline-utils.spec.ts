@@ -33,7 +33,7 @@ import {
 } from './pipeline-test-data';
 
 beforeAll(() => {
-  jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data);
+  jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data as any);
 });
 
 describe('pipeline-utils ', () => {

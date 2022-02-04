@@ -270,14 +270,14 @@ describe('pipeline-quicksearch-utils', () => {
   });
   describe('updateTask', () => {
     beforeEach(() => {
-      jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data);
+      jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data as any);
       jest.spyOn(coFetch, 'coFetch').mockImplementation((url) =>
         Promise.resolve({
           text: () =>
             url === 'oc-task-0.1/url'
               ? sampleTaskWithMultipleVersions[sampleVersions.VERSION_02]
               : sampleTaskWithMultipleVersions[sampleVersions.VERSION_01],
-        }),
+        } as any),
       );
     });
     it('should update openshift client version from 0.1 to 0.2', async () => {

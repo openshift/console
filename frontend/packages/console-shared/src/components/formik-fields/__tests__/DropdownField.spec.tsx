@@ -14,7 +14,7 @@ jest.mock('formik', () => ({
 }));
 describe('DropdownField', () => {
   it('should pass through autocompleteFilter to Dropdown', () => {
-    const filterFn = jest.fn<React.ComponentProps<typeof DropdownField>['autocompleteFilter']>();
+    const filterFn = jest.fn();
     const wrapper = shallow(<DropdownField name="test" items={{}} autocompleteFilter={filterFn} />);
     expect(
       wrapper

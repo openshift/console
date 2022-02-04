@@ -1,4 +1,3 @@
-import { t } from '../../../../../../../../__mocks__/i18next';
 import { Resources } from '../../../../import/import-types';
 import {
   getDeploymentStrategyItems,
@@ -8,14 +7,14 @@ import { DeploymentStrategyType } from '../types';
 
 describe('getDeploymentStrategyItems', () => {
   it('returns items for kubernetes resources', () => {
-    expect(getDeploymentStrategyItems(Resources.Kubernetes, t)).toEqual({
+    expect(getDeploymentStrategyItems(Resources.Kubernetes)).toEqual({
       Recreate: 'Recreate',
       RollingUpdate: 'Rolling Update',
     });
   });
 
   it('returns items for kubernetes resources', () => {
-    expect(getDeploymentStrategyItems(Resources.OpenShift, t)).toEqual({
+    expect(getDeploymentStrategyItems(Resources.OpenShift)).toEqual({
       Custom: 'Custom',
       Recreate: 'Recreate',
       Rolling: 'Rolling',
@@ -23,17 +22,17 @@ describe('getDeploymentStrategyItems', () => {
   });
 
   it('returns no items for kubernetes resources', () => {
-    expect(getDeploymentStrategyItems(Resources.KnativeService, t)).toEqual({});
+    expect(getDeploymentStrategyItems(Resources.KnativeService)).toEqual({});
   });
 });
 
 describe('getDeploymentStrategyHelpText', () => {
   it('return helptext for all known resource and deployment strategy combinations', () => {
     [Resources.Kubernetes, Resources.OpenShift].forEach((resource) => {
-      const deployStrategyItems = Object.keys(getDeploymentStrategyItems(resource, t));
+      const deployStrategyItems = Object.keys(getDeploymentStrategyItems(resource));
 
       deployStrategyItems.forEach((item: DeploymentStrategyType) => {
-        const helpText = getDeploymentStrategyHelpText(resource, item, t);
+        const helpText = getDeploymentStrategyHelpText(resource, item);
         expect(helpText).toBeTruthy();
         expect(helpText).toMatch(/[^~]/);
       });

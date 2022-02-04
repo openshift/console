@@ -12,7 +12,7 @@ const HelmReleaseResourcesList: React.FC<TableProps> = (props) => {
       {...props}
       aria-label={t('helm-plugin~Resources')}
       defaultSortField="kind"
-      Header={HelmReleaseResourcesHeader(t)}
+      Header={HelmReleaseResourcesHeader()}
       Row={HelmReleaseResourcesRow}
       EmptyMsg={() => <MsgBox title={t('helm-plugin~No resources found')} />}
       virtualize

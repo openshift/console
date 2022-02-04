@@ -36,7 +36,11 @@ describe('Pipeline Success Ratio Graph', () => {
   });
 
   it('Should render an LoadingInline if query result is loading', () => {
-    usePipelineRunTaskRunPollSpy.mockReturnValue([{ data: { result: [{ x: 'x' }] } }, false, true]);
+    usePipelineRunTaskRunPollSpy.mockReturnValue([
+      { data: { result: [{ x: 'x' } as any], resultType: 'matrix' }, status: '' },
+      false,
+      true,
+    ]);
     const PipelineSuccessRatioDonutWrapper = shallow(
       <PipelineSuccessRatioDonut {...PipelineSuccessRatioDonutProps} />,
     );
@@ -44,7 +48,11 @@ describe('Pipeline Success Ratio Graph', () => {
   });
 
   it('Should render an empty state if query result is empty', () => {
-    usePipelineRunTaskRunPollSpy.mockReturnValue([{ data: { result: [] } }, false, false]);
+    usePipelineRunTaskRunPollSpy.mockReturnValue([
+      { data: { result: [], resultType: 'matrix' }, status: '' },
+      false,
+      false,
+    ]);
     const PipelineSuccessRatioDonutWrapper = shallow(
       <PipelineSuccessRatioDonut {...PipelineSuccessRatioDonutProps} />,
     );
@@ -52,7 +60,11 @@ describe('Pipeline Success Ratio Graph', () => {
   });
 
   it('Should render an empty state if query resulted in error', () => {
-    usePipelineRunTaskRunPollSpy.mockReturnValue([{ data: { result: [] } }, true, false]);
+    usePipelineRunTaskRunPollSpy.mockReturnValue([
+      { data: { result: [], resultType: 'matrix' }, status: '' },
+      true,
+      false,
+    ]);
     const PipelineSuccessRatioDonutWrapper = shallow(
       <PipelineSuccessRatioDonut {...PipelineSuccessRatioDonutProps} />,
     );
@@ -61,7 +73,7 @@ describe('Pipeline Success Ratio Graph', () => {
 
   it('Should render an TimeSeriesChart and SuccessRatioDonut if data is available', () => {
     usePipelineRunTaskRunPollSpy.mockReturnValue([
-      { data: { result: [{ x: Date.now(), y: 1 }] } },
+      { data: { result: [{ x: Date.now(), y: 1 } as any], resultType: 'matrix' }, status: '' },
       false,
       false,
     ]);

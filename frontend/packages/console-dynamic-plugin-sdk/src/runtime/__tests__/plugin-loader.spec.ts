@@ -209,7 +209,7 @@ describe('window.loadPluginEntry', () => {
       pluginStore,
       initSharedPluginModules,
       resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    )('Test@1.2.3', entryModule as any);
 
     expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(true);
     expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
@@ -238,7 +238,7 @@ describe('window.loadPluginEntry', () => {
       pluginStore,
       initSharedPluginModules,
       resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    )('Test@1.2.3', entryModule as any);
 
     expect(pluginMap.size).toBe(0);
     expect(initSharedPluginModules).not.toHaveBeenCalled();
@@ -263,13 +263,13 @@ describe('window.loadPluginEntry', () => {
       pluginStore,
       initSharedPluginModules,
       resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    )('Test@1.2.3', entryModule as any);
 
     getPluginEntryCallback(
       pluginStore,
       initSharedPluginModules,
       resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    )('Test@1.2.3', entryModule as any);
 
     expect(pluginMap.size).toBe(1);
     expect(initSharedPluginModules).toHaveBeenCalledTimes(1);
@@ -296,7 +296,7 @@ describe('window.loadPluginEntry', () => {
       pluginStore,
       initSharedPluginModules,
       resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    )('Test@1.2.3', entryModule as any);
 
     expect(pluginMap.size).toBe(1);
     expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
@@ -327,7 +327,7 @@ describe('loadPluginFromURL', () => {
 
 describe('loadAndEnablePlugin', () => {
   let pluginStore: PluginStore;
-  let setDynamicPluginEnabled: jest.SpyInstance<typeof pluginStore.setDynamicPluginEnabled>;
+  let setDynamicPluginEnabled: jest.SpyInstance;
 
   beforeEach(() => {
     pluginStore = new PluginStore();

@@ -154,7 +154,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={helmActionString(t)[helmAction]}
+        submitLabel={helmActionString()[helmAction]}
         disableSubmit={isSubmitDisabled}
         resetLabel={t('helm-plugin~Cancel')}
         sticky

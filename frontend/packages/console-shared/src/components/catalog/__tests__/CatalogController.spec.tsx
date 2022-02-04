@@ -4,12 +4,23 @@ import { PageHeading } from '@console/internal/components/utils';
 import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import CatalogController from '../CatalogController';
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
-  useLocation: () => {
-    return 'path';
-  },
-}));
+jest.mock('react-router-dom', () => {
+  const reactRouterDom = jest.requireActual('react-router-dom');
+  return {
+    ...reactRouterDom,
+    useLocation: () => {
+      return 'path';
+    },
+  };
+});
+
+jest.mock('react', () => {
+  const react = jest.requireActual('react');
+  return {
+    ...react,
+    useMemo: jest.fn(),
+  };
+});
 
 describe('Catalog Controller', () => {
   const spyUseMemo = jest.spyOn(React, 'useMemo');
@@ -39,9 +50,21 @@ describe('Catalog Controller', () => {
       searchCatalog: jest.fn(),
     };
     spyUseQueryParams.mockImplementation(() => ({
-      catagory: null,
+      category: null,
       keyword: null,
       sortOrder: null,
+      append: null,
+      delete: null,
+      get: null,
+      getAll: null,
+      has: null,
+      set: null,
+      sort: null,
+      forEach: null,
+      entries: null,
+      keys: null,
+      values: null,
+      [Symbol.iterator]: null,
     }));
     spyUseMemo.mockReturnValue({
       pluginID: '@console/helm-plugin',
@@ -89,9 +112,21 @@ describe('Catalog Controller', () => {
       searchCatalog: jest.fn(),
     };
     spyUseQueryParams.mockImplementation(() => ({
-      catagory: null,
+      category: null,
       keyword: null,
       sortOrder: null,
+      append: null,
+      delete: null,
+      get: null,
+      getAll: null,
+      has: null,
+      set: null,
+      sort: null,
+      forEach: null,
+      entries: null,
+      keys: null,
+      values: null,
+      [Symbol.iterator]: null,
     }));
     spyUseMemo.mockReturnValue({
       pluginID: 'pluginId',
@@ -141,6 +176,18 @@ describe('Catalog Controller', () => {
       catagory: null,
       keyword: null,
       sortOrder: null,
+      append: null,
+      delete: null,
+      get: null,
+      getAll: null,
+      has: null,
+      set: null,
+      sort: null,
+      forEach: null,
+      entries: null,
+      keys: null,
+      values: null,
+      [Symbol.iterator]: null,
     }));
     spyUseMemo.mockReturnValue({
       pluginID: '@console/helm-plugin',

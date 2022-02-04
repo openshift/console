@@ -1,4 +1,3 @@
-import { t } from '../../../../../__mocks__/i18next';
 import {
   mockHelmReleases,
   mockHelmChartData,
@@ -72,7 +71,7 @@ describe('Helm Releases Utils', () => {
   });
 
   it('should return the chart versions, concatenated with the App Version, available for the helm chart', () => {
-    const chartVersions = getChartVersions(mockHelmChartData, t);
+    const chartVersions = getChartVersions(mockHelmChartData);
     expect(chartVersions).toEqual({
       '1.0.1--IBM Helm Repo': '1.0.1 / App Version 3.10.5 (Provided by IBM Helm Repo)',
       '1.0.1--Red Hat Helm Repo': '1.0.1 / App Version 3.10.5 (Provided by Red Hat Helm Repo)',

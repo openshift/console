@@ -98,7 +98,7 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication })
       onReset={history.goBack}
       validateOnBlur={false}
       validateOnChange={false}
-      validationSchema={addChannelValidationSchema(t)}
+      validationSchema={addChannelValidationSchema()}
     >
       {(formikProps) => <ChannelForm {...formikProps} namespace={namespace} channels={channels} />}
     </Formik>

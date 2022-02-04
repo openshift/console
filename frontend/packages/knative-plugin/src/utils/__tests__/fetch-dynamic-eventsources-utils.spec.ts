@@ -25,7 +25,7 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     jest.spyOn(coFetch, 'coFetch').mockImplementation(() =>
       Promise.resolve({
         json: () => ({ ...mockEventSourcCRDData }),
-      }),
+      } as any),
     );
   });
 
@@ -122,7 +122,7 @@ describe('fetch-dynamic-eventsources: Channels', () => {
     jest.spyOn(coFetch, 'coFetch').mockImplementation(() =>
       Promise.resolve({
         json: () => ({ ...mockChannelCRDData }),
-      }),
+      } as any),
     );
   });
 

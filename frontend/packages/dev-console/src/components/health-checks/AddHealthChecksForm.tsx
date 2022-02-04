@@ -64,7 +64,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
     <Formik
       initialValues={initialValues}
       validationSchema={yup.object().shape({
-        healthChecks: healthChecksProbesValidationSchema(t),
+        healthChecks: healthChecksProbesValidationSchema(),
       })}
       onSubmit={handleSubmit}
       onReset={history.goBack}

@@ -35,7 +35,7 @@ describe('PipelineRunEvents:', () => {
     spyUsePipelineRunRelatedResources.mockReturnValue({
       taskruns: { data: taskRuns, loaded: true },
       pods: { data: pods, loaded: true },
-    });
+    } as any);
   });
 
   it('Should render a ResourcesEventStream', () => {

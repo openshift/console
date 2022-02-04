@@ -25,7 +25,7 @@ describe('ApplicationSelector', () => {
     spyUseField.mockReturnValue([
       { value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' },
       {},
-    ]);
+    ] as any);
     spyUseFormikContext.mockReturnValue({
       setFieldValue,
       setFieldTouched,
@@ -36,7 +36,7 @@ describe('ApplicationSelector', () => {
           selectedKey: CREATE_APPLICATION_KEY,
         },
       },
-    });
+    } as any);
     wrapper = shallow(<ApplicationSelector {...applicationSelectorProps} />);
     jest.clearAllMocks();
   });
@@ -47,7 +47,7 @@ describe('ApplicationSelector', () => {
   });
 
   it('should show ApplicationDropdown if projects are available', () => {
-    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }]);
+    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }] as any);
     wrapper.setProps({ noProjectsAvailable: false });
     expect(wrapper.find(ApplicationDropdown).exists()).toBe(true);
   });
@@ -63,9 +63,12 @@ describe('ApplicationSelector', () => {
 
   it('should reset the application name if the application list is empty', () => {
     spyUseField
-      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
-    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }]);
+      .mockReturnValueOnce([
+        { value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' },
+        {},
+      ] as any)
+      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}] as any);
+    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }] as any);
     wrapper.setProps({ noProjectsAvailable: false });
     wrapper
       .find(ApplicationDropdown)
@@ -78,8 +81,11 @@ describe('ApplicationSelector', () => {
 
   it('should set the application name and selectedKey on dropdown change', () => {
     spyUseField
-      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
+      .mockReturnValueOnce([
+        { value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' },
+        {},
+      ] as any)
+      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}] as any);
     wrapper.setProps({ noProjectsAvailable: false });
     wrapper
       .find(ApplicationDropdown)
@@ -94,8 +100,11 @@ describe('ApplicationSelector', () => {
 
   it('should not set the application name on dropdown change if the application is undefined', () => {
     spyUseField
-      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
+      .mockReturnValueOnce([
+        { value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' },
+        {},
+      ] as any)
+      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}] as any);
     wrapper.setProps({ noProjectsAvailable: false });
     wrapper
       .find(ApplicationDropdown)

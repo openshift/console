@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import Helmet from 'react-helmet';
-import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
@@ -21,14 +20,13 @@ type HelmRollbackFormData = {
 };
 
 const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match }) => {
-  const { t } = useTranslation();
   const { releaseName, ns: namespace } = match.params;
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
   const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[]>(null);
 
   const config = React.useMemo(
-    () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, t, actionOrigin),
-    [actionOrigin, namespace, releaseName, t],
+    () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, actionOrigin),
+    [actionOrigin, namespace, releaseName],
   );
 
   React.useEffect(() => {

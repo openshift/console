@@ -124,7 +124,7 @@ describe('checkPodEditAccess', () => {
   it('should have access true if check Access return allowed true', (done) => {
     jest
       .spyOn(utils, 'checkAccess')
-      .mockImplementation(() => Promise.resolve({ status: { allowed: true } }));
+      .mockImplementation(() => Promise.resolve({ status: { allowed: true } } as any));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {
         expect(resp.status.allowed).toBe(true);
@@ -136,7 +136,7 @@ describe('checkPodEditAccess', () => {
   it('should have access false if check Access return allowed false', (done) => {
     jest
       .spyOn(utils, 'checkAccess')
-      .mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
+      .mockImplementation(() => Promise.resolve({ status: { allowed: false } } as any));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {
         expect(resp.status.allowed).toBe(false);

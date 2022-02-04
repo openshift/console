@@ -1,4 +1,3 @@
-import { Dispatch } from 'redux';
 import cloudShellConfirmationModal from '../../../components/cloud-shell/cloudShellConfirmationModal';
 import {
   setCloudShellExpanded,
@@ -10,6 +9,7 @@ import {
 const cloudShellConfirmationModalMock = cloudShellConfirmationModal as jest.Mock;
 
 jest.mock('../../../components/cloud-shell/cloudShellConfirmationModal', () => ({
+  __esModule: true,
   default: jest.fn((action) => action()),
 }));
 
@@ -57,7 +57,7 @@ describe('Cloud shell actions', () => {
   });
 
   it('should thunk dispatch toggle expand true action', () => {
-    const dispatch = jest.fn<Dispatch>();
+    const dispatch = jest.fn();
     // initial isExpanded state is false
     const state = { plugins: { console: { cloudShell: { isExpanded: false } } } } as any;
     toggleCloudShellExpanded()(dispatch, () => state);
@@ -72,7 +72,7 @@ describe('Cloud shell actions', () => {
   });
 
   it('should thunk dispatch toggle expand false action without confirmation', () => {
-    const dispatch = jest.fn<Dispatch>();
+    const dispatch = jest.fn();
     // initial isExpanded state is true but isActive is false
     const state = {
       plugins: { console: { cloudShell: { isExpanded: true, isActive: false } } },
@@ -91,7 +91,7 @@ describe('Cloud shell actions', () => {
   });
 
   it('should thunk dispatch toggle expand false action with confirmation', async () => {
-    const dispatch = jest.fn<Dispatch>();
+    const dispatch = jest.fn();
     // initial isExpanded state is true and isActive is true
     const state = {
       plugins: { console: { cloudShell: { isExpanded: true, isActive: true } } },
@@ -110,7 +110,7 @@ describe('Cloud shell actions', () => {
   });
 
   it('should thunk dispatch toggle expand true action', () => {
-    const dispatch = jest.fn<Dispatch>();
+    const dispatch = jest.fn();
     // initial isExpanded state is false
     const state = { plugins: { console: { cloudShell: { isExpanded: false } } } } as any;
     toggleCloudShellExpanded()(dispatch, () => state);

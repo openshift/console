@@ -2,9 +2,9 @@
 import * as webpack from 'webpack';
 import * as path from 'path';
 import * as _ from 'lodash';
-import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';

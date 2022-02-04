@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { load } from 'js-yaml';
-import { useTranslation } from 'react-i18next';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
@@ -23,7 +22,6 @@ interface AddBrokerProps {
 const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
   const perspectiveExtension = useExtensions<Perspective>(isPerspective);
   const [perspective] = useActivePerspective();
-  const { t } = useTranslation();
   const initialValues: AddBrokerFormYamlValues = addBrokerInitialValues(
     namespace,
     selectedApplication,
@@ -68,7 +66,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
-      validationSchema={brokerValidationSchema(t)}
+      validationSchema={brokerValidationSchema()}
     >
       {(formikProps) => <AddBrokerForm {...formikProps} namespace={namespace} />}
     </Formik>
