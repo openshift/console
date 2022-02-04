@@ -17,7 +17,9 @@ declare global {
 // ex: cy.createProject(name)
 Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false) => {
   cy.log(`create project`);
-  cy.visit(`/k8s/cluster/projects`).its('yaml-create').should('be.visible');
+  cy.visit(`/k8s/cluster/projects`)
+    .its('yaml-create')
+    .should('be.visible');
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
   cy.byTestID('input-name')
