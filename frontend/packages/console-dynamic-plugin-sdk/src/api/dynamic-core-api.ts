@@ -118,3 +118,5 @@ export const InventoryItemStatus: React.FC<InventoryItemStatusProps> = require('
   .InventoryItemStatus;
 export const InventoryItemLoading: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemLoading;
+
+export { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
