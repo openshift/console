@@ -158,6 +158,19 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         state.getIn(['queryBrowser', 'queries']).push(newQueryBrowserQuery()),
       );
 
+    case ActionType.QueryBrowserDuplicateQuery: {
+      const index = action.payload.index;
+      const originQueryText = state.getIn(['queryBrowser', 'queries', index, 'text']);
+      const duplicate = newQueryBrowserQuery().merge({
+        text: originQueryText,
+        isEnabled: false,
+      });
+      return state.setIn(
+        ['queryBrowser', 'queries'],
+        state.getIn(['queryBrowser', 'queries']).push(duplicate),
+      );
+    }
+
     case ActionType.QueryBrowserDeleteAllQueries:
       return state.setIn(['queryBrowser', 'queries'], ImmutableList([newQueryBrowserQuery()]));
 

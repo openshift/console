@@ -992,6 +992,7 @@
   "Hide all series": "Hide all series",
   "Show all series": "Show all series",
   "Delete query": "Delete query",
+  "Duplicate query": "Duplicate query",
   "Error loading values": "Error loading values",
   "No query entered": "No query entered",
   "Enter a query in the box below to explore metrics for this cluster.": "Enter a query in the box below to explore metrics for this cluster.",
