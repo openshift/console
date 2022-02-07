@@ -17,6 +17,7 @@ export type BackingStoreAction =
 
 export const initialState: BackingStoreProviderDataState = {
   secretName: '',
+  secretNamespace: '',
   secretKey: '',
   accessKey: '',
   region: AWS_REGIONS[0],
@@ -36,6 +37,8 @@ export const providerDataReducer = (
   switch (action.type) {
     case 'setSecretName':
       return Object.assign({}, state, { secretName: value });
+    case 'setSecretNamespace':
+      return Object.assign({}, state, { secretNamespace: value });
     case 'setSecretKey':
       return Object.assign({}, state, { secretKey: value });
     case 'setAccessKey':

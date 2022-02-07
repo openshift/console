@@ -8,12 +8,12 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/
 import { useFlag } from '@console/shared/src/hooks/flag';
 import CreateBackingStoreForm from './create-bs';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
-import { ODF_MODEL_FLAG } from '../../constants';
+import { ODF_MODEL_FLAG, CEPH_STORAGE_NAMESPACE } from '../../constants';
 
 const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const [showHelp, setShowHelp] = React.useState(true);
-  const { ns, appName } = match.params;
+  const { ns = CEPH_STORAGE_NAMESPACE, appName } = match.params;
   const isODF = useFlag(ODF_MODEL_FLAG);
 
   const onCancel = () => {

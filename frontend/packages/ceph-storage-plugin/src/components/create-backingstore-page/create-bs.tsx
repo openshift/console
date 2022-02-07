@@ -23,7 +23,9 @@ import {
   PROVIDERS_NOOBAA_MAP,
   BUCKET_LABEL_NOOBAA_MAP,
   ODF_MODEL_FLAG,
+  DEDICATED_ADMIN,
 } from '../../constants';
+import { ODF_MANAGED_FLAG } from '../../features';
 import { getExternalProviders, getProviders, secretPayloadCreator } from '../../utils/noobaa-utils';
 import { Payload } from '../../types';
 import { PVCType } from '../noobaa-provider-endpoints/pvc-endpoint-type';
@@ -45,6 +47,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     initialState,
   );
   const isODF = useFlag(ODF_MODEL_FLAG);
+  const isOdfManaged = useFlag(ODF_MANAGED_FLAG);
 
   const handleBsNameTextInputChange = (strVal: string) => {
     if (strVal.length <= 43) {
@@ -72,9 +75,10 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     if (!secretName && provider !== BC_PROVIDERS.PVC) {
       secretName = bsName.concat('-secret');
       const { secretKey, accessKey, gcpJSON } = providerDataState;
+      const ns = isOdfManaged ? DEDICATED_ADMIN : namespace;
       const secretPayload = secretPayloadCreator(
         provider,
-        namespace,
+        ns,
         secretName,
         accessKey || gcpJSON,
         secretKey,
@@ -107,13 +111,17 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         },
       };
     } else if (externalProviders.includes(provider)) {
+      const osdSpecificNs = providerDataState.secretNamespace
+        ? providerDataState.secretNamespace
+        : DEDICATED_ADMIN;
+      const ns = isOdfManaged ? osdSpecificNs : namespace;
       bsPayload.spec = {
         ...bsPayload.spec,
         [PROVIDERS_NOOBAA_MAP[provider]]: {
           [BUCKET_LABEL_NOOBAA_MAP[provider]]: providerDataState.target,
           secret: {
             name: secretName,
-            namespace,
+            namespace: ns,
           },
         },
       };

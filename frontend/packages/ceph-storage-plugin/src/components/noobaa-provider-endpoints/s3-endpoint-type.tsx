@@ -1,13 +1,24 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Dropdown, Firehose } from '@console/internal/components/utils';
 import { Button, FormGroup, TextInput, InputGroup } from '@patternfly/react-core';
-import { SecretModel } from '@console/internal/models';
-import { ResourceDropdown } from '@console/shared';
+import { ProjectModel, SecretModel } from '@console/internal/models';
+import { ResourceDropdown, getName, getNamespace } from '@console/shared';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BC_PROVIDERS, AWS_REGIONS } from '../../constants';
 import { endpointsSupported, awsRegionItems } from '../../utils/noobaa-utils';
-import { StoreType } from '../../constants/common';
+import {
+  StoreType,
+  EXCLUDED_PREFIX,
+  EXCLUDED_NS,
+  CEPH_STORAGE_NAMESPACE,
+} from '../../constants/common';
 import { ProviderDataState, StoreAction } from '../namespace-store/reducer';
+import { ODF_MANAGED_FLAG } from '../../features';
 import './noobaa-provider-endpoints.scss';
 
 type S3EndpointTypeProps = {
@@ -17,10 +28,101 @@ type S3EndpointTypeProps = {
   provider: BC_PROVIDERS;
   namespace: string;
 };
+type SecretDropdownProps = Omit<S3EndpointTypeProps, 'type' | 'provider'>;
+type OSDSecretDropdownProps = Omit<SecretDropdownProps, 'namespace'>;
+
+const projectResource = {
+  isList: true,
+  kind: ProjectModel.kind,
+};
+const getSecretResource = (namespace: string, optional = false) => ({
+  isList: true,
+  namespace,
+  optional,
+  kind: SecretModel.kind,
+  prop: namespace,
+});
+const getDropdownProps = (state: ProviderDataState, t: TFunction) => ({
+  id: 'secret-dropdown',
+  selectedKey: state.secretName,
+  placeholder: t('ceph-storage-plugin~Select Secret'),
+  className: 'nb-endpoints-form-entry__dropdown nb-endpoints-form-entry__dropdown--full-width',
+  buttonClassName: 'nb-endpoints-form-entry__dropdown',
+  dataSelector: ['metadata', 'name'],
+});
+const isValidNS = (projName: string) => {
+  const isValid = EXCLUDED_PREFIX.reduce((acc, cur) => {
+    return acc && !projName.startsWith(cur);
+  }, true);
+  return isValid && !EXCLUDED_NS.includes(projName);
+};
+const transformLabel = (resource: K8sResourceCommon) => (
+  <span className="co-resource-item">
+    <span className="co-resource-item__resource-name">
+      <span>{getName(resource)}</span>
+      {getNamespace(resource) && (
+        <div className="text-muted co-truncate co-nowrap small co-resource-item__resource-namespace">
+          {getNamespace(resource)}
+        </div>
+      )}
+    </span>
+  </span>
+);
+const getTransformLabelName = (item: object) =>
+  _.get(_.get(item, ['props', 'children', 'props', 'children'])[0], ['props', 'children']);
+const autocompleteFilter = (strText: string, item: object) =>
+  getTransformLabelName(item).includes(strText);
+
+const OSDSecretDropdown: React.FC<OSDSecretDropdownProps> = ({ state, dispatch }) => {
+  const { t } = useTranslation();
+  const [projData, projDataLoaded, projDataError] = useK8sWatchResource<K8sResourceCommon[]>(
+    projectResource,
+  );
+  const secretResources = React.useMemo(() => {
+    const res = [];
+    if (projDataLoaded && !projDataError) {
+      res.push(getSecretResource(CEPH_STORAGE_NAMESPACE, true));
+      projData.forEach((project) => {
+        const name = getName(project);
+        if (isValidNS(name)) res.push(getSecretResource(name, true));
+      });
+    }
+    return res;
+  }, [projData, projDataLoaded, projDataError]);
+
+  return (
+    <Firehose resources={secretResources}>
+      <ResourceDropdown
+        {...getDropdownProps(state, t)}
+        onChange={(key, obj, resource) => {
+          dispatch({ type: 'setSecretName', value: key });
+          dispatch({ type: 'setSecretNamespace', value: getNamespace(resource) });
+        }}
+        autocompleteFilter={autocompleteFilter}
+        transformLabel={transformLabel}
+      />
+    </Firehose>
+  );
+};
+
+export const SecretDropdown: React.FC<SecretDropdownProps> = ({ state, dispatch, namespace }) => {
+  const { t } = useTranslation();
+  const isOdfManaged = useFlag(ODF_MANAGED_FLAG);
+
+  return !isOdfManaged ? (
+    <Firehose resources={[getSecretResource(namespace)]}>
+      <ResourceDropdown
+        {...getDropdownProps(state, t)}
+        onChange={(e) => dispatch({ type: 'setSecretName', value: e })}
+      />
+    </Firehose>
+  ) : (
+    <OSDSecretDropdown state={state} dispatch={dispatch} />
+  );
+};
 
 export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
   const { t } = useTranslation();
-
   const [showSecret, setShowSecret] = React.useState(true);
   const { provider, namespace, state, dispatch, type } = props;
 
@@ -36,14 +138,6 @@ export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
     provider === BC_PROVIDERS.AZURE
       ? t('ceph-storage-plugin~Account key')
       : t('ceph-storage-plugin~Secret key');
-  const resources = [
-    {
-      isList: true,
-      namespace,
-      kind: SecretModel.kind,
-      prop: 'secrets',
-    },
-  ];
 
   const switchToSecret = () => {
     setShowSecret(true);
@@ -54,6 +148,7 @@ export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
   const switchToCredentials = () => {
     setShowSecret(false);
     dispatch({ type: 'setSecretName', value: '' });
+    dispatch({ type: 'setSecretNamespace', value: '' });
   };
 
   return (
@@ -108,17 +203,7 @@ export const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           isRequired
         >
           <InputGroup>
-            <Firehose resources={resources}>
-              <ResourceDropdown
-                id="secret-dropdown"
-                selectedKey={state.secretName}
-                placeholder={t('ceph-storage-plugin~Select Secret')}
-                className="nb-endpoints-form-entry__dropdown nb-endpoints-form-entry__dropdown--full-width"
-                buttonClassName="nb-endpoints-form-entry__dropdown"
-                dataSelector={['metadata', 'name']}
-                onChange={(e) => dispatch({ type: 'setSecretName', value: e })}
-              />
-            </Firehose>
+            <SecretDropdown state={state} dispatch={dispatch} namespace={namespace} />
             <Button variant="plain" data-test="switch-to-creds" onClick={switchToCredentials}>
               {t('ceph-storage-plugin~Switch to Credentials')}
             </Button>

@@ -43,3 +43,6 @@ export enum StoreType {
   NS = 'NamespaceStore',
 }
 export const ODF_MODEL_FLAG = 'ODF_MODEL';
+export const DEDICATED_ADMIN = 'dedicated-admin';
+export const EXCLUDED_PREFIX = ['openshift-', 'kube-'];
+export const EXCLUDED_NS = ['openshift', 'default'];
