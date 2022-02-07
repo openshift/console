@@ -261,7 +261,11 @@ const ErrorRetrievingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
       <BlueInfoCircleIcon /> {t('public~Not configured to request update recommedations.')}
     </>
   ) : (
-    <Tooltip content={truncateMiddle(retrievedUpdatesCondition.message, { length: 256 })}>
+    <Tooltip
+      content={truncateMiddle(retrievedUpdatesCondition.message, {
+        length: 256,
+      })}
+    >
       <span>
         <RedExclamationCircleIcon />{' '}
         {retrievedUpdatesCondition.reason === 'VersionNotFound'
@@ -558,52 +562,69 @@ const UpdatesType: React.FC<UpdatesTypeProps> = ({ children }) => {
 
 export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
   divided,
+  desiredVersion,
   hideIfComplete,
   machineConfigPool,
   name,
   updateStartedTime,
 }) => {
+  const [machineConfigOperator, machineConfigOperatorLoaded] = useK8sWatchResource<ClusterOperator>(
+    {
+      kind: referenceForModel(ClusterOperatorModel),
+      name: 'machine-config',
+    },
+  );
+  const MCOIsUpdated = getClusterOperatorVersion(machineConfigOperator) === desiredVersion;
+  const MCPisUpdated = machineConfigPool?.status?.conditions?.some(
+    (c) => c.type === 'Updated' && c.status === K8sResourceConditionStatus.True,
+  );
+  const updatedMachineCountReady = MCOIsUpdated && MCPisUpdated;
   const MCPUpdatingTime = getUpdatingTimeForMCP(machineConfigPool);
   const totalMCPNodes = machineConfigPool?.status?.machineCount || 0;
   const updatedMCPNodes =
-    MCPUpdatingTime > updateStartedTime ? machineConfigPool?.status?.updatedMachineCount : 0;
+    updatedMachineCountReady || MCPUpdatingTime > updateStartedTime
+      ? machineConfigPool?.status?.updatedMachineCount
+      : 0;
   const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
   const { t } = useTranslation();
-  return hideIfComplete && percentMCPNodes === 100 ? null : (
-    <UpdatesGroup divided={divided}>
-      <UpdatesType>
-        <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${machineConfigPool.metadata.name}`}>
-          {t('public~{{name}} Nodes', { name })}
-        </Link>
-        {name !== 'Master' && (
-          <FieldLevelHelp>
-            {t(
-              'public~{{name}} {{resource}} may continue to update after the update of Master {{resource}} and {{resource2}} are complete.',
-              {
-                name,
-                resource: NodeModel.labelPlural,
-                resource2: ClusterOperatorModel.labelPlural,
-              },
+  return hideIfComplete && percentMCPNodes === 100
+    ? null
+    : machineConfigOperatorLoaded && (
+        <UpdatesGroup divided={divided}>
+          <UpdatesType>
+            <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${machineConfigPool.metadata.name}`}>
+              {t('public~{{name}} Nodes', { name })}
+            </Link>
+            {name !== 'Master' && (
+              <FieldLevelHelp>
+                {t(
+                  'public~{{name}} {{resource}} may continue to update after the update of Master {{resource}} and {{resource2}} are complete.',
+                  {
+                    name,
+                    resource: NodeModel.labelPlural,
+                    resource2: ClusterOperatorModel.labelPlural,
+                  },
+                )}
+              </FieldLevelHelp>
             )}
-          </FieldLevelHelp>
-        )}
-      </UpdatesType>
-      <UpdatesBar>
-        <Progress
-          title={t('public~{{updatedMCPNodes}} of {{totalMCPNodes}}', {
-            updatedMCPNodes,
-            totalMCPNodes,
-          })}
-          value={!_.isNaN(percentMCPNodes) ? percentMCPNodes : null}
-          size={ProgressSize.sm}
-          variant={percentMCPNodes === 100 ? ProgressVariant.success : null}
-        />
-      </UpdatesBar>
-    </UpdatesGroup>
-  );
+          </UpdatesType>
+          <UpdatesBar>
+            <Progress
+              title={t('public~{{updatedMCPNodes}} of {{totalMCPNodes}}', {
+                updatedMCPNodes,
+                totalMCPNodes,
+              })}
+              value={!_.isNaN(percentMCPNodes) ? percentMCPNodes : null}
+              size={ProgressSize.sm}
+              variant={percentMCPNodes === 100 ? ProgressVariant.success : null}
+            />
+          </UpdatesBar>
+        </UpdatesGroup>
+      );
 };
 
 const OtherNodes: React.FC<OtherNodesProps> = ({
+  desiredVersion,
   hideIfComplete,
   machineConfigPools,
   updateStartedTime,
@@ -616,6 +637,7 @@ const OtherNodes: React.FC<OtherNodesProps> = ({
       {otherNodes.map((mcp) => {
         return (
           <NodesUpdatesGroup
+            desiredVersion={desiredVersion}
             divided
             hideIfComplete={hideIfComplete}
             key={mcp.metadata.uid}
@@ -765,6 +787,7 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
       </UpdatesGroup>
       {masterMachinePoolConfig && (
         <NodesUpdatesGroup
+          desiredVersion={desiredVersion}
           machineConfigPool={masterMachinePoolConfig}
           name="Master"
           updateStartedTime={updateStartedTime}
@@ -772,6 +795,7 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
       )}
       {workerMachineConfigPool && (
         <NodesUpdatesGroup
+          desiredVersion={desiredVersion}
           divided
           machineConfigPool={workerMachineConfigPool}
           name="Worker"
@@ -779,7 +803,11 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
         />
       )}
       {machineConfigPools.length > 2 && (
-        <OtherNodes machineConfigPools={machineConfigPools} updateStartedTime={updateStartedTime} />
+        <OtherNodes
+          desiredVersion={desiredVersion}
+          machineConfigPools={machineConfigPools}
+          updateStartedTime={updateStartedTime}
+        />
       )}
     </UpdatesProgress>
   );
@@ -904,7 +932,10 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               isInline
               title={t(
                 'public~Version {{version}} not found in channel {{channel}}. To request update recommendations, configure a channel that supports your version.',
-                { version: getLastCompletedUpdate(cv), channel: cv.spec.channel },
+                {
+                  version: getLastCompletedUpdate(cv),
+                  channel: cv.spec.channel,
+                },
               )}
               className="co-alert"
             />
@@ -952,6 +983,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                     {workerMachineConfigPool && (
                       <UpdatesProgress>
                         <NodesUpdatesGroup
+                          desiredVersion={desiredVersion}
                           divided
                           hideIfComplete
                           machineConfigPool={workerMachineConfigPool}
@@ -960,6 +992,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                         />
                         {machineConfigPools.length > 2 && (
                           <OtherNodes
+                            desiredVersion={desiredVersion}
                             hideIfComplete
                             machineConfigPools={machineConfigPools}
                             updateStartedTime={updateStartedTime}
@@ -1117,7 +1150,12 @@ export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match 
   const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
   const title = t('public~Cluster Settings');
   const resources: FirehoseResource[] = [
-    { kind: clusterVersionReference, name: 'version', isList: false, prop: 'obj' },
+    {
+      kind: clusterVersionReference,
+      name: 'version',
+      isList: false,
+      prop: 'obj',
+    },
   ];
   if (hasClusterAutoscaler) {
     resources.push({
@@ -1236,6 +1274,7 @@ type UpdatesTypeProps = {
 };
 
 type NodesUpdatesGroupProps = {
+  desiredVersion: string;
   divided?: boolean;
   hideIfComplete?: boolean;
   name: string;
@@ -1244,6 +1283,7 @@ type NodesUpdatesGroupProps = {
 };
 
 type OtherNodesProps = {
+  desiredVersion: string;
   hideIfComplete?: boolean;
   machineConfigPools: MachineConfigPoolKind[];
   updateStartedTime: string;
