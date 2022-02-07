@@ -9,6 +9,7 @@
       "insertBefore": "helm",
       "name": "%gitops-plugin~Environments%",
       "href": "/environments",
+      "namespaced": true,
       "dataAttributes": {
         "data-test-id": "environments-header"
       }

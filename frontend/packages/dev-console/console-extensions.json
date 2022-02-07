@@ -358,6 +358,7 @@
       "section": "top",
       "name": "%devconsole~Observe%",
       "href": "/dev-monitoring",
+      "namespaced": true,
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-monitoring",
         "data-tour-id": "tour-monitoring-nav",

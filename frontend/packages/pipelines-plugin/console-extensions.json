@@ -563,6 +563,7 @@
       "insertAfter": "builds",
       "name": "%pipelines-plugin~Pipelines%",
       "href": "/dev-pipelines",
+      "namespaced": true,
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-pipelines",
         "data-test-id": "pipeline-header"
