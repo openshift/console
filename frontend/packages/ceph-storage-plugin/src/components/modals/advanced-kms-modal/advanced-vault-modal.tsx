@@ -233,6 +233,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
                 maxSize: KMSMaxFileUploadSize,
                 onDropRejected: () => setError(KMSFileSizeErrorMsg),
               }}
+              data-test="kms-service-ca-cert"
             />
           </FormGroup>
           <FormGroup
@@ -253,6 +254,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
                 maxSize: KMSMaxFileUploadSize,
                 onDropRejected: () => setError(KMSFileSizeErrorMsg),
               }}
+              data-test="kms-service-client-cert"
             />
           </FormGroup>
           <FormGroup
@@ -273,6 +275,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
                 maxSize: KMSMaxFileUploadSize,
                 onDropRejected: () => setError(KMSFileSizeErrorMsg),
               }}
+              data-test="kms-service-client-private-key"
             />
           </FormGroup>
         </ModalBody>
