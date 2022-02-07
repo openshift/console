@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as formik from 'formik';
+import formik from 'formik';
 import { InputField } from '@console/shared';
 import { CREATE_APPLICATION_KEY } from '../../../const';
 import ApplicationDropdown from '../ApplicationDropdown';

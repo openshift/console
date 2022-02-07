@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { DetailsPage } from '@console/internal/components/factory';
-import * as utils from '@console/internal/components/utils';
+import * as utils from '@console/internal/components/utils/rbac';
 import CreateProjectListPage from '../../CreateProjectListPage';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 

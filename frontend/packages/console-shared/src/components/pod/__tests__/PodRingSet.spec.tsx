@@ -3,7 +3,7 @@ import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { shallow } from 'enzyme';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
-import * as hooks from '../../../hooks';
+import * as hooks from '../../../hooks/usePodsWatcher';
 import { PodRCData } from '../../../types';
 import { samplePods } from '../../../utils/__tests__/test-resource-data';
 import PodRing from '../PodRing';

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import * as _ from 'lodash';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';

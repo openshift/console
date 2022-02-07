@@ -8,7 +8,7 @@ import * as hookUtils from '../../pipelines/hooks';
 import TaskRuns from '../detail-page-tabs/TaskRuns';
 import PipelineRunEvents from '../events/PipelineRunEvents';
 import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
-import * as utils from '../triggered-by';
+import * as utils from '../triggered-by/hooks';
 
 const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');

@@ -4,6 +4,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import * as utils from '@console/internal/components/utils';
+import * as rbac from '@console/internal/components/utils/rbac';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel } from '../../../models';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
@@ -37,7 +38,7 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should show info if no Revisions present, link for all revisions should not be shown and traffic split button should be disabled', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    const spyUseAccessReview = jest.spyOn(rbac, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
     wrapper = shallow(
       <RevisionsOverviewList revisions={[]} service={MockKnativeResources.revisions.data[0]} />,
@@ -86,7 +87,7 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should have button for traffic distribution and enabled', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    const spyUseAccessReview = jest.spyOn(rbac, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(true);
     expect(wrapper.find(Button)).toHaveLength(1);
     expect(
@@ -111,7 +112,7 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should not show button for traffic distribution if access is not there', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    const spyUseAccessReview = jest.spyOn(rbac, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(false);
     wrapper = shallow(
       <RevisionsOverviewList

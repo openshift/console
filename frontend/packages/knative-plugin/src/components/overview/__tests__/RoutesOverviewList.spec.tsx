@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as utils from '@console/internal/components/utils';
+import * as utils from '@console/internal/components/utils/rbac';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import RoutesOverviewList from '../RoutesOverviewList';

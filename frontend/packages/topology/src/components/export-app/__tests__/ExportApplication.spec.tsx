@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import * as utils from '@console/internal/components/utils';
+import * as utils from '@console/internal/components/utils/rbac';
 import * as k8s from '@console/internal/module/k8s';
-import * as shared from '@console/shared';
+import * as useToast from '@console/shared/src/components/toast/index';
+import * as useFlag from '@console/shared/src/hooks/flag';
+import * as useIsMobile from '@console/shared/src/hooks/useIsMobile';
+import * as useUserSettings from '@console/shared/src/hooks/useUserSettings';
 import { ExportModel } from '../../../models';
 import ExportApplication from '../ExportApplication';
 import { mockExportData } from './export-data';
 
 describe('ExportApplication', () => {
   const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-  const spyUseFlag = jest.spyOn(shared, 'useFlag');
-  const spyUseIsMobile = jest.spyOn(shared, 'useIsMobile');
-  const spyUseToast = jest.spyOn(shared, 'useToast');
-  const spyUseUserSettings = jest.spyOn(shared, 'useUserSettings');
+  const spyUseFlag = jest.spyOn(useFlag, 'useFlag');
+  const spyUseIsMobile = jest.spyOn(useIsMobile, 'useIsMobile');
+  const spyUseToast = jest.spyOn(useToast, 'useToast');
+  const spyUseUserSettings = jest.spyOn(useUserSettings, 'useUserSettings');
 
   beforeEach(() => {
     spyUseToast.mockReturnValue({ addToast: (v) => ({ v }) } as any);

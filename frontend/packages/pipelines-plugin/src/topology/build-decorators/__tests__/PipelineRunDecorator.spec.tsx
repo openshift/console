@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
-import * as utils from '@console/internal/components/utils';
+import * as utils from '@console/internal/components/utils/rbac';
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { ConnectedPipelineRunDecorator } from '../PipelineRunDecorator';
 import { connectedPipelineOne } from './decorator-data';

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as utils from '@console/internal/components/utils';
+import * as rbac from '@console/internal/components/utils/rbac';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { PageContents } from '../MonitoringPage';
 
 describe('Monitoring Page ', () => {
   let monPageProps: React.ComponentProps<typeof PageContents>;
-  const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+  const spyUseAccessReview = jest.spyOn(rbac, 'useAccessReview');
   it('should render ProjectList page when in all-projects namespace', () => {
     monPageProps = {
       match: {

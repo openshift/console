@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   PREFERRED_CREATE_EDIT_METHOD_USER_SETTING_VALUE_LATEST,
   usePreferredCreateEditMethod,
@@ -105,7 +105,7 @@ describe('useEditorType', () => {
   it('should return false for loaded if resources have loaded and defaultValue is defined but activeEditorType is not defined', () => {
     mockUserSettings.mockReturnValue([undefined, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
-    spyOn(React, 'useState').and.returnValue([null, jest.fn()]);
+    jest.spyOn(React, 'useState').mockReturnValue([null, jest.fn()]);
     const { result } = testHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);
@@ -115,7 +115,7 @@ describe('useEditorType', () => {
   it('should return true for loaded if all resources have loaded but activeEditorType and defaultValue are not defined', () => {
     mockUserSettings.mockReturnValue([undefined, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
-    spyOn(React, 'useState').and.returnValue([null, jest.fn()]);
+    jest.spyOn(React, 'useState').mockReturnValue([null, jest.fn()]);
     const { result } = testHook(() => useEditorType(lastViewUserSettingKey, null));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);

@@ -7,6 +7,7 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
+import * as resource from '@console/internal/module/k8s/resource';
 import { getSuggestedName } from '../../../utils/imagestream-utils';
 import {
   mockDeployImageFormData,
@@ -70,7 +71,7 @@ describe('DeployImage Submit Utils', () => {
   describe('createOrUpdateImageStream', () => {
     const k8sCreate = jest.spyOn(k8s, 'k8sCreate');
     const k8sUpdate = jest.spyOn(k8s, 'k8sUpdate');
-    const k8sWaitForUpdate = jest.spyOn(k8s, 'k8sWaitForUpdate');
+    const k8sWaitForUpdate = jest.spyOn(resource, 'k8sWaitForUpdate');
 
     beforeEach(() => {
       jest.resetAllMocks();

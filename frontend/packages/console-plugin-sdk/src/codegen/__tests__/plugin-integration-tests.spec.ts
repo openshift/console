@@ -1,4 +1,4 @@
-import * as glob from 'glob';
+import glob from 'glob';
 import { getTemplatePackage } from '../../utils/test-utils';
 import { getTestSuitesForPluginPackage, mergeTestSuites } from '../plugin-integration-tests';
 import { PluginPackage } from '../plugin-resolver';
