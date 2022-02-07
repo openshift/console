@@ -38,7 +38,6 @@ import {
 } from './install-plan';
 import * as modal from './modals/installplan-preview-modal';
 import { referenceForStepResource } from '.';
-import Spy = jasmine.Spy;
 
 const i18nNS = 'public';
 
@@ -256,9 +255,9 @@ describe('InstallPlanPreview', () => {
     },
   };
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
+  const spyAndExpect = (spy) => (returnValue: any) =>
     new Promise((resolve) =>
-      spy.and.callFake((...args) => {
+      spy.mockImplementation((...args) => {
         resolve(args);
         return returnValue;
       }),
@@ -299,7 +298,7 @@ describe('InstallPlanPreview', () => {
   it('calls `k8sPatch` to set `approved: true` when button is clicked', (done) => {
     jest.spyOn(k8s, 'k8sPatch').mockImplementation((model, data) => Promise.resolve(data));
 
-    spyAndExpect(spyOn(k8s, 'k8sPatch'))(Promise.resolve(testInstallPlan))
+    spyAndExpect(jest.spyOn(k8s, 'k8sPatch'))(Promise.resolve(testInstallPlan))
       .then(([model, installPlan]) => {
         expect(model).toEqual(InstallPlanModel);
         expect(jest.spyOn(k8s, 'k8sPatch')).toHaveBeenLastCalledWith(

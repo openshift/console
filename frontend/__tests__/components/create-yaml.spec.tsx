@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { load, dump } from 'js-yaml';
-import * as extensionHooks from '@console/plugin-sdk';
+import * as extensionHooks from '@console/plugin-sdk/src/api/useExtensions';
 
 import { CreateYAML, CreateYAMLProps } from '../../public/components/create-yaml';
 import { PodModel } from '../../public/models';
@@ -13,7 +13,7 @@ describe(CreateYAML.displayName, () => {
   let wrapper: ShallowWrapper<CreateYAMLProps>;
 
   beforeEach(() => {
-    spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
+    jest.spyOn(extensionHooks, 'useExtensions').mockReturnValue([]);
     const match = { url: '', params: { ns: 'default', plural: 'pods' }, isExact: true, path: '' };
     wrapper = shallow(
       <CreateYAML.WrappedComponent match={match} kindsInFlight={false} kindObj={PodModel} />,

@@ -25,7 +25,6 @@ import CreateOperandPage, {
 } from './create-operand';
 import { OperandForm, OperandFormProps } from './operand-form';
 import { OperandYAML, OperandYAMLProps } from './operand-yaml';
-import Spy = jasmine.Spy;
 
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({ useK8sModel: jest.fn() }));
 
@@ -126,9 +125,9 @@ describe('CreateOperandPage', () => {
 xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', () => {
   let wrapper: ShallowWrapper<OperandFormProps>;
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
+  const spyAndExpect = (spy) => (returnValue: any) =>
     new Promise((resolve) =>
-      spy.and.callFake((...args) => {
+      spy.mockImplementation((...args) => {
         resolve(args);
         return returnValue;
       }),
@@ -172,7 +171,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
   });
 
   it('calls `k8sCreate` to create new operand if form is valid', (done) => {
-    spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.resolve({}))
+    spyAndExpect(jest.spyOn(k8s, 'k8sCreate'))(Promise.resolve({}))
       .then(([model, obj]: [k8s.K8sKind, k8s.K8sResourceKind]) => {
         expect(model).toEqual(testModel);
         expect(obj.apiVersion).toEqual(k8s.apiVersionForModel(testModel));
@@ -189,7 +188,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
   it('displays errors if calling `k8sCreate` fails', (done) => {
     const error = { message: 'Failed to create' } as k8s.Status;
     /* eslint-disable-next-line prefer-promise-reject-errors */
-    spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.reject({ json: error }))
+    spyAndExpect(jest.spyOn(k8s, 'k8sCreate'))(Promise.reject({ json: error }))
       .then(
         () => new Promise<void>((resolve) => setTimeout(() => resolve(), 10)),
       )

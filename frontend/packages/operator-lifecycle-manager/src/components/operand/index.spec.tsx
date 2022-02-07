@@ -11,9 +11,10 @@ import {
   ResourceKebab,
   FirehoseResourcesResult,
 } from '@console/internal/components/utils';
-import * as k8sModels from '@console/internal/module/k8s';
+import * as k8s from '@console/internal/module/k8s';
+import * as k8sModels from '@console/internal/module/k8s/k8s-models';
 import store from '@console/internal/redux';
-import * as extensionHooks from '@console/plugin-sdk';
+import * as extensionHooks from '@console/plugin-sdk/src/api/useExtensions';
 import { referenceForProvidedAPI } from '..';
 import {
   testCRD,
@@ -110,7 +111,7 @@ describe(OperandTableRow.displayName, () => {
   let wrapper: ShallowWrapper<OperandTableRowProps>;
 
   beforeEach(() => {
-    spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
+    jest.spyOn(extensionHooks, 'useExtensions').mockReturnValue([]);
     wrapper = shallow(<OperandTableRow obj={testResourceInstance} columns={[]} />);
   });
 
@@ -157,18 +158,18 @@ describe(OperandTableRow.displayName, () => {
     expect(kebab.props().actions[1](testModel, testOwnedResourceInstance).labelKey).toEqual(
       `olm~Delete {{item}}`,
     );
-    expect(kebab.props().kind).toEqual(k8sModels.referenceFor(testResourceInstance));
+    expect(kebab.props().kind).toEqual(k8s.referenceFor(testResourceInstance));
     expect(kebab.props().resource).toEqual(testResourceInstance);
   });
 });
 
 describe(OperandList.displayName, () => {
   let wrapper: ShallowWrapper<OperandListProps>;
-  let resources: k8sModels.K8sResourceKind[];
+  let resources: k8s.K8sResourceKind[];
 
   beforeEach(() => {
     resources = [testResourceInstance];
-    spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
+    jest.spyOn(extensionHooks, 'useExtensions').mockReturnValue([]);
     // eslint-disable-next-line react/jsx-pascal-case
     wrapper = shallow(<OperandList loaded data={resources} />);
   });
@@ -303,7 +304,7 @@ describe('ResourcesList', () => {
     match = {
       params: {
         appName: 'etcd',
-        plural: k8sModels.referenceFor(testResourceInstance),
+        plural: k8s.referenceFor(testResourceInstance),
         name: 'my-etcd',
         ns: 'default',
       },
@@ -372,7 +373,7 @@ describe(OperandDetailsPage.displayName, () => {
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
     expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
-      kind: k8sModels.referenceForModel(ClusterServiceVersionModel),
+      kind: k8s.referenceForModel(ClusterServiceVersionModel),
       name: match.params.appName,
       namespace: match.params.ns,
       isList: false,
@@ -502,7 +503,7 @@ describe(ProvidedAPIsPage.displayName, () => {
 
   beforeAll(() => {
     // Since crd models have not been loaded into redux state, just force return of the correct model type
-    spyOn(k8sModels, 'modelFor').and.returnValue(testModel);
+    jest.spyOn(k8sModels, 'modelFor').mockReturnValue(testModel);
   });
 
   beforeEach(() => {

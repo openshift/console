@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
@@ -32,7 +32,7 @@ jest.mock('@console/shared', () => {
 describe('TopologyPageToolbar tests', () => {
   it('should render view shortcuts button on topology page toolbar', () => {
     const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
+    jest.spyOn(React, 'useContext').mockReturnValue({
       isEmptyModel: false,
       namespace: 'test-namespace',
     });
@@ -44,7 +44,7 @@ describe('TopologyPageToolbar tests', () => {
 
   it('should render view shortcuts button on topology list page toolbar', () => {
     const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
+    jest.spyOn(React, 'useContext').mockReturnValue({
       isEmptyModel: false,
       namespace: 'test-namespace',
     });
@@ -56,7 +56,7 @@ describe('TopologyPageToolbar tests', () => {
 
   it('should show the topology icon when on topology list page', () => {
     const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
+    jest.spyOn(React, 'useContext').mockReturnValue({
       isEmptyModel: false,
       namespace: 'test-namespace',
     });
@@ -68,7 +68,7 @@ describe('TopologyPageToolbar tests', () => {
 
   it('should show the topology list icon when on topology page', () => {
     const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
+    jest.spyOn(React, 'useContext').mockReturnValue({
       isEmptyModel: false,
       namespace: 'test-namespace',
     });
@@ -80,7 +80,7 @@ describe('TopologyPageToolbar tests', () => {
 
   it('should not contain view switcher when when no project is selected', () => {
     const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
+    jest.spyOn(React, 'useContext').mockReturnValue({
       isEmptyModel: false,
       namespace: undefined,
     });
@@ -92,7 +92,7 @@ describe('TopologyPageToolbar tests', () => {
 
   it('should disable view switcher when no model', () => {
     const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
+    jest.spyOn(React, 'useContext').mockReturnValue({
       isEmptyModel: true,
       namespace: 'test-namespace',
     });

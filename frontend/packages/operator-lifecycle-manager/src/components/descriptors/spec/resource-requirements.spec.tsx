@@ -11,7 +11,6 @@ import {
   ResourceRequirementsModalLink,
   ResourceRequirementsModalLinkProps,
 } from './resource-requirements';
-import Spy = jasmine.Spy;
 
 describe(ResourceRequirementsModal.name, () => {
   let wrapper: ReactWrapper<ResourceRequirementsModalProps>;
@@ -19,9 +18,9 @@ describe(ResourceRequirementsModal.name, () => {
   const description = 'Define the resource requests for this TestResource instance.';
   const cancel = jasmine.createSpy('cancelSpy');
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
+  const spyAndExpect = (spy) => (returnValue: any) =>
     new Promise((resolve) =>
-      spy.and.callFake((...args) => {
+      spy.mockImplementation((...args) => {
         resolve(args);
         return returnValue;
       }),
@@ -66,7 +65,7 @@ describe(ResourceRequirementsModal.name, () => {
       .find('input[name="ephemeral-storage"]')
       .simulate('change', { target: { value: '50Mi' } });
 
-    spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve())
+    spyAndExpect(jest.spyOn(k8s, 'k8sUpdate'))(Promise.resolve())
       .then(([model, newObj]: [k8s.K8sKind, k8s.K8sResourceKind]) => {
         expect(model).toEqual(testModel);
         expect(newObj.spec.resources.requests).toEqual({

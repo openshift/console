@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import Spy = jasmine.Spy;
-import * as fileSaver from 'file-saver';
+import fileSaver from 'file-saver';
 import { Button } from '@patternfly/react-core';
 
 import {
@@ -14,9 +13,9 @@ describe(DownloadButton.displayName, () => {
   let wrapper: ReactWrapper<DownloadButtonProps>;
   const url = 'http://google.com';
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
+  const spyAndExpect = (spy) => (returnValue: any) =>
     new Promise((resolve) =>
-      spy.and.callFake((...args) => {
+      spy.mockImplementation((...args) => {
         resolve(args);
         return returnValue;
       }),
@@ -25,11 +24,11 @@ describe(DownloadButton.displayName, () => {
   beforeEach(() => {
     wrapper = mount(<DownloadButton url={url} />);
 
-    spyOn(fileSaver, 'saveAs').and.returnValue(null);
+    jest.spyOn(fileSaver, 'saveAs').mockReturnValue(null);
   });
 
   it('renders button which calls `coFetch` to download URL when clicked', (done) => {
-    spyAndExpect(spyOn(coFetch, 'coFetch'))(Promise.resolve()).then(([downloadURL]) => {
+    spyAndExpect(jest.spyOn(coFetch, 'coFetch'))(Promise.resolve()).then(([downloadURL]) => {
       expect(downloadURL).toEqual(url);
       done();
     });
@@ -38,7 +37,7 @@ describe(DownloadButton.displayName, () => {
   });
 
   it('renders "Downloading..." if download is in flight', (done) => {
-    spyAndExpect(spyOn(coFetch, 'coFetch'))(Promise.resolve()).then(() => {
+    spyAndExpect(jest.spyOn(coFetch, 'coFetch'))(Promise.resolve()).then(() => {
       expect(
         wrapper
           .find(Button)

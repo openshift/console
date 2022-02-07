@@ -6,7 +6,7 @@ import { EnvironmentPage, UnconnectedEnvironmentPage } from '../../public/compon
 // eslint-disable-next-line import/no-duplicates
 import { FieldLevelHelp } from '../../public/components/utils';
 // eslint-disable-next-line import/no-duplicates
-import * as utils from '../../public/components/utils';
+import * as utils from '../../public/components/utils/rbac';
 import { DeploymentModel } from '../../public/models';
 import * as k8s from '../../public/module/k8s';
 
@@ -45,9 +45,9 @@ describe(EnvironmentPage.name, () => {
 
   describe('When user does not have permission', () => {
     beforeEach(() => {
-      spyOn(utils, 'checkAccess').and.callFake(() =>
-        Promise.resolve({ status: { allowed: false } }),
-      );
+      jest
+        .spyOn(utils, 'checkAccess')
+        .mockReturnValue(Promise.resolve({ status: { allowed: false } } as any));
       environmentPageRO = (
         <UnconnectedEnvironmentPage
           obj={obj}
@@ -72,10 +72,10 @@ describe(EnvironmentPage.name, () => {
 
   describe('When readOnly attribute is "false"', () => {
     beforeEach(() => {
-      spyOn(k8s, 'k8sGet').and.callFake(() => Promise.resolve());
-      spyOn(utils, 'checkAccess').and.callFake(() =>
-        Promise.resolve({ status: { allowed: true } }),
-      );
+      jest.spyOn(k8s, 'k8sGet').mockReturnValue(Promise.resolve());
+      jest
+        .spyOn(utils, 'checkAccess')
+        .mockReturnValue(Promise.resolve({ status: { allowed: true } } as any));
       environmentPage = (
         <UnconnectedEnvironmentPage
           obj={obj}

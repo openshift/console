@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import Spy = jasmine.Spy;
 
 import { PullSecret } from '../../public/components/namespace';
 import * as k8s from '../../public/module/k8s';
@@ -11,16 +10,13 @@ import { ServiceAccountModel } from '../../public/models';
 describe(PullSecret.displayName, () => {
   let wrapper: ReactWrapper;
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
-    new Promise((resolve) =>
-      spy.and.callFake((...args) => {
-        resolve(args);
-        return returnValue;
-      }),
-    );
-
   it('renders link to open modal once pull secrets are loaded', (done) => {
-    spyAndExpect(spyOn(k8s, 'k8sGet'))(Promise.resolve({ items: [] }))
+    new Promise((resolve) =>
+      jest.spyOn(k8s, 'k8sGet').mockImplementation((...args) => {
+        resolve(args);
+        return Promise.resolve({ items: [] });
+      }),
+    )
       .then(([model, name, namespace, options]) => {
         expect(model).toEqual(ServiceAccountModel);
         expect(name).toBe('default');
@@ -38,7 +34,7 @@ describe(PullSecret.displayName, () => {
   });
 
   it('does not render link if still loading', () => {
-    spyOn(k8s, 'k8sGet').and.returnValue(Promise.resolve({ items: [] }));
+    jest.spyOn(k8s, 'k8sGet').mockReturnValue(Promise.resolve({ items: [] }));
     wrapper = mount(<PullSecret namespace={testNamespace} />);
 
     expect(wrapper.find(LoadingInline).exists()).toBe(true);

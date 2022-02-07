@@ -11,7 +11,7 @@ import {
 
 describe('resourcePathFromModel', () => {
   beforeEach(() => {
-    spyOn(fetchUtils, 'coFetch').and.callFake(() => Promise.resolve({}));
+    jest.spyOn(fetchUtils, 'coFetch').mockReturnValue(Promise.resolve({}) as any);
   });
   const testResourcePath = (model: K8sKind, name: string, namespace: string, expected: string) => {
     it(`${model.plural}${name ? `/${name}` : ''}${

@@ -1,6 +1,6 @@
 import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
-import * as utils from '@console/internal/components/utils';
+import * as utils from '@console/internal/components/utils/rbac';
 import * as k8s from '@console/internal/module/k8s';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockBaseResources } from '@console/shared/src/utils/__tests__/test-resource-data';
@@ -40,11 +40,10 @@ import {
   MockKnativeResources,
   sampleDeploymentsCamelConnector,
 } from './topology-knative-test-data';
-import Spy = jasmine.Spy;
 
-const spyAndReturn = (spy: Spy) => (returnValue: any) =>
+const spyAndReturn = (spy) => (returnValue: any) =>
   new Promise((resolve) =>
-    spy.and.callFake((...args) => {
+    spy.mockImplementation((...args) => {
       resolve(args);
       return returnValue;
     }),
@@ -144,19 +143,18 @@ describe('knative data transformer ', () => {
       (n) => (n as OdcNodeModel).resource.metadata.name === 'overlayimage',
     ) as OdcNodeModel;
 
-    const spy = spyOn(k8s, 'k8sKill');
-    const checkAccessSpy = spyOn(utils, 'checkAccess');
-    const spyK8sList = spyOn(k8s, 'k8sList');
+    const spy = jest.spyOn(k8s, 'k8sKill');
+    const checkAccessSpy = jest.spyOn(utils, 'checkAccess');
+    const spyK8sList = jest.spyOn(k8s, 'k8sList');
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
     spyAndReturn(spyK8sList)(Promise.resolve([]));
 
     cleanUpWorkload(node.resource, true)
       .then(() => {
-        const allArgs = spy.calls.allArgs();
-        const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(2);
-        expect(removedModels.find((rm) => rm.id === ServiceModel.id)).toBeTruthy();
+        const removedModels = spy.mock.calls[0][0];
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(removedModels.id === ServiceModel.id).toBeTruthy();
         done();
       })
       .catch((err) => fail(err));
