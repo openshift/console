@@ -15,15 +15,17 @@ describe('Create Route', () => {
   let wrapper: ShallowWrapper<{}, CreateRouteState>;
 
   beforeEach(() => {
-    spyOn(UIActions, 'getActiveNamespace').and.returnValue('default');
-    spyOn(k8sActions, 'k8sList').and.returnValue(
-      Promise.resolve([
-        { metadata: { name: 'service1' } },
-        { metadata: { name: 'service2' } },
-        { metadata: { name: 'service3' } },
-        { metadata: { name: 'service4' } },
-      ]),
-    );
+    jest.spyOn(UIActions, 'getActiveNamespace').mockReturnValue('default');
+    jest
+      .spyOn(k8sActions, 'k8sList')
+      .mockReturnValue(
+        Promise.resolve([
+          { metadata: { name: 'service1' } },
+          { metadata: { name: 'service2' } },
+          { metadata: { name: 'service3' } },
+          { metadata: { name: 'service4' } },
+        ]),
+      );
     wrapper = shallow(<CreateRoute />).dive();
   });
 
