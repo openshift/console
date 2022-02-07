@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceDropdownField, getFieldId } from '@console/shared';

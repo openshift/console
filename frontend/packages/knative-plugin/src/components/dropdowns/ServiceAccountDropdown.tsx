@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { ServiceAccountModel } from '@console/internal/models';

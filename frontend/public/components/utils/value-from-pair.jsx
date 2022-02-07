@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 
 import { Dropdown, ResourceName } from './';

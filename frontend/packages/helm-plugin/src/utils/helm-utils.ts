@@ -1,4 +1,4 @@
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import i18next from 'i18next';
 import { loadAll, dump, DEFAULT_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';

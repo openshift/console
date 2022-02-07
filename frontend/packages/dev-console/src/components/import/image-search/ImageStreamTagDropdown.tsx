@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, getIn } from 'formik';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ImageStreamTagModel } from '@console/internal/models';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useField } from 'formik';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';

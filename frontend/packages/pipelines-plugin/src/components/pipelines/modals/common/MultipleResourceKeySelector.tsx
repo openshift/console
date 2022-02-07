@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import classnames from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';

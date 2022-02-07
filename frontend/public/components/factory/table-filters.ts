@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
 import { getNodeRole, getLabelsAsString } from '@console/shared';
 import { FilterValue, RowFilter } from '@console/dynamic-plugin-sdk';

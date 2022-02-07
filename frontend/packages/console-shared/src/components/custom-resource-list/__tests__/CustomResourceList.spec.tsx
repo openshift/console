@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EmptyState } from '@patternfly/react-core';
 import { SortByDirection, sortable } from '@patternfly/react-table';
 import { shallow } from 'enzyme';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { TableData, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import { RowFilter, FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { LoadingBox } from '@console/internal/components/utils';

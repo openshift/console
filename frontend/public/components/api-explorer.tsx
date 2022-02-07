@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Map as ImmutableMap } from 'immutable';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';

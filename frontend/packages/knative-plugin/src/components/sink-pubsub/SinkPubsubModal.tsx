@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import {

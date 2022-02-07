@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { getIcon, getIcons } from '@console/internal/components/catalog/catalog-item-icon';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 

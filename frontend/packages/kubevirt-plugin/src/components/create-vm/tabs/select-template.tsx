@@ -23,7 +23,7 @@ import {
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
 import classnames from 'classnames';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import { createProjectModal } from '@console/internal/components/modals';
 import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';

@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import {

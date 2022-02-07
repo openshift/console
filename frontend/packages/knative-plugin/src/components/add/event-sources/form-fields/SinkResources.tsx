@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
-import * as fuzzy from 'fuzzysearch';
+import fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
