@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64';
-import * as ParseBitbucketUrl from 'parse-bitbucket-url';
+import ParseBitbucketUrl from 'parse-bitbucket-url';
 import 'whatwg-fetch';
 import {
   GitSource,
