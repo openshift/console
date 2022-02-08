@@ -13,6 +13,7 @@ import {
   reducePluginTestSuites,
   mergeTestSuites,
 } from '@console/plugin-sdk/src/codegen/plugin-integration-tests';
+import * as jasmine from 'jasmine';
 
 const tap = !!process.env.TAP;
 
@@ -149,7 +150,7 @@ export const config = {
   },
   beforeLaunch: () => new Promise((resolve) => htmlReporter.beforeLaunch(resolve)),
   onPrepare: () => {
-    const addReporter = jasmine.getEnv().addReporter;
+    const addReporter = (jasmine as any).getEnv().addReporter;
     browser.waitForAngularEnabled(false);
     addReporter(htmlReporter);
     addReporter(junitReporter);

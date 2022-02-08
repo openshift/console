@@ -6,7 +6,8 @@
     "target": "es2016",
     "jsx": "react",
     "typeRoots": ["node_modules/@types", "@types"],
-    "types": ["node", "jest", "console"]
+    "types": ["node", "jest", "console"],
+    "esModuleInterop": true
   },
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
 }
