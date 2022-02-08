@@ -2,7 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { DetailsPage } from '@console/internal/components/factory';
-import * as utils from '@console/internal/components/utils/rbac';
+import * as utils from '@console/internal/components/utils';
+import * as rbac from '@console/internal/components/utils/rbac';
 import CreateProjectListPage from '../../CreateProjectListPage';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
@@ -29,7 +30,7 @@ describe('ProjectDetailsPage', () => {
   });
 
   it('should not render the Project Access tab if user has no access to role bindings', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    const spyUseAccessReview = jest.spyOn(rbac, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(false);
     const component = shallow(<PageContents match={testProjectMatch} />);
     const pages = component.find(DetailsPage).prop('pages');
