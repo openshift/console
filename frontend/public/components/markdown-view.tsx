@@ -2,7 +2,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
-import * as sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
 import { useForceRender, useResizeObserver } from '@console/shared';
 

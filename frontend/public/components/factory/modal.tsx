@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import * as Modal from 'react-modal';
+import Modal from 'react-modal';
 import { Router } from 'react-router-dom';
 import classnames from 'classnames';
 import * as _ from 'lodash-es';
