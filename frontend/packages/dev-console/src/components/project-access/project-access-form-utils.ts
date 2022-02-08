@@ -33,7 +33,7 @@ export const getUsersFromSubject = (user: RoleBinding): UserRoleBinding[] =>
   }));
 
 export const getUserRoleBindings = (roleBindings: RoleBinding[]): UserRoleBinding[] =>
-  _.flatten(roleBindings.map((user) => getUsersFromSubject(user)));
+  _.filter(_.flatten(roleBindings.map((user) => getUsersFromSubject(user))), undefined);
 
 export const ignoreRoleBindingName = (roleBinding: UserRoleBinding[]) => {
   const res = roleBinding.map((obj) => ({ user: obj.user, role: obj.role }));
