@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAccessReview } from '@console/internal/components/utils';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   useFlag,
   useIsMobile,
@@ -52,9 +53,9 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
       const exportAppToastConfig = {
         ...exportAppToast,
         [key]: {
+          kind: referenceForModel(ExportModel),
           uid: exportResp.metadata.uid,
           name: exportResp.metadata.name,
-          kind: exportResp.kind,
           namespace,
         },
       };
