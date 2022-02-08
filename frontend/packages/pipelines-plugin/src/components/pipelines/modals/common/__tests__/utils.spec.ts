@@ -4,7 +4,12 @@ import {
   pipelineTestData,
 } from '../../../../../test-data/pipeline-data';
 import { PipelineKind, PipelineRunKind } from '../../../../../types';
-import { preferredNameAnnotation, TektonResourceLabel, VolumeTypes } from '../../../const';
+import {
+  preferredNameAnnotation,
+  StartedByAnnotation,
+  TektonResourceLabel,
+  VolumeTypes,
+} from '../../../const';
 import { CommonPipelineModalFormikValues } from '../types';
 import {
   convertPipelineToModalData,
@@ -13,6 +18,10 @@ import {
   getPipelineRunFromForm,
   migratePipelineRun,
 } from '../utils';
+
+jest.mock('@console/internal/actions/ui', () => ({
+  getActiveUserName: () => 'developer',
+}));
 
 const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline;
 const samplePipelineRun =
@@ -194,6 +203,13 @@ describe('PipelineAction testing getPipelineRunData', () => {
     const runData = getPipelineRunData(null, pipelineRun);
     expect(runData.spec.pipelineRef).toMatchObject(pipelineRun.spec.pipelineRef);
   });
+
+  it('should add active user name to started annotations', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SKIPPED];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.metadata.annotations[StartedByAnnotation.user]).toBe('developer');
+  });
 });
 
 describe('PipelineAction testing getPipelineRunFromForm', () => {
@@ -233,7 +249,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
         namespace: pipelinerun.metadata.namespace,
         generateName: `${samplePipeline.metadata.name}-`,
         labels: { ...pipelinerun.metadata.labels, ...labels },
-        annotations: {},
+        annotations: { [StartedByAnnotation.user]: 'developer' },
       },
       spec: {
         pipelineRef: { name: samplePipeline.metadata.name },

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { getActiveUserName } from '@console/internal/actions/ui';
 import { getRandomChars } from '@console/shared';
 import { PipelineRunModel } from '../../../../models';
 import {
@@ -14,7 +15,12 @@ import {
   PipelineRunParam,
 } from '../../../../types';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
-import { TektonResourceLabel, VolumeTypes, preferredNameAnnotation } from '../../const';
+import {
+  TektonResourceLabel,
+  VolumeTypes,
+  preferredNameAnnotation,
+  StartedByAnnotation,
+} from '../../const';
 import { CREATE_PIPELINE_RESOURCE, initialResourceFormValues } from './const';
 import {
   CommonPipelineModalFormikValues,
@@ -87,6 +93,9 @@ export const getPipelineRunData = (
     {},
     pipeline?.metadata?.annotations,
     latestRun?.metadata?.annotations,
+    {
+      [StartedByAnnotation.user]: getActiveUserName(),
+    },
     !latestRun?.spec.pipelineRef &&
       !latestRun?.metadata.annotations?.[preferredNameAnnotation] && {
         [preferredNameAnnotation]: pipelineName,
