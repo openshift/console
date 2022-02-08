@@ -147,6 +147,17 @@ export const roleBindingsWithRequiredRoles = [
       },
     ],
   },
+  {
+    metadata: {
+      name: 'check-edit',
+      namespace: 'xyz',
+    },
+    roleRef: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'ClusterRole',
+      name: 'edit',
+    },
+  },
 ];
 
 export const roleBindingsWithRequiredAttributes = [
