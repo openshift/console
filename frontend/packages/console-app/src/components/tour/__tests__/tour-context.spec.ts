@@ -1,5 +1,5 @@
 import * as redux from 'react-redux';
-import * as plugins from '@console/plugin-sdk';
+import * as plugins from '@console/plugin-sdk/src/api/useExtensions';
 import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import { TourActions } from '../const';
@@ -7,6 +7,7 @@ import * as TourModule from '../tour-context';
 import { TourDataType } from '../type';
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
+  __esModule: true,
   default: () => ['dev', jest.fn()],
 }));
 
@@ -73,19 +74,17 @@ describe('guided-tour-context', () => {
     });
 
     it('should return context values from the hook', () => {
-      spyOn(redux, 'useSelector').and.returnValues(
-        { A: true, B: false },
-        {
+      jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce({
           A: true,
           B: false,
-        },
-      );
-      spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
-      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
-        { completed: false },
-        () => null,
-        true,
-      ]);
+        });
+      jest.spyOn(plugins, 'useExtensions').mockReturnValue(mockTourExtension);
+      jest
+        .spyOn(TourModule, 'useTourStateForPerspective')
+        .mockReturnValue([{ completed: false }, () => null, true]);
       testHook(() => {
         const contextValue = useTourValuesForContext();
         const { tourState, tour, totalSteps } = contextValue;
@@ -103,19 +102,17 @@ describe('guided-tour-context', () => {
     });
 
     it('should return tour null from the hook', () => {
-      spyOn(redux, 'useSelector').and.returnValues(
-        { A: true, B: false },
-        {
+      jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce({
           A: true,
           B: false,
-        },
-      );
-      spyOn(plugins, 'useExtensions').and.returnValue([]);
-      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
-        { completed: false },
-        () => null,
-        true,
-      ]);
+        });
+      jest.spyOn(plugins, 'useExtensions').mockReturnValue([]);
+      jest
+        .spyOn(TourModule, 'useTourStateForPerspective')
+        .mockReturnValue([{ completed: false }, () => null, true]);
       testHook(() => {
         const contextValue = useTourValuesForContext();
         const { tourState, tour, totalSteps } = contextValue;
@@ -125,20 +122,18 @@ describe('guided-tour-context', () => {
       });
     });
 
-    it('should return null from the hook if tour is available but data isnot loaded', () => {
-      spyOn(redux, 'useSelector').and.returnValues(
-        { A: true, B: false },
-        {
+    it('should return null from the hook if tour is available but data is not loaded', () => {
+      jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce({
           A: true,
           B: false,
-        },
-      );
-      spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
-      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
-        { completed: false },
-        () => null,
-        false,
-      ]);
+        });
+      jest.spyOn(plugins, 'useExtensions').mockReturnValue(mockTourExtension);
+      jest
+        .spyOn(TourModule, 'useTourStateForPerspective')
+        .mockReturnValue([{ completed: false }, () => null, false]);
       testHook(() => {
         const contextValue = useTourValuesForContext();
         const { tourState, tour, totalSteps } = contextValue;
@@ -151,11 +146,9 @@ describe('guided-tour-context', () => {
 
   describe('useTourStatePerspective', () => {
     it('should return data based on the perspective passed as prop', () => {
-      spyOn(userHooks, 'useUserSettingsCompatibility').and.returnValue([
-        { dev: { a: true }, admin: { a: false } },
-        () => null,
-        true,
-      ]);
+      jest
+        .spyOn(userHooks, 'useUserSettingsCompatibility')
+        .mockReturnValue([{ dev: { a: true }, admin: { a: false } }, () => null, true]);
       testHook(() => {
         const [state, , loaded] = useTourStateForPerspective('dev');
         expect(state).toEqual({ a: true });
