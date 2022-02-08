@@ -149,7 +149,7 @@ export const config = {
   },
   beforeLaunch: () => new Promise((resolve) => htmlReporter.beforeLaunch(resolve)),
   onPrepare: () => {
-    const addReporter = (jasmine as any).getEnv().addReporter;
+    const addReporter = jasmine.getEnv().addReporter;
     browser.waitForAngularEnabled(false);
     addReporter(htmlReporter);
     addReporter(junitReporter);
@@ -218,7 +218,7 @@ function hasError() {
 export const checkErrors = async () =>
   await browser.executeScript(hasError).then((err) => {
     if (err) {
-      fail(err);
+      throw err;
     }
   });
 
