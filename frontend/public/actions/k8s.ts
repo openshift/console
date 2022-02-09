@@ -31,6 +31,14 @@ export enum ActionType {
   UpdateListFromWS = 'updateListFromWS',
 }
 
+export const partialObjectMetadataListHeader = {
+  Accept: 'application/json;as=PartialObjectMetadataList;v=v1;g=meta.k8s.io,application/json',
+};
+
+export const partialObjectMetadataHeader = {
+  Accept: 'application/json;as=PartialObjectMetadata;v=v1;g=meta.k8s.io,application/json',
+};
+
 const WS = {} as { [id: string]: WebSocket & any };
 const POLLs = {};
 const REF_COUNTS = {};
@@ -82,6 +90,7 @@ export const watchK8sObject = (
   namespace: string,
   query: { [key: string]: string },
   k8sType: K8sKind,
+  partialMetadata = false,
 ) => (dispatch: Dispatch, getState) => {
   if (id in REF_COUNTS) {
     REF_COUNTS[id] += 1;
@@ -95,8 +104,14 @@ export const watchK8sObject = (
     delete query.name;
   }
 
+  const requestOptions: RequestInit = partialMetadata
+    ? {
+        headers: partialObjectMetadataHeader,
+      }
+    : {};
+
   const poller = () => {
-    k8sGet(k8sType, name, namespace).then(
+    k8sGet(k8sType, name, namespace, null, requestOptions).then(
       (o) => dispatch(modifyObject(id, o)),
       (e) => dispatch(errored(id, e)),
     );
@@ -145,6 +160,7 @@ export const watchK8sList = (
   query: { [key: string]: string },
   k8skind: K8sKind,
   extraAction?,
+  partialMetadata = false,
 ) => (dispatch, getState) => {
   // Only one watch per unique list ID
   if (id in REF_COUNTS) {
@@ -162,6 +178,12 @@ export const watchK8sList = (
       return;
     }
 
+    const requestOptions: RequestInit = partialMetadata
+      ? {
+          headers: partialObjectMetadataListHeader,
+        }
+      : {};
+
     const response = await k8sList(
       k8skind,
       {
@@ -170,6 +192,7 @@ export const watchK8sList = (
         ...(continueToken ? { continue: continueToken } : {}),
       },
       true,
+      requestOptions,
     );
 
     if (!REF_COUNTS[id]) {

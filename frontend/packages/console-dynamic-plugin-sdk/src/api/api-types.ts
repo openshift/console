@@ -10,6 +10,7 @@ export type WatchK8sResource = {
   limit?: number;
   fieldSelector?: string;
   optional?: boolean;
+  partialMetadata?: boolean;
 };
 
 export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
