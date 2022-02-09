@@ -284,6 +284,7 @@
   "Please note that installing non-Red Hat operators into OpenShift namespaces and enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat operators can lead to malicious metrics data overriding existing cluster metrics. For more information, see the <2>cluster monitoring documentation</2>.": "Red Hat 以外の Operator を OpenShift namespace にインストールし、モニタリングを有効にするとユーザーサポートが無効になることに注意してください。Red Hat 以外の Operator のクラスターモニタリングを有効にすると、悪意のあるメトリクスデータが既存のクラスターメトリクスを上書きする可能性があります。詳細は、<2>クラスターモニタリングのドキュメント</2>を参照してください。",
   "Operator recommended Namespace:": "Operator 推奨の namespace:",
   "Select a Namespace": "namespace の選択",
+  "Not installing the Operator into the recommended namespace can cause unexpected behavior.": "Operator を推奨される namespace にインストールしないと、予期せぬ動作が発生する可能性があります。",
   "Operator Installation": "Operator のインストール",
   "Install Operator": "Operator のインストール",
   "Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.": "更新チャネルのいずれかにサブスクライブして Operator をインストールし、Operator を最新の状態に保ちます。ストラテジーでは手動または自動の更新のいずれかを決定します。",

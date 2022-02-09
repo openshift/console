@@ -253,7 +253,6 @@
   "Kubelet version": "Kubelet 版本",
   "Kube-Proxy version": "Kube-Proxy 版本",
   "Overview": "概述",
-  "Terminal": "终端",
   "Pods": "Pod",
   "Labels": "标签",
   "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} 内核/ {{totalCores}} 内核",

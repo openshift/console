@@ -253,7 +253,6 @@
   "Kubelet version": "Kubelet バージョン",
   "Kube-Proxy version": "Kube-Proxy バージョン",
   "Overview": "概要",
-  "Terminal": "ターミナル",
   "Pods": "Pod",
   "Labels": "ラベル",
   "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} コア / {{totalCores}} コア",

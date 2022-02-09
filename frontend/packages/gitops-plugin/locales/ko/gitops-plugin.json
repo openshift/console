@@ -1,7 +1,9 @@
 {
   "Environments": "환경",
+  "Error cannot retrieve environments": "오류로 인해 환경을 검색할 수 없습니다",
   "Compatibility Issue": "호환성 문제",
   "Compatibility Issue Message": "호환성 문제 메시지",
+  "Error Encountered": "오류 발생",
   "Cluster URL not available": "클러스터 URL을 사용할 수 없습니다.",
   "{{message}}": "{{message}}",
   "by {{author}}": "{{author}} 별",
@@ -32,6 +34,7 @@
   "Environment": "환경",
   "Last deployment": "마지막 배포",
   "No GitOps manifest URLs found": "GitOps 매니페스트 URL을 찾을 수 없습니다",
+  "Error cannot retrieve applications": "오류로 인해 애플리케이션을 검색할 수 없습니다",
   "No Application groups found": "애플리케이션 그룹을 찾을 수 없습니다",
   "Environment details were not found. Try reloading the page or contacting an administrator.": "환경 세부 정보를 찾을 수 없습니다. 페이지를 새로 고침하거나 관리자에게 문의하십시오."
 }

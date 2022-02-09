@@ -284,6 +284,7 @@
   "Please note that installing non-Red Hat operators into OpenShift namespaces and enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat operators can lead to malicious metrics data overriding existing cluster metrics. For more information, see the <2>cluster monitoring documentation</2>.": "请注意，将非 Red Hat operator 安装到 Openshift 命名空间并启用监控将无法获得支持。为非 Red Hat operator 启用集群监控可导致恶意指标数据覆盖现有的集群指标。如需更多信息，请参阅<2>集群监控文档</2>。",
   "Operator recommended Namespace:": "Operator 推荐的命名空间：",
   "Select a Namespace": "选择一个命名空间。",
+  "Not installing the Operator into the recommended namespace can cause unexpected behavior.": "没有将 Operator 安装到推荐的命名空间中可能会导致意外行为。",
   "Operator Installation": "Operator 安装",
   "Install Operator": "安装 Operator",
   "Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.": "通过订阅到一个更新频道来安装 Operator 以便保持 Operator 的最新状态。策略决定手动更新还是自动更新。",

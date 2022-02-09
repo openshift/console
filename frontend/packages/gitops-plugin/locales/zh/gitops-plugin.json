@@ -1,7 +1,9 @@
 {
   "Environments": "环境",
+  "Error cannot retrieve environments": "错误，无法检索环境",
   "Compatibility Issue": "兼容性问题",
   "Compatibility Issue Message": "兼容性问题信息",
+  "Error Encountered": "出现错误",
   "Cluster URL not available": "没有集群 URL",
   "{{message}}": "{{message}}",
   "by {{author}}": "按{{author}}",
@@ -32,6 +34,7 @@
   "Environment": "环境",
   "Last deployment": "最后的部署",
   "No GitOps manifest URLs found": "未找到 GitOps 清单 URL",
+  "Error cannot retrieve applications": "错误，无法检索应用程序",
   "No Application groups found": "未找到应用程序组",
   "Environment details were not found. Try reloading the page or contacting an administrator.": "无法找到环境详情。请重新载入页面或联系管理员。"
 }
