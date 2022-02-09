@@ -9,7 +9,6 @@ import {
   AlertActionLink,
   WizardContextConsumer,
 } from '@patternfly/react-core';
-import { TechPreviewBadge } from '@console/shared';
 import { CreateStepsSC } from '../constants';
 import '../components/ocs-install/ocs-install.scss';
 import { EncryptionType } from '../types';
@@ -45,7 +44,6 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
         title: (
           <div className="ceph-minimal-deployment-alert__header">
             {t('ceph-storage-plugin~A minimal cluster deployment will be performed.')}
-            <TechPreviewBadge />
           </div>
         ),
         text: t(
