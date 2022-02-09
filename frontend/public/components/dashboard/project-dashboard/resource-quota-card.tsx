@@ -5,7 +5,6 @@ import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import ResourceQuotaBody from '@console/shared/src/components/dashboard/resource-quota-card/ResourceQuotaBody';
 import ResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/ResourceQuotaItem';
 import AppliedClusterResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/AppliedClusterResourceQuotaItem';
-import { getQuotaResourceTypes, hasComputeResources } from '../../resource-quota';
 import { FirehoseResult, FirehoseResource } from '../../utils';
 import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '../../../models';
 import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
@@ -56,26 +55,22 @@ export const ResourceQuotaCard = withDashboardResources(
         </CardHeader>
         <CardBody>
           <ResourceQuotaBody error={!!rqLoadError} isLoading={!rqLoaded}>
-            {quotas
-              .filter((rq) => hasComputeResources(getQuotaResourceTypes(rq)))
-              .map((rq) => (
-                <ResourceQuotaItem key={rq.metadata.uid} resourceQuota={rq} />
-              ))}
+            {quotas.map((rq) => (
+              <ResourceQuotaItem key={rq.metadata.uid} resourceQuota={rq} />
+            ))}
           </ResourceQuotaBody>
           <ResourceQuotaBody
             error={!!acrqLoadError}
             isLoading={!acrqLoaded}
             noText={t('public~No AppliedClusterResourceQuotas')}
           >
-            {clusterQuotas
-              .filter((rq) => hasComputeResources(getQuotaResourceTypes(rq)))
-              .map((rq) => (
-                <AppliedClusterResourceQuotaItem
-                  key={rq.metadata.uid}
-                  resourceQuota={rq}
-                  namespace={obj.metadata.name}
-                />
-              ))}
+            {clusterQuotas.map((rq) => (
+              <AppliedClusterResourceQuotaItem
+                key={rq.metadata.uid}
+                resourceQuota={rq}
+                namespace={obj.metadata.name}
+              />
+            ))}
           </ResourceQuotaBody>
         </CardBody>
       </Card>

@@ -509,7 +509,6 @@ export const hasComputeResources = (resourceTypes) => {
 const Details = ({ obj: rq, match }) => {
   const { t } = useTranslation();
   const resourceTypes = getQuotaResourceTypes(rq);
-  const showChartRow = hasComputeResources(resourceTypes);
   const scopes = rq.spec?.scopes ?? rq.spec?.quota?.scopes;
   const reference = referenceFor(rq);
   const isACRQ = reference === appliedClusterQuotaReference;
@@ -535,9 +534,7 @@ const Details = ({ obj: rq, match }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={text} />
-        {showChartRow && (
-          <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} namespace={namespace} />
-        )}
+        <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} namespace={namespace} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={rq}>
