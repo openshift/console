@@ -9,9 +9,8 @@ import {
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { Action, ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { Action, ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { useAccessReview, history } from '@console/internal/components/utils';
-import { impersonateStateToProps } from '@console/internal/reducers/ui';
 
 export type ActionMenuItemProps = {
   action: Action;

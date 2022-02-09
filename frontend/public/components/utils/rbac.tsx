@@ -5,7 +5,12 @@ import * as _ from 'lodash-es';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 
 import store from '../../redux';
-import { impersonateStateToProps } from '../../reducers/ui';
+import {
+  impersonateStateToProps,
+  ImpersonateKind,
+  getActiveCluster,
+  getImpersonate,
+} from '@console/dynamic-plugin-sdk';
 import {
   AccessReviewResourceAttributes,
   k8sCreate,
@@ -16,7 +21,6 @@ import {
 } from '../../module/k8s';
 import { ProjectModel, SelfSubjectAccessReviewModel } from '../../models';
 import { useSafetyFirst } from '../../components/safety-first';
-import { ImpersonateKind, getImpersonate, getActiveCluster } from '@console/dynamic-plugin-sdk';
 
 // Memoize the result so we only make the request once for each access review.
 // This does mean that the user will have to refresh the page to see updates.

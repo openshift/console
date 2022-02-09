@@ -12,6 +12,15 @@ type GetCluster = (state: SDKStoreState) => string;
 export const getImpersonate: GetImpersonate = (state) => state.sdkCore.impersonate;
 
 /**
+ * It provides impersonation details from the redux store as a props object.
+ * @param state the root state
+ * @return The the impersonation details props object.
+ * * */
+export const impersonateStateToProps = (state: SDKStoreState) => {
+  return { impersonate: getImpersonate(state) };
+};
+
+/**
  * It provides user details from the redux store.
  * @param state the root state
  * @return The the user state.

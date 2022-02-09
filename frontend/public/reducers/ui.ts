@@ -6,7 +6,7 @@ import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/co
 import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
-import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
+import { getUser } from '@console/dynamic-plugin-sdk';
 
 export type UIState = ImmutableMap<string, any>;
 
@@ -153,10 +153,6 @@ export const createProjectMessageStateToProps = ({ UI }: RootState) => {
 
 export const userStateToProps = (state: RootState) => {
   return { user: getUser(state) };
-};
-
-export const impersonateStateToProps = (state: RootState) => {
-  return { impersonate: getImpersonate(state) };
 };
 
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
