@@ -368,9 +368,10 @@ export const EditYAML_ = connect(stateToProps)(
           // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
           if (!obj.metadata.namespace && model.namespaced) {
             if (this.props.activeNamespace === ALL_NAMESPACES_KEY) {
-              return t('public~No "metadata.namespace" field found in YAML.');
+              obj.metadata.namespace = 'default';
+            } else {
+              obj.metadata.namespace = this.props.activeNamespace;
             }
-            obj.metadata.namespace = this.props.activeNamespace;
           }
         }
 
