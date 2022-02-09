@@ -12,7 +12,7 @@ import {
   Status,
   getMachinePhase,
 } from '@console/shared';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
+import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
@@ -20,7 +20,6 @@ import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { DetailsPage } from './factory';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
-import ListPageBody from './factory/ListPage/ListPageBody';
 import { useListPageFilter } from './factory/ListPage/filter-hook';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {

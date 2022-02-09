@@ -35,7 +35,7 @@ import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
-import { RowFilter, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
+import { ListPageBody, RowFilter, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -58,7 +58,6 @@ import {
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory';
-import ListPageBody from './factory/ListPage/ListPageBody';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
