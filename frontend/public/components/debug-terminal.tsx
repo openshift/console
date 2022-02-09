@@ -69,7 +69,7 @@ const DebugTerminalInner: React.FC<DebugTerminalInnerProps> = ({ debugPod, initi
     case 'Unknown':
       return (
         <DebugTerminalError
-          error={<>{t('public~The debug pod failed. ')}</>}
+          error={<>{t('public~The debug pod failed.')}</>}
           description={
             debugPod.status.containerStatuses?.[0]?.state?.terminated?.message ||
             debugPod.status.message
