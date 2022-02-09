@@ -27,7 +27,7 @@ import (
 const (
 	CSRFCookieName    = "csrf-token"
 	CSRFHeader        = "X-CSRFToken"
-	stateCookieName   = "state-token"
+	stateCookieName   = "login-state"
 	errorOAuth        = "oauth_error"
 	errorLoginState   = "login_state_error"
 	errorCookie       = "cookie_error"
