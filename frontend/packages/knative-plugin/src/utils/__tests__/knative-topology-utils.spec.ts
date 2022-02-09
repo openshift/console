@@ -29,7 +29,7 @@ import { EdgeType, NodeType } from '../../topology/topology-types';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 import { EventSourceCronJobModel, EventSourceKafkaModel } from '../../models';
 import * as knativefetchutils from '../fetch-dynamic-eventsources-utils';
-import { SERVERLESS_FUNCTION_LABEL } from '../../const';
+import { SERVERLESS_FUNCTION_LABEL, SERVERLESS_FUNCTION_LABEL_DEPRECATED } from '../../const';
 
 describe('knative topology utils', () => {
   it('expect getKnativeServiceData to return knative resources', () => {
@@ -186,6 +186,13 @@ describe('knative topology utils', () => {
     };
     expect(isServerlessFunction(sampleKnResource)).toBe(true);
   });
+
+  // TODO: remove test case for deprecated label for serverless function
+  const sampleKnResourceDep: k8s.K8sResourceKind = {
+    ...MockKnativeResources.ksservices.data[0],
+    metadata: { labels: { [SERVERLESS_FUNCTION_LABEL_DEPRECATED]: 'true' } },
+  };
+  expect(isServerlessFunction(sampleKnResourceDep)).toBe(true);
 });
 
 describe('Knative Topology Utils', () => {
