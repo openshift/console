@@ -127,6 +127,7 @@ const normalizeClusterServiceVersions = (
           properties: detailsProperties,
           descriptions: detailsDescriptions,
         },
+        data: desc,
       };
     });
 
