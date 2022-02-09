@@ -50,6 +50,7 @@ import {
   getTriggerAnnotation,
   mergeData,
   getTemplateLabels,
+  getRouteAnnotations,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { AppResources } from '../edit-application/edit-application-types';
@@ -316,9 +317,10 @@ export const createOrUpdateDeployment = (
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const imageName = name;
-  const annotations = {
-    ...getGitAnnotations(repository, ref),
+  const defaultAnnotations = {
     ...getCommonAnnotations(),
+    ...getGitAnnotations(repository, ref),
+    ...getRouteAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(name, imageName, namespace, imageChange),
   };
@@ -332,7 +334,7 @@ export const createOrUpdateDeployment = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations,
+      annotations: defaultAnnotations,
     },
     spec: {
       selector: {
@@ -388,7 +390,11 @@ export const createOrUpdateDeploymentConfig = (
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
+  const defaultAnnotations = {
+    ...getCommonAnnotations(),
+    ...getGitAnnotations(repository, ref),
+    ...getRouteAnnotations(),
+  };
   const podLabels = getPodLabels(name);
   const templateLabels = getTemplateLabels(originalDeploymentConfig);
 
@@ -699,8 +705,6 @@ export const createOrUpdateResources = async (
     }
   }
 
-  const defaultAnnotations = getGitAnnotations(repository, ref);
-
   if (formData.resources === Resources.KnativeService) {
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
 
@@ -711,11 +715,20 @@ export const createOrUpdateResources = async (
       namespace,
       imageChange,
     );
-    const annotations = {
-      ...originalAnnotations,
-      ...defaultAnnotations,
-      ...triggerAnnotations,
-    };
+    const annotations =
+      Object.keys(originalAnnotations).length > 0
+        ? {
+            ...originalAnnotations,
+            ...getGitAnnotations(repository, ref),
+            ...triggerAnnotations,
+          }
+        : {
+            ...originalAnnotations,
+            ...getCommonAnnotations(),
+            ...getRouteAnnotations(),
+            ...getGitAnnotations(repository, ref),
+            ...triggerAnnotations,
+          };
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamURL,
