@@ -202,6 +202,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
         samples: NUM_SAMPLES,
         timeout: '30s',
         timespan,
+        namespace,
       });
 
       dispatch(monitoringDashboardsPatchVariable(name, { isLoading: true }, activePerspective));
@@ -221,7 +222,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
           }
         });
     }
-  }, [activePerspective, dispatch, name, query, safeFetch, timespan]);
+  }, [activePerspective, dispatch, name, namespace, query, safeFetch, timespan]);
 
   React.useEffect(() => {
     if (variable.value && variable.value !== getQueryArgument(name)) {
@@ -544,7 +545,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
             ) : (
               <>
                 {panel.type === 'grafana-piechart-panel' && (
-                  <BarChart pollInterval={pollInterval} query={queries[0]} />
+                  <BarChart pollInterval={pollInterval} query={queries[0]} namespace={namespace} />
                 )}
                 {panel.type === 'graph' && (
                   <Graph
@@ -555,13 +556,24 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                     showLegend={panel.legend?.show}
                     units={panel.yaxes?.[0]?.format}
                     onZoomHandle={handleZoom}
+                    namespace={namespace}
                   />
                 )}
                 {(panel.type === 'singlestat' || panel.type === 'gauge') && (
-                  <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
+                  <SingleStat
+                    panel={panel}
+                    pollInterval={pollInterval}
+                    query={queries[0]}
+                    namespace={namespace}
+                  />
                 )}
                 {panel.type === 'table' && (
-                  <Table panel={panel} pollInterval={pollInterval} queries={queries} />
+                  <Table
+                    panel={panel}
+                    pollInterval={pollInterval}
+                    queries={queries}
+                    namespace={namespace}
+                  />
                 )}
               </>
             )}

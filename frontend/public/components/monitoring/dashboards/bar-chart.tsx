@@ -19,5 +19,6 @@ const BarChart: React.FC<BarChartProps> = ({ pollInterval, query }) => (
 type BarChartProps = {
   pollInterval: number;
   query: string;
+  namespace?: string;
 };
 export default BarChart;
