@@ -23,7 +23,7 @@
   "EventListeners": "事件监听器",
   "Repository": "软件仓库",
   "Repositories": "存储库",
-  "Create a Tekton Pipeline to automate delivery of your Application": "创建一个 Tekton 管道来自动交付应用程序",
+  "Create a Tekton Pipeline to automate delivery of your application": "创建一个 Tekton 管道来自动交付应用程序",
   "Triggers": "触发器",
   "Red Hat": "Red Hat",
   "Browse for openshift pipeline tasks available in the cluster.": "浏览集群中可用的 openshift 管道任务。",

@@ -20,8 +20,8 @@ Feature: Application groupings in topology
         @smoke
         Scenario: Verify Application grouping context menu: T-05-TC02
             Given user is at Topology page
-             When user right clicks on Application "nodejs-ex-git-app" to open Context Menu
-             Then user can view Add to Application and Delete Application options
+             When user right clicks on application "nodejs-ex-git-app" to open Context Menu
+             Then user can view Add to application and Delete application options
 
 
         @regression @broken-test
@@ -35,10 +35,10 @@ Feature: Application groupings in topology
              Then user can see "added-application-1" workload
 
         @regression
-        Scenario: Delete Application grouping from Action menu: T-05-TC04
+        Scenario: Delete application grouping from Action menu: T-05-TC04
             Given user is at Add page
               And user has created workload "nodejs-1" with resource type "Deployment" and application groupings "app2"
              When user right clicks on Application "app2" to open Context Menu
-              And user clicks on "Delete Application" from context action menu
-              And user enters the name "app2" in the Delete Application modal and clicks on Delete button
+              And user clicks on "Delete application" from context action menu
+              And user enters the name "app2" in the Delete application modal and clicks on Delete button
              Then user will not see Application groupings "app2"

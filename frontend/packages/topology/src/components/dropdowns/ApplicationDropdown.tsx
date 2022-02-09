@@ -76,7 +76,7 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
     <Firehose resources={resources}>
       <ResourceDropdown
         {...props}
-        placeholder={t('topology~Select an Application')}
+        placeholder={t('topology~Select an application')}
         dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
       />
     </Firehose>

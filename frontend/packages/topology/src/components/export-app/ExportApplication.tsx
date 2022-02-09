@@ -66,7 +66,7 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
       };
       toast.addToast({
         variant: AlertVariant.info,
-        title: t('topology~Export Application'),
+        title: t('topology~Export application'),
         content: (
           <>
             <Trans t={t} ns="topology">
@@ -84,7 +84,7 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
       setIsCreating(false);
       toast.addToast({
         variant: AlertVariant.danger,
-        title: t('topology~Export Application'),
+        title: t('topology~Export application'),
         content: (
           <Trans t={t} ns="topology">
             Export of resources in <strong>{{ namespace }}</strong> has failed with error:{' '}
@@ -152,11 +152,11 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
       <Button
         variant="secondary"
         data-test="export-app-btn"
-        aria-label={t('topology~Export Application')}
+        aria-label={t('topology~Export application')}
         isDisabled={isDisabled}
         onClick={exportAppClickHandle}
       >
-        {t('topology~Export Application')}
+        {t('topology~Export application')}
       </Button>
     </ToolbarItem>
   ) : null;

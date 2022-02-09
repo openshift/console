@@ -27,7 +27,7 @@ describe('Deploy Image', () => {
       // Wait for the Applications dropdown to appear
       await browser.wait(until.presenceOf(element(by.css(dropdown))));
       // Confirm that the application dropdown is unset
-      expect(element(by.css(dropdown)).getText()).toEqual('Application: all applications');
+      expect(element(by.css(dropdown)).getText()).toEqual('Application: All applications');
     });
 
     it('can be used to search for an image', async () => {

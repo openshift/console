@@ -42,8 +42,8 @@ export enum nodeActions {
 }
 
 export enum applicationGroupingsActions {
-  DeleteApplication = 'Delete Application',
-  AddtoApplication = 'Add to Application',
+  DeleteApplication = 'Delete application',
+  AddtoApplication = 'Add to application',
 }
 
 export enum authenticationTypes {

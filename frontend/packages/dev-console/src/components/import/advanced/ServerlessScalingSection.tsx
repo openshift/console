@@ -36,14 +36,14 @@ const ServerlessScalingSection: React.FC = () => {
         name="serverless.scaling.concurrencytarget"
         label={t('devconsole~Concurrency target')}
         helpText={t(
-          'devconsole~Defines how many concurrent requests are wanted per instance of the Application at a given time (soft limit) and is the recommended configuration for autoscaling. If not specified, will be defaulted to the value set in the Cluster config.',
+          'devconsole~Defines how many concurrent requests are wanted per instance of the application at a given time (soft limit) and is the recommended configuration for autoscaling. If not specified, will be defaulted to the value set in the Cluster config.',
         )}
       />
       <NumberSpinnerField
         name="serverless.scaling.concurrencylimit"
         label={t('devconsole~Concurrency limit')}
         helpText={t(
-          'devconsole~Limits the amount of concurrent requests allowed into one instance of the Application at a given time (hard limit), and is configured in the revision template. If not specified, will be defaulted to the value set in the Cluster config.',
+          'devconsole~Limits the amount of concurrent requests allowed into one instance of the application at a given time (hard limit), and is configured in the revision template. If not specified, will be defaulted to the value set in the Cluster config.',
         )}
       />
       <NumberSpinnerField

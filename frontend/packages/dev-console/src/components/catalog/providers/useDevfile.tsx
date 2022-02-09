@@ -12,7 +12,7 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
     const { name: uid, displayName, description, tags, git, icon, provider } = sample;
     const gitRepoUrl = Object.values(git.remotes)[0];
     const href = `/import?importType=devfile&devfileName=${uid}&gitRepo=${gitRepoUrl}`;
-    const createLabel = t('devconsole~Create Application');
+    const createLabel = t('devconsole~Create application');
     const type = 'Devfile';
 
     const detailsProperties = [

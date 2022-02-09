@@ -15,7 +15,7 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
     // t('topology~Remove component node from Application')
     const titleKey = targetGroup
       ? 'topology~Move component node'
-      : 'topology~Remove component node from Application';
+      : 'topology~Remove component node from application';
     const nodeLabel = node.getLabel();
     const sourceLabel = sourceGroup.getLabel();
     const targetLabel = targetGroup?.getLabel();

@@ -72,7 +72,7 @@
       "groupId": "samples",
       "href": "/samples/ns/:namespace",
       "label": "%devconsole~Samples%",
-      "description": "%devconsole~Create an Application from a code sample%",
+      "description": "%devconsole~Create an application from a code sample%",
       "icon": { "$codeRef": "icons.samplesIconElement" },
       "accessReview": [
         { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
@@ -152,7 +152,7 @@
       "groupId": "developer-catalog",
       "href": "/catalog/ns/:namespace?category=databases",
       "label": "%devconsole~Database%",
-      "description": "%devconsole~Browse the catalog to discover database services to add to your Application%",
+      "description": "%devconsole~Browse the catalog to discover database services to add to your application%",
       "icon": { "$codeRef": "icons.databaseCatalogIconElement" }
     }
   },
@@ -592,7 +592,7 @@
     "type": "console.action/group",
     "properties": {
       "id": "add-to-application",
-      "label": "%devconsole~Add to Application%",
+      "label": "%devconsole~Add to application%",
       "submenu": true,
       "insertAfter": ["delete-application"]
     }

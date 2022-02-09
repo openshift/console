@@ -28,7 +28,7 @@ const database: AddActionExtension = {
   pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
-    description: 'Browse the catalog to discover database services to add to your Application',
+    description: 'Browse the catalog to discover database services to add to your application',
     groupId: 'developer-catalog',
     href: '/catalog/ns/:namespace?category=databases',
     icon: <CatalogIcon />,
@@ -241,7 +241,7 @@ const pipelinesAction: AddActionExtension = {
         verb: 'create',
       },
     ],
-    description: 'Create a Tekton Pipeline to automate delivery of your Application',
+    description: 'Create a Tekton Pipeline to automate delivery of your application',
     groupId: 'pipelines',
     href: '/k8s/ns/:namespace/tekton.dev~v1beta1~Pipeline/~new/builder',
     icon: 'static/assets/pipeline.svg',

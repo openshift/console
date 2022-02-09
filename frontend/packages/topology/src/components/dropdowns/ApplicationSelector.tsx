@@ -60,11 +60,11 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
 
   const actionItems = [
     {
-      actionTitle: t('topology~Create Application'),
+      actionTitle: t('topology~Create application'),
       actionKey: CREATE_APPLICATION_KEY,
     },
     {
-      actionTitle: t('topology~No Application group'),
+      actionTitle: t('topology~No application group'),
       actionKey: UNASSIGNED_KEY,
     },
   ];
@@ -75,8 +75,8 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
 
   const label = t('topology~Application');
   const inputHelpText = applicationExists
-    ? t('topology~Warning: the Application grouping already exists.')
-    : t('topology~A unique name given to the Application grouping to label your resources.');
+    ? t('topology~Warning: the application grouping already exists.')
+    : t('topology~A unique name given to the application grouping to label your resources.');
 
   React.useEffect(() => {
     if (selectedKey.value === CREATE_APPLICATION_KEY) {
@@ -93,7 +93,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           helperTextInvalid={errorMessage}
           validated={isValid ? 'default' : 'error'}
           helperText={t(
-            'topology~Select an Application for your grouping or no Application group to not use an Application grouping.',
+            'topology~Select an application for your grouping or no application group to not use an application grouping.',
           )}
         >
           <ApplicationDropdown

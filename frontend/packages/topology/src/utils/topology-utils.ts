@@ -150,7 +150,7 @@ export const updateTopologyResourceApplication = (
     if (!resourceKind) {
       return Promise.reject(
         new Error(
-          i18next.t('topology~Unable to update Application, invalid resource type: {{kind}}', {
+          i18next.t('topology~Unable to update application, invalid resource type: {{kind}}', {
             kind: nextResource.kind,
           }),
         ),

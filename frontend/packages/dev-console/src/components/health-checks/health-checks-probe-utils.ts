@@ -23,7 +23,7 @@ export const getHealthChecksProbeConfig = (probe: string, t: TFunction) => {
       return {
         formTitle: t('devconsole~Startup probe'),
         formSubtitle: t(
-          'devconsole~A startup probe checks if the Application within the Container is started. If the startup probe fails the Container is killed.',
+          'devconsole~A startup probe checks if the application within the Container is started. If the startup probe fails the Container is killed.',
         ),
       };
     }
