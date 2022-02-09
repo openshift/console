@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroup, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { ValutConfigure } from './vault-config';
+import { VaultConfigure } from './vault-config';
 import { HpcsConfigure } from './hpcs-config';
 import { EncryptionDispatch, KMSConfigureProps } from './providers';
 import { isLengthUnity } from './utils';
@@ -14,7 +14,7 @@ const KMSProviders = [
   {
     name: 'Vault',
     value: ProviderNames.VAULT,
-    Component: ValutConfigure,
+    Component: VaultConfigure,
   },
   {
     name: 'Hyper Protect Crypto Services',

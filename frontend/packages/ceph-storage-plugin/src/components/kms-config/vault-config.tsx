@@ -39,7 +39,7 @@ import {
 
 import './kms-config.scss';
 
-export const ValutConfigure: React.FC<KMSConfigureProps> = ({
+export const VaultConfigure: React.FC<KMSConfigureProps> = ({
   state,
   dispatch,
   className,
@@ -117,7 +117,7 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
           </FormSelect>
         </FormGroup>
       )}
-      <ValutConnectionForm
+      <VaultConnectionForm
         {...{
           t,
           state,
@@ -133,7 +133,7 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
   );
 };
 
-const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
+const VaultConnectionForm: React.FC<VaultConnectionFormProps> = ({
   t,
   state,
   vaultState,
@@ -309,7 +309,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
   );
 };
 
-export type ValutConnectionFormProps = {
+export type VaultConnectionFormProps = {
   state:
     | InternalClusterState
     | State
