@@ -22,14 +22,17 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 export const MAX_VIEW_COLS = 9;
 
 export const NAME_COLUMN_ID = 'name';
-const readOnlyColumns = new Set([NAME_COLUMN_ID]);
+export const NAMESPACE_COLUMN_ID = 'namespace';
 
 const DataListRow: React.FC<DataListRowProps> = ({
   checkedColumns,
   column,
   onChange,
   disableUncheckedRow,
-}) => (
+  disableNamespaceCheckbox,
+}) => {
+  const readOnlyColumns = !disableNamespaceCheckbox ? new Set([NAME_COLUMN_ID]) : new Set([NAME_COLUMN_ID, NAMESPACE_COLUMN_ID])
+  return (
   <DataListItem
     aria-labelledby={`table-column-management-item-${column.id}`}
     key={column.id}
@@ -41,7 +44,9 @@ const DataListRow: React.FC<DataListRowProps> = ({
           (disableUncheckedRow && !checkedColumns.has(column.id)) || readOnlyColumns.has(column.id)
         }
         aria-labelledby={`table-column-management-item-${column.id}`}
-        checked={checkedColumns.has(column.id)}
+        checked={
+          checkedColumns.has(column.id) || readOnlyColumns.has(column.id)
+        }
         name={column.title}
         id={column.id}
         onChange={onChange}
@@ -57,7 +62,8 @@ const DataListRow: React.FC<DataListRowProps> = ({
       />
     </DataListItemRow>
   </DataListItem>
-);
+  )
+};
 
 export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
   WithUserSettingsCompatibilityProps<object>> = ({
@@ -75,6 +81,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
       ? new Set(columnLayout.selectedColumns)
       : new Set(defaultColumns.map((col) => col.id)),
   );
+  const disableNamespaceCheckbox = columnLayout?.showNamespaceOverride ? true : false 
 
   const onColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
     const updatedCheckedColumns = new Set<string>(checkedColumns);
@@ -143,6 +150,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
                     disableUncheckedRow={areMaxColumnsDisplayed}
                     column={defaultColumn}
                     checkedColumns={checkedColumns}
+                    disableNamespaceCheckbox={disableNamespaceCheckbox}
                   />
                 ))}
               </DataList>
@@ -161,6 +169,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
                     disableUncheckedRow={areMaxColumnsDisplayed}
                     column={additionalColumn}
                     checkedColumns={checkedColumns}
+                    disableNamespaceCheckbox={disableNamespaceCheckbox}
                   />
                 ))}
               </DataList>
@@ -198,6 +207,7 @@ type DataListRowProps = {
   onChange: (checked: boolean, event: React.SyntheticEvent) => void;
   disableUncheckedRow: boolean;
   checkedColumns: Set<string>;
+  disableNamespaceCheckbox: boolean;
 };
 
 export type ColumnManagementModalProps = {
