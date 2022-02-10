@@ -232,7 +232,7 @@ export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, i
       {!inline && !level ? (
         <FieldLevelHelp>
           {t(
-            'public~API failed to return the Service Level Agreement setting for this cluster.  Check again later.',
+            'public~API failed to return the Service Level Agreement setting for this cluster. Check again later.',
           )}
         </FieldLevelHelp>
       ) : null}
