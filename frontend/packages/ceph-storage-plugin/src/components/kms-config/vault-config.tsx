@@ -72,15 +72,15 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
     (authMethod) =>
       (encryption.clusterWide
         ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.CLUSTER_WIDE)
-        : true) &&
+        : false) ||
       (encryption.storageClass
         ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.STORAGE_CLASS)
-        : true),
+        : false),
   );
 
   const vaultAuthMethods = filteredVaultAuthMethodMapping.map((authMethod) => authMethod.value);
   if (!vaultAuthMethods.includes(vaultState.authMethod)) {
-    if (isKmsVaultSASupported) {
+    if (isKmsVaultSASupported && vaultAuthMethods.includes(VaultAuthMethods.KUBERNETES)) {
       // From 4.10 kubernetes is default auth method
       setAuthMethod(VaultAuthMethods.KUBERNETES);
     } else {
@@ -176,6 +176,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
       state,
       dispatch,
       mode,
+      isWizardFlow,
     });
 
   // vault state update
