@@ -5,12 +5,27 @@ import {
   useResolvedExtensions,
   NetworkAdapter,
   K8sResourceCommon,
+  DetailsTabSectionCallback,
 } from '@console/dynamic-plugin-sdk';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { NetworkingOverview } from './NetworkingOverview';
 import { getDataFromAdapter } from './utils';
 
-const NetworkTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
+const NetworkTabSection: React.FC<{
+  networkAdapter: {
+    resource: K8sResourceCommon;
+  };
+}> = ({ networkAdapter }) => {
+  return networkAdapter ? (
+    <TopologySideBarTabSection>
+      <NetworkingOverview obj={networkAdapter.resource} />
+    </TopologySideBarTabSection>
+  ) : null;
+};
+
+export const useNetworkingSideBarTabSection: DetailsTabSectionCallback = (
+  element: GraphElement,
+) => {
   const [networkAdapterExtensions, extensionsLoaded] = useResolvedExtensions<NetworkAdapter>(
     isNetworkAdapter,
   );
@@ -22,13 +37,9 @@ const NetworkTabSection: React.FC<{ element: GraphElement }> = ({ element }) => 
       ]),
     [element, extensionsLoaded, networkAdapterExtensions],
   );
-  return networkAdapter ? (
-    <TopologySideBarTabSection>
-      <NetworkingOverview obj={networkAdapter.resource} />
-    </TopologySideBarTabSection>
-  ) : null;
-};
-
-export const getNetworkingSideBarTabSection = (element: GraphElement) => {
-  return <NetworkTabSection element={element} />;
+  if (!networkAdapter) {
+    return [undefined, true, undefined];
+  }
+  const section = <NetworkTabSection networkAdapter={networkAdapter} />;
+  return [section, true, undefined];
 };

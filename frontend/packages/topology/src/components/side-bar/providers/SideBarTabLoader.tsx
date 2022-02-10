@@ -5,13 +5,13 @@ import {
   DetailsTabSection,
   isDetailsTab,
   isDetailsTabSection,
+  ResolvedExtension,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 import { Tab } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
-
-const TabSection: React.FC = ({ children }) => <>{children}</>;
+import TabSection from './TabSection';
 
 type SideBarTabLoaderProps = {
   element: GraphElement;
@@ -31,39 +31,27 @@ const SideBarTabLoader: React.FC<SideBarTabLoaderProps> = ({ element, children }
     [tabExtensions],
   );
 
-  const tabSections = React.useMemo(() => {
-    return resolved
-      ? tabSectionExtensions.reduce((tabs, { properties: { tab, section, ...rest } }) => {
-          const resolvedSection = section(element);
-          if (!resolvedSection) return tabs;
-          return {
-            ...tabs,
-            ...(tabs.hasOwnProperty(tab)
-              ? { [tab]: [...tabs[tab], { ...rest, resolvedSection }] }
-              : { [tab]: [{ ...rest, resolvedSection }] }),
-          };
-        }, {})
-      : {};
-  }, [tabSectionExtensions, element, resolved]);
+  const orderedTabSections = React.useMemo<ResolvedExtension<DetailsTabSection>['properties'][]>(
+    () =>
+      resolved
+        ? orderExtensionBasedOnInsertBeforeAndAfter<
+            ResolvedExtension<DetailsTabSection>['properties']
+          >(tabSectionExtensions.map(({ properties }) => properties))
+        : [],
+    [tabSectionExtensions, resolved],
+  );
 
-  const [tabs, loaded] = React.useMemo(() => {
-    if (Object.keys(tabSections).length === 0) return [[], false];
-
-    const resolvedTabs = orderedTabs.reduce((acc, { id, label }) => {
-      if (!tabSections.hasOwnProperty(id)) return acc;
-      const tabContent = orderExtensionBasedOnInsertBeforeAndAfter<{
-        resolvedSection: React.ReactNode;
-        id: string;
-      }>(tabSections[id]).map(({ id: tsId, resolvedSection }) => (
-        <TabSection key={tsId}>{resolvedSection}</TabSection>
-      ));
-      return [...acc, { name: label, component: () => <>{tabContent}</> }];
-    }, []);
-
-    return [resolvedTabs, true];
-  }, [tabSections, orderedTabs]);
-
-  return children(tabs, loaded);
+  return resolved ? (
+    <TabSection
+      element={element}
+      tabExtensions={orderedTabs}
+      tabSectionExtensions={orderedTabSections}
+    >
+      {children}
+    </TabSection>
+  ) : (
+    children([], false)
+  );
 };
 
 export default SideBarTabLoader;
