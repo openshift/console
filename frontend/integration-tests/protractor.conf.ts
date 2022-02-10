@@ -13,7 +13,6 @@ import {
   reducePluginTestSuites,
   mergeTestSuites,
 } from '@console/plugin-sdk/src/codegen/plugin-integration-tests';
-import * as jasmine from 'jasmine';
 
 const tap = !!process.env.TAP;
 
