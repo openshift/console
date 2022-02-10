@@ -34,8 +34,16 @@ import { GlobalConfigPage } from '../../public/components/cluster-settings/globa
 import { Firehose, HorizontalNav, ResourceLink, Timestamp } from '../../public/components/utils';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
-  useK8sWatchResource: jest.fn(),
+  useK8sWatchResource: jest.fn(() => []),
 }));
+
+jest.mock('react-redux', () => {
+  const ActualReactRedux = jest.requireActual('react-redux');
+  return {
+    ...ActualReactRedux,
+    useSelector: jest.fn(),
+  };
+});
 
 describe('Cluster Settings page', () => {
   let wrapper: ShallowWrapper<any>;
@@ -47,6 +55,8 @@ describe('Cluster Settings page', () => {
   });
 
   it('should render ClusterSettingsPage component', () => {
+    wrapper = shallow(<ClusterSettingsPage match={match} />);
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     expect(wrapper.exists()).toBe(true);
   });
   it('should render correct Cluster Settings page title', () => {

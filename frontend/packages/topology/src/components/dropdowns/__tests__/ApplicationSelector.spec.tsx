@@ -47,7 +47,10 @@ describe('ApplicationSelector', () => {
   });
 
   it('should show ApplicationDropdown if projects are available', () => {
-    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }] as any);
+    spyUseField.mockReturnValue([
+      { value: CREATE_APPLICATION_KEY },
+      { touched: false, error: '' },
+    ] as any);
     wrapper.setProps({ noProjectsAvailable: false });
     expect(wrapper.find(ApplicationDropdown).exists()).toBe(true);
   });
@@ -65,10 +68,15 @@ describe('ApplicationSelector', () => {
     spyUseField
       .mockReturnValueOnce([
         { value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' },
-        {},
+        { touched: false, error: '' },
       ] as any)
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}] as any);
-    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }] as any);
+      .mockReturnValueOnce([
+        { value: '', name: 'application.name' },
+        { touched: false, error: '' },
+      ] as any);
+    spyUseField.mockImplementationOnce(
+      () => [{ value: CREATE_APPLICATION_KEY }, { touched: false, error: '' }] as any,
+    );
     wrapper.setProps({ noProjectsAvailable: false });
     wrapper
       .find(ApplicationDropdown)

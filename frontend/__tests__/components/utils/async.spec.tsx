@@ -126,6 +126,7 @@ describe('AsyncComponent', () => {
               .find(`#${fooId}`)
               .exists(),
           ).toBe(true);
+          done();
         }, 10);
       });
 
@@ -144,6 +145,8 @@ describe('AsyncComponent', () => {
       });
 
     wrapper = mount(<AsyncComponent loader={loader1} />);
-    wrapper = wrapper.setProps({ loader: loader2 });
+    setTimeout(() => {
+      wrapper = wrapper.setProps({ loader: loader2 });
+    }, 20);
   });
 });
