@@ -20,6 +20,14 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
+jest.mock('react', () => {
+  const react = jest.requireActual('react');
+  return {
+    ...react,
+    useEffect: jest.fn(),
+  };
+});
+
 // make jest synchronously run the useEffect inside shallow
 jest.spyOn(React, 'useEffect').mockImplementation((f) => f());
 

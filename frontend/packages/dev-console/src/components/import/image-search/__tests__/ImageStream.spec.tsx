@@ -14,6 +14,24 @@ import ImageStreamDropdown from '../ImageStreamDropdown';
 import ImageStreamNsDropdown from '../ImageStreamNsDropdown';
 import ImageStreamTagDropdown from '../ImageStreamTagDropdown';
 
+jest.mock('formik', () => {
+  const formikActual = jest.requireActual('formik');
+  return {
+    ...formikActual,
+    useFormikContext: jest.fn(),
+    useField: jest.fn(),
+  };
+});
+
+jest.mock('react', () => {
+  const react = jest.requireActual('react');
+  return {
+    ...react,
+    useReducer: jest.fn(),
+    useState: jest.fn(),
+  };
+});
+
 const spyUseFormikContext = jest.spyOn(formik, 'useFormikContext');
 const spyUseReducer = jest.spyOn(React, 'useReducer');
 const spyUseField = jest.spyOn(formik, 'useField');

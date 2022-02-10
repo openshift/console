@@ -16,6 +16,7 @@ describe('startAPIDiscovery', () => {
     const dispatch = jest.fn();
     jest.useFakeTimers();
     jest.spyOn(console, 'log');
+    jest.spyOn(window, 'setTimeout');
     const fn = () => {};
     jest.spyOn(k8sActions, 'getResources').mockImplementation(fn as any);
     await k8sActions.startAPIDiscovery()(dispatch);

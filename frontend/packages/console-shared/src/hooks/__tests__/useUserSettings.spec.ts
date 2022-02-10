@@ -18,9 +18,6 @@ const createConfigMapMock = createConfigMap as jest.Mock;
 const updateConfigMapMock = updateConfigMap as jest.Mock;
 const useSelectorMock = useSelector as jest.Mock;
 
-// need to mock StorageEvent because it doesn't exist
-(global as any).StorageEvent = Event;
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
@@ -672,7 +669,7 @@ describe('useUserSettings', () => {
     const storageListener = (event: StorageEvent) => {
       storageListenerInvoked = true;
       expect(event.storageArea).toBe(sessionStorage);
-      expect(event.key).toBe('user-settings-imposter');
+      expect(event.key).toBe('console-user-settings-imposter');
       expect(event.newValue).toBe(JSON.stringify({ 'impersonate.key': 'newValue' }));
     };
     window.addEventListener('storage', storageListener);

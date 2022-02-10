@@ -13,4 +13,4 @@ export const useTranslation = () => {
 export const withTranslation = () => (component) => (props) =>
   React.createElement(component, { ...props, t: i18nextMocks.t });
 
-export const Trans = () => null;
+export const Trans = (children) => children.children;

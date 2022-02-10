@@ -50,7 +50,7 @@ describe('handleURLs', () => {
   });
 
   describe('Test edge-case URL Examples', () => {
-    const enzymeExternalLink = '< />'; // how enzyme represents <ExternalLink /> in .text() format
+    const enzymeExternalLink = '<ExternalLink />';
 
     it('should create multiple ExternalLinks and not lose the interim prefix/suffix values', () => {
       const data =
