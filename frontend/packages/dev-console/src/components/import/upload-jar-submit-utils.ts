@@ -399,7 +399,7 @@ export const createOrUpdateJarFile = async (
   responses.push(buildConfigResponse);
 
   if (verb === 'create') {
-    responses.push(await createWebhookSecret(formData, 'generic', dryRun));
+    responses.push(await createWebhookSecret(formData, imageStream, 'generic', dryRun));
   }
 
   if (resources === Resources.KnativeService) {
