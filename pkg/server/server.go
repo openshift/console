@@ -579,17 +579,26 @@ func (s *Server) HTTPHandler() http.Handler {
 		})
 	}
 
+	multiClusterHandler := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			cluster := serverutils.GetCluster(r)
+			helmHandlers.ApiServerHost = s.K8sProxyConfigs[cluster].Endpoint.String()
+			helmHandlers.Transport = s.K8sClients[cluster].Transport
+			next.ServeHTTP(w, r)
+		})
+	}
+
 	handle("/metrics", metricsHandler(authHandler(func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	})))
 
-	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
-	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
-	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
-	handle("/api/helm/release/history", authHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
-	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleIndexFile))
+	handle("/api/helm/template", multiClusterHandler(authHandlerWithUser(helmHandlers.HandleHelmRenderManifests)))
+	handle("/api/helm/releases", multiClusterHandler(authHandlerWithUser(helmHandlers.HandleHelmList)))
+	handle("/api/helm/chart", multiClusterHandler(authHandlerWithUser(helmHandlers.HandleChartGet)))
+	handle("/api/helm/release/history", multiClusterHandler(authHandlerWithUser(helmHandlers.HandleGetReleaseHistory)))
+	handle("/api/helm/charts/index.yaml", multiClusterHandler(authHandlerWithUser(helmHandlers.HandleIndexFile)))
 
-	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	handle("/api/helm/release", multiClusterHandler(authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			helmHandlers.HandleGetRelease(user, w, r)
@@ -605,7 +614,7 @@ func (s *Server) HTTPHandler() http.Handler {
 			w.Header().Set("Allow", "GET, POST, PATCH, PUT, DELETE")
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET, POST, PATCH, PUT, DELETE"})
 		}
-	}))
+	})))
 
 	// GitOps proxy endpoints
 	if s.gitopsProxyEnabled() {
