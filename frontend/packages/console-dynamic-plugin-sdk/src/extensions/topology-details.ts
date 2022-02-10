@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
+import { ExtensionHook } from '../api/common-types';
 import { Extension, CodeRef, ExtensionDeclaration } from '../types';
 import { K8sResourceCommon } from './console-types';
 import { BuildConfigData } from './topology-types';
@@ -34,12 +35,8 @@ export type DetailsTabSection = ExtensionDeclaration<
     tab: string;
     /** Returns a section for the graph element or undefined if not provided.
      * SDK component: <Section title={<optional>}>... padded area </Section>
-     * @param renderNull should be used for section that defines Adapter to
-     *  determine if adapter component renders null or not
      * */
-    section: CodeRef<
-      (element: GraphElement, renderNull?: () => null) => React.Component | undefined
-    >;
+    section: CodeRef<DetailsTabSectionCallback>;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -169,3 +166,5 @@ export type PodsAdapterDataType<E = K8sResourceCommon> = {
 export type NetworkAdapterType = {
   resource: K8sResourceCommon;
 };
+
+export type DetailsTabSectionCallback = ExtensionHook<React.ReactElement | undefined, GraphElement>;

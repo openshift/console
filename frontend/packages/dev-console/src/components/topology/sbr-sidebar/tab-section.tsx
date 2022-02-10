@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Edge, GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
 import TopologyEdgeResourcesPanel from '@console/topology/src/components/side-bar/TopologyEdgeResourcesPanel';
 import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
@@ -17,13 +18,19 @@ const DetailsSection: React.FC<{ resource: K8sResourceCommon }> = ({ resource })
   );
 };
 
-export const getSbrPanelDetailsSection = (element: GraphElement) => {
-  if (element.getType() !== TYPE_SERVICE_BINDING) return undefined;
+export const getSbrPanelDetailsSection: DetailsTabSectionCallback = (element: GraphElement) => {
+  if (element.getType() !== TYPE_SERVICE_BINDING) {
+    return [undefined, true, undefined];
+  }
   const resource = getResource(element);
-  return <DetailsSection resource={resource} />;
+  const section = <DetailsSection resource={resource} />;
+  return [section, true, undefined];
 };
 
-export const getSbrPanelResourceSection = (element: Edge) => {
-  if (element.getType() !== TYPE_SERVICE_BINDING) return undefined;
-  return <TopologyEdgeResourcesPanel edge={element} />;
+export const getSbrPanelResourceSection: DetailsTabSectionCallback = (element: Edge) => {
+  if (element.getType() !== TYPE_SERVICE_BINDING) {
+    return [undefined, true, undefined];
+  }
+  const section = <TopologyEdgeResourcesPanel edge={element} />;
+  return [section, true, undefined];
 };
