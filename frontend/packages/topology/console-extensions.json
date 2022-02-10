@@ -92,7 +92,7 @@
     "properties": {
       "id": "topology-tab-section-pods-overview",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "workload.getPodsSideBarTabSection" }
+      "section": { "$codeRef": "workload.usePodsSideBarTabSection" }
     }
   },
   {
@@ -108,7 +108,7 @@
     "properties": {
       "id": "topology-tab-section-builds-overview",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "workload.getBuildsSideBarTabSection" }
+      "section": { "$codeRef": "workload.useBuildsSideBarTabSection" }
     }
   },
   {
@@ -116,7 +116,7 @@
     "properties": {
       "id": "topology-tab-section-network-overview",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "workload.getNetworkingSideBarTabSection" }
+      "section": { "$codeRef": "workload.useNetworkingSideBarTabSection" }
     }
   },
   {

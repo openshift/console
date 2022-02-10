@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import {
-  SidebarSectionHeading,
-  ResourceLink,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { SidebarSectionHeading, ResourceLink, ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, PodKind, podPhase } from '@console/internal/module/k8s';
 import { AllPodStatus, usePodsWatcher } from '@console/shared';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
@@ -55,16 +52,19 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
   );
 };
 
-export const getKnativeSidepanelEventSinkSection = (element: GraphElement) => {
+export const getKnativeSidepanelEventSinkSection: DetailsTabSectionCallback = (
+  element: GraphElement,
+) => {
   if (element.getType() === NodeType.EventSink) {
     const resource = getResource(element);
-    return resource ? (
+    const section = resource ? (
       <TopologySideBarTabSection>
         <EventSinkSourceSection resource={resource} />
       </TopologySideBarTabSection>
     ) : null;
+    return [section, true, undefined];
   }
-  return undefined;
+  return [undefined, true, undefined];
 };
 
 export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
