@@ -23,7 +23,7 @@ import { VaultConfig, ProviderNames, VaultAuthMethods } from '../../../types';
 import './advanced-kms-modal.scss';
 
 export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProps) => {
-  const { close, cancel, errorMessage, inProgress, state, dispatch, mode } = props;
+  const { close, cancel, errorMessage, inProgress, state, dispatch, mode, isWizardFlow } = props;
   const kms: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
 
   const { t } = useTranslation();
@@ -149,23 +149,26 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
               data-test="kms-service-backend-path"
             />
           </FormGroup>
-          {kms.authMethod === VaultAuthMethods.KUBERNETES && state.encryption.storageClass && (
-            <>
-              <FormGroup
-                fieldId="kms-auth-path"
-                label={t('ceph-storage-plugin~Authentication Path')}
-                className="ceph-advanced-kms__form-body"
-              >
-                <TextInput
-                  value={authPath}
-                  onChange={setAuthPath}
-                  type="text"
-                  id="kms-service-auth-path"
-                  name="kms-service-auth-path"
-                  data-test="kms-service-auth-path"
-                />
-              </FormGroup>
+          {kms.authMethod === VaultAuthMethods.KUBERNETES && (
+            <FormGroup
+              fieldId="kms-auth-path"
+              label={t('ceph-storage-plugin~Authentication Path')}
+              className="ceph-advanced-kms__form-body"
+            >
+              <TextInput
+                value={authPath}
+                onChange={setAuthPath}
+                type="text"
+                id="kms-service-auth-path"
+                name="kms-service-auth-path"
+                data-test="kms-service-auth-path"
+              />
+            </FormGroup>
+          )}
 
+          {kms.authMethod === VaultAuthMethods.KUBERNETES &&
+            state.encryption.storageClass &&
+            !isWizardFlow && (
               <FormGroup
                 fieldId="kms-auth-namespace"
                 label={t('ceph-storage-plugin~Authentication Namespace')}
@@ -180,8 +183,7 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
                   data-test="kms-service-auth-namespace"
                 />
               </FormGroup>
-            </>
-          )}
+            )}
 
           <FormGroup
             fieldId="kms-service-tls"
@@ -197,24 +199,26 @@ export const AdvancedVaultModal = withHandlePromise((props: AdvancedKMSModalProp
               name="kms-service-tls"
             />
           </FormGroup>
-          <FormGroup
-            fieldId="kms-service-namespace"
-            label={t('ceph-storage-plugin~Vault Enterprise Namespace')}
-            className="ceph-advanced-kms__form-body"
-            labelIcon={<FieldLevelHelp>{vaultNamespaceTooltip}</FieldLevelHelp>}
-            helperText={t(
-              'ceph-storage-plugin~The name must be accurate and must match the service namespace',
-            )}
-          >
-            <TextInput
-              value={providerNS}
-              onChange={setProvideNS}
-              type="text"
-              id="kms-service-namespace"
-              name="kms-service-namespace"
-              placeholder="kms-namespace"
-            />
-          </FormGroup>
+          {kms.authMethod === VaultAuthMethods.TOKEN && (
+            <FormGroup
+              fieldId="kms-service-namespace"
+              label={t('ceph-storage-plugin~Vault Enterprise Namespace')}
+              className="ceph-advanced-kms__form-body"
+              labelIcon={<FieldLevelHelp>{vaultNamespaceTooltip}</FieldLevelHelp>}
+              helperText={t(
+                'ceph-storage-plugin~The name must be accurate and must match the service namespace',
+              )}
+            >
+              <TextInput
+                value={providerNS}
+                onChange={setProvideNS}
+                type="text"
+                id="kms-service-namespace"
+                name="kms-service-namespace"
+                placeholder="kms-namespace"
+              />
+            </FormGroup>
+          )}
           <FormGroup
             fieldId="kms-service-ca-cert"
             label={t('ceph-storage-plugin~CA Certificate')}

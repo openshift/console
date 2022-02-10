@@ -183,7 +183,6 @@ const createCsiVaultResources = (
     VAULT_TLS_SERVER_NAME: kms.tls,
     VAULT_CLIENT_CERT: kms.clientCert?.metadata.name,
     VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
-    VAULT_NAMESPACE: kms.providerNamespace,
     VAULT_CACERT_FILE: kms.caCertFile,
     VAULT_CLIENT_CERT_FILE: kms.clientCertFile,
     VAULT_CLIENT_KEY_FILE: kms.clientKeyFile,
@@ -195,6 +194,7 @@ const createCsiVaultResources = (
       csiConfigData = {
         ...csiConfigData,
         VAULT_TOKEN_NAME: KMSVaultCSISecretName,
+        VAULT_NAMESPACE: kms.providerNamespace,
       };
       // token creation on ceph-csi deployment namespace from installation flow
       if (kms.authValue.value) {
@@ -277,12 +277,15 @@ const createClusterVaultResources = (
     VAULT_TLS_SERVER_NAME: kms.tls,
     VAULT_CLIENT_CERT: kms.clientCert?.metadata.name,
     VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
-    VAULT_NAMESPACE: kms.providerNamespace,
     VAULT_AUTH_METHOD: kms.authMethod,
   };
 
   switch (kms.authMethod) {
     case VaultAuthMethods.TOKEN:
+      vaultConfigData = {
+        ...vaultConfigData,
+        VAULT_NAMESPACE: kms.providerNamespace,
+      };
       clusterKmsResources.push(
         k8sCreate(SecretModel, getKmsVaultSecret(kms.authValue.value, KMSVaultTokenSecretName)),
       );
@@ -291,6 +294,7 @@ const createClusterVaultResources = (
       vaultConfigData = {
         ...vaultConfigData,
         VAULT_AUTH_KUBERNETES_ROLE: kms.authValue.value,
+        VAULT_AUTH_MOUNT_PATH: kms.providerAuthPath,
       };
       break;
     default:
