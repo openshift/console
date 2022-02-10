@@ -19,7 +19,9 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
 }) => {
   const { t } = useTranslation();
   const resourcesData = resources.reduce((acc, { resource }) => {
-    acc[resource.kind] = [...(acc[resource.kind] ? acc[resource.kind] : []), resource];
+    if (resource?.kind) {
+      acc[resource.kind] = [...(acc[resource.kind] ? acc[resource.kind] : []), resource];
+    }
     return acc;
   }, {});
 
