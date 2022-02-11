@@ -1,3 +1,9 @@
+/**
+ * monorepo entrypoint for the dynamic plugin SDK
+ *
+ * Not published to NPM
+ */
+
 // Plugin APIs and types
 export * from './api/useResolvedExtensions';
 export * from './api/common-types';

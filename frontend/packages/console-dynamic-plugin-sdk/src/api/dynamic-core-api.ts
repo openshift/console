@@ -22,6 +22,9 @@ import {
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
+export * from '../app/components';
+export * from './common-types';
+
 export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;
 
