@@ -1,7 +1,7 @@
 /**
- * lib-core entrypoint for the dynamic plugin SDK
+ * @file Entrypoint for the `@openshift-console/dynamic-plugin-sdk` package published to npmjs.
  *
- * Published to NPM
+ * Provides core APIs, types and utilities used by dynamic plugins at runtime.
  */
 
 export * from './extensions';

@@ -1,7 +1,7 @@
 /**
- * monorepo entrypoint for the dynamic plugin SDK
+ * @file Entrypoint for the Console dynamic plugin SDK monorepo package.
  *
- * Not published to NPM
+ * Not published to npmjs; all Console monorepo packages are marked as private.
  */
 
 // Plugin APIs and types
