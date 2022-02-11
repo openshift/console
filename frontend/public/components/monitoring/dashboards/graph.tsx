@@ -1,4 +1,3 @@
-import { useActivePerspective } from '@console/shared';
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -10,6 +9,7 @@ import {
 } from '../../../actions/ui';
 import { RootState } from '../../../redux';
 import { FormatSeriesTitle, QueryBrowser } from '../query-browser';
+import { getActivePerspective } from './monitoring-dashboard-utils';
 
 type Props = {
   formatSeriesTitle?: FormatSeriesTitle;
@@ -33,7 +33,7 @@ const Graph: React.FC<Props> = ({
   namespace,
 }) => {
   const dispatch = useDispatch();
-  const [activePerspective] = useActivePerspective();
+  const activePerspective = getActivePerspective(namespace);
   const endTime = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', activePerspective, 'endTime']),
   );
