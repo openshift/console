@@ -5,16 +5,16 @@ import { nav } from '../../../integration-tests-cypress/views/nav';
 import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
-  name: 'Business Automation',
-  operatorHubCardTestID: 'businessautomation-operator-redhat-operators-openshift-marketplace',
+  name: 'Red Hat CodeReady Workspaces',
+  operatorHubCardTestID: 'codeready-workspaces-redhat-operators-openshift-marketplace',
   installedNamespace: testName,
 };
 
 const testOperand: TestOperandProps = {
-  name: 'KieApp',
-  kind: 'KieApp',
-  tabName: 'KieApp',
-  exampleName: `example-kieappk`,
+  name: 'CodeReady Workspaces instance Specification',
+  kind: 'CheCluster',
+  tabName: 'CodeReady Workspaces instance Specification',
+  exampleName: `codeready-workspaces`,
 };
 
 describe(`Installing "${testOperator.name}" operator in ${testOperator.installedNamespace}`, () => {
