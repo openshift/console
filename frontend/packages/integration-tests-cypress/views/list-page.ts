@@ -90,6 +90,14 @@ export const listPage = {
         });
       cy.byTestActionID(actionName).click();
     },
+    clickStatusButton: (resourceName: string) => {
+      cy.get(`[data-test-rows="resource-row"]`)
+        .contains(resourceName)
+        .parents('tr')
+        .within(() => {
+          cy.byTestID('popover-status-button').click();
+        });
+    },
     hasLabel: (resourceName: string, label: string) => {
       cy.get(`[data-test-rows="resource-row"]`)
         .contains(resourceName)

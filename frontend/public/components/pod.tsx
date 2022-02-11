@@ -628,7 +628,7 @@ const PodStatusPopover: React.FC<PodStatusPopoverProps> = ({
 }) => {
   return (
     <Popover headerContent={headerContent} bodyContent={bodyContent} footerContent={footerContent}>
-      <Button variant="link" isInline>
+      <Button variant="link" isInline data-test="popover-status-button">
         <Status status={status} />
       </Button>
     </Popover>
@@ -695,6 +695,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
                       pod.metadata.name,
                       pod.metadata.namespace,
                     )}/containers/${container.name}/debug`}
+                    data-test={`popup-debug-container-link-${container.name}`}
                   >
                     {t('public~Debug container {{name}}', { name: container.name })}
                   </Link>
