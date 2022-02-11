@@ -379,7 +379,13 @@ const PollConsoleUpdates = React.memo(() => {
       {
         dismiss: true,
         label: t('public~Refresh web console'),
-        callback: () => window.location.reload(),
+        callback: () => {
+          if (window.location.pathname.includes('/operatorhub/subscribe')) {
+            window.location.href = '/operatorhub';
+          } else {
+            window.location.reload();
+          }
+        },
       },
     ],
     onClose: toastCallback,
