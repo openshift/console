@@ -515,3 +515,140 @@ export const mockDeployment = {
   },
   status: {},
 };
+
+export const mockDeploymentConfig2 = {
+  ...mockDeploymentConfig,
+  spec: {
+    strategy: {
+      resources: {},
+      imageStreamData: {
+        post: {
+          containerName: '',
+          fromImageStreamTag: true,
+          image: {
+            image: {},
+            name: '',
+            ports: [],
+            status: {},
+            tag: '',
+          },
+          imageStream: {
+            image: '',
+            namespace: 'xyz',
+            tag: '',
+          },
+          imageStreamTag: {},
+          isi: {},
+          name: 'nodejs-ex-git',
+          project: { name: 'xyz' },
+        },
+        pre: {
+          containerName: '',
+          fromImageStreamTag: true,
+          image: {
+            image: {},
+            name: '',
+            ports: [],
+            status: {},
+            tag: '',
+          },
+          imageStream: {
+            image: '',
+            namespace: 'xyz',
+            tag: '',
+          },
+          imageStreamTag: {},
+          isi: {},
+          name: 'nodejs-ex-git',
+          project: { name: 'xyz' },
+        },
+      },
+      type: 'Rolling',
+      rollingParams: {
+        maxUnavailable: '25%',
+        maxSurge: '25%',
+        intervalSeconds: 1,
+        post: {
+          action: 'execNewPod',
+          lch: {
+            execNewPod: {
+              command: [''],
+              containerName: undefined,
+              env: undefined,
+            },
+          },
+        },
+        pre: {
+          action: 'execNewPod',
+          lch: {
+            execNewPod: {
+              command: [''],
+              containerName: undefined,
+              env: undefined,
+            },
+          },
+        },
+        timeoutSeconds: 600,
+      },
+    },
+    triggers: [
+      {
+        type: 'ImageChange',
+        imageChangeParams: {
+          automatic: true,
+          containerNames: ['nationalparks-py-dc'],
+          from: {
+            kind: 'ImageStreamTag',
+            namespace: 'div',
+            name: 'nationalparks-py-dc:latest',
+          },
+          lastTriggeredImage:
+            'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py-dc@sha256:e187d5a42e4817792ef05b92871558eef47df5092d8c6256dc5d8369695117a0',
+        },
+      },
+      {
+        type: 'ConfigChange',
+      },
+    ],
+    replicas: 1,
+    revisionHistoryLimit: 10,
+    test: false,
+    selector: {
+      app: 'nationalparks-py-dc',
+      deploymentconfig: 'nationalparks-py-dc',
+    },
+    template: {
+      metadata: {
+        creationTimestamp: null,
+        labels: {
+          app: 'nationalparks-py-dc',
+          deploymentconfig: 'nationalparks-py-dc',
+        },
+      },
+      spec: {
+        containers: [
+          {
+            name: 'nationalparks-py-dc',
+            image:
+              'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py-dc@sha256:e187d5a42e4817792ef05b92871558eef47df5092d8c6256dc5d8369695117a0',
+            ports: [
+              {
+                containerPort: 8080,
+                protocol: 'TCP',
+              },
+            ],
+            resources: {},
+            terminationMessagePath: '/dev/termination-log',
+            terminationMessagePolicy: 'File',
+            imagePullPolicy: 'Always',
+          },
+        ],
+        restartPolicy: 'Always',
+        terminationGracePeriodSeconds: 30,
+        dnsPolicy: 'ClusterFirst',
+        securityContext: {},
+        schedulerName: 'default-scheduler',
+      },
+    },
+  },
+};
