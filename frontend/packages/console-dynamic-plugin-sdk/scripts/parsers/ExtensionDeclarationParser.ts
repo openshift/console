@@ -17,7 +17,9 @@ export class ExtensionDeclarationParser implements tsj.SubNodeParser {
   supportsNode(node: ts.Node) {
     return (
       ts.isTypeAliasDeclaration(node) &&
-      this.consoleExtensions.some((e) => e.name === node.name.text)
+      this.consoleExtensions.some(
+        (e) => e.name === node.name.text || node.name.text === 'CustomExtension',
+      )
     );
   }
 

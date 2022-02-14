@@ -63,6 +63,7 @@ import {
 import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
 import { UserPreferenceGroup, UserPreferenceItem } from '../extensions/user-preferences';
 import { YAMLTemplate } from '../extensions/yaml-templates';
+import { CustomExtension } from '../extensions/custom';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -128,4 +129,4 @@ export type SupportedExtension =
 /**
  * Schema of Console plugin's `console-extensions.json` file.
  */
-export type ConsoleExtensionsJSON = SupportedExtension[];
+export type ConsoleExtensionsJSON = (SupportedExtension | CustomExtension)[];

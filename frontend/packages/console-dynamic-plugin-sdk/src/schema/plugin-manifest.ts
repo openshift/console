@@ -1,4 +1,4 @@
-import { SupportedExtension } from './console-extensions';
+import { ConsoleExtensionsJSON } from './console-extensions';
 import { ConsolePluginMetadata } from './plugin-package';
 
 /**
@@ -6,5 +6,5 @@ import { ConsolePluginMetadata } from './plugin-package';
  */
 export type ConsolePluginManifestJSON = Omit<ConsolePluginMetadata, 'exposedModules'> & {
   /** List of extensions contributed by the plugin. */
-  extensions: SupportedExtension[];
+  extensions: ConsoleExtensionsJSON;
 };

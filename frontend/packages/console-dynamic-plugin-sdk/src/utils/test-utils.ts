@@ -1,5 +1,5 @@
 import { applyCodeRefSymbol } from '../coderefs/coderef-resolver';
-import { SupportedExtension } from '../schema/console-extensions';
+import { ConsoleExtensionsJSON } from '../schema/console-extensions';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { Extension, RemoteEntryModule, CodeRef, Update } from '../types';
 
@@ -11,7 +11,7 @@ export const getPluginManifest = (
 ): ConsolePluginManifestJSON => ({
   name,
   version,
-  extensions: extensions as SupportedExtension[],
+  extensions: extensions as ConsoleExtensionsJSON,
   dependencies: { '@console/pluginAPI': '*' },
   disableStaticPlugins,
 });
