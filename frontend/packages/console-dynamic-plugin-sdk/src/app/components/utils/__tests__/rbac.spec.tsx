@@ -390,6 +390,15 @@ describe('useAccessReviewAllowed', () => {
     });
   });
 
+  it('must not call the API when resource parameter is null', async () => {
+    // Run check
+    const { result } = testHook(() => useAccessReviewAllowed(null));
+    expect(result.current).toEqual(true);
+
+    // Assertions
+    expect(k8sCreateMock).toHaveBeenCalledTimes(0);
+  });
+
   it('must not load permissions twice', async () => {
     // Test and mock data
     const resource: AccessReviewResourceAttributes = {
@@ -454,12 +463,8 @@ describe('useAccessReviewAllowed', () => {
 
     // Assertions
     expect(k8sCreateMock).toHaveBeenCalledTimes(1);
-    expect(renderResult).toHaveBeenCalledTimes(3); // TODO: Too much
-    expect(renderResult.mock.calls).toEqual([
-      [false],
-      [true], // TODO: too much
-      [true],
-    ]);
+    expect(renderResult).toHaveBeenCalledTimes(2);
+    expect(renderResult.mock.calls).toEqual([[false], [true]]);
   });
 
   it('should not update the component when API call result is cached', async () => {
@@ -487,12 +492,8 @@ describe('useAccessReviewAllowed', () => {
 
     // Assertions
     expect(k8sCreateMock).toHaveBeenCalledTimes(0);
-    expect(renderResult).toHaveBeenCalledTimes(3); // TODO: Too much
-    expect(renderResult.mock.calls).toEqual([
-      [false], // TODO: too much
-      [true], // TODO: too much
-      [true],
-    ]);
+    expect(renderResult).toHaveBeenCalledTimes(1);
+    expect(renderResult.mock.calls).toEqual([[true]]);
   });
 });
 
@@ -654,6 +655,15 @@ describe('useAccessReview', () => {
     });
   });
 
+  it('must not call the API when resource parameter is null', async () => {
+    // Run check
+    const { result } = testHook(() => useAccessReview(null));
+    expect(result.current).toEqual([true, false]);
+
+    // Assertions
+    expect(k8sCreateMock).toHaveBeenCalledTimes(0);
+  });
+
   it('must not load permissions twice', async () => {
     // Test and mock data
     const resource: AccessReviewResourceAttributes = {
@@ -718,12 +728,8 @@ describe('useAccessReview', () => {
 
     // Assertions
     expect(k8sCreateMock).toHaveBeenCalledTimes(1);
-    expect(renderResult).toHaveBeenCalledTimes(3); // TODO: Too much
-    expect(renderResult.mock.calls).toEqual([
-      [[false, true]],
-      [[true, true]], // TODO: too much
-      [[true, false]],
-    ]);
+    expect(renderResult).toHaveBeenCalledTimes(2);
+    expect(renderResult.mock.calls).toEqual([[[false, true]], [[true, false]]]);
   });
 
   it('should not update the component when API call result is cached', async () => {
@@ -751,11 +757,7 @@ describe('useAccessReview', () => {
 
     // Assertions
     expect(k8sCreateMock).toHaveBeenCalledTimes(0);
-    expect(renderResult).toHaveBeenCalledTimes(3); // TODO: Too much
-    expect(renderResult.mock.calls).toEqual([
-      [[false, true]], // TODO: too much
-      [[true, true]], // TODO: too much
-      [[true, false]],
-    ]);
+    expect(renderResult).toHaveBeenCalledTimes(1);
+    expect(renderResult.mock.calls).toEqual([[[true, false]]]);
   });
 });

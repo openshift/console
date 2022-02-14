@@ -243,11 +243,9 @@ describe('useMultipleAccessReviews', () => {
 
     // Assertions
     expect(k8sCreateMock).toHaveBeenCalledTimes(1);
-    expect(renderResult).toHaveBeenCalledTimes(3); // TODO: Too much
+    expect(renderResult).toHaveBeenCalledTimes(2);
     expect(renderResult.mock.calls).toEqual([
       [[[], true]],
-      // TODO: Too much
-      [[[], false]],
       [
         [
           [
@@ -295,12 +293,10 @@ describe('useMultipleAccessReviews', () => {
 
     // Assertions
     expect(k8sCreateMock).toHaveBeenCalledTimes(0);
-    expect(renderResult).toHaveBeenCalledTimes(3); // TODO: Too much
+    // In theorie this could be one, but useMultipleAccessReviews doesn't use resultCache yet.
+    expect(renderResult).toHaveBeenCalledTimes(2);
     expect(renderResult.mock.calls).toEqual([
       [[[], true]],
-      // TODO: Too much
-      [[[], false]],
-      // TODO: Too much
       [
         [
           [
