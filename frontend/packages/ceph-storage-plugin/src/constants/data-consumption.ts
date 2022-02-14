@@ -10,7 +10,7 @@ export enum Breakdown {
 
 export enum Metrics {
   IOPS = 'I/O Operations',
-  LOGICAL = 'Logial Used Capacity',
+  LOGICAL = 'Logical Used Capacity',
   EGRESS = 'Egress',
   PHY_VS_LOG = 'Physical Vs Logical Usage',
   LATENCY = 'Latency',
