@@ -7,4 +7,5 @@ export { default as ResourceStatus } from './utils/resource-status';
 
 export * from './status/icons';
 export * from './status/statuses';
+export { checkAccess, useAccessReviewAllowed, useAccessReview } from './utils/rbac';
 export { useSafetyFirst } from './safety-first';

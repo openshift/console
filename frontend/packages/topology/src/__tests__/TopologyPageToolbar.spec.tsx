@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
+import * as utils from '@console/internal/components/utils';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
 import { TopologyViewType } from '../topology-types';
 
@@ -30,6 +31,17 @@ jest.mock('@console/shared', () => {
 });
 
 describe('TopologyPageToolbar tests', () => {
+  let spyUseAccessReview;
+
+  beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    spyUseAccessReview.mockReset();
+  });
+
   it('should render view shortcuts button on topology page toolbar', () => {
     const mockViewChange = jest.fn();
     spyOn(React, 'useContext').and.returnValue({

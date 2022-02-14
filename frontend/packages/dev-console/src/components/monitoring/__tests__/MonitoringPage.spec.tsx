@@ -6,7 +6,17 @@ import { PageContents } from '../MonitoringPage';
 
 describe('Monitoring Page ', () => {
   let monPageProps: React.ComponentProps<typeof PageContents>;
-  const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+  let spyUseAccessReview;
+
+  beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    spyUseAccessReview.mockReset();
+  });
+
   it('should render ProjectList page when in all-projects namespace', () => {
     monPageProps = {
       match: {

@@ -3,6 +3,7 @@ import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { useRelatedHPA } from '../../hooks/hpa-hooks';
 import { ExtPodKind } from '../../types';
@@ -16,7 +17,7 @@ interface PodRingProps {
   rc?: K8sResourceKind;
   resourceKind: K8sKind;
   path?: string;
-  impersonate?: string;
+  impersonate?: ImpersonateKind;
   enableScaling?: boolean;
 }
 
