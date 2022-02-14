@@ -7,7 +7,10 @@ import { Map as ImmutableMap } from 'immutable';
 import { inject } from './inject';
 import { makeReduxID, makeQuery } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
-import { getActiveCluster } from '@console/dynamic-plugin-sdk';
+import {
+  getActiveCluster,
+  INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL,
+} from '@console/dynamic-plugin-sdk';
 
 const shallowMapEquals = (a, b) => {
   if (a === b || (a.size === 0 && b.size === 0)) {
@@ -19,7 +22,7 @@ const shallowMapEquals = (a, b) => {
   return a.every((v, k) => b.get(k) === v);
 };
 
-const processReduxId = ({ k8s }, props) => {
+export const processReduxId = ({ k8s }, props) => {
   const { reduxID, isList, filters } = props;
 
   if (!reduxID) {
@@ -30,17 +33,30 @@ const processReduxId = ({ k8s }, props) => {
     let stuff = k8s.get(reduxID);
     if (stuff) {
       stuff = stuff.toJS();
+      // TODO: To cache also single resources we need to remove this attribute.
       stuff.optional = props.optional;
     }
     return stuff || {};
   }
 
-  const data = k8s.getIn([reduxID, 'data']);
+  let data = k8s.getIn([reduxID, 'data']);
   const _filters = k8s.getIn([reduxID, 'filters']);
   const selected = k8s.getIn([reduxID, 'selected']);
 
+  if (data) {
+    if (!data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+      data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = data.toArray().map((a) => {
+        if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+          a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
+        }
+        return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+      });
+    }
+    data = data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+  }
+
   return {
-    data: data && data.toArray().map((p) => p.toJSON()),
+    data,
     // This is a hack to allow filters passed down from props to make it to
     // the injected component. Ideally filters should all come from redux.
     filters: _.extend({}, _filters && _filters.toJS(), filters),
