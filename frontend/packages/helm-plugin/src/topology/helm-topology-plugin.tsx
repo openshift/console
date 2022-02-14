@@ -27,6 +27,10 @@ const getHelmWatchedResources = (namespace: string): WatchK8sResources<any> => {
       namespace,
       optional: true,
       partialMetadata: true,
+      selector: {
+        matchLabels: { owner: 'helm' },
+        matchExpressions: [{ key: 'status', operator: 'NotEquals', values: ['superseded'] }],
+      },
     },
   };
 };
