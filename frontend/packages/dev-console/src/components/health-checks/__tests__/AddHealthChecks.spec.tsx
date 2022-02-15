@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import * as utils from '@console/internal/components/utils';
 import { ContainerDropdown, ResourceLink } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
@@ -12,6 +13,8 @@ import HealthChecks from '../HealthChecks';
 let addHealthCheckProbs: React.ComponentProps<typeof AddHealthChecks>;
 
 describe('AddHealthCheck', () => {
+  let spyUseAccessReview;
+
   beforeEach(() => {
     addHealthCheckProbs = {
       ...formikFormProps,
@@ -29,6 +32,12 @@ describe('AddHealthCheck', () => {
         },
       },
     };
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('should load AddHealthCheck', () => {

@@ -8,20 +8,32 @@ import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
 const testProjectMatch = { url: '', params: { ns: 'test-project' }, isExact: true, path: '' };
 const allNamespaceMatch = { url: '', params: {}, isExact: true, path: '' };
+let spyUseAccessReview;
 
 describe('ProjectDetailsPage', () => {
+  beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('expect ProjectDetailsPage to render the project list page when in the all-projects namespace', () => {
+    spyUseAccessReview.mockReturnValue(true);
     const component = shallow(<PageContents match={allNamespaceMatch} />);
 
     expect(component.find(CreateProjectListPage).exists()).toBe(true);
   });
 
   it('expect ProjectDetailsPage to show a namespaced details page for a namespace', () => {
+    spyUseAccessReview.mockReturnValue(true);
     const component = shallow(<PageContents match={testProjectMatch} />);
     expect(component.find(DetailsPage).exists()).toBe(true);
   });
 
   it('expect ProjectDetailsPage not to render breadcrumbs', () => {
+    spyUseAccessReview.mockReturnValue(true);
     // Currently rendering the breadcrumbs will buck-up against the redirects and not work as expected
     const component = shallow(<ProjectDetailsPage match={testProjectMatch} />);
 
@@ -29,7 +41,6 @@ describe('ProjectDetailsPage', () => {
   });
 
   it('should not render the Project Access tab if user has no access to role bindings', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(false);
     const component = shallow(<PageContents match={testProjectMatch} />);
     const pages = component.find(DetailsPage).prop('pages');

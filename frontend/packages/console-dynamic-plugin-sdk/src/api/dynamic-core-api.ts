@@ -73,6 +73,12 @@ export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/inter
 export { default as ResourceStatus } from '@console/dynamic-plugin-sdk/src/app/components/utils/resource-status';
 
 export {
+  checkAccess,
+  useAccessReview,
+  useAccessReviewAllowed,
+} from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+
+export {
   useK8sModel,
   useK8sModels,
   useK8sWatchResource,

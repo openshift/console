@@ -12,7 +12,7 @@ import {
   modelFor,
   k8sList,
 } from '../../module/k8s';
-import { useSafetyFirst } from '../safety-first';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';

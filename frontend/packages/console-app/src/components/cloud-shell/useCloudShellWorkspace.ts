@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { WatchK8sResource, WatchK8sResult, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';

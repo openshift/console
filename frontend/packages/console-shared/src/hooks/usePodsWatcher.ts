@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodRCData } from '../types';

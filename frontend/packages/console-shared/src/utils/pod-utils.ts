@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 import {
   K8sResourceKind,
@@ -112,7 +113,7 @@ export const calculateRadius = (size: number) => {
 export const checkPodEditAccess = (
   resource: K8sResourceKind,
   resourceKind: K8sKind,
-  impersonate: string,
+  impersonate: ImpersonateKind,
   subresource?: string,
 ): Promise<SelfSubjectAccessReviewKind> => {
   if (_.isEmpty(resource) || !resourceKind) {

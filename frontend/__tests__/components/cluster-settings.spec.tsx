@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, mount, ShallowWrapper } from 'enzyme';
-
+import * as utils from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   clusterVersionProps,
@@ -138,10 +138,17 @@ describe('Cluster Settings page', () => {
 describe('Cluster Version Details Table page', () => {
   let wrapper: ShallowWrapper<any>;
   let cv;
+  let spyUseAccessReview;
 
   beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
     cv = clusterVersionProps;
     wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
+  });
+
+  afterEach(() => {
+    spyUseAccessReview.mockReset();
   });
 
   it('should render ClusterVersionDetailsTable component', () => {
@@ -203,11 +210,18 @@ describe('Cluster Version Details Table page', () => {
 describe('Cluster Version Details Table page while ClusterVersion Upgradeable=False', () => {
   let wrapper: ShallowWrapper<any>;
   let cv;
+  let spyUseAccessReview;
 
   beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     cv = clusterVersionUpgradeableFalseProps;
     wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
+  });
+
+  afterEach(() => {
+    spyUseAccessReview.mockReset();
   });
 
   it('should render ClusterVersionDetailsTable component', () => {
@@ -345,11 +359,18 @@ describe('Updates Graph', () => {
 describe('Cluster Version Details Table page while updating', () => {
   let wrapper: ShallowWrapper<any>;
   let cv;
+  let spyUseAccessReview;
 
   beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
     cv = clusterVersionUpdatingProps;
     wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
+  });
+
+  afterEach(() => {
+    spyUseAccessReview.mockReset();
   });
 
   it('should render ClusterVersionDetailsTable component', () => {
@@ -432,11 +453,18 @@ describe('Update In Progress while updating', () => {
 describe('Cluster Version Details Table page once updated', () => {
   let wrapper: ShallowWrapper<any>;
   let cv;
+  let spyUseAccessReview;
 
   beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
     cv = clusterVersionUpdatedProps;
     wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
+  });
+
+  afterEach(() => {
+    spyUseAccessReview.mockReset();
   });
 
   it('should render ClusterVersionDetailsTable component', () => {

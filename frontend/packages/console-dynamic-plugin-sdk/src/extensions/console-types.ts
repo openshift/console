@@ -570,3 +570,18 @@ export type QueryWithDescription = {
   query: string;
   desc: string;
 };
+
+export type SelfSubjectAccessReviewKind = {
+  apiVersion: string;
+  kind: string;
+  metadata?: ObjectMetadata;
+  spec: {
+    resourceAttributes?: AccessReviewResourceAttributes;
+  };
+  status?: {
+    allowed: boolean;
+    denied?: boolean;
+    reason?: string;
+    evaluationError?: string;
+  };
+};

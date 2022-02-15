@@ -5,7 +5,6 @@ import {
   ObjectMetadata,
   K8sResourceCommon,
   K8sVerb,
-  AccessReviewResourceAttributes,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
 import { Selector, MatchLabels, K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -885,21 +884,6 @@ export type OAuthKind = {
     };
   };
 } & K8sResourceCommon;
-
-export type SelfSubjectAccessReviewKind = {
-  apiVersion: string;
-  kind: string;
-  metadata?: ObjectMetadata;
-  spec: {
-    resourceAttributes?: AccessReviewResourceAttributes;
-  };
-  status?: {
-    allowed: boolean;
-    denied?: boolean;
-    reason?: string;
-    evaluationError?: string;
-  };
-};
 
 export type ResourceAccessReviewRequest = {
   apiVersion: string;

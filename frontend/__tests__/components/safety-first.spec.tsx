@@ -4,7 +4,7 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import Spy = jasmine.Spy;
 
-import { useSafetyFirst } from '../../public/components/safety-first';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 
 type Props = {
   loader: () => Promise<any>;

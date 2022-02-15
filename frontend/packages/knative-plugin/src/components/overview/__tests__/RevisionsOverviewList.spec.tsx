@@ -17,13 +17,21 @@ import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
 
 describe('RevisionsOverviewList', () => {
   let wrapper: ShallowWrapper<RevisionsOverviewListProps>;
+  let spyUseAccessReview;
+
   beforeEach(() => {
+    spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(true);
     wrapper = shallow(
       <RevisionsOverviewList
         revisions={MockKnativeResources.revisions.data}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
+  });
+
+  afterEach(() => {
+    spyUseAccessReview.mockReset();
   });
 
   it('should have title Revisions', () => {
@@ -37,8 +45,6 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should show info if no Revisions present, link for all revisions should not be shown and traffic split button should be disabled', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
     wrapper = shallow(
       <RevisionsOverviewList revisions={[]} service={MockKnativeResources.revisions.data[0]} />,
     );
@@ -86,8 +92,6 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should have button for traffic distribution and enabled', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
     expect(wrapper.find(Button)).toHaveLength(1);
     expect(
       wrapper
@@ -111,7 +115,6 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should not show button for traffic distribution if access is not there', () => {
-    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
     spyUseAccessReview.mockReturnValue(false);
     wrapper = shallow(
       <RevisionsOverviewList
