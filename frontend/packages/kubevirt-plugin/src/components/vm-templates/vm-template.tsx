@@ -13,12 +13,7 @@ import {
   VMWizardName,
 } from '../../constants';
 import { VIRTUALMACHINES_TEMPLATES_BASE_URL } from '../../constants/url-params';
-import {
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-  VM_CUSTOMIZE_LABEL,
-} from '../../constants/vm';
+import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, VM_CUSTOMIZE_LABEL } from '../../constants/vm';
 import {
   DataSourceModel,
   DataVolumeModel,
@@ -75,7 +70,12 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       namespace,
       prop: 'vmTemplates',
       selector: {
-        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+        matchExpressions: [
+          {
+            key: TEMPLATE_TYPE_LABEL,
+            operator: 'Exists',
+          },
+        ],
       },
     },
     {
