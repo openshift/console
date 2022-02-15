@@ -22,6 +22,9 @@ import {
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
+export * from '../app/components';
+export * from './common-types';
+
 export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;
 
@@ -70,7 +73,7 @@ export const useListPageFilter: UseListPageFilter = require('@console/internal/c
   .useListPageFilter;
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
   .ResourceLink;
-export { default as ResourceStatus } from '@console/dynamic-plugin-sdk/src/app/components/utils/resource-status';
+export { default as ResourceStatus } from '../app/components/utils/resource-status';
 
 export {
   checkAccess,
@@ -83,13 +86,13 @@ export {
   useK8sModels,
   useK8sWatchResource,
   useK8sWatchResources,
-} from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
+} from '../utils/k8s/hooks';
 
 export {
   consoleFetch,
   consoleFetchJSON,
   consoleFetchText,
-} from '@console/dynamic-plugin-sdk/src/utils/fetch';
+} from '../utils/fetch';
 
 // Expose K8s CRUD utilities as below
 export {
@@ -99,12 +102,12 @@ export {
   k8sPatchResource as k8sPatch,
   k8sDeleteResource as k8sDelete,
   k8sListResource as k8sList,
-} from '@console/dynamic-plugin-sdk/src/utils/k8s';
+} from '../utils/k8s';
 export {
   getAPIVersionForModel,
   getGroupVersionKindForResource,
   getGroupVersionKindForModel,
-} from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+} from '../utils/k8s/k8s-ref';
 
 export const StatusPopupSection: React.FC<StatusPopupSectionProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
   .StatusPopupSection;
@@ -125,4 +128,4 @@ export const InventoryItemStatus: React.FC<InventoryItemStatusProps> = require('
 export const InventoryItemLoading: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemLoading;
 
-export { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
+export { useFlag } from '../utils/flags';

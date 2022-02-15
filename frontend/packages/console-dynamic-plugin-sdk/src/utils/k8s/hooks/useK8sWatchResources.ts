@@ -4,9 +4,10 @@ import { Map as ImmutableMap } from 'immutable';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
-import { getActiveCluster, SDKStoreState } from '@console/dynamic-plugin-sdk/src/app';
 import { K8sModel } from '../../../api/common-types';
+import { getActiveCluster } from '../../../app/core/reducers/coreSelectors';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
+import { SDKStoreState } from '../../../app/redux-types';
 import { UseK8sWatchResources } from '../../../extensions/console-types';
 import {
   transformGroupVersionKindToReference,
