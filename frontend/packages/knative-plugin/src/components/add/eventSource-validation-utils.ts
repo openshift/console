@@ -70,6 +70,10 @@ export const sourceDataSpecSchema = (t: TFunction) =>
             selector: yup.object().shape({
               matchLabels: yup.object(),
             }),
+            name: yup.string().when('selector.matchLabels', {
+              is: (obj: object) => !obj,
+              then: yup.string().required(t('knative-plugin~Required')),
+            }),
             apiVersion: yup
               .string()
               .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
