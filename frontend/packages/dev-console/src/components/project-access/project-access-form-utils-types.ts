@@ -20,7 +20,7 @@ type ApiGroupType = {
 
 export type RoleBinding = K8sResourceCommon & {
   roleRef: ApiGroupType;
-  subjects: ApiGroupType[];
+  subjects?: ApiGroupType[];
 };
 
 export const roleBinding: RoleBinding = {
