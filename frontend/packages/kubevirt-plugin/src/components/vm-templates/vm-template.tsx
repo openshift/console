@@ -16,12 +16,7 @@ import {
   customizeWizardBaseURLBuilder,
   VIRTUALMACHINES_TEMPLATES_BASE_URL,
 } from '../../constants/url-params';
-import {
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-  VM_CUSTOMIZE_LABEL,
-} from '../../constants/vm';
+import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, VM_CUSTOMIZE_LABEL } from '../../constants/vm';
 import {
   DataSourceModel,
   DataVolumeModel,
@@ -35,7 +30,6 @@ import VMTemplateTable from './table/VMTemplateTable';
 import { flattenTemplates } from './utils';
 import './vm-template.scss';
 
-// TODO
 const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [
   {
     filterGroupName: t('kubevirt-plugin~Template Provider'),
@@ -78,7 +72,12 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       namespace,
       prop: 'vmTemplates',
       selector: {
-        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+        matchExpressions: [
+          {
+            key: TEMPLATE_TYPE_LABEL,
+            operator: 'Exists',
+          },
+        ],
       },
     },
     {

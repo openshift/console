@@ -18,7 +18,6 @@ import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
   VMWizardMode,
   VMWizardView,
 } from '../../constants/vm';
@@ -478,7 +477,12 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
           getResource(TemplateModel, {
             namespace: activeNamespace,
             prop: VMWizardProps.userTemplates,
-            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+            matchExpressions: [
+              {
+                key: TEMPLATE_TYPE_LABEL,
+                operator: 'Exists',
+              },
+            ],
           }),
         );
       }
@@ -490,7 +494,12 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
             namespace: initialData.userTemplateNs,
             prop: VMWizardProps.userTemplate,
             isList: false,
-            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+            matchExpressions: [
+              {
+                key: TEMPLATE_TYPE_LABEL,
+                operator: 'Exists',
+              },
+            ],
           }),
         );
       }

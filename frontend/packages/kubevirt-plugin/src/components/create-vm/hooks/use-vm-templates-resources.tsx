@@ -9,7 +9,6 @@ import {
   OPENSHIFT_OS_IMAGES_NS,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
 } from '../../../constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { DataSourceModel, DataVolumeModel } from '../../../models';
@@ -22,7 +21,12 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     kind: TemplateModel.kind,
     namespace,
     selector: {
-      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+      matchExpressions: [
+        {
+          key: TEMPLATE_TYPE_LABEL,
+          operator: 'Exists',
+        },
+      ],
     },
     isList: true,
   });
