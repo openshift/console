@@ -6,7 +6,6 @@ import {
   getCorePackage,
   getInternalPackage,
   getInternalKubevirtPackage,
-  getHostAppPackage,
   getWebpackPackage,
 } from './package-definitions';
 import { resolvePath, relativePath } from './utils/path';
@@ -34,7 +33,6 @@ const outPackages = [
   getCorePackage(sdkPackage, rootPackage, missingDepCallback),
   getInternalPackage(sdkPackage, rootPackage, missingDepCallback),
   getInternalKubevirtPackage(sdkPackage, rootPackage, missingDepCallback),
-  getHostAppPackage(sdkPackage, rootPackage, missingDepCallback),
   getWebpackPackage(sdkPackage, rootPackage, missingDepCallback),
 ];
 

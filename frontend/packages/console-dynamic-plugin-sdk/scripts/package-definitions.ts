@@ -112,24 +112,6 @@ export const getInternalKubevirtPackage: GetPackageDefinition = (
   },
 });
 
-export const getHostAppPackage: GetPackageDefinition = (
-  sdkPackage,
-  rootPackage,
-  missingDepCallback,
-) => ({
-  outDir: 'dist/host-app',
-  manifest: {
-    name: '@openshift-console/dynamic-plugin-sdk-host-app',
-    version: sdkPackage.version,
-    main: 'lib/lib-host-app.js',
-    ...commonManifestFields,
-    dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
-  },
-  filesToCopy: {
-    ...commonFiles,
-  },
-});
-
 export const getWebpackPackage: GetPackageDefinition = (
   sdkPackage,
   rootPackage,

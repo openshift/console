@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig-base.json",
-  "compilerOptions": {
-    "outDir": "dist/host-app/lib"
-  },
-  "files": ["src/lib-host-app.ts"]
-}
