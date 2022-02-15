@@ -49,7 +49,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
         items: [
           { name: t('ceph-storage-plugin~I/O Operations'), id: Metrics.IOPS },
           ...(selectedBreakdown === Breakdown.ACCOUNTS
-            ? [{ name: t('ceph-storage-plugin~Logial Used Capacity'), id: Metrics.LOGICAL }]
+            ? [{ name: t('ceph-storage-plugin~Logical Used Capacity'), id: Metrics.LOGICAL }]
             : [
                 {
                   name: t('ceph-storage-plugin~Physical vs. Logical used capacity'),
