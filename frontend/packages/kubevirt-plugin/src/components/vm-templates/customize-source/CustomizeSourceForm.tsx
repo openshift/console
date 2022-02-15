@@ -35,9 +35,7 @@ import {
   OPENSHIFT_OS_IMAGES_NS,
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
-  TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
   VM_CUSTOMIZE_LABEL,
 } from '../../../constants';
 import { VIRTUALIZATION_BASE_URL } from '../../../constants/url-params';
@@ -89,9 +87,8 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     selector: {
       matchExpressions: [
         {
-          operator: 'In',
           key: TEMPLATE_TYPE_LABEL,
-          values: [TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM],
+          operator: 'Exists',
         },
       ],
     },

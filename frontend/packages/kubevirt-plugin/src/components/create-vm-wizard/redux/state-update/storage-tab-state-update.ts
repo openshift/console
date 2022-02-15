@@ -340,8 +340,7 @@ const initialStorageWindowsPVCUpdater = ({ id, prevState, dispatch, getState }: 
   const state = getState();
   const relevantOptions = iGetRelevantTemplateSelectors(state, id);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-  const template =
-    iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions).toJS();
+  const template = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
   const iStorageClassConfigMap = iGetLoadedCommonData(
     state,
     id,
@@ -371,8 +370,8 @@ const initialStorageWindowsPVCUpdater = ({ id, prevState, dispatch, getState }: 
     );
   })?.metadata?.labels?.[LABEL_CDROM_SOURCE];
 
-  if (isCdRom && removableRootDisk && iStorageClassConfigMap) {
-    if (isWindowsTemplate(template)) {
+  if (isCdRom && removableRootDisk && iStorageClassConfigMap && template) {
+    if (isWindowsTemplate(template.toJS())) {
       dispatch(
         vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
           id: getNextIDResolver(storages),
