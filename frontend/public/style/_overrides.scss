@@ -25,9 +25,10 @@ form.pf-c-form {
   vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
 }
 
-.co-toolbar-no-padding.pf-c-toolbar {
-  --pf-c-toolbar__content--PaddingLeft: 0;
-  --pf-c-toolbar__content--PaddingRight: 0;
+.co-toolbar-no-padding .pf-c-toolbar__content {
+  // use negative margins so that pf-c-toolbar__expandable-content extends to the edges at mobile
+  margin-left: -$pf-global-gutter;
+  margin-right: -$pf-global-gutter;
   --pf-c-toolbar--PaddingTop: 0;
   --pf-c-toolbar--RowGap: var(--pf-global--spacer--md);
 }
