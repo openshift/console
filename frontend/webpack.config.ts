@@ -49,11 +49,7 @@ const sharedPatternFlyCoreTest = getVendorModuleRegExp([
 ]);
 
 const config: Configuration = {
-  entry: [
-    './polyfills.js',
-    './public/components/app.jsx',
-    'monaco-editor-core/esm/vs/editor/editor.worker.js',
-  ],
+  entry: ['./public/components/app.jsx', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
