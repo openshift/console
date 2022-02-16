@@ -44,6 +44,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
       namespaced: true,
       optional: true,
       selector: { matchLabels: { owner: 'helm' } },
+      partialMetadata: true,
     }),
     [namespace],
   );
