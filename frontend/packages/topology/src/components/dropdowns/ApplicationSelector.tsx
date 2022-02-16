@@ -69,8 +69,13 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     },
   ];
 
-  const handleAppChange = (event) => {
-    setApplicationExists(availableApplications.current.includes(event.target.value));
+  const handleAppChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setApplicationExists(availableApplications.current.includes(event.target.value.trim()));
+  };
+
+  const handleAppBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const trimmedApplicationName = event.target.value.trim();
+    setFieldValue(nameField.name, trimmedApplicationName);
   };
 
   const label = t('topology~Application');
@@ -121,6 +126,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           helpText={inputHelpText}
           validated={applicationExists ? ValidatedOptions.warning : ValidatedOptions.default}
           onChange={handleAppChange}
+          onBlur={handleAppBlur}
         />
       )}
     </>
