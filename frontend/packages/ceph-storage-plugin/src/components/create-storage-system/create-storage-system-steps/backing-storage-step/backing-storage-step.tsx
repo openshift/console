@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { useTranslation } from 'react-i18next';
-import { useFlag, DevPreviewBadge } from '@console/shared/src';
+import { useFlag } from '@console/shared/src';
 import {
   Form,
   FormGroup,
@@ -19,7 +19,7 @@ import {
   ClusterServiceVersionModel,
 } from '@console/operator-lifecycle-manager/src';
 import { AdvancedSection } from './advanced-section';
-import { SUPPORTED_EXTERNAL_STORAGE, isStorageProviderDevPreview } from '../../external-storage';
+import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
 import {
   getODFCsv,
@@ -76,14 +76,13 @@ const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
         aria-label={t('ceph-storage-plugin~Select external system from list')}
         value={selectedStorage}
         id="storage-platform-name"
-        className="odf-backing-storage__selection--width  odf-backing-storage__selection--spacer"
+        className="odf-backing-storage__selection--width"
         onChange={handleSelection}
       >
         {selectOptions.map(({ displayName, model: { kind } }) => (
           <FormSelectOption key={kind} value={kind} label={displayName} />
         ))}
       </FormSelect>
-      {isStorageProviderDevPreview(selectedStorage) && <DevPreviewBadge />}
     </FormGroup>
   );
 };
