@@ -83,6 +83,9 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         ImmutableMap(action.payload.variables),
       );
 
+    case ActionType.DashboardsClearVariables:
+      return state.setIn(['dashboards', action.payload.perspective, 'variables'], ImmutableMap());
+
     case ActionType.DashboardsSetEndTime:
       return state.setIn(
         ['dashboards', action.payload.perspective, 'endTime'],
