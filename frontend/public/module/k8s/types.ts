@@ -62,7 +62,7 @@ export type K8sResourceCondition = {
 
 export type MatchExpression = {
   key: string;
-  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
+  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual' | 'NotEquals';
   values?: string[];
   value?: string;
 };

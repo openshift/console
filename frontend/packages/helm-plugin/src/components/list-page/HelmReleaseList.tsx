@@ -12,7 +12,10 @@ import { SortByDirection } from '@patternfly/react-table';
 import { CustomResourceList } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { StatusBox } from '@console/internal/components/utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
@@ -36,14 +39,17 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
   const [releasesLoaded, setReleasesLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>();
   const [releases, setReleases] = React.useState([]);
-  const secretResource = React.useMemo(
+  const secretResource = React.useMemo<WatchK8sResource>(
     () => ({
       isList: true,
       namespace,
       kind: SecretModel.kind,
       namespaced: true,
       optional: true,
-      selector: { matchLabels: { owner: 'helm' } },
+      selector: {
+        matchLabels: { owner: 'helm' },
+        matchExpressions: [{ key: 'status', operator: 'NotEquals', values: ['superseded'] }],
+      },
       partialMetadata: true,
     }),
     [namespace],
