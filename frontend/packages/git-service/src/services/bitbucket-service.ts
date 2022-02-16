@@ -26,7 +26,7 @@ export class BitbucketService extends BaseService {
     switch (this.gitsource.secretType) {
       case SecretType.BASIC_AUTH: {
         const { username, password } = this.gitsource.secretContent;
-        const encodedAuth = Base64.encode(`${username}:${password}`);
+        const encodedAuth = Base64.encode(`${Base64.decode(username)}:${Base64.decode(password)}`);
         return { Authorization: `Basic ${encodedAuth}` };
       }
       default:
