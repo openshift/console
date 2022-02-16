@@ -193,3 +193,43 @@ export type Options = {
   queryParams?: QueryParams;
   cluster?: string;
 };
+
+export type UseActiveNamespace = () => [string, (ns: string) => void];
+
+export type VirtualizedGridProps = {
+  items: VirtualizedGridItem[] | VirtualizedGridGroupedItems;
+  renderCell: VirtualizedGridRenderCell;
+  /**
+   * should be set when items are grouped/ `isItemGrouped` is set to true and each group has a heading
+   */
+  renderHeader?: VirtualizedGridRenderHeader;
+  /**
+   * Default value: false
+   * should be set true when items are grouped
+   */
+  isItemsGrouped?: boolean;
+
+  /** Grid styles */
+  className?: string;
+
+  /** Cell Measurements */
+  cellWidth?: number;
+  cellMargin?: number;
+  celldefaultHeight?: number;
+  estimatedCellHeight?: number;
+
+  overscanRowCount?: number;
+  headerHeight?: number;
+};
+
+export type VirtualizedGridItem = {
+  [key: string]: any;
+};
+
+export type VirtualizedGridGroupedItems = {
+  [key: string]: VirtualizedGridItem[];
+};
+
+export type VirtualizedGridRenderHeader = (heading: string) => React.ReactNode;
+
+export type VirtualizedGridRenderCell = (item: VirtualizedGridItem) => React.ReactNode;

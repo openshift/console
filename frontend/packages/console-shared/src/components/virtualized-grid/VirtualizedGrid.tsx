@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { WindowScroller, AutoSizer, Size, CellMeasurerCache } from 'react-virtualized';
+import { VirtualizedGridProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { WithScrollContainer } from '@console/internal/components/utils';
 import Cell from './Cell';
 import {
@@ -12,34 +13,8 @@ import {
 } from './const';
 import Grid from './Grid';
 import GroupByFilterGrid from './GroupByFilterGrid';
-import { Item, GroupedItems, GridChildrenProps, RenderHeader, RenderCell } from './types';
+import { Item, GroupedItems, GridChildrenProps } from './types';
 import { CellMeasurementContext } from './utils';
-
-type VirtualizedGridProps = {
-  items: Item[] | GroupedItems;
-  renderCell: RenderCell;
-  /**
-   * should be set when items are grouped/ `isItemGrouped` is set to true and each group has a heading
-   */
-  renderHeader?: RenderHeader;
-  /**
-   * Default value: false
-   * should be set true when items are grouped
-   */
-  isItemsGrouped?: boolean;
-
-  /** Grid styles */
-  className?: string;
-
-  /** Cell Measurements */
-  cellWidth?: number;
-  cellMargin?: number;
-  celldefaultHeight?: number;
-  estimatedCellHeight?: number;
-
-  overscanRowCount?: number;
-  headerHeight?: number;
-};
 
 const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
   items,

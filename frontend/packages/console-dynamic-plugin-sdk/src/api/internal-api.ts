@@ -15,6 +15,8 @@ import {
   UtilizationDurationDropdownProps,
   UseUtilizationDuration,
   UsePrometheusPoll,
+  UseActiveNamespace,
+  VirtualizedGridProps,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -43,9 +45,14 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = require('@console
   .default;
 export const UtilizationBody: React.FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
   .default;
-export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
-  .useUtilizationDuration;
 export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown')
   .UtilizationDurationDropdown;
+export const VirtualizedGrid: React.FC<VirtualizedGridProps> = require('@console/shared/src/components/virtualized-grid/VirtualizedGrid')
+  .default;
+
+export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
+  .useUtilizationDuration;
 export const usePrometheusPoll: UsePrometheusPoll = require('@console/internal/components/graphs/prometheus-poll-hook')
   .usePrometheusPoll;
+export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
+  .useActiveNamespace;
