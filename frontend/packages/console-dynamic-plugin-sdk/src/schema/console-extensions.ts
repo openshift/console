@@ -9,6 +9,7 @@ import {
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import { ContextProvider } from '../extensions/context-providers';
 import { CreateResource } from '../extensions/create-resource';
+import { CustomExtension } from '../extensions/custom';
 import {
   DashboardsTab,
   DashboardsCard,
@@ -63,7 +64,6 @@ import {
 import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
 import { UserPreferenceGroup, UserPreferenceItem } from '../extensions/user-preferences';
 import { YAMLTemplate } from '../extensions/yaml-templates';
-import { CustomExtension } from '../extensions/custom';
 
 export type SupportedExtension =
   | FeatureFlag
