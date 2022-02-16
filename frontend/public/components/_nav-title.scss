@@ -25,9 +25,6 @@
     padding-right: $pf-global-gutter--md;
   }
   &--row {
-    @media (max-width: $screen-xs-max) {
-      margin-bottom: 30px;
-    }
     @media (min-width: $screen-sm) {
       display: flex;
       flex-direction: row;

@@ -15,7 +15,9 @@ import {
   ToolbarChip,
   ToolbarContent,
   ToolbarFilter,
+  ToolbarGroup,
   ToolbarItem,
+  ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
 import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
@@ -280,138 +282,142 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   return (
     <Toolbar
-      className="co-toolbar-no-padding"
+      className="co-toolbar-no-padding pf-m-toggle-group-container"
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}
       clearFiltersButtonText={t('public~Clear all filters')}
     >
       <ToolbarContent>
-        {rowFilters?.length > 0 && (
-          <ToolbarItem>
-            {_.reduce(
-              Object.keys(filters),
-              (acc, key) => (
-                <ToolbarFilter
-                  key={key}
-                  chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
-                    return {
-                      key: item,
-                      node: filtersNameMap[item],
-                    };
-                  })}
-                  deleteChip={(filter, chip: ToolbarChip) => updateRowFilterSelected([chip.key])}
-                  categoryName={key}
-                  deleteChipGroup={() => clearAllRowFilter(key)}
-                  chipGroupCollapsedText={t('public~{{numRemaining}} more', {
-                    numRemaining: '${remaining}',
-                  })}
-                  chipGroupExpandedText={t('public~Show less')}
-                >
-                  {acc}
-                </ToolbarFilter>
-              ),
-              <div data-test-id="filter-dropdown-toggle">
-                <Select
-                  placeholderText={
-                    <span>
-                      <FilterIcon className="span--icon__right-margin" />
-                      {t('public~Filter')}
-                    </span>
-                  }
-                  isOpen={isOpen}
-                  onToggle={() => {
-                    setOpen(!isOpen);
-                  }}
-                  onSelect={onRowFilterSelect}
-                  variant={SelectVariant.checkbox}
-                  selections={selectedRowFilters}
-                  isCheckboxSelectionBadgeHidden
-                  isGrouped
-                  maxHeight="60vh"
-                >
-                  {dropdownItems}
-                </Select>
-              </div>,
-            )}
-          </ToolbarItem>
-        )}
-        {!hideNameLabelFilters && (
-          <ToolbarItem className="co-filter-search--full-width">
-            <ToolbarFilter
-              deleteChipGroup={() => {
-                setLabelInputText('');
-                applyLabelFilters([]);
-              }}
-              chips={labelFilters}
-              deleteChip={(f, chip: string) => {
-                setLabelInputText('');
-                applyLabelFilters(_.difference(labelFilters, [chip]));
-              }}
-              categoryName={t('public~Label')}
-            >
+        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+          {rowFilters?.length > 0 && (
+            <ToolbarItem>
+              {_.reduce(
+                Object.keys(filters),
+                (acc, key) => (
+                  <ToolbarFilter
+                    key={key}
+                    chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
+                      return {
+                        key: item,
+                        node: filtersNameMap[item],
+                      };
+                    })}
+                    deleteChip={(filter, chip: ToolbarChip) => updateRowFilterSelected([chip.key])}
+                    categoryName={key}
+                    deleteChipGroup={() => clearAllRowFilter(key)}
+                    chipGroupCollapsedText={t('public~{{numRemaining}} more', {
+                      numRemaining: '${remaining}',
+                    })}
+                    chipGroupExpandedText={t('public~Show less')}
+                  >
+                    {acc}
+                  </ToolbarFilter>
+                ),
+                <div data-test-id="filter-dropdown-toggle">
+                  <Select
+                    placeholderText={
+                      <span>
+                        <FilterIcon className="span--icon__right-margin" />
+                        {t('public~Filter')}
+                      </span>
+                    }
+                    isOpen={isOpen}
+                    onToggle={() => {
+                      setOpen(!isOpen);
+                    }}
+                    onSelect={onRowFilterSelect}
+                    variant={SelectVariant.checkbox}
+                    selections={selectedRowFilters}
+                    isCheckboxSelectionBadgeHidden
+                    isGrouped
+                    maxHeight="60vh"
+                  >
+                    {dropdownItems}
+                  </Select>
+                </div>,
+              )}
+            </ToolbarItem>
+          )}
+          {!hideNameLabelFilters && (
+            <ToolbarItem className="co-filter-search--full-width">
               <ToolbarFilter
-                chips={nameInputText ? [nameInputText] : []}
-                deleteChip={() => {
-                  setNameInputText('');
-                  applyNameFilter('');
+                deleteChipGroup={() => {
+                  setLabelInputText('');
+                  applyLabelFilters([]);
                 }}
-                categoryName={translatedNameFilterTitle}
+                chips={labelFilters}
+                deleteChip={(f, chip: string) => {
+                  setLabelInputText('');
+                  applyLabelFilters(_.difference(labelFilters, [chip]));
+                }}
+                categoryName={t('public~Label')}
               >
-                <div className="pf-c-input-group">
-                  {!hideLabelFilter && (
-                    <DropdownInternal
-                      items={filterDropdownItems}
-                      onChange={(type) => setFilterType(FilterType[type])}
-                      selectedKey={filterType}
-                      title={translateFilterType(filterType)}
-                    />
-                  )}
-                  {filterType === FilterType.LABEL ? (
-                    <AutocompleteInput
-                      className="co-text-node"
-                      onSuggestionSelect={(selected) => {
-                        applyLabelFilters(_.uniq([...labelFilters, selected]));
-                      }}
-                      showSuggestions
-                      textValue={labelInputText}
-                      setTextValue={setLabelInputText}
-                      placeholder={labelFilterPlaceholder ?? t('public~Search by label...')}
-                      data={data}
-                      labelPath={labelPath}
-                    />
-                  ) : (
-                    <TextFilter
-                      data-test="name-filter-input"
-                      value={nameInputText}
-                      onChange={(value: string) => {
-                        setNameInputText(value);
-                        debounceApplyNameFilter(value);
-                      }}
-                      placeholder={nameFilterPlaceholder ?? t('public~Search by name...')}
-                    />
-                  )}
-                </div>
+                <ToolbarFilter
+                  chips={nameInputText ? [nameInputText] : []}
+                  deleteChip={() => {
+                    setNameInputText('');
+                    applyNameFilter('');
+                  }}
+                  categoryName={translatedNameFilterTitle}
+                >
+                  <div className="pf-c-input-group">
+                    {!hideLabelFilter && (
+                      <DropdownInternal
+                        items={filterDropdownItems}
+                        onChange={(type) => setFilterType(FilterType[type])}
+                        selectedKey={filterType}
+                        title={translateFilterType(filterType)}
+                      />
+                    )}
+                    {filterType === FilterType.LABEL ? (
+                      <AutocompleteInput
+                        className="co-text-node"
+                        onSuggestionSelect={(selected) => {
+                          applyLabelFilters(_.uniq([...labelFilters, selected]));
+                        }}
+                        showSuggestions
+                        textValue={labelInputText}
+                        setTextValue={setLabelInputText}
+                        placeholder={labelFilterPlaceholder ?? t('public~Search by label...')}
+                        data={data}
+                        labelPath={labelPath}
+                      />
+                    ) : (
+                      <TextFilter
+                        data-test="name-filter-input"
+                        value={nameInputText}
+                        onChange={(value: string) => {
+                          setNameInputText(value);
+                          debounceApplyNameFilter(value);
+                        }}
+                        placeholder={nameFilterPlaceholder ?? t('public~Search by name...')}
+                      />
+                    )}
+                  </div>
+                </ToolbarFilter>
               </ToolbarFilter>
-            </ToolbarFilter>
-          </ToolbarItem>
-        )}
+            </ToolbarItem>
+          )}
+        </ToolbarToggleGroup>
         {columnLayout?.id && !hideColumnManagement && (
-          <ToolbarItem>
-            <Tooltip content={t('public~Manage columns')}>
-              <Button
-                variant="plain"
-                onClick={() =>
-                  createColumnManagementModal({
-                    columnLayout,
-                  })
-                }
-                aria-label={t('public~Column management')}
-              >
-                <ColumnsIcon />
-              </Button>
-            </Tooltip>
-          </ToolbarItem>
+          <ToolbarGroup>
+            <ToolbarItem>
+              <Tooltip content={t('public~Manage columns')}>
+                <Button
+                  variant="plain"
+                  onClick={() =>
+                    createColumnManagementModal({
+                      columnLayout,
+                    })
+                  }
+                  aria-label={t('public~Column management')}
+                >
+                  <ColumnsIcon />
+                </Button>
+              </Tooltip>
+            </ToolbarItem>
+          </ToolbarGroup>
         )}
       </ToolbarContent>
     </Toolbar>
