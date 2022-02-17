@@ -263,6 +263,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
               resource.metadata.name,
               resource.metadata.namespace,
             )}/containers/${containerName}/debug`}
+            data-test="debug-container-link"
           >
             {label}
           </Link>
