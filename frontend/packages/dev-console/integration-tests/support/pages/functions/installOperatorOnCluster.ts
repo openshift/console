@@ -25,7 +25,27 @@ export const installOperator = (operatorName: operators) => {
       cy.get(operatorsPO.operatorHub.install).click();
       cy.get(operatorsPO.operatorHub.installingOperatorModal).should('be.visible');
       app.waitForLoad();
-      cy.byTestID('success-icon').should('be.visible');
+
+      // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=2059865
+      const waitForResult = (tries: number = 10) => {
+        if (tries < 1) {
+          return;
+        }
+        cy.wait(2000);
+        cy.get('body').then((body) => {
+          if (body.find(`[data-test="success-icon"]`).length > 0) {
+            cy.byTestID('success-icon').should('be.visible');
+          } else if (body.find(`.pf-c-alert`).length > 0) {
+            cy.log('Installation flow interrupted, check the Installed Operators page for status');
+            operatorsPage.navigateToInstallOperatorsPage();
+            operatorsPage.searchOperatorInInstallPage(operatorName);
+            cy.contains('Succeeded', { timeout: 300000 });
+          } else {
+            waitForResult(tries - 1);
+          }
+        });
+      };
+      waitForResult();
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
@@ -82,6 +102,7 @@ const performPostInstallationSteps = (operator: operators): void => {
       cy.log(`Performing Serverless post installation steps`);
       createKnativeServing();
       createKnativeEventing();
+      operatorsPage.navigateToOperatorHubPage();
       break;
     case operators.RedHatCodereadyWorkspaces:
       cy.log(`Performing CRW post-installation steps`);
@@ -112,20 +133,17 @@ export const verifyAndInstallOperator = (operator: operators, namespace?: string
   operatorsPage.searchOperatorInInstallPage(operator);
 
   installIfNotInstalled(operator);
-
   performPostInstallationSteps(operator);
 };
 
 export const verifyAndInstallPipelinesOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.PipelinesOperator);
-  performPostInstallationSteps(operators.PipelinesOperator);
 };
 
 export const verifyAndInstallKnativeOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.ServerlessOperator);
-  performPostInstallationSteps(operators.ServerlessOperator);
 };
 
 export const verifyAndInstallGitopsPrimerOperator = () => {

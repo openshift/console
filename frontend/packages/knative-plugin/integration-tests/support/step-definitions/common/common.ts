@@ -56,7 +56,7 @@ When('user selects {string} from Context Menu', (menuOption: string) => {
 Given('user has installed eventing operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   operatorsPage.navigateToInstallOperatorsPage();
-  operatorsPage.searchOperator(operators.ServerlessOperator);
+  operatorsPage.searchOperatorInInstallPage(operators.ServerlessOperator);
   cy.get('body', {
     timeout: 50000,
   }).then(($ele) => {
@@ -71,7 +71,7 @@ Given('user has installed eventing operator', () => {
 Given('user has installed Red Hat Integration - Camel K Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   operatorsPage.navigateToInstallOperatorsPage();
-  operatorsPage.searchOperator(operators.RedHatIntegrationCamelK);
+  operatorsPage.searchOperatorInInstallPage(operators.RedHatIntegrationCamelK);
   cy.get('body', {
     timeout: 50000,
   }).then(($ele) => {
@@ -86,7 +86,7 @@ Given('user has installed Red Hat Integration - Camel K Operator', () => {
 Given('user has installed Knative Apache Kafka Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
   operatorsPage.navigateToInstallOperatorsPage();
-  operatorsPage.searchOperator(operators.ApacheKafka);
+  operatorsPage.searchOperatorInInstallPage(operators.ApacheKafka);
   cy.get('body', {
     timeout: 50000,
   }).then(($ele) => {

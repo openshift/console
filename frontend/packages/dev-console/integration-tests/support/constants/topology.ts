@@ -7,7 +7,7 @@ export enum displayOptions {
 }
 
 export enum nodeActions {
-  EditApplicationGrouping = 'Edit Application grouping',
+  EditApplicationGrouping = 'Edit application grouping',
   EditPodCount = 'Edit Pod count',
   PauseRollOuts = 'Pause rollouts',
   AddHealthChecks = 'Add Health Checks',

@@ -116,7 +116,7 @@ export enum Actions {
   PauseRollouts = 'Pause Rollouts',
   AddStorage = 'Add Storage',
   EditUpdateStrategy = 'Edit Update Strategy',
-  EditApplicationGrouping = 'Edit Application Grouping',
+  EditApplicationGrouping = 'Edit application Grouping',
   EditNode = 'Edit Node',
   EditLabels = 'Edit Labels',
   EditAnnotations = 'Edit Annotations',

@@ -6,7 +6,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
             Given user has created or selected namespace "aut-deployment-knative"
 
 
-        @regression
+        @regression @broken-test
         Scenario: Create serverless workload (ksvc) for existing Deployment from Action menu: KN-04-TC01
             Given user is at Add page
               And user has created git workload "dep-workload"

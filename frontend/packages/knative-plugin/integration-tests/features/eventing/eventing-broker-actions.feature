@@ -26,7 +26,7 @@ Feature: Perform actions on Broker
         Scenario: Context Menu for Broker: KE-05-TC02
             Given user has created broker "default" in application groupings "app"
              When user right clicks on "default" broker
-             Then user will see "Edit Application grouping" option
+             Then user will see "Edit application grouping" option
               And user will see "Add Trigger" option
               And user will see "Edit labels" option
               And user will see "Edit annotations" option
@@ -47,7 +47,7 @@ Feature: Perform actions on Broker
         @regression @to-do
         Scenario: Edit Application grouping to new application action on Broker: KE-05-TC04
              When user right clicks on "default" broker to open the context menu
-              And user clicks on "Edit Application grouping"
+              And user clicks on "Edit application grouping"
               And user will click on Application drop down on the modal
               And user selects "Create application" from Application drop down
               And user enters application name as "new-app"
@@ -114,7 +114,7 @@ Feature: Perform actions on Broker
         @regression @to-do
         Scenario: Edit Application grouping to no application group action on Broker: KE-05-TC10
              When user right clicks on "default" broker to open the context menu
-              And user clicks on "Edit Application grouping"
+              And user clicks on "Edit application grouping"
               And user will click on Application drop down on the modal
               And user selects "No Application group" from Application drop down
               And user clicks on Save button

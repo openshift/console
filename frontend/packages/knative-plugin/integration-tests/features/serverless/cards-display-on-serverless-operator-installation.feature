@@ -20,7 +20,7 @@ Feature: Event sources cards display
               And user is able to see event sources like ApiServerSource, ContainerSource, PingSource, SinkBinding
 
 
-        @smoke
+        @smoke @broken-test
         Scenario: Event Source card display on serverless operator installation: KN-03-TC02
             Given user is at Add page
              Then user is able to see "Event Source" card on Add page
@@ -29,7 +29,7 @@ Feature: Event sources cards display
               And user is able to see "Broker" card on Add page
 
 
-        @regression
+        @regression @broken-test
         Scenario: knative eventing in operator backed: KN-03-TC03
             Given user is at Add page
              When user clicks on "Operator Backed" card
@@ -46,7 +46,7 @@ Feature: Event sources cards display
               And user is able to see "Kamelet Source" type
 
 
-        @regression
+        @regression @broken-test
         Scenario: Operator Backed card display on serverless operator installation: KN-03-TC06
               And user is at namespace "aut-namespace"
              When user selects Add option from left side navigation menu
@@ -54,7 +54,7 @@ Feature: Event sources cards display
               And user is able to see "Operator Backed" card on Add page
 
 
-        @regression
+        @regression @broken-test
         Scenario: Notifier message display in Event sources page when knative service is not available in namespace: KN-03-TC07
             Given user is at Add page
              When user clicks on "Event Source" card

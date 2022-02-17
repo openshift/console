@@ -56,8 +56,7 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
   # heavily unstable/outdated tests in pipelines
   # yarn run test-cypress-pipelines-nightly
   yarn run test-cypress-topology-nightly
-  # disabled due to serverless operator not being available
-  # yarn run test-cypress-knative-nightly
+  yarn run test-cypress-knative-nightly
 
   exit $err;
 fi
@@ -67,8 +66,7 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-dev-console-headless
   yarn run test-cypress-olm-headless
   yarn run test-cypress-helm-headless
-  # disabled serverless as serverless operator is not availavle in operatorhub
-  # yarn run test-cypress-knative-headless
+  yarn run test-cypress-knative-headless
   yarn run test-cypress-topology-headless
   yarn run test-cypress-pipelines-headless
   exit;
