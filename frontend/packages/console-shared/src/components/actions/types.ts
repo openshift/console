@@ -1,5 +1,10 @@
 import { Action, ActionGroup } from '@console/dynamic-plugin-sdk';
 
+export {
+  ActionContext,
+  ActionMenuVariant,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+
 export type MenuOption = Action | GroupedMenuOption;
 
 export type GroupedMenuOption = ActionGroup['properties'] & {
@@ -11,15 +16,6 @@ export enum MenuOptionType {
   SUB_MENU,
   ATOMIC_MENU,
 }
-
-export enum ActionMenuVariant {
-  KEBAB = 'plain',
-  DROPDOWN = 'default',
-}
-
-export type ActionContext = {
-  [contextId: string]: any;
-};
 
 export type ActionService = {
   actions: Action[];

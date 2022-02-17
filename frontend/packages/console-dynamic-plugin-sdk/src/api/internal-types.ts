@@ -233,3 +233,19 @@ export type VirtualizedGridGroupedItems = {
 export type VirtualizedGridRenderHeader = (heading: string) => React.ReactNode;
 
 export type VirtualizedGridRenderCell = (item: VirtualizedGridItem) => React.ReactNode;
+
+export type LazyActionMenuProps = {
+  context: ActionContext;
+  variant?: ActionMenuVariant;
+  label?: string;
+  isDisabled?: boolean;
+};
+
+export type ActionContext = {
+  [contextId: string]: any;
+};
+
+export enum ActionMenuVariant {
+  KEBAB = 'plain',
+  DROPDOWN = 'default',
+}
