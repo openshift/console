@@ -9,6 +9,7 @@ import {
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import { ContextProvider } from '../extensions/context-providers';
 import { CreateResource } from '../extensions/create-resource';
+import { CustomExtension } from '../extensions/custom';
 import {
   DashboardsTab,
   DashboardsCard,
@@ -128,4 +129,4 @@ export type SupportedExtension =
 /**
  * Schema of Console plugin's `console-extensions.json` file.
  */
-export type ConsoleExtensionsJSON = SupportedExtension[];
+export type ConsoleExtensionsJSON = (SupportedExtension | CustomExtension)[];
