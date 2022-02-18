@@ -29,3 +29,7 @@
 
 // External dependency extensions
 @import "style/patternfly-sizing-extension";
+
+// Dark theme styles from patternfly
+// Temporarily using css instead of scss due to a PF issue: https://github.com/patternfly/patternfly/issues/4700
+@import '~@patternfly/patternfly/patternfly-theme-dark.css';
