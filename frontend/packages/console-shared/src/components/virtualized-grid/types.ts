@@ -1,22 +1,18 @@
 import { GridCellProps } from 'react-virtualized';
+import { VirtualizedGridItem } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+
+export {
+  VirtualizedGridItem as Item,
+  VirtualizedGridGroupedItems as GroupedItems,
+  VirtualizedGridRenderHeader as RenderHeader,
+  VirtualizedGridRenderCell as RenderCell,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export type Params = {
   index: number;
 };
 
-export type Item = {
-  [key: string]: any;
-};
-
-export type GroupedItems = {
-  [key: string]: Item[];
-};
-
-export type CellItem = string | null | Item;
-
-export type RenderHeader = (heading: string) => React.ReactNode;
-
-export type RenderCell = (item: Item) => React.ReactNode;
+export type CellItem = string | null | VirtualizedGridItem;
 
 export type GridChildrenProps = {
   data: GridCellProps;
