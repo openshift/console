@@ -37,18 +37,6 @@ export const sourceDataSpecSchema = (t: TFunction) =>
   yup
     .object()
     .when('type', {
-      is: EventSources.CronJobSource,
-      then: yup.object().shape({
-        [EventSources.CronJobSource]: yup.object().shape({
-          data: yup.string().max(253, t('knative-plugin~Cannot be longer than 253 characters.')),
-          schedule: yup
-            .string()
-            .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-            .required(t('knative-plugin~Required')),
-        }),
-      }),
-    })
-    .when('type', {
       is: EventSources.PingSource,
       then: yup.object().shape({
         [EventSources.PingSource]: yup.object().shape({

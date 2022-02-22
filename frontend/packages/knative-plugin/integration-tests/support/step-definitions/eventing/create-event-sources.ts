@@ -105,7 +105,7 @@ Then('user will be redirected to page with header name {string}', (title: string
 });
 
 Then(
-  'user is able to see event sources like ApiServerSource, ContainerSource, CronJobSource, PingSource, SinkBinding',
+  'user is able to see event sources like ApiServerSource, ContainerSource, PingSource, SinkBinding',
   () => {
     app.waitForLoad();
     eventSourcesPage.verifyEventSourceType('Api Server Source');
@@ -283,14 +283,6 @@ Then(
 
 Then(
   'ContainerSource event source {string} is created and linked to selected knative service {string}',
-  (eventSource: string, resourceName: string) => {
-    topologyPage.getEventSource(eventSource).click({ force: true });
-    topologySidePane.verifyResource(resourceName);
-  },
-);
-
-Then(
-  'CronJobSource event source {string} is created and linked to selected knative service {string}',
   (eventSource: string, resourceName: string) => {
     topologyPage.getEventSource(eventSource).click({ force: true });
     topologySidePane.verifyResource(resourceName);

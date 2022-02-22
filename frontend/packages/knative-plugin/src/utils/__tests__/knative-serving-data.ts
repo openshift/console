@@ -348,10 +348,6 @@ export const deploymentKnativeData: K8sResourceKind = {
 };
 
 const eventSourceData = {
-  [EventSources.CronJobSource]: {
-    data: '',
-    schedule: '* * * * *',
-  },
   [EventSources.PingSource]: {
     jsonData: '',
     schedule: '* * * * *',

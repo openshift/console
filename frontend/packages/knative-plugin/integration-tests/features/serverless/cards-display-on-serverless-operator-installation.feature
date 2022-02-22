@@ -17,7 +17,7 @@ Feature: Event sources cards display
               And user will see the Event Sources cards
               And user will see Filter by Keyword field
               And user will see sort dropdown with values A-Z, Z-A
-              And user is able to see event sources like ApiServerSource, ContainerSource, CronJobSource, PingSource, SinkBinding
+              And user is able to see event sources like ApiServerSource, ContainerSource, PingSource, SinkBinding
 
 
         @smoke
@@ -74,4 +74,4 @@ Feature: Event sources cards display
               And user will see the Event Sources cards
               And user will see Filter by Keyword field
               And user will see sort dropdown with values A-Z, Z-A
-              And user is able to see event sources like ApiServerSource, ContainerSource, CronJobSource, PingSource, SinkBinding
+              And user is able to see event sources like ApiServerSource, ContainerSource, PingSource, SinkBinding

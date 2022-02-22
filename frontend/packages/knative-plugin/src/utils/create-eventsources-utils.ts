@@ -149,10 +149,6 @@ export const getCatalogEventSourceResource = (
 
 export const getEventSourceData = (source: string) => {
   const eventSourceData = {
-    [EventSources.CronJobSource]: {
-      data: '',
-      schedule: '',
-    },
     [EventSources.PingSource]: {
       jsonData: '',
       schedule: '',

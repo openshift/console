@@ -17,7 +17,6 @@ import {
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENT_SOURCE_APIGROUP,
   EVENT_SOURCE_CONTAINER_KIND,
-  EVENT_SOURCE_CRONJOB_KIND,
   KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   EVENT_SOURCE_PING_KIND,
 } from '../../const';
@@ -1221,11 +1220,6 @@ export const MockKnativeResources: TopologyDataResources = {
   ksroutes: sampleKnativeRoutes,
   configurations: sampleKnativeConfigurations,
   revisions: sampleKnativeRevisions,
-  [EVENT_SOURCE_CRONJOB_KIND]: getEventSourceResponse(
-    KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
-    'v1alpha1',
-    EVENT_SOURCE_CRONJOB_KIND,
-  ),
   [EVENT_SOURCE_CONTAINER_KIND]: getEventSourceResponse(
     KNATIVE_EVENT_SOURCE_APIGROUP,
     'v1',
@@ -1363,11 +1357,8 @@ export const sinkUriUid = '1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri';
 const sinkUri = 'http://overlayimage.testproject3.svc.cluster.local';
 
 export const eventSourceWithSinkUri: K8sResourceKind = {
-  ...getEventSourceResponse(
-    KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
-    'v1alpha1',
-    EVENT_SOURCE_CRONJOB_KIND,
-  ).data[0],
+  ...getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP_DEP, 'v1alpha1', EVENT_SOURCE_PING_KIND)
+    .data[0],
   spec: { sink: { uri: sinkUri } },
 };
 
