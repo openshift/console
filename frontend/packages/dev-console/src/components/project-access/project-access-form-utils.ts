@@ -37,7 +37,7 @@ export const getUsersFromSubject = (user: RoleBinding): UserRoleBinding[] =>
   }));
 
 export const getUserRoleBindings = (roleBindings: RoleBinding[]): UserRoleBinding[] =>
-  _.flatten(roleBindings.map((user) => getUsersFromSubject(user)));
+  _.filter(_.flatten(roleBindings.map((user) => getUsersFromSubject(user))), undefined);
 
 export const defaultProjectAccessRoles: ProjectAccessRoles = {
   availableClusterRoles: ['admin', 'edit', 'view'],
