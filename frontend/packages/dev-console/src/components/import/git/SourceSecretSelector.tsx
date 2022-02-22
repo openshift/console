@@ -47,8 +47,12 @@ const SourceSecretSelector: React.FC<{
   };
 
   React.useEffect(() => {
-    loaded && !loadError && data && setFieldValue(`${fieldPrefix}git.secretResource`, data);
-  }, [loaded, loadError, data, setFieldValue, fieldPrefix]);
+    loaded &&
+      !loadError &&
+      secret &&
+      data &&
+      setFieldValue(`${fieldPrefix}git.secretResource`, data);
+  }, [loaded, loadError, secret, data, setFieldValue, fieldPrefix]);
 
   return (
     <>
