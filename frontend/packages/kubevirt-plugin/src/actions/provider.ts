@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
-import { modelFor } from '@console/dynamic-plugin-sdk/src/lib-internal-kubevirt';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceFor } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { getModifyApplicationAction } from '@console/topology/src/actions';
 import { VmActionFactory, VmiActionFactory } from '../components/vms/menu-actions';
