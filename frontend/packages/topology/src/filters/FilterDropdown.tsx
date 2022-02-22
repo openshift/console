@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Radio,
-  Select,
-  SelectGroup,
-  SelectOption,
-  SelectVariant,
-  Switch,
-} from '@patternfly/react-core';
+import { Select, SelectGroup, SelectOption, SelectVariant, Switch } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
 import { EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
@@ -42,18 +35,6 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     onChange([...filters.slice(0, index), filter, ...filters.slice(index + 1)]);
   };
 
-  const onShowGroupsChange = (value: boolean) => {
-    const index = filters?.findIndex((f) => f.id === SHOW_GROUPS_FILTER_ID) ?? -1;
-    if (index === -1) {
-      return;
-    }
-    const filter = {
-      ...filters[index],
-      value,
-    };
-    onChange([...filters.slice(0, index), filter, ...filters.slice(index + 1)]);
-  };
-
   const onGroupsExpandedChange = (value: boolean) => {
     const index = filters?.findIndex((f) => f.id === EXPAND_GROUPS_FILTER_ID) ?? -1;
     if (index === -1) {
@@ -79,29 +60,14 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     .filter((f) => f.type === TopologyDisplayFilterType.show && supportedFilters.includes(f.id))
     .sort((a, b) => a.priority - b.priority);
 
+  const isSelectDisabled =
+    isDisabled ||
+    (viewType === TopologyViewType.graph
+      ? !expandFilters.length && !showFilters.length
+      : !expandFilters.length);
+
   const selectContent = (
     <div className="odc-topology-filter-dropdown">
-      <div className="odc-topology-filter-dropdown__group">
-        <span className="pf-c-select__menu-group-title">{t('topology~Mode')}</span>
-        <div className="odc-topology-filter-dropdown__radio-group">
-          <Radio
-            className="odc-topology-filter-dropdown__radio"
-            id="showGroups"
-            isChecked={showGroups}
-            label={t('topology~Connectivity')}
-            name="Connectivity"
-            onChange={() => onShowGroupsChange(true)}
-          />
-          <Radio
-            className="odc-topology-filter-dropdown__radio"
-            id="hideGroups"
-            isChecked={!showGroups}
-            label={t('topology~Consumption')}
-            name="Consumption"
-            onChange={() => onShowGroupsChange(false)}
-          />
-        </div>
-      </div>
       {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
@@ -146,7 +112,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       className="odc-topology-filter-dropdown__select"
       variant={SelectVariant.checkbox}
       customContent={selectContent}
-      isDisabled={isDisabled}
+      isDisabled={isSelectDisabled}
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
