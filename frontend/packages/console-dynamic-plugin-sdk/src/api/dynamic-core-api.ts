@@ -65,8 +65,6 @@ export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = require
   .ListPageCreateButton;
 export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
   .ListPageCreateDropdown;
-export const ListPageBody: React.FC = require('@console/internal/components/factory/ListPage/ListPageBody')
-  .default;
 export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/internal/components/factory/ListPage/ListPageFilter')
   .default;
 export const useListPageFilter: UseListPageFilter = require('@console/internal/components/factory/ListPage/filter-hook')

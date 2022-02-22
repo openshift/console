@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
+import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,6 @@ import VirtualizedTable from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
-import ListPageBody from './factory/ListPage/ListPageBody';
 import { useListPageFilter } from './factory/ListPage/filter-hook';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
