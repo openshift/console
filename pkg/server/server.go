@@ -467,7 +467,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	clusterManagementProxy := proxy.NewProxy(s.ClusterManagementProxyConfig)
 	handle(accountManagementEndpoint, http.StripPrefix(
 		s.BaseURL.Path,
-		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			clusterManagementProxy.ServeHTTP(w, r)
 		})),
 	)
