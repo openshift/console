@@ -5,7 +5,7 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "clean": "rm -rf dist generated",
+    "clean": "rm -rf dist generated schema",
     "build": "yarn clean && yarn validate && yarn compile && yarn generate",
     "compile": "for ext in '' '-internal' '-internal-kubevirt' '-webpack' ; do ./node_modules/.bin/tsc -p tsconfig${ext}.json || exit $? ; done",
     "generate": "yarn generate-schema && yarn generate-doc && yarn generate-pkg-assets",
