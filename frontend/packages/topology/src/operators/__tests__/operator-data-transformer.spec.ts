@@ -12,11 +12,7 @@ import { baseDataModelGetter } from '../../data-transforms/data-transformer';
 import { getWorkloadResources } from '../../data-transforms/transform-utils';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
 import { getFilterById } from '../../filters';
-import {
-  DEFAULT_TOPOLOGY_FILTERS,
-  EXPAND_GROUPS_FILTER_ID,
-  SHOW_GROUPS_FILTER_ID,
-} from '../../filters/const';
+import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from '../../filters/const';
 import {
   WorkloadData,
   TopologyDataResources,
@@ -115,18 +111,6 @@ describe('operator data transformer ', () => {
     expect(
       newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE && n.collapsed).length,
     ).toBe(1);
-  });
-
-  it('should flag not show operator groups when show groups is false', async () => {
-    const topologyTransformedData = await getTransformedTopologyData(mockResources);
-    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
-    const newModel = updateModelFromFilters(
-      topologyTransformedData,
-      filters,
-      ALL_APPLICATIONS_KEY,
-      filterers,
-    );
-    expect(newModel.nodes.filter((n) => n.type === TYPE_OPERATOR_BACKED_SERVICE).length).toBe(0);
   });
 
   it('should show the operator group and its children when filtered by the group', async () => {

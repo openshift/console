@@ -8,7 +8,6 @@ import { ExtensibleModel } from './ModelContext';
 export const updateTopologyDataModel = (
   dataModelContext: ExtensibleModel,
   resources: WatchK8sResults<TopologyResourcesObject>,
-  showGroups: boolean,
   trafficData: TrafficData,
   monitoringAlerts: Alerts,
 ): Promise<{ loaded: boolean; loadError: string; model: Model }> => {
@@ -52,7 +51,7 @@ export const updateTopologyDataModel = (
       dataModelContext.namespace,
       resources,
       workloadResources,
-      showGroups ? depicters : [],
+      depicters,
       trafficData,
       monitoringAlerts,
     );

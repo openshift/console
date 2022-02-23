@@ -2,8 +2,7 @@ import * as React from 'react';
 import { SelectOption } from '@patternfly/react-core';
 import { mount, shallow } from 'enzyme';
 import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
-import { DEFAULT_TOPOLOGY_FILTERS, SHOW_GROUPS_FILTER_ID } from '../const';
-import { getFilterById } from '../filter-utils';
+import { DEFAULT_TOPOLOGY_FILTERS } from '../const';
 import KindFilterDropdown from '../KindFilterDropdown';
 
 describe(KindFilterDropdown.displayName, () => {
@@ -88,7 +87,6 @@ describe(KindFilterDropdown.displayName, () => {
   });
 
   it('should select kinds when filtered', () => {
-    getFilterById(SHOW_GROUPS_FILTER_ID, dropdownFilter).value = false;
     dropdownFilter.push({
       type: TopologyDisplayFilterType.kind,
       id: 'Kind-A',

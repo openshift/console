@@ -16,7 +16,6 @@ import { getFilterById } from '@console/topology/src/filters';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
-  SHOW_GROUPS_FILTER_ID,
 } from '@console/topology/src/filters/const';
 import {
   TopologyDataResources,
@@ -102,13 +101,6 @@ describe('HELM data transformer ', () => {
     expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE && n.collapsed)).toHaveLength(
       1,
     );
-  });
-
-  it('should flag not show helm groups when show groups is false', async () => {
-    const graphData = await getTransformedTopologyData(mockResources);
-    getFilterById(SHOW_GROUPS_FILTER_ID, filters).value = false;
-    const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
-    expect(newModel.nodes.filter((n) => n.type === TYPE_HELM_RELEASE)).toHaveLength(0);
   });
 
   it('should show helm releases and their children when filtered by HelmRelease', async () => {

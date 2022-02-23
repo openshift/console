@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useDebounceCallback } from '@console/shared';
-import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
+// import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { ModelContext, ExtensibleModel } from './ModelContext';
 import { updateTopologyDataModel } from './updateTopologyDataModel';
@@ -16,10 +16,8 @@ type TopologyDataRetrieverProps = {
 const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficData }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const { namespace } = dataModelContext;
-  const filters = useDisplayFilters();
   const [resources, setResources] = React.useState<WatchK8sResults<TopologyResourcesObject>>();
   const monitoringAlerts = useMonitoringAlerts(namespace);
-  const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
   const resourcesList = React.useMemo<WatchK8sResources<any>>(
     () => (namespace && dataModelContext.extensionsLoaded ? dataModelContext.watchedResources : {}),
     [dataModelContext.extensionsLoaded, dataModelContext.watchedResources, namespace],
@@ -41,13 +39,7 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
 
   React.useEffect(() => {
     if (!_.isEmpty(resources)) {
-      updateTopologyDataModel(
-        dataModelContext,
-        resources,
-        showGroups,
-        trafficData,
-        monitoringAlerts,
-      )
+      updateTopologyDataModel(dataModelContext, resources, trafficData, monitoringAlerts)
         .then((res) => {
           dataModelContext.loadError = res.loadError;
           if (res.loaded) {
@@ -57,7 +49,7 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
         })
         .catch(() => {});
     }
-  }, [resources, trafficData, dataModelContext, monitoringAlerts, showGroups]);
+  }, [resources, trafficData, dataModelContext, monitoringAlerts]);
 
   return null;
 };

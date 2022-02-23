@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Select, SelectGroup, SelectOption, SelectVariant, Switch } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
-import { EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
+import { EXPAND_GROUPS_FILTER_ID } from './const';
 
 import './FilterDropdown.scss';
 
@@ -25,7 +25,6 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(opened);
-  const showGroups = filters?.find((f) => f.id === SHOW_GROUPS_FILTER_ID)?.value ?? true;
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
 
   const onToggle = (open: boolean): void => setIsOpen(open);
@@ -76,7 +75,6 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
               aria-label={t('topology~Collapse groups')}
               isChecked={groupsExpanded}
               onChange={onGroupsExpandedChange}
-              isDisabled={!showGroups}
             />
           </span>
           <SelectGroup className="odc-topology-filter-dropdown__expand-groups-label">
@@ -84,7 +82,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
               <SelectOption
                 key={filter.id}
                 value={filter.id}
-                isDisabled={!groupsExpanded || !showGroups}
+                isDisabled={!groupsExpanded}
                 isChecked={filter.value}
               >
                 {filter.labelKey ? t(filter.labelKey) : filter.label}

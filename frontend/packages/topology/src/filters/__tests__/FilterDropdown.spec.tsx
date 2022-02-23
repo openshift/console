@@ -6,7 +6,6 @@ import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_APPLICATION_GROUPS_FILTER_ID,
   EXPAND_GROUPS_FILTER_ID,
-  SHOW_GROUPS_FILTER_ID,
 } from '../const';
 import { getFilterById } from '../filter-utils';
 import FilterDropdown from '../FilterDropdown';
@@ -96,31 +95,6 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(
-      wrapper
-        .find(SelectOption)
-        .first()
-        .props().isDisabled,
-    ).toBeTruthy();
-  });
-
-  it('should disable expand groups and individual group expands when show groups is false', () => {
-    getFilterById(SHOW_GROUPS_FILTER_ID, dropdownFilter).value = false;
-    const wrapper = mount(
-      <FilterDropdown
-        filters={dropdownFilter}
-        viewType={TopologyViewType.graph}
-        supportedFilters={dropdownFilter.map((f) => f.id)}
-        onChange={onChange}
-        opened
-      />,
-    );
-    expect(
-      wrapper
-        .find(Switch)
-        .at(0)
-        .props().isDisabled,
-    ).toBeTruthy();
     expect(
       wrapper
         .find(SelectOption)

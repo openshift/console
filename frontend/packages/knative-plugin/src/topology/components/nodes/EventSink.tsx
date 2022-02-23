@@ -29,7 +29,6 @@ import {
   useDisplayFilters,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
-  useAllowEdgeCreation,
 } from '@console/topology/src/filters';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
@@ -72,7 +71,6 @@ const EventSink: React.FC<EventSinkProps> = ({
   const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
-  const allowEdgeCreation = useAllowEdgeCreation();
   const isKafkaConnectionLinkPresent =
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
       .length > 0;
@@ -94,20 +92,14 @@ const EventSink: React.FC<EventSinkProps> = ({
   }, [loaded, loadError, pods, resource]);
 
   React.useLayoutEffect(() => {
-    if (allowEdgeCreation && !isKafkaConnectionLinkPresent) {
+    if (!isKafkaConnectionLinkPresent) {
       if (hover) {
         onShowCreateConnector && onShowCreateConnector();
       } else {
         onHideCreateConnector && onHideCreateConnector();
       }
     }
-  }, [
-    hover,
-    onShowCreateConnector,
-    onHideCreateConnector,
-    allowEdgeCreation,
-    isKafkaConnectionLinkPresent,
-  ]);
+  }, [hover, onShowCreateConnector, onHideCreateConnector, isKafkaConnectionLinkPresent]);
 
   return (
     <g

@@ -29,7 +29,6 @@ import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import {
   useSearchFilter,
   useDisplayFilters,
-  useAllowEdgeCreation,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
@@ -95,20 +94,19 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
 
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const displayFilters = useDisplayFilters();
-  const allowEdgeCreation = useAllowEdgeCreation();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover || innerHover;
   const { x, y, width, height } = element.getBounds();
 
   React.useLayoutEffect(() => {
-    if (editAccess && allowEdgeCreation) {
+    if (editAccess) {
       if (innerHover) {
         onShowCreateConnector && onShowCreateConnector();
       } else {
         onHideCreateConnector && onHideCreateConnector();
       }
     }
-  }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector, allowEdgeCreation]);
+  }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
 
   const decorators = getNodeDecorators(
     element,

@@ -29,7 +29,6 @@ import { TYPE_AGGREGATE_EDGE } from '@console/topology/src/const';
 import {
   useSearchFilter,
   useDisplayFilters,
-  useAllowEdgeCreation,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
@@ -86,7 +85,6 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   const { data, resource } = element.getData();
   const [filtered] = useSearchFilter(element.getLabel(), resource?.metadata?.labels);
   const displayFilters = useDisplayFilters();
-  const allowEdgeCreation = useAllowEdgeCreation();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
   const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
@@ -104,14 +102,14 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
     namespace: resourceObj.metadata.namespace,
   });
   React.useLayoutEffect(() => {
-    if (createAccess && allowEdgeCreation) {
+    if (createAccess) {
       if (hover) {
         onShowCreateConnector && onShowCreateConnector();
       } else {
         onHideCreateConnector && onHideCreateConnector();
       }
     }
-  }, [hover, onShowCreateConnector, onHideCreateConnector, createAccess, allowEdgeCreation]);
+  }, [hover, onShowCreateConnector, onHideCreateConnector, createAccess]);
 
   return (
     <Tooltip
