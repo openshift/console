@@ -22,42 +22,54 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 export const MAX_VIEW_COLS = 9;
 
 export const NAME_COLUMN_ID = 'name';
-const readOnlyColumns = new Set([NAME_COLUMN_ID]);
+export const NAMESPACE_COLUMN_ID = 'namespace';
 
 const DataListRow: React.FC<DataListRowProps> = ({
   checkedColumns,
   column,
   onChange,
   disableUncheckedRow,
-}) => (
-  <DataListItem
-    aria-labelledby={`table-column-management-item-${column.id}`}
-    key={column.id}
-    className="pf-c-data-list__item--transparent-bg"
-  >
-    <DataListItemRow>
-      <DataListCheck
-        isDisabled={
-          (disableUncheckedRow && !checkedColumns.has(column.id)) || readOnlyColumns.has(column.id)
-        }
-        aria-labelledby={`table-column-management-item-${column.id}`}
-        checked={checkedColumns.has(column.id)}
-        name={column.title}
-        id={column.id}
-        onChange={onChange}
-      />
-      <DataListItemCells
-        dataListCells={[
-          <DataListCell id={`table-column-management-item-${column.id}`} key={column.id}>
-            <label className="co-label--plain" htmlFor={column.id}>
-              {column.title}
-            </label>
-          </DataListCell>,
-        ]}
-      />
-    </DataListItemRow>
-  </DataListItem>
-);
+  showNamespaceOverride,
+}) => {
+  const readOnlyColumns = new Set(
+    showNamespaceOverride ? [NAME_COLUMN_ID, NAMESPACE_COLUMN_ID] : [NAME_COLUMN_ID],
+  );
+
+  if (showNamespaceOverride) {
+    checkedColumns.add(NAMESPACE_COLUMN_ID);
+  }
+
+  return (
+    <DataListItem
+      aria-labelledby={`table-column-management-item-${column.id}`}
+      key={column.id}
+      className="pf-c-data-list__item--transparent-bg"
+    >
+      <DataListItemRow>
+        <DataListCheck
+          isDisabled={
+            (disableUncheckedRow && !checkedColumns.has(column.id)) ||
+            readOnlyColumns.has(column.id)
+          }
+          aria-labelledby={`table-column-management-item-${column.id}`}
+          checked={checkedColumns.has(column.id)}
+          name={column.title}
+          id={column.id}
+          onChange={onChange}
+        />
+        <DataListItemCells
+          dataListCells={[
+            <DataListCell id={`table-column-management-item-${column.id}`} key={column.id}>
+              <label className="co-label--plain" htmlFor={column.id}>
+                {column.title}
+              </label>
+            </DataListCell>,
+          ]}
+        />
+      </DataListItemRow>
+    </DataListItem>
+  );
+};
 
 export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
   WithUserSettingsCompatibilityProps<object>> = ({
@@ -143,6 +155,9 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
                     disableUncheckedRow={areMaxColumnsDisplayed}
                     column={defaultColumn}
                     checkedColumns={checkedColumns}
+                    showNamespaceOverride={
+                      columnLayout ? columnLayout.showNamespaceOverride : false
+                    }
                   />
                 ))}
               </DataList>
@@ -198,6 +213,7 @@ type DataListRowProps = {
   onChange: (checked: boolean, event: React.SyntheticEvent) => void;
   disableUncheckedRow: boolean;
   checkedColumns: Set<string>;
+  showNamespaceOverride?: boolean;
 };
 
 export type ColumnManagementModalProps = {

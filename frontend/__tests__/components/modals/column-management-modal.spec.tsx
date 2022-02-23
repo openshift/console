@@ -68,64 +68,6 @@ const columnLayout = [
   },
 ];
 
-const columnLayoutNamespaceDisabled = [
-  {
-    title: 'Name',
-    id: 'name',
-  },
-  {
-    title: 'Namespace',
-    id: 'namespace',
-  },
-  {
-    title: 'Status',
-    id: 'status',
-  },
-  {
-    title: 'Ready',
-    id: 'ready',
-  },
-  {
-    title: 'Restarts',
-    id: 'restarts',
-  },
-  {
-    title: 'Owner',
-    id: 'owner',
-  },
-  {
-    title: 'Memory',
-    id: 'memory',
-  },
-  {
-    title: 'CPU',
-    id: 'cpu',
-  },
-  {
-    title: 'Created',
-    id: 'created',
-  },
-  {
-    title: 'Node',
-    additional: true,
-    id: 'node',
-  },
-  {
-    title: 'Labels',
-    additional: true,
-    id: 'labels',
-  },
-  {
-    title: 'IP Address',
-    additional: true,
-    id: 'ipaddress',
-  },
-  {
-    title: '',
-    id: '',
-  },
-];
-
 describe(ColumnManagementModal.displayName, () => {
   let wrapper;
   beforeEach(() => {
@@ -165,11 +107,44 @@ describe(ColumnManagementModal.displayName, () => {
   it('renders 12 checkboxes with name, and last 3 disabled', () => {
     const checkboxItems = wrapper.find(DataListCheck);
     expect(checkboxItems.length).toEqual(12);
-    expect(checkboxItems.at(0).props().isDisabled).toEqual(true); // namespace is always disabled
+    expect(checkboxItems.at(0).props().isDisabled).toEqual(true); // name is always disabled
     expect(checkboxItems.at(1).props().isDisabled).toEqual(false); // all default columns should be enabled
     expect(checkboxItems.at(8).props().isDisabled).toEqual(false); // all default columns should be enabled
     expect(checkboxItems.at(9).props().isDisabled).toEqual(true); // all additional columns should be disabled
     expect(checkboxItems.at(11).props().isDisabled).toEqual(true); // all additional columns should be disabled
+  });
+
+  it('renders 12 checkboxes with namespace checked and disabled, if showNamespaceOverride is true', () => {
+    wrapper = mount(
+      <Provider store={store}>
+        <ColumnManagementModal
+          columnLayout={{
+            columns: columnLayout,
+            id: columnManagementID,
+            selectedColumns: new Set(
+              columnLayout.reduce((acc, column) => {
+                if (column.id && !column.additional && column.id !== 'cpu') {
+                  acc.push(column.id);
+                }
+                return acc;
+              }, []),
+            ),
+            showNamespaceOverride: true,
+            type: columnManagementType,
+          }}
+          userSettingState={null}
+          setUserSettingState={jest.fn()}
+        />
+      </Provider>,
+    );
+
+    const checkboxItems = wrapper.find(DataListCheck);
+    const namespaceCheckBoxProps = checkboxItems.at(1).props();
+
+    expect(checkboxItems.length).toEqual(12);
+    expect(namespaceCheckBoxProps.name).toEqual('Namespace');
+    expect(namespaceCheckBoxProps.checked).toEqual(true);
+    expect(namespaceCheckBoxProps.isDisabled).toEqual(true);
   });
 
   it('renders a single disabled checkbox when under MAX columns', () => {
@@ -177,10 +152,10 @@ describe(ColumnManagementModal.displayName, () => {
       <Provider store={store}>
         <ColumnManagementModal
           columnLayout={{
-            columns: columnLayoutNamespaceDisabled,
+            columns: columnLayout,
             id: columnManagementID,
             selectedColumns: new Set(
-              columnLayoutNamespaceDisabled.reduce((acc, column) => {
+              columnLayout.reduce((acc, column) => {
                 if (column.id && !column.additional && column.id !== 'cpu') {
                   acc.push(column.id);
                 }
