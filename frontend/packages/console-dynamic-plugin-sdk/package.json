@@ -24,6 +24,6 @@
     "ts-json-schema-generator": "0.91.0",
     "tsutils": "3.x",
     "typescript": "4.2.x",
-    "webpack": "^5.62.1"
+    "webpack": "^5.68.0"
   }
 }

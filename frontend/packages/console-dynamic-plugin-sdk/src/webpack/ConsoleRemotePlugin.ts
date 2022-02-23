@@ -56,21 +56,23 @@ export class ConsoleRemotePlugin {
   apply(compiler: webpack.Compiler) {
     const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
     const publicPath = `/api/plugins/${this.pkg.consolePlugin.name}/`;
+    const containerName = this.pkg.consolePlugin.name;
     const remoteEntryCallback = 'window.loadPluginEntry';
 
     // Validate webpack options
     if (compiler.options.output.publicPath !== undefined) {
       logger.warn(`output.publicPath is defined, but will be overridden to ${publicPath}`);
     }
+    if (compiler.options.output.uniqueName !== undefined) {
+      logger.warn(`output.uniqueName is defined, but will be overridden to ${containerName}`);
+    }
 
-    // Perform post-compiler-initialization actions
-    compiler.hooks.initialize.tap(ConsoleRemotePlugin.name, () => {
-      compiler.options.output.publicPath = publicPath;
-    });
+    compiler.options.output.publicPath = publicPath;
+    compiler.options.output.uniqueName = containerName;
 
     // Generate webpack federated module container assets
     new webpack.container.ModuleFederationPlugin({
-      name: this.pkg.consolePlugin.name,
+      name: containerName,
       library: {
         type: 'jsonp',
         name: remoteEntryCallback,
