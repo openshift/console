@@ -6,8 +6,6 @@ import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
-import { EVENTING_CHANNEL_KIND } from '../../../../const';
-import { EventingBrokerModel } from '../../../../models';
 import { getDynamicChannelResourceList } from '../../../../utils/fetch-dynamic-eventsources-utils';
 import {
   knativeServingResourcesServices,
@@ -71,16 +69,8 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
     }
   };
 
-  // filter out channels backing brokers
-  const resourceFilter = (resource: K8sResourceKind) => {
-    const {
-      metadata: { ownerReferences },
-    } = resource;
-    return (
-      !ownerReferences?.length ||
-      ![EVENTING_CHANNEL_KIND, EventingBrokerModel.kind].includes(ownerReferences[0].kind)
-    );
-  };
+  // filter out resource which are owned by other resource
+  const resourceFilter = ({ metadata }: K8sResourceKind) => !metadata?.ownerReferences?.length;
 
   return (
     <FormGroup
