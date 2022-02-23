@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useDebounceCallback } from '@console/shared';
-// import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { ModelContext, ExtensibleModel } from './ModelContext';
 import { updateTopologyDataModel } from './updateTopologyDataModel';

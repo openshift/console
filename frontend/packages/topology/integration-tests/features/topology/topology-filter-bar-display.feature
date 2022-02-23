@@ -13,24 +13,14 @@ Feature: Workload Groupings in Topology
         Scenario: Default state of Display dropdown: T-16-TC01
             Given user has created workload "nodejs-ex-git" with resource type "Deployment"
              When user clicks on the Display dropdown
-             Then user will see the Connectivity Mode is checked
-              And user will see the Expand is checked
+             Then user will see the Expand is checked
               And user will see the Pod count is unchecked
-
-
-        @regression
-        Scenario: Check the Consumption Mode: T-16-TC02
-            Given user is at Topology page
-             When user clicks on the Display dropdown
-              And user checks the Consumption Mode
-             Then user will see that the Expand options are disabled
 
 
         @regression
         Scenario: Uncheck the Expand: T-16-TC03
             Given user is at Topology page
              When user clicks on the Display dropdown
-              And user checks the Connectivity Mode
               And user unchecks the Expand
              Then user will see that the Expand options are disabled
 

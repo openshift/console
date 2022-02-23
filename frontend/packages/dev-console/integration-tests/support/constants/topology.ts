@@ -4,8 +4,6 @@ export enum displayOptions {
   ApplicationGroupings = 'Application Groupings',
   HelmReleases = 'Helm Releases',
   KnativeServices = 'Knative Services',
-  ConnectivityMode = 'Connectivity',
-  ConsumptionMode = 'Consumption',
 }
 
 export enum nodeActions {
