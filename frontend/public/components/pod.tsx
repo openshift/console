@@ -491,6 +491,7 @@ export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) =>
     </div>
   );
 };
+ContainerRow.displayName = 'ContainerRow';
 
 export const PodContainerTable: React.FC<PodContainerTableProps> = ({
   heading,
@@ -743,10 +744,23 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
       <DetailsItem label={t('public~Node')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName} />
       </DetailsItem>
+      {pod.spec.imagePullSecrets && (
+        <DetailsItem label={t('public~Image pull secret')} obj={pod} path="spec.imagePullSecrets">
+          {pod.spec.imagePullSecrets.map((imagePullSecret) => (
+            <ResourceLink
+              key={imagePullSecret.name}
+              kind="Secret"
+              name={imagePullSecret.name}
+              namespace={pod.metadata.namespace}
+            />
+          ))}
+        </DetailsItem>
+      )}
       <RuntimeClass obj={pod} path="spec.runtimeClassName" />
     </dl>
   );
 };
+PodDetailsList.displayName = 'PodDetailsList';
 
 export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({ pod }) => (
   <ResourceSummary
@@ -1078,7 +1092,7 @@ type PodStatusPopoverProps = {
   status: string;
 };
 
-type PodStatusProps = {
+export type PodStatusProps = {
   pod: PodKind;
 };
 
@@ -1086,7 +1100,7 @@ type PodResourceSummaryProps = {
   pod: PodKind;
 };
 
-type PodDetailsListProps = {
+export type PodDetailsListProps = {
   pod: PodKind;
 };
 
