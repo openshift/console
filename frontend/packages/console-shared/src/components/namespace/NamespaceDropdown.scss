@@ -23,7 +23,8 @@
 // more closely match the custom DropDown based drop down.
 // These are displayed side by site in the Developer view > Topology view.active.
 // Once the custom DropDown component changes to the PatternFly component, these styles can be removed.
-.co-namespace-dropdown__menu-toggle {
+.pf-c-menu-toggle.co-namespace-dropdown__menu-toggle {
+  background-color: var(--co-namespace-dropdown__menu-toggle--BackgroundColor, inherit); // Button should inherit the same backgound as the co-namespace-bar
   font-size: ($font-size-base + 1) !important;
   padding: 2px 0 !important;
   width: 100%;

@@ -27,7 +27,7 @@ dl.co-inline {
     padding-bottom: 0;
   }
   + .co-m-pane__body {
-    border-top: 1px solid $color-grey-background-border;
+    border-top: 1px solid var(--pf-global--BorderColor--100);
     margin-top: 0;
     padding-top: $pf-global-gutter--md;
   }

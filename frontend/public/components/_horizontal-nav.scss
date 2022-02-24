@@ -1,7 +1,7 @@
 $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
 
 .co-m-horizontal-nav__menu {
-  border-bottom: 1px solid var(--pf-global--BorderColor--100);
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   display: flex;
   flex-shrink: 0; // prevent collapse of tabs
   list-style: none;
@@ -15,7 +15,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
     padding-left: ($pf-global-gutter--md - $pf-global-gutter);
   }
   &--within-sidebar {
-    border-top: 1px solid var(--pf-global--BorderColor--100);
+    border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
     margin-bottom: $pf-global-gutter--md !important;
     margin-left: -$pf-global-gutter;
     margin-right: -$pf-global-gutter;

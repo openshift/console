@@ -32,7 +32,7 @@
     }
   }
   &--detail {
-    border-bottom: 1px solid var(--pf-global--BorderColor--100);
+    border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
     flex-shrink: 0; // do not allow to shrink
   }
   // Positioned after --detail to take precedence, since they will be a siblings
