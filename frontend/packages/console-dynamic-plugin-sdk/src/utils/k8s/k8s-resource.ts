@@ -16,7 +16,7 @@ type BaseOptions = {
 type AdapterFunc = <D extends BaseOptions>(
   func: Function,
   knownArgs: string[],
-) => (options: D) => Promise<Response>;
+) => (options: D) => Promise<any>;
 
 /**
  * An adapter function to call the underlying APIs with provided options.
@@ -77,7 +77,7 @@ type OptionsGet = BaseOptions & {
   requestInit?: RequestInit;
 };
 
-type K8sGetResource = (options: OptionsGet) => Promise<Response>;
+type K8sGetResource = <R extends K8sResourceCommon>(options: OptionsGet) => Promise<R>;
 
 /**
  * It fetches a resource from the cluster, based on the provided options.
@@ -129,9 +129,7 @@ type OptionsCreate<R> = BaseOptions & {
   data: R;
 };
 
-type K8sCreateResource = <R extends K8sResourceCommon>(
-  options: OptionsCreate<R>,
-) => Promise<Response>;
+type K8sCreateResource = <R extends K8sResourceCommon>(options: OptionsCreate<R>) => Promise<R>;
 
 /**
  * It creates a resource in the cluster, based on the provided options.
@@ -186,9 +184,7 @@ type OptionsUpdate<R> = BaseOptions & {
   data: R;
 };
 
-type K8sUpdateResource = <R extends K8sResourceCommon>(
-  options: OptionsUpdate<R>,
-) => Promise<Response>;
+type K8sUpdateResource = <R extends K8sResourceCommon>(options: OptionsUpdate<R>) => Promise<R>;
 /**
  * It updates the entire resource in the cluster, based on provided options.
  * When a client needs to replace an existing resource entirely, they can use k8sUpdate.
@@ -260,9 +256,7 @@ type OptionsPatch<R> = BaseOptions & {
   data: Patch[];
 };
 
-type K8sPatchResource = <R extends K8sResourceCommon>(
-  options: OptionsPatch<R>,
-) => Promise<Response>;
+type K8sPatchResource = <R extends K8sResourceCommon>(options: OptionsPatch<R>) => Promise<R>;
 
 /**
  * It patches any resource in the cluster, based on provided options.
@@ -330,9 +324,7 @@ type OptionsDelete<R> = BaseOptions & {
   json: Record<string, any>;
 };
 
-type K8sDeleteResource = <R extends K8sResourceCommon>(
-  options: OptionsDelete<R>,
-) => Promise<Response>;
+type K8sDeleteResource = <R extends K8sResourceCommon>(options: OptionsDelete<R>) => Promise<R>;
 
 /**
  * It deletes resources from the cluster, based on the provided model, resource.
@@ -402,7 +394,9 @@ type OptionsList = {
   requestInit: RequestInit;
 };
 
-type K8sListResource = (options: OptionsList) => Promise<Response>;
+type K8sListResource = <R extends K8sResourceCommon>(
+  options: OptionsList,
+) => Promise<R[] | (K8sResourceCommon & { items: R[] })>;
 
 /**
  * It lists the resources as an array in the cluster, based on provided options.

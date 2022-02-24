@@ -59,9 +59,10 @@ describe('k8s-Resource', () => {
   });
 
   it('k8sGetResource should call consoleFetchJSON', async () => {
-    spyCoFetchJSON.mockReturnValueOnce(Promise.resolve({}));
-    await k8sGetResource({ model: MockPodModel, name: 'my-pod' });
+    spyCoFetchJSON.mockReturnValueOnce(Promise.resolve({ kind: 'Pod' }));
+    const result = await k8sGetResource({ model: MockPodModel, name: 'my-pod' });
     expect(spyCoFetchJSON).toHaveBeenCalled();
     expect(spyCoFetchJSON).toHaveBeenCalledTimes(1);
+    expect(result.kind).toBeDefined();
   });
 });
