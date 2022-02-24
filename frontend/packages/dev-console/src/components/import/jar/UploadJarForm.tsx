@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,7 @@ import JarSection from './section/JarSection';
 export type UploadJarFormProps = {
   namespace: string;
   projects: WatchK8sResultsObject<K8sResourceKind[]>;
-  builderImage: BuilderImage;
+  builderImage?: BuilderImage;
 };
 
 const UploadJarForm: React.FunctionComponent<FormikProps<FormikValues> & UploadJarFormProps> = ({
@@ -44,11 +45,21 @@ const UploadJarForm: React.FunctionComponent<FormikProps<FormikValues> & UploadJ
         <JarSection />
         <IconSection />
         <FormSection>
-          <BuilderImageTagSelector
-            selectedBuilderImage={builderImage}
-            selectedImageTag={selectedImagetag}
-            showImageInfo={false}
-          />
+          {builderImage && selectedImagetag ? (
+            <BuilderImageTagSelector
+              selectedBuilderImage={builderImage}
+              selectedImageTag={selectedImagetag}
+              showImageInfo={false}
+            />
+          ) : (
+            <Alert
+              variant="warning"
+              title={t('devconsole~Unable to detect the Builder Image.')}
+              isInline
+            >
+              {t('devconsole~No associated Builder Image is found for Java.')}
+            </Alert>
+          )}
         </FormSection>
         <AppSection
           project={values.project}

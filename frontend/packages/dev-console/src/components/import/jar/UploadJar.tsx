@@ -44,7 +44,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const application = forApplication || '';
   const activeApplication = application !== ALL_APPLICATIONS_KEY ? application : '';
-  const { name: imageName, recentTag: tag } = builderImage;
+  const { name: imageName, recentTag: tag } = builderImage || {};
 
   const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, activeApplication);
   const initialValues: UploadJarFormData = {
@@ -62,9 +62,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
     runtimeIcon: 'java',
     image: {
       ...initialBaseValues.image,
-      selected: imageName,
-      tag: tag.name,
-      tagObj: tag,
+      ...(imageName && tag?.name && { selected: imageName, tag: tag.name, tagObj: tag }),
     },
     import: {
       showEditImportStrategy: true,

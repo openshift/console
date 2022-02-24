@@ -43,9 +43,11 @@ const UploadJarPage: React.FunctionComponent<UploadJarPageProps> = ({ match, loc
 
   if (!isResourceLoaded) return <LoadingBox />;
 
-  const { [imageStreamName]: builderImage }: NormalizedBuilderImages = normalizeBuilderImages(
-    resources.imagestream.data,
-  );
+  let normalizedJavaImages: NormalizedBuilderImages;
+  const { loaded: isLoaded, data: isData, loadError: isLoadError } = resources.imagestream;
+  if (isLoaded && !isLoadError) {
+    normalizedJavaImages = normalizeBuilderImages(isData);
+  }
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
@@ -61,7 +63,7 @@ const UploadJarPage: React.FunctionComponent<UploadJarPageProps> = ({ match, loc
             forApplication={desiredApplication}
             namespace={namespace}
             projects={resources.projects as WatchK8sResultsObject<K8sResourceKind[]>}
-            builderImage={builderImage}
+            builderImage={normalizedJavaImages?.[imageStreamName]}
             contextualSource={params.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
           />
         )}
