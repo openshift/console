@@ -55,9 +55,16 @@ import {
   ServiceAccountModel,
 } from '../models';
 import { coFetchJSON } from '../co-fetch';
-import { k8sGet, referenceForModel } from '../module/k8s';
+import { k8sGet, K8sResourceKind, referenceForModel } from '../module/k8s';
 import * as UIActions from '../actions/ui';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import {
+  DetailsPage,
+  DetailsPageProps,
+  ListPage,
+  RowFunctionArgs,
+  Table,
+  TableData,
+} from './factory';
 import {
   DetailsItem,
   ExternalLink,
@@ -309,7 +316,7 @@ NamespacesTableHeader.displayName = 'NamespacesTableHeader';
 const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
 
 const getNamespacesSelectedColumns = () => {
-  return new Set(
+  return new Set<string>(
     NamespacesTableHeader().reduce((acc, column) => {
       if (column.id && !column.additional) {
         acc.push(column.id);
@@ -319,7 +326,10 @@ const getNamespacesSelectedColumns = () => {
   );
 };
 
-const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
+const NamespacesTableRow: React.FC<RowFunctionArgs<any, any>> = ({
+  obj: ns,
+  customData: { tableColumns },
+}) => {
   const { t } = useTranslation();
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
   const name = getName(ns);
@@ -328,7 +338,8 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
   const cores = metrics?.cpu?.[name];
   const description = getDescription(ns);
   const labels = ns.metadata.labels;
-  const columns = tableColumns?.length > 0 ? new Set(tableColumns) : getNamespacesSelectedColumns();
+  const columns =
+    tableColumns?.length > 0 ? new Set<string>(tableColumns) : getNamespacesSelectedColumns();
   return (
     <>
       <TableData className={namespaceColumnInfo.name.classes}>
@@ -421,7 +432,7 @@ export const NamespacesList = (props) => {
   }, [dispatch]);
   const selectedColumns =
     tableColumns?.[NamespacesColumnManagementID]?.length > 0
-      ? new Set(tableColumns[NamespacesColumnManagementID])
+      ? new Set<string>(tableColumns[NamespacesColumnManagementID])
       : null;
 
   const customData = React.useMemo(
@@ -437,7 +448,7 @@ export const NamespacesList = (props) => {
         {t('public~No namespaces found')}
       </Title>
       <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStatePrimary />
+      <EmptyStatePrimary>{undefined}</EmptyStatePrimary>
     </EmptyState>
   );
 
@@ -466,7 +477,7 @@ export const NamespacesPage = (props) => {
   );
   const selectedColumns =
     tableColumns?.[NamespacesColumnManagementID]?.length > 0
-      ? new Set(tableColumns[NamespacesColumnManagementID])
+      ? new Set<string>(tableColumns[NamespacesColumnManagementID])
       : getNamespacesSelectedColumns();
   return (
     <ListPage
@@ -476,7 +487,7 @@ export const NamespacesPage = (props) => {
       canCreate={true}
       createHandler={() => createNamespaceModal({ blocking: true })}
       columnLayout={{
-        columns: NamespacesTableHeader(null, t).map((column) =>
+        columns: NamespacesTableHeader().map((column) =>
           _.pick(column, ['title', 'additional', 'id']),
         ),
         id: NamespacesColumnManagementID,
@@ -567,7 +578,7 @@ const projectTableHeader = ({ showMetrics, showActions }) => {
 };
 
 const getProjectSelectedColumns = ({ showMetrics, showActions }) => {
-  return new Set(
+  return new Set<string>(
     projectTableHeader({ showMetrics, showActions }).reduce((acc, column) => {
       if (column.id && !column.additional) {
         acc.push(column.id);
@@ -577,7 +588,7 @@ const getProjectSelectedColumns = ({ showMetrics, showActions }) => {
   );
 };
 
-const ProjectLink = ({ project }) => {
+const ProjectLink: React.FC<{ project: K8sResourceKind }> = ({ project }) => {
   const dispatch = useDispatch();
   const [, setLastNamespace] = useUserSettingsCompatibility(
     LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
@@ -622,7 +633,10 @@ const ProjectLink = ({ project }) => {
 const projectHeaderWithoutActions = () =>
   projectTableHeader({ showMetrics: false, showActions: false });
 
-const ProjectTableRow = ({ obj: project, customData = {} }) => {
+const ProjectTableRow: React.FC<RowFunctionArgs<any, any>> = ({
+  obj: project,
+  customData = {},
+}) => {
   const { t } = useTranslation();
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
   const name = getName(project);
@@ -641,7 +655,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
   const labels = project.metadata.labels;
   const columns = isColumnManagementEnabled
     ? tableColumns?.length > 0
-      ? new Set(tableColumns)
+      ? new Set<string>(tableColumns)
       : getProjectSelectedColumns({ showMetrics, showActions })
     : null;
   return (
@@ -793,7 +807,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
   }, [dispatch, showMetrics]);
   const selectedColumns =
     tableColumns?.[projectColumnManagementID]?.length > 0
-      ? new Set(tableColumns[projectColumnManagementID])
+      ? new Set<string>(tableColumns[projectColumnManagementID])
       : null;
 
   // Don't render the table until we know whether we can get metrics. It's
@@ -816,7 +830,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
         {t('public~No projects found')}
       </Title>
       <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStatePrimary />
+      <EmptyStatePrimary>{undefined}</EmptyStatePrimary>
     </EmptyState>
   );
 
@@ -869,7 +883,7 @@ export const ProjectsPage = (props) => {
         id: projectColumnManagementID,
         selectedColumns:
           tableColumns?.[projectColumnManagementID]?.length > 0
-            ? new Set(tableColumns[projectColumnManagementID])
+            ? new Set<string>(tableColumns[projectColumnManagementID])
             : null,
         type: t('public~Project'),
       }}
@@ -877,8 +891,9 @@ export const ProjectsPage = (props) => {
   );
 };
 
-/** @type {React.SFC<{namespace: K8sResourceKind}>} */
-export const PullSecret = (props) => {
+export const PullSecret: React.FC<{ namespace: K8sResourceKind; canViewSecrets: boolean }> = (
+  props,
+) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [data, setData] = React.useState([]);
   const [error, setError] = React.useState(false);
@@ -905,10 +920,10 @@ export const PullSecret = (props) => {
 
   const secrets = () => {
     if (error) {
-      return (<Alert variant="danger" isInline title={t('Error loading default pull Secrets')} />);
+      return <Alert variant="danger" isInline title={t('Error loading default pull Secrets')} />;
     }
     return data.length > 0 ? (
-      (data.map((secret) => (
+      data.map((secret) => (
         <div key={secret.name}>
           <ResourceLink
             kind="Secret"
@@ -917,12 +932,12 @@ export const PullSecret = (props) => {
             linkTo={canViewSecrets}
           />
         </div>
-      )))
+      ))
     ) : (
-      (<Button variant="link" type="button" isInline onClick={modal}>
+      <Button variant="link" type="button" isInline onClick={modal}>
         {t('public~Not configured')}
         <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-      </Button>)
+      </Button>
     );
   };
 
@@ -934,7 +949,7 @@ export const PullSecret = (props) => {
   );
 };
 
-export const NamespaceLineCharts = ({ ns }) => {
+export const NamespaceLineCharts: React.FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation();
   return (
     <div className="row">
@@ -959,7 +974,7 @@ export const NamespaceLineCharts = ({ ns }) => {
   );
 };
 
-export const TopPodsBarChart = ({ ns }) => {
+export const TopPodsBarChart: React.FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation();
   return (
     <Bar
@@ -972,7 +987,7 @@ export const TopPodsBarChart = ({ ns }) => {
   );
 };
 
-const ResourceUsage = ({ ns }) => {
+const ResourceUsage: React.FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation();
   const isPrometheusAvailable = usePrometheusGate();
   return isPrometheusAvailable ? (
@@ -984,7 +999,7 @@ const ResourceUsage = ({ ns }) => {
   ) : null;
 };
 
-export const NamespaceSummary = ({ ns }) => {
+export const NamespaceSummary: React.FC<{ ns: K8sResourceKind }> = ({ ns }) => {
   const { t } = useTranslation();
   const displayName = getDisplayName(ns);
   const description = getDescription(ns);
@@ -1054,7 +1069,7 @@ export const NamespaceSummary = ({ ns }) => {
 
 export const NamespaceDetails = ({ obj: ns, customData }) => {
   const { t } = useTranslation();
-  const [consoleLinks] = useK8sWatchResource({
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
@@ -1087,7 +1102,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   );
 };
 
-const RolesPage = ({ obj: { metadata } }) => (
+const RolesPage: React.FC<{ obj: K8sResourceKind }> = ({ obj: { metadata } }) => (
   <RoleBindingsPage
     createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
     namespace={metadata.name}
@@ -1143,8 +1158,12 @@ export const NamespaceBarDropdowns = ({
   );
 };
 
-/** @type {React.FC<{children?: ReactNode, disabled?: boolean, onNamespaceChange?: Function, hideProjects?: boolean}>} */
-export const NamespaceBar = ({ hideProjects = false, children, disabled, onNamespaceChange }) => {
+export const NamespaceBar: React.FC<{
+  children?: React.ReactNode;
+  disabled?: boolean;
+  onNamespaceChange?: Function;
+  hideProjects?: boolean;
+}> = ({ hideProjects = false, children, disabled, onNamespaceChange }) => {
   const useProjects = useSelector(({ k8s }) =>
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
@@ -1157,11 +1176,12 @@ export const NamespaceBar = ({ hideProjects = false, children, disabled, onNames
       ) : (
         // Data from Firehose is not used directly by the NamespaceDropdown nor the children.
         // Data is used to determine if the StartGuide should be shown.
-        // See NamespaceBarDropdowns_  above.
+        // See NamespaceBarDropdowns above.
         <Firehose
           resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}
         >
           <NamespaceBarDropdowns
+            namespace={undefined}
             useProjects={useProjects}
             disabled={disabled}
             onNamespaceChange={onNamespaceChange}
@@ -1174,7 +1194,7 @@ export const NamespaceBar = ({ hideProjects = false, children, disabled, onNames
   );
 };
 
-export const NamespacesDetailsPage = (props) => (
+export const NamespacesDetailsPage: React.FC<DetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     menuActions={nsMenuActions}
@@ -1186,7 +1206,7 @@ export const NamespacesDetailsPage = (props) => (
   />
 );
 
-export const ProjectsDetailsPage = (props) => {
+export const ProjectsDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <DetailsPage

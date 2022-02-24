@@ -50,7 +50,7 @@ export const stopWatchK8s = (id: string) => action(ActionType.StopWatchK8s, { id
 
 export const errored = (id: string, k8sObjects: any) =>
   action(ActionType.Errored, { id, k8sObjects });
-export const filterList = (id: string, name: string, value: FilterValue) =>
+export const filterList = (id: string, name: string, value: FilterValue | string) =>
   action(ActionType.FilterList, { id, name, value });
 
 export const partialObjectMetadataListHeader = {

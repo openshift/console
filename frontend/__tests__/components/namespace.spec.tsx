@@ -34,12 +34,12 @@ describe(PullSecret.displayName, () => {
         done();
       });
 
-    wrapper = mount(<PullSecret namespace={testNamespace} />);
+    wrapper = mount(<PullSecret namespace={testNamespace} canViewSecrets={false} />);
   });
 
   it('does not render link if still loading', () => {
     spyOn(k8s, 'k8sGet').and.returnValue(Promise.resolve({ items: [] }));
-    wrapper = mount(<PullSecret namespace={testNamespace} />);
+    wrapper = mount(<PullSecret namespace={testNamespace} canViewSecrets={false} />);
 
     expect(wrapper.find(LoadingInline).exists()).toBe(true);
   });

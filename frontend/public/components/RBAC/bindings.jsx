@@ -290,9 +290,9 @@ export const RoleBindingsPage = ({
   namespace = undefined,
   showTitle = true,
   mock = false,
-  staticFilters,
-  name,
-  kind,
+  staticFilters = undefined,
+  name = undefined,
+  kind = undefined,
   createPath = `/k8s/cluster/rolebindings/~new${
     name && kind ? `?subjectName=${name}&subjectKind=${kind}` : ''
   }`,
