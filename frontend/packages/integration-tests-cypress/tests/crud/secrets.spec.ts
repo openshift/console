@@ -48,7 +48,7 @@ describe('Create key/value secrets', () => {
     cy.logout();
   });
 
-  it(`Validate a key/value secret whose value is a binary file `, () => {
+  it(`Validate a key/value secret whose value is a binary file`, () => {
     populateSecretForm(binarySecretName, secretKey, binaryFilename);
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
     cy.get(infoMessage).should('exist');
@@ -66,7 +66,7 @@ describe('Create key/value secrets', () => {
     });
   });
 
-  it(`Validate a key/value secret whose value is an ascii file `, () => {
+  it(`Validate a key/value secret whose value is an ascii file`, () => {
     populateSecretForm(asciiSecretName, secretKey, asciiFilename);
     cy.byLegacyTestID('file-input-textarea').should('exist');
     cy.get(infoMessage).should('not.exist');
@@ -84,7 +84,7 @@ describe('Create key/value secrets', () => {
     });
   });
 
-  it(`Validate a key/value secret whose value is a unicode file `, () => {
+  it(`Validate a key/value secret whose value is a unicode file`, () => {
     populateSecretForm(unicodeSecretName, secretKey, unicodeFilename);
     cy.byLegacyTestID('file-input-textarea').should('exist');
     cy.get(infoMessage).should('not.exist');
