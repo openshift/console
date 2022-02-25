@@ -34,6 +34,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { ActionsMenu } from '@console/dynamic-plugin-sdk';
 import CloseButton from '@console/shared/src/components/close-button';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
@@ -57,7 +58,6 @@ import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL } from '../graphs/helpers';
 import {
-  ActionsMenu,
   Dropdown,
   getURLSearchParams,
   Kebab,

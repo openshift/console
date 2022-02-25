@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Action, ActionGroup, isActionGroup } from '@console/dynamic-plugin-sdk';
+import { ActionContext } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useExtensions } from '@console/plugin-sdk';
 import { useDeepCompareMemoize } from '../../hooks';
 import ActionsLoader from './loader/ActionsLoader';
-import { ActionContext, ActionService, MenuOption } from './types';
+import { ActionService, MenuOption } from './types';
 import { createMenuOptions } from './utils';
 
 type ActionServiceProviderProps = {

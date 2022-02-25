@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu } from '@console/internal/components/utils';
+import { ActionsMenu } from '@console/dynamic-plugin-sdk';
 import { edgeActions } from '../../actions/edgeActions';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import TopologyEdgeResourcesPanel from './TopologyEdgeResourcesPanel';

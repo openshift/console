@@ -18,7 +18,7 @@ import {
   OutlinedBellIcon,
 } from '@patternfly/react-icons';
 
-import { useActivePerspective, ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective, ResourceStatus, ActionsMenu } from '@console/dynamic-plugin-sdk';
 import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
@@ -87,7 +87,6 @@ import {
 } from './utils';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { formatPrometheusDuration } from '../utils/datetime';
-import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';

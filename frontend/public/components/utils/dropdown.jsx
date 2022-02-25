@@ -2,15 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
-import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
-
-import { checkAccess } from './rbac';
-import { history } from './router';
-import { KebabItems } from './kebab';
 import { ResourceName } from './resource-icon';
 
 class DropdownMixin extends React.PureComponent {
@@ -628,93 +622,6 @@ Dropdown.propTypes = {
   describedBy: PropTypes.string,
   required: PropTypes.bool,
   dataTest: PropTypes.string,
-};
-
-class ActionsMenuDropdown_ extends DropdownMixin {
-  render() {
-    const { actions, title = undefined, t } = this.props;
-    const onClick = (event, option) => {
-      event.preventDefault();
-
-      if (option.callback) {
-        option.callback();
-      }
-
-      if (option.href) {
-        history.push(option.href);
-      }
-
-      this.hide();
-    };
-    return (
-      <div
-        ref={this.dropdownElement}
-        className={classNames({
-          'co-actions-menu pf-c-dropdown': true,
-          'pf-m-expanded': this.state.active,
-        })}
-      >
-        <button
-          type="button"
-          aria-haspopup="true"
-          aria-label={t('public~Actions')}
-          aria-expanded={this.state.active}
-          className="pf-c-dropdown__toggle"
-          onClick={this.toggle}
-          data-test-id="actions-menu-button"
-        >
-          <span className="pf-c-dropdown__toggle-text">{title || t('public~Actions')}</span>
-          <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
-        </button>
-        {this.state.active && <KebabItems options={actions} onClick={onClick} />}
-      </div>
-    );
-  }
-}
-
-const ActionsMenuDropdown = withTranslation()(ActionsMenuDropdown_);
-
-const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
-  const [isVisible, setVisible] = useSafetyFirst(false);
-
-  // Check if any actions are visible when actions have access reviews.
-  React.useEffect(() => {
-    if (!actions.length) {
-      setVisible(false);
-      return;
-    }
-    const promises = actions.reduce((acc, action) => {
-      if (action.accessReview) {
-        acc.push(checkAccess(action.accessReview));
-      }
-      return acc;
-    }, []);
-
-    // Only need to resolve if all actions require access review
-    if (promises.length !== actions.length) {
-      setVisible(true);
-      return;
-    }
-    Promise.all(promises)
-      .then((results) => setVisible(_.some(results, 'status.allowed')))
-      .catch(() => setVisible(true));
-  }, [actions, impersonate, setVisible]);
-  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
-};
-
-export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
-
-ActionsMenu.propTypes = {
-  actions: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.node,
-      labelKey: PropTypes.string,
-      href: PropTypes.string,
-      callback: PropTypes.func,
-      accessReview: PropTypes.object,
-    }),
-  ).isRequired,
-  title: PropTypes.node,
 };
 
 const containerLabel = (container) => (

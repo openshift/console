@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
-import { ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { ResourceStatus, ActionsMenu } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import {
   OverviewItem,
@@ -17,14 +17,7 @@ import {
   useCsvWatchResource,
 } from '@console/shared';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
-import {
-  ActionsMenu,
-  FirehoseResult,
-  KebabAction,
-  KebabOption,
-  ResourceIcon,
-  resourcePath,
-} from './index';
+import { FirehoseResult, KebabAction, KebabOption, ResourceIcon, resourcePath } from './index';
 import { connectToModel } from '../../kinds';
 import {
   K8sKind,
