@@ -24,18 +24,13 @@ describe('TrafficSplittingFields', () => {
         values={{ trafficSplitting: [{ percent: 100, revisionName: 'overlayimage-fdqsf' }] }}
       />,
     );
-    expect(
-      wrapper
-        .find(MultiColumnField)
-        .first()
-        .props().disableDeleteRow,
-    ).toBe(true);
-    expect(
-      wrapper
-        .find(MultiColumnField)
-        .first()
-        .props().disableAddRow,
-    ).toBe(false);
+    const multiColumnField = wrapper.find(MultiColumnField).first();
+    expect(multiColumnField.props().disableDeleteRow).toBe(true);
+    expect(multiColumnField.props().tooltipDeleteRow).toBe(
+      'Service must have at least one assigned revision',
+    );
+    expect(multiColumnField.props().disableAddRow).toBe(false);
+    expect(multiColumnField.props().tooltipAddRow).toBe(null);
   });
 
   it('should not disable delete row button or add row button if number of values is more than one but less than total number of revisions', () => {
@@ -50,28 +45,20 @@ describe('TrafficSplittingFields', () => {
         }}
       />,
     );
-    expect(
-      wrapper
-        .find(MultiColumnField)
-        .first()
-        .props().disableDeleteRow,
-    ).toBe(false);
-    expect(
-      wrapper
-        .find(MultiColumnField)
-        .first()
-        .props().disableAddRow,
-    ).toBe(false);
+    const multiColumnField = wrapper.find(MultiColumnField).first();
+    expect(multiColumnField.props().disableDeleteRow).toBe(false);
+    expect(multiColumnField.props().tooltipDeleteRow).toBe(undefined);
+    expect(multiColumnField.props().disableAddRow).toBe(false);
+    expect(multiColumnField.props().tooltipAddRow).toBe(null);
   });
 
   it('should disable add button when no. of revisionName fields equals number of revisions', () => {
     const wrapper = shallow(<TrafficSplittingFields {...formProps} />);
-    expect(
-      wrapper
-        .find(MultiColumnField)
-        .first()
-        .props().disableAddRow,
-    ).toBe(true);
+    const multiColumnField = wrapper.find(MultiColumnField).first();
+    expect(multiColumnField.props().disableAddRow).toBe(true);
+    expect(multiColumnField.props().tooltipAddRow).toBe(
+      'All revisions are already set to receive traffic',
+    );
   });
 
   it('should exclude the revisions present in values from dropdown items', () => {
@@ -81,11 +68,11 @@ describe('TrafficSplittingFields', () => {
         values={{ trafficSplitting: [{ percent: 100, revisionName: 'overlayimage-fdqsf' }] }}
       />,
     );
-    expect(
-      wrapper
-        .find(TrafficModalRevisionsDropdownField)
-        .first()
-        .props().revisionItems['overlayimage-fdqsf'],
-    ).toBe(undefined);
+    const trafficModalRevisionsDropdownField = wrapper
+      .find(TrafficModalRevisionsDropdownField)
+      .first();
+    expect(trafficModalRevisionsDropdownField.props().revisionItems['overlayimage-fdqsf']).toBe(
+      undefined,
+    );
   });
 });

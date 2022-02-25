@@ -16,8 +16,6 @@ export interface FieldProps {
   required?: boolean;
   style?: React.CSSProperties;
   isReadOnly?: boolean;
-  disableDeleteRow?: boolean;
-  disableAddRow?: boolean;
   className?: string;
   isDisabled?: boolean;
   validated?: ValidatedOptions;
@@ -97,7 +95,6 @@ export interface ResourceLimitFieldProps extends FieldProps {
 
 export interface MultiColumnFieldProps extends FieldProps {
   addLabel?: string;
-  toolTip?: string;
   emptyValues: { [name: string]: string | boolean | string[] };
   emptyMessage?: string;
   headers: ({ name: string; required: boolean } | string)[];
@@ -105,6 +102,10 @@ export interface MultiColumnFieldProps extends FieldProps {
   children?: React.ReactNode;
   spans?: gridItemSpanValueShape[];
   rowRenderer?: (row: RowRendererProps) => React.ReactNode;
+  disableDeleteRow?: boolean;
+  tooltipDeleteRow?: string;
+  disableAddRow?: boolean;
+  tooltipAddRow?: string;
 }
 
 export interface YAMLEditorFieldProps extends FieldProps {

@@ -17,7 +17,7 @@ import {
   MergeNewValueUtil,
 } from './text-column-types';
 
-export type TextColumntItemContentProps = TextColumnItemProps & {
+export type TextColumnItemContentProps = TextColumnItemProps & {
   previewDropRef: (node) => void | null;
   dragRef: (node) => void | null;
   opacity: number;
@@ -44,7 +44,7 @@ const DEFAULT_CHILDREN = (
   );
 };
 
-const TextColumnItemContent: React.FC<TextColumntItemContentProps> = ({
+const TextColumnItemContent: React.FC<TextColumnItemContentProps> = ({
   name,
   dndEnabled,
   children = DEFAULT_CHILDREN,
@@ -55,7 +55,7 @@ const TextColumnItemContent: React.FC<TextColumntItemContentProps> = ({
   arrayHelpers,
   rowValues,
   disableDeleteRow,
-  tooltip,
+  tooltipDeleteRow,
   previewDropRef,
   dragRef,
   opacity,
@@ -87,9 +87,9 @@ const TextColumnItemContent: React.FC<TextColumntItemContentProps> = ({
         </FlexItem>
         {!isReadOnly && (
           <FlexItem>
-            <Tooltip content={tooltip || t('console-shared~Remove')}>
+            <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
               <Button
-                aria-label={tooltip || t('console-shared~Remove')}
+                aria-label={tooltipDeleteRow || t('console-shared~Remove')}
                 variant={ButtonVariant.plain}
                 type={ButtonType.button}
                 isInline

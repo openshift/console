@@ -23,8 +23,9 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   emptyMessage,
   isReadOnly,
   disableDeleteRow,
+  tooltipDeleteRow,
   disableAddRow,
-  toolTip,
+  tooltipAddRow,
   spans,
   complexFields,
   rowRenderer,
@@ -63,14 +64,14 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
                 <MultiColumnFieldRow
                   key={`${index.toString()}`} // There is no other usable value for key prop in this case.
                   name={name}
-                  toolTip={toolTip}
                   rowIndex={index}
-                  onDelete={() => remove(index)}
                   isReadOnly={isReadOnly}
-                  disableDeleteRow={disableDeleteRow}
                   spans={fieldSpans}
                   complexFields={complexFields}
                   rowRenderer={rowRenderer}
+                  disableDeleteRow={disableDeleteRow}
+                  tooltipDeleteRow={tooltipDeleteRow}
+                  onDelete={() => remove(index)}
                 >
                   {children}
                 </MultiColumnFieldRow>
@@ -78,6 +79,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
             {!isReadOnly && (
               <MultiColumnFieldFooter
                 disableAddRow={disableAddRow}
+                tooltipAddRow={tooltipAddRow}
                 addLabel={addLabel}
                 onAdd={() => push(emptyValues)}
               />
