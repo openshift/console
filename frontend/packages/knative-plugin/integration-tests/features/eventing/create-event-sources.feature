@@ -29,16 +29,6 @@ Feature: Create event sources
               And Create button is disabled
 
 
-        @regression @un-verified
-        Scenario: Event source details for CronJobSource event source type: KE-02-TC03
-             When user selects event source type "Cron Job Source"
-              And user selects Create Event Source
-             Then page contains CronJobSource, Sink, Application and node name
-              And CronJobSource has Data, Schedule fields
-              And sink has knative service dropdown with "Service" and "KSVC" options
-              And Create button is disabled
-
-
         @regression @odc-6359
         Scenario: Event source details for PingSource event source type: KE-02-TC04
              When user selects event source type "PingSource"
@@ -90,17 +80,6 @@ Feature: Create event sources
               And user clicks on Create button
              Then user will be redirected to Topology page
               And ContainerSource event source "container-source" is created and linked to selected knative service "kn-event"
-
-
-        @regression
-        Scenario: Create CronJobSource event source: KE-02-TC09
-             When user selects event source type "Cron Job Source"
-              And user selects Create Event Source
-              And user enters schedule as "*/2 * * * *"
-              And user selects an "kn-event" option from knative service field
-              And user clicks on Create button
-             Then user will be redirected to Topology page
-              And CronJobSource event source "cron-job-source" is created and linked to selected knative service "kn-event"
 
 
         @smoke

@@ -1284,20 +1284,6 @@
     "type": "console.model-metadata",
     "properties": {
       "model": {
-        "group": "sources.eventing.knative.dev",
-        "version": "v1alpha1",
-        "kind": "CronJobSource"
-      },
-      "color": "#005f60",
-      "label": "%knative-plugin~CronJobSource%",
-      "labelPlural": "%knative-plugin~CronJobSources%",
-      "abbr": "CJS"
-    }
-  },
-  {
-    "type": "console.model-metadata",
-    "properties": {
-      "model": {
         "group": "sources.knative.dev",
         "version": "v1",
         "kind": "PingSource"

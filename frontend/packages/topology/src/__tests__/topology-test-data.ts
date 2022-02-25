@@ -28,8 +28,6 @@ export const TEST_KINDS_MAP = {
   'sources.knative.dev~v1alpha1~ApiServerSource': 'sources.knative.dev~v1alpha1~ApiServerSource',
   'sources.eventing.knative.dev~v1alpha1~ContainerSource':
     'sources.eventing.knative.dev~v1alpha1~ContainerSource',
-  'sources.eventing.knative.dev~v1alpha1~CronJobSource':
-    'sources.eventing.knative.dev~v1alpha1~CronJobSource',
   'sources.knative.dev~v1alpha1~KafkaSource': 'sources.knative.dev~v1alpha1~KafkaSource',
   'sources.knative.dev~v1alpha1~PingSource': 'sources.knative.dev~v1alpha1~PingSource',
   'sources.knative.dev~v1alpha1~SinkBinding': 'sources.knative.dev~v1alpha1~SinkBinding',

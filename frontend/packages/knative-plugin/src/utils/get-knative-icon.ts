@@ -9,14 +9,13 @@ import {
   EVENT_SOURCE_API_SERVER_KIND,
   EVENT_SOURCE_CONTAINER_KIND,
   EVENT_SOURCE_PING_KIND,
-  EVENT_SOURCE_CRONJOB_KIND,
 } from '../const';
 import * as eventSourceImg from '../imgs/event-source.svg';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.svg';
 import * as camelSourceImg from '../imgs/logos/camelsource.svg';
 import * as containerSourceImg from '../imgs/logos/containersource.svg';
-import * as cronJobSourceImg from '../imgs/logos/cronjobsource.svg';
 import * as kafkaSourceImg from '../imgs/logos/kafkasource.svg';
+import * as pingSourceImg from '../imgs/logos/pingsource.svg';
 import * as sinkBindingSourceImg from '../imgs/logos/sinkbindingsource.svg';
 
 const getEventSourceIconFromKind = (kind: string): string => {
@@ -27,9 +26,8 @@ const getEventSourceIconFromKind = (kind: string): string => {
       return camelSourceImg;
     case EVENT_SOURCE_CONTAINER_KIND:
       return containerSourceImg;
-    case EVENT_SOURCE_CRONJOB_KIND:
     case EVENT_SOURCE_PING_KIND:
-      return cronJobSourceImg;
+      return pingSourceImg;
     case EVENT_SOURCE_KAFKA_KIND:
       return kafkaSourceImg;
     case EVENT_SOURCE_SINK_BINDING_KIND:

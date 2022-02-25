@@ -84,9 +84,6 @@ describe('Create knative Utils', () => {
     expect(getEventSourceData(EventSources.PingSource).jsonData).toBeDefined();
     expect(getEventSourceData(EventSources.PingSource).schedule).toBeDefined();
 
-    expect(getEventSourceData(EventSources.CronJobSource).data).toBeDefined();
-    expect(getEventSourceData(EventSources.CronJobSource).schedule).toBeDefined();
-
     expect(getEventSourceData(EventSources.SinkBinding).subject).toBeDefined();
     expect(getEventSourceData(EventSources.SinkBinding).subject.apiVersion).toBeDefined();
     expect(getEventSourceData(EventSources.SinkBinding).subject.kind).toBeDefined();

@@ -13,7 +13,6 @@ import { formDescriptorData } from '../../../utils/create-eventsources-utils';
 import { EventSources } from '../import-types';
 import ApiServerSection from './ApiServerSection';
 import ContainerSourceSection from './ContainerSourceSection';
-import CronJobSection from './CronJobSection';
 import KafkaSourceSection from './KafkaSourceSection';
 import PingSourceSection from './PingSourceSection';
 import SinkBindingSection from './SinkBindingSection';
@@ -61,9 +60,6 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
   let EventSource: React.ReactElement;
   const sectionTitle = values.formData.data?.itemData?.title ?? values.formData.type;
   switch (values.formData.type) {
-    case EventSources.CronJobSource:
-      EventSource = <CronJobSection title={sectionTitle} fullWidth={fullWidth} />;
-      break;
     case EventSources.SinkBinding:
       EventSource = <SinkBindingSection title={sectionTitle} fullWidth={fullWidth} />;
       break;

@@ -7,7 +7,6 @@ import {
   EVENT_SOURCE_API_SERVER_KIND,
   EVENT_SOURCE_CONTAINER_KIND,
   EVENT_SOURCE_PING_KIND,
-  EVENT_SOURCE_CRONJOB_KIND,
   EVENT_SOURCE_KAFKA_KIND,
 } from '../../const';
 import { CamelKameletBindingModel } from '../../models';
@@ -15,7 +14,6 @@ import { CamelKameletBindingModel } from '../../models';
 export const EventSources = {
   ApiServerSource: EVENT_SOURCE_API_SERVER_KIND,
   ContainerSource: EVENT_SOURCE_CONTAINER_KIND,
-  CronJobSource: EVENT_SOURCE_CRONJOB_KIND,
   KafkaSource: EVENT_SOURCE_KAFKA_KIND,
   PingSource: EVENT_SOURCE_PING_KIND,
   SinkBinding: EVENT_SOURCE_SINK_BINDING_KIND,
