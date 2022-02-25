@@ -1153,6 +1153,8 @@
   "Memory usage by pod (top 10)": "Memory usage by pod (top 10)",
   "Resource usage": "Resource usage",
   "NetworkPolicies": "NetworkPolicies",
+  "404: Project not found": "404: Project not found",
+  "404: Namespace not found": "404: Namespace not found",
   "Observe": "Observe",
   "Home": "Home",
   "Search": "Search",

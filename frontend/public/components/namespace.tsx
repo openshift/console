@@ -1230,3 +1230,51 @@ export const ProjectsDetailsPage: React.FC<DetailsPageProps> = (props) => {
     />
   );
 };
+
+/**
+ * Exists is true in this cases:
+ * 1. Namespace parameter is null/undefined
+ * 2. Namespace parameter is ALL_NAMESPACES_KEY.
+ * 3. Namespace was found
+ * 4. All namespace call fails for any reason
+ */
+export const useNamespaceExist = (
+  namespace: string | null | undefined,
+): [boolean, boolean, Error | undefined] => {
+  const useProjects = useSelector(({ k8s }) =>
+    k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
+  );
+  // Fetch all namespaces here because this is the same API call
+  // we do already for the NamespaceDropdown!
+  const [allNamespaces, allNamespacesLoaded, allNamespacesError] = useK8sWatchResource<
+    K8sResourceKind[]
+  >(
+    namespace && namespace !== ALL_NAMESPACES_KEY
+      ? {
+          isList: true,
+          kind: useProjects ? ProjectModel.kind : NamespaceModel.kind,
+          optional: true,
+        }
+      : null,
+  );
+  const exist =
+    !namespace ||
+    namespace === ALL_NAMESPACES_KEY ||
+    (allNamespacesLoaded && allNamespaces?.some((n) => n.metadata?.name === namespace)) ||
+    !!allNamespacesError;
+  return [exist, allNamespacesLoaded, allNamespacesError];
+};
+
+export const NamespaceNotFoundError: React.FC<{}> = () => {
+  const { t } = useTranslation();
+  const useProjects = useSelector(({ k8s }) =>
+    k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
+  );
+  return (
+    <div className="co-m-pane__body">
+      <h1 className="co-m-pane__heading co-m-pane__heading--center">
+        {useProjects ? t('public~404: Project not found') : t('public~404: Namespace not found')}
+      </h1>
+    </div>
+  );
+};

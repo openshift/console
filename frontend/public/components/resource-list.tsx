@@ -31,17 +31,23 @@ import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
+import { useNamespaceExist, NamespaceNotFoundError } from './namespace';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), props);
 
 export const ResourceListPage = connectToPlural(
-  withStartGuide((props: ResourceListPageProps) => {
+  withStartGuide(function ResourceListPage(props: ResourceListPageProps) {
     const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
     const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
       isDynamicResourceListPage,
     );
     const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
+
+    const [namespaceExist, namespaceLoaded] = useNamespaceExist(ns);
+    if (namespaceLoaded && !namespaceExist) {
+      return <NamespaceNotFoundError />;
+    }
 
     if (!kindObj) {
       if (kindsInFlight) {
@@ -56,6 +62,7 @@ export const ResourceListPage = connectToPlural(
         />
       );
     }
+
     const ref = referenceForModel(kindObj);
     const componentLoader = getResourceListPages(
       resourceListPageExtensions,
@@ -81,13 +88,20 @@ export const ResourceListPage = connectToPlural(
   }),
 );
 
-export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
+export const ResourceDetailsPage = connectToPlural(function ResourceDetailsPage(
+  props: ResourceDetailsPageProps,
+) {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
   const dynamicResourceListPageExtensions = useExtensions<DynamicResourceDetailsPage>(
     isDynamicResourceDetailsPage,
   );
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
   const decodedName = decodeURIComponent(name);
+
+  const [namespaceExist, namespaceLoaded] = useNamespaceExist(ns);
+  if (namespaceLoaded && !namespaceExist) {
+    return <NamespaceNotFoundError />;
+  }
 
   if (!name || !kindObj) {
     if (kindsInFlight) {
