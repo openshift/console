@@ -4,12 +4,7 @@ import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-t
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import {
-  Firehose,
-  FirehoseResult,
-  humanizeBinaryBytes,
-  resourcePath,
-} from '@console/internal/components/utils';
+import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
@@ -112,7 +107,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     return [
       combinedDisk.getName(),
       combinedDisk.getSourceValue(),
-      combinedDisk.getSize() && humanizeBinaryBytes(combinedDisk.getSize().value).string,
+      combinedDisk.getReadableSize(),
       combinedDisk.getDiskInterface(),
       combinedDisk.getStorageClassName(),
       combinedDisk.getAccessModes()?.join(', '),

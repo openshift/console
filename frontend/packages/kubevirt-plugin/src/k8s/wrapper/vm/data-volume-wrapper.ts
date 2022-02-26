@@ -1,3 +1,4 @@
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
   BinaryUnit,
   stringValueUnitSplit,
@@ -68,6 +69,13 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getReadabableSize = () => {
     const { value, unit } = this.getSize();
+
+    // if only unit is undefined, the value has to be recalculated from B and the new unit set, for more readable output
+    if (value && !unit) {
+      const { value: newValue, unit: newUnit } = humanizeBinaryBytes(this.getSize().value);
+      return `${newValue} ${newUnit}`;
+    }
+
     return `${value} ${toIECUnit(unit) || BinaryUnit.B}`;
   };
 
