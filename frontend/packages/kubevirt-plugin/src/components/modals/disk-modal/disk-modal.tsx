@@ -16,6 +16,7 @@ import {
   ExternalLink,
   FirehoseResult,
   HandlePromiseProps,
+  humanizeBinaryBytes,
   LoadingInline,
   withHandlePromise,
 } from '@console/internal/components/utils';
@@ -192,8 +193,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   );
 
   const [size, setSize] = React.useState<string>(
-    combinedDiskSize ? `${combinedDiskSize.value}` : '',
+    combinedDiskSize
+      ? combinedDiskSize.unit
+        ? `${combinedDiskSize.value}`
+        : `${humanizeBinaryBytes(combinedDiskSize.value).value}`
+      : '',
   );
+
   const [unit, setUnit] = React.useState<string>(
     (combinedDiskSize && combinedDiskSize.unit) || BinaryUnit.Gi,
   );
