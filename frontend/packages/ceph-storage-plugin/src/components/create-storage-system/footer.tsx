@@ -1,7 +1,4 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -13,7 +10,6 @@ import {
   AlertActionCloseButton,
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
-import { setFlag } from '@console/internal/actions/features';
 import { WizardCommonProps, WizardState } from './reducer';
 import {
   createExternalSubSystem,
@@ -41,7 +37,6 @@ import { MINIMUM_NODES, OCS_EXTERNAL_CR_NAME, OCS_INTERNAL_CR_NAME } from '../..
 import { NetworkType } from '../../types';
 import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
 import { createClusterKmsResources } from '../kms-config/utils';
-import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG, MCG_STANDALONE } from '../../features';
 
 const validateBackingStorageStep = (
   backingStorage: WizardState['backingStorage'],
@@ -106,34 +101,10 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
   }
 };
 
-export const setActionFlags = (
-  type: WizardState['backingStorage']['type'],
-  flagDispatcher: any,
-  isRhcs: boolean,
-  isMCG: boolean,
-) => {
-  switch (type) {
-    case BackingStorageType.EXISTING:
-    case BackingStorageType.LOCAL_DEVICES:
-      flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
-      flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));
-      flagDispatcher(setFlag(OCS_FLAG, true));
-      break;
-    case BackingStorageType.EXTERNAL:
-      flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, isRhcs));
-      flagDispatcher(setFlag(OCS_CONVERGED_FLAG, !isRhcs));
-      flagDispatcher(setFlag(OCS_FLAG, true));
-      break;
-    default:
-  }
-  flagDispatcher(setFlag(MCG_STANDALONE, isMCG));
-};
-
 const handleReviewAndCreateNext = async (
   state: WizardState,
   hasOCS: boolean,
   handleError: (err: string, showError: boolean) => void,
-  flagDispatcher: any,
 ) => {
   const { connectionDetails, createStorageClass, storageClass, nodes, capacityAndNodes } = state;
   const { externalStorage, deployment, type } = state.backingStorage;
@@ -180,8 +151,6 @@ const handleReviewAndCreateNext = async (
       if (!isRhcs) await waitforCRD(model);
       await createExternalSubSystem(subSystemPayloads);
     }
-    // These flags control the enablement of dashboards and other ODF UI components in console
-    setActionFlags(type, flagDispatcher, isRhcs, isMCG);
     history.push('/odf/systems');
   } catch (err) {
     handleError(err.message, true);
@@ -199,7 +168,6 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
   const [requestInProgress, setRequestInProgress] = React.useState(false);
   const [requestError, setRequestError] = React.useState('');
   const [showErrorAlert, setShowErrorAlert] = React.useState(false);
-  const flagDispatcher = useDispatch();
 
   const stepId = activeStep.id as number;
   const stepName = activeStep.name as string;
@@ -229,7 +197,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         break;
       case StepsName(t)[Steps.ReviewAndCreate]:
         setRequestInProgress(true);
-        await handleReviewAndCreateNext(state, hasOCS, handleError, flagDispatcher);
+        await handleReviewAndCreateNext(state, hasOCS, handleError);
         setRequestInProgress(false);
         break;
       default:

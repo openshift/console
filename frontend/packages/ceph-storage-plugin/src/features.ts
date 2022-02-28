@@ -136,32 +136,44 @@ export const detectRGW: FeatureDetector = async (dispatch) => {
           clearInterval(id);
         }
       });
+  // calling first time instantaneously
+  // else it will wait for 15s before start polling
+  logicHandler();
   id = setInterval(logicHandler, 15 * SECOND);
 };
 
 export const detectOCS: FeatureDetector = async (dispatch) => {
-  try {
-    const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
-    if (storageClusters?.length > 0) {
-      const storageCluster = storageClusters.find(
-        (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
-      );
-      const isInternal = _.isEmpty(storageCluster?.spec?.externalStorage);
-      dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
-      dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
-      dispatch(setFlag(OCS_FLAG, true));
-      dispatch(
-        setFlag(
-          MCG_STANDALONE,
-          storageCluster?.spec?.multiCloudGateway?.reconcileStrategy === 'standalone',
-        ),
-      );
+  let ocsIntervalId = null;
+  const ocsDetector = async () => {
+    try {
+      const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
+      if (storageClusters?.length > 0) {
+        const storageCluster = storageClusters.find(
+          (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
+        );
+        const isInternal = _.isEmpty(storageCluster?.spec?.externalStorage);
+        dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
+        dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
+        dispatch(setFlag(OCS_FLAG, true));
+        dispatch(
+          setFlag(
+            MCG_STANDALONE,
+            storageCluster?.spec?.multiCloudGateway?.reconcileStrategy === 'standalone',
+          ),
+        );
+        clearInterval(ocsIntervalId);
+      }
+    } catch (error) {
+      dispatch(setFlag(OCS_FLAG, false));
+      dispatch(setFlag(OCS_CONVERGED_FLAG, false));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
     }
-  } catch (error) {
-    dispatch(setFlag(OCS_FLAG, false));
-    dispatch(setFlag(OCS_CONVERGED_FLAG, false));
-    dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
-  }
+  };
+
+  // calling first time instantaneously
+  // else it will wait for 15s before start polling
+  ocsDetector();
+  ocsIntervalId = setInterval(ocsDetector, 15 * SECOND);
 };
 
 export const detectManagedODF: FeatureDetector = async (dispatch) => {
