@@ -1454,7 +1454,7 @@
     "properties": {
       "model": {
         "group": "kafka.strimzi.io",
-        "version": "v1beta1",
+        "version": "v1beta2",
         "kind": "Kafka"
       },
       "label": "%knative-plugin~Kafka%",
@@ -1467,7 +1467,7 @@
     "properties": {
       "model": {
         "group": "kafka.strimzi.io",
-        "version": "v1beta1",
+        "version": "v1beta2",
         "kind": "KafkaTopic"
       },
       "label": "%knative-plugin~KafkaTopic%",
