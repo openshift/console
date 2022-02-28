@@ -536,15 +536,19 @@ func (s *Server) HTTPHandler() http.Handler {
 		for _, proxyServiceHandler := range proxyServiceHandlers {
 			klog.Infof(" - %s -> %s\n", proxyServiceHandler.ConsoleEndpoint, proxyServiceHandler.ProxyConfig.Endpoint)
 			serviceProxy := proxy.NewProxy(proxyServiceHandler.ProxyConfig)
+			f := func(w http.ResponseWriter, r *http.Request) {
+				serviceProxy.ServeHTTP(w, r)
+			}
+			var h http.Handler
+			if proxyServiceHandler.Authorize {
+				h = authHandler(f)
+			} else {
+				h = http.HandlerFunc(f)
+			}
 			handle(proxyServiceHandler.ConsoleEndpoint, http.StripPrefix(
 				proxy.SingleJoiningSlash(s.BaseURL.Path, proxyServiceHandler.ConsoleEndpoint),
-				authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-					if proxyServiceHandler.Authorize {
-						r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-					}
-					serviceProxy.ServeHTTP(w, r)
-				})),
-			)
+				h,
+			))
 		}
 	}
 
