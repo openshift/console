@@ -15,6 +15,7 @@ import {
   AngleRightIcon,
   ChartLineIcon,
   CompressIcon,
+  TableIcon,
 } from '@patternfly/react-icons';
 import {
   ISortBy,
@@ -51,6 +52,7 @@ import {
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
   toggleGraphs,
+  toggleTable,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
@@ -201,6 +203,28 @@ export const ToggleGraph: React.FC<{}> = () => {
       variant="link"
     >
       {icon} {hideGraphs ? t('public~Show graph') : t('public~Hide graph')}
+    </Button>
+  );
+};
+
+const ToggleTable: React.FC = () => {
+  const { t } = useTranslation();
+
+  const hideTable = useSelector(({ observe }: RootState) => !!observe.get('hideTable'));
+
+  const dispatch = useDispatch();
+  const toggle = React.useCallback(() => dispatch(toggleTable()), [dispatch]);
+
+  const icon = hideTable ? <TableIcon /> : <CompressIcon />;
+
+  return (
+    <Button
+      type="button"
+      className="pf-m-link--align-right query-browser__toggle-graph"
+      onClick={toggle}
+      variant="link"
+    >
+      {icon} {hideTable ? t('public~Show table') : t('public~Hide table')}
     </Button>
   );
 };
@@ -993,18 +1017,16 @@ const QueryBrowserPage_: React.FC<{}> = () => {
         <div className="row">
           <div className="col-xs-12">
             <QueryBrowserWrapper />
-            <div className="query-browser__controls">
-              <div className="query-browser__controls--left">
-                <MetricsDropdown />
-              </div>
-              <div className="query-browser__controls--right">
-                <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
-                  <AddQueryButton />
-                  <RunQueriesButton />
-                </ActionGroup>
-              </div>
-            </div>
-            <QueriesList />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-xs-12">
+            <ToggleTable />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-xs-12">
+            <QueryCreationWrapper />
           </div>
         </div>
       </div>
@@ -1012,6 +1034,38 @@ const QueryBrowserPage_: React.FC<{}> = () => {
   );
 };
 export const QueryBrowserPage = withFallback(QueryBrowserPage_);
+QueryBrowserPage.displayName = 'QueryBrowserPage';
+
+export const QueryCreationWrapper: React.FC = () => {
+  const hideTable = useSelector(({ observe }: RootState) => !!observe.get('hideTable'));
+
+  if (hideTable) {
+    return null;
+  }
+
+  return (
+    <>
+      <QueriesControls />
+      <QueriesList />
+    </>
+  );
+};
+
+const QueriesControls: React.FC = () => {
+  return (
+    <div className="query-browser__controls">
+      <div className="query-browser__controls--left">
+        <MetricsDropdown />
+      </div>
+      <div className="query-browser__controls--right">
+        <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+          <AddQueryButton />
+          <RunQueriesButton />
+        </ActionGroup>
+      </div>
+    </div>
+  );
+};
 
 type MetricsDropdownItems = {
   [key: string]: string;

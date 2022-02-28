@@ -26,6 +26,7 @@ export enum ActionType {
   QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
   SetAlertCount = 'SetAlertCount',
   ToggleGraphs = 'toggleGraphs',
+  ToggleTable = 'toggleTable',
 }
 
 export const dashboardsPatchVariable = (key: string, patch: any, perspective: string) =>
@@ -82,6 +83,8 @@ export const alertingSetRules = (key: 'rules' | 'devRules', rules: Rule[], persp
   action(ActionType.AlertingSetRules, { key, data: rules, perspective });
 
 export const toggleGraphs = () => action(ActionType.ToggleGraphs);
+
+export const toggleTable = () => action(ActionType.ToggleTable);
 
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 
@@ -150,6 +153,7 @@ const actions = {
   queryBrowserToggleSeries,
   setAlertCount,
   toggleGraphs,
+  toggleTable,
 };
 
 export type ObserveAction = Action<typeof actions>;

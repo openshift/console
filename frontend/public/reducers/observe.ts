@@ -152,6 +152,9 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     case ActionType.ToggleGraphs:
       return state.set('hideGraphs', !state.get('hideGraphs'));
 
+    case ActionType.ToggleTable:
+      return state.set('hideTable', !state.get('hideTable'));
+
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(
         ['queryBrowser', 'queries'],
