@@ -91,6 +91,8 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
       dataAttributes,
       'data-tour-id': dataTourId,
       'data-quickstart-id': dataQuickStartId,
+      insertBeforeName,
+      dragRef,
     } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
@@ -98,22 +100,32 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
 
     const itemClasses = classNames(className, { 'pf-m-current': isActive });
     const linkClasses = classNames('pf-c-nav__link', { 'pf-m-current': isActive });
+    const link = (
+      <Link
+        className={linkClasses}
+        data-test-id={testID}
+        to={this.to}
+        onClick={onClick}
+        title={tipText}
+        data-tour-id={dataTourId}
+        data-quickstart-id={dataQuickStartId}
+        data-test="nav"
+        {...dataAttributes}
+      >
+        {insertBeforeName}
+        {name}
+        {children}
+      </Link>
+    );
     return (
       <NavItem className={itemClasses} isActive={isActive}>
-        <Link
-          className={linkClasses}
-          data-test-id={testID}
-          to={this.to}
-          onClick={onClick}
-          title={tipText}
-          data-tour-id={dataTourId}
-          data-quickstart-id={dataQuickStartId}
-          data-test="nav"
-          {...dataAttributes}
-        >
-          {name}
-          {children}
-        </Link>
+        {dragRef ? (
+          <div ref={dragRef} style={{ padding: 0 }}>
+            {link}
+          </div>
+        ) : (
+          link
+        )}
       </NavItem>
     );
   }
@@ -203,12 +215,15 @@ export type NavLinkProps = {
   dataAttributes?: { [key: string]: string };
   'data-tour-id'?: string;
   'data-quickstart-id'?: string;
+  insertBeforeName?: React.ReactNode;
+  dragRef?: React.Ref<any>;
 };
 
 export type ResourceNSLinkProps = NavLinkProps & {
   resource: string;
   model?: ExtensionK8sModel;
   activeNamespace?: string;
+  dragRef?: React.Ref<any>;
 };
 
 export type ResourceClusterLinkProps = NavLinkProps & {
@@ -269,13 +284,14 @@ const RootNavLink_: React.FC<RootNavLinkProps & RootNavLinkStateProps> = ({
   isActive,
   className,
   children,
+  dragRef,
   ...props
 }) => {
   if (!canRender) {
     return null;
   }
   return (
-    <Component className={className} {...props} isActive={isActive}>
+    <Component className={className} {...props} isActive={isActive} dragRef={dragRef}>
       {children}
     </Component>
   );
