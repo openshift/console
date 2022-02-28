@@ -10,9 +10,14 @@ import {
   WizardContextConsumer,
 } from '@patternfly/react-core';
 import { TechPreviewBadge } from '@console/shared';
-import { CreateStepsSC } from '../constants';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { SubscriptionModel } from '@console/operator-lifecycle-manager';
+import { FirehoseResult } from '@console/internal/module/k8s';
+import { CreateStepsSC, CEPH_STORAGE_NAMESPACE } from '../constants';
 import '../components/ocs-install/ocs-install.scss';
 import { EncryptionType } from '../types';
+import { getODFVersion } from '../selectors';
+import { K8sResourceCommon } from '../../../../public/module/k8s/index';
 
 export type Validation = {
   title: React.ReactNode;
@@ -37,7 +42,11 @@ export enum ValidationType {
   'ATTACHED_DEVICES_FLEXIBLE_SCALING' = 'ATTACHED_DEVICES_FLEXIBLE_SCALING',
 }
 
-export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Validation => {
+export const VALIDATIONS = (
+  type: keyof typeof ValidationType,
+  t: TFunction,
+  hideBadge = false,
+): Validation => {
   switch (type) {
     case ValidationType.MINIMAL:
       return {
@@ -45,7 +54,7 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
         title: (
           <div className="ceph-minimal-deployment-alert__header">
             {t('ceph-storage-plugin~A minimal cluster deployment will be performed.')}
-            <TechPreviewBadge />
+            {!hideBadge && <TechPreviewBadge />}
           </div>
         ),
         text: t(
@@ -169,6 +178,16 @@ type ActionAlertProps = Validation & {
 
 export const ValidationMessage: React.FC<ValidationMessageProps> = ({ className, validation }) => {
   const { t } = useTranslation();
+  const [subscriptions, subsLoaded, subsLoadError] = useK8sGet<K8sResourceCommon>(
+    SubscriptionModel,
+    null,
+    CEPH_STORAGE_NAMESPACE,
+  );
+  const subsObject = {
+    loaded: subsLoaded,
+    loadError: subsLoadError,
+    data: subscriptions?.['items'],
+  };
   const {
     variant = AlertVariant.info,
     title,
@@ -177,7 +196,11 @@ export const ValidationMessage: React.FC<ValidationMessageProps> = ({ className,
     linkText,
     actionLinkStep,
     actionLinkText,
-  } = VALIDATIONS(validation, t);
+  } = VALIDATIONS(
+    validation,
+    t,
+    subsLoaded && !subsLoadError && getODFVersion(subsObject as FirehoseResult).includes('4.10'),
+  );
   return actionLinkStep ? (
     <Alert className={cx('co-alert', className)} variant={variant} title={title} isInline>
       <p>{text}</p>
