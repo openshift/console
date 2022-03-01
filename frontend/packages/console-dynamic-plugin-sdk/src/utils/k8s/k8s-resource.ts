@@ -320,8 +320,8 @@ export const k8sKill = <R extends K8sResourceCommon>(
 type OptionsDelete<R> = BaseOptions & {
   model: K8sModel;
   resource: R;
-  requestInit: RequestInit;
-  json: Record<string, any>;
+  requestInit?: RequestInit;
+  json?: Record<string, any>;
 };
 
 type K8sDeleteResource = <R extends K8sResourceCommon>(options: OptionsDelete<R>) => Promise<R>;
@@ -391,7 +391,7 @@ export const k8sList = (
 type OptionsList = {
   model: K8sModel;
   queryParams: { [key: string]: any };
-  requestInit: RequestInit;
+  requestInit?: RequestInit;
 };
 
 type K8sListResource = <R extends K8sResourceCommon>(
