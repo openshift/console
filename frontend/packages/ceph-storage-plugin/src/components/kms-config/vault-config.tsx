@@ -63,7 +63,14 @@ export const VaultConfigure: React.FC<KMSConfigureProps> = ({
         });
   };
 
+  const setAuthValue = (authValue: string) => {
+    vaultStateClone.authValue.value = authValue;
+    vaultStateClone.authValue.valid = authValue !== '';
+    updateVaultState(vaultStateClone);
+  };
+
   const setAuthMethod = (authMethod: VaultAuthMethods) => {
+    setAuthValue('');
     vaultStateClone.authMethod = authMethod;
     updateVaultState(vaultStateClone);
   };
@@ -127,6 +134,7 @@ export const VaultConfigure: React.FC<KMSConfigureProps> = ({
           isWizardFlow,
           dispatch,
           updateVaultState,
+          setAuthValue,
         }}
       />
     </>
@@ -142,6 +150,7 @@ const VaultConnectionForm: React.FC<VaultConnectionFormProps> = ({
   isWizardFlow,
   dispatch,
   updateVaultState,
+  setAuthValue,
 }) => {
   const vaultStateClone: VaultConfig = _.cloneDeep(vaultState);
   const Component: React.FC<VaultAuthMethodProps> =
@@ -196,12 +205,6 @@ const VaultConnectionForm: React.FC<VaultConnectionFormProps> = ({
     vaultStateClone.port.value = port;
     vaultStateClone.port.valid =
       port !== '' && !_.isNaN(Number(port)) && Number(port) > 0 && Number(port) < 65536;
-    updateVaultState(vaultStateClone);
-  };
-
-  const setAuthValue = (authValue: string) => {
-    vaultStateClone.authValue.value = authValue;
-    vaultStateClone.authValue.valid = authValue !== '';
     updateVaultState(vaultStateClone);
   };
 
@@ -323,4 +326,5 @@ export type VaultConnectionFormProps = {
   t: TFunction;
   dispatch: EncryptionDispatch;
   updateVaultState: (VaultConfig) => void;
+  setAuthValue: (string) => void;
 };
