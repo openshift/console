@@ -6,9 +6,7 @@ import { TYPE_AGGREGATE_EDGE, TYPE_APPLICATION_GROUP } from '../const';
 import {
   DEFAULT_SUPPORTED_FILTER_IDS,
   EXPAND_APPLICATION_GROUPS_FILTER_ID,
-  getFilterById,
   isExpanded,
-  SHOW_GROUPS_FILTER_ID,
   showKind,
 } from '../filters';
 import { DisplayFilters, OdcNodeModel, TopologyApplyDisplayOptions } from '../topology-types';
@@ -51,10 +49,8 @@ const getNodeKind = (node: NodeModel) => {
 const isNodeShown = (node: NodeModel, filters: DisplayFilters, allNodes: NodeModel[]): boolean => {
   let shown = showKind(getNodeKind(node), filters);
   if (!shown) {
-    const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
     const parentNode = allNodes.find(
-      (n) =>
-        n.group && showGroups && n.type !== TYPE_APPLICATION_GROUP && n.children?.includes(node.id),
+      (n) => n.group && n.type !== TYPE_APPLICATION_GROUP && n.children?.includes(node.id),
     );
     shown = parentNode && isNodeShown(parentNode, filters, allNodes);
   }
@@ -78,7 +74,6 @@ export const updateModelFromFilters = (
   const supportedKinds = {};
   let appGroupFound = false;
   const expanded = isExpanded(EXPAND_APPLICATION_GROUPS_FILTER_ID, filters);
-  const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
   dataModel.nodes.forEach((d) => {
     d.visible = true;
     if (displayFilterers) {
@@ -119,11 +114,6 @@ export const updateModelFromFilters = (
         (g.visible && group?.label === application) ||
         (!group && application === UNASSIGNED_APPLICATIONS_KEY);
     });
-  }
-
-  if (!showGroups) {
-    dataModel.nodes = dataModel.nodes.filter((n) => !n.group);
-    dataModel.edges = [];
   }
 
   // create links from data, only include those which have a valid source and target

@@ -1,9 +1,6 @@
-import { allowEdgeCreation } from './filter-utils';
-import { useDisplayFilters } from './useDisplayFilters';
-
-const useAllowEdgeCreation = (): boolean => {
-  const filters = useDisplayFilters();
-  return allowEdgeCreation(filters);
-};
+/*
+ * @deprecated This hook is deprecated as show/hide groups(connectivity/consumption mode) filter is no longer needed
+ */
+const useAllowEdgeCreation = (): boolean => true;
 
 export { useAllowEdgeCreation };

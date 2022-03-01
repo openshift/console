@@ -97,12 +97,6 @@ export const topologyPage = {
       case displayOptions.KnativeServices:
         cy.get('[id$=knativeServices]').check();
         break;
-      case displayOptions.ConnectivityMode:
-        cy.get('#showGroups').click();
-        break;
-      case displayOptions.ConsumptionMode:
-        cy.get('#hideGroups').click();
-        break;
       default:
         throw new Error('Option is not available');
         break;

@@ -57,7 +57,6 @@ describe('TopologyDataRetriever ', () => {
     const results = await updateTopologyDataModel(
       mockExtensibleModel,
       mockReadyResources,
-      true,
       null,
       null,
     );
@@ -70,7 +69,6 @@ describe('TopologyDataRetriever ', () => {
     const results = await updateTopologyDataModel(
       mockExtensibleModel,
       mockReadyResources,
-      true,
       null,
       null,
     );
@@ -79,7 +77,7 @@ describe('TopologyDataRetriever ', () => {
   });
 
   it('should wait for resources to be defined', async () => {
-    const results = await updateTopologyDataModel(mockExtensibleModel, undefined, true, null, null);
+    const results = await updateTopologyDataModel(mockExtensibleModel, undefined, null, null);
     expect(results.loaded).toBeFalsy();
     expect(results.loadError).toBeFalsy();
   });
@@ -88,7 +86,6 @@ describe('TopologyDataRetriever ', () => {
     const results = await updateTopologyDataModel(
       mockExtensibleModel,
       mockNotReadyResources,
-      true,
       null,
       null,
     );
@@ -100,7 +97,6 @@ describe('TopologyDataRetriever ', () => {
     const results = await updateTopologyDataModel(
       mockExtensibleModel,
       mockErrorResources,
-      true,
       null,
       null,
     );
@@ -114,7 +110,6 @@ describe('TopologyDataRetriever ', () => {
     const results = await updateTopologyDataModel(
       mockExtensibleModel,
       mockErrorResources,
-      true,
       null,
       null,
     );
