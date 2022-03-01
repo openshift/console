@@ -69,16 +69,15 @@ spec:
 
 In case the plugin needs to communicate with some in-cluster service, it can
 declare a service proxy in its `ConsolePlugin` resource using the
-`spec.proxy.services` array field. A service `name`, `namespace` and `port`
+`spec.proxy` array field. Each entry needs to specify type and alias of the proxy, under the `type` and `alias` field. For the `Service` proxy type, a `service` field with `name`, `namespace` and `port`
 needs to be specified.
 
 Console backend exposes following endpoint in order to proxy the communication
 between plugin and the service:
-`/api/proxy/namespace/<service-namespace>/service/<service-name>:<port-number>/<request-path>?<optional-query-parameters>`
+`/api/proxy/plugin/<plugin-name>/<proxy-alias>/<request-path>?<optional-query-parameters>`
 
-An example proxy request path from plugin to `helm-charts` service,
-in `helm` namespace to list ten helm releases:
-`/api/proxy/namespace/helm/service/helm-charts:8443/releases?limit=10`
+An example proxy request path from `helm` plugin with a `helm-charts` service to list ten helm releases:
+`/api/proxy/plugin/helm/helm-charts/releases?limit=10`
 
 Proxied request will use [service CA bundle](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/security_and_compliance/certificate-types-and-descriptions#cert-types-service-ca-certificates) by default. The service must use HTTPS.
 If the service uses a custom service CA, the `caCertificate` field
@@ -93,8 +92,10 @@ then passed in the HTTP `Authorization` request header, for example:
 # ...
 spec:
   proxy:
-    services:
-    - name: helm-charts
+  - type: Service
+    alias: helm-charts
+    service:
+      name: helm-charts
       namespace: helm
       port: 8443
       caCertificate: '-----BEGIN CERTIFICATE-----\nMIID....'
