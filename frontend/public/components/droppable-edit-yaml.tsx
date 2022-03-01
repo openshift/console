@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
+import { DroppableEditYAMLProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 import { EditYAML } from './edit-yaml';
 import withDragDropContext from './utils/drag-drop-context';
@@ -123,10 +124,7 @@ type EditYAMLProps = {
   clearFileUpload: () => void;
 };
 
-export type DroppableEditYAMLProps = {
-  allowMultiple?: boolean;
-  obj: string;
-};
+export { DroppableEditYAMLProps };
 
 export type DroppedFile = {
   error?: string;

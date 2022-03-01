@@ -10,6 +10,7 @@ import {
   ResourceInventoryItemProps,
   DetailItemProps,
   DetailsBodyProps,
+  DroppableEditYAMLProps,
   UtilizationItemProps,
   UtilizationBodyProps,
   UtilizationDurationDropdownProps,
@@ -52,6 +53,9 @@ export const VirtualizedGrid: React.FC<VirtualizedGridProps> = require('@console
   .default;
 export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
   .default;
+
+export const DroppableEditYAML: React.FC<DroppableEditYAMLProps> = require('@console/internal/components/droppable-edit-yaml')
+  .DroppableEditYAML;
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
