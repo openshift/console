@@ -4,7 +4,8 @@ import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
-import { useForceRender, useResizeObserver } from '@console/shared';
+import { useForceRender, useResizeObserver, useUserSettings } from '@console/shared';
+import { updateThemeClass } from '@console/app/src/components/user-preferences/theme';
 
 import './_markdown-view.scss';
 
@@ -172,6 +173,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   const [frame, setFrame] = React.useState<HTMLIFrameElement>();
   const [frameHeight, setFrameHeight] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
+  const [theme, , themeLoaded] = useUserSettings('console.theme');
 
   const updateDimensions = React.useCallback(
     _.debounce(() => {
@@ -181,6 +183,8 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
       setFrameHeight(
         frame.contentWindow.document.body.firstElementChild.scrollHeight + (exactHeight ? 0 : 15),
       );
+      const htmlTagElement = frame?.contentDocument?.getElementsByTagName('html')[0];
+      updateThemeClass(htmlTagElement, theme, themeLoaded);
     }, 100),
     [frame, exactHeight],
   );
