@@ -391,7 +391,8 @@ const ExistingKMSDropDown: React.FC<ExistingKMSDropDownProps> = ({
               );
             }
           } catch (err) {
-            return err;
+            // eslint-disable-next-line no-console
+            console.error(err);
           }
           return res;
         },
