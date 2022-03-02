@@ -26,6 +26,7 @@ const getHelmWatchedResources = (namespace: string): WatchK8sResources<any> => {
       kind: 'Secret',
       namespace,
       optional: true,
+      partialMetadata: true,
     },
   };
 };

@@ -57,8 +57,8 @@ export const watchURL = (kind, options) => {
   return resourceURL(kind, opts);
 };
 
-export const k8sGet = (kind, name, ns, opts) =>
-  coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)));
+export const k8sGet = (kind, name, ns, opts, options) =>
+  coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)), 'GET', options);
 
 export const k8sCreate = (kind, data, opts = {}) => {
   return coFetchJSON.post(
