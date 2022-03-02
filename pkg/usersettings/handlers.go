@@ -176,5 +176,5 @@ func (h *UserSettingsHandler) getUserSettingMeta(context context.Context, user *
 		return nil, err
 	}
 
-	return newUserSettingMeta(userInfo.GetName(), string(userInfo.GetUID()))
+	return newUserSettingMeta(userInfo)
 }
