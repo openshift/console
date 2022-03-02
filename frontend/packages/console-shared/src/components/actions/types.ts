@@ -1,8 +1,11 @@
 import { Action, ActionGroup } from '@console/dynamic-plugin-sdk';
 
+export type {
+  ActionContext
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+
 export {
-  ActionContext,
-  ActionMenuVariant,
+  ActionMenuVariant
 } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export type MenuOption = Action | GroupedMenuOption;
