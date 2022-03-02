@@ -50,6 +50,7 @@ import {
   useURLPoll,
   URL_POLL_DEFAULT_DELAY,
 } from '@console/internal/components/utils/url-poll-hook';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { init as initI18n } from '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -384,7 +385,7 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
         label: t('public~Refresh web console'),
         callback: () => {
           if (window.location.pathname.includes('/operatorhub/subscribe')) {
-            window.location.href = '/operatorhub';
+            window.location.href = `/k8s/all-namespaces/${ClusterServiceVersionModel.apiGroup}~${ClusterServiceVersionModel.apiVersion}~${ClusterServiceVersionModel.kind}`;
           } else {
             window.location.reload();
           }
