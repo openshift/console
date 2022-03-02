@@ -620,12 +620,24 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         title={t('olm~Select a Namespace')}
       />
       {!useSuggestedNSForSingleInstallMode && (
-        <NsDropdown
-          id="dropdown-selectbox"
-          selectedKey={selectedTargetNamespace}
-          onChange={(ns) => setTargetNamespace(ns)}
-          dataTest="dropdown-selectbox"
-        />
+        <>
+          <NsDropdown
+            id="dropdown-selectbox"
+            selectedKey={selectedTargetNamespace}
+            onChange={(ns) => setTargetNamespace(ns)}
+            dataTest="dropdown-selectbox"
+          />
+          {suggestedNamespace !== selectedTargetNamespace && (
+            <Alert
+              isInline
+              className="co-alert pf-c-alert--top-margin"
+              variant="warning"
+              title={t(
+                'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
+              )}
+            />
+          )}
+        </>
       )}
     </div>
   );
