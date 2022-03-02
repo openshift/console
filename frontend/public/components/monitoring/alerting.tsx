@@ -105,7 +105,7 @@ const pollers = {};
 const pollerTimeouts = {};
 
 const silenceAlert = (alert: Alert) => ({
-  callback: () => history.replace(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`),
+  callback: () => history.push(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`),
   label: i18next.t('public~Silence alert'),
 });
 
