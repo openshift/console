@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { HorizontalPodAutoscalerKind, k8sList } from '@console/internal/module/k8s';
-import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import { doesHpaMatch } from '../utils/hpa-utils';
 
 export const useRelatedHPA = (
@@ -10,57 +10,30 @@ export const useRelatedHPA = (
   workloadName: string,
   workloadNamespace: string,
 ): [HorizontalPodAutoscalerKind, boolean, string] => {
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = React.useState<string>(null);
-  const [hpaName, setHPAName] = React.useState<string>(null);
+  // useRelatedHPA is used by PodRing which will be shown many many times on the topology.
+  // The topology loads all HPAs itself via useK8sWatchResource, and because our watch
+  // hooks are smart enough to do not watch the same resources twice, we can do this here
+  // without additional API calls.
+  // See also packages/topology/src/data-transforms/ModelContext.ts (getBaseWatchedResources)
+  const [hpas, loaded, error] = useK8sWatchResource<HorizontalPodAutoscalerKind[]>({
+    kind: HorizontalPodAutoscalerModel.kind,
+    namespace: workloadNamespace,
+    optional: true,
+    isList: true,
+  });
 
-  React.useEffect(() => {
-    let destroyed = false;
-    k8sList(HorizontalPodAutoscalerModel, { ns: workloadNamespace })
-      .then((hpaList: HorizontalPodAutoscalerKind[]) => {
-        if (destroyed) {
-          return;
-        }
-        const matchingHPA = hpaList.find(
-          doesHpaMatch({
-            apiVersion: workloadAPI,
-            kind: workloadKind,
-            metadata: { name: workloadName },
-          }),
-        );
-        setLoaded(true);
-        if (!matchingHPA) {
-          return;
-        }
-        setHPAName(matchingHPA.metadata.name);
-      })
-      .catch((error) => {
-        if (destroyed) {
-          return;
-        }
-        setLoaded(true);
-        setErrorMessage(
-          error?.message || `No matching ${HorizontalPodAutoscalerModel.label} found.`,
-        );
-      });
-    return () => {
-      destroyed = true;
-    };
-  }, [workloadAPI, workloadKind, workloadName, workloadNamespace]);
+  const matchingHpa = React.useMemo<HorizontalPodAutoscalerKind>(() => {
+    if (hpas && loaded && !error) {
+      return hpas.find(
+        doesHpaMatch({
+          apiVersion: workloadAPI,
+          kind: workloadKind,
+          metadata: { name: workloadName },
+        }),
+      );
+    }
+    return undefined; // similar to .find(() => false)
+  }, [hpas, loaded, error, workloadAPI, workloadKind, workloadName]);
 
-  const resource = React.useMemo(
-    () =>
-      hpaName && {
-        kind: HorizontalPodAutoscalerModel.kind,
-        name: hpaName,
-        namespace: workloadNamespace,
-      },
-    [hpaName, workloadNamespace],
-  );
-  const [hpa, hpaWatchLoaded, error] = useK8sWatchResource<HorizontalPodAutoscalerKind>(resource);
-
-  const hpaLoaded = loaded && hpaWatchLoaded;
-  const returnHPA = !error && hpa && hpaLoaded ? hpa : null;
-  const hpaError = error || errorMessage;
-  return [returnHPA, hpaLoaded, hpaError];
+  return [matchingHpa, loaded, error];
 };
