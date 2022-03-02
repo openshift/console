@@ -77,9 +77,9 @@ const FinishTourText: React.FC = () => {
     optional: true,
   });
   const { t } = useTranslation();
-  const openshiftBlogLink = consoleLinks.filter(
-    (link: K8sResourceKind) => link.metadata.name === 'openshift-blog',
-  )[0]?.spec?.href;
+  const openshiftBlogLink =
+    consoleLinks.filter((link: K8sResourceKind) => link.metadata.name === 'openshift-blog')[0]?.spec
+      ?.href || 'https://developers.redhat.com/products/openshift/whats-new';
   // declaring openshiftHelpBase instead of importing because it throws error while using it as tour extension
   const openshiftHelpBase =
     window.SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
