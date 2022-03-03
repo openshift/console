@@ -15,7 +15,7 @@ import {
   k8sCreate,
   k8sDelete,
   k8sGet,
-  k8sList,
+  k8sListItems,
   k8sPatch,
   K8sResourceCommon,
   k8sUpdate,
@@ -104,14 +104,10 @@ const K8sAPIConsumer: React.FC = () => {
   };
 
   const k8sListClick = () => {
-    k8sList({ model: k8sModel, queryParams: { ns: 'default' } })
+    k8sListItems({ model: k8sModel, queryParams: { ns: 'default' } })
       .then((response) => {
         setErrData('');
-        if (Array.isArray(response)) {
-          setK8sListData(response);
-        } else {
-          setK8sListData(response.items);
-        }
+        setK8sListData(response);
       })
       .catch((e) => {
         setErrData(e.message);

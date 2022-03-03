@@ -77,7 +77,7 @@ export {
   checkAccess,
   useAccessReview,
   useAccessReviewAllowed,
-} from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+} from '../app/components/utils/rbac';
 
 export {
   useK8sModel,
@@ -100,6 +100,7 @@ export {
   k8sPatchResource as k8sPatch,
   k8sDeleteResource as k8sDelete,
   k8sListResource as k8sList,
+  k8sListResourceItems as k8sListItems,
 } from '../utils/k8s';
 export {
   getAPIVersionForModel,

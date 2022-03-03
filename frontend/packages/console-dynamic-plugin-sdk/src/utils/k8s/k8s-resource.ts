@@ -414,3 +414,17 @@ export const k8sListResource: K8sListResource = adapterFunc(k8sList, [
   'requestInit',
   'cluster',
 ]);
+
+/**
+ * Same interface as {@link k8sListResource} but returns the sub items.
+ * @see K8sListResource
+ */
+export const k8sListResourceItems = <R extends K8sResourceCommon>(
+  options: OptionsList,
+): Promise<R[]> =>
+  k8sListResource<R>(options).then((response) => {
+    if (Array.isArray(response)) {
+      return response;
+    }
+    return response.items;
+  });
