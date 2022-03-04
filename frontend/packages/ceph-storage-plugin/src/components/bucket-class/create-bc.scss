@@ -15,7 +15,7 @@
 
 .nb-create-bc-step-page-form__dropdown {
   display: block;
-  height: 20rem;
+  min-height: 12rem;
 }
 
 .nb-create-bc-list--indent {
@@ -37,6 +37,7 @@
 
 .nb-create-bc-step-page-form__element--light-text {
   margin-top: var(--pf-global--spacer--sm);
+  margin-bottom: var(--pf-global--spacer--sm);
   color: var(--pf-global--Color--400);
 }
 

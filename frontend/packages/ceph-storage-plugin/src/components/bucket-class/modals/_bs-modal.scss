@@ -1,6 +1,6 @@
 .nb-bc-modal {
   max-height: 70vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   .modal-body {
     background-color: var(--pf-global--BackgroundColor--100);
@@ -14,6 +14,14 @@
     padding: 0;
     margin: 0;
   }
+
+  &__text{
+    padding-bottom: var(--pf-global--spacer--md);
+  }
+}
+
+.nb-create-bc-step-page-form__dropdown {
+  min-height: 12rem;
 }
 
 .nb-edit-modal__save-btn {
