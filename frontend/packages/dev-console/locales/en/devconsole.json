@@ -440,6 +440,7 @@
   "Optional Java arguments": "Optional Java arguments",
   "Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.": "Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.",
   "JAVA_ARGS": "JAVA_ARGS",
+  "No associated Builder Image is found for Java.": "No associated Builder Image is found for Java.",
   "JAR file uploading": "JAR file uploading",
   "JAR file is uploading to {{namespace}}. You can view the upload progress in the build logs. This may take a few minutes. If you exit the browser while upload is in progress it may fail.": "JAR file is uploading to {{namespace}}. You can view the upload progress in the build logs. This may take a few minutes. If you exit the browser while upload is in progress it may fail.",
   "View build logs": "View build logs",
