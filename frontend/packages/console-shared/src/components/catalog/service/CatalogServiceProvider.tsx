@@ -3,11 +3,12 @@ import * as _ from 'lodash';
 import {
   CatalogExtensionHookOptions,
   CatalogItem,
+  CatalogItemMetadataProviderFunction,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { IncompleteDataError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
 import { CatalogService } from '../utils';
-import { keywordCompare } from '../utils/catalog-utils';
+import { keywordCompare, applyCatalogItemMetadata } from '../utils/catalog-utils';
 import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
 
 type CatalogServiceProviderProps = {
@@ -28,18 +29,22 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     catalogTypeExtensions,
     catalogProviderExtensions,
     catalogFilterExtensions,
+    catalogBadgeProviderExtensions,
     extensionsResolved,
   ] = useCatalogExtensions(catalogId, catalogType);
 
   const [extItemsMap, setExtItemsMap] = React.useState<{ [uid: string]: CatalogItem[] }>({});
   const [extItemsErrorMap, setItemsErrorMap] = React.useState<{ [uid: string]: Error }>({});
+  const [metadataProviderMap, setMetadataProviderMap] = React.useState<{
+    [type: string]: CatalogItemMetadataProviderFunction[];
+  }>({});
 
   const loaded =
     extensionsResolved &&
     (catalogProviderExtensions.length === 0 ||
       catalogProviderExtensions.every(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid]));
 
-  const catalogItems = React.useMemo(() => {
+  const preCatalogItems = React.useMemo(() => {
     if (!loaded) {
       return [];
     }
@@ -52,7 +57,6 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
       ),
     ).reduce((acc, item) => {
       if (!item) return acc;
-
       acc[item.uid] = item;
       return acc;
     }, {} as { [uid: string]: CatalogItem });
@@ -60,12 +64,23 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     return _.sortBy(Object.values(itemMap), 'name');
   }, [extItemsMap, loaded, catalogProviderExtensions, catalogFilterExtensions]);
 
+  const catalogItems = React.useMemo(() => {
+    if (!loaded) {
+      return preCatalogItems;
+    }
+    return applyCatalogItemMetadata(preCatalogItems, metadataProviderMap);
+  }, [loaded, preCatalogItems, metadataProviderMap]);
+
   const onValueResolved = React.useCallback((items, uid) => {
     setExtItemsMap((prev) => ({ ...prev, [uid]: items }));
   }, []);
 
   const onValueError = React.useCallback((error, uid) => {
     setItemsErrorMap((prev) => ({ ...prev, [uid]: error }));
+  }, []);
+
+  const onMetadataValueResolved = React.useCallback((provider, type) => {
+    setMetadataProviderMap((prev) => ({ ...prev, [type]: [...(prev?.[type] ?? []), provider] }));
   }, []);
 
   const searchCatalog = React.useCallback(
@@ -117,13 +132,23 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     <>
       {extensionsResolved &&
         catalogProviderExtensions.map((extension) => (
-          <CatalogExtensionHookResolver
+          <CatalogExtensionHookResolver<CatalogItem[]>
             key={extension.uid}
             id={extension.uid}
             useValue={extension.properties.provider}
             options={defaultOptions}
             onValueResolved={onValueResolved}
             onValueError={onValueError}
+          />
+        ))}
+      {extensionsResolved &&
+        catalogBadgeProviderExtensions.map((extension) => (
+          <CatalogExtensionHookResolver<CatalogItemMetadataProviderFunction>
+            key={extension.uid}
+            id={extension.uid}
+            useValue={extension.properties.provider}
+            options={defaultOptions}
+            onValueResolved={(value) => onMetadataValueResolved(value, extension.properties.type)}
           />
         ))}
       {children(catalogService)}

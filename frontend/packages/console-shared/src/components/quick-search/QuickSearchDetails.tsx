@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import './QuickSearchDetails.scss';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { useTelemetry } from '../../hooks/useTelemetry';
+import CatalogBadges from '../catalog/CatalogBadges';
 import { handleCta } from './utils/quick-search-utils';
+
+import './QuickSearchDetails.scss';
 
 export type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
@@ -35,6 +37,11 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
               provider: props.selectedItem.provider,
             })}
           </span>
+        )}
+        {selectedItem.badges?.length > 0 ? (
+          <CatalogBadges badges={selectedItem.badges} />
+        ) : (
+          undefined
         )}
         <Button
           variant={ButtonVariant.primary}

@@ -7,3 +7,5 @@ export { default as builderImageSamplesProvider } from './useBuilderImageSamples
 export { default as devfileSamplesProvider } from './useDevfileSamples';
 
 export { default as devfileProvider } from './useDevfile';
+
+export { default as bindableItemMetadataProvider } from './useBindableItemMetadataProvider';

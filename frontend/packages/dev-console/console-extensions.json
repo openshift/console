@@ -274,6 +274,32 @@
     }
   },
   {
+    "type": "console.catalog/item-type-metadata",
+    "properties": {
+      "type": "OperatorBackedService",
+      "filters": [
+        {
+          "label": "%devconsole~Service Binding%",
+          "attribute": "bindable"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-metadata",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "OperatorBackedService",
+      "provider": { "$codeRef": "catalog.bindableItemMetadataProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "Sample",
