@@ -114,14 +114,14 @@ Feature: Perform actions on knative revision
               And another message display as "This object has been updated."
 
 
-        @regression
+        @regression @broken-test
         Scenario: Delete revision modal details for service with multiple revisions: KN-01-TC10
             Given Knative service with multiple revisions
              When user selects "Delete Revision" option from knative revision context menu
              Then modal with "Update the traffic distribution among the remaining Revisions" appears
 
 
-        @regression
+        @regression @broken-test
         Scenario: Delete revision for the service which contains multiple revisions: KN-01-TC11
             Given Knative service with multiple revisions
              When user selects "Delete Revision" option from knative revision context menu

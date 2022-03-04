@@ -10,9 +10,9 @@ import {
   deleteRevision,
   editLabels,
   editAnnotations,
-  createGitWorkload,
   navigateTo,
   addPage,
+  createGitWorkloadIfNotExistsOnTopologyPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
   topologyPage,
@@ -81,7 +81,11 @@ Then(
 
 Given('Knative service with multiple revisions', () => {
   navigateTo(devNavigationMenu.Add);
-  createGitWorkload('https://github.com/sclorg/nodejs-ex.git', 'nodejs-ex-git-z', 'Knative');
+  createGitWorkloadIfNotExistsOnTopologyPage(
+    'https://github.com/sclorg/nodejs-ex.git',
+    'nodejs-ex-git-z',
+    'Knative',
+  );
   // TODO: implement step
 });
 
@@ -208,7 +212,7 @@ Then(
     cy.get(topologyPO.sidePane.detailsTab.labels).should('be.visible');
     cy.get(topologyPO.sidePane.detailsTab.labels)
       .find('a [data-test="label-key"]')
-      .contains(key)
+      .contains(new RegExp(`^${key}$`, 'g'))
       .should('not.exist');
   },
 );

@@ -53,10 +53,10 @@ Feature: Perform actions on knative service and revision
 
         Scenario: Update the service to new application group: KN-02-TC08
              When user right clicks on the knative service "kn-service" to open the context menu
-              And user selects "Edit Application grouping" from context menu
+              And user selects "Edit application grouping" from context menu
               And user selects the Create Application option from application drop down present in Edit Application grouping modal
               And user enters "openshift-app" into the Application Name text box
-              And user clicks save button on the "Edit Application grouping" modal
+              And user clicks save button on the "Edit application grouping" modal
               And user searches for application name "openshift-app"
               And user clicks on application node "openshift-app" on topology page
              Then updated service "kn-service" is present in side bar of application "openshift-app"

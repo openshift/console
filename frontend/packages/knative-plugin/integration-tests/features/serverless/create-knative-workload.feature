@@ -22,7 +22,7 @@ Feature: Create a workload of 'knative Service' type resource
              Then Knative Service option is displayed under Resources section
 
 
-        @regression
+        @regression @broken-test
         Scenario: knative resource type in catalog add flow: KN-05-TC03
             Given user is at Add page
              When user clicks on From Catalog card
@@ -79,7 +79,7 @@ Feature: Create a workload of 'knative Service' type resource
                   | https://github.com/rohitkrai03/flask-dockerfile-example | Dockerfile      | knative-docker |
 
 
-        @regression
+        @regression @broken-test
         Scenario: Create a workload from DevCatalog BuilderImages card on Add page: KN-05-TC07
             Given user is at Developer Catalog page
               And builder images are displayed

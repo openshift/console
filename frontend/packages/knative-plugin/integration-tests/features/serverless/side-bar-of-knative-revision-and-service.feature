@@ -42,7 +42,7 @@ Feature: side bar details
             # And owner field displayed in topology details
 
 
-        @smoke
+        @smoke @broken-test
         Scenario: side bar details of knative Revision: KN-06-TC02
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the revision of knative service "nodejs-ex-git"
@@ -51,7 +51,7 @@ Feature: side bar details
               And Pods, Deployment, Routes and Configurations displayed in Resources section
 
 
-        @regression
+        @regression @broken-test
         Scenario: Actions menu of knative revision in side bar: KN-06-TC05
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the revision of knative service "nodejs-ex-git"
@@ -66,7 +66,7 @@ Feature: side bar details
               And user clicks on Resources section
 
 
-        @regression
+        @regression @broken-test
         Scenario: Actions menu of knative service in side bar: KN-06-TC08
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the knative service "nodejs-ex-git"

@@ -89,10 +89,10 @@ Feature: Perform actions on knative service
 
         @smoke
         Scenario: Update the service to new application group: KN-02-TC08
-             When user selects "Edit Application grouping" context menu option of knative service "kn-service"
+             When user selects "Edit application grouping" context menu option of knative service "kn-service"
               And user selects the Create Application option from application drop down present in Edit Application grouping modal
               And user enters "openshift-app" into the Application Name text box
-              And user clicks save button on the "Edit Application grouping" modal
+              And user clicks save button on the "Edit application grouping" modal
               And user searches for application name "openshift-app"
               And user clicks on application node "openshift-app" on topology page
              Then updated service "kn-service" is present in side bar of application "openshift-app"
@@ -100,9 +100,9 @@ Feature: Perform actions on knative service
 
         @regression
         Scenario: Update the service to different application group existing in same project: KN-02-TC09
-             When user selects "Edit Application grouping" context menu option of knative service "kn-service"
+             When user selects "Edit application grouping" context menu option of knative service "kn-service"
               And user selects the "hello-openshift-app" option from application drop down present in Edit Application grouping modal
-              And user clicks save button on the "Edit Application grouping" modal
+              And user clicks save button on the "Edit application grouping" modal
               And user searches for application name "hello-openshift-app"
               And user clicks on application node "hello-openshift-app" on topology page
              Then updated service "kn-service" is present in side bar of application "hello-openshift-app"
@@ -131,7 +131,7 @@ Feature: Perform actions on knative service
              Then error message displays as "validation failed: Traffic targets sum to 75, want 100: spec.traffic"
 
 
-        @regression
+        @regression @broken-test
         Scenario: Set traffic distribution equal to 100% for the Revisions of the knative Service: KN-02-TC12
             Given user created another revision for knative Service "kn-service"
               And user is at the Topology page
@@ -160,7 +160,7 @@ Feature: Perform actions on knative service
              Then user will be redirected to Topology page
 
 
-        @regression
+        @regression @broken-test
         Scenario: Edit NameOfWorkload for a service: KN-02-TC15
              When user selects "Edit kn-service" context menu option of knative service "kn-service"
               And user selects the "No Application group" option from Application drop down
@@ -169,7 +169,7 @@ Feature: Perform actions on knative service
               And user is not able to see application group in Topology page
 
 
-        @smoke
+        @smoke @broken-test
         Scenario: Delete service: KN-02-TC16
              When user selects "Delete Service" context menu option of knative service "kn-service-1"
               And user clicks Delete button on Delete Service modal
