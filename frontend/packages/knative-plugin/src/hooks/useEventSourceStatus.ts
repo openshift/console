@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { EventSourceMetaData } from '../components/add/import-types';
+import { KnEventCatalogMetaData } from '../components/add/import-types';
 import { GLOBAL_OPERATOR_NS } from '../const';
 import { CamelKameletBindingModel, CamelKameletModel } from '../models';
 import { getEventSourceMetadata, getKameletMetadata } from '../utils/create-eventsources-utils';
@@ -18,7 +18,7 @@ export const useEventSourceStatus = (
   createSourceAccessLoading: boolean;
   createSourceAccess: boolean;
   loaded: boolean;
-  normalizedSource: EventSourceMetaData;
+  normalizedSource: KnEventCatalogMetaData;
   kamelet: K8sResourceKind;
 } => {
   const { t } = useTranslation();
@@ -58,7 +58,7 @@ export const useEventSourceStatus = (
       return {
         isValidSource: false,
         loaded: true,
-        normalizedSource: {} as EventSourceMetaData,
+        normalizedSource: {} as KnEventCatalogMetaData,
       };
     }
     return {

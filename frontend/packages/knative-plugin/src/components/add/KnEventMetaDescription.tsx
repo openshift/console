@@ -1,24 +1,22 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { EventSourceMetaData } from './import-types';
+import { KnEventCatalogMetaData } from './import-types';
 
-import './EventSourceMetaDescription.scss';
+import './KnEventMetaDescription.scss';
 
-type EventSourceMetaDescriptionProps = {
-  normalizedSource: EventSourceMetaData;
+type KnEventMetaDescriptionProps = {
+  normalizedData: KnEventCatalogMetaData;
 };
 
-const EventSourceMetaDescription: React.FC<EventSourceMetaDescriptionProps> = ({
-  normalizedSource,
-}) => {
+const KnEventMetaDescription: React.FC<KnEventMetaDescriptionProps> = ({ normalizedData }) => {
   const { t } = useTranslation();
-  if (_.isEmpty(normalizedSource)) {
+  if (_.isEmpty(normalizedData)) {
     return null;
   }
-  const { name, provider, iconUrl, description } = normalizedSource;
+  const { name, provider, iconUrl, description } = normalizedData;
   return (
-    <div className="kn-event-source-metadata-description__container">
+    <div className="kn-event-metadata-description__container">
       <div className="co-clusterserviceversion-logo">
         <div className="co-clusterserviceversion-logo__icon">
           <img
@@ -44,4 +42,4 @@ const EventSourceMetaDescription: React.FC<EventSourceMetaDescriptionProps> = ({
   );
 };
 
-export default EventSourceMetaDescription;
+export default KnEventMetaDescription;
