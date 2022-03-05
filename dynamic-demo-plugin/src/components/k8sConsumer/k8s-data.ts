@@ -28,6 +28,7 @@ export const mockDeploymetData = {
             image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
             ports: [
               {
+                protocol: 'tcp',
                 containerPort: 8080,
               },
             ],

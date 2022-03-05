@@ -320,8 +320,8 @@ export const k8sKill = <R extends K8sResourceCommon>(
 type OptionsDelete<R> = BaseOptions & {
   model: K8sModel;
   resource: R;
-  requestInit: RequestInit;
-  json: Record<string, any>;
+  requestInit?: RequestInit;
+  json?: Record<string, any>;
 };
 
 type K8sDeleteResource = <R extends K8sResourceCommon>(options: OptionsDelete<R>) => Promise<R>;
@@ -391,7 +391,7 @@ export const k8sList = (
 type OptionsList = {
   model: K8sModel;
   queryParams: { [key: string]: any };
-  requestInit: RequestInit;
+  requestInit?: RequestInit;
 };
 
 type K8sListResource = <R extends K8sResourceCommon>(
@@ -414,3 +414,17 @@ export const k8sListResource: K8sListResource = adapterFunc(k8sList, [
   'requestInit',
   'cluster',
 ]);
+
+/**
+ * Same interface as {@link k8sListResource} but returns the sub items.
+ * @see K8sListResource
+ */
+export const k8sListResourceItems = <R extends K8sResourceCommon>(
+  options: OptionsList,
+): Promise<R[]> =>
+  k8sListResource<R>(options).then((response) => {
+    if (Array.isArray(response)) {
+      return response;
+    }
+    return response.items;
+  });
