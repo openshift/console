@@ -491,13 +491,16 @@ const GitSection: React.FC<GitSectionProps> = ({
         helpText={helpText}
         helpTextInvalid={helpText}
         validated={validated}
-        onChange={(e: React.SyntheticEvent) => {
+        onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+          const trimmedURL = e.target.value.trim();
+          if (e.target.value !== trimmedURL) {
+            setFieldValue('git.url', trimmedURL);
+            debouncedHandleGitUrlChange(trimmedURL, values.git.ref, values.git.dir);
+          }
+        }}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           resetFields();
-          debouncedHandleGitUrlChange(
-            (e.target as HTMLInputElement).value,
-            values.git.ref,
-            values.git.dir,
-          );
+          debouncedHandleGitUrlChange(e.target.value.trim(), values.git.ref, values.git.dir);
         }}
         data-test-id="git-form-input-url"
         required

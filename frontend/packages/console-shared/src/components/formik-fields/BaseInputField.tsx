@@ -14,6 +14,7 @@ const BaseInputField: React.FC<BaseInputFieldProps & {
   children,
   name,
   onChange,
+  onBlur,
   helpTextInvalid,
   validated,
   ...props
@@ -43,6 +44,10 @@ const BaseInputField: React.FC<BaseInputFieldProps & {
         onChange: (value, event) => {
           field.onChange(event);
           onChange && onChange(event);
+        },
+        onBlur: (event) => {
+          field.onBlur(event);
+          onBlur && onBlur(event);
         },
       })}
     </FormGroup>

@@ -107,4 +107,17 @@ describe('ApplicationSelector', () => {
     expect(setFieldValue).toHaveBeenCalledWith('application.name', undefined);
     expect(setFieldValue).toHaveBeenCalledTimes(2);
   });
+
+  it('should trim the spaces in the application name', () => {
+    spyUseField
+      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
+      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
+    wrapper.setProps({ noProjectsAvailable: false });
+    wrapper
+      .find(InputField)
+      .props()
+      .onBlur({ target: { value: ' test-application ' } });
+
+    expect(setFieldValue).toHaveBeenCalledWith('application.name', 'test-application');
+  });
 });
