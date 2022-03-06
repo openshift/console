@@ -11,6 +11,16 @@
   z-index: $zindex-modal;
 }
 
+.modal-dialog {
+  --os-modal-dialog--BackgroundColor: var(--pf-global--BackgroundColor--100);
+
+  background: var(--os-modal-dialog--BackgroundColor);
+
+  :where(.pf-theme-dark) & {
+    --os-modal-dialog--BackgroundColor: var(--pf-global--BackgroundColor--300);
+  }
+}
+
 .modal-body {
   display: flex;
   flex: 1 1 auto;
@@ -19,45 +29,20 @@
   overflow-y: auto;
   padding: 0;
   position: relative;
-  @include scroll-shadows-vertical;
   -webkit-overflow-scrolling: touch;
 }
 
 .modal-body-border {
-  border-top: 1px solid $pf-color-black-300;
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
 }
 
 .modal-body-content {
   height: 100%;
-}
-
-.modal-body-inner-shadow-covers {
-  min-height: 100%;
-  // --pf-c-modal-box--Padding* will not render correctly here so applying pf4 spacer values
   padding: 0 var(--pf-global--spacer--xl) var(--pf-global--spacer--xl);
-  @include scroll-shadows-vertical-covers;
-  width: 100%;
-
-  // so that input and textarea don't mask the inner scroll shadows
-  input, textarea {
-    &.pf-c-form-control {
-      --pf-c-form-control--BackgroundColor: transparent;
-
-      max-width: 100%;
-
-      &[disabled],
-      &[readonly] {
-        --pf-c-form-control--BackgroundColor: rgba(128, 128, 128, 0.15);
-      }
-    }
-  }
 }
 
 .modal-content {
-  background-color: $pf-color-white;
   background-clip: padding-box;
-  border: 1px solid rgba(0,0,0,0.2);
-  @include box-shadow(0 3px 9px rgba(0, 0, 0, .5));
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -75,9 +60,6 @@
     &--no-inner-scroll {
       .modal-body {
         overflow-y: visible !important;
-      }
-      .modal-body-content {
-        background-color: var(--pf-global--BackgroundColor--100);
       }
       .modal-body-inner-shadow-covers {
         padding-bottom: var(--pf-global--spacer--lg);
@@ -119,13 +101,11 @@
 }
 
 .modal-footer {
-  background-color: var(--pf-global--BackgroundColor--100);
   margin-top: 0;
   padding: var(--pf-global--spacer--md) var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) var(--pf-global--spacer--xl);
 }
 
 .modal-header {
-  background-color:var(--pf-global--BackgroundColor--100);
   padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) var(--pf-global--spacer--lg);
 }
 
