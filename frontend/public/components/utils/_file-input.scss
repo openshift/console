@@ -2,7 +2,7 @@
   overflow: hidden;
   position: relative;
   input[type=file] {
-    background: white;
+    background-color: var(--pf-global--BackgroundColor--100);
     cursor: inherit;
     display: block;
     filter: alpha(opacity=0);

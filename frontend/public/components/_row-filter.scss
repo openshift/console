@@ -37,7 +37,7 @@ $color-row-filter-border--active: $pf-color-blue-300;
 }
 
 .row-filter__box {
-  background: $pf-color-black-150;
+  background-color: var(--pf-global--palette--black-150);
   display: inline-block;
   margin: 0 -1px -1px 0;
   padding: 7px 10px;
@@ -61,7 +61,7 @@ $color-row-filter-border--active: $pf-color-blue-300;
 }
 
 .row-filter__box--active {
-  background: $pf-color-blue-50;
+  background-color: var(--pf-global--palette--blue-50);
   border-color: $color-row-filter-border--active !important;
   // z-index is because latter blocks overlap the joining outline of former blocks
   z-index: 1;
@@ -78,7 +78,7 @@ $color-row-filter-border--active: $pf-color-blue-300;
 }
 
 .row-filter__number-bubble {
-  background: $pf-color-white;
+  background-color: var(--pf-global--BackgroundColor--100);
   border-radius: 4px;
   border: 1px solid $color-row-filter-border;
   display: inline-block;
