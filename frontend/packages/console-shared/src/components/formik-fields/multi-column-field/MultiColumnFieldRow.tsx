@@ -15,10 +15,10 @@ import './MultiColumnField.scss';
 export interface RowRendererProps {
   fieldName: string;
   isReadOnly?: boolean;
-  disableDeleteRow?: boolean;
   spans: gridItemSpanValueShape[];
   complexFields?: boolean[];
-  toolTip?: string;
+  disableDeleteRow?: boolean;
+  tooltipDeleteRow?: string;
   onDelete: () => void;
 }
 export interface MultiColumnFieldRowProps extends Omit<RowRendererProps, 'fieldName'> {
@@ -33,9 +33,9 @@ const DEFAULT_ROW_RENDERER = ({
   complexFields,
   children,
   isReadOnly,
-  toolTip,
   spans,
   disableDeleteRow,
+  tooltipDeleteRow,
   onDelete,
 }): React.ReactNode => {
   const { t } = useTranslation();
@@ -60,15 +60,15 @@ const DEFAULT_ROW_RENDERER = ({
       </Grid>
       {!isReadOnly && (
         <div className={'odc-multi-column-field__col--button'}>
-          <Tooltip content={toolTip || t('console-shared~Remove')}>
+          <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
             <Button
               data-test="delete-row"
-              aria-label={toolTip || t('console-shared~Remove')}
+              aria-label={tooltipDeleteRow || t('console-shared~Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}
               isInline
-              onClick={onDelete}
-              isDisabled={disableDeleteRow}
+              onClick={!disableDeleteRow ? onDelete : undefined}
+              isAriaDisabled={disableDeleteRow}
             >
               <MinusCircleIcon />
             </Button>
@@ -81,12 +81,12 @@ const DEFAULT_ROW_RENDERER = ({
 
 const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
   name,
-  toolTip,
   rowIndex,
   onDelete,
   children,
   isReadOnly,
   disableDeleteRow,
+  tooltipDeleteRow,
   spans,
   complexFields = [],
   rowRenderer = DEFAULT_ROW_RENDERER,
@@ -99,9 +99,9 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
         complexFields,
         children,
         isReadOnly,
-        toolTip,
         spans,
         disableDeleteRow,
+        tooltipDeleteRow,
         onDelete,
       })}
     </>

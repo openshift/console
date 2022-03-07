@@ -224,6 +224,8 @@
   "Add Revision": "Add Revision",
   "Split": "Split",
   "Tag": "Tag",
+  "Service must have at least one assigned revision": "Service must have at least one assigned revision",
+  "All revisions are already set to receive traffic": "All revisions are already set to receive traffic",
   "Select a Revision": "Select a Revision",
   "Set traffic distribution for the Revisions of the Knative Service": "Set traffic distribution for the Revisions of the Knative Service",
   "Resources": "Resources",

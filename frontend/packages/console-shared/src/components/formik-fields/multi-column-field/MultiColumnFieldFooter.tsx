@@ -1,32 +1,35 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-export interface MultiColumnFieldHeader {
+export interface MultiColumnFieldFooterProps {
   addLabel?: string;
-  onAdd: () => void;
   disableAddRow?: boolean;
+  tooltipAddRow?: string;
+  onAdd: () => void;
 }
 
-const MultiColumnFieldFooter: React.FC<MultiColumnFieldHeader> = ({
+const MultiColumnFieldFooter: React.FC<MultiColumnFieldFooterProps> = ({
   addLabel,
-  onAdd,
   disableAddRow = false,
+  tooltipAddRow,
+  onAdd,
 }) => {
   const { t } = useTranslation();
-  return (
+  const button = (
     <Button
       data-test={'add-action'}
       variant="link"
-      isDisabled={disableAddRow}
-      onClick={onAdd}
+      isAriaDisabled={disableAddRow}
+      onClick={!disableAddRow ? onAdd : undefined}
       icon={<PlusCircleIcon />}
       isInline
     >
       {addLabel || t('console-shared~Add values')}
     </Button>
   );
+  return tooltipAddRow ? <Tooltip content={tooltipAddRow}>{button}</Tooltip> : button;
 };
 
 export default MultiColumnFieldFooter;

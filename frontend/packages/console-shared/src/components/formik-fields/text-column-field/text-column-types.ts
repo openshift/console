@@ -20,7 +20,8 @@ export type TextColumnFieldProps = FieldProps & {
   name: string;
   label: string;
   addLabel?: string;
-  tooltip?: string;
+  disableDeleteRow?: boolean;
+  tooltipDeleteRow?: string;
   placeholder?: string;
   onChange?: OnChangeHandler;
   dndEnabled?: boolean;
