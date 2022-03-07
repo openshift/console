@@ -1,7 +1,7 @@
 .co-user-preference-page {
   display: flex;
   min-height: 100%;
-  background-color: var(--pf-global--palette--black-150);
+  background-color: var(--pf-global--BackgroundColor--200);
   overflow-y: auto;
   flex-direction: column;
 
@@ -21,11 +21,11 @@
     @media (min-width: 769px) {
       max-width: 100%;
     }
-  
+
     @media (min-width: 992px) {
       min-width: 220px;
     }
-  
+
     @media (min-width: 1200px) {
       max-width: 220px;
     }
