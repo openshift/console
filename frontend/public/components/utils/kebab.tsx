@@ -35,6 +35,7 @@ import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugi
 import { connectToModel } from '../../kinds';
 import {
   BuildConfigModel,
+  ConfigMapModel,
   DeploymentConfigModel,
   DeploymentModel,
   VolumeSnapshotModel,
@@ -284,6 +285,9 @@ const kebabFactory: KebabFactory = {
   Edit: (kind, obj) => {
     let href: string;
     switch (kind.kind) {
+      case ConfigMapModel.kind:
+        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/edit`;
+        break;
       case BuildConfigModel.kind:
         href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`;
         break;

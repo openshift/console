@@ -1,3 +1,5 @@
+import { safeLoad, safeDump } from 'js-yaml';
+import { defaultsDeep } from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { errorMessage } from '../../views/form';
@@ -10,10 +12,18 @@ const createExampleConfigMapInstance = () => {
   nav.sidenav.clickNavLink(['Workloads', 'ConfigMaps']);
   cy.byLegacyTestID('resource-title').should('have.text', 'ConfigMaps');
   listPage.clickCreateYAMLbutton();
+  cy.byTestID('yaml-view-input').click();
   cy.byTestID('resource-sidebar').should('exist');
   yamlEditor.isLoaded();
-  yamlEditor.clickSaveCreateButton();
-  cy.get(errorMessage).should('not.exist');
+  let newContent;
+  // get, update, and set yaml editor content.
+  yamlEditor.getEditorContent().then((content) => {
+    newContent = defaultsDeep({}, { metadata: { name: 'example' } }, safeLoad(content));
+    yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+      yamlEditor.clickSaveCreateButton();
+      cy.get(errorMessage).should('not.exist');
+    });
+  });
 };
 
 const deleteExampleConfigMapInstance = () => {

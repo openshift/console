@@ -10,11 +10,11 @@ import {
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
 import { modelFor } from '@console/internal/module/k8s';
-import { DragAndDrop } from '@console/shared/src/components/dnd';
 import PinnedResource from './PinnedResource';
 import { usePinnedResources } from '@console/shared';
 import { getSortedNavItems } from './navSortUtils';
 import AdminNav from './admin-nav';
+import withDragDropContext from '../utils/drag-drop-context';
 import { PluginNavItems } from './items';
 
 import './_perspective-nav.scss';
@@ -45,7 +45,7 @@ const PerspectiveNav: React.FC<{}> = () => {
   const getPinnedItems = (): React.ReactElement[] =>
     validPinnedResources.map((resource, idx) => (
       <PinnedResource
-        key={idx.toString()}
+        key={`${resource}_${idx.toString()}`}
         idx={idx}
         resourceRef={resource}
         onChange={setPinnedResources}
@@ -55,16 +55,16 @@ const PerspectiveNav: React.FC<{}> = () => {
       />
     ));
 
+  const NavGroupWithDnd = withDragDropContext(() => (
+    <NavGroup title="" className="no-title">
+      {getPinnedItems()}
+    </NavGroup>
+  ));
+
   return (
     <div className="oc-perspective-nav" data-test-id="dev-perspective-nav">
       <PluginNavItems items={orderedNavItems} />
-      {pinnedResourcesLoaded && validPinnedResources?.length > 0 ? (
-        <DragAndDrop>
-          <NavGroup title="" className="no-title">
-            {getPinnedItems()}
-          </NavGroup>
-        </DragAndDrop>
-      ) : null}
+      {pinnedResourcesLoaded && validPinnedResources?.length > 0 ? <NavGroupWithDnd /> : null}
     </div>
   );
 };

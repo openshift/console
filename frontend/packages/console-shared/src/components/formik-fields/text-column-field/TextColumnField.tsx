@@ -2,7 +2,6 @@ import * as React from 'react';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
 import { FieldArray, useField } from 'formik';
 import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
-import { DragAndDrop } from '../../dnd';
 import { getFieldId } from '../field-utils';
 import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
 import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
@@ -44,7 +43,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
           >
             {helpText && <div className="pf-c-form__helper-text">{helpText}</div>}
             {dndEnabled ? (
-              <DragAndDrop>
+              <>
                 {rowValues.map((v, idx) => {
                   return (
                     <TextColumnItemWithDnd
@@ -54,7 +53,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
                     </TextColumnItemWithDnd>
                   );
                 })}
-              </DragAndDrop>
+              </>
             ) : (
               <>
                 {rowValues.map((v, idx) => {

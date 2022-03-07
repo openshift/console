@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
+import { debounce } from 'lodash';
 import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
@@ -95,14 +96,14 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
-    hover(item: DragItem) {
+    hover: debounce((item: DragItem) => {
       if (item.idx === idx) {
         return;
       }
       onDrag(reorder(navResources, item.idx, idx));
       // monitor item updated here to avoid expensive index searches.
       item.idx = idx;
-    },
+    }, 10),
     drop() {
       onChange(navResources);
     },
