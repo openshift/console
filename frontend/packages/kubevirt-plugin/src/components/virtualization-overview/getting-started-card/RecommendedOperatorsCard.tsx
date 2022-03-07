@@ -42,7 +42,7 @@ export const RecommendedOperatorsCard: React.FC = () => {
         />
       }
       title={t('kubevirt-plugin~Recommended Operators')}
-      titleColor={'var(--os-global--palette--blue-600)'}
+      titleColor={'var(--co-global--palette--blue-600)'}
       description={t(
         'kubevirt-plugin~Ease operational complexity with virtualization by using Operators.',
       )}

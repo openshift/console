@@ -53,7 +53,7 @@ export const FeatureHighlightsCard: React.FC = () => {
         />
       }
       title={t('kubevirt-plugin~Feature highlights')}
-      titleColor={'var(--os-global--palette--blue-600)'}
+      titleColor={'var(--co-global--palette--blue-600)'}
       description={t(
         'kubevirt-plugin~Read about the latest information and key virtualization features on the Virtualization highlights.',
       )}

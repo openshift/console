@@ -117,9 +117,9 @@ export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCard
         return (
           <GettingStartedCard
             id="quick-start"
-            icon={<RouteIcon color="var(--os-global--palette--purple-600)" aria-hidden="true" />}
+            icon={<RouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />}
             title={title || t('console-shared~Build with guided documentation')}
-            titleColor={'var(--os-global--palette--purple-700)'}
+            titleColor={'var(--co-global--palette--purple-700)'}
             description={
               description ||
               t(
