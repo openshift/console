@@ -36,7 +36,7 @@ export const ClusterSetupGettingStartedCard: React.FC = () => {
       id="cluster-setup"
       icon={<ClipboardCheckIcon color="var(--pf-global--primary-color--100)" aria-hidden="true" />}
       title={t('public~Set up your cluster')}
-      titleColor={'var(--pf-global--palette--blue-600)'}
+      titleColor={'var(--os-global--palette--blue-600)'}
       description={t('public~Finish setting up your cluster with recommended configurations.')}
       links={links}
       moreLink={moreLink}

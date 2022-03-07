@@ -1,0 +1,20 @@
+:root {
+  --os-global--palette--blue-600: var(--pf-global--palette--blue-600);
+  --os-global--palette--purple-600: var(--pf-global--palette--purple-600);
+  --os-global--palette--gold-700: var(--pf-global--palette--gold-700);
+  --os-global--palette--purple-700: var(--pf-global--palette--purple-700);
+
+  // dark
+  --os-global--dark--palette--blue-600: var(--pf-global--palette--blue-200);
+  --os-global--dark--palette--purple-600: var(--pf-global--palette--purple-200);
+  --os-global--dark--palette--gold-700: var(--pf-global--palette--gold-200);
+  --os-global--dark--palette--purple-700: var(--pf-global--palette--purple-200);
+}
+
+// :where(#{$pf-theme-dark-class}) {
+:root:where(.pf-theme-dark) {
+  --os-global--palette--blue-600: var(--os-global--dark--palette--blue-600);
+  --os-global--palette--purple-600: var(--os-global--dark--palette--purple-600);
+  --os-global--palette--gold-700: var(--os-global--dark--palette--gold-700);
+  --os-global--palette--purple-700: var(--os-global--dark--palette--purple-600);
+}
