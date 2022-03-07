@@ -18,7 +18,7 @@ export const useTektonHubIntegration = () => {
     'config',
   );
   if (config && configLoaded && !configLoadErr) {
-    const devconsoleIntegrationEnabled = config.spec?.hub?.params.find(
+    const devconsoleIntegrationEnabled = config.spec?.hub?.params?.find(
       (p) => p.name === TEKTON_HUB_INTEGRATION_KEY,
     );
     return devconsoleIntegrationEnabled ? devconsoleIntegrationEnabled.value : true;
