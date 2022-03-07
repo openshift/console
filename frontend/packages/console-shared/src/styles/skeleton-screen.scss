@@ -1,5 +1,16 @@
+:root {
+  --os-skeleton--Color: var(--pf-global--palette--black-150);
+}
+
+[class^="loading-skeleton"] {
+  .pf-theme-dark & {
+    --os-skeleton--Color: var(--pf-global--palette--black-600);
+  }
+}
+
+$skeleton-color: var(--os-skeleton--Color);
+
 $skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
-$skeleton-color: #eaedf1;
 $skeleton-bone-height-1line: 24px;
 
 // Dashboard Status
