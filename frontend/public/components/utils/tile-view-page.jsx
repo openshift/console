@@ -21,6 +21,8 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { getURLWithParams, VirtualizedGrid } from '@console/shared';
+import { Link } from 'react-router-dom';
+import { isModifiedEvent } from '@console/shared/src/utils';
 
 import { history } from './router';
 import { isModalOpen } from '../modals';
@@ -689,14 +691,25 @@ export class TileViewPage extends React.Component {
     return (
       <VerticalTabsTab
         key={id}
-        title={label}
         active={active}
         className={tabClasses}
-        onActivate={() => this.selectCategory(id)}
         hasActiveDescendant={hasActiveDescendant(selectedCategoryId, category)}
         shown={shown}
         data-test={id}
-        href={getURLWithParams(FilterTypes.category, id)}
+        component={() => (
+          <Link
+            to={getURLWithParams(FilterTypes.category, id)}
+            onClick={(e) => {
+              if (isModifiedEvent(e)) {
+                return;
+              }
+              e.preventDefault();
+              this.selectCategory(id);
+            }}
+          >
+            {label}
+          </Link>
+        )}
       >
         {subcategories && (
           <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryId, category)}>
