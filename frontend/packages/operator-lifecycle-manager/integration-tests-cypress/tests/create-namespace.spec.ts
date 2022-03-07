@@ -23,14 +23,15 @@ describe('Create namespace from install operators', () => {
   const nsName = `${testName}-ns`;
 
   it('creates namespace from operator install page', () => {
-    const operatorSelector = 'advanced-cluster-management-redhat-operators-openshift-marketplace';
+    const operatorSelector = '3scale-operator-redhat-operators-openshift-marketplace';
+    const operatorName = 'Red Hat Integration - 3scale';
     cy.log('test namespace creation from dropdown');
     cy.visit(`/operatorhub/ns/${testName}`);
+    cy.byTestID('search-operatorhub').type(operatorName);
     cy.byTestID(operatorSelector).click();
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
 
     // configure operator install
-    cy.byTestID('Select a Namespace-radio-input').check();
     cy.byTestID('dropdown-selectbox')
       .click()
       .get('[data-test-dropdown-menu="Create_Namespace"]')
