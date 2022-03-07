@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Button, PageHeaderToolsItem, Tooltip } from '@patternfly/react-core';
-import { TopologyIcon } from '@patternfly/react-icons';
 import {
   TopologyControlBar as PfTopologyControlBar,
   observer,
@@ -9,9 +7,7 @@ import {
   defaultControlButtonsOptions,
   Visualization,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { COLA_FORCE_LAYOUT, COLA_LAYOUT } from './layouts/layoutFactory';
 
 interface ControlBarProps {
   visualization: Visualization;
@@ -20,7 +16,6 @@ interface ControlBarProps {
 
 const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization, isDisabled }) => {
   const { t } = useTranslation();
-  const layout = visualization.getGraph()?.getLayout() ?? COLA_LAYOUT;
   return (
     <span className="pf-topology-control-bar">
       <PfTopologyControlBar
@@ -55,52 +50,7 @@ const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization,
             legend: false,
           }),
         ]}
-      >
-        <div className="odc-topology__layout-group">
-          <Tooltip content={t('topology~Layout 1')}>
-            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
-              <Button
-                className={classNames('pf-topology-control-bar__button', {
-                  'pf-m-active': layout === COLA_LAYOUT,
-                })}
-                variant="tertiary"
-                isDisabled={isDisabled}
-                onClick={() => {
-                  visualization.getGraph().setLayout(COLA_LAYOUT);
-                  visualization.getGraph().layout();
-                }}
-              >
-                <TopologyIcon
-                  className="odc-topology__layout-button__icon"
-                  aria-label={t('topology~Layout')}
-                />
-                1
-              </Button>
-            </PageHeaderToolsItem>
-          </Tooltip>
-          <Tooltip content={t('topology~Layout 2')}>
-            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
-              <Button
-                className={classNames('pf-topology-control-bar__button', {
-                  'pf-m-active': layout === COLA_FORCE_LAYOUT,
-                })}
-                variant="tertiary"
-                isDisabled={isDisabled}
-                onClick={() => {
-                  visualization.getGraph().setLayout(COLA_FORCE_LAYOUT);
-                  visualization.getGraph().layout();
-                }}
-              >
-                <TopologyIcon
-                  className="odc-topology__layout-button__icon"
-                  aria-label={t('topology~Layout')}
-                />
-                2
-              </Button>
-            </PageHeaderToolsItem>
-          </Tooltip>
-        </div>
-      </PfTopologyControlBar>
+      />
     </span>
   );
 });
