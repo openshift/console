@@ -4,7 +4,7 @@
   --odc-topology-list-view-type-icon-size: 16px;
   --odc-topology-list-view-sidebar-width: 550px;
   --pf-c-data-list__item--m-selectable--OutlineOffset: 0;
-  background-color: var(--pf-global--palette--white);
+  background-color: var(--pf-global--BackgroundColor--100);
   position: absolute;
   top: 0;
   bottom: 0;
@@ -26,7 +26,7 @@
   }
 
   &__sidebar {
-    background-color: var(--pf-global--palette--white);
+    background-color: var(--pf-global--BackgroundColor--100);
     bottom: 0;
     box-shadow: var(--pf-global--BoxShadow--md);
     display: none;
@@ -86,7 +86,7 @@
     margin: 2px 0;
   }
   &__type-icon-bg {
-    background-color: var(--pf-global--palette--white);
+    background-color: var(--pf-global--BackgroundColor--100);
     border: solid 1px var(--pf-global--BorderColor--300);
     border-radius: 12px;
     box-shadow: 2px 2px 3px var(--pf-global--BorderColor--100);
@@ -134,7 +134,7 @@
   .pf-c-data-list__item.pf-m-selectable {
     .odc-topology-list-view__kind-row, .odc-topology-list-view__unassigned-group{
       &.pf-c-data-list__item-row:hover {
-        background-color: var(--pf-global--palette--white);
+        background-color: var(--pf-global--BackgroundColor--100);
         cursor: default;
       }
     }

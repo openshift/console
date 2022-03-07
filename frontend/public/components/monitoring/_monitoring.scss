@@ -467,7 +467,7 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__tooltip {
-  background-color: $tooltip-background-color;
+  background-color: var(--pf-global--BackgroundColor--dark-100);
   color: #eee;
   font-size: 12px;
   overflow-x: hidden;

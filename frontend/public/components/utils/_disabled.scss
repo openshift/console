@@ -5,7 +5,7 @@
 }
 
 .co-disabled::before {
-  background-color: #fff;
+  background-color: var(--pf-global--BackgroundColor--100);
   bottom: 0;
   content: '';
   cursor: not-allowed;

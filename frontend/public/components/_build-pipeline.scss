@@ -16,7 +16,7 @@ $pipeline-circle-border-width: ($pipeline-line-border-width * 0.5);
 $pipeline-circle-radius: ($pipeline-circle-diameter * 0.5);
 $pipeline-inner-circle-animation-time: 0.1s;
 $pipeline-icon-animation-time: $pipeline-inner-circle-animation-time;
-$pipeline-inner-circle-color: #fff;
+$pipeline-inner-circle-color: var(--pf-global--BackgroundColor--100);
 $pipeline-line-animation-time: $pipeline-circle-animation-time;
 $pipeline-line-border-width: 8px;
 $pipeline-line-grow-animation-time: 0.5s;

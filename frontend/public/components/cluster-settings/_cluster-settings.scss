@@ -1,5 +1,5 @@
 $co-channel-background-color: var(--pf-c-drawer__content--BackgroundColor);
-$co-channel-color: var(--pf-global--disabled-color--100);
+$co-channel-color: var(--pf-global--palette--black-600);
 $co-channel-current-color: var(--pf-global--primary-color--100);
 $co-channel-height: 60px;
 
@@ -23,14 +23,14 @@ $co-channel-height: 60px;
   width: 100%;
 
   &:before {
-    background-color: $co-channel-color;
+    background-color: var(--pf-global--palette--black-600);
     content: '';
     height: 4px;
     position: absolute;
     width: 100%;
 
     .co-channel-path--current & {
-      background-color: $co-channel-current-color;
+      background-color: var(--pf-global--primary-color--100);
     }
   }
 
@@ -44,11 +44,11 @@ $co-channel-height: 60px;
     right: -15px;
 
     .co-channel-path--current & {
-      border-left-color: $co-channel-current-color;
+      border-left-color: var(--pf-global--primary-color--100);
     }
 
     .co-channel--end-of-life & {
-      background-color: $co-channel-current-color;
+      background-color: var(--pf-global--primary-color--100);
       border: 0;
       height: 16px;
       right: 0px;

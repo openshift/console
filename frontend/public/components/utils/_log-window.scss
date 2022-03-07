@@ -3,7 +3,7 @@ $color-log-window-text: $pf-color-black-150;
 
 .log-window__header {
   color: $color-log-window-text;
-  background-color: $color-log-window-header-bg;
+  background-color: var(--pf-global--BackgroundColor--dark-100);
   padding: 8px 10px 5px 10px;
 }
 

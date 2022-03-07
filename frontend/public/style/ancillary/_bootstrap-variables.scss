@@ -19,7 +19,7 @@ $brand-danger:          #d9534f !default;
 //== Scaffolding
 
 //** Background color for `<body>`.
-$body-bg:               #fff !default;
+$body-bg:               var(--pf-global--BackgroundColor--100) !default;
 //** Global text color on `<body>`.
 $text-color:            $gray-dark !default;
 
@@ -140,6 +140,6 @@ $grid-columns:              12 !default;
 //== List group
 
 //** Background color on `.list-group-item`
-$list-group-bg:                 #fff !default;
+$list-group-bg:                 var(--pf-global--BackgroundColor--100) !default;
 //** `.list-group-item` border color
 $list-group-border:             #ddd !default;
