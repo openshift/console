@@ -429,13 +429,22 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <LazyRoute
-        path="/k8s/ns/:ns/routes/~new/form"
+        path="/k8s/ns/:ns/routes/~new"
         exact
         kind="Route"
         loader={() =>
-          import('./routes/create-route' /* webpackChunkName: "create-route" */).then(
-            (m) => m.CreateRoute,
+          import('./routes/RoutePage' /* webpackChunkName: "create-route" */).then(
+            (m) => m.RoutePage,
           )
+        }
+      />
+
+      <LazyRoute
+        path="/k8s/ns/:ns/routes/:name/edit"
+        exact
+        kind="Route"
+        loader={() =>
+          import('./routes/RoutePage' /* webpackChunkName: "edit-route" */).then((m) => m.RoutePage)
         }
       />
 
