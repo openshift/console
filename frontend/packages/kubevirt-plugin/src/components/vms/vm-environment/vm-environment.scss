@@ -1,4 +1,4 @@
 .environment-buttons {
-    border-top: 1px solid #ddd;
-    padding-top: var(--pf-global--spacer--lg);
-  }
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  padding-top: var(--pf-global--spacer--lg);
+}

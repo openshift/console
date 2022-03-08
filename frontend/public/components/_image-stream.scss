@@ -43,7 +43,7 @@
 }
 
 .co-images-stream-tag-timeline__line {
-  border: 2px solid $pf-color-black-300;
+  border: var(--pf-global--BorderWidth--md) solid var(--pf-global--BorderColor--100);
   left: 14px;
   position: relative;
 }

@@ -2,7 +2,7 @@
 
 .co-synced-editor__editor-toggle {
   padding: 8px 30px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   & label {
     margin: 0;
   }

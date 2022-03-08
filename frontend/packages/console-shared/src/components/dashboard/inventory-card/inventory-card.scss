@@ -39,7 +39,7 @@
 }
 
 .co-inventory-card__accordion.pf-c-accordion {
-  border-bottom: 1px solid $pf-color-black-300;
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   box-shadow: none;
   padding: 0;
 

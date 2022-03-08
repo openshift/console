@@ -18,5 +18,5 @@
   // no pf class for 0.3rem
   padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--xl) 0.3rem
     var(--pf-global--spacer--xl);
-  border-bottom: var(--pf-global--BorderWidth--sm) solid #ddd;
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
 }
