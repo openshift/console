@@ -13,6 +13,8 @@ import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { COLA_FORCE_LAYOUT, COLA_LAYOUT } from './layouts/layoutFactory';
 
+import './TopologyControlBar.scss';
+
 interface ControlBarProps {
   visualization: Visualization;
   isDisabled: boolean;
@@ -22,7 +24,7 @@ const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization,
   const { t } = useTranslation();
   const layout = visualization.getGraph()?.getLayout() ?? COLA_LAYOUT;
   return (
-    <span className="pf-topology-control-bar">
+    <span className="pf-topology-control-bar odc-topology-control-bar">
       <PfTopologyControlBar
         controlButtons={[
           ...createTopologyControlButtons({
