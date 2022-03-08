@@ -9,6 +9,8 @@ import {
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 
+import './TopologyControlBar.scss';
+
 interface ControlBarProps {
   visualization: Visualization;
   isDisabled: boolean;
@@ -17,7 +19,7 @@ interface ControlBarProps {
 const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization, isDisabled }) => {
   const { t } = useTranslation();
   return (
-    <span className="pf-topology-control-bar">
+    <span className="pf-topology-control-bar odc-topology-control-bar">
       <PfTopologyControlBar
         controlButtons={[
           ...createTopologyControlButtons({

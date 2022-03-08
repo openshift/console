@@ -1149,7 +1149,9 @@ export const NamespaceBar = ({ hideProjects = false, children, disabled, onNames
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
   return (
-    <div className="co-namespace-bar">
+    <div
+      className={classNames('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}
+    >
       {hideProjects ? (
         <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
           {children}
