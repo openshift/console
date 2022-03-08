@@ -3,7 +3,7 @@
 .ocs-page-layout {
   &__content {
     padding:  $pf-global-gutter--md $pf-global-gutter;
-
+    background-color: var(--pf-global--BackgroundColor--200);
     @media (min-width: $pf-global--breakpoint--xl) {
       padding-left: $pf-global-gutter--md;
       padding-right: $pf-global-gutter--md;

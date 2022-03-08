@@ -92,7 +92,7 @@
       "href": "/import/ns/:namespace",
       "label": "%devconsole~Import from Git%",
       "description": "%devconsole~Import code from your Git repository to be built and deployed%",
-      "icon": { "$codeRef": "icons.gitIconSVG" },
+      "icon": { "$codeRef": "icons.gitIconElement" },
       "accessReview": [
         { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
         { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
@@ -131,7 +131,7 @@
       "href": "/k8s/ns/:namespace/import",
       "label": "%devconsole~Import YAML%",
       "description": "%devconsole~Create resources from their YAML or JSON definitions%",
-      "icon": { "$codeRef": "icons.yamlIconSVG" }
+      "icon": { "$codeRef": "icons.yamlIconElement" }
     }
   },
   {

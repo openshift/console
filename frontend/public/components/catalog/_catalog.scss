@@ -100,7 +100,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-page {
-  background: $pf-color-white;
+  background: var(--pf-global--BackgroundColor--100);
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
@@ -140,7 +140,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__grid {
-    background-color: $pf-color-black-150;
+    background-color: var(--pf-global--BackgroundColor--200);
   }
 
   &__grouped-items {
@@ -280,7 +280,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     h1,
     h2,
     h3 {
-      color: #333; // same color as styles hardcoded in markdown text component
+      color: var(--pf-global--Color--100); // same color as styles hardcoded in markdown text component
     }
 
     h2 {
@@ -290,7 +290,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     p,
     li,
     ol {
-      color: #333; // same color as styles hardcoded in markdown text component
+      color: var(--pf-global--Color--100); // same color as styles hardcoded in markdown text component
       font-size: $font-size-base !important;
     }
 
