@@ -27,7 +27,7 @@
 }
 
 .co-suggestion-line {
-  border: 1px solid #ededed;
+  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
   background-color: var(--pf-global--palette--black-150);
   border-radius: 12px;
   overflow: hidden;

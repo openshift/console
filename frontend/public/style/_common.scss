@@ -508,7 +508,7 @@ dl.co-inline {
   &--bordered {
     .co-m-table-grid__body .row,
     .co-m-table-grid__head {
-      border-bottom: solid 1px #eee;
+      border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
     }
   }
   .co-m-table-grid {

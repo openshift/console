@@ -30,7 +30,7 @@
 }
 
 .co-form-section__separator {
-  border-top: solid 1px #eee;
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
   margin: 30px 0;
 }
 
