@@ -9,7 +9,7 @@ import {
   DragObjectWithType,
   ComponentFactory,
 } from '@patternfly/react-topology';
-import { contextMenuActions } from '../../../actions';
+import { contextMenuActions, graphActionContext, groupActionContext } from '../../../actions';
 import {
   TYPE_WORKLOAD,
   TYPE_CONNECTS_TO,
@@ -33,7 +33,6 @@ import {
 import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
 import GraphComponent from './GraphComponent';
 import { Application } from './groups';
-import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import { WorkloadNode } from './nodes';
 
 import './ContextMenu.scss';
@@ -42,7 +41,7 @@ export const componentFactory: ComponentFactory = (kind, type) => {
   switch (type) {
     case TYPE_APPLICATION_GROUP:
       return withDndDrop(applicationGroupDropTargetSpec)(
-        withSelection({ controlled: true })(withContextMenu(groupContextMenu)(Application)),
+        withSelection({ controlled: true })(withContextMenu(groupActionContext)(Application)),
       );
     case TYPE_WORKLOAD:
       return withCreateConnector(
@@ -78,7 +77,7 @@ export const componentFactory: ComponentFactory = (kind, type) => {
           return withDndDrop(graphDropTargetSpec)(
             withPanZoom()(
               withSelection({ controlled: true })(
-                withContextMenu(graphContextMenu)(GraphComponent),
+                withContextMenu(graphActionContext)(GraphComponent),
               ),
             ),
           );

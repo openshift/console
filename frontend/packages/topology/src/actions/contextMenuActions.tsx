@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Node, ContextSubMenuItem, ContextMenuItem } from '@patternfly/react-topology';
+import { Node, ContextSubMenuItem, ContextMenuItem, Graph } from '@patternfly/react-topology';
 import { Action } from '@console/dynamic-plugin-sdk/src';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
-  ActionServiceProvider,
   getMenuOptionType,
   GroupedMenuOption,
   MenuOption,
@@ -39,17 +38,20 @@ export const createContextMenuItems = (actions: MenuOption[]) => {
   });
 };
 
-export const contextMenuActions = (element: Node): React.ReactElement[] => {
+export const graphActionContext = (graph: Graph, connectorSource?: Node) => ({
+  'topology-context-actions': { element: graph, connectorSource },
+});
+
+export const groupActionContext = (element: Node, connectorSource?: Node) => ({
+  'topology-context-actions': { element, connectorSource },
+});
+
+export const contextMenuActions = (element: Node) => {
   const resource = getResource(element);
   const { csvName } = element.getData()?.data ?? {};
-  const context = {
+  return {
     'topology-actions': element,
     ...(resource ? { [referenceFor(resource)]: resource } : {}),
     ...(csvName ? { 'csv-actions': { csvName, resource } } : {}),
   };
-  return [
-    <ActionServiceProvider key="topology" context={context}>
-      {({ options, loaded }) => loaded && createContextMenuItems(options)}
-    </ActionServiceProvider>,
-  ];
 };
