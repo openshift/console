@@ -137,6 +137,7 @@ const NamespaceDropdown: React.FC = () => {
         itemId={lastViewedOption.key}
         isSelected={selected === lastViewedOption.key}
         data-test="dropdown-menu-item-lastViewed"
+        translate="no"
       >
         {lastViewedOption.title}
       </MenuItem>
