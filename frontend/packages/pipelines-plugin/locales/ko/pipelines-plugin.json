@@ -101,7 +101,7 @@
   "Enter a path": "경로 입력",
   "Remove": "삭제",
   "Add items": "항목 추가",
-  "Select a {{label}}": " 선택",
+  "Select a {{label}}": "{{label}} 선택",
   "Parameters": "매개 변수",
   "Select Pipeline resource": "파이프 라인 리소스 선택",
   "Create Pipeline resource": "파이프 라인 리소스 만들기",
