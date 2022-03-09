@@ -24,6 +24,13 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   onFilterChange,
   onShowAllToggle,
 }) => {
+  const sortedActiveFilters = Object.keys(activeFilters)
+    .sort()
+    .reduce((acc, groupName) => {
+      acc[groupName] = activeFilters[groupName];
+      return acc;
+    }, {});
+
   const renderFilterItem = (filter, filterName, groupName) => {
     const { label, active } = filter;
     const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
@@ -47,24 +54,35 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
     );
   };
 
-  const renderFilterGroup = (filterGroup, groupName) =>
-    Object.keys(filterGroup).length > 1 ? (
-      <FilterSidePanelCategory
-        key={groupName}
-        title={filterGroupNameMap[groupName] || groupName}
-        onShowAllToggle={() => onShowAllToggle(groupName)}
-        showAll={filterGroupsShowAll[groupName] ?? false}
-        data-test-group-name={groupName}
-      >
-        {_.map(filterGroup, (filter, filterName) =>
-          renderFilterItem(filter, filterName, groupName),
-        )}
-      </FilterSidePanelCategory>
-    ) : null;
+  const renderFilterGroup = (filterGroup, groupName) => {
+    const filterGroupKeys = Object.keys(filterGroup);
+    if (filterGroupKeys.length > 1) {
+      const sortedFilterGroup = filterGroupKeys.sort().reduce((acc, filterName) => {
+        acc[filterName] = filterGroup[filterName];
+        return acc;
+      }, {});
+      return (
+        <FilterSidePanelCategory
+          key={groupName}
+          title={filterGroupNameMap[groupName] || groupName}
+          onShowAllToggle={() => onShowAllToggle(groupName)}
+          showAll={filterGroupsShowAll[groupName] ?? false}
+          data-test-group-name={groupName}
+        >
+          {_.map(sortedFilterGroup, (filter, filterName) =>
+            renderFilterItem(filter, filterName, groupName),
+          )}
+        </FilterSidePanelCategory>
+      );
+    }
+    return null;
+  };
 
   return (
     <FilterSidePanel>
-      {_.map(activeFilters, (filterGroup, groupName) => renderFilterGroup(filterGroup, groupName))}
+      {_.map(sortedActiveFilters, (filterGroup, groupName) =>
+        renderFilterGroup(filterGroup, groupName),
+      )}
     </FilterSidePanel>
   );
 };
