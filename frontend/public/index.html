@@ -53,6 +53,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript">
       window.SERVER_FLAGS = [[.]];
+      const htmlTagElement = document.documentElement;
+      let theme = localStorage.getItem('bridge/theme') || 'systemDefault';
+      if (theme === 'systemDefault' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        theme = 'dark';
+      }
+      if (theme === 'dark') {
+        document.documentElement.classList.add('pf-theme-dark');
+      }
     </script>
   </head>
 

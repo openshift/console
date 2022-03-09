@@ -313,8 +313,17 @@
       "groupId": "general",
       "description": "%console-app~Console will appear as per the selected theme.%",
       "field": {
-        "type": "custom",
-        "component": { "$codeRef": "userPreferences.ThemeField" }
+        "type": "dropdown",
+        "userSettingsKey": "console.theme",
+        "defaultValue": "systemDefault",
+        "options": [
+          {
+            "value": "systemDefault",
+            "label": "%console-app~System default%"
+          },
+          { "value": "light", "label": "%console-app~Light%" },
+          { "value": "dark", "label": "%console-app~Dark%" }
+        ]
       },
       "insertAfter": "console.preferredCreateEditMethod"
     }

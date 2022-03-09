@@ -31,7 +31,6 @@ import DetectNamespace from '@console/app/src/components/detect-namespace/Detect
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import { useExtensions } from '@console/plugin-sdk';
-import { useUserSettings } from '@console/shared';
 import {
   useResolvedExtensions,
   isContextProvider,
@@ -42,7 +41,6 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
-import { updateThemeClass } from '@console/app/src/components/user-preferences/theme';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useToast } from '@console/shared/src/components/toast';
@@ -52,6 +50,7 @@ import {
   useURLPoll,
   URL_POLL_DEFAULT_DELAY,
 } from '@console/internal/components/utils/url-poll-hook';
+import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -305,15 +304,6 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   return null;
 });
 
-const SetTheme = React.memo(function SetTheme() {
-  const [theme, , themeLoaded] = useUserSettings('console.theme');
-  React.useEffect(() => {
-    const htmlTagElement = document.getElementsByTagName('html')[0];
-    updateThemeClass(htmlTagElement, theme, themeLoaded);
-  }, [theme, themeLoaded]);
-  return null;
-});
-
 const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const toastContext = useToast();
   const { t } = useTranslation();
@@ -501,7 +491,7 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
-        <SetTheme />
+        <ThemeProvider />
         <AppInitSDK
           configurations={{
             appFetch: appInternalFetch,
