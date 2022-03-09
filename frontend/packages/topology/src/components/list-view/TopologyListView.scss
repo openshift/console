@@ -4,7 +4,7 @@
   --odc-topology-list-view-type-icon-size: 16px;
   --odc-topology-list-view-sidebar-width: 550px;
   --pf-c-data-list__item--m-selectable--OutlineOffset: 0;
-  background-color: var(--pf-global--BackgroundColor—-100);
+  background-color: var(--pf-global--BackgroundColor--100);
   position: absolute;
   top: 0;
   bottom: 0;
@@ -26,7 +26,7 @@
   }
 
   &__sidebar {
-    background-color: var(--pf-global--BackgroundColor—-100);
+    background-color: var(--pf-global--BackgroundColor--100);
     bottom: 0;
     box-shadow: var(--pf-global--BoxShadow--md);
     display: none;
