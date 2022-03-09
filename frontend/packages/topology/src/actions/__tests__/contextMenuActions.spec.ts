@@ -49,8 +49,6 @@ describe('context menu actions', () => {
         resource,
       },
     };
-    expect(contextMenuActions(mockOperatorBackedServiceNode)[0].props.context).toEqual(
-      expectedContext,
-    );
+    expect(contextMenuActions(mockOperatorBackedServiceNode)).toEqual(expectedContext);
   });
 });
