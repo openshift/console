@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  GraphElement as TopologyElement,
-  ElementContext,
-  ContextMenu,
-} from '@patternfly/react-topology';
+import { GraphElement, ElementContext, ContextMenu } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
 import { ActionContext, ActionServiceProvider } from '@console/shared';
 import { createContextMenuItems } from '../../../actions';
@@ -15,7 +11,7 @@ export interface WithContextMenuProps {
   contextMenuOpen: boolean;
 }
 
-const withContextMenu = <E extends TopologyElement>(
+const withContextMenu = <E extends GraphElement>(
   actionContext: (element: E) => ActionContext,
   container?: Element | null | undefined | (() => Element),
   className?: string,
@@ -44,21 +40,23 @@ const withContextMenu = <E extends TopologyElement>(
           onContextMenu={onContextMenu}
           contextMenuOpen={!!reference}
         />
-        <ActionServiceProvider key="topology" context={actionContext(element as E)}>
-          {({ options, loaded }) =>
-            reference && loaded ? (
-              <ContextMenu
-                reference={reference}
-                container={container}
-                className={className}
-                open
-                onRequestClose={() => setReference(null)}
-              >
-                {createContextMenuItems(options)}
-              </ContextMenu>
-            ) : null
-          }
-        </ActionServiceProvider>
+        {reference ? (
+          <ActionServiceProvider context={actionContext(element as E)}>
+            {({ options, loaded }) =>
+              loaded ? (
+                <ContextMenu
+                  reference={reference}
+                  container={container}
+                  className={className}
+                  open
+                  onRequestClose={() => setReference(null)}
+                >
+                  {createContextMenuItems(options)}
+                </ContextMenu>
+              ) : null
+            }
+          </ActionServiceProvider>
+        ) : null}
       </>
     );
   };
