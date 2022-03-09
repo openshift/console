@@ -2,11 +2,11 @@ import { deploymentData } from '../../utils/__tests__/knative-serving-data';
 import { hideKnatifyAction } from '../knatify';
 
 describe('knatify', () => {
-  it('hideKnatifyAction should return false is Workload standalone and avilable', () => {
+  it('hideKnatifyAction should return false is Workload standalone and available', () => {
     expect(hideKnatifyAction(deploymentData)).toBe(false);
   });
 
-  it('hideKnatifyAction should return true is Workload standalone and not avilable', () => {
+  it('hideKnatifyAction should return true is Workload standalone and not available', () => {
     const mockDeploymentData = {
       ...deploymentData,
       status: {
@@ -26,7 +26,7 @@ describe('knatify', () => {
     expect(hideKnatifyAction(mockDeploymentData)).toBe(true);
   });
 
-  it('hideKnatifyAction should return true is Workload not standalone and avilable', () => {
+  it('hideKnatifyAction should return true is Workload not standalone and available', () => {
     const mockDeploymentData = {
       ...deploymentData,
       metadata: {
@@ -46,7 +46,7 @@ describe('knatify', () => {
     expect(hideKnatifyAction(mockDeploymentData)).toBe(true);
   });
 
-  it('hideKnatifyAction should return true is Workload not standalone and not avilable', () => {
+  it('hideKnatifyAction should return true is Workload not standalone and not available', () => {
     const mockDeploymentData = {
       ...deploymentData,
       metadata: {

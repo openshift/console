@@ -4,12 +4,9 @@ import { useFormikContext, FormikValues, useField } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { FirehoseResource, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
-import {
-  getDynamicChannelResourceList,
-  getDynamicEventSourcesResourceList,
-} from '../../../../utils/fetch-dynamic-eventsources-utils';
+import { EventingContextType, EventingContext } from '../../../../topology/eventing-context';
 import { knativeEventingResourcesBroker } from '../../../../utils/get-knative-resources';
 import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
 import { SinkType } from '../../import-types';
@@ -20,12 +17,41 @@ export interface SourceResourcesProps {
 }
 
 const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink }) => {
+  const {
+    eventSourceData: { eventSourceModels, loaded: esLoaded },
+    channelsData: { eventSourceChannels, loaded: chLoaded },
+  } = React.useContext<EventingContextType>(EventingContext);
   const { t } = useTranslation();
   const [resourceAlert, setResourceAlert] = React.useState(false);
   const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
     FormikValues
   >();
   const [, { touched: sinkTypeTouched }] = useField('formData.sourceType');
+
+  const [resourcesData, setResouceData] = React.useState<FirehoseResource[]>([]);
+  React.useEffect(() => {
+    if (esLoaded && chLoaded && resourcesData.length === 0) {
+      setResouceData([
+        ...eventSourceModels.map((model) => ({
+          isList: true,
+          kind: referenceForModel(model),
+          namespace,
+          prop: referenceForModel(model),
+          optional: true,
+        })),
+        ...eventSourceChannels.map((model) => ({
+          isList: true,
+          kind: referenceForModel(model),
+          namespace,
+          prop: referenceForModel(model),
+          optional: true,
+        })),
+        ...knativeEventingResourcesBroker(namespace),
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chLoaded, esLoaded, namespace]);
+
   const autocompleteFilter = (strText: string, item: React.ReactElement): boolean =>
     fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('source-name', 'dropdown');
@@ -47,11 +73,6 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
     [setFieldValue, setFieldTouched, validateForm],
   );
   const contextAvailable = isMoveSink ? false : !!initialValues.formData.source.name;
-  const resourcesData = [
-    ...getDynamicEventSourcesResourceList(namespace),
-    ...getDynamicChannelResourceList(namespace),
-    ...knativeEventingResourcesBroker(namespace),
-  ];
 
   const handleOnLoad = (resourceList: { [key: string]: string }) => {
     if (isEmpty(resourceList)) {
@@ -89,6 +110,7 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
         </>
       )}
       <ResourceDropdownField
+        key={resourcesData.length === 0 ? 'no-resources' : 'resources'}
         menuClassName={'max-height-menu'}
         data-test="sourcable-resources"
         name="formData.source.key"

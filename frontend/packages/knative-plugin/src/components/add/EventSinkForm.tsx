@@ -13,15 +13,17 @@ import {
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { getCatalogEventSinkResource } from '../../utils/create-eventsink-utils';
-import { sanitizeSourceToForm } from '../../utils/create-eventsources-utils';
+import {
+  getCatalogEventSinkResource,
+  sanitizeSinkToForm,
+} from '../../utils/create-eventsink-utils';
 import EventSinkSection from './event-sinks/EventSinkSection';
 import { EventSinkSyncFormData } from './import-types';
 
 interface OwnProps {
   namespace: string;
   eventSinkMetaDescription: React.ReactNode;
-  kameletSink?: K8sResourceKind;
+  kameletSink: K8sResourceKind;
 }
 
 const EventSinkForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
@@ -67,7 +69,7 @@ const EventSinkForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
             variant="info"
           />
         )}
-        <EventSinkSection namespace={namespace} kameletSink={kameletSink} fullWidth />{' '}
+        <EventSinkSection namespace={namespace} kameletSink={kameletSink} fullWidth />
       </div>
     </div>
   );
@@ -80,7 +82,7 @@ const EventSinkForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
             name: 'formData',
             editor: formEditor,
             sanitizeTo: (newFormData: K8sResourceKind) =>
-              sanitizeSourceToForm(newFormData, values.formData, kameletSink),
+              sanitizeSinkToForm(newFormData, values.formData, kameletSink),
           }}
           yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
           lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}

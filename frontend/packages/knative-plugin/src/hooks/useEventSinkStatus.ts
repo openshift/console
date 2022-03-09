@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAccessReview } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { KnEventCatalogMetaData } from '../components/add/import-types';

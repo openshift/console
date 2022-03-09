@@ -53,8 +53,8 @@ const EventSinkSection: React.FC<EventSinkSectionProps> = ({
     </>
   );
   let EventSink: React.ReactElement = null;
-  if (values.formData.type === EventSources.KameletBinding) {
-    EventSink = kameletSink && (
+  if (kameletSink && values.formData.type === EventSources.KameletBinding) {
+    EventSink = (
       <>
         <Text component={TextVariants.h2}>{kameletSink.spec?.definition?.title}</Text>
         <DynamicFormField

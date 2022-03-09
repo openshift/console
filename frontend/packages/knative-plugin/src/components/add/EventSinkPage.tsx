@@ -7,7 +7,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
-import { useEventSinkStatus } from '../../hooks';
+import { useEventSinkStatus } from '../../hooks/useEventSinkStatus';
 import EventSink from './EventSink';
 import EventSinkAlert from './EventSinkAlert';
 
@@ -28,6 +28,10 @@ const EventSinkPage: React.FC<EventSinkPageProps> = ({ match, location }) => {
     kamelet,
   } = useEventSinkStatus(namespace, sinkKindProp, kameletName);
 
+  if (!loaded) {
+    return <LoadingBox />;
+  }
+
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
@@ -38,23 +42,19 @@ const EventSinkPage: React.FC<EventSinkPageProps> = ({ match, location }) => {
           'knative-plugin~Create an Event sink to register interest in a class of events from a particular system. Configure using the YAML and form views.',
         )}
       </PageHeading>
-
-      {loaded ? (
-        <EventSinkAlert
-          isValidSink={isValidSink}
-          createSinkAccessLoading={createSinkAccessLoading}
-          createSinkAccess={createSinkAccess}
-        />
-      ) : (
-        <LoadingBox />
-      )}
-      {loaded && isValidSink && !createSinkAccessLoading && createSinkAccess && (
+      {loaded && isValidSink && !createSinkAccessLoading && createSinkAccess ? (
         <EventSink
           namespace={namespace}
           normalizedSink={normalizedSink}
           selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
           contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
           kameletSink={kamelet}
+        />
+      ) : (
+        <EventSinkAlert
+          isValidSink={isValidSink}
+          createSinkAccessLoading={createSinkAccessLoading}
+          createSinkAccess={createSinkAccess}
         />
       )}
     </NamespacedPage>
