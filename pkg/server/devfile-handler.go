@@ -66,9 +66,9 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to parse devfile:")
 		if strings.Contains(err.Error(), "schemaVersion not present in devfile") {
-			errMsg = fmt.Sprintf("%v schemaVersion not present in devfile. Only devfile 2.2.0 or above is supported. The devfile needs to have the schemaVersion set in the metadata section with a value of 2.2.0 or above.", errMsg)
+			errMsg = fmt.Sprintf("%s schemaVersion not present in devfile. Only devfile 2.2.0 or above is supported. The devfile needs to have the schemaVersion set in the metadata section with a value of 2.2.0 or above.", errMsg)
 		} else {
-			errMsg = fmt.Sprintf("%v %v", errMsg, err)
+			errMsg = fmt.Sprintf("%s %s", errMsg, err)
 		}
 
 		klog.Error(errMsg)
@@ -90,7 +90,7 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(imageComponents) != 1 {
-		errMsg := fmt.Sprintf("Only devfile 2.2.0 or above with one image component is supported. ")
+		errMsg := fmt.Sprintf("Only devfile 2.2.0 or above, with one image component, is supported. ")
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
