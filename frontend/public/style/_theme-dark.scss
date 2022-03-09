@@ -11,7 +11,6 @@
   --co-global--dark--palette--purple-700: var(--pf-global--palette--purple-200);
 }
 
-// :where(#{$pf-theme-dark-class}) {
 :root:where(.pf-theme-dark) {
   --co-global--palette--blue-600: var(--co-global--dark--palette--blue-600);
   --co-global--palette--purple-600: var(--co-global--dark--palette--purple-600);
