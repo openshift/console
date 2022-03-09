@@ -8,7 +8,7 @@
 
     &__check {
       width: 8.333% !important;
-  
+
     @media screen and (max-width: 768px) {
       width: 16.66% !important;
     }
@@ -34,7 +34,7 @@
     margin-bottom: var(--pf-global--spacer--md);
     max-height: 300px;
     overflow-y: auto;
-    scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+    scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--BackgroundColor--100);
     .pf-c-table {
       border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
       .pf-c-table__check {

@@ -16,7 +16,7 @@
 }
 
 .yaml-editor__buttons {
-  background: white;
+  background-color: var(--pf-global--BackgroundColor--100);
   border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   padding: 20px $pf-global-gutter;
   margin-top: auto;

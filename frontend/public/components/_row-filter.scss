@@ -78,7 +78,7 @@ $color-row-filter-border--active: $pf-color-blue-300;
 }
 
 .row-filter__number-bubble {
-  background: $pf-color-white;
+  background-color: var(--pf-global--BackgroundColor--100);
   border-radius: 4px;
   border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   display: inline-block;

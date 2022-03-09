@@ -6,7 +6,7 @@
   overflow-y: auto;
   overflow-wrap: break-word;
   scrollbar-width: 12px;
-  scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+  scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--BackgroundColor—100);
 
   &__form-button {
     margin: var(--pf-global--spacer--md) 0px !important;
@@ -30,5 +30,5 @@
   border-radius: 10px;
 }
 .ocs-quick-search-details::-webkit-scrollbar-track {
-  background: var(--pf-global--palette--white);
+  background-color: var(--pf-global--BackgroundColor--100);
 }

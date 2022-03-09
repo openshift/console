@@ -74,7 +74,7 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent__box {
-  background-color: #fff; // prevent overlapping text if events overlap each other
+  background-color: var(--pf-global--BackgroundColor--100);; // prevent overlapping text if events overlap each other
   border: solid 1px $color-dark-border;
   border-bottom-color: $pf-color-black-200;
   flex: none;

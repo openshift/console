@@ -11,7 +11,7 @@ $overview-sidebar-width: 550px;
   }
 
   .overview__sidebar {
-    background: #fff;
+    background-color: var(--pf-global--BackgroundColor--100);
     bottom: 0;
     box-shadow: var(--pf-global--BoxShadow--md);
     display: none;
