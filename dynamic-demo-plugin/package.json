@@ -65,7 +65,8 @@
       "events": "./components/APIServerEvents",
       "overviewDetailItem": "./components/OverviewDetailItem",
       "projectOverviewInventory": "./components/ProjectOverview/Inventory",
-      "projectOverview": "./utils/project-overview"
+      "projectOverview": "./utils/project-overview",
+      "modalPage": "./components/Modals/ModalPage"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
