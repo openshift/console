@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
+import { GitProvider } from '@console/git-service/src';
 import CheIcon from './CheIcon';
-import { GitTypes } from './import-types';
 import { detectGitType } from './import-validation-utils';
 
 export const routeDecoratorIcon = (
@@ -20,16 +20,16 @@ export const routeDecoratorIcon = (
     );
   }
   switch (detectGitType(routeURL)) {
-    case GitTypes.invalid:
+    case GitProvider.INVALID:
       // Not a valid url and thus not safe to use
       return null;
-    case GitTypes.github:
+    case GitProvider.GITHUB:
       return <GithubIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
-    case GitTypes.bitbucket:
+    case GitProvider.BITBUCKET:
       return (
         <BitbucketIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />
       );
-    case GitTypes.gitlab:
+    case GitProvider.GITLAB:
       return <GitlabIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
     default:
       return <GitAltIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;

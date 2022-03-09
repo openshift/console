@@ -3,14 +3,14 @@ import { ValidatedOptions } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ImportStrategy } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
-import { GitImportFormProps, GitTypes } from './import-types';
+import { GitImportFormProps } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
 import ResourceSection from './section/ResourceSection';
 
@@ -35,7 +35,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   } = values;
   const showFullForm =
     importType === 'devfile' ||
-    (validated !== ValidatedOptions.default && gitType !== GitTypes.invalid);
+    (validated !== ValidatedOptions.default && gitType !== GitProvider.INVALID);
 
   return (
     <form onSubmit={handleSubmit} data-test-id="import-git-form">

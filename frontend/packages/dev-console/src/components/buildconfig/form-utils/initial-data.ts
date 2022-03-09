@@ -1,5 +1,5 @@
+import { GitProvider } from '@console/git-service/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { GitTypes } from '../../import/import-types';
 import { BuildConfigFormikValues, BuildStrategyType } from './types';
 
 export const getInitialBuildConfigFormikValues = (): BuildConfigFormikValues => {
@@ -15,7 +15,7 @@ export const getInitialBuildConfigFormikValues = (): BuildConfigFormikValues => 
           name: '',
           git: {
             url: '',
-            type: GitTypes.invalid,
+            type: GitProvider.INVALID,
             ref: '',
             dir: '/',
             showGitType: false,

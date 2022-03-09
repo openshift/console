@@ -2,6 +2,7 @@ import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Perspective } from '@console/dynamic-plugin-sdk';
+import { GitProvider } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
@@ -58,7 +59,6 @@ import { getProbesData } from '../health-checks/create-health-checks-probe-utils
 import {
   GitImportFormData,
   ProjectData,
-  GitTypes,
   GitReadableTypes,
   Resources,
   DevfileSuggestedResources,
@@ -283,7 +283,7 @@ export const createOrUpdateBuildConfig = (
             secretReference: { name: `${name}-generic-webhook-secret` },
           },
         },
-        ...(triggers.webhook && gitType !== GitTypes.unsure ? [webhookTriggerData] : []),
+        ...(triggers.webhook && gitType !== GitProvider.UNSURE ? [webhookTriggerData] : []),
         ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
         ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
       ],
