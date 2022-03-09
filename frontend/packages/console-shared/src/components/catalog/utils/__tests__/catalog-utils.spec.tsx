@@ -34,10 +34,10 @@ describe('catalog-utils#applyCatalogItemMetadata', () => {
       },
     ];
     const metadataProviderMap: {
-      [type: string]: CatalogItemMetadataProviderFunction[];
+      [type: string]: { [id: string]: CatalogItemMetadataProviderFunction };
     } = {
-      type1: [
-        () => ({
+      type1: {
+        '@console/dev-console[49]': () => ({
           tags: ['foo', 'bar'],
           attributes: {
             foo: 'bar',
@@ -51,7 +51,7 @@ describe('catalog-utils#applyCatalogItemMetadata', () => {
             },
           ],
         }),
-      ],
+      },
     };
 
     const result = applyCatalogItemMetadata(catalogItems, metadataProviderMap);

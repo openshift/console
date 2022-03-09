@@ -5,7 +5,12 @@ import {
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
 import * as _ from 'lodash';
-import { CatalogFilterCounts, CatalogFilters } from '../utils/types';
+import {
+  CatalogFilter,
+  CatalogFilterCounts,
+  CatalogFilterItem,
+  CatalogFilters,
+} from '../utils/types';
 
 type CatalogFiltersProps = {
   activeFilters: CatalogFilters;
@@ -26,12 +31,12 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
 }) => {
   const sortedActiveFilters = Object.keys(activeFilters)
     .sort()
-    .reduce((acc, groupName) => {
+    .reduce<CatalogFilters>((acc, groupName) => {
       acc[groupName] = activeFilters[groupName];
       return acc;
     }, {});
 
-  const renderFilterItem = (filter, filterName, groupName) => {
+  const renderFilterItem = (filter: CatalogFilterItem, filterName: string, groupName: string) => {
     const { label, active } = filter;
     const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
     // TODO remove when adopting https://github.com/patternfly/patternfly-react/issues/5139
@@ -54,10 +59,10 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
     );
   };
 
-  const renderFilterGroup = (filterGroup, groupName) => {
+  const renderFilterGroup = (filterGroup: CatalogFilter, groupName: string) => {
     const filterGroupKeys = Object.keys(filterGroup);
     if (filterGroupKeys.length > 1) {
-      const sortedFilterGroup = filterGroupKeys.sort().reduce((acc, filterName) => {
+      const sortedFilterGroup = filterGroupKeys.sort().reduce<CatalogFilter>((acc, filterName) => {
         acc[filterName] = filterGroup[filterName];
         return acc;
       }, {});

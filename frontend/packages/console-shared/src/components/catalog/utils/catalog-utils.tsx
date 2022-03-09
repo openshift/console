@@ -94,11 +94,11 @@ export const customPropertyPresent = (
 export const applyCatalogItemMetadata = (
   catalogItems: CatalogItem[],
   metadataProviderMap: {
-    [type: string]: CatalogItemMetadataProviderFunction[];
+    [type: string]: { [id: string]: CatalogItemMetadataProviderFunction };
   },
 ) =>
   catalogItems.map((item) => {
-    const metadataProviders = metadataProviderMap[item.type];
+    const metadataProviders = Object.values(metadataProviderMap[item.type] ?? {});
     if (metadataProviders?.length) {
       const metadata = metadataProviders
         .map((metadataProvider) => metadataProvider(item))

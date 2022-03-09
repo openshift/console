@@ -36,7 +36,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   const [extItemsMap, setExtItemsMap] = React.useState<{ [uid: string]: CatalogItem[] }>({});
   const [extItemsErrorMap, setItemsErrorMap] = React.useState<{ [uid: string]: Error }>({});
   const [metadataProviderMap, setMetadataProviderMap] = React.useState<{
-    [type: string]: CatalogItemMetadataProviderFunction[];
+    [type: string]: { [id: string]: CatalogItemMetadataProviderFunction };
   }>({});
 
   const loaded =
@@ -79,8 +79,11 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     setItemsErrorMap((prev) => ({ ...prev, [uid]: error }));
   }, []);
 
-  const onMetadataValueResolved = React.useCallback((provider, type) => {
-    setMetadataProviderMap((prev) => ({ ...prev, [type]: [...(prev?.[type] ?? []), provider] }));
+  const onMetadataValueResolved = React.useCallback((provider, uid, type) => {
+    setMetadataProviderMap((prev) => ({
+      ...prev,
+      [type]: { ...(prev?.[type] ?? {}), [uid]: provider },
+    }));
   }, []);
 
   const searchCatalog = React.useCallback(
@@ -148,7 +151,9 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
             id={extension.uid}
             useValue={extension.properties.provider}
             options={defaultOptions}
-            onValueResolved={(value) => onMetadataValueResolved(value, extension.properties.type)}
+            onValueResolved={(value, uid) =>
+              onMetadataValueResolved(value, uid, extension.properties.type)
+            }
           />
         ))}
       {children(catalogService)}
