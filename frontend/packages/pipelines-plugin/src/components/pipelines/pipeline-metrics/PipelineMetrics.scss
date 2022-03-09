@@ -2,9 +2,9 @@
 
 
 .pipeline-metrics-dashboard {
-  background: var(--pf-global--palette--black-150);
+  background-color: var(--pf-global--BackgroundColor--200);
   &__body {
-    background: var(--pf-global--palette--black-150);
+    background-color: var(--pf-global--BackgroundColor--200);
     margin-bottom: 0 !important;
     margin-top: 0;
   }
@@ -17,5 +17,5 @@
   }
 }
 .pipeline-metrics-empty-state {
-  background: var(--pf-global--palette--black-150);
+  background-color: var(--pf-global--BackgroundColor--200);
 }

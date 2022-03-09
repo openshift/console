@@ -140,7 +140,7 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent__icon-line {
-  background-color: $pf-color-black-200;
+  background-color: var(--pf-global--BackgroundColor--200);
   height: 3px;
   position: absolute;
   top: 50%;

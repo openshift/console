@@ -37,7 +37,7 @@ $color-row-filter-border--active: $pf-color-blue-300;
 }
 
 .row-filter__box {
-  background: $pf-color-black-150;
+  background-color: var(--pf-global--BackgroundColor--200);
   display: inline-block;
   margin: 0 -1px -1px 0;
   padding: 7px 10px;

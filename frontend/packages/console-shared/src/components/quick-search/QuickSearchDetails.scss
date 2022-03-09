@@ -6,7 +6,7 @@
   overflow-y: auto;
   overflow-wrap: break-word;
   scrollbar-width: 12px;
-  scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+  scrollbar-color: var(--pf-global--BackgroundColor--200) var(--pf-global--palette--white);
 
   &__form-button {
     margin: var(--pf-global--spacer--md) 0px !important;
@@ -26,7 +26,7 @@
   width: 12px;
 }
 .ocs-quick-search-details::-webkit-scrollbar-thumb {
-  background: var(--pf-global--BackgroundColor--light-300);
+  background-color: var(--pf-global--BackgroundColor--200);
   border-radius: 10px;
 }
 .ocs-quick-search-details::-webkit-scrollbar-track {

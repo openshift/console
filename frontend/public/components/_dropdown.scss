@@ -26,7 +26,7 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .dropdown-menu__divider {
-  background-color: $pf-color-black-200;
+  background-color: var(--pf-global--BackgroundColor--200);
   height: 1px;
   flex-grow: 1;
   margin: 9px 0;
@@ -172,7 +172,7 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   // target the <li> except the one containing the list divider.
   li {
     &:not(.co-namespace-selector__divider):hover {
-      background-color: $dropdown-background--hover;
+      background-color: var(--pf-global--BackgroundColor--200);
       color: $dropdown-link-hover-color;
       position: relative;
     }
@@ -186,11 +186,11 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
         color: $color-bookmarker;
         flex: 0;
         &:hover {
-          background-color: $dropdown-background--hover;
+          background-color: var(--pf-global--BackgroundColor--200);
           color: $color-bookmarker--hover;
         }
         &:focus {
-          background-color: $dropdown-background--hover;
+          background-color: var(--pf-global--BackgroundColor--200);
         }
       }
       &.next-to-bookmark {
