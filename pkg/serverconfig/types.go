@@ -1,5 +1,9 @@
 package serverconfig
 
+import (
+	configv1 "github.com/openshift/api/config/v1"
+)
+
 // This file is a copy of the struct within the console operator:
 //   https://github.com/openshift/console-operator/blob/master/pkg/console/subresource/consoleserver/types.go
 // These structs need to remain in sync.
@@ -59,9 +63,10 @@ type MonitoringInfo struct {
 
 // ClusterInfo holds information the about the cluster such as master public URL and console public URL.
 type ClusterInfo struct {
-	ConsoleBaseAddress string `yaml:"consoleBaseAddress,omitempty"`
-	ConsoleBasePath    string `yaml:"consoleBasePath,omitempty"`
-	MasterPublicURL    string `yaml:"masterPublicURL,omitempty"`
+	ConsoleBaseAddress  string                `yaml:"consoleBaseAddress,omitempty"`
+	ConsoleBasePath     string                `yaml:"consoleBasePath,omitempty"`
+	MasterPublicURL     string                `yaml:"masterPublicURL,omitempty"`
+	ControlPlaneToplogy configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
 }
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".
