@@ -134,7 +134,7 @@ tags-input.ng-invalid .tags {
 }
 
 tags-input .autocomplete {
-  background-color: var(--pf-global--BackgroundColor—100);
+  background-color: var(--pf-global--BackgroundColor—-100);
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   margin-top: 5px;
@@ -151,7 +151,7 @@ tags-input .autocomplete .suggestion-list {
 }
 
 tags-input .autocomplete .suggestion-item {
-  background-color: var(--pf-global--BackgroundColor—100);
+  background-color: var(--pf-global--BackgroundColor—-100);
   color: black;
   cursor: pointer;
   font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -172,7 +172,7 @@ tags-input .autocomplete .suggestion-item.selected em {
 }
 
 tags-input .autocomplete .suggestion-item em {
-  background-color: var(--pf-global--BackgroundColor—100);
+  background-color: var(--pf-global--BackgroundColor—-100);
   color: black;
   font: normal bold 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
