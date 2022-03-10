@@ -3,42 +3,55 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
 
 import {
-  StorageClassProvisioner,
-  ExtensionSCProvisionerProp,
-} from '@console/plugin-sdk/src/typings/storage-class-params';
-
-import {
   ConnectedStorageClassForm,
-  StorageClassFormExtensionProps,
   StorageClassFormProps,
   StorageClassFormState,
 } from '../../public/components/storage-class-form';
 import { PageHeading } from '../../public/components/utils';
+import * as plugins from '@console/dynamic-plugin-sdk';
+
+const extensions = [
+  {
+    properties: {
+      OTHERS: {
+        title: 'AWS Elastic Block Storage',
+        provisioner: 'kubernetes.io/aws-ebs',
+        allowVolumeExpansion: () => true,
+        documentationLink: () => '',
+        parameters: {
+          type: {
+            name: 'Type',
+            values: { io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1' },
+            hintText: 'Select AWS Type',
+          },
+        },
+      },
+    },
+  },
+];
 
 describe(ConnectedStorageClassForm.displayName, () => {
-  const Component: React.ComponentType<Omit<StorageClassFormProps, 't' | 'i18n' | 'tReady'> &
-    StorageClassFormExtensionProps> = ConnectedStorageClassForm.WrappedComponent as any;
+  const Component: React.ComponentType<Omit<
+    StorageClassFormProps,
+    't' | 'i18n' | 'tReady'
+  >> = ConnectedStorageClassForm.WrappedComponent as any;
   let wrapper: ShallowWrapper<StorageClassFormProps, StorageClassFormState>;
   let onClose: Spy;
   let watchK8sList: Spy;
   let stopK8sWatch: Spy;
   let k8s: Spy;
-  let params: StorageClassProvisioner[];
-  let extensionFunction: ExtensionSCProvisionerProp;
+  let extensionSpy: Spy;
 
   beforeEach(() => {
+    extensionSpy = spyOn(plugins, 'useResolvedExtensions').and.returnValue([
+      extensions,
+      true,
+      null,
+    ]);
     onClose = jasmine.createSpy('onClose');
     watchK8sList = jasmine.createSpy('watchK8sList');
     stopK8sWatch = jasmine.createSpy('stopK8sWatch');
     k8s = jasmine.createSpy('k8s');
-    params = [
-      {
-        type: 'StorageClass/Provisioner',
-        properties: {
-          getStorageClassProvisioner: extensionFunction,
-        },
-      },
-    ];
 
     wrapper = shallow(
       <Component
@@ -46,7 +59,6 @@ describe(ConnectedStorageClassForm.displayName, () => {
         watchK8sList={watchK8sList}
         stopK8sWatch={stopK8sWatch}
         k8s={k8s}
-        params={params}
       />,
     )
       .dive()
@@ -74,9 +86,12 @@ describe(ConnectedStorageClassForm.displayName, () => {
     wrapper.setState({
       newStorageClass: {
         ...wrapper.state().newStorageClass,
-        type: 'aws',
+        type: 'kubernetes.io/aws-ebs',
       },
     });
+    wrapper.instance().componentDidUpdate({}, {});
+    expect(extensionSpy).toHaveBeenCalled();
+    wrapper.instance().forceUpdate();
     expect(wrapper.find({ title: 'Select AWS Type' }).exists()).toBe(true);
   });
 

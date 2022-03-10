@@ -8,28 +8,18 @@ import { i18n, TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 import { getName } from '@console/shared';
-import { Extension, withExtensions } from '@console/plugin-sdk';
 import {
-  StorageClassProvisioner,
   isStorageClassProvisioner,
-  ExtensionSCProvisionerProp,
-} from '@console/plugin-sdk/src/typings/storage-class-params';
-
+  StorageClassProvisioner,
+  useResolvedExtensions,
+  ProvisionerDetails as UnResolvedProvisionerDetails,
+  ProvisionerType,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
+import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import {
   AsyncComponent,
   ButtonBar,
-  DOC_URL_STORAGE_CLASSES_AWS_EBS,
-  DOC_URL_STORAGE_CLASSES_AZURE_DISK,
-  DOC_URL_STORAGE_CLASSES_AZURE_FILE,
-  DOC_URL_STORAGE_CLASSES_GCE,
-  DOC_URL_STORAGE_CLASSES_GLUSTERFS,
-  DOC_URL_STORAGE_CLASSES_LOCAL,
-  DOC_URL_STORAGE_CLASSES_OPENSTACK_CINDER,
-  DOC_URL_STORAGE_CLASSES_PORTWORX_VOLUME,
-  DOC_URL_STORAGE_CLASSES_QUOBYTE,
-  DOC_URL_STORAGE_CLASSES_SCALEIO,
-  DOC_URL_STORAGE_CLASSES_STORAGEOS,
-  DOC_URL_STORAGE_CLASSES_VSPHERE,
   Dropdown,
   ExternalLink,
   Firehose,
@@ -44,17 +34,14 @@ import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './.
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';
 
-enum Provisioner {
-  CSI = 'csi',
-  OTHERS = 'others',
-}
-
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
     loader={() => import('./utils/name-value-editor').then((c) => c.NameValueEditor)}
     {...props}
   />
 );
+
+type Parameters = ProvisionerDetails['parameters'];
 
 const defaultState = {
   newStorageClass: {
@@ -73,6 +60,15 @@ const defaultState = {
   fieldErrors: { parameters: {} },
 };
 
+type ProvisionerDetails = ResolvedCodeRefProperties<UnResolvedProvisionerDetails>;
+type ResolvedStorageClassProvisioner = ResolvedCodeRefProperties<StorageClassProvisioner>;
+
+const isCSIProvisionerExtension = (extension: ResolvedStorageClassProvisioner) =>
+  extension.properties.hasOwnProperty(ProvisionerType.CSI);
+
+type StorageProvisionerMap = {
+  [provisioner: string]: ProvisionerDetails;
+};
 class StorageClassFormWithTranslation extends React.Component<
   StorageClassFormProps,
   StorageClassFormState
@@ -87,514 +83,27 @@ class StorageClassFormWithTranslation extends React.Component<
     this.previousName = '';
   }
 
-  defaultProvisionerObj = {
+  defaultProvisionerObj: ProvisionerDetails = {
     title: '',
     provisioner: '',
     parameters: {},
-    allowVolumeExpansion: true,
+    allowVolumeExpansion: () => true,
   };
 
-  storageTypes = {};
+  storageTypes: { [driverName: string]: ProvisionerDetails } = {};
 
-  // Fetch Storage type provisioners from different operators
-  // For CSI - provisionerType: 'csi'
-  // For Defaults - provisionerType: 'others'
-  getExtensionsStorageClassProvisioners = (provisionerType = Provisioner.OTHERS) => {
-    const extensionCSIProvisioners: ExtensionSCProvisionerProp = _.reduce(
-      this.props.params,
-      (res, value) => {
-        const obj = value.properties.getStorageClassProvisioner || {};
-        if (obj) {
-          const key = provisionerType;
-          const keyValue = obj[provisionerType];
-          res[key] = keyValue;
-        }
-        return res;
-      },
-      {},
-    );
+  CSIStorageTypes: StorageProvisionerMap = {};
+  defaultStorageTypes: StorageProvisionerMap = {};
 
-    return extensionCSIProvisioners[provisionerType];
+  getExtensions = (extensions) => {
+    extensions.forEach((ext: ResolvedStorageClassProvisioner) => {
+      if (isCSIProvisionerExtension(ext)) {
+        this.CSIStorageTypes[ext.properties.CSI.provisioner] = { ...ext.properties.CSI };
+      } else {
+        this.defaultStorageTypes[ext.properties.OTHERS.provisioner] = { ...ext.properties.OTHERS };
+      }
+    });
   };
-
-  // For 'csi' storage type
-  CSIStorageTypes = Object.freeze({
-    ...this.getExtensionsStorageClassProvisioners(Provisioner.CSI),
-    'ebs.csi.aws.com': {
-      title: this.props.t('public~AWS CSI'),
-      provisioner: 'ebs.csi.aws.com',
-      allowVolumeExpansion: true,
-      parameters: {
-        type: {
-          name: this.props.t('public~Type'),
-          values: {
-            gp3: 'gp3',
-            gp2: 'gp2',
-            io1: 'io1',
-            sc1: 'sc1',
-            st1: 'st1',
-            standard: 'standard',
-          },
-          hintText: this.props.t('public~Select AWS Type. Default is gp3'),
-        },
-        iopsPerGB: {
-          name: this.props.t('public~IOPS per GiB'),
-          hintText: this.props.t('public~I/O operations per second per GiB'),
-          validation: (params) => {
-            if (params.iopsPerGB.value && !params.iopsPerGB.value.match(/^\d+$/)) {
-              return this.props.t('public~IOPS per GiB must be a number');
-            }
-            return null;
-          },
-          visible: (params) => _.get(params, 'type.value') === 'io1',
-        },
-        fsType: {
-          name: this.props.t('public~Filesystem Type'),
-          hintText: this.props.t(
-            'public~Filesystem type to use during volume creation. Default is ext4.',
-          ),
-          values: { ext4: 'ext4', xfs: 'xfs', ext2: 'ext2', ext3: 'ext3' },
-        },
-        encrypted: {
-          name: this.props.t('public~Encrypted'),
-          type: 'checkbox',
-          format: (value) => value.toString(),
-        },
-        kmsKeyId: {
-          name: this.props.t('public~KMS key ID'),
-          hintText: this.props.t(
-            'public~The full Amazon resource name of the key to use when encrypting the volume',
-          ),
-          visible: (params) => _.get(params, 'encrypted.value', false),
-        },
-      },
-    },
-  });
-
-  // For 'other' storage type
-  defaultStorageTypes = Object.freeze({
-    ...this.getExtensionsStorageClassProvisioners(Provisioner.OTHERS), // Plugin provisioners
-    local: {
-      title: this.props.t('public~Local'),
-      provisioner: 'kubernetes.io/no-provisioner',
-      documentationLink: DOC_URL_STORAGE_CLASSES_LOCAL,
-      parameters: {},
-      volumeBindingMode: 'WaitForFirstConsumer',
-    },
-    aws: {
-      title: 'AWS Elastic Block Storage',
-      provisioner: 'kubernetes.io/aws-ebs',
-      allowVolumeExpansion: true,
-      documentationLink: DOC_URL_STORAGE_CLASSES_AWS_EBS,
-      parameters: {
-        type: {
-          name: this.props.t('public~Type'),
-          values: { io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1' },
-          hintText: this.props.t('public~Select AWS Type'),
-        },
-        iopsPerGB: {
-          name: this.props.t('public~IOPS per GiB'),
-          hintText: this.props.t('public~I/O operations per second per GiB'),
-          validation: (params) => {
-            if (params.iopsPerGB.value && !params.iopsPerGB.value.match(/^\d+$/)) {
-              return this.props.t('public~IOPS per GiB must be a number');
-            }
-            return null;
-          },
-          visible: (params) => _.get(params, 'type.value') === 'io1',
-        },
-        fsType: {
-          name: this.props.t('public~Filesystem type'),
-          hintText: this.props.t(
-            'public~Filesystem type to use during volume creation. Default is ext4.',
-          ),
-        },
-        encrypted: {
-          name: this.props.t('public~Encrypted'),
-          type: 'checkbox',
-          format: (value) => value.toString(),
-        },
-        kmsKeyId: {
-          name: this.props.t('public~KMS key ID'),
-          hintText: this.props.t(
-            'public~The full Amazon resource name of the key to use when encrypting the volume',
-          ),
-          visible: (params) => _.get(params, 'encrypted.value', false),
-        },
-      },
-    },
-    'gce-pd': {
-      title: 'GCE PD',
-      provisioner: 'kubernetes.io/gce-pd',
-      allowVolumeExpansion: true,
-      documentationLink: DOC_URL_STORAGE_CLASSES_GCE,
-      parameters: {
-        type: {
-          name: this.props.t('public~Type'),
-          values: { 'pd-standard': 'pd-standard', 'pd-ssd': 'pd-ssd' },
-          hintText: this.props.t('public~Select GCE type'),
-        },
-        zone: {
-          name: this.props.t('public~Zone'),
-          validation: (params) => {
-            if (params.zone.value !== '' && _.get(params, 'zones.value', '') !== '') {
-              return this.props.t(
-                'public~Zone and zones parameters must not be used at the same time',
-              );
-            }
-            return null;
-          },
-        },
-        zones: {
-          name: this.props.t('public~Zones'),
-          validation: (params) => {
-            if (params.zones.value !== '' && _.get(params, 'zone.value', '') !== '') {
-              return this.props.t(
-                'public~Zone and zones parameters must not be used at the same time',
-              );
-            }
-            return null;
-          },
-        },
-        'replication-type': {
-          name: this.props.t('public~Replication type'),
-          values: { none: 'none', 'regional-pd': 'regional-pd' },
-          hintText: this.props.t('public~Select Replication type'),
-          validation: (params) => {
-            if (
-              params['replication-type'].value === 'regional-pd' &&
-              _.get(params, 'zone.value', '') !== ''
-            ) {
-              return this.props.t(
-                'public~Zone cannot be specified when replication type regional-pd is chosen. Use zones instead.',
-              );
-            }
-            return null;
-          },
-        },
-      },
-    },
-    glusterfs: {
-      title: 'Glusterfs',
-      provisioner: 'kubernetes.io/glusterfs',
-      allowVolumeExpansion: true,
-      documentationLink: DOC_URL_STORAGE_CLASSES_GLUSTERFS,
-      parameters: {
-        resturl: {
-          name: this.props.t('public~Gluster REST/Heketi URL'),
-          required: true,
-        },
-        restuser: {
-          name: this.props.t('public~Gluster REST/Heketi user'),
-        },
-        secretNamespace: {
-          name: this.props.t('public~Secret Namespace'),
-        },
-        secretName: {
-          name: this.props.t('public~Secret name'),
-        },
-        clusterid: {
-          name: this.props.t('public~Cluster ID'),
-        },
-        gidMin: {
-          name: this.props.t('public~GID min'),
-          validation: (params) => {
-            if (params.gidMin.value !== '' && !params.gidMin.value.match(/^[1-9]\d*$/)) {
-              return this.props.t('public~GID min must be number');
-            }
-            return null;
-          },
-        },
-        gidMax: {
-          name: this.props.t('public~GID max'),
-          validation: (params) => {
-            if (params.gidMax.value !== '' && !params.gidMax.value.match(/^[1-9]\d*$/)) {
-              return this.props.t('public~GID max must be number');
-            }
-            return null;
-          },
-        },
-        volumetype: {
-          name: this.props.t('public~Volume type'),
-        },
-      },
-    },
-    openstackCinder: {
-      title: 'OpenStack Cinder',
-      provisioner: 'kubernetes.io/cinder',
-      allowVolumeExpansion: true,
-      documentationLink: DOC_URL_STORAGE_CLASSES_OPENSTACK_CINDER,
-      parameters: {
-        type: {
-          name: this.props.t('public~Volume type'),
-        },
-        availability: {
-          name: this.props.t('public~Availability zone'),
-        },
-      },
-    },
-    azureFile: {
-      title: 'Azure File',
-      provisioner: 'kubernetes.io/azure-file',
-      allowVolumeExpansion: true,
-      documentationLink: DOC_URL_STORAGE_CLASSES_AZURE_FILE,
-      parameters: {
-        skuName: {
-          name: this.props.t('public~SKU name'),
-          hintText: this.props.t('public~Azure storage account SKU tier'),
-        },
-        location: {
-          name: this.props.t('public~Location'),
-          hintText: this.props.t('public~Azure storage account location'),
-        },
-        storageAccount: {
-          name: this.props.t('public~Azure storage account name'),
-          hintText: this.props.t('public~Azure storage account name'),
-        },
-      },
-    },
-    azureDisk: {
-      title: 'Azure Disk',
-      provisioner: 'kubernetes.io/azure-disk',
-      allowVolumeExpansion: true,
-      documentationLink: DOC_URL_STORAGE_CLASSES_AZURE_DISK,
-      parameters: {
-        storageaccounttype: {
-          name: this.props.t('public~Storage account type'),
-          hintText: this.props.t('public~Storage account type'),
-        },
-        kind: {
-          name: this.props.t('public~Account kind'),
-          values: { shared: 'shared', dedicated: 'dedicated', managed: 'managed' },
-          hintText: this.props.t('public~Select account kind'),
-        },
-      },
-    },
-    quobyte: {
-      title: 'Quobyte',
-      provisioner: 'kubernetes.io/quobyte',
-      allowVolumeExpansion: false,
-      documentationLink: DOC_URL_STORAGE_CLASSES_QUOBYTE,
-      parameters: {
-        quobyteAPIServer: {
-          name: this.props.t('public~Quobyte API server'),
-          hintText: this.props.t('public~Quobyte API server'),
-        },
-        registry: {
-          name: this.props.t('public~Registry address(es)'),
-          hintText: this.props.t('public~Registry address(es)'),
-        },
-        adminSecretName: {
-          name: this.props.t('public~Admin secret name'),
-          hintText: this.props.t('public~Admin secret name'),
-        },
-        adminSecretNamespace: {
-          name: this.props.t('public~Admin secret namespace'),
-          hintText: this.props.t('public~Admin secret namespace'),
-        },
-        user: {
-          name: this.props.t('public~User'),
-          hintText: this.props.t('public~User'),
-        },
-        group: {
-          name: this.props.t('public~Group'),
-          hintText: this.props.t('public~Group'),
-        },
-        quobyteConfig: {
-          name: this.props.t('public~Quobyte configuration'),
-          hintText: this.props.t('public~Quobyte configuration'),
-        },
-        quobyteTenant: {
-          name: this.props.t('public~Quobyte tenant'),
-          hintText: this.props.t('public~Quobyte tenant ID used to create/delete the volume'),
-        },
-      },
-    },
-    vSphereVolume: {
-      title: 'vSphere Volume',
-      provisioner: 'kubernetes.io/vsphere-volume',
-      allowVolumeExpansion: false,
-      documentationLink: DOC_URL_STORAGE_CLASSES_VSPHERE,
-      parameters: {
-        diskformat: {
-          name: this.props.t('public~Disk format'),
-          values: {
-            thin: 'thin',
-            zeroedthick: 'zeroed thick',
-            eagerzeroedthick: 'eager zeroed thick',
-          },
-          hintText: this.props.t('public~Select disk format'),
-        },
-        datastore: {
-          name: this.props.t('public~Datastore'),
-          hintText: this.props.t('public~Datastore'),
-        },
-      },
-      volumeBindingMode: 'Immediate',
-    },
-    portworxVolume: {
-      title: 'Portworx Volume',
-      provisioner: 'kubernetes.io/portworx-volume',
-      allowVolumeExpansion: true,
-      documentationLink: DOC_URL_STORAGE_CLASSES_PORTWORX_VOLUME,
-      parameters: {
-        fs: {
-          name: this.props.t('public~Filesystem'),
-          values: { none: 'none', xfs: 'xfs', ext4: 'ext4' },
-          hintText: this.props.t('public~Select Filesystem'),
-        },
-        // eslint-disable-next-line camelcase
-        block_size: {
-          name: this.props.t('public~Block size'),
-          hintText: this.props.t('public~Block size in Kb'),
-          validation: (params) => {
-            if (params.block_size.value !== '' && !params.block_size.value.match(/^[1-9]\d*$/)) {
-              return this.props.t('public~Snapshot interval must be a number');
-            }
-            return null;
-          },
-        },
-        repl: {
-          name: this.props.t(
-            'public~Number of synchronous replicas to be provided in the form of replication factor',
-          ),
-          hintText: this.props.t('public~Number of replicas'),
-          validation: (params) => {
-            if (params.repl.value !== '' && !params.repl.value.match(/^[1-9]\d*$/)) {
-              return this.props.t('public~Number of replicas must be a number');
-            }
-            return null;
-          },
-        },
-        // eslint-disable-next-line camelcase
-        io_priority: {
-          name: this.props.t('public~I/O priority'),
-          values: { high: 'high', medium: 'medium', low: 'low' },
-          hintText: this.props.t('public~I/O priority'),
-        },
-        // eslint-disable-next-line camelcase
-        snap_interval: {
-          name: this.props.t('public~Snapshot interval'),
-          hintText: this.props.t(
-            'public~Clock/time interval in minutes for when to trigger snapshots',
-          ),
-          validation: (params) => {
-            if (params.repl.value !== '' && !params.repl.value.match(/^[1-9]\d*$/)) {
-              return this.props.t('public~Snapshot interval must be a number');
-            }
-            return null;
-          },
-          format: (value) => value.toString(),
-        },
-        // eslint-disable-next-line camelcase
-        aggregation_level: {
-          name: this.props.t('public~Aggregation level'),
-          hintText: this.props.t(
-            'public~The number of chunks the volume would be distributed into',
-          ),
-          validation: (params) => {
-            if (
-              params.aggregation_level.value !== '' &&
-              !params.aggregation_level.value.match(/^[1-9]\d*$/)
-            ) {
-              return this.props.t('public~Aggregation level must be a number');
-            }
-            return null;
-          },
-          format: (value) => value.toString(),
-        },
-        ephemeral: {
-          name: this.props.t('public~Ephemeral'),
-          type: 'checkbox',
-          format: (value) => value.toString(),
-        },
-      },
-    },
-    scaleIo: {
-      title: 'ScaleIO',
-      provisioner: 'kubernetes.io/scaleio',
-      allowVolumeExpansion: false,
-      documentationLink: DOC_URL_STORAGE_CLASSES_SCALEIO,
-      parameters: {
-        gateway: {
-          name: this.props.t('public~API gateway'),
-          required: true,
-          hintText: this.props.t('public~ScaleIO API gateway address'),
-        },
-        system: {
-          name: this.props.t('public~System name'),
-          required: true,
-          hintText: this.props.t('public~Name of the ScaleIO system'),
-        },
-        protectionDomain: {
-          name: this.props.t('public~Protection domain'),
-          required: true,
-          hintText: this.props.t('public~Name of the ScaleIO protection domain'),
-        },
-        storagePool: {
-          name: this.props.t('public~Storage pool'),
-          required: true,
-          hintText: this.props.t('public~Name of the volume storage pool'),
-        },
-        storageMode: {
-          name: this.props.t('public~Storage mode'),
-          values: { thinProvisioned: 'ThinProvisioned', thickProvisioned: 'ThickProvisioned' },
-          hintText: this.props.t('public~Select storage provision mode'),
-        },
-        secretRef: {
-          name: this.props.t('public~Secret reference'),
-          required: true,
-          hintText: this.props.t('public~Reference to a configured Secret object'),
-        },
-        readOnly: {
-          name: this.props.t('public~Read Only'),
-          type: 'checkbox',
-        },
-        fsType: {
-          name: this.props.t('public~Filesystem Type'),
-          hintText: this.props.t('public~Filesystem to use for the volume'),
-        },
-      },
-    },
-    storageOs: {
-      title: 'StorageOS',
-      provisioner: 'kubernetes.io/storageos',
-      allowVolumeExpansion: false,
-      documentationLink: DOC_URL_STORAGE_CLASSES_STORAGEOS,
-      parameters: {
-        pool: {
-          name: this.props.t('public~Pool'),
-          hintText: this.props.t(
-            'public~Name of the StorageOS distributed capacity pool from which to provision the volume',
-          ),
-        },
-        description: {
-          name: this.props.t('public~Description'),
-          hintText: this.props.t(
-            'public~Description to assign to volumes that were created dynamically',
-          ),
-        },
-        fsType: {
-          name: this.props.t('public~Filesystem type'),
-          hintText: this.props.t('public~Default filesystem type to request'),
-        },
-        adminSecretName: {
-          name: this.props.t('public~Admin secret name'),
-          hintText: this.props.t(
-            'public~Name of the secret to use for obtaining the StorageOS API credentials',
-          ),
-        },
-        adminSecretNamespace: {
-          name: this.props.t('public~Admin secret namespace'),
-          hintText: this.props.t('public~Namespace where the API configuration secret is located'),
-          required: (params) => {
-            const adminSecretName = _.get(params, 'adminSecretName.value', null);
-            return adminSecretName !== null && adminSecretName !== '';
-          },
-        },
-      },
-    },
-  });
 
   reclaimPolicies = {
     Retain: this.props.t('public~Retain'),
@@ -610,36 +119,42 @@ class StorageClassFormWithTranslation extends React.Component<
   // provisioner is listed in CSIStorageTypes object
   // if yes then return the provisioner with parameters that
   // needs to be filled by user.
-  csiProvisionerMap = (csiData) => {
-    const csiListedProvisioner: string[] = _.keys(this.CSIStorageTypes);
-    csiData.map((csi) => {
-      _.each(csiListedProvisioner, (provisioner) => {
-        const hasProvisioner = getName(csi).includes(provisioner);
+  csiProvisionerMap = (csiDrivers: K8sResourceKind[]) => {
+    const csiListedProvisioner: string[] = Object.keys(this.CSIStorageTypes);
+    csiDrivers.forEach((csiDriver: K8sResourceKind) => {
+      for (const provisioner of csiListedProvisioner) {
+        const csiDriverName = getName(csiDriver);
+        const hasProvisioner = csiDriverName.includes(provisioner);
         if (hasProvisioner) {
           const provisionerData = _.cloneDeep(this.CSIStorageTypes[provisioner]);
-          provisionerData.provisioner = getName(csi);
-          this.storageTypes[getName(csi)] = provisionerData;
-          return false;
+          provisionerData.provisioner = csiDriverName;
+          this.storageTypes[csiDriverName] = provisionerData;
+          break;
         }
         const provisionerData = _.cloneDeep(this.defaultProvisionerObj);
-        provisionerData.title = getName(csi);
-        provisionerData.provisioner = getName(csi);
-        this.storageTypes[getName(csi)] = provisionerData;
-      });
+        provisionerData.title = csiDriverName;
+        provisionerData.provisioner = csiDriverName;
+        this.storageTypes[csiDriverName] = provisionerData;
+      }
     });
   };
 
   componentDidUpdate(prevProps) {
-    if (this.props !== prevProps) {
+    const [extensions, extensionsLoaded] = this.props.extensions;
+    if (extensionsLoaded && !_.isEqual(this.props.extensions, prevProps.extensions)) {
+      this.getExtensions(extensions);
+    }
+    if (this.props !== prevProps && extensionsLoaded) {
+      this.storageTypes = _.cloneDeep(this.defaultStorageTypes);
       const { resources } = this.props;
-      const loaded = _.get(resources.sc, 'loaded');
-      const csiLoaded = _.get(resources.csi, 'loaded');
-      const scData = _.get(resources.sc, 'data', []) as K8sResourceKind[];
-      const csiData = _.get(resources.csi, 'data', []) as K8sResourceKind[];
+      const loaded = resources?.sc?.loaded;
+      const csiLoaded = resources?.csi?.loaded;
+      const scData = (resources?.sc?.data || []) as K8sResourceKind[];
+      const csiData = (resources?.csi?.data || []) as K8sResourceKind[];
       if (loaded) {
         this.resources = {
           data: scData,
-          loadError: _.get(resources.sc, 'loadError'),
+          loadError: resources?.sc?.loadError,
           loaded,
         };
         this.validateForm();
@@ -650,19 +165,15 @@ class StorageClassFormWithTranslation extends React.Component<
     }
   }
 
-  componentDidMount() {
-    this.storageTypes = _.cloneDeep(this.defaultStorageTypes);
-  }
-
-  setParameterHandler = (param, event, checkbox) => {
+  setParameterHandler = (param: keyof Parameters, event, checkbox) => {
     const newParams = { ...this.state.newStorageClass.parameters };
     if (checkbox) {
-      newParams[param] = { value: event.target.checked };
+      newParams[param] = { value: event.target.checked } as Parameters[keyof Parameters];
     } else {
       if (event.target) {
-        newParams[param] = { value: event.target.value };
+        newParams[param] = { value: event.target.value } as Parameters[keyof Parameters];
       } else {
-        newParams[param] = { value: event };
+        newParams[param] = { value: event } as Parameters[keyof Parameters];
       }
     }
 
@@ -684,7 +195,7 @@ class StorageClassFormWithTranslation extends React.Component<
     this.updateNewStorage(param, value, true);
   }
 
-  updateNewStorage = (param, value, runValidation) => {
+  updateNewStorage = (param: keyof Parameters, value, runValidation) => {
     const newParams = {
       ...this.state.newStorageClass,
       [param]: value,
@@ -699,7 +210,10 @@ class StorageClassFormWithTranslation extends React.Component<
     const defaultParams = this.storageTypes?.[this.state?.newStorageClass?.type]?.parameters ?? {};
     const hiddenParmas = {};
     _.each(defaultParams, (values, param) => {
-      if (values.visible && !values.visible() && values.value) {
+      const isVisible = _.isFunction(values?.visible)
+        ? values.visible(defaultParams)
+        : values?.visible ?? true;
+      if (!isVisible && values.value) {
         hiddenParmas[param] = values;
       }
     });
@@ -746,7 +260,11 @@ class StorageClassFormWithTranslation extends React.Component<
         data.volumeBindingMode = volumeBindingMode;
       }
 
-      if (this.storageTypes[type].allowVolumeExpansion) {
+      const allowVolumeExpansion = this?.storageTypes?.[type]?.allowVolumeExpansion;
+      const shouldAllowVolumeExpansion = _.isFunction(allowVolumeExpansion)
+        ? allowVolumeExpansion(this.state.newStorageClass.parameters)
+        : allowVolumeExpansion;
+      if (shouldAllowVolumeExpansion) {
         data.allowVolumeExpansion = expansion;
       }
 
@@ -902,15 +420,18 @@ class StorageClassFormWithTranslation extends React.Component<
   };
 
   getProvisionerElements = () => {
-    const parameters = this.storageTypes[this.state.newStorageClass.type].parameters;
+    const parameters = this.storageTypes[this.state.newStorageClass.type]?.parameters;
 
     const dynamicContent = _.map(parameters, (parameter, key) => {
       const paramId = `storage-class-provisioner-${_.kebabCase(_.get(parameter, 'name', key))}`;
       const validationMsg = _.get(parameter, 'validationMsg', null);
       const isCheckbox = parameter.type === 'checkbox';
       const selectedKey = ['newStorageClass', 'parameters', key, 'value'];
-
-      if (parameter.visible && !parameter.visible(this.state.newStorageClass.parameters)) {
+      const visibilityProperty = parameter?.visible ?? true;
+      const isVisible = _.isFunction(visibilityProperty)
+        ? visibilityProperty(this.state.newStorageClass.parameters)
+        : visibilityProperty;
+      if (!isVisible) {
         return null;
       }
 
@@ -996,6 +517,7 @@ class StorageClassFormWithTranslation extends React.Component<
       );
     });
     const { t } = this.props;
+    const documentationLink = this.storageTypes[this.state.newStorageClass.type]?.documentationLink;
     return (
       <>
         {!_.isEmpty(parameters) && dynamicContent}
@@ -1005,9 +527,9 @@ class StorageClassFormWithTranslation extends React.Component<
           <p>
             {t('public~Specific fields for the selected provisioner.')}
             &nbsp;
-            {this.storageTypes[this.state.newStorageClass.type].documentationLink && (
+            {documentationLink && (
               <ExternalLink
-                href={this.storageTypes[this.state.newStorageClass.type].documentationLink}
+                href={documentationLink()}
                 text={t('public~What should I enter here?')}
               />
             )}
@@ -1034,8 +556,12 @@ class StorageClassFormWithTranslation extends React.Component<
       newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
     const volumeBindingModeKey =
       newStorageClass.volumeBindingMode || this.volumeBindingModes.WaitForFirstConsumer;
+    const allowVolumeExpansion = this?.storageTypes?.[newStorageClass.type]?.allowVolumeExpansion;
     const expansionFlag =
-      newStorageClass.type && this.storageTypes[newStorageClass.type].allowVolumeExpansion;
+      newStorageClass.type &&
+      (_.isFunction(allowVolumeExpansion)
+        ? allowVolumeExpansion(this.state.newStorageClass.parameters)
+        : allowVolumeExpansion);
     const allowExpansion = expansionFlag ? newStorageClass.expansion : false;
 
     return (
@@ -1223,19 +749,20 @@ type WithTranslation = {
 };
 
 export type StorageClassFormProps = WithTranslation &
-  StorageClassFormExtensionProps &
   StateProps &
   DispatchProps & {
     resources?: {
       [key: string]: FirehoseResult;
     };
+  } & {
+    extensions?: [ResolvedExtension<StorageClassProvisioner>[], boolean, any[]];
   };
 
 export type StorageClassData = {
   name: string;
   type: string;
   description: string;
-  parameters: any;
+  parameters: Parameters;
   reclaim: string;
   volumeBindingMode: string;
   expansion: boolean;
@@ -1269,16 +796,11 @@ export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(
-  withTranslation()(
-    withExtensions<StorageClassFormExtensionProps, Extension, StorageClassFormProps>({
-      params: isStorageClassProvisioner,
-    })(StorageClassFormWithTranslation),
-  ),
+  withTranslation()<StateProps & DispatchProps & WithTranslation>((props) => {
+    const extensions = useResolvedExtensions<StorageClassProvisioner>(isStorageClassProvisioner);
+    return <StorageClassFormWithTranslation extensions={extensions} {...props} />;
+  }),
 );
-
-export type StorageClassFormExtensionProps = {
-  params: StorageClassProvisioner[];
-};
 
 export const StorageClassForm = (props) => {
   const resources = [

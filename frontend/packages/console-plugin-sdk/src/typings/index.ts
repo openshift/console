@@ -9,7 +9,6 @@ export * from './overview';
 export * from './pages';
 export * from './global-configs';
 export * from './horizontal-nav';
-export * from './storage-class-params';
 export * from './guided-tour';
 export * from './post-form-submit';
 export * from './detail-page-bread-crumbs';

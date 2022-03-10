@@ -1,4 +1,3 @@
-import { ExtensionSCProvisionerProp } from '@console/plugin-sdk';
 import {
   CephFsNameComponent,
   PoolResourceComponent,
@@ -8,7 +7,7 @@ import {
 import { ThickProvision } from '../components/ocs-storage-class-form/ocs-thick-provisioner';
 import { CEPH_STORAGE_NAMESPACE } from '../constants';
 
-export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.freeze({
+export const StorageClassFormProvisoners = Object.freeze({
   csi: {
     'openshift-storage.rbd.csi.ceph.com': {
       title: 'Ceph RBD',
