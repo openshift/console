@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
+import {
+  SidebarSectionHeading,
+  ResourceLink,
+  ExternalLink,
+} from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, PodKind, podPhase } from '@console/internal/module/k8s';
 import { AllPodStatus } from '@console/shared/src';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
@@ -14,27 +18,43 @@ export const EventSinkOutputTargetSection: React.FC<{ resource: K8sResourceKind 
 }) => {
   const { t } = useTranslation();
   const target = resource?.spec?.source?.ref;
-  const reference = referenceFor(target);
+  const reference = target && referenceFor(target);
+  const sinkUri = resource?.spec?.source?.uri;
+
+  if (!reference && !sinkUri) {
+    return (
+      <span data-test="event-sink-text" className="text-muted">
+        {t('knative-plugin~No output target found for this resource.')}
+      </span>
+    );
+  }
+
   return (
     <>
       <SidebarSectionHeading text={t('knative-plugin~Output Target')} />
-      {target ? (
-        <ul className="list-group">
-          <li className="list-group-item">
-            {target && (
-              <ResourceLink
-                kind={reference}
-                name={target.name}
-                namespace={resource.metadata.namespace}
+      <ul className="list-group">
+        <li className="list-group-item">
+          {reference ? (
+            <ResourceLink
+              kind={reference}
+              name={target.name}
+              namespace={resource.metadata.namespace}
+              dataTest="event-sink-sb-res"
+            />
+          ) : (
+            <>
+              <span data-test="event-sink-target-uri" className="text-muted">
+                {t('knative-plugin~Target URI:')}{' '}
+              </span>
+              <ExternalLink
+                href={sinkUri}
+                additionalClassName="co-external-link--block"
+                text={sinkUri}
               />
-            )}
-          </li>
-        </ul>
-      ) : (
-        <span className="text-muted">
-          {t('knative-plugin~No output target found for this resource.')}
-        </span>
-      )}
+            </>
+          )}
+        </li>
+      </ul>
     </>
   );
 };
