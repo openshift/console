@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
+import { throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { coFetchText } from '@console/internal/co-fetch';
 import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
@@ -34,20 +35,32 @@ const Logs: React.FC<LogsProps> = ({
   const [error, setError] = React.useState<boolean>(false);
   const resourceStatusRef = React.useRef<string>(resourceStatus);
   const onCompleteRef = React.useRef<(name) => void>();
+  const blockContentRef = React.useRef<string>('');
   onCompleteRef.current = onComplete;
+
+  const addContentAndScroll = React.useCallback(
+    throttle(() => {
+      if (contentRef.current) {
+        contentRef.current.innerText += blockContentRef.current;
+      }
+      if (scrollToRef.current) {
+        scrollToRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+      blockContentRef.current = '';
+    }, 300),
+    [],
+  );
 
   const appendMessage = React.useRef<(blockContent) => void>();
 
   appendMessage.current = React.useCallback(
     (blockContent: string) => {
-      if (contentRef.current && blockContent) {
-        contentRef.current.innerText += blockContent;
-      }
+      blockContentRef.current += blockContent;
       if (scrollToRef.current && blockContent && render && autoScroll) {
-        scrollToRef.current.scrollIntoView({ behavior: 'smooth' });
+        addContentAndScroll();
       }
     },
-    [autoScroll, render],
+    [autoScroll, render, addContentAndScroll],
   );
 
   if (resourceStatusRef.current !== resourceStatus) {
@@ -108,9 +121,9 @@ const Logs: React.FC<LogsProps> = ({
 
   React.useEffect(() => {
     if (scrollToRef.current && render && autoScroll) {
-      scrollToRef.current.scrollIntoView({ behavior: 'smooth' });
+      addContentAndScroll();
     }
-  }, [autoScroll, render]);
+  }, [autoScroll, render, addContentAndScroll]);
 
   return (
     <div className="odc-logs" style={{ display: render ? '' : 'none' }}>
