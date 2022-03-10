@@ -11,10 +11,9 @@ Feature: Secrets
         @smoke
         Scenario Outline: Add Secrets: P-08-TC01
             Given user has created pipeline "<pipeline_name>" with git resources
-              And user is at pipelines page
-             When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
-              And user clicks on Show Credentials link present in Start Pipeline modal
-              And user clicks on "Add Secret" link
+              And user is at Start Pipeline modal for pipeline "<pipeline_name>"
+             When user clicks on Show Credentials link present in Start Pipeline modal
+              And user clicks on Add Secret link
              Then user is able to see Create Source Secret section
               And user is able to see Secret Name, Access to, Server UrL fields and authentication type fields
 
@@ -47,6 +46,8 @@ Feature: Secrets
             Given user has created pipeline "<pipeline_name>" with git resources
               And user is at Start Pipeline modal for pipeline "<pipeline_name>"
              When user enters URL, Revision as "<git_private_repo_url>" and "master"
+              And user clicks on Show Credentials link present in Start Pipeline modal
+              And user clicks on Add Secret link
               And user enters Secret Name as "<secret_name>"
               And user selects the "Git Server" option from accessTo drop down
               And user selects the Authentication type as "SSH Key"
@@ -65,6 +66,8 @@ Feature: Secrets
             Given user has created pipeline "<pipeline_name>" with git resources
               And user is at Start Pipeline modal for pipeline "<pipeline_name>"
              When user enters URL, Revision as "<git_private_repo_url>" and "master"
+              And user clicks on Show Credentials link present in Start Pipeline modal
+              And user clicks on Add Secret link
               And user enters Secret Name as "<secret_name>"
               And user selects the "Image Registry" option from accessTo drop down
               And user selects the Authentication type as "Image Registry Credentials"

@@ -1,7 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineActions } from '../../constants';
 import { pipelinesPO } from '../../page-objects/pipelines-po';
 import { pipelinesPage, startPipelineInPipelinesPage, pipelineBuilderPage } from '../../pages';
@@ -38,6 +38,7 @@ Given('user is at Start Pipeline modal for pipeline {string}', (pipelineName: st
   pipelinesPage.search(pipelineName);
   pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');
+  app.waitForLoad();
 });
 
 When('user enters URL, Revision as {string} and {string}', (gitUrl: string, revision: string) => {
@@ -49,7 +50,7 @@ When('user enters Secret Name as {string}', (secretName: string) => {
 });
 
 When('user clicks on Add Secret link', () => {
-  cy.byButtonText('Add Secret').click();
+  cy.contains('Add Secret').click({ force: true });
 });
 
 When('user selects the {string} option from accessTo drop down', (option: string) => {
@@ -81,12 +82,8 @@ When('user clicks on tick mark', () => {
 
 Then('{string} is added under secrets section', (secretName: string) => {
   cy.get(pipelinesPO.startPipeline.advancedOptions.tickIcon).should('not.exist');
-  cy.get('.odc-secrets-list').then(($secretsList) => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
-    if ($secretsList.find('span.co-resource-item').length) {
-      cy.byLegacyTestID(secretName).should('be.visible');
-    }
+  cy.get('.odc-secrets-list').within(() => {
+    cy.byLegacyTestID(secretName).should('be.visible');
   });
   startPipelineInPipelinesPage.clickCancel();
 });

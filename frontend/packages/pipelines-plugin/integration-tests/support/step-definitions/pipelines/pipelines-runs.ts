@@ -69,11 +69,11 @@ Then(
 );
 
 Then('user is able to see the pipelineRuns with status as Running', () => {
-  pipelineRunDetailsPage.fieldDetails('Status', 'Running');
+  cy.get(pipelineRunsPO.pipelineRunsTable.status).should('contain.text', 'Running');
 });
 
 Then('user is able to see the pipelineRuns with status as Succeeded', () => {
-  pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
+  cy.get(pipelineRunsPO.pipelineRunsTable.status).should('contain.text', 'Succeeded');
 });
 
 Then(
@@ -223,8 +223,8 @@ When('user selects Rerun option from the Actions menu', () => {
   pipelineRunDetailsPage.selectFromActionsDropdown(pipelineActions.Rerun);
 });
 
-Then('status displays as {string} in pipeline run details page', (PipelineStatus: string) => {
-  pipelineRunDetailsPage.fieldDetails('Status', PipelineStatus);
+Then('status displays as {string} in pipeline run details page', (pipelineStatus: string) => {
+  cy.get(pipelineRunsPO.pipelineRunsTable.status).should('contain.text', pipelineStatus);
 });
 
 Then('user will be redirected to Pipeline Run Details page', () => {

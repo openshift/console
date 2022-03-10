@@ -6,6 +6,7 @@ Feature: Create Pipeline using YAML Editor on Pipelines page
             Given user has created or selected namespace "aut-pipelines"
 
 
+        @regression
         Scenario Outline: Create pipeline using YAML and YAML Editor: PU-01-TC01
             Given user is at "YAML View" on Pipeline Builder page
              When user creates pipeline resource using YAML editor from "<pipeline_yaml>"

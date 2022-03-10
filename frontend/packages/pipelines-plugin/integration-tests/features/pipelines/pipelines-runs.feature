@@ -266,7 +266,6 @@ Feature: Pipeline Runs
               And user navigates to Workspaces section
               And user selects "VolumeClaimTemplate" option from workspace dropdown
               And user clicks Show VolumeClaimTemplate options
-              And user selects StorageClass as "gp2"
               And user clicks on Start
              Then user will be redirected to Pipeline Run Details page
               And user will see VolumeClaimTemplate Workspace in Pipeline Run Details page

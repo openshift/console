@@ -53,8 +53,7 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
 
   yarn run test-cypress-dev-console-nightly
   yarn run test-cypress-helm-nightly
-  # heavily unstable/outdated tests in pipelines
-  # yarn run test-cypress-pipelines-nightly
+  yarn run test-cypress-pipelines-nightly
   yarn run test-cypress-topology-nightly
   yarn run test-cypress-knative-nightly
 

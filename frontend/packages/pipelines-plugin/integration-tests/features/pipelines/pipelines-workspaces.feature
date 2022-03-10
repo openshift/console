@@ -43,6 +43,7 @@ Feature: Workspaces
              Then user will see Config Map Workspace "test-motd" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
+        @regression
         Scenario: Start the pipeline with Secret: P-10-TC05
             Given user created pipeline "test-secret-pipeline" with workspace
               And user created Secret using yaml "pipeline-secret.yaml"
@@ -53,7 +54,8 @@ Feature: Workspaces
              Then user will be redirected to Pipeline Run Details page
               And user will see Secret Workspace "secret-password" mentioned in the Workspace Resources section of Pipeline Run Details page
 
-
+        
+        @regression
         Scenario: Start the pipeline with PVC: P-10-TC06
             Given user created pipeline "test-pvc-pipeline" with workspace
               And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"

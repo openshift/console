@@ -91,7 +91,7 @@ Feature: Create the pipeline from builder page
                   # | p-cluster     | task-cluster           | Cluster       | cluster repo  |
 
 
-        @regression
+        @regression @to-do
         Scenario: Add Parameters to the pipeline in pipeline builder page: P-02-TC06
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-params"
