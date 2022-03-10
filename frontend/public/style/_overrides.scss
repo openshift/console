@@ -315,6 +315,10 @@ ul.pf-c-tree-view__list {
   font-size: $font-size-base !important;
 }
 
+.pf-topology-content {
+  background-color: var(--pf-global--BackgroundColor--200);
+}
+
 // TODO Remove this override when skip to content CSS is figured out.
 .pf-c-skip-to-content {
   position: absolute !important;
