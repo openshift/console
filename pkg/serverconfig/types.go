@@ -63,10 +63,10 @@ type MonitoringInfo struct {
 
 // ClusterInfo holds information the about the cluster such as master public URL and console public URL.
 type ClusterInfo struct {
-	ConsoleBaseAddress  string                `yaml:"consoleBaseAddress,omitempty"`
-	ConsoleBasePath     string                `yaml:"consoleBasePath,omitempty"`
-	MasterPublicURL     string                `yaml:"masterPublicURL,omitempty"`
-	ControlPlaneToplogy configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
+	ConsoleBaseAddress   string                `yaml:"consoleBaseAddress,omitempty"`
+	ConsoleBasePath      string                `yaml:"consoleBasePath,omitempty"`
+	MasterPublicURL      string                `yaml:"masterPublicURL,omitempty"`
+	ControlPlaneTopology configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
 }
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".

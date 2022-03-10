@@ -190,6 +190,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	if clusterInfo.MasterPublicURL != "" {
 		fs.Set("k8s-public-endpoint", clusterInfo.MasterPublicURL)
 	}
+
+	if clusterInfo.ControlPlaneTopology != "" {
+		fs.Set("control-plane-topology-mode", string(clusterInfo.ControlPlaneTopology))
+	}
 }
 
 func addAuth(fs *flag.FlagSet, auth *Auth) {
