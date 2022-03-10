@@ -12,7 +12,7 @@
     flex: 1;
 
     &.is-dark {
-      background-color: var(--pf-global--BackgroundColor--200);
+      background: var(--pf-global--palette--black-150);
     }
   }
 
