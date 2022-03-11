@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormGroup, Form, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
-import { resourcePathFromModel, BreadCrumbs } from '@console/internal/components/utils';
+import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { history } from '@console/internal/components/utils/router';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
@@ -79,19 +79,11 @@ export const CreateLocalVolumeDiscovery: React.FC<CreateLocalVolumeDiscoveryProp
 
   return (
     <>
-      <div className="co-create-operand__breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            {
-              name: t('lso-plugin~Local Storage'),
-              path: resourcePath,
-            },
-            { name: t('lso-plugin~Create Local Volume Discovery'), path: '' },
-          ]}
-        />
-      </div>
       <div className="co-create-operand__header">
-        <LocalVolumeDiscoveryHeader variant={TextVariants.h1} />
+        <LocalVolumeDiscoveryHeader
+          variant={TextVariants.h1}
+          className="co-create-operand__header-text"
+        />
       </div>
       <Form
         noValidate={false}

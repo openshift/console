@@ -6,7 +6,7 @@ import {
   referenceForModel,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { history, BreadCrumbs } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils';
 import { RadioGroup } from '@console/internal/components/radio';
 import { InfrastructureModel, StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -40,7 +40,6 @@ const INDEP_MODE_SUPPORTED_PLATFORMS = [
 const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const {
     params: { ns, appName },
-    url,
   } = match;
   const csvResource = {
     kind: referenceForModel(ClusterServiceVersionModel),
@@ -54,7 +53,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     null,
   );
   const [downloadFile, setDownloadFile] = React.useState(null);
-  const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const [csv, csvLoaded, csvError] = useK8sWatchResource<ClusterServiceVersionKind>(csvResource);
   const [infra, infraLoaded, infraError] = useK8sGet<any>(InfrastructureModel, 'cluster');
   const [storageCluster] = useK8sGet<ListKind<StorageClusterKind>>(
@@ -75,7 +73,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
         getAnnotations(memoizedCSV)?.['external.features.ocs.openshift.io/export-script'],
       );
       setDownloadFile(file);
-      setClusterServiceVersion(memoizedCSV);
     }
   }, [memoizedCSV, csvLoaded, csvError]);
 
@@ -136,22 +133,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
 
   return (
     <>
-      <div className="co-create-operand__breadcrumbs">
-        {clusterServiceVersion !== null && (
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: clusterServiceVersion.spec.displayName,
-                path: url.replace('/~new', ''),
-              },
-              {
-                name: t('ceph-storage-plugin~Create StorageCluster'),
-                path: url,
-              },
-            ]}
-          />
-        )}
-      </div>
       <div className="co-create-operand__header">
         <h1 className="co-create-operand__header-text">
           {t('ceph-storage-plugin~Create StorageCluster')}

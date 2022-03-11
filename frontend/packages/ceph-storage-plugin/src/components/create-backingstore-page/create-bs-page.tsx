@@ -3,18 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { Alert, AlertActionCloseButton, Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
-import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import CreateBackingStoreForm from './create-bs';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
-import { ODF_MODEL_FLAG } from '../../constants';
 
 const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const [showHelp, setShowHelp] = React.useState(true);
   const { ns, appName } = match.params;
-  const isODF = useFlag(ODF_MODEL_FLAG);
 
   const onCancel = () => {
     history.goBack();
@@ -22,28 +17,15 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
 
   return (
     <>
-      <div className="co-create-operand__breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            {
-              name: isODF ? 'OpenShift Data Foundation' : 'OpenShift Container Storage',
-              path: isODF ? '/odf' : resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
-            },
-            { name: t('ceph-storage-plugin~Create BackingStore '), path: match.url },
-          ]}
-        />
-      </div>
       <div className="co-create-operand__header">
-        <div className="nb-endpoints-page-title">
-          <Title size="2xl" headingLevel="h1" className="nb-endpoints-page-title__main">
-            {t('ceph-storage-plugin~Create new BackingStore ')}
-          </Title>
-          <p className="nb-endpoints-page-title__info">
-            {t(
-              'ceph-storage-plugin~Storage targets that are used to store chunks of data on Multicloud Object Gateway buckets.',
-            )}
-          </p>
-        </div>
+        <Title size="2xl" headingLevel="h1" className="co-create-operand__header-text">
+          {t('ceph-storage-plugin~Create new BackingStore ')}
+        </Title>
+        <p className="help-block">
+          {t(
+            'ceph-storage-plugin~Storage targets that are used to store chunks of data on Multicloud Object Gateway buckets.',
+          )}
+        </p>
       </div>
       <div className="nb-endpoints-page">
         {showHelp && (

@@ -4,7 +4,6 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import { CreateYAML } from '@console/internal/components/create-yaml';
-import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
@@ -17,12 +16,7 @@ import {
   testModel,
   testCRD,
 } from '../../../mocks';
-import { ClusterServiceVersionModel } from '../../models';
-import CreateOperandPage, {
-  CreateOperand,
-  CreateOperandPageProps,
-  CreateOperandProps,
-} from './create-operand';
+import { CreateOperand, CreateOperandProps } from './create-operand';
 import { OperandForm, OperandFormProps } from './operand-form';
 import { OperandYAML, OperandYAMLProps } from './operand-yaml';
 import Spy = jasmine.Spy;
@@ -92,34 +86,6 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
     ).toEqual('Edit YAML');
     expect(wrapper.find(OperandYAML).exists()).toBe(false);
     expect(wrapper.find(OperandForm).exists()).toBe(true);
-  });
-});
-
-describe('CreateOperandPage', () => {
-  let wrapper: ShallowWrapper<CreateOperandPageProps>;
-
-  beforeEach(() => {
-    const match = {
-      params: { csvName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
-      isExact: true,
-      url: '',
-      path: '',
-    };
-    wrapper = shallow(<CreateOperandPage match={match} />);
-  });
-
-  it('renders breadcrumb links for given ClusterServiceVersion', () => {
-    expect(wrapper.find(BreadCrumbs).props().breadcrumbs).toEqual([
-      {
-        name: testClusterServiceVersion.spec.displayName,
-        path: resourcePathFromModel(
-          ClusterServiceVersionModel,
-          testClusterServiceVersion.metadata.name,
-          testClusterServiceVersion.metadata.namespace,
-        ),
-      },
-      { name: 'Create Test Resource', path: window.location.pathname },
-    ]);
   });
 });
 

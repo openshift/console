@@ -18,7 +18,7 @@ import {
 import { StorageSystemKind } from '../../types';
 import { StorageSystemModel } from '../../models';
 
-const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
+const CreateStorageSystem: React.FC<CreateStorageSystemProps> = () => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer<WizardReducer>(reducer, initialState);
   const [ssList, ssLoaded, ssLoadError] = useK8sGet<ListKind<StorageSystemKind>>(
@@ -26,8 +26,6 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
   );
   const [infra, infraLoaded, infraLoadError] = useK8sGet<any>(InfrastructureModel, 'cluster');
   const infraType = infra?.spec?.platformSpec?.type;
-
-  const { url } = match;
 
   let wizardSteps: WizardStep[] = [];
   let hasOCS: boolean = false;
@@ -59,7 +57,7 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
 
   return (
     <>
-      <CreateStorageSystemHeader url={url} />
+      <CreateStorageSystemHeader />
       <Wizard
         steps={steps}
         footer={
