@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import SourceUriResourcesGroup from './form-fields/SourceUriResourcesGroup';
+import SourceResources from './form-fields/SourceResources';
 
 interface SourceSectionProps {
   namespace: string;
@@ -25,12 +25,12 @@ const SourceSection: React.FC<SourceSectionProps> = ({ namespace, fullWidth }) =
         </>
       }
       subTitle={t(
-        'knative-plugin~Add an input target to route cloud events from a Channel, Broker, Event sources or another route.',
+        'knative-plugin~Add an input target to route cloud events from a Channel or Broker',
       )}
       extraMargin
       fullWidth={fullWidth}
     >
-      <SourceUriResourcesGroup namespace={namespace} />
+      <SourceResources namespace={namespace} />
     </FormSection>
   );
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
-import { useFormikContext, FormikValues, useField } from 'formik';
+import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,6 @@ import { getFieldId, ResourceDropdownField } from '@console/shared';
 import { EventingContextType, EventingContext } from '../../../../topology/eventing-context';
 import { knativeEventingResourcesBroker } from '../../../../utils/get-knative-resources';
 import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
-import { SinkType } from '../../import-types';
 
 export interface SourceResourcesProps {
   namespace: string;
@@ -18,7 +17,6 @@ export interface SourceResourcesProps {
 
 const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink }) => {
   const {
-    eventSourceData: { eventSourceModels, loaded: esLoaded },
     channelsData: { eventSourceChannels, loaded: chLoaded },
   } = React.useContext<EventingContextType>(EventingContext);
   const { t } = useTranslation();
@@ -26,19 +24,11 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
   const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
     FormikValues
   >();
-  const [, { touched: sinkTypeTouched }] = useField('formData.sourceType');
 
   const [resourcesData, setResouceData] = React.useState<FirehoseResource[]>([]);
   React.useEffect(() => {
-    if (esLoaded && chLoaded && resourcesData.length === 0) {
+    if (chLoaded && resourcesData.length === 0) {
       setResouceData([
-        ...eventSourceModels.map((model) => ({
-          isList: true,
-          kind: referenceForModel(model),
-          namespace,
-          prop: referenceForModel(model),
-          optional: true,
-        })),
         ...eventSourceChannels.map((model) => ({
           isList: true,
           kind: referenceForModel(model),
@@ -50,7 +40,7 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
       ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chLoaded, esLoaded, namespace]);
+  }, [chLoaded, namespace]);
 
   const autocompleteFilter = (strText: string, item: React.ReactElement): boolean =>
     fuzzy(strText, item?.props?.name);
@@ -77,10 +67,6 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
   const handleOnLoad = (resourceList: { [key: string]: string }) => {
     if (isEmpty(resourceList)) {
       setResourceAlert(true);
-      if (!sinkTypeTouched) {
-        setFieldValue('formData.sourceType', SinkType.Uri);
-        setFieldTouched('formData.sourceType', true);
-      }
     } else {
       setResourceAlert(false);
     }
@@ -102,9 +88,7 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
       {resourceAlert && (
         <>
           <Alert variant="default" title={t('knative-plugin~No resources available')} isInline>
-            {t(
-              'knative-plugin~Select the URI option, or exit this form and create an Event source, Broker, or Channel first.',
-            )}
+            {t('knative-plugin~Exit this form and create a Broker, or Channel first.')}
           </Alert>
           &nbsp;
         </>

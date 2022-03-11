@@ -30,12 +30,7 @@ import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import { EVENT_SOURCES_APP } from './const';
 import { eventSinkValidationSchema } from './eventSink-validation-utils';
 import EventSinkForm from './EventSinkForm';
-import {
-  SinkType,
-  KnEventCatalogMetaData,
-  EventSinkFormData,
-  EventSinkSyncFormData,
-} from './import-types';
+import { KnEventCatalogMetaData, EventSinkFormData, EventSinkSyncFormData } from './import-types';
 import KnEventMetaDescription from './KnEventMetaDescription';
 
 interface EventSinkProps {
@@ -82,13 +77,11 @@ const EventSink: React.FC<EventSinkProps> = ({
     },
     name: sinkName,
     apiVersion: sinkApiVersion,
-    sourceType: SinkType.Resource,
     source: {
       apiVersion: sourceApiVersion,
       kind: sourceKind,
       name: sourceName,
       key: craftResourceKey(sourceName, { kind: sourceKind, apiVersion: sourceGroupVersionKind }),
-      uri: '',
     },
     type: CamelKameletBindingModel.kind,
     data: sinkData,

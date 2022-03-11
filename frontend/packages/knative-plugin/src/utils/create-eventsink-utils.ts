@@ -7,7 +7,8 @@ import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
-import { EventSinkFormData, EventSinkSyncFormData, SinkType } from '../components/add/import-types';
+import { EventSinkFormData, EventSinkSyncFormData } from '../components/add/import-types';
+import { craftResourceKey } from '../components/pub-sub/pub-sub-utils';
 import { loadYamlData } from './create-eventsources-utils';
 
 export const getEventSinksDepResource = (formData: EventSinkFormData): K8sResourceKind => {
@@ -18,18 +19,12 @@ export const getEventSinksDepResource = (formData: EventSinkFormData): K8sResour
     application: { name: applicationName },
     project: { name: namespace },
     data,
-    sourceType,
     source,
   } = formData;
 
   const defaultLabel = getAppLabels({ name, applicationName });
   const eventSrcData = data[type];
-  const {
-    name: sourceName,
-    kind: sourceKind,
-    apiVersion: sourceApiVersion,
-    uri: sourceUri,
-  } = source;
+  const { name: sourceName, kind: sourceKind, apiVersion: sourceApiVersion } = source;
   const eventSourceResource: K8sResourceKind = {
     apiVersion,
     kind: type,
@@ -43,21 +38,17 @@ export const getEventSinksDepResource = (formData: EventSinkFormData): K8sResour
     },
     spec: {
       ...(eventSrcData && eventSrcData),
-      ...(sourceType === SinkType.Resource && sourceName && sourceApiVersion && sourceKind
-        ? {
-            source: {
-              ref: {
-                apiVersion: sourceApiVersion,
-                kind: sourceKind,
-                name: sourceName,
-              },
+      ...(sourceName &&
+        sourceApiVersion &&
+        sourceKind && {
+          source: {
+            ref: {
+              apiVersion: sourceApiVersion,
+              kind: sourceKind,
+              name: sourceName,
             },
-          }
-        : {
-            source: {
-              uri: sourceUri,
-            },
-          }),
+          },
+        }),
     },
   };
 
@@ -89,10 +80,11 @@ export const sanitizeSinkToForm = (
   newFormData: K8sResourceKind,
   formDataValues: EventSinkFormData,
   kameletSink?: K8sResourceKind,
-) => {
+): EventSinkFormData => {
   const specData = newFormData.spec;
+  const { ref: sourceRef } = specData?.source || {};
   const appGroupName = newFormData.metadata?.labels?.['app.kubernetes.io/part-of'];
-  const formData = {
+  const formData: EventSinkFormData = {
     ...formDataValues,
     application: {
       ...formDataValues.application,
@@ -107,14 +99,16 @@ export const sanitizeSinkToForm = (
       }),
     },
     name: newFormData.metadata?.name,
-    sourceType: specData?.source?.ref ? SinkType.Resource : SinkType.Uri,
-    sink: {
-      apiVersion: specData?.sink?.ref?.apiVersion,
-      kind: specData?.sink?.ref?.kind,
-      name: specData?.sink?.ref?.name,
-      key: `${specData?.sink?.ref?.kind}-${specData?.sink?.ref?.name}`,
-      uri: specData?.sink?.uri || '',
-    },
+    ...(sourceRef?.name &&
+      sourceRef?.kind &&
+      sourceRef?.apiVersion && {
+        source: {
+          apiVersion: sourceRef.apiVersion,
+          kind: sourceRef.kind,
+          name: sourceRef.name,
+          key: craftResourceKey(sourceRef.name, sourceRef),
+        },
+      }),
     data: {
       [formDataValues.type]: {
         ..._.omit(specData, 'source'),
