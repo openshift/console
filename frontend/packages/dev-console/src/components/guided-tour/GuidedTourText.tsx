@@ -70,7 +70,7 @@ export const SearchTourText: React.FC = () => {
 
 export const searchTourText = <SearchTourText />;
 
-const FinishTourText: React.FC = () => {
+export const FinishTourText: React.FC = () => {
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -86,11 +86,21 @@ const FinishTourText: React.FC = () => {
   return (
     <Trans t={t} ns="devconsole">
       Stay up-to-date with everything OpenShift on our{' '}
-      <a href={openshiftBlogLink} target="_blank" rel="noopener noreferrer">
+      <a
+        href={openshiftBlogLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-test="openshift-blog-link"
+      >
         blog
       </a>{' '}
       or continue to learn more in our{' '}
-      <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">
+      <a
+        href={openshiftHelpBase}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-test="openshift-docs-link"
+      >
         documentation
       </a>
       .
