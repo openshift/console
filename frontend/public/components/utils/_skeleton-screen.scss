@@ -1,23 +1,23 @@
 @import '~@console/shared/src/styles/skeleton-screen';
 
 $skeleton-detail-bone-height: $skeleton-bone-height-1line;
-$skeleton-detail-bone: linear-gradient(white $skeleton-detail-bone-height, transparent 0);
+$skeleton-detail-bone: linear-gradient($skeleton-color $skeleton-detail-bone-height, transparent 0);
 
-$skeleton-detail-position: 15px 35px; // declared out of alpha order to be reused
+$skeleton-detail-position: 0 35px; // declared out of alpha order to be reused
 
 $skeleton-detail-data-position: $skeleton-detail-position;
 $skeleton-detail-data-size: 200px $skeleton-detail-bone-height;
 
-$skeleton-detail-label: linear-gradient(white ($skeleton-detail-bone-height * 2), transparent 0);
+$skeleton-detail-label: linear-gradient($skeleton-color ($skeleton-detail-bone-height * 2), transparent 0);
 $skeleton-detail-label-position: $skeleton-detail-position;
 $skeleton-detail-label-size: 90% 75px;
 
-$skeleton-detail-name-position: 15px 15px;
+$skeleton-detail-name-position: 0 15px;
 $skeleton-detail-name-size: 80px 15px;
 
-$skeleton-detail-resource-position: 45px 35px;
+$skeleton-detail-resource-position: 30px 35px;
 $skeleton-detail-resource-size: 75%;
-$skeleton-detail-resource-icon: radial-gradient(circle 12px at center, white 100%, transparent 0);
+$skeleton-detail-resource-icon: radial-gradient(circle 12px at center, $skeleton-color 100%, transparent 0);
 $skeleton-detail-resource-icon-position: $skeleton-detail-position;
 $skeleton-detail-resource-icon-size: $skeleton-detail-bone-height $skeleton-detail-bone-height;
 
@@ -27,11 +27,11 @@ $skeleton-overview-tile-padding: 24px;
 
 $skeleton-overview-icon-size: 24px;
 $skeleton-overview-icon-position: 15px $skeleton-overview-tile-padding;
-$skeleton-overview-icon-bone: radial-gradient(circle 12px at center, white 100%, transparent 0);
+$skeleton-overview-icon-bone: radial-gradient(circle 12px at center, $skeleton-color 100%, transparent 0);
 
 $skeleton-overview-meta-height: 24px;
 $skeleton-overview-meta-position: 96% $skeleton-overview-tile-padding;
-$skeleton-overview-meta-bone: linear-gradient(white $skeleton-overview-meta-height, transparent 0);
+$skeleton-overview-meta-bone: linear-gradient($skeleton-color $skeleton-overview-meta-height, transparent 0);
 $skeleton-overview-meta-width: 75px;
 
 $skeleton-overview-tile-bone: linear-gradient(
@@ -42,23 +42,23 @@ $skeleton-overview-tile-bone: linear-gradient(
 $skeleton-overview-title-height: 24px;
 $skeleton-overview-title-position: 50px $skeleton-overview-tile-padding;
 $skeleton-overview-title-bone: linear-gradient(
-  white $skeleton-overview-title-height,
+  $skeleton-color $skeleton-overview-title-height,
   transparent 0
 );
 $skeleton-overview-title-width: 38%;
 
 $skeleton-tile-height: 240px; // height of catalog tiles
 $skeleton-tile-padding: 24px;
-$skeleton-tile-bone: linear-gradient($skeleton-color $skeleton-tile-height, transparent 0);
+$skeleton-tile-bone: linear-gradient($skeleton-color--300 $skeleton-tile-height, transparent 0);
 
-$skeleton-tile-logo-bone: radial-gradient(circle 20px at center, #fff 100%, transparent 0);
+$skeleton-tile-logo-bone: radial-gradient(circle 20px at center, $skeleton-color 100%, transparent 0);
 $skeleton-tile-logo-position: $skeleton-tile-padding $skeleton-tile-padding;
 $skeleton-tile-logo-size: 46px;
 
 $skeleton-tile-title-height: 32px;
 $skeleton-tile-title-position: $skeleton-tile-padding 75px;
 $skeleton-tile-title-width: 142px;
-$skeleton-tile-title-bone: linear-gradient(#fff $skeleton-tile-title-height, transparent 0);
+$skeleton-tile-title-bone: linear-gradient($skeleton-color $skeleton-tile-title-height, transparent 0);
 
 $skeleton-tile-desc-line-height: 14px;
 $skeleton-tile-desc-line-1-width: 168px;
@@ -69,7 +69,7 @@ $skeleton-tile-desc-line-3-width: 185px;
 $skeleton-tile-desc-line-3-position: $skeleton-tile-padding 172px;
 $skeleton-tile-desc-line-4-width: 125px;
 $skeleton-tile-desc-line-4-position: $skeleton-tile-padding 192px;
-$skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-height, transparent 0);
+$skeleton-tile-desc-line-bone: linear-gradient($skeleton-color $skeleton-tile-desc-line-height, transparent 0);
 
 @keyframes loading-skeleton {
   0% {
@@ -193,7 +193,6 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 
 .skeleton-detail-view--tile {
   animation: $skeleton-animation;
-  background: $skeleton-color;
   height: 75px;
   opacity: 0;
   width: 95%;

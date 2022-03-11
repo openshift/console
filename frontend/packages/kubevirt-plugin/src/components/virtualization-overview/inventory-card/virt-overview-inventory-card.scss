@@ -1,6 +1,6 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
-$skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
-$skeleton-color: #eaedf1;
+@import '../../../../../console-shared/src/styles/skeleton-screen.scss';
+
 
 .kv-inventory-card__body {
   padding: 0;
