@@ -1,3 +1,4 @@
+import { K8sResourceKind } from '../app/k8s/actions/k8s';
 import {
   K8sResourceCommon,
   FirehoseResult,
@@ -8,7 +9,7 @@ import {
   TopConsumerPopoverProps,
   LIMIT_STATE,
 } from '../extensions/console-types';
-import { K8sModel, Alert } from './common-types';
+import { K8sModel, Alert, K8sKind } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
   className?: string;
@@ -249,3 +250,54 @@ export enum ActionMenuVariant {
   KEBAB = 'plain',
   DROPDOWN = 'default',
 }
+
+export type HandlePromiseProps = {
+  handlePromise: <T>(
+    promise: Promise<T>,
+    onFulfill?: (res) => void,
+    onError?: (errorMsg: string) => void,
+  ) => void;
+  inProgress: boolean;
+  errorMessage: string;
+};
+
+export type TagsModalProps = {
+  tags?: { [key: string]: string };
+  path: string;
+  titleKey: string;
+  kind: K8sKind;
+  resource: K8sResourceKind;
+  inProgress: boolean;
+  errorMessage: string;
+  cancel?: () => void;
+  close?: () => void;
+} & HandlePromiseProps;
+
+export type LabelsModalProps = {
+  kind: K8sKind;
+  resource: K8sResourceKind;
+  blocking: boolean;
+  errorMessage: string;
+  cancel?: () => void;
+  close?: () => void;
+} & HandlePromiseProps;
+
+export type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags'>;
+
+export type CreateModalLauncherProps = {
+  blocking?: boolean;
+  modalClassName?: string;
+};
+
+export type ModalComponentProps = {
+  cancel?: () => void;
+  close?: () => void;
+};
+
+export type CreateModalLauncherResult<P extends ModalComponentProps> = (
+  props: P & CreateModalLauncherProps,
+) => { result: Promise<{}> };
+
+export type CreateModalLauncher = <P extends ModalComponentProps>(
+  C: React.ComponentType<P>,
+) => CreateModalLauncherResult<P>;

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { HandlePromiseProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
   const [inProgress, setInProgress] = React.useState(false);
@@ -78,15 +79,7 @@ export class PromiseComponent<P, S extends PromiseComponentState> extends React.
   }
 }
 
-export type HandlePromiseProps = {
-  handlePromise: <T>(
-    promise: Promise<T>,
-    onFulfill?: (res) => void,
-    onError?: (errorMsg: string) => void,
-  ) => void;
-  inProgress: boolean;
-  errorMessage: string;
-};
+export { HandlePromiseProps };
 
 export type WithHandlePromise = <P extends HandlePromiseProps>(
   C: React.ComponentType<P>,

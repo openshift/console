@@ -1,10 +1,15 @@
 import * as _ from 'lodash-es';
+import {
+  AnnotationsModalProps,
+  TagsModalProps,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { NameValueEditorPair, withHandlePromise, HandlePromiseProps } from '../utils';
+import { NameValueEditorPair, withHandlePromise } from '../utils';
 import { AsyncComponent } from '../utils/async';
 
 /**
@@ -75,19 +80,5 @@ export const annotationsModal = createModalLauncher((props: AnnotationsModalProp
     {...props}
   />
 ));
-
-type TagsModalProps = {
-  tags?: { [key: string]: string };
-  path: string;
-  titleKey: string;
-  kind: K8sKind;
-  resource: K8sResourceKind;
-  inProgress: boolean;
-  errorMessage: string;
-  cancel?: () => void;
-  close?: () => void;
-} & HandlePromiseProps;
-
-type AnnotationsModalProps = Omit<TagsModalProps, 'path' | 'tags'>;
 
 TagsModal.displayName = 'TagsModal';

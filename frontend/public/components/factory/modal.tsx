@@ -9,6 +9,12 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import CloseButton from '@console/shared/src/components/close-button';
+import {
+  CreateModalLauncher,
+  CreateModalLauncherProps,
+  ModalComponentProps,
+  CreateModalLauncherResult,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
@@ -183,16 +189,6 @@ export type GetModalContainer = (onClose: (e?: React.SyntheticEvent) => void) =>
 
 type CreateModal = (getModalContainer: GetModalContainer) => { result: Promise<any> };
 
-export type CreateModalLauncherProps = {
-  blocking?: boolean;
-  modalClassName?: string;
-};
-
-export type ModalComponentProps = {
-  cancel?: () => void;
-  close?: () => void;
-};
-
 export type ModalTitleProps = {
   className?: string;
   close?: (e: React.SyntheticEvent<any, Event>) => void;
@@ -221,6 +217,9 @@ export type ModalSubmitFooterProps = {
   submitDanger?: boolean;
 };
 
-export type CreateModalLauncher = <P extends ModalComponentProps>(
-  C: React.ComponentType<P>,
-) => (props: P & CreateModalLauncherProps) => { result: Promise<{}> };
+export {
+  CreateModalLauncher,
+  CreateModalLauncherProps,
+  ModalComponentProps,
+  CreateModalLauncherResult,
+};

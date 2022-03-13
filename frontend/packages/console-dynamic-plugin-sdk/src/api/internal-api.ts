@@ -2,10 +2,13 @@
 import {
   ActivityItemProps,
   ActivityBodyProps,
+  AnnotationsModalProps,
   RecentEventsBodyProps,
   OngoingActivityBodyProps,
   AlertsBodyProps,
   AlertItemProps,
+  CreateModalLauncherResult,
+  ModalComponentProps,
   HealthItemProps,
   ResourceInventoryItemProps,
   DetailItemProps,
@@ -52,6 +55,12 @@ export const VirtualizedGrid: React.FC<VirtualizedGridProps> = require('@console
   .default;
 export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
   .default;
+
+export const LabelsModal: CreateModalLauncherResult<ModalComponentProps> = require('@console/internal/components/modals/labels-modal')
+  .labelsModal;
+
+export const AnnotationsModal: CreateModalLauncherResult<AnnotationsModalProps> = require('@console/internal/components/modals/tags')
+  .annotationsModal;
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
