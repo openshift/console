@@ -34,17 +34,17 @@ import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import { EVENT_SOURCES_APP } from './const';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
-import EventSourceMetaDescription from './EventSourceMetadataDescription';
 import {
   EventSourceSyncFormData,
   SinkType,
-  EventSourceMetaData,
+  KnEventCatalogMetaData,
   EventSourceFormData,
 } from './import-types';
+import KnEventMetaDescription from './KnEventMetaDescription';
 
 interface EventSourceProps {
   namespace: string;
-  normalizedSource: EventSourceMetaData;
+  normalizedSource: KnEventCatalogMetaData;
   contextSource?: string;
   selectedApplication?: string;
   sourceKind?: string;
@@ -92,9 +92,7 @@ export const EventSource: React.FC<Props> = ({
     getGroupVersionKind(sinkGroupVersionKind) ?? [];
   const sinkApiVersion = sinkGroup ? `${sinkGroup}/${sinkVersion}` : '';
 
-  const eventSourceMetaDescription = (
-    <EventSourceMetaDescription normalizedSource={normalizedSource} />
-  );
+  const eventSourceMetaDescription = <KnEventMetaDescription normalizedData={normalizedSource} />;
 
   const initialFormData: EventSourceFormData = {
     project: {

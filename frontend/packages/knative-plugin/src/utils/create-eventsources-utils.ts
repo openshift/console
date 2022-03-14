@@ -26,7 +26,7 @@ import {
   EventSourceFormData,
   EventSourceSyncFormData,
   SinkType,
-  EventSourceMetaData,
+  KnEventCatalogMetaData,
   YamlFormSyncData,
 } from '../components/add/import-types';
 import { CAMEL_K_PROVIDER_ANNOTATION } from '../const';
@@ -271,7 +271,7 @@ export const sanitizeKafkaSourceResource = (formData: EventSourceFormData): Even
   };
 };
 
-export const getKameletMetadata = (kamelet: K8sResourceKind): EventSourceMetaData => {
+export const getKameletMetadata = (kamelet: K8sResourceKind): KnEventCatalogMetaData => {
   let normalizedKamelet = {};
   if (kamelet?.kind === CamelKameletModel.kind) {
     const {
@@ -288,10 +288,10 @@ export const getKameletMetadata = (kamelet: K8sResourceKind): EventSourceMetaDat
       iconUrl,
     };
   }
-  return normalizedKamelet as EventSourceMetaData;
+  return normalizedKamelet as KnEventCatalogMetaData;
 };
 
-export const getEventSourceMetadata = (eventSourceModel: K8sKind, t): EventSourceMetaData => {
+export const getEventSourceMetadata = (eventSourceModel: K8sKind, t): KnEventCatalogMetaData => {
   let normalizedSource = {};
   if (eventSourceModel) {
     const { kind, label: name } = eventSourceModel;
@@ -303,7 +303,7 @@ export const getEventSourceMetadata = (eventSourceModel: K8sKind, t): EventSourc
       iconUrl: getEventSourceIcon(referenceForModel(eventSourceModel)),
     };
   }
-  return normalizedSource as EventSourceMetaData;
+  return normalizedSource as KnEventCatalogMetaData;
 };
 
 export const getEventSourceModelsWithAccess = (

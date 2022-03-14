@@ -304,6 +304,19 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
+      "path": ["/catalog/ns/:ns/eventsink"],
+      "component": {
+        "$codeRef": "addComponent.EventSinkPage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
       "path": ["/channel"],
       "component": {
         "$codeRef": "knativeComponent.NamespaceRedirect"
@@ -422,6 +435,20 @@
       "required": ["KNATIVE_EVENTING"]
     },
     "properties": {
+      "id": "knative-event-sink",
+      "groupId": "eventing",
+      "href": "/catalog/ns/:namespace?catalogType=EventSink",
+      "label": "%knative-plugin~Event Sink%",
+      "description": "%knative-plugin~Create an Event sink to register interest in a class of events from a particular system%",
+      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    },
+    "properties": {
       "id": "knative-event-source",
       "groupId": "eventing",
       "href": "/catalog/ns/:namespace?catalogType=EventSource&provider=[\"Red+Hat\"]",
@@ -499,6 +526,36 @@
       "type": "EventSource",
       "title": "%knative-plugin~Event Sources%",
       "provider": { "$codeRef": "catalog.kameletsProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_CAMEL_KAMELETS"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "EventSink",
+      "title": "%knative-plugin~Event Sinks%",
+      "catalogDescription": "%knative-plugin~Event sinks are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%knative-plugin~**Event sinks** are objects that link to an event producer and an event sink or consumer.%",
+      "filters": [
+        {
+          "label": "%knative-plugin~Provider%",
+          "attribute": "provider"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "EventSink",
+      "title": "%knative-plugin~Event Sinks%",
+      "provider": { "$codeRef": "catalog.kameletsSinkProvider" }
     },
     "flags": {
       "required": ["FLAG_CAMEL_KAMELETS"]

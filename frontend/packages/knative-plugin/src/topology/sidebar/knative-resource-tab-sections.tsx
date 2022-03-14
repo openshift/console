@@ -28,7 +28,6 @@ export const EventSinkOutputTargetSection: React.FC<{ resource: K8sResourceKind 
       </span>
     );
   }
-
   return (
     <>
       <SidebarSectionHeading text={t('knative-plugin~Output Target')} />

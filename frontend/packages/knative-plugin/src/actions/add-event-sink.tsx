@@ -5,15 +5,15 @@ import { Action } from '@console/dynamic-plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import * as eventSourceImg from '../imgs/event-source.svg';
 
-const eventSourceIconStyle = {
+const eventSinkIconStyle = {
   width: '1em',
   height: '1em',
 };
 const EventSourceIcon: React.FC = () => {
-  return <img style={eventSourceIconStyle} src={eventSourceImg} alt="Event Source logo" />;
+  return <img style={eventSinkIconStyle} src={eventSourceImg} alt="Event Sink logo" />;
 };
 
-export const AddEventSourceAction = (
+export const AddEventSinkAction = (
   namespace: string,
   application?: string,
   contextSource?: string,
@@ -21,19 +21,19 @@ export const AddEventSourceAction = (
 ): Action => {
   const params = new URLSearchParams();
   const pageUrl = `/catalog/ns/${namespace}`;
-  params.append('catalogType', 'EventSource');
+  params.append('catalogType', 'EventSink');
   contextSource && params.append(QUERY_PROPERTIES.CONTEXT_SOURCE, contextSource);
   application
     ? params.append(QUERY_PROPERTIES.APPLICATION, application)
     : params.append(QUERY_PROPERTIES.APPLICATION, UNASSIGNED_KEY);
   return {
-    id: 'event-source-add',
-    label: i18next.t('knative-plugin~Event Source'),
+    id: 'event-sink-add',
+    label: i18next.t('knative-plugin~Event Sink'),
     icon: <EventSourceIcon />,
     cta: {
       href: `${pageUrl}?${params.toString()}`,
     },
     path,
-    insertAfter: 'event-sink-add',
+    insertAfter: 'upload-jar',
   };
 };

@@ -31,6 +31,7 @@ import {
 import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
 import { AddBrokerAction } from './add-broker';
 import { AddChannelAction } from './add-channel';
+import { AddEventSinkAction } from './add-event-sink';
 import { AddEventSourceAction } from './add-event-source';
 import { AddSubscriptionAction, SUBSCRIPTION_ACTION_ID } from './add-subscription';
 import { AddTriggerAction, TRIGGER_ACTION_ID } from './add-trigger';
@@ -134,6 +135,7 @@ export const useTopologyActionsProvider = ({
       }
       const path = application ? 'add-to-application' : 'add-to-project';
       return [
+        AddEventSinkAction(namespace, application, undefined, path),
         AddEventSourceAction(namespace, application, undefined, path),
         AddChannelAction(namespace, application, path),
         AddBrokerAction(namespace, application, path),
