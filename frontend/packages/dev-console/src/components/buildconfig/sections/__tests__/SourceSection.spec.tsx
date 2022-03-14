@@ -2,8 +2,8 @@ import * as React from 'react';
 import { configure, render, screen, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
+import { GitProvider } from '@console/git-service/src';
 import store from '@console/internal/redux';
-import { GitTypes } from '../../../import/import-types';
 import userEvent from '../../__tests__/user-event';
 import { BuildStrategyType } from '../../types';
 import SourceSection, { SourceSectionFormData } from '../SourceSection';
@@ -53,7 +53,7 @@ const initialValues: SourceSectionFormData = {
         name: '',
         git: {
           url: '',
-          type: GitTypes.invalid,
+          type: GitProvider.INVALID,
           ref: '',
           dir: '/',
           showGitType: false,
@@ -194,7 +194,7 @@ describe('SourceSection', () => {
             formType: 'edit',
             name: '',
             git: {
-              type: GitTypes.invalid,
+              type: GitProvider.INVALID,
               url: 'https://github.com/openshift/console',
               ref: '',
               dir: '/',
@@ -243,7 +243,7 @@ describe('SourceSection', () => {
             formType: 'edit',
             name: '',
             git: {
-              type: GitTypes.invalid,
+              type: GitProvider.INVALID,
               url: '',
               ref: '',
               dir: '/',

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { ImportStrategy } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel, RouteModel } from '@console/internal/models';
 import { RouteKind } from '@console/internal/module/k8s';
@@ -22,7 +22,6 @@ import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import {
   GitImportFormData,
-  GitTypes,
   FirehoseList,
   ImportData,
   Resources,
@@ -79,7 +78,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     },
     git: {
       url: '',
-      type: GitTypes.invalid,
+      type: GitProvider.INVALID,
       ref: '',
       dir: '/',
       showGitType: false,

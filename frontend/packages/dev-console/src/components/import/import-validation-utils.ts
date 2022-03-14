@@ -1,9 +1,9 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
+import { GitProvider } from '@console/git-service/src';
 import { nameValidationSchema, nameRegex } from '@console/shared';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
-import { GitTypes } from './import-types';
 import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
@@ -46,22 +46,22 @@ const hasDomain = (url: string, domain: string): boolean => {
   );
 };
 
-export const detectGitType = (url: string): GitTypes => {
+export const detectGitType = (url: string): GitProvider => {
   if (!gitUrlRegex.test(url)) {
     // Not a URL
-    return GitTypes.invalid;
+    return GitProvider.INVALID;
   }
   if (hasDomain(url, 'github.com')) {
-    return GitTypes.github;
+    return GitProvider.GITHUB;
   }
   if (hasDomain(url, 'bitbucket.org')) {
-    return GitTypes.bitbucket;
+    return GitProvider.BITBUCKET;
   }
   if (hasDomain(url, 'gitlab.com')) {
-    return GitTypes.gitlab;
+    return GitProvider.GITLAB;
   }
   // Not a known URL
-  return GitTypes.unsure;
+  return GitProvider.UNSURE;
 };
 
 export const createComponentName = (nameString: string): string => {

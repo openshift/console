@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash';
+import { GitProvider } from '@console/git-service/src';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
 import { t } from '../../../../../../__mocks__/i18next';
 import { mockFormData } from '../__mocks__/import-validation-mock';
-import { GitTypes } from '../import-types';
 import {
   validationSchema,
   detectGitType,
@@ -15,30 +15,30 @@ describe('ValidationUtils', () => {
   describe('Detect Git Type', () => {
     it('should return the invalid enum key for invalid git url', () => {
       const gitType = detectGitType('test');
-      expect(gitType).toEqual(GitTypes.invalid);
+      expect(gitType).toEqual(GitProvider.INVALID);
     });
     it('should return the unsure enum key for valid but unknown git url ', () => {
       const gitType = detectGitType('https://svnsource.test.com');
-      expect(gitType).toEqual(GitTypes.unsure);
+      expect(gitType).toEqual(GitProvider.UNSURE);
 
       const gitType1 = detectGitType('https://github.comWRONG/test/repo');
-      expect(gitType1).toEqual(GitTypes.unsure);
+      expect(gitType1).toEqual(GitProvider.UNSURE);
 
       const gitType2 = detectGitType('git@bitbucket.orgs:atlassian_tutorial/helloworld.git');
-      expect(gitType2).toEqual(GitTypes.unsure);
+      expect(gitType2).toEqual(GitProvider.UNSURE);
     });
     it('should return proper git type for valid known git url', () => {
       const gitType = detectGitType('https://github.com/test/repo');
-      expect(gitType).toEqual(GitTypes.github);
+      expect(gitType).toEqual(GitProvider.GITHUB);
 
       const gitType1 = detectGitType('git@bitbucket.org:atlassian_tutorial/helloworld.git');
-      expect(gitType1).toEqual(GitTypes.bitbucket);
+      expect(gitType1).toEqual(GitProvider.BITBUCKET);
 
       const gitType2 = detectGitType('git@github.com:openshift/console.git');
-      expect(gitType2).toEqual(GitTypes.github);
+      expect(gitType2).toEqual(GitProvider.GITHUB);
 
       const gitType3 = detectGitType('git@bitbucket.org:atlassian_tutorial/helloworld.git');
-      expect(gitType3).toEqual(GitTypes.bitbucket);
+      expect(gitType3).toEqual(GitProvider.BITBUCKET);
     });
   });
 
@@ -93,7 +93,7 @@ describe('ValidationUtils', () => {
     it('should throw an error if url is valid but git type is not valid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'https://something.com/test/repo';
-      mockData.git.type = GitTypes.invalid;
+      mockData.git.type = GitProvider.INVALID;
       await validationSchema(t)
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
