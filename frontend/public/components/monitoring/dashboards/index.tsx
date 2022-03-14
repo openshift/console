@@ -29,6 +29,7 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import {
+  DashboardsClearVariables,
   dashboardsPatchAllVariables,
   dashboardsPatchVariable,
   dashboardsSetEndTime,
@@ -646,6 +647,16 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 
   // Clear queries on unmount
   React.useEffect(() => () => dispatch(queryBrowserDeleteAllQueries()), [dispatch]);
+
+  // Clear variables on unmount for dev perspective
+  React.useEffect(
+    () => () => {
+      if (activePerspective === 'dev') {
+        dispatch(DashboardsClearVariables(activePerspective));
+      }
+    },
+    [activePerspective, dispatch],
+  );
 
   const boardItems = React.useMemo(
     () =>
