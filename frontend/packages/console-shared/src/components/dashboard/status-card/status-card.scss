@@ -2,7 +2,7 @@
 @import '../../../styles/skeleton-screen';
 
 .co-status-card__alerts-body {
-  border-top: 1px solid $pf-color-black-300;
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   max-height: 19rem;
   min-height: 6rem;
   overflow-x: hidden;

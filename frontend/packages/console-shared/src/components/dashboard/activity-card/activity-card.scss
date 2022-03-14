@@ -16,7 +16,7 @@
 }
 
 .co-activity-card__ongoing-title {
-  border-bottom: solid 1px $pf-color-black-300;
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   padding: 0.2rem var(--pf-c-card--child--PaddingRight) 0.2rem var(--pf-c-card--child--PaddingLeft);
 }
 
@@ -71,7 +71,7 @@
 }
 
 .co-activity-card__recent-title {
-  border-bottom: solid 1px $pf-color-black-300;
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

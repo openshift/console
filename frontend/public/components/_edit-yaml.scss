@@ -17,7 +17,7 @@
 
 .yaml-editor__buttons {
   background: white;
-  border-top: 1px solid #ddd;
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   padding: 20px $pf-global-gutter;
   margin-top: auto;
   z-index: 10;
@@ -28,7 +28,7 @@
 }
 
 .yaml-editor__header {
-  border-bottom: 1px solid #ddd;
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   padding: 20px $pf-global-gutter;
   @media(min-width: $pf-global--breakpoint--xl) {
     padding-left: $pf-global-gutter--md;

@@ -1,5 +1,5 @@
 .co-resource-sidebar-item {
-  border-top: 1px solid #ccc;
+  border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor—100);
   padding: ($line-height-computed * 0.5) 0 $line-height-computed;
 
   &:first-child {
