@@ -30,7 +30,7 @@ export const pipelineBuilderPO = {
       resourceType: '#form-dropdown-formData-resources-0-type-field',
     },
     sidePane: {
-      dialog: 'div.odc-sidebar',
+      dialog: 'div.opp-task-sidebar',
       displayName: '#task-name',
       inputResource: 'select[id*="resources-inputs-0-resource-field"]',
       workSpace: '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
