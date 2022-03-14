@@ -192,7 +192,7 @@ dl.co-inline {
 }
 
 .co-m-pane__explanation code {
-  background-color: $pf-color-black-150;
+  background-color: var(--pf-global--BackgroundColor--200);
   color: $pf-color-black-600;
 }
 
