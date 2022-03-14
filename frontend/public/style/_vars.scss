@@ -17,7 +17,7 @@ $fa-font-path: $consoleWebDistPath + '/';
 
 // PatternFly 4 font path.
 $pf-global--font-path: '~@patternfly/patternfly/assets/fonts';
-$table-border-color: $pf-color-black-200;
+$table-border-color: var(--pf-global--BorderColor--300);
 
 :root {
   --pf-global--FontSize--md: 14px; // Numerical value required, same as $font-size-base

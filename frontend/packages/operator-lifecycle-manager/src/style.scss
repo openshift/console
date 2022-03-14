@@ -129,7 +129,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-spec-descriptor--resource-requirements {
-  border: 1px solid #eee;
+  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
   padding: 20px 0 20px 20px;
   margin-top: 5px;
 }
@@ -162,7 +162,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-affinity-term {
-  border: 1px solid #eee;
+  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -197,7 +197,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operand-field-group {
-  border: 1px solid #eee;
+  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;

@@ -180,14 +180,14 @@ pre code {
         padding: $table-cell-padding;
         line-height: $line-height-base;
         vertical-align: top;
-        border-top: 1px solid $table-border-color;
+        border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
       }
     }
   }
   // Bottom align for column headings
   > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: 2px solid $table-border-color;
+    border-bottom: var(--pf-global--BorderWidth--md) solid var(--pf-global--BorderColor--300);
   }
   // Remove top border from thead by default
   > caption + thead,

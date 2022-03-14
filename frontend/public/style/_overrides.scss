@@ -273,7 +273,7 @@ form.pf-c-form {
     border-bottom: 0;
   }
   tr:last-child {
-    border-bottom: 1px solid $table-border-color;
+    border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
   }
 }
 

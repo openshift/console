@@ -7,7 +7,7 @@
     // Collapse borders when multiple consecutive rows.
     margin-top: -1px;
     padding: 20px 0 5px 20px;
-    border: 1px solid #eee;
+    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
 
     .ip-name {
       margin-bottom: 5px;

@@ -220,7 +220,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   }
   td,
   th {
-    border-bottom: 1px solid #ededed;
+    border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
     padding: 10px;
     vertical-align: top;
   }
