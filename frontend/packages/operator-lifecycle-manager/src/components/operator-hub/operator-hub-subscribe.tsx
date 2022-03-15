@@ -12,13 +12,13 @@ import {
   Firehose,
   history,
   isUpstream,
+  MsgBox,
   NsDropdown,
   openshiftHelpBase,
-  BreadCrumbs,
-  MsgBox,
-  StatusBox,
+  PageHeading,
   ResourceIcon,
   ResourceName,
+  StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
@@ -676,20 +676,16 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <Helmet>
         <title>Operator Installation</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            { name: t('olm~OperatorHub'), path: `/operatorhub?${search.toString()}` },
-            { name: t('olm~Operator Installation'), path: props.match.url },
-          ]}
-        />
-        <h1 className="co-m-pane__heading">{t('olm~Install Operator')}</h1>
-        <p className="co-help-text">
-          {t(
-            'olm~Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.',
-          )}
-        </p>
-      </div>
+      <PageHeading
+        title={t('olm~Install Operator')}
+        breadcrumbs={[
+          { name: t('olm~OperatorHub'), path: `/operatorhub?${search.toString()}` },
+          { name: t('olm~Operator Installation'), path: props.match.url },
+        ]}
+        helpText={t(
+          'olm~Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.',
+        )}
+      />
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-xs-6">

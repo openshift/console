@@ -6,7 +6,16 @@ import { Link } from 'react-router-dom';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Split,
+  SplitItem,
+  Text,
+  TextContent,
+  TextVariants,
+} from '@patternfly/react-core';
 import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import {
@@ -95,6 +104,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     menuActions,
     buttonActions,
     customActionMenu,
+    link,
     obj,
     breadcrumbs,
     breadcrumbsFor,
@@ -105,6 +115,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     getResourceStatus = (resource: K8sResourceKind): string =>
       _.get(resource, ['status', 'phase'], null),
     className,
+    centerText,
+    helpText,
   } = props;
   const extraResources = _.reduce(
     props.resourceKeys,
@@ -145,8 +157,14 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         </Split>
       )}
       {showHeading && (
-        <h1
-          className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}
+        <Text
+          component={TextVariants.h1}
+          className={classNames('co-m-pane__heading', {
+            'co-m-pane__heading--baseline': link,
+            'co-m-pane__heading--center': centerText,
+            'co-m-pane__heading--logo': props.icon,
+            'co-m-pane__heading--with-help-text': helpText,
+          })}
         >
           {props.icon ? (
             <props.icon obj={data} />
@@ -169,6 +187,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           {!breadcrumbsFor && !breadcrumbs && badge && (
             <span className="co-m-pane__heading-badge">{badge}</span>
           )}
+          {link && <div className="co-m-pane__heading-link">{link}</div>}
           {showActions && (
             <div className="co-actions" data-test-id="details-actions">
               {hasButtonActions && (
@@ -186,7 +205,14 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
             </div>
           )}
-        </h1>
+        </Text>
+      )}
+      {helpText && (
+        <TextContent>
+          <Text component={TextVariants.p} className="help-block co-m-pane__heading-help-text">
+            {helpText}
+          </Text>
+        </TextContent>
       )}
       {props.children}
     </div>
@@ -293,6 +319,7 @@ export type PageHeadingProps = {
   customActionMenu?:
     | React.ReactNode
     | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
+  link?: React.ReactNode;
   obj?: FirehoseResult<K8sResourceKind>;
   resourceKeys?: string[];
   style?: object;
@@ -303,6 +330,8 @@ export type PageHeadingProps = {
   icon?: React.ComponentType<{ obj?: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   className?: string;
+  centerText?: boolean;
+  helpText?: React.ReactNode;
 };
 
 export type ResourceOverviewHeadingProps = {

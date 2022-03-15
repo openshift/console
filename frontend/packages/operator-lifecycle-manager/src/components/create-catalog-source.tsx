@@ -6,10 +6,11 @@ import { match } from 'react-router-dom';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
   ButtonBar,
+  HandlePromiseProps,
   history,
   NsDropdown,
+  PageHeading,
   withHandlePromise,
-  HandlePromiseProps,
 } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { CatalogSourceModel } from '../models';
@@ -78,95 +79,97 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
 
     const title = t('olm~Create CatalogSource');
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <h1 className="co-m-pane__heading" data-test="create-catalogsource-title">
-          {title}
-        </h1>
-        <p className="co-m-pane__explanation">
-          {t('olm~Create a CatalogSource in order to make operators available in OperatorHub.')}
-        </p>
-        <Form onSubmit={onSave}>
-          <FormGroup fieldId="catalog-source-name" isRequired label={t('olm~CatalogSource name')}>
-            <TextInput
-              id="catalog-source-name"
-              isRequired
-              name="catalog-source-name"
-              onChange={setName}
-              placeholder={t('olm~e.g. custom-catalog-source')}
-              type="text"
-              value={name}
-              data-test="catalog-source-name"
-            />
-          </FormGroup>
-          <FormGroup fieldId="catalog-source-display-name" label={t('olm~Display name')}>
-            <TextInput
-              id="catalog-source-display-name"
-              name="caltalog-source-display-name"
-              onChange={setDisplayName}
-              placeholder={t('olm~e.g. Custom catalog source')}
-              type="text"
-              value={displayName}
-            />
-          </FormGroup>
-          <FormGroup fieldId="catalog-source-publisher" label={t('olm~Publisher name')}>
-            <TextInput
-              id="catalog-source-publisher"
-              isRequired
-              name="catalog-source-publisher"
-              onChange={setPublisher}
-              placeholder={t('olm~e.g. John Doe')}
-              type="text"
-              value={publisher}
-            />
-          </FormGroup>
-          <FormGroup
-            label={t('olm~Image (URL of container image)')}
-            isRequired
-            fieldId="catalog-source-image"
-            helperText={t('olm~URL of container image hosted on a registry')}
-          >
-            <TextInput
-              aria-describedby="catalog-source-image-helper"
-              isRequired
-              type="text"
-              id="catalog-source-image"
-              name="catalog-source-image"
-              onChange={setImage}
-              placeholder={t('olm~e.g. quay.io/johndoe/catalog-registry:latest')}
-              value={image}
-              data-test="catalog-source-image"
-            />
-          </FormGroup>
-          <FormGroup fieldId="catalog-source-availability" label={t('olm~Availability')}>
-            <RadioGroup
-              currentValue={availability}
-              items={availabilityKinds}
-              onChange={onAvailabiltiyChange}
-            />
-          </FormGroup>
-          {availability === AvailabilityValue.SINGLE_NAMESPACE && (
-            <FormGroup fieldId="catalog-source-namespace" label={t('olm~Namespace')} isRequired>
-              <NsDropdown
-                selectedKey={namespace}
-                onChange={onNamespaceChange}
-                id="catalog-source-namespace"
+        <PageHeading
+          title={title}
+          helpText={t(
+            'olm~Create a CatalogSource in order to make operators available in OperatorHub.',
+          )}
+        />
+        <div className="co-m-pane__body">
+          <Form onSubmit={onSave}>
+            <FormGroup fieldId="catalog-source-name" isRequired label={t('olm~CatalogSource name')}>
+              <TextInput
+                id="catalog-source-name"
+                isRequired
+                name="catalog-source-name"
+                onChange={setName}
+                placeholder={t('olm~e.g. custom-catalog-source')}
+                type="text"
+                value={name}
+                data-test="catalog-source-name"
               />
             </FormGroup>
-          )}
-          <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form__group--no-top-margin">
-              <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
-                {t('olm~Create')}
-              </Button>
-              <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
-                {t('olm~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </Form>
+            <FormGroup fieldId="catalog-source-display-name" label={t('olm~Display name')}>
+              <TextInput
+                id="catalog-source-display-name"
+                name="caltalog-source-display-name"
+                onChange={setDisplayName}
+                placeholder={t('olm~e.g. Custom catalog source')}
+                type="text"
+                value={displayName}
+              />
+            </FormGroup>
+            <FormGroup fieldId="catalog-source-publisher" label={t('olm~Publisher name')}>
+              <TextInput
+                id="catalog-source-publisher"
+                isRequired
+                name="catalog-source-publisher"
+                onChange={setPublisher}
+                placeholder={t('olm~e.g. John Doe')}
+                type="text"
+                value={publisher}
+              />
+            </FormGroup>
+            <FormGroup
+              label={t('olm~Image (URL of container image)')}
+              isRequired
+              fieldId="catalog-source-image"
+              helperText={t('olm~URL of container image hosted on a registry')}
+            >
+              <TextInput
+                aria-describedby="catalog-source-image-helper"
+                isRequired
+                type="text"
+                id="catalog-source-image"
+                name="catalog-source-image"
+                onChange={setImage}
+                placeholder={t('olm~e.g. quay.io/johndoe/catalog-registry:latest')}
+                value={image}
+                data-test="catalog-source-image"
+              />
+            </FormGroup>
+            <FormGroup fieldId="catalog-source-availability" label={t('olm~Availability')}>
+              <RadioGroup
+                currentValue={availability}
+                items={availabilityKinds}
+                onChange={onAvailabiltiyChange}
+              />
+            </FormGroup>
+            {availability === AvailabilityValue.SINGLE_NAMESPACE && (
+              <FormGroup fieldId="catalog-source-namespace" label={t('olm~Namespace')} isRequired>
+                <NsDropdown
+                  selectedKey={namespace}
+                  onChange={onNamespaceChange}
+                  id="catalog-source-namespace"
+                />
+              </FormGroup>
+            )}
+            <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
+              <ActionGroup className="pf-c-form__group--no-top-margin">
+                <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
+                  {t('olm~Create')}
+                </Button>
+                <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
+                  {t('olm~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </Form>
+        </div>
       </div>
     );
   },

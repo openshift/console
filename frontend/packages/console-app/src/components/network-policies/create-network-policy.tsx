@@ -84,9 +84,9 @@ export const CreateNetworkPolicy: React.FC<{
       <PageHeading
         className="create-network-policy__page-heading"
         title={t('console-app~Create NetworkPolicy')}
-      >
-        <span className="help-block">{helpText}</span>
-      </PageHeading>
+        helpText={helpText}
+        detail
+      />
       <SyncedEditor
         context={{
           formContext: { networkPolicy: initialPolicy },

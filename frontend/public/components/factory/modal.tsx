@@ -5,7 +5,7 @@ import * as Modal from 'react-modal';
 import { Router } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import CloseButton from '@console/shared/src/components/close-button';
@@ -72,18 +72,20 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
   close,
 }) => (
   <div className={className}>
-    <h1 className="pf-c-title pf-m-2xl" data-test-id="modal-title">
-      {children}
-      {close && (
-        <CloseButton
-          onClick={(e) => {
-            e.stopPropagation();
-            close(e);
-          }}
-          additionalClassName="co-close-button--float-right"
-        />
-      )}
-    </h1>
+    <TextContent>
+      <Text component={TextVariants.h1} data-test-id="modal-title">
+        {children}
+        {close && (
+          <CloseButton
+            onClick={(e) => {
+              e.stopPropagation();
+              close(e);
+            }}
+            additionalClassName="co-close-button--float-right"
+          />
+        )}
+      </Text>
+    </TextContent>
   </div>
 );
 

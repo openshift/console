@@ -6,7 +6,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, PromiseComponent, history } from '../utils';
+import { ButtonBar, PromiseComponent, history, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -145,73 +145,75 @@ class AddGitLabPageWithTranslation extends PromiseComponent<
     const { t } = this.props;
     const title = t('public~Add Identity Provider: GitLab');
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            {t(
-              'public~You can use GitLab integration for users authenticating with GitLab credentials.',
-            )}
-          </p>
-          <IDPNameInput value={name} onChange={this.nameChanged} />
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
-              {t('public~URL')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="url"
-              onChange={this.urlChanged}
-              value={url}
-              id="url"
-              aria-describedby="idp-url-help"
-              required
-            />
-            <p className="help-block" id="idp-url-help">
-              {t('public~The OAuth server base URL.')}
-            </p>
-          </div>
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
-              {t('public~Client ID')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={this.clientIDChanged}
-              value={clientID}
-              id="client-id"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
-              {t('public~Client secret')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="password"
-              onChange={this.clientSecretChanged}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
-          </div>
-          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary" data-test-id="add-idp">
-                {t('public~Add')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+        <PageHeading
+          title={title}
+          helpText={t(
+            'public~You can use GitLab integration for users authenticating with GitLab credentials.',
+          )}
+        />
+        <div className="co-m-pane__body">
+          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
+            <IDPNameInput value={name} onChange={this.nameChanged} />
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="url">
+                {t('public~URL')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="url"
+                onChange={this.urlChanged}
+                value={url}
+                id="url"
+                aria-describedby="idp-url-help"
+                required
+              />
+              <p className="help-block" id="idp-url-help">
+                {t('public~The OAuth server base URL.')}
+              </p>
+            </div>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="client-id">
+                {t('public~Client ID')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={this.clientIDChanged}
+                value={clientID}
+                id="client-id"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="client-secret">
+                {t('public~Client secret')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="password"
+                onChange={this.clientSecretChanged}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </div>
+            <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary" data-test-id="add-idp">
+                  {t('public~Add')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

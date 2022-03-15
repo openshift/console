@@ -22,6 +22,7 @@ import {
   convertToBaseValue,
   humanizeBinaryBytes,
   getURLSearchParams,
+  PageHeading,
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -219,13 +220,13 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
 
   return (
     <div className="co-volume-snapshot__body">
-      <div className="co-m-pane__body co-m-pane__form">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-          <div className="co-m-pane__name">{title}</div>
-          <div className="co-m-pane__heading-link">
+        <PageHeading
+          title={<div className="co-m-pane__name">{title}</div>}
+          link={
             <Link
               to={`/k8s/ns/${namespace || 'default'}/${referenceForModel(
                 VolumeSnapshotModel,
@@ -236,85 +237,87 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
             >
               {t('console-app~Edit YAML')}
             </Link>
-          </div>
-        </h1>
-        <form className="co-m-pane__body-group" onSubmit={create}>
-          {pvcName ? (
-            <p>
-              <Trans ns="console-app">
-                Creating snapshot for claim <strong>{{ pvcName }}</strong>
-              </Trans>
-            </p>
-          ) : (
-            /* eslint-disable jsx-a11y/label-has-associated-control */
-            <>
-              <label className="control-label co-required" html-for="claimName">
-                {t('console-app~PersistentVolumeClaim')}
-              </label>
-              <PVCDropdown
-                dataTest="pvc-dropdown"
-                namespace={namespace}
-                onChange={handlePVCName}
-                selectedKey={selectedPVCName}
-                dataFilter={isBound}
-                desc={t('console-app~PersistentVolumeClaim in {{namespace}} namespace', {
-                  namespace,
-                })}
-              />
-            </>
-          )}
-          <div className="form-group co-volume-snapshot__form">
-            <label className="control-label co-required" htmlFor="snapshot-name">
-              {t('console-app~Name')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={handleSnapshotName}
-              name="snapshotName"
-              id="snapshot-name"
-              value={snapshotName}
-              required
-            />
-          </div>
-          {pvcObj && (
+          }
+        />
+        <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+          <form className="co-m-pane__body-group" onSubmit={create}>
+            {pvcName ? (
+              <p>
+                <Trans ns="console-app">
+                  Creating snapshot for claim <strong>{{ pvcName }}</strong>
+                </Trans>
+              </p>
+            ) : (
+              /* eslint-disable jsx-a11y/label-has-associated-control */
+              <>
+                <label className="control-label co-required" html-for="claimName">
+                  {t('console-app~PersistentVolumeClaim')}
+                </label>
+                <PVCDropdown
+                  dataTest="pvc-dropdown"
+                  namespace={namespace}
+                  onChange={handlePVCName}
+                  selectedKey={selectedPVCName}
+                  dataFilter={isBound}
+                  desc={t('console-app~PersistentVolumeClaim in {{namespace}} namespace', {
+                    namespace,
+                  })}
+                />
+              </>
+            )}
             <div className="form-group co-volume-snapshot__form">
-              <label className="control-label co-required" htmlFor="snapshot-class">
-                {t('console-app~Snapshot Class')}
+              <label className="control-label co-required" htmlFor="snapshot-name">
+                {t('console-app~Name')}
               </label>
-              {vscErr || scObjListErr ? (
-                <Alert
-                  className="co-alert co-volume-snapshot__alert-body"
-                  variant="danger"
-                  title="Error fetching info on claim's provisioner"
-                  isInline
-                />
-              ) : (
-                <SnapshotClassDropdown
-                  filter={snapshotClassFilter}
-                  onChange={setSnapshotClassName}
-                  dataTest="snapshot-dropdown"
-                  selectedKey={snapshotClassName}
-                />
-              )}
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={handleSnapshotName}
+                name="snapshotName"
+                id="snapshot-name"
+                value={snapshotName}
+                required
+              />
             </div>
-          )}
-          <ButtonBar errorMessage={errorMessage || loadError} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button
-                type="submit"
-                variant="primary"
-                id="save-changes"
-                isDisabled={!snapshotClassName || !snapshotName || !selectedPVCName}
-              >
-                {t('console-app~Create')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('console-app~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            {pvcObj && (
+              <div className="form-group co-volume-snapshot__form">
+                <label className="control-label co-required" htmlFor="snapshot-class">
+                  {t('console-app~Snapshot Class')}
+                </label>
+                {vscErr || scObjListErr ? (
+                  <Alert
+                    className="co-alert co-volume-snapshot__alert-body"
+                    variant="danger"
+                    title="Error fetching info on claim's provisioner"
+                    isInline
+                  />
+                ) : (
+                  <SnapshotClassDropdown
+                    filter={snapshotClassFilter}
+                    onChange={setSnapshotClassName}
+                    dataTest="snapshot-dropdown"
+                    selectedKey={snapshotClassName}
+                  />
+                )}
+              </div>
+            )}
+            <ButtonBar errorMessage={errorMessage || loadError} inProgress={inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  id="save-changes"
+                  isDisabled={!snapshotClassName || !snapshotName || !selectedPVCName}
+                >
+                  {t('console-app~Create')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('console-app~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
       <div className="co-volume-snapshot__info">
         <Grid hasGutter>

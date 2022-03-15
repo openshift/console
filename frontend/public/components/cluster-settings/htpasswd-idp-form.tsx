@@ -6,7 +6,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { AsyncComponent, ButtonBar, PromiseComponent, history } from '../utils';
+import { AsyncComponent, ButtonBar, PromiseComponent, history, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 
@@ -102,42 +102,44 @@ class AddHTPasswdPageWithTranslation extends PromiseComponent<
     const title = t('public~Add Identity Provider: HTPasswd');
 
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            {t(
-              'public~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
-            )}
-          </p>
-          <IDPNameInput value={name} onChange={this.nameChanged} />
-          <div className="form-group">
-            <DroppableFileInput
-              onChange={this.htpasswdFileChanged}
-              inputFileData={htpasswdFileContent}
-              id="htpasswd-file"
-              label={t('public~HTPasswd file')}
-              inputFieldHelpText={t(
-                'public~Upload an HTPasswd file created using the htpasswd command.',
-              )}
-              isRequired
-              hideContents
-            />
-          </div>
-          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
-                {t('public~Add')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+        <PageHeading
+          title={title}
+          helpText={t(
+            'public~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
+          )}
+        />
+        <div className="co-m-pane__body">
+          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
+            <IDPNameInput value={name} onChange={this.nameChanged} />
+            <div className="form-group">
+              <DroppableFileInput
+                onChange={this.htpasswdFileChanged}
+                inputFileData={htpasswdFileContent}
+                id="htpasswd-file"
+                label={t('public~HTPasswd file')}
+                inputFieldHelpText={t(
+                  'public~Upload an HTPasswd file created using the htpasswd command.',
+                )}
+                isRequired
+                hideContents
+              />
+            </div>
+            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary">
+                  {t('public~Add')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

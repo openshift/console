@@ -69,10 +69,8 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion-logo__name__clusterserviceversion {
-  font-size: 15px;
-  font-weight: var(--pf-global--FontWeight--normal);
-  margin-bottom: 5px;
-  margin-top: 0;
+  font-size: 15px !important;
+  margin-bottom: 5px !important;
 }
 .co-m-pane__heading--logo .co-clusterserviceversion-logo__name__provider {
   font-size: var(--pf-global--FontSize--sm);
@@ -140,6 +138,7 @@ $co-affinity-row-margin: 15px;
   height: 25px;
 }
 
+// only used in packages and will be orphaned when packages move out
 .co-create-operand__header {
   border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   padding: 0 $pf-global-gutter var(--pf-global--spacer--lg);
@@ -149,6 +148,7 @@ $co-affinity-row-margin: 15px;
   }
 }
 
+// only used in packages and will be orphaned when packages move out
 .co-create-operand__header-text {
   margin: var(--pf-global--spacer--lg) 0 0 !important;
 }

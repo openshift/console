@@ -98,7 +98,7 @@ dl.co-inline {
 .co-m-pane__heading {
   display: flex;
   justify-content: space-between;
-  margin: 0 0 $pf-global-gutter--md;
+  margin-bottom: $pf-global-gutter--md !important;
   &--baseline {
     align-items: baseline;
   }
@@ -107,7 +107,9 @@ dl.co-inline {
   }
   &--logo {
     align-items: center;
-    margin-bottom: $pf-global-gutter;
+  }
+  &--with-help-text {
+    margin-bottom: 0 !important;
   }
 }
 
@@ -115,6 +117,10 @@ dl.co-inline {
   @media (min-width: $screen-sm-min) {
     margin-left: var(--pf-global--spacer--sm);
   }
+}
+
+.co-m-pane__heading-help-text {
+  margin-bottom: $pf-global-gutter--md !important;
 }
 
 .co-m-pane__heading-owner {

@@ -6,7 +6,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PromiseComponent, history } from '../utils';
+import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -157,97 +157,101 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
     const { t } = this.props;
     const title = t('public~Add Identity Provider: Request Header');
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            {t(
-              'public~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
-            )}
-          </p>
-          <IDPNameInput value={name} onChange={this.nameChanged} />
-          <div className="co-form-section__separator" />
-          <h3 className="co-required">{t('public~URLs')}</h3>
-          <p className="co-m-pane__explanation">{t('public~At least one URL must be provided.')}</p>
-          <div className="form-group">
-            <label className="control-label" htmlFor="challenge-url">
-              {t('public~Challenge URL')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="url"
-              onChange={this.challengeURLChanged}
-              value={challengeURL}
-              id="challenge-url"
-              aria-describedby="challenge-url-help"
-            />
-            <div className="help-block" id="challenge-url-help">
-              {t(
-                'public~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
-              )}
+        <PageHeading
+          title={title}
+          helpText={t(
+            'public~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
+          )}
+        />
+        <div className="co-m-pane__body">
+          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
+            <IDPNameInput value={name} onChange={this.nameChanged} />
+            <div className="co-form-section__separator" />
+            <h3 className="co-required">{t('public~URLs')}</h3>
+            <p className="co-m-pane__explanation">
+              {t('public~At least one URL must be provided.')}
+            </p>
+            <div className="form-group">
+              <label className="control-label" htmlFor="challenge-url">
+                {t('public~Challenge URL')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="url"
+                onChange={this.challengeURLChanged}
+                value={challengeURL}
+                id="challenge-url"
+                aria-describedby="challenge-url-help"
+              />
+              <div className="help-block" id="challenge-url-help">
+                {t(
+                  'public~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
+                )}
+              </div>
             </div>
-          </div>
-          <div className="form-group">
-            <label className="control-label" htmlFor="login-url">
-              {t('public~Login URL')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="url"
-              onChange={this.loginURLChanged}
-              value={loginURL}
-              id="login-url"
-              aria-describedby="login-url-help"
-            />
-            <div className="help-block" id="login-url-help">
-              {t(
-                'public~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
-              )}
+            <div className="form-group">
+              <label className="control-label" htmlFor="login-url">
+                {t('public~Login URL')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="url"
+                onChange={this.loginURLChanged}
+                value={loginURL}
+                id="login-url"
+                aria-describedby="login-url-help"
+              />
+              <div className="help-block" id="login-url-help">
+                {t(
+                  'public~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
+                )}
+              </div>
             </div>
-          </div>
-          <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
-          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} isRequired />
-          <ListInput
-            label={t('public~Client common names')}
-            onChange={this.clientCommonNamesChanged}
-            helpText={t('public~The set of common names to require a match from.')}
-          />
-          <ListInput
-            label={t('public~Headers')}
-            onChange={this.headersChanged}
-            helpText={t('public~The set of headers to check for identity information.')}
-            required
-          />
-          <ListInput
-            label={t('public~Preferred username headers')}
-            onChange={this.preferredUsernameHeadersChanged}
-            helpText={t('public~The set of headers to check for the preferred username.')}
-          />
-          <ListInput
-            label={t('public~Name headers')}
-            onChange={this.nameHeadersChanged}
-            helpText={t('public~The set of headers to check for the display name.')}
-          />
-          <ListInput
-            label={t('public~Email headers')}
-            onChange={this.emailHeadersChanged}
-            helpText={t('public~The set of headers to check for the email address.')}
-          />
-          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
-                {t('public~Add')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            <div className="co-form-section__separator" />
+            <h3>{t('public~More options')}</h3>
+            <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} isRequired />
+            <ListInput
+              label={t('public~Client common names')}
+              onChange={this.clientCommonNamesChanged}
+              helpText={t('public~The set of common names to require a match from.')}
+            />
+            <ListInput
+              label={t('public~Headers')}
+              onChange={this.headersChanged}
+              helpText={t('public~The set of headers to check for identity information.')}
+              required
+            />
+            <ListInput
+              label={t('public~Preferred username headers')}
+              onChange={this.preferredUsernameHeadersChanged}
+              helpText={t('public~The set of headers to check for the preferred username.')}
+            />
+            <ListInput
+              label={t('public~Name headers')}
+              onChange={this.nameHeadersChanged}
+              helpText={t('public~The set of headers to check for the display name.')}
+            />
+            <ListInput
+              label={t('public~Email headers')}
+              onChange={this.emailHeadersChanged}
+              helpText={t('public~The set of headers to check for the email address.')}
+            />
+            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary">
+                  {t('public~Add')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

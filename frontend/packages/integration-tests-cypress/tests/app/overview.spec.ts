@@ -52,7 +52,7 @@ describe('Visiting Overview page', () => {
           yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
             yamlEditor.clickSaveCreateButton();
             cy.get(errorMessage).should('not.exist');
-            detailsPage.titleShouldContain(resourceName);
+            detailsPage.sectionHeaderShouldExist(`${kindModel.label} details`);
           });
         });
       });

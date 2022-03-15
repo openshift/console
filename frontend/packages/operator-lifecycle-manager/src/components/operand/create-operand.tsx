@@ -42,8 +42,6 @@ import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
 
-import './create-operand.scss';
-
 export const CreateOperand: React.FC<CreateOperandProps> = ({
   initialEditorType,
   match,
@@ -129,15 +127,12 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
-      <div className="co-create-operand__header">
-        <PageHeading
-          badge={getBadgeFromType(model.badge)}
-          className="olm-create-operand__page-heading"
-          title={t('olm~Create {{item}}', { item: model.label })}
-        >
-          <span className="help-block">{helpText}</span>
-        </PageHeading>
-      </div>
+      <PageHeading
+        title={t('olm~Create {{item}}', { item: model.label })}
+        badge={getBadgeFromType(model.badge)}
+        helpText={helpText}
+        detail
+      />
       <SyncedEditor
         context={{
           formContext: { csv, match, model, next, schema, providedAPI },

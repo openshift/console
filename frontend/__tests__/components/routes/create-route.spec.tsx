@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Button } from '@patternfly/react-core';
 
-import { ButtonBar, Dropdown } from '../../../public/components/utils';
+import { ButtonBar, Dropdown, PageHeading } from '../../../public/components/utils';
 import {
   CreateRoute,
   CreateRouteState,
@@ -32,7 +32,7 @@ describe('Create Route', () => {
   });
 
   it('should render correct Create Route page title', () => {
-    expect(wrapper.contains('Create Route')).toBeTruthy();
+    expect(wrapper.find(PageHeading).prop('title')).toEqual('Create Route');
   });
 
   it('should render the form elements of CreateRoute component', () => {

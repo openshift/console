@@ -40,13 +40,15 @@ describe('OAuth', () => {
       await oauthView.idpNameInput.sendKeys(idpName);
       await oauthView.basicAuthURLInput.sendKeys('https://example.com');
       await oauthView.addIDPButton.click();
+      await crudView.isLoaded();
       expect(oauthView.errorMessage.isPresent()).toBe(false);
     });
 
     it('shows the BasicAuth IDP on the OAuth settings page', async () => {
+      await browser.get(oauthSettingsURL);
+      await crudView.isLoaded();
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain('config.openshift.io~v1~OAuth/cluster');
-      await crudView.isLoaded();
       expect(oauthView.idpTableCellName(idpName).getText()).toEqual(idpName);
       expect(oauthView.idpTableCellType(idpName).getText()).toEqual('BasicAuth');
       expect(oauthView.idpTableCellMapping(idpName).getText()).toEqual('claim');
@@ -68,13 +70,15 @@ describe('OAuth', () => {
       await oauthView.githubClientSecretInput.sendKeys('my-client-secret');
       await oauthView.githubOrganizationInput.sendKeys('my-organization');
       await oauthView.addIDPButton.click();
+      await crudView.isLoaded();
       expect(oauthView.errorMessage.isPresent()).toBe(false);
     });
 
     it('shows the GitHub IDP on the OAuth settings page', async () => {
+      await browser.get(oauthSettingsURL);
+      await crudView.isLoaded();
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain('config.openshift.io~v1~OAuth/cluster');
-      await crudView.isLoaded();
       expect(oauthView.idpTableCellName(idpName).getText()).toEqual(idpName);
       expect(oauthView.idpTableCellType(idpName).getText()).toEqual('GitHub');
       expect(oauthView.idpTableCellMapping(idpName).getText()).toEqual('claim');
@@ -96,13 +100,15 @@ describe('OAuth', () => {
       await oauthView.gitlabClientIDInput.sendKeys('my-client-id');
       await oauthView.gitlabClientSecretInput.sendKeys('my-client-secret');
       await oauthView.addIDPButton.click();
+      await crudView.isLoaded();
       expect(oauthView.errorMessage.isPresent()).toBe(false);
     });
 
     it('shows the GitLab IDP on the OAuth settings page', async () => {
+      await browser.get(oauthSettingsURL);
+      await crudView.isLoaded();
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain('config.openshift.io~v1~OAuth/cluster');
-      await crudView.isLoaded();
       expect(oauthView.idpTableCellName(idpName).getText()).toEqual(idpName);
       expect(oauthView.idpTableCellType(idpName).getText()).toEqual('GitLab');
       expect(oauthView.idpTableCellMapping(idpName).getText()).toEqual('claim');
@@ -124,13 +130,15 @@ describe('OAuth', () => {
       await oauthView.googleClientSecretInput.sendKeys('my-client-secret');
       await oauthView.googleHostedDomainInput.sendKeys('example.com');
       await oauthView.addIDPButton.click();
+      await crudView.isLoaded();
       expect(oauthView.errorMessage.isPresent()).toBe(false);
     });
 
     it('shows the Google IDP on the OAuth settings page', async () => {
+      await browser.get(oauthSettingsURL);
+      await crudView.isLoaded();
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain('config.openshift.io~v1~OAuth/cluster');
-      await crudView.isLoaded();
       expect(oauthView.idpTableCellName(idpName).getText()).toEqual(idpName);
       expect(oauthView.idpTableCellType(idpName).getText()).toEqual('Google');
       expect(oauthView.idpTableCellMapping(idpName).getText()).toEqual('claim');
@@ -151,13 +159,15 @@ describe('OAuth', () => {
       await oauthView.keystoneDomainInput.sendKeys('example.com');
       await oauthView.keystoneURLInput.sendKeys('https://example.com');
       await oauthView.addIDPButton.click();
+      await crudView.isLoaded();
       expect(oauthView.errorMessage.isPresent()).toBe(false);
     });
 
     it('shows the Keystone IDP on the OAuth settings page', async () => {
+      await browser.get(oauthSettingsURL);
+      await crudView.isLoaded();
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain('config.openshift.io~v1~OAuth/cluster');
-      await crudView.isLoaded();
       expect(oauthView.idpTableCellName(idpName).getText()).toEqual(idpName);
       expect(oauthView.idpTableCellType(idpName).getText()).toEqual('Keystone');
       expect(oauthView.idpTableCellMapping(idpName).getText()).toEqual('claim');
@@ -177,13 +187,15 @@ describe('OAuth', () => {
       await oauthView.idpNameInput.sendKeys(idpName);
       await oauthView.ldapURLInput.sendKeys('ldap://ldap.example.com/o=Acme?cn?sub?(enabled=true)');
       await oauthView.addIDPButton.click();
+      await crudView.isLoaded();
       expect(oauthView.errorMessage.isPresent()).toBe(false);
     });
 
     it('shows the LDAP IDP on the OAuth settings page', async () => {
+      await browser.get(oauthSettingsURL);
+      await crudView.isLoaded();
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain('config.openshift.io~v1~OAuth/cluster');
-      await crudView.isLoaded();
       expect(oauthView.idpTableCellName(idpName).getText()).toEqual(idpName);
       expect(oauthView.idpTableCellType(idpName).getText()).toEqual('LDAP');
       expect(oauthView.idpTableCellMapping(idpName).getText()).toEqual('claim');
@@ -205,13 +217,15 @@ describe('OAuth', () => {
       await oauthView.oidcClientSecretInput.sendKeys('my-client-secret');
       await oauthView.oidcIssuerInput.sendKeys('https://example.com');
       await oauthView.addIDPButton.click();
+      await crudView.isLoaded();
       expect(oauthView.errorMessage.isPresent()).toBe(false);
     });
 
     it('shows the OpenID IDP on the OAuth settings page', async () => {
+      await browser.get(oauthSettingsURL);
+      await crudView.isLoaded();
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       expect(browser.getCurrentUrl()).toContain('config.openshift.io~v1~OAuth/cluster');
-      await crudView.isLoaded();
       expect(oauthView.idpTableCellName(idpName).getText()).toEqual(idpName);
       expect(oauthView.idpTableCellType(idpName).getText()).toEqual('OpenID');
       expect(oauthView.idpTableCellMapping(idpName).getText()).toEqual('claim');

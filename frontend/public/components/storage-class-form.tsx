@@ -21,8 +21,9 @@ import {
   ExternalLink,
   Firehose,
   FirehoseResult,
-  NameValueEditorPair,
   history,
+  NameValueEditorPair,
+  PageHeading,
   resourceObjPath,
 } from './utils';
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
@@ -1001,10 +1002,10 @@ class StorageClassFormWithTranslation extends React.Component<
     const allowExpansion = expansionFlag ? newStorageClass.expansion : false;
 
     return (
-      <div className="co-m-pane__body co-m-pane__form">
-        <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-          <div className="co-m-pane__name">{t('public~StorageClass')}</div>
-          <div className="co-m-pane__heading-link">
+      <div className="co-m-pane__form">
+        <PageHeading
+          title={t('public~StorageClass')}
+          link={
             <Link
               to="/k8s/cluster/storageclasses/~new"
               id="yaml-link"
@@ -1013,142 +1014,146 @@ class StorageClassFormWithTranslation extends React.Component<
             >
               {t('public~Edit YAML')}
             </Link>
-          </div>
-        </h1>
-        <form data-test-id="storage-class-form">
-          <div className={classNames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
-            <label className="control-label co-required" htmlFor="storage-class-name">
-              {t('public~Name')}
-            </label>
-            <input
-              type="text"
-              className="pf-c-form-control"
-              placeholder={newStorageClass.name}
-              id="storage-class-name"
-              onChange={(event) => this.setStorageHandler('name', event.target.value.trim())}
-              value={_.get(newStorageClass, 'name', '')}
-            />
-            <span className="help-block">
-              {fieldErrors.nameValidationMsg ? fieldErrors.nameValidationMsg : null}
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="storage-class-description">{t('public~Description')}</label>
-            <input
-              type="text"
-              className="pf-c-form-control"
-              id="storage-class-description"
-              onChange={(event) => this.setStorageHandler('description', event.target.value)}
-              value={_.get(newStorageClass, 'description', '')}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="co-required" htmlFor="storage-class-reclaim-policy">
-              {t('public~Reclaim policy')}
-            </label>
-            <Dropdown
-              title={t('public~Select reclaim policy')}
-              items={this.reclaimPolicies}
-              dropDownClassName="dropdown--full-width"
-              selectedKey={reclaimPolicyKey}
-              onChange={(event) => this.setStorageHandler('reclaim', event)}
-              id="storage-class-reclaim-policy"
-            />
-            <span className="help-block">
-              {t(
-                'public~Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to "Delete"',
-              )}
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label className="co-required" htmlFor="storage-class-volume-binding-mode">
-              {t('public~Volume binding mode')}
-            </label>
-            <Dropdown
-              title={t('public~Select volume binding mode')}
-              items={this.volumeBindingModes}
-              dropDownClassName="dropdown--full-width"
-              selectedKey={volumeBindingModeKey}
-              onChange={(event) => this.setStorageHandler('volumeBindingMode', event)}
-              id="storage-class-volume-binding-mode"
-              dataTest="storage-class-volume-binding-mode"
-            />
-            <span className="help-block">
-              {t(
-                'public~Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
-              )}
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label className="co-required" htmlFor="storage-class-provisioner">
-              {t('public~Provisioner')}
-            </label>
-            <Dropdown
-              title={t('public~Select Provisioner')}
-              autocompleteFilter={this.autocompleteFilter}
-              autocompletePlaceholder={'Select Provisioner'}
-              items={_.mapValues(this.storageTypes, 'provisioner')}
-              dropDownClassName="dropdown--full-width"
-              menuClassName="dropdown-menu--text-wrap"
-              selectedKey={_.get(this.state, 'newStorageClass.type')}
-              onChange={(event) => this.setStorageHandler('type', event)}
-              id="storage-class-provisioner"
-              dataTest="storage-class-provisioner-dropdown"
-            />
-            <span className="help-block">
-              {t(
-                'public~Determines what volume plugin is used for provisioning PersistentVolumes.',
-              )}
-            </span>
-          </div>
-
-          <div className="co-form-subsection">
-            {newStorageClass.type !== null ? this.getProvisionerElements() : null}
-          </div>
-
-          {expansionFlag && (
-            <div className="checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  className="create-storage-class-form__checkbox"
-                  onChange={(event) => this.setStorageHandler('expansion', event.target.checked)}
-                  checked={allowExpansion}
-                />
-                {t('public~Allow PersistentVolumeClaims to be expanded')}
+          }
+        />
+        <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+          <form data-test-id="storage-class-form">
+            <div
+              className={classNames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}
+            >
+              <label className="control-label co-required" htmlFor="storage-class-name">
+                {t('public~Name')}
               </label>
+              <input
+                type="text"
+                className="pf-c-form-control"
+                placeholder={newStorageClass.name}
+                id="storage-class-name"
+                onChange={(event) => this.setStorageHandler('name', event.target.value.trim())}
+                value={_.get(newStorageClass, 'name', '')}
+              />
+              <span className="help-block">
+                {fieldErrors.nameValidationMsg ? fieldErrors.nameValidationMsg : null}
+              </span>
             </div>
-          )}
 
-          <ButtonBar
-            errorMessage={this.state.error ? this.state.error.message : ''}
-            inProgress={this.state.loading}
-          >
-            <ActionGroup className="pf-c-form">
-              <Button
-                id="save-changes"
-                isDisabled={!this.state.validationSuccessful}
-                onClick={this.createStorageClass}
-                type="submit"
-                variant="primary"
-              >
-                {t('public~Create')}
-              </Button>
-              <Button
-                id="cancel"
-                onClick={() => history.push('/k8s/cluster/storageclasses')}
-                type="button"
-                variant="secondary"
-              >
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            <div className="form-group">
+              <label htmlFor="storage-class-description">{t('public~Description')}</label>
+              <input
+                type="text"
+                className="pf-c-form-control"
+                id="storage-class-description"
+                onChange={(event) => this.setStorageHandler('description', event.target.value)}
+                value={_.get(newStorageClass, 'description', '')}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="co-required" htmlFor="storage-class-reclaim-policy">
+                {t('public~Reclaim policy')}
+              </label>
+              <Dropdown
+                title={t('public~Select reclaim policy')}
+                items={this.reclaimPolicies}
+                dropDownClassName="dropdown--full-width"
+                selectedKey={reclaimPolicyKey}
+                onChange={(event) => this.setStorageHandler('reclaim', event)}
+                id="storage-class-reclaim-policy"
+              />
+              <span className="help-block">
+                {t(
+                  'public~Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to "Delete"',
+                )}
+              </span>
+            </div>
+
+            <div className="form-group">
+              <label className="co-required" htmlFor="storage-class-volume-binding-mode">
+                {t('public~Volume binding mode')}
+              </label>
+              <Dropdown
+                title={t('public~Select volume binding mode')}
+                items={this.volumeBindingModes}
+                dropDownClassName="dropdown--full-width"
+                selectedKey={volumeBindingModeKey}
+                onChange={(event) => this.setStorageHandler('volumeBindingMode', event)}
+                id="storage-class-volume-binding-mode"
+                dataTest="storage-class-volume-binding-mode"
+              />
+              <span className="help-block">
+                {t(
+                  'public~Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
+                )}
+              </span>
+            </div>
+
+            <div className="form-group">
+              <label className="co-required" htmlFor="storage-class-provisioner">
+                {t('public~Provisioner')}
+              </label>
+              <Dropdown
+                title={t('public~Select Provisioner')}
+                autocompleteFilter={this.autocompleteFilter}
+                autocompletePlaceholder={'Select Provisioner'}
+                items={_.mapValues(this.storageTypes, 'provisioner')}
+                dropDownClassName="dropdown--full-width"
+                menuClassName="dropdown-menu--text-wrap"
+                selectedKey={_.get(this.state, 'newStorageClass.type')}
+                onChange={(event) => this.setStorageHandler('type', event)}
+                id="storage-class-provisioner"
+                dataTest="storage-class-provisioner-dropdown"
+              />
+              <span className="help-block">
+                {t(
+                  'public~Determines what volume plugin is used for provisioning PersistentVolumes.',
+                )}
+              </span>
+            </div>
+
+            <div className="co-form-subsection">
+              {newStorageClass.type !== null ? this.getProvisionerElements() : null}
+            </div>
+
+            {expansionFlag && (
+              <div className="checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    className="create-storage-class-form__checkbox"
+                    onChange={(event) => this.setStorageHandler('expansion', event.target.checked)}
+                    checked={allowExpansion}
+                  />
+                  {t('public~Allow PersistentVolumeClaims to be expanded')}
+                </label>
+              </div>
+            )}
+
+            <ButtonBar
+              errorMessage={this.state.error ? this.state.error.message : ''}
+              inProgress={this.state.loading}
+            >
+              <ActionGroup className="pf-c-form">
+                <Button
+                  id="save-changes"
+                  isDisabled={!this.state.validationSuccessful}
+                  onClick={this.createStorageClass}
+                  type="submit"
+                  variant="primary"
+                >
+                  {t('public~Create')}
+                </Button>
+                <Button
+                  id="cancel"
+                  onClick={() => history.push('/k8s/cluster/storageclasses')}
+                  type="button"
+                  variant="secondary"
+                >
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

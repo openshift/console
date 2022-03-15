@@ -6,7 +6,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PromiseComponent, history } from '../utils';
+import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -163,110 +163,112 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
     const { t } = this.props;
     const title = t('public~Add Identity Provider: GitHub');
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            {t(
-              'public~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
-            )}
-          </p>
-          <IDPNameInput value={name} onChange={this.nameChanged} />
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
-              {t('public~Client ID')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={this.clientIDChanged}
-              value={clientID}
-              id="client-id"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
-              {t('public~Client secret')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="password"
-              onChange={this.clientSecretChanged}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="control-label" htmlFor="hostname">
-              {t('public~Hostname')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={this.hostnameChanged}
-              value={hostname}
-              id="hostname"
-              aria-describedby="idp-hostname-help"
-            />
-            <p className="help-block" id="idp-hostname-help">
-              {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
+        <PageHeading
+          title={title}
+          helpText={t(
+            'public~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
+          )}
+        />
+        <div className="co-m-pane__body">
+          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
+            <IDPNameInput value={name} onChange={this.nameChanged} />
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="client-id">
+                {t('public~Client ID')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={this.clientIDChanged}
+                value={clientID}
+                id="client-id"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="client-secret">
+                {t('public~Client secret')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="password"
+                onChange={this.clientSecretChanged}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="hostname">
+                {t('public~Hostname')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={this.hostnameChanged}
+                value={hostname}
+                id="hostname"
+                aria-describedby="idp-hostname-help"
+              />
+              <p className="help-block" id="idp-hostname-help">
+                {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
+              </p>
+            </div>
+            <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+            <div className="co-form-section__separator" />
+            <h3>{t('public~Organizations')}</h3>
+            <p className="co-help-text">
+              <Trans
+                t={t}
+                ns="public"
+                i18nKey="Optionally list organizations. If specified, only GitHub users that are members of at least one of the listed organizations will be allowed to log in. Cannot be used in combination with <strong>teams</strong>."
+              >
+                Optionally list organizations. If specified, only GitHub users that are members of
+                at least one of the listed organizations will be allowed to log in. Cannot be used
+                in combination with <strong>teams</strong>.
+              </Trans>
             </p>
-          </div>
-          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-          <div className="co-form-section__separator" />
-          <h3>{t('public~Organizations')}</h3>
-          <p className="co-help-text">
-            <Trans
-              t={t}
-              ns="public"
-              i18nKey="Optionally list organizations. If specified, only GitHub users that are members of at least one of the listed organizations will be allowed to log in. Cannot be used in combination with <strong>teams</strong>."
-            >
-              Optionally list organizations. If specified, only GitHub users that are members of at
-              least one of the listed organizations will be allowed to log in. Cannot be used in
-              combination with <strong>teams</strong>.
-            </Trans>
-          </p>
-          <ListInput
-            label={t('public~Organization')}
-            onChange={this.organizationsChanged}
-            helpText={t('public~Restricts which organizations are allowed to log in.')}
-          />
-          <div className="co-form-section__separator" />
-          <h3>{t('public~Teams')}</h3>
-          <p className="co-help-text">
-            <Trans
-              t={t}
-              ns="public"
-              i18nKey="Optionally list teams. If specified, only GitHub users that are members of at least one of the listed teams will be allowed to log in. Cannot be used in combination with <strong>organizations</strong>."
-            >
-              Optionally list teams. If specified, only GitHub users that are members of at least
-              one of the listed teams will be allowed to log in. Cannot be used in combination with{' '}
-              <strong>organizations</strong>.
-            </Trans>
-          </p>
-          <ListInput
-            label={t('public~Team')}
-            onChange={this.teamsChanged}
-            helpText={t(
-              'public~Restricts which teams are allowed to log in. The format is <org>/<team>.',
-            )}
-          />
-          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary" data-test-id="add-idp">
-                {t('public~Add')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            <ListInput
+              label={t('public~Organization')}
+              onChange={this.organizationsChanged}
+              helpText={t('public~Restricts which organizations are allowed to log in.')}
+            />
+            <div className="co-form-section__separator" />
+            <h3>{t('public~Teams')}</h3>
+            <p className="co-help-text">
+              <Trans
+                t={t}
+                ns="public"
+                i18nKey="Optionally list teams. If specified, only GitHub users that are members of at least one of the listed teams will be allowed to log in. Cannot be used in combination with <strong>organizations</strong>."
+              >
+                Optionally list teams. If specified, only GitHub users that are members of at least
+                one of the listed teams will be allowed to log in. Cannot be used in combination
+                with <strong>organizations</strong>.
+              </Trans>
+            </p>
+            <ListInput
+              label={t('public~Team')}
+              onChange={this.teamsChanged}
+              helpText={t(
+                'public~Restricts which teams are allowed to log in. The format is <org>/<team>.',
+              )}
+            />
+            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary" data-test-id="add-idp">
+                  {t('public~Add')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

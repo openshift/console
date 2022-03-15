@@ -7,7 +7,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, PromiseComponent, history, AsyncComponent } from '../utils';
+import { ButtonBar, PromiseComponent, history, AsyncComponent, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -178,84 +178,86 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
     const { t } = this.props;
     const title = t('public~Add Identity Provider: Keystone Authentication');
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            {t(
-              'public~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
-            )}
-          </p>
-          <IDPNameInput value={name} onChange={this.nameChanged} />
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="domain-name">
-              {t('public~Domain name')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={this.domainNameChanged}
-              value={domainName}
-              id="domain-name"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
-              {t('public~URL')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="url"
-              onChange={this.urlChanged}
-              value={url}
-              id="url"
-              aria-describedby="idp-url-help"
-              required
-            />
-            <p className="help-block" id="idp-url-help">
-              {t('public~The remote URL to connect to.')}
-            </p>
-          </div>
-          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-          <div className="form-group">
-            <DroppableFileInput
-              onChange={this.certFileChanged}
-              inputFileData={certFileContent}
-              id="cert-file-input"
-              label={t('public~Certificate')}
-              hideContents
-              inputFieldHelpText={t(
-                'public~PEM-encoded TLS client certificate to present when connecting to the server.',
-              )}
-            />
-          </div>
-          <div className="form-group">
-            <DroppableFileInput
-              onChange={this.keyFileChanged}
-              inputFileData={keyFileContent}
-              id="key-file-input"
-              label={t('public~Key')}
-              hideContents
-              inputFieldHelpText={t(
-                'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
-              )}
-            />
-          </div>
-          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary" data-test-id="add-idp">
-                {t('public~Add')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+        <PageHeading
+          title={title}
+          helpText={t(
+            'public~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
+          )}
+        />
+        <div className="co-m-pane__body">
+          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
+            <IDPNameInput value={name} onChange={this.nameChanged} />
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="domain-name">
+                {t('public~Domain name')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={this.domainNameChanged}
+                value={domainName}
+                id="domain-name"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="url">
+                {t('public~URL')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="url"
+                onChange={this.urlChanged}
+                value={url}
+                id="url"
+                aria-describedby="idp-url-help"
+                required
+              />
+              <p className="help-block" id="idp-url-help">
+                {t('public~The remote URL to connect to.')}
+              </p>
+            </div>
+            <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+            <div className="form-group">
+              <DroppableFileInput
+                onChange={this.certFileChanged}
+                inputFileData={certFileContent}
+                id="cert-file-input"
+                label={t('public~Certificate')}
+                hideContents
+                inputFieldHelpText={t(
+                  'public~PEM-encoded TLS client certificate to present when connecting to the server.',
+                )}
+              />
+            </div>
+            <div className="form-group">
+              <DroppableFileInput
+                onChange={this.keyFileChanged}
+                inputFileData={keyFileContent}
+                id="key-file-input"
+                label={t('public~Key')}
+                hideContents
+                inputFieldHelpText={t(
+                  'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+                )}
+              />
+            </div>
+            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary" data-test-id="add-idp">
+                  {t('public~Add')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

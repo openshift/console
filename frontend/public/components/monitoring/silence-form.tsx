@@ -16,7 +16,7 @@ import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../utils/datetime';
 import { Dropdown } from '../utils/dropdown';
-import { SectionHeading } from '../utils/headings';
+import { PageHeading, SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { history } from '../utils/router';
 import { StatusBox } from '../utils/status-box';
@@ -194,14 +194,13 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail">
-        <h1 className="co-m-pane__heading">{title}</h1>
-        <p className="co-m-pane__explanation">
-          {t(
-            'public~Silences temporarily mute alerts based on a set of label selectors that you define. Notifications will not be sent for alerts that match all the listed values or regular expressions.',
-          )}
-        </p>
-      </div>
+      <PageHeading
+        title={title}
+        helpText={t(
+          'public~Silences temporarily mute alerts based on a set of label selectors that you define. Notifications will not be sent for alerts that match all the listed values or regular expressions.',
+        )}
+        detail
+      />
 
       {Info && <Info />}
 

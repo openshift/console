@@ -27,14 +27,17 @@
   }
 }
 
+// only used in packages and will be orphaned when packages move out
 .yaml-editor__header {
   border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   padding: 20px $pf-global-gutter;
   @media(min-width: $pf-global--breakpoint--xl) {
     padding-left: $pf-global-gutter--md;
+    padding-right: $pf-global-gutter--md;
   }
 }
 
+// only used in packages and will be orphaned when packages move out
 .yaml-editor__header-text {
   margin: 0;
 }

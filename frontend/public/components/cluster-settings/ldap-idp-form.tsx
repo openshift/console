@@ -7,7 +7,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PromiseComponent, history } from '../utils';
+import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -198,116 +198,118 @@ class AddLDAPPageWithTranslation extends PromiseComponent<AddLDAPPageProps, AddL
     const { t } = this.props;
     const title = t('public~Add Identity Provider: LDAP');
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            {t('public~Integrate with an LDAP identity provider.')}
-          </p>
-          <IDPNameInput value={name} onChange={this.nameChanged} />
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
-              {t('public~URL')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="url"
-              onChange={this.urlChanged}
-              value={url}
-              id="url"
+        <PageHeading
+          title={title}
+          helpText={t('public~Integrate with an LDAP identity provider.')}
+        />
+        <div className="co-m-pane__body">
+          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
+            <IDPNameInput value={name} onChange={this.nameChanged} />
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="url">
+                {t('public~URL')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="url"
+                onChange={this.urlChanged}
+                value={url}
+                id="url"
+                required
+                aria-describedby="url-help"
+              />
+              <div className="help-block" id="url-help">
+                {t('public~An RFC 2255 URL which specifies the LDAP search parameters to use.')}
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="bind-dn">
+                {t('public~Bind DN')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={this.bindDNChanged}
+                value={bindDN}
+                id="bind-dn"
+                aria-describedby="bind-dn-help"
+              />
+              <div className="help-block" id="bind-dn-help">
+                {t('public~DN to bind with during the search phase.')}
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="bind-password">
+                {t('public~Bind password')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="password"
+                onChange={this.bindPasswordChanged}
+                value={bindPassword}
+                id="bind-password"
+                aria-describedby="bind-password-help"
+              />
+              <div className="help-block" id="bind-password-help">
+                {t('public~Password to bind with during the search phase.')}
+              </div>
+            </div>
+            <div className="co-form-section__separator" />
+            <h3>{t('public~Attributes')}</h3>
+            <p className="co-help-text">
+              {t('public~Attributes map LDAP attributes to identities.')}
+            </p>
+            <ListInput
+              label={t('public~ID')}
               required
-              aria-describedby="url-help"
+              initialValues={attributesID}
+              onChange={this.attributesIDChanged}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the user ID.',
+              )}
             />
-            <div className="help-block" id="url-help">
-              {t('public~An RFC 2255 URL which specifies the LDAP search parameters to use.')}
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="control-label" htmlFor="bind-dn">
-              {t('public~Bind DN')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={this.bindDNChanged}
-              value={bindDN}
-              id="bind-dn"
-              aria-describedby="bind-dn-help"
+            <ListInput
+              label={t('public~Preferred username')}
+              initialValues={attributesPreferredUsername}
+              onChange={this.attributesPreferredUsernameChanged}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the preferred username.',
+              )}
             />
-            <div className="help-block" id="bind-dn-help">
-              {t('public~DN to bind with during the search phase.')}
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="control-label" htmlFor="bind-password">
-              {t('public~Bind password')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="password"
-              onChange={this.bindPasswordChanged}
-              value={bindPassword}
-              id="bind-password"
-              aria-describedby="bind-password-help"
+            <ListInput
+              label={t('public~Name')}
+              initialValues={attributesName}
+              onChange={this.attributesNameChanged}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the display name.',
+              )}
             />
-            <div className="help-block" id="bind-password-help">
-              {t('public~Password to bind with during the search phase.')}
-            </div>
-          </div>
-          <div className="co-form-section__separator" />
-          <h3>{t('public~Attributes')}</h3>
-          <p className="co-help-text">
-            {t('public~Attributes map LDAP attributes to identities.')}
-          </p>
-          <ListInput
-            label={t('public~ID')}
-            required
-            initialValues={attributesID}
-            onChange={this.attributesIDChanged}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the user ID.',
-            )}
-          />
-          <ListInput
-            label={t('public~Preferred username')}
-            initialValues={attributesPreferredUsername}
-            onChange={this.attributesPreferredUsernameChanged}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the preferred username.',
-            )}
-          />
-          <ListInput
-            label={t('public~Name')}
-            initialValues={attributesName}
-            onChange={this.attributesNameChanged}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the display name.',
-            )}
-          />
-          <ListInput
-            label={t('public~Email')}
-            onChange={this.attributesEmailChanged}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the email address.',
-            )}
-          />
-          <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
-          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary" data-test-id="add-idp">
-                {t('public~Add')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            <ListInput
+              label={t('public~Email')}
+              onChange={this.attributesEmailChanged}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the email address.',
+              )}
+            />
+            <div className="co-form-section__separator" />
+            <h3>{t('public~More options')}</h3>
+            <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary" data-test-id="add-idp">
+                  {t('public~Add')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

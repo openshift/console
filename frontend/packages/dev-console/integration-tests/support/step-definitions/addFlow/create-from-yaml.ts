@@ -12,6 +12,7 @@ Given('user is at Import YAML page', () => {
 When('user clicks create button on YAML page', () => {
   yamlPage.clickOnCreateButton();
   app.waitForLoad();
+  detailsPage.sectionHeaderShouldExist('Deployment details');
   detailsPage.titleShouldContain('shell-app');
 });
 
