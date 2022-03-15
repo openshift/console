@@ -83,7 +83,7 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
         return (
           <GettingStartedCard
             id="samples"
-            icon={<CatalogIcon color="var(--pf-global--primary-color--100)" aria-hidden="true" />}
+            icon={<CatalogIcon color="var(--co-global--palette--blue-600)" aria-hidden="true" />}
             title={t('devconsole~Create applications using samples')}
             titleColor={'var(--co-global--palette--blue-600)'}
             description={t(

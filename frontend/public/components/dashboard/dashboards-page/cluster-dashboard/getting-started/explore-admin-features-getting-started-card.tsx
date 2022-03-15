@@ -38,9 +38,9 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   return (
     <GettingStartedCard
       id="admin-features"
-      icon={<FlagIcon color="var(--pf-global--palette--orange-300)" aria-hidden="true" />}
+      icon={<FlagIcon color="var(--co-global--palette--orange-700)" aria-hidden="true" />}
       title={t('public~Explore new admin features')}
-      titleColor={'var(--co-global--palette--gold-700)'}
+      titleColor={'var(--co-global--palette--orange-700)'}
       description={t('public~Explore new features and resources within the admin perspective.')}
       links={links}
       moreLink={moreLink}
