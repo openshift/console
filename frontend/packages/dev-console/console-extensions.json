@@ -285,7 +285,7 @@
       ]
     },
     "flags": {
-      "required": ["OPENSHIFT"]
+      "required": ["ALLOW_SERVICE_BINDING"]
     }
   },
   {
@@ -296,7 +296,7 @@
       "provider": { "$codeRef": "catalog.bindableItemMetadataProvider" }
     },
     "flags": {
-      "required": ["OPENSHIFT"]
+      "required": ["ALLOW_SERVICE_BINDING"]
     }
   },
   {
