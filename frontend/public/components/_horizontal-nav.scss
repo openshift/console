@@ -1,7 +1,7 @@
 $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
 
 .co-m-horizontal-nav__menu {
-  border-bottom: 1px solid $color-grey-background-border;
+  border-bottom: 1px solid var(--pf-global--BorderColor--100);
   display: flex;
   flex-shrink: 0; // prevent collapse of tabs
   list-style: none;
@@ -15,7 +15,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
     padding-left: ($pf-global-gutter--md - $pf-global-gutter);
   }
   &--within-sidebar {
-    border-top: 1px solid $color-grey-background-border;
+    border-top: 1px solid var(--pf-global--BorderColor--100);
     margin-bottom: $pf-global-gutter--md !important;
     margin-left: -$pf-global-gutter;
     margin-right: -$pf-global-gutter;
@@ -42,17 +42,17 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-global-gutter;
   button {
     background: transparent;
     border: 0;
-    color: $pf-color-black-700;
+    color: var(--pf-global--Color--200);
     display: block;
     padding: 6px $co-m-horizontal-nav__menu-item-link-padding-lr 8px;
     position: relative;
     text-decoration: none;
     &:hover,
     &:focus {
-      color: #252525;
+      color: var(--pf-global--Color--100);
       text-decoration: none;
       &::after {
-        background: $pf-color-black-400;
+        background: var(--pf-global--palette--black-400);
       }
     }
     &::after {
