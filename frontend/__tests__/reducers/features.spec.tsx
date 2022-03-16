@@ -19,7 +19,40 @@ describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {
     const newState = featureReducer(null, null);
 
-    expect(newState).toEqual(Immutable.Map(defaults));
+    expect(newState).toEqual(
+      Immutable.Map({
+        AUTH_ENABLED: true,
+        PROMETHEUS: undefined,
+        CHARGEBACK: undefined,
+        OPENSHIFT: undefined,
+        MONITORING: false,
+        CAN_GET_NS: undefined,
+        CAN_LIST_NS: undefined,
+        CAN_LIST_NODE: undefined,
+        CAN_LIST_PV: undefined,
+        CAN_LIST_CRD: undefined,
+        CAN_LIST_CHARGEBACK_REPORTS: undefined,
+        CAN_LIST_USERS: undefined,
+        CAN_LIST_GROUPS: undefined,
+        CAN_LIST_OPERATOR_GROUP: undefined,
+        CAN_LIST_PACKAGE_MANIFEST: undefined,
+        CAN_CREATE_PROJECT: undefined,
+        CAN_LIST_VSC: undefined,
+        CLUSTER_AUTOSCALER: undefined,
+        SHOW_OPENSHIFT_START_GUIDE: undefined,
+        SERVICE_CATALOG: undefined,
+        CLUSTER_API: undefined,
+        CLUSTER_VERSION: undefined,
+        MACHINE_CONFIG: undefined,
+        MACHINE_AUTOSCALER: undefined,
+        MACHINE_HEALTH_CHECK: undefined,
+        CONSOLE_LINK: undefined,
+        CONSOLE_CLI_DOWNLOAD: undefined,
+        CONSOLE_NOTIFICATION: undefined,
+        CONSOLE_EXTERNAL_LOG_LINK: undefined,
+        CONSOLE_YAML_SAMPLE: undefined,
+      }),
+    );
   });
 
   it('returns updated state with new flags if `setFlag` action', () => {

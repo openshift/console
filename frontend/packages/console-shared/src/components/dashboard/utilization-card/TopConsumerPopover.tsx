@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useActivePerspective, LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
@@ -17,9 +14,7 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
-import { featureReducerName } from '@console/internal/reducers/features';
-import { RootState } from '@console/internal/redux';
-import { getName, getNamespace } from '../../..';
+import { getName, getNamespace, useFlag } from '../../..';
 import { FLAGS } from '../../../constants';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
 import Status from '../status-card/StatusPopup';
@@ -136,11 +131,8 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const { t } = useTranslation();
       const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
       const activePerspective = useActivePerspective()[0];
-      const canAccessMonitoring = useSelector<RootState, boolean>(
-        (state) =>
-          !!state[featureReducerName].get(FLAGS.CAN_GET_NS) &&
-          !!window.SERVER_FLAGS.prometheusBaseURL,
-      );
+      const canAccessMonitoring =
+        useFlag(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL;
       const { query, model, metric, fieldSelector } = currentConsumer;
       const k8sResource = React.useMemo(
         () => (isOpen ? getResourceToWatch(model, namespace, fieldSelector) : null),

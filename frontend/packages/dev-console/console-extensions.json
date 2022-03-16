@@ -392,7 +392,7 @@
       }
     },
     "flags": {
-      "required": ["OPENSHIFT"]
+      "required": ["OPENSHIFT", "MONITORING"]
     }
   },
   {
@@ -553,6 +553,9 @@
       "id": "topology-side-bar-tab-observe",
       "label": "%devconsole~Observe%",
       "insertAfter": "topology-side-bar-tab-resource"
+    },
+    "flags": {
+      "required": ["OPENSHIFT", "MONITORING"]
     }
   },
   {
