@@ -249,3 +249,8 @@ export enum ActionMenuVariant {
   KEBAB = 'plain',
   DROPDOWN = 'default',
 }
+
+export type DroppableEditYAMLProps = {
+  allowMultiple?: boolean;
+  obj: string;
+};

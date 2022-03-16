@@ -15,4 +15,5 @@ export const sharedPluginModules = [
   'react-redux',
   'redux',
   'redux-thunk',
+  'monaco-editor-core',
 ];

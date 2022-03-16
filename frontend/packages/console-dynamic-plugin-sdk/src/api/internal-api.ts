@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { lazy } from 'react';
 import {
   ActivityItemProps,
   ActivityBodyProps,
@@ -52,6 +53,26 @@ export const VirtualizedGrid: React.FC<VirtualizedGridProps> = require('@console
   .default;
 export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
   .default;
+
+/**
+ * A lazy component that creates a monaco editor
+ * @example
+ * ```tsx
+ * <DroppableEditYAML
+ *     obj={obj}
+ *     create
+ *     kind={kindObj.kind}
+ *     resourceObjPath={resourceObjPath}
+ *     header={`Create ${kindObj.label}`}
+ *    />
+ * ```
+ *
+ */
+export const DroppableEditYAML = lazy(() =>
+  import('@console/internal/components/droppable-edit-yaml').then((m) => ({
+    default: m.DroppableEditYAML,
+  })),
+);
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
