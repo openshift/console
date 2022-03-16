@@ -8,15 +8,16 @@ describe('CloudShellDrawerComponent', () => {
   it('should render children as Drawer children when present', () => {
     const wrapper = shallow(
       <CloudShellDrawer onClose={() => null}>
-        <p>Terminal content</p>
+        <p data-test="terminal-content">Terminal content</p>
       </CloudShellDrawer>,
     );
     expect(
       wrapper
         .find(Drawer)
         .children()
-        .html(),
-    ).toEqual('<p>Terminal content</p>');
+        .find('[data-test="terminal-content"]')
+        .text(),
+    ).toEqual('Terminal content');
   });
 
   it('should call onClose when clicked on close button', () => {

@@ -66,7 +66,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
       onChange={handleChange}
       resizable
     >
-      {children}
+      <div className="co-cloud-shell-drawer__body">{children}</div>
     </Drawer>
   );
 };

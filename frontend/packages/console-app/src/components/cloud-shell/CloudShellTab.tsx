@@ -4,7 +4,7 @@ import { Redirect } from 'react-router';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
 import { useFlag } from '@console/shared';
 import { FLAG_DEVWORKSPACE } from '../../consts';
-import CloudShellTerminal from './CloudShellTerminal';
+import MultiTabTerminal from './MultiTabbedTerminal';
 import './CloudShellTab.scss';
 
 const CloudShellTab: React.FC = () => {
@@ -21,7 +21,7 @@ const CloudShellTab: React.FC = () => {
         </div>
       </div>
       <div className="co-cloud-shell-tab__body">
-        <CloudShellTerminal />
+        <MultiTabTerminal />
       </div>
     </>
   );

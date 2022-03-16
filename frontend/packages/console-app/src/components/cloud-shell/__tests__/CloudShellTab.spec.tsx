@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { Redirect } from 'react-router';
 import * as shared from '@console/shared';
 import CloudShellTab from '../CloudShellTab';
-import CloudShellTerminal from '../CloudShellTerminal';
+import MultiTabTerminal from '../MultiTabbedTerminal';
 
 describe('CloudShellTab', () => {
   it('should not render redirect component if flag check is pending', () => {
@@ -24,13 +24,13 @@ describe('CloudShellTab', () => {
     spyOn(shared, 'useFlag').and.returnValue(true);
     window.SERVER_FLAGS.clusters = ['clustera', 'clusterb'];
     const cloudShellTabWrapper = shallow(<CloudShellTab />);
-    expect(cloudShellTabWrapper.find(CloudShellTerminal).exists()).toBe(false);
+    expect(cloudShellTabWrapper.find(MultiTabTerminal).exists()).toBe(false);
   });
 
   it('should render CloudShellTerminal when Devworkspaceflag is true and not MultiCluster', () => {
     spyOn(shared, 'useFlag').and.returnValue(true);
     window.SERVER_FLAGS.clusters = ['clustera'];
     const cloudShellTabWrapper = shallow(<CloudShellTab />);
-    expect(cloudShellTabWrapper.find(CloudShellTerminal).exists()).toBe(true);
+    expect(cloudShellTabWrapper.find(MultiTabTerminal).exists()).toBe(true);
   });
 });
