@@ -387,7 +387,7 @@ export const NodeModel: K8sKind = {
 };
 
 export const CertificateSigningRequestModel: K8sKind = {
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   apiGroup: 'certificates.k8s.io',
   label: 'CertificateSigningRequest',
   // t('public~CertificateSigningRequest')
