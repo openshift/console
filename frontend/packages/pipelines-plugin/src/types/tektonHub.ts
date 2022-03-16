@@ -21,7 +21,7 @@ export type TektonHubLatestVersion = {
   minPipelinesVersion: string;
   rawURL: string;
   webURL: string;
-  hubURL: string;
+  hubURLPath: string;
   platforms: TektonHubPlatform[];
   updatedAt: string;
 };
