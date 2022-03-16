@@ -115,7 +115,7 @@ export const sampleTasks: SampleTasks = {
       displayName: 'Ansible Runner',
       description: 'Task to run Ansible playbooks using Ansible Runner',
       minPipelinesVersion: '0.12.1',
-      hubURL: 'tekton/task/curl/0.1',
+      hubURLPath: 'tekton/task/curl/0.1',
       rawURL:
         'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
       webURL:
@@ -250,9 +250,9 @@ export const sampleTektonHubCatalogItemWithHubURL: CatalogItem = {
   attributes: {
     installed: '',
     versions: [
-      { id: '1', hubURL: 'foo/bar/test' },
-      { id: '2', hubURL: 'foo/bar/test2' },
-      { id: '3', hubURL: 'foo/bar/test3' },
+      { id: '1', hubURLPath: 'foo/bar/test' },
+      { id: '2', hubURLPath: 'foo/bar/test2' },
+      { id: '3', hubURLPath: 'foo/bar/test3' },
     ],
   },
   data: {

@@ -53,7 +53,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     [selectedVersion, versions],
   );
 
-  const hubURL = loadedVersion?.hubURL; // To-Do: test once API is up and if needed change
+  const hubURL = loadedVersion?.hubURLPath;
   const hubLink = hubURL && `${TEKTON_HUB_ENDPOINT}/${hubURL}`;
 
   return (
