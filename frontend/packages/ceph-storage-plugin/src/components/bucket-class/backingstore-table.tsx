@@ -92,7 +92,7 @@ const BackingStoreTable: React.FC<BackingStoreTableProps> = (props) => {
   const memoizedData = useDeepCompareMemoize(data, true);
   const memoizedPreSelected = useDeepCompareMemoize(preSelected, true);
   React.useEffect(() => {
-    if (!_.isEmpty(memoizedPreSelected) && selectedRows.size === 0) {
+    if (!_.isEmpty(memoizedPreSelected) && selectedRows.size === 0 && !_.isEmpty(memoizedData)) {
       const preSelectedRows = memoizedData.filter((item) =>
         memoizedPreSelected.includes(getUID(item)),
       );

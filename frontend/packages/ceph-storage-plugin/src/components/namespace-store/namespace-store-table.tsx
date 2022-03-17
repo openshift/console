@@ -84,7 +84,7 @@ const NamespaceStoreTable: React.FC<NamespaceStoreTableProps> = (props) => {
   );
   const memoizedData = useDeepCompareMemoize(data, true);
   React.useEffect(() => {
-    if (!_.isEmpty(preSelected) && selectedRows.size === 0) {
+    if (!_.isEmpty(preSelected) && selectedRows.size === 0 && !_.isEmpty(memoizedData)) {
       const preSelectedRows = memoizedData.filter((item) => preSelected.includes(getUID(item)));
       updateSelectedRows(preSelectedRows);
     }
