@@ -1,5 +1,6 @@
 .co-hint-block {
-  background-color: $pf-color-blue-50;
-  color: $pf-color-blue-600;
-  padding: 10px 15px 10px;
+  background-color: var(--pf-global--BackgroundColor--400);
+  border: 1px solid var(--pf-global--BorderColor--300);
+  color: var(--pf-global--Color--100);
+  padding: var(--pf-global--spacer--lg);
 }
