@@ -4,33 +4,35 @@ import { CheckCircleIcon } from '@patternfly/react-icons';
 import { global_palette_green_500 as greenColor } from '@patternfly/react-tokens';
 import i18n from 'i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { TektonHubTaskVersion } from '../catalog/apis/tektonHub';
 import { isSelectedVersionInstalled } from './pipeline-quicksearch-utils';
 
 interface PipelineQuickSearchVersionDropdownProps {
   selectedVersion: string;
   item: CatalogItem;
+  versions: TektonHubTaskVersion[];
   onChange: (key: string) => void;
 }
 
 const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDropdownProps> = ({
   item,
+  versions,
   onChange,
   selectedVersion,
 }) => {
   const [isOpen, setOpen] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setOpen((v) => !v), []);
-  const versions = item?.attributes?.versions ?? [];
-  const versionItems = versions.reduce((acc, { version, id }) => {
-    acc[id.toString()] =
-      id === item.data?.latestVersion?.id
+
+  if (!versions || versions?.length === 0) {
+    return null;
+  }
+  const versionItems = versions.reduce((acc, { version }) => {
+    acc[version.toString()] =
+      version === item.data?.latestVersion?.version
         ? i18n.t('pipelines-plugin~{{version}} (latest)', { version })
         : version;
     return acc;
   }, {});
-
-  if (versions.length === 0) {
-    return null;
-  }
 
   return (
     <Dropdown

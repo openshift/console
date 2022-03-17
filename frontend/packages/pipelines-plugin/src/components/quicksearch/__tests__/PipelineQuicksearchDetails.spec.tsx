@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { render, fireEvent, screen, cleanup, waitFor, configure } from '@testing-library/react';
 import { omit } from 'lodash';
+import { coFetch } from '@console/internal/co-fetch';
 import {
   sampleClusterTaskCatalogItem,
   sampleTektonHubCatalogItem,
@@ -9,6 +10,25 @@ import {
 import PipelineQuickSearchDetails from '../PipelineQuickSearchDetails';
 
 configure({ testIdAttribute: 'data-test' });
+
+const coFetchMock = coFetch as jest.Mock;
+
+jest.mock('@console/internal/co-fetch', () => ({
+  coFetch: jest.fn(),
+}));
+
+beforeEach(() => {
+  coFetchMock.mockClear();
+  coFetchMock.mockReturnValueOnce(
+    Promise.resolve({
+      json: () => ({
+        data: {
+          versions: sampleTektonHubCatalogItem.attributes.versions,
+        },
+      }),
+    }),
+  );
+});
 
 describe('pipelineQuickSearchDetails', () => {
   const clusterTaskProps = {
@@ -34,7 +54,7 @@ describe('pipelineQuickSearchDetails', () => {
     it('should show the installed badge for the installed tekton hub task', async () => {
       const installedTektonHubTask = {
         ...sampleTektonHubCatalogItem,
-        attributes: { ...sampleTektonHubCatalogItem.attributes, installed: 1 },
+        attributes: { ...sampleTektonHubCatalogItem.attributes, installed: '0.1' },
       };
       const { queryByTestId } = render(
         <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={installedTektonHubTask} />,
@@ -53,6 +73,25 @@ describe('pipelineQuickSearchDetails', () => {
   });
 
   describe('CTA button tests', () => {
+    it('Add button should be disabled if the versions is not available', async () => {
+      const { getByRole } = render(
+        <PipelineQuickSearchDetails
+          {...clusterTaskProps}
+          selectedItem={omit(clusterTaskProps.selectedItem, 'attributes.versions')}
+        />,
+      );
+      await waitFor(() => {
+        expect(getByRole('button', { name: 'Add' }).getAttribute('aria-disabled')).toBe('true');
+      });
+    });
+
+    it('Add button should be enabled if the versions is not available', async () => {
+      const { getByRole } = render(<PipelineQuickSearchDetails {...clusterTaskProps} />);
+      await waitFor(() => {
+        expect(getByRole('button', { name: 'Add' }).getAttribute('aria-disabled')).toBe('false');
+      });
+    });
+
     it('should show the Add button for already installed task', async () => {
       const { getByRole } = render(<PipelineQuickSearchDetails {...clusterTaskProps} />);
       await waitFor(() => {
@@ -70,7 +109,7 @@ describe('pipelineQuickSearchDetails', () => {
     it('should show the Update and add button for already installed task', async () => {
       const installedTektonHubTask = {
         ...sampleTektonHubCatalogItem,
-        attributes: { ...sampleTektonHubCatalogItem.attributes, installed: 1 },
+        attributes: { ...sampleTektonHubCatalogItem.attributes, installed: '0.1' },
       };
       const { getByRole, queryByTestId } = render(
         <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={installedTektonHubTask} />,
@@ -128,7 +167,7 @@ describe('pipelineQuickSearchDetails', () => {
     it('should not show the hub link if the hub url is not available', async () => {
       const installedTektonHubTask = {
         ...sampleTektonHubCatalogItem,
-        attributes: { ...sampleTektonHubCatalogItem.attributes, installed: 1 },
+        attributes: { ...sampleTektonHubCatalogItem.attributes, installed: '0.1' },
       };
       const { queryByTestId } = render(
         <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={installedTektonHubTask} />,

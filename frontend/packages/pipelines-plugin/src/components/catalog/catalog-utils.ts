@@ -1,8 +1,7 @@
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TektonConfigModel } from '../../models';
-import { TektonHubTask } from '../../types/tektonHub';
-import { TEKTON_HUB_INTEGRATION_KEY } from './const';
+import { TektonHubTask, TEKTON_HUB_INTEGRATION_KEY } from './apis/tektonHub';
 
 export const getClusterPlatform = (): string =>
   `${window.SERVER_FLAGS.GOOS}/${window.SERVER_FLAGS.GOARCH}`;
