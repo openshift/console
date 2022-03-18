@@ -167,17 +167,6 @@ form.pf-c-form {
   }
 }
 
-@-webkit-keyframes autofill-success {
-  to {
-    background: var(--pf-c-form-control--success--Background);
-  }
-}
-@-webkit-keyframes autofill-invalid {
-  to {
-    background: var(--pf-c-form-control--invalid--Background);
-  }
-}
-
 // specificity targeting form elements to override --pf-global--FontSize--md
 .pf-c-page,
 .modal-dialog {
@@ -198,18 +187,6 @@ form.pf-c-form {
   .pf-c-form-control.pf-m-success,
   .pf-c-form-control[aria-invalid='true'] {
     --pf-global--FontSize--md: #{$font-size-base};
-  }
-
-  .pf-c-form-control {
-    &:-webkit-autofill {
-      -webkit-animation-fill-mode: both;
-      &.pf-m-success {
-        -webkit-animation-name: autofill-success;
-      }
-      &[aria-invalid='true'] {
-        -webkit-animation-name: autofill-invalid;
-      }
-    }
   }
 }
 
