@@ -7,7 +7,7 @@ import {
 } from '@console/dev-console/integration-tests/support/constants';
 import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineActions } from '../../constants';
-import { pipelineBuilderPO, pipelinesPO } from '../../page-objects';
+import { pipelinesPO } from '../../page-objects';
 import {
   pipelineRunDetailsPage,
   pipelineBuilderPage,
@@ -78,9 +78,6 @@ Given(
 
 When('user adds another task {string} in parallel', (taskName: string) => {
   pipelineBuilderPage.selectParallelTask(taskName);
-  pipelineBuilderPage.addResource('git resource');
-  pipelineBuilderPage.clickOnTask(taskName);
-  cy.get(pipelineBuilderPO.formView.sidePane.inputResource).select('git resource');
   pipelineBuilderPage.clickCreateButton();
 });
 

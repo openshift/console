@@ -65,15 +65,6 @@ When('user selects {string} from Task drop down', (taskName: string) => {
   pipelineBuilderPage.selectTask(taskName);
 });
 
-When('user adds another task {string} in parallel', (taskName: string) => {
-  pipelineBuilderPage.selectParallelTask(taskName);
-  pipelineBuilderPage.addResource('git resource');
-  pipelineBuilderPage.clickOnTask(taskName);
-  cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
-  cy.byTestDropDownMenu('git resource').click();
-  pipelineBuilderPage.clickCreateButton();
-});
-
 When('user clicks Create button on Pipeline Builder page', () => {
   pipelineBuilderPage.clickCreateButton();
 });
@@ -87,9 +78,6 @@ Then(
 
 When('user adds another task {string} in series', (taskName: string) => {
   pipelineBuilderPage.selectSeriesTask(taskName);
-  pipelineBuilderPage.addResource('git resource');
-  pipelineBuilderPage.clickOnTask(taskName);
-  cy.get(pipelineBuilderPO.formView.sidePane.inputResource).select('git resource');
   pipelineBuilderPage.clickCreateButton();
 });
 
@@ -223,11 +211,10 @@ And('user clicks on Create', () => {
 });
 
 And(
-  'user is able to see finally tasks {string}, {string} and {string} mentioned under "Finally tasks" section in the Pipeline details page',
-  (tkn: string, openshift: string, kn: string) => {
-    cy.get(`[data-test="finally-task-node ${tkn}"]`).should('be.visible');
-    cy.get(`[data-test="finally-task-node ${openshift}"]`).should('be.visible');
-    cy.get(`[data-test="finally-task-node ${kn}"]`).should('be.visible');
+  'user is able to see finally tasks {string} and {string} mentioned under "Finally tasks" section in the Pipeline details page',
+  (tkn: string, kn: string) => {
+    cy.get(`[data-test-id="${tkn}"]`).should('be.visible');
+    cy.get(`[data-test-id="${kn}"]`).should('be.visible');
   },
 );
 
@@ -410,10 +397,10 @@ And('user enters url under Parameters section {string}', (url: string) => {
   cy.get('[data-test="parameter url"] [data-test~="value"]').type(url);
 });
 
-And('user adds workspace as {string}', (workspace: string) => {
-  cy.get('[data-test~="workspaces"]')
+And('user adds {string} workspace as {string}', (workspace: string, wName: string) => {
+  cy.get(`[data-test="workspaces ${workspace}"]`)
     .scrollIntoView()
-    .select(workspace);
+    .select(wName);
 });
 
 Given('user has applied yaml {string}', (yamlFile: string) => {
@@ -540,5 +527,26 @@ When('user clicks on Install and add button', () => {
 });
 
 When('user clicks on Add button', () => {
+  cy.byTestID('task-cta').click();
+});
+
+When('user clicks on Add in selected task', () => {
+  cy.byTestID('task-cta').click();
+});
+
+When('user adds a task in series', () => {
+  cy.mouseHover(pipelineBuilderPO.formView.task);
+  cy.get(pipelineBuilderPO.formView.plusTaskIcon)
+    .first()
+    .click({ force: true });
+});
+
+When('user should see the Create button enabled after installation', () => {
+  cy.byLegacyTestID('submit-button').should('not.be.disabled');
+});
+
+When('user selects {string} from Add task quick search', (searchItem: string) => {
+  cy.get('[data-test="task-list"]').click();
+  cy.get(pipelineBuilderPO.formView.quickSearch).type(searchItem);
   cy.byTestID('task-cta').click();
 });
