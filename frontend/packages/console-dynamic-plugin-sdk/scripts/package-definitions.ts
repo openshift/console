@@ -94,24 +94,6 @@ export const getInternalPackage: GetPackageDefinition = (
   },
 });
 
-export const getInternalKubevirtPackage: GetPackageDefinition = (
-  sdkPackage,
-  rootPackage,
-  missingDepCallback,
-) => ({
-  outDir: 'dist/internal-kubevirt',
-  manifest: {
-    name: '@openshift-console/dynamic-plugin-sdk-internal-kubevirt',
-    version: sdkPackage.version,
-    main: 'lib/lib-internal-kubevirt.js',
-    ...commonManifestFields,
-    dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
-  },
-  filesToCopy: {
-    ...commonFiles,
-  },
-});
-
 export const getWebpackPackage: GetPackageDefinition = (
   sdkPackage,
   rootPackage,
