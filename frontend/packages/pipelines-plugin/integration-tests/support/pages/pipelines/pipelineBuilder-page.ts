@@ -14,8 +14,11 @@ export const pipelineBuilderSidePane = {
 
   removeTask: () => {
     cy.get(pipelineBuilderPO.formView.sidePane.dialog).within(() => {
-      cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.actions, 'Remove Task');
+      cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.actions, 'Remove task');
     });
+    cy.get('[data-test="confirm-action"]')
+      .should('be.visible')
+      .click();
   },
 
   enterParameterUrl: (url: string = 'https://github.com/sclorg/golang-ex.git') => {
