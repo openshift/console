@@ -80,7 +80,7 @@ export const getReduxData = (immutableData, resource: WatchK8sResource) => {
 };
 
 export const getIDAndDispatch: GetIDAndDispatch<SDKStoreState> = (resource, k8sModel, cluster) => {
-  if (!k8sModel || !resource) {
+  if (!k8sModel || !resource || (!resource.isList && !resource.name)) {
     return null;
   }
   const query = makeQuery(

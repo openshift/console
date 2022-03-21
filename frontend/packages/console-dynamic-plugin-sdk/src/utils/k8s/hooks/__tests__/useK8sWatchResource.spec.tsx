@@ -96,6 +96,21 @@ describe('useK8sWatchResource', () => {
     resourceUpdate.mockClear();
   });
 
+  it('should not fetch any data if isList is false and name is not provided', async () => {
+    const initResource: WatchK8sResource = {
+      kind: 'Pod',
+    };
+    render(
+      <Wrapper>
+        <WatchResource initResource={initResource} />
+      </Wrapper>,
+    );
+
+    expect(resourceUpdate).toHaveBeenCalledTimes(1);
+    expect(resourceUpdate.mock.calls[0]).toEqual([{}, false, undefined]);
+    resourceUpdate.mockClear();
+  });
+
   it('should not fetch any data if watch parameter is null also when rerender and unmount', () => {
     const initResource: WatchK8sResource = null;
     const { rerender, unmount } = render(

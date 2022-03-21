@@ -15,9 +15,9 @@ const EditDeploymentPage: React.FC<EditDeploymentPageProps> = ({ match, location
   const { t } = useTranslation();
   const namespace = match.params.ns;
   const queryParams = new URLSearchParams(location.search);
+  const kind = queryParams.get('kind') ?? '';
   const name = queryParams.get('name');
   const isNew = !name || name === '~new';
-  const kind = queryParams.get('kind');
 
   const [watchedDeployment, loaded, loadError] = useK8sWatchResource<DeploymentKind>(
     isNew
@@ -45,7 +45,12 @@ const EditDeploymentPage: React.FC<EditDeploymentPageProps> = ({ match, location
       <Helmet>
         <title>{heading}</title>
       </Helmet>
-      <StatusBox loaded={loaded} loadError={loadError} label={label} data={deployment}>
+      <StatusBox
+        loaded={loaded || !!deployment}
+        loadError={loadError}
+        label={label}
+        data={deployment}
+      >
         <EditDeployment
           heading={heading}
           resource={deployment}
