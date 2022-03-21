@@ -38,12 +38,20 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
   class PodExec extends React.PureComponent {
     constructor(props) {
       super(props);
+      let activeContainer = props.initialContainer;
+      if (!activeContainer) {
+        const defaultContainer =
+          props.obj?.metadata.annotations?.['kubectl.kubernetes.io/default-container'];
+        activeContainer =
+          defaultContainer &&
+          props.obj?.spec.containers.some(({ name }) => name === defaultContainer)
+            ? defaultContainer
+            : props.obj?.spec.containers[0].name;
+      }
       this.state = {
         open: false,
         containers: [],
-        activeContainer: props.initialContainer
-          ? props.initialContainer
-          : props.obj?.spec.containers[0].name,
+        activeContainer,
       };
       this.terminal = React.createRef();
       this.onResize = (rows, cols) => this.onResize_(rows, cols);
@@ -205,6 +213,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
                     items={_.mapValues(containers, nameWithIcon)}
                     title={nameWithIcon(activeContainer || <LoadingInline />)}
                     onChange={this.onChangeContainer}
+                    dataTest="container-dropdown"
                   />
                 ) : (
                   nameWithIcon(containers[0])

@@ -756,6 +756,7 @@ export const ContainerDropdown = (props) => {
       title={title}
       onChange={onChange}
       selectedKey={currentKey}
+      dataTest="container-dropdown"
     />
   );
 };

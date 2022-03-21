@@ -64,15 +64,18 @@ export class PodLogs extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps({ obj: build }, { currentKey }) {
+  static getDerivedStateFromProps({ obj }, { currentKey }) {
     const newState = {};
-    const containers = _.get(build, 'spec.containers', []);
-    const initContainers = _.get(build, 'spec.initContainers', []);
-    newState.containers = containersToStatuses(build, containers);
-    newState.initContainers = containersToStatuses(build, initContainers);
+    const containers = _.get(obj, 'spec.containers', []);
+    const initContainers = _.get(obj, 'spec.initContainers', []);
+    newState.containers = containersToStatuses(obj, containers);
+    newState.initContainers = containersToStatuses(obj, initContainers);
     if (!currentKey) {
-      const firstContainer = _.find(newState.containers, { order: 0 });
-      newState.currentKey = firstContainer ? firstContainer.name : '';
+      const defaultContainer =
+        obj.metadata.annotations?.['kubectl.kubernetes.io/default-container'];
+      const selected =
+        newState.containers[defaultContainer] || _.find(newState.containers, { order: 0 });
+      newState.currentKey = selected?.name || '';
     }
     return newState;
   }
