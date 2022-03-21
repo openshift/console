@@ -52,7 +52,6 @@ tags-input .tags {
 }
 
 .modal-body tags-input .tags {
-  background-color: rgba(255, 255, 255, 0.5); // enable scroll-shadows to be seen
   margin-bottom: $pf-global-gutter;
   min-height: 120px;
 
@@ -134,7 +133,7 @@ tags-input.ng-invalid .tags {
 }
 
 tags-input .autocomplete {
-  background-color: white;
+  background-color: var(--pf-global--BackgroundColor--100);
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   margin-top: 5px;
@@ -151,7 +150,7 @@ tags-input .autocomplete .suggestion-list {
 }
 
 tags-input .autocomplete .suggestion-item {
-  background-color: white;
+  background-color: var(--pf-global--BackgroundColor--100);
   color: black;
   cursor: pointer;
   font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -172,7 +171,7 @@ tags-input .autocomplete .suggestion-item.selected em {
 }
 
 tags-input .autocomplete .suggestion-item em {
-  background-color: white;
+  background-color: var(--pf-global--BackgroundColor--100);
   color: black;
   font: normal bold 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

@@ -319,6 +319,10 @@ ul.pf-c-tree-view__list {
   background-color: var(--pf-global--BackgroundColor--200);
 }
 
+.pfext-quick-start-footer {
+  background-color: var(--pf-global--BackgroundColor--100);
+}
+
 // TODO Remove this override when skip to content CSS is figured out.
 .pf-c-skip-to-content {
   position: absolute !important;
