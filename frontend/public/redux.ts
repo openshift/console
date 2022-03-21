@@ -24,7 +24,7 @@ function createThunkMiddleware(extraArgument?) {
   };
 }
 
-const thunk = createThunkMiddleware();
+export const thunk = createThunkMiddleware();
 (thunk as any).withExtraArgument = createThunkMiddleware;
 
 export type RootState = {

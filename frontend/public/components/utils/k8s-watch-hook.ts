@@ -49,14 +49,24 @@ const getIDAndDispatch: GetIDAndDispatch = (resource, k8sModel) => {
   return { id, dispatch };
 };
 
-const getReduxData = (immutableData, resource: WatchK8sResource) => {
+export const INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL = Symbol('_cachedToJSResult');
+
+export const getReduxData = (immutableData, resource: WatchK8sResource) => {
   if (!immutableData) {
     return null;
   }
   if (resource.isList) {
-    return immutableData.toArray().map((a) => a.toJSON());
+    return immutableData.toArray().map((a) => {
+      if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+        a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
+      }
+      return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+    });
   } else if (immutableData.toJSON) {
-    return immutableData.toJSON();
+    if (!immutableData[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+      immutableData[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = immutableData.toJSON();
+    }
+    return immutableData[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
   }
   return null;
 };
