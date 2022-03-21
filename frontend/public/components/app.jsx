@@ -491,20 +491,21 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
-        <ThemeProvider />
-        <AppInitSDK
-          configurations={{
-            appFetch: appInternalFetch,
-            apiDiscovery: initApiDiscovery,
-            initPlugins,
-          }}
-        >
-          <CaptureTelemetry />
-          <ToastProvider>
-            <PollConsoleUpdates />
-            <AppRouter />
-          </ToastProvider>
-        </AppInitSDK>
+        <ThemeProvider>
+          <AppInitSDK
+            configurations={{
+              appFetch: appInternalFetch,
+              apiDiscovery: initApiDiscovery,
+              initPlugins,
+            }}
+          >
+            <CaptureTelemetry />
+            <ToastProvider>
+              <PollConsoleUpdates />
+              <AppRouter />
+            </ToastProvider>
+          </AppInitSDK>
+        </ThemeProvider>
       </Provider>
     </React.Suspense>,
     document.getElementById('app'),

@@ -4,8 +4,8 @@ import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
-import { useForceRender, useResizeObserver, useUserSettings } from '@console/shared';
-import { THEME_USER_SETTING_KEY, THEME_LOCAL_STORAGE_KEY, updateThemeClass } from './ThemeProvider';
+import { useForceRender, useResizeObserver } from '@console/shared';
+import { updateThemeClass, ThemeContext } from './ThemeProvider';
 
 import './_markdown-view.scss';
 
@@ -173,8 +173,8 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   const [frame, setFrame] = React.useState<HTMLIFrameElement>();
   const [frameHeight, setFrameHeight] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
-  const [theme, , themeLoaded] = useUserSettings<string>(THEME_USER_SETTING_KEY);
-  const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY);
+  const theme = React.useContext(ThemeContext);
+  const htmlTagElement = frame?.contentDocument?.documentElement;
 
   const updateDimensions = React.useCallback(
     _.debounce(() => {
@@ -189,15 +189,14 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   );
 
   const onLoad = React.useCallback(() => {
-    const htmlTagElement = frame?.contentDocument?.documentElement;
-    if (themeLoaded) {
-      updateThemeClass(htmlTagElement, theme);
-    } else {
-      updateThemeClass(htmlTagElement, localTheme);
-    }
+    htmlTagElement && updateThemeClass(htmlTagElement, theme);
     updateDimensions();
     setLoaded(true);
-  }, [frame, localTheme, theme, themeLoaded, updateDimensions]);
+  }, [htmlTagElement, theme, updateDimensions]);
+
+  React.useEffect(() => {
+    htmlTagElement && updateThemeClass(htmlTagElement, theme);
+  }, [frame, htmlTagElement, theme]);
 
   useResizeObserver(updateDimensions, frame);
 
