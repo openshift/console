@@ -17,6 +17,7 @@ export const ImpersonateNotifier = connect((state) => ({ impersonate: getImperso
   const kindTranslated = modelFor(impersonate.kind)?.labelKey
     ? t(modelFor(impersonate.kind).labelKey)
     : impersonate.kind;
+  const impersonateName = impersonate.name;
   return (
     <div className="co-global-notification">
       <div className="co-global-notification__content">
@@ -28,7 +29,7 @@ export const ImpersonateNotifier = connect((state) => ({ impersonate: getImperso
           </span>{' '}
           <Trans t={t} ns="public">
             You are impersonating{' '}
-            <span className="co-global-notification__impersonate-name">{impersonate.name}</span>.
+            <span className="co-global-notification__impersonate-name">{{ impersonateName }}</span>.
             You are viewing all resources and roles this {{ kindTranslated }} can access.
           </Trans>{' '}
           <Button isInline type="button" variant="link" onClick={stopImpersonate}>

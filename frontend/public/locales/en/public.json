@@ -596,7 +596,7 @@
   "Identifier": "Identifier",
   "Last updated": "Last updated",
   "Impersonating {{kind}}": "Impersonating {{kind}}",
-  "You are impersonating <2>{impersonate.name}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "You are impersonating <2>{impersonate.name}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.",
+  "You are impersonating <2>{{impersonateName}}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "You are impersonating <2>{{impersonateName}}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.",
   "Stop impersonation": "Stop impersonation",
   "Creating resources...": "Creating resources...",
   "Resources successfully created": "Resources successfully created",

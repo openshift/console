@@ -592,7 +592,7 @@
   "Identifier": "식별자",
   "Last updated": "마지막 업데이트",
   "Impersonating {{kind}}": "{{kind}} 명의 도용",
-  "You are impersonating <2>{impersonate.name}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "<2>{impersonate.name}</2> 명의를 도용하고 있습니다. {{kindTranslated}}이/가 액세스할 수 있는 모든 리소스와 역할을 보고 있습니다.",
+  "You are impersonating <2>{{impersonateName}}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "<2>{{impersonateName}}</2> 명의를 도용하고 있습니다. {{kindTranslated}}이/가 액세스할 수 있는 모든 리소스와 역할을 보고 있습니다.",
   "Stop impersonation": "명의 도용 중지",
   "Creating resources...": "리소스 생성 중...",
   "Resources successfully created": "리소스가 성공적으로 생성되었습니다.",
