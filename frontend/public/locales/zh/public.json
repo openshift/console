@@ -592,7 +592,7 @@
   "Identifier": "识别符",
   "Last updated": "最后更新",
   "Impersonating {{kind}}": "模拟 {{kind}}",
-  "You are impersonating <2>{impersonate.name}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "您正在模拟 <2>{impersonate.name}</2>。您在查看此 {{kindTranslated}} 可访问的所有资源和角色。",
+  "You are impersonating <2>{{impersonateName}}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "您正在模拟 <2>{{impersonateName}}</2>。您在查看此 {{kindTranslated}} 可访问的所有资源和角色。",
   "Stop impersonation": "停止模仿",
   "Creating resources...": "创建资源......",
   "Resources successfully created": "资源被成功创建",

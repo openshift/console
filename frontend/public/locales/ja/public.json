@@ -592,7 +592,7 @@
   "Identifier": "ID",
   "Last updated": "最終更新:",
   "Impersonating {{kind}}": "{{kind}} へのユーザー切り替え",
-  "You are impersonating <2>{impersonate.name}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "<2>{impersonate.name}</2> のユーザーに切り替えて操作しています。{{kindTranslated}} がアクセスできるすべてのリソースおよびロールが表示されています。",
+  "You are impersonating <2>{{impersonateName}}</2>. You are viewing all resources and roles this {{kindTranslated}} can access.": "<2>{{impersonateName}}</2> のユーザーに切り替えて操作しています。{{kindTranslated}} がアクセスできるすべてのリソースおよびロールが表示されています。",
   "Stop impersonation": "ユーザー切り替えの停止",
   "Creating resources...": "リソースの作成...",
   "Resources successfully created": "リソースが正常に作成されました",
