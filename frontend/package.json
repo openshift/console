@@ -89,7 +89,7 @@
       "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
     },
     "transform": {
-      "^.+\\.(ts|tsx|js|jsx)$": "./node_modules/ts-jest/preprocessor.js",
+      "^.+\\.(ts|tsx|js|jsx)$": "ts-jest",
       "^.+\\.(gql|graphql)$": "jest-transform-graphql"
     },
     "transformIgnorePatterns": [
@@ -108,6 +108,9 @@
       "./__mocks__/mutationObserver.js",
       "./__mocks__/websocket.js",
       "./before-tests.js"
+    ],
+    "setupFilesAfterEnv": [
+      "./jest-setup.ts"
     ],
     "coverageDirectory": "__coverage__",
     "coverageReporters": [
@@ -218,6 +221,7 @@
     "@graphql-codegen/typescript-graphql-files-modules": "^1.15.1",
     "@graphql-codegen/typescript-operations": "^1.15.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.0",
+    "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.1.9",
     "@types/chai": "^4.2.12",
@@ -229,10 +233,10 @@
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
     "@types/jasminewd2": "2.0.x",
-    "@types/jest": "21.x",
+    "@types/jest": "27.x",
     "@types/json-schema": "^7.0.7",
     "@types/lodash-es": "4.17.x",
-    "@types/node": "10.x",
+    "@types/node": "14.x",
     "@types/prop-types": "15.5.6",
     "@types/react": "16.8.13",
     "@types/react-dom": "16.8.4",
@@ -282,8 +286,8 @@
     "jasmine-console-reporter": "2.x",
     "jasmine-core": "2.x",
     "jasmine-reporters": "2.x",
-    "jest": "21.x",
-    "jest-cli": "21.x",
+    "jest": "27.x",
+    "jest-cli": "27.x",
     "jest-junit": "^11.1.0",
     "jest-resolve": "^26.4.0",
     "jest-transform-graphql": "^2.1.0",
@@ -310,7 +314,7 @@
     "sass-loader": "^10.1.1",
     "style-loader": "^2.0.0",
     "thread-loader": "^3.0.4",
-    "ts-jest": "21.x",
+    "ts-jest": "27.x",
     "ts-loader": "^6.2.2",
     "ts-node": "^10.2.1",
     "typescript": "3.8.3",
@@ -330,7 +334,8 @@
     "lodash-es": "^4.17.21",
     "minimist": "1.2.5",
     "ua-parser-js": "^0.7.24",
-    "@types/jest": "21.x",
+    "@types/jest": "27.x",
+    "@types/node": "14.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13"
   },
