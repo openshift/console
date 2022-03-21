@@ -16,7 +16,7 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import { Conditions } from '@console/internal/components/conditions';
+import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
   DetailsPage,
@@ -1151,6 +1151,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
             type: c.phase,
             status: 'True',
           }))}
+          type={ConditionTypes.ClusterServiceVersion}
         />
       </div>
     </>

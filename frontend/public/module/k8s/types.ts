@@ -33,6 +33,13 @@ export type K8sResourceCondition = {
   message?: string;
 };
 
+export type ClusterServiceVersionCondition = {
+  phase: string;
+  lastTransitionTime?: string;
+  reason?: string;
+  message?: string;
+};
+
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
 
 export type Taint = {
