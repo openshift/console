@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
-import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
+import {
+  GraphElement,
+  isGraph,
+  Model,
+  TopologyQuadrant,
+  Visualization,
+} from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
@@ -55,7 +61,6 @@ import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../re
 import {
   GraphData,
   TopologyDecorator,
-  TopologyDecoratorQuadrant,
   TopologyDisplayFilterType,
   TopologyViewType,
 } from '../../topology-types';
@@ -232,10 +237,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
           return acc;
         },
         {
-          [TopologyDecoratorQuadrant.upperLeft]: [],
-          [TopologyDecoratorQuadrant.upperRight]: [],
-          [TopologyDecoratorQuadrant.lowerLeft]: [],
-          [TopologyDecoratorQuadrant.lowerRight]: [],
+          [TopologyQuadrant.upperLeft]: [],
+          [TopologyQuadrant.upperRight]: [],
+          [TopologyQuadrant.lowerLeft]: [],
+          [TopologyQuadrant.lowerRight]: [],
         },
       );
       Object.keys(allDecorators).forEach((key) =>

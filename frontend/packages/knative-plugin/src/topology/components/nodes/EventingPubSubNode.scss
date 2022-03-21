@@ -16,14 +16,14 @@
     stroke-width: 2px;
     stroke: $filtered-stroke-color;
   }
-  &.is-selected &__bg {
+  &.pf-m-selected &__bg {
     stroke-width: 2px;
     stroke: $selected-stroke-color;
   }
-  &.is-highlight &__bg {
+  &.pf-m-highlight &__bg {
     stroke: $interactive-stroke-color;
   }
-  &.is-dropTarget &__bg {
+  &.pt-m-drop-target &__bg {
     fill: $interactive-fill-color;
     stroke: $interactive-stroke-color;
   }
@@ -33,8 +33,8 @@
 .odc-m-filter-active {
   .odc-eventing-pubsub {
     opacity: $de-emphasize-opacity;
-    &.is-dragging,
-    &.is-highlight {
+    &.pf-m-dragging,
+    &.pf-m-highlight {
       opacity: 1;
     }
   }

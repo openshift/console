@@ -1,15 +1,18 @@
 import * as React from 'react';
 import {
-  Layer,
   Edge,
   WithRemoveConnectorProps,
   observer,
-  useHover,
   useSelection,
   WithContextMenuProps,
+  DefaultEdge,
+  EdgeTerminalType,
+  WithSourceDragProps,
+  WithTargetDragProps,
+  NodeStatus,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
-import { useAccessReview } from '@console/internal/components/utils';
+import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';
 import './BaseEdge.scss';
@@ -18,26 +21,36 @@ type BaseEdgeProps = {
   element: Edge;
   dragging?: boolean;
   className?: string;
+  animationDuration?: number;
+  startTerminalType?: EdgeTerminalType;
+  startTerminalClass?: string;
+  startTerminalStatus?: NodeStatus;
+  endTerminalType?: EdgeTerminalType;
+  endTerminalClass?: string;
+  endTerminalStatus?: NodeStatus;
+  tag?: string;
+  tagClass?: string;
+  tagStatus?: NodeStatus;
 } & WithRemoveConnectorProps &
+  Partial<WithSourceDragProps> &
+  Partial<WithTargetDragProps> &
   Partial<WithContextMenuProps>;
 
 const BaseEdge: React.FC<BaseEdgeProps> = ({
+  className,
   element,
-  dragging,
+  endTerminalType = EdgeTerminalType.directional,
   onShowRemoveConnector,
   onHideRemoveConnector,
-  children,
-  className,
-  onContextMenu,
+  targetDragRef,
+  sourceDragRef,
+  ...rest
 }) => {
-  const [hover, hoverRef] = useHover();
-  const [selected, onSelect] = useSelection({ controlled: true });
-  const startPoint = element.getStartPoint();
-  const endPoint = element.getEndPoint();
   const resourceObj = getResource(element.getSource());
   const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
+  const [selected, onSelect] = useSelection({ controlled: true });
 
-  const editAccess = useAccessReview({
+  const editAccess = useAccessReviewAllowed({
     group: resourceModel?.apiGroup,
     verb: 'patch',
     resource: resourceModel?.plural,
@@ -45,47 +58,19 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
     namespace: resourceObj?.metadata.namespace,
   });
 
-  React.useLayoutEffect(() => {
-    if (editAccess) {
-      if (hover && !dragging) {
-        onShowRemoveConnector && onShowRemoveConnector();
-      } else {
-        onHideRemoveConnector && onHideRemoveConnector();
-      }
-    }
-  }, [hover, dragging, onShowRemoveConnector, onHideRemoveConnector, editAccess]);
-
   return (
-    <Layer id={dragging || hover ? 'top' : undefined}>
-      <g
-        ref={hoverRef}
-        data-test-id="edge-handler"
-        className={classNames(className, 'odc-base-edge', {
-          'is-dragging': dragging,
-          'is-hover': hover,
-          'is-selected': selected,
-        })}
-        onClick={onSelect}
-        onContextMenu={onContextMenu}
-      >
-        <line
-          x1={startPoint.x}
-          y1={startPoint.y}
-          x2={endPoint.x}
-          y2={endPoint.y}
-          strokeWidth={10}
-          stroke="transparent"
-        />
-        <line
-          className="odc-base-edge__link"
-          x1={startPoint.x}
-          y1={startPoint.y}
-          x2={endPoint.x}
-          y2={endPoint.y}
-        />
-        {children}
-      </g>
-    </Layer>
+    <DefaultEdge
+      className={classNames('odc-base-edge', className)}
+      element={element}
+      onShowRemoveConnector={editAccess ? onShowRemoveConnector : undefined}
+      onHideRemoveConnector={editAccess ? onHideRemoveConnector : undefined}
+      targetDragRef={editAccess ? targetDragRef : undefined}
+      sourceDragRef={editAccess ? sourceDragRef : undefined}
+      endTerminalType={endTerminalType}
+      selected={selected}
+      onSelect={onSelect}
+      {...rest}
+    />
   );
 };
 

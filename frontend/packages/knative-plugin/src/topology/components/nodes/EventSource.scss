@@ -15,7 +15,7 @@
     stroke-width: 2px;
     stroke: $filtered-stroke-color;
   }
-  &.is-selected &__bg {
+  &.pf-m-selected &__bg {
     stroke-width: 2px;
     stroke: $selected-stroke-color;
   }
@@ -25,7 +25,7 @@
 .odc-m-filter-active {
   .odc-event-source {
     opacity: $de-emphasize-opacity;
-    &.is-dragging {
+    &.pf-m-dragging {
       opacity: 1;
     }
   }

@@ -2,14 +2,11 @@ import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { VirtualMachineIcon } from '@patternfly/react-icons';
 import {
-  createSvgIdUrl,
   Node,
   NodeModel,
   observer,
   RectAnchor,
   useAnchor,
-  useCombineRefs,
-  useHover,
   WithContextMenuProps,
   WithCreateConnectorProps,
   WithDndDropProps,
@@ -17,22 +14,8 @@ import {
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
-import { useAccessReview } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import {
-  NODE_SHADOW_FILTER_ID,
-  NODE_SHADOW_FILTER_ID_HOVER,
-  NodeShadows,
-} from '@console/topology/src/components/graph-view';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import {
-  getFilterById,
-  SHOW_LABELS_FILTER_ID,
-  useDisplayFilters,
-  useSearchFilter,
-} from '@console/topology/src/filters';
+import { BaseNode } from '@console/topology/src/components/graph-view';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
-import { getResource } from '@console/topology/src/utils';
 import { VMStatus } from '../../../constants/vm/vm-status';
 import { VMNodeData } from '../../types';
 
@@ -53,57 +36,17 @@ export type VmNodeProps = {
   WithDndDropProps &
   WithCreateConnectorProps;
 
-const VM_NODE_RADIUS = 10;
 const VM_STATUS_GAP = 7;
 const VM_STATUS_WIDTH = 7;
 const VM_STATUS_RADIUS = 7;
 
-const ObservedVmNode: React.FC<VmNodeProps> = ({
-  element,
-  dragNodeRef,
-  dndDropRef,
-  canDrop,
-  dragging,
-  edgeDragging,
-  dropTarget,
-  selected,
-  onSelect,
-  onContextMenu,
-  contextMenuOpen,
-  onHideCreateConnector,
-  onShowCreateConnector,
-}) => {
-  const [hover, hoverRef] = useHover();
+const ObservedVmNode: React.FC<VmNodeProps> = ({ element, canDrop, dropTarget, ...rest }) => {
   useAnchor(RectAnchor);
-  const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
   const { width, height } = element.getBounds();
   const vmData = element.getData().data;
   const { kind, osImage, vmStatusBundle } = vmData;
-  const displayFilters = useDisplayFilters();
   const iconRadius = Math.min(width, height) * 0.25;
-  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
-  const showLabels = showLabelsFilter?.value || hover;
   const tipContent = `Create a visual connector`;
-  const resourceObj = getResource(element);
-  const resourceModel = modelFor(referenceFor(resourceObj));
-  const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
-  const editAccess = useAccessReview({
-    group: resourceModel.apiGroup,
-    verb: 'patch',
-    resource: resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
-  });
-
-  React.useLayoutEffect(() => {
-    if (editAccess) {
-      if (hover) {
-        onShowCreateConnector && onShowCreateConnector();
-      } else {
-        onHideCreateConnector && onHideCreateConnector();
-      }
-    }
-  }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess]);
 
   let statusClass;
   const statusMessage = vmStatusBundle.message;
@@ -179,66 +122,24 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
         isVisible={dropTarget && canDrop}
         animationDuration={0}
       >
-        <g
-          className={classNames('odc-base-node kubevirt-vm-node', statusClass, {
-            'is-hover': hover || contextMenuOpen,
-            'is-highlight': canDrop,
-            'is-dragging': dragging || edgeDragging,
-            'is-dropTarget': canDrop && dropTarget,
-            'is-filtered': filtered,
-            'is-selected': selected,
-          })}
+        <BaseNode
+          className={classNames('kubevirt-vm-node', statusClass)}
+          kind={kind}
+          element={element}
+          dropTarget={dropTarget}
+          canDrop={canDrop}
+          {...rest}
         >
-          <NodeShadows />
-          <g
-            data-test-id="base-node-handler"
-            onClick={onSelect}
-            onContextMenu={editAccess ? onContextMenu : null}
-            ref={refs}
-          >
-            <rect
-              key={
-                hover || dragging || edgeDragging || dropTarget || contextMenuOpen
-                  ? 'rect-hover'
-                  : 'rect'
-              }
-              className="odc-base-node__bg"
-              ref={dndDropRef}
-              x={0}
-              y={0}
-              rx={VM_NODE_RADIUS}
-              ry={VM_NODE_RADIUS}
-              width={width}
-              height={height}
-              filter={createSvgIdUrl(
-                hover || dragging || edgeDragging || dropTarget || contextMenuOpen
-                  ? NODE_SHADOW_FILTER_ID_HOVER
-                  : NODE_SHADOW_FILTER_ID,
-              )}
-            />
-            {statusMessage ? <Tooltip content={statusMessage}>{statusRect}</Tooltip> : statusRect}
-            <rect
-              className="kubevirt-vm-node__bg"
-              x={VM_STATUS_GAP + VM_STATUS_WIDTH}
-              y={VM_STATUS_GAP + VM_STATUS_WIDTH}
-              width={width - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
-              height={height - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
-            />
-            {imageComponent}
-            {showLabels && (vmData.kind || element.getLabel()) && (
-              <SvgBoxedText
-                className="odc-base-node__label"
-                x={width / 2}
-                y={height + 24}
-                paddingX={8}
-                paddingY={4}
-                kind={kind}
-              >
-                {element.getLabel()}
-              </SvgBoxedText>
-            )}
-          </g>
-        </g>
+          {statusMessage ? <Tooltip content={statusMessage}>{statusRect}</Tooltip> : statusRect}
+          <rect
+            className="kubevirt-vm-node__bg"
+            x={VM_STATUS_GAP + VM_STATUS_WIDTH}
+            y={VM_STATUS_GAP + VM_STATUS_WIDTH}
+            width={width - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
+            height={height - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
+          />
+          {imageComponent}
+        </BaseNode>
       </Tooltip>
     </g>
   );

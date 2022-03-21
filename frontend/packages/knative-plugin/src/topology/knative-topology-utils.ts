@@ -1,4 +1,12 @@
-import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
+import {
+  Edge,
+  EdgeModel,
+  EdgeStyle,
+  Model,
+  Node,
+  NodeModel,
+  NodeShape,
+} from '@patternfly/react-topology/dist/esm/types';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
@@ -66,10 +74,13 @@ import {
 export const getKnNodeModelProps = (type: string) => {
   switch (type) {
     case NodeType.EventSource:
+    case NodeType.EventSink:
+    case NodeType.EventSourceKafka:
       return {
         width: NODE_WIDTH,
         height: NODE_HEIGHT,
         visible: true,
+        shape: NodeShape.rhombus,
         style: {
           padding: NODE_PADDING,
         },
@@ -91,7 +102,7 @@ export const getKnNodeModelProps = (type: string) => {
         width: NODE_WIDTH,
         height: NODE_HEIGHT / 2,
         visible: true,
-        shape: NodeShape.rect,
+        shape: NodeShape.stadium,
         style: {
           padding: NODE_PADDING,
         },
@@ -930,6 +941,7 @@ export const getKnSourceKafkaTopologyEdgeItems = (
       acc.push({
         id: edgeId,
         type: EdgeType.EventSourceKafkaLink,
+        edgeStyle: EdgeStyle.dashedMd,
         label: i18next.t('knative-plugin~Kafka connector'),
         source: kafkaSource.metadata?.uid,
         target: kafkaConnection.metadata?.uid,

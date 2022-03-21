@@ -41,7 +41,9 @@ export const componentFactory: ComponentFactory = (kind, type) => {
   switch (type) {
     case TYPE_APPLICATION_GROUP:
       return withDndDrop(applicationGroupDropTargetSpec)(
-        withSelection({ controlled: true })(withContextMenu(groupActionContext)(Application)),
+        withDragNode(nodeDragSourceSpec(type, false, false))(
+          withSelection({ controlled: true })(withContextMenu(groupActionContext)(Application)),
+        ),
       );
     case TYPE_WORKLOAD:
       return withCreateConnector(

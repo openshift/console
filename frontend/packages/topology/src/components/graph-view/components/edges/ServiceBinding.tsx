@@ -4,8 +4,8 @@ import {
   WithTargetDragProps,
   Edge,
   observer,
-  EdgeConnectorArrow,
   WithContextMenuProps,
+  EdgeTerminalType,
 } from '@patternfly/react-topology';
 import BaseEdge from './BaseEdge';
 
@@ -18,16 +18,12 @@ type ServiceBindingProps = {
   WithTargetDragProps &
   WithContextMenuProps;
 
-const ServiceBinding: React.FC<ServiceBindingProps> = ({
-  element,
-  targetDragRef,
-  children,
-  ...others
-}) => (
-  <BaseEdge element={element} {...others} className="odc-service-binding">
-    <EdgeConnectorArrow dragRef={targetDragRef} edge={element} />
-    {children}
-  </BaseEdge>
+const ServiceBinding: React.FC<ServiceBindingProps> = (props) => (
+  <BaseEdge
+    className="odc-service-binding"
+    endTerminalType={EdgeTerminalType.directionalAlt}
+    {...props}
+  />
 );
 
 export default observer(ServiceBinding);

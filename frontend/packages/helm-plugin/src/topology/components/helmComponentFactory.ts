@@ -16,6 +16,7 @@ import {
   withContextMenu,
   withNoDrop,
   CreateConnector,
+  noRegroupDragSourceSpec,
 } from '@console/topology/src/components/graph-view';
 import { withEditReviewAccess } from '@console/topology/src/utils';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './const';
@@ -28,7 +29,9 @@ export const getHelmComponentFactory = (
   switch (type) {
     case TYPE_HELM_RELEASE:
       return withSelection({ controlled: true })(
-        withContextMenu(contextMenuActions)(withNoDrop()(HelmRelease)),
+        withContextMenu(contextMenuActions)(
+          withNoDrop()(withDragNode(noRegroupDragSourceSpec)(HelmRelease)),
+        ),
       );
     case TYPE_HELM_WORKLOAD:
       return withCreateConnector(

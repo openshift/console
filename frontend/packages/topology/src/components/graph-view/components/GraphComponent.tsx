@@ -6,6 +6,7 @@ import {
 import * as classNames from 'classnames';
 
 type GraphComponentProps = React.ComponentProps<typeof BaseGraphComponent> & {
+  dragInProgress?: boolean;
   dragEditInProgress?: boolean;
   hasDropTarget?: boolean;
   dragCreate?: boolean;
@@ -15,8 +16,13 @@ const DRAG_ACTIVE_CLASS = 'odc-m-drag-active';
 const VALID_DROP_CLASS = 'odc-m-valid-drop-target';
 
 const GraphComponent: React.FC<GraphComponentProps> = (props) => {
-  const { dragEditInProgress, hasDropTarget, dragCreate } = props;
+  const { dragInProgress, dragEditInProgress, hasDropTarget, dragCreate } = props;
   const graphClasses = classNames('odc-graph', { 'odc-m-drag-create': dragCreate });
+  const controller = props.element.getController();
+
+  React.useEffect(() => {
+    controller.setRenderConstraint(!dragInProgress);
+  }, [controller, dragInProgress]);
 
   React.useEffect(() => {
     const addClassList = [];

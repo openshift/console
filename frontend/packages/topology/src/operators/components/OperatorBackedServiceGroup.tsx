@@ -5,6 +5,7 @@ import {
   observer,
   WithSelectionProps,
   WithDndDropProps,
+  WithDragNodeProps,
   useDragNode,
   Layer,
   useHover,
@@ -13,24 +14,19 @@ import {
   useAnchor,
   RectAnchor,
   WithContextMenuProps,
+  NodeLabel,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { referenceFor } from '@console/internal/module/k8s';
 import {
   noRegroupDragSourceSpec,
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/graph-view';
-import SvgBoxedText from '../../components/svg/SvgBoxedText';
-import {
-  getFilterById,
-  useDisplayFilters,
-  useSearchFilter,
-  SHOW_LABELS_FILTER_ID,
-} from '../../filters';
-import { getResource, getResourceKind } from '../../utils/topology-utils';
+import { useSearchFilter } from '../../filters';
+import { useShowLabel } from '../../filters/useShowLabel';
+import { getResource } from '../../utils/topology-utils';
 
 type OperatorBackedServiceGroupProps = {
   element: Node;
@@ -38,16 +34,26 @@ type OperatorBackedServiceGroupProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   editAccess: boolean;
+  badge?: string;
+  badgeColor?: string;
+  badgeClassName?: string;
+  dragging?: boolean;
 } & WithSelectionProps &
   WithContextMenuProps &
-  WithDndDropProps;
+  WithDndDropProps &
+  WithDragNodeProps;
 
 const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   element,
   selected,
   editAccess,
+  badge,
+  badgeColor,
+  badgeClassName,
   onSelect,
   dndDropRef,
+  dragNodeRef,
+  dragging,
   canDrop,
   dropTarget,
   onContextMenu,
@@ -56,16 +62,12 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(noRegroupDragSourceSpec);
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
-  const ownerReferenceKind = referenceFor({ kind: data.operatorKind, apiVersion: data.apiVersion });
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
-  const displayFilters = useDisplayFilters();
-  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
-  const showLabels = showLabelsFilter?.value || hover || innerHover;
+  const showLabel = useShowLabel(hover || innerHover);
   const { x, y, width, height } = element.getBounds();
   useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
 
@@ -75,9 +77,9 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       onClick={onSelect}
       onContextMenu={editAccess ? onContextMenu : null}
       className={classNames('odc-operator-backed-service', {
-        'is-dragging': dragging || labelDragging,
+        'pf-m-dragging': dragging || labelDragging,
         'is-filtered': filtered,
-        'is-highlight': canDrop,
+        'pf-m-highlight': canDrop,
       })}
     >
       <NodeShadows />
@@ -92,11 +94,11 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           <g
             ref={nodeRefs}
             className={classNames('odc-operator-backed-service', {
-              'is-selected': selected,
-              'is-highlight': canDrop,
-              'is-dragging': dragging || labelDragging,
+              'pf-m-selected': selected,
+              'pf-m-highlight': canDrop,
+              'pf-m-dragging': dragging || labelDragging,
               'is-filtered': filtered,
-              'is-dropTarget': canDrop && dropTarget,
+              'pf-m-drop-target': canDrop && dropTarget,
             })}
           >
             <rect
@@ -127,19 +129,23 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           </g>
         </Tooltip>
       </Layer>
-      {showLabels && (getResourceKind(element) || element.getLabel()) && (
-        <SvgBoxedText
-          className="odc-base-node__label"
+      {showLabel && (data.kind || element.getLabel()) && (
+        <NodeLabel
+          className="pf-topology__group__label odc-knative-service__label odc-base-node__label"
+          onContextMenu={onContextMenu}
+          contextMenuOpen={contextMenuOpen}
           x={x + width / 2}
           y={y + height + 20}
           paddingX={8}
           paddingY={4}
-          kind={ownerReferenceKind}
+          labelIconClass={data.builderImage}
+          badge={badge}
+          badgeColor={badgeColor}
+          badgeClassName={badgeClassName}
           dragRef={dragLabelRef}
-          typeIconClass={data.builderImage}
         >
           {element.getLabel()}
-        </SvgBoxedText>
+        </NodeLabel>
       )}
     </g>
   );

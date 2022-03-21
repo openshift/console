@@ -6,12 +6,16 @@ import {
   WithContextMenuProps,
   WithDndDropProps,
   WithCreateConnectorProps,
+  useDragNode,
 } from '@patternfly/react-topology';
+import classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { nodeDragSourceSpec, GroupNode } from '@console/topology/src/components/graph-view';
+import { getKindStringAndAbbreviation } from '@console/topology/src/components/graph-view/components/nodes/nodeUtils';
 import { getResource } from '@console/topology/src/utils';
+import { TYPE_KNATIVE_SERVICE } from '../../const';
 import KnativeServiceGroup from './KnativeServiceGroup';
-import KnativeServiceNode from './KnativeServiceNode';
 
 import './KnativeService.scss';
 
@@ -27,6 +31,8 @@ export type KnativeServiceProps = {
   WithCreateConnectorProps;
 
 const KnativeService: React.FC<KnativeServiceProps> = (props) => {
+  const { element } = props;
+  const { data } = element.getData();
   const resourceObj = getResource(props.element);
   const resourceModel = modelFor(referenceFor(resourceObj));
   const editAccess = useAccessReview({
@@ -36,11 +42,43 @@ const KnativeService: React.FC<KnativeServiceProps> = (props) => {
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
+  const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(data.kind);
+  const badgeClassName = classNames('odc-resource-icon', {
+    [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
+  });
+  const dragSpec = React.useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [
+    editAccess,
+  ]);
+  const dragProps = React.useMemo(() => ({ element }), [element]);
+  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(dragSpec, dragProps);
+
   if (props.element.isCollapsed()) {
-    return <KnativeServiceNode {...props} editAccess={editAccess} />;
+    return (
+      <GroupNode
+        {...props}
+        bgClassName="odc-knative-service__bg"
+        badge={kindAbbr}
+        badgeColor={kindColor}
+        badgeClassName={badgeClassName}
+        dragging={dragging}
+        dragNodeRef={dragNodeRef}
+      />
+    );
   }
 
-  return <KnativeServiceGroup {...props} editAccess={editAccess} />;
+  return (
+    <KnativeServiceGroup
+      {...props}
+      badge={kindAbbr}
+      badgeColor={kindColor}
+      badgeClassName={badgeClassName}
+      editAccess={editAccess}
+      dragging={dragging}
+      dragSpec={dragSpec}
+      regrouping={regrouping}
+      dragNodeRef={dragNodeRef}
+    />
+  );
 };
 
 export default observer(KnativeService);

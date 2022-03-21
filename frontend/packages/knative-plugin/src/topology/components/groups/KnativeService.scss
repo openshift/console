@@ -25,18 +25,18 @@
     stroke-width: $group-node-filtered-stroke-width;
     stroke-dasharray: none;
   }
-  &.is-selected &__bg {
+  &.pf-m-selected &__bg {
     fill: $selected-fill-color;
     stroke: $selected-stroke-color;
     stroke-width: $group-node-selected-stroke-width;
     stroke-dasharray: $group-node-stroke-dasharray;
   }
-  &.is-highlight &__bg {
+  &.pf-m-highlight &__bg {
     fill: $group-node-fill-color;
     stroke: $interactive-stroke-color;
     stroke-dasharray: $group-node-stroke-dasharray;
   }
-  &.is-dropTarget &__bg {
+  &.pf-m-drop-target &__bg {
     fill: $interactive-fill-color;
     stroke: $interactive-stroke-color;
     stroke-dasharray: $group-node-stroke-dasharray;
@@ -47,8 +47,8 @@
 .odc-m-filter-active {
   .odc-knative-service {
     opacity: $de-emphasize-opacity;
-    &.is-dragging,
-    &.is-highlight {
+    &.pf-m-dragging,
+    &.pf-m-highlight {
       opacity: 1;
     }
   }

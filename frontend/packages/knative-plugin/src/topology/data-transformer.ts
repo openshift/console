@@ -1,4 +1,4 @@
-import { Model } from '@patternfly/react-topology';
+import { Model } from '@patternfly/react-topology/dist/esm/types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { addToTopologyDataModel } from '@console/topology/src/data-transforms/transform-utils';
 import { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';

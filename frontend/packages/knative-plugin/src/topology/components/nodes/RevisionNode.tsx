@@ -1,26 +1,12 @@
 import * as React from 'react';
-import { useAnchor, AnchorEnd, Node, observer } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import { WorkloadPodsNode } from '@console/topology/src/components/graph-view';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
-import { useRoutesURL } from '../../../utils/useRoutesURL';
-import RevisionTrafficTargetAnchor from '../anchors/RevisionTrafficTargetAnchor';
 
-const DECORATOR_RADIUS = 13;
 const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadPodsNode>> = (props) => {
   const { element } = props;
   const resource = getTopologyResourceObject(element.getData());
-  const url = useRoutesURL(resource);
-  const hasDataUrl = !!url;
-
-  useAnchor(
-    React.useCallback(
-      (node: Node) => new RevisionTrafficTargetAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),
-      [hasDataUrl],
-    ),
-    AnchorEnd.target,
-    'revision-traffic',
-  );
   const { loaded, loadError, pods } = usePodsForRevisions(
     resource.metadata.uid,
     resource.metadata.namespace,
@@ -40,7 +26,7 @@ const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadPodsNode>> = (p
     return null;
   }, [loaded, loadError, pods, resource]);
 
-  return <WorkloadPodsNode donutStatus={donutStatus} {...props} />;
+  return <WorkloadPodsNode donutStatus={donutStatus?.current ? donutStatus : null} {...props} />;
 };
 
 export default observer(RevisionNode);

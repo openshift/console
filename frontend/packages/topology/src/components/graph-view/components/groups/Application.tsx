@@ -3,13 +3,21 @@ import {
   Node,
   observer,
   WithDndDropProps,
+  WithDragNodeProps,
   WithSelectionProps,
   WithContextMenuProps,
+  useHover,
+  useCombineRefs,
 } from '@patternfly/react-topology';
+import classNames from 'classnames';
+import { useSearchFilter } from '../../../../filters';
+import { useShowLabel } from '../../../../filters/useShowLabel';
+import { ApplicationModel } from '../../../../models';
 import { SHOW_GROUPING_HINT_EVENT } from '../../../../topology-types';
+import { getKindStringAndAbbreviation } from '../nodes/nodeUtils';
 import RegroupHint from '../RegroupHint';
-import ApplicationGroup from './ApplicationGroup';
-import ApplicationNode from './ApplicationNode';
+import ApplicationGroupExpanded from './ApplicationGroupExpanded';
+import GroupNode from './GroupNode';
 
 import './Application.scss';
 
@@ -22,21 +30,20 @@ type ApplicationProps = {
   dragRegroupable?: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
+  WithDragNodeProps &
   WithContextMenuProps;
 
 const Application: React.FC<ApplicationProps> = ({
   element,
-  selected,
-  onSelect,
-  dndDropRef,
-  droppable,
+  dragNodeRef,
   canDrop,
   dropTarget,
   dragRegroupable,
-  onContextMenu,
-  contextMenuOpen,
-  dragging,
+  ...others
 }) => {
+  const [hover, hoverRef] = useHover();
+  const refs = useCombineRefs(dragNodeRef, hoverRef);
+  const [filtered] = useSearchFilter(element.getLabel());
   const needsHintRef = React.useRef<boolean>(false);
   React.useEffect(() => {
     const needsHint = dropTarget && !canDrop && dragRegroupable;
@@ -47,35 +54,45 @@ const Application: React.FC<ApplicationProps> = ({
         .fireEvent(SHOW_GROUPING_HINT_EVENT, element, needsHint ? <RegroupHint /> : null);
     }
   }, [dropTarget, canDrop, element, dragRegroupable]);
+  const showLabel = useShowLabel(hover);
+  const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(ApplicationModel.kind);
+  const badgeClassName = classNames('odc-resource-icon', {
+    [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
+  });
+
+  const groupClasses = classNames('odc-application-group', {
+    'is-filtered': filtered,
+  });
 
   if (element.isCollapsed()) {
     return (
-      <ApplicationNode
+      <GroupNode
+        bgClassName="odc-application-group__bg"
         element={element}
-        selected={selected}
-        onSelect={onSelect}
-        dndDropRef={dndDropRef}
         canDrop={canDrop}
         dropTarget={dropTarget}
-        onContextMenu={onContextMenu}
-        contextMenuOpen={contextMenuOpen}
-        dragging={dragging}
+        badge={kindAbbr}
+        badgeColor={kindColor}
+        badgeClassName={badgeClassName}
+        dragNodeRef={refs}
+        {...others}
       />
     );
   }
 
+  // Use local version of DefaultGroupExpanded until we have a fix for https://github.com/patternfly/patternfly-react/issues/7300
   return (
-    <ApplicationGroup
+    <ApplicationGroupExpanded
+      className={groupClasses}
+      showLabel={showLabel}
       element={element}
-      selected={selected}
-      onSelect={onSelect}
-      dndDropRef={dndDropRef}
       canDrop={canDrop}
       dropTarget={dropTarget}
-      droppable={droppable}
-      onContextMenu={onContextMenu}
-      contextMenuOpen={contextMenuOpen}
-      dragging={dragging}
+      dragNodeRef={refs}
+      badge={kindAbbr}
+      badgeColor={kindColor}
+      badgeClassName={badgeClassName}
+      {...others}
     />
   );
 };

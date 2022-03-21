@@ -45,7 +45,7 @@ import TopologyControlBar from './TopologyControlBar';
 
 import './Topology.scss';
 
-const STORED_NODE_LAYOUT_FIELDS = ['id', 'x', 'y', 'collapsed', 'visible', 'style', 'shape'];
+const STORED_NODE_LAYOUT_FIELDS = ['id', 'x', 'y'];
 
 const setTopologyLayout = (namespace: string, nodes: NodeModel[], layout: string) => {
   const currentStore = {};
@@ -217,7 +217,7 @@ const Topology: React.FC<TopologyProps &
           model.nodes.forEach((n) => {
             const storedNode = storedLayout.nodes.find((sn) => sn.id === n.id);
             if (storedNode) {
-              Object.keys(storedNode).forEach((key) => {
+              STORED_NODE_LAYOUT_FIELDS.forEach((key) => {
                 n[key] = storedNode[key];
               });
             }
@@ -225,6 +225,20 @@ const Topology: React.FC<TopologyProps &
         }
         storedLayoutApplied.current = true;
       }
+
+      model.nodes.forEach((n) => {
+        const oldNode = visualization.getNodeById(n.id);
+        if (oldNode && _.isEqual(oldNode.getData(), n.data)) {
+          n.data = oldNode.getData();
+        }
+      });
+      model.edges.forEach((e) => {
+        const oldEdge = visualization.getEdgeById(e.id);
+        if (oldEdge && _.isEqual(oldEdge.getData(), e.data)) {
+          e.data = oldEdge.getData();
+        }
+      });
+
       visualization.fromModel(model);
       const selectedItem = selectedId ? visualization.getElementById(selectedId) : null;
       if (!selectedItem || !selectedItem.isVisible()) {

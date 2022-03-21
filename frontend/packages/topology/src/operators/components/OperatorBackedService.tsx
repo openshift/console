@@ -4,6 +4,7 @@ import {
   observer,
   WithSelectionProps,
   WithDndDropProps,
+  WithDragNodeProps,
   DropTargetSpec,
   GraphElement,
   CREATE_CONNECTOR_DROP_TYPE,
@@ -11,6 +12,7 @@ import {
   useDndDrop,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
 import { connect } from 'react-redux';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -21,6 +23,7 @@ import {
   NodeComponentProps,
   nodesEdgeIsDragging,
 } from '../../components/graph-view/components';
+import { getKindStringAndAbbreviation } from '../../components/graph-view/components/nodes/nodeUtils';
 import { getServiceBindingStatus, getResource } from '../../utils/topology-utils';
 import OperatorBackedServiceGroup from './OperatorBackedServiceGroup';
 import OperatorBackedServiceNode from './OperatorBackedServiceNode';
@@ -67,16 +70,18 @@ type OperatorBackedServiceProps = {
   element: Node;
 } & WithSelectionProps &
   WithDndDropProps &
+  WithDragNodeProps &
   WithContextMenuProps &
   StateProps;
 
 const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
   serviceBinding,
+  element,
   ...rest
 }) => {
   const spec = React.useMemo(() => obsDropTargetSpec(serviceBinding), [serviceBinding]);
   const [dndDropProps, dndDropRef] = useDndDrop(spec, rest as any);
-  const resourceObj = getResource(rest.element);
+  const resourceObj = getResource(element);
   const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : null;
   const editAccess = useAccessReview({
     group: resourceModel?.apiGroup,
@@ -85,13 +90,23 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
     name: resourceObj?.metadata.name,
     namespace: resourceObj?.metadata.namespace,
   });
+  const { data } = element.getData();
+  const ownerReferenceKind = referenceFor({ kind: data.operatorKind, apiVersion: data.apiVersion });
+  const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(ownerReferenceKind);
+  const badgeClassName = classNames('odc-resource-icon', {
+    [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
+  });
 
-  if (rest.element.isCollapsed()) {
+  if (element.isCollapsed()) {
     return (
       <OperatorBackedServiceNode
         {...rest}
+        element={element}
         dndDropRef={dndDropRef}
         editAccess={editAccess}
+        badge={kindAbbr}
+        badgeColor={kindColor}
+        badgeClassName={badgeClassName}
         {...dndDropProps}
       />
     );
@@ -100,8 +115,12 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
   return (
     <OperatorBackedServiceGroup
       {...rest}
+      element={element}
       dndDropRef={dndDropRef}
       editAccess={editAccess}
+      badge={kindAbbr}
+      badgeColor={kindColor}
+      badgeClassName={badgeClassName}
       {...dndDropProps}
     />
   );

@@ -26,7 +26,7 @@ Given('user has installed helm release {string}', (helmReleaseName: string) => {
 When(
   'user right clicks on the helm release {string} to open the context menu',
   (helmReleaseName: string) => {
-    topologyPage.rightClickOnNode(helmReleaseName);
+    topologyPage.rightClickOnGroup(helmReleaseName);
   },
 );
 
@@ -47,7 +47,7 @@ Then('user is able to see the context menu with actions Upgrade and Uninstall He
 });
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
-  topologyPage.clickOnNode(helmReleaseName);
+  topologyPage.clickOnGroup(helmReleaseName);
   topologySidePane.verify();
 });
 
@@ -137,7 +137,7 @@ Then('user will be redirected to Topology page', () => {
   topologyPage.verifyTopologyPage();
 });
 When('user clicks on the helm release {string}', (helmReleaseName: string) => {
-  topologyPage.clickOnNode(helmReleaseName);
+  topologyPage.clickOnGroup(helmReleaseName);
 });
 
 Then('user will see the sidebar for the helm release', () => {
@@ -149,7 +149,7 @@ Then('user will see the Details, Resources, Release notes tabs', () => {
 });
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
-  topologyPage.clickOnNode(helmReleaseName);
+  topologyPage.clickOnGroup(helmReleaseName);
   topologySidePane.verify();
 });
 

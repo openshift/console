@@ -1,4 +1,4 @@
-import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
+import { EdgeModel, Model, NodeModel, NodeShape } from '@patternfly/react-topology';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
@@ -51,7 +51,15 @@ const getTopologyBindableServiceNodes = (
         icon: getImageForCSVIcon(csvData?.spec?.icon?.[0]) || getDefaultOperatorIcon(),
       },
     };
-    return getTopologyNodeItem(obj, TYPE_BINDABLE_NODE, data, BINDABLE_PROPS);
+    return getTopologyNodeItem(
+      obj,
+      TYPE_BINDABLE_NODE,
+      data,
+      BINDABLE_PROPS,
+      undefined,
+      undefined,
+      NodeShape.trapezoid,
+    );
   });
 
   return nodes;

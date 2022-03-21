@@ -1,7 +1,7 @@
-import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
+import { EdgeModel, Model, NodeModel, NodeShape } from '@patternfly/react-topology/dist/esm/types';
 import {
-  K8sResourceKind,
   apiVersionForModel,
+  K8sResourceKind,
   modelFor,
   referenceFor,
 } from '@console/internal/module/k8s';
@@ -18,9 +18,9 @@ import { edgesFromServiceBinding } from '@console/topology/src/operators/operato
 import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
 import { KafkaConnectionModel } from '../models';
 import {
-  KAFKA_WIDTH,
   KAFKA_HEIGHT,
   KAFKA_PADDING,
+  KAFKA_WIDTH,
   TYPE_MANAGED_KAFKA_CONNECTION,
 } from './components/const';
 
@@ -70,7 +70,17 @@ export const getTopologyRhoasNodes = (
         icon: getImageForCSVIcon(csvData?.spec?.icon?.[0]) || getDefaultOperatorIcon(),
       },
     };
-    nodes.push(getTopologyNodeItem(obj, TYPE_MANAGED_KAFKA_CONNECTION, data, KAFKA_PROPS));
+    nodes.push(
+      getTopologyNodeItem(
+        obj,
+        TYPE_MANAGED_KAFKA_CONNECTION,
+        data,
+        KAFKA_PROPS,
+        undefined,
+        undefined,
+        NodeShape.trapezoid,
+      ),
+    );
   }
 
   return nodes;

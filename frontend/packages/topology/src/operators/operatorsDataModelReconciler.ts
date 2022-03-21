@@ -1,4 +1,4 @@
-import { Model, NodeShape } from '@patternfly/react-topology';
+import { Model, NodeShape } from '@patternfly/react-topology/dist/esm/types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   getKameletSinkAndSourceBindings,

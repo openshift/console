@@ -1,7 +1,7 @@
+import { TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { Plugin } from '@console/plugin-sdk';
 import { TopologyDecoratorProvider } from '../../../../../extensions';
-import { TopologyDecoratorQuadrant } from '../../../../../topology-types';
 import {
   getAlertsDecorator,
   getBuildDecorator,
@@ -15,7 +15,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
     properties: {
       id: 'edit-decorator',
       priority: 1000,
-      quadrant: TopologyDecoratorQuadrant.lowerRight,
+      quadrant: TopologyQuadrant.lowerRight,
       decorator: applyCodeRefSymbol(getEditDecorator),
     },
   },
@@ -24,7 +24,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
     properties: {
       id: 'url-decorator',
       priority: 1000,
-      quadrant: TopologyDecoratorQuadrant.upperRight,
+      quadrant: TopologyQuadrant.upperRight,
       decorator: applyCodeRefSymbol(getUrlDecorator),
     },
   },
@@ -33,7 +33,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
     properties: {
       id: 'build-decorator',
       priority: 1000,
-      quadrant: TopologyDecoratorQuadrant.lowerLeft,
+      quadrant: TopologyQuadrant.lowerLeft,
       decorator: applyCodeRefSymbol(getBuildDecorator),
     },
   },
@@ -42,7 +42,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
     properties: {
       id: 'alerts-decorator',
       priority: 1000,
-      quadrant: TopologyDecoratorQuadrant.upperLeft,
+      quadrant: TopologyQuadrant.upperLeft,
       decorator: applyCodeRefSymbol(getAlertsDecorator),
     },
   },

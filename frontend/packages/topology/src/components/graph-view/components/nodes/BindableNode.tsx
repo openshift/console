@@ -10,10 +10,9 @@ import {
 } from '@patternfly/react-topology';
 import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { calculateRadius } from '@console/shared';
-import { getTopologyResourceObject } from '../../../../../utils';
-import { getRelationshipProvider } from '../../../../../utils/relationship-provider-utils';
-import TrapezoidBaseNode from './TrapezoidBaseNode';
+import { getTopologyResourceObject } from '../../../../utils';
+import { getRelationshipProvider } from '../../../../utils/relationship-provider-utils';
+import BaseNode from './BaseNode';
 
 type BindableNodeProps = {
   element: Node;
@@ -32,25 +31,23 @@ const BindableNode: React.FC<BindableNodeProps> = ({
 }) => {
   const spec = React.useMemo(() => getRelationshipProvider(), []);
   const { width, height } = element.getBounds();
-  const size = Math.min(width, height);
   const iconRadius = Math.min(width, height) * 0.25;
-  const { radius } = calculateRadius(size);
   const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...props });
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
   const iconData = element.getData()?.data?.icon || openshiftImg;
+  const kind = resourceModel && referenceForModel(resourceModel);
 
   return (
-    <TrapezoidBaseNode
+    <BaseNode
       className="bindable-node"
       tooltipLabel={tooltipLabel}
       onSelect={onSelect}
       icon={iconData}
+      kind={kind}
       innerRadius={iconRadius}
       selected={selected}
-      kind={resourceModel && referenceForModel(resourceModel)}
       element={element}
-      outerRadius={radius}
       {...props}
       dndDropRef={dndDropRef}
       {...dndDropProps}
