@@ -122,7 +122,7 @@ const LogControls: React.FC<LogControlsProps> = ({
         )}
         {showSearch && (
           <div className="co-toolbar__item">
-            <LogViewerSearch placeholder="Search" />
+            <LogViewerSearch placeholder={t('public~Search')} />
           </div>
         )}
       </div>
