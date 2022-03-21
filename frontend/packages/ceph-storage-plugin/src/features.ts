@@ -56,6 +56,11 @@ export enum FEATURES {
   ODF_VAULT_SA_KMS = 'ODF_VAULT_SA_KMS',
   SS_LIST = 'ODF_SS_LIST',
   ADD_CAPACITY = 'ODF_ADD_CAPACITY',
+  ODF_WIZARD = 'ODF_WIZARD',
+  BLOCK_POOL = 'BLOCK_POOL',
+  MCG_RESOURCE = 'MCG_RESOURCE',
+  ODF_DASHBOARD = 'ODF_DASHBOARD',
+  COMMON_FLAG = 'COMMON_FLAG',
 }
 
 const OCS_FEATURE_FLAGS = {
@@ -76,6 +81,11 @@ const OCS_FEATURE_FLAGS = {
 export const ODF_BLOCK_FLAG = {
   [FEATURES.SS_LIST]: 'ss-list',
   [FEATURES.ADD_CAPACITY]: 'add-capacity',
+  [FEATURES.ODF_WIZARD]: 'install-wizard',
+  [FEATURES.BLOCK_POOL]: 'block-pool',
+  [FEATURES.MCG_RESOURCE]: 'mcg-resource',
+  [FEATURES.ODF_DASHBOARD]: 'odf-dashboard',
+  [FEATURES.COMMON_FLAG]: 'common',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
