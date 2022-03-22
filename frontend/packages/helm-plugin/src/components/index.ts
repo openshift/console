@@ -3,3 +3,4 @@ export { default as HelmInstallUpgradePage } from './forms/install-upgrade/HelmI
 export { default as HelmReleaseRollbackPage } from './forms/rollback/HelmReleaseRollbackPage';
 export { default as HelmReleaseDetailsPage } from './details-page/HelmReleaseDetailsPage';
 export { default as HelmReleaseListPage } from './list-page/HelmReleaseListPage';
+export { default as ProjectHelmChartRepositoryForm } from './forms/ProjectHelmChartRepository/CreateProjectHelmChartRepositoryPage';

@@ -98,6 +98,14 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/ns/:ns/projecthelmchartrepositories/~new"],
+      "component": { "$codeRef": "helmComponents.ProjectHelmChartRepositoryForm" }
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
       "required": ["OPENSHIFT_HELM"]
