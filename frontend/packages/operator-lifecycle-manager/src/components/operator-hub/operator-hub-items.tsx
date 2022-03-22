@@ -29,7 +29,13 @@ import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../con
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { OperatorHubItem, InstalledState, CapabilityLevel, InfraFeatures } from './index';
+import {
+  OperatorHubItem,
+  InstalledState,
+  CapabilityLevel,
+  InfraFeatures,
+  ValidSubscriptionValue,
+} from './index';
 
 const osBaseLabel = 'operatorframework.io/os.';
 const targetGOOSLabel = window.SERVER_FLAGS.GOOS ? `${osBaseLabel}${window.SERVER_FLAGS.GOOS}` : '';
@@ -86,7 +92,7 @@ const Badge = ({ text }) => (
 );
 
 /**
- * Filter property white list
+ * Filter property allow list
  */
 const operatorHubFilterGroups = [
   'catalogSourceDisplayName',
@@ -94,6 +100,7 @@ const operatorHubFilterGroups = [
   'installState',
   'capabilityLevel',
   'infraFeatures',
+  'validSubscriptionFilters',
 ];
 
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
@@ -208,6 +215,21 @@ const infraFeaturesSort = (infrastructure) => {
   }
 };
 
+const validSubscriptionSort = (validSubscription) => {
+  switch (validSubscription.value) {
+    case ValidSubscriptionValue.OpenShiftKubernetesEngine:
+      return 0;
+    case ValidSubscriptionValue.OpenShiftContainerPlatform:
+      return 1;
+    case ValidSubscriptionValue.OpenShiftPlatformPlus:
+      return 2;
+    case ValidSubscriptionValue.RequiresSeparateSubscription:
+      return 3;
+    default:
+      return 4;
+  }
+};
+
 const sortFilterValues = (values, field) => {
   let sorter: any = ['value'];
 
@@ -229,6 +251,10 @@ const sortFilterValues = (values, field) => {
 
   if (field === 'infraFeatures') {
     sorter = infraFeaturesSort;
+  }
+
+  if (field === 'validSubscriptionFilters') {
+    sorter = validSubscriptionSort;
   }
 
   return _.sortBy(values, sorter);
@@ -478,6 +504,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     installState: t('olm~Install state'),
     capabilityLevel: t('olm~Capability level'),
     infraFeatures: t('olm~Infrastructure features'),
+    validSubscriptionFilters: t('olm~Valid subscription'),
   };
 
   return (

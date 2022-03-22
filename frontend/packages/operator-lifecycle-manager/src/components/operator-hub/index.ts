@@ -26,6 +26,13 @@ export enum InfraFeatures {
   sno = 'Single Node Clusters',
 }
 
+export enum ValidSubscriptionValue {
+  OpenShiftKubernetesEngine = 'OpenShift Kubernetes Engine',
+  OpenShiftContainerPlatform = 'OpenShift Container Platform',
+  OpenShiftPlatformPlus = 'OpenShift Platform Plus',
+  RequiresSeparateSubscription = 'Requires separate subscription',
+}
+
 export type OperatorHubItem = {
   obj: PackageManifestKind;
   name: string;
