@@ -181,7 +181,7 @@
     "properties": {
       "model": {
         "group": "batch",
-        "version": "v1beta1",
+        "version": "v1",
         "kind": "CronJob"
       },
       "provider": { "$codeRef": "actions.useCronJobActionsProvider" }

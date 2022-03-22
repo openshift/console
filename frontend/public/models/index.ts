@@ -777,7 +777,7 @@ export const CronJobModel: K8sKind = {
   label: 'CronJob',
   // t('public~CronJob')
   labelKey: 'public~CronJob',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   apiGroup: 'batch',
   plural: 'cronjobs',
   abbr: 'CJ',
