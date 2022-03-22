@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { TextInput } from '@patternfly/react-core';
+import { Text, TextContent, TextInput, TextVariants } from '@patternfly/react-core';
 import * as semver from 'semver';
 
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
@@ -43,18 +43,20 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
         {channelsExist ? t('public~Select channel') : t('public~Input channel')}
       </ModalTitle>
       <ModalBody>
-        <p>
-          {channelsExist
-            ? t(
-                'public~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
-              )
-            : t(
-                'public~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
-              )}
-        </p>
-        <p>
-          <ChannelDocLink />
-        </p>
+        <TextContent>
+          <Text component={TextVariants.p}>
+            {channelsExist
+              ? t(
+                  'public~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
+                )
+              : t(
+                  'public~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
+                )}
+          </Text>
+          <Text component={TextVariants.p} className="pf-u-mb-md">
+            <ChannelDocLink />
+          </Text>
+        </TextContent>
         <div className="form-group">
           <label htmlFor="channel">{t('public~Channel')}</label>
           {channelsExist ? (
