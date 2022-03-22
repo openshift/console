@@ -13,9 +13,7 @@ import { getResource } from '@console/topology/src/utils';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { NodeType } from '../topology-types';
 
-export const EventSinkOutputTargetSection: React.FC<{ resource: K8sResourceKind }> = ({
-  resource,
-}) => {
+export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = ({ resource }) => {
   const { t } = useTranslation();
   const target = resource?.spec?.source?.ref;
   const reference = target && referenceFor(target);
@@ -24,13 +22,13 @@ export const EventSinkOutputTargetSection: React.FC<{ resource: K8sResourceKind 
   if (!reference && !sinkUri) {
     return (
       <span data-test="event-sink-text" className="text-muted">
-        {t('knative-plugin~No output target found for this resource.')}
+        {t('knative-plugin~No Source found for this resource.')}
       </span>
     );
   }
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Output Target')} />
+      <SidebarSectionHeading text={t('knative-plugin~Source')} />
       <ul className="list-group">
         <li className="list-group-item">
           {reference ? (
@@ -63,7 +61,7 @@ export const getKnativeSidepanelEventSinkSection = (element: GraphElement) => {
     const resource = getResource(element);
     return resource ? (
       <TopologySideBarTabSection>
-        <EventSinkOutputTargetSection resource={resource} />
+        <EventSinkSourceSection resource={resource} />
       </TopologySideBarTabSection>
     ) : null;
   }

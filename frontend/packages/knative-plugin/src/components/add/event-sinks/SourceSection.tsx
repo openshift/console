@@ -14,7 +14,7 @@ const SourceSection: React.FC<SourceSectionProps> = ({ namespace, fullWidth }) =
     <FormSection
       title={
         <>
-          {t('knative-plugin~Output Target')}
+          {t('knative-plugin~Source')}
           <span
             className="pf-c-form__label-required"
             aria-hidden="true"
@@ -24,9 +24,7 @@ const SourceSection: React.FC<SourceSectionProps> = ({ namespace, fullWidth }) =
           </span>
         </>
       }
-      subTitle={t(
-        'knative-plugin~Add an input target to route cloud events from a Channel or Broker',
-      )}
+      subTitle={t('knative-plugin~Add a source to route cloud events for the Event sink.')}
       extraMargin
       fullWidth={fullWidth}
     >
