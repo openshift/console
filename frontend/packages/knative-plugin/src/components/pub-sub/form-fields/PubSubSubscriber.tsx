@@ -4,6 +4,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField, getFieldId } from '@console/shared';
 import { getSinkableResources } from '../../../utils/get-knative-resources';
 import { craftResourceKey } from '../pub-sub-utils';
@@ -44,6 +45,9 @@ const PubSubSubscriber: React.FC = () => {
     setResourceAlert(_.isEmpty(resourceList));
   };
 
+  // filter out resource which are owned by other resource
+  const resourceFilter = ({ metadata }: K8sResourceKind) => !metadata?.ownerReferences?.length;
+
   return (
     <FormGroup
       fieldId={getFieldId('pubsub', 'subscriber')}
@@ -73,6 +77,7 @@ const PubSubSubscriber: React.FC = () => {
         customResourceKey={craftResourceKey}
         autoSelect
         disabled={resourceAlert}
+        resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />
     </FormGroup>
