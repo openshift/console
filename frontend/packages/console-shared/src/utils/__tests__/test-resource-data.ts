@@ -2080,7 +2080,7 @@ export const sampleJobs: FirehoseResult = {
         namespace: 'jeff-project',
         ownerReferences: [
           {
-            apiVersion: 'batch/v1beta1',
+            apiVersion: 'batch/v1',
             kind: 'CronJob',
             name: 'py-cron',
             uid: 'be644703-be4b-4ee5-9d86-fdeb9495569c',
@@ -2383,7 +2383,7 @@ export const sampleJobs: FirehoseResult = {
         namespace: 'jeff-project',
         ownerReferences: [
           {
-            apiVersion: 'batch/v1beta1',
+            apiVersion: 'batch/v1',
             kind: 'CronJob',
             name: 'py-cron',
             uid: 'be644703-be4b-4ee5-9d86-fdeb9495569c',
@@ -2462,7 +2462,7 @@ export const sampleCronJobs: FirehoseResult = {
   data: [
     {
       kind: 'CronJob',
-      apiVersion: 'batch/v1beta1',
+      apiVersion: 'batch/v1',
       metadata: {
         name: 'py-cron',
         namespace: 'jeff-project',
@@ -2476,7 +2476,7 @@ export const sampleCronJobs: FirehoseResult = {
           {
             manager: 'oc',
             operation: 'Update',
-            apiVersion: 'batch/v1beta1',
+            apiVersion: 'batch/v1',
             time: '2020-06-24T11:17:41Z',
             fieldsType: 'FieldsV1',
             fieldsV1: {
@@ -2549,7 +2549,7 @@ export const sampleCronJobs: FirehoseResult = {
           {
             manager: 'kube-controller-manager',
             operation: 'Update',
-            apiVersion: 'batch/v1beta1',
+            apiVersion: 'batch/v1',
             time: '2020-06-24T12:35:05Z',
             fieldsType: 'FieldsV1',
             fieldsV1: {
