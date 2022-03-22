@@ -9,7 +9,6 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { history } from '@console/internal/components/utils/router';
-import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { getName } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -281,31 +280,15 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
 
   return (
     <>
-      <div className="co-create-operand__breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            {
-              name: isODF ? 'OpenShift Data Foundation' : 'OpenShift Container Storage',
-              path: isODF ? '/odf' : resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
-            },
-            {
-              name: t('ceph-storage-plugin~Create BucketClass'),
-              path: match.url,
-            },
-          ]}
-        />
-      </div>
       <div className="co-create-operand__header">
-        <div className="nb-create-bc-header-title">
-          <Title size="2xl" headingLevel="h1" className="nb-create-bc-header-title__main">
-            {t('ceph-storage-plugin~Create new BucketClass')}
-          </Title>
-          <p className="nb-create-bc-header-title__info">
-            {t(
-              'ceph-storage-plugin~BucketClass is a CRD representing a class for buckets that defines tiering policies and data placements for an OBC.',
-            )}
-          </p>
-        </div>
+        <Title size="2xl" headingLevel="h1" className="co-create-operand__header-text">
+          {t('ceph-storage-plugin~Create new BucketClass')}
+        </Title>
+        <p className="help-block">
+          {t(
+            'ceph-storage-plugin~BucketClass is a CRD representing a class for buckets that defines tiering policies and data placements for an OBC.',
+          )}
+        </p>
       </div>
       <div className="nb-create-bc-wizard">
         <Wizard

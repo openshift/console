@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useDeepCompareMemoize } from '@console/shared';
 import { StatusBox } from '@console/internal/components/utils/status-box';
-import { BreadCrumbs, history } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils';
 import { Button } from '@patternfly/react-core';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { Modal } from '@console/shared/src/components/modal';
@@ -97,20 +97,6 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
 
   return (
     <>
-      <div className="co-create-operand__breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            {
-              name: params?.appName ? 'Openshift Container Storage' : 'Openshift Data Foundation',
-              path: blockPoolPageUrl,
-            },
-            {
-              name: t('ceph-storage-plugin~Create BlockPool'),
-              path: url,
-            },
-          ]}
-        />
-      </div>
       <div className="co-create-operand__header">
         <h1 className="co-create-operand__header-text">
           {t('ceph-storage-plugin~Create BlockPool')}

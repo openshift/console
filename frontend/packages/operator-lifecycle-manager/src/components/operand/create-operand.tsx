@@ -8,7 +8,6 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
   StatusBox,
-  BreadCrumbs,
   resourcePathFromModel,
   AsyncComponent,
 } from '@console/internal/components/utils';
@@ -165,7 +164,6 @@ const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
     namespace: match.params.ns,
     isList: false,
   });
-  const [model] = useK8sModel(match.params.plural);
 
   return (
     <>
@@ -173,26 +171,6 @@ const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
         <title>{t('olm~Create {{item}}', { item: kindForReference(match.params.plural) })}</title>
       </Helmet>
       <ModelStatusBox groupVersionKind={match.params.plural}>
-        {loaded && !_.isEmpty(csv) && (
-          <div className="co-create-operand__breadcrumbs">
-            <BreadCrumbs
-              breadcrumbs={[
-                {
-                  name: csv.spec.displayName,
-                  path: resourcePathFromModel(
-                    ClusterServiceVersionModel,
-                    csv.metadata.name,
-                    csv.metadata.namespace,
-                  ),
-                },
-                {
-                  name: t('olm~Create {{item}}', { item: model?.label }),
-                  path: window.location.pathname,
-                },
-              ]}
-            />
-          </div>
-        )}
         {createResourceExtension ? (
           <AsyncComponent
             loader={createResourceExtension.properties.component}

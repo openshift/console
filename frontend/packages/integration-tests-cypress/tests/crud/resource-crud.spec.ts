@@ -135,7 +135,7 @@ describe('Kubernetes resource CRUD operations', () => {
           cy.byTestID('yaml-link').click();
         }
         if (resourcesWithSyncedEditor.has(kind)) {
-          cy.byTestID('YAML view-radio-input').click();
+          cy.byTestID('yaml-view-input').click();
         }
         // sidebar needs to be fully loaded, else it sometimes overlays the Create button
         cy.byTestID('resource-sidebar').should('exist');

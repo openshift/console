@@ -142,23 +142,15 @@ $co-affinity-row-margin: 15px;
 
 .co-create-operand__header {
   border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-  padding: 0 15px 10px;
-  @media (min-width: $screen-sm-min) {
-    padding: 0 30px 15px;
-  }
-}
-
-.co-create-operand__breadcrumbs {
-  align-items: baseline;
-  display: flex;
-  padding: 10px 15px;
-  @media (min-width: $screen-sm-min) {
-    padding: 0 30px 15px;
+  padding: 0 $pf-global-gutter var(--pf-global--spacer--lg);
+  @media (min-width: $pf-global--breakpoint--xl) {
+    padding-left: $pf-global-gutter--md;
+    padding-right: $pf-global-gutter--md;
   }
 }
 
 .co-create-operand__header-text {
-  margin: 0;
+  margin: var(--pf-global--spacer--lg) 0 0 !important;
 }
 
 .co-affinity-term {

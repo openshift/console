@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
-import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { getName } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -21,28 +19,15 @@ const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) =>
 
   return (
     <>
-      <div className="co-create-operand__breadcrumbs">
-        <BreadCrumbs
-          breadcrumbs={[
-            {
-              name: isODF ? 'OpenShift Data Foundation' : 'OpenShift Container Storage',
-              path: isODF ? '/odf' : resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
-            },
-            { name: t('ceph-storage-plugin~Create NamespaceStore '), path: match.url },
-          ]}
-        />
-      </div>
       <div className="co-create-operand__header">
-        <div className="nb-endpoints-page-title">
-          <Title size="2xl" headingLevel="h1" className="nb-endpoints-page-title__main">
-            {t('ceph-storage-plugin~Create NamespaceStore ')}
-          </Title>
-          <p className="nb-endpoints-page-title__info">
-            {t(
-              'ceph-storage-plugin~Represents an underlying storage to be used as read or write target for the data in the namespace buckets.',
-            )}
-          </p>
-        </div>
+        <Title size="2xl" headingLevel="h1" className="co-create-operand__header-text">
+          {t('ceph-storage-plugin~Create NamespaceStore ')}
+        </Title>
+        <p className="help-block">
+          {t(
+            'ceph-storage-plugin~Represents an underlying storage to be used as read or write target for the data in the namespace buckets.',
+          )}
+        </p>
       </div>
       <NamespaceStoreForm
         onCancel={onCancel}
