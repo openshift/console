@@ -24,30 +24,30 @@ const SecureRouteFields: React.FC = () => {
     () =>
       Object.keys(TerminationTypes).map((tlsTerminationOption) => (
         <SelectOption key={tlsTerminationOption} value={tlsTerminationOption}>
-          {TerminationTypes[tlsTerminationOption]}
+          {t(TerminationTypes[tlsTerminationOption])}
         </SelectOption>
       )),
-    [],
+    [t],
   );
 
   const insecureTrafficSelectOptions: JSX.Element[] = React.useMemo(
     () =>
       Object.keys(InsecureTrafficTypes).map((insecureTrafficOption) => (
         <SelectOption key={insecureTrafficOption} value={insecureTrafficOption}>
-          {InsecureTrafficTypes[insecureTrafficOption]}
+          {t(InsecureTrafficTypes[insecureTrafficOption])}
         </SelectOption>
       )),
-    [],
+    [t],
   );
 
   const passthroughInsecureTrafficTypesSelectOptions: JSX.Element[] = React.useMemo(
     () =>
       Object.keys(PassthroughInsecureTrafficTypes).map((passthroughInsecureTraffic) => (
         <SelectOption key={passthroughInsecureTraffic} value={passthroughInsecureTraffic}>
-          {PassthroughInsecureTrafficTypes[passthroughInsecureTraffic]}
+          {t(PassthroughInsecureTrafficTypes[passthroughInsecureTraffic])}
         </SelectOption>
       )),
-    [],
+    [t],
   );
 
   const onSecureRouteChecked = React.useCallback(

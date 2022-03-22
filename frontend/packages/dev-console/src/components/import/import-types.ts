@@ -304,19 +304,27 @@ export interface ImportData {
 }
 
 export enum TerminationTypes {
+  // t('devconsole~Edge')
   edge = 'Edge',
+  // t('devconsole~Passthrough')
   passthrough = 'Passthrough',
+  // t('devconsole~Re-encrypt')
   reencrypt = 'Re-encrypt',
 }
 
 export enum InsecureTrafficTypes {
+  // t('devconsole~None')
   None = 'None',
+  // t('devconsole~Allow')
   Allow = 'Allow',
+  // t('devconsole~Redirect')
   Redirect = 'Redirect',
 }
 
 export enum PassthroughInsecureTrafficTypes {
+  // t('devconsole~None')
   None = 'None',
+  // t('devconsole~Redirect')
   Redirect = 'Redirect',
 }
 
