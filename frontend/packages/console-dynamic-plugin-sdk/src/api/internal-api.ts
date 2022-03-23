@@ -59,3 +59,4 @@ export const usePrometheusPoll: UsePrometheusPoll = require('@console/internal/c
   .usePrometheusPoll;
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;
+export const ServicesList = require('@console/internal/components/service').ServicesList;
