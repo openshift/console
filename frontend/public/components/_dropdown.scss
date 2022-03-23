@@ -61,7 +61,7 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .co-namespace-bar {
-  border-bottom: 1px solid $color-grey-background-border;
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
   padding: 0 $pf-global-gutter;
   white-space: nowrap;
 

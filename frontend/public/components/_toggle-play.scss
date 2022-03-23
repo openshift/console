@@ -1,5 +1,6 @@
 .co-toggle-play.pf-c-button {
-  border: 3px solid $pf-color-black-200;
+  background-color: var(--pf-global--BackgroundColor--100);
+  border: var(--pf-global--BorderWidth--lg) solid var(--pf-global--BorderColor--100);
   border-radius: 50%;
   height: 32px;
   margin-right: 15px;
@@ -18,6 +19,6 @@
   }
 
   &.co-toggle-play--active {
-    border-color: $pf-color-green-300;
+    border-color: var(--pf-global--palette--green-300); // brighter green that works for both light and dark themes
   }
 }

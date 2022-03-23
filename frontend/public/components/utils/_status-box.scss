@@ -2,18 +2,18 @@
   padding: 40px 20px;
 
   &__title {
-    color: #333;
+    color: var(--pf-global--Color--100);
     font-size: 18px;
     margin-bottom: 20px;
     text-align: center;
 
     .cos-error-title {
-      color: $pf-color-red-100;
+      color: var(--pf-global--danger-color--100);
     }
   }
 
   &__detail {
-    color: $color-text-muted;
+    color: var(--pf-global--Color--200);
     font-size: $font-size-base;
     max-width: 500px;
     margin: 0 auto;
