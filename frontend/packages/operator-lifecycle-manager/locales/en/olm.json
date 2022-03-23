@@ -258,6 +258,7 @@
   "No Operators available": "No Operators available",
   "There are no Operators that match operating system {{os}} and architecture {{arch}}.": "There are no Operators that match operating system {{os}} and architecture {{arch}}.",
   "Install state": "Install state",
+  "Valid subscription": "Valid subscription",
   "No Results Match the Filter Criteria": "No Results Match the Filter Criteria",
   "No OperatorHub items are being shown due to the filters being applied.": "No OperatorHub items are being shown due to the filters being applied.",
   "Purchase": "Purchase",

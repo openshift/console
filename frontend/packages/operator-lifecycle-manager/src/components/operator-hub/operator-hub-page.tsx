@@ -40,6 +40,7 @@ import {
   InstalledState,
   OperatorHubCSVAnnotationKey,
   InfraFeatures,
+  ValidSubscriptionValue,
 } from './index';
 
 const ANNOTATIONS_WITH_JSON = [
@@ -53,6 +54,13 @@ const clusterServiceVersionFor = (
 ): ClusterServiceVersionKind => {
   return clusterServiceVersions?.find((csv) => csv.metadata.name === csvName);
 };
+
+const isOpenShiftValidSubscriptionValue = (validSubscriptionValue) =>
+  [
+    ValidSubscriptionValue.OpenShiftKubernetesEngine,
+    ValidSubscriptionValue.OpenShiftContainerPlatform,
+    ValidSubscriptionValue.OpenShiftPlatformPlus,
+  ].includes(validSubscriptionValue);
 
 export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   loaded,
@@ -90,15 +98,42 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const { currentCSVDesc } = (channels || []).find(({ name }) => name === defaultChannel);
           const currentCSVAnnotations: OperatorHubCSVAnnotations =
             currentCSVDesc?.annotations ?? {};
-          const [parsedInfraFeatures = [], validSubscription] = ANNOTATIONS_WITH_JSON.map(
-            (annotationKey) => {
-              return parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
+          const [parsedInfraFeatures, validSubscription] = ANNOTATIONS_WITH_JSON.map(
+            (annotationKey) =>
+              parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
                 // eslint-disable-next-line no-console
                 console.warn(`Error parsing annotation in PackageManifest ${pkg.metadata.name}`),
-              );
-            },
+              ) ?? [],
           );
-          const filteredInfraFeatures = _.uniq(
+
+          const validSubscriptionFilters = validSubscription.reduce(
+            (previousValidSubscriptionValues, currentValidSubscriptionValue) => {
+              // The three openshift valid subscriptions values should be appended as-is so that
+              // they show up as filter options on operator hub
+              if (isOpenShiftValidSubscriptionValue(currentValidSubscriptionValue)) {
+                return [...previousValidSubscriptionValues, currentValidSubscriptionValue];
+              }
+
+              // Any value other than the openshift valid subscription values above should be
+              // aggregated into a single "Requires separate subscription" filter option
+              if (
+                !previousValidSubscriptionValues.includes(
+                  ValidSubscriptionValue.RequiresSeparateSubscription,
+                )
+              ) {
+                return [
+                  ...previousValidSubscriptionValues,
+                  ValidSubscriptionValue.RequiresSeparateSubscription,
+                ];
+              }
+
+              return previousValidSubscriptionValues;
+            },
+            [],
+          );
+
+          // TODO remove lodash and implement using Array.prototye.reduce
+          const infraFeatures = _.uniq(
             _.compact(_.map(parsedInfraFeatures, (key) => InfraFeatures[key])),
           );
 
@@ -163,7 +198,8 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             marketplaceRemoteWorkflow,
             marketplaceSupportWorkflow,
             validSubscription,
-            infraFeatures: filteredInfraFeatures,
+            validSubscriptionFilters,
+            infraFeatures,
             keywords: currentCSVDesc?.keywords ?? [],
           };
         },
