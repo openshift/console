@@ -25,13 +25,13 @@ Feature: Pipeline metrics
               And user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs
 
 
-        @regression @to-do
+        @regression
         Scenario: No datapoint graphs in metrics tab: P-04-TC03
             Given pipeline "pipeline-metrics-two" is present on Pipeline Details page
-             When user clicks on pipeline "pipeline-metrics-two"
               And user selects option "Start" from Actions menu drop down
               And user navigates to Pipelines page
               And user clicks on pipeline "pipeline-metrics-two"
+              And user clicks on Metrics tab
              Then user can see Time Range with a default value of "1 week"
               And user can see and Refresh Interval with a default value of "30 seconds"
               And user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs

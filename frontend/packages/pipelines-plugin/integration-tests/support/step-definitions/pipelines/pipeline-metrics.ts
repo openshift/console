@@ -43,3 +43,7 @@ Then(
       .should('contain.text', pipelineDetailsText.metrics.graphs.taskRunDuration);
   },
 );
+
+When('user can see message "No datapoints found" inside graphs', () => {
+  cy.byTestID('datapoints-msg').should('include.text', 'No datapoints found.');
+});
