@@ -9,6 +9,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { Priority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { Feature, ImageManifestVuln, Vulnerability } from '../types';
+import { getVulnerabilityType, VulnerabilitiesType } from './image-vulnerability-utils';
 import ImageVulnerabilitiesTable from './ImageVulnerabilitiesTable';
 
 type ImageVulnerabilitiesListProps = {
@@ -33,6 +34,18 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
   } = props;
 
   const imageVulnerabilitiesRowFilters: RowFilter<ImageVuln>[] = [
+    {
+      filterGroupName: t('container-security~Type'),
+      items: [
+        { id: VulnerabilitiesType.appDependency, title: VulnerabilitiesType.appDependency },
+        { id: VulnerabilitiesType.baseImage, title: VulnerabilitiesType.baseImage },
+      ],
+      type: 'vulnerability-type',
+      reducer: (v) => getVulnerabilityType(v.vulnerability),
+      filter: (filter, vuln) =>
+        filter.selected?.includes(getVulnerabilityType(vuln.vulnerability)) ||
+        _.isEmpty(filter.selected),
+    },
     {
       filterGroupName: t('container-security~Severity'),
       items: [

@@ -23,6 +23,8 @@ describe('ImageVulnerabilitiesTable', () => {
       'Name',
       'Severity',
       'Package',
+      'Type',
+      'Source',
       'Current version',
       'Fixed in version',
     ];
