@@ -425,6 +425,7 @@ const NodesTable: React.FC<NodesTableProps &
         activeColumns={selectedColumns}
         columnManagementID={columnManagementID}
         aria-label={t('nodes~Nodes')}
+        showNamespaceOverride
         Header={NodeTableHeader}
         Row={Row}
         virtualize

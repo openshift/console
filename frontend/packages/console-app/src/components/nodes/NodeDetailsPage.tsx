@@ -30,7 +30,11 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
       },
       editYaml(),
       pods(({ obj }) => (
-        <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
+        <PodsPage
+          showTitle={false}
+          fieldSelector={`spec.nodeName=${obj.metadata.name}`}
+          customData={{ showNamespaceOverride: true }}
+        />
       )),
       events(ResourceEventStream),
       ...(!_.some(
