@@ -4,7 +4,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { OdcNodeModel } from '@console/topology/src/topology-types';
 import { CAMEL_SOURCE_INTEGRATION } from '../const';
 import { EventingBrokerModel } from '../models';
-import { TYPE_EVENT_SOURCE, TYPE_EVENT_SOURCE_KAFKA } from './const';
+import { TYPE_EVENT_SINK, TYPE_EVENT_SOURCE, TYPE_EVENT_SOURCE_KAFKA } from './const';
 
 const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
 
@@ -16,13 +16,18 @@ export const isKnativeResource = (resource: K8sResourceKind, model: Model): bool
     return false;
   }
 
-  const eventSources = model.nodes
-    .filter((n) => n.type === TYPE_EVENT_SOURCE || n.type === TYPE_EVENT_SOURCE_KAFKA)
+  const eventResources = model.nodes
+    .filter(
+      (n) =>
+        n.type === TYPE_EVENT_SOURCE ||
+        n.type === TYPE_EVENT_SOURCE_KAFKA ||
+        n.type === TYPE_EVENT_SINK,
+    )
     .map((n) => (n as OdcNodeModel).resource);
 
-  const isEventSourceKind = (uid: string): boolean =>
+  const isEventSourceSinkKind = (uid: string): boolean =>
     uid &&
-    !!eventSources?.find(
+    !!eventResources?.find(
       (eventSource) =>
         eventSource.metadata?.uid === uid ||
         resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
@@ -30,7 +35,7 @@ export const isKnativeResource = (resource: K8sResourceKind, model: Model): bool
         ),
     );
 
-  if (isEventSourceKind(resource.metadata?.ownerReferences?.[0].uid)) {
+  if (isEventSourceSinkKind(resource.metadata?.ownerReferences?.[0].uid)) {
     return true;
   }
 

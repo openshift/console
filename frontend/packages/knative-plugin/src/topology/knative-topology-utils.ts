@@ -519,7 +519,11 @@ const createKnativeDeploymentItems = (
 ): KnativeServiceOverviewItem => {
   let associatedDeployment = getOwnedResources(resource, resources.deployments.data);
   // form Deployments for camelSource as they are owned by integrations
-  if (resource.kind === EVENT_SOURCE_CAMEL_KIND && resources.integrations) {
+  if (
+    (resource.kind === EVENT_SOURCE_CAMEL_KIND ||
+      resource.kind === CamelKameletBindingModel.kind) &&
+    resources.integrations
+  ) {
     const intgrationsOwnData = getOwnedResources(resource, resources.integrations.data);
     const integrationsOwnedDeployment =
       intgrationsOwnData?.length > 0
@@ -754,7 +758,7 @@ export const getEventSinkTopologyEdgeItems = (resource: K8sResourceKind, resourc
   if (source?.kind === EventingBrokerModel.kind) {
     sinkSource = resources.brokers.data.find((broker) => broker.metadata.name === source.name);
   } else {
-    sinkSource = resources[targetRef].data.find((res) => res.metadata.name === source.name);
+    sinkSource = resources[targetRef]?.data?.find((res) => res.metadata.name === source.name);
   }
 
   if (sinkSource) {

@@ -17,6 +17,8 @@ import {
   AnchorEnd,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
+import { DeploymentModel } from '@console/internal/models';
+import { usePodsWatcher } from '@console/shared';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
@@ -74,10 +76,25 @@ const EventSink: React.FC<EventSinkProps> = ({
   const isKafkaConnectionLinkPresent =
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
       .length > 0;
-  const revisionIds = resources.revisions?.map((revision) => revision.metadata.uid);
+  const { revisions, associatedDeployment = {} } = resources;
+  const revisionIds = revisions?.map((revision) => revision.metadata.uid);
   const { loaded, loadError, pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
+
+  const {
+    podData: podsDeployment,
+    loadError: loadErrorDeployment,
+    loaded: loadedDeployment,
+  } = usePodsWatcher(
+    associatedDeployment,
+    associatedDeployment.kind ?? DeploymentModel.kind,
+    associatedDeployment.metadata?.namespace || resource.metadata?.namespace,
+  );
+
   const donutStatus = React.useMemo(() => {
-    if (loaded && !loadError) {
+    if (!revisionIds && loadedDeployment && !loadErrorDeployment) {
+      return podsDeployment;
+    }
+    if (revisionIds && loaded && !loadError) {
       const [current, previous] = pods;
       const isRollingOut = !!current && !!previous;
       return {
@@ -89,7 +106,16 @@ const EventSink: React.FC<EventSinkProps> = ({
       };
     }
     return null;
-  }, [loaded, loadError, pods, resource]);
+  }, [
+    revisionIds,
+    loadedDeployment,
+    loadErrorDeployment,
+    loaded,
+    loadError,
+    podsDeployment,
+    pods,
+    resource,
+  ]);
 
   React.useLayoutEffect(() => {
     if (!isKafkaConnectionLinkPresent) {
