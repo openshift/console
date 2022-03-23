@@ -242,3 +242,51 @@ Then('user will be redirected to Pipelines page', () => {
 When('user clicks Save button on Pipeline Builder page', () => {
   pipelineBuilderPage.clickSaveButton();
 });
+
+Then('user clicks on Add task button', () => {
+  cy.get('[data-test="task-list"]').click();
+});
+
+When('user clicks on Add task in parallel', () => {
+  cy.mouseHover(pipelineBuilderPO.formView.task);
+  cy.get(pipelineBuilderPO.formView.plusTaskIcon)
+    .eq(2)
+    .click({ force: true });
+});
+
+Then('user clicks on Add in selected task', () => {
+  cy.byTestID('task-cta').click();
+});
+
+Given('pipeline run is available for {string}', (pipelineName: string) => {
+  pipelinesPage.clickOnCreatePipeline();
+  Cypress.env('PIPELINE_NAME', pipelineName);
+  pipelineBuilderPage.enterPipelineName(pipelineName);
+  cy.get('[data-test="task-list"]').click();
+  cy.get(pipelineBuilderPO.formView.quickSearch).type('kn');
+  cy.byTestID('task-cta').click();
+  pipelineBuilderPage.clickCreateButton();
+  actionsDropdownMenu.selectAction('Start');
+  cy.get('[data-test="pipeline-visualization"]').should('be.visible');
+  cy.get('[data-test="status-text"]', { timeout: 50000 }).should('include.text', 'Succeeded');
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.search(pipelineName);
+  cy.get(pipelinesPO.pipelinesTable.pipelineRunIcon).should('be.visible');
+});
+
+Then('Pipeline run details page is displayed', () => {
+  pipelineRunDetailsPage.verifyTitle();
+});
+
+Then('pipeline run status displays as {string} in Pipeline run page', (pipelineStatus: string) => {
+  cy.get('[data-test="status-text"]').should('include.text', pipelineStatus);
+});
+
+Then(
+  'Last run status of the {string} displays as {string} in pipelines page',
+  (pipelineName: string, pipelineStatus: string) => {
+    navigateTo(devNavigationMenu.Pipelines);
+    pipelinesPage.search(pipelineName);
+    cy.get('[data-test="status-text"]').should('include.text', pipelineStatus);
+  },
+);
