@@ -1,5 +1,5 @@
-import { K8sResourceKind } from 'public/module/k8s';
-import { TEKTON_HUB_INTEGRATION_KEY } from '../components/catalog/const';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { TEKTON_HUB_INTEGRATION_KEY } from '../components/catalog/apis/tektonHub';
 
 export enum IntegrationTypes {
   ENABLED = 'enabled',

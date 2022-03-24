@@ -1,6 +1,6 @@
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
+import { TektonHubTask } from '../components/catalog/apis/tektonHub';
 import { TaskKind } from '../types';
-import { TektonHubTask } from '../types/tektonHub';
 
 export enum CatalogItemTypes {
   CLUSTER_TASK = 'clusterTask',
@@ -250,9 +250,9 @@ export const sampleTektonHubCatalogItemWithHubURL: CatalogItem = {
   attributes: {
     installed: '',
     versions: [
-      { id: '1', hubURLPath: 'foo/bar/test' },
-      { id: '2', hubURLPath: 'foo/bar/test2' },
-      { id: '3', hubURLPath: 'foo/bar/test3' },
+      { version: '0.1', hubURLPath: 'foo/bar/test' },
+      { version: '0.2', hubURLPath: 'foo/bar/test2' },
+      { version: '0.3', hubURLPath: 'foo/bar/test3' },
     ],
   },
   data: {
