@@ -59,7 +59,6 @@ import {
   PubsubNodes,
   KnativeUtil,
   KnativeServiceOverviewItem,
-  KnativeDeploymentOverviewItem,
   KnativeTopologyDataObject,
   KameletType,
 } from './topology-types';
@@ -318,7 +317,7 @@ export const getPubSubSubscribers = (
     const depicters = relationShipMap[resource.kind] || relationShipMap[referenceFor(resource)];
     _.forEach(depicters, (depicter) => {
       const { relatedResource, relationshipResource, isRelatedResource } = depicter;
-      if (resources[relatedResource] && resources[relatedResource].data.length > 0) {
+      if (resources[relatedResource] && resources[relatedResource].data?.length > 0) {
         subscribers = subscribers.concat(
           _.reduce(
             resources[relatedResource].data,
@@ -473,11 +472,11 @@ export const getKnativeRevisionsData = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
 ) => {
-  const configurations = getOwnedResources(resource, resources.configurations.data);
+  const configurations = getOwnedResources(resource, resources.configurations?.data);
   const revisions =
     configurations && configurations.length
-      ? getOwnedResources(configurations[0], resources.revisions.data)
-      : undefined;
+      ? getOwnedResources(configurations[0], resources.revisions?.data)
+      : [];
   return revisions;
 };
 
@@ -489,7 +488,7 @@ export const getKnativeServiceData = (
   resources: TopologyDataResources,
   utils?: KnativeUtil[],
 ): KnativeItem => {
-  const configurations = getOwnedResources(resource, resources.configurations.data);
+  const configurations = getOwnedResources(resource, resources.configurations?.data);
   const revisions = getKnativeRevisionsData(resource, resources);
   const ksroutes = resources.ksroutes
     ? getOwnedResources(resource, resources.ksroutes.data)
@@ -509,35 +508,44 @@ export const getKnativeServiceData = (
   return overviewItem;
 };
 
+export const getDeploymentsForKamelet = (
+  resource: K8sResourceKind,
+  resources: TopologyDataResources,
+): K8sResourceKind[] => {
+  if (
+    [EVENT_SOURCE_CAMEL_KIND, CamelKameletBindingModel.kind].includes(resource.kind) &&
+    resources.integrations
+  ) {
+    const intgrationsOwnData = getOwnedResources(resource, resources.integrations.data);
+    const associatedDeployment =
+      intgrationsOwnData?.length > 0
+        ? getOwnedResources(intgrationsOwnData[0], resources.deployments?.data)
+        : [];
+    return associatedDeployment;
+  }
+  return [];
+};
+
 /**
- * Rollup data for deployments for revisions/ event sources
+ * Rollup data for deployments for revisions, event sources, event sinks
  */
-const createKnativeDeploymentItems = (
+export const createKnativeDeploymentItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
   utils?: KnativeUtil[],
 ): KnativeServiceOverviewItem => {
   let associatedDeployment = getOwnedResources(resource, resources.deployments.data);
-  // form Deployments for camelSource as they are owned by integrations
-  if (
-    (resource.kind === EVENT_SOURCE_CAMEL_KIND ||
-      resource.kind === CamelKameletBindingModel.kind) &&
-    resources.integrations
-  ) {
-    const intgrationsOwnData = getOwnedResources(resource, resources.integrations.data);
-    const integrationsOwnedDeployment =
-      intgrationsOwnData?.length > 0
-        ? getOwnedResources(intgrationsOwnData[0], resources.deployments.data)
-        : [];
-    associatedDeployment = [...associatedDeployment, ...integrationsOwnedDeployment];
-  }
+  associatedDeployment = [
+    ...associatedDeployment,
+    ...getDeploymentsForKamelet(resource, resources),
+  ];
   if (!_.isEmpty(associatedDeployment)) {
     const depObj: K8sResourceKind = {
       ...associatedDeployment[0],
       apiVersion: apiVersionForModel(DeploymentModel),
       kind: DeploymentModel.kind,
     };
-    const overviewItems: KnativeDeploymentOverviewItem = {
+    const overviewItems: KnativeServiceOverviewItem = {
       obj: resource,
       associatedDeployment: depObj,
     };

@@ -9,16 +9,8 @@ import {
   KNATIVE_EVENT_SOURCE_APIGROUP,
   EVENT_SOURCE_CAMEL_KIND,
 } from '../../const';
-import {
-  MockKnativeResources,
-  getEventSourceResponse,
-  sampleDeploymentsCamelConnector,
-  kafkaConnectionData,
-  sinkUriUid,
-  eventSourceWithSinkUri,
-  sinkUriObj,
-  sinkUriData,
-} from '../../topology/__tests__/topology-knative-test-data';
+import { mockServiceData, mockRevisions } from '../../utils/__mocks__/traffic-splitting-utils-mock';
+import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
 import {
   getKnativeServiceData,
   getKnativeTopologyNodeItems,
@@ -33,10 +25,20 @@ import {
   isOperatorBackedKnResource,
   isServerlessFunction,
   getKnSourceKafkaTopologyEdgeItems,
-} from '../../topology/knative-topology-utils';
-import { EdgeType, NodeType } from '../../topology/topology-types';
-import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
-import * as knativefetchutils from '../fetch-dynamic-eventsources-utils';
+  getDeploymentsForKamelet,
+} from '../knative-topology-utils';
+import { EdgeType, NodeType } from '../topology-types';
+import { modelsKnTopology } from './__mocks__/knativeResourcesData';
+import {
+  MockKnativeResources,
+  getEventSourceResponse,
+  sampleDeploymentsCamelConnector,
+  kafkaConnectionData,
+  sinkUriUid,
+  eventSourceWithSinkUri,
+  sinkUriObj,
+  sinkUriData,
+} from './topology-knative-test-data';
 
 describe('knative topology utils', () => {
   it('expect getKnativeServiceData to return knative resources', () => {
@@ -373,5 +375,23 @@ describe('event-source-kafka', () => {
   it('should not return any edges if KafkaConnection is not present', () => {
     const edges = getKnSourceKafkaTopologyEdgeItems(mockKafkaData, undefined);
     expect(edges).toEqual([]);
+  });
+});
+
+describe('getDeploymentsForKamelet', () => {
+  it('should return associated deployment if present for evets sink', () => {
+    const {
+      nodes: [{ resource, resources }],
+    } = modelsKnTopology;
+    const associatedDeployment = getDeploymentsForKamelet(resource, resources);
+    expect(associatedDeployment[0].metadata.uid).toEqual('88c41236-f5b1-49b5-90be-e026a52d6170');
+  });
+
+  it('should return associated deployment if present for evets source', () => {
+    const {
+      nodes: [, { resource, resources }],
+    } = modelsKnTopology;
+    const associatedDeployment = getDeploymentsForKamelet(resource, resources);
+    expect(associatedDeployment[0].metadata.uid).toEqual('c253be20-78a3-4c41-931e-0169bccb02c0');
   });
 });
