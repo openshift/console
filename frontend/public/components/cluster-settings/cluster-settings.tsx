@@ -13,6 +13,9 @@ import {
   Progress,
   ProgressSize,
   ProgressVariant,
+  Text,
+  TextContent,
+  TextVariants,
   Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
@@ -389,8 +392,8 @@ export const CurrentVersionHeader: React.FC<CurrentVersionProps> = ({ cv }) => {
 
 export const ChannelDocLink: React.FC<{}> = () => {
   const upgradeLink = isUpstream()
-    ? `${openshiftHelpBase}updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor`
-    : `${openshiftHelpBase}html/updating_clusters/updating-cluster-between-minor#understanding-upgrade-channels_updating-cluster-between-minor`;
+    ? `${openshiftHelpBase}updating/understanding-upgrade-channels-release.html#understanding-upgrade-channels_understanding-upgrade-channels-releases`
+    : `${openshiftHelpBase}html/updating_clusters/understanding-upgrade-channels-releases#understanding-upgrade-channels_understanding-upgrade-channels-releases`;
   const { t } = useTranslation();
   return (
     <ExternalLink
@@ -406,12 +409,16 @@ const ChannelHeader: React.FC<{}> = () => {
     <>
       {t('public~Channel')}
       <FieldLevelHelp>
-        <p>
-          {t(
-            'public~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
-          )}
-        </p>
-        <ChannelDocLink />
+        <TextContent>
+          <Text component={TextVariants.p}>
+            {t(
+              'public~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
+            )}
+          </Text>
+          <Text component={TextVariants.p}>
+            <ChannelDocLink />
+          </Text>
+        </TextContent>
       </FieldLevelHelp>
     </>
   );
