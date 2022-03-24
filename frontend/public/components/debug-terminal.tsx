@@ -19,6 +19,7 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   delete debugPod.metadata.uid;
   delete debugPod.metadata.managedFields;
   delete debugPod.metadata.name;
+  delete debugPod.metadata.labels;
   debugPod.metadata.generateName = debugPodName;
   debugPod.metadata.annotations['debug.openshift.io/source-container'] = containerName;
   debugPod.metadata.annotations[
