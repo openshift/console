@@ -813,7 +813,7 @@
   "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.": "PVC <2>{{resourceName}} の容量を増やします。</2> 容量は、現在の PVC サイズよりも小さくできないことに注意してください。このプロセスには時間がかかる場合があります。",
   "Total size": "合計サイズ",
   "requestSize": "要求サイズ",
-  "Expand": "拡張",
+  "Expand": "全画面表示",
   "Edit {{description}}": "{{description}}の編集",
   "Edit labels": "ラベルの編集",
   "Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.": "ラベルは、リソースの整理と選択に役立ちます。以下にラベルを追加すると、ラベルが類似するオブジェクト、ラベルが重複するオブジェクトまたはラベルが異なるオブジェクトをクエリーできます。",
