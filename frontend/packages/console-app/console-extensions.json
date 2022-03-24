@@ -228,6 +228,28 @@
   {
     "type": "console.user-preference/item",
     "properties": {
+      "id": "console.theme",
+      "label": "%console-app~Theme%",
+      "groupId": "general",
+      "description": "%console-app~Console will appear as per the selected theme.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "console.theme",
+        "defaultValue": "systemDefault",
+        "options": [
+          {
+            "value": "systemDefault",
+            "label": "%console-app~System default%"
+          },
+          { "value": "light", "label": "%console-app~Light%" },
+          { "value": "dark", "label": "%console-app~Dark%" }
+        ]
+      }
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
       "id": "console.preferredPerspective",
       "label": "%console-app~Perspective%",
       "groupId": "general",
@@ -235,7 +257,8 @@
       "field": {
         "type": "custom",
         "component": { "$codeRef": "userPreferences.PerspectiveDropdown" }
-      }
+      },
+      "insertAfter": "console.theme"
     }
   },
   {

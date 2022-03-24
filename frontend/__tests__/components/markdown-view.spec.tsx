@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount } from 'enzyme';
+import { useUserSettings } from '@console/shared';
 import { SyncMarkdownView } from '../../public/components/markdown-view';
 
 jest.mock('showdown', () => ({
@@ -14,8 +15,15 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(),
+}));
+
+const mockUserSettings = useUserSettings as jest.Mock;
+
 describe('markdown-view', () => {
   it('should render markdown view inline and iframe', () => {
+    mockUserSettings.mockReturnValue(['light', jest.fn(), true]);
     expect(
       mount(<SyncMarkdownView />)
         .find('iframe')
@@ -30,6 +38,7 @@ describe('markdown-view', () => {
 
   it('should call renderExtension', () => {
     const renderExtension = jest.fn();
+    mockUserSettings.mockReturnValue(['light', jest.fn(), true]);
     mount(<SyncMarkdownView renderExtension={renderExtension} />);
     expect(renderExtension).not.toHaveBeenCalled();
 

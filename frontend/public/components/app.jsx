@@ -50,6 +50,7 @@ import {
   useURLPoll,
   URL_POLL_DEFAULT_DELAY,
 } from '@console/internal/components/utils/url-poll-hook';
+import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -490,19 +491,21 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
-        <AppInitSDK
-          configurations={{
-            appFetch: appInternalFetch,
-            apiDiscovery: initApiDiscovery,
-            initPlugins,
-          }}
-        >
-          <CaptureTelemetry />
-          <ToastProvider>
-            <PollConsoleUpdates />
-            <AppRouter />
-          </ToastProvider>
-        </AppInitSDK>
+        <ThemeProvider>
+          <AppInitSDK
+            configurations={{
+              appFetch: appInternalFetch,
+              apiDiscovery: initApiDiscovery,
+              initPlugins,
+            }}
+          >
+            <CaptureTelemetry />
+            <ToastProvider>
+              <PollConsoleUpdates />
+              <AppRouter />
+            </ToastProvider>
+          </AppInitSDK>
+        </ThemeProvider>
       </Provider>
     </React.Suspense>,
     document.getElementById('app'),

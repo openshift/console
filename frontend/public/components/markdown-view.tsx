@@ -5,6 +5,7 @@ import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
 import { useForceRender, useResizeObserver } from '@console/shared';
+import { updateThemeClass, ThemeContext } from './ThemeProvider';
 
 import './_markdown-view.scss';
 
@@ -172,6 +173,8 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   const [frame, setFrame] = React.useState<HTMLIFrameElement>();
   const [frameHeight, setFrameHeight] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
+  const theme = React.useContext(ThemeContext);
+  const htmlTagElement = frame?.contentDocument?.documentElement;
 
   const updateDimensions = React.useCallback(
     _.debounce(() => {
@@ -186,9 +189,14 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   );
 
   const onLoad = React.useCallback(() => {
+    htmlTagElement && updateThemeClass(htmlTagElement, theme);
     updateDimensions();
     setLoaded(true);
-  }, [updateDimensions]);
+  }, [htmlTagElement, theme, updateDimensions]);
+
+  React.useEffect(() => {
+    htmlTagElement && updateThemeClass(htmlTagElement, theme);
+  }, [frame, htmlTagElement, theme]);
 
   useResizeObserver(updateDimensions, frame);
 
