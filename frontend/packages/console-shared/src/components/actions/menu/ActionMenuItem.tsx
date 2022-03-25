@@ -66,6 +66,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
     className: classes,
     onClick: handleClick,
     'data-test-action': label,
+    translate: 'no',
   };
 
   const extraProps = {

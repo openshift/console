@@ -43,6 +43,7 @@ const SubMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) =>
         </MenuContent>
       </Menu>
     }
+    translate="no"
   >
     {option.label}
   </MenuItem>
