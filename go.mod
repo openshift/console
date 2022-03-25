@@ -16,7 +16,7 @@ require (
 	github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 	github.com/operator-framework/kubectl-operator v0.3.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/prometheus/client_golang v1.11.0
+	github.com/prometheus/client_golang v1.11.1
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
 	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
