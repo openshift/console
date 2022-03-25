@@ -187,7 +187,7 @@
         > .odc-topology-list-view__item-row {
           outline-offset: -5px;
           outline: -webkit-focus-ring-color auto 1px;
-          background-color: var(--co-global--palette--blue-100);
+          background-color: var(--pf-global--BackgroundColor--200);
         }
       }
     }
@@ -204,7 +204,7 @@
      }
     }
     &.pf-m-selectable .pf-c-data-list__item-row:hover {
-      background-color: var(--co-global--palette--blue-100);
+      background-color: var(--pf-global--BackgroundColor--200);
     }
   }
   .pf-c-data-list__item-content {
