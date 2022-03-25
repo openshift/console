@@ -106,6 +106,7 @@ type jsGlobals struct {
 	QuickStarts                string   `json:"quickStarts"`
 	ProjectAccessClusterRoles  string   `json:"projectAccessClusterRoles"`
 	Clusters                   []string `json:"clusters"`
+	ControlPlaneTopology       string   `json:"controlPlaneTopology"`
 }
 
 type Server struct {
@@ -124,6 +125,7 @@ type Server struct {
 	Branding             string
 	CustomProductName    string
 	CustomLogoFile       string
+	ControlPlaneTopology string
 	StatuspageID         string
 	LoadTestFactor       int
 	InactivityTimeout    int
@@ -670,6 +672,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		KubeAPIServerURL:           s.KubeAPIServerURL,
 		Branding:                   s.Branding,
 		CustomProductName:          s.CustomProductName,
+		ControlPlaneTopology:       s.ControlPlaneTopology,
 		StatuspageID:               s.StatuspageID,
 		InactivityTimeout:          s.InactivityTimeout,
 		DocumentationBaseURL:       s.DocumentationBaseURL.String(),

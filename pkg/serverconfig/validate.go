@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	configv1 "github.com/openshift/api/config/v1"
 	"github.com/openshift/console/pkg/bridge"
 )
 
@@ -25,6 +26,10 @@ func Validate(fs *flag.FlagSet) error {
 	}
 
 	if _, err := validateProjectAccessClusterRolesJSON(fs.Lookup("project-access-cluster-roles").Value.String()); err != nil {
+		return err
+	}
+
+	if _, err := validateControlPlaneTopology(fs.Lookup("control-plane-topology-mode").Value.String()); err != nil {
 		return err
 	}
 
@@ -91,6 +96,20 @@ func validateAddPage(value string) (*AddPage, error) {
 	}
 
 	return &addPage, nil
+}
+
+func validateControlPlaneTopology(value string) (string, error) {
+	if value == "" {
+		return value, nil
+	}
+
+	if !(value == string(configv1.SingleReplicaTopologyMode) ||
+		value == string(configv1.HighlyAvailableTopologyMode) ||
+		value == string(configv1.ExternalTopologyMode)) {
+		return value, fmt.Errorf("ControlPlaneTopologyMode %s is not valid; valid options are External, HighlyAvailable, or SingleReplica", value)
+	}
+
+	return value, nil
 }
 
 func validateProjectAccessClusterRolesJSON(value string) ([]string, error) {

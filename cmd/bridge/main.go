@@ -132,6 +132,7 @@ func main() {
 	fAddPage := fs.String("add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
 	fProjectAccessClusterRoles := fs.String("project-access-cluster-roles", "", "The list of Cluster Roles assignable for the project access page. (JSON as string)")
 	fManagedClusterConfigs := fs.String("managed-clusters", "", "List of managed cluster configurations. (JSON as string)")
+	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -233,6 +234,7 @@ func main() {
 		Branding:                  branding,
 		CustomProductName:         *fCustomProductName,
 		CustomLogoFile:            *fCustomLogoFile,
+		ControlPlaneTopology:      *fControlPlaneTopology,
 		StatuspageID:              *fStatuspageID,
 		DocumentationBaseURL:      documentationBaseURL,
 		AlertManagerPublicURL:     alertManagerPublicURL,
