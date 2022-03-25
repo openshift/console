@@ -455,7 +455,7 @@ const Graph: React.FC<GraphProps> = React.memo(
             itemsPerRow={4}
             orientation="vertical"
             style={{
-              labels: { fontSize: 11 },
+              labels: { fontSize: 11, fill: 'var(--pf-global--Color--100)' },
             }}
             symbolSpacer={4}
           />
