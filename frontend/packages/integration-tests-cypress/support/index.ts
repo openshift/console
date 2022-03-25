@@ -87,6 +87,6 @@ export const create = (obj) => {
     `${obj.metadata.name}.${obj.kind.toLowerCase()}.json`,
   ].join('/');
   cy.writeFile(filename, JSON.stringify(obj));
-  cy.exec(`kubectl create -f ${filename}`);
+  cy.exec(`oc create -f ${filename}`);
   cy.exec(`rm ${filename}`);
 };

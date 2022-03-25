@@ -21,8 +21,9 @@ describe('Using OLM descriptor components', () => {
   });
 
   after(() => {
-    cy.exec(`kubectl delete crd ${testCRD.metadata.name}`);
-    cy.exec(`kubectl delete -n ${testName} clusterserviceversion ${testCSV.metadata.name}`);
+    cy.exec(`oc delete crd ${testCRD.metadata.name}`);
+    cy.exec(`oc delete -n ${testName} clusterserviceversion ${testCSV.metadata.name}`);
+    cy.deleteProject(testName);
     cy.logout();
   });
 
