@@ -154,7 +154,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       confirmNavUnpinModal(resource, pinnedResources, setPinnedResources);
       return;
     }
-    setPinnedResources([...pinnedResources, resource]);
+    setPinnedResources([resource, ...pinnedResources]);
   };
 
   const toggleKindExpanded = (kindView: string) => {

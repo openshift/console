@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { NavGroup, Button } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { NavGroup } from '@patternfly/react-core';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   Separator,
@@ -11,26 +9,21 @@ import {
   isNavItem,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
+import { modelFor } from '@console/internal/module/k8s';
+import { DragAndDrop } from '@console/shared/src/components/dnd';
+import PinnedResource from './PinnedResource';
 import { usePinnedResources } from '@console/shared';
-import { K8sKind, modelFor, referenceForModel } from '../../module/k8s';
 import { getSortedNavItems } from './navSortUtils';
-import confirmNavUnpinModal from './confirmNavUnpinModal';
 import AdminNav from './admin-nav';
-import {
-  NavLinkComponent,
-  PluginNavItems,
-  ResourceClusterLink,
-  ResourceNSLink,
-  RootNavLink,
-} from './items';
+import { PluginNavItems } from './items';
 
 import './_perspective-nav.scss';
 
 const PerspectiveNav: React.FC<{}> = () => {
-  const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const allItems = useExtensions<PluginNavSection | NavItem | Separator>(isNavSection, isNavItem);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
+  const [validPinnedResources, setValidPinnedResources] = React.useState<string[]>(pinnedResources);
   const orderedNavItems = React.useMemo(() => {
     const topLevelItems = allItems.filter(
       (s) => s.properties.perspective === perspective && !(s as NavItem).properties.section,
@@ -38,11 +31,10 @@ const PerspectiveNav: React.FC<{}> = () => {
     return getSortedNavItems(topLevelItems);
   }, [allItems, perspective]);
 
-  const unPin = (e: React.MouseEvent<HTMLButtonElement>, resource: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    confirmNavUnpinModal(resource, pinnedResources, setPinnedResources);
-  };
+  React.useEffect(() => {
+    const validResources = pinnedResources.filter((res) => !!modelFor(res));
+    setValidPinnedResources(validResources);
+  }, [setValidPinnedResources, pinnedResources]);
 
   // Until admin perspective is contributed through extensions, render static
   // `AdminNav` and any additional plugin nav items.
@@ -50,69 +42,28 @@ const PerspectiveNav: React.FC<{}> = () => {
     return <AdminNav pluginNavItems={orderedNavItems} />;
   }
 
-  const getLabelForResource = (resource: string): string => {
-    const model: K8sKind | undefined = modelFor(resource);
-    if (model) {
-      if (model.labelPluralKey) {
-        return t(model.labelPluralKey);
-      }
-      return model.labelPlural || model.plural;
-    }
-    return '';
-  };
-
   const getPinnedItems = (): React.ReactElement[] =>
-    pinnedResourcesLoaded
-      ? pinnedResources
-          .map((resource) => {
-            const model = modelFor(resource);
-            if (!model) {
-              return null;
-            }
-            const { apiVersion, apiGroup, namespaced, crd, plural } = model;
-            const label = getLabelForResource(resource);
-            const duplicates =
-              pinnedResources.filter((res) => getLabelForResource(res) === label).length > 1;
-            const props = {
-              key: `pinned-${resource}`,
-              name: label,
-              resource: crd ? referenceForModel(model) : plural,
-              tipText: duplicates ? `${label}: ${apiGroup || 'core'}/${apiVersion}` : null,
-              id: resource,
-            };
-            const Component: NavLinkComponent = namespaced ? ResourceNSLink : ResourceClusterLink;
-            const removeButton = (
-              <Button
-                className="oc-nav-pinned-item__unpin-button"
-                variant="link"
-                aria-label={t('public~Unpin')}
-                onClick={(e) => unPin(e, resource)}
-              >
-                <MinusCircleIcon className="oc-nav-pinned-item__icon" />
-              </Button>
-            );
-
-            return (
-              <RootNavLink
-                key={resource}
-                className="oc-nav-pinned-item"
-                component={Component}
-                {...props}
-              >
-                {removeButton}
-              </RootNavLink>
-            );
-          })
-          .filter((p) => p !== null)
-      : [];
+    validPinnedResources.map((resource, idx) => (
+      <PinnedResource
+        key={idx.toString()}
+        idx={idx}
+        resourceRef={resource}
+        onChange={setPinnedResources}
+        onDrag={setValidPinnedResources}
+        navResources={validPinnedResources}
+        draggable={validPinnedResources.length > 1}
+      />
+    ));
 
   return (
-    <div className="oc-perspective-nav">
+    <div className="oc-perspective-nav" data-test-id="dev-perspective-nav">
       <PluginNavItems items={orderedNavItems} />
-      {pinnedResourcesLoaded && pinnedResources?.length ? (
-        <NavGroup title="" className="no-title">
-          {getPinnedItems()}
-        </NavGroup>
+      {pinnedResourcesLoaded && validPinnedResources?.length > 0 ? (
+        <DragAndDrop>
+          <NavGroup title="" className="no-title">
+            {getPinnedItems()}
+          </NavGroup>
+        </DragAndDrop>
       ) : null}
     </div>
   );

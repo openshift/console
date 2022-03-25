@@ -1,0 +1,87 @@
+.oc-pinned-resource.pf-c-nav__item {
+  --pf-c-nav__link--PaddingRight: 0;
+
+  display: flex;
+
+  .pf-c-nav__link {
+    display: block;
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover,
+    &:focus {
+      --pf-c-nav__section-title--PaddingRight: 30px;
+      .oc-pinned-resource__unpin-button,
+      .oc-pinned-resource__drag-button {
+        .oc-pinned-resource__delete-icon,
+        .oc-pinned-resource__drag-icon {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .oc-pinned-resource__unpin-button {
+    background-color: var(--pf-c-nav--m-dark__item--BackgroundColor);
+    color: var(--pf-c-nav__link--after--BorderColor);
+    padding-bottom: 0;
+    padding-top: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    .pf-m-current & {
+      background-color: var(--pf-c-nav--m-dark__item--m-current--BackgroundColor);
+    }
+
+    .oc-pinned-resource__delete-icon {
+      opacity: 0;
+    }
+
+    &:hover,
+    &:focus {
+      .oc-pinned-resource__delete-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  .oc-pinned-resource__drag-button {
+    background-color: var(--pf-c-nav--m-dark__item--BackgroundColor);
+    color: var(--pf-c-nav__link--after--BorderColor);
+    padding: 0;
+    cursor: move;
+    width: 14px;
+    position: absolute;
+    left: 4px;
+    top: 0;
+    bottom: 0;
+
+    .pf-m-current & {
+      background-color: var(--pf-c-nav--m-dark__item--m-current--BackgroundColor);
+    }
+
+    .oc-pinned-resource__drag-icon {
+      opacity: 0;
+    }
+
+    &:hover,
+    &:focus {
+      .oc-pinned-resource__drag-icon {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.oc-pinned-resource__dragging {
+  outline: 1px dashed var(--pf-global--palette--black-400);
+  overflow: hidden;
+  div {
+    opacity: 0.5;
+  }
+}
