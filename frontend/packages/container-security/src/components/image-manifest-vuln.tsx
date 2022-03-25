@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { EmptyState, EmptyStateVariant, Title, Tooltip } from '@patternfly/react-core';
-import { SecurityIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
@@ -176,7 +176,7 @@ export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVu
       <TableData className={tableColumnClasses[2]}>
         {_.get(obj.status, 'highestSeverity') ? (
           <>
-            <SecurityIcon color={priorityFor(obj.status.highestSeverity).color.value} />
+            <ExclamationTriangleIcon color={priorityFor(obj.status.highestSeverity).color.value} />
             &nbsp;{obj.status.highestSeverity}
           </>
         ) : (
@@ -344,7 +344,7 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
                     vulnFor(status),
                     (vuln) => (
                       <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <SecurityIcon
+                        <ExclamationTriangleIcon
                           color={priorityFor(_.get(vuln.status, 'highestSeverity')).color.value}
                         />
                         &nbsp;
