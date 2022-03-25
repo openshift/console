@@ -163,7 +163,6 @@ export const pipelineBuilderPage = {
     pipelineBuilderPage.selectTask(taskName);
     pipelineBuilderPage.addResource(resourceName);
     pipelineBuilderPage.clickOnTask(taskName);
-    pipelineBuilderSidePane.selectInputResource(resourceName);
     pipelineBuilderPage.clickCreateButton();
     pipelineDetailsPage.verifyTitle(pipelineName);
   },

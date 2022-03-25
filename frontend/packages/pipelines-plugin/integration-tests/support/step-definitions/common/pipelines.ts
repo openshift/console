@@ -25,6 +25,7 @@ When(
 
 Given('pipeline run is displayed for {string} with resource', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
+  cy.get('#form-radiobutton-editorType-form-field').click();
   pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
   cy.byLegacyTestID('breadcrumb-link-0').click();
   pipelinesPage.search(pipelineName);
