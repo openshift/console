@@ -138,6 +138,7 @@
   "InstallPlans": "InstallPlans",
   "Missing sufficient privileges for manual InstallPlan approval": "수동 InstallPlan 승인을 위한 충분한 권한이 없습니다.",
   "User \"{{user}}\" does not have permissions to patch resource InstallPlans in API group \"{{apiGroup}}\" in the namespace \"{{namespace}}.\"": "사용자 \"{{user}}\"에게는 네임스페이스 \"{{namespace}}\"의 API 그룹 \"{{apiGroup}}\"에서 리소스 InstallPlan을 패치할 권한이 없습니다.",
+  "User does not have permissions to patch resource InstallPlans in API group \"{{apiGroup}}\" in the namespace \"{{namespace}}.\"": "사용자에게 \"{{namespace}}\" 네임스페이스의 API 그룹 \"{{apiGroup}}\"에서 리소스 InstallPlan을 패치할 권한이 없습니다.",
   "Review manual InstallPlan": "수동 InstallPlan 확인",
   "Inspect the requirements for the components specified in this InstallPlan before approving.": "승인하기 전에이 InstallPlan에 지정된 구성 요소에 대한 요구 사항을 확인하십시오.",
   "Preview InstallPlan": "InstallPlan 미리보기",

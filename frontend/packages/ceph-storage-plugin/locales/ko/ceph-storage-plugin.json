@@ -367,7 +367,7 @@
   "Accounts": "계정",
   "Metric": "지표",
   "I/O Operations": "I/O 작업",
-  "Logial Used Capacity": "논리 사용 용량",
+  "Logical Used Capacity": "논리적 사용 용량",
   "Physical vs. Logical used capacity": "물리적 및 논리적 사용 용량",
   "Egress": "Egress",
   "Latency": "지연 시간",

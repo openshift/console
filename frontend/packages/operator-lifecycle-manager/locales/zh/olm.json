@@ -138,6 +138,7 @@
   "InstallPlans": "InstallPlans",
   "Missing sufficient privileges for manual InstallPlan approval": "缺少手动 InstallPlan 批准的权限",
   "User \"{{user}}\" does not have permissions to patch resource InstallPlans in API group \"{{apiGroup}}\" in the namespace \"{{namespace}}.\"": "用户 \"{{user}}\" 没有在命名空间 \"{{namespace}} \" 中对 API 组 \"{{apiGroup}}\" 中的资源 InstallPlans 进行补丁的权限。",
+  "User does not have permissions to patch resource InstallPlans in API group \"{{apiGroup}}\" in the namespace \"{{namespace}}.\"": "用户没有在命名空间 \"{{namespace}}\" 中对 API 组 \"{{apiGroup}}\" 中的资源 InstallPlans 进行补丁的权限。",
   "Review manual InstallPlan": "检查手动 InstallPlan",
   "Inspect the requirements for the components specified in this InstallPlan before approving.": "在批准前，检查此 InstallPlan 中指定的组件的要求。",
   "Preview InstallPlan": "预览 InstallPlan",

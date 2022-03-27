@@ -115,7 +115,7 @@
   "Required": "必須",
   "Service binding already exists. Select a different service to connect to.": "サービスバインディングがすでに存在します。接続する別のサービスを選択します。",
   "Create by completing the form.": "このフォームに入力して作成します。",
-  "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "YAML または JSON 定義を手動で入力するか、またはファイルをエディターにドラッグし、ドロップして作成します。",
+  "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "YAML または JSON 定義を手動で入力するか、またはファイルをエディターにドラッグアンドドロップして作成します。",
   "Not all YAML property values are supported in the form editor. Some data would be lost.": "YAML プロパティーの値がすべてフォームでサポートされるわけではありません。データの一部が失われる可能性があります。",
   "Create NetworkPolicy": "ネットワークポリシーの作成",
   "Allow pods from the same namespace": "同じ namespace からの Pod の許可",

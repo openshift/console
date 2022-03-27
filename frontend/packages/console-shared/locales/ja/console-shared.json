@@ -116,7 +116,7 @@
   "Clear filter": "フィルターをクリア",
   "Add values": "値の追加",
   "Remove": "削除",
-  "Configure via:": "次を使用して設定:",
+  "Configure via:": "設定ビュー:",
   "Form view": "フォームビュー",
   "YAML view": "YAML ビュー",
   "Invalid YAML cannot be persisted": "無効な YAML を永続化できません",
