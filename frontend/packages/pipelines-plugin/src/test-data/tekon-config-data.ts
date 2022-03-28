@@ -114,7 +114,7 @@ export const tektonHubIntegrationConfigs: TekonHubIntegrationConfigs = {
     spec: {
       ...sampleTektonConfig.spec,
       hub: {
-        params: [{ name: TEKTON_HUB_INTEGRATION_KEY, value: true }],
+        params: [{ name: TEKTON_HUB_INTEGRATION_KEY, value: 'true' }],
       },
     },
   },
@@ -123,7 +123,7 @@ export const tektonHubIntegrationConfigs: TekonHubIntegrationConfigs = {
     spec: {
       ...sampleTektonConfig.spec,
       hub: {
-        params: [{ name: TEKTON_HUB_INTEGRATION_KEY, value: false }],
+        params: [{ name: TEKTON_HUB_INTEGRATION_KEY, value: 'false' }],
       },
     },
   },
