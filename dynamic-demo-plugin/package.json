@@ -54,6 +54,7 @@
       "K8sAPIConsumer": "./components/k8sConsumer/K8sAPIConsumer",
       "navPage": "./components/Nav",
       "listPage": "./components/ListPage",
+      "projectTabContent": "./components/ProjectTabExtensionContent",
       "clusterInventoryOverview": "./components/ClusterOverview/Inventory",
       "clusterOverview": "./utils/cluster-overview"
     },

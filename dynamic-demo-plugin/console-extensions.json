@@ -187,6 +187,19 @@
     }
   },
   {
+    "type": "console.page/resource/tab",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "name": "Demo Plugin",
+      "href": "/demo-plugin",
+      "component": { "$codeRef": "projectTabContent" }
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "path": "/test-utility-consumer",
