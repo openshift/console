@@ -37,10 +37,6 @@ export const useActiveColumns = <D = any>({
             }),
           );
 
-    if (showNamespaceOverride && !activeColumnIDs.has('namespace')) {
-      activeColumnIDs.add('namespace');
-    }
-
     let activeColumns = columns.filter((c) => activeColumnIDs.has(c.id) || c.title === '');
     if (namespace && namespace !== ALL_NAMESPACES_KEY && !showNamespaceOverride) {
       activeColumns = activeColumns.filter((column) => column.id !== 'namespace');
