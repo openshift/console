@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 
 export type OperatorBackedServiceKindMap = {
   [name: string]: ClusterServiceVersionKind;

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import { StepResource } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   createModalLauncher,
   ModalTitle,
@@ -9,7 +10,6 @@ import {
   ModalFooter,
 } from '@console/internal/components/factory/modal';
 import { ResourceLink, CopyToClipboard } from '@console/internal/components/utils';
-import { StepResource } from '../../types';
 import { referenceForStepResource } from '../index';
 
 const InstallPlanPreview: React.FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {

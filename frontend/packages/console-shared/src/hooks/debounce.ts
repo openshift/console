@@ -1,20 +1,16 @@
 import * as React from 'react';
 import { debounce } from 'lodash';
+import { UseDebounceCallback, Cancelable } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from './deep-compare-memoize';
 
-interface Cancelable {
-  cancel(): void;
-  flush(): void;
-}
-
-export const useDebounceCallback = <T extends (...args: any[]) => any>(
-  callback: T,
-  timeout: number = 500,
-  debounceParams: { leading?: boolean; trailing?: boolean; maxWait?: number } = {
+export const useDebounceCallback = <T extends (...args: any[]) => any>({
+  callback,
+  timeout = 500,
+  debounceParams = {
     leading: false,
     trailing: true,
   },
-): ((...args) => any) & Cancelable => {
+}: UseDebounceCallback<T>): ((...args) => any) & Cancelable => {
   const memDebounceParams = useDeepCompareMemoize(debounceParams);
   const callbackRef = React.useRef<T>();
   callbackRef.current = callback;

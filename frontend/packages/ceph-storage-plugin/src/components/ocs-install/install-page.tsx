@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   ListKind,
   referenceForModel,
@@ -13,10 +14,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useDeepCompareMemoize } from '@console/shared';
 import { getAnnotations } from '@console/shared/src/selectors/common';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { getRequiredKeys, createDownloadFile } from './external-mode/utils';
 import CreateExternalCluster from './external-mode/install';
 import { CreateInternalCluster } from './internal-mode/install-wizard';

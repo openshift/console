@@ -2,6 +2,10 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import {
+  ClusterServiceVersionKind,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Checkbox } from '@console/internal/components/checkbox';
@@ -36,7 +40,6 @@ import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { getPatchForRemovingPlugins, isPluginEnabled } from '@console/shared/src/utils';
 import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
-import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { getClusterServiceVersionPlugins } from '../../utils';
 import { OperandLink } from '../operand/operand-link';
 

@@ -2,16 +2,14 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { getName } from '@console/shared/src/selectors/common';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
@@ -26,6 +24,7 @@ import {
   ServiceType,
 } from '../../../../constants';
 import { RGW_FLAG } from '../../../../features';
+
 import './data-consumption-card.scss';
 
 const timeSpan = {

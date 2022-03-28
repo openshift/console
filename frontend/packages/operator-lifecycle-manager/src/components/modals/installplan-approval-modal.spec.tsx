@@ -2,15 +2,19 @@ import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import * as _ from 'lodash';
 import {
+  InstallPlanApproval,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import {
   ModalTitle,
   ModalSubmitFooter,
   ModalBody,
 } from '@console/internal/components/factory/modal';
 import { RadioInput } from '@console/internal/components/radio';
 import * as k8sModels from '@console/internal/module/k8s';
+import { InstallPlanModel } from '@console/shared/src/components/olm/models';
 import { testSubscription, testInstallPlan } from '../../../mocks';
-import { SubscriptionModel, InstallPlanModel } from '../../models';
-import { SubscriptionKind, InstallPlanApproval } from '../../types';
+import { SubscriptionModel } from '../../models';
 import {
   InstallPlanApprovalModal,
   InstallPlanApprovalModalProps,

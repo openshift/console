@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { CatalogSourceKind } from '@console/dynamic-plugin-sdk';
 import {
   ModalTitle,
   ModalBody,
@@ -15,7 +16,6 @@ import {
 } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { CatalogSourceModel } from '../../models';
-import { CatalogSourceKind } from '../../types';
 
 const availablePollIntervals = {
   '10m0s': '10m',

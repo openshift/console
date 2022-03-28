@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { match, Link } from 'react-router-dom';
-import { getUser } from '@console/dynamic-plugin-sdk';
+import { getUser, InstallPlanApproval, InstallPlanKind, Step } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   MultiListPage,
@@ -43,15 +43,13 @@ import {
   UserKind,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { FLAGS, GreenCheckCircleIcon, Status, useFlag } from '@console/shared';
+import { FLAGS, GreenCheckCircleIcon, InstallPlanModel, Status, useFlag } from '@console/shared';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
-  InstallPlanModel,
   OperatorGroupModel,
   CatalogSourceModel,
 } from '../models';
-import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
 import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';

@@ -2,11 +2,12 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ResourceLink, history } from '@console/internal/components/utils';
 import store from '@console/internal/redux';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 import { testModel, testResourceInstance } from '../../../../mocks';
-import { Descriptor, StatusCapability, SpecCapability, DescriptorType } from '../types';
+import { StatusCapability, SpecCapability, DescriptorType } from '../types';
 
 const OBJ = {
   ...testResourceInstance,

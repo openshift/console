@@ -4,14 +4,15 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
+import {
+  K8sResourceCondition,
+  K8sResourceConditionStatus,
+} from '@console/dynamic-plugin-sdk/src/api/k8s-types';
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
 import { MachineConfigPoolModel } from '../models';
 import { machineConfigReference, MachineConfigPage } from './machine-config';
 import {
-  K8sResourceCondition,
-  K8sResourceConditionStatus,
   MachineConfigPoolConditionType,
   MachineConfigPoolKind,
   referenceForModel,

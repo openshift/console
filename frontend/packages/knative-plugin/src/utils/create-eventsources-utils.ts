@@ -4,6 +4,7 @@ import {
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
 import { Perspective } from '@console/dynamic-plugin-sdk';
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { checkAccess, history } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
@@ -12,10 +13,7 @@ import {
   modelFor,
   K8sKind,
 } from '@console/internal/module/k8s';
-import {
-  Descriptor,
-  SpecCapability,
-} from '@console/operator-lifecycle-manager/src/components/descriptors/types';
+import { SpecCapability } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';

@@ -18,7 +18,10 @@ import {
   UseActiveNamespace,
   VirtualizedGridProps,
   LazyActionMenuProps,
+  SubscriptionStatusProps,
 } from './internal-types';
+import * as React from 'react';
+import { StatusComponentProps } from '../extensions';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
   .default;
@@ -52,6 +55,10 @@ export const VirtualizedGrid: React.FC<VirtualizedGridProps> = require('@console
   .default;
 export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
   .default;
+export const WarningStatus: React.FC<StatusComponentProps> = require('@console/shared/src/components/status/statuses.tsx')
+  .WarningStatus;
+export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = require('@console/shared/src/components/olm/subscription.tsx')
+  .SubscriptionStatus;
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
@@ -60,3 +67,5 @@ export const usePrometheusPoll: UsePrometheusPoll = require('@console/internal/c
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;
 export const ServicesList = require('@console/internal/components/service').ServicesList;
+export const useDebounceCallback = require('@console/shared/src/hooks/debounce.ts')
+  .useDebounceCallback;

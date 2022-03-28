@@ -1,5 +1,6 @@
 import { EdgeModel, Model } from '@patternfly/react-topology';
 import * as _ from 'lodash';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   K8sResourceKind,
   LabelSelector,
@@ -7,7 +8,6 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import {
   isOperatorBackedService,
   getOperatorBackedServiceKindMap,

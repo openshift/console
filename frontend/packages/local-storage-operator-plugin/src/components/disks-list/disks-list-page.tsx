@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RowFilter } from '@console/dynamic-plugin-sdk';
+import { RowFilter, SubscriptionKind } from '@console/dynamic-plugin-sdk';
 import {
   Table,
   TableProps,
@@ -19,7 +19,7 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
-import { SubscriptionKind, SubscriptionModel } from '@console/operator-lifecycle-manager';
+import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { getNamespace, getNodeRole } from '@console/shared/';
 import { LABEL_SELECTOR } from '../../constants/disks-list';
 import { LocalVolumeDiscoveryResult } from '../../models';

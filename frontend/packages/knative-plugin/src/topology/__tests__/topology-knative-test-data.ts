@@ -1,8 +1,8 @@
+import { K8sResourceConditionStatus } from '@console/dynamic-plugin-sdk/src/api/k8s-types';
 import { FirehoseResult } from '@console/internal/components/utils';
 import {
   DeploymentKind,
   PodKind,
-  K8sResourceConditionStatus,
   referenceForModel,
   K8sResourceKind,
 } from '@console/internal/module/k8s';

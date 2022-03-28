@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceCondition } from '@console/internal/module/k8s';
+import { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/api/k8s-types';
 import { VM_IMPORT_PROGRESS_ANNOTATION } from '../../constants/v2v-import/constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';

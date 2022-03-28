@@ -8,7 +8,7 @@ import {
   ModelDefinition,
   Selector,
 } from '../../api/common-types';
-import { Options } from '../../api/internal-types';
+import { Options } from '../../api/k8s-types';
 import { QueryParams, K8sResourceKindReference } from '../../extensions/console-types';
 import { Extension } from '../../types';
 import { k8sBasePath } from './k8s';

@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   Kebab,
   navFactory,
@@ -13,10 +14,7 @@ import { OperandDetails } from '@console/operator-lifecycle-manager/src/componen
 import { referenceForModel, nameForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
 import { ResourceEventStream } from '@console/internal/components/events';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

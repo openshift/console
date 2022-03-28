@@ -4,14 +4,12 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager/src';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { ResourceDropdownField, getFieldId } from '@console/shared';
 import { getBindableResources } from './bindable-services-utils';
 

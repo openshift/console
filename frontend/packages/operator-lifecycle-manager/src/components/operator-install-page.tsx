@@ -11,7 +11,13 @@ import {
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import {
+  ClusterServiceVersionKind,
+  InstallPlanKind,
+  ResourceStatus,
+  StatusIconAndText,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { errorModal } from '@console/internal/components/modals';
 import {
@@ -28,24 +34,14 @@ import {
   referenceFor,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { parseJSONAnnotation } from '@console/shared';
+import { InstallPlanModel, parseJSONAnnotation } from '@console/shared';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
-import {
-  ClusterServiceVersionModel,
-  InstallPlanModel,
-  PackageManifestModel,
-  SubscriptionModel,
-} from '../models';
-import {
-  ClusterServiceVersionKind,
-  SubscriptionKind,
-  InstallPlanKind,
-  PackageManifestKind,
-} from '../types';
+import { ClusterServiceVersionModel, PackageManifestModel, SubscriptionModel } from '../models';
+import { PackageManifestKind } from '../types';
 import { InstallPlanPreview, NeedInstallPlanPermissions } from './install-plan';
 import { ClusterServiceVersionLogo, iconFor, InstallPlanReview } from './index';
 

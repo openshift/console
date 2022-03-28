@@ -2,6 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
+  InstallPlanApproval,
+  InstallPlanKind,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
@@ -15,9 +20,9 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { InstallPlanModel } from '@console/shared/src/components/olm/models';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { SubscriptionModel, InstallPlanModel } from '../../models';
-import { SubscriptionKind, InstallPlanApproval, InstallPlanKind } from '../../types';
+import { SubscriptionModel } from '../../models';
 
 const getApprovalStrategy = (obj: InstallPlanKind | SubscriptionKind): InstallPlanApproval =>
   (obj as SubscriptionKind)?.spec?.installPlanApproval ??

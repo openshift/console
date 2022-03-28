@@ -1,6 +1,6 @@
 import * as React from 'react';
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import { Action, ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
@@ -10,10 +10,7 @@ import {
   K8sResourceCommon,
   HorizontalPodAutoscalerKind,
 } from '@console/internal/module/k8s';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import {
   deleteHPAModal,
   isHelmResource,

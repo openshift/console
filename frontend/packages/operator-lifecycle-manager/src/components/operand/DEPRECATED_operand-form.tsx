@@ -18,6 +18,7 @@ import * as Immutable from 'immutable';
 import { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { RadioGroup } from '@console/internal/components/radio';
@@ -48,7 +49,7 @@ import {
   DEFAULT_POD_AFFINITY,
 } from '../descriptors/spec/affinity';
 import { ResourceRequirements } from '../descriptors/spec/resource-requirements';
-import { Descriptor, SpecCapability, StatusCapability } from '../descriptors/types';
+import { SpecCapability, StatusCapability } from '../descriptors/types';
 import { ClusterServiceVersionLogo } from '../index';
 import { OperandFormProps } from './operand-form';
 

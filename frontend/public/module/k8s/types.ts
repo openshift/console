@@ -1,13 +1,14 @@
 import { JSONSchema7 } from 'json-schema';
 import { NodeAddress } from '@console/shared';
 import {
-  ObjectReference,
-  ObjectMetadata,
   K8sResourceCommon,
   K8sVerb,
+  ObjectMetadata,
+  ObjectReference,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
-import { Selector, MatchLabels, K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { K8sModel, MatchLabels, Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/api/k8s-types';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 export * from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -16,20 +17,6 @@ export type PartialObjectMetadata = {
   apiVersion: string;
   kind: string;
   metadata: ObjectMetadata;
-};
-
-export enum K8sResourceConditionStatus {
-  True = 'True',
-  False = 'False',
-  Unknown = 'Unknown',
-}
-
-export type K8sResourceCondition = {
-  type: string;
-  status: keyof typeof K8sResourceConditionStatus;
-  lastTransitionTime?: string;
-  reason?: string;
-  message?: string;
 };
 
 export type ClusterServiceVersionCondition = {

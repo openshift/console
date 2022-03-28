@@ -1,4 +1,5 @@
-import { K8sResourceKind, K8sResourceCondition } from '@console/internal/module/k8s';
+import { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/api/k8s-types';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export type ConfigurationKind = K8sResourceKind;
 

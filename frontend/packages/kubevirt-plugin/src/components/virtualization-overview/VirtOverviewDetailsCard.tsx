@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  SourceMissingStatus,
-  SubscriptionStatus,
-} from '@console/operator-lifecycle-manager/src/components/subscription';
+import { SourceMissingStatus } from '@console/operator-lifecycle-manager/src/components/subscription';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import { SubscriptionStatus } from '@console/shared/src/components/olm/subscription';
 import { useKubevirtCsvDetails } from '../../hooks/use-kubevirt-csv-details';
 
 export const VirtOverviewDetailsCard: React.FC = () => {

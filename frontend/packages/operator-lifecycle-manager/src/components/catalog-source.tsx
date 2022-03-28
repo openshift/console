@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router-dom';
-import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { CatalogSourceKind, PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import {
   DetailsPage,
@@ -43,7 +43,7 @@ import {
   OperatorGroupModel,
   OperatorHubModel,
 } from '../models';
-import { CatalogSourceKind, PackageManifestKind, OperatorGroupKind } from '../types';
+import { PackageManifestKind, OperatorGroupKind } from '../types';
 import useOperatorHubConfig from '../utils/useOperatorHubConfig';
 import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
 import { disableDefaultSourceModal } from './modals/disable-default-source-modal';

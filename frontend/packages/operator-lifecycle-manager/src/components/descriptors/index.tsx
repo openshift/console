@@ -2,13 +2,14 @@ import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { DetailsItem } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getSchemaAtPath } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';
-import { Descriptor, DescriptorType } from './types';
+import { DescriptorType } from './types';
 import {
   DescriptorGroup,
   groupDescriptorDetails,

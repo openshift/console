@@ -1,10 +1,8 @@
 import * as React from 'react';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 
 type CsvWatchResource = {
   csvData: ClusterServiceVersionKind[];

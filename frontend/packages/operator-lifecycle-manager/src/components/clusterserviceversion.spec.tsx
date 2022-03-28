@@ -3,6 +3,7 @@ import { CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '@console/dynamic-plugin-sdk';
 import {
   DetailsPage,
   Table,
@@ -31,7 +32,6 @@ import {
   testSubscriptions,
 } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
 import {
   ClusterServiceVersionsDetailsPage,
   ClusterServiceVersionsDetailsPageProps,

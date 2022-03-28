@@ -1,8 +1,5 @@
-import {
-  K8sResourceCondition,
-  K8sResourceKind,
-  ObjectMetadata,
-} from '@console/internal/module/k8s';
+import { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/api/k8s-types';
+import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 import {
   V1alpha1DataVolumeSpec,
   V1alpha1DataVolumeStatus,

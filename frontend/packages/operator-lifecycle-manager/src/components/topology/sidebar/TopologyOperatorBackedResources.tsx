@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import {
+  ClusterServiceVersionKind,
+  CRDDescription,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { Firehose, ResourceIcon, StatusBox } from '@console/internal/components/utils';
 import {
@@ -12,9 +16,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import {
-  ClusterServiceVersionKind,
   ClusterServiceVersionModel,
-  CRDDescription,
   providedAPIForReference,
 } from '@console/operator-lifecycle-manager/src';
 import {

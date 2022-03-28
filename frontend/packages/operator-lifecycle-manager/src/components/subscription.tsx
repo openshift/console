@@ -1,19 +1,28 @@
 import * as React from 'react';
 import { Alert, Button, Popover } from '@patternfly/react-core';
-import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { match, Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import {
+  CatalogSourceKind,
+  ClusterServiceVersionKind,
+  InstallPlanApproval,
+  InstallPlanKind,
+  InstallPlanPhase,
+  SubscriptionKind,
+  SubscriptionState,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
   MultiListPage,
+  RowFunctionArgs,
   Table,
   TableData,
-  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
   FieldLevelHelp,
@@ -23,50 +32,40 @@ import {
   navFactory,
   ResourceKebab,
   ResourceLink,
-  resourcePathFromModel,
   ResourceSummary,
   SectionHeading,
 } from '@console/internal/components/utils';
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import {
-  referenceForModel,
   k8sGet,
-  k8sPatch,
   k8sKill,
-  k8sUpdate,
-  K8sResourceCommon,
   K8sKind,
+  k8sPatch,
+  K8sResourceCommon,
+  k8sUpdate,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import {
-  BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
   getName,
   getNamespace,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   WarningStatus,
-  YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { InstallPlanModel } from '@console/shared/src/components/olm/models';
 import {
-  SubscriptionModel,
-  ClusterServiceVersionModel,
+  SubscriptionStatus,
+  subscriptionTableColumnClasses,
+} from '@console/shared/src/components/olm/subscription';
+import {
   CatalogSourceModel,
-  InstallPlanModel,
-  PackageManifestModel,
+  ClusterServiceVersionModel,
   OperatorGroupModel,
+  PackageManifestModel,
+  SubscriptionModel,
 } from '../models';
-import {
-  SubscriptionKind,
-  SubscriptionState,
-  PackageManifestKind,
-  InstallPlanApproval,
-  ClusterServiceVersionKind,
-  OperatorGroupKind,
-  InstallPlanKind,
-  InstallPlanPhase,
-  CatalogSourceKind,
-} from '../types';
-import { upgradeRequiresApproval } from '../utils';
+import { OperatorGroupKind, PackageManifestKind } from '../types';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
 import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
@@ -117,67 +116,6 @@ export const SourceMissingStatus: React.FC = () => {
   );
 };
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  Kebab.columnClass,
-];
-
-export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> = ({
-  subscription,
-}) => {
-  const { t } = useTranslation();
-  const to = resourcePathFromModel(
-    InstallPlanModel,
-    subscription.status.installPlanRef.name,
-    subscription.metadata.namespace,
-  );
-  return (
-    <span className="co-icon-and-text">
-      <Link to={to}>
-        <BlueArrowCircleUpIcon /> {t('olm~Upgrade available')}
-      </Link>
-    </span>
-  );
-};
-
-export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = ({
-  subscription,
-}) => {
-  const { t } = useTranslation();
-  switch (subscription.status.state) {
-    case SubscriptionState.SubscriptionStateUpgradeAvailable:
-      return (
-        <span>
-          <YellowExclamationTriangleIcon /> {t('olm~Upgrade available')}
-        </span>
-      );
-    case SubscriptionState.SubscriptionStateUpgradePending:
-      return upgradeRequiresApproval(subscription) && subscription.status.installPlanRef ? (
-        <UpgradeApprovalLink subscription={subscription} />
-      ) : (
-        <span>
-          <InProgressIcon className="text-primary" /> {t('olm~Upgrading')}
-        </span>
-      );
-    case SubscriptionState.SubscriptionStateAtLatest:
-      return (
-        <span>
-          <GreenCheckCircleIcon /> {t('olm~Up to date')}
-        </span>
-      );
-    default:
-      return (
-        <span className={_.isEmpty(subscription.status.state) ? 'text-muted' : ''}>
-          {subscription.status.state || t('olm~Unknown failure')}
-        </span>
-      );
-  }
-};
-
 const menuActions = [
   Kebab.factory.Edit,
   (kind, obj) => ({
@@ -207,26 +145,32 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
-      <TableData className={tableColumnClasses[0]}>
+      <TableData className={subscriptionTableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(SubscriptionModel)}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      <TableData className={subscriptionTableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      <TableData className={subscriptionTableColumnClasses[2]}>
         <SubscriptionStatus subscription={obj} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
+      <TableData
+        className={classNames(
+          subscriptionTableColumnClasses[3],
+          'co-truncate',
+          'co-select-to-copy',
+        )}
+      >
         {obj.spec.channel || 'default'}
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={subscriptionTableColumnClasses[4]}>
         {obj.spec.installPlanApproval || t('olm~Automatic')}
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={subscriptionTableColumnClasses[5]}>
         <ResourceKebab
           actions={menuActions}
           kind={referenceForModel(SubscriptionModel)}
@@ -245,29 +189,29 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
         title: t('olm~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        props: { className: subscriptionTableColumnClasses[0] },
       },
       {
         title: t('olm~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        props: { className: subscriptionTableColumnClasses[1] },
       },
       {
         title: t('olm~Status'),
-        props: { className: tableColumnClasses[2] },
+        props: { className: subscriptionTableColumnClasses[2] },
       },
       {
         title: t('olm~Update channel'),
-        props: { className: tableColumnClasses[3] },
+        props: { className: subscriptionTableColumnClasses[3] },
       },
       {
         title: t('olm~Update approval'),
-        props: { className: tableColumnClasses[4] },
+        props: { className: subscriptionTableColumnClasses[4] },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[5] },
+        props: { className: subscriptionTableColumnClasses[5] },
       },
     ];
   };

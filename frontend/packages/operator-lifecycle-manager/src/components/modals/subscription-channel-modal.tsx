@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { SubscriptionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   createModalLauncher,
   ModalTitle,
@@ -11,7 +12,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
-import { SubscriptionKind, PackageManifestKind } from '../../types';
+import { PackageManifestKind } from '../../types';
 
 export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> = ({
   cancel,

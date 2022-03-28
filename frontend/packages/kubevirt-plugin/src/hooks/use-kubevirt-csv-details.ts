@@ -1,12 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import {
+  ClusterServiceVersionKind,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
 import {
   CatalogSourceModel,
-  ClusterServiceVersionKind,
   ClusterServiceVersionModel,
-  SubscriptionKind,
   SubscriptionModel,
 } from '@console/operator-lifecycle-manager';
 import { catalogSourceForSubscription } from '@console/operator-lifecycle-manager/src/components/subscription';

@@ -44,14 +44,13 @@ import {
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
-import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import {
-  OperatorGroupKind,
-  PackageManifestKind,
-  SubscriptionKind,
-  InstallPlanApproval,
   InstallModeType,
-} from '../../types';
+  InstallPlanApproval,
+  SubscriptionKind,
+} from 'packages/console-dynamic-plugin-sdk/src/api/internal-types';
+import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
+import { OperatorGroupKind, PackageManifestKind } from '../../types';
 import { getClusterServiceVersionPlugins, isCatalogSourceTrusted } from '../../utils';
 import { ConsolePluginFormGroup } from '../../utils/console-plugin-form-group';
 import { CRDCard } from '../clusterserviceversion';

@@ -1,6 +1,6 @@
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { configureCountModal } from '@console/internal/components/modals';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
-import { Descriptor } from '../types';
 import { getPatchPathFromDescriptor } from '../utils';
 
 export const configureSizeModal = ({

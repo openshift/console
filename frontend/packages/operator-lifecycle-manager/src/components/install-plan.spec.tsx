@@ -4,6 +4,10 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import {
+  InstallPlanApproval,
+  InstallPlanKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import {
   Table,
   MultiListPage,
   DetailsPage,
@@ -21,9 +25,9 @@ import {
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
+import { InstallPlanModel } from '@console/shared/src/components/olm/models';
 import { testInstallPlan } from '../../mocks';
-import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../models';
-import { InstallPlanKind, InstallPlanApproval } from '../types';
+import { ClusterServiceVersionModel, OperatorGroupModel } from '../models';
 import {
   InstallPlanTableRow,
   InstallPlansList,

@@ -1,10 +1,8 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { k8sGet, k8sList, StorageClassResourceKind, ListKind } from '@console/internal/module/k8s';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
 import { getAnnotations, getName } from '@console/shared/src/selectors/common';

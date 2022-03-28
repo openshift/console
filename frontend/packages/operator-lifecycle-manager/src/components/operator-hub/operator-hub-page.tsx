@@ -4,6 +4,10 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import {
+  ClusterServiceVersionKind,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import {
   Firehose,
@@ -25,12 +29,7 @@ import {
   OperatorGroupModel,
   SubscriptionModel,
 } from '../../models';
-import {
-  ClusterServiceVersionKind,
-  PackageManifestKind,
-  OperatorGroupKind,
-  SubscriptionKind,
-} from '../../types';
+import { PackageManifestKind, OperatorGroupKind } from '../../types';
 import { subscriptionFor } from '../operator-group';
 import { OperatorHubTileView } from './operator-hub-items';
 import { getCatalogSourceDisplayName } from './operator-hub-utils';

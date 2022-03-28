@@ -1,19 +1,20 @@
 import * as _ from 'lodash';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
-  Plugin,
+  DashboardsOverviewHealthOperator,
   ModelDefinition,
   ModelFeatureFlag,
-  ResourceListPage,
+  Plugin,
   ResourceDetailsPage,
+  ResourceListPage,
   RoutePage,
-  DashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
+import { InstallPlanModel } from '@console/shared/src/components/olm/models';
 import { FLAGS } from '@console/shared/src/constants';
 import { getClusterServiceVersionsWithStatuses } from './components/dashboard/utils';
 import { Flags } from './const';
 import * as models from './models';
-import { ClusterServiceVersionKind } from './types';
 
 import './style.scss';
 
@@ -237,7 +238,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Resource/Details',
     properties: {
-      model: models.InstallPlanModel,
+      model: InstallPlanModel,
       loader: async () =>
         (await import('./components/install-plan' /* webpackChunkName: "install-plan" */))
           .InstallPlanDetailsPage,
@@ -246,7 +247,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Resource/List',
     properties: {
-      model: models.InstallPlanModel,
+      model: InstallPlanModel,
       loader: async () =>
         (await import('./components/install-plan' /* webpackChunkName: "install-plan" */))
           .InstallPlansPage,

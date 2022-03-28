@@ -1,22 +1,21 @@
 import {
+  CatalogSourceKind,
+  ClusterServiceVersionKind,
+  ClusterServiceVersionPhase,
+  CSVConditionReason,
+  InstallPlanApproval,
+  InstallPlanKind,
+  InstallPlanPhase,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import {
   K8sResourceKind,
   K8sKind,
   CustomResourceDefinitionKind,
 } from '@console/internal/module/k8s';
 import { StatusCapability, SpecCapability } from './src/components/descriptors/types';
 import { OperatorHubItem } from './src/components/operator-hub';
-import {
-  OperatorGroupKind,
-  PackageManifestKind,
-  SubscriptionKind,
-  InstallPlanKind,
-  CatalogSourceKind,
-  ClusterServiceVersionKind,
-  ClusterServiceVersionPhase,
-  CSVConditionReason,
-  InstallPlanApproval,
-  InstallPlanPhase,
-} from './src/types';
+import { OperatorGroupKind, PackageManifestKind } from './src/types';
 
 const prefixedCapabilities = new Set([
   SpecCapability.selector,

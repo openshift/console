@@ -11,14 +11,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
+import { SubscriptionKind } from '@console/dynamic-plugin-sdk';
 import {
   FieldLevelHelp,
   FirehoseResource,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-
-import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager/src';
+import { SubscriptionModel } from '@console/operator-lifecycle-manager/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { OCS_OPERATOR } from '@console/ceph-storage-plugin/src/constants';

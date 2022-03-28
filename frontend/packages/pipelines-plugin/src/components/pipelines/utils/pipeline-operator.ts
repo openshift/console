@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { compare, gte, parse, SemVer } from 'semver';
 import { k8sList } from '@console/internal/module/k8s';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import {
   ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
   ClusterServiceVersionPhase,
-} from '@console/operator-lifecycle-manager';
+} from 'packages/console-dynamic-plugin-sdk/src/api/internal-types';
 import { PIPELINE_GA_VERSION, TRIGGERS_GA_VERSION } from '../const';
 
 export const getPipelineOperatorVersion = async (namespace: string): Promise<SemVer | null> => {

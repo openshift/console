@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { match } from 'react-router-dom';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/api/k8s-types';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -40,7 +42,6 @@ import { CustomResourceDefinitionModel } from '@console/internal/models';
 import {
   GroupVersionKind,
   K8sKind,
-  K8sResourceCondition,
   K8sResourceKind,
   K8sResourceKindReference,
   OwnerReference,
@@ -64,7 +65,6 @@ import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind } from '../../types';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 import { DescriptorConditions } from '../descriptors/status/conditions';
 import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';

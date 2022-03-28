@@ -1,3 +1,4 @@
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 export enum DescriptorType {
@@ -52,14 +53,6 @@ export enum CommonCapability {
   hidden = 'urn:alm:descriptor:com.tectonic.ui:hidden',
   password = 'urn:alm:descriptor:com.tectonic.ui:password',
 }
-
-export type Descriptor<T = any> = {
-  path: string;
-  displayName: string;
-  description: string;
-  'x-descriptors'?: T[];
-  value?: any;
-};
 
 export type SpecDescriptor = Descriptor<SpecCapability>;
 export type StatusDescriptor = Descriptor<StatusCapability>;

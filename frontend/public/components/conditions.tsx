@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
+import { CamelCaseWrap, K8sResourceCondition } from '@console/dynamic-plugin-sdk';
 import { LinkifyExternal, Timestamp } from './utils';
-import { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
+import { ClusterServiceVersionCondition } from '../module/k8s';
 
 /**
  * Since ClusterServiceVersionCondition type is different from K8sResourceCondition, but InstallPlanCondition and SubscriptionCondition are identical, we will use the following enum to render the proper conditions table based on type.

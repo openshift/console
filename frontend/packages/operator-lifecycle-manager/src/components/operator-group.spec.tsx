@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { SubscriptionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   testOperatorGroup,
   testSubscription,
   testPackageManifest,
   dummyPackageManifest,
 } from '../../mocks';
-import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../types';
+import { InstallModeType, OperatorGroupKind } from '../types';
 import {
   requireOperatorGroup,
   NoOperatorGroupMsg,

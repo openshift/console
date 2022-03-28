@@ -6,6 +6,13 @@ import { Alert } from '@patternfly/react-core';
 import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
+import { K8sResourceConditionStatus } from '@console/dynamic-plugin-sdk';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
+
 import { ClusterOperatorModel } from '../../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from '../factory';
 import { Conditions } from '../conditions';
@@ -17,7 +24,6 @@ import {
   ClusterOperator,
   ClusterVersionConditionType,
   ClusterVersionKind,
-  K8sResourceConditionStatus,
   K8sResourceKindReference,
   OperandVersion,
   OperatorStatus,
@@ -32,11 +38,6 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
-import {
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
 import RelatedObjectsPage from './related-objects';
 import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings';
 

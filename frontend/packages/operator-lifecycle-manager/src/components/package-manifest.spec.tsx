@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { CatalogSourceKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import * as UIActions from '@console/internal/actions/ui';
 import { RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { testPackageManifest, testCatalogSource } from '../../mocks';
-import { PackageManifestKind, CatalogSourceKind } from '../types';
+import { PackageManifestKind } from '../types';
 import {
   PackageManifestTableRow,
   PackageManifestTableHeader,

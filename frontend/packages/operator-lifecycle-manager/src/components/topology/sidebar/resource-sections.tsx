@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '@console/topology/src/operators/components/const';
 import { ClusterServiceVersionModel } from '../../../models';
-import { ClusterServiceVersionKind } from '../../../types';
 import TopologyOperatorBackedResources from './TopologyOperatorBackedResources';
 import { OperatorGroupData } from './types';
 

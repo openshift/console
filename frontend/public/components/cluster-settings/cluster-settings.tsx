@@ -23,12 +23,14 @@ import { HashLink } from 'react-router-hash-link';
 import { useTranslation } from 'react-i18next';
 
 import { AddCircleOIcon, PencilAltIcon, SyncAltIcon } from '@patternfly/react-icons';
-import { removeQueryArgument } from '@console/internal/components/utils/router';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager';
+  K8sResourceConditionStatus,
+  WatchK8sResource,
+} from '@console/dynamic-plugin-sdk';
+import { removeQueryArgument } from '@console/internal/components/utils/router';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import {
@@ -69,7 +71,6 @@ import {
   getSortedUpdates,
   isMinorVersionNewer,
   k8sPatch,
-  K8sResourceConditionStatus,
   K8sResourceKind,
   MachineConfigPoolConditionType,
   MachineConfigPoolKind,
@@ -104,7 +105,6 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 

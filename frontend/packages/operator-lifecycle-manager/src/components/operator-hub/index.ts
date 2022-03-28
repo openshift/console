@@ -1,5 +1,6 @@
+import { SubscriptionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
-import { PackageManifestKind, SubscriptionKind } from '../../types';
+import { PackageManifestKind } from '../../types';
 
 export enum InstalledState {
   Installed = 'Installed',

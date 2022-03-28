@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
+import {
+  APIServiceDefinition,
+  ClusterServiceVersionKind,
+  CRDDescription,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   history,
@@ -11,7 +16,6 @@ import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8
 import { usePostFormSubmitAction } from '@console/shared';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../index';
 import { getUISchema } from './utils';
 

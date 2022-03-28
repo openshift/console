@@ -1,11 +1,11 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   K8sResourceKind,
   apiVersionForModel,
   modelFor,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src/types';
 import {
   getDefaultOperatorIcon,
   getImageForCSVIcon,

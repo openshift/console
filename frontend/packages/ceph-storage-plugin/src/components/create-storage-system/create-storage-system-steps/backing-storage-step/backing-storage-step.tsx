@@ -9,14 +9,12 @@ import {
   FormSelectProps,
   Radio,
 } from '@patternfly/react-core';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { StorageClassModel } from '@console/internal/models';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager/src';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { SelectDeployment } from './select-deployment';
 import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';

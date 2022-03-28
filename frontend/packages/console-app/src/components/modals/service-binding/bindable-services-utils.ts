@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { getBindableServiceResources } from '@console/dev-console/src/components/topology/bindable-services/bindable-service-resources';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { referenceForGroupVersionKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import { getOperatorBackedServiceKindMap } from '@console/shared/src';
 
 export type OwnedResourceType = {

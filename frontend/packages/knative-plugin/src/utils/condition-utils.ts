@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceCondition, K8sResourceConditionStatus } from '@console/internal/module/k8s';
+import { K8sResourceCondition, K8sResourceConditionStatus } from '@console/dynamic-plugin-sdk';
 
 export const getConditionOKCount = (conditions: K8sResourceCondition[]): number =>
   _.sumBy<any>(conditions, (c) => Number(c.status === K8sResourceConditionStatus.True));

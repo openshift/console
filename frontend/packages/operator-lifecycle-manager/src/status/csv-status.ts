@@ -1,14 +1,14 @@
 import * as _ from 'lodash';
-import i18n from '@console/internal/i18n';
-import { getName } from '@console/shared/src/selectors/common';
 import {
   ClusterServiceVersionKind,
+  ClusterServiceVersionPhase,
   SubscriptionKind,
   SubscriptionState,
-  ClusterServiceVersionPhase,
-  ClusterServiceVersionStatus,
-} from '../types';
-import { upgradeRequiresApproval } from '../utils';
+} from '@console/dynamic-plugin-sdk';
+import i18n from '@console/internal/i18n';
+import { upgradeRequiresApproval } from '@console/shared/src/components/olm/subscription';
+import { getName } from '@console/shared/src/selectors/common';
+import { ClusterServiceVersionStatus } from '../types';
 
 const pendingPhases = [
   ClusterServiceVersionPhase.CSVPhasePending,

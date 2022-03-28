@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { getAnnotations } from '@console/shared';
 import { IP_FAMILY } from '../../../constants';
 

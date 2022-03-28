@@ -1,12 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-  SubscriptionModel,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { useDebounceCallback } from './use-debounce';
 import { useDeepCompareMemoize } from './use-deep-compare-memoize';

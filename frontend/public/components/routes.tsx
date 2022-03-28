@@ -7,6 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import i18next from 'i18next';
 
+import { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/api/k8s-types';
 import { Status, usePrometheusGate } from '@console/shared';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
@@ -22,13 +23,7 @@ import {
   ExternalLinkWithCopy,
 } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
-import {
-  K8sResourceKindReference,
-  RouteKind,
-  RouteIngress,
-  RouteTarget,
-  K8sResourceCondition,
-} from '../module/k8s';
+import { K8sResourceKindReference, RouteKind, RouteIngress, RouteTarget } from '../module/k8s';
 import { RouteModel } from '../models';
 import { Conditions } from './conditions';
 import { RouteMetrics } from './routes/route-metrics';

@@ -2,13 +2,13 @@ import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import i18next from 'i18next';
 
+import { K8sResourceConditionStatus } from '@console/dynamic-plugin-sdk';
 import { ClusterVersionModel } from '../../models';
 import { referenceForModel } from './k8s-ref';
 import {
   ClusterVersionKind,
   ClusterUpdate,
   ClusterVersionConditionType,
-  K8sResourceConditionStatus,
   ClusterVersionCondition,
   UpdateHistory,
 } from '.';

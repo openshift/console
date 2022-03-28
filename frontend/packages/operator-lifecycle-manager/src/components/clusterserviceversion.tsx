@@ -15,7 +15,19 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import { WatchK8sResource, ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import {
+  WatchK8sResource,
+  ResourceStatus,
+  StatusIconAndText,
+  SubscriptionKind,
+  InstallPlanKind,
+  ClusterServiceVersionKind,
+  APIServiceDefinition,
+  CRDDescription,
+  CSVConditionReason,
+  ClusterServiceVersionPhase,
+  CatalogSourceKind,
+} from '@console/dynamic-plugin-sdk';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -64,9 +76,13 @@ import {
   K8sResourceCommon,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
+import { ALL_NAMESPACES_KEY, Status, getNamespace, InstallPlanModel } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { consolePluginModal } from '@console/shared/src/components/modals';
+import {
+  UpgradeApprovalLink,
+  upgradeRequiresApproval,
+} from '@console/shared/src/components/olm/subscription';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
@@ -78,35 +94,19 @@ import {
   SubscriptionModel,
   PackageManifestModel,
   CatalogSourceModel,
-  InstallPlanModel,
   OperatorGroupModel,
 } from '../models';
 import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
-import {
-  APIServiceDefinition,
-  CatalogSourceKind,
-  ClusterServiceVersionKind,
-  ClusterServiceVersionPhase,
-  CRDDescription,
-  CSVConditionReason,
-  InstallPlanKind,
-  PackageManifestKind,
-  SubscriptionKind,
-} from '../types';
-import {
-  getClusterServiceVersionPlugins,
-  isCatalogSourceTrusted,
-  upgradeRequiresApproval,
-} from '../utils';
+import { PackageManifestKind } from '../types';
+import { getClusterServiceVersionPlugins, isCatalogSourceTrusted } from '../utils';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
-  SourceMissingStatus,
   SubscriptionDetails,
-  UpgradeApprovalLink,
   catalogSourceForSubscription,
+  SourceMissingStatus,
 } from './subscription';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV } from './index';
 

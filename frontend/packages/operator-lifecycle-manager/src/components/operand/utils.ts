@@ -2,6 +2,7 @@ import { UiSchema } from '@rjsf/core';
 import * as Immutable from 'immutable';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import i18n from '@console/internal/i18n';
 import { modelFor } from '@console/internal/module/k8s';
 import { getSchemaAtPath } from '@console/shared';
@@ -15,7 +16,7 @@ import {
   REGEXP_SELECT_OPTION,
 } from '../descriptors/const';
 import { capabilityFieldMap, capabilityWidgetMap } from '../descriptors/spec/spec-descriptor-input';
-import { SpecCapability, Descriptor } from '../descriptors/types';
+import { SpecCapability } from '../descriptors/types';
 import { getValidCapabilitiesForSchema } from '../descriptors/utils';
 import { HIDDEN_UI_SCHEMA } from './const';
 

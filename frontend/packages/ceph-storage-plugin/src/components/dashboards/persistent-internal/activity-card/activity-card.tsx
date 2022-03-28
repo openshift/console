@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import { SubscriptionKind } from '@console/dynamic-plugin-sdk';
 import {
   EventKind,
   K8sResourceKind,
@@ -18,7 +19,6 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { SubscriptionKind } from '@console/operator-lifecycle-manager';
 import { isClusterExpandActivity, ClusterExpandActivity } from './cluster-expand-activity';
 import { isOCSUpgradeActivity, OCSUpgradeActivity } from './ocs-upgrade-activity';
 import { OCS_OPERATOR, PVC_PROVISIONER_ANNOTATION } from '../../../../constants/index';
@@ -30,6 +30,7 @@ import {
   eventsResource,
 } from '../../../../resources';
 import { getResiliencyProgress, isPersistentStorageEvent } from '../../../../utils';
+
 import './activity-card.scss';
 
 export const getOCSSubscription = (subscriptions: FirehoseResult): SubscriptionKind => {

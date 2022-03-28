@@ -2,13 +2,13 @@ import * as React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import * as _ from 'lodash';
 import { act } from 'react-dom/test-utils';
+import { SubscriptionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ModalTitle, ModalSubmitFooter } from '@console/internal/components/factory/modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { testSubscription, dummyPackageManifest } from '../../../mocks';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
-import { SubscriptionKind } from '../../types';
 import { UninstallOperatorModal, UninstallOperatorModalProps } from './uninstall-operator-modal';
 import Spy = jasmine.Spy;
 

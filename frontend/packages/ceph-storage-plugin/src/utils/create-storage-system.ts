@@ -1,3 +1,4 @@
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import { convertToBaseValue, humanizeCpuCores } from '@console/internal/components/utils';
 import {
   getLabel,
@@ -8,7 +9,6 @@ import {
   getUID,
 } from '@console/shared/src';
 import { NodeKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import { ValidationType } from './common-ocs-install-el';
 import { getZone, isFlexibleScaling, shouldDeployAsMinimal } from './install';
 import { SUPPORTED_EXTERNAL_STORAGE } from '../components/create-storage-system/external-storage';

@@ -1,6 +1,6 @@
 import { SemVer } from 'semver';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { k8sList } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { getPipelineOperatorVersion, isGAVersionInstalled } from '../pipeline-operator';
 
 jest.mock('@console/internal/module/k8s', () => ({

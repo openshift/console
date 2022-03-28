@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { ClusterServiceVersionPhase } from './constants';
 

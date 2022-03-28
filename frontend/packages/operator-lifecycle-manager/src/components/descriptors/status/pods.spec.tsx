@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { ChartDonut } from '@patternfly/react-charts';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { SpecCapability, Descriptor } from '../types';
+import { Descriptor } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { SpecCapability } from '../types';
 import { PodStatusChart, PodStatusChartProps } from './pods';
 
 describe(PodStatusChart.displayName, () => {

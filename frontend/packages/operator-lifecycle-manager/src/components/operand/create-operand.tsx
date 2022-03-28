@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ClusterServiceVersionKind, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
   StatusBox,
@@ -34,7 +34,7 @@ import { useCreateResourceExtension } from '@console/shared/src/hooks/create-res
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
+import { ProvidedAPI } from '../../types';
 import ModelStatusBox from '../model-status-box';
 import { DEFAULT_K8S_SCHEMA } from './const';
 // eslint-disable-next-line @typescript-eslint/camelcase

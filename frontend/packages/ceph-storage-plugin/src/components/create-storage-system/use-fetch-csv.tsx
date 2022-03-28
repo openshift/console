@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
   SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import {
+  ClusterServiceVersionModel,
   SubscriptionModel,
 } from '@console/operator-lifecycle-manager/src';
 import { referenceForModel } from '@console/internal/module/k8s';

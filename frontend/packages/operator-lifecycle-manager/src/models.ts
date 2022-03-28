@@ -66,23 +66,6 @@ export const ClusterServiceVersionModel: K8sKind = {
   legacyPluralURL: true,
 };
 
-export const InstallPlanModel: K8sKind = {
-  kind: 'InstallPlan',
-  label: 'InstallPlan',
-  // t('olm~InstallPlan')
-  labelKey: 'olm~InstallPlan',
-  labelPlural: 'InstallPlans',
-  // t('olm~InstallPlans')
-  labelPluralKey: 'olm~InstallPlans',
-  apiGroup: 'operators.coreos.com',
-  apiVersion: 'v1alpha1',
-  abbr: 'IP',
-  namespaced: true,
-  crd: true,
-  plural: 'installplans',
-  legacyPluralURL: true,
-};
-
 export const SubscriptionModel: K8sKind = {
   kind: 'Subscription',
   label: 'Subscription',

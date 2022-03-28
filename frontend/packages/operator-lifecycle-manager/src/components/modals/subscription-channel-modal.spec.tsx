@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { SubscriptionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   ModalTitle,
   ModalSubmitFooter,
@@ -9,7 +10,7 @@ import {
 import { RadioInput } from '@console/internal/components/radio';
 import { testSubscription, testPackageManifest } from '../../../mocks';
 import { SubscriptionModel } from '../../models';
-import { SubscriptionKind, PackageManifestKind } from '../../types';
+import { PackageManifestKind } from '../../types';
 import {
   SubscriptionChannelModal,
   SubscriptionChannelModalProps,

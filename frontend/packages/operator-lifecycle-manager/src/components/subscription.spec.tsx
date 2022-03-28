@@ -3,6 +3,10 @@ import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import {
+  SubscriptionKind,
+  SubscriptionState,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import {
   Table,
   MultiListPage,
   DetailsPage,
@@ -10,6 +14,8 @@ import {
 } from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { InstallPlanModel } from '@console/shared/src/components/olm/models';
+import { SubscriptionStatus } from '@console/shared/src/components/olm/subscription';
 import {
   testSubscription,
   testSubscriptions,
@@ -22,10 +28,8 @@ import {
   ClusterServiceVersionModel,
   PackageManifestModel,
   OperatorGroupModel,
-  InstallPlanModel,
   CatalogSourceModel,
 } from '../models';
-import { SubscriptionKind, SubscriptionState } from '../types';
 import {
   SubscriptionTableRow,
   SubscriptionsList,
@@ -38,7 +42,6 @@ import {
   SubscriptionUpdates,
   SubscriptionUpdatesProps,
   SubscriptionUpdatesState,
-  SubscriptionStatus,
 } from './subscription';
 
 describe('SubscriptionTableRow', () => {

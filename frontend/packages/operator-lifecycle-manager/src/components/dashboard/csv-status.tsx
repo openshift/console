@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { pluralize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk';
 import {
   resourcePathFromModel,
   resourcePath,
@@ -9,7 +10,6 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { OperatorRowProps } from '@console/plugin-sdk';
 import Status from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind } from '../../types';
 
 import './csv-status.scss';
 

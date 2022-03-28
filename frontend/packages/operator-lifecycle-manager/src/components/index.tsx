@@ -2,6 +2,14 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import {
+  ClusterServiceVersionIcon,
+  ClusterServiceVersionKind,
+  InstallPlanApproval,
+  InstallPlanKind,
+  StepResource,
+  SubscriptionKind,
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import {
   GroupVersionKind,
   referenceForGroupVersionKind,
   resourceURL,
@@ -13,18 +21,7 @@ import {
 } from '@console/internal/module/k8s';
 import { PackageManifestModel } from '../models';
 import * as operatorLogo from '../operator.svg';
-import {
-  APIServiceDefinition,
-  ClusterServiceVersionIcon,
-  ClusterServiceVersionKind,
-  CRDDescription,
-  InstallPlanApproval,
-  InstallPlanKind,
-  PackageManifestKind,
-  ProvidedAPI,
-  StepResource,
-  SubscriptionKind,
-} from '../types';
+import { APIServiceDefinition, CRDDescription, PackageManifestKind, ProvidedAPI } from '../types';
 import { getInternalObjects } from '../utils';
 
 export const visibilityLabel = 'olm-visibility';

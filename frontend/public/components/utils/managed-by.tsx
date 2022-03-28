@@ -13,9 +13,9 @@ import {
   k8sList,
 } from '../../module/k8s';
 import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
+import { ClusterServiceVersionKind } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
 export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = ({
   csvName,
