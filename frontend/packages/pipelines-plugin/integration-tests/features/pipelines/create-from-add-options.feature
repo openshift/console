@@ -6,13 +6,6 @@ Feature: Create Pipeline from Add Options
             Given user has created or selected namespace "aut-pipelines-add-options"
 
 
-        @regression
-        Scenario: Pipelines section on git form: P-01-TC01
-             When user clicks Import From Git card on the Add page
-             Then user will be redirected to Import from Git form
-              And pipeline section is displayed with message "Select a Builder Image and resource to see if there is a pipeline template available for this runtime."
-
-
         @smoke
         Scenario Outline: Create a pipeline from git workload with resource type "<resource>": P-01-TC02
             Given user is at Import from Git form
@@ -39,7 +32,7 @@ Feature: Create Pipeline from Add Options
               And user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
               And user enters Name as "<pipeline_name>" in General section
-              And user selects resource type as "knative"
+              And user selects resource type as "Knative"
               And user selects Add Pipeline checkbox in Pipelines section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
@@ -50,7 +43,8 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git-kn |
 
 
-        @smoke
+        # https://bugzilla.redhat.com/show_bug.cgi?id=2061302
+        @smoke @broken-test
         Scenario Outline: Pipeline details display in topology page: P-01-TC04
             Given user created workload "<name>" from add page with pipeline
               And user is at the Topology page

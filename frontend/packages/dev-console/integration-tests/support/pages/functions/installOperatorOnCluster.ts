@@ -1,4 +1,5 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { pipelinesPage } from '@console/pipelines-plugin/integration-tests/support/pages';
 import { pageTitle, operators, switchPerspective } from '../../constants';
 import { operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';
@@ -85,7 +86,11 @@ export const waitForCRDs = (operator: operators) => {
       cy.byTestID('name-filter-input')
         .clear()
         .type('Pipeline');
-      cy.get('tr[data-test-rows="resource-row"]', { timeout: 300000 }).should('have.length', 4);
+      cy.get('tr[data-test-rows="resource-row"]', { timeout: 300000 }).should(
+        'have.length.within',
+        4,
+        6,
+      );
       cy.get('[data-test-id="TektonPipeline"]', { timeout: 80000 }).should('be.visible');
       cy.get('[data-test-id="PipelineResource"]', { timeout: 80000 }).should('be.visible');
       cy.get('[data-test-id="PipelineRun"]', { timeout: 80000 }).should('be.visible');
@@ -94,6 +99,22 @@ export const waitForCRDs = (operator: operators) => {
     default:
       cy.log(`waiting for CRC's is not applicable for this ${operator} operator`);
   }
+};
+
+const waitForPipelineTasks = (retries: number = 30) => {
+  if (retries === 0) {
+    return;
+  }
+  cy.contains('h1', 'Pipeline builder').should('be.visible');
+  cy.byTestID('loading-indicator').should('not.exist');
+  cy.wait(500);
+  cy.get('body').then(($body) => {
+    if ($body.find(`[data-id="pipeline-builder"]`).length === 0) {
+      cy.wait(10000);
+      cy.reload();
+      waitForPipelineTasks(retries - 1);
+    }
+  });
 };
 
 const performPostInstallationSteps = (operator: operators): void => {
@@ -117,6 +138,9 @@ const performPostInstallationSteps = (operator: operators): void => {
         expect(resp.status).toEqual(200);
       });
       waitForCRDs(operators.PipelinesOperator);
+      cy.visit('/pipelines/ns/default');
+      pipelinesPage.clickOnCreatePipeline();
+      waitForPipelineTasks();
       break;
     default:
       cy.log(`Nothing to do in post-installation steps`);

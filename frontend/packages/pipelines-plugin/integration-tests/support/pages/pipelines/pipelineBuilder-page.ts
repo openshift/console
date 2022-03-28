@@ -1,26 +1,15 @@
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import {
-  devNavigationMenu,
-  switchPerspective,
-} from '@console/dev-console/integration-tests/support/constants';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
-import {
-  createForm,
-  navigateTo,
-  perspective,
-  projectNameSpace,
-} from '@console/dev-console/integration-tests/support/pages';
+import { createForm } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineBuilderText } from '../../constants';
-import { pipelineBuilderPO, pipelineDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
+import { pipelineBuilderPO, pipelineDetailsPO } from '../../page-objects/pipelines-po';
 import { pipelineDetailsPage } from './pipelineDetails-page';
+import { pipelinesPage } from './pipelines-page';
 
 export const pipelineBuilderSidePane = {
   verifyDialog: () => cy.get(pipelineBuilderPO.formView.sidePane.dialog).should('be.visible'),
 
   selectInputResource: (resourceName: string) => {
-    cy.get(pipelineBuilderPO.formView.sidePane.dialog).within(() => {
-      cy.get(pipelineBuilderPO.formView.sidePane.inputResource).select(resourceName);
-    });
+    cy.get(pipelineBuilderPO.formView.sidePane.inputResource).select(resourceName);
   },
 
   removeTask: () => {
@@ -71,45 +60,11 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
     cy.byTestID('task-cta').click();
   },
-  clickAddTask: (tries: number = 6, polling: number = 20000) => {
-    if (tries === 0) {
-      return;
-    }
-
-    cy.get('body').then(($ele) => {
-      if ($ele.find(pipelineBuilderPO.formView.taskDropdown).length === 0) {
-        createForm.clickCancel();
-        perspective.switchTo(switchPerspective.Developer);
-        projectNameSpace.selectOrCreateProject(Cypress.env('NAMESPACE'));
-        navigateTo(devNavigationMenu.Pipelines);
-        //  Due to dependency cycle error, Adding below code related to pipelinesPage.clickOnCreatePipeline();
-        detailsPage.titleShouldContain(pageTitle.Pipelines);
-        cy.get('body').then(($body) => {
-          if ($body.find('[data-test-id= "dropdown-button"]').length > 0) {
-            cy.byLegacyTestID('dropdown-button').click();
-            cy.get(pipelineBuilderPO.pipeline).click();
-          } else {
-            cy.get(pipelinesPO.createPipeline).click();
-          }
-        });
-
-        pipelineBuilderPage.enterPipelineName(Cypress.env('PIPELINE_NAME'));
-        cy.byTestID('loading-indicator').should('not.exist');
-        // Element was not found. Wait and try again.
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(polling);
-        if ($ele.find('[aria-label="Danger Alert"]').length > 0) {
-          pipelineBuilderPage.clickAddTask(tries - 1, polling);
-        } else {
-          cy.get(pipelineBuilderPO.formView.taskDropdown).click();
-        }
-      } else {
-        cy.get(pipelineBuilderPO.formView.taskDropdown).click();
-      }
-    });
+  clickAddTask: () => {
+    cy.get(pipelineBuilderPO.formView.taskDropdown).click();
   },
-  selectTask: (taskName: string = 'kn', tries: number = 4, polling: number = 500) => {
-    pipelineBuilderPage.clickAddTask(tries, polling);
+  selectTask: (taskName: string = 'kn') => {
+    pipelineBuilderPage.clickAddTask();
     pipelineBuilderPage.AddTask(taskName);
   },
   clickOnTask: (taskName: string) => {
@@ -179,7 +134,7 @@ export const pipelineBuilderPage = {
   },
   clickSaveButton: () => cy.get(pipelineBuilderPO.create).click(),
   clickYaml: () => {
-    cy.get(pipelinesPO.createPipeline).click();
+    pipelinesPage.clickOnCreatePipeline();
     cy.get(pipelineBuilderPO.configureVia.yamlView).click();
   },
   enterYaml: (yamlContent: string) => {
@@ -202,7 +157,7 @@ export const pipelineBuilderPage = {
   createPipelineWithGitResources: (
     pipelineName: string = 'git-pipeline',
     taskName: string = 'openshift-client',
-    resourceName: string = 'git resource',
+    resourceName: string = 'Git',
   ) => {
     pipelineBuilderPage.enterPipelineName(pipelineName);
     pipelineBuilderPage.selectTask(taskName);

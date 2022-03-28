@@ -12,9 +12,9 @@ Feature: Triggers
             Given user has created pipeline "pipe-trigger-one" with git resources
               And user selected Add Trigger from kebab menu of pipeline "pipe-trigger-one"
              When user selects the "github-pullreq" from Git Provider Type field
-              And user clicks on "Show Variables" link
+              And user clicks on "Show variables" link
              Then Git provider type field is enabled
-              And user should be able to see "Hide Variables" link with variables section
+              And user should be able to see "Hide variables" link with variables section
               And variables section displayed with message "The following variables can be used in the Parameters or when created new Resources."
               And Add button is disabled
 

@@ -2,27 +2,31 @@ import { detailsPage } from '@console/cypress-integration-tests/views/details-pa
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
+import { app } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineActions, pipelineTabs } from '../../constants/pipelines';
 import { pipelinesPO, pipelineBuilderPO } from '../../page-objects/pipelines-po';
 
 export const pipelinesPage = {
   clickOnCreatePipeline: () => {
     detailsPage.titleShouldContain(pageTitle.Pipelines);
+    app.waitForLoad();
+    cy.get('button');
     cy.get('body').then(($body) => {
-      if ($body.find('[data-test-id= "dropdown-button"]').length !== 0) {
-        cy.byLegacyTestID('dropdown-button').click();
-        cy.get(pipelineBuilderPO.pipeline).click();
-      } else {
+      if ($body.find(pipelinesPO.createPipeline).length > 0) {
         cy.get(pipelinesPO.createPipeline).click();
+      } else {
+        cy.contains(`[data-test-id="dropdown-button"]`, 'Create').click();
+        cy.get(pipelineBuilderPO.pipeline).click();
       }
     });
   },
 
   clickCreateRepository: () => {
     detailsPage.titleShouldContain(pageTitle.Pipelines);
+    app.waitForLoad();
     cy.get('body').then(($body) => {
-      if ($body.find('[data-test-id= "dropdown-button"]').length !== 0) {
-        cy.byLegacyTestID('dropdown-button').click();
+      if ($body.find('[data-test-id="dropdown-button"]').length !== 0) {
+        cy.contains('[data-test-id="dropdown-button"]', 'Create').click();
         cy.get(pipelineBuilderPO.repository).click();
       } else {
         cy.get(pipelinesPO.createPipeline).click();
@@ -62,9 +66,8 @@ export const pipelinesPage = {
         if ($el.text().includes(pipelineName)) {
           cy.get('tbody tr')
             .eq(index)
-            .find(pipelinesPO.pipelinesTable.kebabMenu)
-            .then(($ele1) => {
-              cy.wrap($ele1).click({ force: true });
+            .within(() => {
+              cy.get(pipelinesPO.pipelinesTable.kebabMenu).click({ force: true });
             });
         }
       });
@@ -146,8 +149,11 @@ export const pipelinesPage = {
       .should('be.visible')
       .clear()
       .type(name);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
+    cy.get('tbody tr')
+      .eq(0)
+      .within(() => {
+        cy.byLegacyTestID(name);
+      });
     cy.get(pipelinesPO.pipelinesTable.table).should('be.visible');
   },
 
@@ -191,7 +197,7 @@ export const pipelinesPage = {
     });
   },
 
-  verifyCreateButtonIsEnabled: () => cy.get(pipelinesPO.createPipeline).should('be.enabled'),
+  verifyCreateButtonIsEnabled: () => cy.contains('button', 'Create').should('be.enabled'),
 
   verifyKebabMenu: () => cy.get(pipelinesPO.pipelinesTable.kebabMenu).should('be.visible'),
 
@@ -204,6 +210,12 @@ export const pipelinesPage = {
       .next('a')
       .then(($el) => {
         expect($el.text()).toMatch(pipelineName);
+      });
+    // wait for the table to render after search
+    cy.get('tbody tr')
+      .eq(0)
+      .within(() => {
+        cy.byLegacyTestID(pipelineName);
       });
   },
 
@@ -285,8 +297,7 @@ export const startPipelineInPipelinesPage = {
   addGitResource: (gitUrl: string, revision: string = 'master') => {
     modal.shouldBeOpened();
     cy.get('form').within(() => {
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000);
+      app.waitForLoad();
       cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
         if ($btn.attr('disabled')) {
           cy.log('Pipeline resource is not available, so adding a new git resource');
