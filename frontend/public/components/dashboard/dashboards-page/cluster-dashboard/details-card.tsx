@@ -182,7 +182,7 @@ export const DetailsCard = withDashboardResources(
                   </DetailItem>
 
                   <ServiceLevel clusterID={clusterID}>
-                    <DetailItem title={useServiceLevelTitle()} error={false} isLoading={false}>
+                    <DetailItem title={useServiceLevelTitle()}>
                       {/* Service Level handles loading and error state */}
                       <ServiceLevelText clusterID={clusterID} />
                     </DetailItem>

@@ -247,7 +247,7 @@ export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, i
     );
   }
   return (
-    <>
+    <div data-test-id="sla-text">
       <div className="co-select-to-copy">
         {levelText}
         <div>
@@ -262,7 +262,7 @@ export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, i
           />
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 export const useServiceLevelTitle = (): string => {
