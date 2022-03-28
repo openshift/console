@@ -14,8 +14,8 @@ Feature: Entire pipeline flow from Builder page
              When user enters pipeline name as "flow"
               And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
-              And user selects "git-clone" from git community
-              And user clicks on Install and add button
+              And user selects "git-clone" from "Red Hat"
+              And user clicks on Add button
               And user clicks the "git-clone" node
               And user enters the url as "https://github.com/sclorg/golang-ex.git" under Parameters section in cluster task sidebar
               And user enters revision as "master" under Parameters section in cluster task sidebar

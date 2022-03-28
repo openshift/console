@@ -523,6 +523,11 @@ When('user searches {string} in quick search bar', (searchItem: string) => {
   cy.get(pipelineBuilderPO.formView.quickSearch).type(searchItem);
 });
 
+When('user selects {string} from {string}', (taskName: string, publisher: string) => {
+  cy.get('[aria-label="Quick search list"]').should('be.visible');
+  cy.get(`[data-test="item-name-${taskName}-${publisher}"]`).click();
+});
+
 When('user selects {string} from git community', () => {
   cy.get('[aria-label="Quick search list"]').should('be.visible');
   cy.get('li')
