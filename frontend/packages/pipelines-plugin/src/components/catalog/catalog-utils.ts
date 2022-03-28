@@ -16,11 +16,15 @@ export const useTektonHubIntegration = () => {
     TektonConfigModel,
     'config',
   );
+  if (!configLoaded) {
+    return false;
+  }
+  // return false only if TEKTON_HUB_INTEGRATION_KEY value is set to 'false'
   if (config && configLoaded && !configLoadErr) {
     const devconsoleIntegrationEnabled = config.spec?.hub?.params?.find(
       (p) => p.name === TEKTON_HUB_INTEGRATION_KEY,
     );
-    return devconsoleIntegrationEnabled ? devconsoleIntegrationEnabled.value : true;
+    return devconsoleIntegrationEnabled?.value?.toLowerCase() !== 'false';
   }
   return true;
 };
