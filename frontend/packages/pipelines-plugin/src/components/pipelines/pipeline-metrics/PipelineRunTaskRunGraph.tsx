@@ -139,6 +139,9 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
                 itemsPerRow={4}
                 name="legend"
                 data={getLegendData()}
+                style={{
+                  labels: { fill: 'var(--pf-global--Color--100)' },
+                }}
               />
             }
             containerComponent={

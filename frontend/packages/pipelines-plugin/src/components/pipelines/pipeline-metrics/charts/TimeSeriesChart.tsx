@@ -63,10 +63,14 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
   }
 
   const xTickFormat = (d) => formatDate(d);
-  let xAxisStyle;
+  const xAxisFillStyle = {
+    tickLabels: { fill: 'var(--pf-global--Color--100)' },
+  };
+  let xAxisStyle: any = xAxisFillStyle;
   if (tickValues.length > 7 || width < 225) {
     xAxisStyle = {
       tickLabels: {
+        ...xAxisFillStyle.tickLabels,
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',
@@ -104,7 +108,14 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
       width={width}
     >
       <ChartAxis style={xAxisStyle} tickValues={tickValues} tickFormat={xTickFormat} />
-      <ChartAxis dependentAxis showGrid tickFormat={yTickFormatter || yTickFormat} />
+      <ChartAxis
+        dependentAxis
+        showGrid
+        tickFormat={yTickFormatter || yTickFormat}
+        style={{
+          tickLabels: { fill: 'var(--pf-global--Color--100)' },
+        }}
+      />
       <ChartGroup>
         {!bar &&
           Object.values(gData).map((d, index) => (

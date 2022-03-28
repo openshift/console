@@ -59,6 +59,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       fontSize: 10,
       textAnchor: 'end',
       verticalAnchor: 'end',
+      fill: 'var(--pf-global--Color--100)',
     },
   };
 
@@ -84,7 +85,15 @@ export const LineChart: React.FC<LineChartProps> = ({
       width={width}
     >
       <ChartAxis style={xAxisStyle} labelComponent={<ChartTooltip />} tickValues={tickValues} />
-      <ChartAxis dependentAxis showGrid tickCount={4} tickFormat={yTickFormat} />
+      <ChartAxis
+        dependentAxis
+        showGrid
+        tickCount={4}
+        tickFormat={yTickFormat}
+        style={{
+          tickLabels: { fill: 'var(--pf-global--Color--100)' },
+        }}
+      />
       <ChartGroup>
         {Object.values(filteredData).map((prun, index) => (
           <ChartScatter
