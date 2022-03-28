@@ -36,8 +36,8 @@ export const FeatureHighlightsCard: React.FC = () => {
     },
     {
       id: 'item2',
-      title: getTitle(t('kubevirt-plugin~OpenShift Virtualization 4.7 Highlights'), '5 min'),
-      href: 'https://www.openshift.com/blog/openshift-virtualization-4.7-highlights',
+      title: getTitle(t('kubevirt-plugin~What’s New in OpenShift Virtualization 4.10?'), '5 min'),
+      href: 'https://cloud.redhat.com/blog/whats-new-in-openshift-virtualization-4.10',
       external: true,
     },
   ];
