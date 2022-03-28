@@ -189,14 +189,6 @@ func ValidateManagedClusterConfig(managedCluster ManagedClusterConfig) error {
 		errors = append(errors, "Name is required.")
 	}
 
-	if managedCluster.APIServer.URL == "" {
-		errors = append(errors, "APIServer.URL is required.")
-	}
-
-	if managedCluster.APIServer.CAFile == "" {
-		errors = append(errors, "APIServer.CAFile is required.")
-	}
-
 	if managedCluster.OAuth.ClientID == "" {
 		errors = append(errors, "Oauth.ClientID is required.")
 	}
