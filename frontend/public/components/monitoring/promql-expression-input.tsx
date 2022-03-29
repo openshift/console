@@ -153,6 +153,7 @@ export const theme = EditorView.theme({
   },
 });
 
+// Codemirror plugin to select an autosuggest option using the mouse
 export const selectAutocompleteOnHoverPlugin = ViewPlugin.fromClass(
   class SelectAutocompleteOnHoverPlugin {
     optionsLength: number = 0;
@@ -166,23 +167,27 @@ export const selectAutocompleteOnHoverPlugin = ViewPlugin.fromClass(
       this.optionsLength = currentCompletions(update.state).length;
     }
 
-    onMouseMove(e: Event) {
-      const element = e.target;
-      let index = -1;
-      for (
-        let dom = element as HTMLElement | null, match;
-        dom && dom !== this.view.dom;
-        dom = dom.parentNode as HTMLElement
-      ) {
-        if (
-          dom.nodeName === 'LI' &&
-          (match = /-(\d+)$/.exec(dom.id)) &&
-          +match[1] < this.optionsLength
-        ) {
-          index = +match[1];
+    findHoveredOptionIndex(dom: HTMLElement) {
+      let listItem: HTMLElement | null = null;
+
+      while (dom && dom !== this.view.dom) {
+        if (dom.nodeName === 'LI') {
+          listItem = dom;
           break;
         }
+        dom = dom.parentElement;
       }
+
+      if (!listItem || !listItem.parentNode) {
+        return -1;
+      }
+
+      return Array.from(listItem.parentNode.children).indexOf(listItem);
+    }
+
+    onMouseMove(e: Event) {
+      const element = e.target;
+      const index = this.findHoveredOptionIndex(element as HTMLElement);
 
       if (index >= 0 && this.lastIndex !== index) {
         this.lastIndex = index;
@@ -262,10 +267,6 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
     }
   };
 
-  const onExecute = React.useCallback(() => {
-    onExecuteQuery?.();
-  }, [onExecuteQuery]);
-
   React.useEffect(() => {
     if (viewRef.current !== null) {
       const currentExpression = viewRef.current.state.doc.toString();
@@ -330,7 +331,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
               {
                 key: 'Enter',
                 run: (): boolean => {
-                  onExecute();
+                  onExecuteQuery?.();
                   return true;
                 },
               },
@@ -356,7 +357,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
 
       view.focus();
     }
-  }, [metricNames, onChange, onExecute, placeholder, safeFetch, value]);
+  }, [metricNames, onChange, onExecuteQuery, placeholder, value]);
 
   const handleBlur = () => {
     if (viewRef.current !== null) {
