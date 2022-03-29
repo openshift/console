@@ -35,6 +35,7 @@ const TopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassignedGroupP
     <DataList aria-label="unassigned items" id="unassigned-items">
       {kindKeys.map((key) => (
         <TopologyListViewKindGroup
+          groupLabel={t('topology~unassigned')}
           key={key}
           kind={key}
           childElements={kindsMap[key]}

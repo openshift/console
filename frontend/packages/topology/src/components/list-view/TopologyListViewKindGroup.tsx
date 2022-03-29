@@ -13,6 +13,7 @@ import { labelKeyForNodeKind } from './list-view-utils';
 import ListElementWrapper from './ListElementWrapper';
 
 interface TopologyListViewKindGroupProps {
+  groupLabel: string;
   kind: string;
   childElements: GraphElement[];
   selectedIds: string[];
@@ -20,6 +21,7 @@ interface TopologyListViewKindGroupProps {
 }
 
 const TopologyListViewKindGroup: React.FC<TopologyListViewKindGroupProps> = ({
+  groupLabel,
   kind,
   childElements,
   selectedIds,
@@ -32,21 +34,29 @@ const TopologyListViewKindGroup: React.FC<TopologyListViewKindGroupProps> = ({
   childNodes.sort((a, b) => a.getLabel().localeCompare(b.getLabel()));
 
   return (
-    <DataListItem key={kind} aria-labelledby={`${kind}_label`} isExpanded>
+    <DataListItem
+      key={kind}
+      aria-labelledby={`${groupLabel}-${resourceLabel}-label`.replace(' ', '-')}
+      isExpanded
+    >
       <DataListItemRow className="odc-topology-list-view__kind-row">
         <DataListItemCells
           dataListCells={[
             <DataListCell
               key={kind}
               className="odc-topology-list-view__kind-label"
-              id={`${kind}_label`}
+              id={`${groupLabel}-${resourceLabel}-label`.replace(' ', '-')}
             >
               {resourceLabel}
             </DataListCell>,
           ]}
         />
       </DataListItemRow>
-      <DataListContent aria-label={kind} id={kind} isHidden={false}>
+      <DataListContent
+        aria-label={t('topology~{{groupLabel}} {{resourceLabel}}', { groupLabel, resourceLabel })}
+        id={`${groupLabel}-${resourceLabel}`}
+        isHidden={false}
+      >
         <DataList
           aria-label={t('topology~{{resourceLabel}} sub-resources', { resourceLabel })}
           selectedDataListItemId={selectedIds[0]}
