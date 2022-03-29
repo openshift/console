@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { LoadingBox } from '@console/internal/components/utils';
 import { GroupVersionKind, kindForReference } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
@@ -11,10 +10,8 @@ type ModelStatusBoxProps = {
 
 const ModelStatusBox: React.FC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
   const { t } = useTranslation();
-  const [model, modelsLoading] = useK8sModel(groupVersionKind);
-  return modelsLoading ? (
-    <LoadingBox />
-  ) : model ? (
+  const [model] = useK8sModel(groupVersionKind);
+  return model ? (
     <>{children}</>
   ) : (
     <ErrorPage404
