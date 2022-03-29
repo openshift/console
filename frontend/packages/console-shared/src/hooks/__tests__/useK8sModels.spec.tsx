@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render } from '@testing-library/react';
+import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { receivedResources } from '@console/internal/actions/k8s';
@@ -20,7 +20,11 @@ const WatchModels: React.FC<{}> = () => {
   return null;
 };
 
+let container: HTMLDivElement;
+
 beforeEach(() => {
+  container = document.createElement('div');
+  document.body.appendChild(container);
   store = createStore(
     combineReducers({ k8s: k8sReducers, UI: UIReducers }),
     {},
@@ -29,12 +33,18 @@ beforeEach(() => {
   modelUpdate.mockClear();
 });
 
+afterEach(() => {
+  document.body.removeChild(container);
+  container = null;
+});
+
 describe('useK8sModels', () => {
   it('should return in flight mode before resources are received', () => {
     render(
       <Wrapper>
         <WatchModels />
       </Wrapper>,
+      container,
     );
 
     expect(modelUpdate).toHaveBeenCalledTimes(1);
@@ -50,7 +60,6 @@ describe('useK8sModels', () => {
         adminResources: [],
         allResources: [],
         configResources: [],
-        clusterOperatorConfigResources: [],
         namespacedSet: null,
         safeResources: [],
         groupVersionMap: {},
@@ -61,6 +70,7 @@ describe('useK8sModels', () => {
       <Wrapper>
         <WatchModels />
       </Wrapper>,
+      container,
     );
 
     expect(modelUpdate).toHaveBeenCalledTimes(1);
@@ -80,22 +90,23 @@ describe('useK8sModels', () => {
         adminResources: [],
         allResources: [],
         configResources: [],
-        clusterOperatorConfigResources: [],
         namespacedSet: null,
         safeResources: [],
         groupVersionMap: {},
       }),
     );
 
-    const { rerender } = render(
+    render(
       <Wrapper>
         <WatchModels />
       </Wrapper>,
+      container,
     );
-    rerender(
+    render(
       <Wrapper>
         <WatchModels />
       </Wrapper>,
+      container,
     );
 
     expect(modelUpdate).toHaveBeenCalledTimes(2);
@@ -117,7 +128,6 @@ describe('useK8sModels', () => {
         adminResources: [],
         allResources: [],
         configResources: [],
-        clusterOperatorConfigResources: [],
         namespacedSet: null,
         safeResources: [],
         groupVersionMap: {},
@@ -129,6 +139,7 @@ describe('useK8sModels', () => {
         <WatchModels />
         <WatchModels />
       </Wrapper>,
+      container,
     );
 
     expect(modelUpdate).toHaveBeenCalledTimes(2);

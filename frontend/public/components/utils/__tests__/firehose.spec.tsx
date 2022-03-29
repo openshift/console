@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import { act, cleanup, render } from '@testing-library/react';
+import { render, unmountComponentAtNode } from 'react-dom';
+import { act } from 'react-dom/test-utils';
 import { receivedResources } from '../../../actions/k8s';
 import k8sReducers from '../../../reducers/k8s';
 import UIReducers from '../../../reducers/ui';
@@ -145,7 +146,11 @@ describe('processReduxId', () => {
 });
 
 describe('Firehose', () => {
+  let container: HTMLDivElement;
+
   beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
     // Init k8s redux store with just one model
     store = createStore(
       combineReducers({ k8s: k8sReducers, UI: UIReducers }),
@@ -158,7 +163,6 @@ describe('Firehose', () => {
         adminResources: [],
         allResources: [],
         configResources: [],
-        clusterOperatorConfigResources: [],
         namespacedSet: null,
         safeResources: [],
         groupVersionMap: {},
@@ -183,7 +187,8 @@ describe('Firehose', () => {
     // Ensure that there is no timer left which triggers a rerendering
     await act(async () => jest.runAllTimers());
 
-    cleanup();
+    document.body.removeChild(container);
+    container = null;
 
     // Ensure that there is no unexpected api calls
     expect(k8sListMock).toHaveBeenCalledTimes(0);
@@ -198,21 +203,23 @@ describe('Firehose', () => {
   });
 
   it('should return an empty object when reduxID prop is missing (also when rerender or unmount)', async () => {
-    const { rerender, unmount } = render(
+    render(
       <Wrapper>
         <Firehose resources={[]}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
-    rerender(
+    render(
       <Wrapper>
         <Firehose resources={[]}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
-    unmount();
+    unmountComponentAtNode(container);
 
     expect(resourceUpdate).toHaveBeenCalledTimes(2);
     expect(resourceUpdate.mock.calls[0][0]).toEqual(firehoseChildPropsWithoutModels);
@@ -229,12 +236,13 @@ describe('Firehose', () => {
         namespace: 'my-namespace',
       },
     ];
-    const { rerender, unmount } = render(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
 
     expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -302,14 +310,15 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(podsLoadedProps);
 
     // Check rerender and unmount
-    rerender(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
-    unmount();
+    unmountComponentAtNode(container);
     expect(resourceUpdate).toHaveBeenCalledTimes(3);
     expect(resourceUpdate.mock.calls[2][0]).toEqual(podsLoadedProps);
 
@@ -325,12 +334,13 @@ describe('Firehose', () => {
         name: 'my-pod',
       },
     ];
-    const { rerender, unmount } = render(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
 
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -387,14 +397,15 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(podLoadedProps);
 
     // Check rerender and unmount
-    rerender(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
-    unmount();
+    unmountComponentAtNode(container);
     expect(resourceUpdate).toHaveBeenCalledTimes(3);
     expect(resourceUpdate.mock.calls[2][0]).toEqual(podLoadedProps);
 
@@ -411,12 +422,13 @@ describe('Firehose', () => {
         namespace: 'my-namespace',
       },
     ];
-    const { rerender, unmount } = render(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
 
     expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -477,14 +489,15 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(podsLoadedProps);
 
     // Check rerender and unmount
-    rerender(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
-    unmount();
+    unmountComponentAtNode(container);
     expect(resourceUpdate).toHaveBeenCalledTimes(3);
     expect(resourceUpdate.mock.calls[2][0]).toEqual(podsLoadedProps);
 
@@ -501,12 +514,13 @@ describe('Firehose', () => {
         name: 'my-pod',
       },
     ];
-    const { rerender, unmount } = render(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
 
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -556,14 +570,15 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(podLoadedProps);
 
     // Check rerender and unmount
-    rerender(
+    render(
       <Wrapper>
         <Firehose resources={resources}>
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
-    unmount();
+    unmountComponentAtNode(container);
     expect(resourceUpdate).toHaveBeenCalledTimes(3);
     expect(resourceUpdate.mock.calls[2][0]).toEqual(podLoadedProps);
 
@@ -592,6 +607,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
 
     // Assert that API calls are just triggered once
@@ -721,12 +737,12 @@ describe('Firehose', () => {
         prop: 'pods',
         kind: 'Pod',
         isList: true,
-        namespace: 'my-namespace',
+        namespace: 'same-data-namespace',
       },
       {
         prop: 'pod',
         kind: 'Pod',
-        namespace: 'my-namespace',
+        namespace: 'same-data-namespace',
         name: 'my-pod',
       },
     ];
@@ -739,19 +755,20 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      container,
     );
 
     // Assert that API calls are just triggered once
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([
       PodModel,
-      { limit: 250, ns: 'my-namespace' },
+      { limit: 250, ns: 'same-data-namespace' },
       true,
       {},
     ]);
     k8sListMock.mockClear();
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'my-namespace', null, {}]);
+    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'same-data-namespace', null, {}]);
     k8sGetMock.mockClear();
 
     // Expect initial render child-props
@@ -774,8 +791,8 @@ describe('Firehose', () => {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
       reduxIDs: [
-        'core~v1~Pod---{"ns":"my-namespace"}',
-        'core~v1~Pod---{"ns":"my-namespace","name":"my-pod"}',
+        'core~v1~Pod---{"ns":"same-data-namespace"}',
+        'core~v1~Pod---{"ns":"same-data-namespace","name":"my-pod"}',
       ],
       loaded: false,
       // Yes, same data twice at the moment.
@@ -826,8 +843,8 @@ describe('Firehose', () => {
       ...firehoseChildPropsWithoutModels,
       k8sModels: ImmutableMap({ Pod: PodModel }),
       reduxIDs: [
-        'core~v1~Pod---{"ns":"my-namespace"}',
-        'core~v1~Pod---{"ns":"my-namespace","name":"my-pod"}',
+        'core~v1~Pod---{"ns":"same-data-namespace"}',
+        'core~v1~Pod---{"ns":"same-data-namespace","name":"my-pod"}',
       ],
       loaded: true,
       // Yes, same data twice at the moment.
