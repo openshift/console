@@ -82,7 +82,9 @@ describe('Interacting with OperatorHub', () => {
 
   it('clears text filter when "Clear All Filters" link is clicked', () => {
     cy.byLegacyTestID('catalog-clear-filters').click();
-    cy.byTestID('search-operatorhub').should('be.empty');
+    cy.byTestID('search-operatorhub')
+      .get('input')
+      .should('be.empty');
     cy.get('.catalog-tile-pf')
       .its('length')
       .should('be.gt', 0);
