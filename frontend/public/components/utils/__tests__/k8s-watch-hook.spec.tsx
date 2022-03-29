@@ -6,8 +6,7 @@ import {
   Map as ImmutableMap,
   OrderedMap as ImmutableOrderedMap,
 } from 'immutable';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { getReduxData } from '../k8s-watch-hook';
+import { getReduxData, WatchK8sResource } from '../k8s-watch-hook';
 
 describe('getReduxData', () => {
   it('should return null for falsy values', () => {

@@ -10,6 +10,9 @@ import {
   OwnerReference,
   modelFor,
 } from './index';
+import { referenceForGroupVersionKind, referenceForModel } from './k8s-ref';
+
+export * from './k8s-ref';
 
 export const getQN: (obj: K8sResourceKind) => string = (obj) => {
   const { name, namespace } = obj.metadata;
@@ -23,11 +26,6 @@ export const getQN: (obj: K8sResourceKind) => string = (obj) => {
 };
 
 export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
-
-// TODO(alecmerdler): Replace all manual string building with this function
-export const referenceForGroupVersionKind = (group: string) => (version: string) => (
-  kind: string,
-) => [group, version, kind].join('~');
 
 export const getGroupVersionKind = (
   ref: GroupVersionKind | string,
@@ -110,9 +108,6 @@ export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind
     groupVersionFor(ownerRef.apiVersion).version,
   )(ownerRef.kind);
 
-export const referenceForModel = (model: K8sKind): GroupVersionKind =>
-  referenceForGroupVersionKind(model.apiGroup || 'core')(model.apiVersion)(model.kind);
-
 export const referenceFor = ({ kind, apiVersion }: K8sResourceCommon): GroupVersionKind => {
   if (!kind) {
     return '';
@@ -136,9 +131,6 @@ export const kindForReference = (ref: K8sResourceKindReference) =>
 export const apiGroupForReference = (ref: GroupVersionKind) => ref.split('~')[0];
 
 export const versionForReference = (ref: GroupVersionKind) => ref.split('~')[1];
-
-export const apiVersionForModel = (model: K8sKind) =>
-  _.isEmpty(model.apiGroup) ? model.apiVersion : `${model.apiGroup}/${model.apiVersion}`;
 
 export const apiVersionForReference = (ref: GroupVersionKind) =>
   isGroupVersionKind(ref) ? `${ref.split('~')[0]}/${ref.split('~')[1]}` : ref;
