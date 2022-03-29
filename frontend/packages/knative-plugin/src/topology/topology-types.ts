@@ -60,10 +60,6 @@ export type KnativeServiceOverviewItem = OverviewItem &
     isRollingOut?: boolean;
   };
 
-export type KnativeDeploymentOverviewItem = OverviewItem & {
-  associatedDeployment: K8sResourceKind;
-};
-
 export interface KnativeTopologyDataObject<O extends OverviewItem, D = {}>
   extends TopologyDataObject<D> {
   resources: O;

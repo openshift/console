@@ -40,6 +40,7 @@ export type KnativeItem = {
   eventSourceSinkbinding?: K8sResourceKind[];
   domainMappings?: K8sResourceKind[];
   pods?: PodKind[];
+  associatedDeployment?: K8sResourceKind;
 };
 
 const isKnativeDeployment = (dc: K8sResourceKind) => {

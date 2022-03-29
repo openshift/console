@@ -71,10 +71,10 @@ const PodSet: React.FC<PodSetProps> = React.memo(function PodSet({
   const { inProgressDeploymentData, completedDeploymentData } = getPodData(data);
 
   const [hpa] = useRelatedHPA(
-    data.obj.apiVersion,
-    data.obj.kind,
-    data.obj.metadata.name,
-    data.obj.metadata.namespace,
+    data.obj?.apiVersion,
+    data.obj?.kind,
+    data.obj?.metadata?.name,
+    data.obj?.metadata?.namespace,
   );
   const hpaControlledScaling = !!hpa;
 
