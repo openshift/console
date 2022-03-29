@@ -23,18 +23,18 @@ const PerspectiveNav: React.FC<{}> = () => {
   const [perspective] = useActivePerspective();
   const allItems = useExtensions<PluginNavSection | NavItem | Separator>(isNavSection, isNavItem);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
-  const [validPinnedResources, setValidPinnedResources] = React.useState<string[]>(pinnedResources);
+
+  const validPinnedResources = React.useMemo(
+    () => pinnedResources.filter((res) => !!modelFor(res)),
+    [pinnedResources],
+  );
+
   const orderedNavItems = React.useMemo(() => {
     const topLevelItems = allItems.filter(
       (s) => s.properties.perspective === perspective && !(s as NavItem).properties.section,
     );
     return getSortedNavItems(topLevelItems);
   }, [allItems, perspective]);
-
-  React.useEffect(() => {
-    const validResources = pinnedResources.filter((res) => !!modelFor(res));
-    setValidPinnedResources(validResources);
-  }, [setValidPinnedResources, pinnedResources]);
 
   // Until admin perspective is contributed through extensions, render static
   // `AdminNav` and any additional plugin nav items.
@@ -49,7 +49,7 @@ const PerspectiveNav: React.FC<{}> = () => {
         idx={idx}
         resourceRef={resource}
         onChange={setPinnedResources}
-        onDrag={setValidPinnedResources}
+        onDrag={setPinnedResources}
         navResources={validPinnedResources}
         draggable={validPinnedResources.length > 1}
       />
