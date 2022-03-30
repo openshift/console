@@ -11,8 +11,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    &:hover,
-    &:focus {
+    &:hover {
       --pf-c-nav__section-title--PaddingRight: 30px;
       .oc-pinned-resource__unpin-button,
       .oc-pinned-resource__drag-button {
@@ -41,13 +40,6 @@
     .oc-pinned-resource__delete-icon {
       opacity: 0;
     }
-
-    &:hover,
-    &:focus {
-      .oc-pinned-resource__delete-icon {
-        opacity: 1;
-      }
-    }
   }
 
   .oc-pinned-resource__drag-button {
@@ -68,19 +60,13 @@
     .oc-pinned-resource__drag-icon {
       opacity: 0;
     }
-
-    &:hover,
-    &:focus {
-      .oc-pinned-resource__drag-icon {
-        opacity: 1;
-      }
-    }
   }
 }
 
-.oc-pinned-resource__dragging {
-  outline: 1px dashed var(--pf-global--palette--black-400);
+.oc-pinned-resource--dragging {
+  outline: 1px dashed var(--pf-global--Color--400);
   overflow: hidden;
+  background-color: var(--pf-global--Color--200) !important;
   div {
     opacity: 0.5;
   }

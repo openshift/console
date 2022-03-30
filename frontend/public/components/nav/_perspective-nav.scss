@@ -17,4 +17,14 @@
       border: none;
     }
   }
+  &--dragging {
+    background-color: var(--pf-global--Color--200) !important;
+    .pf-c-nav__link {
+      background-color: var(--pf-global--Color--200) !important;
+    }
+    .oc-pinned-resource__unpin-button,
+    .oc-pinned-resource__drag-button {
+      opacity: 0;
+    }
+  }
 }

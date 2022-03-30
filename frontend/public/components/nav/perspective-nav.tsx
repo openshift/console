@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { NavGroup } from '@patternfly/react-core';
 import { useExtensions } from '@console/plugin-sdk';
 import {
@@ -23,11 +24,13 @@ const PerspectiveNav: React.FC<{}> = () => {
   const [perspective] = useActivePerspective();
   const allItems = useExtensions<PluginNavSection | NavItem | Separator>(isNavSection, isNavItem);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
+  const [validPinnedResources, setValidPinnedResources] = React.useState<string[]>([]);
+  const [isDragged, setIsDragged] = React.useState(false);
 
-  const validPinnedResources = React.useMemo(
-    () => pinnedResources.filter((res) => !!modelFor(res)),
-    [pinnedResources],
-  );
+  React.useEffect(() => {
+    const validResources = pinnedResources.filter((res) => !!modelFor(res));
+    setValidPinnedResources(validResources);
+  }, [setValidPinnedResources, pinnedResources]);
 
   const orderedNavItems = React.useMemo(() => {
     const topLevelItems = allItems.filter(
@@ -49,14 +52,18 @@ const PerspectiveNav: React.FC<{}> = () => {
         idx={idx}
         resourceRef={resource}
         onChange={setPinnedResources}
-        onDrag={setPinnedResources}
+        onReorder={setValidPinnedResources}
+        onDrag={setIsDragged}
         navResources={validPinnedResources}
         draggable={validPinnedResources.length > 1}
       />
     ));
 
   const NavGroupWithDnd = withDragDropContext(() => (
-    <NavGroup title="" className="no-title">
+    <NavGroup
+      title=""
+      className={classNames('no-title', { 'oc-perspective-nav--dragging': isDragged })}
+    >
       {getPinnedItems()}
     </NavGroup>
   ));

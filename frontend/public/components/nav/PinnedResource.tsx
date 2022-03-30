@@ -17,7 +17,8 @@ type PinnedResourceProps = {
   onChange?: (pinnedResources: string[]) => void;
   idx?: number;
   draggable?: boolean;
-  onDrag?: (pinnedResources: string[]) => void;
+  onReorder?: (pinnedResources: string[]) => void;
+  onDrag?: (dragging: boolean) => void;
 };
 
 type DraggableButtonProps = {
@@ -83,12 +84,18 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
   navResources,
   idx,
   draggable,
+  onReorder,
   onDrag,
 }) => {
   const { t } = useTranslation();
-  const model = modelFor(resourceRef);
   const [, drag, preview] = useDrag({
     item: { type: 'NavItem', id: `NavItem-${idx}`, idx },
+    end: (item, monitor) => {
+      const didDrop = monitor.didDrop();
+      if (!didDrop) {
+        onDrag(false);
+      }
+    },
   });
 
   const [{ isOver }, drop] = useDrop({
@@ -100,15 +107,21 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
       if (item.idx === idx) {
         return;
       }
-      onDrag(reorder(navResources, item.idx, idx));
+      onReorder(reorder(navResources, item.idx, idx));
       // monitor item updated here to avoid expensive index searches.
       item.idx = idx;
+      onDrag(true);
     }, 10),
     drop() {
-      onChange(navResources);
+      onChange(navResources); // update user-settings when the resource is dropped
+      onDrag(false);
     },
   });
 
+  const model = modelFor(resourceRef);
+  if (!model) {
+    return null;
+  }
   const { apiVersion, apiGroup, namespaced, crd, plural } = model;
 
   const getLabelForResourceRef = (resourceName: string): string => {
@@ -137,7 +150,7 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
       dragRef={previewRef}
       data-test={draggable ? 'draggable-pinned-resource-item' : 'pinned-resource-item'}
       className={classNames('oc-pinned-resource', {
-        'oc-pinned-resource__dragging': draggable && isOver,
+        'oc-pinned-resource--dragging': draggable && isOver,
       })}
       component={Component}
       insertBeforeName={draggable ? <DraggableButton dragRef={drag} /> : null}
