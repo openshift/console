@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
 import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../constants';
+import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL } from '../constants';
 import { VirtualMachineModel } from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { VMKind } from '../types';
@@ -30,7 +30,12 @@ export const useRunningVMsPerTemplateResources = (): {
       kind: kubevirtReferenceForModel(TemplateModel),
       isList: true,
       selector: {
-        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+        matchExpressions: [
+          {
+            key: TEMPLATE_TYPE_LABEL,
+            operator: 'Exists',
+          },
+        ],
       },
     },
     vmCommonTemplates: {
