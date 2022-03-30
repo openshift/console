@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Tabs, Tab, TabTitleText, TabTitleIcon, Button } from '@patternfly/react-core';
+import { Button, Tab, TabTitleText, TabTitleIcon } from '@patternfly/react-core';
 import { CloseIcon, PlusIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { Tabs } from '../tabs';
 import CloudShellTerminal from './CloudShellTerminal';
 import './MultiTabbedTerminal.scss';
 
@@ -40,8 +41,8 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
     <Tabs activeKey={activeTabKey} isBox>
       {terminalTabs.map((terminalNumber, tabIndex) => (
         <Tab
-          className="co-multi-tabbed-terminal__tab"
           translate="no"
+          className="co-multi-tabbed-terminal__tab"
           eventKey={terminalNumber}
           key={terminalNumber}
           title={

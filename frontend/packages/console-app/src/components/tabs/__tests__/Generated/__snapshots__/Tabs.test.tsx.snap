@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tabs should match snapshot (auto-generated) 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "handleTabClick": [Function],
+      "localActiveKey": 0,
+      "mountOnEnter": false,
+      "uniqueId": "string",
+      "unmountOnExit": false,
+      "variant": "div",
+    }
+  }
+>
+  <div
+    aria-label="string"
+    className="pf-c-tabs ''"
+    data-ouia-component-id="OUIA-Generated-Tabs-1"
+    data-ouia-component-type="PF4/Tabs"
+    data-ouia-safe={true}
+    id="string"
+    onSelect={[Function]}
+  >
+    <button
+      aria-hidden={true}
+      aria-label="'Scroll left'"
+      className="pf-c-tabs__scroll-button"
+      disabled={true}
+      onClick={[Function]}
+    >
+      <AngleLeftIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+      />
+    </button>
+    <ul
+      className="pf-c-tabs__list"
+      onScroll={[Function]}
+    >
+      <div
+        key=".0"
+      >
+        ReactNode
+      </div>
+    </ul>
+    <button
+      aria-hidden={true}
+      aria-label="'Scroll right'"
+      className="pf-c-tabs__scroll-button"
+      disabled={true}
+      onClick={[Function]}
+    >
+      <AngleRightIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+      />
+    </button>
+  </div>
+  <ForwardRef
+    activeKey={0}
+    child={
+      <div>
+        ReactNode
+      </div>
+    }
+    id="string"
+    key="0"
+  />
+</ContextProvider>
+`;
