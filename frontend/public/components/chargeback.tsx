@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { match as RMatch } from 'react-router-dom';
 
+import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared';
 import { Conditions } from './conditions';
@@ -534,9 +535,9 @@ const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsPr
         <ResourceSummary resource={obj}>
           <dt>Query</dt>
           <dd>
-            <pre>
-              <code>{_.get(obj, ['spec', 'query'])}</code>
-            </pre>
+            <CodeBlock>
+              <CodeBlockCode>{_.get(obj, ['spec', 'query'])}</CodeBlockCode>
+            </CodeBlock>
           </dd>
           <div className="row">
             <div className="col-xs-12">

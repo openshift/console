@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
-import { Alert } from '@patternfly/react-core';
+import { Alert, CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 
 import { CONST } from '@console/shared';
@@ -298,7 +298,9 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               {this.state.fileData && (
                 <div className="row co-m-form-row">
                   <div className="col-xs-9 col-sm-offset-3">
-                    <pre className="co-pre-wrap">{this.state.fileData}</pre>
+                    <CodeBlock>
+                      <CodeBlockCode>{this.state.fileData}</CodeBlockCode>
+                    </CodeBlock>
                   </div>
                 </div>
               )}

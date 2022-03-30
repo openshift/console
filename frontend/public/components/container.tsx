@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
-
+import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import { Status } from '@console/shared';
 import {
   ContainerLifecycle,
@@ -62,14 +62,14 @@ const Lifecycle: React.FC<LifecycleProps> = ({ lifecycle }) => {
       {postStart && (
         <div>
           <Trans t={t} ns="public">
-            PostStart: {{ postStartLabel }} <code>{{ postStart }}</code>
+            PostStart: {{ postStartLabel }} <code className="co-code">{{ postStart }}</code>
           </Trans>
         </div>
       )}
       {preStop && (
         <div>
           <Trans t={t} ns="public">
-            PreStop: {{ preStopLabel }} <code>{{ preStop }}</code>
+            PreStop: {{ preStopLabel }} <code className="co-code">{{ preStop }}</code>
           </Trans>
         </div>
       )}
@@ -86,7 +86,11 @@ const Probe: React.FC<ProbeProps> = ({ probe, podIP }) => {
     return <>-</>;
   }
   const isMultiline = value.indexOf('\n') !== -1;
-  const formattedValue = isMultiline ? <pre>{value}</pre> : <code>{value}</code>;
+  const formattedValue = isMultiline ? (
+    <pre className="co-pre">{value}</pre>
+  ) : (
+    <code className="co-code">{value}</code>
+  );
   return (
     <>
       {label} {formattedValue}
@@ -327,9 +331,9 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
             <dt>{t('public~Command')}</dt>
             <dd>
               {container.command ? (
-                <pre>
-                  <code>{container.command.join(' ')}</code>
-                </pre>
+                <CodeBlock className="co-code-block--no-header">
+                  <CodeBlockCode>{container.command.join(' ')}</CodeBlockCode>
+                </CodeBlock>
               ) : (
                 <span>-</span>
               )}
@@ -337,9 +341,9 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
             <dt>{t('public~Args')}</dt>
             <dd>
               {container.args ? (
-                <pre>
-                  <code>{container.args.join(' ')}</code>
-                </pre>
+                <CodeBlock>
+                  <CodeBlockCode>{container.args.join(' ')}</CodeBlockCode>
+                </CodeBlock>
               ) : (
                 <span>-</span>
               )}

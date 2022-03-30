@@ -1,17 +1,5 @@
 // Residual css rules within codebase that pertain to Bootstrap
 
-code {
-  padding: 2px 4px;
-  font-size: 90%;
-  color: #004368;
-  background-color: #def3ff;
-  border-radius: 1px;
-}
-
-code, kbd, pre, samp {
-  font-family: Menlo,Monaco,Consolas,monospace;
-}
-
 .form-control-feedback {
   position: absolute;
   top: 0;
@@ -93,13 +81,6 @@ label {
   margin-bottom: -1px;
   background-color: var(--pf-global--BackgroundColor--100);
   border: 1px solid $list-group-border;
-}
-
-pre code {
-  background: transparent;
-  color: inherit;
-  font-size: inherit;
-  white-space: pre-wrap;
 }
 
 .radio,

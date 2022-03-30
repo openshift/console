@@ -99,7 +99,7 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
   const message = (
     <Trans t={t} ns="console-app">
       <p>
-        To use host binaries, run <code>chroot /host</code>
+        To use host binaries, run <code className="co-code">chroot /host</code>
       </p>
     </Trans>
   );

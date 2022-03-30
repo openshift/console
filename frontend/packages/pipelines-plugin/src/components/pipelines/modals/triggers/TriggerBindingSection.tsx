@@ -63,7 +63,7 @@ const TriggerBindingSection: React.FC = () => {
               className="odc-trigger-binding-section__variable-help-text"
             >
               {t('pipelines-plugin~Use this format when you reference variables in this form: ')}
-              <code>{`$(${paramPrefix}parameter)`}</code>
+              <code className="co-code">{`$(${paramPrefix}parameter)`}</code>
             </FormHelperText>
           </ExpandableSection>
         )}

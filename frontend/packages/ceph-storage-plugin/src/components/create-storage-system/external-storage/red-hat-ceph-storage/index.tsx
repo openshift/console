@@ -77,8 +77,9 @@ export const ConnectionDetails: React.FC<ExternalComponentProps<RHCSState>> = ({
           helperText={
             <div className="odf-connection-details__helper-text">
               <Trans t={t} ns="ceph-storage-plugin">
-                Download <code>{{ SCRIPT_NAME }}</code> script and run on the RHCS cluster, then
-                upload the results (JSON) in the External storage system metadata field.
+                Download <code className="co-code">{{ SCRIPT_NAME }}</code> script and run on the
+                RHCS cluster, then upload the results (JSON) in the External storage system metadata
+                field.
               </Trans>{' '}
               {downloadFile && (
                 <a

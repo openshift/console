@@ -1,7 +1,15 @@
 import * as classNames from 'classnames';
 import i18next from 'i18next';
 import * as _ from 'lodash-es';
-import { Alert as PFAlert, Button, Popover, Split, SplitItem } from '@patternfly/react-core';
+import {
+  Alert as PFAlert,
+  Button,
+  CodeBlock,
+  CodeBlockCode,
+  Popover,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -845,7 +853,7 @@ const PrometheusTemplate = ({ text }) => (
   <>
     {text?.split(/(\{\{[^{}]*\}\})/)?.map((part: string, i: number) =>
       part.match(/^\{\{[^{}]*\}\}$/) ? (
-        <code className="prometheus-template-tag" key={i}>
+        <code className="co-code prometheus-template-tag" key={i}>
           {part}
         </code>
       ) : (
@@ -1006,7 +1014,9 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                   <dt>{t('public~Expression')}</dt>
                   <dd>
                     <Link to={queryBrowserURL(rule?.query, namespace)}>
-                      <pre className="co-pre-wrap monitoring-query">{rule?.query}</pre>
+                      <CodeBlock>
+                        <CodeBlockCode>{rule?.query}</CodeBlockCode>
+                      </CodeBlock>
                     </Link>
                   </dd>
                 </dl>

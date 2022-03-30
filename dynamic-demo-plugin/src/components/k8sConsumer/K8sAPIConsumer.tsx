@@ -6,6 +6,8 @@ import {
   Button,
   Card,
   CardBody,
+  CodeBlock,
+  CodeBlockCode,
   Page,
   PageSection,
   Title,
@@ -195,7 +197,13 @@ const K8sAPIConsumer: React.FC = () => {
 };
 
 const ConsoleK8sAPIConsumer: React.FC<{ data: any }> = ({ data }) => {
-  return <pre>{JSON.stringify(data, null, 2)}</pre>;
+  return (
+    <CodeBlock>
+      <CodeBlockCode>
+        {JSON.stringify(data, null, 2)}
+      </CodeBlockCode>
+    </CodeBlock>
+  );
 };
 
 export default K8sAPIConsumer;

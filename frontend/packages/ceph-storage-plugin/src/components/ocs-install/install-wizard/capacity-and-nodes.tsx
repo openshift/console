@@ -97,8 +97,9 @@ export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({
           <FieldLevelHelp>
             <Trans t={t} ns="ceph-storage-plugin">
               This will taint the nodes with the
-              <code>key: node.ocs.openshift.io/storage</code>, <code>value: true</code>, and{' '}
-              <code>effect: NoSchedule</code>
+              <code className="co-code">key: node.ocs.openshift.io/storage</code>,{' '}
+              <code className="co-code">value: true</code>, and{' '}
+              <code className="co-code">effect: NoSchedule</code>
             </Trans>
           </FieldLevelHelp>
         </>

@@ -165,8 +165,8 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
           </Title>
           <p className="im--light im-install-page--margin-top">
             <Trans t={t} ns="ceph-storage-plugin">
-              Download <code>{{ SCRIPT_NAME }}</code> script and run on the RHCS cluster, then
-              upload the results (JSON) in the External cluster metadata field.
+              Download <code className="co-code">{{ SCRIPT_NAME }}</code> script and run on the RHCS
+              cluster, then upload the results (JSON) in the External cluster metadata field.
             </Trans>{' '}
             {downloadFile && (
               <a

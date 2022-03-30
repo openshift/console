@@ -18,19 +18,19 @@ export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
         {!_.isEmpty(postCommitCommand) && <dt>{t('public~Command')}</dt>}
         {!_.isEmpty(postCommitCommand) && (
           <dd>
-            <code>{postCommitCommand.join(' ')}</code>
+            <code className="co-code">{postCommitCommand.join(' ')}</code>
           </dd>
         )}
         {postCommitScript && <dt>{t('public~Script')}</dt>}
         {postCommitScript && (
           <dd>
-            <code>{postCommitScript}</code>
+            <code className="co-code">{postCommitScript}</code>
           </dd>
         )}
         {!_.isEmpty(postCommitArgs) && <dt>{t('public~Args')}</dt>}
         {!_.isEmpty(postCommitArgs) && (
           <dd>
-            <code>{postCommitArgs.join(' ')}</code>
+            <code className="co-code">{postCommitArgs.join(' ')}</code>
           </dd>
         )}
       </dl>

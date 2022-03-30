@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
-
+import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
 import { DetailsItem } from './details-item';
 import { ResourceLink } from './resource-link';
@@ -45,7 +45,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
         <DetailsItem label={t('public~Git commit')} obj={resource} path="spec.revision.git.message">
           {commitMessage}
           <br />
-          {commitHash && <code>{commitHash.substring(0, 7)}</code>}{' '}
+          {commitHash && <code className="co-code">{commitHash.substring(0, 7)}</code>}{' '}
           {commitAuthorName && `by ${commitAuthorName}`}
         </DetailsItem>
       )}
@@ -63,12 +63,16 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
       />
       {dockerfile && (
         <DetailsItem label={t('public~Dockerfile')} obj={resource} path="spec.source.dockerfile">
-          <pre>{dockerfile}</pre>
+          <CodeBlock>
+            <CodeBlockCode>{dockerfile}</CodeBlockCode>
+          </CodeBlock>
         </DetailsItem>
       )}
       {devfile && (
         <DetailsItem label={t('public~Devfile')} obj={resource} path="spec.source.devfile">
-          <pre>{devfile}</pre>
+          <CodeBlock>
+            <CodeBlockCode>{devfile}</CodeBlockCode>
+          </CodeBlock>
         </DetailsItem>
       )}
       {jenkinsfile && (
@@ -77,7 +81,9 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
           obj={resource}
           path="spec.strategy.jenkinsPipelineStrategy.jenkinsfile"
         >
-          <pre>{jenkinsfile}</pre>
+          <CodeBlock>
+            <CodeBlockCode>{jenkinsfile}</CodeBlockCode>
+          </CodeBlock>
         </DetailsItem>
       )}
       <DetailsItem

@@ -98,7 +98,8 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
             <h2>{t('pipelines-plugin~Parameters')}</h2>
             <p className="co-help-text">
               <Trans ns="pipelines-plugin">
-                Use this format when you reference variables in this form: <code>$(</code>
+                Use this format when you reference variables in this form:{' '}
+                <code className="co-code">$(</code>
               </Trans>
             </p>
             {params.map((param) => {
