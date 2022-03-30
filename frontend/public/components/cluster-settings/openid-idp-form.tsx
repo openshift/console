@@ -6,7 +6,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PromiseComponent, history } from '../utils';
+import { ButtonBar, ListInput, PromiseComponent, history, PageHeading } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -188,111 +188,113 @@ class AddOpenIDIDPPageWithTranslation extends PromiseComponent<
     const { t } = this.props;
     const title = t('public~Add Identity Provider: OpenID Connect');
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            {t(
-              'public~Integrate with an OpenID Connect identity provider using an Authorization Code Flow.',
-            )}
-          </p>
-          <IDPNameInput value={name} onChange={this.nameChanged} />
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
-              {t('public~Client ID')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={this.clientIDChanged}
-              value={clientID}
-              id="client-id"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
-              {t('public~Client secret')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="password"
-              onChange={this.clientSecretChanged}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="issuer">
-              {t('public~Issuer URL')}
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="url"
-              onChange={this.issuerChanged}
-              value={issuer}
-              id="issuer"
-              required
-              aria-describedby="issuer-help"
-            />
-            <div className="help-block" id="issuer-help">
-              {t(
-                'public~The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.',
-              )}
+        <PageHeading
+          title={title}
+          helpText={t(
+            'public~Integrate with an OpenID Connect identity provider using an Authorization Code Flow.',
+          )}
+        />
+        <div className="co-m-pane__body">
+          <form onSubmit={this.submit} name="form" className="co-m-pane__body-group">
+            <IDPNameInput value={name} onChange={this.nameChanged} />
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="client-id">
+                {t('public~Client ID')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={this.clientIDChanged}
+                value={clientID}
+                id="client-id"
+                required
+              />
             </div>
-          </div>
-          <div className="co-form-section__separator" />
-          <h3>{t('public~Claims')}</h3>
-          <p className="co-help-text">
-            {t(
-              'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
-            )}
-          </p>
-          <ListInput
-            label={t('public~Preferred username')}
-            initialValues={claimPreferredUsernames}
-            onChange={this.claimPreferredUsernamesChanged}
-            helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
-          />
-          <ListInput
-            label={t('public~Name')}
-            initialValues={claimNames}
-            onChange={this.claimNamesChanged}
-            helpText={t(
-              'public~The list of claims whose values should be used as the display name.',
-            )}
-          />
-          <ListInput
-            label={t('public~Email')}
-            initialValues={claimEmails}
-            onChange={this.claimEmailsChanged}
-            helpText={t(
-              'public~The list of claims whose values should be used as the email address.',
-            )}
-          />
-          <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
-          <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-          <ListInput
-            label={t('public~Extra scopes')}
-            onChange={this.extraScopesChanged}
-            helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
-          />
-          <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary" data-test-id="add-idp">
-                {t('public~Add')}
-              </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="client-secret">
+                {t('public~Client secret')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="password"
+                onChange={this.clientSecretChanged}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="issuer">
+                {t('public~Issuer URL')}
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="url"
+                onChange={this.issuerChanged}
+                value={issuer}
+                id="issuer"
+                required
+                aria-describedby="issuer-help"
+              />
+              <div className="help-block" id="issuer-help">
+                {t(
+                  'public~The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.',
+                )}
+              </div>
+            </div>
+            <div className="co-form-section__separator" />
+            <h3>{t('public~Claims')}</h3>
+            <p className="co-help-text">
+              {t(
+                'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
+              )}
+            </p>
+            <ListInput
+              label={t('public~Preferred username')}
+              initialValues={claimPreferredUsernames}
+              onChange={this.claimPreferredUsernamesChanged}
+              helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
+            />
+            <ListInput
+              label={t('public~Name')}
+              initialValues={claimNames}
+              onChange={this.claimNamesChanged}
+              helpText={t(
+                'public~The list of claims whose values should be used as the display name.',
+              )}
+            />
+            <ListInput
+              label={t('public~Email')}
+              initialValues={claimEmails}
+              onChange={this.claimEmailsChanged}
+              helpText={t(
+                'public~The list of claims whose values should be used as the email address.',
+              )}
+            />
+            <div className="co-form-section__separator" />
+            <h3>{t('public~More options')}</h3>
+            <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
+            <ListInput
+              label={t('public~Extra scopes')}
+              onChange={this.extraScopesChanged}
+              helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
+            />
+            <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary" data-test-id="add-idp">
+                  {t('public~Add')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={history.goBack}>
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

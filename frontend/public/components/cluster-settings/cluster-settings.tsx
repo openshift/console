@@ -87,6 +87,7 @@ import {
   HorizontalNav,
   isUpstream,
   openshiftHelpBase,
+  PageHeading,
   ReleaseNotesLink,
   ResourceLink,
   resourcePathFromModel,
@@ -1195,11 +1196,7 @@ export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match 
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <div className="co-m-nav-title">
-        <h1 className="co-m-pane__heading" data-test-id="cluster-settings-page-heading">
-          {title}
-        </h1>
-      </div>
+      <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
       <Firehose resources={resources}>
         <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} />
       </Firehose>

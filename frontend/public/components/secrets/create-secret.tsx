@@ -10,12 +10,13 @@ import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor, SecretKind } from '../../module/k8s';
 import {
   ButtonBar,
+  Dropdown,
   Firehose,
   history,
-  StatusBox,
   LoadingBox,
-  Dropdown,
+  PageHeading,
   resourceObjPath,
+  StatusBox,
 } from '../utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../factory/modal';
 import { AsyncComponent } from '../utils/async';
@@ -281,34 +282,32 @@ export const SecretFormWrapper = withTranslation()(
           />
         </form>
       ) : (
-        <div className="co-m-pane__body">
+        <div className="co-m-pane__form">
           <Helmet>
             <title>{title}</title>
           </Helmet>
-          <form
-            className="co-m-pane__body-group co-create-secret-form co-m-pane__form"
-            onSubmit={this.save}
-          >
-            <h1 className="co-m-pane__heading">{title}</h1>
-            <p className="co-m-pane__explanation">{this.props.explanation}</p>
-            {this.renderBody()}
-            <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button
-                  type="submit"
-                  data-test="save-changes"
-                  isDisabled={this.state.disableForm}
-                  variant="primary"
-                  id="save-changes"
-                >
-                  {this.props.saveButtonText || t('public~Create')}
-                </Button>
-                <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
-                  {t('public~Cancel')}
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
+          <PageHeading title={title} helpText={this.props.explanation} />
+          <div className="co-m-pane__body">
+            <form className="co-m-pane__body-group co-create-secret-form" onSubmit={this.save}>
+              {this.renderBody()}
+              <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
+                <ActionGroup className="pf-c-form">
+                  <Button
+                    type="submit"
+                    data-test="save-changes"
+                    isDisabled={this.state.disableForm}
+                    variant="primary"
+                    id="save-changes"
+                  >
+                    {this.props.saveButtonText || t('public~Create')}
+                  </Button>
+                  <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
+                    {t('public~Cancel')}
+                  </Button>
+                </ActionGroup>
+              </ButtonBar>
+            </form>
+          </div>
         </div>
       );
     }

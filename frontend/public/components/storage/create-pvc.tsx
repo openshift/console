@@ -8,7 +8,14 @@ import { isObjectSC } from '@console/shared/src/utils';
 import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
-import { AsyncComponent, ButtonBar, RequestSizeInput, history, resourceObjPath } from '../utils';
+import {
+  AsyncComponent,
+  ButtonBar,
+  RequestSizeInput,
+  history,
+  resourceObjPath,
+  PageHeading,
+} from '../utils';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';
@@ -254,13 +261,13 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
   };
 
   return (
-    <div className="co-m-pane__body co-m-pane__form">
+    <div className="co-m-pane__form">
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-        <div className="co-m-pane__name">{title}</div>
-        <div className="co-m-pane__heading-link">
+      <PageHeading
+        title={title}
+        link={
           <Link
             to={`/k8s/ns/${namespace}/persistentvolumeclaims/~new`}
             id="yaml-link"
@@ -269,21 +276,23 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
           >
             {t('public~Edit YAML')}
           </Link>
-        </div>
-      </h1>
-      <form className="co-m-pane__body-group" onSubmit={save}>
-        <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
-        <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <ActionGroup className="pf-c-form">
-            <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
-              {t('public~Create')}
-            </Button>
-            <Button onClick={history.goBack} type="button" variant="secondary">
-              {t('public~Cancel')}
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
+        }
+      />
+      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+        <form className="co-m-pane__body-group" onSubmit={save}>
+          <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
+          <ButtonBar errorMessage={error} inProgress={inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
+                {t('public~Create')}
+              </Button>
+              <Button onClick={history.goBack} type="button" variant="secondary">
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
     </div>
   );
 };

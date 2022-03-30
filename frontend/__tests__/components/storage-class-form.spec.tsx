@@ -13,6 +13,7 @@ import {
   StorageClassFormProps,
   StorageClassFormState,
 } from '../../public/components/storage-class-form';
+import { PageHeading } from '../../public/components/utils';
 
 describe(ConnectedStorageClassForm.displayName, () => {
   const Component: React.ComponentType<Omit<StorageClassFormProps, 't' | 'i18n' | 'tReady'> &
@@ -53,7 +54,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
   });
 
   it('renders the proper header', () => {
-    expect(wrapper.find('.co-m-pane__name').text()).toEqual('StorageClass');
+    expect(wrapper.find(PageHeading).prop('title')).toEqual('StorageClass');
   });
 
   it('renders a form', () => {

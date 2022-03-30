@@ -22,9 +22,10 @@ import {
   ExternalLink,
   Firehose,
   history,
-  LoadingBox,
   LoadError,
+  LoadingBox,
   NsDropdown,
+  PageHeading,
 } from './utils';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
@@ -359,8 +360,8 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <div className="co-m-pane__body">
-        <h1 className="co-m-pane__heading">{title}</h1>
+      <PageHeading title={title} />
+      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
         <Firehose resources={resources}>
           <TemplateForm preselectedNamespace={preselectedNamespace} {...(props as any)} />
         </Firehose>

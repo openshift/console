@@ -30,7 +30,7 @@ describe('Filtering and Searching', () => {
       yamlEditor.setEditorContent(safeDump(newContent)).then(() => {
         yamlEditor.clickSaveCreateButton();
         cy.get(errorMessage).should('not.exist');
-        detailsPage.titleShouldContain(WORKLOAD_NAME);
+        detailsPage.sectionHeaderShouldExist('Deployment details');
       });
     });
   });

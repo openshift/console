@@ -20,19 +20,20 @@ import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import {
   ButtonBar,
-  Kebab,
   Firehose,
+  getQueryArgument,
+  history,
+  Kebab,
+  kindObj,
   ListDropdown,
   MsgBox,
   NsDropdown,
+  PageHeading,
   ResourceKebab,
   ResourceLink,
   ResourceName,
-  StatusBox,
-  getQueryArgument,
-  history,
-  kindObj,
   resourceObjPath,
+  StatusBox,
   useAccessReview,
 } from '../utils';
 import { connectToFlags } from '../../reducers/connectToFlags';
@@ -575,134 +576,133 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
     ];
 
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form className="co-m-pane__body-group co-m-pane__form" onSubmit={this.save}>
-          <h1 className="co-m-pane__heading" data-test="title">
-            {title}
-          </h1>
-          <p className="co-m-pane__explanation">
-            {t(
-              'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
-            )}
-          </p>
-
-          {!_.get(fixed, 'kind') && (
-            <Section label={t('public~Binding type')}>
-              <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />
-            </Section>
+        <PageHeading
+          title={<div data-test="title">{title}</div>}
+          helpText={t(
+            'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
           )}
+        />
+        <div className="co-m-pane__body">
+          <form className="co-m-pane__body-group" onSubmit={this.save}>
+            {!_.get(fixed, 'kind') && (
+              <Section label={t('public~Binding type')}>
+                <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />
+              </Section>
+            )}
 
-          <div className="co-form-section__separator" />
+            <div className="co-form-section__separator" />
 
-          <Section label={t('public~RoleBinding')}>
-            <div className="form-group">
-              <label htmlFor="role-binding-name" className="co-required">
-                {t('public~Name')}
-              </label>
-              {_.get(fixed, 'metadata.name') ? (
-                <ResourceName kind={kind} name={metadata.name} />
-              ) : (
+            <Section label={t('public~RoleBinding')}>
+              <div className="form-group">
+                <label htmlFor="role-binding-name" className="co-required">
+                  {t('public~Name')}
+                </label>
+                {_.get(fixed, 'metadata.name') ? (
+                  <ResourceName kind={kind} name={metadata.name} />
+                ) : (
+                  <input
+                    className="pf-c-form-control"
+                    type="text"
+                    onChange={this.changeName}
+                    placeholder={t('public~RoleBinding name')}
+                    value={metadata.name}
+                    required
+                    id="role-binding-name"
+                    data-test="role-binding-name"
+                  />
+                )}
+              </div>
+              {kind === 'RoleBinding' && (
+                <div className="form-group" data-test="namespace-dropdown">
+                  <label htmlFor="ns-dropdown" className="co-required">
+                    {t('public~Namespace')}
+                  </label>
+                  <NsDropdown
+                    fixed={!!_.get(fixed, 'metadata.namespace')}
+                    selectedKey={metadata.namespace}
+                    onChange={this.changeNamespace}
+                    id="ns-dropdown"
+                  />
+                </div>
+              )}
+            </Section>
+
+            <div className="co-form-section__separator" />
+
+            <Section label={t('public~Role')}>
+              <div className="form-group" data-test="role-dropdown">
+                <label htmlFor="role-dropdown" className="co-required">
+                  {t('public~Role name')}
+                </label>
+                <RoleDropdown
+                  fixed={!!_.get(fixed, 'roleRef.name')}
+                  namespace={metadata.namespace}
+                  onChange={this.changeRoleRef}
+                  selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
+                  selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
+                  id="role-dropdown"
+                />
+              </div>
+            </Section>
+
+            <div className="co-form-section__separator" />
+
+            <Section label={t('public~Subject')}>
+              <div className="form-group">
+                <RadioGroup
+                  currentValue={subject.kind}
+                  items={subjectKinds.map((obj) => ({ ...obj, disabled: isSubjectDisabled }))}
+                  onChange={this.changeSubjectKind}
+                />
+              </div>
+              {subject.kind === 'ServiceAccount' && (
+                <div className="form-group">
+                  <label htmlFor="subject-namespace" className="co-required">
+                    {t('public~Subject namespace')}
+                  </label>
+                  <NsDropdown
+                    id="subject-namespace"
+                    selectedKey={subject.namespace}
+                    onChange={this.changeSubjectNamespace}
+                  />
+                </div>
+              )}
+              <div className="form-group">
+                <label htmlFor="subject-name" className="co-required">
+                  {t('public~Subject name')}
+                </label>
                 <input
                   className="pf-c-form-control"
                   type="text"
-                  onChange={this.changeName}
-                  placeholder={t('public~RoleBinding name')}
-                  value={metadata.name}
+                  onChange={this.changeSubjectName}
+                  placeholder={t('public~Subject name')}
+                  value={subject.name}
                   required
-                  id="role-binding-name"
-                  data-test="role-binding-name"
-                />
-              )}
-            </div>
-            {kind === 'RoleBinding' && (
-              <div className="form-group" data-test="namespace-dropdown">
-                <label htmlFor="ns-dropdown" className="co-required">
-                  {t('public~Namespace')}
-                </label>
-                <NsDropdown
-                  fixed={!!_.get(fixed, 'metadata.namespace')}
-                  selectedKey={metadata.namespace}
-                  onChange={this.changeNamespace}
-                  id="ns-dropdown"
+                  id="subject-name"
+                  disabled={isSubjectDisabled}
+                  data-test="subject-name"
                 />
               </div>
-            )}
-          </Section>
+            </Section>
 
-          <div className="co-form-section__separator" />
+            <div className="co-form-section__separator" />
 
-          <Section label={t('public~Role')}>
-            <div className="form-group" data-test="role-dropdown">
-              <label htmlFor="role-dropdown" className="co-required">
-                {t('public~Role name')}
-              </label>
-              <RoleDropdown
-                fixed={!!_.get(fixed, 'roleRef.name')}
-                namespace={metadata.namespace}
-                onChange={this.changeRoleRef}
-                selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
-                selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
-                id="role-dropdown"
-              />
-            </div>
-          </Section>
-
-          <div className="co-form-section__separator" />
-
-          <Section label={t('public~Subject')}>
-            <div className="form-group">
-              <RadioGroup
-                currentValue={subject.kind}
-                items={subjectKinds.map((obj) => ({ ...obj, disabled: isSubjectDisabled }))}
-                onChange={this.changeSubjectKind}
-              />
-            </div>
-            {subject.kind === 'ServiceAccount' && (
-              <div className="form-group">
-                <label htmlFor="subject-namespace" className="co-required">
-                  {t('public~Subject namespace')}
-                </label>
-                <NsDropdown
-                  id="subject-namespace"
-                  selectedKey={subject.namespace}
-                  onChange={this.changeSubjectNamespace}
-                />
-              </div>
-            )}
-            <div className="form-group">
-              <label htmlFor="subject-name" className="co-required">
-                {t('public~Subject name')}
-              </label>
-              <input
-                className="pf-c-form-control"
-                type="text"
-                onChange={this.changeSubjectName}
-                placeholder={t('public~Subject name')}
-                value={subject.name}
-                required
-                id="subject-name"
-                disabled={isSubjectDisabled}
-                data-test="subject-name"
-              />
-            </div>
-          </Section>
-
-          <div className="co-form-section__separator" />
-
-          <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
-                {saveButtonText || t('public~Create')}
-              </Button>
-              <Button onClick={history.goBack} id="cancel" variant="secondary">
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
+                  {saveButtonText || t('public~Create')}
+                </Button>
+                <Button onClick={history.goBack} id="cancel" variant="secondary">
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
       </div>
     );
   }

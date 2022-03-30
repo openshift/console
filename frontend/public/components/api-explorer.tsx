@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
-import { useAccessReview } from '@console/internal/components/utils';
+import { PageHeading, useAccessReview } from '@console/internal/components/utils';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -37,7 +37,6 @@ import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
   AsyncComponent,
-  BreadCrumbs,
   Dropdown,
   EmptyBox,
   HorizontalNav,
@@ -358,9 +357,7 @@ export const APIExplorerPage: React.FC<{}> = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <div className="co-m-nav-title">
-        <h1 className="co-m-pane__heading">{title}</h1>
-      </div>
+      <PageHeading title={title} />
       <APIResourcesList />
     </>
   );
@@ -700,9 +697,7 @@ const APIResourcePage_ = ({
       <LoadingBox />
     ) : (
       <div className="co-m-pane__body">
-        <h1 className="co-m-pane__heading co-m-pane__heading--center">
-          {t('public~404: Not found')}
-        </h1>
+        <PageHeading title={t('public~404: Not found')} centerText />
       </div>
     );
   }
@@ -753,12 +748,11 @@ const APIResourcePage_ = ({
       <Helmet>
         <title>{kindObj.label}</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
-        <BreadCrumbs breadcrumbs={breadcrumbs} />
-        <h1 className="co-m-pane__heading" data-test-id="api-explorer-resource-title">
-          {kindObj.label}
-        </h1>
-      </div>
+      <PageHeading
+        title={<div data-test-id="api-explorer-resource-title">{kindObj.label}</div>}
+        breadcrumbs={breadcrumbs}
+        detail
+      />
       <HorizontalNav pages={pages} match={match} customData={{ kindObj, namespace }} noStatusBox />
     </>
   );

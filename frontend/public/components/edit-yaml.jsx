@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { connect } from 'react-redux';
-import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { Trans, withTranslation } from 'react-i18next';
 
@@ -23,7 +23,15 @@ import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
-import { Firehose, LoadingBox, checkAccess, history, Loading, resourceObjPath } from './utils';
+import {
+  checkAccess,
+  Firehose,
+  history,
+  Loading,
+  LoadingBox,
+  PageHeading,
+  resourceObjPath,
+} from './utils';
 import {
   referenceForModel,
   k8sCreate,
@@ -625,15 +633,11 @@ export const EditYAML_ = connect(stateToProps)(
               )}
 
               {create && !this.props.hideHeader && (
-                <div className="yaml-editor__header">
-                  <Split>
-                    <SplitItem isFilled>
-                      <h1 className="yaml-editor__header-text">{header}</h1>
-                    </SplitItem>
-                    <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
-                  </Split>
-                  <p className="help-block">
-                    {allowMultiple ? (
+                <PageHeading
+                  title={header}
+                  badge={getBadgeFromType(model && model.badge)}
+                  helpText={
+                    allowMultiple ? (
                       <Trans ns="public">
                         Drag and drop YAML or JSON files into the editor, or manually enter files
                         and use <kbd>---</kbd> to separate each definition.
@@ -642,9 +646,10 @@ export const EditYAML_ = connect(stateToProps)(
                       t(
                         'public~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
                       )
-                    )}
-                  </p>
-                </div>
+                    )
+                  }
+                  detail
+                />
               )}
 
               <div className="pf-c-form co-m-page__body">

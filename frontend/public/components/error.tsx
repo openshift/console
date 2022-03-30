@@ -43,9 +43,9 @@ const ErrorComponent: React.SFC<ErrorComponentProps> = ({ title, message }) => {
   const { t } = useTranslation();
   return (
     <>
-      <PageHeading detail={true} title={t('public~Error')} />
+      <PageHeading title={t('public~Error')} detail />
       <div className="co-m-pane__body" data-test-id="error-page">
-        <h1 className="co-m-pane__heading co-m-pane__heading--center">{title}</h1>
+        <PageHeading title={title} centerText />
         {message && <div className="pf-u-text-align-center">{message}</div>}
       </div>
     </>
@@ -80,9 +80,7 @@ export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (pro
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <h1 className="co-m-pane__heading co-m-pane__heading--center">
-        {t('public~Oh no! Something went wrong.')}
-      </h1>
+      <PageHeading title={t('public~Oh no! Something went wrong.')} centerText />
       <ExpandCollapse
         textCollapsed={t('public~Show details')}
         textExpanded={t('public~Hide details')}

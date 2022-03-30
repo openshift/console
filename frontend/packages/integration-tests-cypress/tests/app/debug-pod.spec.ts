@@ -50,7 +50,7 @@ describe('Debug pod', () => {
     yamlEditor.setEditorContent(podToDebug).then(() => {
       yamlEditor.clickSaveCreateButton();
       cy.get(errorMessage).should('not.exist');
-      detailsPage.titleShouldContain(POD_NAME);
+      detailsPage.sectionHeaderShouldExist('Pod details');
     });
   });
 
