@@ -44,13 +44,14 @@ export const theme = EditorView.theme({
   '.cm-scroller': {
     fontFamily: 'inherit',
   },
-  '&': {
-    '&.cm-editor.cm-focused': {
-      outline: 'none',
-    },
+  '.cm-content': {
+    caretColor: 'auto',
+  },
+  '&.cm-focused.cm-editor': {
+    outline: 'none',
   },
   '.cm-tooltip.cm-completionInfo': {
-    backgroundColor: 'var(--pf-global--palette--blue-50)',
+    backgroundColor: 'var(--pf-global--BackgroundColor--200)',
     border: 'none',
     marginTop: '-11px',
     padding: '10px',
@@ -65,7 +66,7 @@ export const theme = EditorView.theme({
       borderWidth: '10px',
       borderStyle: 'solid',
       borderColor: 'transparent',
-      borderRightColor: 'var(--pf-global--palette--blue-50)',
+      borderRightColor: 'var(--pf-global--BackgroundColor--200)',
     },
     marginLeft: '12px',
   },
@@ -79,7 +80,7 @@ export const theme = EditorView.theme({
       borderWidth: '10px',
       borderStyle: 'solid',
       borderColor: 'transparent',
-      borderLeftColor: 'var(--pf-global--palette--blue-50)',
+      borderLeftColor: 'var(--pf-global--BackgroundColor--200)',
     },
     marginRight: '12px',
   },
@@ -89,11 +90,15 @@ export const theme = EditorView.theme({
     verticalAlign: 'middle',
   },
   '.cm-selectionMatch': {
-    backgroundColor: '#E7F1F4',
+    backgroundColor: 'var(--pf-global--BackgroundColor--100)',
   },
   '.cm-completionDetail': {
     float: 'right',
-    color: '#999',
+    color: 'var(--pf-global--palette--black-500)',
+  },
+  '.cm-tooltip': {
+    backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+    borderColor: 'var(--pf-global--BorderColor--100)',
   },
   '.cm-tooltip.cm-tooltip-autocomplete': {
     boxShadow: 'var(--pf-global--BoxShadow--sm)',
@@ -102,7 +107,7 @@ export const theme = EditorView.theme({
       fontSize: 'var(--pf-global--FontSize--sm)',
     },
     '& > ul > li[aria-selected]': {
-      backgroundColor: 'var(--pf-global--palette--blue-50)',
+      backgroundColor: 'var(--pf-global--BackgroundColor--200)',
       color: 'unset',
     },
     '& > ul > li': {
@@ -116,7 +121,7 @@ export const theme = EditorView.theme({
   },
   '.cm-completionIcon-function, .cm-completionIcon-method': {
     '&:after': { content: "'\\ea8c'" },
-    color: '#652d90',
+    color: 'var(--pf-global--palette--purple-500)',
   },
   '.cm-completionIcon-class': {
     '&:after': { content: "'○'" },
@@ -129,7 +134,7 @@ export const theme = EditorView.theme({
   },
   '.cm-completionIcon-constant': {
     '&:after': { content: "'\\eb5f'" },
-    color: '#007acc',
+    color: 'var(--pf-global--primary-color--100)',
   },
   '.cm-completionIcon-type': {
     '&:after': { content: "'𝑡'" },
@@ -142,14 +147,14 @@ export const theme = EditorView.theme({
   },
   '.cm-completionIcon-keyword': {
     '&:after': { content: "'\\eb62'" },
-    color: '#616161',
+    color: 'var(--pf-global--palette--black-600)',
   },
   '.cm-completionIcon-namespace': {
     '&:after': { content: "'▢'" },
   },
   '.cm-completionIcon-text': {
     '&:after': { content: "'\\ea95'" },
-    color: '#ee9d28',
+    color: 'var(--pf-global--palette--gold-400)',
   },
 });
 
