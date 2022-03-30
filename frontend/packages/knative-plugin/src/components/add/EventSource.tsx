@@ -112,7 +112,10 @@ export const EventSource: React.FC<Props> = ({
       apiVersion: sinkApiVersion,
       kind: sinkKind,
       name: sinkName,
-      key: craftResourceKey(sinkName, { kind: sinkKind, apiVersion: sinkGroupVersionKind }),
+      key: craftResourceKey(sinkName, {
+        kind: sinkKind,
+        apiVersion: `${sinkGroup}/${sinkVersion}`,
+      }),
       uri: '',
     },
     type: sourceKind,
