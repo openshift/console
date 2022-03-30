@@ -44,7 +44,7 @@ const EventSourceResources: React.FC<EventSourceResourcesProps> = ({ obj, ownedS
 
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Input Target')} />
+      <SidebarSectionHeading text={t('knative-plugin~Target')} />
       {isSinkReference || sinkUri ? (
         <ul className="list-group">
           <li className="list-group-item">

@@ -39,7 +39,7 @@ const EventSinkPage: React.FC<EventSinkPageProps> = ({ match, location }) => {
       </Helmet>
       <PageHeading title={t('knative-plugin~Create Event Sink')}>
         {t(
-          'knative-plugin~Create an Event sink to register interest in a class of events from a particular system. Configure using the YAML and form views.',
+          'knative-plugin~Create an Event sink to receive incoming events from a particular source. Configure using YAML and form views.',
         )}
       </PageHeading>
       {loaded && isValidSink && !createSinkAccessLoading && createSinkAccess ? (

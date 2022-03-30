@@ -435,26 +435,27 @@
       "required": ["KNATIVE_EVENTING"]
     },
     "properties": {
-      "id": "knative-event-sink",
-      "groupId": "eventing",
-      "href": "/catalog/ns/:namespace?catalogType=EventSink",
-      "label": "%knative-plugin~Event Sink%",
-      "description": "%knative-plugin~Create an Event sink to register interest in a class of events from a particular system%",
-      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "flags": {
-      "required": ["KNATIVE_EVENTING"]
-    },
-    "properties": {
       "id": "knative-event-source",
       "groupId": "eventing",
       "href": "/catalog/ns/:namespace?catalogType=EventSource&provider=[\"Red+Hat\"]",
       "label": "%knative-plugin~Event Source%",
       "description": "%knative-plugin~Create an Event source to register interest in a class of events from a particular system%",
       "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_BROKER"]
+    },
+    "properties": {
+      "id": "knative-eventing-broker",
+      "groupId": "eventing",
+      "href": "/broker/ns/:namespace",
+      "label": "%knative-plugin~Broker%",
+      "description": "%knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers%",
+      "icon": { "$codeRef": "icons.channelIconSVG" },
+      "accessReview": [{ "group": "eventing.knative.dev", "resource": "brokers", "verb": "create" }]
     }
   },
   {
@@ -477,16 +478,15 @@
   {
     "type": "dev-console.add/action",
     "flags": {
-      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_BROKER"]
+      "required": ["KNATIVE_EVENTING"]
     },
     "properties": {
-      "id": "knative-eventing-broker",
+      "id": "knative-event-sink",
       "groupId": "eventing",
-      "href": "/broker/ns/:namespace",
-      "label": "%knative-plugin~Broker%",
-      "description": "%knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers%",
-      "icon": { "$codeRef": "icons.channelIconSVG" },
-      "accessReview": [{ "group": "eventing.knative.dev", "resource": "brokers", "verb": "create" }]
+      "href": "/catalog/ns/:namespace?catalogType=EventSink",
+      "label": "%knative-plugin~Event Sink%",
+      "description": "%knative-plugin~Create an Event sink to receive incoming events from a particular source%",
+      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
     }
   },
   {
@@ -536,8 +536,8 @@
     "properties": {
       "type": "EventSink",
       "title": "%knative-plugin~Event Sinks%",
-      "catalogDescription": "%knative-plugin~Event sinks are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.%",
-      "typeDescription": "%knative-plugin~**Event sinks** are objects that link to an event producer and an event sink or consumer.%",
+      "catalogDescription": "%knative-plugin~​​Event sinks are resources that can receive incoming events from other resources. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%knative-plugin~​​**Event sinks** are resources that can receive incoming events from other resources.%",
       "filters": [
         {
           "label": "%knative-plugin~Provider%",
