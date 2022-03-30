@@ -7,6 +7,9 @@ import RepositoryList from './ReppositoryList';
 const RepositoriesList: React.FC<React.ComponentProps<typeof ListPage>> = (props) => (
   <ListPage
     {...props}
+    createProps={{
+      to: `/k8s/ns/${props.namespace || 'default'}/${referenceForModel(RepositoryModel)}/~new/form`,
+    }}
     canCreate={props.canCreate ?? true}
     kind={referenceForModel(RepositoryModel)}
     ListComponent={RepositoryList}

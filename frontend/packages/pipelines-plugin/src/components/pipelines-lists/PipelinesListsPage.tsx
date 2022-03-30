@@ -42,7 +42,14 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
     pipelineRun: { model: PipelineRunModel },
     pipelineResource: { model: PipelineResourceModel },
     condition: { model: ConditionModel },
-    ...(isRepositoryEnabled ? { repository: { model: RepositoryModel } } : {}),
+    ...(isRepositoryEnabled
+      ? {
+          repository: {
+            model: RepositoryModel,
+            onSelection: (_key: string, _action: MenuAction, url: string) => `${url}/form`,
+          },
+        }
+      : {}),
   };
   const pages: Page[] = [
     {

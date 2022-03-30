@@ -481,6 +481,16 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
+      "path": "/k8s/ns/:ns/pipelinesascode.tekton.dev~v1alpha1~Repository/~new/form",
+      "component": {
+        "$codeRef": "pipelinesComponent.RepositoryFormPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
       "perspective": "dev",
       "path": [
         "/k8s/all-namespaces/tekton.dev~v1alpha1~PipelineRun",
