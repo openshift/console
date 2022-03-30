@@ -130,7 +130,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/edit-deployment/ns/:ns',
+      path: ['/edit-deployment/ns/:ns', '/create-deployment/ns/:ns/~new/form'],
       loader: async () =>
         (
           await import(

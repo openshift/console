@@ -7,10 +7,11 @@ import { appHost, testName, waitForNone } from '../protractor.conf';
 import { waitForCount } from '@console/shared/src/test-utils/utils';
 
 export const createYAMLButton = $('#yaml-create');
+export const createYAMLSwitchRadio = $('#form-radiobutton-editorType-yaml-field');
 export const createItemButton = $('#item-create');
 export const createYAMLLink = $('#yaml-link');
 
-export const saveChangesBtn = $('#save-changes');
+export const saveChangesBtn = $('#save-changes,[data-test="save-changes"]');
 export const reloadBtn = $('#reload-object');
 export const cancelBtn = $('#cancel');
 
@@ -144,6 +145,9 @@ export const resourceTitle = $('[data-test-id="resource-title"]');
 
 export const nameFilter = $('.pf-c-form-control.co-text-filter');
 export const messageLbl = $('.cos-status-box');
+
+export const isDetailsPageLoaded = () =>
+  browser.wait(until.presenceOf(actionsButton)).then(() => browser.sleep(3000));
 
 export const visitResource = async (resource: string, name: string) => {
   await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`);
