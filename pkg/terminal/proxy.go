@@ -61,7 +61,7 @@ func NewProxy(serviceTLS *tls.Config, TLSClientConfig *tls.Config, clusterEndpoi
 var (
 	WorkspaceGroupVersionResource = schema.GroupVersionResource{
 		Group:    "workspace.devfile.io",
-		Version:  "v1alpha1",
+		Version:  "v1alpha2",
 		Resource: "devworkspaces",
 	}
 
