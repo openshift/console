@@ -41,14 +41,12 @@ export const processReduxId = ({ k8s }, props) => {
   const selected = k8s.getIn([reduxID, 'selected']);
 
   if (data) {
-    if (!data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
-      data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = data.toArray().map((a) => {
-        if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
-          a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
-        }
-        return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
-      });
-    }
+    data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = data.toArray().map((a) => {
+      if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+        a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
+      }
+      return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+    });
     data = data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
   }
 
