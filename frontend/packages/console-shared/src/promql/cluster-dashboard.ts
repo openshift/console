@@ -217,15 +217,12 @@ const top25Queries = {
     `
       topk(25, sort_desc(
         count by (namespace) (
-          (
-            kube_running_pod_ready
+            topk without(uid) (1, kube_running_pod_ready)
             *
-            on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
-          )
+            ignoring(node,uid) group_right node_namespace_pod:kube_pod_info:
           *
-          on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
-        )
-      ))
+          on(node) group_left() (max by (node) (kube_node_role{role=~"<%= nodeType %>"})))
+        ))
     `,
   ),
   [OverviewQuery.PROJECTS_BY_NETWORK_IN]: _.template(
@@ -312,14 +309,10 @@ const overviewQueries = {
   [OverviewQuery.CPU_UTILIZATION]: _.template(
     `
       sum(
-        (
-          1 - sum without (mode) (rate(node_cpu_seconds_total{mode=~"idle|iowait|steal"}[2m]))
-          *
-          on(namespace, pod) group_left(node) node_namespace_pod:kube_pod_info:{pod=~"node-exporter.+"}
-        )
+        1 - sum without (mode) (rate(node_cpu_seconds_total{mode=~"idle|iowait|steal"}[2m]))
         *
-        on(node) group_left(role) (
-          max by (node) (kube_node_role{role=~"<%= nodeType %>"})
+        on(instance) group_left() (
+          label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node","(.*)")
         )
       )
     `,
@@ -376,12 +369,12 @@ const overviewQueries = {
     `
       count(
         (
-          kube_running_pod_ready
+          topk without(uid) (1, kube_running_pod_ready)
           *
-          on(pod,namespace) group_left(node) (node_namespace_pod:kube_pod_info:)
+          ignoring(node,uid) group_right node_namespace_pod:kube_pod_info:
         )
         *
-        on(node) group_left(role) (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
+        on(node) group_left() (max by (node) (kube_node_role{role=~"<%= nodeType %>"}))
       )
     `,
   ),
