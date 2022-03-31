@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { ChartDonut } from '@patternfly/react-charts';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, TitleSizes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LABEL_USED_TEMPLATE_NAME } from '../../../constants';
 import { useRunningVMsPerTemplateResources } from '../../../hooks/use-running-vms-per-template-resources';
 import { getName, getNamespace } from '../../../selectors';
+import { EmptyStateNoVMs } from '../../EmptyState/EmptyStateNoVMs';
 import { VMsChartLegend } from './RunningVMsChartLegend';
 import { RunningVMsChartLegendLabelItem } from './RunningVMsChartLegendLabel';
 import { getColorList } from './utils';
@@ -82,6 +83,7 @@ export const RunningVMsPerTemplateCard = () => {
 
   const chartData = getChartData(templateToVMCountMap);
   const legendItems = getLegendItems(templateToVMCountMap);
+  const numVMs = resources?.vms?.length;
 
   const chart = (
     <div>
@@ -99,7 +101,7 @@ export const RunningVMsPerTemplateCard = () => {
           top: 20,
         }}
         subTitle={t('kubevirt-plugin~VMs')}
-        title={resources?.vms?.length?.toString()}
+        title={numVMs?.toString()}
         width={300}
         style={{
           data: {
@@ -116,8 +118,14 @@ export const RunningVMsPerTemplateCard = () => {
         <CardTitle>{t('kubevirt-plugin~Running VMs per template')}</CardTitle>
       </CardHeader>
       <CardBody>
-        {chart}
-        <VMsChartLegend legendItems={legendItems} />
+        {numVMs ? (
+          <>
+            {chart}
+            <VMsChartLegend legendItems={legendItems} />
+          </>
+        ) : (
+          <EmptyStateNoVMs titleSize={TitleSizes.md} className="kv-running-vms-card__empty-state" />
+        )}
       </CardBody>
     </Card>
   );
