@@ -23,51 +23,51 @@ Feature: Create the pipeline from builder page
               And Create button is in disabled state
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: Create a pipeline with series tasks: P-02-TC02
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "<cluster_task_name>" in quick search bar
-              And user clicks on "Add" in "<cluster_task_name>" task
+              And user clicks on Add in selected task
               And user adds another task "<cluster_task_name_1>" in series
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
 
         Examples:
                   | pipeline_name | cluster_task_name | cluster_task_name_1 |
-                  | p-one         | kn                | openshift-client    |
+                  | pipe-one      | kn                | openshift-client    |
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: Create a pipeline with parallel tasks: P-02-TC03
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "<cluster_task_name>" in quick search bar
-              And user clicks on "Add" in "<cluster_task_name>" task
+              And user clicks on Add in selected task
               And user adds another task "<cluster_task_name_1>" in parallel
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
 
         Examples:
                   | pipeline_name | cluster_task_name | cluster_task_name_1 |
-                  | p-two         | kn                | openshift-client    |
+                  | pipe-two      | kn                | openshift-client    |
 
 
-        @smoke @to-do
+        @smoke
         Scenario Outline: Create a basic pipeline from pipeline builder page: P-02-TC04
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "<cluster_task_name>" in quick search bar
-              And user clicks on "Add" in "<cluster_task_name>" task
+              And user clicks on Add in selected task
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
 
         Examples:
                   | pipeline_name | cluster_task_name |
-                  | p-three-1     | kn                |
+                  | pipe-three    | kn                |
 
 
         @un-verified
@@ -91,13 +91,13 @@ Feature: Create the pipeline from builder page
                   # | p-cluster     | task-cluster           | Cluster       | cluster repo  |
 
 
-        @regression @to-do
+        @regression
         Scenario: Add Parameters to the pipeline in pipeline builder page: P-02-TC06
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-params"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "s2i-nodejs" in quick search bar
-              And user clicks on "Add" in "s2i-nodejs" task
+              And user clicks on Add in selected task
               And user adds the parameter details like Name, Description and Default Value
               And user clicks on Add workspace
               And user adds the Workspace name as "empty"
@@ -227,24 +227,20 @@ Feature: Create the pipeline from builder page
               And user sees "Add finally task" option below "git-clone" task
 
 
-        @regression @to-do
+        @regression
         Scenario: Create a pipeline with finally task node: P-02-TC15
             Given user is at Pipeline Builder page
-             When user enters pipeline name "pipeline-finally"
-              And user clicks on Add task
-              And user searches "openshift-client-v0-22-0" in quick search bar
-              And user clicks on Add in "openshift-client-v0-22-0" task
+             When user enters pipeline name as "pipeline-finally"
+              And user clicks Add task button under Tasks section
+              And user searches "openshift-client" in quick search bar
+              And user clicks on Add in selected task
               And user clicks on Add finally task
-              And user clicks on Add task
-              And user searches "tkn" in quick search bar
-              And user clicks on Add in "tkn" task
-              And user clicks on Add finally task again
-              And user selects "openshift-client" from Add task quick search
+              And user selects "tkn" from Add task quick search
               And user clicks on Add finally task again
               And user selects "kn" from Add task quick search
               And user clicks on Create
              Then user will be redirected to Pipeline Details page with header name "pipeline-finally"
-              And user is able to see finally tasks "tkn", "openshift-client" and "kn" mentioned under "Finally tasks" section in the Pipeline details page
+              And user is able to see finally tasks "tkn" and "kn" mentioned under "Finally tasks" section in the Pipeline details page
 
 
         @regression
@@ -278,12 +274,12 @@ Feature: Create the pipeline from builder page
               And user will see tooltip saying "When expression" while scrolling over diamond structure before conditional task
 
 
-        @regression @to-do
+        @regression
         Scenario: Code assistance for referencing params in the Pipeline Builder: P-02-TC18
             Given user is at Pipeline Builder page
-             When user clicks on Add task
+             When user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
-              And user clicks on Add in "git-clone" task
+              And user clicks on Add in selected task
               And user enters pipeline name as "pipeline-code-assistance"
               And user clicks on Add Parameter
               And user adds Name as "git-url"
@@ -291,7 +287,7 @@ Feature: Create the pipeline from builder page
               And user clicks on Add Workspace and add name as "git-workspace"
               And user clicks on "git-clone" task node
               And user enters url under Parameters section "$(params.git-url)"
-              And user adds workspace as "git-workspace"
+              And user adds "output" workspace as "git-workspace"
               And user clicks on Create
              Then user will be redirected to Pipeline Details page with header name "pipeline-code-assistance"
 
@@ -347,6 +343,6 @@ Feature: Create the pipeline from builder page
               And user clicks on Save button
               And user clicks on Pipeline tab in navigation menu
               And user clicks Create Pipeline button
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user types 'git'
              Then user will see Task, clusterTask only
