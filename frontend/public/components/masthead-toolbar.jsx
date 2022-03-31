@@ -275,7 +275,7 @@ class MastheadToolbarContents_ extends React.Component {
       window.SERVER_FLAGS.branding !== 'azure'
     ) {
       sections.push({
-        name: t('public~Red Hat applications'),
+        name: t('public~Red Hat Applications'),
         isSection: true,
         actions: [
           {
