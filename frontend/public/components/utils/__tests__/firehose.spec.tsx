@@ -850,12 +850,12 @@ describe('Firehose', () => {
     // pods 'resource' object (with data, loaded, etc.) object
     expect(propsChildA.pods).toEqual(propsChildB.pods);
     expect(propsChildA.pods).not.toBe(propsChildB.pods); // Could be the same?
-    expect(propsChildA.pods.data).toBe(propsChildB.pods.data);
+    expect(propsChildA.pods.data).toEqual(propsChildB.pods.data);
     expect(propsChildA.pods.data[0]).toBe(propsChildB.pods.data[0]);
 
     expect(propsChildA.resources.pods).toEqual(propsChildB.resources.pods);
     expect(propsChildA.resources.pods).not.toBe(propsChildB.resources.pods); // Could be the same?
-    expect(propsChildA.resources.pods.data).toBe(propsChildB.resources.pods.data);
+    expect(propsChildA.resources.pods.data).toEqual(propsChildB.resources.pods.data);
     expect(propsChildA.resources.pods.data[0]).toBe(propsChildB.resources.pods.data[0]);
 
     // pod 'resource' object (with data, loaded, etc.) object
