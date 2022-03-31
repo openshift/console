@@ -17,8 +17,8 @@ import {
   EmptyStateVariant,
   Gallery,
   GalleryItem,
+  SearchInput,
   Title,
-  TextInput,
 } from '@patternfly/react-core';
 import { getURLWithParams, VirtualizedGrid } from '@console/shared';
 import { Link } from 'react-router-dom';
@@ -653,7 +653,8 @@ export class TileViewPage extends React.Component {
     const { activeFilters, selectedCategoryId, categories } = this.state;
 
     if (filterType === FilterTypes.keyword) {
-      updateURLParams(FilterTypes.keyword, `${value}`);
+      const update = _.debounce(() => updateURLParams(FilterTypes.keyword, `${value}`), 500);
+      update();
     } else {
       const groupFilter = _.cloneDeep(activeFilters[filterType]);
       _.set(groupFilter, [id, 'active'], value);
@@ -866,14 +867,14 @@ export class TileViewPage extends React.Component {
             <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
             <div className="co-catalog-page__filter">
               <div>
-                <TextInput
+                <SearchInput
                   className="co-catalog-page__input"
                   data-test="search-operatorhub"
-                  type="text"
                   ref={(ref) => (this.filterByKeywordInput = ref)}
                   placeholder={i18n.t('public~Filter by keyword...')}
                   value={activeFilters.keyword.value}
                   onChange={(text) => this.onKeywordChange(text)}
+                  onClear={() => this.onKeywordChange('')}
                   aria-label={i18n.t('public~Filter by keyword...')}
                 />
                 {groupItems && (

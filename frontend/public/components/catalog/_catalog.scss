@@ -169,13 +169,14 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__input {
-    display: inline-flex !important;
     margin: 0 $pf-global-gutter $pf-global-gutter--md;
+    @media (max-width: $pf-global--breakpoint--md) {
+      max-width: 165px;
+    }
     @media (min-width: $pf-global--breakpoint--xl) {
       margin-left: $pf-global-gutter--md;
       margin-right: $pf-global-gutter--md;
     }
-    width: auto !important;
   }
 
   &__sort {
