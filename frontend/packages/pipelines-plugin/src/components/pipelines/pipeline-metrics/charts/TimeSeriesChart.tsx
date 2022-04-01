@@ -63,14 +63,13 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
   }
 
   const xTickFormat = (d) => formatDate(d);
-  const xAxisFillStyle = {
+  let xAxisStyle: any = {
     tickLabels: { fill: 'var(--pf-global--Color--100)' },
   };
-  let xAxisStyle: any = xAxisFillStyle;
   if (tickValues.length > 7 || width < 225) {
     xAxisStyle = {
       tickLabels: {
-        ...xAxisFillStyle.tickLabels,
+        fill: 'var(--pf-global--Color--100)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',
