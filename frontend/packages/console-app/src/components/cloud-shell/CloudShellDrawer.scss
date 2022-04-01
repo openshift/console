@@ -2,4 +2,13 @@
   &__heading {
     padding-left: var(--pf-global--spacer--md);
   }
+  &__body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+    & .pf-c-tabs {
+      flex-shrink: 0;
+    }
+  }
 }

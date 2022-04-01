@@ -6,7 +6,7 @@ import { FLAG_DEVWORKSPACE } from '../../consts';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import CloudShellDrawer from './CloudShellDrawer';
-import CloudShellTerminal from './CloudShellTerminal';
+import MultiTabTerminal from './MultiTabbedTerminal';
 
 type StateProps = {
   open: boolean;
@@ -24,7 +24,7 @@ const CloudShell: React.FC<CloudShellProps> = ({ flags, open, onClose }) => {
   }
   return open ? (
     <CloudShellDrawer onClose={onClose}>
-      <CloudShellTerminal onCancel={onClose} />
+      <MultiTabTerminal onClose={onClose} />
     </CloudShellDrawer>
   ) : null;
 };
