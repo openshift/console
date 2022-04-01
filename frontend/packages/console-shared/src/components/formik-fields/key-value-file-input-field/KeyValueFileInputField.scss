@@ -1,0 +1,9 @@
+.key-value--remove-button {
+  display: flex;
+  flex-flow: row-reverse;
+  margin-bottom: 0 !important;
+}
+.key-value--wrapper + .key-value--wrapper {
+  border-top: 1px solid var(--pf-global--BorderColor--100);
+  padding-top: var(--pf-global--spacer--sm);
+}

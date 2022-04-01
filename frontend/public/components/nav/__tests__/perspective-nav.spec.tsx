@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { DndProvider } from 'react-dnd';
 import { shallow } from 'enzyme';
 import { modelFor } from '@console/internal/module/k8s';
 import { usePinnedResources } from '@console/shared';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
 import { mockPerspectiveExtensions } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
-import { DragAndDrop } from '@console/shared/src/components/dnd';
 import { NavGroup } from '@patternfly/react-core';
 import PerspectiveNav from '../perspective-nav';
 import AdminNav from '../admin-nav';
@@ -71,8 +71,10 @@ describe('Perspective Nav', () => {
     expect(
       wrapper
         .find('[data-test-id="dev-perspective-nav"]')
+        .childAt(1)
         .shallow()
-        .find(DragAndDrop)
+        .find(DndProvider)
+        .childAt(0)
         .shallow()
         .find(NavGroup)
         .shallow()
@@ -98,8 +100,10 @@ describe('Perspective Nav', () => {
     expect(
       wrapper
         .find('[data-test-id="dev-perspective-nav"]')
+        .childAt(1)
         .shallow()
-        .find(DragAndDrop)
+        .find(DndProvider)
+        .childAt(0)
         .shallow()
         .find(NavGroup)
         .shallow()
@@ -122,8 +126,10 @@ describe('Perspective Nav', () => {
     expect(
       wrapper
         .find('[data-test-id="dev-perspective-nav"]')
+        .childAt(1)
         .shallow()
-        .find(DragAndDrop)
+        .find(DndProvider)
+        .childAt(0)
         .shallow()
         .find(NavGroup)
         .shallow()
@@ -150,8 +156,10 @@ describe('Perspective Nav', () => {
     expect(
       wrapper
         .find('[data-test-id="dev-perspective-nav"]')
+        .childAt(1)
         .shallow()
-        .find(DragAndDrop)
+        .find(DndProvider)
+        .childAt(0)
         .shallow()
         .find(NavGroup)
         .shallow()

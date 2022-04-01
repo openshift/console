@@ -381,6 +381,26 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <LazyRoute
+        path="/k8s/ns/:ns/configmaps/~new"
+        exact
+        kind="ConfigMap"
+        loader={() =>
+          import('./configmaps/ConfigMapPage' /* webpackChunkName: "create-configmap-page" */).then(
+            (m) => m.default,
+          )
+        }
+      />
+      <LazyRoute
+        path="/k8s/ns/:ns/configmaps/:name/edit"
+        exact
+        kind="ConfigMap"
+        loader={() =>
+          import('./configmaps/ConfigMapPage' /* webpackChunkName: "edit-configmap-page" */).then(
+            (m) => m.default,
+          )
+        }
+      />
+      <LazyRoute
         path="/k8s/ns/:ns/secrets/:name/edit"
         exact
         kind="Secret"

@@ -67,6 +67,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               variant={ButtonVariant.primary}
               isDisabled={disableSubmit}
               data-test-id="submit-button"
+              data-test="save-changes"
             >
               {submitLabel || t('console-shared~Save')}
             </Button>

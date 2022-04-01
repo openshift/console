@@ -22,6 +22,9 @@ export interface FieldProps {
   dataTest?: string;
 }
 
+export interface DroppableFileInputFieldProps extends FieldProps {
+  onChange?: (fileData: string) => void;
+}
 export interface BaseInputFieldProps extends FieldProps {
   type?: TextInputTypes;
   placeholder?: string;

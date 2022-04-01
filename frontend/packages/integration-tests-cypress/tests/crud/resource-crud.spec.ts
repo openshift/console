@@ -37,7 +37,12 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('services', { kind: 'Service' })
     .set('serviceaccounts', { kind: 'ServiceAccount', humanizeKind: false })
     .set('secrets', { kind: 'Secret', skipYamlReloadTest: true })
-    .set('configmaps', { kind: 'ConfigMap', humanizeKind: false })
+    .set('configmaps', {
+      kind: 'ConfigMap',
+      humanizeKind: false,
+      skipYamlReloadTest: true,
+      skipYamlSaveTest: true,
+    })
     .set('persistentvolumes', {
       kind: 'PersistentVolume',
       namespaced: false,
@@ -105,7 +110,7 @@ describe('Kubernetes resource CRUD operations', () => {
     'PersistentVolumeClaim',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
-  const resourcesWithSyncedEditor = new Set(['NetworkPolicy']);
+  const resourcesWithSyncedEditor = new Set(['NetworkPolicy', 'ConfigMap']);
 
   testObjs.forEach((testObj, resource) => {
     const {

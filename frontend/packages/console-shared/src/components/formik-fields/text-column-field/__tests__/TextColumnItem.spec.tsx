@@ -71,7 +71,11 @@ describe('TextColumnItemWithDnd', () => {
         rowValues={['']}
         arrayHelpers={mockArrayHelper}
       />,
-    );
+    )
+      .shallow()
+      .childAt(0)
+      .shallow();
+
     expect(wrapper.isEmptyRender()).toBe(false);
     expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
   });
@@ -86,7 +90,10 @@ describe('TextColumnItemWithDnd', () => {
         dndEnabled
         arrayHelpers={mockArrayHelper}
       />,
-    );
+    )
+      .shallow()
+      .childAt(0)
+      .shallow();
     expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
     expect(wrapper.find(TextColumnItemContent).props().dndEnabled).toBe(true);
     expect(wrapper.find(TextColumnItemContent).props().previewDropRef).not.toBe(null);
