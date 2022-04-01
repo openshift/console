@@ -60,10 +60,10 @@ body,
 
     &--bordered {
       @media (max-width: $screen-sm-max) {
-        border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor—100);
+        border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
       }
       @media (min-width: $screen-md-min) {
-        border-left: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor—100);
+        border-left: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
       }
     }
   }
