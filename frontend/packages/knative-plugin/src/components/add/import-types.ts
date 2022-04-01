@@ -34,6 +34,7 @@ export interface ApplicationData {
   initial: string;
   name: string;
   selectedKey: string;
+  isInContext?: boolean;
 }
 
 export interface EventSourceData {

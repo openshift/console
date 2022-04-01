@@ -31,7 +31,11 @@ import {
 import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
 import { AddBrokerAction } from './add-broker';
 import { AddChannelAction } from './add-channel';
-import { AddEventSinkAction } from './add-event-sink';
+import {
+  AddEventSinkAction,
+  AddEventSinkMenuAction,
+  EVENT_SINK_ADD_CONNECTOR_ACTION,
+} from './add-event-sink';
 import { AddEventSourceAction } from './add-event-source';
 import { AddSubscriptionAction, SUBSCRIPTION_ACTION_ID } from './add-subscription';
 import { AddTriggerAction, TRIGGER_ACTION_ID } from './add-trigger';
@@ -84,7 +88,12 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const actions = React.useMemo(() => {
-    return [addTriggerBroker(kindObj, resource), ...getCommonResourceActions(kindObj, resource)];
+    const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
+    return [
+      addTriggerBroker(kindObj, resource),
+      AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
+      ...getCommonResourceActions(kindObj, resource),
+    ];
   }, [kindObj, resource]);
 
   return [actions, !inFlight, undefined];
@@ -110,8 +119,10 @@ export const useCommonActionsProvider = (resource: K8sResourceKind) => {
 export const useChannelActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const actions = React.useMemo(() => {
+    const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
     return [
       addSubscriptionChannel(kindObj, resource),
+      AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
       ...getCommonResourceActions(kindObj, resource),
     ];
   }, [kindObj, resource]);
@@ -147,7 +158,14 @@ export const useTopologyActionsProvider = ({
     const sourceKind = connectorSource.getData().data.kind;
     const connectorResource = connectorSource.getData().resource;
     if (isEventingChannelResourceKind(sourceKind)) {
-      return [AddSubscriptionAction(connectorResource)];
+      return [
+        AddSubscriptionAction(connectorResource),
+        AddEventSinkMenuAction(
+          namespace,
+          application,
+          `${sourceKind}/${connectorResource.metadata.name}`,
+        ),
+      ];
     }
     switch (sourceKind) {
       case referenceForModel(ServiceModel):
@@ -160,7 +178,14 @@ export const useTopologyActionsProvider = ({
           ),
         ].filter(disabledActionsFilter);
       case referenceForModel(EventingBrokerModel):
-        return [AddTriggerAction(connectorResource)];
+        return [
+          AddTriggerAction(connectorResource),
+          AddEventSinkMenuAction(
+            namespace,
+            application,
+            `${sourceKind}/${connectorResource.metadata.name}`,
+          ),
+        ];
       default:
         return [];
     }
@@ -271,7 +296,9 @@ export const topologyServerlessActionsFilter = (
 ) => {
   if (
     [TYPE_EVENT_SOURCE_KAFKA, TYPE_EVENT_PUB_SUB].includes(scope.connectorSource?.getData().type) &&
-    ![TRIGGER_ACTION_ID, SUBSCRIPTION_ACTION_ID].includes(action.id)
+    ![TRIGGER_ACTION_ID, SUBSCRIPTION_ACTION_ID, EVENT_SINK_ADD_CONNECTOR_ACTION].includes(
+      action.id,
+    )
   ) {
     return false;
   }

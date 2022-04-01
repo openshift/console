@@ -22,7 +22,9 @@ const AppSection: React.FC<AppSectionProps> = ({
   subPath,
   fullWidth,
 }) => {
-  const [initialApplication] = useField('application.initial');
+  const [initialApplication] = useField(
+    subPath ? `${subPath}.application.initial` : 'application.initial',
+  );
   const [formType] = useField('formType');
   const { t } = useTranslation();
   return (

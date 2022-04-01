@@ -13,6 +13,8 @@ const EventSourceIcon: React.FC = () => {
   return <img style={eventSinkIconStyle} src={eventSourceImg} alt="Event Sink logo" />;
 };
 
+export const EVENT_SINK_ADD_CONNECTOR_ACTION = 'event-sink-add-connector-action';
+
 export const AddEventSinkAction = (
   namespace: string,
   application?: string,
@@ -35,5 +37,26 @@ export const AddEventSinkAction = (
     },
     path,
     insertAfter: 'upload-jar',
+  };
+};
+
+export const AddEventSinkMenuAction = (
+  namespace: string,
+  application?: string,
+  contextSource?: string,
+): Action => {
+  const params = new URLSearchParams();
+  const pageUrl = `/catalog/ns/${namespace}`;
+  params.append('catalogType', 'EventSink');
+  contextSource && params.append(QUERY_PROPERTIES.CONTEXT_SOURCE, contextSource);
+  application
+    ? params.append(QUERY_PROPERTIES.APPLICATION, application)
+    : params.append(QUERY_PROPERTIES.APPLICATION, UNASSIGNED_KEY);
+  return {
+    id: EVENT_SINK_ADD_CONNECTOR_ACTION,
+    label: i18next.t('knative-plugin~Add Event Sink'),
+    cta: {
+      href: `${pageUrl}?${params.toString()}`,
+    },
   };
 };

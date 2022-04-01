@@ -72,8 +72,9 @@ const EventSink: React.FC<EventSinkProps> = ({
     },
     application: {
       initial: sanitizeApplicationValue(activeApplication),
-      name: sanitizeApplicationValue(activeApplication) || EVENT_SOURCES_APP,
+      name: sanitizeApplicationValue(activeApplication) ?? EVENT_SOURCES_APP,
       selectedKey: activeApplication,
+      isInContext: !!sanitizeApplicationValue(activeApplication),
     },
     name: sinkName,
     apiVersion: sinkApiVersion,
@@ -81,7 +82,10 @@ const EventSink: React.FC<EventSinkProps> = ({
       apiVersion: sourceApiVersion,
       kind: sourceKind,
       name: sourceName,
-      key: craftResourceKey(sourceName, { kind: sourceKind, apiVersion: sourceGroupVersionKind }),
+      key: craftResourceKey(sourceName, {
+        kind: sourceKind,
+        apiVersion: `${sourceGroup}/${sourceVersion}`,
+      }),
     },
     type: CamelKameletBindingModel.kind,
     data: sinkData,
