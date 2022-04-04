@@ -19,7 +19,9 @@ export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = 
       {loading ? (
         <div className="skeleton-chart" data-test="skeleton-chart" />
       ) : (
-        <div className="text-secondary">{t('public~No datapoints found.')}</div>
+        <div className="text-secondary" data-test="datapoints-msg">
+          {t('public~No datapoints found.')}
+        </div>
       )}
     </div>
   );
