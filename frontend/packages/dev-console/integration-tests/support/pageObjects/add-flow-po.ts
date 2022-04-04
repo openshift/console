@@ -122,6 +122,7 @@ export const catalogPO = {
     serviceClass: '[data-test="kind-cluster-service-class"]',
     managedServices: '[data-test="kind-managed-service"]',
     eventSources: '[data-test="tab EventSource"]',
+    eventSinks: '[data-test="tab EventSink"]',
   },
   cards: {
     mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',
@@ -265,6 +266,10 @@ export const eventSourcePO = {
   },
 };
 
+export const eventSinkPO = {
+  search: '[placeholder="Filter by keyword..."]',
+};
+
 export const devFilePO = {
   form: '[data-test-id="import-devfile-form"]',
   formFields: {
@@ -280,7 +285,7 @@ export const devFilePO = {
 export const channelPO = {
   channelType: '[data-test-id="dropdown-button"]',
   channelName: '[data-test-id="channel-name"]',
-  appName: '#form-dropdown-application-name-field',
+  appName: '[data-test-id="application-form-app-input"]',
 };
 
 export const yamlPO = {

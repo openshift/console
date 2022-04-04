@@ -73,6 +73,11 @@ export const catalogPage = {
         cy.get(catalogPO.catalogTypes.eventSources).click();
         break;
       }
+      case catalogTypes.EventSinks:
+      case 'Event Sinks': {
+        cy.get(catalogPO.catalogTypes.eventSinks).click();
+        break;
+      }
       default: {
         throw new Error('Card is not available in Catalog');
       }

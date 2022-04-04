@@ -11,6 +11,7 @@ export enum addOptions {
   Channel = 'Channel',
   UploadJARFile = 'Upload JAR file',
   Broker = 'Broker',
+  EventSink = 'Event Sink',
 }
 
 export enum buildConfigOptions {
@@ -56,6 +57,7 @@ export enum catalogTypes {
   ServiceClass = 'Service Class',
   ManagedServices = 'Managed Services',
   EventSources = 'Event Sources',
+  EventSinks = 'Event Sinks',
 }
 
 export enum builderImages {
