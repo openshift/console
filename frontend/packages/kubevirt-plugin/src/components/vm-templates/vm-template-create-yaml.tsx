@@ -85,7 +85,7 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
     return (
       <AsyncComponent
         loader={DroppableEditYAML}
-        obj={defaultTemplate}
+        initialResource={defaultTemplate}
         create
         kind={kindObj.kind}
         resourceObjPath={vmTemplateObjPath}

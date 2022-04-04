@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
+import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
 
 import { EditYAML } from './edit-yaml';
 import withDragDropContext from './utils/drag-drop-context';
@@ -26,6 +27,17 @@ const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, m
   isOver: monitor.isOver(),
   canDrop: monitor.canDrop(),
 }))(EditYAML as React.FC<EditYAMLProps>);
+
+type DroppableEditYAMLProps = ResourceYAMLEditorProps & {
+  allowMultiple?: boolean;
+};
+
+// Prevents SDK users from passing additional props
+export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = ({
+  initialResource,
+  header,
+  onSave,
+}) => <DroppableEditYAML initialResource={initialResource} header={header} onSave={onSave} />;
 
 export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
   class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {
@@ -97,13 +109,13 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
     }
 
     render() {
-      const { allowMultiple, obj } = this.props;
+      const { allowMultiple, initialResource } = this.props;
       const { errors, fileUpload } = this.state;
       return (
         <EditYAMLComponent
           {...this.props}
           allowMultiple={allowMultiple}
-          obj={obj}
+          obj={initialResource}
           fileUpload={fileUpload}
           error={errors.join('\n')}
           onDrop={this.handleFileDrop}
@@ -116,16 +128,11 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
 
 type EditYAMLProps = {
   allowMultiple?: boolean;
-  obj: string;
+  obj: ResourceYAMLEditorProps['initialResource'];
   fileUpload: string;
   error: string;
   onDrop: (item: any, monitor: DropTargetMonitor) => void;
   clearFileUpload: () => void;
-};
-
-export type DroppableEditYAMLProps = {
-  allowMultiple?: boolean;
-  obj: string;
 };
 
 export type DroppedFile = {

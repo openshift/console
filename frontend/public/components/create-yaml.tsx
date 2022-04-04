@@ -73,7 +73,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   return (
     <AsyncComponent
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
-      obj={obj}
+      initialResource={obj}
       create={true}
       kind={kindObj.kind}
       header={header}
