@@ -391,7 +391,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   const previousResourceStatus = usePrevious(resourceStatus);
   const previousTotalLineCount = usePrevious(totalLineCount);
-  const linkURL = getResourceLogURL(cluster, resource, containerName);
+  const linkURL = getResourceLogURL(cluster, resource, containerName, null, false, logType);
   const watchURL = getResourceLogURL(cluster, resource, containerName, null, true, logType);
   const [wrapLines, setWrapLines] = useUserSettings<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
