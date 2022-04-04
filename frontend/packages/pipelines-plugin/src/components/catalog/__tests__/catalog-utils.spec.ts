@@ -90,5 +90,16 @@ describe('catalog-utils', () => {
         expect(tektonHubTasksEnabled).toBe(false);
       });
     });
+
+    it('If the api call is not loaded then it should return false', () => {
+      testHook(() => {
+        (useK8sGet as jest.Mock).mockReturnValue([
+          tektonHubIntegrationConfigs[IntegrationTypes.ENABLED],
+          false,
+        ]);
+        const tektonHubTasksEnabled = useTektonHubIntegration();
+        expect(tektonHubTasksEnabled).toBe(false);
+      });
+    });
   });
 });
