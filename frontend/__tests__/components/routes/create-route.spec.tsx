@@ -1,38 +1,41 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { Formik } from 'formik';
 import { Button } from '@patternfly/react-core';
 
-import { ButtonBar, Dropdown, PageHeading } from '../../../public/components/utils';
+import { Dropdown } from '../../../public/components/utils';
 import {
   CreateRoute,
   CreateRouteState,
   AlternateServicesGroup,
 } from '../../../public/components/routes/create-route';
 import * as UIActions from '../../../public/actions/ui';
-import * as k8sActions from '../../../public/module/k8s';
 
 describe('Create Route', () => {
   let wrapper: ShallowWrapper<{}, CreateRouteState>;
 
   beforeEach(() => {
     spyOn(UIActions, 'getActiveNamespace').and.returnValue('default');
-    spyOn(k8sActions, 'k8sList').and.returnValue(
-      Promise.resolve([
-        { metadata: { name: 'service1' } },
-        { metadata: { name: 'service2' } },
-        { metadata: { name: 'service3' } },
-        { metadata: { name: 'service4' } },
-      ]),
-    );
-    wrapper = shallow(<CreateRoute />).dive();
+    const services = [
+      { metadata: { name: 'service1' } },
+      { metadata: { name: 'service2' } },
+      { metadata: { name: 'service3' } },
+      { metadata: { name: 'service4' } },
+    ];
+    wrapper = shallow(
+      <Formik initialValues={{}} onSubmit={jest.fn()}>
+        <CreateRoute services={services} />
+      </Formik>,
+    )
+      .dive()
+      .dive()
+      .dive()
+      .dive()
+      .dive();
   });
 
   it('should render CreateRoute component', () => {
     expect(wrapper.exists()).toBe(true);
-  });
-
-  it('should render correct Create Route page title', () => {
-    expect(wrapper.find(PageHeading).prop('title')).toEqual('Create Route');
   });
 
   it('should render the form elements of CreateRoute component', () => {
@@ -41,24 +44,6 @@ describe('Create Route', () => {
     expect(wrapper.find('input[id="path"]').exists()).toBe(true);
     expect(wrapper.find(Dropdown).exists()).toBe(true);
     expect(wrapper.find('input[id="secure"]').exists()).toBe(true);
-  });
-
-  it('should render control buttons in a button bar with create disabled', () => {
-    expect(wrapper.find(ButtonBar).exists()).toBe(true);
-    expect(
-      wrapper
-        .find(Button)
-        .at(0)
-        .childAt(0)
-        .text(),
-    ).toEqual('Create');
-    expect(
-      wrapper
-        .find(Button)
-        .at(1)
-        .childAt(0)
-        .text(),
-    ).toEqual('Cancel');
   });
 
   it('should display the Add alternate Service link when a service is selected', () => {

@@ -561,7 +561,7 @@ export const RoutesList: React.FC = (props) => {
 export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
   const { t } = useTranslation();
   const createProps = {
-    to: `/k8s/ns/${props.namespace || 'default'}/routes/~new/form`,
+    to: `/k8s/ns/${props.namespace || 'default'}/routes/~new`,
   };
 
   const filters = [

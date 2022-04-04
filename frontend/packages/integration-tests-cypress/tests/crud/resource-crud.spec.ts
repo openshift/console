@@ -96,7 +96,7 @@ describe('Kubernetes resource CRUD operations', () => {
       skipYamlSaveTest: true,
     })
     .set('imagestreams', { kind: 'ImageStream', humanizeKind: false })
-    .set('routes', { kind: 'Route' })
+    .set('routes', { kind: 'Route', skipYamlReloadTest: true, skipYamlSaveTest: true })
     .set('user.openshift.io~v1~Group', {
       kind: 'user.openshift.io~v1~Group',
       namespaced: false,
@@ -106,11 +106,10 @@ describe('Kubernetes resource CRUD operations', () => {
   const testLabel = 'automated-test-name';
   const resourcesWithCreationForm = new Set([
     'StorageClass',
-    'Route',
     'PersistentVolumeClaim',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
-  const resourcesWithSyncedEditor = new Set(['NetworkPolicy', 'ConfigMap']);
+  const resourcesWithSyncedEditor = new Set(['NetworkPolicy', 'ConfigMap', 'Route']);
 
   testObjs.forEach((testObj, resource) => {
     const {
@@ -151,7 +150,12 @@ describe('Kubernetes resource CRUD operations', () => {
         yamlEditor.getEditorContent().then((content) => {
           newContent = _.defaultsDeep(
             {},
-            { metadata: { name, labels: { [testLabel]: testName } } },
+            {
+              metadata: { name, labels: { [testLabel]: testName } },
+              ...(kind === 'Route'
+                ? { spec: { to: { kind: 'Service', name: 'example' }, port: { targetPort: 80 } } }
+                : {}),
+            },
             safeLoad(content),
           );
           yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {

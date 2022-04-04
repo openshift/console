@@ -42,7 +42,8 @@ class DropdownMixin extends React.PureComponent {
 
   UNSAFE_componentWillReceiveProps({ selectedKey, items }) {
     if (selectedKey !== this.props.selectedKey) {
-      this.setState({ selectedKey, title: items[selectedKey] });
+      const title = items[selectedKey] || this.props.title;
+      this.setState({ selectedKey, title });
     }
   }
 
