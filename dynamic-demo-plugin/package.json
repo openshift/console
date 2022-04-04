@@ -24,6 +24,7 @@
     "file-loader": "1.1.11",
     "http-server": "0.12.x",
     "i18next-parser": "^3.3.0",
+    "js-yaml": "^4.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-helmet": "^6.1.0",
@@ -56,7 +57,8 @@
       "listPage": "./components/ListPage",
       "projectTabContent": "./components/ProjectTabExtensionContent",
       "clusterInventoryOverview": "./components/ClusterOverview/Inventory",
-      "clusterOverview": "./utils/cluster-overview"
+      "clusterOverview": "./utils/cluster-overview",
+      "yamlEditor": "./components/YAMLEditorPage"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
