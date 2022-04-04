@@ -580,7 +580,8 @@ EventStream.propTypes = {
 };
 
 const EventStreamWithTranslation = withTranslation()(EventStream);
-export const ResourceEventStream = ({
+
+export const ResourceEventStream_ = ({
   obj: {
     kind,
     metadata: { name, namespace, uid },
@@ -593,6 +594,16 @@ export const ResourceEventStream = ({
   />
 );
 
+export { ResourceEventStream_ as ResourceEventStream };
+
 export const ResourcesEventStream = ({ filters, namespace }) => (
   <EventStreamWithTranslation filter={filters} resourceEventStream namespace={namespace} />
 );
+
+/**
+ * @typedef {import('@console/dynamic-plugin-sdk/src/extensions').ResourceEventStreamProps} ResourceEventStreamProps
+ * @augments React.FC<ResourceEventStreamProps>
+ */
+export const WrappedResourceEventStream = ({ resource }) => <ResourceEventStream_ obj={resource} />;
+
+export default ResourceEventStream_;

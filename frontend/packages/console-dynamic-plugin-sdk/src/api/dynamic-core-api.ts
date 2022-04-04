@@ -20,6 +20,7 @@ import {
   InventoryItemBodyProps,
   InventoryItemStatusProps,
   ResourceYAMLEditorProps,
+  ResourceEventStreamProps,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -144,3 +145,16 @@ export { useFlag } from '../utils/flags';
  */
 export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
   .AsyncResourceYAMLEditor;
+
+/**
+ * A component to show events related to a particular resource.
+ *
+ * @example
+ * ```tsx
+ * const [resource, loaded, loadError] = useK8sWatchResource(clusterResource);
+ * return <ResourceEventStream resource={resource} />
+ * ```
+ * @param {ResourceEventStreamProps['resource']} - An object whose related events should be shown.
+ */
+export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('@console/internal/components/events')
+  .WrappedResourceEventStream;
