@@ -303,5 +303,12 @@
       "path": "/test-editor",
       "component": { "$codeRef": "yamlEditor.default" }
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-events",
+      "component": { "$codeRef": "events.default" }
+    }
   }
 ]

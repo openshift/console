@@ -58,7 +58,8 @@
       "projectTabContent": "./components/ProjectTabExtensionContent",
       "clusterInventoryOverview": "./components/ClusterOverview/Inventory",
       "clusterOverview": "./utils/cluster-overview",
-      "yamlEditor": "./components/YAMLEditorPage"
+      "yamlEditor": "./components/YAMLEditorPage",
+      "events": "./components/APIServerEvents"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
