@@ -24,10 +24,15 @@ describe('deepForOwn', () => {
     deepForOwn<TestValue>(obj, testPredicate, valueCallback);
 
     expect(valueCallback.mock.calls.length).toBe(5);
-    expect(valueCallback.mock.calls[0]).toEqual([{ test: 1 }, 'foo', obj]);
-    expect(valueCallback.mock.calls[1]).toEqual([{ test: 2 }, '0', obj.bar]);
-    expect(valueCallback.mock.calls[2]).toEqual([{ test: 3 }, '1', obj.bar]);
-    expect(valueCallback.mock.calls[3]).toEqual([{ test: 4 }, 'qux', obj.baz]);
-    expect(valueCallback.mock.calls[4]).toEqual([{ test: 6 }, '0', obj.baz.mux.boom]);
+    expect(valueCallback.mock.calls[0]).toEqual([{ test: 1 }, 'foo', obj, 'foo']);
+    expect(valueCallback.mock.calls[1]).toEqual([{ test: 2 }, '0', obj.bar, 'bar.0']);
+    expect(valueCallback.mock.calls[2]).toEqual([{ test: 3 }, '1', obj.bar, 'bar.1']);
+    expect(valueCallback.mock.calls[3]).toEqual([{ test: 4 }, 'qux', obj.baz, 'baz.qux']);
+    expect(valueCallback.mock.calls[4]).toEqual([
+      { test: 6 },
+      '0',
+      obj.baz.mux.boom,
+      'baz.mux.boom.0',
+    ]);
   });
 });
