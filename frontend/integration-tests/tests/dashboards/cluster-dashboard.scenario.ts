@@ -1,5 +1,4 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
-import { waitForNone } from '@console/internal-integration-tests/protractor.conf';
 import * as dashboardView from '@console/shared/src/test-views/dashboard-shared.view';
 import * as clusterDashboardView from '../../views/dashboard.view';
 import * as sideNavView from '../../views/sidenav.view';
@@ -21,6 +20,7 @@ describe('Cluster Dashboard', () => {
 
   describe('Details Card', () => {
     it('has all fields populated', async () => {
+      await browser.wait(until.presenceOf($('[data-test-id="sla-text"]')));
       expect(clusterDashboardView.detailsCard.isDisplayed()).toBe(true);
       const expectedItems = [
         'Cluster API address',
@@ -30,14 +30,12 @@ describe('Cluster Dashboard', () => {
         'Service Level Agreement (SLA)',
         'Update channel',
       ];
-      await browser.wait(until.presenceOf($('[data-test-id="sla-text"]')), 7000);
       const items = clusterDashboardView.detailsCardList.$$('dt');
       const values = clusterDashboardView.detailsCardList.$$('dd');
       expect(items.count()).toBe(expectedItems.length);
       expect(values.count()).toBe(expectedItems.length);
       expectedItems.forEach(async (label: string, i: number) => {
         expect(items.get(i).getText()).toBe(label);
-        await browser.wait(waitForNone(dashboardView.loaders));
         const text = values.get(i).getText();
         expect(text).not.toBe('');
         // `Update Channel` is expected to be `Not available` in CI.
