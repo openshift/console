@@ -209,7 +209,7 @@
   "Please provide hostname.": "ホスト名を指定してください。",
   "Authorized SSH Key": "認可された SSH キー",
   "Add SSH Key": "SSH キーの追加",
-  "Configure via:": "設定ビュー:",
+  "Configure via:": "設定方法:",
   "Form View": "フォームビュー",
   "Yaml View": "YAML ビュー",
   "You can use Cloudinit for post installation configuration of the guest operating system.": "ゲストオペレーティングシステムのインストール後の設定に Cloudinit を使用できます。",
