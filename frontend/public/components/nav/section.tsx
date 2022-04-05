@@ -234,11 +234,9 @@ export const NavSection = connect(navSectionStateToProps)(
 
           if (isGrouped) {
             return (
-              <div className="pf-c-nav__section-divider">
-                <NavGroup title="" data-quickstart-id={dataQuickStartId} className="no-title">
-                  {children}
-                </NavGroup>
-              </div>
+              <NavGroup title="" data-quickstart-id={dataQuickStartId} className="no-title">
+                {children}
+              </NavGroup>
             );
           }
 
