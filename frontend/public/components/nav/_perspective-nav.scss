@@ -7,10 +7,13 @@
     }
   }
   .pf-c-nav__section.no-title {
-    border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
     --pf-c-nav__section--MarginTop: 0;
     .pf-c-nav__section-title {
       --pf-c-nav__section-title--PaddingBottom: 0;
     }
+  }
+  .pf-c-nav__section-divider {
+    padding-bottom: var(--pf-global--spacer--sm);
+    border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
   }
 }
