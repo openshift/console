@@ -94,12 +94,12 @@ spec:
   proxy:
   - type: Service
     alias: helm-charts
+    authorize: true
+    caCertificate: '-----BEGIN CERTIFICATE-----\nMIID....'
     service:
       name: helm-charts
       namespace: helm
       port: 8443
-      caCertificate: '-----BEGIN CERTIFICATE-----\nMIID....'
-      authorize: true
 # ...
 ```
 
