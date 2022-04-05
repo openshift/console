@@ -188,14 +188,13 @@ const RoleBindingsTableHeader = () => {
 };
 RoleBindingsTableHeader.displayName = 'RoleBindingsTableHeader';
 
-export const BindingName = ({ binding }) => {
+export const BindingName = ({ binding }) => (
   <ResourceLink
     kind={bindingKind(binding)}
     name={binding.metadata.name}
     namespace={binding.metadata.namespace}
-    className="co-resource-item__resource-name"
-  />;
-};
+  />
+);
 
 export const BindingKebab = connect(null, {
   startImpersonate: UIActions.startImpersonate,
@@ -221,12 +220,7 @@ const RoleBindingsTableRow = ({ obj: binding }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={bindingKind(binding)}
-          name={binding.metadata.name}
-          namespace={binding.metadata.namespace}
-          className="co-resource-item__resource-name"
-        />
+        <BindingName binding={binding} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <RoleLink binding={binding} />
@@ -267,12 +261,12 @@ export const BindingsList = (props) => {
   const { t } = useTranslation();
   return (
     <Table
-      {...props}
       aria-label={t('public~RoleBindings')}
       EmptyMsg={EmptyMsg}
       Header={RoleBindingsTableHeader}
       Row={RoleBindingsTableRow}
       virtualize
+      {...props}
     />
   );
 };
