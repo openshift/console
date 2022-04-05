@@ -88,12 +88,18 @@ const Inner = withTranslation()(
     class Inner extends React.PureComponent {
       render() {
         const { event, flags, t } = this.props;
-        const { involvedObject: obj, source, message, reason, series } = event;
+        const { involvedObject: obj, source, message, reason, series, reportingComponent } = event;
         const tooltipMsg = `${reason} (${obj.kind})`;
         const isWarning = typeFilter('warning', event);
         const firstTime = getFirstTime(event);
         const lastTime = getLastTime(event);
         const count = series ? series.count : event.count;
+        // Events in v1beta1 apiVersion store the information about the reporting component
+        // in the 'source.component' field. Events in v1 apiVersion are storing the information
+        // in the `reportingComponent` field.
+        // Unfortunatelly we cannot determine which field to use based on the apiVersion since
+        // v1beta1 is internally converted to v1.
+        const component = source.component ? source.component : reportingComponent;
         return (
           <div className={classNames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
             <div className="co-sysevent__icon-box">
@@ -122,22 +128,22 @@ const Inner = withTranslation()(
                 </div>
                 <div className="co-sysevent__details">
                   <small className="co-sysevent__source">
-                    {source.component !== 'kubelet' &&
+                    {component !== 'kubelet' &&
                       t('public~Generated from {{ sourceComponent }}', {
-                        sourceComponent: source.component,
+                        sourceComponent: component,
                       })}
-                    {source.component === 'kubelet' && flags[FLAGS.CAN_LIST_NODE] && (
+                    {component === 'kubelet' && flags[FLAGS.CAN_LIST_NODE] && (
                       <Trans ns="public">
-                        Generated from {{ sourceComponent: source.component }} on{' '}
+                        Generated from {{ sourceComponent: component }} on{' '}
                         <Link to={resourcePathFromModel(NodeModel, source.host)}>
                           {{ sourceHost: source.host }}
                         </Link>
                       </Trans>
                     )}
-                    {source.component === 'kubelet' &&
+                    {component === 'kubelet' &&
                       !flags[FLAGS.CAN_LIST_NODE] &&
                       t('public~Generated from {{ sourceComponent }} on {{ sourceHost }}', {
-                        sourceComponent: source.component,
+                        sourceComponent: component,
                         sourceHost: source.host,
                       })}
                   </small>
