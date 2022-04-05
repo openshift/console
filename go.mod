@@ -12,23 +12,23 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
-	github.com/openshift/api v0.0.0-20211103080632-8981c8822dfa
+	github.com/openshift/api v0.0.0-20220404140913-04e1813ebb11
 	github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 	github.com/operator-framework/kubectl-operator v0.3.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/prometheus/client_golang v1.11.1
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
-	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
+	golang.org/x/net v0.0.0-20210825183410-e898025ed96a
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.7.1
-	k8s.io/api v0.22.1
+	k8s.io/api v0.23.0
 	k8s.io/apiextensions-apiserver v0.22.1
-	k8s.io/apimachinery v0.22.1
+	k8s.io/apimachinery v0.23.0
 	k8s.io/cli-runtime v0.22.1
 	k8s.io/client-go v0.22.1
 	k8s.io/klog v1.0.0
-	k8s.io/klog/v2 v2.9.0
+	k8s.io/klog/v2 v2.30.0
 	sigs.k8s.io/controller-runtime v0.9.5
 	sigs.k8s.io/yaml v1.2.0
 )

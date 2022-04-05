@@ -148,7 +148,7 @@ github.com/docker/go-connections/tlsconfig
 github.com/docker/go-metrics
 # github.com/docker/go-units v0.4.0
 github.com/docker/go-units
-# github.com/evanphx/json-patch v4.11.0+incompatible
+# github.com/evanphx/json-patch v4.12.0+incompatible
 github.com/evanphx/json-patch
 # github.com/exponent-io/jsonpath v0.0.0-20151013193312-d6023ce2651d
 github.com/exponent-io/jsonpath
@@ -158,7 +158,7 @@ github.com/fatih/color
 ## explicit
 # github.com/go-errors/errors v1.0.1
 github.com/go-errors/errors
-# github.com/go-logr/logr v0.4.0
+# github.com/go-logr/logr v1.2.0
 github.com/go-logr/logr
 # github.com/go-openapi/jsonpointer v0.19.5
 github.com/go-openapi/jsonpointer
@@ -251,7 +251,7 @@ github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
 # github.com/josharian/intern v1.0.0
 github.com/josharian/intern
-# github.com/json-iterator/go v1.1.11
+# github.com/json-iterator/go v1.1.12
 github.com/json-iterator/go
 # github.com/klauspost/compress v1.11.13
 github.com/klauspost/compress/fse
@@ -297,7 +297,7 @@ github.com/moby/term
 github.com/moby/term/windows
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 github.com/modern-go/concurrent
-# github.com/modern-go/reflect2 v1.0.1
+# github.com/modern-go/reflect2 v1.0.2
 github.com/modern-go/reflect2
 # github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00
 github.com/monochromegane/go-gitignore
@@ -313,9 +313,10 @@ github.com/opencontainers/image-spec/specs-go
 github.com/opencontainers/image-spec/specs-go/v1
 # github.com/opencontainers/runc v1.0.2 => github.com/opencontainers/runc v1.0.0-rc8.0.20190926150303-84373aaa560b
 github.com/opencontainers/runc/libcontainer/user
-# github.com/openshift/api v0.0.0-20211103080632-8981c8822dfa
+# github.com/openshift/api v0.0.0-20220404140913-04e1813ebb11
 ## explicit
 github.com/openshift/api/build/v1
+github.com/openshift/api/config/v1
 github.com/openshift/api/image/docker10
 github.com/openshift/api/image/dockerpre012
 github.com/openshift/api/image/v1
@@ -421,7 +422,7 @@ golang.org/x/crypto/openpgp/packet
 golang.org/x/crypto/openpgp/s2k
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
-# golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
+# golang.org/x/net v0.0.0-20210825183410-e898025ed96a
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -440,7 +441,7 @@ golang.org/x/oauth2/internal
 # golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 golang.org/x/sync/errgroup
 golang.org/x/sync/semaphore
-# golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c
+# golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/plan9
@@ -448,7 +449,7 @@ golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d
 golang.org/x/term
-# golang.org/x/text v0.3.6
+# golang.org/x/text v0.3.7
 golang.org/x/text/encoding
 golang.org/x/text/encoding/internal
 golang.org/x/text/encoding/internal/identifier
@@ -517,7 +518,7 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# google.golang.org/protobuf v1.26.0
+# google.golang.org/protobuf v1.27.1
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/descfmt
@@ -598,7 +599,7 @@ helm.sh/helm/v3/pkg/repo
 helm.sh/helm/v3/pkg/storage
 helm.sh/helm/v3/pkg/storage/driver
 helm.sh/helm/v3/pkg/time
-# k8s.io/api v0.22.1
+# k8s.io/api v0.23.0
 ## explicit
 k8s.io/api/admission/v1
 k8s.io/api/admission/v1beta1
@@ -651,7 +652,7 @@ k8s.io/api/storage/v1beta1
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1
-# k8s.io/apimachinery v0.22.1
+# k8s.io/apimachinery v0.23.0
 ## explicit
 k8s.io/apimachinery/pkg/api/equality
 k8s.io/apimachinery/pkg/api/errors
@@ -902,10 +903,11 @@ k8s.io/component-base/version
 # k8s.io/klog v1.0.0
 ## explicit
 k8s.io/klog
-# k8s.io/klog/v2 v2.9.0
+# k8s.io/klog/v2 v2.30.0
 ## explicit
 k8s.io/klog/v2
-# k8s.io/kube-openapi v0.0.0-20210421082810-95288971da7e
+# k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65
+k8s.io/kube-openapi/pkg/schemaconv
 k8s.io/kube-openapi/pkg/util/proto
 k8s.io/kube-openapi/pkg/util/proto/validation
 k8s.io/kube-openapi/pkg/validation/spec
@@ -918,10 +920,13 @@ k8s.io/kubectl/pkg/util/openapi/validation
 k8s.io/kubectl/pkg/util/templates
 k8s.io/kubectl/pkg/util/term
 k8s.io/kubectl/pkg/validation
-# k8s.io/utils v0.0.0-20210722164352-7f3ee0f31471
+# k8s.io/utils v0.0.0-20210930125809-cb0fa318a74b
 k8s.io/utils/buffer
+k8s.io/utils/clock
 k8s.io/utils/exec
 k8s.io/utils/integer
+k8s.io/utils/internal/third_party/forked/golang/net
+k8s.io/utils/net
 k8s.io/utils/pointer
 k8s.io/utils/trace
 # oras.land/oras-go v0.4.0
@@ -937,6 +942,9 @@ sigs.k8s.io/controller-runtime/pkg/client
 sigs.k8s.io/controller-runtime/pkg/client/apiutil
 sigs.k8s.io/controller-runtime/pkg/log
 sigs.k8s.io/controller-runtime/pkg/scheme
+# sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6
+sigs.k8s.io/json
+sigs.k8s.io/json/internal/golang/encoding/json
 # sigs.k8s.io/kustomize/api v0.8.11
 sigs.k8s.io/kustomize/api/builtins
 sigs.k8s.io/kustomize/api/filters/annotations
