@@ -2,7 +2,6 @@ import * as React from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
-import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ExternalLink, HintBlock, Timestamp } from '@console/internal/components/utils';
@@ -30,7 +29,7 @@ const levels = [
 
 const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) => {
   const { t } = useTranslation();
-  const capabilityLevelIndex = _.indexOf(levels, capabilityLevel);
+  const capabilityLevelIndex = levels.indexOf(capabilityLevel);
 
   return (
     <ul className="properties-side-panel-pf-property-value__capability-levels">
@@ -255,13 +254,13 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 value={catalogSourceDisplayName || notAvailable}
               />
               <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
-              {!_.isEmpty(infraFeatures) && (
+              {infraFeatures?.length > 0 && (
                 <PropertyItem
                   label={t('olm~Infrastructure features')}
                   value={mappedInfraFeatures}
                 />
               )}
-              {validSubscription && (
+              {validSubscription?.length > 0 && (
                 <PropertyItem
                   label={t('olm~Valid Subscriptions')}
                   value={mappedValidSubscription}
