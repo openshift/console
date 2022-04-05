@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { DndProvider } from 'react-dnd';
-import { shallow } from 'enzyme';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router';
+import { shallow, mount } from 'enzyme';
 import { modelFor } from '@console/internal/module/k8s';
 import { usePinnedResources } from '@console/shared';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
 import { mockPerspectiveExtensions } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
 import { NavGroup } from '@patternfly/react-core';
+import store from '../../../redux';
+import { history } from '../../utils';
 import PerspectiveNav from '../perspective-nav';
 import AdminNav from '../admin-nav';
 import PinnedResource from '../PinnedResource';
@@ -31,8 +35,8 @@ jest.mock('react-dnd', () => {
   const reactDnd = require.requireActual('react-dnd');
   return {
     ...reactDnd,
-    useDrag: jest.fn(() => [{}, {}]),
-    useDrop: jest.fn(() => [{}, {}]),
+    useDrag: jest.fn(() => [{}, {}, () => {}]),
+    useDrop: jest.fn(() => [{}, () => {}]),
   };
 });
 
@@ -67,19 +71,21 @@ describe('Perspective Nav', () => {
   it('should render non-draggable pinned items for dev perspective if only one pinned resource is available', () => {
     useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
     usePinnedResourcesMock.mockReturnValue([['core~v1~ConfigMap'], jest.fn(), true]);
-    const wrapper = shallow(<PerspectiveNav />);
+    const wrapper = mount(
+      <Router history={history}>
+        <Provider store={store}>
+          <PerspectiveNav />
+        </Provider>
+      </Router>,
+    );
     expect(
       wrapper
         .find('[data-test-id="dev-perspective-nav"]')
         .childAt(1)
-        .shallow()
         .find(DndProvider)
         .childAt(0)
-        .shallow()
         .find(NavGroup)
-        .shallow()
         .find(PinnedResource)
-        .shallow()
         .find('[data-test="pinned-resource-item"]')
         .exists(),
     ).toBeTruthy();
@@ -96,20 +102,22 @@ describe('Perspective Nav', () => {
       jest.fn(),
       true,
     ]);
-    const wrapper = shallow(<PerspectiveNav />);
+    const wrapper = mount(
+      <Router history={history}>
+        <Provider store={store}>
+          <PerspectiveNav />
+        </Provider>
+      </Router>,
+    );
     expect(
       wrapper
         .find('[data-test-id="dev-perspective-nav"]')
         .childAt(1)
-        .shallow()
         .find(DndProvider)
         .childAt(0)
-        .shallow()
         .find(NavGroup)
-        .shallow()
         .find(PinnedResource)
         .at(0)
-        .shallow()
         .find('[data-test="draggable-pinned-resource-item"]')
         .exists(),
     ).toBeTruthy();
