@@ -16,26 +16,26 @@ export const getAvailableAccessRoles = (): string[] | undefined => {
   return JSON.parse(window.SERVER_FLAGS.projectAccessClusterRoles);
 };
 
-export const filterRoleBindings = (
-  roleBindings: RoleBinding[],
-  clusterRoleNames: string[],
-): RoleBinding[] => {
-  return _.filter(roleBindings, (user: RoleBinding) =>
-    clusterRoleNames.includes(user.roleRef.name),
-  );
-};
-
-export const getUsersFromSubject = (user: RoleBinding): UserRoleBinding[] =>
+export const getFormDataFromRoleBinding = (user: RoleBinding): UserRoleBinding[] =>
   user.subjects?.map((obj) => ({
     roleBindingName: user.metadata.name,
-    user: obj.name,
+    subject: obj,
     role: user.roleRef.name,
+    subjects: user.subjects,
   }));
 
-export const getUserRoleBindings = (roleBindings: RoleBinding[]): UserRoleBinding[] =>
-  _.filter(_.flatten(roleBindings.map((user) => getUsersFromSubject(user))), undefined);
+export const getUserRoleBindings = (
+  roleBindings: RoleBinding[],
+  clusterRoleNames: string[],
+): UserRoleBinding[] =>
+  roleBindings.reduce((acc, roleBinding: RoleBinding) => {
+    if (clusterRoleNames.includes(roleBinding.roleRef.name) && roleBinding.subjects?.length > 0) {
+      acc.push(...getFormDataFromRoleBinding(roleBinding));
+    }
+    return acc;
+  }, []);
 
 export const ignoreRoleBindingName = (roleBinding: UserRoleBinding[]) => {
-  const res = roleBinding.map((obj) => ({ user: obj.user, role: obj.role }));
+  const res = roleBinding.map((obj) => ({ user: obj.subject.name, role: obj.role }));
   return _.sortBy(res, ['user']);
 };

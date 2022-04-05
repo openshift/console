@@ -181,28 +181,53 @@ export const roleBindingsWithRequiredAttributes = [
 export const roleBindingsToBeCreated1: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'ab',
+    subject: {
+      name: 'ab',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
   {
-    user: 'c',
+    subject: {
+      name: 'c',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
 ];
 export const rolesBindingsToBeRemoved1: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'a',
+    subject: {
+      name: 'a',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
 ];
@@ -210,7 +235,12 @@ export const rolesBindingsToBeRemoved1: UserRoleBinding[] = [
 export const rolesWithNameChangeResult: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'ab',
+    subject: {
+      name: 'ab',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
 ];
@@ -218,17 +248,32 @@ export const rolesWithNameChangeResult: UserRoleBinding[] = [
 export const initialRoles1: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'ab',
+    subject: {
+      name: 'ab',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
   {
     roleBindingName: 'c-view',
-    user: 'c',
+    subject: {
+      name: 'c',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
 ];
@@ -236,12 +281,22 @@ export const initialRoles1: UserRoleBinding[] = [
 export const formValues1: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'ab',
+    subject: {
+      name: 'ab',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
 ];
@@ -249,7 +304,12 @@ export const formValues1: UserRoleBinding[] = [
 export const rolesBindingsToBeRemoved: UserRoleBinding[] = [
   {
     roleBindingName: 'c-view',
-    user: 'c',
+    subject: {
+      name: 'c',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
 ];
@@ -257,28 +317,53 @@ export const rolesBindingsToBeRemoved: UserRoleBinding[] = [
 export const formValues2: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'ab',
+    subject: {
+      name: 'ab',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
   {
     roleBindingName: 'c-view',
-    user: 'c',
+    subject: {
+      name: 'c',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
-    user: 'd',
+    subject: {
+      name: 'd',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
 ];
 
 export const roleBindingsToBeCreated2: UserRoleBinding[] = [
   {
-    user: 'd',
+    subject: {
+      name: 'd',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
 ];
@@ -286,33 +371,63 @@ export const roleBindingsToBeCreated2: UserRoleBinding[] = [
 export const initialRoles2: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'ab',
+    subject: {
+      name: 'ab',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'xy-admin',
-    user: 'xy',
+    subject: {
+      name: 'xy',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
   {
     roleBindingName: 'yx-view',
-    user: 'yx',
+    subject: {
+      name: 'yx',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
 ];
 export const roleBindingsToBeCreated3: UserRoleBinding[] = [
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
   {
-    user: 'c',
+    subject: {
+      name: 'c',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
 ];
@@ -320,12 +435,22 @@ export const roleBindingsToBeCreated3: UserRoleBinding[] = [
 export const rolesBindingsToBeRemoved2: UserRoleBinding[] = [
   {
     roleBindingName: 'a-view',
-    user: 'ab',
+    subject: {
+      name: 'ab',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
 ];
@@ -333,21 +458,41 @@ export const rolesBindingsToBeRemoved2: UserRoleBinding[] = [
 export const displayRoleBindings: UserRoleBinding[] = [
   {
     roleBindingName: 'xy-admin',
-    user: 'xy',
+    subject: {
+      name: 'xy',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
   {
     roleBindingName: 'yx-view',
-    user: 'yx',
+    subject: {
+      name: 'yx',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'view',
   },
   {
     roleBindingName: 'b-view',
-    user: 'b',
+    subject: {
+      name: 'b',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
   {
-    user: 'c',
+    subject: {
+      name: 'c',
+      kind: 'User',
+      apiGroup: 'rbac.authorization.k8s.io',
+    },
+    subjects: [],
     role: 'admin',
   },
 ];
@@ -370,3 +515,205 @@ export const getGroupedRoleResult = {
     },
   ],
 };
+
+export const newRoles: UserRoleBinding[] = [
+  {
+    role: 'admin',
+    subject: {
+      name: 'dd',
+      apiGroup: '',
+      kind: '',
+    },
+    subjects: null,
+  },
+  {
+    role: 'admin',
+    roleBindingName: 'a-edit-efb4fed775d423d2',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'a',
+    },
+    subjects: [{ apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'a' }],
+  },
+  {
+    role: 'admin',
+    roleBindingName: 'admin-d',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'user5',
+    },
+
+    subjects: [
+      { apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'system:admin' },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user1',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user2',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user3',
+      },
+    ],
+  },
+  {
+    role: 'edit',
+    roleBindingName: 'admin-d',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'user3',
+    },
+
+    subjects: [
+      { apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'system:admin' },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user1',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user2',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user3',
+      },
+      { apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'system:admin' },
+    ],
+  },
+];
+
+export const removeRoles = [
+  {
+    role: 'edit',
+    roleBindingName: 'a-edit-efb4fed775d423d2',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'a',
+    },
+    subjects: [{ apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'a' }],
+  },
+  {
+    role: 'admin',
+    roleBindingName: 'admin-d',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'user1',
+    },
+    subjects: [
+      { apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'system:admin' },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user1',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user2',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user3',
+      },
+    ],
+  },
+  {
+    role: 'admin',
+    roleBindingName: 'admin-d',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'user2',
+    },
+    subjects: [
+      { apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'system:admin' },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user1',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user2',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user3',
+      },
+    ],
+  },
+  {
+    role: 'admin',
+    roleBindingName: 'admin-d',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'user3',
+    },
+    subjects: [
+      { apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'system:admin' },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user1',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user2',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user3',
+      },
+    ],
+  },
+];
+export const updateRoles = [
+  {
+    role: 'admin',
+    roleBindingName: 'admin-d',
+    subject: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'user5',
+    },
+    subjects: [
+      { apiGroup: 'rbac.authorization.k8s.io', kind: 'User', name: 'system:admin' },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user1',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user2',
+      },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'user3',
+      },
+    ],
+  },
+];
