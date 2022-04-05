@@ -39,7 +39,10 @@ export type ErrorHandler = GenericHandler<Event>;
  */
 export type MessageDataType = object | any;
 export type MessageHandler = GenericHandler<MessageDataType>;
-export type DestroyHandler = GenericHandler<undefined>;
+/**
+ * Data is provided potentially by .destroy() caller.
+ */
+export type DestroyHandler = GenericHandler<unknown | undefined>;
 export type BulkMessageHandler = GenericHandler<MessageDataType>;
 
 type WSHandlers = {
@@ -58,8 +61,6 @@ type WSHandlerType = keyof WSHandlers;
  */
 export class WSFactory {
   private readonly id: string;
-
-  private readonly url: string;
 
   private paused: boolean;
 
@@ -87,7 +88,6 @@ export class WSFactory {
     this.id = id;
     this.options = options;
     this.bufferMax = options.bufferMax || 0;
-    this.url = createURL(options.host, options.path);
     this.paused = false;
     this.handlers = {
       open: [],
@@ -142,8 +142,9 @@ export class WSFactory {
     const that = this;
     this.state = 'init';
     this.messageBuffer = [];
+    const url = createURL(this.options.host, this.options.path);
     try {
-      this.ws = new WebSocket(this.url, this.options.subprotocols);
+      this.ws = new WebSocket(url, this.options.subprotocols);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Error creating websocket:', e);
@@ -303,7 +304,7 @@ export class WSFactory {
     return this.messageBuffer.length;
   }
 
-  destroy() {
+  destroy(eventData?: unknown) {
     // eslint-disable-next-line no-console
     console.log(`destroying websocket: ${this.id}`);
     if (this.state === 'destroyed') {
@@ -331,7 +332,7 @@ export class WSFactory {
     }
 
     try {
-      this.triggerEvent('destroy');
+      this.triggerEvent('destroy', eventData);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Error while trigger destroy event for WS socket', e);
@@ -339,7 +340,6 @@ export class WSFactory {
 
     this.state = 'destroyed';
 
-    delete this.options;
     this.messageBuffer = [];
   }
 
