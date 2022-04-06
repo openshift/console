@@ -115,6 +115,9 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries, namespace }) => 
   if (error) {
     return <ErrorAlert message={error} />;
   }
+  if (_.isEmpty(panel.styles)) {
+    return <ErrorAlert message={t('public~panel.styles attribute not found')} />;
+  }
   if (_.isEmpty(data)) {
     return <EmptyBox label={t('public~Data')} />;
   }
