@@ -72,7 +72,7 @@ Feature: Create Pipeline from Add Options
                   | nodejs-g |
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: Create a workload with pipeline from Docker file: P-01-TC06
             Given user is on Import from Git form
              When user enters Git Repo URL as "<docker_git_url>"
@@ -87,7 +87,7 @@ Feature: Create Pipeline from Add Options
 
         Examples:
                   | docker_git_url                                  | pipeline_name   | dockerfile_path |
-                  | https://github.com/openshift/pipelines-vote-api | docker-pipeline | dockerfile      |
+                  | https://github.com/openshift/pipelines-vote-api | docker-pipeline | Dockerfile      |
 
 
         @regression
