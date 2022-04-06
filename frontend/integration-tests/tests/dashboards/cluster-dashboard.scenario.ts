@@ -18,7 +18,7 @@ describe('Cluster Dashboard', () => {
     await dashboardView.isLoaded();
   });
 
-  describe('Details Card', () => {
+  xdescribe('[https://issues.redhat.com/browse/CONSOLE-3124] Details Card', () => {
     it('has all fields populated', async () => {
       await browser.wait(until.presenceOf($('[data-test-id="sla-text"]')));
       expect(clusterDashboardView.detailsCard.isDisplayed()).toBe(true);
