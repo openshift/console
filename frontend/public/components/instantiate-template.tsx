@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Divider } from '@patternfly/react-core';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 
@@ -45,7 +45,7 @@ const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ templ
 
   return (
     <>
-      <hr />
+      <Divider className="co-divider" />
       <p>The following resources will be created:</p>
       <ul>
         {resources.map((kind: string) => (

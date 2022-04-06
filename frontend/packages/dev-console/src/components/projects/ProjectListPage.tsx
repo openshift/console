@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Divider } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import { ProjectsTable } from '@console/internal/components/namespace';
 import { PageHeading } from '@console/internal/components/utils';
@@ -21,7 +22,7 @@ const ProjectListPage: React.FC<ProjectListPageProps> = ({
     <PageHeading title={title} badge={badge}>
       {children}
     </PageHeading>
-    <hr className="odc-project-list-page__section-border" />
+    <Divider className="co-divider" />
     <ListPage
       {...listPageProps}
       showTitle={false}

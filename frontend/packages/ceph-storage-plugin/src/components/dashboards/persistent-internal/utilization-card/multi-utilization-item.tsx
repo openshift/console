@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize } from '@console/internal/components/utils';
+import { Divider } from '@patternfly/react-core';
 import { AreaChart } from './area-chart';
 
 export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> = React.memo(
@@ -40,7 +41,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
           </div>
         </div>
         <div className="co-utilization-card__item-chart">{chart}</div>
-        <hr style={{ border: '1px lightgray solid', margin: '0px' }} />
+        <Divider />
       </div>
     );
   },
