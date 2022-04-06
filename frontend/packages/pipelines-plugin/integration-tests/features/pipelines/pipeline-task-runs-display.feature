@@ -6,11 +6,11 @@ Feature: Display task runs page
             Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
-
+ 
         @smoke
         Scenario: Task runs tab: P-05-TC01
-            Given pipeline run is displayed for "pipeline-tasks-one" with resource
-             When user clicks on pipeline "pipeline-tasks-one"
+            Given pipeline run is displayed for "pipe-one" with resource
+             When user clicks on pipeline "pipe-one"
               And user clicks on Pipeline Runs tab
               And user clicks on a Pipeline Run
               And user clicks on Task Runs tab
@@ -18,37 +18,37 @@ Feature: Display task runs page
               And user can see Name, Task, Pod, Status and Started columns
 
 
-        @regression @to-do
+        @regression
         Scenario: Options in kebab menu of task runs: P-05-TC02
-            Given user is at PipelineRuns tab with pipeline runs
-              And user clicks on a Pipeline Run
+            Given user is at PipelineRuns tab with pipeline runs for pipeline "pipe-one"
+             When user clicks on Pipeline Run for "pipe-one"
               And user clicks on TaskRuns tab
               And user clicks kebab menu of a task run
              Then user can see kebab menu option Delete TaskRun
 
 
-        @regression @to-do
+        @regression
         Scenario: Task Runs Details page for passed task runs: P-05-TC03
-            Given user is at pipeline details page with pipeline runs
+            Given user is at pipeline details page with pipeline runs "pipe-one"
              When user clicks on pipeline runs tab
-              And user clicks on a pipeline run
+              And user clicks on Pipeline Run for "pipe-one"
               And user clicks on Task Runs tab
-              And user clicks on a Succeeded task run
+              And user clicks on task run "pipe-one"
              Then user is redirected to Task Run Details tab
-              And user can see "Details", "Log", "YAML" and "Events" tab
-              And user can see Status and Pods in "Details" tab
+              And user can see Details, Log, YAML and Events tab
+              And user can see Status and Pods in Details tab
 
 
-        @regression @to-do
+        @regression
         Scenario: Task Runs Details page for failed task runs: P-05-TC04
-            Given user is at pipeline details page with pipeline runs
-             When user clicks on pipeline runs tab
-              And user clicks on a pipeline run
+            Given user is at pipeline details page with pipeline runs for failed task run in "aut-pipelines" namespace
+             When user clicks on pipeline runs tab for pipeline "new-pipeline-failed-task"
+              And user clicks on Pipeline Run "pipeline-runs-failed-task"
               And user clicks on Task Runs tab
-              And user clicks on a Failed task run
+              And user clicks on task run "pipeline-runs-failed-task"
              Then user is redirected to Task Run Details tab
-              And user can see "Details", "Log", "YAML" and "Events" tab
-              And user can see Status, Message and Log snippet in "Details" tab
+              And user can see Details, Log, YAML and Events tab
+              And user can see Status, Message and Log snippet in Details tab
 
 
         @regression @manual
@@ -69,18 +69,13 @@ Feature: Display task runs page
                   | pipe-wp-t5    | VolumeClaimTemplate   | VolumeClaimTemplate | VolumeClaimTemplate |
 
 
-        @regression @to-do
+        @regression
         Scenario: Task Run results on Task Run details page for passed task run: P-05-TC06
-            Given pipeline run with passed task run is displayed for "pipeline-tasks-one"
-              And user is on Task Run details page of passed task run
+            Given pipeline run with passed task run is displayed for "aut-pipelines" namespace
+             When user clicks on pipeline runs tab for pipeline "pipeline-taskrun-results"
+              And user clicks on Pipeline Run "pipeline-runs-taskrun-results"
+              And user clicks on Task Runs tab
+              And user clicks on task run "pipeline-runs-taskrun-results"
+             Then user is redirected to Task Run Details tab
              When user scrolls to the Task Run results section
              Then user can see Name and Value column under Task Run results
-
-
-        @regression @to-do
-        Scenario: Task Run results on Task Run details page for failed task run: P-05-TC07
-            Given pipeline run with failed task run is displayed for "pipeline-tasks-one"
-            # user can use yaml content "sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml"
-              And user is on Task Run details page of failed task run
-             When user scrolls to the Task Run results section
-             Then user can see message "No Task Run results available due to failure."
