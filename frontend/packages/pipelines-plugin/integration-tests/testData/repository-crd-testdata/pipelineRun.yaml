@@ -1,0 +1,313 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+ generateName: pipeline-as-code-on-push-
+ annotations:
+   pipelinesascode.tekton.dev/on-event: '[push]'
+   pipelinesascode.tekton.dev/on-target-branch: '[main]'
+   pipelinesascode.tekton.dev/sha-title: Delete new-test
+   pipelinesascode.tekton.dev/sha-url: >-
+     https://github.com/karthikjeeyar/demo-app/commit/6f9445a02ead2950a234362142c0e8718b30f183
+   pipelinesascode.tekton.dev/task: '[git-clone]'
+   pipelinesascode.tekton.dev/task-1: '[https://git.io/Jn9Ee]'
+ resourceVersion: '4127217'
+ name: pipeline-as-code-on-push-c6f4q
+ uid: be953d5d-967e-473c-b788-e36cb1dfc2f5
+ creationTimestamp: '2022-03-30T05:50:03Z'
+ generation: 1
+ managedFields:
+   - apiVersion: tekton.dev/v1beta1
+     fieldsType: FieldsV1
+     fieldsV1:
+       'f:metadata':
+         'f:labels':
+           'f:tekton.dev/pipeline': {}
+     manager: openshift-pipelines-controller
+     operation: Update
+     time: '2022-03-30T05:50:03Z'
+   - apiVersion: tekton.dev/v1beta1
+     fieldsType: FieldsV1
+     fieldsV1:
+       'f:metadata':
+         'f:annotations':
+           .: {}
+           'f:pipelinesascode.tekton.dev/on-event': {}
+           'f:pipelinesascode.tekton.dev/on-target-branch': {}
+           'f:pipelinesascode.tekton.dev/sha-title': {}
+           'f:pipelinesascode.tekton.dev/sha-url': {}
+           'f:pipelinesascode.tekton.dev/task': {}
+           'f:pipelinesascode.tekton.dev/task-1': {}
+         'f:generateName': {}
+         'f:labels':
+           'f:pipelinesascode.tekton.dev/url-repository': {}
+           'f:pipelinesascode.tekton.dev/repository': {}
+           'f:app.kubernetes.io/managed-by': {}
+           'f:pipelinesascode.tekton.dev/url-org': {}
+           'f:pipelinesascode.tekton.dev/event-type': {}
+           'f:pipelinesascode.tekton.dev/original-prname': {}
+           .: {}
+           'f:pipelinesascode.tekton.dev/sha': {}
+           'f:pipelinesascode.tekton.dev/sender': {}
+           'f:app.kubernetes.io/version': {}
+           'f:pipelinesascode.tekton.dev/branch': {}
+       'f:spec':
+         .: {}
+         'f:params': {}
+         'f:pipelineSpec':
+           .: {}
+           'f:finally': {}
+           'f:params': {}
+           'f:tasks': {}
+     manager: pipelines-as-code-controller
+     operation: Update
+     time: '2022-03-30T05:50:03Z'
+   - apiVersion: tekton.dev/v1beta1
+     fieldsType: FieldsV1
+     fieldsV1:
+       'f:status':
+         .: {}
+         'f:completionTime': {}
+         'f:conditions': {}
+         'f:pipelineSpec':
+           .: {}
+           'f:finally': {}
+           'f:params': {}
+           'f:tasks': {}
+         'f:startTime': {}
+         'f:taskRuns':
+           .: {}
+           'f:pipeline-as-code-on-push-c6f4q-fetch-mk2pv':
+             .: {}
+             'f:pipelineTaskName': {}
+             'f:status':
+               .: {}
+               'f:completionTime': {}
+               'f:conditions': {}
+               'f:podName': {}
+               'f:startTime': {}
+               'f:steps': {}
+               'f:taskSpec':
+                 .: {}
+                 'f:params': {}
+                 'f:steps': {}
+           'f:pipeline-as-code-on-push-c6f4q-send-notifications-p57dq':
+             .: {}
+             'f:pipelineTaskName': {}
+             'f:status':
+               .: {}
+               'f:completionTime': {}
+               'f:conditions': {}
+               'f:podName': {}
+               'f:startTime': {}
+               'f:steps': {}
+               'f:taskSpec':
+                 .: {}
+                 'f:params': {}
+                 'f:steps': {}
+     manager: openshift-pipelines-controller
+     operation: Update
+     subresource: status
+     time: '2022-03-30T05:50:14Z'
+ namespace: aut-pipelines
+ labels:
+   pipelinesascode.tekton.dev/sender: karthikjeeyar
+   app.kubernetes.io/version: nightly-20220329-3e0f4b2
+   tekton.dev/pipeline: pipeline-as-code-on-push-c6f4q
+   app.kubernetes.io/managed-by: pipelinesascode.tekton.dev
+   pipelinesascode.tekton.dev/branch: refs-heads-main
+   pipelinesascode.tekton.dev/url-org: karthikjeeyar
+   pipelinesascode.tekton.dev/original-prname: pipeline-as-code-on-push
+   pipelinesascode.tekton.dev/url-repository: demo-app
+   pipelinesascode.tekton.dev/repository: test-repo
+   pipelinesascode.tekton.dev/sha: 6f9445a02ead2950a234362142c0e8718b30f183
+   pipelinesascode.tekton.dev/event-type: push
+spec:
+ params:
+   - name: repo_url
+     value: 'https://github.com/karthikjeeyar/demo-app'
+   - name: revision
+     value: 6f9445a02ead2950a234362142c0e8718b30f183
+ pipelineSpec:
+   finally:
+     - name: send-notifications
+       params:
+         - name: echo-value-for-task
+           value: Sending notification... $(params.echo-value) fetched
+       taskSpec:
+         metadata: {}
+         params:
+           - default: this is not the param you're looking for
+             description: The value to echo out
+             name: echo-value-for-task
+             type: string
+         spec: null
+         steps:
+           - args:
+               - $(inputs.params.echo-value-for-task)
+             command:
+               - echo
+             image: ubuntu
+             name: echo
+             resources: {}
+   params:
+     - default: code
+       description: The value to echo out
+       name: echo-value
+       type: string
+   tasks:
+     - name: fetch
+       params:
+         - name: echo-value-for-task
+           value: fetching $(params.echo-value)
+       taskSpec:
+         metadata: {}
+         params:
+           - default: this is not the param you're looking for
+             description: The value to echo out
+             name: echo-value-for-task
+             type: string
+         spec: null
+         steps:
+           - args:
+               - $(inputs.params.echo-value-for-task)
+             command:
+               - echo
+             image: ubuntu
+             name: echo
+             resources: {}
+ serviceAccountName: pipeline
+ timeout: 1h0m0s
+status:
+ completionTime: '2022-03-30T05:50:14Z'
+ conditions:
+   - lastTransitionTime: '2022-03-30T05:50:14Z'
+     message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0'
+     reason: Succeeded
+     status: 'True'
+     type: Succeeded
+ pipelineSpec:
+   finally:
+     - name: send-notifications
+       params:
+         - name: echo-value-for-task
+           value: Sending notification... $(params.echo-value) fetched
+       taskSpec:
+         metadata: {}
+         params:
+           - default: this is not the param you're looking for
+             description: The value to echo out
+             name: echo-value-for-task
+             type: string
+         spec: null
+         steps:
+           - args:
+               - $(inputs.params.echo-value-for-task)
+             command:
+               - echo
+             image: ubuntu
+             name: echo
+             resources: {}
+   params:
+     - default: code
+       description: The value to echo out
+       name: echo-value
+       type: string
+   tasks:
+     - name: fetch
+       params:
+         - name: echo-value-for-task
+           value: fetching $(params.echo-value)
+       taskSpec:
+         metadata: {}
+         params:
+           - default: this is not the param you're looking for
+             description: The value to echo out
+             name: echo-value-for-task
+             type: string
+         spec: null
+         steps:
+           - args:
+               - $(inputs.params.echo-value-for-task)
+             command:
+               - echo
+             image: ubuntu
+             name: echo
+             resources: {}
+ startTime: '2022-03-30T05:50:03Z'
+ taskRuns:
+   pipeline-as-code-on-push-c6f4q-fetch-mk2pv:
+     pipelineTaskName: fetch
+     status:
+       completionTime: '2022-03-30T05:50:08Z'
+       conditions:
+         - lastTransitionTime: '2022-03-30T05:50:08Z'
+           message: All Steps have completed executing
+           reason: Succeeded
+           status: 'True'
+           type: Succeeded
+       podName: pipeline-as-code-on-push-c6f4q-fetch-mk2pv-pod-tcxqg
+       startTime: '2022-03-30T05:50:03Z'
+       steps:
+         - container: step-echo
+           imageID: >-
+             docker.io/library/ubuntu@sha256:bea6d19168bbfd6af8d77c2cc3c572114eb5d113e6f422573c93cb605a0e2ffb
+           name: echo
+           terminated:
+             containerID: >-
+               cri-o://a38b2ef6f83adb913eacd212a6378da831353e4810b7da44052579ebd9904204
+             exitCode: 0
+             finishedAt: '2022-03-30T05:50:08Z'
+             reason: Completed
+             startedAt: '2022-03-30T05:50:08Z'
+       taskSpec:
+         params:
+           - default: this is not the param you're looking for
+             description: The value to echo out
+             name: echo-value-for-task
+             type: string
+         steps:
+           - args:
+               - $(inputs.params.echo-value-for-task)
+             command:
+               - echo
+             image: ubuntu
+             name: echo
+             resources: {}
+   pipeline-as-code-on-push-c6f4q-send-notifications-p57dq:
+     pipelineTaskName: send-notifications
+     status:
+       completionTime: '2022-03-30T05:50:14Z'
+       conditions:
+         - lastTransitionTime: '2022-03-30T05:50:14Z'
+           message: All Steps have completed executing
+           reason: Succeeded
+           status: 'True'
+           type: Succeeded
+       podName: pipeline-as-code-on-push-c6f4q-send-notifications-p57dq-p-6thl4
+       startTime: '2022-03-30T05:50:08Z'
+       steps:
+         - container: step-echo
+           imageID: >-
+             docker.io/library/ubuntu@sha256:bea6d19168bbfd6af8d77c2cc3c572114eb5d113e6f422573c93cb605a0e2ffb
+           name: echo
+           terminated:
+             containerID: >-
+               cri-o://7772eede635d73f132d8c79c0fedc7523f38c2b54cb7754d5b200254f0ba521c
+             exitCode: 0
+             finishedAt: '2022-03-30T05:50:14Z'
+             reason: Completed
+             startedAt: '2022-03-30T05:50:14Z'
+       taskSpec:
+         params:
+           - default: this is not the param you're looking for
+             description: The value to echo out
+             name: echo-value-for-task
+             type: string
+         steps:
+           - args:
+               - $(inputs.params.echo-value-for-task)
+             command:
+               - echo
+             image: ubuntu
+             name: echo
+             resources: {}
