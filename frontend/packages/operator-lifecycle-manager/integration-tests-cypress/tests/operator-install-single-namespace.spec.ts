@@ -17,7 +17,7 @@ const testOperand: TestOperandProps = {
   exampleName: `backend1-sample`,
 };
 
-describe(`Installing "${testOperator.name}" operator in ${testOperator.installedNamespace}`, () => {
+describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
@@ -37,7 +37,7 @@ describe(`Installing "${testOperator.name}" operator in ${testOperator.installed
     cy.logout();
   });
 
-  it(`Installs ${testOperator.name} operator in ${testOperator.installedNamespace} and creates ${testOperand.name} operand instance`, () => {
+  it(`Installs ${testOperator.name} operator in test namespace and creates ${testOperand.name} operand instance`, () => {
     operator.install(
       testOperator.name,
       testOperator.operatorHubCardTestID,
