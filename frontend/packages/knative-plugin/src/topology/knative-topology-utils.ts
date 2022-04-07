@@ -516,10 +516,10 @@ export const getDeploymentsForKamelet = (
     [EVENT_SOURCE_CAMEL_KIND, CamelKameletBindingModel.kind].includes(resource.kind) &&
     resources.integrations
   ) {
-    const intgrationsOwnData = getOwnedResources(resource, resources.integrations.data);
+    const integrationsOwnData = getOwnedResources(resource, resources.integrations.data);
     const associatedDeployment =
-      intgrationsOwnData?.length > 0
-        ? getOwnedResources(intgrationsOwnData[0], resources.deployments?.data)
+      integrationsOwnData?.length > 0
+        ? getOwnedResources(integrationsOwnData[0], resources.deployments?.data)
         : [];
     return associatedDeployment;
   }

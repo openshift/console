@@ -1,46 +1,42 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   ResourceLink,
   ExternalLink,
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
-import { PodModel } from '@console/internal/models';
 import {
   K8sResourceKind,
   referenceForGroupVersionKind,
   groupVersionFor,
 } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared';
 import EventSourceOwnedList from './EventSourceOwnedList';
 
-type EventSourceResourcesProps = {
+type EventSourceTargetProps = {
   obj: K8sResourceKind;
-  ownedSources?: K8sResourceKind[];
 };
 
-const EventSourceResources: React.FC<EventSourceResourcesProps> = ({ obj, ownedSources }) => {
+type EventSourceDeploymentsProps = {
+  deploymentObj: K8sResourceKind;
+};
+
+type OwnedEventSourcesProps = {
+  eventSources: K8sResourceKind[];
+};
+
+export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => {
   const { t } = useTranslation();
   const {
-    kind,
-    apiVersion,
-    metadata: { name, namespace },
+    metadata: { namespace },
     spec,
     status,
   } = obj;
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiversion } =
     spec?.sink?.ref || spec?.sink || {};
   const sinkUri = spec?.sink?.uri || status?.sinkUri;
-  const apiGroup = apiVersion.split('/')[0];
-  const linkUrl = `/search/ns/${namespace}?kind=${PodModel.kind}&q=${encodeURIComponent(
-    `${apiGroup}/${_.lowerFirst(kind)}=${name}`,
-  )}`;
   const { group, version } = (sinkApiversion && groupVersionFor(sinkApiversion)) || {};
   const isSinkReference = !!(sinkKind && sinkName && group && version);
-  const { podData } = usePodsWatcher(obj, obj.kind, namespace);
-  const deploymentData = podData?.current?.obj?.metadata?.ownerReferences?.[0];
 
   return (
     <>
@@ -70,27 +66,40 @@ const EventSourceResources: React.FC<EventSourceResourcesProps> = ({ obj, ownedS
       ) : (
         <span className="text-muted">{t('knative-plugin~No sink found for this resource.')}</span>
       )}
-      {podData?.pods?.length > 0 && <PodsOverview obj={obj} allPodsLink={linkUrl} />}
-      {deploymentData?.name && (
+    </>
+  );
+};
+
+export const EventSourceDeployments: React.FC<EventSourceDeploymentsProps> = ({
+  deploymentObj,
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {!_.isEmpty(deploymentObj) ? (
         <>
           <SidebarSectionHeading text={t('knative-plugin~Deployment')} />
           <ul className="list-group">
             <li className="list-group-item">
               <ResourceLink
-                kind={deploymentData.kind}
-                name={deploymentData.name}
-                namespace={namespace}
+                kind={deploymentObj.kind}
+                name={deploymentObj.metadata.name}
+                namespace={deploymentObj.metadata.namespace}
               />
             </li>
           </ul>
         </>
-      )}
-      {ownedSources?.length > 0 &&
-        ownedSources.map((source) => (
-          <EventSourceOwnedList key={source.metadata.uid} source={source} />
-        ))}
+      ) : null}
     </>
   );
 };
 
-export default EventSourceResources;
+export const OwnedEventSources: React.FC<OwnedEventSourcesProps> = ({ eventSources }) => (
+  <>
+    {eventSources?.length > 0
+      ? eventSources.map((source) => (
+          <EventSourceOwnedList key={source.metadata.uid} source={source} />
+        ))
+      : null}
+  </>
+);
