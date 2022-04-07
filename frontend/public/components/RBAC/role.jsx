@@ -8,8 +8,8 @@ import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 // import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import { flatten as bindingsFlatten } from './bindings';
-import { BindingName, BindingsList, RulesList } from './index';
+import { BindingName, BindingsList, flatten as bindingsFlatten } from './bindings';
+import { RulesList } from './rules';
 import { DetailsPage, MultiListPage, TextFilter, Table, TableData } from '../factory';
 import {
   Kebab,
@@ -208,7 +208,7 @@ const BindingsListComponent = (props) => {
   };
   BindingsTableHeader.displayName = 'BindingsTableHeader';
 
-  return <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} virtualize />;
+  return <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} />;
 };
 
 export const BindingsForRolePage = (props) => {
@@ -234,7 +234,11 @@ export const BindingsForRolePage = (props) => {
         }/rolebindings/~new?rolekind=${kind}&rolename=${name}${ns ? `&namespace=${ns}` : ''}`,
       }}
       ListComponent={BindingsListComponent}
-      staticFilters={[{ 'role-binding-roleRef-name': name }, { 'role-binding-roleRef-kind': kind }]}
+      staticFilters={[
+        // Some bindings have a name that needs to be decoded (e.g., `system%3Aimage-builder`)
+        { 'role-binding-roleRef-name': decodeURIComponent(name) },
+        { 'role-binding-roleRef-kind': kind },
+      ]}
       resources={resources}
       textFilter="role-binding"
       filterLabel={t('public~by role or subject')}
