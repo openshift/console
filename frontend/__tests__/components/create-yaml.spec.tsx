@@ -40,7 +40,7 @@ describe(CreateYAML.displayName, () => {
     };
     wrapper = wrapper.setProps({ template: safeDump(templateObj) });
 
-    expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);
+    expect(wrapper.find(AsyncComponent).props().initialResource).toEqual(expectedObj);
   });
 
   it('creates sample object using default YAML template for model', () => {
@@ -49,6 +49,6 @@ describe(CreateYAML.displayName, () => {
     );
     expectedObj.metadata.namespace = 'default';
 
-    expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);
+    expect(wrapper.find(AsyncComponent).props().initialResource).toEqual(expectedObj);
   });
 });

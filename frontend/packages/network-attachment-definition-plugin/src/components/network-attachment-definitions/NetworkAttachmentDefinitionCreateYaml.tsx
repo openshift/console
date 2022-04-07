@@ -37,7 +37,7 @@ const CreateNetAttachDefYAMLConnected = connectToPlural(
     return (
       <AsyncComponent
         loader={DroppableEditYAML}
-        obj={obj}
+        initialResource={obj}
         create
         kind={kindObj.kind}
         resourceObjPath={netAttachDefTemplatePath}

@@ -296,5 +296,12 @@
       "getUtilizationQueries": { "$codeRef": "clusterOverview.getUtilizationQueries" },
       "humanize": { "$codeRef": "clusterOverview.humanize" }
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-editor",
+      "component": { "$codeRef": "yamlEditor.default" }
+    }
   }
 ]

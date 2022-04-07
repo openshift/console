@@ -19,6 +19,7 @@ import {
   InventoryItemTitleProps,
   InventoryItemBodyProps,
   InventoryItemStatusProps,
+  ResourceYAMLEditorProps,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -73,11 +74,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/inter
   .ResourceLink;
 export { default as ResourceStatus } from '../app/components/utils/resource-status';
 
-export {
-  checkAccess,
-  useAccessReview,
-  useAccessReviewAllowed,
-} from '../app/components/utils/rbac';
+export { checkAccess, useAccessReview, useAccessReviewAllowed } from '../app/components/utils/rbac';
 
 export {
   useK8sModel,
@@ -86,11 +83,7 @@ export {
   useK8sWatchResources,
 } from '../utils/k8s/hooks';
 
-export {
-  consoleFetch,
-  consoleFetchJSON,
-  consoleFetchText,
-} from '../utils/fetch';
+export { consoleFetch, consoleFetchJSON, consoleFetchText } from '../utils/fetch';
 
 // Expose K8s CRUD utilities as below
 export {
@@ -128,3 +121,26 @@ export const InventoryItemLoading: React.FC = require('@console/shared/src/compo
   .InventoryItemLoading;
 
 export { useFlag } from '../utils/flags';
+
+/**
+ * A lazy loaded YAML editor for Kubernetes resources with hover help and completion.
+ * The editor will handle updating the resource when the user clicks save unless an onSave handler is provided.
+ * It should be wrapped in a React.Suspense component.
+ * @example
+ * ```tsx
+ * <React.Suspense fallback={<LoadingBox />}>
+ *   <ResourceYAMLEditor
+ *     initialResource={resource}
+ *     header="Create resource"
+ *     onSave={(content) => updateResource(content)}
+ *   />
+ * </React.Suspense>
+ * ```
+ * @param {ResourceYAMLEditorProps['initialResource']} initialResource - YAML/Object representing a resource to be shown by the editor.
+ * This prop is used only during the inital render
+ * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor
+ * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button.
+ * Passing it will override the default update performed on the resource by the editor
+ */
+export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
+  .AsyncResourceYAMLEditor;
