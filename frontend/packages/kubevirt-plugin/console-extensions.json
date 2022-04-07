@@ -29,7 +29,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT_HAS_v1_API"]
+      "required": ["KUBEVIRT_HAS_v1_API"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -40,7 +41,8 @@
       "insertAfter": "workloads"
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -54,7 +56,8 @@
       "prefixNamespaced": false
     },
     "flags": {
-      "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"]
+      "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -68,7 +71,8 @@
       "component": { "$codeRef": "VirtualizationPage.VirtualizationPage" }
     },
     "flags": {
-      "required": ["KUBEVIRT_HAS_v1_API"]
+      "required": ["KUBEVIRT_HAS_v1_API"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -82,7 +86,8 @@
       "component": { "$codeRef": "VirtualizationPage.VirtualizationPage" }
     },
     "flags": {
-      "required": ["KUBEVIRT_HAS_v1alpha3_API"]
+      "required": ["KUBEVIRT_HAS_v1alpha3_API"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -98,7 +103,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT_HAS_v1_API"]
+      "required": ["KUBEVIRT_HAS_v1_API"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -114,7 +120,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT_HAS_v1alpha3_API"]
+      "required": ["KUBEVIRT_HAS_v1alpha3_API"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -127,7 +134,8 @@
       "component": { "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage" }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -141,7 +149,8 @@
       "prefixNamespaced": true
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -154,7 +163,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -167,7 +177,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -178,7 +189,8 @@
       "component": { "$codeRef": "standaloneConsole" }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -189,7 +201,8 @@
       "component": { "$codeRef": "standaloneConsole.VMConsolePage" }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -201,7 +214,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -217,7 +231,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -229,7 +244,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"]
+      "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -257,7 +273,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -396,7 +413,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -420,7 +438,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -432,7 +451,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -449,7 +469,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -466,7 +487,8 @@
       }
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -671,6 +693,9 @@
       "provider": {
         "$codeRef": "actions.useVmActionsProvider"
       }
+    },
+    "flags": {
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
@@ -694,6 +719,9 @@
       "provider": {
         "$codeRef": "actions.useVmiActionsProvider"
       }
+    },
+    "flags": {
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   },
   {
