@@ -3,26 +3,16 @@ import * as React from 'react';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { getNamespace } from '@console/internal/components/utils/link';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { setActiveNamespace } from '@console/internal/actions/ui';
-import {
-  ALL_NAMESPACES_KEY,
-  USERSETTINGS_PREFIX,
-  NAMESPACE_USERSETTINGS_PREFIX,
-  NAMESPACE_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
+import { getNamespace } from '@console/internal/components/utils/link';
+import { usePreferredNamespace } from '../user-preferences/namespace/usePreferredNamespace';
+import { useLastNamespace } from './useLastNamespace';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
 type NamespaceContextType = {
   namespace?: string;
   setNamespace?: (ns: string) => void;
 };
-
-const FAVORITE_NAMESPACE_NAME_USERSETTINGS_KEY = `${NAMESPACE_USERSETTINGS_PREFIX}.favorite`;
-const FAVORITE_NAMESPACE_NAME_LOCAL_STORAGE_KEY = NAMESPACE_LOCAL_STORAGE_KEY;
-
-const LAST_NAMESPACE_NAME_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastNamespace`;
-const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `bridge/last-namespace-name`;
 
 export const NamespaceContext = React.createContext<NamespaceContextType>({});
 
@@ -30,13 +20,8 @@ export const useValuesForNamespaceContext = () => {
   const { pathname } = useLocation();
   const urlNamespace = getNamespace(pathname);
 
-  const [favoritedNamespace, , favoriteLoaded] = useUserSettingsCompatibility<string>(
-    FAVORITE_NAMESPACE_NAME_USERSETTINGS_KEY,
-    FAVORITE_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  );
-  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useUserSettingsCompatibility<
-    string
-  >(LAST_NAMESPACE_NAME_USER_SETTINGS_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
+  const [favoritedNamespace, , favoriteLoaded] = usePreferredNamespace();
+  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useLastNamespace();
 
   const dispatch = useDispatch();
   const setNamespace = React.useCallback(
