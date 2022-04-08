@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { referenceForModel } from '../../module/k8s/k8s';
+import { referenceForModel } from '../../module/k8s/k8s-ref';
 
 export const makeReduxID = (k8sKind = {}, query) => {
   let qs = '';
