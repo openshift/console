@@ -242,4 +242,18 @@ describe('Gitlab Service', () => {
       nockDone();
     });
   });
+
+  it('should make API call to specified hostname', async () => {
+    const gitSource: GitSource = { url: 'https://example.com/test/repo' };
+    const gitService = new GitlabService(gitSource);
+
+    const scope = nock('https://example.com/api/v4')
+      .get('/projects/test%2Frepo')
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      .reply(200, { path_with_namespace: 'test/repo' });
+
+    const status = await gitService.isRepoReachable();
+    expect(status).toEqual(RepoStatus.Reachable);
+    scope.done();
+  });
 });

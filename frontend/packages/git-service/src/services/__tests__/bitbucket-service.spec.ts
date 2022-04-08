@@ -139,7 +139,7 @@ describe('Bitbucket Service', () => {
 
   it('should detect Dockerfile', () => {
     const gitSource: GitSource = {
-      url: 'https://bitbucket.org/akashshinde123/tutorial-react-docker',
+      url: 'https://bitbucket.org/jerolimov/nodeinfo',
       dockerfilePath: 'Dockerfile',
     };
 
@@ -155,7 +155,7 @@ describe('Bitbucket Service', () => {
 
   it('should return exposed container port from dockerfile', () => {
     const gitSource: GitSource = {
-      url: 'https://bitbucket.org/akashshinde123/tutorial-react-docker',
+      url: 'https://bitbucket.org/jerolimov/nodeinfo',
       dockerfilePath: 'Dockerfile',
     };
 
@@ -165,7 +165,7 @@ describe('Bitbucket Service', () => {
       const dockerfileContent = await gitService.getDockerfileContent();
       const parser = new DockerFileParser(dockerfileContent);
       const port = parser.getContainerPort();
-      expect(port).toEqual(5000);
+      expect(port).toEqual(8080);
       context.assertScopesFinished();
       nockDone();
     });
