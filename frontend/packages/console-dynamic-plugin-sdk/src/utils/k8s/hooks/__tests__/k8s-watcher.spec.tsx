@@ -127,4 +127,26 @@ describe('getReduxData', () => {
     // Except for the changed object obviously
     expect(firstTime[2]).not.toBe(secondTime[2]);
   });
+
+  it('should return different data for isList true and false, but same data when calling multiple times', () => {
+    const immutableData = ImmutableMap({
+      a: ImmutableMap({ a: 1 }),
+      b: ImmutableMap({ b: 2 }),
+      c: ImmutableMap({ c: 3 }),
+    });
+    const listFirstTime = getReduxData(immutableData, { isList: true });
+    const noListFirstTime = getReduxData(immutableData, { isList: false });
+    const listSecondTime = getReduxData(immutableData, { isList: true });
+    const noListSecondTime = getReduxData(immutableData, { isList: false });
+
+    // Contains the right data
+    expect(listFirstTime).toEqual([{ a: 1 }, { b: 2 }, { c: 3 }]);
+    expect(noListFirstTime).toEqual({ a: { a: 1 }, b: { b: 2 }, c: { c: 3 } });
+    expect(listSecondTime).toEqual([{ a: 1 }, { b: 2 }, { c: 3 }]);
+    expect(noListSecondTime).toEqual({ a: { a: 1 }, b: { b: 2 }, c: { c: 3 } });
+
+    // Contains the same (cached) data for both calls
+    expect(listFirstTime).not.toBe(listSecondTime); // BUT THIS COULD BE THE SAME
+    expect(noListFirstTime).toBe(noListSecondTime);
+  });
 });
