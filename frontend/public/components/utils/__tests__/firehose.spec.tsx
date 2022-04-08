@@ -168,7 +168,7 @@ describe('processReduxId', () => {
     // And it could not be the same because optional parameter could change!
     expect(firstTime).not.toBe(secondTime);
     // But at least the data should be the same
-    expect(firstTime.data).not.toBe(secondTime.data); // TODO
+    expect(firstTime.data).toBe(secondTime.data);
   });
 
   it('should return different data for isList true and false, but same data when calling multiple times', () => {});
@@ -919,10 +919,10 @@ describe('Firehose', () => {
     expect(propsChildA.resources.pods.data[0]).toBe(propsChildB.resources.pods.data[0]);
 
     // pod 'resource' object (with data, loaded, etc.) object
-    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Should be the same?
-    expect(propsChildA.data).not.toBe(propsChildB.pod.data); // Should be the same?
-    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Should be the same?
-    expect(propsChildA.resources.pod.data).not.toBe(propsChildB.resources.pod.data); // Should be the same?
+    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Could be the same?
+    expect(propsChildA.data).toBe(propsChildB.data);
+    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Could be the same?
+    expect(propsChildA.resources.pod.data).toBe(propsChildB.resources.pod.data);
   });
 });
 

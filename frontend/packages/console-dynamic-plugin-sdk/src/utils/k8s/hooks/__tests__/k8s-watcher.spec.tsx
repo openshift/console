@@ -101,7 +101,7 @@ describe('getReduxData', () => {
     expect(firstTime).toEqual([{ a: 1 }, { b: 2 }, { c: 3 }]);
     expect(secondTime).toEqual([{ a: 1 }, { b: 2 }, { c: 3 }]);
     // The array instance should be the same
-    expect(firstTime).not.toBe(secondTime); // TODO???
+    expect(firstTime).toBe(secondTime);
     expect(firstTime[0]).toBe(secondTime[0]);
     expect(firstTime[1]).toBe(secondTime[1]);
     expect(firstTime[2]).toBe(secondTime[2]);
@@ -146,7 +146,7 @@ describe('getReduxData', () => {
     expect(noListSecondTime).toEqual({ a: { a: 1 }, b: { b: 2 }, c: { c: 3 } });
 
     // Contains the same (cached) data for both calls
-    expect(listFirstTime).not.toBe(listSecondTime); // BUT THIS COULD BE THE SAME
+    expect(listFirstTime).toBe(listSecondTime);
     expect(noListFirstTime).toBe(noListSecondTime);
   });
 });
