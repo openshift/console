@@ -17,7 +17,7 @@ import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
 import { Navigation } from './nav';
-import { history, AsyncComponent, LoadingBox } from './utils';
+import { history, AsyncComponent, LoadingBox, useSafeFetch, usePoll } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
@@ -46,10 +46,7 @@ import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
-import {
-  useURLPoll,
-  URL_POLL_DEFAULT_DELAY,
-} from '@console/internal/components/utils/url-poll-hook';
+import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
 import '../vendor.scss';
@@ -313,9 +310,20 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   const [consoleChanged, setConsoleChanged] = React.useState(false);
   const [isFetchingPluginEndpoints, setIsFetchingPluginEndpoints] = React.useState(false);
   const [allPluginEndpointsReady, setAllPluginEndpointsReady] = React.useState(false);
-  const [pluginsData, pluginsError] = useURLPoll(
-    `${window.SERVER_FLAGS.basePath}api/check-updates`,
-  );
+
+  const [pluginsData, setPluginsData] = React.useState();
+  const [pluginsError, setPluginsError] = React.useState();
+  const safeFetch = React.useCallback(useSafeFetch(), []);
+  const tick = React.useCallback(() => {
+    safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
+      .then((response) => {
+        setPluginsData(response);
+        setPluginsError(null);
+      })
+      .catch(setPluginsError);
+  }, [safeFetch]);
+  usePoll(tick, URL_POLL_DEFAULT_DELAY);
+
   const prevPluginsDataRef = React.useRef();
   React.useEffect(() => {
     prevPluginsDataRef.current = pluginsData;
