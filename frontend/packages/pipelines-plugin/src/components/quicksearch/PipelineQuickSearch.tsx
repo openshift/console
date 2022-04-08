@@ -59,12 +59,7 @@ const Contents: React.FC<{
     if (item.provider === TektonTaskProviders.community) {
       item.attributes.installed = '';
       if (installedTask) {
-        const installedVersion = item.attributes?.versions?.find(
-          (v) => v.version === installedTask.attributes?.versions[0]?.version,
-        );
-        if (installedVersion) {
-          item.attributes.installed = installedVersion.id.toString();
-        }
+        item.attributes.installed = installedTask.attributes?.versions[0]?.version.toString();
       }
     }
 

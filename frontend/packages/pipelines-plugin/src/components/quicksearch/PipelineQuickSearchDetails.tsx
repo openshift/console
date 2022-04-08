@@ -19,12 +19,13 @@ import { ExternalLink } from '@console/internal/components/utils';
 import { handleCta } from '@console/shared';
 import { QuickSearchDetailsRendererProps } from '@console/shared/src/components/quick-search/QuickSearchDetails';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { TEKTON_HUB_ENDPOINT } from '../catalog/const';
+import { getHubUIPath, getTektonHubTaskVersions } from '../catalog/apis/tektonHub';
 import {
   getCtaButtonText,
   getTaskCtaType,
   isOneVersionInstalled,
   isTaskVersionInstalled,
+  isTektonHubTaskWithoutVersions,
 } from './pipeline-quicksearch-utils';
 import PipelineQuickSearchTaskAlert from './PipelineQuickSearchTaskAlert';
 import PipelineQuickSearchVersionDropdown from './PipelineQuickSearchVersionDropdown';
@@ -38,23 +39,53 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [selectedVersion, setSelectedVersion] = React.useState<string>();
-  const versions = selectedItem?.attributes?.versions ?? [];
+  const [versions, setVersions] = React.useState(selectedItem?.attributes?.versions ?? []);
+  const [hasInstalledVersion, setHasInstalledVersion] = React.useState<boolean>(
+    isOneVersionInstalled(selectedItem),
+  );
+
+  const resetVersions = React.useCallback(() => {
+    setVersions(selectedItem?.attributes?.versions ?? []);
+    setSelectedVersion(selectedItem?.attributes?.installed ?? '');
+    setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+  }, [selectedItem]);
+
+  React.useEffect(() => {
+    resetVersions();
+    let mounted = true;
+    if (isTektonHubTaskWithoutVersions(selectedItem)) {
+      getTektonHubTaskVersions(selectedItem.data.id)
+        .then((itemVersions = []) => {
+          if (mounted) {
+            setVersions([...itemVersions]);
+            selectedItem.attributes.versions = itemVersions;
+            setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+          }
+        })
+        .catch((err) => {
+          if (mounted) {
+            resetVersions();
+          }
+          console.log('failed to fetch versions:', err); // eslint-disable-line no-console
+        });
+    }
+
+    return () => (mounted = false);
+  }, [resetVersions, selectedItem]);
 
   React.useEffect(() => {
     if (isTaskVersionInstalled(selectedItem)) {
       setSelectedVersion(selectedItem.attributes.installed);
     } else {
-      setSelectedVersion(selectedItem.data?.latestVersion?.id?.toString());
+      setSelectedVersion(selectedItem.data?.latestVersion?.version?.toString());
     }
   }, [selectedItem]);
-
   const loadedVersion = React.useMemo(
-    () => versions?.find((version) => version.id?.toString() === selectedVersion),
+    () => versions?.find((version) => version.version?.toString() === selectedVersion),
     [selectedVersion, versions],
   );
 
-  const hubURL = loadedVersion?.hubURLPath;
-  const hubLink = hubURL && `${TEKTON_HUB_ENDPOINT}/${hubURL}`;
+  const hubLink = getHubUIPath(loadedVersion?.hubURLPath);
 
   return (
     <div className="opp-quick-search-details">
@@ -73,6 +104,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
           <Split hasGutter>
             <SplitItem>
               <Button
+                isDisabled={versions.length === 0}
                 data-test="task-cta"
                 variant={ButtonVariant.primary}
                 className="opp-quick-search-details__form-button"
@@ -86,6 +118,8 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
             {versions.length > 0 && (
               <SplitItem data-test="task-version-dropdown">
                 <PipelineQuickSearchVersionDropdown
+                  key={selectedItem.uid}
+                  versions={versions}
                   item={selectedItem}
                   selectedVersion={selectedVersion}
                   onChange={(key) => setSelectedVersion(key)}
@@ -94,7 +128,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
             )}
           </Split>
         </LevelItem>
-        {isOneVersionInstalled(selectedItem) && (
+        {hasInstalledVersion && (
           <LevelItem>
             <Label color="green" icon={<CheckCircleIcon />} data-test="task-installed-badge">
               {t('pipelines-plugin~Installed')}
