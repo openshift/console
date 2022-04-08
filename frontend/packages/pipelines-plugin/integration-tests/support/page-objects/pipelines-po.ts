@@ -211,6 +211,15 @@ export const pipelineRunDetailsPO = {
       started: '[data-label="Started"]',
     },
   },
+  taskRunsDetails: {
+    columnNames: {
+      details: '[data-test-id="horizontal-link-public~Details"]',
+      YAML: '[data-test-id="horizontal-link-public~YAML"]',
+      logs: '[data-test-id="horizontal-link-Logs"]',
+      events: '[data-test-id="horizontal-link-public~Events"]',
+    },
+    status: '.odc-taskrun-details__status',
+  },
 };
 
 export const pipelineRunsPO = {
