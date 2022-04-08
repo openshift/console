@@ -115,10 +115,6 @@ form.pf-c-form {
   text-align: left; // override default .pf-c-button text centering
 }
 
-.pf-c-button.pf-m-link {
-  white-space: normal; // override default .pf-c-button to enable wrapping
-}
-
 .pf-c-button.pf-m-link--align-left {
   --pf-c-button--PaddingLeft: 0;
 }
