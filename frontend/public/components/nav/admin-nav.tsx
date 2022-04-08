@@ -275,6 +275,7 @@ const AdminNav: React.FC<AdminNavProps> = ({ pluginNavItems }) => {
         id="pipelines"
         title={t('public~Pipelines')}
         data-quickstart-id="qs-nav-pipelines"
+        data-test="nav-pipelines"
       />
 
       <NavSection
