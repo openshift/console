@@ -268,7 +268,7 @@
   "Operator will be available in all Namespaces.": "Operator はすべての namespace で利用可能になります",
   "Operator will be available in a single Namespace only.": "Operator は単一の namespace でのみ利用可能になります",
   "This mode is not supported by this Operator": "このモードはこの Operator ではサポートされません。",
-  "Could not create Operator Subscription.": "Operator Subscription を作成できませんでした。",
+  "Could not create Operator Subscription.": "Operator サブスクリプションを作成できませんでした。",
   "Namespace does not support installation mode": "namespace はインストールモードをサポートしません",
   "The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.": "{{namespace}} namespace はすべての namespace を監視するグローバル Operator 用に予約されます。Operator を単一の namespace にインストールするには、オペランドを実行する別の namespace を選択します。",
   "The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.": "{{namespace}} namespace の OperatorGroup は {{mode}} インストールモードをサポートしません。このモードをサポートする別のインストール namespace を選択します。",
