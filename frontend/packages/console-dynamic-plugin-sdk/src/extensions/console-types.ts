@@ -589,5 +589,6 @@ export type SelfSubjectAccessReviewKind = {
 export type ResourceYAMLEditorProps = {
   initialResource: string | { [key: string]: any };
   header?: string;
+  error?: string;
   onSave?: (content: string) => void;
 };

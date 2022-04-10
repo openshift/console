@@ -36,8 +36,16 @@ type DroppableEditYAMLProps = ResourceYAMLEditorProps & {
 export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = ({
   initialResource,
   header,
+  error,
   onSave,
-}) => <DroppableEditYAML initialResource={initialResource} header={header} onSave={onSave} />;
+}) => (
+  <DroppableEditYAML
+    initialResource={initialResource}
+    header={header}
+    onSave={onSave}
+    error={error}
+  />
+);
 
 export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
   class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {
@@ -109,7 +117,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
     }
 
     render() {
-      const { allowMultiple, initialResource } = this.props;
+      const { allowMultiple, initialResource, error } = this.props;
       const { errors, fileUpload } = this.state;
       return (
         <EditYAMLComponent
@@ -117,7 +125,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
           allowMultiple={allowMultiple}
           obj={initialResource}
           fileUpload={fileUpload}
-          error={errors.join('\n')}
+          error={[error, ...errors].filter((e) => e).join('\n')}
           onDrop={this.handleFileDrop}
           clearFileUpload={this.clearFileUpload}
         />

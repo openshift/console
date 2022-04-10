@@ -141,6 +141,7 @@ export { useFlag } from '../utils/flags';
  * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor
  * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button.
  * Passing it will override the default update performed on the resource by the editor
+ * @param {ResourceYAMLEditorProps['error']} error - Error message to display in the editor
  */
 export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
   .AsyncResourceYAMLEditor;
