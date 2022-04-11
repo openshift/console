@@ -97,7 +97,7 @@ describe('pipeline-quicksearch-utils', () => {
         ...sampleTektonHubCatalogItem,
         attributes: {
           ...sampleTektonHubCatalogItem.attributes,
-          installed: '1',
+          installed: '0.1',
         },
       };
       expect(isOneVersionInstalled(catalogItem)).toBe(true);
@@ -131,7 +131,7 @@ describe('pipeline-quicksearch-utils', () => {
         ...sampleTektonHubCatalogItem,
         attributes: {
           ...sampleTektonHubCatalogItem.attributes,
-          installed: '1',
+          installed: '0.1',
         },
       };
       expect(isSelectedVersionUpgradable(catalogItem, '2')).toBe(true);
@@ -159,7 +159,7 @@ describe('pipeline-quicksearch-utils', () => {
         ...sampleTektonHubCatalogItem,
         attributes: {
           ...sampleTektonHubCatalogItem.attributes,
-          installed: '1',
+          installed: '0.1',
         },
       };
       expect(getTaskCtaType(catalogItem, '2')).toBe(CTALabel.Update);
@@ -212,15 +212,17 @@ describe('pipeline-quicksearch-utils', () => {
 
   describe('getSelectedVersionUrl', () => {
     it('should return null if the attirbutes is not present in the catalogItem', () => {
-      expect(getSelectedVersionUrl(omit(sampleTektonHubCatalogItem, 'attributes'), '1')).toBeNull();
+      expect(
+        getSelectedVersionUrl(omit(sampleTektonHubCatalogItem, 'attributes'), '0.1'),
+      ).toBeNull();
     });
 
     it('should return the download url when the item and version id is passed', () => {
-      expect(getSelectedVersionUrl(sampleTektonHubCatalogItem, '1')).toBe(
+      expect(getSelectedVersionUrl(sampleTektonHubCatalogItem, '0.1')).toBe(
         'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
       );
 
-      expect(getSelectedVersionUrl(sampleTektonHubCatalogItem, '2')).toBe(
+      expect(getSelectedVersionUrl(sampleTektonHubCatalogItem, '0.2')).toBe(
         'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.2/ansible-runner.yaml',
       );
     });

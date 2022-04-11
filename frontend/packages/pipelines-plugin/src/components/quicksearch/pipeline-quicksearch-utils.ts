@@ -5,7 +5,7 @@ import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { ClusterTaskModel, TaskModel } from '../../models';
-import { TektonTaskAnnotation } from '../pipelines/const';
+import { TektonTaskAnnotation, TektonTaskProviders } from '../pipelines/const';
 import { CTALabel, TEKTONHUB } from './const';
 
 export const isSelectedVersionInstalled = (item: CatalogItem, selectedVersion: string): boolean => {
@@ -15,10 +15,13 @@ export const isSelectedVersionInstalled = (item: CatalogItem, selectedVersion: s
 export const isTaskVersionInstalled = (item: CatalogItem): boolean => !!item.attributes?.installed;
 
 export const isOneVersionInstalled = (item: CatalogItem): boolean => {
-  return !!item.attributes?.versions?.find(
-    (v) => v.id.toString() === item.attributes?.installed.toString(),
-  );
+  return !!item.attributes?.versions?.find((v) => v.version === item.attributes?.installed);
 };
+
+export const isTektonHubTaskWithoutVersions = (item: CatalogItem): boolean => {
+  return item.provider === TektonTaskProviders.community && item?.attributes?.versions.length === 0;
+};
+
 export const isSelectedVersionUpgradable = (
   item: CatalogItem,
   selectedVersion: string,
@@ -71,7 +74,7 @@ export const getSelectedVersionUrl = (item: CatalogItem, version: string): strin
   if (!item?.attributes?.versions) {
     return null;
   }
-  return item.attributes.versions.find((v) => v.id.toString() === version)?.rawURL;
+  return item.attributes.versions.find((v) => v.version === version)?.rawURL;
 };
 
 export const findInstalledTask = (items: CatalogItem[], item: CatalogItem): CatalogItem => {
