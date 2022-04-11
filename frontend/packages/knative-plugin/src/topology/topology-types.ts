@@ -12,6 +12,7 @@ export enum NodeType {
   SinkUri = 'sink-uri',
   EventSourceKafka = 'event-source-kafka',
   Kafka = 'knative-kafka',
+  KafkaSink = 'kafka-sink',
 }
 
 export enum EdgeType {

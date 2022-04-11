@@ -18,6 +18,7 @@ import {
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { DeploymentModel } from '@console/internal/models';
+import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared';
 import {
   NodeShadows,
@@ -32,6 +33,7 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
+import { KafkaSinkModel } from '../../../models';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import { TYPE_EVENT_SINK_LINK, TYPE_KAFKA_CONNECTION_LINK } from '../../const';
@@ -89,6 +91,8 @@ const EventSink: React.FC<EventSinkProps> = ({
     associatedDeployment.kind ?? DeploymentModel.kind,
     associatedDeployment.metadata?.namespace || resource.metadata?.namespace,
   );
+
+  const isKafkaSink = referenceFor(resource) === referenceForModel(KafkaSinkModel);
 
   const donutStatus = React.useMemo(() => {
     if (!revisionIds && loadedDeployment && !loadErrorDeployment) {
@@ -151,7 +155,9 @@ const EventSink: React.FC<EventSinkProps> = ({
         points={`${width / 2}, ${(height - size) / 2} ${width - (width - size) / 2},${height /
           2} ${width / 2},${height - (height - size) / 2} ${(width - size) / 2},${height / 2}`}
       />
-      {donutStatus && <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />}
+      {donutStatus && !isKafkaSink && (
+        <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
+      )}
       <image
         x={width * 0.33}
         y={height * 0.33}

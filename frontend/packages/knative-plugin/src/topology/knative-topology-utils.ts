@@ -1159,6 +1159,7 @@ export const transformKnNodeData = (
   _.forEach(knResourcesData, (res) => {
     const item = createKnativeDeploymentItems(res, resources, utils);
     switch (type) {
+      case NodeType.KafkaSink:
       case NodeType.EventSink: {
         const data = createEventSinkTopologyNodeData(res, item, type);
         const itemData = getOwnedEventSinkData(res, data, resources);

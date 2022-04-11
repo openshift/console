@@ -7,6 +7,7 @@ import {
   withDndDrop,
   withCreateConnector,
 } from '@patternfly/react-topology';
+import { ViewComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { contextMenuActions } from '@console/topology/src/actions';
 import {
   NodeComponentProps,
@@ -31,6 +32,7 @@ import {
   TYPE_KAFKA_CONNECTION_LINK,
   TYPE_EVENT_SINK,
   TYPE_EVENT_SINK_LINK,
+  TYPE_KAFKA_SINK,
 } from '../const';
 import EventingPubSubLink from './edges/EventingPubSubLink';
 import EventSinkLink from './edges/EventSinkLink';
@@ -164,4 +166,15 @@ export const getKnativeComponentFactory = (
     default:
       return undefined;
   }
+};
+
+export const getKafkaSinkComponentFactory: ViewComponentFactory = (kind, type) => {
+  if (type === TYPE_KAFKA_SINK) {
+    return withEditReviewAccess('patch')(
+      withDragNode(nodeDragSourceSpec(type))(
+        withSelection({ controlled: true })(withContextMenu(contextMenuActions)(EventSink)),
+      ),
+    );
+  }
+  return undefined;
 };
