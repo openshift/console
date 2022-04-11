@@ -94,7 +94,7 @@ export interface TopologyViewProps {
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 
-export const ConnectedTopologyView: React.FC<ComponentProps> = ({
+export const TopologyView: React.FC<ComponentProps> = ({
   model,
   namespace,
   viewType,
@@ -106,6 +106,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   isOver,
   canDrop,
 }) => {
+  console.log('xxx TopologyView render');
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [viewContainer, setViewContainer] = React.useState<HTMLElement>(null);
@@ -431,4 +432,4 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
 export default connect<StateProps, DispatchProps, TopologyViewProps>(
   TopologyStateToProps,
   TopologyDispatchToProps,
-)(ConnectedTopologyView);
+)(TopologyView);

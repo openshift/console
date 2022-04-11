@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Menu, Popper, MenuContent, MenuList } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { Action } from '@console/dynamic-plugin-sdk';
+import { Action, prefetchCheckAccess } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenuProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { checkAccess } from '@console/internal/components/utils';
 import ActionServiceProvider from './ActionServiceProvider';
 import ActionMenuContent from './menu/ActionMenuContent';
 import ActionMenuToggle from './menu/ActionMenuToggle';
@@ -29,12 +28,7 @@ const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
     // Check access after loading actions from service over a kebab to minimize flicker when opened.
     // This depends on `checkAccess` being memoized.
     _.each(actions, (action: Action) => {
-      if (action.accessReview) {
-        checkAccess(action.accessReview).catch((e) =>
-          // eslint-disable-next-line no-console
-          console.warn('Could not check access for action menu', e),
-        );
-      }
+      prefetchCheckAccess(action.accessReview);
     });
   }, [actions]);
 
@@ -66,6 +60,7 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
   label,
   isDisabled,
 }) => {
+  // console.log('xxx LazyActionMenu');
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [initActionLoader, setInitActionLoader] = React.useState<boolean>(false);
   const menuRef = React.useRef<HTMLDivElement>(null);

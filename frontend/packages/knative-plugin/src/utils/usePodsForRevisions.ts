@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel } from '@console/internal/models';
 import {
@@ -18,9 +19,9 @@ export const usePodsForRevisions = (
   revisionIds: string | string[],
   namespace: string,
 ): { loaded: boolean; loadError: string; pods: PodControllerOverviewItem[] } => {
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>('');
-  const [pods, setPods] = React.useState<PodControllerOverviewItem[]>([]);
+  const [loaded, setLoaded] = useSafetyFirst<boolean>(false);
+  const [loadError, setLoadError] = useSafetyFirst<string>('');
+  const [pods, setPods] = useSafetyFirst<PodControllerOverviewItem[]>([]);
   const revisions = useDeepCompareMemoize(Array.isArray(revisionIds) ? revisionIds : [revisionIds]);
   const watchedResources = React.useMemo(
     () => ({
@@ -80,7 +81,7 @@ export const usePodsForRevisions = (
         setPods(revisionsPods);
       }
     },
-    [revisions],
+    [revisions, setLoadError, setLoaded, setPods],
   );
 
   const debouncedUpdateResources = useDebounceCallback(updateResults, 250);

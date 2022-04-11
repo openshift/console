@@ -13,7 +13,7 @@ import {
   CreateConnector,
 } from '@console/topology/src/components/graph-view';
 import BindableNode from '@console/topology/src/components/graph-view/components/nodes/trapezoidNode/BindableNode';
-import { withEditReviewAccess } from '@console/topology/src/utils';
+// import { withEditReviewAccess } from '@console/topology/src/utils';
 import { TYPE_BINDABLE_NODE } from '../const';
 
 export const getDevConsoleComponentFactory = (
@@ -26,11 +26,11 @@ export const getDevConsoleComponentFactory = (
         createConnectorCallback(),
         CreateConnector,
       )(
-        withEditReviewAccess('patch')(
-          withDragNode(nodeDragSourceSpec(type))(
-            withSelection({ controlled: true })(withContextMenu(contextMenuActions)(BindableNode)),
-          ),
+        // withEditReviewAccess('patch')(
+        withDragNode(nodeDragSourceSpec(type))(
+          withSelection({ controlled: true })(withContextMenu(contextMenuActions)(BindableNode)),
         ),
+        // ),
       );
     default:
       return undefined;

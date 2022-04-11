@@ -152,6 +152,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
   const createVisualization = () => {
     const newVisualization = new Visualization();
     newVisualization.registerElementFactory(odcElementFactory);
+    console.log('xxx fromModel 3', listModel);
     newVisualization.fromModel(listModel);
     return newVisualization;
   };
@@ -175,6 +176,7 @@ const ConnectedTopologyListView: React.FC<TopologyListViewProps &
       if (model.graph?.layout) {
         delete model.graph.layout;
       }
+      console.log('xxx fromModel 4', model);
       visualization.fromModel(model);
       const selectedItem = selectedId ? visualization.getElementById(selectedId) : null;
       if (!selectedItem || !selectedItem.isVisible()) {

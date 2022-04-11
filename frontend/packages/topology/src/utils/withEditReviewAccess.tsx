@@ -9,6 +9,9 @@ type ComponentProps = {
   element: Node;
 };
 
+/**
+ * @deprecated
+ */
 export const withEditReviewAccess = (verb: K8sVerb) => (WrappedComponent: React.ComponentType) => {
   const Component: React.FC<ComponentProps> = (props) => {
     const resourceObj = getResource(props.element);

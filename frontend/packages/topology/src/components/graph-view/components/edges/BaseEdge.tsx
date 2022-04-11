@@ -9,9 +9,9 @@ import {
   WithContextMenuProps,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
-import { useAccessReview } from '@console/internal/components/utils';
-import { referenceFor, modelFor } from '@console/internal/module/k8s';
-import { getResource } from '../../../../utils/topology-utils';
+// import { useAccessReview } from '@console/internal/components/utils';
+// import { referenceFor, modelFor } from '@console/internal/module/k8s';
+// import { getResource } from '../../../../utils/topology-utils';
 import './BaseEdge.scss';
 
 type BaseEdgeProps = {
@@ -24,8 +24,8 @@ type BaseEdgeProps = {
 const BaseEdge: React.FC<BaseEdgeProps> = ({
   element,
   dragging,
-  onShowRemoveConnector,
-  onHideRemoveConnector,
+  // onShowRemoveConnector,
+  // onHideRemoveConnector,
   children,
   className,
   onContextMenu,
@@ -34,26 +34,26 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   const [selected, onSelect] = useSelection({ controlled: true });
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
-  const resourceObj = getResource(element.getSource());
-  const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
+  // const resourceObj = getResource(element.getSource());
+  // const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
 
-  const editAccess = useAccessReview({
-    group: resourceModel?.apiGroup,
-    verb: 'patch',
-    resource: resourceModel?.plural,
-    name: resourceObj?.metadata.name,
-    namespace: resourceObj?.metadata.namespace,
-  });
+  // const editAccess = useAccessReview({
+  //   group: resourceModel?.apiGroup,
+  //   verb: 'patch',
+  //   resource: resourceModel?.plural,
+  //   name: resourceObj?.metadata.name,
+  //   namespace: resourceObj?.metadata.namespace,
+  // });
 
-  React.useLayoutEffect(() => {
-    if (editAccess) {
-      if (hover && !dragging) {
-        onShowRemoveConnector && onShowRemoveConnector();
-      } else {
-        onHideRemoveConnector && onHideRemoveConnector();
-      }
-    }
-  }, [hover, dragging, onShowRemoveConnector, onHideRemoveConnector, editAccess]);
+  // React.useLayoutEffect(() => {
+  //   if (editAccess) {
+  //     if (hover && !dragging) {
+  //       onShowRemoveConnector && onShowRemoveConnector();
+  //     } else {
+  //       onHideRemoveConnector && onHideRemoveConnector();
+  //     }
+  //   }
+  // }, [hover, dragging, onShowRemoveConnector, onHideRemoveConnector, editAccess]);
 
   return (
     <Layer id={dragging || hover ? 'top' : undefined}>

@@ -33,6 +33,7 @@ const PodsTabSection: React.FC<{ element: GraphElement; renderNull: () => null }
     [element, podAdapterExtension, podAdapterExtensionResolved],
   );
   const handleAdapterResolved = React.useCallback((data) => {
+    console.log('xxx PodsTabSection handleAdapterResolved', data);
     setPodData({ data, loaded: true });
   }, []);
 

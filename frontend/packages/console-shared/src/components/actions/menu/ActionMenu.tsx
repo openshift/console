@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { Action, useSafetyFirst } from '@console/dynamic-plugin-sdk';
-import { checkAccess } from '@console/internal/components/utils';
+import {
+  Action,
+  useSafetyFirst,
+  checkAccess,
+  prefetchCheckAccess,
+} from '@console/dynamic-plugin-sdk';
 import { ActionMenuVariant, MenuOption } from '../types';
 import ActionMenuContent from './ActionMenuContent';
 import ActionMenuToggle from './ActionMenuToggle';
@@ -38,12 +42,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     // Check access when hovering over a kebab to minimize flicker when opened.
     // This depends on `checkAccess` being memoized.
     _.each(actions, (action: Action) => {
-      if (action.accessReview) {
-        checkAccess(action.accessReview).catch((e) =>
-          // eslint-disable-next-line no-console
-          console.warn('Could not check access for action menu', e),
-        );
-      }
+      prefetchCheckAccess(action.accessReview);
     });
   }, [actions]);
 

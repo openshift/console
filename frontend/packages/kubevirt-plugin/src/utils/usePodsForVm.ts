@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { useDebounceCallback } from '../hooks/use-debounce';
@@ -14,9 +15,9 @@ export const usePodsForVm = (
   vm: K8sResourceKind,
 ): { loaded: boolean; loadError: string; podData: PodRCData } => {
   const { namespace } = vm.metadata;
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>('');
-  const [podData, setPodData] = React.useState<PodRCData>();
+  const [loaded, setLoaded] = useSafetyFirst<boolean>(false);
+  const [loadError, setLoadError] = useSafetyFirst<string>('');
+  const [podData, setPodData] = useSafetyFirst<PodRCData>(undefined);
   const vmName = vm.metadata.name;
   const vmRef = React.useRef<K8sResourceKind>(vm);
 

@@ -17,7 +17,7 @@ import {
   withNoDrop,
   CreateConnector,
 } from '@console/topology/src/components/graph-view';
-import { withEditReviewAccess } from '@console/topology/src/utils';
+// import { withEditReviewAccess } from '@console/topology/src/utils';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './const';
 import HelmRelease from './HelmRelease';
 
@@ -41,13 +41,11 @@ export const getHelmComponentFactory = (
           { droppable?: boolean; hover?: boolean; canDrop?: boolean },
           NodeComponentProps
         >(nodeDropTargetSpec)(
-          withEditReviewAccess('patch')(
-            withDragNode(nodeDragSourceSpec(type, false))(
-              withSelection({ controlled: true })(
-                withContextMenu(contextMenuActions)(WorkloadNode),
-              ),
-            ),
+          // withEditReviewAccess('patch')(
+          withDragNode(nodeDragSourceSpec(type, false))(
+            withSelection({ controlled: true })(withContextMenu(contextMenuActions)(WorkloadNode)),
           ),
+          // ),
         ),
       );
     default:

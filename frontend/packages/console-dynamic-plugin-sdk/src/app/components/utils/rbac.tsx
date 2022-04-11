@@ -143,6 +143,24 @@ export const checkAccess = (
 };
 
 /**
+ * Prefetch information about user access to a given resource.
+ *
+ * @param resourceAttributes resource attributes for access review, could be null.
+ * @param impersonate impersonation details
+ */
+export const prefetchCheckAccess = (
+  resourceAttributes: AccessReviewResourceAttributes | null,
+  impersonate?: ImpersonateKind,
+): void => {
+  if (resourceAttributes) {
+    checkAccess(resourceAttributes, impersonate).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.warn('SelfSubjectAccessReview prefetch failed:', error);
+    });
+  }
+};
+
+/**
  * Hook that provides information about user access to a given resource.
  * @param resourceAttributes resource attributes for access review, null to skip access check.
  * @param impersonate impersonation details

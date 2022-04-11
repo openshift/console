@@ -74,16 +74,21 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
+  const iconRadius = innerRadius * 0.9;
+
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
-  const iconRadius = innerRadius * 0.9;
-  const editAccess = useAccessReview({
-    group: resourceModel.apiGroup,
-    verb: 'patch',
-    resource: resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
-  });
+  const editAccess = useAccessReview(
+    hover && (onShowCreateConnector || onHideCreateConnector)
+      ? {
+          group: resourceModel.apiGroup,
+          verb: 'patch',
+          resource: resourceModel.plural,
+          name: resourceObj.metadata.name,
+          namespace: resourceObj.metadata.namespace,
+        }
+      : null,
+  );
   const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
   const displayFilters = useDisplayFilters();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);

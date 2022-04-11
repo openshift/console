@@ -18,7 +18,7 @@ import {
   TYPE_TRAFFIC_CONNECTOR,
 } from '../../../const';
 import { createConnection } from '../../../utils/createConnection';
-import { withEditReviewAccess } from '../../../utils/withEditReviewAccess';
+// import { withEditReviewAccess } from '../../../utils/withEditReviewAccess';
 import {
   NodeComponentProps,
   graphDropTargetSpec,
@@ -54,13 +54,11 @@ export const componentFactory: ComponentFactory = (kind, type) => {
           { droppable?: boolean; hover?: boolean; canDrop?: boolean },
           NodeComponentProps
         >(nodeDropTargetSpec)(
-          withEditReviewAccess('patch')(
-            withDragNode(nodeDragSourceSpec(type))(
-              withSelection({ controlled: true })(
-                withContextMenu(contextMenuActions)(WorkloadNode),
-              ),
-            ),
+          // withEditReviewAccess('patch')(
+          withDragNode(nodeDragSourceSpec(type))(
+            withSelection({ controlled: true })(withContextMenu(contextMenuActions)(WorkloadNode)),
           ),
+          // ),
         ),
       );
     case TYPE_CONNECTS_TO:

@@ -23,7 +23,9 @@ export const setTopologyGraphModel = (namespace: string, graphModel: GraphModel)
 
 export const getTopologyGraphModel = (state: RootState, namespace: string): GraphModel => {
   const topology = state?.plugins?.devconsole?.topology;
-  return topology?.get('topologyGraphModel')?.[namespace];
+  const topologyGraphModelForNamespace = topology?.get('topologyGraphModel')?.[namespace];
+  console.log('xxx topologyGraphModelForNamespace', topologyGraphModelForNamespace);
+  return topologyGraphModelForNamespace;
 };
 
 const actions = {

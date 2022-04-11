@@ -179,6 +179,7 @@ const Topology: React.FC<TopologyProps &
     if (storedLayout) {
       graphModel.graph.layout = storedLayout.layout;
     }
+    console.log('xxx fromModel 2', graphModel);
     newVisualization.fromModel(graphModel);
     newVisualization.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids: string[]) => {
       const selectedEntity = ids[0] ? newVisualization.getElementById(ids[0]) : null;
@@ -225,6 +226,7 @@ const Topology: React.FC<TopologyProps &
         }
         storedLayoutApplied.current = true;
       }
+      console.log('xxx fromModel 1', model);
       visualization.fromModel(model);
       const selectedItem = selectedId ? visualization.getElementById(selectedId) : null;
       if (!selectedItem || !selectedItem.isVisible()) {

@@ -17,7 +17,7 @@ import {
   CreateConnector,
   EditableDragOperationType,
 } from '@console/topology/src/components/graph-view';
-import { withEditReviewAccess } from '@console/topology/src/utils';
+// import { withEditReviewAccess } from '@console/topology/src/utils';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -82,44 +82,42 @@ export const getKnativeComponentFactory = (
           { droppable?: boolean; hover?: boolean; canDrop?: boolean; dropTarget?: boolean },
           NodeComponentProps
         >(eventSourceSinkDropTargetSpec)(
-          withEditReviewAccess('update')(
-            withSelection({ controlled: true })(
-              withContextMenu(contextMenuActions)(KnativeService),
-            ),
-          ),
+          // withEditReviewAccess('update')(
+          withSelection({ controlled: true })(withContextMenu(contextMenuActions)(KnativeService)),
+          // ),
         ),
       );
     case TYPE_EVENT_SOURCE:
-      return withEditReviewAccess('patch')(
-        withDragNode(nodeDragSourceSpec(type))(
-          withSelection({ controlled: true })(
-            withContextMenu(contextMenuActions)(
-              withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
-            ),
+      // return withEditReviewAccess('patch')(
+      return withDragNode(nodeDragSourceSpec(type))(
+        withSelection({ controlled: true })(
+          withContextMenu(contextMenuActions)(
+            withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
           ),
         ),
       );
+    // );
     case TYPE_EVENT_SINK:
-      return withEditReviewAccess('patch')(
-        withDragNode(nodeDragSourceSpec(type))(
-          withSelection({ controlled: true })(withContextMenu(contextMenuActions)(EventSink)),
-        ),
+      // return withEditReviewAccess('patch')(
+      return withDragNode(nodeDragSourceSpec(type))(
+        withSelection({ controlled: true })(withContextMenu(contextMenuActions)(EventSink)),
       );
+    // );
     case TYPE_EVENT_PUB_SUB:
       return withCreateConnector(createConnectorCallback(), CreateConnector, '', {
         dragOperation,
       })(
-        withEditReviewAccess('update')(
-          withDragNode(nodeDragSourceSpec(type))(
-            withSelection({ controlled: true })(
-              withContextMenu(contextMenuActions)(
-                withDndDrop<any, any, {}, NodeComponentProps>(pubSubDropTargetSpec)(
-                  EventingPubSubNode,
-                ),
+        // withEditReviewAccess('update')(
+        withDragNode(nodeDragSourceSpec(type))(
+          withSelection({ controlled: true })(
+            withContextMenu(contextMenuActions)(
+              withDndDrop<any, any, {}, NodeComponentProps>(pubSubDropTargetSpec)(
+                EventingPubSubNode,
               ),
             ),
           ),
         ),
+        // ),
       );
     case TYPE_SINK_URI:
       return withDragNode(nodeDragSourceSpec(type))(
@@ -145,15 +143,15 @@ export const getKnativeComponentFactory = (
       return withCreateConnector(kafkaSourceCreateConnectorCallback, CreateConnector, '', {
         dragOperation: dragOperationKafka,
       })(
-        withEditReviewAccess('patch')(
-          withDragNode(nodeDragSourceSpec(type))(
-            withSelection({ controlled: true })(
-              withContextMenu(contextMenuActions)(
-                withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
-              ),
+        // withEditReviewAccess('patch')(
+        withDragNode(nodeDragSourceSpec(type))(
+          withSelection({ controlled: true })(
+            withContextMenu(contextMenuActions)(
+              withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
             ),
           ),
         ),
+        // ),
       );
     case TYPE_KAFKA_CONNECTION_LINK:
       return withTargetDrag(eventSourceKafkaLinkDragSourceSpec())(KafkaConnectionLink);
