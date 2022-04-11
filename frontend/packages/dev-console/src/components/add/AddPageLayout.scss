@@ -1,3 +1,5 @@
+@import '../../../../../public/style/vars';
+
 .odc-add-page-layout {
   // Fix missing white background color above the header.
   .ocs-page-layout__title {
@@ -39,8 +41,10 @@
         display: flex;
       }
       &__text {
-        margin-left: var(--pf-global--spacer--xs);
-        vertical-align: middle;
+        // Used font-size-base variable instead of --pf-global--FontSize--sm, which is getting calculated to 13px instead of 14px
+        font-size: $font-size-base;
+        font-weight: normal;
+        align-items: center;    
       }
     }
   }

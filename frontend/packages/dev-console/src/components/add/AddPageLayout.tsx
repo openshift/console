@@ -88,17 +88,14 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
                       setShowDetails(checked);
                     }}
                     data-test="switch"
+                    label={switchText}
+                    labelOff={switchText}
+                    className="odc-add-page-layout__hint-block__details-switch__text"
                   />
                 </Tooltip>
               ) : (
                 <Skeleton shape="circle" width="24px" />
               )}
-              <span
-                className="odc-add-page-layout__hint-block__details-switch__text"
-                data-test="label"
-              >
-                {extensionsLoaded ? switchText : <Skeleton height="100%" width="64px" />}
-              </span>
             </div>
           </div>
           <TopologyQuickSearch
