@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shell-app
-  namespace: aut-addflow-yaml
 spec:
   selector:
     matchLabels:
