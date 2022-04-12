@@ -22,7 +22,7 @@ export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> =
 }) => {
   const pathArray: string[] = _.toPath(path);
   return (
-    <Breadcrumb className="pf-c-breadcrumb--no-padding-top">
+    <Breadcrumb className="co-breadcrumb">
       <BreadcrumbItem>{kind}</BreadcrumbItem>
       {pathArray.map((property, i) => {
         const isLast = i === pathArray.length - 1;
