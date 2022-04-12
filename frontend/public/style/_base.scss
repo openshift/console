@@ -2,7 +2,7 @@
 // Please DO NOT add rules of this type.
 
 dd {
-  margin-bottom: 20px;
+  margin-bottom: var(--pf-global--spacer--lg);
 }
 
 dd:last-child {
