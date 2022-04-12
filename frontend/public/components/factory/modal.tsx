@@ -91,9 +91,7 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
 
 export const ModalBody: React.SFC<ModalBodyProps> = ({ children }) => (
   <div className="modal-body">
-    <div className="modal-body-content">
-      <div className="modal-body-inner-shadow-covers">{children}</div>
-    </div>
+    <div className="modal-body-content">{children}</div>
   </div>
 );
 
