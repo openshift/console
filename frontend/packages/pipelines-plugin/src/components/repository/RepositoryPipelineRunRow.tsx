@@ -56,6 +56,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ 
       </TableData>
       <TableData className={tableColumnClasses[1]} columnID="sha">
         <Tooltip
+          data-test="tooltip-msg"
           content={
             <>
               {plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.SHA_MESSAGE]] ??

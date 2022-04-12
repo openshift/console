@@ -45,12 +45,6 @@ export const repositoryDetailsPage = {
       cy.get('dl dt')
         .eq(0)
         .should('have.text', 'Repository');
-      cy.get('dl dt')
-        .eq(1)
-        .should('have.text', 'Branch');
-      cy.get('dl dt')
-        .eq(2)
-        .should('have.text', 'Event type');
     });
   },
 

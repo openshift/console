@@ -209,6 +209,10 @@ export const pipelineRunDetailsPO = {
       pod: '[data-label="Pod"]',
       status: '[data-label="Status"]',
       started: '[data-label="Started"]',
+      commidID: '[data-label="Commit id"]',
+      taskStatus: '[data-label="Task status"]',
+      duration: '[data-label="Duration"]',
+      branch: '[data-label="Branch"]',
     },
   },
   taskRunsDetails: {

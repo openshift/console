@@ -16,8 +16,8 @@ Feature: Perform Actions on repository
              Then user will be redirected to Repository details page with header name "<repository_name>"
 
         Examples:
-                  | repository_yaml                                 | repository_name |
-                  | testData/repository-crd-testdata/test-repo.yaml | test-repo       |
+                  | repository_yaml                                  | repository_name |
+                  | testData/repository-crd-testdata/repository.yaml | test-repo       |
 
 
         @smoke
@@ -26,7 +26,7 @@ Feature: Perform Actions on repository
              When user clicks on the repository "<repository_name>" on Repositories page
              Then user will be redirected to Repository details page with header "<repository_name>"
               And user is able to see Details, YAML, Pipeline Runs tabs
-              And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository, Branch and Event type
+              And Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository
               And Actions menu display with options Edit labels, Edit annotations, Edit repository, Delete repository
 
         Examples:
@@ -93,10 +93,10 @@ Feature: Perform Actions on repository
 
 
         # test data needs to be created using before execuitng below 2 scenarios : https://docs.google.com/document/d/1nUFtwtuZooDhOGg1YrjXn0zrOhZDrJ4h1oE6h35Noao/edit#
-        @regression @to-do
+        @regression
         Scenario Outline: Pipeline Run Details page for the repository: P-11-TC09
             Given pipeline run is displayed for "<repository_name>"
-              And user is at the repositories page
+              And user is at repositories page
              When user clicks Last Run value of repository "<repository_name>"
              Then user will be redirected to Pipeline Run Details page
               And user is able to see Details, YAML, TaskRuns, Logs and Events tabs
@@ -108,7 +108,7 @@ Feature: Perform Actions on repository
                   | test-repo       |
 
 
-        @regression @to-do
+        @regression
         Scenario: Pipeline Runs tab of the Repository details page: P-11-TC10
             Given repository "test-repo" is present on the Repositories page
              When user searches repository "test-repo" in repositories page

@@ -1,0 +1,116 @@
+apiVersion: pipelinesascode.tekton.dev/v1alpha1
+kind: Repository
+metadata:
+ creationTimestamp: '2022-03-30T05:13:58Z'
+ generation: 6
+ managedFields:
+   - apiVersion: pipelinesascode.tekton.dev/v1alpha1
+     fieldsType: FieldsV1
+     fieldsV1:
+       'f:spec':
+         .: {}
+         'f:branch': {}
+         'f:event_type': {}
+         'f:url': {}
+     manager: tkn-pac
+     operation: Update
+     time: '2022-03-30T05:13:58Z'
+   - apiVersion: pipelinesascode.tekton.dev/v1alpha1
+     fieldsType: FieldsV1
+     fieldsV1:
+       'f:pipelinerun_status': {}
+     manager: pipelines-as-code-controller
+     operation: Update
+     time: '2022-03-30T05:25:54Z'
+ name: test-repo
+ namespace: aut-pipelines
+ resourceVersion: '4127271'
+ uid: d8563bd6-9024-4bf2-bdb8-70ad0f4eb856
+pipelinerun_status:
+ - completionTime: '2022-03-30T05:25:54Z'
+   logurl: >-
+     https://console-openshift-console.apps.rhoms-4.11-032904.dev.openshiftappsvc.org/k8s/ns/karthik/tekton.dev~v1beta1~PipelineRun/demo-app-pull-request-flxts
+   sha: 0a1051f3fe25e896d3b0408fd130ca18a6bca276
+   startTime: '2022-03-30T05:25:19Z'
+   target_branch: main
+   pipelineRunName: demo-app-pull-request-flxts
+   title: Update test-pac.txt
+   conditions:
+     - lastTransitionTime: '2022-03-30T05:25:54Z'
+       message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0'
+       reason: Succeeded
+       status: 'True'
+       type: Succeeded
+   sha_url: >-
+     https://github.com/karthikjeeyar/demo-app/commit/0a1051f3fe25e896d3b0408fd130ca18a6bca276
+   event_type: pull_request
+ - completionTime: '2022-03-30T05:27:08Z'
+   logurl: >-
+     https://console-openshift-console.apps.rhoms-4.11-032904.dev.openshiftappsvc.org/k8s/ns/karthik/tekton.dev~v1beta1~PipelineRun/pipeline-as-code-on-push-mn2kf
+   sha: 1455450e97967f9f1c092b92e7892a0aeb325dfc
+   startTime: '2022-03-30T05:26:53Z'
+   target_branch: main
+   pipelineRunName: pipeline-as-code-on-push-mn2kf
+   title: 'Update test-pac.txt (#144)'
+   conditions:
+     - lastTransitionTime: '2022-03-30T05:27:08Z'
+       message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0'
+       reason: Succeeded
+       status: 'True'
+       type: Succeeded
+   sha_url: >-
+     https://github.com/karthikjeeyar/demo-app/commit/1455450e97967f9f1c092b92e7892a0aeb325dfc
+   event_type: push
+ - completionTime: '2022-03-30T05:48:36Z'
+   logurl: >-
+     https://console-openshift-console.apps.rhoms-4.11-032904.dev.openshiftappsvc.org/k8s/ns/karthik/tekton.dev~v1beta1~PipelineRun/demo-app-pull-request-wnd42
+   sha: 4b979dd8e4d5d0fbf76201d773a967c1fe7f284f
+   startTime: '2022-03-30T05:48:10Z'
+   target_branch: main
+   pipelineRunName: demo-app-pull-request-wnd42
+   title: Delete test-pac.txt
+   conditions:
+     - lastTransitionTime: '2022-03-30T05:48:36Z'
+       message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0'
+       reason: Succeeded
+       status: 'True'
+       type: Succeeded
+   sha_url: >-
+     https://github.com/karthikjeeyar/demo-app/commit/4b979dd8e4d5d0fbf76201d773a967c1fe7f284f
+   event_type: pull_request
+ - completionTime: '2022-03-30T05:49:05Z'
+   logurl: >-
+     https://console-openshift-console.apps.rhoms-4.11-032904.dev.openshiftappsvc.org/k8s/ns/karthik/tekton.dev~v1beta1~PipelineRun/pipeline-as-code-on-push-mn54h
+   sha: 57142a4c5c6b4c02c715a9e786d7cb81c0df6a1e
+   startTime: '2022-03-30T05:48:53Z'
+   target_branch: main
+   pipelineRunName: pipeline-as-code-on-push-mn54h
+   title: 'Delete test-pac.txt (#145)'
+   conditions:
+     - lastTransitionTime: '2022-03-30T05:49:05Z'
+       message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0'
+       reason: Succeeded
+       status: 'True'
+       type: Succeeded
+   sha_url: >-
+     https://github.com/karthikjeeyar/demo-app/commit/57142a4c5c6b4c02c715a9e786d7cb81c0df6a1e
+   event_type: push
+ - completionTime: '2022-03-30T05:50:14Z'
+   logurl: >-
+     https://console-openshift-console.apps.rhoms-4.11-032904.dev.openshiftappsvc.org/k8s/ns/karthik/tekton.dev~v1beta1~PipelineRun/pipeline-as-code-on-push-c6f4q
+   sha: 6f9445a02ead2950a234362142c0e8718b30f183
+   startTime: '2022-03-30T05:50:03Z'
+   target_branch: main
+   pipelineRunName: pipeline-as-code-on-push-c6f4q
+   title: Delete new-test
+   conditions:
+     - lastTransitionTime: '2022-03-30T05:50:14Z'
+       message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0'
+       reason: Succeeded
+       status: 'True'
+       type: Succeeded
+   sha_url: >-
+     https://github.com/karthikjeeyar/demo-app/commit/6f9445a02ead2950a234362142c0e8718b30f183
+   event_type: push
+spec:
+ url: 'https://github.com/karthikjeeyar/demo-app'

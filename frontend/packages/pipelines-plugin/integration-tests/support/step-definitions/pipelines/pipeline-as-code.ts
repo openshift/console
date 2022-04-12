@@ -13,19 +13,37 @@ import {
 } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineActions, pipelineTabs, repositoryDetailsTabs } from '../../constants';
 import { createRepositoryPO } from '../../page-objects';
-import { pipelinesPage, repositoryDetailsPage, repositoriesPage } from '../../pages';
+import { repositoryDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
+import {
+  pipelinesPage,
+  repositoryDetailsPage,
+  repositoriesPage,
+  pipelineRunDetailsPage,
+} from '../../pages';
 import { actionsDropdownMenu, tableFunctions } from '../../pages/functions/common';
 
 Given('user has installed pipelines as code', () => {
   // Steps to install pipeline as code feature : https://gist.github.com/chmouel/272df2cfbeef5606ca36d29a9a2d2f96
-  cy.exec(
-    `oc apply -f https://raw.githubusercontent.com/openshift-pipelines/pipelines-as-code/release-0.1/release-0.1.yaml`,
-    {
-      failOnNonZeroExit: false,
-    },
-  );
-  cy.exec(`oc expose service el-pipelines-as-code-interceptor -n pipelines-as-code`, {
-    failOnNonZeroExit: false,
+
+  cy.get('body').then(($body) => {
+    if ($body.find(pipelinesPO.repositoriesTab).length > 0) {
+      cy.get(pipelinesPO.repositoriesTab).then(($header) => {
+        if ($header.is(':visible')) {
+          cy.get(pipelinesPO.repositoriesTab).should('include.text', 'Repositories');
+        }
+      });
+    } else {
+      cy.exec(
+        `oc apply -f ${'testData/repository-crd-testdata/pac-installation-release0.1.yaml'}`,
+        {
+          failOnNonZeroExit: false,
+        },
+      );
+
+      cy.exec(`oc expose service el-pipelines-as-code-interceptor -n pipelines-as-code`, {
+        failOnNonZeroExit: false,
+      });
+    }
   });
 });
 
@@ -51,6 +69,7 @@ When('user creates repository using YAML editor from {string}', (yamlLocation: s
 Then(
   'user will be redirected to Repository details page with header name {string}',
   (repositoryName: string) => {
+    cy.get(repositoryDetailsPO.details.sectionTitle).should('be.visible');
     detailsPage.titleShouldContain(repositoryName);
   },
 );
@@ -81,7 +100,7 @@ Then('user is able to see Details, YAML, Pipeline Runs tabs', () => {
 });
 
 Then(
-  'Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository, Branch and Event type',
+  'Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created at, Owner, Repository',
   () => {
     repositoryDetailsPage.verifyFieldsInDetailsTab();
   },
@@ -210,4 +229,45 @@ Then('{string} is not displayed on Repositories page', (repoName: string) => {
     .then(() => {
       cy.log(`${repoName} is deleted from namespace`);
     });
+});
+
+Given('pipeline run is displayed for {string}', (repoName) => {
+  cy.exec(
+    `oc apply -f ${'testData/repository-crd-testdata/pipelineRun.yaml'} -n ${'aut-pipelines'}`,
+  );
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.selectTab(pipelineTabs.Repositories);
+  pipelinesPage.search(repoName);
+  cy.get('[data-label="Last run"]').should('not.be.empty');
+});
+
+When('user clicks Last Run value of repository {string}', (repoName) => {
+  pipelinesPage.search(repoName);
+  cy.byLegacyTestID('pipeline-as-code-on-push-c6f4q').click();
+});
+
+Then('Details tab is displayed with fields Repository, Branch, Commit id and Event type', () => {
+  pipelineRunDetailsPage.verifyDetailsFields();
+  cy.byLegacyTestID('resource-title').scrollIntoView();
+});
+
+Then(
+  'user is able to see Name, Commit id, Status, Task status, Started, Duration and Branch fields',
+  () => {
+    pipelineRunDetailsPage.verifyPipelineRunColumns();
+  },
+);
+
+Then('user hovers over the commit id', () => {
+  cy.get('.co-external-link')
+    .focus()
+    .trigger('mouseover');
+});
+
+Then('user should see commit message in tooltip', () => {
+  cy.byTestID('tooltip-msg').should('be.visible');
+});
+
+Then('user clicks on Pipeline Runs tab', () => {
+  cy.get(repositoryDetailsPO.pipelineRunsTab).click();
 });
