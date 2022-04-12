@@ -34,6 +34,7 @@ export enum operators {
   GitopsPrimer = 'gitops-primer',
   ServiceBinding = 'Service Binding Operator',
   CrunchyPostgresforKubernetes = 'Crunchy Postgres for Kubernetes',
+  QuayContainerSecurity = 'Quay Container Security',
 }
 
 export enum authenticationType {

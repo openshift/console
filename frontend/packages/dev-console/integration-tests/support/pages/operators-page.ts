@@ -162,6 +162,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.CrunchyPostgresforKubernetes).click();
         break;
       }
+      case 'Quay Container Security':
+      case operators.QuayContainerSecurity: {
+        cy.get(operatorsPO.operatorHub.quayContainerSecurity).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }

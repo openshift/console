@@ -138,7 +138,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Project: {
       cy.get(devNavigationMenuPO.project).click();
-      detailsPage.titleShouldContain(pageTitle.Project);
+      detailsPage.titleShouldContain(Cypress.env('NAMESPACE'));
       cy.testA11y('Projects Page in dev perspective');
       break;
     }
