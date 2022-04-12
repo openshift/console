@@ -1,11 +1,10 @@
 reviewers:
+  - jan--f
   - kyoto
-  - lilic
-  - paulfantom
-  - s-urbaniak
   - simonpasquier
   - spadgett
 approvers:
+  - jan--f
   - kyoto
-  - lilic
-  - s-urbaniak
+  - simonpasquier
+  - spadgett
