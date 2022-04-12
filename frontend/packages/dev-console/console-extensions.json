@@ -279,8 +279,9 @@
       "type": "OperatorBackedService",
       "filters": [
         {
-          "label": "%devconsole~Service Binding%",
-          "attribute": "bindable"
+          "label": "%devconsole~Service binding%",
+          "attribute": "bindable",
+          "description": "%devconsole~Bindable services can be easily consumed by applications because they expose their binding data (credentials, connection details, volume mounts, secrets, etc.) in a standard way.%"
         }
       ]
     },

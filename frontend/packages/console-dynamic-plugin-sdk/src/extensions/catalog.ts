@@ -169,6 +169,7 @@ export type CatalogItemDetailsDescription = {
 export type CatalogItemAttribute = {
   label: string;
   attribute: string;
+  description?: string;
 };
 
 export type CatalogItemBadge = {

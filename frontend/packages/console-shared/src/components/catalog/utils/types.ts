@@ -1,4 +1,8 @@
-import { CatalogItem, CatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
+import {
+  CatalogItem,
+  CatalogItemAttribute,
+  CatalogItemType,
+} from '@console/dynamic-plugin-sdk/src/extensions';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 export enum CatalogQueryParams {
@@ -30,6 +34,8 @@ export type CatalogFilterCounts = Record<string, { [key: string]: number }>;
 export type CatalogTypeCounts = Record<string, number>;
 
 export type CatalogStringMap = Record<string, string>;
+
+export type CatalogFilterGroupMap = { [key: string]: CatalogItemAttribute };
 
 export type CatalogType = {
   label: string;

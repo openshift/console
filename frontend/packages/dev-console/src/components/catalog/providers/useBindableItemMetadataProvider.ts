@@ -28,12 +28,6 @@ const useBindableItemMetadataProvider: ExtensionHook<CatalogItemMetadataProvider
     },
   });
 
-  const notbindableMtadata = React.useRef<ReturnType<CatalogItemMetadataProviderFunction>>({
-    attributes: {
-      bindable: t('devconsole~Not Bindable'),
-    },
-  });
-
   const provider = React.useCallback<CatalogItemMetadataProviderFunction>(
     (item: CatalogItem) => {
       if (
@@ -51,7 +45,7 @@ const useBindableItemMetadataProvider: ExtensionHook<CatalogItemMetadataProvider
       ) {
         return bindableMtadata.current;
       }
-      return notbindableMtadata.current;
+      return null;
     },
     [bindableServices, loaded],
   );

@@ -25,6 +25,7 @@ import {
   CatalogService,
   CatalogStringMap,
   CatalogType,
+  CatalogFilterGroupMap,
 } from './utils/types';
 
 type CatalogControllerProps = CatalogService & {
@@ -75,10 +76,10 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     );
   }, [typeExtension]);
 
-  const filterGroupNameMap: CatalogStringMap = React.useMemo(() => {
+  const filterGroupMap: CatalogFilterGroupMap = React.useMemo(() => {
     return (
       typeExtension?.properties.filters?.reduce((map, filter: CatalogItemAttribute) => {
-        map[filter.attribute] = filter.label;
+        map[filter.attribute] = filter;
         return map;
       }, {}) ?? {}
     );
@@ -201,7 +202,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
                 categories={categories}
                 filters={availableFilters}
                 filterGroups={filterGroups}
-                filterGroupNameMap={filterGroupNameMap}
+                filterGroupMap={filterGroupMap}
                 groupings={groupings}
                 renderTile={renderTile}
                 hideSidebar={hideSidebar}
