@@ -77,7 +77,7 @@ const BaseLabelsModal = withHandlePromise((props) => {
             <SelectorInput
               onChange={(l) => setLabels(l)}
               tags={labels}
-              labelClassName={labelClassName || `co-text-${kind.id}`}
+              labelClassName={labelClassName || `co-m-${kind.id}`}
               autoFocus
             />
           </div>
@@ -114,7 +114,7 @@ export const podSelectorModal = createModalLauncher((props) => {
       messageVariables={{
         kind: props.kind.labelKey ? t(props.kind.labelKey) : props.kind.label.toLowerCase(),
       }}
-      labelClassName="co-text-pod"
+      labelClassName="co-m-pod"
       {...props}
     />
   );

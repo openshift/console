@@ -6,7 +6,7 @@ import { firstElementByTestID } from '../protractor.conf';
 
 export const wait = async (condition) => await browser.wait(condition, 20000);
 
-export const labels = $$('.co-m-label');
+export const labels = $$('.co-label');
 export const saveButton = $('button[type=submit]');
 
 // YAML form

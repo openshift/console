@@ -185,7 +185,6 @@ dl.co-inline {
 .co-m-pane__details {
   line-height: 1.66;
   // TODO: refactor so <dl>s have margin-bottom by default
-  margin-bottom: 20px;
   min-width: 0; // enable break-word
   white-space: normal; // override inheritence from co-detail-table
   .co-detail-table__row & {

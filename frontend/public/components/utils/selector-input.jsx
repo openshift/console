@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as TagsInput from 'react-tagsinput';
+import { Label as PfLabel } from '@patternfly/react-core';
 
 import { split, selectorFromString } from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
@@ -131,13 +132,14 @@ export class SelectorInput extends React.Component {
 
     const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => {
       return (
-        <span className={classNames('tag-item', this.props.labelClassName)} key={key}>
-          <span className="tag-item__content">{getTagDisplayValue(tag)}</span>
-          &nbsp;
-          <a className="remove-button" onClick={() => onRemove(key)}>
-            ×
-          </a>
-        </span>
+        <PfLabel
+          className={classNames('co-label tag-item-content', this.props.labelClassName)}
+          key={key}
+          onClose={() => onRemove(key)}
+          isTruncated
+        >
+          {getTagDisplayValue(tag)}
+        </PfLabel>
       );
     };
 

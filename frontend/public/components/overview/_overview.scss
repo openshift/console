@@ -86,19 +86,17 @@ $overview-sidebar-width: 550px;
 .resource-overview__body {
   display: flex;
   flex-wrap: wrap;
+  gap: var(--pf-global--spacer--lg);
 }
 
-.resource-overview__details {
-  width: 50%;
+.resource-overview__details,
+.resource-overview__summary {
+  flex: 1;
+  min-width: 200px;
 }
 
 .resource-overview__pod-counts {
   width: 100%;
-}
-
-.resource-overview__summary {
-  padding-right: 10px;
-  width: 50%;
 }
 
 .sidebar__section-heading {

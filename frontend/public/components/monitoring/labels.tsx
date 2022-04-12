@@ -1,13 +1,14 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Label as PfLabel } from '@patternfly/react-core';
 
 export const Label = ({ k, v }) => (
-  <div className="co-m-label co-m-label--expand" key={k}>
+  <PfLabel className="co-label co-m-label--expand" key={k}>
     <span className="co-m-label__key">{k}</span>
     <span className="co-m-label__eq">=</span>
     <span className="co-m-label__value">{v}</span>
-  </div>
+  </PfLabel>
 );
 
 export const Labels = ({ kind, labels }) => {
