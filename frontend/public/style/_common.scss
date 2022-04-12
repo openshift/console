@@ -1,5 +1,9 @@
 $co-external-link-padding-right: 15px;
 
+.co-breadcrumb {
+  padding-bottom: var(--pf-global--spacer--sm);
+}
+
 dl.co-inline {
   dd {
     margin-bottom: 1em;

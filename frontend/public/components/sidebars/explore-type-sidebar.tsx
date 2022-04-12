@@ -96,7 +96,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   return (
     <>
       {!_.isEmpty(breadcrumbs) && (
-        <Breadcrumb className="pf-c-breadcrumb--no-padding-top co-break-word">
+        <Breadcrumb className="co-breadcrumb co-break-word">
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
