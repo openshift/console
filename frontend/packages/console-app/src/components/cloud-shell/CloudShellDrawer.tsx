@@ -29,7 +29,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
     setExpanded(openState);
   };
   const header = (
-    <Flex style={{ flexGrow: 1 }}>
+    <Flex style={{ flexGrow: 1 }} data-test="cloudshell-drawer-header">
       <FlexItem className="co-cloud-shell-drawer__heading">
         {t('console-app~Command line terminal')}
       </FlexItem>
@@ -52,7 +52,11 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
           onClick={onMRButtonClick}
         />
         <Tooltip content={t('console-app~Close terminal')}>
-          <CloseButton ariaLabel={t('console-app~Close terminal')} onClick={onClose} />
+          <CloseButton
+            ariaLabel={t('console-app~Close terminal')}
+            onClick={onClose}
+            data-test="cloudshell-drawer-close-button"
+          />
         </Tooltip>
       </FlexItem>
     </Flex>
