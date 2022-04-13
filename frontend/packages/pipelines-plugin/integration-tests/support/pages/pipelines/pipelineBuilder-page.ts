@@ -172,6 +172,7 @@ export const pipelineBuilderPage = {
     taskName: string = 'git-clone',
     workspaceName: string = 'git',
   ) => {
+    cy.byTestID('form-view-input').check();
     pipelineBuilderPage.enterPipelineName(pipelineName);
     pipelineBuilderPage.selectTask(taskName);
     pipelineBuilderPage.clickOnAddWorkSpace();

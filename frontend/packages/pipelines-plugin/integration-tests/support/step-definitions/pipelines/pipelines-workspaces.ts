@@ -89,8 +89,10 @@ Then(
 );
 
 Given('user created Config Map using yaml {string}', (yamlFile: string) => {
-  const yamlFileName = `testData/pipelines-workspaces/${yamlFile}`;
-  cy.exec(`oc apply -f ${yamlFileName} -n ${Cypress.env('NAMESPACE')}`);
+  const yamlFileName = `testData/pipelines-workspaces/using-optional-workspaces-in-when-expressions-pipelineRun/${yamlFile}`;
+  cy.exec(`oc apply -f ${yamlFileName} -n ${Cypress.env('NAMESPACE')}`, {
+    failOnNonZeroExit: false,
+  });
 });
 
 Given('user created pipeline {string} with workspace', (pipelineName: string) => {
@@ -102,12 +104,16 @@ Given('user created pipeline {string} with workspace', (pipelineName: string) =>
 
 Given('user created Secret using yaml {string}', (yamlFile: string) => {
   const yamlFileName = `testData/pipelines-workspaces/${yamlFile}`;
-  cy.exec(`oc apply -f ${yamlFileName} -n ${Cypress.env('NAMESPACE')}`);
+  cy.exec(`oc apply -f ${yamlFileName} -n ${Cypress.env('NAMESPACE')}`, {
+    failOnNonZeroExit: false,
+  });
 });
 
 Given('user created PVC using yaml {string}', (yamlFile: string) => {
   const yamlFileName = `testData/pipelines-workspaces/${yamlFile}`;
-  cy.exec(`oc apply -f ${yamlFileName} -n ${Cypress.env('NAMESPACE')}`);
+  cy.exec(`oc apply -f ${yamlFileName} -n ${Cypress.env('NAMESPACE')}`, {
+    failOnNonZeroExit: false,
+  });
 });
 
 When('user selects {string} from Config Map dropdown', (ConfigMapValue: string) => {
@@ -147,5 +153,28 @@ Then(
   (pvc: string) => {
     pipelineRunDetailsPage.verifyWorkspacesSection();
     cy.get(`[data-test-id^="${pvc}"]`).should('be.visible');
+  },
+);
+
+Given('user created pipeline run using yaml {string}', (yamlFile: string) => {
+  const yamlFileName = `testData/pipelines-workspaces/using-optional-workspaces-in-when-expressions-pipelineRun/${yamlFile}`;
+  cy.byTestID('import-yaml').click();
+  yamlEditor.isLoaded();
+  pipelinesPage.clearYAMLEditor();
+  pipelinesPage.setEditorContent(yamlFileName);
+  cy.byTestID('save-changes').click();
+});
+
+When('user is at PipelineRun Details Page of {string}', (pipelineRunName: string) => {
+  cy.contains('PipelineRun details').should('be.visible');
+  cy.byLegacyTestID('resource-title').should('include.text', pipelineRunName);
+});
+
+When(
+  'user selects "rerun" option from action menu for pipeline run {string}',
+  (pipelineRunName: string) => {
+    cy.byLegacyTestID('resource-title').should('include.text', pipelineRunName);
+    cy.byLegacyTestID('actions-menu-button').click();
+    cy.get('[data-test-action="Rerun"]').click();
   },
 );
