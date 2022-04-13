@@ -114,6 +114,7 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
           mapper={mapper || resolvedMapper}
           additionalResources={additionalResourcesData}
           ExpandedComponent={expandedComponent ? ExpandedComponent : null}
+          dataTest="resource-inventory-item"
         />
       );
     },
