@@ -50,10 +50,11 @@ export type Panel = {
   span: number;
   stack: boolean;
   styles?: ColumnStyle[];
-  targets: {
+  targets: Array<{
     expr: string;
     legendFormat?: string;
-  };
+    refId: string;
+  }>;
   title: string;
   transform?: string;
   type: string;
