@@ -305,27 +305,27 @@ export interface ImportData {
 
 export enum TerminationTypes {
   // t('devconsole~Edge')
-  edge = 'Edge',
+  edge = 'devconsole~Edge',
   // t('devconsole~Passthrough')
-  passthrough = 'Passthrough',
+  passthrough = 'devconsole~Passthrough',
   // t('devconsole~Re-encrypt')
-  reencrypt = 'Re-encrypt',
+  reencrypt = 'devconsole~Re-encrypt',
 }
 
 export enum InsecureTrafficTypes {
   // t('devconsole~None')
-  None = 'None',
+  None = 'devconsole~None',
   // t('devconsole~Allow')
-  Allow = 'Allow',
+  Allow = 'devconsole~Allow',
   // t('devconsole~Redirect')
-  Redirect = 'Redirect',
+  Redirect = 'devconsole~Redirect',
 }
 
 export enum PassthroughInsecureTrafficTypes {
   // t('devconsole~None')
-  None = 'None',
+  None = 'devconsole~None',
   // t('devconsole~Redirect')
-  Redirect = 'Redirect',
+  Redirect = 'devconsole~Redirect',
 }
 
 export interface AutoscaleWindowType {
