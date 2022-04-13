@@ -108,6 +108,7 @@ export const pipelineDetailsPO = {
       createdAt: '[data-test="Created at"]',
       owner: '[data-test="Owner"]',
       tasks: '.odc-dynamic-resource-link-list--addSpaceBelow dl dt',
+      list: '.odc-dynamic-resource-link-list',
     },
     fieldValues: {
       name: '[data-test-selector="details-item-value__Name"]',
@@ -120,6 +121,7 @@ export const pipelineDetailsPO = {
     },
     sections: {
       triggerTemplates: '.odc-trigger-template-list',
+
       tasks: '.odc-dynamic-resource-link-list--addSpaceBelow',
     },
   },
@@ -181,8 +183,10 @@ export const pipelineRunDetailsPO = {
   yamlTab: '[data-test-id$="YAML"]',
   detailsTab: '[data-test-id$="Details"]',
   taskRunsTab: '[data-test-id="horizontal-link-TaskRuns"]',
+  pipelineRunsResults: '[data-test-section-heading="PipelineRun results"]',
   eventsTab: '[data-test-id$="Events"]',
   pipelineRunStatus: '[data-test="resource-status"]',
+  statusMessage: '.odc-pipeline-run-details__customDetails',
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',
     sectionTitle: '[data-test-section-heading="PipelineRun details"]',
@@ -231,6 +235,7 @@ export const pipelineRunsPO = {
     table: 'div[role="grid"]',
     pipelineRunName: 'tr td:nth-child(1)',
     status: '[data-test="status-text"]',
+    resultTable: '[role="grid"]',
   },
 };
 
