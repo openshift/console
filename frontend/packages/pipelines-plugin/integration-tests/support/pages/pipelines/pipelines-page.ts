@@ -282,7 +282,7 @@ export const startPipelineInPipelinesPage = {
   },
 
   selectSecret: (secret: string) => {
-    cy.selectByDropDownText(pipelinesPO.startPipeline.workspaces.secret, secret);
+    cy.selectByAutoCompleteDropDownText(pipelinesPO.startPipeline.workspaces.secret, secret);
   },
 
   selectPVC: (pvc: string) => {
