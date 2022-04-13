@@ -85,11 +85,16 @@ const evaluateTemplate = (
   // Use a minimum of 5m to make sure we have enough data to perform `irate` calculations, which
   // require 2 data points each. Otherwise, there could be gaps in the graph.
   const interval: Variable = { value: `${Math.max(intervalMinutes, 5)}m` };
+  const range: Variable = { value: `${Math.floor(timespan / 1000)}s` };
   const allVariables = {
     ...variables.toJS(),
     __interval: interval,
-    // eslint-disable-next-line camelcase
+    __range: range,
+    /* eslint-disable camelcase */
+    __range_ms: range,
+    __range_s: range,
     __rate_interval: interval,
+    /* eslint-enable camelcase */
 
     // This is last to ensure it is applied after all other variable substitutions (because the
     // other variable substitutions may result in "$__auto_interval_*" being inserted)
