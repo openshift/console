@@ -1,0 +1,9 @@
+.pfext-page-layout__content{
+  &.pfext-is-dark {
+    background-color: var(--pf-global--BackgroundColor--200);
+  }
+}
+
+.pfext-quick-start-footer {
+  background-color: var(--pf-global--BackgroundColor--100);
+}

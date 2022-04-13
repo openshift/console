@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils';
 import QuickStartsLoader from './loader/QuickStartsLoader';
 
+import './QuickStartCatalogPage.scss';
+
 const QuickStartCatalogPage: React.FC = () => {
   const { t } = useTranslation();
   return (
