@@ -19,7 +19,7 @@ const StatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
       <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
         {(logSnippet: string) => (
           <>
-            <pre>{logSnippet}</pre>
+            <pre className="co-pre">{logSnippet}</pre>
             {link}
           </>
         )}

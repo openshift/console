@@ -41,14 +41,3 @@
     font-family: var(--pf-global--FontFamily--sans-serif);
   }
 
-  pre {
-    background-color: var(--pf-c-code-block--BackgroundColor);
-    color: var(--pf-global--Color--100);
-    font-family: var(--pf-c-code-block__pre--FontFamily);
-    font-size: var(--pf-c-code-block__pre--FontSize);
-    overflow-wrap: break-word;
-    padding: var(--pf-global--spacer--md);
-    white-space: pre-wrap;
-    display: block;
-  }
-

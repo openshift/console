@@ -302,7 +302,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 path="status.logSnippet"
                 hideEmpty
               >
-                <pre>{logSnippet}</pre>
+                <pre className="co-pre">{logSnippet}</pre>
               </DetailsItem>
               <DetailsItem
                 label={t('public~Duration')}

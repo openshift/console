@@ -1,17 +1,5 @@
 .co-copy-to-clipboard {
-  font-family: $font-family-monospace;
-  position: relative;
-}
-
-.pf-c-clipboard-copy__group-copy.co-copy-to-clipboard__btn {
-  position: absolute;
-  right: 0px;
-  top: 3px;
-}
-
-.co-copy-to-clipboard__text {
-  line-height: 1.4;
-  padding-right: 50px;
+  position: relative; // prevents double scrollbars when used with reveal/hide value toggle
 }
 
 .co-copy-to-clipboard__stacktrace-width-height {
@@ -24,16 +12,4 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-}
-
-.pf-c-button.co-copy-to-clipboard__btn,
-.pf-c-button.co-copy-to-clipboard__btn:hover {
-  --pf-c-button--PaddingTop: 11px;
-  --pf-c-button--PaddingRight: 16px;
-  --pf-c-button--PaddingBottom: 11px;
-  --pf-c-button--PaddingLeft: 16px;
-  --pf-c-button--BorderColor: var(--pf-global--BorderColor--100);
-  --pf-c-button--BorderRadius: 0;
-  --pf-c-button--hover--BorderWidth: 1px;
-  --pf-c-button--LineHeight: 20px;
 }

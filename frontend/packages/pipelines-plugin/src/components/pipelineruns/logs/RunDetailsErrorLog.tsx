@@ -24,7 +24,7 @@ const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({ logDetails, name
         <dt>{t('pipelines-plugin~Log snippet')}</dt>
         <dd>
           <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
-            {(logSnippet: string) => <pre>{logSnippet}</pre>}
+            {(logSnippet: string) => <pre className="co-pre">{logSnippet}</pre>}
           </LogSnippetBlock>
         </dd>
       </dl>

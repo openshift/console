@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
-import { Button, Tooltip } from '@patternfly/react-core';
+import { Button, CodeBlock, CodeBlockAction, CodeBlockCode, Tooltip } from '@patternfly/react-core';
 import { CopyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -19,17 +19,14 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
   // Default to value if no visible value was specified.
   const visibleValue = _.isNil(props.visibleValue) ? props.value : props.visibleValue;
 
-  return (
-    <div className="co-copy-to-clipboard">
-      <pre className="co-pre-wrap co-copy-to-clipboard__text" data-test="copy-to-clipboard">
-        {visibleValue}
-      </pre>
+  const actions = (
+    <CodeBlockAction>
       <Tooltip content={tooltipContent} trigger="click mouseenter focus" exitDelay={1250}>
         <CTC text={props.value} onCopy={() => setCopied(true)}>
           <Button
             variant="plain"
             onMouseEnter={() => setCopied(false)}
-            className="co-copy-to-clipboard__btn pf-c-clipboard-copy__group-copy"
+            className="co-copy-to-clipboard__btn"
             type="button"
           >
             <CopyIcon />
@@ -37,7 +34,19 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
           </Button>
         </CTC>
       </Tooltip>
-    </div>
+    </CodeBlockAction>
+  );
+
+  return (
+    <CodeBlock actions={actions} className="co-copy-to-clipboard">
+      {/* pf-c-code-block__pre added because upstream component does not currently have a className prop to add additional classes. https://github.com/patternfly/patternfly-react/issues/7156  */}
+      <CodeBlockCode
+        className="pf-c-code-block__pre co-copy-to-clipboard__text"
+        data-test="copy-to-clipboard"
+      >
+        {visibleValue}
+      </CodeBlockCode>
+    </CodeBlock>
   );
 });
 

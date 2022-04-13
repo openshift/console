@@ -12,7 +12,7 @@ export const Invalid: React.FC<{ path: string }> = ({ path }) => {
       <YellowExclamationTriangleIcon />
       &nbsp;&nbsp;
       <Trans ns="olm">
-        The field <code>{{ path }}</code> is invalid.
+        The field <code className="co-code">{{ path }}</code> is invalid.
       </Trans>
     </span>
   );

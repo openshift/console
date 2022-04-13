@@ -77,7 +77,9 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps> = ({
       {_.isEmpty(value) ? (
         <span className="text-muted">{t('public~None')}</span>
       ) : (
-        <pre style={{ width: 'max-content' }}>{value}</pre>
+        <pre className="co-pre" style={{ width: 'max-content' }}>
+          {value}
+        </pre>
       )}
     </DetailsItem>
   );
