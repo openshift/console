@@ -33,7 +33,10 @@ export const PageContents: React.FC<PipelineTabbedPageProps> = (props) => {
       model: PipelineModel,
       onSelection: (key: string, action: MenuAction, url: string) => `${url}/builder`,
     },
-    repository: { model: RepositoryModel },
+    repository: {
+      model: RepositoryModel,
+      onSelection: (_key: string, _action: MenuAction, url: string) => `${url}/form`,
+    },
   };
   const pages: Page[] = [
     {

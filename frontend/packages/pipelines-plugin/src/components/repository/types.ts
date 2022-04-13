@@ -20,3 +20,9 @@ export type RepositoryKind = K8sResourceKind & {
   };
   pipelinerun_status?: RepositoryStatus[];
 };
+
+export type RepositoryFormValues = {
+  name: string;
+  gitUrl: string;
+  accessToken?: string;
+};

@@ -1,3 +1,5 @@
+import { RepositoryFormValues } from './types';
+
 export enum RepositoryFields {
   REPOSITORY = 'Repository',
   BRANCH = 'Branch',
@@ -27,3 +29,8 @@ export const RepositoryAnnotations: Record<RepoAnnotationFields, string> = {
 };
 
 export const baseURL = 'https://github.com';
+
+export const defaultRepositoryFormValues: RepositoryFormValues = {
+  name: '',
+  gitUrl: '',
+};
