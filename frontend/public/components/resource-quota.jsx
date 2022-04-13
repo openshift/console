@@ -27,6 +27,7 @@ import {
   Selector,
   Timestamp,
   DetailsItem,
+  humanizePercentage,
 } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending } from '../reducers/features';
@@ -233,6 +234,7 @@ export const QuotaGaugeCharts = ({
   const resourceTypesSet = new Set(resourceTypes);
   const { t } = useTranslation();
 
+  // TODO Separate ACRQ and RQ into separate components since they are very different APIs
   if (isACRQ) {
     const cpuRequestUsagePercent = getACRQResourceUsage(
       quota,
@@ -271,7 +273,7 @@ export const QuotaGaugeCharts = ({
                 },
               ]}
               title={t('public~CPU request')}
-              label={`${cpuRequestUsagePercent.namespace}%`}
+              label={`${humanizePercentage(cpuRequestUsagePercent.namespace).string}`}
             />
           </div>
         ) : (
@@ -301,7 +303,7 @@ export const QuotaGaugeCharts = ({
                 },
               ]}
               title={t('public~CPU limit')}
-              label={`${cpuLimitUsagePercent.namespace}%`}
+              label={`${humanizePercentage(cpuLimitUsagePercent.namespace).string}`}
             />
           </div>
         ) : (
@@ -331,7 +333,7 @@ export const QuotaGaugeCharts = ({
                 },
               ]}
               title={t('public~Memory request')}
-              label={`${memoryRequestUsagePercent.namespace}%`}
+              label={`${humanizePercentage(memoryRequestUsagePercent.namespace).string}`}
             />
           </div>
         ) : (
@@ -361,7 +363,7 @@ export const QuotaGaugeCharts = ({
                 },
               ]}
               title={t('public~Memory limit')}
-              label={`${memoryLimitUsagePercent.namespace}%`}
+              label={`${humanizePercentage(memoryLimitUsagePercent.namespace).string}`}
             />
           </div>
         ) : (
