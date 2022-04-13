@@ -106,7 +106,7 @@ export const getConfigmapFormData = (
   };
 };
 
-export const getConfigmapData = (values: FormikValues): ConfigMap => {
+export const getConfigmapData = (values: FormikValues, existingConfigMap: ConfigMap): ConfigMap => {
   const { name, namespace, immutable, data, binaryData } = values.formData;
 
   const dataMap = data.reduce((acc, { key, value }) => {
@@ -127,7 +127,9 @@ export const getConfigmapData = (values: FormikValues): ConfigMap => {
   }, {});
 
   return _.merge({}, initialConfigmapData, {
+    ...existingConfigMap,
     metadata: {
+      ...existingConfigMap?.metadata,
       name,
       namespace,
     },
@@ -136,11 +138,8 @@ export const getConfigmapData = (values: FormikValues): ConfigMap => {
     binaryData: binaryDataMap ?? {},
   });
 };
-export const sanitizeToYaml = (formData: ConfigMapFormData, configMap: ConfigMap): string => {
-  let configmapObj = getConfigmapData({ formData });
-  if (configMap) {
-    configmapObj = _.merge({}, configMap, configmapObj);
-  }
+export const sanitizeToYaml = (formData: ConfigMapFormData, configMap?: ConfigMap): string => {
+  const configmapObj = getConfigmapData({ formData }, configMap);
   return safeJSToYAML(configmapObj, 'yamlData', {
     skipInvalid: true,
   });

@@ -39,12 +39,14 @@ const ConfigmapForm: React.FC<ConfigMapProps> = ({
       configMapYaml.metadata.namespace = namespace;
     }
     const configmap: ConfigMap =
-      values.editorType === EditorType.Form ? getConfigmapData(values) : configMapYaml;
+      values.editorType === EditorType.Form
+        ? getConfigmapData(values, configMapYaml)
+        : configMapYaml;
     if (isCreateFlow) {
       resourceCall = k8sCreateResource({ model: ConfigMapModel, data: configmap });
     } else {
       const editConfigMapData = _.cloneDeep(configMap);
-      editConfigMapData.metadata.name = configmap?.metadata?.name;
+      editConfigMapData.metadata = configmap?.metadata;
       editConfigMapData.data = configmap.data;
       editConfigMapData.binaryData = configmap.binaryData;
       editConfigMapData.immutable = configmap.immutable;
