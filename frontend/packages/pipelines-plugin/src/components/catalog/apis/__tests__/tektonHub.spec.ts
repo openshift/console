@@ -89,4 +89,8 @@ describe('getHubUIPath', () => {
     expect(getHubUIPath('test')).not.toBeNull();
     expect(getHubUIPath('test-path')).toBe(`${TEKTON_HUB_ENDPOINT}/test-path`);
   });
+
+  it('should return custom path url if the baseurl param is passed as a second argument', () => {
+    expect(getHubUIPath('test-path', 'https://hub-ui.com')).toBe(`https://hub-ui.com/test-path`);
+  });
 });

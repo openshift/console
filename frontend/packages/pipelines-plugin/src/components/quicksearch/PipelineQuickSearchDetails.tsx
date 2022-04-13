@@ -54,7 +54,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     resetVersions();
     let mounted = true;
     if (isTektonHubTaskWithoutVersions(selectedItem)) {
-      getTektonHubTaskVersions(selectedItem.data.id)
+      getTektonHubTaskVersions(selectedItem.data.id, selectedItem.attributes.apiURL)
         .then((itemVersions = []) => {
           if (mounted) {
             setVersions([...itemVersions]);
@@ -85,7 +85,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     [selectedVersion, versions],
   );
 
-  const hubLink = getHubUIPath(loadedVersion?.hubURLPath);
+  const hubLink = getHubUIPath(loadedVersion?.hubURLPath, selectedItem.attributes.uiURL);
 
   return (
     <div className="opp-quick-search-details">

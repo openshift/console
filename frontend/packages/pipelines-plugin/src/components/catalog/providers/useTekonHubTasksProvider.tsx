@@ -6,10 +6,14 @@ import { ResourceIcon, useAccessReview } from '@console/internal/components/util
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
 import { TektonTaskProviders } from '../../pipelines/const';
-import { TektonHubTask, useTektonHubResources } from '../apis/tektonHub';
+import { TektonHubTask, useInclusterTektonHubURLs, useTektonHubResources } from '../apis/tektonHub';
 import { filterBySupportedPlatforms, useTektonHubIntegration } from '../catalog-utils';
 
-const normalizeTektonHubTasks = (tektonHubTasks: TektonHubTask[]): CatalogItem<TektonHubTask>[] => {
+const normalizeTektonHubTasks = (
+  tektonHubTasks: TektonHubTask[],
+  apiURL: string,
+  uiURL: string,
+): CatalogItem<TektonHubTask>[] => {
   const normalizedTektonHubTasks: CatalogItem<TektonHubTask>[] = tektonHubTasks
     .filter(filterBySupportedPlatforms)
     .reduce((acc, task) => {
@@ -34,7 +38,7 @@ const normalizeTektonHubTasks = (tektonHubTasks: TektonHubTask[]): CatalogItem<T
         icon: {
           node: <ResourceIcon kind={referenceForModel(TaskModel)} />,
         },
-        attributes: { installed: '', versions, categories },
+        attributes: { installed: '', versions, categories, apiURL, uiURL },
         cta: {
           label: i18next.t('pipelines-plugin~Add'),
         },
@@ -70,14 +74,17 @@ const useTektonHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   });
 
   const integrationEnabled = useTektonHubIntegration();
+  const { apiURL, uiURL, loaded: baseURLLoaded } = useInclusterTektonHubURLs();
 
   const [tektonHubTasks, tasksLoaded, tasksError] = useTektonHubResources(
-    canCreateTask && canUpdateTask && integrationEnabled,
+    apiURL,
+    canCreateTask && canUpdateTask && integrationEnabled && baseURLLoaded,
   );
 
-  React.useMemo(() => setNormalizedTektonHubTasks(normalizeTektonHubTasks(tektonHubTasks)), [
-    tektonHubTasks,
-  ]);
+  React.useMemo(
+    () => setNormalizedTektonHubTasks(normalizeTektonHubTasks(tektonHubTasks, apiURL, uiURL)),
+    [apiURL, tektonHubTasks, uiURL],
+  );
   return [normalizedTektonHubTasks, tasksLoaded, tasksError];
 };
 

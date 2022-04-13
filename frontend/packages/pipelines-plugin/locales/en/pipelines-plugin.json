@@ -318,6 +318,8 @@
   "{{taskLabel}} details": "{{taskLabel}} details",
   "TektonConfig": "TektonConfig",
   "TektonConfigs": "TektonConfigs",
+  "TektonHub": "TektonHub",
+  "TektonHubs": "TektonHubs",
   "Pipeline {{status}}": "Pipeline {{status}}",
   "Pipeline status is {{status}}. View logs.": "Pipeline status is {{status}}. View logs.",
   "Pipeline not started. Start pipeline.": "Pipeline not started. Start pipeline.",
