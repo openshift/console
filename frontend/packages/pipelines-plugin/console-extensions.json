@@ -446,6 +446,16 @@
   {
     "type": "console.page/route",
     "properties": {
+      "exact": false,
+      "path": ["/pac/all-namespaces", "/pac/ns/:ns"],
+      "component": {
+        "$codeRef": "pacComponent.PacPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
       "exact": true,
       "perspective": "dev",
       "path": [
