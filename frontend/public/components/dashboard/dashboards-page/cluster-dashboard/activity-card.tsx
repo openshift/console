@@ -198,7 +198,9 @@ export const ActivityCard: React.FC<{}> = React.memo(() => {
       <CardHeader>
         <CardTitle>{t('public~Activity')}</CardTitle>
         <CardActions className="co-overview-card__actions">
-          <Link to={viewEvents}>{t('public~View events')}</Link>
+          <Link to={viewEvents} data-test="view-events-link">
+            {t('public~View events')}
+          </Link>
         </CardActions>
       </CardHeader>
       <ActivityBody className="co-overview-dashboard__activity-body">

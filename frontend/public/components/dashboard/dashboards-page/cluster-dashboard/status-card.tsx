@@ -255,13 +255,19 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       <CardHeader>
         <CardTitle>{t('public~Status')}</CardTitle>
         <CardActions className="co-overview-card__actions">
-          <Link to="/monitoring/alerts">{t('public~View alerts')}</Link>
+          <Link to="/monitoring/alerts" data-test="status-card-view-alerts">
+            {t('public~View alerts')}
+          </Link>
         </CardActions>
       </CardHeader>
       <HealthBody>
         <Gallery className="co-overview-status__health" hasGutter>
           {healthItems.map((item) => {
-            return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
+            return (
+              <GalleryItem key={item.title} data-test={item.title}>
+                {item.Component}
+              </GalleryItem>
+            );
           })}
         </Gallery>
       </HealthBody>

@@ -133,7 +133,9 @@ export const DetailsCard = withDashboardResources(
         <CardHeader>
           <CardTitle>{t('public~Details')}</CardTitle>
           <CardActions className="co-overview-card__actions">
-            <Link to="/settings/cluster/">{t('public~View settings')}</Link>
+            <Link to="/settings/cluster/" data-test="details-card-view-settings">
+              {t('public~View settings')}
+            </Link>
           </CardActions>
         </CardHeader>
         <CardBody>
