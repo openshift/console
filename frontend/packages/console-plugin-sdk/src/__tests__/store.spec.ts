@@ -169,7 +169,7 @@ describe('isExtensionInUse', () => {
 
   it('returns true only for the right combination of flag values', () => {
     // Generate all possible combinations (i.e. variations with repetition)
-    const allFlagCombos = Combinatorics.baseN([true, false, undefined], 4)
+    const allFlagCombos = Combinatorics.baseN([true, false], 4)
       .toArray()
       .map<ReturnType<typeof flags>>((combination) =>
         flags(combination[0], combination[1], combination[2], combination[3]),
@@ -188,6 +188,12 @@ describe('isExtensionInUse', () => {
     failFlagCombos.forEach((combo) => {
       expect(isExtensionInUse(gatedExtension, combo)).toBe(false);
     });
+
+    // When the flag value is undefined, having the flag in `required` array should put the extension out of use
+    expect(isExtensionInUse(gatedExtension, flags(undefined, undefined, false, false))).toBe(false);
+
+    // When the flag value is undefined, having the flag in `disallowed` array should keep the extension in use
+    expect(isExtensionInUse(gatedExtension, flags(true, true, undefined, undefined))).toBe(true);
   });
 });
 
