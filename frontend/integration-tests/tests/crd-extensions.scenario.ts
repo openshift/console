@@ -32,7 +32,9 @@ describe('CRD extensions', () => {
     };
 
     it(`displays YAML editor for creating a new ${crd} instance and creates it`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await browser.get(
+        `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+      );
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.isLoaded();
@@ -60,7 +62,9 @@ describe('CRD extensions', () => {
     });
 
     it(`deletes the ${crd} instance`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await browser.get(
+        `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+      );
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
@@ -99,7 +103,9 @@ describe('CRD extensions', () => {
         menuLinkText,
       }) => {
         it(`displays YAML editor for creating a new ${crd} ${dropdownMenuName} instance and creates it`, async () => {
-          await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+          await browser.get(
+            `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+          );
           await crudView.isLoaded();
           await crudView.clickKebabAction(crd, 'View instances');
           await crudView.isLoaded();
@@ -146,7 +152,9 @@ describe('CRD extensions', () => {
         });
 
         it(`deletes the ${crd} ${dropdownMenuName} instance`, async () => {
-          await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+          await browser.get(
+            `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+          );
           await crudView.isLoaded();
           await crudView.clickKebabAction(crd, 'View instances');
           await crudView.resourceRowsPresent();
@@ -164,7 +172,9 @@ describe('CRD extensions', () => {
     let notification = $(`[data-test=${name}-${location}]`);
 
     it(`displays YAML editor for creating a new ${crd} instance and creates it`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await browser.get(
+        `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+      );
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.isLoaded();
@@ -220,7 +230,9 @@ describe('CRD extensions', () => {
     });
 
     it(`deletes the ${crd} instance`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await browser.get(
+        `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+      );
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
@@ -237,7 +249,9 @@ describe('CRD extensions', () => {
     const namespaceFilter = '^openshift-';
 
     it(`displays YAML editor for creating a new ${crd} instance and creates it`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await browser.get(
+        `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+      );
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.isLoaded();
@@ -292,7 +306,9 @@ describe('CRD extensions', () => {
     });
 
     it(`displays YAML editor for adding namespaceFilter to the ${crd} instance`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await browser.get(
+        `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+      );
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
@@ -323,7 +339,9 @@ describe('CRD extensions', () => {
     });
 
     it(`deletes the ${crd} instance`, async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${crd}`);
+      await browser.get(
+        `${appHost}/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`,
+      );
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
