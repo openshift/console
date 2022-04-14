@@ -30,7 +30,8 @@
       "topology": "src/components/topology",
       "perspective": "src/utils/perspective.tsx",
       "userPreferences": "src/components/user-preferences",
-      "serviceBindingContext": "src/components/topology/bindable-services/bindable-service-context.ts"
+      "serviceBindingContext": "src/components/topology/bindable-services/bindable-service-context.ts",
+      "projectAccess": "src/components/project-access"
     }
   }
 }

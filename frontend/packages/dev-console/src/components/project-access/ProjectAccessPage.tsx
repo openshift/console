@@ -1,24 +1,22 @@
 import * as React from 'react';
+import { match as RMatch } from 'react-router';
 import { Firehose } from '@console/internal/components/utils';
 import { useProjectAccessRoles } from './hooks';
 import ProjectAccess from './ProjectAccess';
 
 export interface ProjectAccessPageProps {
-  customData: { activeNamespace: string };
+  match: RMatch<{ ns?: string }>;
 }
 
-const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ customData }) => {
-  const { activeNamespace } = customData;
+const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ match, ...props }) => {
+  const namespace = match.params.ns;
   const roles = useProjectAccessRoles();
-  const props: React.ComponentProps<typeof ProjectAccess> = {
-    namespace: activeNamespace,
-    roles,
-  };
+  const showFullForm = match.path.includes('project-access');
   return (
     <Firehose
       resources={[
         {
-          namespace: activeNamespace,
+          namespace,
           kind: 'RoleBinding',
           prop: 'roleBindings',
           isList: true,
@@ -26,7 +24,7 @@ const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ customData }) => 
         },
       ]}
     >
-      <ProjectAccess {...props} />
+      <ProjectAccess fullFormView={showFullForm} namespace={namespace} roles={roles} {...props} />
     </Firehose>
   );
 };

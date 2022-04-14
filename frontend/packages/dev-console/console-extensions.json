@@ -187,6 +187,30 @@
     }
   },
   {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "sharing",
+      "name": "%devconsole~Sharing%",
+      "insertAfter": "helm-chart-repositories",
+      "insertBefore": "local-machine"
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "project-access",
+      "groupId": "sharing",
+      "href": "/project-access/ns/:namespace",
+      "label": "%devconsole~Sharing%",
+      "description": "%devconsole~Project access allows you to add or remove a user's access to the project%",
+      "icon": { "$codeRef": "icons.shareProjectIconElement" },
+      "accessReview": [
+        { "group": "rbac.authorization.k8s.io", "resource": "rolebindings", "verb": "create" },
+        { "group": "rbac.authorization.k8s.io", "resource": "rolebindings", "verb": "list" }
+      ]
+    }
+  },
+  {
     "type": "dev-console.import/environment",
     "properties": {
       "imageStreamName": "nodejs",
@@ -650,6 +674,14 @@
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/project-access/ns/:ns", "/project-access/all-namespaces"],
+      "component": { "$codeRef": "projectAccess.ProjectAccessPage" }
     }
   }
 ]

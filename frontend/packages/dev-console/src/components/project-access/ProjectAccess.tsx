@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
+  history,
   LoadingBox,
   isUpstream,
   openshiftHelpBase,
@@ -13,6 +15,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
   getRolesWithNameChange,
   sendRoleBindingRequest,
@@ -30,9 +33,15 @@ export interface ProjectAccessProps {
   namespace: string;
   roleBindings?: { data: []; loaded: boolean; loadError: {} };
   roles: { data: Roles; loaded: boolean };
+  fullFormView?: boolean;
 }
 
-const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, roles }) => {
+const ProjectAccess: React.FC<ProjectAccessProps> = ({
+  namespace,
+  roleBindings,
+  roles,
+  fullFormView,
+}) => {
   const { t } = useTranslation();
   if ((!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) || !roles.loaded) {
     return <LoadingBox />;
@@ -48,6 +57,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
 
   const initialValues = {
     projectAccess: roleBindings.loaded && userRoleBindings,
+    namespace,
   };
 
   const handleSubmit = (values, actions) => {
@@ -106,9 +116,9 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
     actions.resetForm({ status: { success: null }, values: initialValues });
   };
 
-  return (
+  const projectAccessForm = (
     <>
-      <PageHeading>
+      <PageHeading title={fullFormView ? t('devconsole~Project access') : null}>
         <Trans t={t} ns="devconsole">
           {
             "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in "
@@ -131,11 +141,27 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, 
           validationSchema={validationSchema}
         >
           {(formikProps) => (
-            <ProjectAccessForm {...formikProps} roles={roles.data} roleBindings={initialValues} />
+            <ProjectAccessForm
+              {...formikProps}
+              roles={roles.data}
+              roleBindings={initialValues}
+              onCancel={fullFormView ? history.goBack : null}
+            />
           )}
         </Formik>
       )}
     </>
+  );
+
+  return fullFormView ? (
+    <NamespacedPage hideApplications variant={NamespacedPageVariants.light} disabled>
+      <Helmet>
+        <title>{t('devconsole~Project access')}</title>
+      </Helmet>
+      {projectAccessForm}
+    </NamespacedPage>
+  ) : (
+    projectAccessForm
   );
 };
 
