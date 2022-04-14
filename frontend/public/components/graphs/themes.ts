@@ -4,7 +4,7 @@ const pfDependentAxisTickLabels = {
   padding: 5,
   fontFamily: 'var(--pf-chart-global--FontFamily)',
   letterSpacing: 'var(--pf-chart-global--letter-spacing)',
-  fill: 'rgb(79, 82, 85)',
+  fill: 'var(--pf-global--Color--200)',
 };
 const pfIndependentAxisTickLabels = Object.assign({}, pfDependentAxisTickLabels, { padding: 2 });
 const axisTicks = {

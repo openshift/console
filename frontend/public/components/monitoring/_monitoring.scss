@@ -1,4 +1,8 @@
-$tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
+%tooltip-background-color-theme-dark {
+  .pf-theme-dark & {
+    --pf-global--BackgroundColor--dark-100: var(--pf-global--palette--black-1000);
+  }
+}
 
 .co-alert-manager {
   margin-bottom: var(--pf-global--spacer--md);
@@ -463,7 +467,8 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__tooltip {
-  background-color: $tooltip-background-color;
+  background-color: var(--pf-global--BackgroundColor--dark-100);
+  @extend %tooltip-background-color-theme-dark;
   color: #eee;
   font-size: 12px;
   overflow-x: hidden;
@@ -472,14 +477,16 @@ $monitoring-line-height: 18px;
 
 .query-browser__tooltip-arrow {
   border-bottom: 12px solid transparent;
-  border-right: 12px solid $tooltip-background-color;
+  border-right: 12px solid var(--pf-global--BackgroundColor--dark-100);
+  @extend %tooltip-background-color-theme-dark;
   border-top: 12px solid transparent;
   height: 0;
   width: 0;
 }
 
 .query-browser__tooltip-line {
-  stroke: $tooltip-background-color;
+  stroke: var(--pf-global--BackgroundColor--dark-100);
+  @extend %tooltip-background-color-theme-dark;
 }
 
 .query-browser__tooltip-series {
@@ -513,7 +520,8 @@ $monitoring-line-height: 18px;
     flex-direction: row-reverse;
 
     .query-browser__tooltip-arrow {
-      border-left: 12px solid $tooltip-background-color;
+      border-left: 12px solid var(--pf-global--BackgroundColor--dark-100);
+      @extend %tooltip-background-color-theme-dark;
       border-right: none;
     }
   }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartDonut, ChartDonutProps, ChartThemeColor } from '@patternfly/react-charts';
+import { ChartDonut, ChartDonutProps, ChartLabel, ChartThemeColor } from '@patternfly/react-charts';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import * as _ from 'lodash';
 
@@ -32,7 +32,11 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
         top: 20,
       }}
       subTitle={subTitle}
+      subTitleComponent={
+        <ChartLabel style={{ fill: 'var(--pf-global--Color--400)', fontSize: 14 }} />
+      }
       title={title}
+      titleComponent={<ChartLabel style={{ fill: 'var(--pf-global--Color--100)', fontSize: 24 }} />}
       width={width}
     />
   );
