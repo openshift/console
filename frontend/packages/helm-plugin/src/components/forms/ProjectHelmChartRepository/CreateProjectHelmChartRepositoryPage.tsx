@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router-dom';
+import NamespacedPage, {
+  NamespacedPageVariants,
+} from '@console/dev-console/src/components/NamespacedPage';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { ProjectHelmChartRepositoryModel } from '../../../models';
@@ -70,14 +74,19 @@ const CreateProjectHelmChartRepositoryPage: React.FC<CreateProjectHelmChartRepos
     repoUrl: '',
   };
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={createProjectHelmChartRepositoryValidationSchema(t)}
-      onSubmit={handleSubmit}
-      onReset={() => {}}
-    >
-      {(formikProps) => <CreateProjectHelmChartRepositoryForm {...formikProps} />}
-    </Formik>
+    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications disabled>
+      <Helmet>
+        <title>Create ProjectHelmChartRepository</title>
+      </Helmet>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={createProjectHelmChartRepositoryValidationSchema(t)}
+        onSubmit={handleSubmit}
+        onReset={() => {}}
+      >
+        {(formikProps) => <CreateProjectHelmChartRepositoryForm {...formikProps} />}
+      </Formik>
+    </NamespacedPage>
   );
 };
 

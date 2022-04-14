@@ -5,7 +5,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { ExpandCollapse } from '@console/internal/components/utils';
+import { ExpandCollapse, history } from '@console/internal/components/utils';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import {
   InputField,
@@ -20,7 +20,6 @@ import {
 const CreateProjectHelmChartRepositoryForm: React.FC<FormikProps<FormikValues>> = ({
   errors,
   handleSubmit,
-  handleReset,
   status,
   isSubmitting,
   dirty,
@@ -34,7 +33,6 @@ const CreateProjectHelmChartRepositoryForm: React.FC<FormikProps<FormikValues>> 
         <FormHeader
           title={t('helm-plugin~Create ProjectHelmChartRepository')}
           helpText={t('helm-plugin~Add helm chart repository in the namespace')}
-          marginBottom="lg"
         />
         <FormSection>
           <InputField
@@ -117,7 +115,7 @@ const CreateProjectHelmChartRepositoryForm: React.FC<FormikProps<FormikValues>> 
         isSubmitting={isSubmitting}
         submitLabel={t('helm-plugin~Create')}
         disableSubmit={!dirty || isSubmitting || !_.isEmpty(errors)}
-        handleCancel={handleReset}
+        handleCancel={history.goBack}
       />
     </FlexForm>
   );
