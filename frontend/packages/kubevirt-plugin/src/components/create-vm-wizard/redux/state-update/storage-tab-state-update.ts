@@ -56,7 +56,8 @@ import { InternalActionType, UpdateOptions } from '../types';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-
+  const [, dataSourcesLoaded] = iGetCommonData(state, id, VMWizardProps.dataSources);
+  const [, pvcsLoaded] = iGetCommonData(state, id, VMWizardProps.pvcs);
   if (
     !hasVMSettingsValueChanged(
       prevState,
@@ -67,7 +68,9 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
       VMSettingsField.WORKLOAD_PROFILE,
       VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
       VMSettingsField.PROVISION_SOURCE_TYPE,
-    )
+    ) &&
+    !dataSourcesLoaded &&
+    !pvcsLoaded
   ) {
     return;
   }
