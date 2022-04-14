@@ -39,6 +39,9 @@ const getColumns = (styles: ColumnStyle[]): AugmentedColumnStyle[] => {
 
     if (col.pattern.startsWith('Value #')) {
       valueColumns.push(col);
+    } else if (col.pattern === 'Value') {
+      // Set the column to use the first group pattern because the panel has a single target
+      valueColumns.push({ ...col, pattern: 'Value #A' });
     } else {
       labelColumns.push({
         ...col,
