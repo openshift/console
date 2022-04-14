@@ -212,3 +212,17 @@ Then('user can see sidebar opens with Resources tab selected by default', () => 
 When('user selects {string} pipeline from the pipeline dropdown menu', (pipelineName: string) => {
   gitPage.selectPipeline(pipelineName);
 });
+
+When('user clicks on "Edit import strategy"', () => {
+  cy.get('.odc-import-strategy-section__edit-strategy-button').click();
+});
+
+When('user selects Import Strategy as Dockerfile', () => {
+  cy.byTestID('import-strategy Dockerfile').click();
+});
+
+When('user enters Dockerfile path as {string}', (dockerfilePath: string) => {
+  cy.get('#form-input-docker-dockerfilePath-field')
+    .clear()
+    .type(dockerfilePath);
+});

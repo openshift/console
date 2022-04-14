@@ -67,6 +67,7 @@ const ImportStrategySelector: React.FC = () => {
           <GridItem span={4} key={item.name}>
             <Tile
               className="odc-import-strategy-selector__tile"
+              data-test={`import-strategy ${item.name}`}
               title={item.name}
               icon={item.icon}
               onClick={() => onSelect(item)}
