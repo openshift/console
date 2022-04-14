@@ -329,6 +329,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
             {...extraResources}
             {...p.pageData}
             customData={props.customData}
+            params={params}
           />
         </ErrorBoundary>
       );
