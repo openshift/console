@@ -1,7 +1,7 @@
 import { coFetch } from '@console/internal/co-fetch';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TektonHubModel } from '../../../models';
+import { TektonHub } from '../../../types/hub';
 import useApiResponse, { ApiResult } from '../hooks/useApiResponse';
 
 export type TektonHubItem = {
@@ -60,7 +60,7 @@ export const getHubUIPath = (path: string = '', baseURL: string = TEKTON_HUB_END
 export const getApiResponse = async (url: string) => (await coFetch(url)).json();
 
 export const useInclusterTektonHubURLs = () => {
-  const [hub, loaded] = useK8sGet<K8sResourceKind>(TektonHubModel, 'hub');
+  const [hub, loaded] = useK8sGet<TektonHub>(TektonHubModel, 'hub');
   // check in-cluster hub exists, if yes use incluster hub instance api url and ui url
   return {
     loaded,
