@@ -62,7 +62,7 @@ You can see more information on [Operand's Creation Forms](../../descriptors#cre
 
 **x-descriptors**
 
-This descriptor allows you to specify the number of pods for your instance. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L40-L44):
+This descriptor allows you to specify the number of pods for your instance. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L48-L52):
 
 ```yaml
 …
@@ -93,15 +93,16 @@ This descriptor allows you to specify the number of pods for your instance. See 
 
 **x-descriptors**
 
-This descriptor allows you to specify the mini/max amount of compute resources required/allowed. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L45-L50):
+This descriptor allows you to specify the mini/max amount of compute resources required/allowed. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L53-L58):
 
 ```yaml
 …
-- displayName: Size
-  description: Limits describes the minimum/maximum amount of compute resources required/allowed
-  path: pod.resources
-  x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:resourceRequirements'
+- description: Limits describes the minimum/maximum amount of compute resources
+  required/allowed
+displayName: Resource Requirements
+path: pod.resources
+x-descriptors:
+- urn:alm:descriptor:com.tectonic.ui:resourceRequirements
 …
 ```
 
@@ -127,15 +128,16 @@ This descriptor allows you to specify the mini/max amount of compute resources r
 **x-descriptors**
 
 This descriptor allows you to specify the prerequisite kubernetes object (e.g. _Secrets, ServiceAccount, Service, ConfigMap, Namespace, etc_) for your instance. See example from
-[[CSV] Couchbase Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/couchbase-enterprise/1.2.2/couchbase-v1.2.2.clusterserviceversion.yaml#L96-L101):
+[[CSV] Couchbase Operator](https://github.com/operator-framework/community-operators/blob/1591b5e18d47129ed14e83ac2f9832d6cb41bb40/upstream-community-operators/couchbase-enterprise/1.2.2/manifests/couchbase-v1.2.2.clusterserviceversion.yaml#L100-L105):
 
 ```yaml
 …
-- displayName: Server TLS Secret
-  description: The name of the secret object that stores the server's TLS certificate.
-  path: tls.static.member.serverSecret
-  x-descriptors:
-    - 'urn:alm:descriptor:io.kubernetes:Secret'
+- description: The name of the secret object that stores the server's TLS
+  certificate.
+displayName: Server TLS Secret
+path: tls.static.member.serverSecret
+x-descriptors:
+- urn:alm:descriptor:io.kubernetes:Secret
 …
 ```
 
@@ -159,7 +161,7 @@ This descriptor allows you to specify the prerequisite kubernetes object (e.g. _
 
 **x-descriptors**
 
-This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L70-L74):
+This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L78-L82):
 
 ```yaml
 …
@@ -226,11 +228,11 @@ This descriptor allows you to specify a text input for a _string_ data type. See
 
 ```yaml
 …
-- displayName: Image
+- path: image
+  displayName: Image
   description: The docker image name and version of Portworx Enterprise.
-  path: image
   x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - 'urn:alm:descriptor:com.tectonic.ui:text'
 …
 ```
 
@@ -254,7 +256,7 @@ This descriptor allows you to specify a text input for a _string_ data type. See
 
 **x-descriptors**
 
-This descriptor allows you to specify a number input for a _number_ data type. See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.2.0/keda.v1.2.0.clusterserviceversion.yaml#L168-L172):
+This descriptor allows you to specify a number input for a _number_ data type. See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/2.3.0/manifests/keda.v2.3.0.clusterserviceversion.yaml#L269L273):
 
 ```yaml
 …
@@ -355,11 +357,11 @@ This descriptor allows you to specify the policy for pulling your container imag
 
 ```yaml
 …
-- displayName: Pull Policy
-  description: image pull policy for container image
+- description: image pull policy for container image
+  displayName: Pull Policy
   path: pullPolicy
   x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:imagePullPolicy'
+  - urn:alm:descriptor:com.tectonic.ui:imagePullPolicy
 …
 ```
 
@@ -486,15 +488,15 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 
 **x-descriptors**
 
-This descriptor allows you to specify labels for identifying a set of objects via a _label selector_ (The label selector is the core grouping primitive in Kubernetes). See example from [[CSV] Prometheus Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/prometheusoperator.0.27.0.clusterserviceversion.yaml#L231-L235):
+This descriptor allows you to specify labels for identifying a set of objects via a _label selector_ (The label selector is the core grouping primitive in Kubernetes). See example from [[CSV] Prometheus Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/0.27.0/prometheusoperator.0.27.0.clusterserviceversion.yaml#L41L45):
 
 ```yaml
 …
-- displayName: Rule Config Map Selector
-  description: A selector for the ConfigMaps from which to load rule files
+- description: A selector for the ConfigMaps from which to load rule files
+  displayName: Rule Config Map Selector
   path: ruleSelector
   x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:selector:core:v1:ConfigMap'
+  - urn:alm:descriptor:com.tectonic.ui:selector:core:v1:ConfigMap
 …
 ```
 
@@ -528,17 +530,17 @@ This x-descriptor has been __deprecated__. See the [entry in the deprecated](#ar
 
 **x-descriptors**
 
-This descriptor allows you to specify a set of predefined options (e.g. `enum:` type) for a dropdownUI component. See example from [[CSV] Strimzi Apache Kafka Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/strimzi-kafka-operator/0.17.0/strimzi-cluster-operator.v0.17.0.clusterserviceversion.yaml#L335-L341):
+This descriptor allows you to specify a set of predefined options (e.g. `enum:` type) for a dropdownUI component. See example from [[CSV] Strimzi Apache Kafka Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/strimzi-kafka-operator/0.17.0/strimzi-cluster-operator.v0.17.0.clusterserviceversion.yaml#L343-L349):
 
 ```yaml
 …
- - displayName: Kafka storage
-   description: The type of storage used by Kafka brokers
-   path: kafka.storage.type
-   x-descriptors:
-     - 'urn:alm:descriptor:com.tectonic.ui:select:ephemeral'
-     - 'urn:alm:descriptor:com.tectonic.ui:select:persistent-claim'
-     - 'urn:alm:descriptor:com.tectonic.ui:select:jbod'
+- description: The type of storage used by Kafka brokers
+  displayName: Kafka storage
+  path: kafka.storage.type
+  x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:select:ephemeral
+    - urn:alm:descriptor:com.tectonic.ui:select:persistent-claim
+    - urn:alm:descriptor:com.tectonic.ui:select:jbod
 …
 ```
 
@@ -602,15 +604,15 @@ This descriptor allows you to specify fields as &quot;Advanced Configurations&qu
 
 **x-descriptors**
 
-This descriptor is created specifically for Prometheus Operator to specify a list of endpoints allowed for the ServiceMonitor it manages. See example from [[CSV] Prometheus Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/prometheusoperator.0.27.0.clusterserviceversion.yaml#L270-L274):
+This descriptor is created specifically for Prometheus Operator to specify a list of endpoints allowed for the ServiceMonitor it manages. See example from [[CSV] Prometheus Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/prometheus/0.27.0/prometheusoperator.0.27.0.clusterserviceversion.yaml#L82L86):
 
 ```yaml
 …
-- displayName: Endpoints
-  description: A list of endpoints allowed as part of this ServiceMonitor
+- description: A list of endpoints allowed as part of this ServiceMonitor
+  displayName: Endpoints
   path: endpoints
   x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:endpointList'
+  - urn:alm:descriptor:com.tectonic.ui:endpointList
 …
 ```
 
@@ -750,7 +752,7 @@ status:
 
 **Example**
 
-See example from [[CSV] 3Scale Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/3scale-community-operator/0.4.0/3scale-community-operator.v0.4.0.clusterserviceversion.yaml#L53-L57):
+See example from [[CSV] 3Scale Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/3scale-community-operator/0.4.0/3scale-community-operator.v0.4.0.clusterserviceversion.yaml#L61-L65):
 
 ```yaml
 …
@@ -817,15 +819,15 @@ status:
 
 **Example**
 
-See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L76-L80):
+See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L84-L88):
 
 ```yaml
 …
-- displayName: Eclipse Che URL
-  description: Route to access Eclipse Che
+- description: Route to access Eclipse Che
+  displayName: Eclipse Che URL
   path: cheURL
   x-descriptors:
-    - urn:alm:descriptor:org.w3:link
+  - urn:alm:descriptor:org.w3:link
 …
 ```
 
@@ -874,7 +876,7 @@ status:
 
 **Example**
 
-See example from [[CSV] Nexus Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/nexus-operator/0.1.0/nexus-operator.v0.1.0.clusterserviceversion.yaml#L102-L106):
+See example from [CSV] Nexus Operator:
 
 ```yaml
 …
@@ -934,7 +936,7 @@ This descriptor allows you to expose the status field of your instance in plain 
 
 **Example**
 
-See example from [[CSV] Spark Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/spark-gcp/2.4.0/sparkoperator.v2.4.0.clusterserviceversion.yaml#L61-L65):
+See example from [[CSV] Spark Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/spark-gcp/2.4.0/sparkoperator.v2.4.0.clusterserviceversion.yaml#L69-L73):
 
 ```yaml
 …
@@ -976,13 +978,13 @@ This descriptor allows you to expose the status phase of your instance in plain 
 
 **Example**
 
-See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.2.0/keda.v1.2.0.clusterserviceversion.yaml#L107-L111):
+See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.4.1/manifests/keda.v1.4.1.clusterserviceversion.yaml#L129L133):
 
 ```yaml
 …
-- displayName: Phase
+- path: phase
   description: Phase
-  path: phase
+  displayName: Phase
   x-descriptors:
     - 'urn:alm:descriptor:io.kubernetes.phase'
 …
@@ -1016,13 +1018,13 @@ This descriptor allows you to expose the phase reason of your instance in plain 
 
 **Example**
 
-See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.2.0/keda.v1.2.0.clusterserviceversion.yaml#L112-L116):
+See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.4.1/manifests/keda.v1.4.1.clusterserviceversion.yaml#L134L138):
 
 ```yaml
 …
-- displayName: Reason
+- path: reason
   description: Reason
-  path: reason
+  displayName: Reason
   x-descriptors:
     - 'urn:alm:descriptor:io.kubernetes.phase:reason'
 …
@@ -1057,7 +1059,7 @@ This descriptor allows you to expose a kubernetes object for your instance.
 
 **Example**
 
-See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L57-L61):
+See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L65-L69):
 
 ```yaml
 …
