@@ -15,6 +15,7 @@ import {
   getClusterOperatorStatus,
   getTemplateInstanceStatus,
   VolumeSnapshotKind,
+  CustomResourceDefinitionKind,
 } from '../../module/k8s';
 import {
   alertDescription,
@@ -284,6 +285,13 @@ export const tableFilters: FilterMap = {
   'cluster-service-version': (str, csv) => {
     const value = clusterServiceVersionDisplayName(csv);
     return fuzzyCaseInsensitive(str.selected?.[0], value);
+  },
+  'custom-resource-definition-name': (str, crd: CustomResourceDefinitionKind) => {
+    const displayName = _.get(crd, 'spec.names.kind');
+    return (
+      fuzzyCaseInsensitive(str.selected?.[0], crd.metadata.name) ||
+      fuzzyCaseInsensitive(str.selected?.[0], displayName)
+    );
   },
 };
 
