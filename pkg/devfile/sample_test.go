@@ -18,6 +18,8 @@ func TestGetRegistrySamples(t *testing.T) {
 
 	pythonBase64Image := "https://www.python.org/static/community_logos/python-logo-generic.svg"
 
+	goBase64Image := "https://go.dev/blog/go-brand/Go-Logo/SVG/Go-Logo_Blue.svg"
+
 	tests := []struct {
 		name        string
 		registry    string
@@ -89,6 +91,22 @@ func TestGetRegistrySamples(t *testing.T) {
 					Git: &schema.Git{
 						Remotes: map[string]string{
 							"origin": "https://github.com/devfile-samples/devfile-sample-python-basic.git",
+						},
+					},
+				},
+				{
+					Name:        "go-basic",
+					DisplayName: "Basic Go",
+					Description: "A simple Hello World application using Go",
+					Tags:        []string{"Go"},
+					Icon:        goBase64Image,
+					Type:        schema.SampleDevfileType,
+					ProjectType: "go",
+					Language:    "go",
+					Provider:    "Red Hat",
+					Git: &schema.Git{
+						Remotes: map[string]string{
+							"origin": "https://github.com/devfile-samples/devfile-sample-go-basic.git",
 						},
 					},
 				},
