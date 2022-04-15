@@ -24,8 +24,7 @@ export const augmentExtension = <E extends Extension>(
   });
 
 export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
-  e.flags.required.every((f) => flags[f] === true) &&
-  e.flags.disallowed.every((f) => flags[f] === false);
+  e.flags.required.every((f) => flags[f]) && e.flags.disallowed.every((f) => !flags[f]);
 
 export const getGatingFlagNames = (extensions: Extension[]): string[] =>
   _.uniq([
