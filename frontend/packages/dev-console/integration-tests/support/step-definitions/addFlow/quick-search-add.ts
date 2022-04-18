@@ -1,4 +1,6 @@
-import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { operators } from '@console/dev-console/integration-tests/support/constants/global';
+import { verifyAndInstallOperator } from '@console/dev-console/integration-tests/support/pages';
 import { catalogPO, gitPO, quickSearchAddPO, quickStartSidebarPO } from '../../pageObjects';
 import { devFilePage, gitPage, topologyPage } from '../../pages';
 import { addQuickSearch } from '../../pages/add-flow/add-quick-search';
@@ -20,6 +22,16 @@ When('user enters {string} in Add to project search bar', (node: string) => {
 When('user selects {string} option of {string}', (option: string, type: string) => {
   addQuickSearch.selectQuickOption(option, type);
 });
+
+Then(
+  'user will see {string} label associated with {string}',
+  (labelName: string, catalogName: string) => {
+    cy.get(`[data-test^="item-name-${catalogName}-Operator Backed"]`).click();
+    cy.get(catalogPO.catalogBatch)
+      .should('be.visible')
+      .contains(labelName);
+  },
+);
 
 When('user clicks on {string}', (buttonName: string) => {
   cy.log(buttonName, 'is clicked');
@@ -80,3 +92,11 @@ Then(
     topologyPage.verifyWorkloadInTopologyPage(workloadName);
   },
 );
+
+Given('user has installed Service Binding operator', () => {
+  verifyAndInstallOperator(operators.ServiceBinding);
+});
+
+Given('user has installed Crunchy Postgres for Kubernetes operator', () => {
+  verifyAndInstallOperator(operators.CrunchyPostgresforKubernetes);
+});

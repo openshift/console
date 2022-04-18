@@ -157,6 +157,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.serviceBinding).click();
         break;
       }
+      case 'Crunchy Postgres for Kubernetes':
+      case operators.CrunchyPostgresforKubernetes: {
+        cy.get(operatorsPO.operatorHub.CrunchyPostgresforKubernetes).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }

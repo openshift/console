@@ -57,7 +57,7 @@ Feature: Provide quick search in Add page
              Then user is taken to the Topology page with "devfile-sample-git" workload created
 
 
-        @regression @to-do @odc-6467
+        @regression @odc-6467
         Scenario: Bindable resource in Quick Add: A-11-TC07
             Given user has installed Service Binding operator
               And user has installed Crunchy Postgres for Kubernetes operator
