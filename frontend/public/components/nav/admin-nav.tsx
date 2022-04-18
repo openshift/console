@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useSelector } from 'react-redux';
 import {
   NavItem as PluginNavItem,
   NavSection as PluginNavSection,
   Separator as PluginNavSeparator,
 } from '@console/dynamic-plugin-sdk/src';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { FLAGS, useActiveNamespace, usePrometheusGate } from '@console/shared';
+import { FLAGS, useFlag, useActiveNamespace, usePrometheusGate } from '@console/shared';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { NavItemSeparator, NavList } from '@patternfly/react-core';
@@ -27,8 +24,6 @@ import {
   VolumeSnapshotModel,
 } from '../../models';
 import { referenceForModel } from '../../module/k8s';
-import { featureReducerName } from '../../reducers/features';
-import { RootState } from '../../redux';
 import { HrefLink, PluginNavItems, ResourceClusterLink, ResourceNSLink } from './items';
 import { NavSection } from './section';
 
@@ -68,9 +63,7 @@ const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 const MonitoringNavSection: React.FC<{}> = () => {
   const { t } = useTranslation();
 
-  const canAccess = useSelector(
-    (state: RootState) => !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
-  );
+  const canAccess = useFlag(FLAGS.CAN_GET_NS);
 
   if (!canAccess || !window.SERVER_FLAGS.prometheusBaseURL) {
     return null;

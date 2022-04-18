@@ -37,9 +37,16 @@ import { pluginStore } from '../plugins';
 // eslint-disable-next-line prettier/prettier
 export type { FeatureState };
 
-export const defaults = _.mapValues(FLAGS, (flag) =>
-  flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
-);
+export const defaults = _.mapValues(FLAGS, (flag) => {
+  switch (flag) {
+    case FLAGS.AUTH_ENABLED:
+      return !window.SERVER_FLAGS.authDisabled;
+    case FLAGS.MONITORING:
+      return !!window.SERVER_FLAGS.prometheusBaseURL;
+    default:
+      return undefined;
+  }
+});
 
 export const baseCRDs = {
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
