@@ -44,14 +44,14 @@ export const getPipelineParams = (
   dockerfilePath: string,
   tag: string,
 ) => {
-  return params.map((param) => {
+  return (params || []).map((param) => {
     switch (param.name) {
       case 'APP_NAME':
         return { ...param, default: name };
       case 'GIT_REPO':
         return { ...param, default: gitUrl };
       case 'GIT_REVISION':
-        return { ...param, default: gitRef || 'master' };
+        return { ...param, default: gitRef };
       case 'PATH_CONTEXT':
         return { ...param, default: gitDir.replace(/^\//, '') || param.default };
       case 'IMAGE_NAME':
