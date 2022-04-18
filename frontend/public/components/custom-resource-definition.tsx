@@ -304,6 +304,7 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
     ListComponent={CustomResourceDefinitionsList}
     kind="CustomResourceDefinition"
     canCreate={true}
+    textFilter="custom-resource-definition-name"
   />
 );
 export const CustomResourceDefinitionsDetailsPage: React.FC<CustomResourceDefinitionsDetailsPageProps> = (
