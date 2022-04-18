@@ -170,7 +170,11 @@ const BindingsTableRow = ({ obj: binding }) => {
       <TableData className={bindingsColumnClasses[1]}>{binding.subject.kind}</TableData>
       <TableData className={bindingsColumnClasses[2]}>{binding.subject.name}</TableData>
       <TableData className={bindingsColumnClasses[3]}>
-        {binding.namespace || t('public~All namespaces')}
+        {binding.metadata.namespace ? (
+          <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
+        ) : (
+          t('public~All namespaces')
+        )}
       </TableData>
     </>
   );
