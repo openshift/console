@@ -1,12 +1,22 @@
+import { act } from 'react-dom/test-utils';
 import { setUtilsConfig } from '@console/dynamic-plugin-sdk/src/app/configSetup';
 import { appInternalFetch } from '@console/internal/co-fetch';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 import { sampleTektonHubCatalogItem } from '../../../../test-data/catalog-item-data';
+import { sampleTektonHubCR } from '../../../../test-data/tektonhub-data';
 import {
   TektonHubTaskVersion,
   getApiResponse,
   getHubUIPath,
   TEKTON_HUB_ENDPOINT,
+  useInclusterTektonHubURLs,
+  TEKTON_HUB_API_ENDPOINT,
 } from '../tektonHub';
+
+jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
+  useK8sGet: jest.fn(),
+}));
 
 const emptyHeaders = new Headers();
 const apiResults = ({
@@ -88,5 +98,91 @@ describe('getHubUIPath', () => {
   it('should return a value if the path is set', () => {
     expect(getHubUIPath('test')).not.toBeNull();
     expect(getHubUIPath('test-path')).toBe(`${TEKTON_HUB_ENDPOINT}/test-path`);
+  });
+
+  it('should return custom path url if the baseurl param is passed as a second argument', () => {
+    expect(getHubUIPath('test-path', 'https://hub-ui.com')).toBe(`https://hub-ui.com/test-path`);
+  });
+});
+
+describe('useInClusterTektonHubURLs:', () => {
+  it('should return public tekton hub endpoint incase of hub CR not found', async () => {
+    (useK8sGet as jest.Mock).mockReturnValue([
+      null,
+      true,
+      'error fetching tektonhubs.operator.tekton.dev "hub" not found',
+    ]);
+    const { result } = testHook(() => useInclusterTektonHubURLs());
+    expect(result.current).toEqual({
+      loaded: true,
+      apiURL: TEKTON_HUB_API_ENDPOINT,
+      uiURL: TEKTON_HUB_ENDPOINT,
+    });
+  });
+
+  it('should return public tekton hub endpoint when hub is installed and if status field missing', async () => {
+    const sampleHubWithoutApiURL = {
+      ...sampleTektonHubCR,
+      status: null,
+    };
+    (useK8sGet as jest.Mock).mockReturnValue([sampleHubWithoutApiURL, true, '']);
+    const { result } = testHook(() => useInclusterTektonHubURLs());
+    expect(result.current).toEqual({
+      loaded: true,
+      apiURL: TEKTON_HUB_API_ENDPOINT,
+      uiURL: TEKTON_HUB_ENDPOINT,
+    });
+  });
+
+  it('should return public tekton hub endpoint when hub is installed but urls are missing', async () => {
+    const sampleHubWithoutApiURL = {
+      ...sampleTektonHubCR,
+      status: {
+        ...sampleTektonHubCR.status,
+        apiUrl: '',
+        uiUrl: '',
+      },
+    };
+    (useK8sGet as jest.Mock).mockReturnValue([sampleHubWithoutApiURL, true, '']);
+    const { result } = testHook(() => useInclusterTektonHubURLs());
+    expect(result.current).toEqual({
+      loaded: true,
+      apiURL: TEKTON_HUB_API_ENDPOINT,
+      uiURL: TEKTON_HUB_ENDPOINT,
+    });
+  });
+
+  it('should return incluster tekton hub endpoint when hub is installed', async () => {
+    (useK8sGet as jest.Mock).mockReturnValue([sampleTektonHubCR, true, '']);
+    const { result } = testHook(() => useInclusterTektonHubURLs());
+    expect(result.current).toEqual({
+      loaded: true,
+      apiURL: sampleTektonHubCR.status.apiUrl,
+      uiURL: sampleTektonHubCR.status.uiUrl,
+    });
+  });
+
+  it('should return the apiUrl and uiUrl when the api call the hub has urls in the status', async () => {
+    const sampleHubWithoutApiURL = {
+      ...sampleTektonHubCR,
+      status: null,
+    };
+    (useK8sGet as jest.Mock).mockReturnValue([sampleHubWithoutApiURL, true, '']);
+    const { result, rerender } = testHook(() => useInclusterTektonHubURLs());
+    expect(result.current).toEqual({
+      loaded: true,
+      apiURL: TEKTON_HUB_API_ENDPOINT,
+      uiURL: TEKTON_HUB_ENDPOINT,
+    });
+
+    (useK8sGet as jest.Mock).mockReturnValue([sampleTektonHubCR, true, '']);
+    act(() => {
+      rerender();
+    });
+    expect(result.current).toEqual({
+      loaded: true,
+      apiURL: sampleTektonHubCR.status.apiUrl,
+      uiURL: sampleTektonHubCR.status.uiUrl,
+    });
   });
 });
