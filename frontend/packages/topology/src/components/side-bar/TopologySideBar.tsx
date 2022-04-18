@@ -29,7 +29,10 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ children, onClose }) 
       defaultSize={`${sideBarSizeLoaded ? sideBarSize : DEFAULT_SIDE_BAR_SIZE}px`}
       onResize={handleResizeCallback}
     >
-      <PFTopologySideBar resizable className="pf-topology-side-bar-resizable">
+      <PFTopologySideBar
+        resizable
+        className="pf-topology-side-bar-resizable pf-topology-side-bar__body"
+      >
         <div className="co-sidebar-dismiss clearfix">
           <CloseButton
             onClick={onClose}
