@@ -9,7 +9,7 @@ import {
   resourcePath,
   Timestamp,
 } from '@console/internal/components/utils';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
@@ -83,65 +83,78 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem
+          <OverviewDetailItem
             title={t('kubevirt-plugin~Name')}
             error={false}
+            errorMessage={t('kubevirt-plugin~Not available')}
             isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
             {name}
-          </DetailItem>
-          <DetailItem title={t('kubevirt-plugin~Namespace')} error={false} isLoading={!vmiLike}>
+          </OverviewDetailItem>
+          <OverviewDetailItem
+            title={t('kubevirt-plugin~Namespace')}
+            error={false}
+            errorMessage={t('kubevirt-plugin~Not available')}
+            isLoading={!vmiLike}
+          >
             <ResourceLink
               kind="Namespace"
               name={namespace}
               title={getUID(vmiLike)}
               namespace={null}
             />
-          </DetailItem>
-          <DetailItem title={t('kubevirt-plugin~Created')} error={false} isLoading={!vmiLike}>
+          </OverviewDetailItem>
+          <OverviewDetailItem
+            title={t('kubevirt-plugin~Created')}
+            error={false}
+            errorMessage={t('kubevirt-plugin~Not available')}
+            isLoading={!vmiLike}
+          >
             <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('kubevirt-plugin~Hostname')}
             error={!hostname}
             isLoading={!vmiLike}
             errorMessage={guestAgentFieldNotAvailMsg}
           >
             {hostname}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('kubevirt-plugin~Node')}
             error={!launcherPod || !nodeName}
+            errorMessage={t('kubevirt-plugin~Not available')}
             isLoading={!vmiLike}
           >
             {launcherPod && nodeName && <NodeLink name={nodeName} />}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('kubevirt-plugin~IP Address')}
             error={!launcherPod || !ipAddrs}
+            errorMessage={t('kubevirt-plugin~Not available')}
             isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
             {launcherPod && ipAddrs && <VMIP data={ipAddrs} />}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('kubevirt-plugin~Operating System')}
             error={!(operatingSystem || os)}
             isLoading={!vmiLike}
             errorMessage={guestAgentFieldNotAvailMsg}
           >
             {operatingSystem || os}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('kubevirt-plugin~Time Zone')}
             error={!timeZone}
             isLoading={!vmiLike}
             errorMessage={guestAgentFieldNotAvailMsg}
           >
             {timeZone}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('kubevirt-plugin~Active Users')}
             error={numLoggedInUsers == null}
             isLoading={!vmiLike}
@@ -157,7 +170,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             ) : (
               numLoggedInUsersMsg
             )}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>

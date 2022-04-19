@@ -10,7 +10,7 @@ import {
 } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@console/plugin-shared/src';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 
@@ -145,17 +145,19 @@ export const DetailsCard = withDashboardResources(
             <DetailsBody>
               {openshiftFlag ? (
                 <>
-                  <DetailItem
+                  <OverviewDetailItem
                     title={t('public~Cluster API address')}
                     isLoading={!infrastructureLoaded}
                     error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
+                    errorMessage={t('public~Not available')}
                     valueClassName="co-select-to-copy"
                   >
                     {infrastuctureApiUrl}
-                  </DetailItem>
-                  <DetailItem
+                  </OverviewDetailItem>
+                  <OverviewDetailItem
                     title={t('public~Cluster ID')}
                     error={!!clusterVersionError || (clusterVersionLoaded && !clusterID)}
+                    errorMessage={t('public~Not available')}
                     isLoading={!clusterVersionLoaded}
                   >
                     <div className="co-select-to-copy">{clusterID}</div>
@@ -166,58 +168,62 @@ export const DetailsCard = withDashboardResources(
                           href={getOCMLink(clusterID)}
                         />
                       )}
-                  </DetailItem>
-                  <DetailItem
+                  </OverviewDetailItem>
+                  <OverviewDetailItem
                     title={t('public~Provider')}
                     error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
+                    errorMessage={t('public~Not available')}
                     isLoading={!infrastructureLoaded}
                     valueClassName="co-select-to-copy"
                   >
                     {infrastructurePlatform}
-                  </DetailItem>
-                  <DetailItem
+                  </OverviewDetailItem>
+                  <OverviewDetailItem
                     title={t('public~OpenShift version')}
                     error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
+                    errorMessage={t('public~Not available')}
                     isLoading={!clusterVersionLoaded}
                   >
                     <ClusterVersion cv={clusterVersionData} />
-                  </DetailItem>
+                  </OverviewDetailItem>
 
                   <ServiceLevel clusterID={clusterID}>
-                    <DetailItem title={useServiceLevelTitle()}>
+                    <OverviewDetailItem title={useServiceLevelTitle()}>
                       {/* Service Level handles loading and error state */}
                       <ServiceLevelText clusterID={clusterID} />
-                    </DetailItem>
+                    </OverviewDetailItem>
                   </ServiceLevel>
 
-                  <DetailItem
+                  <OverviewDetailItem
                     title={t('public~Update channel')}
                     isLoading={!clusterVersionLoaded && !clusterVersionError}
                     error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
+                    errorMessage={t('public~Not available')}
                     valueClassName="co-select-to-copy"
                   >
                     {cvChannel}
-                  </DetailItem>
+                  </OverviewDetailItem>
                   {isSingleNode(infrastructure) && (
-                    <DetailItem
+                    <OverviewDetailItem
                       title={t('public~Control plane high availability')}
                       isLoading={false}
                       valueClassName="co-select-to-copy"
                     >
                       {t('public~No (single master)')}
-                    </DetailItem>
+                    </OverviewDetailItem>
                   )}
                 </>
               ) : (
-                <DetailItem
+                <OverviewDetailItem
                   key="kubernetes"
                   title={t('public~Kubernetes version')}
                   error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)}
+                  errorMessage={t('public~Not available')}
                   isLoading={!k8sVersion}
                   valueClassName="co-select-to-copy"
                 >
                   {k8sGitVersion}
-                </DetailItem>
+                </OverviewDetailItem>
               )}
             </DetailsBody>
           )}

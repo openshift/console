@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getInfrastructurePlatform, useFlag } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@console/plugin-shared/src';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -86,43 +86,41 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem
-            key="service_name"
-            title={t('ceph-storage-plugin~Service name')}
-            isLoading={false}
-            error={false}
-          >
+          <OverviewDetailItem key="service_name" title={t('ceph-storage-plugin~Service name')}>
             <Link data-test="ocs-link" to={servicePath}>
               {serviceName}
             </Link>
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             key="cluster_name"
             title={t('ceph-storage-plugin~Cluster name')}
             error={!!ocsError}
+            errorMessage={t('ceph-storage-plugin~Not available')}
             isLoading={!ocsLoaded}
           >
             {ocsName}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             key="provider"
             title={t('ceph-storage-plugin~Provider')}
             error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
+            errorMessage={t('ceph-storage-plugin~Not available')}
             isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
-          </DetailItem>
-          <DetailItem title={t('ceph-storage-plugin~Mode')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem title={t('ceph-storage-plugin~Mode')}>
             {t('ceph-storage-plugin~Internal')}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             key="version"
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
             error={subscriptionLoaded && !serviceVersion}
+            errorMessage={t('ceph-storage-plugin~Not available')}
           >
             {serviceVersion}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>
