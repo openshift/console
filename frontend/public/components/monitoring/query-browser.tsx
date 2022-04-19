@@ -35,7 +35,11 @@ import { VictoryPortal } from 'victory-core';
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
-import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/observe';
+import {
+  queryBrowserDeleteAllSeries,
+  queryBrowserPatchQuery,
+  queryBrowserSetTimespan,
+} from '../../actions/observe';
 import { RootState } from '../../redux';
 import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
@@ -797,9 +801,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       setGraphData(null);
       setXDomain(undefined);
       setSpan(newSpan);
+      dispatch(queryBrowserSetTimespan(newSpan));
       setSamples(defaultSamples || getMaxSamplesForSpan(newSpan));
     },
-    [defaultSamples],
+    [defaultSamples, dispatch],
   );
 
   const isRangeVector = _.get(error, 'json.error', '').match(

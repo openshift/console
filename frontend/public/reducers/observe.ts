@@ -66,6 +66,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         metrics: [],
         pollInterval: null,
         queries: ImmutableList([newQueryBrowserQuery()]),
+        timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
       }),
     });
   }
@@ -222,6 +223,9 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
     case ActionType.QueryBrowserSetPollInterval:
       return state.setIn(['queryBrowser', 'pollInterval'], action.payload.pollInterval);
+
+    case ActionType.QueryBrowserSetTimespan:
+      return state.setIn(['queryBrowser', 'timespan'], action.payload.timespan);
 
     case ActionType.QueryBrowserToggleIsEnabled: {
       const query = state.getIn(['queryBrowser', 'queries', action.payload.index]);
