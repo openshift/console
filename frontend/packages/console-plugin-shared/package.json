@@ -1,0 +1,25 @@
+{
+  "name": "@console/console-plugin-shared",
+  "version": "0.0.0-fixed",
+  "description": "Console plugin shared code",
+  "private": true,
+  "main": "lib/index.js",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk",
+  "keywords": [
+    "openshift",
+    "console",
+    "plugin",
+    "library"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist node_modules",
+    "build": "yarn compile && yarn pkgfiles",
+    "compile": "tsc -p tsconfig.json",
+    "pkgfiles": "cp LICENSE README.md package.json dist/"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "4.2.x"
+  }
+}
