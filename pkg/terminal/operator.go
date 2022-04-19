@@ -3,6 +3,7 @@ package terminal
 import (
 	"context"
 	"errors"
+
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -63,7 +64,7 @@ func checkWebTerminalOperatorIsRunning() (bool, error) {
 // checkWebTerminalOperatorIsInstalled checks to see that a web-terminal-operator is installed on the cluster
 func checkWebTerminalOperatorIsInstalled() (bool, error) {
 
-	_, err := getWebTerminalSubscriptions()
+	subs, err := getWebTerminalSubscriptions()
 	if err != nil {
 		// Web Terminal subscription is not found but it's technically not a real error so we don't want to propogate it. Just say that the operator is not installed
 		if k8sErrors.IsNotFound(err) {
@@ -72,7 +73,7 @@ func checkWebTerminalOperatorIsInstalled() (bool, error) {
 
 		return false, err
 	}
-	return true, nil
+	return len(subs.Items) > 0, nil
 }
 
 func getWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
@@ -92,18 +93,22 @@ func getWebTerminalSubscriptions() (*unstructured.UnstructuredList, error) {
 		FieldSelector: "metadata.name=" + webTerminalOperatorName,
 	})
 	if err != nil {
-		return subs, err
+		return nil, err
 	}
 	return subs, err
 }
 
-func getWebTerminalNamespace(subs *unstructured.UnstructuredList) (string, error) {
+func getWebTerminalNamespace(subs *unstructured.UnstructuredList) (namespace string, found bool, err error) {
 	if len(subs.Items) > 1 {
-		return "", errors.New("found multiple subscriptions for web-terminal when only one should be found")
+		return "", false, errors.New("found multiple subscriptions for web-terminal when only one should be found")
+	}
+
+	if len(subs.Items) == 0 {
+		return "", false, nil
 	}
 
 	webTerminalSubscription := subs.Items[0]
-	namespace := webTerminalSubscription.GetNamespace()
+	namespace = webTerminalSubscription.GetNamespace()
 
-	return namespace, nil
+	return namespace, true, nil
 }
