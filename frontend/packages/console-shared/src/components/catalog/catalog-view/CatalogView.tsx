@@ -24,6 +24,7 @@ import {
 import {
   CatalogCategory,
   CatalogFilterCounts,
+  CatalogFilterGroupMap,
   CatalogFilters as FiltersType,
   CatalogQueryParams,
   CatalogSortOrder,
@@ -45,7 +46,7 @@ type CatalogViewProps = {
   categories?: CatalogCategory[];
   filters: FiltersType;
   filterGroups: string[];
-  filterGroupNameMap: CatalogStringMap;
+  filterGroupMap: CatalogFilterGroupMap;
   groupings: CatalogStringMap;
   renderTile: (item: CatalogItem) => React.ReactNode;
   hideSidebar?: boolean;
@@ -58,7 +59,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   categories,
   filters,
   filterGroups,
-  filterGroupNameMap,
+  filterGroupMap,
   groupings,
   renderTile,
   hideSidebar,
@@ -195,7 +196,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     () =>
       filterGroups.length > 0 &&
       !_.isEmpty(activeFilters) &&
-      Object.values(activeFilters).some((filterGroup) => Object.keys(filterGroup).length > 1),
+      Object.values(activeFilters).some((filterGroup) => Object.keys(filterGroup).length > 0),
     [activeFilters, filterGroups.length],
   );
 
@@ -243,8 +244,9 @@ const CatalogView: React.FC<CatalogViewProps> = ({
             <CatalogFilters
               activeFilters={activeFilters}
               filterGroupCounts={filterGroupCounts}
-              filterGroupNameMap={filterGroupNameMap}
+              filterGroupMap={filterGroupMap}
               filterGroupsShowAll={filterGroupsShowAll}
+              catalogItemsCount={items.length}
               onShowAllToggle={handleShowAllToggle}
               onFilterChange={handleFilterChange}
             />
