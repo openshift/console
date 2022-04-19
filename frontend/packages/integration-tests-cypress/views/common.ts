@@ -29,3 +29,5 @@ export const projectDropdown = {
     cy.byLegacyTestID('namespace-bar-dropdown').should('not.contain', name),
   shouldNotExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('not.exist'),
 };
+
+export const isLocalDevEnvironment = Cypress.config('baseUrl').includes('localhost');

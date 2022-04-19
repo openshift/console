@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: console-demo-plugin
-          image: quay.io/vszocs/console-demo-plugin
+          image: quay.io/jcaianirh/console-demo-plugin
           ports:
             - containerPort: 9001
               protocol: TCP
