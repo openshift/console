@@ -591,3 +591,7 @@ export type ResourceYAMLEditorProps = {
   header?: string;
   onSave?: (content: string) => void;
 };
+
+export type ResourceEventStreamProps = {
+  resource: K8sResourceCommon;
+};
