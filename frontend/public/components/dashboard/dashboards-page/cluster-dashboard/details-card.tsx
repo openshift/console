@@ -7,6 +7,7 @@ import {
   getInfrastructurePlatform,
   isSingleNode,
   useFlag,
+  useCanClusterUpgrade,
 } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
@@ -31,7 +32,7 @@ import {
   getOCMLink,
 } from '../../../../module/k8s';
 import { flagPending } from '../../../../reducers/features';
-import { ExternalLink, useAccessReview, LoadingInline } from '../../../utils';
+import { ExternalLink, LoadingInline } from '../../../utils';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
@@ -40,14 +41,8 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const { t } = useTranslation();
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
+  const canUpgrade = useCanClusterUpgrade();
   const status = getClusterUpdateStatus(cv);
-  const clusterVersionIsEditable =
-    useAccessReview({
-      group: ClusterVersionModel.apiGroup,
-      resource: ClusterVersionModel.plural,
-      verb: 'patch',
-      name: 'version',
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
   switch (status) {
     case ClusterUpdateStatus.Updating:
@@ -66,7 +61,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       return (
         <>
           <span className="co-select-to-copy">{desiredVersion}</span>
-          {clusterVersionIsEditable && (
+          {canUpgrade && (
             <div>
               <Link to="/settings/cluster?showVersions">
                 <BlueArrowCircleUpIcon className="co-icon-space-r" />

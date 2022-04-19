@@ -40,7 +40,12 @@ import {
   CardTitle,
   CardActions,
 } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
+import {
+  BlueArrowCircleUpIcon,
+  FLAGS,
+  getInfrastructurePlatform,
+  useCanClusterUpgrade,
+} from '@console/shared';
 
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
@@ -66,7 +71,6 @@ import {
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterDashboardContext } from './context';
-import { useAccessReview } from '../../../utils';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 
 const filterSubsystems = (
@@ -110,21 +114,10 @@ export const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ labelSelector 
   const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
     hasCVResource ? cvResource : ({} as WatchK8sResource),
   );
-
-  const clusterVersionIsEditable =
-    useAccessReview({
-      group: ClusterVersionModel.apiGroup,
-      resource: ClusterVersionModel.plural,
-      verb: 'patch',
-      name: 'version',
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+  const canUpgrade = useCanClusterUpgrade();
 
   const showClusterUpdate =
-    hasCVResource &&
-    cvLoaded &&
-    hasAvailableUpdates(cv) &&
-    clusterVersionIsEditable &&
-    !labelSelector;
+    canUpgrade && hasCVResource && cvLoaded && hasAvailableUpdates(cv) && !labelSelector;
   return (
     <AlertsBody error={!_.isEmpty(loadError)}>
       {showClusterUpdate && (
