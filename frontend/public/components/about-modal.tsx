@@ -17,6 +17,7 @@ import {
   getCurrentVersion,
   getK8sGitVersion,
   getOpenShiftVersion,
+  hasAvailableUpdates,
 } from '../module/k8s/cluster-settings';
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
@@ -28,7 +29,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
       .catch(() => setKubernetesVersion(t('public~unknown')));
   }, [t]);
   const clusterVersion = useClusterVersion();
-  const canUpgrade = useCanClusterUpgrade(clusterVersion);
+  const canUpgrade = useCanClusterUpgrade();
 
   const clusterID = getClusterID(clusterVersion);
   const channel: string = clusterVersion?.spec?.channel;
@@ -36,7 +37,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
 
   return (
     <>
-      {canUpgrade && (
+      {canUpgrade && hasAvailableUpdates(clusterVersion) && (
         <Alert
           className="co-alert co-about-modal__alert"
           title={

@@ -142,6 +142,7 @@
   "This cluster should not be updated to the next minor version.": "This cluster should not be updated to the next minor version.",
   "View ClusterOperators": "View ClusterOperators",
   "View installed Operators": "View installed Operators",
+  "Control plane is hosted.": "Control plane is hosted.",
   "This cluster is not currently requesting update notifications. To request update recommendations, configure a channel.": "This cluster is not currently requesting update notifications. To request update recommendations, configure a channel.",
   "Version {{version}} not found in channel {{channel}}. To request update recommendations, configure a channel that supports your version.": "Version {{version}} not found in channel {{channel}}. To request update recommendations, configure a channel that supports your version.",
   "{{resource}} updates are paused.": "{{resource}} updates are paused.",
