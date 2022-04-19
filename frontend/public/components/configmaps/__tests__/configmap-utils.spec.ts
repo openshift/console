@@ -175,9 +175,23 @@ describe('configmap-utils', () => {
       expect(yamlData).toBe(defaultConfigMapYaml);
     });
 
-    it('should convert the object from yaml to formData', () => {
+    it('should convert the object from formData to yaml', () => {
       const yamlData = sanitizeToYaml(getInitialConfigMapFormData(sampleConfigMap, ''), null);
       expect(yamlData).toBe(sampleConfigMapYaml);
+    });
+
+    it('should set data or binary data to empty object if they are removed from formData', () => {
+      const configMapFormData = getInitialConfigMapFormData(
+        {
+          ...sampleConfigMap,
+          data: {},
+          binaryData: {},
+        },
+        '',
+      );
+      const yamlData = safeYAMLToJS(sanitizeToYaml(configMapFormData, null));
+      expect(yamlData.data).toEqual({});
+      expect(yamlData.binaryData).toEqual({});
     });
 
     it('should convert the binaryData value to base64 format when switched to yamlview', () => {
