@@ -37,10 +37,10 @@ const PodsTabSection: React.FC<{ element: GraphElement; renderNull: () => null }
   }, []);
 
   React.useEffect(() => {
-    if (!podAdapter) {
+    if (!podAdapter && podAdapterExtensionResolved) {
       renderNull();
     }
-  }, [podAdapter, renderNull]);
+  }, [podAdapter, renderNull, podAdapterExtensionResolved]);
 
   return podAdapter ? (
     <TopologySideBarTabSection>

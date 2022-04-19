@@ -39,10 +39,10 @@ const BuildTabSection: React.FC<{ element: GraphElement; renderNull: () => null 
   }, []);
 
   React.useEffect(() => {
-    if (!buildAdapter) {
+    if (!buildAdapter && extensionsResolved) {
       renderNull();
     }
-  }, [buildAdapter, renderNull]);
+  }, [buildAdapter, renderNull, extensionsResolved]);
 
   return buildAdapter ? (
     <TopologySideBarTabSection>

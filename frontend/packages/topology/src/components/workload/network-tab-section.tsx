@@ -27,10 +27,10 @@ const NetworkTabSection: React.FC<{ element: GraphElement; renderNull: () => nul
   );
 
   React.useEffect(() => {
-    if (!networkAdapter) {
+    if (!networkAdapter && extensionsLoaded) {
       renderNull();
     }
-  }, [networkAdapter, renderNull]);
+  }, [networkAdapter, renderNull, extensionsLoaded]);
 
   return networkAdapter ? (
     <TopologySideBarTabSection>
