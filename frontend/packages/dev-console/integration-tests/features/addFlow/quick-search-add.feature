@@ -55,3 +55,13 @@ Feature: Provide quick search in Add page
               And user clicks on "Create Application"
               And user clicks on Create button in the Import from Git page
              Then user is taken to the Topology page with "devfile-sample-git" workload created
+
+
+        @regression @to-do @odc-6467
+        Scenario: Bindable resource in Quick Add: A-11-TC07
+            Given user has installed Service Binding operator
+              And user has installed Crunchy Postgres for Kubernetes operator
+              And user is at Add page
+             When user clicks Add to project button
+              And user enters "crunchy" in Add to project search bar
+             Then user will see "Bindable" label associated with "Postgres Cluster"

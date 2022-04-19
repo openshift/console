@@ -43,3 +43,25 @@ Feature: Create workload from Operator Backed file
               And user clicks create button in Create Jaeger page
              Then user will be redirected to Topology page
               And user is able to see "jaeger-all-in-one-inmemory1" in Topology page
+
+
+        @regression @to-do @odc-6467
+        Scenario: Bindable resource in Operator Backed: A-08-TC05
+            Given user has installed Service Binding operator
+              And user has installed Crunchy Postgres for Kubernetes operator
+              And user has created or selected namespace "aut-service-binding"
+              And user is at OperatorBacked page
+             When user enters "Postgres Cluster" in Filter by keyword
+             Then user will see "Bindable" label associated with "Postgres Cluster" card
+              And user will see "Bindable" label in "Postgres Cluster" sidebar
+
+
+        @regression @to-do @odc-6467
+        Scenario: Bindable filter for service binding in Operator Backed: A-08-TC06
+            Given user has installed Service Binding operator
+              And user has installed Crunchy Postgres for Kubernetes operator
+              And user has created or selected namespace "aut-service-binding"
+              And user is at OperatorBacked page
+             When user selects Bindable checkbox under Service Binding
+             Then user will see Bindable cards
+              And user can see infotip associated with the Service Binding filter
