@@ -397,7 +397,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
-    (!dirty || gitDirTouched || gitTypeTouched) &&
+    (!dirty || gitDirTouched || gitTypeTouched || values.git.secretResource) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
@@ -409,6 +409,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     values.git.ref,
     values.git.dir,
     values.git.type,
+    values.git.secretResource,
     gitTypeTouched,
   ]);
 

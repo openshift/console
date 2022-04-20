@@ -84,7 +84,6 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       secret: '',
       isUrlValidating: false,
       validated: ValidatedOptions.default,
-      secretResource: {},
     },
     docker: {
       dockerfilePath: '',
