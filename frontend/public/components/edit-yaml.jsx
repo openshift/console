@@ -640,7 +640,7 @@ export const EditYAML_ = connect(stateToProps)(
                     allowMultiple ? (
                       <Trans ns="public">
                         Drag and drop YAML or JSON files into the editor, or manually enter files
-                        and use <kbd>---</kbd> to separate each definition.
+                        and use <kbd className="co-kbd">---</kbd> to separate each definition.
                       </Trans>
                     ) : (
                       t(

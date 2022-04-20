@@ -1,6 +1,11 @@
 .co-hint-block {
-  background-color: var(--pf-global--BackgroundColor--400);
-  border: 1px solid var(--pf-global--BorderColor--300);
+  background-color: var(--pf-global--palette--blue-50);
+  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--palette--blue-100);
   color: var(--pf-global--Color--100);
   padding: var(--pf-global--spacer--lg);
+
+  :where(.pf-theme-dark) & {
+    background-color: var(--pf-global--BackgroundColor--400);
+    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--300);
+  }
 }

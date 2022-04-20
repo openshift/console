@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
-import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
+import { CodeBlock, CodeBlockCode, Divider } from '@patternfly/react-core';
 import { Status } from '@console/shared';
 import {
   ContainerLifecycle,
@@ -366,7 +366,7 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
         </div>
       </div>
 
-      <hr />
+      <Divider className="co-divider" />
 
       <div className="row">
         <div className="col-lg-4">

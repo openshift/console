@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Divider } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu } from '@console/internal/components/utils';
 import { TaskKind } from '../../../../types';
@@ -42,7 +43,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({ removeThisTask, t
       <div className="opp-task-sidebar-header__shortcuts clearfix">
         <TaskSidebarShortcuts />
       </div>
-      <hr />
+      <Divider className="co-divider" />
     </div>
   );
 };

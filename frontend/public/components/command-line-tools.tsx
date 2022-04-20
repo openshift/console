@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { Divider } from '@patternfly/react-core';
 
 import { FLAGS } from '@console/shared';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
@@ -20,7 +21,7 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
     const defaultLinkText = `Download ${displayName}`;
     return (
       <React.Fragment key={tool.metadata.uid}>
-        <hr />
+        <Divider className="co-divider" />
         <h2 className="co-section-heading" data-test-id={displayName}>
           {displayName}
         </h2>
@@ -57,7 +58,7 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
         </h1>
         {window.SERVER_FLAGS.requestTokenURL && (
           <>
-            <hr />
+            <Divider className="co-divider" />
             <ExternalLink
               href={window.SERVER_FLAGS.requestTokenURL}
               text={t('public~Copy login command')}

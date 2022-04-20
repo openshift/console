@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { Divider } from '@patternfly/react-core';
 import { k8sPatch } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
 import { Kebab, EmptyBox, ResourceIcon } from '../utils';
@@ -96,7 +97,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
 
     if (nonResourceURLs && nonResourceURLs.length) {
       if (allResources.length) {
-        allResources.push(<hr key="hr" className="resource-separator" />);
+        allResources.push(<Divider key="hr" className="co-divider resource-separator" />);
       }
       let URLs = [];
       _.each(nonResourceURLs.sort(), (r) => {

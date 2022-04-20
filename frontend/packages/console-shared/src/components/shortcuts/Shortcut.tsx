@@ -20,7 +20,7 @@ interface ShortcutProps {
 
 export const ShortcutCommand: React.FC = ({ children }) => (
   <span className="ocs-shortcut__command">
-    <kbd>{children}</kbd>
+    <kbd className="co-kbd">{children}</kbd>
   </span>
 );
 

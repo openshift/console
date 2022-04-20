@@ -19,7 +19,7 @@
 
 .co-images-stream-tag-timeline__circle-icon,
 .co-images-stream-tag-timeline__square-icon {
-  color: $pf-color-black-300;
+  color: var(--pf-global--BorderColor--100);
   left: 8px;
   position: relative;
 }

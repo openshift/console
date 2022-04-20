@@ -1,16 +1,15 @@
 .co-disabled {
-  position: relative;
+  color: var(--pf-global--disabled-color--100);
   height: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 .co-disabled::before {
-  background-color: #fff;
   bottom: 0;
   content: '';
   cursor: not-allowed;
   left: 0;
-  opacity: 0.4;
   overflow: hidden;
   position: absolute;
   right: 0;

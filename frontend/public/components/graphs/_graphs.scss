@@ -40,7 +40,7 @@
 }
 
 .graph-title {
-  color: black;
+  color: var(--pf-global--Color--100);
   line-height: 1.4; // so descenders don't clip
   margin: 0 0 10px 0;
   overflow: hidden;

@@ -76,8 +76,8 @@ export const TextFilter: React.FC<TextFilterProps> = (props) => {
         tabIndex={0}
         type="text"
       />
-      <span className="form-control-feedback form-control-feedback--keyboard-hint">
-        <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
+      <span className="co-text-filter-feedback">
+        <kbd className="co-kbd co-kbd__filter-input">{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
       </span>
     </div>
   );

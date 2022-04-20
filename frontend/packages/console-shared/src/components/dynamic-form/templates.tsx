@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Alert, FormHelperText } from '@patternfly/react-core';
+import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { ArrayFieldTemplateProps, FieldTemplateProps, ObjectFieldTemplateProps } from '@rjsf/core';
 import { getUiOptions, getSchemaType } from '@rjsf/core/dist/cjs/utils';
@@ -127,7 +127,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
       {_.map(items ?? [], (item) => {
         return (
           <div className="co-dynamic-form__array-field-group-item" key={item.key}>
-            {item.index > 0 && <hr />}
+            {item.index > 0 && <Divider className="co-divider" />}
             {item.hasRemove && (
               <div className="row co-dynamic-form__array-field-group-remove">
                 <Button

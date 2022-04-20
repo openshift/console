@@ -10,6 +10,7 @@ import {
   RedExclamationCircleIcon,
 } from '@console/shared/src/components/status';
 import { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
+import { Divider } from '@patternfly/react-core';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { AreaChart } from './area-chart';
@@ -194,7 +195,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
           )}
         </div>
         <div className="co-utilization-card__item-chart">{chart}</div>
-        <hr style={{ border: '1px lightgray solid', margin: '0px' }} />
+        <Divider />
       </div>
     );
   },

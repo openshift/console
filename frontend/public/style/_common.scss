@@ -4,6 +4,11 @@ $co-external-link-padding-right: 15px;
   padding-bottom: var(--pf-global--spacer--sm);
 }
 
+.co-divider {
+  margin-bottom: var(--pf-global--spacer--lg);
+  margin-top: var(--pf-global--spacer--lg);
+}
+
 dl.co-inline {
   dd {
     margin-bottom: 1em;
@@ -530,10 +535,6 @@ dl.co-inline {
     position: relative;
     vertical-align: middle;
   }
-}
-
-.co-m-row:hover {
-  background-color: $color-co-m-row-hover;
 }
 
 .co-m-loader {

@@ -22,8 +22,7 @@
 }
 
 .resource-separator {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: var(--pf-global--spacer--sm) 0;
 }
 
 .edit-rule {
@@ -41,13 +40,8 @@
   }
 
   .rbac-minor {
-    margin-top: 10px;
-    margin-bottom: 20px;
-    color: #ccc;
-  }
-  .rbac-major {
-    color: #ccc;
-    margin: 30px 0;
+    margin-bottom: var(--pf-global--spacer--md);
+    margin-top: var(--pf-global--spacer--sm);
   }
   .newspaper-columns {
     columns: 3 auto;

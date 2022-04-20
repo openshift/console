@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Divider } from '@patternfly/react-core';
 
 import { k8sGet, k8sUpdate } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
@@ -83,8 +83,8 @@ const RadioButton = ({ name, value, label, text, onChange, activeValue }) => (
   </div>
 );
 
-const HRMinor = () => <hr className="rbac-minor" />;
-const HRMajor = () => <hr className="rbac-major" />;
+const HRMinor = () => <Divider className="co-divider rbac-minor" />;
+const HRMajor = () => <Divider className="co-divider" />;
 
 const stateToProps = (state) => {
   const resourceMap = state.k8s.get('RESOURCES');

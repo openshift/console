@@ -1,18 +1,4 @@
 // Residual css rules within codebase that pertain to Bootstrap
-
-.form-control-feedback {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 2;
-  display: block;
-  width: 29px;
-  height: 29px;
-  line-height: 29px;
-  text-align: center;
-  pointer-events: none;
-}
-
 .form-group {
   margin-bottom: $form-group-margin-bottom;
 }
@@ -26,23 +12,6 @@
   margin-top: 5px;
   margin-bottom: 10px;
   color: lighten($text-color, 25%); // lighten the text some for contrast
-}
-
-
-hr {
-  margin-top: 23px;
-  margin-bottom: 23px;
-  border: 0;
-  border-top: 1px solid #f1f1f1;
-}
-
-kbd {
-  padding: 2px 4px;
-  font-size: 90%;
-  color: #72767b;
-  background-color: rgba(0,0,0,0);
-  border-radius: 3px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 label {
