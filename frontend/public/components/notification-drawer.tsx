@@ -34,7 +34,7 @@ import {
 } from '@console/internal/components/utils/service-level';
 import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/observe';
-import { RedExclamationCircleIcon } from '@console/shared';
+import { RedExclamationCircleIcon, useCanClusterUpgrade } from '@console/shared';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -68,8 +68,7 @@ import {
   getSortedUpdates,
   splitClusterVersionChannel,
 } from '../module/k8s';
-import { ClusterVersionModel } from '../models';
-import { useAccessReview, useAccessReview2 } from './utils/rbac';
+import { useAccessReview2 } from './utils/rbac';
 import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
@@ -132,11 +131,11 @@ export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction
 };
 
 const getUpdateNotificationEntries = (
+  canUpgrade: boolean,
   cv: ClusterVersionKind,
-  isEditable: boolean,
   toggleNotificationDrawer: () => void,
 ): React.ReactNode[] => {
-  if (!cv || !isEditable) {
+  if (!cv || !canUpgrade) {
     return [];
   }
   const updateData: ClusterUpdate[] = getSortedUpdates(cv);
@@ -285,16 +284,10 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     alertActionExtensions,
   ]);
 
-  const clusterVersionIsEditable =
-    useAccessReview({
-      group: ClusterVersionModel.apiGroup,
-      resource: ClusterVersionModel.plural,
-      verb: 'patch',
-      name: 'version',
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+  const canUpgrade = useCanClusterUpgrade();
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
+    canUpgrade,
     clusterVersion,
-    clusterVersionIsEditable,
     toggleNotificationDrawer,
   );
 
