@@ -49,19 +49,17 @@ import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
+import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core'; // PF4 Imports
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
-
-// PF4 Imports
-import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core';
+import '@patternfly/patternfly/patternfly-theme-dark.css'; // load dark theme here as MiniCssExtractPlugin ignores load order of sass and dark theme must load after all other css
 
 const breakpointMD = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 import { graphQLReady } from '../graphql/client';
-import '@patternfly/patternfly/patternfly-theme-dark.scss'; // load dark theme here as MiniCssExtractPlugin ignores load order of sass and dark theme must load after all other css
 
 initI18n();
 
