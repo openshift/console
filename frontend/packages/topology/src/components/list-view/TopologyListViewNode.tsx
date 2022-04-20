@@ -15,6 +15,7 @@ import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
+import { modelFor } from '@console/internal/module/k8s';
 import {
   getSeverityAlertType,
   AlertSeverityIcon,
@@ -144,12 +145,15 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
       {children ? (
         <DataListContent
           className="odc-topology-list-view__group-children"
-          aria-label={item.getLabel()}
-          id={item.getId()}
+          aria-label={t('topology~{{kindLabel}} {{label}}', {
+            label: item.getLabel(),
+            kindLabel: modelFor(kind).label,
+          })}
+          id={`${item.getId()}-${item.getLabel()}`}
           isHidden={false}
         >
           <DataList
-            aria-label={`${item.getLabel()} sub-resources}`}
+            aria-label={t('topology~{{label}} sub-resources', { label: item.getLabel() })}
             selectedDataListItemId={selectedIds[0]}
             onSelectDataListItem={(id) => onSelect(selectedIds[0] === id ? [] : [id])}
           >

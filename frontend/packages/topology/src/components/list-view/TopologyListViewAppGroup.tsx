@@ -76,7 +76,7 @@ const TopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> = ({
     <DataListItem
       className="odc-topology-list-view__application"
       key={id}
-      id={id}
+      id={`${id}_application`}
       aria-labelledby={`${id}_label`}
       isExpanded
     >
@@ -88,6 +88,7 @@ const TopologyListViewAppGroup: React.FC<TopologyListViewAppGroupProps> = ({
           {kindKeys.map((key) => (
             <TopologyListViewKindGroup
               key={key}
+              groupLabel={appGroup.getLabel()}
               kind={key}
               childElements={kindsMap[key]}
               selectedIds={selectedIds}
