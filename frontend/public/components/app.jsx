@@ -61,6 +61,7 @@ const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 import { graphQLReady } from '../graphql/client';
+import '@patternfly/patternfly/patternfly-theme-dark.scss'; // load dark theme here as MiniCssExtractPlugin ignores load order of sass and dark theme must load after all other css
 
 initI18n();
 
