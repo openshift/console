@@ -32,10 +32,16 @@ import { PrometheusEndpoint } from '../graphs/helpers';
 import { useSafeFetch } from '../utils';
 import './_promql-expression-input.scss';
 
+type InteractionTarget = {
+  focus: () => void;
+  setSelectionRange: (from: number, to: number) => void;
+};
+
 interface PromQLExpressionInputProps {
   value: string;
   onValueChange: (value: string) => void;
   onExecuteQuery?: () => void;
+  onSelectionChange?: (target: InteractionTarget, start: number, end: number) => void;
 }
 
 const promqlExtension = new PromQLExtension();
@@ -230,6 +236,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
   value,
   onExecuteQuery,
   onValueChange,
+  onSelectionChange,
 }) => {
   const { t } = useTranslation();
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -282,6 +289,18 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
       }
     }
   }, [value]);
+
+  const target = React.useMemo(
+    () => ({
+      focus: () => viewRef.current.focus(),
+      setSelectionRange: (from: number, to: number) => {
+        viewRef.current.dispatch({
+          selection: { anchor: from, head: to },
+        });
+      },
+    }),
+    [viewRef.current],
+  );
 
   React.useEffect(() => {
     promqlExtension.setComplete({
@@ -347,6 +366,9 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
             ]),
           ),
           EditorView.updateListener.of((update: ViewUpdate): void => {
+            const { from, to } = update.state.selection.main;
+            onSelectionChange?.(target, from, to);
+
             const expressionValue = update.state.doc.toString();
             onChange(expressionValue);
           }),

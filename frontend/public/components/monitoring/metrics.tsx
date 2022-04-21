@@ -555,6 +555,14 @@ const Query: React.FC<{ index: number }> = ({ index }) => {
     dispatch(queryBrowserRunQueries());
   }, [dispatch]);
 
+  const handleSelectionChange = (
+    target: { focus: () => void; setSelectionRange: (start: number, end: number) => void },
+    start: number,
+    end: number,
+  ) => {
+    focusedQuery = { index, selection: { start, end }, target };
+  };
+
   const switchKey = `${id}-${isEnabled}`;
   const switchLabel = isEnabled ? t('public~Disable query') : t('public~Enable query');
 
@@ -570,6 +578,7 @@ const Query: React.FC<{ index: number }> = ({ index }) => {
           value={text}
           onValueChange={handleTextChange}
           onExecuteQuery={handleExecuteQueries}
+          onSelectionChange={handleSelectionChange}
         />
         <div title={switchLabel}>
           <Switch
