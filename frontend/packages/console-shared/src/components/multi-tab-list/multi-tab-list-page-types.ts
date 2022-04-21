@@ -7,3 +7,8 @@ export type MenuAction = {
 };
 
 export type MenuActions = { [key: string]: MenuAction };
+
+export type SecondaryButtonAction = {
+  label: string;
+  href: string;
+};

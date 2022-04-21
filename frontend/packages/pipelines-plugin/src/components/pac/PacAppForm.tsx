@@ -22,7 +22,7 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
 
   const submitFrom = (event: React.FormEvent<EventTarget>) => {
     if (!values.manifestData.hook_attributes.url) {
-      setStatus({ submitError: t('pipelines-plugin~Unable to detect Event listner URL') });
+      setStatus({ submitError: t('pipelines-plugin~Unable to detect Event listener URL') });
       event.preventDefault();
     } else {
       const dataMn = JSON.stringify({ ...values.manifestData, name: values.applicationName });
@@ -32,7 +32,7 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
   return (
     <FlexForm action={PAC_GH_APP_NEW} onSubmit={submitFrom} method="post">
       <FormBody flexLayout>
-        <FormSection fullWidth={false}>
+        <FormSection>
           <FormGroup
             label={t('pipelines-plugin~GitHub application name')}
             isRequired
@@ -43,7 +43,7 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
               type={TextInputTypes.text}
               name="applicationName"
               placeholder={t('pipelines-plugin~Enter name of application')}
-              data-test-id="pac-applicationName"
+              data-test="pac-applicationName"
               required
               aria-label={t('pipelines-plugin~Enter name of application')}
             />
@@ -60,7 +60,7 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('pipelines-plugin~Configure')}
+        submitLabel={t('pipelines-plugin~Setup')}
         disableSubmit={!_.isEmpty(errors) || isSubmitting || !!status?.submitError}
         resetLabel={t('pipelines-plugin~Cancel')}
         sticky

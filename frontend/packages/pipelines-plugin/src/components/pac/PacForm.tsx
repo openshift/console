@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { history, LoadingBox, PageHeading } from '@console/internal/components/utils';
-import { usePacGHManifest } from './hooks';
+import { usePacGHManifest } from './hooks/usePacGHManifest';
 import { pacValidationSchema } from './pac-validation-schema';
 import PacAppForm from './PacAppForm';
 
@@ -16,14 +17,17 @@ const PacForm: React.FC<{ namespace: string }> = ({ namespace }) => {
 
   return (
     <>
+      <Helmet>
+        <title>{t('pipelines-plugin~Setup GitHub App')}</title>
+      </Helmet>
       <PageHeading
-        title={t('pipelines-plugin~Configure Pipelines as Code')}
+        title={t('pipelines-plugin~Setup GitHub App')}
         breadcrumbs={[
           {
             name: t('pipelines-plugin~Pipelines'),
             path: `/pipelines/ns/${namespace}`,
           },
-          { name: t('pipelines-plugin~Configure Pipelines as Code'), path: undefined },
+          { name: t('pipelines-plugin~Setup GitHub App'), path: undefined },
         ]}
       />
       <Formik

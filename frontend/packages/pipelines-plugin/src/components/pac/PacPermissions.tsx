@@ -48,7 +48,10 @@ const PacPermissions: React.FC = () => {
           </FormGroup>
         </GridItem>
         <GridItem>
-          <FormGroup label="Subscribe to events:" fieldId="event-subscriptions">
+          <FormGroup
+            label={t('pipelines-plugin~Subscribe to events:')}
+            fieldId="event-subscriptions"
+          >
             <Text component={TextVariants.small}>
               {t('pipelines-plugin~Commit comment')}
               <br />

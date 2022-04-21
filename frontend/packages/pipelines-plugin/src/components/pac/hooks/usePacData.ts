@@ -10,11 +10,12 @@ import { createPACSecret } from '../pac-utils';
 
 export const usePacData = (
   code: string,
-): { loaded: boolean; secretData: SecretKind; loadError: Error } => {
+): { loaded: boolean; secretData: SecretKind; loadError: Error; isFirstSetup: boolean } => {
+  const apiCallProgressRef = React.useRef(false);
   const [loaded, setloaded] = React.useState<boolean>(false);
   const [secretData, setSecretData] = React.useState<SecretKind>();
-  const [isApiCallInProgress, setApiCallInProgress] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState(null);
+  const [isFirstSetup, setIsFirstSetup] = React.useState<boolean>(false);
   const [pacSecretData, pacSecretDataLoaded, pacSecretDataError] = useK8sGet<SecretKind>(
     SecretModel,
     PAC_SECRET_NAME,
@@ -22,9 +23,10 @@ export const usePacData = (
   );
 
   React.useEffect(() => {
+    let mounted = true;
     const configureGitHubApp = async () => {
-      if (code && !isApiCallInProgress) {
-        setApiCallInProgress(true);
+      if (code && !apiCallProgressRef.current) {
+        apiCallProgressRef.current = true;
         try {
           const response = await coFetch(`${PAC_GH_APP_MANIFEST_API}/${code}/conversions`, {
             method: 'POST',
@@ -33,29 +35,41 @@ export const usePacData = (
           // eslint-disable-next-line @typescript-eslint/camelcase
           const { name, id, pem, webhook_secret, html_url } = data;
           const secret = await createPACSecret(id.toString(), pem, webhook_secret, name, html_url);
-          setSecretData(secret);
-          setloaded(true);
-          removeQueryArgument('code');
-          setApiCallInProgress(false);
+          if (mounted) {
+            setSecretData(secret);
+            setloaded(true);
+            removeQueryArgument('code');
+            setIsFirstSetup(true);
+            apiCallProgressRef.current = false;
+          }
         } catch (err) {
-          setApiCallInProgress(false);
-          removeQueryArgument('code');
-          setloaded(true);
-          setLoadError(err);
+          if (mounted) {
+            apiCallProgressRef.current = false;
+            removeQueryArgument('code');
+            setloaded(true);
+            setLoadError(err);
+          }
         }
       }
     };
     configureGitHubApp();
-  }, [code, isApiCallInProgress]);
+    return () => {
+      mounted = false;
+    };
+  }, [code]);
 
   React.useEffect(() => {
     if (pacSecretDataLoaded && pacSecretData && !pacSecretDataError) {
       setSecretData(pacSecretData);
       setloaded(true);
-    } else if (pacSecretDataLoaded && pacSecretDataError?.code === 404 && !isApiCallInProgress) {
+    } else if (
+      pacSecretDataLoaded &&
+      pacSecretDataError?.code === 404 &&
+      !apiCallProgressRef.current
+    ) {
       setloaded(true);
     }
-  }, [isApiCallInProgress, pacSecretData, pacSecretDataError, pacSecretDataLoaded]);
+  }, [pacSecretData, pacSecretDataError, pacSecretDataLoaded]);
 
-  return { loaded, secretData, loadError };
+  return { loaded, secretData, loadError, isFirstSetup };
 };
