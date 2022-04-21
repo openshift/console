@@ -1,4 +1,9 @@
-import { CatalogItem } from '../../../../../console-dynamic-plugin-sdk/src';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
+
+export enum CatalogItemTypes {
+  CLUSTER_TASK = 'clusterTask',
+  TEKTONHUB_TASK = 'TektonHubTask',
+}
 
 export enum sampleVersions {
   VERSION_01 = '0.1',
@@ -215,6 +220,7 @@ export const sampleTektonHubCatalogItem: CatalogItem = {
     rating: 4.2,
   },
 };
+
 export const sampleTaskWithMultipleVersions = {
   [sampleVersions.VERSION_01]: `---
   apiVersion: tekton.dev/v1beta1
