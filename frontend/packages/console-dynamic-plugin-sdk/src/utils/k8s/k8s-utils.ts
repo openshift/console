@@ -1,6 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import * as staticModels from '@console/internal/models';
 import {
   K8sModel,
   MatchExpression,
@@ -212,7 +211,8 @@ let k8sModels;
 
 const getK8sModels = () => {
   if (!k8sModels) {
-    k8sModels = modelsToMap(_.values(staticModels));
+    // TODO this was migrated from console and is only used for the fallback API discovery and can likely be removed
+    k8sModels = modelsToMap([]);
 
     const hasModel = (model: K8sModel) => k8sModels.has(modelKey(model));
 

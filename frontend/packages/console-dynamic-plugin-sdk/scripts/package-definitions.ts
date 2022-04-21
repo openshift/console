@@ -68,7 +68,10 @@ export const getCorePackage: GetPackageDefinition = (
     version: sdkPackage.version,
     main: 'lib/lib-core.js',
     ...commonManifestFields,
-    dependencies: parseSharedModuleDeps(rootPackage, missingDepCallback),
+    dependencies: {
+      ...parseSharedModuleDeps(rootPackage, missingDepCallback),
+      ...parseDeps(rootPackage, ['typesafe-actions', 'whatwg-fetch'], missingDepCallback),
+    },
   },
   filesToCopy: {
     ...commonFiles,
