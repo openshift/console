@@ -129,7 +129,7 @@ describe('knative data transformer ', () => {
       isKnativeResource(resource, graphData),
     );
     expect(workloadResources).toHaveLength(6);
-    expect(filteredResources).toHaveLength(3);
+    expect(filteredResources).toHaveLength(2);
   });
 
   it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', async (done) => {

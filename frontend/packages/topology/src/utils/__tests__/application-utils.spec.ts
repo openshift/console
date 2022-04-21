@@ -10,9 +10,16 @@ import {
   StatefulSetModel,
 } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
-import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
+import {
+  CamelKameletBindingModel,
+  KafkaSinkModel,
+  ServiceModel as KnativeServiceModel,
+} from '@console/knative-plugin/src/models';
 import { MockKnativeResources } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
-import { getKnativeTopologyDataModel } from '@console/knative-plugin/src/topology/data-transformer';
+import {
+  getKafkaSinkKnativeTopologyData,
+  getKnativeTopologyDataModel,
+} from '@console/knative-plugin/src/topology/data-transformer';
 import {
   MockResources,
   sampleBuildConfigs,
@@ -48,7 +55,26 @@ const getTopologyData = async (
     workloadType,
   ]);
   if (isKnativeResource) {
-    model = await getKnativeTopologyDataModel(namespace, mockData);
+    model = await getKnativeTopologyDataModel(name, mockData);
+  }
+  const result = baseDataModelGetter(model, namespace, mockData, workloadResources, []);
+  return result.nodes.find((n) => n.data.resources?.obj.metadata.name === name);
+};
+
+const getTopologyDataKafkaSink = async (
+  mockData: TopologyDataResources,
+  name: string,
+  namespace: string,
+  workloadType?: string,
+  isKnativeResource?: boolean,
+): Promise<OdcNodeModel> => {
+  let model: Model = { nodes: [], edges: [] };
+  const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, [
+    ...WORKLOAD_TYPES,
+    workloadType,
+  ]);
+  if (isKnativeResource) {
+    model = await getKafkaSinkKnativeTopologyData(name, mockData);
   }
   const result = baseDataModelGetter(model, namespace, mockData, workloadResources, []);
   return result.nodes.find((n) => n.data.resources?.obj.metadata.name === name);
@@ -166,6 +192,48 @@ describe('ApplicationUtils ', () => {
         expect(spy.calls.count()).toEqual(2);
         expect(removedModels).toContain(ImageStreamModel);
         expect(removedModels).toContain(KnativeServiceModel);
+        expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
+        done();
+      })
+      .catch((err) => fail(err));
+  });
+
+  it('Should delete all the specific models related to kamelet binding', async (done) => {
+    const nodeModel = await getTopologyData(
+      MockKnativeResources,
+      'overlayimage-kb',
+      'testproject3',
+      CamelKameletBindingModel.plural,
+      true,
+    );
+    spyAndReturn(spyOn(k8s, 'modelFor'))(CamelKameletBindingModel);
+    cleanUpWorkload(nodeModel.resource, true)
+      .then(() => {
+        const allArgs = spy.calls.allArgs();
+        const removedModels = allArgs.map((arg) => arg[0]);
+        expect(spy.calls.count()).toEqual(1);
+        expect(removedModels).toContain(CamelKameletBindingModel);
+        expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
+        done();
+      })
+      .catch((err) => fail(err));
+  });
+
+  it('Should delete all the specific models related to Kafka Sink', async (done) => {
+    const nodeModel = await getTopologyDataKafkaSink(
+      MockKnativeResources,
+      'kafkasink-dummy',
+      'testproject3',
+      CamelKameletBindingModel.plural,
+      true,
+    );
+    spyAndReturn(spyOn(k8s, 'modelFor'))(KafkaSinkModel);
+    cleanUpWorkload(nodeModel.resource, true)
+      .then(() => {
+        const allArgs = spy.calls.allArgs();
+        const removedModels = allArgs.map((arg) => arg[0]);
+        expect(spy.calls.count()).toEqual(1);
+        expect(removedModels).toContain(KafkaSinkModel);
         expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
         done();
       })

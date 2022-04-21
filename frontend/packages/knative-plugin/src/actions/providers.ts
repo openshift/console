@@ -312,7 +312,12 @@ export const useKnativeEventSinkActionProvider = (element: Node) => {
   const actions = React.useMemo(() => {
     const type = element.getType();
     if ((type !== TYPE_EVENT_SINK && type !== TYPE_KAFKA_SINK) || !k8sModel) return undefined;
-    return k8sModel && resource ? getCommonResourceActions(k8sModel, resource) : undefined;
+    return k8sModel && resource
+      ? [
+          getModifyApplicationAction(k8sModel, resource),
+          ...getCommonResourceActions(k8sModel, resource),
+        ]
+      : undefined;
   }, [element, k8sModel, resource]);
 
   return React.useMemo(() => {

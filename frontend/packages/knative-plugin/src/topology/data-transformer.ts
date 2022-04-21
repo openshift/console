@@ -38,7 +38,7 @@ const addKnativeTopologyData = (
   addToTopologyDataModel(knativeResourceDataModel, graphModel);
 };
 
-const getKnativeTOpologyDataUtils = () => [
+const getKnativeTopologyDataUtils = () => [
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
@@ -58,7 +58,7 @@ export const getKafkaSinkKnativeTopologyData = (
       KnResources,
       type,
       resources,
-      getKnativeTOpologyDataUtils(),
+      getKnativeTopologyDataUtils(),
     );
   };
   addTopologyData(kafkaSinks, NodeType.KafkaSink);
@@ -98,7 +98,7 @@ export const getKnativeTopologyDataModel = (
       KnResources,
       type,
       resources,
-      getKnativeTOpologyDataUtils(),
+      getKnativeTopologyDataUtils(),
     );
   };
 
@@ -110,7 +110,7 @@ export const getKnativeTopologyDataModel = (
   addTopologyData(camelSourceKameletBindings, NodeType.EventSource);
   addTopologyData(camelSinkKameletBindings, NodeType.EventSink);
 
-  const revisionData = getRevisionsData(knRevResources, resources, getKnativeTOpologyDataUtils());
+  const revisionData = getRevisionsData(knRevResources, resources, getKnativeTopologyDataUtils());
 
   knativeTopologyGraphModel.nodes.forEach((n) => {
     if (n.type === NodeType.KnService) {

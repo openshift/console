@@ -1,6 +1,7 @@
 import { Model } from '@patternfly/react-topology';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { EventKind } from '@console/internal/module/k8s';
+import { CamelKameletBindingModel, KafkaSinkModel } from '@console/knative-plugin';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../const';
 import { WorkloadModelProps } from '../data-transforms/transform-utils';
@@ -39,6 +40,8 @@ export const TEST_KINDS_MAP = {
   vmImports: 'VirtualMachineImport',
   brokers: 'Broker',
   triggers: 'Trigger',
+  [CamelKameletBindingModel.plural]: CamelKameletBindingModel.kind,
+  [KafkaSinkModel.kind]: KafkaSinkModel.kind,
 };
 
 export const resources: TopologyDataResources = {
