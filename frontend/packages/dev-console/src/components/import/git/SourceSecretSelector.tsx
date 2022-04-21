@@ -21,13 +21,17 @@ const SourceSecretSelector: React.FC<{
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const namespace: string = _.get(values, `${fieldPrefix}project.name`);
   const secret: string = _.get(values, `${fieldPrefix}git.secret`);
-  const [data, loaded, loadError] = useK8sWatchResource({
-    kind: SecretModel.kind,
-    namespace,
-    name: secret,
-    optional: true,
-    isList: false,
-  });
+  const [data, loaded, loadError] = useK8sWatchResource(
+    namespace && secret
+      ? {
+          kind: SecretModel.kind,
+          namespace,
+          name: secret,
+          optional: true,
+          isList: false,
+        }
+      : null,
+  );
 
   const handleSave = (name: string) => {
     setFieldValue(`${fieldPrefix}git.secret`, name);

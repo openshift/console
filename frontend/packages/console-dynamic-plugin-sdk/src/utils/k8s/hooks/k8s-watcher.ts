@@ -13,7 +13,7 @@ export class NoModelError extends CustomError {
   }
 }
 
-export const makeReduxID = (k8sKind: K8sModel, query, cluster?: string) => {
+export const makeReduxID = (k8sKind: K8sModel, query: Query, cluster?: string) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
@@ -47,19 +47,28 @@ export const makeQuery: MakeQuery = (namespace, labelSelector, fieldSelector, na
   return query;
 };
 
-export const INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL = Symbol('_cachedToJSResult');
+export const INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL = Symbol('_cachedToArrayResult');
+export const INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL = Symbol('_cachedToJSONResult');
 
 export const getReduxData = (immutableData, resource: WatchK8sResource) => {
   if (!immutableData) {
     return null;
   }
-  if (resource.isList) {
-    return immutableData.toArray().map((a) => {
-      if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
-        a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
-      }
-      return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
-    });
+  if (resource.isList && immutableData.toArray) {
+    if (!immutableData[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL]) {
+      immutableData[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL] = immutableData
+        .toArray()
+        .map((a) => {
+          if (a.toJSON) {
+            if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+              a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
+            }
+            return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+          }
+          return a;
+        });
+    }
+    return immutableData[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL];
   }
   if (immutableData.toJSON) {
     if (!immutableData[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
