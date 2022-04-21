@@ -75,6 +75,10 @@ export const topologyPO = {
     applicationGroupingsTitle: '.overview__sidebar-pane-head.resource-overview__heading',
     applicationGroupingsSidepane: 'overview__sidebar-pane resource-overview',
     resourcesTabApplicationGroupings: '.co-m-horizontal-nav__menu-item',
+    pipelineRunsDetails: '.sidebar__section-heading',
+    pipelineRunsLogSnippet: '.ocs-log-snippet__log-snippet',
+    pipelineRunsStatus: '.ocs-log-snippet__status-message',
+    pipelineRunsLinks: 'a.sidebar__section-view-all',
     detailsTab: {
       labels: '[data-test="label-list"]',
       annotations: '[data-test="edit-annotations"]',

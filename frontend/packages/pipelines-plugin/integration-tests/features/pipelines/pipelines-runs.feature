@@ -216,22 +216,22 @@ Feature: Pipeline Runs
               And existing pipeline runs contains the old pipeline graph
 
 
-        @regression @to-do
+        @regression
         Scenario: Display failure details on pipeline run details: P-07-TC22
             Given user is at pipeline page in developer perspective
               And a failed pipeline is present
-             When user goes to failed pipeline run
+             When user goes to failed pipeline run of pipeline "golang-ex"
               And user opens pipeline run details
              Then user can see status as Failure
               And user can view failure message under Message heading
               And user can see Log snippet to get know what taskruns failed
 
 
-        @regression @to-do
+        @regression
         Scenario: Display failure details of pipeline run in topology sidebar: P-07-TC23
-            Given user is at Topology page
-              And a node with an associated pipeline that has failed is present
-             When user opens sidebar of the node
+            Given user is at the Topology page
+              And a node with an associated pipeline "golang-ex" is present
+             When user opens sidebar of the node "golang-ex"
               And user scrolls down to pipeline runs section
              Then user will see the pipeline run name with failed status
               And user will see failure message below pipeline runs
@@ -289,11 +289,11 @@ Feature: Pipeline Runs
               And user can see failed task before finally task
 
 
-        @regression @to-do
+        @regression
         Scenario: Pipeline Run results on Pipeline Run details page for passed pipeline run: P-07-TC29
             #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
-            Given user has passed pipeline run for pipeline "sum-three-pipeline"
-              And user is on Pipeline Run details page
+            Given user has passed pipeline run
+              And user is on Pipeline Run details page of "sum-three-pipeline-run" pipeline run
              When user scrolls to the Pipeline Run results section
              Then user can see Name and Value column under Pipeline Run results
 
