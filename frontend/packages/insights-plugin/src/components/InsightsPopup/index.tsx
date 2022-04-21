@@ -10,8 +10,9 @@ import {
   legendColorScale,
   riskSorting,
   mapMetrics,
-  isWaitingOrDisabled as _isWaitingOrDisabled,
-  isError as _isError,
+  isWaiting,
+  isDisabled,
+  isError,
 } from './mappers';
 import './style.scss';
 
@@ -21,16 +22,20 @@ const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
 };
 
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
+  const [
+    { response: metricsResponse, error: metricsError },
+    { response: operatorStatusResponse, error: operatorStatusError },
+  ] = responses;
   const { t } = useTranslation();
-  const metrics = mapMetrics(responses[0].response);
+  const metrics = mapMetrics(metricsResponse);
   const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
   const riskEntries = Object.entries(metrics).sort(
     ([k1], [k2]) => riskSorting[k1] - riskSorting[k2],
   );
   const numberOfIssues = Object.values(metrics).reduce((acc, cur) => acc + cur, 0);
-
-  const isWaitingOrDisabled = _isWaitingOrDisabled(metrics);
-  const isError = _isError(metrics);
+  const waiting = isWaiting(metrics) || !metricsResponse || !operatorStatusResponse;
+  const error = isError(metrics) || metricsError || operatorStatusError;
+  const disabled = isDisabled(operatorStatusResponse);
 
   const riskKeys = {
     // t('insights-plugin~low')
@@ -50,18 +55,14 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
           'insights-plugin~Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
         )}
       </p>
-      {isError && (
-        <div className="co-status-popup__section">
-          {t('insights-plugin~Temporary unavailable.')}
-        </div>
-      )}
-      {isWaitingOrDisabled && (
-        <div className="co-status-popup__section">
-          {t('insights-plugin~Disabled or waiting for results.')}
-        </div>
-      )}
-      <div className="co-status-popup__section">
-        {!isWaitingOrDisabled && !isError && (
+      {error ? (
+        <p className="text-muted">{t('insights-plugin~Temporarily unavailable.')}</p>
+      ) : disabled ? (
+        <p className="text-muted">{t('insights-plugin~Disabled.')}</p>
+      ) : waiting ? (
+        <p className="text-muted">{t('insights-plugin~Waiting for results.')}</p>
+      ) : (
+        <div>
           <div>
             <ChartDonut
               data={riskEntries.map(([k, v]) => ({
@@ -99,35 +100,32 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               }}
             />
           </div>
-        )}
-      </div>
-      <div className="co-status-popup__section">
-        {!isWaitingOrDisabled && !isError && clusterID && (
-          <>
-            <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
+          {clusterID ? (
+            <>
+              <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
+              <div>
+                <ExternalLink
+                  href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}`}
+                  text={t('insights-plugin~View all recommendations in Insights Advisor')}
+                />
+              </div>
+            </>
+          ) : (
             <div>
               <ExternalLink
-                href={`https://console.redhat.com/openshift/details/${clusterID}#insights`}
-                text={t('insights-plugin~View all in OpenShift Cluster Manager')}
+                href={`https://console.redhat.com/openshift/insights/advisor`}
+                text={t('insights-plugin~View more in Insights Advisor')}
               />
             </div>
-          </>
-        )}
-        {!isWaitingOrDisabled && !isError && !clusterID && (
-          <div>
-            <ExternalLink
-              href={`https://console.redhat.com/openshift/`}
-              text={t('insights-plugin~Go to OpenShift Cluster Manager')}
-            />
-          </div>
-        )}
-        {(isWaitingOrDisabled || isError) && (
-          <ExternalLink
-            href={`${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`}
-            text={t('insights-plugin~More about Insights')}
-          />
-        )}
-      </div>
+          )}
+        </div>
+      )}
+      {(waiting || disabled || error) && (
+        <ExternalLink
+          href={`${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`}
+          text={t('insights-plugin~More about Insights')}
+        />
+      )}
     </div>
   );
 };

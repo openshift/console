@@ -3,31 +3,56 @@ import * as _ from 'lodash';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { mapMetrics, isError, isWaitingOrDisabled } from './mappers';
+import { mapMetrics, isError, isWaiting, isDisabled } from './mappers';
 
-export const getClusterInsightsComponentStatus = (
-  response: PrometheusResponse,
-  error,
+const getClusterInsightsComponentStatus = (
+  responses: {
+    response: PrometheusResponse;
+    error: any;
+  }[],
 ): SubsystemHealth => {
-  if (error) {
+  const [
+    { response: metricsResponse, error: metricsError },
+    { response: operatorStatusResponse, error: operatorStatusError },
+  ] = responses;
+  const operatorDisabled = isDisabled(operatorStatusResponse);
+
+  // Unexpected error
+  if (metricsError || operatorStatusError) {
     return {
       state: HealthState.NOT_AVAILABLE,
       message: i18next.t('insights-plugin~Not available'),
     };
   }
-  if (!response) {
-    return { state: HealthState.LOADING };
+  // Insights Operator is disabled
+  if (operatorDisabled) {
+    return {
+      state: HealthState.WARNING,
+      message: i18next.t('insights-plugin~Disabled'),
+    };
   }
-  const values = mapMetrics(response);
-
+  // Initializing Insights Operator
+  if (!metricsResponse || !operatorStatusResponse) {
+    return {
+      state: HealthState.PROGRESS,
+      message: i18next.t('insights-plugin~Issues pending'),
+    };
+  }
+  const values = mapMetrics(metricsResponse);
+  // Malformed metrics values
   if (isError(values)) {
-    return { state: HealthState.ERROR, message: i18next.t('insights-plugin~Not available') };
+    return {
+      state: HealthState.NOT_AVAILABLE,
+      message: i18next.t('insights-plugin~Not available'),
+    };
   }
-
-  if (!isError(values) && isWaitingOrDisabled(values)) {
-    return { state: HealthState.UNKNOWN, message: i18next.t('insights-plugin~Not available') };
+  // Waiting for the first results
+  if (!isError(values) && isWaiting(values)) {
+    return {
+      state: HealthState.PROGRESS,
+      message: i18next.t('insights-plugin~Issues pending'),
+    };
   }
-
   // Insights Operator has sent rules results
   const issuesNumber = Object.values(values).reduce((acc, cur) => acc + cur, 0);
   const issueStr =
@@ -44,13 +69,11 @@ export const getClusterInsightsComponentStatus = (
 };
 
 export const getClusterInsightsStatus: PrometheusHealthHandler = (responses, t, cluster) => {
-  const componentHealth = getClusterInsightsComponentStatus(
-    responses[0].response,
-    responses[0].error,
-  );
-  if (componentHealth.state === HealthState.LOADING || !_.get(cluster, 'loaded')) {
-    return { state: HealthState.LOADING };
+  // Extra state for not yet loaded cluster
+  if (!_.get(cluster, 'loaded')) {
+    return {
+      state: HealthState.LOADING,
+    };
   }
-
-  return componentHealth;
+  return getClusterInsightsComponentStatus(responses);
 };
