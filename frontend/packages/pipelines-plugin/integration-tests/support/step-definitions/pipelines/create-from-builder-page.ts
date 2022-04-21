@@ -1,6 +1,7 @@
 import { And, Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
+import { quickSearchAddPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { navigateTo, sidePane } from '@console/dev-console/integration-tests/support/pages/app';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import {
@@ -548,5 +549,55 @@ When('user should see the Create button enabled after installation', () => {
 When('user selects {string} from Add task quick search', (searchItem: string) => {
   cy.get('[data-test="task-list"]').click();
   cy.get(pipelineBuilderPO.formView.quickSearch).type(searchItem);
+});
+
+When('user hovers over the newly added task', () => {
+  cy.mouseHover('[data-test="task-list"]');
+  cy.get('[data-test="task-list"] .odc-task-list-node__trigger-underline')
+    .trigger('mouseenter')
+    .invoke('show');
+});
+
+When('user clicks on delete icon', () => {
+  cy.get(pipelineBuilderPO.formView.deleteTaskIcon)
+    .first()
+    .click({ force: true });
+});
+
+Then('user can see the task in series gets removed', () => {
+  cy.get('[data-test="task-list"]').should('not.exist');
+});
+
+When(
+  'user searches and select {string} in the list of items based on the {string} provider in quick search bar',
+  (taskName: string, provider: string) => {
+    cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
+    cy.get(quickSearchAddPO.quickSearchListItem(taskName, provider)).click();
+  },
+);
+
+When(
+  'user installs and removes {string} of {string} provider',
+  (task: string, provider: string) => {
+    pipelineBuilderPage.clickAddTask();
+    cy.get(pipelineBuilderPO.formView.quickSearch).type(task);
+    cy.get('[aria-label="Quick search list"]').should('be.visible');
+    cy.get(quickSearchAddPO.quickSearchListItem(task, provider)).click();
+    cy.byTestID('task-cta').click();
+    pipelineBuilderPage.clickOnTask(task);
+    pipelineBuilderSidePane.removeTask();
+  },
+);
+
+When('user changes version to {string}', (menuItem: string) => {
+  cy.get(pipelineBuilderPO.formView.versionTask).click();
+  cy.get("[role='menu']")
+    .find('li')
+    .contains(menuItem)
+    .should('be.visible')
+    .click();
+});
+
+When('user clicks on Update and Add button', () => {
   cy.byTestID('task-cta').click();
 });
