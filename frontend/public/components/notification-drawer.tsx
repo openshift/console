@@ -61,11 +61,11 @@ import {
 import { history } from '@console/internal/components/utils';
 import { coFetchJSON } from '../co-fetch';
 import {
-  ClusterUpdate,
   ClusterVersionKind,
   getNewerClusterVersionChannel,
   getSimilarClusterVersionChannels,
-  getSortedUpdates,
+  getSortedAvailableUpdates,
+  Release,
   splitClusterVersionChannel,
 } from '../module/k8s';
 import { ClusterVersionModel } from '../models';
@@ -139,7 +139,7 @@ const getUpdateNotificationEntries = (
   if (!cv || !isEditable) {
     return [];
   }
-  const updateData: ClusterUpdate[] = getSortedUpdates(cv);
+  const updateData: Release[] = getSortedAvailableUpdates(cv);
   const currentChannel = cv?.spec?.channel;
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);

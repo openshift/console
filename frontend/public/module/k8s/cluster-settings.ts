@@ -5,12 +5,14 @@ import i18next from 'i18next';
 import { ClusterVersionModel, MachineConfigPoolModel } from '../../models';
 import { referenceForModel } from './k8s-ref';
 import {
-  ClusterUpdate,
   ClusterVersionCondition,
   ClusterVersionConditionType,
   ClusterVersionKind,
+  ConditionalUpdate,
   k8sPatch,
+  K8sResourceCondition,
   K8sResourceConditionStatus,
+  Release,
   UpdateHistory,
 } from '.';
 import { MachineConfigPoolKind } from './types';
@@ -27,18 +29,49 @@ export enum ClusterUpdateStatus {
 
 export const clusterVersionReference = referenceForModel(ClusterVersionModel);
 
-export const getAvailableClusterUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
-  return _.get(cv, 'status.availableUpdates', []);
+const getAvailableClusterUpdates = (cv: ClusterVersionKind): Release[] => {
+  return cv?.status?.availableUpdates || [];
 };
 
-export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
-  const available = getAvailableClusterUpdates(cv) || [];
+export const getSortedAvailableUpdates = (cv: ClusterVersionKind): Release[] => {
+  const available = getAvailableClusterUpdates(cv);
   try {
     return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error('error sorting cluster updates', e);
+    console.error('error sorting available cluster updates', e);
     return available;
+  }
+};
+
+const getConditionalClusterUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] => {
+  return cv?.status?.conditionalUpdates || [];
+};
+
+export const getNotRecommendedUpdateCondition = (
+  conditions: K8sResourceCondition[],
+): K8sResourceCondition => {
+  return conditions?.find(
+    (condition) => condition.type === 'Recommended' && condition.status !== 'True',
+  );
+};
+
+const getNotRecommendedUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] => {
+  return getConditionalClusterUpdates(cv).filter((update) =>
+    getNotRecommendedUpdateCondition(update.conditions),
+  );
+};
+
+export const getSortedNotRecommendedUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] => {
+  const notRecommended = getNotRecommendedUpdates(cv);
+  try {
+    return notRecommended.sort(({ release: { version: left } }, { release: { version: right } }) =>
+      semver.rcompare(left, right),
+    );
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('error sorting conditional cluster updates', e);
+    return notRecommended;
   }
 };
 
