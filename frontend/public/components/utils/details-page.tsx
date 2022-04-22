@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
+import { useCanClusterUpgrade } from '@console/shared';
 
 import { DetailsItem } from './details-item';
 import { Kebab } from './kebab';
@@ -13,6 +14,7 @@ import { Selector } from './selector';
 import { Timestamp } from './timestamp';
 import { useAccessReview } from './rbac';
 import {
+  ClusterVersionKind,
   K8sResourceCommon,
   K8sResourceKind,
   modelFor,
@@ -20,7 +22,6 @@ import {
   Toleration,
 } from '../../module/k8s';
 import { configureClusterUpstreamModal, labelsModal } from '../modals';
-import { ClusterVersionModel } from '../../models';
 
 const editLabelsModal = (e, props) => {
   e.preventDefault();
@@ -198,14 +199,7 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
   resource,
 }) => {
   const { t } = useTranslation();
-  // TODO this specific RBAC is duplicated across several modals and pages
-  const clusterVersionIsEditable =
-    useAccessReview({
-      group: ClusterVersionModel.apiGroup,
-      resource: ClusterVersionModel.plural,
-      verb: 'patch',
-      name: resource?.metadata?.name,
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+  const canUpgrade = useCanClusterUpgrade();
   return (
     <DetailsItem label={t('public~Upstream configuration')} obj={resource} path="spec.upstream">
       <div>
@@ -216,15 +210,13 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            clusterVersionIsEditable && configureClusterUpstreamModal({ cv: resource });
+            canUpgrade && configureClusterUpstreamModal({ cv: resource });
           }}
           variant="link"
-          isDisabled={!clusterVersionIsEditable}
+          isDisabled={!canUpgrade}
         >
           {resource?.spec?.upstream || t('public~Default update server')}
-          {clusterVersionIsEditable && (
-            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-          )}
+          {canUpgrade && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
         </Button>
       </div>
     </DetailsItem>
@@ -250,7 +242,7 @@ export type ResourcePodCountProps = {
 };
 
 export type UpstreamConfigDetailsItemProps = {
-  resource: K8sResourceKind;
+  resource: ClusterVersionKind;
 };
 
 export type RuntimeClassProps = {

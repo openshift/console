@@ -60,7 +60,6 @@ import {
   ClusterVersionConditionType,
   ClusterVersionKind,
   clusterVersionReference,
-  getAvailableClusterUpdates,
   getClusterID,
   getClusterOperatorVersion,
   getClusterUpdateStatus,
@@ -120,12 +119,14 @@ import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
+  useCanClusterUpgrade,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
 import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../utils/service-level';
+import { hasAvailableUpdates } from '../../module/k8s/cluster-settings';
 
 const cancelUpdate = (cv: ClusterVersionKind) => {
   k8sPatch(ClusterVersionModel, cv, [{ path: '/spec/desiredUpdate', op: 'remove' }]).catch(
@@ -180,10 +181,10 @@ const getReleaseImageVersion = (obj: K8sResourceKind): string => {
 const calculatePercentage = (numerator: number, denominator: number): number =>
   Math.round((numerator / denominator) * 100);
 
-export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, clusterVersionIsEditable }) => {
+export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation();
   const label = cv.spec.channel || t('public~Not configured');
-  return clusterVersionIsEditable ? (
+  return canUpgrade ? (
     <Button
       type="button"
       isInline
@@ -376,7 +377,7 @@ export const CurrentVersion: React.FC<CurrentVersionProps> = ({ cv }) => {
   );
 };
 
-export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, clusterVersionIsEditable }) => {
+export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
   // assume if 'worker' is editable, others are too
   const workerMachineConfigPoolIsEditable = useAccessReview({
     group: MachineConfigPoolModel.apiGroup,
@@ -385,14 +386,13 @@ export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, clusterVersionIs
     name: NodeTypes.worker,
   });
   const status = getClusterUpdateStatus(cv);
-  const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
   const { t } = useTranslation();
-  return updatesAvailable &&
+  return canUpgrade &&
+    hasAvailableUpdates(cv) &&
     (status === ClusterUpdateStatus.ErrorRetrieving ||
       status === ClusterUpdateStatus.Failing ||
       status === ClusterUpdateStatus.UpdatesAvailable ||
       status === ClusterUpdateStatus.Updating) &&
-    clusterVersionIsEditable &&
     workerMachineConfigPoolIsEditable ? (
     <div className="co-cluster-settings__details">
       <Button
@@ -953,6 +953,7 @@ export const ClusterNotUpgradeableAlert: React.FC<ClusterNotUpgradeableAlertProp
 };
 
 export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
+  canUpgrade,
   cv,
   machineConfigPools,
   status,
@@ -969,6 +970,16 @@ export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
   const pausedMCPs = machineConfigPools
     .filter((mcp) => !isMCPMaster(mcp))
     .filter((mcp) => isMCPPaused(mcp));
+  if (!canUpgrade) {
+    return (
+      <Alert
+        variant="info"
+        isInline
+        title={t('public~Control plane is hosted.')}
+        className="co-alert"
+      />
+    );
+  }
   return (
     <>
       {!channel && (
@@ -1038,13 +1049,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   const imageParts = desiredImage.split('@');
   const releaseNotes = showReleaseNotes();
   const status = getClusterUpdateStatus(cv);
-  const clusterVersionIsEditable =
-    useAccessReview({
-      group: ClusterVersionModel.apiGroup,
-      resource: ClusterVersionModel.plural,
-      verb: 'patch',
-      name: cv.metadata.name,
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+  const canUpgrade = useCanClusterUpgrade();
   const [machineConfigPools] = useK8sWatchResource<MachineConfigPoolKind[]>(
     MachineConfigPoolsResource,
   );
@@ -1066,7 +1071,12 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
     <>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <ClusterSettingsAlerts cv={cv} machineConfigPools={machineConfigPools} status={status} />
+          <ClusterSettingsAlerts
+            canUpgrade={canUpgrade}
+            cv={cv}
+            machineConfigPools={machineConfigPools}
+            status={status}
+          />
           <div className="co-cluster-settings">
             <div className="co-cluster-settings__row">
               <div className="co-cluster-settings__section co-cluster-settings__section--current">
@@ -1093,13 +1103,10 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                         <ChannelHeader />
                       </dt>
                       <dd>
-                        <CurrentChannel
-                          cv={cv}
-                          clusterVersionIsEditable={clusterVersionIsEditable}
-                        />
+                        <CurrentChannel cv={cv} canUpgrade={canUpgrade} />
                       </dd>
                     </dl>
-                    <UpdateLink cv={cv} clusterVersionIsEditable={clusterVersionIsEditable} />
+                    <UpdateLink cv={cv} canUpgrade={canUpgrade} />
                   </div>
                 </div>
                 {clusterIsUpToDateOrUpdateAvailable(status) && (
@@ -1183,7 +1190,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
             </dd>
             <UpstreamConfigDetailsItem resource={cv} />
-            {autoscalers && (
+            {autoscalers && canUpgrade && (
               <>
                 <dt>{t('public~Cluster autoscaler')}</dt>
                 <dd>
@@ -1332,12 +1339,12 @@ type CVStatusMessageProps = {
 
 type CurrentChannelProps = {
   cv: K8sResourceKind;
-  clusterVersionIsEditable: boolean;
+  canUpgrade: boolean;
 };
 
 type CurrentVersionProps = {
   cv: ClusterVersionKind;
-  clusterVersionIsEditable?: boolean;
+  canUpgrade?: boolean;
 };
 
 type ChannelProps = {
@@ -1427,6 +1434,7 @@ type ClusterNotUpgradeableAlertProps = {
 };
 
 type ClusterSettingsAlertsProps = {
+  canUpgrade: boolean;
   cv: ClusterVersionKind;
   machineConfigPools: MachineConfigPoolKind[];
   status: ClusterUpdateStatus;
