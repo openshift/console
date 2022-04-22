@@ -11,6 +11,7 @@ import './ProjectAccessForm.scss';
 type ProjectAccessFormProps = FormikProps<FormikValues> & {
   roles: Roles;
   roleBindings: { projectAccess: UserRoleBinding[] };
+  onCancel?: () => void;
 };
 
 const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
@@ -23,6 +24,7 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
   roles,
   roleBindings,
   values,
+  onCancel,
 }) => {
   const { t } = useTranslation();
   const [isStaleInfo, setIsStaleInfo] = React.useState<boolean>(false);
@@ -74,6 +76,7 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
         resetLabel={t('devconsole~Reload')}
         infoTitle={isStaleInfo && t('devconsole~This list has been updated.')}
         infoMessage={isStaleInfo && t('devconsole~Click reload to see the new list.')}
+        handleCancel={onCancel}
       />
     </Form>
   );
