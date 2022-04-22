@@ -7,6 +7,7 @@ import { isWatchActive, RESULTS_TYPE, RequestMap } from '../reducers/dashboards'
 import { RootState } from '../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
 import { PrometheusResponse } from '../components/graphs';
+import { URL_POLL_DEFAULT_DELAY } from '../components/utils/url-poll-hook';
 
 export enum ActionType {
   StopWatch = 'stopWatch',
@@ -16,8 +17,6 @@ export enum ActionType {
   UpdateWatchInFlight = 'updateWatchInFlight',
   SetError = 'setError',
 }
-
-const REFRESH_TIMEOUT = 5000;
 
 export const stopWatch = (type: RESULTS_TYPE, key: string) =>
   action(ActionType.StopWatch, { type, key });
@@ -78,7 +77,7 @@ const fetchPeriodically: FetchPeriodically = async (
     dispatch(updateWatchInFlight(type, key, false));
     const timeout = setTimeout(
       () => fetchPeriodically(dispatch, type, key, getURL, getState, fetch),
-      REFRESH_TIMEOUT,
+      URL_POLL_DEFAULT_DELAY,
     );
     dispatch(updateWatchTimeout(type, key, timeout));
   }
