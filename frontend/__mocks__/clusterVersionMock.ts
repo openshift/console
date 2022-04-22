@@ -18,7 +18,6 @@ export const clusterVersionProps: ClusterVersionKind = {
   status: {
     availableUpdates: [
       {
-        force: false,
         image:
           'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
         version: '4.5.4',
@@ -49,7 +48,6 @@ export const clusterVersionProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'registry.svc.ci.openshift.org/ocp/release@sha256:8f923b7b8efdeac619eb0e7697106c1d17dd3d262c49d8742b38600417cf7d1d',
       version: '4.5.2',
@@ -85,7 +83,6 @@ export const clusterVersionUpdatingProps: ClusterVersionKind = {
     channel: 'stable-4.5',
     clusterID: '727841c6-242d-4592-90d1-699925c4cfba',
     desiredUpdate: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',
@@ -95,7 +92,6 @@ export const clusterVersionUpdatingProps: ClusterVersionKind = {
   status: {
     availableUpdates: [
       {
-        force: false,
         image:
           'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
         version: '4.5.4',
@@ -126,7 +122,6 @@ export const clusterVersionUpdatingProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',
@@ -174,7 +169,6 @@ export const clusterVersionUpgradeableFalseProps: ClusterVersionKind = {
   status: {
     availableUpdates: [
       {
-        force: false,
         image:
           'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
         version: '4.5.4',
@@ -213,7 +207,6 @@ export const clusterVersionUpgradeableFalseProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'registry.svc.ci.openshift.org/ocp/release@sha256:8f923b7b8efdeac619eb0e7697106c1d17dd3d262c49d8742b38600417cf7d1d',
       version: '4.5.2',
@@ -249,7 +242,6 @@ export const clusterVersionUpdatedProps: ClusterVersionKind = {
     channel: 'stable-4.5',
     clusterID: '94ffb461-7099-4064-b628-8526b35a6389',
     desiredUpdate: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',
@@ -283,7 +275,6 @@ export const clusterVersionUpdatedProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',

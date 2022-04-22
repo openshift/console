@@ -7,7 +7,7 @@ import {
   getConditionUpgradeableFalse,
   getLastCompletedUpdate,
   getReleaseNotesLink,
-  getSortedUpdates,
+  getSortedAvailableUpdates,
   isMinorVersionNewer,
   showReleaseNotes,
 } from '../../module/k8s';
@@ -25,7 +25,7 @@ import {
 import { ReleaseNotesLink } from '../utils';
 
 export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
-  const availableUpdates = getSortedUpdates(cv);
+  const availableUpdates = getSortedAvailableUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
@@ -35,7 +35,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
     <div className="modal-content">
       <ModalTitle>{t('public~Other available paths')}</ModalTitle>
       <ModalBody>
-        {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert cv={cv} />}
+        {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert cv={cv} onCancel={cancel} />}
         <table className="table">
           <thead>
             <tr>

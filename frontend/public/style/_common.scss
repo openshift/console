@@ -170,6 +170,13 @@ dl.co-inline {
   margin: 15px 0;
 }
 
+// TODO: remove when $font-size-base goes away or to 16px
+// and when override `label` font-weight style from _bootstrap-residual.scss is removed
+.co-switch-label .pf-c-switch__label {
+  font-size: $font-size-base;
+  font-weight: var(--pf-global--FontWeight--normal);
+}
+
 .co-table-container {
   overflow: auto;
   margin-bottom: 30px;
