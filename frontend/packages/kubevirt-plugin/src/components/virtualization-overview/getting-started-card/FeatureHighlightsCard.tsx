@@ -46,10 +46,10 @@ export const FeatureHighlightsCard: React.FC = () => {
     <GettingStartedCard
       id="feature-highlights"
       icon={
-        <i className="fas fa-blog" color="var(--co-global--palette--blue-600)" aria-hidden="true" />
+        <i className="fas fa-blog" color="var(--co-global--palette--blue-400)" aria-hidden="true" />
       }
       title={t('kubevirt-plugin~Feature highlights')}
-      titleColor={'var(--co-global--palette--blue-600)'}
+      titleColor={'var(--co-global--palette--blue-400)'}
       description={t(
         'kubevirt-plugin~Read about the latest information and key virtualization features on the Virtualization highlights.',
       )}
