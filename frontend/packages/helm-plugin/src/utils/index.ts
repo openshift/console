@@ -1,1 +1,1 @@
-export { helmCatalogIconSVG } from './icons';
+export * from './icons';

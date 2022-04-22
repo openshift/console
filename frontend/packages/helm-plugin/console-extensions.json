@@ -106,6 +106,14 @@
     }
   },
   {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "helm-chart-repositories",
+      "name": "%helm-plugin~Helm Chart repositories%",
+      "insertAfter": "local-machine"
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -117,6 +125,20 @@
       "label": "%helm-plugin~Helm Chart%",
       "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
       "icon": { "$codeRef": "helmUtils.helmCatalogIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "project-helm-chart-repositories",
+      "groupId": "helm-chart-repositories",
+      "href": "/ns/:namespace/projecthelmchartrepositories/~new",
+      "label": "%helm-plugin~Helm Chart repositories%",
+      "description": "%helm-plugin~Add a Helm Chart Repository to extend the Developer Catalog%",
+      "icon": { "$codeRef": "helmUtils.helmChartRepositoriesIconElement" },
+      "accessReview": [
+        { "group": "helm.openshift.io", "resource": "ProjectHelmChartRepository", "verb": "create" }
+      ]
     }
   },
   {
