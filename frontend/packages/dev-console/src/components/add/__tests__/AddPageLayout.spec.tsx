@@ -99,7 +99,9 @@ describe('AddPageLayout', () => {
       expect(
         wrapper
           .find(PageLayout)
-          .shallow()
+          .dive()
+          .find(Switch)
+          .dive()
           .text()
           .includes('Details on'),
       ).toBe(true);
@@ -113,7 +115,9 @@ describe('AddPageLayout', () => {
       expect(
         wrapper
           .find(PageLayout)
-          .shallow()
+          .dive()
+          .find(Switch)
+          .dive()
           .text()
           .includes('Details off'),
       ).toBe(true);
