@@ -1,5 +1,13 @@
-$color-log-window-header-bg: $pf-color-black-900;
-$color-log-window-text: $pf-color-black-150;
+$color-log-window-header-bg: var(--pf-global--BackgroundColor--dark-300);
+$color-log-window-text: var(--pf-global--Color--light-100);
+
+.pf-c-log-viewer {
+  &.pf-m-dark {
+    .pf-c-log-viewer__main {
+      background-color: var(--pf-global--palette--black-1000);
+    }
+  }
+}
 
 .log-window__header {
   color: $color-log-window-text;

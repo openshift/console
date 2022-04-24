@@ -152,6 +152,10 @@ form.pf-c-form {
     flex-direction: column;
     height: 100%;
   }
+
+  .pf-c-page__header {
+    background-color: var(--pf-global--palette--black-1000);
+  }
 }
 
 // specificity targeting form elements to override --pf-global--FontSize--md
