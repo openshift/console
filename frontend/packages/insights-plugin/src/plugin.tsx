@@ -14,6 +14,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       queries: [
         'health_statuses_insights{metric=~"low|moderate|important|critical"}',
         'cluster_operator_conditions{name="insights", condition="Disabled"}',
+        'insightsclient_last_gather_time',
       ],
       healthHandler: getClusterInsightsStatus,
       additionalResource: {

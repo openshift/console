@@ -3,7 +3,12 @@ import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
+import {
+  ExternalLink,
+  isUpstream,
+  openshiftHelpBase,
+  Timestamp,
+} from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import {
@@ -16,7 +21,6 @@ import {
   isDisabled,
   isError,
 } from './mappers';
-import './style.scss';
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
   const Icon = riskIcons[datum.id];
@@ -41,6 +45,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const [
     { response: metricsResponse, error: metricsError },
     { response: operatorStatusResponse, error: operatorStatusError },
+    { response: lastGatherResponse },
   ] = responses;
   const { t } = useTranslation();
   const metrics = mapMetrics(metricsResponse);
@@ -68,9 +73,14 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
     critical: 'insights-plugin~critical',
   };
 
+  const lastRefreshTime = parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] || '0', 10);
+
   return (
     <Stack hasGutter>
       <StackItem>
+        {t('insights-plugin~Last refresh')}: <Timestamp timestamp={lastRefreshTime} isUnix simple />
+      </StackItem>
+      <StackItem className="text-muted">
         {t(
           'insights-plugin~Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
         )}
