@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-import './OverviewDetailItem.css';
+import './OverviewDetailItem.scss';
 
 export type OverviewDetailItemProps = {
   title: string;

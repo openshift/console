@@ -14,10 +14,10 @@
   ],
   "scripts": {
     "clean": "rm -rf dist node_modules",
-    "build": "yarn compile && yarn pkgfiles && yarn cssfiles",
+    "build": "yarn compile && yarn pkgfiles && yarn stylefiles",
     "compile": "tsc -p tsconfig.json",
     "pkgfiles": "cp LICENSE README.md package.json dist/",
-    "cssfiles": "cd src && find . -name '*.css' -exec cp '{}' ../dist/lib/'{}' \\;"
+    "stylefiles": "cd src && find . -name '*.scss' -exec cp '{}' ../dist/lib/'{}' \\;"
   },
   "dependencies": {
     "classnames": "2.x"
