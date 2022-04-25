@@ -85,19 +85,12 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
         <DetailsBody>
           <OverviewDetailItem
             title={t('kubevirt-plugin~Name')}
-            error={false}
-            errorMessage={t('kubevirt-plugin~Not available')}
             isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
             {name}
           </OverviewDetailItem>
-          <OverviewDetailItem
-            title={t('kubevirt-plugin~Namespace')}
-            error={false}
-            errorMessage={t('kubevirt-plugin~Not available')}
-            isLoading={!vmiLike}
-          >
+          <OverviewDetailItem title={t('kubevirt-plugin~Namespace')} isLoading={!vmiLike}>
             <ResourceLink
               kind="Namespace"
               name={namespace}
@@ -105,34 +98,26 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
               namespace={null}
             />
           </OverviewDetailItem>
-          <OverviewDetailItem
-            title={t('kubevirt-plugin~Created')}
-            error={false}
-            errorMessage={t('kubevirt-plugin~Not available')}
-            isLoading={!vmiLike}
-          >
+          <OverviewDetailItem title={t('kubevirt-plugin~Created')} isLoading={!vmiLike}>
             <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
           </OverviewDetailItem>
           <OverviewDetailItem
             title={t('kubevirt-plugin~Hostname')}
-            error={!hostname}
+            error={!hostname ? guestAgentFieldNotAvailMsg : undefined}
             isLoading={!vmiLike}
-            errorMessage={guestAgentFieldNotAvailMsg}
           >
             {hostname}
           </OverviewDetailItem>
           <OverviewDetailItem
             title={t('kubevirt-plugin~Node')}
-            error={!launcherPod || !nodeName}
-            errorMessage={t('kubevirt-plugin~Not available')}
+            error={!launcherPod || !nodeName ? t('kubevirt-plugin~Not available') : undefined}
             isLoading={!vmiLike}
           >
             {launcherPod && nodeName && <NodeLink name={nodeName} />}
           </OverviewDetailItem>
           <OverviewDetailItem
             title={t('kubevirt-plugin~IP Address')}
-            error={!launcherPod || !ipAddrs}
-            errorMessage={t('kubevirt-plugin~Not available')}
+            error={!launcherPod || !ipAddrs ? t('kubevirt-plugin~Not available') : undefined}
             isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
@@ -140,25 +125,22 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           </OverviewDetailItem>
           <OverviewDetailItem
             title={t('kubevirt-plugin~Operating System')}
-            error={!(operatingSystem || os)}
+            error={!(operatingSystem || os) ? guestAgentFieldNotAvailMsg : undefined}
             isLoading={!vmiLike}
-            errorMessage={guestAgentFieldNotAvailMsg}
           >
             {operatingSystem || os}
           </OverviewDetailItem>
           <OverviewDetailItem
             title={t('kubevirt-plugin~Time Zone')}
-            error={!timeZone}
+            error={!timeZone ? guestAgentFieldNotAvailMsg : undefined}
             isLoading={!vmiLike}
-            errorMessage={guestAgentFieldNotAvailMsg}
           >
             {timeZone}
           </OverviewDetailItem>
           <OverviewDetailItem
             title={t('kubevirt-plugin~Active Users')}
-            error={numLoggedInUsers == null}
+            error={numLoggedInUsers == null ? guestAgentFieldNotAvailMsg : undefined}
             isLoading={!vmiLike}
-            errorMessage={guestAgentFieldNotAvailMsg}
           >
             {numLoggedInUsers != null && numLoggedInUsers > 0 ? (
               <Link

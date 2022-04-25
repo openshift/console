@@ -148,16 +148,22 @@ export const DetailsCard = withDashboardResources(
                   <OverviewDetailItem
                     title={t('public~Cluster API address')}
                     isLoading={!infrastructureLoaded}
-                    error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
-                    errorMessage={t('public~Not available')}
+                    error={
+                      !!infrastructureError || (infrastructure && !infrastuctureApiUrl)
+                        ? t('public~Not available')
+                        : undefined
+                    }
                     valueClassName="co-select-to-copy"
                   >
                     {infrastuctureApiUrl}
                   </OverviewDetailItem>
                   <OverviewDetailItem
                     title={t('public~Cluster ID')}
-                    error={!!clusterVersionError || (clusterVersionLoaded && !clusterID)}
-                    errorMessage={t('public~Not available')}
+                    error={
+                      !!clusterVersionError || (clusterVersionLoaded && !clusterID)
+                        ? t('public~Not available')
+                        : undefined
+                    }
                     isLoading={!clusterVersionLoaded}
                   >
                     <div className="co-select-to-copy">{clusterID}</div>
@@ -171,8 +177,11 @@ export const DetailsCard = withDashboardResources(
                   </OverviewDetailItem>
                   <OverviewDetailItem
                     title={t('public~Provider')}
-                    error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-                    errorMessage={t('public~Not available')}
+                    error={
+                      !!infrastructureError || (infrastructure && !infrastructurePlatform)
+                        ? t('public~Not available')
+                        : undefined
+                    }
                     isLoading={!infrastructureLoaded}
                     valueClassName="co-select-to-copy"
                   >
@@ -180,8 +189,11 @@ export const DetailsCard = withDashboardResources(
                   </OverviewDetailItem>
                   <OverviewDetailItem
                     title={t('public~OpenShift version')}
-                    error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
-                    errorMessage={t('public~Not available')}
+                    error={
+                      !!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)
+                        ? t('public~Not available')
+                        : undefined
+                    }
                     isLoading={!clusterVersionLoaded}
                   >
                     <ClusterVersion cv={clusterVersionData} />
@@ -197,8 +209,11 @@ export const DetailsCard = withDashboardResources(
                   <OverviewDetailItem
                     title={t('public~Update channel')}
                     isLoading={!clusterVersionLoaded && !clusterVersionError}
-                    error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
-                    errorMessage={t('public~Not available')}
+                    error={
+                      !!clusterVersionError || (clusterVersionLoaded && !cvChannel)
+                        ? t('public~Not available')
+                        : undefined
+                    }
                     valueClassName="co-select-to-copy"
                   >
                     {cvChannel}
@@ -217,8 +232,11 @@ export const DetailsCard = withDashboardResources(
                 <OverviewDetailItem
                   key="kubernetes"
                   title={t('public~Kubernetes version')}
-                  error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)}
-                  errorMessage={t('public~Not available')}
+                  error={
+                    !!k8sVersionError || (k8sVersion && !k8sGitVersion)
+                      ? t('public~Not available')
+                      : undefined
+                  }
                   isLoading={!k8sVersion}
                   valueClassName="co-select-to-copy"
                 >

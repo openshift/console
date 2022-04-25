@@ -109,8 +109,11 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             key="system_name"
             title={t('ceph-storage-plugin~System name')}
             isLoading={!systemResult || !dashboardLinkResult}
-            error={systemLoadError || dashboardLinkLoadError || !systemName || !systemLink}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={
+              systemLoadError || dashboardLinkLoadError || !systemName || !systemLink
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
           >
             <ExternalLink
               href={systemLink}
@@ -129,8 +132,11 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
           <OverviewDetailItem
             key="provider"
             title={t('ceph-storage-plugin~Provider')}
-            error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={
+              !!infrastructureError || (infrastructure && !infrastructurePlatform)
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
             isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
@@ -139,8 +145,11 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             key="version"
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
-            error={subscriptionLoaded && !serviceVersion}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={
+              subscriptionLoaded && !serviceVersion
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
           >
             {serviceVersion}
           </OverviewDetailItem>

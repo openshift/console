@@ -1,8 +1,8 @@
-.co-details-card__item-title {
+.co-overview-details-card__item-title {
   flex-basis: 100%;
 }
 
-.co-details-card__item-value {
+.co-overview-details-card__item-value {
   flex-basis: 100%;
   margin-bottom: 8px;
   overflow: hidden;

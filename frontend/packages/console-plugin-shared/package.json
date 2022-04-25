@@ -5,7 +5,7 @@
   "private": true,
   "main": "lib/index.js",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk",
+  "homepage": "https://github.com/openshift/console/tree/master/frontend/packages/console-plugin-shared",
   "keywords": [
     "openshift",
     "console",

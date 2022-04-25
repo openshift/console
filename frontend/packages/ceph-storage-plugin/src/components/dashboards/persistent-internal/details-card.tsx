@@ -94,8 +94,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <OverviewDetailItem
             key="cluster_name"
             title={t('ceph-storage-plugin~Cluster name')}
-            error={!!ocsError}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={ocsError ? t('ceph-storage-plugin~Not available') : undefined}
             isLoading={!ocsLoaded}
           >
             {ocsName}
@@ -103,8 +102,11 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           <OverviewDetailItem
             key="provider"
             title={t('ceph-storage-plugin~Provider')}
-            error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={
+              !!infrastructureError || (infrastructure && !infrastructurePlatform)
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
             isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
@@ -116,8 +118,11 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             key="version"
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
-            error={subscriptionLoaded && !serviceVersion}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={
+              subscriptionLoaded && !serviceVersion
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
           >
             {serviceVersion}
           </OverviewDetailItem>

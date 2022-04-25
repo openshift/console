@@ -36,16 +36,14 @@ const DetailsCard: React.FC = () => {
           <OverviewDetailItem
             isLoading={!obj}
             title={t('console-app~Instance type')}
-            error={!instanceType}
-            errorMessage={t('console-app~Not available')}
+            error={!instanceType ? t('console-app~Not available') : undefined}
           >
             {instanceType}
           </OverviewDetailItem>
           <OverviewDetailItem
             isLoading={!obj}
             title={t('console-app~Zone')}
-            error={!zone}
-            errorMessage={t('console-app~Not available')}
+            error={!zone ? t('console-app~Not available') : undefined}
           >
             {zone}
           </OverviewDetailItem>

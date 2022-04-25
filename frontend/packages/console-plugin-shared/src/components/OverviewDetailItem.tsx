@@ -9,23 +9,20 @@ export type OverviewDetailItemProps = {
   isLoading?: boolean;
   valueClassName?: string;
 
-  error?: boolean;
-  /** Text for error === true, use "Not available" as a fallback */
-  errorMessage?: string;
+  error?: string;
 };
 
 export const OverviewDetailItem: React.FC<OverviewDetailItemProps> = ({
   title,
   isLoading = false,
   children,
-  error = false,
+  error,
   valueClassName,
-  errorMessage,
 }) => {
   let status: React.ReactNode;
 
   if (error) {
-    status = <span className="text-secondary">{errorMessage}</span>;
+    status = <span className="text-secondary">{error}</span>;
   } else if (isLoading) {
     status = <div className="skeleton-text" />;
   } else {
@@ -33,11 +30,11 @@ export const OverviewDetailItem: React.FC<OverviewDetailItemProps> = ({
   }
   return (
     <>
-      <dt className="co-details-card__item-title" data-test="detail-item-title">
+      <dt className="co-overview-details-card__item-title" data-test="detail-item-title">
         {title}
       </dt>
       <dd
-        className={classNames('co-details-card__item-value', valueClassName)}
+        className={classNames('co-overview-details-card__item-value', valueClassName)}
         data-test="detail-item-value"
       >
         {status}

@@ -90,8 +90,7 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
           </OverviewDetailItem>
           <OverviewDetailItem
             title={t('ceph-storage-plugin~Cluster Name')}
-            error={!!ocsError}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={ocsError ? t('ceph-storage-plugin~Not available') : undefined}
             isLoading={!ocsLoaded}
             data-test-id="cluster-name"
           >
@@ -107,8 +106,7 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
           <OverviewDetailItem
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
-            error={!!subscriptionError}
-            errorMessage={t('ceph-storage-plugin~Not available')}
+            error={subscriptionError ? t('ceph-storage-plugin~Not available') : undefined}
             data-test-id="cluster-subscription"
           >
             {subscriptionVersion}
