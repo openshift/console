@@ -4,13 +4,13 @@ Feature: Serving and Eventing pages at Administrator perspective
 
 
         Background:
-            Given user is at administrator perspective
-              And user has created or selected namespace "aut-eventing-empty"
+            Given user has created or selected namespace "aut-eventing-empty"
+              And user is at administrator perspective
 
 
-        @regression @to-do
+        @regression
         Scenario: Empty state of Eventing page: KA-03-TC01
-            Given user is at Eventing page
+            Given user is at eventing page
              Then user will see Create button
               And user will see "No Event Sources found" message on Event Sources tab
               And user will see "No Brokers found" message on Brokers tab
@@ -19,7 +19,7 @@ Feature: Serving and Eventing pages at Administrator perspective
               And user will see "No Subscriptions found" message on Subscriptions tab
 
 
-        @regression @to-do
+        @regression
         Scenario: Empty state of Serving page: KA-03-TC02
             Given user is at Serving page
              Then user will see Create button

@@ -39,6 +39,7 @@ export const pageTitle = {
   Environments: 'Environments',
   PipelineRuns: 'PipelineRuns',
   Eventing: 'Eventing',
+  Serving: 'Serving',
   RedHatOpenShiftServerless: 'Red Hat OpenShift Serverless',
   RedHatCodeReadyWorkspaces: 'Red Hat CodeReady Workspaces',
   CreateKnativeServing: 'Create KnativeServing',

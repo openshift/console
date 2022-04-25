@@ -4,25 +4,24 @@ Feature: Serving page at Administrator perspective
 
 
         Background:
-            Given user is at administrator perspective
-              And user has installed OpenShift Serverless Operator
-              And user has created or selected namespace "aut-serving-page"
+            Given user has created or selected namespace "aut-serving-page"
+              And user has created knative service "hello-openshift"
+              And user is at administrator perspective
 
 
-        @regression @to-do
+        @regression
         Scenario: Create new KSVC using Create button on Serving page: KA-04-TC01
             Given user is at Serving page
              When user clicks on Create button
               And user clicks on Service button
-              And user clicks on Create button
+              And user clicks on Create button to create service
              Then user will be redirected to Service Details page
               And user can see "sample" knative service created
 
 
-        @regression @to-do
+        @regression
         Scenario: Services tab on Serving page: KA-04-TC02
             Given user is at Serving page
-              And user has created knative service "hello-openshift"
              When user clicks on Services tab
              Then user will see Search by name field
               And user can see knative service name "hello-openshift"
@@ -30,9 +29,9 @@ Feature: Serving page at Administrator perspective
               And user can see kebab button
 
 
+        @regression
         Scenario: Revisions tab on Serving page: KA-04-TC03
             Given user is at Serving page
-              And user has created knative service "hello-openshift"
              When user clicks on Revisions tab
              Then user will see Search by name field
               And user can see knative service name "hello-openshift"
@@ -40,9 +39,9 @@ Feature: Serving page at Administrator perspective
               And user can see kebab button
 
 
+        @regression
         Scenario: Routes tab on Serving page: KA-04-TC04
             Given user is at Serving page
-              And user has created knative service "hello-openshift"
              When user clicks on Routes tab
              Then user will see Search by name field
               And user can see knative service name "hello-openshift"
