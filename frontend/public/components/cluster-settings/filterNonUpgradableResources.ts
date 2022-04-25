@@ -1,22 +1,6 @@
 import { K8sGroupVersionKind, K8sModel } from '@console/dynamic-plugin-sdk';
-import { MachineConfigModel } from '@console/internal/models';
 
 const resourcesToOmit: K8sGroupVersionKind[] = [
-  {
-    group: MachineConfigModel.apiGroup,
-    version: MachineConfigModel.apiVersion,
-    kind: MachineConfigModel.kind,
-  },
-  {
-    group: 'machineconfiguration.openshift.io',
-    version: 'v1',
-    kind: 'KubeletConfig',
-  },
-  {
-    group: 'machineconfiguration.openshift.io',
-    version: 'v1',
-    kind: 'ContainerRuntimeConfig',
-  },
   {
     group: 'config.openshift.io',
     version: 'v1',
