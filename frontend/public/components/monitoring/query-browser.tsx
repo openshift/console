@@ -646,6 +646,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const tickInterval = useSelector(
     ({ observe }: RootState) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
   );
+  const lastRequestTime = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'lastRequestTime']),
+  );
 
   const dispatch = useDispatch();
 
@@ -792,7 +795,17 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   }
 
   const queriesKey = _.reject(queries, _.isEmpty).join();
-  usePoll(tick, delay, endTime, filterLabels, namespace, queriesKey, samples, span);
+  usePoll(
+    tick,
+    delay,
+    endTime,
+    filterLabels,
+    namespace,
+    queriesKey,
+    samples,
+    span,
+    lastRequestTime,
+  );
 
   React.useLayoutEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
 
