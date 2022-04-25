@@ -7,8 +7,6 @@ import {
   CodeBlock,
   CodeBlockCode,
   Popover,
-  Split,
-  SplitItem,
 } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
@@ -691,7 +689,7 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         loaded={alerts?.loaded}
         loadError={alerts?.loadError}
       >
-        <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+        <div className="pf-c-page__main-breadcrumb">
           <BreadCrumbs
             breadcrumbs={[
               {
@@ -701,6 +699,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               { name: t('public~Alert details'), path: undefined },
             ]}
           />
+        </div>
+        <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
           <h1 className="co-m-pane__heading">
             <div data-test="resource-title" className="co-resource-item">
               <MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertResource} />
@@ -937,7 +937,7 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         <title>{t('public~{{name}} details', { name: rule?.name || RuleResource.label })}</title>
       </Helmet>
       <StatusBox data={rule} label={RuleResource.label} loaded={loaded} loadError={loadError}>
-        <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+        <div className="pf-c-page__main-breadcrumb">
           <BreadCrumbs
             breadcrumbs={[
               {
@@ -949,6 +949,8 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               { name: t('public~Alerting rule details'), path: undefined },
             ]}
           />
+        </div>
+        <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
           <h1 className="co-m-pane__heading">
             <div data-test="resource-title" className="co-resource-item">
               <MonitoringResourceIcon className="co-m-resource-icon--lg" resource={RuleResource} />
@@ -1128,7 +1130,7 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         loaded={silences?.loaded}
         loadError={silences?.loadError}
       >
-        <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+        <div className="pf-c-page__main-breadcrumb">
           <BreadCrumbs
             breadcrumbs={[
               {
@@ -1141,6 +1143,8 @@ const SilencesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
               { name: t('public~Silence details'), path: undefined },
             ]}
           />
+        </div>
+        <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
           <h1 className="co-m-pane__heading">
             <div data-test="resource-title" className="co-resource-item">
               <MonitoringResourceIcon
@@ -1702,23 +1706,21 @@ const AlertingPage: React.FC<{ match: any }> = ({ match }) => {
 
   return (
     <>
+      {isAlertmanager && (
+        <div className="pf-c-page__main-breadcrumb">
+          <BreadCrumbs
+            breadcrumbs={breadcrumbsForGlobalConfig(
+              'Alertmanager',
+              '/monitoring/alertmanagerconfig',
+            )}
+          />
+        </div>
+      )}
       <div
         className={classNames('co-m-nav-title', 'co-m-nav-title--detail', {
           'co-m-nav-title--breadcrumbs': isAlertmanager,
         })}
       >
-        {isAlertmanager && (
-          <Split style={{ alignItems: 'baseline' }}>
-            <SplitItem isFilled>
-              <BreadCrumbs
-                breadcrumbs={breadcrumbsForGlobalConfig(
-                  'Alertmanager',
-                  '/monitoring/alertmanagerconfig',
-                )}
-              />
-            </SplitItem>
-          </Split>
-        )}
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
