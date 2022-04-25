@@ -1,8 +1,17 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { catalogTypes, addOptions, pageTitle, catalogCards } from '../../constants';
+import { operators } from '@console/dev-console/integration-tests/support/constants/global';
+import { verifyAndInstallOperator } from '@console/dev-console/integration-tests/support/pages';
+import {
+  catalogTypes,
+  devNavigationMenu,
+  addOptions,
+  pageTitle,
+  catalogCards,
+  switchPerspective,
+} from '../../constants';
 import { catalogPO } from '../../pageObjects';
-import { catalogPage, addPage, topologyPage } from '../../pages';
+import { perspective, catalogPage, addPage, navigateTo, topologyPage } from '../../pages';
 
 const d = new Date();
 const timestamp = d.getTime();
@@ -12,6 +21,8 @@ Given('Operator Backed is selected on Developer Catalog page', () => {
 });
 
 Given('user is at OperatorBacked page', () => {
+  perspective.switchTo(switchPerspective.Developer);
+  navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.OperatorBacked);
 });
 
@@ -52,4 +63,55 @@ Then('user will be redirected to Developer Catalog page', () => {
 
 When('user selects knative Kafka card', () => {
   catalogPage.selectCardInCatalog(catalogCards.knativeKafka);
+});
+
+Given('user has installed Service Binding operator', () => {
+  verifyAndInstallOperator(operators.ServiceBinding);
+});
+
+Given('user has installed Crunchy Postgres for Kubernetes operator', () => {
+  verifyAndInstallOperator(operators.CrunchyPostgresforKubernetes);
+});
+
+Given('user enters {string} in Filter by keyword', (filterName: string) => {
+  cy.get(catalogPO.filterKeyword)
+    .scrollIntoView()
+    .click();
+  cy.get(catalogPO.filterKeyword).type(filterName);
+});
+
+Then(
+  'user will see {string} label associated with {string} card',
+  (labelName: string, catalogName: string) => {
+    cy.get(`[data-test^="OperatorBackedService-${catalogName}"]`).within(() => {
+      cy.get(catalogPO.batchLabel)
+        .should('be.visible')
+        .contains(labelName);
+    });
+  },
+);
+
+Then(
+  'user will see {string} label in {string} sidebar',
+  (labelName: string, catalogName: string) => {
+    cy.get(`[data-test^="OperatorBackedService-${catalogName}"]`).click();
+    cy.get(catalogPO.batchLabel)
+      .should('be.visible')
+      .contains(labelName);
+  },
+);
+
+When('user selects Bindable checkbox under Service Binding', () => {
+  cy.get(catalogPO.bindingFilterBindable).within(() => {
+    cy.get(catalogPO.filterCheckBox).click();
+  });
+});
+
+Then('user will see Bindable cards', () => {
+  cy.get(catalogPO.batchLabel).should('contain.text', 'Bindable');
+});
+
+Then('user can see infotip associated with the Service Binding filter', () => {
+  cy.get(catalogPO.filterInfoTip).click();
+  cy.get(catalogPO.filterInfoTipContent).should('be.visible');
 });

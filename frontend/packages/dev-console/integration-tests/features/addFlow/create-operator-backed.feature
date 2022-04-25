@@ -3,15 +3,15 @@ Feature: Create workload from Operator Backed file
               As a user, I want to create the application, component or service from Developer Catalog Operator backed file
 
         Background:
-            Given user has installed OpenShift Serverless Operator
-              And user is at developer perspective
+            Given user is at developer perspective
               And user is at Add page
 
 
 # Below scenario needs to be executed only once. Second time it throws error. So not recommended to execute in automation suite
         @regression @manual
         Scenario: Create the Knative Kafka workload from Operator Backed: A-08-TC01
-            Given user has not created kafka instance in "knative-eventing" namespace
+            Given user has installed OpenShift Serverless Operator
+              And user has not created kafka instance in "knative-eventing" namespace
               And user has created or selected namespace "knative-eventing"
               And user is at OperatorBacked page
              When user selects knative Kafka card
@@ -24,7 +24,8 @@ Feature: Create workload from Operator Backed file
 
         @smoke @manual
         Scenario: Perform cancel operation: A-08-TC02
-            Given user has created or selected namespace "knative-eventing"
+            Given user has installed OpenShift Serverless Operator
+              And user has created or selected namespace "knative-eventing"
               And user is at OperatorBacked page
              When user selects knative Serving card
               And user clicks Create button in side bar
@@ -45,7 +46,7 @@ Feature: Create workload from Operator Backed file
               And user is able to see "jaeger-all-in-one-inmemory1" in Topology page
 
 
-        @regression @to-do @odc-6467
+        @regression @odc-6467
         Scenario: Bindable resource in Operator Backed: A-08-TC05
             Given user has installed Service Binding operator
               And user has installed Crunchy Postgres for Kubernetes operator
@@ -56,7 +57,7 @@ Feature: Create workload from Operator Backed file
               And user will see "Bindable" label in "Postgres Cluster" sidebar
 
 
-        @regression @to-do @odc-6467
+        @regression @odc-6467
         Scenario: Bindable filter for service binding in Operator Backed: A-08-TC06
             Given user has installed Service Binding operator
               And user has installed Crunchy Postgres for Kubernetes operator

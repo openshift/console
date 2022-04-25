@@ -101,6 +101,8 @@ export const gitPO = {
 
 export const catalogPO = {
   search: 'input[placeholder="Filter by keyword..."]',
+  filterKeyword: 'input.pf-c-search-input__text-input',
+  templateTitle: '.catalog-tile-pf-title',
   card: '.pf-c-card',
   cardBadge: 'span.pf-c-badge',
   groupBy: '[data-test-id="dropdown-button"]',
@@ -112,6 +114,12 @@ export const catalogPO = {
   cardList: '[role="grid"]',
   cardHeader: '.pf-c-badge.pf-m-read',
   groupByMenu: 'pf-c-dropdown__menu',
+  catalogBatch: '.odc-catalog-badges',
+  batchLabel: '.odc-catalog-badges__label',
+  bindingFilterBindable: '[data-test="bindable-bindable"]',
+  filterInfoTip: '.co-field-level-help__icon',
+  filterInfoTipContent: '.pf-c-popover__content',
+  filterCheckBox: '[class="pf-c-check__input"]',
   chartRepositoryGroup: '[data-test-group-name="chartRepositoryTitle"]',
   catalogTypeLink: 'li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty',
   catalogTypes: {
