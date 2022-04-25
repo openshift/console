@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   SourceMissingStatus,
   SubscriptionStatus,
 } from '@console/operator-lifecycle-manager/src/components/subscription';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { useKubevirtCsvDetails } from '../../hooks/use-kubevirt-csv-details';
 

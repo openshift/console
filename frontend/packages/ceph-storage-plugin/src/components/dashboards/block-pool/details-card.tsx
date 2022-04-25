@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 
 import { BlockPoolDashboardContext } from './block-pool-dashboard-context';

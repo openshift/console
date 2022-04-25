@@ -1,8 +1,8 @@
 {
-  "name": "@console/plugin-shared",
-  "version": "0.0.0-fixed",
+  "name": "@openshift-console/plugin-shared",
+  "version": "0.0.1",
   "description": "Console plugin shared code",
-  "private": true,
+  "private": false,
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "homepage": "https://github.com/openshift/console/tree/master/frontend/packages/console-plugin-shared",

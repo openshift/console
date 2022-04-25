@@ -10,7 +10,7 @@ import {
 import { FirehoseResource, FirehoseResult, ExternalLink } from '@console/internal/components/utils';
 import { getName, useFlag } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { SecretModel } from '@console/internal/models';
 import { getOCSVersion, getODFVersion } from '../../../selectors';

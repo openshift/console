@@ -10,7 +10,7 @@
     "@console/internal": "0.0.0-fixed",
     "@console/operator-lifecycle-manager": "0.0.0-fixed",
     "@console/local-storage-operator-plugin": "0.0.0-fixed",
-    "@console/plugin-shared": "0.0.0-fixed"
+    "@console/plugin-shared": "file:../console-plugin-shared"
   },
   "consolePlugin": {
     "entry": "src/plugin.ts",

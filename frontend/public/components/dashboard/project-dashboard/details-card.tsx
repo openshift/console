@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, CardActions, Button } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
 import { LabelList, resourcePathFromModel } from '../../utils';
 import { ProjectModel } from '../../../models';

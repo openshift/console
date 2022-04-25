@@ -10,7 +10,7 @@ import {
 } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 

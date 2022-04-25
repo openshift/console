@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getInfrastructurePlatform, useFlag } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import {
   DashboardItemProps,
   withDashboardResources,

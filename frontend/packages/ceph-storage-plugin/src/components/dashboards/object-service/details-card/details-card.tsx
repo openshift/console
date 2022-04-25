@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   DashboardItemProps,

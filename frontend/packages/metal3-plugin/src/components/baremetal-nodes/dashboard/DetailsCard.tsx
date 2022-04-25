@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -8,7 +9,6 @@ import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
 import { resourcePathFromModel, ResourceLink } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import { BareMetalHostModel } from '../../../models';

@@ -4,7 +4,7 @@ import { compose } from 'redux';
 
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import { OverviewDetailItem } from '@console/plugin-shared/src';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import {
