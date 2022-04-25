@@ -749,5 +749,19 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "virtualization",
+      "name": "%kubevirt-plugin~Virtualization%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-virtualization" },
+      "insertBefore": "serverless",
+      "insertAfter": "workloads"
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]

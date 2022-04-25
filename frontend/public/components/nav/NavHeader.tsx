@@ -18,6 +18,8 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { ConsoleLinkModel } from '@console/internal/models';
 import * as acmIcon from '../../imgs/ACM-icon.svg';
 
+import './NavHeader.scss';
+
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
 };

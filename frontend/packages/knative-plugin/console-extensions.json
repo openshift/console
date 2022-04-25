@@ -1712,5 +1712,19 @@
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "serverless",
+      "name": "%knative-plugin~Serverless%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-serverless" },
+      "insertBefore": "networking",
+      "insertAfter": "virtualization"
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
+    }
   }
 ]

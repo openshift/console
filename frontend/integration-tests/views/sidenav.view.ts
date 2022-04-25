@@ -1,6 +1,6 @@
 import { $$, by, browser, element, ExpectedConditions as until } from 'protractor';
 
-const navItemPath = '.pf-c-nav > .pf-c-nav__list > .pf-c-nav__item';
+const navItemPath = '.pf-c-nav .pf-c-nav__item';
 
 export const navSectionFor = (name: string) => element(by.cssContainingText(navItemPath, name));
 

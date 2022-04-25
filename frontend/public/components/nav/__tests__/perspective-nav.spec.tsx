@@ -6,18 +6,13 @@ import { shallow, mount } from 'enzyme';
 import { modelFor } from '@console/internal/module/k8s';
 import { usePinnedResources } from '@console/shared';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
-import { mockPerspectiveExtensions } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
-import { NavGroup } from '@patternfly/react-core';
+import { NavGroup, Nav } from '@patternfly/react-core';
 import store from '../../../redux';
 import { history } from '../../utils';
-import PerspectiveNav from '../perspective-nav';
-import AdminNav from '../admin-nav';
+import PerspectiveNav from '../PerspectiveNav';
 import PinnedResource from '../PinnedResource';
 
 const useActivePerspectiveMock = useActivePerspective as jest.Mock;
-const useExtensionsMock = useExtensions as jest.Mock;
-const setPinnedResourcesMock = jest.fn();
 jest.mock('react', () => ({
   ...require.requireActual('react'),
   useLayoutEffect: require.requireActual('react').useEffect,
@@ -30,7 +25,9 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
 jest.mock('@console/shared/src/hooks/usePinnedResources', () => ({
   usePinnedResources: jest.fn(),
 }));
-jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({ useExtensions: jest.fn() }));
+jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
+  useExtensions: jest.fn(() => []),
+}));
 jest.mock('react-dnd', () => {
   const reactDnd = require.requireActual('react-dnd');
   return {
@@ -45,13 +42,6 @@ describe('Perspective Nav', () => {
     useActivePerspectiveMock.mockClear();
   });
 
-  it('should render Admin nav for admin perspective', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
-    useActivePerspectiveMock.mockReturnValue(['admin', () => {}]);
-    usePinnedResourcesMock.mockReturnValue([['hgh'], setPinnedResourcesMock, true]);
-    const wrapper = shallow(<PerspectiveNav />);
-    expect(wrapper.find(AdminNav).exists()).toBe(true);
-  });
   it('should render draggable pinned items for dev perspective', () => {
     useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
     usePinnedResourcesMock.mockReturnValue([
@@ -74,7 +64,9 @@ describe('Perspective Nav', () => {
     const wrapper = mount(
       <Router history={history}>
         <Provider store={store}>
-          <PerspectiveNav />
+          <Nav>
+            <PerspectiveNav />
+          </Nav>
         </Provider>
       </Router>,
     );
@@ -105,7 +97,9 @@ describe('Perspective Nav', () => {
     const wrapper = mount(
       <Router history={history}>
         <Provider store={store}>
-          <PerspectiveNav />
+          <Nav>
+            <PerspectiveNav />
+          </Nav>
         </Provider>
       </Router>,
     );

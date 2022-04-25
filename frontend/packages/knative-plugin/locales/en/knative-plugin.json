@@ -67,6 +67,7 @@
   "IntegrationPlatforms": "IntegrationPlatforms",
   "KafkaSink": "KafkaSink",
   "KafkaSinks": "KafkaSinks",
+  "Serverless": "Serverless",
   "Add Event Sink": "Add Event Sink",
   "Add Subscription": "Add Subscription",
   "Add Trigger": "Add Trigger",

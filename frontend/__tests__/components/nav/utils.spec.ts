@@ -1,11 +1,8 @@
-import {
-  getSortedNavItems,
-  sortExtensionItems,
-} from '@console/internal/components/nav/navSortUtils';
+import { getSortedNavItems, sortExtensionItems } from '@console/internal/components/nav/utils';
 import { LoadedExtension } from '@console/plugin-sdk/src';
-import { NavItem, NavSection, Separator } from '@console/dynamic-plugin-sdk/src';
+import { NavExtension } from '@console/dynamic-plugin-sdk/src';
 
-const mockNavItems: LoadedExtension<NavSection | NavItem | Separator>[] = [
+const mockNavItems: LoadedExtension<NavExtension>[] = [
   {
     type: 'console.navigation/section',
     properties: {

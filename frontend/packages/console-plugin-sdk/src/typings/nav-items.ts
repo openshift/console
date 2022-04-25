@@ -1,9 +1,7 @@
-import {
-  NavLinkProps,
-  HrefLinkProps,
-  ResourceNSLinkProps,
-  ResourceClusterLinkProps,
-} from '@console/internal/components/nav/items';
+import { NavLinkProps } from '@console/internal/components/nav/NavLink';
+import { NavLinkHrefProps } from '@console/internal/components/nav/NavLinkHref';
+import { NavLinkResourceClusterProps } from '@console/internal/components/nav/NavLinkResourceCluster';
+import { NavLinkResourceNSProps } from '@console/internal/components/nav/NavLinkResourceNS';
 import { Extension } from './base';
 
 namespace ExtensionProperties {
@@ -39,16 +37,16 @@ namespace ExtensionProperties {
 
   export interface HrefNavItem extends NavItem {
     componentProps: NavItem['componentProps'] &
-      Pick<HrefLinkProps, 'namespaced' | 'href' | 'activePath'>;
+      Pick<NavLinkHrefProps, 'namespaced' | 'href' | 'activePath'>;
   }
 
   export interface ResourceNSNavItem extends NavItem {
-    componentProps: NavItem['componentProps'] & Pick<ResourceNSLinkProps, 'resource' | 'model'>;
+    componentProps: NavItem['componentProps'] & Pick<NavLinkResourceNSProps, 'resource' | 'model'>;
   }
 
   export interface ResourceClusterNavItem extends NavItem {
     componentProps: NavItem['componentProps'] &
-      Pick<ResourceClusterLinkProps, 'resource' | 'model'>;
+      Pick<NavLinkResourceClusterProps, 'resource' | 'model'>;
   }
 }
 

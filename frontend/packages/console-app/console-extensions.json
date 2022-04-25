@@ -196,8 +196,8 @@
       },
       "provider": { "$codeRef": "actions.useCronJobActionsProvider" }
     }
-  }, 
-   {
+  },
+  {
     "type": "console.action/resource-provider",
     "properties": {
       "model": {
@@ -347,6 +347,752 @@
         "falseValue": false,
         "defaultValue": false
       }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "home",
+      "name": "%console-app~Home%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-home" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "operators",
+      "name": "%console-app~Operators%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-operators" },
+      "insertAfter": "home"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "workloads",
+      "name": "%console-app~Workloads%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-workloads" },
+      "insertAfter": "operators"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "networking",
+      "name": "%console-app~Networking%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-networking" },
+      "insertAfter": "workloads"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "storage",
+      "name": "%console-app~Storage%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-storage" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "builds",
+      "name": "%console-app~Builds%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-builds" }
+    },
+    "flags": { "required": ["OPENSHIFT"] }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "compute",
+      "name": "%console-app~Compute%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-compute" }
+    },
+    "flags": { "required": ["CAN_LIST_NODE"] }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "usermanagement",
+      "name": "%console-app~User Management%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-usermanagement" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "administration",
+      "name": "%console-app~Administration%",
+      "dataAttributes": { "data-quickstart-id": "qs-nav-administration" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "observe",
+      "insertBefore": ["compute", "usermanagement"],
+      "name": "%console-app~Observe%",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-monitoring"
+      }
+    },
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "dashboards",
+      "name": "%console-app~Overview%",
+      "href": "/dashboards",
+      "activePath": "/dashboards/"
+    },
+    "flags": {
+      "required": ["CAN_GET_NS", "OPENSHIFT", "PROMETHEUS", "MONITORING"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "projects",
+      "insertAfter": "dashboards",
+      "name": "%console-app~Projects%",
+      "resource": "projects"
+    },
+    "flags": { "required": ["OPENSHIFT"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "search",
+      "insertAfter": "projects",
+      "name": "%console-app~Search%",
+      "href": "/search",
+      "namespaced": true,
+      "startsWith": ["search"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "explore",
+      "insertAfter": "search",
+      "name": "%console-app~API Explorer%",
+      "href": "/api-explorer",
+      "startsWith": ["api-explorer", "api-resource"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "home",
+      "id": "events",
+      "insertAfter": "explore",
+      "name": "%console-app~Events%",
+      "resource": "events"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "pods",
+      "name": "%console-app~Pods%",
+      "resource": "pods"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "deployments",
+      "insertAfter": "pods",
+      "name": "%console-app~Deployments%",
+      "resource": "deployments"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "deploymentconfigs",
+      "insertAfter": "deployments",
+      "name": "%console-app~DeploymentConfigs%",
+      "resource": "deploymentconfigs"
+    },
+    "flags": { "required": ["OPENSHIFT"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "statefulsets",
+      "insertAfter": "deploymentconfigs",
+      "name": "%console-app~StatefulSets%",
+      "resource": "statefulsets"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "secrets",
+      "insertAfter": "statefulsets",
+      "name": "%console-app~Secrets%",
+      "resource": "secrets"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "configmaps",
+      "insertAfter": "secrets",
+      "name": "%console-app~ConfigMaps%",
+      "resource": "configmaps"
+    }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "WorkloadsSeparator",
+      "insertAfter": "configmaps",
+      "testID": "WorkloadsSeparator"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "cronjobs",
+      "insertAfter": "WorkloadsSeparator",
+      "name": "%console-app~CronJobs%",
+      "resource": "cronjobs"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "jobs",
+      "insertAfter": "cronjobs",
+      "name": "%console-app~Jobs%",
+      "resource": "jobs"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "daemonsets",
+      "insertAfter": "jobs",
+      "name": "%console-app~DaemonSets%",
+      "resource": "daemonsets"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "replicasets",
+      "insertAfter": "daemonsets",
+      "name": "%console-app~ReplicaSets%",
+      "resource": "replicasets"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "replicationcontrollers",
+      "insertAfter": "replicasets",
+      "name": "%console-app~ReplicationControllers%",
+      "resource": "replicationcontrollers"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "horizontalpodautoscalers",
+      "insertAfter": "replicationcontrollers",
+      "name": "%console-app~HorizontalPodAutoscalers%",
+      "resource": "horizontalpodautoscalers"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "poddisruptionbudgets",
+      "insertAfter": "horizontalpodautoscalers",
+      "name": "%console-app~PodDisruptionBudgets%",
+      "resource": "poddisruptionbudgets"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "networking",
+      "id": "services",
+      "name": "%console-app~Services%",
+      "resource": "services"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "networking",
+      "id": "routes",
+      "insertAfter": "services",
+      "name": "%console-app~Routes%",
+      "resource": "routes"
+    },
+    "flags": { "required": ["OPENSHIFT"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "networking",
+      "id": "ingresses",
+      "insertAfter": "routes",
+      "name": "%console-app~Ingresses%",
+      "resource": "ingresses"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "networking",
+      "id": "networkpolicies",
+      "insertAfter": "ingresses",
+      "name": "%console-app~NetworkPolicies%",
+      "resource": "networkpolicies"
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "persistentvolumes",
+      "name": "%console-app~PersistentVolumes%",
+      "resource": "persistentvolumes"
+    },
+    "flags": { "required": ["CAN_LIST_PV"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "persistentvolumeclaims",
+      "insertAfter": "persistentvolumes",
+      "name": "%console-app~PersistentVolumeClaims%",
+      "resource": "persistentvolumeclaims"
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "storageclasses",
+      "insertAfter": "persistentvolumeclaims",
+      "name": "%console-app~StorageClasses%",
+      "resource": "storageclasses"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumesnapshots",
+      "insertAfter": "storageclasses",
+      "name": "%console-app~VolumeSnapshots%",
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshot"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumesnapshotclasses",
+      "insertAfter": "volumesnapshots",
+      "name": "%console-app~VolumeSnapshotClasses%",
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotClass"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "buildconfigs",
+      "name": "%console-app~BuildConfigs%",
+      "resource": "buildconfigs"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "builds",
+      "insertAfter": "buildconfigs",
+      "name": "%console-app~Builds%",
+      "resource": "builds"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "imagestreams",
+      "insertAfter": "builds",
+      "name": "%console-app~ImageStreams%",
+      "resource": "imagestreams",
+      "startsWith": ["imagestreams", "imagestreamtags"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "nodes",
+      "name": "%console-app~Nodes%",
+      "resource": "nodes"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machines",
+      "insertAfter": "nodes",
+      "name": "%console-app~Machines%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machinesets",
+      "insertAfter": "machines",
+      "name": "%console-app~MachineSets%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machzineautoscaler",
+      "insertAfter": "machinesets",
+      "name": "%console-app~MachineAutoscalers%",
+      "href": "/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler"
+    },
+    "flags": { "required": ["MACHINE_AUTOSCALER"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machinehealthchecks",
+      "insertAfter": "machzineautoscaler",
+      "name": "%console-app~MachineHealthChecks%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck"
+    },
+    "flags": { "required": ["MACHINE_HEALTH_CHECK"] }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "computeseparator",
+      "insertAfter": "machinehealthchecks",
+      "testID": "ComputeSeparator"
+    },
+    "flags": { "required": ["MACHINE_CONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machineconfigs",
+      "insertAfter": "computeseparator",
+      "name": "%console-app~MachineConfigs%",
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfig"
+      }
+    },
+    "flags": { "required": ["MACHINE_CONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machineconfigpools",
+      "insertAfter": "machineconfigs",
+      "name": "%console-app~MachineConfigPools%",
+      "model": {
+        "version": "v1",
+        "group": "machineconfiguration.openshift.io",
+        "kind": "MachineConfigPool"
+      }
+    },
+    "flags": { "required": ["MACHINE_CONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "users",
+      "name": "%console-app~Users%",
+      "model": {
+        "version": "v1",
+        "group": "user.openshift.io",
+        "kind": "User"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT", "CAN_LIST_USERS"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "groups",
+      "insertAfter": "users",
+      "name": "%console-app~Groups%",
+      "model": {
+        "version": "v1",
+        "group": "user.openshift.io",
+        "kind": "Group"
+      }
+    },
+    "flags": { "required": ["OPENSHIFT", "CAN_LIST_GROUPS"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "serviceaccounts",
+      "insertAfter": "groups",
+      "name": "%console-app~ServiceAccounts%",
+      "resource": "serviceaccounts"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "roles",
+      "insertAfter": "serviceaccounts",
+      "name": "%console-app~Roles%",
+      "resource": "roles",
+      "startsWith": ["roles", "clusterroles"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "usermanagement",
+      "id": "rolebindings",
+      "insertAfter": "roles",
+      "name": "%console-app~RoleBindings%",
+      "resource": "rolebindings",
+      "startsWith": ["rolebindings", "clusterrolebindings"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "clustersettings",
+      "name": "%console-app~Cluster Settings%",
+      "href": "/settings/cluster",
+      "activePath": "/settings/cluster/",
+      "startsWith": [
+        "settings/cluster",
+        "settings/idp",
+        "config.openshift.io",
+        "monitoring/alertmanagerconfig",
+        "monitoring/alertmanageryaml"
+      ]
+    },
+    "flags": { "required": ["CLUSTER_VERSION"] }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "namespaces",
+      "insertAfter": "clustersettings",
+      "name": "%console-app~Namespaces%",
+      "resource": "namespaces"
+    },
+    "flags": { "required": ["CAN_LIST_NS"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "resourcequotas",
+      "insertAfter": "namespaces",
+      "name": "%console-app~ResourceQuotas%",
+      "resource": "resourcequotas",
+      "startsWith": ["resourcequotas", "clusterresourcequotas"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "limitranges",
+      "insertAfter": "resourcequotas",
+      "name": "%console-app~LimitRanges%",
+      "resource": "limitranges"
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "administration",
+      "id": "customresourcedefinitions",
+      "insertAfter": "metering",
+      "name": "%console-app~CustomResourceDefinitions%",
+      "resource": "customresourcedefinitions"
+    },
+    "flags": { "required": ["CAN_LIST_CRD"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
+    },
+    "properties": {
+      "perspective": "admin",
+      "section": "observe",
+      "id": "monitoringalerts",
+      "name": "%console-app~Alerting%",
+      "href": "/monitoring/alerts",
+      "startsWith": ["monitoring/alerts", "monitoring/alertrules", "monitoring/silences"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
+    },
+    "properties": {
+      "perspective": "admin",
+      "section": "observe",
+      "id": "monitoringmetrics",
+      "insertAfter": "monitoringalerts",
+      "href": "/monitoring/query-browser",
+      "name": "%console-app~Metrics%"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
+    },
+    "properties": {
+      "perspective": "admin",
+      "section": "observe",
+      "id": "monitoringdashboards",
+      "insertAfter": "monitoringmetrics",
+      "name": "%console-app~Dashboards%",
+      "href": "/monitoring/dashboards"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
+    },
+    "properties": {
+      "perspective": "admin",
+      "section": "observe",
+      "id": "monitoringtargets",
+      "insertAfter": "monitoringdashboards",
+      "name": "%console-app~Targets%",
+      "href": "/monitoring/targets",
+      "startsWith": ["monitoring/targets"]
     }
   }
 ]
