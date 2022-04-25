@@ -602,6 +602,10 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   );
   const span = useSelector(({ observe }: RootState) => observe.getIn(['queryBrowser', 'timespan']));
 
+  const lastRequestTime = useSelector(({ observe }: RootState) =>
+    observe.getIn(['queryBrowser', 'lastRequestTime']),
+  );
+
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {
@@ -620,7 +624,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
     }
   };
 
-  usePoll(tick, pollInterval, namespace, query, span);
+  usePoll(tick, pollInterval, namespace, query, span, lastRequestTime);
 
   React.useEffect(() => {
     setData(undefined);

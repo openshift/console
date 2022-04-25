@@ -208,7 +208,10 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
         const text = _.trim(q.get('text'));
         return isEnabled && query !== text ? q.merge({ query: text, series: undefined }) : q;
       });
-      return state.setIn(['queryBrowser', 'queries'], queries);
+
+      return state
+        .setIn(['queryBrowser', 'queries'], queries)
+        .setIn(['queryBrowser', 'lastRequestTime'], Date.now());
     }
 
     case ActionType.QueryBrowserSetAllExpanded: {
