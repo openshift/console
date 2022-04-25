@@ -283,8 +283,10 @@ ul.pf-c-tree-view__list {
   font-size: $font-size-base !important;
 }
 
-.pf-topology-content {
-  background-color: var(--pf-global--BackgroundColor--200);
+.odc-topology {
+  .pf-topology-content {
+    background-color: var(--pf-global--BackgroundColor--200);
+  }
 }
 
 .pfext-quick-start-footer {
