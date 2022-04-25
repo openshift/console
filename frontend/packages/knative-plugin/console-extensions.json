@@ -451,7 +451,7 @@
       "href": "/catalog/ns/:namespace?catalogType=EventSource&provider=[\"Red+Hat\"]",
       "label": "%knative-plugin~Event Source%",
       "description": "%knative-plugin~Create an Event source to register interest in a class of events from a particular system%",
-      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+      "icon": { "$codeRef": "icons.eventSourceIcon" }
     }
   },
   {
@@ -497,7 +497,7 @@
       "href": "/catalog/ns/:namespace?catalogType=EventSink",
       "label": "%knative-plugin~Event Sink%",
       "description": "%knative-plugin~Create an Event sink to receive incoming events from a particular source%",
-      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+      "icon": { "$codeRef": "icons.eventSinkIcon" }
     }
   },
   {
