@@ -86,7 +86,6 @@ export const PDBFormPage: React.FC<{
           formContext: {
             existingResource,
             selector: resource?.spec?.template?.metadata?.labels,
-            params: match.params,
           },
           yamlContext: {},
         }}

@@ -1321,6 +1321,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: ''
+  namespace: target-ns
 `,
   )
   .setIn(
@@ -1330,6 +1331,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: example
+  namespace: target-ns
 spec:
  maxUnavailable: 0
  selector:
@@ -1344,6 +1346,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: example
+  namespace: target-ns
 spec:
  minAvailable: "25%"
  selector:
