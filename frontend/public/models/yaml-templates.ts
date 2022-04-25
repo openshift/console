@@ -1322,6 +1322,9 @@ kind: PodDisruptionBudget
 metadata:
   name: ''
   namespace: target-ns
+spec:
+  selector:
+    {}
 `,
   )
   .setIn(
