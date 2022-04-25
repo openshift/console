@@ -55,9 +55,9 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   return (
     <GettingStartedCard
       id="developer-features"
-      icon={<FlagIcon color="var(--pf-global--palette--orange-300)" aria-hidden="true" />}
+      icon={<FlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('devconsole~Explore new developer features')}
-      titleColor={'var(--co-global--palette--orange-700)'}
+      titleColor={'var(--co-global--palette--orange-400)'}
       description={t(
         'devconsole~Explore new features and resources within the developer perspective.',
       )}
