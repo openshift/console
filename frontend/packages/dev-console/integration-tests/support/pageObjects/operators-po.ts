@@ -39,6 +39,8 @@ export const operatorsPO = {
       '[data-test="rh-service-binding-operator-redhat-operators-openshift-marketplace"]',
     CrunchyPostgresforKubernetes:
       '[data-test="crunchy-postgres-operator-certified-operators-openshift-marketplace"]',
+    quayContainerSecurity:
+      '[data-test="container-security-operator-redhat-operators-openshift-marketplace"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',

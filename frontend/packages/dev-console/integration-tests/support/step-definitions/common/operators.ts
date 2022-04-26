@@ -37,3 +37,7 @@ Given(
     verifyAndInstallOperator(operator, namespace);
   },
 );
+
+Given('user has installed Quay Container Security Operator', () => {
+  verifyAndInstallOperator(operators.QuayContainerSecurity);
+});

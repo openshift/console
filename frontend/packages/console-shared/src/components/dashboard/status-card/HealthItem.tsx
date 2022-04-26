@@ -43,7 +43,12 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
                 enableFlip
                 maxWidth="21rem"
               >
-                <Button variant="link" isInline className="co-status-card__popup">
+                <Button
+                  variant="link"
+                  isInline
+                  className="co-status-card__popup"
+                  data-test={`${title}`}
+                >
                   {title}
                 </Button>
               </Popover>

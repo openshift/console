@@ -6,3 +6,4 @@ export * from './monitoring-po';
 export * from './operators-po';
 export * from '@console/topology/integration-tests/support/page-objects/topology-po';
 export * from './quickStarts-po';
+export * from './vulnerability-po';

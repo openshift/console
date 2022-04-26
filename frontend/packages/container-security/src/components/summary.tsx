@@ -79,7 +79,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
   const vulnDetailsUrl = `/k8s/ns/${namespace}/${referenceForModel(ImageManifestVulnModel)}`;
 
   return (
-    <Stack hasGutter>
+    <Stack hasGutter data-test="vul popup">
       <StackItem>
         {namespace
           ? t(
@@ -161,7 +161,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
               </div>
               {_.sortBy(_.take([...fixableVulns.values()], 5), [
                 (v) => priorityFor(v.status?.highestSeverity).index,
-              ]).map((v) => (
+              ]).map((v, key) => (
                 <div className="co-status-popup__row" key={v.metadata.name}>
                   <span>
                     <ExclamationTriangleIcon
@@ -173,6 +173,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                           ? `${vulnDetailsUrl}/${v.metadata.name}`
                           : `${baseVulnListUrl}?name=${v.metadata.name}`
                       }
+                      data-test={`vuln-${key}`}
                     >
                       {namespace
                         ? imageNameClamped(v.spec.image)
@@ -194,6 +195,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                     pathname: baseVulnListUrl,
                     search: '?orderBy=desc&sortBy=Fixable',
                   }}
+                  data-test="view-all"
                 >
                   {t('container-security~View all')}
                 </Link>
