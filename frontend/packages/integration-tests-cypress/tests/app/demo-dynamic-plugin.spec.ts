@@ -170,7 +170,7 @@ describe('Demo dynamic plugin test', () => {
   it(`test Test Consumer nav item`, () => {
     nav.sidenav.clickNavLink(['Demo Plugin', 'Test Consumer']);
     cy.byTestID('test-consumer-title').should('contain', 'Extensions of type Console.flag/Model');
-    cy.get('.pf-c-card').should('have.length', 20);
+    cy.get('.pf-c-card').should('have.length', 21);
   });
 
   it(`test Test Utilities nav item`, () => {
