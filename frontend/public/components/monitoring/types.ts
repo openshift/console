@@ -50,19 +50,19 @@ export type MonitoringResource = {
 export type Silences = {
   data: Silence[];
   loaded: boolean;
-  loadError?: string;
+  loadError?: string | Error;
 };
 
 export type Alerts = {
   data: Alert[];
   loaded: boolean;
-  loadError?: string;
+  loadError?: string | Error;
 };
 
 export type Rules = {
   data: Rule[];
   loaded: boolean;
-  loadError?: string;
+  loadError?: string | Error;
 };
 
 type Group = {
@@ -97,12 +97,13 @@ export type ListPageProps = {
   labelFilter?: string;
   labelPath?: string;
   loaded: boolean;
-  loadError?: string;
+  loadError?: any;
   nameFilterID: string;
   reduxID: string;
   Row: React.FC<RowFunctionArgs>;
   rowFilters: RowFilter[];
   showTitle?: boolean;
+  TopAlert?: React.ReactNode
 };
 
 export type Target = {
