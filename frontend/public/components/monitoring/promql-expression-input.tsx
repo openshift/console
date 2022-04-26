@@ -273,12 +273,6 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
     onValueChange('');
   };
 
-  const onChange = (expressionValue: string) => {
-    if (expressionValue !== value) {
-      onValueChange(expressionValue);
-    }
-  };
-
   React.useEffect(() => {
     if (viewRef.current !== null) {
       const currentExpression = viewRef.current.state.doc.toString();
@@ -299,7 +293,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
         });
       },
     }),
-    [viewRef.current],
+    [],
   );
 
   React.useEffect(() => {
@@ -370,7 +364,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
             onSelectionChange?.(target, from, to);
 
             const expressionValue = update.state.doc.toString();
-            onChange(expressionValue);
+            onValueChange(expressionValue);
           }),
         ],
       });
@@ -384,7 +378,7 @@ export const PromQLExpressionInput: React.FC<PromQLExpressionInputProps> = ({
 
       view.focus();
     }
-  }, [metricNames, onChange, onExecuteQuery, placeholder, value]);
+  }, [metricNames, onValueChange, onExecuteQuery, placeholder, value, onSelectionChange, target]);
 
   const handleBlur = () => {
     if (viewRef.current !== null) {

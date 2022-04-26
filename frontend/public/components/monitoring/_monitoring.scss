@@ -450,6 +450,9 @@ $monitoring-line-height: 18px;
 
   tr > :first-child {
     width: 40px;
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: middle;
   }
 }
 
