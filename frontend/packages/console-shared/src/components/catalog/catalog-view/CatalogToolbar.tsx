@@ -61,7 +61,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
       <div className="co-catalog-page__header">
         <div className="co-catalog-page__heading text-capitalize">{title}</div>
         <div className="co-catalog-page__filter">
-          <div ref={inputRef}>
+          <div ref={inputRef} className="co-catalog-page__searchfilter">
             <SearchInput
               className="co-catalog-page__input"
               data-test="search-catalog"

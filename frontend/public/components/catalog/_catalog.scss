@@ -306,6 +306,10 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     flex: 0 0 220px;
     margin: 0 $pf-global-gutter 0 0;
   }
+
+  &__searchfilter {
+    display: inline-flex;
+  }
 }
 
 .co-catalog-page__overlay.pf-c-modal-box {
