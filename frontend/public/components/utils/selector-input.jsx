@@ -132,7 +132,12 @@ export class SelectorInput extends React.Component {
 
     const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => {
       return (
-        <PfLabel className={classNames(this.props.labelClassName)} key={key} onClose={() => onRemove(key)} isTruncated>
+        <PfLabel
+          className={classNames(this.props.labelClassName)}
+          key={key}
+          onClose={() => onRemove(key)}
+          isTruncated
+        >
           {getTagDisplayValue(tag)}
         </PfLabel>
       );
