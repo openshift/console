@@ -1,1 +1,1 @@
-export * from './OverviewDetailItem';
+export * from './OverviewPage';
