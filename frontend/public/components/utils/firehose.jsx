@@ -9,6 +9,7 @@ import { makeReduxID, makeQuery } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
 import {
   getActiveCluster,
+  INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL,
   INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL,
 } from '@console/dynamic-plugin-sdk';
 
@@ -31,28 +32,33 @@ export const processReduxId = ({ k8s }, props) => {
 
   if (!isList) {
     let stuff = k8s.get(reduxID);
-    if (stuff) {
-      stuff = stuff.toJS();
-      // TODO: To cache also single resources we need to remove this attribute.
-      stuff.optional = props.optional;
+    if (!stuff) {
+      return {};
     }
-    return stuff || {};
+    if (!stuff[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+      stuff[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = stuff.toJSON();
+    }
+    stuff = stuff[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+    return { ...stuff, optional: props.optional };
   }
 
   let data = k8s.getIn([reduxID, 'data']);
   const _filters = k8s.getIn([reduxID, 'filters']);
   const selected = k8s.getIn([reduxID, 'selected']);
 
-  if (data) {
-    if (!data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
-      data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = data.toArray().map((a) => {
-        if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
-          a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
+  if (data && data.toArray) {
+    if (!data[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL]) {
+      data[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL] = data.toArray().map((a) => {
+        if (a.toJSON) {
+          if (!a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+            a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = a.toJSON();
+          }
+          return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
         }
-        return a[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+        return a;
       });
     }
-    data = data[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+    data = data[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL];
   }
 
   return {

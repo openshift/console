@@ -7,6 +7,8 @@ import { act, cleanup, render } from '@testing-library/react';
 import { SDKReducers } from '@console/dynamic-plugin-sdk/src/app';
 import { k8sList, k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { setPluginStore, k8sWatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { WatchK8sResources } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResources';
 import { receivedResources } from '../../../actions/k8s';
 import { processReduxId, Firehose } from '../firehose';
 import { PodModel, podData, podList, firehoseChildPropsWithoutModels } from './firehose.data';
@@ -28,13 +30,6 @@ const k8sWatchMock = k8sWatch as jest.Mock;
 let store;
 const Wrapper: React.FC = ({ children }) => <Provider store={store}>{children}</Provider>;
 
-// Object under test
-const resourceUpdate = jest.fn();
-const Child: React.FC = (props) => {
-  resourceUpdate(props);
-  return null;
-};
-
 describe('processReduxId', () => {
   const k8s = ImmutableMap({
     ['Pods']: ImmutableMap({
@@ -45,7 +40,7 @@ describe('processReduxId', () => {
             kind: 'Pod',
             metadata: {
               name,
-              namespace: 'default',
+              namespace: 'my-namespace',
               resourceVersion: '123',
             },
           }),
@@ -58,7 +53,7 @@ describe('processReduxId', () => {
         kind: 'Pod',
         metadata: {
           name: 'my-pod',
-          namespace: 'default',
+          namespace: 'my-namespace',
           resourceVersion: '123',
         },
       }),
@@ -108,17 +103,17 @@ describe('processReduxId', () => {
         {
           apiVersion: 'v1',
           kind: 'Pod',
-          metadata: { name: 'my-pod1', namespace: 'default', resourceVersion: '123' },
+          metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
         },
         {
           apiVersion: 'v1',
           kind: 'Pod',
-          metadata: { name: 'my-pod2', namespace: 'default', resourceVersion: '123' },
+          metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
         },
         {
           apiVersion: 'v1',
           kind: 'Pod',
-          metadata: { name: 'my-pod3', namespace: 'default', resourceVersion: '123' },
+          metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
         },
       ],
       filters: {},
@@ -127,6 +122,21 @@ describe('processReduxId', () => {
       optional: undefined,
       selected: undefined,
     });
+  });
+
+  it('should return the same object twice when calling it twice for a list', () => {
+    const props = {
+      reduxID: 'Pods',
+      kind: 'Pod',
+      isList: true,
+    };
+    const firstTime = processReduxId({ k8s }, props);
+    const secondTime = processReduxId({ k8s }, props);
+    // Exact JSON is tested above.
+    // It returns always a new result object
+    expect(firstTime).not.toBe(secondTime);
+    // But at least the data should be the same
+    expect(firstTime.data).toBe(secondTime.data);
   });
 
   it('should return an Firehose object with data when extract a single item', () => {
@@ -139,14 +149,39 @@ describe('processReduxId', () => {
       data: {
         apiVersion: 'v1',
         kind: 'Pod',
-        metadata: { name: 'my-pod', namespace: 'default', resourceVersion: '123' },
+        metadata: { name: 'my-pod', namespace: 'my-namespace', resourceVersion: '123' },
       },
       optional: undefined,
     });
   });
+
+  it('should return the same object twice when calling it twice for a single item', () => {
+    const props = {
+      reduxID: 'Pods~~~my-pod',
+      kind: 'Pod',
+      isList: false,
+    };
+    const firstTime = processReduxId({ k8s }, props);
+    const secondTime = processReduxId({ k8s }, props);
+    // Exact JSON is tested above.
+    // It returns always a new result object
+    // And it could not be the same because optional parameter could change!
+    expect(firstTime).not.toBe(secondTime);
+    // But at least the data should be the same
+    expect(firstTime.data).toBe(secondTime.data);
+  });
+
+  it('should return different data for isList true and false, but same data when calling multiple times', () => {});
 });
 
 describe('Firehose', () => {
+  // Object under test
+  const resourceUpdate = jest.fn();
+  const Child: React.FC = (props) => {
+    resourceUpdate(props);
+    return null;
+  };
+
   beforeEach(() => {
     // Init k8s redux store with just one model
     setPluginStore({ getExtensionsInUse: () => [] });
@@ -277,7 +312,7 @@ describe('Firehose', () => {
         kind: 'Pod',
         metadata: {
           name,
-          namespace: 'default',
+          namespace: 'my-namespace',
           resourceVersion: '123',
         },
       })),
@@ -370,7 +405,7 @@ describe('Firehose', () => {
         kind: 'Pod',
         metadata: {
           name: 'my-pod',
-          namespace: 'default',
+          namespace: 'my-namespace',
           resourceVersion: '123',
         },
       },
@@ -669,7 +704,7 @@ describe('Firehose', () => {
         kind: 'Pod',
         metadata: {
           name,
-          namespace: 'default',
+          namespace: 'my-namespace',
           resourceVersion: '123',
         },
       })),
@@ -685,7 +720,7 @@ describe('Firehose', () => {
         kind: 'Pod',
         metadata: {
           name: 'my-pod',
-          namespace: 'default',
+          namespace: 'my-namespace',
           resourceVersion: '123',
         },
       },
@@ -823,7 +858,7 @@ describe('Firehose', () => {
         kind: 'Pod',
         metadata: {
           name,
-          namespace: 'default',
+          namespace: 'my-namespace',
           resourceVersion: '123',
         },
       })),
@@ -839,7 +874,7 @@ describe('Firehose', () => {
         kind: 'Pod',
         metadata: {
           name: 'my-pod',
-          namespace: 'default',
+          namespace: 'my-namespace',
           resourceVersion: '123',
         },
       },
@@ -884,9 +919,687 @@ describe('Firehose', () => {
     expect(propsChildA.resources.pods.data[0]).toBe(propsChildB.resources.pods.data[0]);
 
     // pod 'resource' object (with data, loaded, etc.) object
-    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Should be the same?
-    expect(propsChildA.data).not.toBe(propsChildB.pod.data); // Should be the same?
-    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Should be the same?
-    expect(propsChildA.resources.pod.data).not.toBe(propsChildB.resources.pod.data); // Should be the same?
+    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Could be the same?
+    expect(propsChildA.data).toBe(propsChildB.data);
+    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Could be the same?
+    expect(propsChildA.resources.pod.data).toBe(propsChildB.resources.pod.data);
+  });
+});
+
+describe('Firehose together with useK8sWatchResources', () => {
+  // Objects under test
+  const firehoseUpdate = jest.fn();
+  const Child: React.FC = (props) => {
+    firehoseUpdate(props);
+    return null;
+  };
+
+  const resourcesUpdate = jest.fn();
+  const WatchResources: React.FC<{ initResources: WatchK8sResources<{}> }> = ({
+    initResources,
+  }) => {
+    resourcesUpdate(useK8sWatchResources(initResources));
+    return null;
+  };
+
+  beforeEach(() => {
+    // Init k8s redux store with just one model
+    setPluginStore({ getExtensionsInUse: () => [] });
+    store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
+    store.dispatch(
+      receivedResources({
+        models: [PodModel],
+        adminResources: [],
+        allResources: [],
+        configResources: [],
+        clusterOperatorConfigResources: [],
+        namespacedSet: null,
+        safeResources: [],
+        groupVersionMap: {},
+      }),
+    );
+
+    jest.useFakeTimers();
+    jest.resetAllMocks();
+
+    k8sListMock.mockReturnValue(Promise.resolve(podList));
+    k8sGetMock.mockReturnValue(Promise.resolve(podData));
+    const wsMock = {
+      onclose: () => wsMock,
+      ondestroy: () => wsMock,
+      onbulkmessage: () => wsMock,
+      destroy: () => wsMock,
+    };
+    k8sWatchMock.mockReturnValue(wsMock);
+  });
+
+  afterEach(async () => {
+    // Ensure that there is no timer left which triggers a rerendering
+    await act(async () => jest.runAllTimers());
+
+    cleanup();
+
+    // Ensure that there is no unexpected api calls
+    expect(k8sListMock).toHaveBeenCalledTimes(0);
+    expect(k8sGetMock).toHaveBeenCalledTimes(0);
+    expect(k8sWatchMock).toHaveBeenCalledTimes(0);
+    expect(firehoseUpdate).toHaveBeenCalledTimes(0);
+    expect(resourcesUpdate).toHaveBeenCalledTimes(0);
+
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
+  it('should fetch data just once and return the same data for both (Firehose first)', async () => {
+    const resources = [
+      {
+        prop: 'pods',
+        kind: 'Pod',
+        isList: true,
+        namespace: 'my-namespace',
+      },
+      {
+        prop: 'pod',
+        kind: 'Pod',
+        namespace: 'my-namespace',
+        name: 'my-pod',
+      },
+    ];
+    const initResources: WatchK8sResources<{}> = {
+      pods: {
+        kind: 'Pod',
+        namespace: 'my-namespace',
+        isList: true,
+      },
+      pod: {
+        kind: 'Pod',
+        namespace: 'my-namespace',
+        name: 'my-pod',
+      },
+    };
+
+    render(
+      <Wrapper>
+        <Firehose resources={resources}>
+          <Child />
+        </Firehose>
+        <WatchResources initResources={initResources} />
+      </Wrapper>,
+    );
+
+    // Finish API calls
+    await act(async () => jest.runAllTimers());
+
+    // Assert that API calls are just triggered once
+    expect(k8sListMock).toHaveBeenCalledTimes(1);
+    expect(k8sListMock.mock.calls[0]).toEqual([
+      PodModel,
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      true,
+      {},
+      'local-cluster',
+    ]);
+    k8sListMock.mockClear();
+
+    expect(k8sGetMock).toHaveBeenCalledTimes(1);
+    expect(k8sGetMock.mock.calls[0]).toEqual([
+      PodModel,
+      'my-pod',
+      'my-namespace',
+      { cluster: 'local-cluster' },
+      {},
+    ]);
+    k8sGetMock.mockClear();
+
+    // Components was rendered the right amount of time (loaded: false, loaded: true)
+    expect(firehoseUpdate).toHaveBeenCalledTimes(3);
+    expect(resourcesUpdate).toHaveBeenCalledTimes(3);
+    const lastFirehoseChildProps = firehoseUpdate.mock.calls[2][0];
+    const lastUseResourcesHookResult = resourcesUpdate.mock.calls[2][0];
+    firehoseUpdate.mockClear();
+    resourcesUpdate.mockClear();
+
+    // Tests earlier checks the exact format, we focus here on comparing the data instances
+    expect(lastFirehoseChildProps.pods).toBeTruthy();
+    expect(lastFirehoseChildProps.pod).toBeTruthy();
+    expect(lastUseResourcesHookResult.pods).toBeTruthy();
+    expect(lastUseResourcesHookResult.pod).toBeTruthy();
+
+    // Result objects looks different for list (not a requirement, but the status quo)
+    expect(lastFirehoseChildProps.pods).not.toEqual(lastUseResourcesHookResult.pods);
+    // but is the same for single items at the moment (also not a requirement, but the status quo)
+    expect(lastFirehoseChildProps.pod).toEqual(lastUseResourcesHookResult.pod);
+    expect(lastFirehoseChildProps.pod).not.toBe(lastUseResourcesHookResult.pod);
+
+    // The data should be the same!
+    expect(lastFirehoseChildProps.pods.data).toEqual(lastUseResourcesHookResult.pods.data);
+    expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
+
+    // And they also should return the same instance for lists
+    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
+    expect(lastFirehoseChildProps.pods.data[0]).not.toBe(lastUseResourcesHookResult.pods.data[0]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data[1]).not.toBe(lastUseResourcesHookResult.pods.data[1]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data[2]).not.toBe(lastUseResourcesHookResult.pods.data[2]); // Should be the same!!!
+
+    // And they also should return the same instance for single items
+    expect(lastFirehoseChildProps.pod.data).not.toBe(lastUseResourcesHookResult.pod.data); // Should be the same, or?
+  });
+
+  it('should fetch data just once and return the same data for both (useK8sWatchResources first)', async () => {
+    const initResources: WatchK8sResources<{}> = {
+      pods: {
+        kind: 'Pod',
+        namespace: 'my-namespace',
+        isList: true,
+      },
+      pod: {
+        kind: 'Pod',
+        namespace: 'my-namespace',
+        name: 'my-pod',
+      },
+    };
+    const resources = [
+      {
+        prop: 'pods',
+        kind: 'Pod',
+        isList: true,
+        namespace: 'my-namespace',
+      },
+      {
+        prop: 'pod',
+        kind: 'Pod',
+        namespace: 'my-namespace',
+        name: 'my-pod',
+      },
+    ];
+
+    render(
+      <Wrapper>
+        <WatchResources initResources={initResources} />
+        <Firehose resources={resources}>
+          <Child />
+        </Firehose>
+      </Wrapper>,
+    );
+
+    // Finish API calls
+    await act(async () => jest.runAllTimers());
+
+    // Assert that API calls are just triggered once
+    expect(k8sListMock).toHaveBeenCalledTimes(1);
+    expect(k8sListMock.mock.calls[0]).toEqual([
+      PodModel,
+      { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+      true,
+      {},
+      'local-cluster',
+    ]);
+    k8sListMock.mockClear();
+
+    expect(k8sGetMock).toHaveBeenCalledTimes(1);
+    expect(k8sGetMock.mock.calls[0]).toEqual([
+      PodModel,
+      'my-pod',
+      'my-namespace',
+      { cluster: 'local-cluster' },
+      {},
+    ]);
+    k8sGetMock.mockClear();
+
+    // Components was rendered the right amount of time (loaded: false, loaded: true)
+    expect(firehoseUpdate).toHaveBeenCalledTimes(3);
+    expect(resourcesUpdate).toHaveBeenCalledTimes(4);
+    const lastFirehoseChildProps = firehoseUpdate.mock.calls[2][0];
+    const lastUseResourcesHookResult = resourcesUpdate.mock.calls[3][0];
+    firehoseUpdate.mockClear();
+    resourcesUpdate.mockClear();
+
+    // Tests earlier checks the exact format, we focus here on comparing the data instances
+    expect(lastFirehoseChildProps.pods).toBeTruthy();
+    expect(lastFirehoseChildProps.pod).toBeTruthy();
+    expect(lastUseResourcesHookResult.pods).toBeTruthy();
+    expect(lastUseResourcesHookResult.pod).toBeTruthy();
+
+    // Result objects looks different for list (not a requirement, but the status quo)
+    expect(lastFirehoseChildProps.pods).not.toEqual(lastUseResourcesHookResult.pods);
+    // but is the same for single items at the moment (also not a requirement, but the status quo)
+    expect(lastFirehoseChildProps.pod).toEqual(lastUseResourcesHookResult.pod);
+    expect(lastFirehoseChildProps.pod).not.toBe(lastUseResourcesHookResult.pod);
+
+    // The data should be the same!
+    expect(lastFirehoseChildProps.pods.data).toEqual(lastUseResourcesHookResult.pods.data);
+    expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
+
+    // And they also should return the same instance for lists
+    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
+    expect(lastFirehoseChildProps.pods.data[0]).not.toBe(lastUseResourcesHookResult.pods.data[0]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data[1]).not.toBe(lastUseResourcesHookResult.pods.data[1]); // Should be the same!!!
+    expect(lastFirehoseChildProps.pods.data[2]).not.toBe(lastUseResourcesHookResult.pods.data[2]); // Should be the same!!!
+
+    // And they also should return the same instance for single items
+    expect(lastFirehoseChildProps.pod.data).not.toBe(lastUseResourcesHookResult.pod.data); // Should be the same, or?
+  });
+
+  // Regression test for "Git import page crashes after load" on 4.9
+  // https://bugzilla.redhat.com/show_bug.cgi?id=2069621
+  describe('regression test for bug #2069621', () => {
+    // This reproduce the original issue
+    it('should return an array for Firehose isList=true even when useK8sWatchResources isList=false is called without a name (Firehose first)', async () => {
+      const resources = [
+        {
+          prop: 'pods',
+          kind: 'Pod',
+          isList: true,
+          namespace: 'my-namespace',
+        },
+      ];
+      const initResources: WatchK8sResources<{}> = {
+        pods: {
+          kind: 'Pod',
+          namespace: 'my-namespace',
+          name: '', // Should not be supported by the API, but this happens sometimes
+          isList: false,
+          optional: true,
+        },
+      };
+
+      render(
+        <Wrapper>
+          <Firehose resources={resources}>
+            <Child />
+          </Firehose>
+          <WatchResources initResources={initResources} />
+        </Wrapper>,
+      );
+
+      // Finish API calls
+      await act(async () => jest.runAllTimers());
+
+      // Assert that API calls are just triggered once
+      expect(k8sListMock).toHaveBeenCalledTimes(1);
+      expect(k8sListMock.mock.calls[0]).toEqual([
+        PodModel,
+        { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+        true,
+        {},
+        'local-cluster',
+      ]);
+      k8sListMock.mockClear();
+
+      // Components was rendered the right amount of time (loaded: false, loaded: true)
+      expect(firehoseUpdate).toHaveBeenCalledTimes(2);
+      const lastFirehoseChildProps = firehoseUpdate.mock.calls[1][0];
+      firehoseUpdate.mockClear();
+
+      expect(resourcesUpdate).toHaveBeenCalledTimes(2);
+      const lastUseResourcesHookResult = resourcesUpdate.mock.calls[1][0];
+      resourcesUpdate.mockClear();
+
+      // But the Firehose call defines isList correctly and should still work
+      // and should return an array.
+      expect(lastFirehoseChildProps.pods).toEqual({
+        kind: 'Pod',
+        data: ['my-pod1', 'my-pod2', 'my-pod3'].map((name) => ({
+          apiVersion: 'v1',
+          kind: 'Pod',
+          metadata: {
+            name,
+            namespace: 'my-namespace',
+            resourceVersion: '123',
+          },
+        })),
+        loaded: true,
+        loadError: '',
+        filters: {},
+        selected: null,
+        optional: undefined,
+      });
+
+      // The hook should not return any data because the name is missing!
+      // Instead it returns the internal redux state of the list above as object.
+      expect(lastUseResourcesHookResult.pods).toEqual({
+        loaded: true,
+        loadError: '',
+        data: {
+          '(my-namespace)-my-pod1': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+          '(my-namespace)-my-pod2': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+          '(my-namespace)-my-pod3': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+        },
+      });
+    });
+
+    // And this 3 cases tests against other call orders / isList=true/false combinations...
+    it('should return an array for Firehose isList=true even when useK8sWatchResources isList=false is called without a name (useK8sWatchResources first)', async () => {
+      const initResources: WatchK8sResources<{}> = {
+        pods: {
+          kind: 'Pod',
+          namespace: 'my-namespace',
+          name: '', // Should not be supported by the API, but this happens sometimes
+          isList: false,
+          optional: true,
+        },
+      };
+      const resources = [
+        {
+          prop: 'pods',
+          kind: 'Pod',
+          isList: true,
+          namespace: 'my-namespace',
+        },
+      ];
+
+      render(
+        <Wrapper>
+          <WatchResources initResources={initResources} />
+          <Firehose resources={resources}>
+            <Child />
+          </Firehose>
+        </Wrapper>,
+      );
+
+      // Finish API calls
+      await act(async () => jest.runAllTimers());
+
+      // Assert that API calls are just triggered once
+      expect(k8sListMock).toHaveBeenCalledTimes(1);
+      expect(k8sListMock.mock.calls[0]).toEqual([
+        PodModel,
+        { cluster: 'local-cluster', limit: 250, ns: 'my-namespace' },
+        true,
+        {},
+        'local-cluster',
+      ]);
+      k8sListMock.mockClear();
+
+      // Components was rendered the right amount of time (loaded: false, loaded: true)
+      expect(resourcesUpdate).toHaveBeenCalledTimes(3);
+      const lastUseResourcesHookResult = resourcesUpdate.mock.calls[2][0];
+      resourcesUpdate.mockClear();
+
+      expect(firehoseUpdate).toHaveBeenCalledTimes(2);
+      const lastFirehoseChildProps = firehoseUpdate.mock.calls[1][0];
+      firehoseUpdate.mockClear();
+
+      // The hook could not return any data because the name is missing.
+      expect(lastUseResourcesHookResult.pods).toEqual({
+        loaded: true,
+        loadError: '',
+        data: {
+          '(my-namespace)-my-pod1': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+          '(my-namespace)-my-pod2': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+          '(my-namespace)-my-pod3': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+        },
+      });
+
+      // But the Firehose call defines isList correctly and should still work
+      // and should return an array.
+      expect(lastFirehoseChildProps.pods).toEqual({
+        kind: 'Pod',
+        data: ['my-pod1', 'my-pod2', 'my-pod3'].map((name) => ({
+          apiVersion: 'v1',
+          kind: 'Pod',
+          metadata: {
+            name,
+            namespace: 'my-namespace',
+            resourceVersion: '123',
+          },
+        })),
+        loaded: true,
+        loadError: '',
+        filters: {},
+        selected: null,
+        optional: undefined,
+      });
+    });
+
+    // FIXME crashs
+    it.skip('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (Firehose first)', async () => {
+      // Without a name the k8sGet API is called, but it returns a list anyway.
+      k8sGetMock.mockReturnValue(Promise.resolve(podList));
+
+      const resources = [
+        {
+          prop: 'pods',
+          kind: 'Pod',
+          isList: false,
+          namespace: 'my-namespace',
+          name: '',
+        },
+      ];
+      const initResources: WatchK8sResources<{}> = {
+        pods: {
+          kind: 'Pod',
+          namespace: 'my-namespace',
+          isList: true,
+        },
+      };
+
+      render(
+        <Wrapper>
+          <Firehose resources={resources}>
+            <Child />
+          </Firehose>
+          <WatchResources initResources={initResources} />
+        </Wrapper>,
+      );
+
+      // Finish API calls
+      await act(async () => jest.runAllTimers());
+
+      // Assert that API calls are just triggered once
+      expect(k8sGetMock).toHaveBeenCalledTimes(1);
+      expect(k8sGetMock.mock.calls[0]).toEqual([
+        PodModel,
+        '', // Without a name above this calls the get api, but it still returns a list.
+        'my-namespace',
+        { cluster: 'local-cluster' },
+        {},
+      ]);
+      k8sGetMock.mockClear();
+
+      // Components was rendered the right amount of time (loaded: false, loaded: true)
+      expect(firehoseUpdate).toHaveBeenCalledTimes(2);
+      const lastFirehoseChildProps = firehoseUpdate.mock.calls[1][0];
+      firehoseUpdate.mockClear();
+
+      expect(resourcesUpdate).toHaveBeenCalledTimes(2);
+      const lastUseResourcesHookResult = resourcesUpdate.mock.calls[1][0];
+      resourcesUpdate.mockClear();
+
+      // The Firehose call defines isList=false, so it returns the full API response.
+      expect(lastFirehoseChildProps.pods).toEqual({
+        data: {
+          apiVersion: 'v1',
+          items: [
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+          ],
+          kind: 'PodList',
+          metadata: { resourceVersion: '123' },
+        },
+        loaded: true,
+        loadError: '',
+        optional: undefined,
+      });
+
+      // But the hook defines isList=true and converts it automatically to an array.
+      // At the moment it doesn't extract the 'values' key.
+      expect(lastUseResourcesHookResult.pods).toEqual({
+        loaded: true,
+        loadError: '',
+        data: [
+          'v1',
+          'PodList',
+          [
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+          ],
+          { resourceVersion: '123' },
+        ],
+      });
+    });
+
+    // FIXME crashs
+    it.skip('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (useK8sWatchResources first)', async () => {
+      // Without a name the k8sGet API is called, but it returns a list anyway.
+      k8sGetMock.mockReturnValue(Promise.resolve(podList));
+
+      const initResources: WatchK8sResources<{}> = {
+        pods: {
+          kind: 'Pod',
+          namespace: 'my-namespace',
+          isList: true,
+          optional: true,
+        },
+      };
+      const resources = [
+        {
+          prop: 'pods',
+          kind: 'Pod',
+          isList: false,
+          namespace: 'my-namespace',
+          name: '',
+        },
+      ];
+
+      render(
+        <Wrapper>
+          <WatchResources initResources={initResources} />
+          <Firehose resources={resources}>
+            <Child />
+          </Firehose>
+        </Wrapper>,
+      );
+
+      // Finish API calls
+      await act(async () => jest.runAllTimers());
+
+      expect(k8sGetMock).toHaveBeenCalledTimes(1);
+      expect(k8sGetMock.mock.calls[0]).toEqual([
+        PodModel,
+        '', // Without a name above this calls the get api, but it still returns a list.
+        'my-namespace',
+        { cluster: 'local-cluster' },
+        {},
+      ]);
+      k8sGetMock.mockClear();
+
+      // Components was rendered the right amount of time (loaded: false, loaded: true)
+      expect(resourcesUpdate).toHaveBeenCalledTimes(3);
+      const lastUseResourcesHookResult = resourcesUpdate.mock.calls[2][0];
+      resourcesUpdate.mockClear();
+
+      expect(firehoseUpdate).toHaveBeenCalledTimes(2);
+      const lastFirehoseChildProps = firehoseUpdate.mock.calls[1][0];
+      firehoseUpdate.mockClear();
+
+      // The hook could not return any data because the name is missing.
+      expect(lastUseResourcesHookResult.pods).toEqual({
+        data: [
+          'v1',
+          'PodList',
+          [
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+          ],
+          { resourceVersion: '123' },
+        ],
+        loadError: '',
+        loaded: true,
+      });
+
+      // But Firehose can return a pod when  call defines isList correctly and should still work
+      // and should get an array.
+      expect(lastFirehoseChildProps.pods).toEqual({
+        data: {
+          apiVersion: 'v1',
+          items: [
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+            {
+              apiVersion: 'v1',
+              kind: 'Pod',
+              metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
+            },
+          ],
+          kind: 'PodList',
+          metadata: { resourceVersion: '123' },
+        },
+        loaded: true,
+        loadError: '',
+        optional: undefined,
+      });
+    });
   });
 });
