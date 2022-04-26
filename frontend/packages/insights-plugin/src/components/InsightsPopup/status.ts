@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { mapMetrics, isError, isWaiting, isDisabled } from './mappers';
+import { mapMetrics, isError, isWaiting, mapConditions, errorUpload } from './mappers';
 
 const getClusterInsightsComponentStatus = (
   responses: {
@@ -15,10 +15,11 @@ const getClusterInsightsComponentStatus = (
     { response: metricsResponse, error: metricsError },
     { response: operatorStatusResponse, error: operatorStatusError },
   ] = responses;
-  const operatorDisabled = isDisabled(operatorStatusResponse);
+  const conditions = mapConditions(operatorStatusResponse);
+  const operatorDisabled = !!conditions.Disabled;
 
   // Unexpected error
-  if (metricsError || operatorStatusError) {
+  if (metricsError || operatorStatusError || errorUpload(conditions)) {
     return {
       state: HealthState.NOT_AVAILABLE,
       message: i18next.t('insights-plugin~Not available'),

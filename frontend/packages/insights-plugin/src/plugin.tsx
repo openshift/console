@@ -13,7 +13,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: '%insights-plugin~Insights%',
       queries: [
         'health_statuses_insights{metric=~"low|moderate|important|critical"}',
-        'cluster_operator_conditions{name="insights", condition="Disabled"}',
+        'cluster_operator_conditions{name="insights"}',
         'insightsclient_last_gather_time',
       ],
       healthHandler: getClusterInsightsStatus,
