@@ -12,9 +12,7 @@ import {
   isModelFeatureFlag as isDynamicModelFeatureFlag,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
-  ChargebackReportModel,
   ClusterAutoscalerModel,
-  ClusterServiceClassModel,
   ConsoleCLIDownloadModel,
   ConsoleExternalLogLinkModel,
   ConsoleLinkModel,
@@ -49,9 +47,7 @@ export const defaults = _.mapValues(FLAGS, (flag) => {
 });
 
 export const baseCRDs = {
-  [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterAutoscalerModel)]: FLAGS.CLUSTER_AUTOSCALER,
-  [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ConsoleLinkModel)]: FLAGS.CONSOLE_LINK,
   [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,
   [referenceForModel(ConsoleExternalLogLinkModel)]: FLAGS.CONSOLE_EXTERNAL_LOG_LINK,

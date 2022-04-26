@@ -281,7 +281,7 @@ class TemplateForm_ extends React.Component<
               }: TemplateParameter) => {
                 const value = this.state.parameters[name] || '';
                 const helpID = description ? `${name}-help` : '';
-                const placeholder = generate ? '(generated if empty)' : '';
+                const placeholder = generate ? t('public~(generated if empty)') : '';
                 // Only set required for parameters not generated.
                 const requiredInput = requiredParam && !generate;
                 return (

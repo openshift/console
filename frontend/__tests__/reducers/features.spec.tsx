@@ -23,7 +23,6 @@ describe('featureReducer', () => {
       Immutable.Map({
         AUTH_ENABLED: true,
         PROMETHEUS: undefined,
-        CHARGEBACK: undefined,
         OPENSHIFT: undefined,
         MONITORING: false,
         CAN_GET_NS: undefined,
@@ -31,7 +30,6 @@ describe('featureReducer', () => {
         CAN_LIST_NODE: undefined,
         CAN_LIST_PV: undefined,
         CAN_LIST_CRD: undefined,
-        CAN_LIST_CHARGEBACK_REPORTS: undefined,
         CAN_LIST_USERS: undefined,
         CAN_LIST_GROUPS: undefined,
         CAN_LIST_OPERATOR_GROUP: undefined,
@@ -40,7 +38,6 @@ describe('featureReducer', () => {
         CAN_LIST_VSC: undefined,
         CLUSTER_AUTOSCALER: undefined,
         SHOW_OPENSHIFT_START_GUIDE: undefined,
-        SERVICE_CATALOG: undefined,
         CLUSTER_API: undefined,
         CLUSTER_VERSION: undefined,
         MACHINE_CONFIG: undefined,
@@ -88,8 +85,6 @@ describe('featureReducer', () => {
     expect(newState).toEqual(
       initialState.merge({
         [FLAGS.PROMETHEUS]: false,
-        [FLAGS.CHARGEBACK]: false,
-        [FLAGS.SERVICE_CATALOG]: false,
         [FLAGS.CLUSTER_API]: false,
         [FLAGS.MACHINE_CONFIG]: false,
         [FLAGS.MACHINE_AUTOSCALER]: false,

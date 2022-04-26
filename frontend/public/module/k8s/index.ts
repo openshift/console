@@ -2,7 +2,6 @@ export * from './job';
 export * from './k8s';
 export * from './pods';
 export * from './resource';
-export * from './service-catalog';
 export * from './get-resources';
 export * from './k8s-models';
 export * from './label-selector';
