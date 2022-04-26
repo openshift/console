@@ -18,7 +18,7 @@ export const useSchemaLabel = (schema: JSONSchema7, uiSchema: UiSchema, defaultL
   const options = getUiOptions(uiSchema ?? {});
   const showLabel = options?.label ?? true;
   const label = (options?.title || schema?.title) as string;
-  return [showLabel, label || _.startCase(defaultLabel)] as [boolean, string];
+  return [showLabel, label || defaultLabel] as [boolean, string];
 };
 
 export const useSchemaDescription = (

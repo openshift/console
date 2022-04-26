@@ -156,9 +156,9 @@ describe('Using OLM descriptor components', () => {
     cy.get(`#${FIELD_GROUP_ID}_accordion-toggle`)
       .should('exist')
       .click();
-    cy.get(`[for="${FIELD_GROUP_ID}_itemOne"]`).should('have.text', 'Item One');
+    cy.get(`[for="${FIELD_GROUP_ID}_itemOne"]`).should('have.text', 'itemOne');
     cy.get(`#${FIELD_GROUP_ID}_itemOne`).should('have.value', testCR.spec.fieldGroup.itemOne);
-    cy.get(`[for="${FIELD_GROUP_ID}_itemTwo"]`).should('have.text', 'Item Two');
+    cy.get(`[for="${FIELD_GROUP_ID}_itemTwo"]`).should('have.text', 'itemTwo');
     cy.get(`#${FIELD_GROUP_ID}_itemTwo`).should('have.value', testCR.spec.fieldGroup.itemTwo);
   });
 
