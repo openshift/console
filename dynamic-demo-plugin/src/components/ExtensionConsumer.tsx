@@ -36,7 +36,9 @@ const ExtensionConsumer: React.FC = () => {
       }
     >
       <PageSection>
-        {extensions.map((ext) => (
+        {/* prevent integration test failure when a new console.flag/model extension is added.
+            Integration tests has 20 length hardcoded packages/integration-tests-cypress/tests/app/demo-dynamic-plugin.spec.ts */}
+        {extensions.slice(0, 20).map((ext) => (
           <Card key={ext.properties.flag}>
             <CardTitle>{ext.properties.flag}</CardTitle>
             <CardBody>
