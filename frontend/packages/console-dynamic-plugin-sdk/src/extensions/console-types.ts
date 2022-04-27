@@ -152,8 +152,8 @@ export type PrometheusPollProps = {
   /** One of the well-defined Prometheus API endpoints */
   endpoint: PrometheusEndpoint;
   namespace?: string;
-  /** Prometheus query */
-  query: string;
+  /** Prometheus query, polling is skipped when empty or undefined */
+  query?: string;
   /** A search parameter */
   timeout?: string;
   /** A vector-query search parameter */
@@ -166,11 +166,7 @@ export type PrometheusPollProps = {
 
 export type UsePrometheusPoll = (
   props: PrometheusPollProps,
-) => [
-  PrometheusResponse,
-  any /* Caught error. Can be originated by a request or internal processing. */,
-  boolean /* is loading? */,
-];
+) => [PrometheusResponse, boolean, unknown];
 
 export type WatchK8sResource = {
   /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
