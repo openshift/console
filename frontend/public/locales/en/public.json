@@ -1694,6 +1694,7 @@
   "Create snapshot": "Create snapshot",
   "Clone PVC": "Clone PVC",
   "Restore as new PVC": "Restore as new PVC",
+  "Resource is being deleted.": "Resource is being deleted.",
   "Copied to clipboard": "Copied to clipboard",
   "Error loading {{desc}}": "Error loading {{desc}}",
   "No {{selection}} found": "No {{selection}} found",
