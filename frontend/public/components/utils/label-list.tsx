@@ -14,7 +14,7 @@ export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
   const klass = classNames(kindOf, { 'co-m-expand': expand });
 
   return (
-    <PfLabel className={klass} href={href}>
+    <PfLabel className={klass} href={href} isTruncated>
       <span className="co-label__key" data-test="label-key">
         {name}
       </span>
@@ -31,22 +31,22 @@ class TranslatedLabelList extends React.Component<LabelListProps> {
 
   render() {
     const { labels, kind, t, expand = true } = this.props;
-    let list = _.map(labels, (label, key) => (
+    const list = _.map(labels, (label, key) => (
       <Label key={key} kind={kind} name={key} value={label} expand={expand} />
     ));
 
-    if (_.isEmpty(list)) {
-      list = [
-        <div className="text-muted" key="0">
-          {t('public~No labels')}
-        </div>,
-      ];
-    }
-
     return (
-      <PfLabelGroup defaultIsOpen={true} numLabels={20}>
-        {list}
-      </PfLabelGroup>
+      <>
+        {_.isEmpty(list) ? (
+          <div className="text-muted" key="0">
+            {t('public~No labels')}
+          </div>
+        ) : (
+          <PfLabelGroup defaultIsOpen={true} numLabels={20}>
+            {list}
+          </PfLabelGroup>
+        )}
+      </>
     );
   }
 }

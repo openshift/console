@@ -49,7 +49,7 @@ export const vmDetailBootOrder = (namespace, vmName) =>
 export const vmDetailBootOrderEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order-edit'));
 export const vmDetailLabelValue = async (labelKey) => {
-  const filteredLabel = $$('.co-m-label').filter((elem) =>
+  const filteredLabel = $$('.pf-c-label').filter((elem) =>
     elem
       .$('.co-m-label__key')
       .getText()

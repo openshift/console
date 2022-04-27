@@ -26,18 +26,16 @@
 }
 
 // override label and label group default max widths
+.pf-c-label,
 .pf-c-label-group,
-.pf-c-label-group__main,
 .pf-c-label-group__list,
 .pf-c-label-group__list-item,
-.pf-c-label {
+.pf-c-label-group__main {
   max-width: 100%;
 }
 
-.pf-c-label {
-  .pf-c-label__text {
-    --pf-c-label__text--MaxWidth: 100%;
-  }
+.pf-c-label-group .pf-c-label {
+  --pf-c-label__text--MaxWidth: 100%;
 }
 
 .co-label__key,
