@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import * as redux from 'react-redux';
-import { QueryInput } from '@console/internal/components/monitoring/metrics';
 import { Dropdown } from '@console/internal/components/utils';
 import MetricsQueryInput from '../MetricsQueryInput';
+import { QueryInput } from '../QueryInput';
 
 describe('Metrics Query Input', () => {
   // FIXME upgrading redux types is causing many errors at this time

@@ -222,7 +222,8 @@ $screen-phone-landscape-min-width: 567px;
 }
 
 .monitoring-dashboards__variable-dropdown {
-  .pf-c-dropdown__menu, .pf-c-select__menu {
+  .pf-c-dropdown__menu,
+  .pf-c-select__menu {
     max-height: 60vh;
     overflow-y: auto;
   }
@@ -379,6 +380,10 @@ $monitoring-line-height: 18px;
   line-height: 1;
   margin: 0 15px 0 0;
   width: 100%;
+
+  .pf-c-form__helper-text {
+    margin-top: var(--pf-global--spacer--xs);
+  }
 }
 
 .query-browser__query-controls {
@@ -389,9 +394,17 @@ $monitoring-line-height: 18px;
   padding: 10px 0;
 }
 
-.query-browser__query-input {
+.query-browser__query > .query-browser__query-input {
   padding-right: 28px !important;
   resize: vertical;
+  font-family: var(--pf-c-code-block__pre--FontFamily), monospace;
+  font-size: var(--pf-c-code-block__pre--FontSize);
+
+  &:focus-within {
+    --pf-c-form-control--BorderBottomColor: var(--pf-c-form-control--focus--BorderBottomColor);
+    padding-bottom: var(--pf-c-form-control--focus--PaddingBottom);
+    border-bottom-width: var(--pf-c-form-control--focus--BorderBottomWidth);
+  }
 }
 
 .query-browser__series-btn {
@@ -437,6 +450,9 @@ $monitoring-line-height: 18px;
 
   tr > :first-child {
     width: 40px;
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: middle;
   }
 }
 

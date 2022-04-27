@@ -14,7 +14,6 @@ import {
 } from '@console/internal/actions/observe';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import { QueryInput } from '@console/internal/components/monitoring/metrics';
 import { QueryObj } from '@console/internal/components/monitoring/query-browser';
 import {
   Dropdown,
@@ -25,6 +24,7 @@ import {
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { metricsQuery, getTopMetricsQueries } from '../queries';
+import { QueryInput } from './QueryInput';
 import './MetricsQueryInput.scss';
 
 const ADD_NEW_QUERY = '#ADD_NEW_QUERY#';
