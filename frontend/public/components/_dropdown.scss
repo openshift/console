@@ -85,6 +85,13 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   }
 }
 
+.co-namespace-bar--no-project {
+  padding-left: var(--pf-global--spacer--sm);
+  @media screen and (max-width: $pf-global--breakpoint--xl) {
+    margin-left: -0.5rem;
+  }
+}
+
 .co-namespace-selector {
   margin-right: 20px;
   max-width: 60%;
