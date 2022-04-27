@@ -9,7 +9,7 @@ import { nav } from '../../views/nav';
 
 const PLUGIN_NAME = 'console-demo-plugin';
 const PLUGIN_PATH = '../../../dynamic-demo-plugin';
-const CHECK_UPDATE_WAIT = 30000;
+const CHECK_UPDATE_WAIT = 40000;
 const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
 
 /*
@@ -64,7 +64,7 @@ const enableDemoPlugin = (enable: boolean) => {
   } else {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(CHECK_UPDATE_WAIT);
-    cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}.`);
+    cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
   }
   cy.get(warningToast)
     .should('exist')
