@@ -1,6 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import * as staticModels from '@console/internal/models';
 import {
   K8sModel,
   MatchExpression,
@@ -14,6 +13,8 @@ import { Extension } from '../../types';
 import { k8sBasePath } from './k8s';
 import { getReferenceForModel } from './k8s-ref';
 import { WSFactory, WSOptions } from './ws-factory';
+// eslint-disable-next-line
+const staticModels = require('@console/internal/models');
 
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }: K8sModel): string => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
@@ -212,6 +213,7 @@ let k8sModels;
 
 const getK8sModels = () => {
   if (!k8sModels) {
+    // TODO this was migrated from console and is only used for the fallback API discovery and can likely be removed
     k8sModels = modelsToMap(_.values(staticModels));
 
     const hasModel = (model: K8sModel) => k8sModels.has(modelKey(model));
