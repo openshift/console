@@ -74,7 +74,7 @@ $kindsToModifier: (
 }
 
 @each $kind, $color in $kindsToModifier {
-  .pf-c-label {
+  .co-label {
     &.co-m-#{$kind} {
       @extend .pf-m-#{$color};
     }

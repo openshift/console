@@ -26,15 +26,15 @@
 }
 
 // override label and label group default max widths
-.pf-c-label,
-.pf-c-label-group,
-.pf-c-label-group__list,
-.pf-c-label-group__list-item,
-.pf-c-label-group__main {
+.co-label,
+.co-label-group,
+.co-label-group > *,
+.co-label-group ul,
+.co-label-group li {
   max-width: 100%;
 }
 
-.pf-c-label-group .pf-c-label {
+.co-label.pf-c-label {
   --pf-c-label__text--MaxWidth: 100%;
 }
 
@@ -44,10 +44,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  .pf-c-label.co-m-expand & {
-    max-width: 100%;
-  }
 }
 
 tags-input {
@@ -69,7 +65,7 @@ tags-input .host:active {
 }
 
 tags-input .tags {
-  align-items: flex-start;
+  align-content: flex-start;
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
   border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
   color: $input-color;

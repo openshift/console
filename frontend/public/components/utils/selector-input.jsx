@@ -133,7 +133,7 @@ export class SelectorInput extends React.Component {
     const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => {
       return (
         <PfLabel
-          className={classNames(this.props.labelClassName)}
+          className={classNames('co-label', this.props.labelClassName)}
           key={key}
           onClose={() => onRemove(key)}
           isTruncated

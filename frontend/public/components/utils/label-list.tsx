@@ -11,7 +11,7 @@ import { K8sResourceKindReference, kindForReference } from '../../module/k8s';
 export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
   const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
   const kindOf = `co-m-${kindForReference(kind.toLowerCase())}`;
-  const klass = classNames(kindOf, { 'co-m-expand': expand });
+  const klass = classNames(kindOf, { 'co-m-expand': expand }, 'co-label');
 
   return (
     <PfLabel className={klass} href={href} isTruncated>
@@ -42,7 +42,7 @@ class TranslatedLabelList extends React.Component<LabelListProps> {
             {t('public~No labels')}
           </div>
         ) : (
-          <PfLabelGroup defaultIsOpen={true} numLabels={20}>
+          <PfLabelGroup className="co-label-group" defaultIsOpen={true} numLabels={20}>
             {list}
           </PfLabelGroup>
         )}
