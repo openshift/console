@@ -23,6 +23,8 @@ import {
   ClusterGlobalConfig,
   isClusterGlobalConfig,
 } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
+import { useCanClusterUpgrade } from '@console/shared';
+import filterNonUpgradableResources from './filterNonUpgradableResources';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 
@@ -210,9 +212,21 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   );
 };
 
-export const GlobalConfigPage = connect(stateToProps)((props) => {
+export const GlobalConfigPage = connect(stateToProps)(({ configResources, ...props }) => {
   const [resolvedExtensions] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
-  return <GlobalConfigPage_ globalConfigs={resolvedExtensions} {...props} />;
+
+  const canClusterUpgrade = useCanClusterUpgrade();
+  const adjustedConfigResources = canClusterUpgrade
+    ? configResources
+    : configResources.filter(filterNonUpgradableResources);
+
+  return (
+    <GlobalConfigPage_
+      globalConfigs={resolvedExtensions}
+      configResources={adjustedConfigResources}
+      {...props}
+    />
+  );
 });
 
 type GlobalConfigPageExtensionProps = {
