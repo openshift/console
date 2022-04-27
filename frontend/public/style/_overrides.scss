@@ -181,10 +181,11 @@ form.pf-c-form {
   }
 }
 
+:where(:root:not(.pf-theme-dark)) .pf-c-page {
+  --pf-c-page__sidebar--BoxShadow: none;
+}
+
 .pf-c-page__sidebar {
-  @media screen and (min-width: $pf-global--breakpoint--xl) {
-    --pf-c-page__sidebar--BoxShadow: none;
-  }
 
   // Perspective switcher
   &.pf-m-dark .pf-c-dropdown {

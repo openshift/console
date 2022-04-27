@@ -1,17 +1,5 @@
-:root {
-  --os-skeleton--Color: var(--pf-global--palette--black-150);
-  --os-skeleton--Color--300: var(--pf-global--palette--black-300);
-}
-
-[class^="skeleton"] {
-  .pf-theme-dark & {
-    --os-skeleton--Color: var(--pf-global--palette--black-600);
-    --os-skeleton--Color--300: var(--pf-global--palette--black-700)
-  }
-}
-
-$skeleton-color: var(--os-skeleton--Color);
-$skeleton-color--300: var(--os-skeleton--Color--300);
+$skeleton-color: var(--co-skeleton--Color);
+$skeleton-color--300: var(--co-skeleton--Color--300);
 
 $skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
 $skeleton-bone-height-1line: 24px;
