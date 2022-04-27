@@ -169,7 +169,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
     <div className="co-m-pane__body">
       {!loading && (
         <>
-          <p className="co-help-text">
+          <p className="co-help-text co-cluster-paragraph">
             {t('public~Edit the following resources to manage the configuration of your cluster.')}
           </p>
           <div className="co-m-pane__filter-row">

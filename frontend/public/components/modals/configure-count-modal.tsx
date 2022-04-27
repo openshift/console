@@ -50,7 +50,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>{titleKey ? t(titleKey, titleVariables) : title}</ModalTitle>
       <ModalBody>
-        <p>{messageKey ? t(messageKey, messageVariables) : message}</p>
+        <p className="modal-paragraph">{messageKey ? t(messageKey, messageVariables) : message}</p>
         <NumberSpinner
           value={value}
           onChange={(e: any) => setValue(e.target.value)}

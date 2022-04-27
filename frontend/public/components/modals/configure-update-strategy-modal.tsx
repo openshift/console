@@ -44,7 +44,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
             autoFocus={props.strategyType === 'RollingUpdate'}
           >
             <div className="co-m-radio-desc">
-              <p className="text-muted">
+              <p className="text-muted modal-paragraph">
                 {t(
                   'public~Execute a smooth roll out of the new revision, based on the settings below',
                 )}

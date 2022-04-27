@@ -184,7 +184,7 @@ export class AddSecretToWorkloadModalWithTrans extends React.Component<
       >
         <ModalTitle>{t('public~Add secret to workload')}</ModalTitle>
         <ModalBody>
-          <p>
+          <p className="modal-paragraph">
             <Trans t={t} ns="public">
               Add all values from <ResourceIcon kind="Secret" />
               {{ secretName }} to a workload as environment variables or a volume.
