@@ -18,7 +18,7 @@ import { PipelineRunModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { pipelinesTab } from '../../utils/pipeline-utils';
-import { DEFAULT_SAMPLES, TektonResourceLabel } from './const';
+import { DEFAULT_SAMPLES, PIPELINE_NAMESPACE, TektonResourceLabel } from './const';
 
 type Match = RMatch<{ url: string }>;
 
@@ -73,6 +73,7 @@ export const usePipelineSuccessRatioPoll = ({ delay, namespace, name, timespan, 
       samples: 1,
       endTime: Date.now(),
       timespan,
+      namespace: PIPELINE_NAMESPACE,
     }),
     delay,
     namespace,
@@ -91,6 +92,7 @@ export const usePipelineRunTaskRunPoll = ({ delay, namespace, name, timespan, qu
       samples: DEFAULT_SAMPLES,
       endTime: Date.now(),
       timespan,
+      namespace: PIPELINE_NAMESPACE,
     }),
     delay,
     namespace,
@@ -112,6 +114,7 @@ export const usePipelineRunDurationPoll = ({
       samples: DEFAULT_SAMPLES,
       endTime: Date.now(),
       timespan,
+      namespace: PIPELINE_NAMESPACE,
     }),
     delay,
     namespace,
@@ -127,6 +130,7 @@ export const usePipelineRunPoll = ({ delay, namespace, name, timespan, queryPref
       samples: DEFAULT_SAMPLES,
       endTime: Date.now(),
       timespan,
+      namespace: PIPELINE_NAMESPACE,
     }),
     delay,
     namespace,
