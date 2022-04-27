@@ -103,13 +103,15 @@ const Details = withRouter<DetailsProps>(({ loaded, loadError, match, targets })
       <Helmet>
         <title>{t('public~Target details')}</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+      <div className="pf-c-page__main-breadcrumb">
         <BreadCrumbs
           breadcrumbs={[
             { name: t('public~Targets'), path: '/monitoring/targets' },
             { name: t('public~Target details'), path: undefined },
           ]}
         />
+      </div>
+      <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
         <h1 className="co-m-pane__heading">
           <div className="co-resource-item">{scrapeUrl}</div>
         </h1>
