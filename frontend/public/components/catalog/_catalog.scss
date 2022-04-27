@@ -22,6 +22,10 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   min-width: 515px; // in order to accommodate filters and tiles at mobile
 }
 
+.co-catalog-item-info {
+  margin-bottom: 20px;
+}
+
 // Prevents our tile text from inheriting the link color
 .co-catalog-tile {
   color: var(--pf-global--Color--100);

@@ -34,7 +34,6 @@ export * from './copy-to-clipboard';
 export * from './build-hooks';
 export * from './webhooks';
 export * from './scroll-to-top-on-mount';
-export * from './service-catalog-status';
 export * from './container-table';
 export * from './simple-tab-nav';
 export * from './request-size-input';

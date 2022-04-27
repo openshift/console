@@ -9,9 +9,6 @@ import { roleType } from '../RBAC';
 import {
   K8sResourceKind,
   MachineKind,
-  serviceCatalogStatus,
-  serviceClassDisplayName,
-  servicePlanDisplayName,
   getClusterOperatorStatus,
   getTemplateInstanceStatus,
   VolumeSnapshotKind,
@@ -196,15 +193,6 @@ export const tableFilters: FilterMap = {
     return statuses.selected.includes(status) || !_.includes(statuses.all, status);
   },
 
-  'catalog-status': (statuses, catalog) => {
-    if (!statuses || !statuses.selected || !statuses.selected.length) {
-      return true;
-    }
-
-    const status = serviceCatalogStatus(catalog);
-    return statuses.selected.includes(status) || !_.includes(statuses.all, status);
-  },
-
   'secret-type': (types, secret) => {
     if (!types || !types.selected || !types.selected.length) {
       return true;
@@ -228,17 +216,6 @@ export const tableFilters: FilterMap = {
 
     const phase = pvc.status.phase;
     return phases.selected.includes(phase) || !_.includes(phases.all, phase);
-  },
-
-  // Filter service classes by text match
-  'service-class': (str, serviceClass) => {
-    const displayName = serviceClassDisplayName(serviceClass);
-    return fuzzyCaseInsensitive(str.selected?.[0], displayName);
-  },
-
-  'service-plan': (str, servicePlan) => {
-    const displayName = servicePlanDisplayName(servicePlan);
-    return fuzzyCaseInsensitive(str.selected?.[0], displayName);
   },
 
   'cluster-operator-status': (statuses, operator) => {

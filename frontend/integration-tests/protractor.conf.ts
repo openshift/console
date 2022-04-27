@@ -187,8 +187,6 @@ export const config = {
     // Use a string rather than boolean so it can be specified on the command line:
     // $ yarn test-protractor --params.openshift true
     openshift: 'false',
-    // Set to 'true' to enable Service Catalog resources in the crud scenario.
-    servicecatalog: 'false',
   },
 };
 

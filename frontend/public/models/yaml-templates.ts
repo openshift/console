@@ -195,37 +195,6 @@ spec:
 `,
   )
   .setIn(
-    [referenceForModel(k8sModels.ChargebackReportModel), 'default'],
-    `
-apiVersion: metering.openshift.io/v1
-kind: Report
-metadata:
-  name: namespace-memory-request
-  namespace: openshift-metering
-spec:
-  query: namespace-memory-request
-  reportingStart: '${new Date().getFullYear()}-01-01T00:00:00Z'
-  reportingEnd: '${new Date().getFullYear()}-12-31T23:59:59Z'
-  runImmediately: true
-`,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ReportQueryModel), 'default'],
-    `
-apiVersion: metering.openshift.io/v1
-kind: ReportQuery
-metadata:
-  name: example
-  namespace: openshift-metering
-spec:
-  columns:
-  - name: the_time
-    type: timestamp
-  query: |
-    SELECT now() AS the_time;
-`,
-  )
-  .setIn(
     [referenceForModel(k8sModels.DeploymentModel), 'default'],
     `
 apiVersion: apps/v1
@@ -890,17 +859,6 @@ metadata:
 users:
 - user1
 - user2
-`,
-  )
-  .setIn(
-    [referenceForModel(k8sModels.ClusterServiceBrokerModel), 'default'],
-    `
-apiVersion: servicecatalog.k8s.io/v1beta1
-kind: ClusterServiceBroker
-metadata:
-  name: example-cluster-service-broker
-spec:
-  url: https://example.com/broker/
 `,
   )
   .setIn(
