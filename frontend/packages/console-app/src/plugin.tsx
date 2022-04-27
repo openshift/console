@@ -114,7 +114,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
       // t('console-app~Control Plane status')
       popupTitle: '%console-app~Control Plane status%',
-      disallowedProviders: ['IBMCloud'],
+      disallowedControlPlaneTopology: ['External'],
     },
   },
   {

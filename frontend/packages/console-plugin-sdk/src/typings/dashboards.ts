@@ -80,10 +80,8 @@ namespace ExtensionProperties {
      */
     popupTitle?: string;
 
-    /**
-     * Cloud providers which for which the subsystem should be hidden.
-     */
-    disallowedProviders?: string[];
+    /** Control plane topology for which the subsystem should be hidden. */
+    disallowedControlPlaneTopology?: string[];
   }
 
   export interface DashboardsOverviewHealthResourceSubsystem<R extends ResourcesObject>
