@@ -12,7 +12,7 @@ const PLUGIN_PATH = '../../../dynamic-demo-plugin';
 const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
 /* The update wait is the value to wait for the poll of /api/check-updates to return with the updated list of plugins
  after the plugin is enabled and loaded. This wait will be longer on ci than when debugging locally. */
-const CHECK_UPDATE_WAIT = 60000;
+const CHECK_UPDATE_WAIT = 300000;
 
 /*
   These tests are meant to:
