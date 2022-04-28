@@ -36,7 +36,7 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
         imageFeatures: {
           name: 'Image Features',
           hintText: 'Ceph RBD image features',
-          value: 'layering',
+          value: 'layering,deep-flatten,exclusive-lock,object-map,fast-diff',
           visible: () => false,
         },
         'csi.storage.k8s.io/provisioner-secret-name': {
