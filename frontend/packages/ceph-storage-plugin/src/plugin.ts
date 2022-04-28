@@ -92,6 +92,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.COMMON_FLAG],
     },
   },
   {
@@ -101,6 +102,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.ODF_WIZARD],
     },
   },
   {
@@ -110,6 +112,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.COMMON_FLAG],
     },
   },
   {
@@ -119,6 +122,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.COMMON_FLAG],
     },
   },
   {
@@ -128,6 +132,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [ODF_MODEL_FLAG],
+      disallowed: [FEATURES.COMMON_FLAG],
     },
   },
   {
@@ -137,6 +142,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.COMMON_FLAG],
     },
   },
   {
@@ -159,6 +165,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/create-storage-system/create-storage-system' /* webpackChunkName: "create-storage-system" */
         ).then((m) => m.default),
+    },
+    flags: {
+      disallowed: [FEATURES.ODF_WIZARD],
     },
   },
   {
@@ -248,6 +257,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           });
       },
     },
+    flags: {
+      disallowed: [FEATURES.BLOCK_POOL],
+    },
   },
   {
     type: 'Dashboards/Overview/Activity/Resource',
@@ -281,6 +293,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           (m) => m.default,
         ),
     },
+    flags: {
+      disallowed: [FEATURES.MCG_RESOURCE],
+    },
   },
   {
     type: 'Page/Route',
@@ -296,6 +311,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/create-backingstore-page/create-bs-page' /* webpackChunkName: "create-bs" */
         ).then((m) => m.default),
+    },
+    flags: {
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   {
@@ -313,6 +331,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/namespace-store/create-namespace-store' /* webpackChunkName: "create-namespace-store" */
         ).then((m) => m.default),
     },
+    flags: {
+      disallowed: [FEATURES.MCG_RESOURCE],
+    },
   },
   {
     type: 'Page/Resource/List',
@@ -325,6 +346,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   {
@@ -338,6 +360,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   {
@@ -351,6 +374,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   {
@@ -364,6 +388,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_MODEL_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   {
@@ -377,6 +402,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   // When RGW is available without MCG
@@ -391,7 +417,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [RGW_FLAG],
-      disallowed: [MCG_FLAG],
+      disallowed: [MCG_FLAG, FEATURES.MCG_RESOURCE],
     },
   },
   {
@@ -442,6 +468,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   {
@@ -453,6 +480,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/block-pool/create-block-pool' /* webpackChunkName: "create-block-pool" */
         ).then((m) => m.default),
+    },
+    flags: {
+      disallowed: [FEATURES.BLOCK_POOL],
     },
   },
   {
@@ -473,6 +503,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             console.error('Error loading block Pool Modal', e);
           });
       },
+    },
+    flags: {
+      disallowed: [FEATURES.BLOCK_POOL],
     },
   },
   {
@@ -545,6 +578,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl
@@ -567,6 +601,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl
@@ -589,6 +624,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+      disallowed: [FEATURES.MCG_RESOURCE],
     },
   },
 ];
