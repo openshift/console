@@ -25,17 +25,19 @@
   }
 }
 
-// override label and label group default max widths
-.co-label,
-.co-label-group,
-.co-label-group > *,
-.co-label-group ul,
-.co-label-group li {
+.co-label.pf-c-label {
+  --pf-c-label__text--MaxWidth: 100%;
+}
+
+.co-label-group {
   max-width: 100%;
 }
 
-.co-label.pf-c-label {
-  --pf-c-label__text--MaxWidth: 100%;
+.co-label,
+.co-label-group > *,
+.co-label-group li,
+.co-label-group ul {
+  min-width: 0;
 }
 
 .co-label__key,
