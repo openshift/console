@@ -94,6 +94,13 @@ export const addPage = {
         detailsPage.titleShouldContain(pageTitle.Broker);
         cy.testA11y(pageTitle.Broker);
         break;
+      case 'Event Sink':
+      case addOptions.EventSink:
+        cy.byTestID('item knative-event-sink').click();
+        app.waitForLoad();
+        detailsPage.titleShouldContain(pageTitle.EventSink);
+        cy.testA11y(pageTitle.EventSink);
+        break;
       default:
         throw new Error(`Unable to find the "${card}" card on Add page`);
     }

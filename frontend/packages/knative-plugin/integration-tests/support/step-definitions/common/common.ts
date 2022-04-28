@@ -17,6 +17,7 @@ import {
   createGitWorkloadIfNotExistsOnTopologyPage,
   createEventSourcePage,
   verifyAndInstallKnativeOperator,
+  createChannel,
 } from '@console/dev-console/integration-tests/support/pages';
 
 Given('user is at developer perspective', () => {
@@ -131,4 +132,8 @@ Then('modal with {string} appears', (header: string) => {
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();
+});
+
+Given('user has created channel {string}', (channelName: string) => {
+  createChannel(channelName);
 });

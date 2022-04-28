@@ -7,6 +7,7 @@ export const pageTitle = {
   PipelineBuilder: 'Pipeline builder',
   EventSource: 'Event Sources',
   CreateEventSource: 'Create Event Source',
+  EventSink: 'Event Sinks',
   upgradeHelmRelease: 'Upgrade Helm Release',
   Channel: 'Channel',
   Broker: 'Broker',
