@@ -38,17 +38,37 @@ const addKnativeTopologyData = (
   addToTopologyDataModel(knativeResourceDataModel, graphModel);
 };
 
+const getKnativeTopologyDataUtils = () => [
+  getKnativeServingRevisions,
+  getKnativeServingConfigurations,
+  getKnativeServingRoutes,
+  getKnativeServingServices,
+  getKnativeServingDomainMapping,
+];
+
+export const getKafkaSinkKnativeTopologyData = (
+  namespace: string,
+  resources: TopologyDataResources,
+): Promise<Model> => {
+  const knativeTopologyGraphModel: Model = { nodes: [], edges: [] };
+  const kafkaSinks = resources?.kafkasinks?.data ?? [];
+  const addTopologyData = (KnResources: K8sResourceKind[], type?: string) => {
+    addKnativeTopologyData(
+      knativeTopologyGraphModel,
+      KnResources,
+      type,
+      resources,
+      getKnativeTopologyDataUtils(),
+    );
+  };
+  addTopologyData(kafkaSinks, NodeType.KafkaSink);
+  return Promise.resolve(knativeTopologyGraphModel);
+};
+
 export const getKnativeTopologyDataModel = (
   namespace: string,
   resources: TopologyDataResources,
 ): Promise<Model> => {
-  const utils = [
-    getKnativeServingRevisions,
-    getKnativeServingConfigurations,
-    getKnativeServingRoutes,
-    getKnativeServingServices,
-    getKnativeServingDomainMapping,
-  ];
   const eventSourceProps = getDynamicEventSourcesModelRefs();
   const channelResourceProps = getDynamicChannelModelRefs();
   const knativeTopologyGraphModel: Model = { nodes: [], edges: [] };
@@ -73,7 +93,13 @@ export const getKnativeTopologyDataModel = (
     resources,
   );
   const addTopologyData = (KnResources: K8sResourceKind[], type?: string) => {
-    addKnativeTopologyData(knativeTopologyGraphModel, KnResources, type, resources, utils);
+    addKnativeTopologyData(
+      knativeTopologyGraphModel,
+      KnResources,
+      type,
+      resources,
+      getKnativeTopologyDataUtils(),
+    );
   };
 
   addTopologyData(knSvcResources, NodeType.KnService);
@@ -84,7 +110,7 @@ export const getKnativeTopologyDataModel = (
   addTopologyData(camelSourceKameletBindings, NodeType.EventSource);
   addTopologyData(camelSinkKameletBindings, NodeType.EventSink);
 
-  const revisionData = getRevisionsData(knRevResources, resources, utils);
+  const revisionData = getRevisionsData(knRevResources, resources, getKnativeTopologyDataUtils());
 
   knativeTopologyGraphModel.nodes.forEach((n) => {
     if (n.type === NodeType.KnService) {

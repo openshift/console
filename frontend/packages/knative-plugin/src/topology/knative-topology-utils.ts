@@ -491,7 +491,7 @@ export const getKnativeServiceData = (
   const configurations = getOwnedResources(resource, resources.configurations?.data);
   const revisions = getKnativeRevisionsData(resource, resources);
   const ksroutes = resources.ksroutes
-    ? getOwnedResources(resource, resources.ksroutes.data)
+    ? getOwnedResources(resource, resources.ksroutes?.data)
     : undefined;
   const eventSources = getSubscribedPubSubNodes(resource, resources);
   const overviewItem: KnativeItem = {
@@ -1060,11 +1060,11 @@ const getOwnedEventSourceData = (
 };
 
 const getOwnedEventSinkData = (resource: K8sResourceKind, data: TopologyDataObject, resources) => {
-  const ownedIntegrationData = getOwnedResources(resource, resources.integrations.data);
-  const ownedServiceData = getOwnedResources(ownedIntegrationData[0], resources.ksservices.data);
+  const ownedIntegrationData = getOwnedResources(resource, resources.integrations?.data);
+  const ownedServiceData = getOwnedResources(ownedIntegrationData[0], resources.ksservices?.data);
   const ownedDeploymentData = getOwnedResources(
     ownedIntegrationData[0],
-    resources.deployments.data,
+    resources.deployments?.data,
   );
   let knServiceData = {};
   if (ownedServiceData.length > 0) {
@@ -1159,6 +1159,7 @@ export const transformKnNodeData = (
   _.forEach(knResourcesData, (res) => {
     const item = createKnativeDeploymentItems(res, resources, utils);
     switch (type) {
+      case NodeType.KafkaSink:
       case NodeType.EventSink: {
         const data = createEventSinkTopologyNodeData(res, item, type);
         const itemData = getOwnedEventSinkData(res, data, resources);

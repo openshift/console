@@ -33,8 +33,9 @@ const SimpleTabNavWrapper: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
 };
 
 const SideBarBody: React.FC<{ element: GraphElement }> = ({ element }) => {
+  const uid = element.getId();
   return (
-    <SideBarTabLoader element={element}>
+    <SideBarTabLoader key={uid} element={element}>
       {(tabs, loaded) => (loaded ? <SimpleTabNavWrapper tabs={tabs} /> : null)}
     </SideBarTabLoader>
   );

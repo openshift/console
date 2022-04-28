@@ -26,7 +26,9 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import {
+  CamelKameletBindingModel,
   EventingBrokerModel,
+  KafkaSinkModel,
   ServiceModel as KnativeServiceModel,
 } from '@console/knative-plugin/src/models';
 import {
@@ -236,6 +238,10 @@ export const cleanUpWorkload = async (
       break;
     case KnativeServiceModel.kind:
       batchDeleteRequests(knativeDeleteModels, resourceData);
+      break;
+    case CamelKameletBindingModel.kind:
+    case KafkaSinkModel.kind:
+      deleteRequest(resourceModel, resource);
       break;
     default:
       break;

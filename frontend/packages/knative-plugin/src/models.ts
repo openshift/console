@@ -262,3 +262,21 @@ export const CamelKameletModel: K8sKind = {
   crd: true,
   color: knativeEventingColor.value,
 };
+
+export const KafkaSinkModel: K8sKind = {
+  apiGroup: 'eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'KafkaSink',
+  label: 'KafkaSink',
+  // t('knative-plugin~KafkaSink')
+  labelKey: 'knative-plugin~KafkaSink',
+  labelPlural: 'KafkaSinks',
+  // t('knative-plugin~KafkaSinks')
+  labelPluralKey: 'knative-plugin~KafkaSinks',
+  plural: 'kafkasinks',
+  id: 'kafkasink',
+  abbr: 'KS',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};

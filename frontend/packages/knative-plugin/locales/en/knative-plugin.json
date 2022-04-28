@@ -65,6 +65,8 @@
   "Kamelets": "Kamelets",
   "IntegrationPlatform": "IntegrationPlatform",
   "IntegrationPlatforms": "IntegrationPlatforms",
+  "KafkaSink": "KafkaSink",
+  "KafkaSinks": "KafkaSinks",
   "Add Event Sink": "Add Event Sink",
   "Add Subscription": "Add Subscription",
   "Add Trigger": "Add Trigger",

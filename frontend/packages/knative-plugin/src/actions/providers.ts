@@ -27,6 +27,7 @@ import {
   TYPE_REVISION_TRAFFIC,
   TYPE_KAFKA_CONNECTION_LINK,
   TYPE_EVENT_SINK,
+  TYPE_KAFKA_SINK,
 } from '../topology/const';
 import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
 import { AddBrokerAction } from './add-broker';
@@ -310,8 +311,13 @@ export const useKnativeEventSinkActionProvider = (element: Node) => {
   const [k8sModel] = useK8sModel(referenceFor(resource));
   const actions = React.useMemo(() => {
     const type = element.getType();
-    if (type !== TYPE_EVENT_SINK || !k8sModel) return undefined;
-    return k8sModel && resource ? getCommonResourceActions(k8sModel, resource) : undefined;
+    if ((type !== TYPE_EVENT_SINK && type !== TYPE_KAFKA_SINK) || !k8sModel) return undefined;
+    return k8sModel && resource
+      ? [
+          getModifyApplicationAction(k8sModel, resource),
+          ...getCommonResourceActions(k8sModel, resource),
+        ]
+      : undefined;
   }, [element, k8sModel, resource]);
 
   return React.useMemo(() => {

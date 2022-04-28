@@ -7,3 +7,6 @@ export {
   providerProvidesServiceBinding,
   providerCreateServiceBinding,
 } from './relationship-provider';
+
+export { getKafkaSinkKnativeTopologyData } from './data-transformer';
+export { getKafkaSinkComponentFactory } from './components/knativeComponentFactory';

@@ -121,6 +121,17 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KafkaSink"
+      },
+      "flag": "FLAG_KAFKA_SINK"
+    }
+  },
+  {
     "type": "console.page/resource/list",
     "properties": {
       "model": {
@@ -1572,6 +1583,19 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "eventing.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KafkaSink"
+      },
+      "label": "%knative-plugin~KafkaSink%",
+      "labelPlural": "%knative-plugin~KafkaSinks%",
+      "abbr": "KS"
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "eventingContext.EventingContextProvider" },
@@ -1616,6 +1640,40 @@
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-kafka-sink-topology-data-factory",
+      "priority": "99",
+      "resources": {
+        "kafkasinks": {
+          "model": {
+            "group": "eventing.knative.dev",
+            "version": "v1alpha1",
+            "kind": "KafkaSink"
+          },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "getDataModel": {
+        "$codeRef": "topology.getKafkaSinkKnativeTopologyData"
+      }
+    },
+    "flags": {
+      "required": ["FLAG_KAFKA_SINK"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.getKafkaSinkComponentFactory"
+      }
+    },
+    "flags": {
+      "required": ["FLAG_KAFKA_SINK"]
     }
   }
 ]
