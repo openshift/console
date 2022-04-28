@@ -220,6 +220,9 @@ const VaultConnectionForm: React.FC<VaultConnectionFormProps> = ({
 
   const isValid = (value: boolean) => (value ? ValidatedOptions.default : ValidatedOptions.error);
 
+  const { encryption } = state;
+  const isScEncryption = encryption.storageClass;
+
   return (
     <>
       <FormGroup
@@ -290,7 +293,14 @@ const VaultConnectionForm: React.FC<VaultConnectionFormProps> = ({
       </div>
       {isWizardFlow && (
         <Component
-          {...{ t, className: `${className}__form-body`, vaultState, setAuthValue, isValid }}
+          {...{
+            t,
+            className: `${className}__form-body`,
+            vaultState,
+            setAuthValue,
+            isValid,
+            isScEncryption,
+          }}
         />
       )}
       <Button

@@ -18,6 +18,7 @@ export const VaultTokenConfigure: React.FC<VaultAuthMethodProps> = ({
   vaultState,
   setAuthValue,
   isValid,
+  isScEncryption,
 }) => {
   const [revealToken, setRevealToken] = React.useState(false);
 
@@ -28,9 +29,12 @@ export const VaultTokenConfigure: React.FC<VaultAuthMethodProps> = ({
       className={className}
       helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
       validated={isValid(vaultState.authValue?.valid)}
-      helperText={t(
-        'ceph-storage-plugin~Create a secret with the token for every namespace using encrypted PVCs.',
-      )}
+      helperText={
+        isScEncryption &&
+        t(
+          'ceph-storage-plugin~Create a secret with the token for every namespace using encrypted PVCs.',
+        )
+      }
       isRequired
     >
       <InputGroup className="ocs-install-kms__form-token">
@@ -89,6 +93,7 @@ export const VaultServiceAccountConfigure: React.FC<VaultAuthMethodProps> = ({
 };
 
 export type VaultAuthMethodProps = {
+  isScEncryption?: boolean;
   className: string;
   vaultState: VaultConfig;
   t: TFunction;
