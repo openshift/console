@@ -165,27 +165,6 @@ export type UseUtilizationDuration = (
   adjustDuration?: (duration: number) => number,
 ) => UtilizationDurationState;
 
-export enum PrometheusEndpoint {
-  LABEL = 'api/v1/label',
-  QUERY = 'api/v1/query',
-  QUERY_RANGE = 'api/v1/query_range',
-  RULES = 'api/v1/rules',
-  TARGETS = 'api/v1/targets',
-}
-
-type PrometheusPollProps = {
-  delay?: number;
-  endpoint: PrometheusEndpoint;
-  endTime?: number;
-  namespace?: string;
-  query: string;
-  samples?: number;
-  timeout?: string;
-  timespan?: number;
-};
-
-export type UsePrometheusPoll = (props: PrometheusPollProps) => [PrometheusResponse, any, boolean];
-
 export type Options = {
   ns?: string;
   name?: string;

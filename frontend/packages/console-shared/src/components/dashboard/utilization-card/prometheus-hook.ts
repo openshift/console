@@ -18,6 +18,7 @@ import { Humanize, HumanizeResult } from '@console/internal/components/utils/typ
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
 import { RootState } from '@console/internal/redux';
 
+/** @deprecated use usePrometheusPoll() instead */
 export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
   const dispatch = useDispatch();
   React.useEffect(() => {
@@ -43,6 +44,7 @@ export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
 
 const customSelectorCreator = createSelectorCreator(defaultMemoize, shallowEqual);
 
+/** @deprecated use usePrometheusPoll() instead */
 export const usePrometheusQueries = <R extends any>(
   queries: string[],
   parser?: GetInstantStats | GetRangeStats,

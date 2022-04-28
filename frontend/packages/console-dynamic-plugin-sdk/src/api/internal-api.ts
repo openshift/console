@@ -14,7 +14,6 @@ import {
   UtilizationBodyProps,
   UtilizationDurationDropdownProps,
   UseUtilizationDuration,
-  UsePrometheusPoll,
   UseActiveNamespace,
   VirtualizedGridProps,
   LazyActionMenuProps,
@@ -55,7 +54,7 @@ export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/s
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
-export const usePrometheusPoll: UsePrometheusPoll = require('@console/internal/components/graphs/prometheus-poll-hook')
+export const UsePrometheusPoll = require('@console/dynamic-plugin-sdk/src/api/dynamic-core-api')
   .usePrometheusPoll;
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;

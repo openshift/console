@@ -9,6 +9,7 @@ import {
   PrometheusValue,
   ResolvedExtension,
   Selector,
+  PrometheusEndpoint,
 } from '../api/common-types';
 import { Extension, ExtensionTypeGuard } from '../types';
 
@@ -144,6 +145,32 @@ export type PrometheusResponse = {
   error?: string;
   warnings?: string[];
 };
+
+export type PrometheusPollProps = {
+  /** Delay between polling requests */
+  delay?: number;
+  /** One of the well-defined Prometheus API endpoints */
+  endpoint: PrometheusEndpoint;
+  namespace?: string;
+  /** Prometheus query */
+  query: string;
+  /** A search parameter */
+  timeout?: string;
+  /** A vector-query search parameter */
+  endTime?: number;
+  /** A vector-query search parameter */
+  samples?: number;
+  /** A vector-query search parameter */
+  timespan?: number;
+};
+
+export type UsePrometheusPoll = (
+  props: PrometheusPollProps,
+) => [
+  PrometheusResponse,
+  any /* Caught error. Can be originated by a request or internal processing. */,
+  boolean /* is loading? */,
+];
 
 export type WatchK8sResource = {
   /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */

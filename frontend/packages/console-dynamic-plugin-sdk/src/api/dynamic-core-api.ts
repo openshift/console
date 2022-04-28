@@ -21,6 +21,7 @@ import {
   InventoryItemStatusProps,
   ResourceYAMLEditorProps,
   ResourceEventStreamProps,
+  UsePrometheusPoll,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -158,3 +159,6 @@ export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@c
  */
 export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('@console/internal/components/events')
   .WrappedResourceEventStream;
+
+export const usePrometheusPoll: UsePrometheusPoll = require('@console/internal/components/graphs/prometheus-poll-hook')
+  .usePrometheusPoll;

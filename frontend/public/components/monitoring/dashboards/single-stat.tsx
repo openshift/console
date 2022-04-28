@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Bullseye } from '@patternfly/react-core';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
 import { formatNumber } from '../format';

@@ -214,3 +214,11 @@ namespace ExtensionProperties {
 export interface ModelDefinition extends AlwaysOnExtension<ExtensionProperties.ModelDefinition> {
   type: 'ModelDefinition';
 }
+
+export enum PrometheusEndpoint {
+  LABEL = 'api/v1/label',
+  QUERY = 'api/v1/query',
+  QUERY_RANGE = 'api/v1/query_range',
+  RULES = 'api/v1/rules',
+  TARGETS = 'api/v1/targets',
+}
