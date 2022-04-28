@@ -68,7 +68,7 @@ describe('ClusterSetupGettingStartedCard', () => {
       id: 'machine-configuration',
       title: 'View all steps in documentation',
       href:
-        'https://docs.okd.io/latest/post_installation_configuration/machine-configuration-tasks.html',
+        'https://docs.okd.io/latest/post-installation_configuration/post-install-machine-configuration-tasks.html',
       external: true,
     });
   });
