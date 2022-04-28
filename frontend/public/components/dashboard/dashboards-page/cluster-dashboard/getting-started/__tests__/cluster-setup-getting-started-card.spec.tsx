@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import { useCanClusterUpgrade } from '@console/shared';
 
 import { ClusterSetupGettingStartedCard } from '../cluster-setup-getting-started-card';
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';
@@ -9,6 +10,10 @@ import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 jest.mock('react', () => ({
   ...require.requireActual('react'),
   useLayoutEffect: require.requireActual('react').useEffect,
+}));
+
+jest.mock('@console/shared/src/hooks/useCanClusterUpgrade', () => ({
+  useCanClusterUpgrade: jest.fn(),
 }));
 
 jest.mock('../cluster-setup-identity-provider-link', () => ({
@@ -33,11 +38,13 @@ jest.mock(
     },
 );
 
+const useCanClusterUpgradeMock = useCanClusterUpgrade as jest.Mock;
 const useIdentityProviderLinkMock = useIdentityProviderLink as jest.Mock;
 const useAlertReceiverLinkMock = useAlertReceiverLink as jest.Mock;
 
 describe('ClusterSetupGettingStartedCard', () => {
   it('should render links if hooks provide them', () => {
+    useCanClusterUpgradeMock.mockReturnValue(true);
     useIdentityProviderLinkMock.mockReturnValue({
       id: 'identity-providers',
       title: 'Add identity providers',

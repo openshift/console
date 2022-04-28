@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCheckIcon } from '@patternfly/react-icons';
 
+import { useCanClusterUpgrade } from '@console/shared';
+
 import {
   GettingStartedCard,
   GettingStartedLink,
@@ -13,10 +15,12 @@ import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
 export const ClusterSetupGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
 
+  const canUpgrade = useCanClusterUpgrade();
+
   const identityProviderLink = useIdentityProviderLink();
   const alertReceiverLink = useAlertReceiverLink();
 
-  const links = [identityProviderLink, alertReceiverLink].filter(Boolean);
+  const links = [canUpgrade && identityProviderLink, alertReceiverLink].filter(Boolean);
 
   if (links.length === 0) {
     return null;
