@@ -40,12 +40,7 @@ import {
   CardTitle,
   CardActions,
 } from '@patternfly/react-core';
-import {
-  BlueArrowCircleUpIcon,
-  FLAGS,
-  getInfrastructurePlatform,
-  useCanClusterUpgrade,
-} from '@console/shared';
+import { BlueArrowCircleUpIcon, FLAGS, useCanClusterUpgrade } from '@console/shared';
 
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
@@ -70,7 +65,6 @@ import {
 } from './health-item';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { ClusterDashboardContext } from './context';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 
 const filterSubsystems = (
@@ -181,7 +175,6 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       ),
     [subsystems],
   );
-  const { infrastructure, infrastructureLoaded } = React.useContext(ClusterDashboardContext);
   const { t } = useTranslation();
   const healthItems: { title: string; Component: React.ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
@@ -197,11 +190,10 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       isDashboardsOverviewHealthPrometheusSubsystem(subsystem) ||
       isResolvedDashboardsOverviewHealthPrometheusSubsystem(subsystem)
     ) {
-      const { disallowedProviders } = subsystem.properties;
+      const { disallowedControlPlaneTopology } = subsystem.properties;
       if (
-        disallowedProviders?.length &&
-        (!infrastructureLoaded ||
-          disallowedProviders.includes(getInfrastructurePlatform(infrastructure)))
+        disallowedControlPlaneTopology?.length &&
+        disallowedControlPlaneTopology.includes(window.SERVER_FLAGS.controlPlaneTopology)
       ) {
         return;
       }

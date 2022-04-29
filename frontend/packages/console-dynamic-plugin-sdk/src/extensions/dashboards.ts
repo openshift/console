@@ -66,8 +66,8 @@ export type DashboardsOverviewHealthPrometheusSubsystem = ExtensionDeclaration<
     popupComponent?: CodeRef<React.ComponentType<PrometheusHealthPopupProps>>;
     /** The title of the popover. */
     popupTitle?: string;
-    /** Cloud providers which for which the subsystem should be hidden. */
-    disallowedProviders?: string[];
+    /** Control plane topology for which the subsystem should be hidden. */
+    disallowedControlPlaneTopology?: string[];
   }
 >;
 
