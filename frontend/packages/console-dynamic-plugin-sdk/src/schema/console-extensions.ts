@@ -5,6 +5,7 @@ import {
   ClusterOverviewInventoryItem,
   ClusterOverviewUtilizationItem,
   ClusterOverviewMultilineUtilizationItem,
+  OverviewDetailItem,
 } from '../extensions/cluster-overview';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import { ContextProvider } from '../extensions/context-providers';
@@ -124,7 +125,8 @@ export type SupportedExtension =
   | HorizontalNavTab
   | ClusterOverviewInventoryItem
   | ClusterOverviewUtilizationItem
-  | ClusterOverviewMultilineUtilizationItem;
+  | ClusterOverviewMultilineUtilizationItem
+  | OverviewDetailItem;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

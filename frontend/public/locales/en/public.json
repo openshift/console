@@ -383,7 +383,7 @@
   "Not available": "Not available",
   "View settings": "View settings",
   "Cluster API address": "Cluster API address",
-  "Provider": "Provider",
+  "Infrastructure provider": "Infrastructure provider",
   "Update channel": "Update channel",
   "Control plane high availability": "Control plane high availability",
   "No (single master)": "No (single master)",

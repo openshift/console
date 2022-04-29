@@ -14,6 +14,7 @@
   "devDependencies": {
     "@openshift-console/dynamic-plugin-sdk": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/core",
     "@openshift-console/dynamic-plugin-sdk-webpack": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
+    "@openshift-console/plugin-shared": "file:../frontend/packages/console-plugin-shared/dist",
     "@patternfly/react-core": "4.162.2",
     "@patternfly/react-table": "4.31.7",
     "@types/react": "16.8.13",
@@ -59,7 +60,8 @@
       "clusterInventoryOverview": "./components/ClusterOverview/Inventory",
       "clusterOverview": "./utils/cluster-overview",
       "yamlEditor": "./components/YAMLEditorPage",
-      "events": "./components/APIServerEvents"
+      "events": "./components/APIServerEvents",
+      "overviewDetailItem": "./components/OverviewDetailItem"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
