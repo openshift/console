@@ -211,8 +211,8 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     hostname: _.get(route, 'spec.host', ''),
     secure: _.has(route, 'spec.tls.termination'),
     tls: {
-      termination: _.get(route, 'spec.tls.termination', ''),
-      insecureEdgeTerminationPolicy: _.get(route, 'spec.tls.insecureEdgeTerminationPolicy', ''),
+      termination: _.get(route, 'spec.tls.termination', null),
+      insecureEdgeTerminationPolicy: _.get(route, 'spec.tls.insecureEdgeTerminationPolicy', null),
       caCertificate: _.get(route, 'spec.tls.caCertificate', ''),
       certificate: _.get(route, 'spec.tls.certificate', ''),
       destinationCACertificate: _.get(route, 'spec.tls.destinationCACertificate', ''),
