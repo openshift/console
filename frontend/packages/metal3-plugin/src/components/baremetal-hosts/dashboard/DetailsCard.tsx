@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostKind } from '../../../types';
@@ -38,15 +38,15 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem title={t('metal3-plugin~Host name')} isLoading={false} error={null}>
+          <OverviewDetailItem title={t('metal3-plugin~Host name')} isLoading={false}>
             {hostName}
-          </DetailItem>
-          <DetailItem title={t('metal3-plugin~Role')} isLoading={false} error={null}>
+          </OverviewDetailItem>
+          <OverviewDetailItem title={t('metal3-plugin~Role')} isLoading={false}>
             {hostRole}
-          </DetailItem>
-          <DetailItem title={t('metal3-plugin~Node')} isLoading={false} error={null}>
+          </OverviewDetailItem>
+          <OverviewDetailItem title={t('metal3-plugin~Node')} isLoading={false}>
             {nodeCell}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>

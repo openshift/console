@@ -10,7 +10,7 @@ import {
 import { FirehoseResource, FirehoseResult, ExternalLink } from '@console/internal/components/utils';
 import { getName, useFlag } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { SecretModel } from '@console/internal/models';
 import { getOCSVersion, getODFVersion } from '../../../selectors';
@@ -85,30 +85,32 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem title={t('ceph-storage-plugin~Service Name')}>{serviceName}</DetailItem>
-          <DetailItem
+          <OverviewDetailItem title={t('ceph-storage-plugin~Service Name')}>
+            {serviceName}
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('ceph-storage-plugin~Cluster Name')}
-            error={!!ocsError}
+            error={ocsError ? t('ceph-storage-plugin~Not available') : undefined}
             isLoading={!ocsLoaded}
             data-test-id="cluster-name"
           >
             {ocsName}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             title={t('ceph-storage-plugin~Provider')}
             isLoading={!secretLoaded && !secretError}
           >
             {cephLink ? <ExternalLink href={cephLink} text={CEPH_BRAND_NAME} /> : CEPH_BRAND_NAME}
-          </DetailItem>
-          <DetailItem title={t('ceph-storage-plugin~Mode')}>External</DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem title={t('ceph-storage-plugin~Mode')}>External</OverviewDetailItem>
+          <OverviewDetailItem
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
-            error={!!subscriptionError}
+            error={subscriptionError ? t('ceph-storage-plugin~Not available') : undefined}
             data-test-id="cluster-subscription"
           >
             {subscriptionVersion}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>

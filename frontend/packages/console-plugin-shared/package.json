@@ -1,0 +1,31 @@
+{
+  "name": "@openshift-console/plugin-shared",
+  "version": "0.0.1",
+  "description": "Console plugin shared code",
+  "private": false,
+  "main": "lib/index.js",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/openshift/console/tree/master/frontend/packages/console-plugin-shared",
+  "keywords": [
+    "openshift",
+    "console",
+    "plugin",
+    "library"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist node_modules",
+    "build": "yarn compile && yarn pkgfiles && yarn stylefiles",
+    "compile": "tsc -p tsconfig.json",
+    "pkgfiles": "cp LICENSE README.md package.json dist/",
+    "stylefiles": "cd src && find . -name '*.scss' -exec cp '{}' ../dist/lib/'{}' \\;"
+  },
+  "dependencies": {
+    "classnames": "2.x"
+  },
+  "devDependencies": {
+    "typescript": "4.2.x"
+  },
+  "peerDependencies": {
+    "react": "^17.0.1"
+  }
+}

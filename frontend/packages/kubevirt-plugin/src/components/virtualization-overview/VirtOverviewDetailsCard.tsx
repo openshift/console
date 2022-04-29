@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   SourceMissingStatus,
   SubscriptionStatus,
 } from '@console/operator-lifecycle-manager/src/components/subscription';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { useKubevirtCsvDetails } from '../../hooks/use-kubevirt-csv-details';
 
@@ -31,13 +31,13 @@ export const VirtOverviewDetailsCard: React.FC = () => {
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem isLoading={isLoading} title={t('kubevirt-plugin~Service name')}>
+          <OverviewDetailItem isLoading={isLoading} title={t('kubevirt-plugin~Service name')}>
             {name}
-          </DetailItem>
-          <DetailItem isLoading={isLoading} title={t('kubevirt-plugin~Provider')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={isLoading} title={t('kubevirt-plugin~Provider')}>
             {provider}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             isLoading={isLoading}
             title={t('kubevirt-plugin~OpenShift Virtualization version')}
           >
@@ -49,10 +49,10 @@ export const VirtOverviewDetailsCard: React.FC = () => {
                 <SubscriptionStatus subscription={kubevirtSub} />
               )}
             </div>
-          </DetailItem>
-          <DetailItem isLoading={isLoading} title={t('kubevirt-plugin~Update Channel')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={isLoading} title={t('kubevirt-plugin~Update Channel')}>
             {updateChannel}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>

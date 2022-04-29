@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -8,7 +9,6 @@ import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
 import { resourcePathFromModel, ResourceLink } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import { BareMetalHostModel } from '../../../models';
@@ -29,22 +29,22 @@ const DetailsCard: React.FC = () => {
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title={t('metal3-plugin~Node Name')}>
+          <OverviewDetailItem isLoading={!obj} title={t('metal3-plugin~Node Name')}>
             {obj.metadata.name}
-          </DetailItem>
-          <DetailItem isLoading={!obj} title={t('metal3-plugin~Role')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('metal3-plugin~Role')}>
             <NodeRoles node={obj} />
-          </DetailItem>
-          <DetailItem isLoading={!host} title={t('metal3-plugin~Bare Metal Host')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!host} title={t('metal3-plugin~Bare Metal Host')}>
             <ResourceLink
               kind={referenceForModel(BareMetalHostModel)}
               name={host?.metadata?.name}
               namespace={host?.metadata?.namespace}
             />
-          </DetailItem>
-          <DetailItem isLoading={!obj} title={t('metal3-plugin~Node Addresses')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('metal3-plugin~Node Addresses')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>

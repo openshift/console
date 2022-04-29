@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, CardActions, Button } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
 import { LabelList, resourcePathFromModel } from '../../utils';
 import { ProjectModel } from '../../../models';
@@ -32,13 +32,13 @@ export const DetailsCard: React.FC = () => {
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title={t('public~Name')}>
+          <OverviewDetailItem isLoading={!obj} title={t('public~Name')}>
             {getName(obj)}
-          </DetailItem>
-          <DetailItem isLoading={!obj} title={t('public~Requester')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('public~Requester')}>
             {getRequester(obj) || <span className="text-muted">{t('public~No requester')}</span>}
-          </DetailItem>
-          <DetailItem isLoading={!obj} title={t('public~Labels')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('public~Labels')}>
             <div className="co-project-dashboard__details-labels">
               <LabelList kind={ProjectModel.kind} labels={firstThreelabels} />
               {keys.length > 3 && (
@@ -47,8 +47,8 @@ export const DetailsCard: React.FC = () => {
                 </Button>
               )}
             </div>
-          </DetailItem>
-          <DetailItem isLoading={!obj} title={t('public~Description')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('public~Description')}>
             <span
               className={cx({
                 'text-muted': !description,
@@ -57,11 +57,11 @@ export const DetailsCard: React.FC = () => {
             >
               {description || t('public~No description')}
             </span>
-          </DetailItem>
+          </OverviewDetailItem>
           {serviceMeshEnabled && (
-            <DetailItem isLoading={!obj} title={t('public~Service mesh')}>
+            <OverviewDetailItem isLoading={!obj} title={t('public~Service mesh')}>
               <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
-            </DetailItem>
+            </OverviewDetailItem>
           )}
         </DetailsBody>
       </CardBody>

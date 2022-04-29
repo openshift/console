@@ -4,7 +4,7 @@ import { compose } from 'redux';
 
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import {
@@ -83,21 +83,24 @@ export const CompressionDetailsCard: React.FC = () => {
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title={t('ceph-storage-plugin~Compression status')}>
+          <OverviewDetailItem isLoading={!obj} title={t('ceph-storage-plugin~Compression status')}>
             {!compressionEnabled
               ? t('ceph-storage-plugin~Disabled')
               : t('ceph-storage-plugin~Enabled')}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
         {compressionEnabled && (
           <DetailsBody>
             <div>
               <DetailsBody>
-                <DetailItem isLoading={loading} title={t('ceph-storage-plugin~Storage efficiency')}>
+                <OverviewDetailItem
+                  isLoading={loading}
+                  title={t('ceph-storage-plugin~Storage efficiency')}
+                >
                   <EfficiencyItemBody {...compressionEligibilityProps} />
                   <EfficiencyItemBody {...compressionRatioProps} />
                   <EfficiencyItemBody {...compressionSavingsProps} />
-                </DetailItem>
+                </OverviewDetailItem>
               </DetailsBody>
             </div>
           </DetailsBody>

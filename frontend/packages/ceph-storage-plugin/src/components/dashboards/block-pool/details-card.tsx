@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 
 import { BlockPoolDashboardContext } from './block-pool-dashboard-context';
@@ -19,15 +19,15 @@ export const DetailsCard: React.FC = () => {
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title={t('ceph-storage-plugin~Pool name')}>
+          <OverviewDetailItem isLoading={!obj} title={t('ceph-storage-plugin~Pool name')}>
             {obj.metadata?.name}
-          </DetailItem>
-          <DetailItem isLoading={!obj} title={t('ceph-storage-plugin~Volume type')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('ceph-storage-plugin~Volume type')}>
             {volumeType}
-          </DetailItem>
-          <DetailItem isLoading={!obj} title={t('ceph-storage-plugin~Replicas')}>
+          </OverviewDetailItem>
+          <OverviewDetailItem isLoading={!obj} title={t('ceph-storage-plugin~Replicas')}>
             {obj.spec?.replicated?.size}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>

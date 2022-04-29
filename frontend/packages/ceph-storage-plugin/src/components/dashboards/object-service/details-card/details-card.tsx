@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   DashboardItemProps,
@@ -102,19 +102,18 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
       </CardHeader>
       <CardBody>
         <DetailsBody>
-          <DetailItem
-            key="service_name"
-            title={t('ceph-storage-plugin~Service name')}
-            error={false}
-            isLoading={false}
-          >
+          <OverviewDetailItem key="service_name" title={t('ceph-storage-plugin~Service name')}>
             <Link to={servicePath}>{serviceName}</Link>
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             key="system_name"
             title={t('ceph-storage-plugin~System name')}
             isLoading={!systemResult || !dashboardLinkResult}
-            error={systemLoadError || dashboardLinkLoadError || !systemName || !systemLink}
+            error={
+              systemLoadError || dashboardLinkLoadError || !systemName || !systemLink
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
           >
             <ExternalLink
               href={systemLink}
@@ -129,23 +128,31 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
                 {t('ceph-storage-plugin~RADOS Object Gateway')}
               </p>
             )}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             key="provider"
             title={t('ceph-storage-plugin~Provider')}
-            error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
+            error={
+              !!infrastructureError || (infrastructure && !infrastructurePlatform)
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
             isLoading={!infrastructureLoaded}
           >
             {infrastructurePlatform}
-          </DetailItem>
-          <DetailItem
+          </OverviewDetailItem>
+          <OverviewDetailItem
             key="version"
             title={t('ceph-storage-plugin~Version')}
             isLoading={!subscriptionLoaded}
-            error={subscriptionLoaded && !serviceVersion}
+            error={
+              subscriptionLoaded && !serviceVersion
+                ? t('ceph-storage-plugin~Not available')
+                : undefined
+            }
           >
             {serviceVersion}
-          </DetailItem>
+          </OverviewDetailItem>
         </DetailsBody>
       </CardBody>
     </Card>
