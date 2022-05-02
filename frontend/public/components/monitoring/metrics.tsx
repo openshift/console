@@ -39,6 +39,7 @@ import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@consol
 
 import {
   queryBrowserAddQuery,
+  queryBrowserDuplicateQuery,
   queryBrowserDeleteAllQueries,
   queryBrowserDeleteQuery,
   queryBrowserInsertText,
@@ -307,6 +308,10 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
     focusedQuery = undefined;
   }, [dispatch, index]);
 
+  const doClone = React.useCallback(() => {
+    dispatch(queryBrowserDuplicateQuery(index));
+  }, [dispatch, index]);
+
   return (
     <Kebab
       options={[
@@ -319,6 +324,7 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
           callback: toggleAllSeries,
         },
         { label: t('public~Delete query'), callback: doDelete },
+        { label: t('public~Duplicate query'), callback: doClone },
       ]}
     />
   );
