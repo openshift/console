@@ -3,6 +3,9 @@
 }
 .gop-gitops-lastDeploymentTime {
   color: var(--pf-global--palette--black-600);
+  :where(.pf-theme-dark) & {
+    color: var(--pf-global--palette--black-100) !important;
+  }
 }
 .gop-gitops-tooltip-text {
   color: white;
