@@ -70,6 +70,7 @@
   }
   &__author-sha {
     align-items: center;
+    color: var(--pf-global--Color--200);
     display: flex;
     margin-bottom: var(--pf-global--spacer--xs);
   }
@@ -84,10 +85,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--pf-global--palette--black-600);
-    :where(.pf-theme-dark) & {
-      color: var(--pf-global--palette--black-100) !important;
-    }
   }
   &__sha {
     background-color: inherit;
