@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { CronJobModel } from '@console/internal/models';
 import { useJobsForCronJobWatcher } from '@console/shared';
 import { TYPE_WORKLOAD } from '../../const';
@@ -18,7 +18,7 @@ const JobsTabSection: React.FC<{ resource: K8sResourceCommon }> = ({ resource })
   );
 };
 
-export const getJobsSideBarTabSection: DetailsTabSectionCallback = (element: GraphElement) => {
+export const useJobsSideBarTabSection: DetailsTabSectionExtensionHook = (element: GraphElement) => {
   if (element.getType() !== TYPE_WORKLOAD) {
     return [undefined, true, undefined];
   }

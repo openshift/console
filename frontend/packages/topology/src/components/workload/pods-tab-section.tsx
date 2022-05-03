@@ -6,7 +6,7 @@ import {
   PodsAdapterDataType,
   PodAdapter,
   useResolvedExtensions,
-  DetailsTabSectionCallback,
+  DetailsTabSectionExtensionHook,
 } from '@console/dynamic-plugin-sdk';
 import { PodKind } from '@console/internal/module/k8s';
 import { PodsOverviewContent } from '@console/shared/src/components/pod/PodsOverview';
@@ -15,9 +15,10 @@ import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
 const PodsTabSection: React.FC<{
+  id: string;
   podAdapter: AdapterDataType<PodsAdapterDataType<PodKind>>;
   podAdapterExtensionResolved: boolean;
-}> = ({ podAdapter, podAdapterExtensionResolved }) => {
+}> = ({ id, podAdapter, podAdapterExtensionResolved }) => {
   const [{ data: podsData, loaded: podsDataLoaded }, setPodData] = React.useState<{
     data?: PodsAdapterDataType<PodKind>;
     loaded: boolean;
@@ -30,6 +31,7 @@ const PodsTabSection: React.FC<{
     <TopologySideBarTabSection>
       {podAdapterExtensionResolved && (
         <ResolveAdapter<PodsAdapterDataType<PodKind>>
+          key={id}
           resource={podAdapter.resource}
           useAdapterHook={podAdapter.provider}
           onAdapterDataResolved={handleAdapterResolved}
@@ -42,7 +44,7 @@ const PodsTabSection: React.FC<{
   ) : null;
 };
 
-export const usePodsSideBarTabSection: DetailsTabSectionCallback = (element: GraphElement) => {
+export const usePodsSideBarTabSection: DetailsTabSectionExtensionHook = (element: GraphElement) => {
   const [podAdapterExtension, podAdapterExtensionResolved] = useResolvedExtensions<PodAdapter>(
     isPodAdapter,
   );
@@ -59,6 +61,7 @@ export const usePodsSideBarTabSection: DetailsTabSectionCallback = (element: Gra
   }
   const section = (
     <PodsTabSection
+      id={element.getId()}
       podAdapter={podAdapter}
       podAdapterExtensionResolved={podAdapterExtensionResolved}
     />

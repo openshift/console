@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as UIActions from '@console/internal/actions/ui';
 import {
-  navFactory,
   ResourceIcon,
   SimpleTabNav,
   StatusBox,
@@ -61,7 +60,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
           }}
         />
       )
-    : navFactory.details(HelmReleaseOverview).component;
+    : HelmReleaseOverview;
 
   const resourcesComponent = () =>
     manifestResources ? (

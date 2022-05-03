@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
 import { getResource } from '@console/topology/src/utils';
@@ -29,7 +29,7 @@ const HelmReleasePanelDetailsTabSection: React.FC<{ element: GraphElement }> = (
   );
 };
 
-export const getHelmReleasePanelDetailsTabSection: DetailsTabSectionCallback = (
+export const useHelmReleasePanelDetailsTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_HELM_RELEASE) {
@@ -39,7 +39,7 @@ export const getHelmReleasePanelDetailsTabSection: DetailsTabSectionCallback = (
   return [section, true, undefined];
 };
 
-export const getHelmReleasePanelResourceTabSection: DetailsTabSectionCallback = (
+export const useHelmReleasePanelResourceTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_HELM_RELEASE) {
@@ -63,7 +63,7 @@ export const getHelmReleasePanelResourceTabSection: DetailsTabSectionCallback = 
   return [section, true, undefined];
 };
 
-export const getHelmReleasePanelReleaseNotesTabSection: DetailsTabSectionCallback = (
+export const useHelmReleasePanelReleaseNotesTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_HELM_RELEASE) {

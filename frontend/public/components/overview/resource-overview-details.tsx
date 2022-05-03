@@ -9,7 +9,12 @@ import * as UIActions from '../../actions/ui';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, KebabAction, ResourceOverviewHeading, SimpleTabNav, Tab } from '../utils';
 import { OverviewItem } from '@console/shared';
-import { useExtensions, OverviewResourceTab, isOverviewResourceTab } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  OverviewResourceTab,
+  isOverviewResourceTab,
+  LoadedExtension,
+} from '@console/plugin-sdk';
 
 const stateToProps = ({ UI }): PropsFromState => ({
   selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab']),
@@ -24,9 +29,9 @@ const getResourceTabComp = (t) => (props) => (
 );
 
 const getPluginTabResources = (
-  item,
-  tabs,
-  overviewResourceTabs,
+  item: OverviewItem,
+  tabs: Tab[],
+  overviewResourceTabs: LoadedExtension<OverviewResourceTab>[],
 ): ResourceOverviewDetailsProps['tabs'] => {
   let tabEntry = overviewResourceTabs.filter((tab) => item[tab.properties.key]);
   const overridenTabs = tabs.map((tab) => {
@@ -105,10 +110,7 @@ type OwnProps = {
   item: OverviewItem;
   kindObj: K8sKind;
   menuActions: KebabAction[];
-  tabs: {
-    name: string;
-    component: any;
-  }[];
+  tabs: Tab[];
   isOperatorBacked?: boolean;
 };
 

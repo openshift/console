@@ -8,7 +8,6 @@ import * as UIActions from '@console/internal/actions/ui';
 import {
   ActionsMenu,
   Kebab,
-  navFactory,
   ResourceIcon,
   resourcePath,
   SimpleTabNav,
@@ -110,7 +109,7 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
         tabs={[
           {
             name: t('rhoas-plugin~Details'),
-            component: navFactory.details(DetailsComponent).component,
+            component: DetailsComponent,
           },
           { name: t('rhoas-plugin~Resources'), component: ResourcesComponent },
         ]}
