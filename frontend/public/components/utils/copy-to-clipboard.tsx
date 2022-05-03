@@ -39,11 +39,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
 
   return (
     <CodeBlock actions={actions} className="co-copy-to-clipboard">
-      {/* pf-c-code-block__pre added because upstream component does not currently have a className prop to add additional classes. https://github.com/patternfly/patternfly-react/issues/7156  */}
-      <CodeBlockCode
-        className="pf-c-code-block__pre co-copy-to-clipboard__text"
-        data-test="copy-to-clipboard"
-      >
+      <CodeBlockCode className="co-copy-to-clipboard__text" data-test="copy-to-clipboard">
         {visibleValue}
       </CodeBlockCode>
     </CodeBlock>
