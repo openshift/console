@@ -246,6 +246,12 @@ export const topologyPO = {
     },
     tickButton: '[data-test-id="check-icon"]',
   },
+  grouping: {
+    addToApplication: '[data-test-action="add-to-application"]',
+    importFromGitOption: '[data-test-action="Import from Git"]',
+    filterResources: '[data-test="filter-by-resource"]',
+    deploymentCheckbox: '[data-test="Deployment"]',
+  },
 };
 
 export const typeOfWorkload = (workload: string) => {

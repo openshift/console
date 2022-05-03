@@ -24,13 +24,13 @@ Feature: Application groupings in topology
              Then user can view Add to application and Delete application options
 
 
-        @regression @broken-test
+        @regression
         Scenario: Add to Application in Application grouping from Action menu: T-05-TC03
             Given user is at Topology page
              When user clicks on application groupings "nodejs-ex-git-app"
               And user clicks on Action menu
-              And user clicks "Add to Application" from action menu
-              And user clicks on "From Git"
+              And user hovers on Add to Application from action menu
+              And user clicks on Import From Git option
               And user fills the form with workload name "added-application-1" and clicks Create
              Then user can see "added-application-1" workload
 
@@ -38,7 +38,7 @@ Feature: Application groupings in topology
         Scenario: Delete application grouping from Action menu: T-05-TC04
             Given user is at Add page
               And user has created workload "nodejs-1" with resource type "Deployment" and application groupings "app2"
-             When user right clicks on Application "app2" to open Context Menu
+             When user right clicks on application "app2" to open Context Menu
               And user clicks on "Delete application" from context action menu
               And user enters the name "app2" in the Delete application modal and clicks on Delete button
              Then user will not see Application groupings "app2"

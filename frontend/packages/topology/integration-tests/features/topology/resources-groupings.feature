@@ -8,12 +8,12 @@ Feature: Resources Groupings in Topology
               And user has created or selected namespace "aut-topology"
 
 
-        @regression @to-do
+        @regression
         Scenario: Default state of Resources dropdown: T-03-TC01
-            Given user is at Topology page
+            Given user has created workload with resource type deployment
+              And user is at Topology page
              When user clicks on the Resources dropdown
              Then user sees that all the checkboxes are unchecked
-
 
         @regression @manual
         Scenario: Ability to show Deployment resource types in Topology graph and list view: T-03-TC02
