@@ -32,7 +32,11 @@ export const operatorsPage = {
     cy.get(operatorsPO.nav.eventing).click({ force: true });
     detailsPage.titleShouldContain(pageTitle.Eventing);
   },
-
+  navigateToServingPage: () => {
+    cy.get(operatorsPO.nav.serverless).click();
+    cy.get(operatorsPO.nav.serving).click({ force: true });
+    detailsPage.titleShouldContain(pageTitle.Serving);
+  },
   navigateToCustomResourceDefinitions: () => {
     cy.get(operatorsPO.nav.administration).click();
     cy.get(operatorsPO.nav.customResourceDefinitions).click({ force: true });

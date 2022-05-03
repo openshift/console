@@ -4,32 +4,33 @@ Feature: Eventing page at Administrator perspective
 
 
         Background:
-            Given user is at administrator perspective
-              And user has created or selected namespace "aut-eventing-page"
+            Given user has created or selected namespace "aut-eventing-page"
+              And user is at administrator perspective
 
 
-        @regression @to-do
+        @regression
         Scenario: Create new Event Source: KA-01-TC01
-            Given user is at eventing page
-              And user has created knative service "hello-openshift"
+            Given user has created knative service "hello-openshift"
+              And user is at administrator perspective
+              And user is at eventing page
              When user clicks on Create button
               And user selects Event Source
               And user clicks on Ping Source
               And user enters "Message" in Data field
               And user enters "* * * * *" in Schedule field
               And user selects resource "hello-openshift"
-              And user clicks on Create button
+              And user clicks on Create button to submit
              Then user will be redirected to Project Details page
               And user will see ping-source created
 
 
-        @regression @to-do
+        @regression
         Scenario: Create new Channel: KA-01-TC02
             Given user is at eventing page
              When user clicks on Create button
               And user selects Channel
               And user selects Default channels
-              And user clicks on Create button
+              And user clicks on Create button to create channel
              Then user will be redirected to Project Details page
               And user will see channel created
 

@@ -19,6 +19,7 @@ import {
   verifyAndInstallKnativeOperator,
   createChannel,
 } from '@console/dev-console/integration-tests/support/pages';
+import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
@@ -107,6 +108,7 @@ Given(
 );
 
 Given('user has created knative service {string}', (knativeServiceName: string) => {
+  perspective.switchTo(switchPerspective.Developer);
   createGitWorkloadIfNotExistsOnTopologyPage(
     'https://github.com/sclorg/nodejs-ex.git',
     knativeServiceName,
@@ -136,4 +138,18 @@ Given('user has installed OpenShift Serverless Operator', () => {
 
 Given('user has created channel {string}', (channelName: string) => {
   createChannel(channelName);
+});
+
+Given('user is at eventing page', () => {
+  operatorsPage.navigateToEventingPage();
+});
+
+Given('user is at Serving page', () => {
+  operatorsPage.navigateToServingPage();
+});
+
+When('user clicks on Create button', () => {
+  cy.get(eventingPO.createEventDropDownMenu)
+    .contains('Create')
+    .click({ force: true });
 });
