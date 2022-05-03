@@ -17,7 +17,7 @@ import {
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { PipelineKind, PipelineRunKind } from '../types';
-import { shouldHidePipelineRunStop } from './pipeline-augment';
+import { shouldHidePipelineRunStop, shouldHidePipelineRunStart } from './pipeline-augment';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   history.push(
@@ -208,6 +208,36 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
   };
 };
 
+export const startPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: PipelineRunKind) => {
+  // The returned function will be called using the 'kind' and 'obj' in Kebab Actions
+  return {
+    // t('pipelines-plugin~Start')
+    labelKey: 'pipelines-plugin~Start',
+    callback: () => {
+      k8sPatch(
+        PipelineRunModel,
+        {
+          metadata: { name: pipelineRun.metadata.name, namespace: pipelineRun.metadata.namespace },
+        },
+        [
+          {
+            op: 'remove',
+            path: `/spec/status`,
+          },
+        ],
+      );
+    },
+    hidden: shouldHidePipelineRunStart(pipelineRun),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      name: pipelineRun.metadata.name,
+      namespace: pipelineRun.metadata.namespace,
+      verb: 'update',
+    },
+  };
+};
+
 const addTrigger: KebabAction = (kind: K8sKind, pipeline: PipelineKind) => ({
   // t('pipelines-plugin~Add Trigger')
   labelKey: 'pipelines-plugin~Add Trigger',
@@ -263,6 +293,7 @@ export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction
     ? (model, pipelineRun) => rerunPipelineRunAndRedirect(model, pipelineRun)
     : (model, pipelineRun) => reRunPipelineRun(model, pipelineRun),
   (model, pipelineRun) => stopPipelineRun(model, pipelineRun),
+  (model, pipelineRun) => startPipelineRun(model, pipelineRun),
   Kebab.factory.Delete,
 ];
 

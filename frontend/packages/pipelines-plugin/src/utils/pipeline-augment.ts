@@ -332,3 +332,6 @@ export const shouldHidePipelineRunStop = (pipelineRun: PipelineRunKind): boolean
     (countRunningTasks(pipelineRun) > 0 ||
       pipelineRunFilterReducer(pipelineRun) === runStatus.Running)
   );
+
+export const shouldHidePipelineRunStart = (pipelineRun: PipelineRunKind): boolean =>
+  !(pipelineRun && pipelineRunFilterReducer(pipelineRun) === runStatus.Pending);
