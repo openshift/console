@@ -66,6 +66,7 @@ export type StatusDescriptor = Descriptor<StatusCapability>;
 
 export type CapabilityProps<C extends SpecCapability | StatusCapability> = {
   capability?: C;
+  className?: string;
   description?: string;
   descriptor: Descriptor<C>;
   fullPath?: string[];

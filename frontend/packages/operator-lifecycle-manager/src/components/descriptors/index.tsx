@@ -16,7 +16,7 @@ import {
 } from './utils';
 
 export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
-  ({ descriptor, model, obj, onError, schema, type }) => {
+  ({ className, descriptor, model, obj, onError, schema, type }) => {
     const { displayName: label, description, value, fullPath } = useCalculatedDescriptorProperties(
       type,
       descriptor,
@@ -24,6 +24,7 @@ export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
       obj,
     );
     const descriptorProps = {
+      className,
       description,
       descriptor,
       fullPath,
@@ -45,6 +46,7 @@ export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
 );
 
 const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
+  className,
   group,
   groupPath,
   model,
@@ -64,34 +66,36 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
   const arrayElementDescriptors = nested ?? [elementDescriptor];
   const value = _.get(obj, [type, ..._.toPath(arrayGroupPath)], []);
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
-      <div className="details-item__array">
-        {value?.length ? (
-          _.times(value.length, (i) => (
-            <div className="details-item__value--group">
-              <dl>
-                {_.map(arrayElementDescriptors, (primitiveDescriptor: Descriptor) => {
-                  const path = primitiveDescriptor.path.replace(/\d+/, String(i));
-                  return (
-                    <DescriptorDetailsItem
-                      descriptor={{ ...primitiveDescriptor, path }}
-                      key={`${type}.${path}`}
-                      model={model}
-                      obj={obj}
-                      onError={onError}
-                      schema={getSchemaAtPath(schema, path)}
-                      type={type}
-                    />
-                  );
-                })}
-              </dl>
-            </div>
-          ))
-        ) : (
-          <span className="text-muted">{t('public~None')}</span>
-        )}
-      </div>
-    </DetailsItem>
+    <div className={className}>
+      <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
+        <div className="details-item__array">
+          {value?.length ? (
+            _.times(value.length, (i) => (
+              <div className="details-item__value--group">
+                <dl>
+                  {_.map(arrayElementDescriptors, (primitiveDescriptor: Descriptor) => {
+                    const path = primitiveDescriptor.path.replace(/\d+/, String(i));
+                    return (
+                      <DescriptorDetailsItem
+                        descriptor={{ ...primitiveDescriptor, path }}
+                        key={`${type}.${path}`}
+                        model={model}
+                        obj={obj}
+                        onError={onError}
+                        schema={getSchemaAtPath(schema, path)}
+                        type={type}
+                      />
+                    );
+                  })}
+                </dl>
+              </div>
+            ))
+          ) : (
+            <span className="text-muted">{t('public~None')}</span>
+          )}
+        </div>
+      </DetailsItem>
+    </div>
   );
 };
 
@@ -159,6 +163,7 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
   onError,
   schema,
   type,
+  itemClassName,
 }) => {
   const groupedDescriptors = React.useMemo(() => groupDescriptorDetails(descriptors), [
     descriptors,
@@ -182,9 +187,11 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
         const { isArrayGroup, descriptor, nested } = group;
         if (isArrayGroup) {
           return (
-            <div key={`${type}.${groupPath}`} className="col-sm-6">
-              <DescriptorDetailsItemArrayGroup {...groupProps} {...commonProps} />
-            </div>
+            <DescriptorDetailsItemArrayGroup
+              {...groupProps}
+              {...commonProps}
+              className={itemClassName}
+            />
           );
         }
 
@@ -199,9 +206,12 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
         }
 
         return (
-          <div key={`${type}.${groupPath}`} className="col-sm-6">
-            <DescriptorDetailsItem descriptor={descriptor} {...commonProps} />
-          </div>
+          <DescriptorDetailsItem
+            key={`${type}.${groupPath}`}
+            className={itemClassName}
+            descriptor={descriptor}
+            {...commonProps}
+          />
         );
       })}
     </dl>
@@ -215,11 +225,13 @@ export type DescriptorDetailsItemProps = {
   onError?: (e: Error) => void;
   schema: JSONSchema7;
   type: DescriptorType;
+  className?: string;
 };
 
 type DescriptorDetailsItemGroupProps = Omit<DescriptorDetailsItemProps, 'descriptor'> & {
   group: DescriptorGroup;
   groupPath: string;
+  className?: string;
 };
 
 type DescriptorDetailsItemListProps = Omit<
