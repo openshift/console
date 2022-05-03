@@ -5,7 +5,7 @@ import {
   useResolvedExtensions,
   NetworkAdapter,
   K8sResourceCommon,
-  DetailsTabSectionCallback,
+  DetailsTabSectionExtensionHook,
 } from '@console/dynamic-plugin-sdk';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { NetworkingOverview } from './NetworkingOverview';
@@ -23,7 +23,7 @@ const NetworkTabSection: React.FC<{
   ) : null;
 };
 
-export const useNetworkingSideBarTabSection: DetailsTabSectionCallback = (
+export const useNetworkingSideBarTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   const [networkAdapterExtensions, extensionsLoaded] = useResolvedExtensions<NetworkAdapter>(

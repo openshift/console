@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -44,7 +44,7 @@ const ResourceSection: React.FC<{ item: TopologyDataObject<OperatorGroupData> }>
   );
 };
 
-export const getOperatorBackedPanelResourceSection: DetailsTabSectionCallback = (
+export const useOperatorBackedPanelResourceSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_OPERATOR_BACKED_SERVICE) {

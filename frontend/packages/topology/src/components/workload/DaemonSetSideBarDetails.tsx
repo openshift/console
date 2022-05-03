@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { DaemonSetDetailsList } from '@console/internal/components/daemon-set';
 import { ResourceSummary, StatusBox } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { DaemonSetKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { PodRing, usePodsWatcher } from '@console/shared';
 import { getResource } from '../../utils';
 
@@ -38,7 +38,9 @@ const DaemonSetSideBarDetails: React.FC<DaemonSetOverviewDetailsProps> = ({ ds }
   );
 };
 
-export const getDaemonSetSideBarDetails: DetailsTabSectionCallback = (element: GraphElement) => {
+export const useDaemonSetSideBarDetails: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const resource = getResource<DaemonSetKind>(element);
   if (!resource || resource.kind !== DaemonSetModel.kind) {
     return [undefined, true, undefined];

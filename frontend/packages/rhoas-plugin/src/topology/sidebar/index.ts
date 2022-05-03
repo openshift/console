@@ -1,6 +1,6 @@
 export { default as getKafkaConnectionPanelResourceLink } from './KafkaConnectionPanelResourceLink';
 export { useKafkaConnectionAlert } from './useKafkaConnectionAlert';
 export {
-  getDetailsTabSectionForTopologySideBar,
-  getResourceTabSectionForTopologySideBar,
+  useDetailsTabSectionForTopologySideBar,
+  useResourceTabSectionForTopologySideBar,
 } from './kafka-connection-tab-section';

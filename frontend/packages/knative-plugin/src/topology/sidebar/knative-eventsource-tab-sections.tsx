@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ExternalLink, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
@@ -11,7 +11,7 @@ import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsourc
 import { TYPE_SINK_URI } from '../const';
 import { KameletType } from '../topology-types';
 
-export const getKnativeSidepanelSinkSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelSinkSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   const resource = getResource(element);
@@ -21,7 +21,8 @@ export const getKnativeSidepanelSinkSection: DetailsTabSectionCallback = (
   }
   if (
     isDynamicEventResourceKind(referenceFor(resource)) ||
-    (resource.kind === CamelKameletBindingModel.kind && data.kameletType === KameletType.Source)
+    (resource.kind === CamelKameletBindingModel.kind &&
+      data.data.kameletType === KameletType.Source)
   ) {
     const section = (
       <TopologySideBarTabSection>

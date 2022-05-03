@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import EventPubSubResources from '../../components/overview/EventPubSubResources';
 import { TYPE_EVENT_PUB_SUB, TYPE_EVENT_PUB_SUB_LINK } from '../const';
 
-export const getResourceTabPubSubSectionForTopologySidebar: DetailsTabSectionCallback = (
+export const useResourceTabPubSubSectionForTopologySidebar: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (![TYPE_EVENT_PUB_SUB, TYPE_EVENT_PUB_SUB_LINK].includes(element.getType())) {

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { getResource } from '@console/topology/src/utils';
 import { KafkaConnection } from '../../utils/rhoas-types';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '../components/const';
 import { DetailsComponent } from '../components/DetailsComponent';
 import { ResourcesComponent } from '../components/ResourceComponent';
 
-export const getDetailsTabSectionForTopologySideBar: DetailsTabSectionCallback = (
+export const useDetailsTabSectionForTopologySideBar: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_MANAGED_KAFKA_CONNECTION) {
@@ -18,7 +18,7 @@ export const getDetailsTabSectionForTopologySideBar: DetailsTabSectionCallback =
   return [section, true, undefined];
 };
 
-export const getResourceTabSectionForTopologySideBar: DetailsTabSectionCallback = (
+export const useResourceTabSectionForTopologySideBar: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_MANAGED_KAFKA_CONNECTION) {

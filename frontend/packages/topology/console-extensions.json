@@ -36,7 +36,7 @@
     "properties": {
       "id": "topology-tab-section-deployment-config",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "workload.getDeploymentConfigSideBarDetails" }
+      "provider": { "$codeRef": "workload.useDeploymentConfigSideBarDetails" }
     }
   },
   {
@@ -44,7 +44,7 @@
     "properties": {
       "id": "topology-tab-section-deployment",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "workload.getDeploymentSideBarDetails" }
+      "provider": { "$codeRef": "workload.useDeploymentSideBarDetails" }
     }
   },
   {
@@ -52,7 +52,7 @@
     "properties": {
       "id": "topology-tab-section-daemon-set",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "workload.getDaemonSetSideBarDetails" }
+      "provider": { "$codeRef": "workload.useDaemonSetSideBarDetails" }
     }
   },
   {
@@ -60,7 +60,7 @@
     "properties": {
       "id": "topology-tab-section-stateful-set",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "workload.getStatefulSetSideBarDetails" }
+      "provider": { "$codeRef": "workload.useStatefulSetSideBarDetails" }
     }
   },
   {
@@ -68,7 +68,7 @@
     "properties": {
       "id": "topology-tab-section-jobs",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "workload.getJobSideBarDetails" }
+      "provider": { "$codeRef": "workload.useJobSideBarDetails" }
     }
   },
   {
@@ -76,7 +76,7 @@
     "properties": {
       "id": "topology-tab-section-cron-jobs",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "workload.getCronJobSideBarDetails" }
+      "provider": { "$codeRef": "workload.useCronJobSideBarDetails" }
     }
   },
   {
@@ -84,7 +84,7 @@
     "properties": {
       "id": "topology-tab-section-pod",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "workload.getPodSideBarDetails" }
+      "provider": { "$codeRef": "workload.usePodSideBarDetails" }
     }
   },
   {
@@ -92,7 +92,7 @@
     "properties": {
       "id": "topology-tab-section-pods-overview",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "workload.usePodsSideBarTabSection" }
+      "provider": { "$codeRef": "workload.usePodsSideBarTabSection" }
     }
   },
   {
@@ -100,7 +100,7 @@
     "properties": {
       "id": "topology-tab-section-jobs-overview",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "workload.getJobsSideBarTabSection" }
+      "provider": { "$codeRef": "workload.useJobsSideBarTabSection" }
     }
   },
   {
@@ -108,7 +108,7 @@
     "properties": {
       "id": "topology-tab-section-builds-overview",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "workload.useBuildsSideBarTabSection" }
+      "provider": { "$codeRef": "workload.useBuildsSideBarTabSection" }
     }
   },
   {
@@ -116,7 +116,7 @@
     "properties": {
       "id": "topology-tab-section-network-overview",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "workload.useNetworkingSideBarTabSection" }
+      "provider": { "$codeRef": "workload.useNetworkingSideBarTabSection" }
     }
   },
   {
@@ -213,7 +213,7 @@
     "properties": {
       "id": "topology-tab-section-application",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "applicationSidebar.getApplicationPanelResourceTabSection" }
+      "provider": { "$codeRef": "applicationSidebar.useApplicationPanelResourceTabSection" }
     }
   },
   {
@@ -235,8 +235,8 @@
     "properties": {
       "id": "topology-tab-section-visual-connector",
       "tab": "topology-side-bar-tab-resource",
-      "section": {
-        "$codeRef": "vcSidebar.getVisualConnectorResourceTabSection"
+      "provider": {
+        "$codeRef": "vcSidebar.useVisualConnectorResourceTabSection"
       }
     }
   },

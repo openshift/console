@@ -1116,3 +1116,25 @@ export type ConsolePluginKind = K8sResourceCommon & {
     };
   };
 };
+
+export type DaemonSetKind = {
+  spec: {
+    minReadySeconds?: number;
+    revisionHistoryLimit?: number;
+    selector: Selector;
+    template: PodTemplate;
+    updateStrategy?: DeploymentUpdateStrategy;
+  };
+  status?: {
+    collisionCount?: number;
+    conditions?: DeploymentCondition[];
+    currentNumberScheduled: number;
+    desiredNumberScheduled: number;
+    numberAvailable?: number;
+    numberMisscheduled: number;
+    numberReady: number;
+    numberUnavailable: number;
+    observedGeneration: number;
+    updatedNumberScheduled: number;
+  };
+} & K8sResourceCommon;

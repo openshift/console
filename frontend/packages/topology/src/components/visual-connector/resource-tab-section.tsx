@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Edge, GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { TYPE_CONNECTS_TO } from '../../const';
 import TopologyEdgeResourcesPanel from '../side-bar/TopologyEdgeResourcesPanel';
 
-export const getVisualConnectorResourceTabSection: DetailsTabSectionCallback = (
+export const useVisualConnectorResourceTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_CONNECTS_TO) {

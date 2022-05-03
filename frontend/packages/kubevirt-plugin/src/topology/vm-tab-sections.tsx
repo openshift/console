@@ -7,7 +7,7 @@ import {
   NetworkAdapterType,
   PodsAdapterDataType,
 } from '@console/dynamic-plugin-sdk/src';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ResourceIcon, resourcePathFromModel } from '@console/internal/components/utils';
 import { getResource } from '@console/topology/src/utils';
 import { VirtualMachineModel } from '../models';
@@ -17,7 +17,7 @@ import { TYPE_VIRTUAL_MACHINE } from './components/const';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';
 import { VMNode } from './types';
 
-export const getVmSidePanelDetailsTabSection: DetailsTabSectionCallback = (
+export const useVmSidePanelDetailsTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== TYPE_VIRTUAL_MACHINE) {
