@@ -750,8 +750,8 @@
       "id": "topology-tab-section-pipelines-overview",
       "tab": "topology-side-bar-tab-resource",
       "insertBefore": "topology-tab-section-network-overview",
-      "section": {
-        "$codeRef": "topology.getPipelinesSideBarTabSection"
+      "provider": {
+        "$codeRef": "topology.usePipelinesSideBarTabSection"
       }
     },
     "flags": {

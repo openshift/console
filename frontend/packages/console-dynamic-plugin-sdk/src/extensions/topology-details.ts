@@ -33,10 +33,17 @@ export type DetailsTabSection = ExtensionDeclaration<
     id: string;
     /** The parent tab ID that this section should contribute to. */
     tab: string;
-    /** Returns a section for the graph element or undefined if not provided.
+    /** A hook that returns a component or null/undefined that will be rendered
+     * in the topology sidebar.
      * SDK component: <Section title={<optional>}>... padded area </Section>
      * */
-    section: CodeRef<DetailsTabSectionCallback>;
+    provider: CodeRef<DetailsTabSectionExtensionHook>;
+    /** Returns a section for the graph element or undefined if not provided.
+     * @deprecated Fallback if no provider is defined. renderNull is a no-op already.
+     */
+    section: CodeRef<
+      (element: GraphElement, renderNull?: () => null) => React.Component | undefined
+    >;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -167,4 +174,7 @@ export type NetworkAdapterType = {
   resource: K8sResourceCommon;
 };
 
-export type DetailsTabSectionCallback = ExtensionHook<React.ReactElement | undefined, GraphElement>;
+export type DetailsTabSectionExtensionHook = ExtensionHook<
+  React.ReactElement | undefined,
+  GraphElement
+>;

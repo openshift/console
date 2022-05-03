@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ExternalLink, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
@@ -15,7 +15,7 @@ import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsourc
 import { TYPE_SINK_URI } from '../const';
 import { KameletType } from '../topology-types';
 
-export const getKnativeSidepanelSinkSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelSinkSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   const resource = getResource(element);
@@ -33,22 +33,25 @@ export const getKnativeSidepanelSinkSection: DetailsTabSectionCallback = (
         <EventSourceTarget obj={resource} />
       </TopologySideBarTabSection>
     );
+    return [section, true, undefined];
   }
-  return undefined;
+  return [undefined, true, undefined];
 };
 
-export const getKnativeSidepanelSinkAssociatedDeployment = (element: GraphElement) => {
+export const useKnativeSidepanelSinkAssociatedDeployment: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const resource = getResource(element);
   const data = element.getData();
   if (!resource || !data?.resources) {
-    return null;
+    return [undefined, true, undefined];
   }
   if (
     isDynamicEventResourceKind(referenceFor(resource)) ||
     (resource.kind === CamelKameletBindingModel.kind &&
       data.data.kameletType === KameletType.Source)
   ) {
-    return (
+    const section = (
       <TopologySideBarTabSection>
         <EventSourceDeployments
           data-test="event-source-deployments"
@@ -61,24 +64,27 @@ export const getKnativeSidepanelSinkAssociatedDeployment = (element: GraphElemen
   return [undefined, true, undefined];
 };
 
-export const getKnativeSidepanelSinkEventSources = (element: GraphElement) => {
+export const useKnativeSidepanelSinkEventSources: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const resource = getResource(element);
   const data = element.getData();
   if (!resource || !data?.resources) {
-    return null;
+    return [undefined, true, undefined];
   }
   if (
     isDynamicEventResourceKind(referenceFor(resource)) ||
     (resource.kind === CamelKameletBindingModel.kind &&
       data.data.kameletType === KameletType.Source)
   ) {
-    return (
+    const section = (
       <TopologySideBarTabSection>
         <OwnedEventSources eventSources={data.resources.eventSources} />
       </TopologySideBarTabSection>
     );
+    return [section, true, undefined];
   }
-  return undefined;
+  return [undefined, true, undefined];
 };
 
 export const getKnativeURISinkResourceLink = (element: GraphElement) => {

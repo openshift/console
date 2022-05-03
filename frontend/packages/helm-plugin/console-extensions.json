@@ -288,7 +288,7 @@
     "properties": {
       "id": "helm-release-panel-tab-section-details",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelDetailsTabSection" }
+      "provider": { "$codeRef": "helmTopologySidebar.useHelmReleasePanelDetailsTabSection" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -299,7 +299,7 @@
     "properties": {
       "id": "helm-release-panel-tab-section-resource",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelResourceTabSection" }
+      "provider": { "$codeRef": "helmTopologySidebar.useHelmReleasePanelResourceTabSection" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -310,7 +310,7 @@
     "properties": {
       "id": "helm-release-panel-tab-section-releaseNotes",
       "tab": "helm-release-panel-tab-releaseNotes",
-      "section": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelReleaseNotesTabSection" }
+      "provider": { "$codeRef": "helmTopologySidebar.useHelmReleasePanelReleaseNotesTabSection" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]

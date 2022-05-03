@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Edge, GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
 import TopologyEdgeResourcesPanel from '@console/topology/src/components/side-bar/TopologyEdgeResourcesPanel';
 import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
@@ -18,7 +18,9 @@ const DetailsSection: React.FC<{ resource: K8sResourceCommon }> = ({ resource })
   );
 };
 
-export const getSbrPanelDetailsSection: DetailsTabSectionCallback = (element: GraphElement) => {
+export const useSbrPanelDetailsSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   if (element.getType() !== TYPE_SERVICE_BINDING) {
     return [undefined, true, undefined];
   }
@@ -27,7 +29,7 @@ export const getSbrPanelDetailsSection: DetailsTabSectionCallback = (element: Gr
   return [section, true, undefined];
 };
 
-export const getSbrPanelResourceSection: DetailsTabSectionCallback = (element: Edge) => {
+export const useSbrPanelResourceSection: DetailsTabSectionExtensionHook = (element: Edge) => {
   if (element.getType() !== TYPE_SERVICE_BINDING) {
     return [undefined, true, undefined];
   }

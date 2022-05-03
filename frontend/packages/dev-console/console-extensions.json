@@ -566,8 +566,8 @@
     "properties": {
       "id": "topology-tab-section-hpas",
       "tab": "topology-side-bar-tab-resource",
-      "section": {
-        "$codeRef": "topology.getHpaTabSectionForTopologySideBar"
+      "provider": {
+        "$codeRef": "topology.useHpaTabSectionForTopologySideBar"
       },
       "insertAfter": "topology-tab-section-builds-overview"
     }
@@ -588,8 +588,8 @@
     "properties": {
       "id": "topology-tab-section-observe",
       "tab": "topology-side-bar-tab-observe",
-      "section": {
-        "$codeRef": "topology.getObserveSideBarTabSection"
+      "provider": {
+        "$codeRef": "topology.useObserveSideBarTabSection"
       }
     }
   },
@@ -608,8 +608,8 @@
     "properties": {
       "id": "topology-tab-section-sbr-details",
       "tab": "topology-side-bar-tab-details",
-      "section": {
-        "$codeRef": "topology.getSbrPanelDetailsSection"
+      "provider": {
+        "$codeRef": "topology.useSbrPanelDetailsSection"
       }
     },
     "flags": {
@@ -621,8 +621,8 @@
     "properties": {
       "id": "topology-tab-section-sbr-resource",
       "tab": "topology-side-bar-tab-resource",
-      "section": {
-        "$codeRef": "topology.getSbrPanelResourceSection"
+      "provider": {
+        "$codeRef": "topology.useSbrPanelResourceSection"
       }
     },
     "flags": {

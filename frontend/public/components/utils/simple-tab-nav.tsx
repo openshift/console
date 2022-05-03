@@ -59,7 +59,10 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
     const { tabs, tabProps, additionalClassNames } = this.props;
     const { selectedTab } = this.state;
     const selectedTabData = _.find(tabs, { name: selectedTab }) || _.head(tabs);
-    const Component = selectedTabData.component;
+    const content =
+      !React.isValidElement(selectedTabData.component) && !Array.isArray(selectedTabData.component)
+        ? React.createElement(selectedTabData.component, tabProps)
+        : selectedTabData.component;
 
     return (
       <>
@@ -73,7 +76,7 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
             />
           ))}
         </ul>
-        <Component {...tabProps} />
+        {content}
       </>
     );
   }
@@ -83,7 +86,7 @@ export const SimpleTabNav = withTranslation()(SimpleTabNav_) as React.FC<SimpleT
 
 export type Tab = {
   name: string;
-  component: any;
+  component: React.FunctionComponent<{}> | React.ReactElement;
 };
 
 type SimpleTabNavProps = {

@@ -1,37 +1,37 @@
-export { getResourceTabPubSubSectionForTopologySidebar } from './knative-pubsub-tab-sections';
+export { useResourceTabPubSubSectionForTopologySidebar } from './knative-pubsub-tab-sections';
 
 export {
-  getKnativeSidepanelDomainMappingsSection,
-  getKnativeSidepanelTriggersSection,
-  getKnativeSidepanelSubscriptionsSection,
+  useKnativeSidepanelDomainMappingsSection,
+  useKnativeSidepanelTriggersSection,
+  useKnativeSidepanelSubscriptionsSection,
   getKnativeSidepanelBuildAdapterSection,
-  getKnativeSidepanelRevisionSection,
+  useKnativeSidepanelRevisionSection,
 } from './knative-service-tab-sections';
 
 export {
-  getKnativeSidepanelDetailsTab,
-  getKnativeSidepanelRoutesSection,
+  useKnativeSidepanelDetailsTab,
+  useKnativeSidepanelRoutesSection,
   getKnativeSidepanelPodsAdapterSection,
-  getKnativeSidepanelEventSourcesSection,
-  getKnativeSidePanelEventSinkDetailsTab,
+  useKnativeSidepanelEventSourcesSection,
+  useKnativeSidePanelEventSinkDetailsTab,
 } from './knative-common-tab-sections';
 
 export {
-  getKnativeSidepanelDeploymentSection,
-  getKnativeSidepanelConfigurationsSection,
+  useKnativeSidepanelDeploymentSection,
+  useKnativeSidepanelConfigurationsSection,
 } from './knative-revision-tab-sections';
 
 export {
-  getKnativeSidepanelSinkSection,
+  useKnativeSidepanelSinkSection,
+  useKnativeSidepanelSinkAssociatedDeployment,
+  useKnativeSidepanelSinkEventSources,
   getKnativeURISinkResourceLink,
-  getKnativeSidepanelSinkAssociatedDeployment,
-  getKnativeSidepanelSinkEventSources,
 } from './knative-eventsource-tab-sections';
 
-export { getKnativeConnectorSidepanelResourceSection } from './knative-connectors-tab-sections';
+export { useKnativeConnectorSidepanelResourceSection } from './knative-connectors-tab-sections';
 
 export {
-  getKnativeSidepanelEventSinkSection,
+  useKnativeSidepanelEventSinkSection,
   getEventSinkPodsApdapter,
   getEventSourcePodsApdapter,
 } from './knative-resource-tab-sections';

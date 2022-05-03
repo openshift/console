@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { AdapterDataType } from '@console/dynamic-plugin-sdk/src';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { BuildConfigData, useBuildConfigsWatcher } from '@console/shared';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
@@ -14,7 +14,7 @@ import {
   TriggersOverviewList,
 } from './KnativeOverviewSections';
 
-export const getKnativeSidepanelRevisionSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelRevisionSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== NodeType.KnService) {
@@ -38,7 +38,7 @@ export const getKnativeSidepanelBuildAdapterSection = (
   return { resource, provider: useBuildConfigsWatcher };
 };
 
-export const getKnativeSidepanelSubscriptionsSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelSubscriptionsSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== NodeType.KnService) {
@@ -51,7 +51,7 @@ export const getKnativeSidepanelSubscriptionsSection: DetailsTabSectionCallback 
   return [section, true, undefined];
 };
 
-export const getKnativeSidepanelTriggersSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelTriggersSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== NodeType.KnService) {
@@ -64,7 +64,7 @@ export const getKnativeSidepanelTriggersSection: DetailsTabSectionCallback = (
   return [section, true, undefined];
 };
 
-export const getKnativeSidepanelDomainMappingsSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelDomainMappingsSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() !== NodeType.KnService) {

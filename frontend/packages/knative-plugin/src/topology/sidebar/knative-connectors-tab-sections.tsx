@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Edge } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import TopologyEdgeResourcesPanel from '@console/topology/src/components/side-bar/TopologyEdgeResourcesPanel';
 import {
   TYPE_EVENT_SINK_LINK,
@@ -9,7 +9,7 @@ import {
   TYPE_REVISION_TRAFFIC,
 } from '../const';
 
-export const getKnativeConnectorSidepanelResourceSection: DetailsTabSectionCallback = (
+export const useKnativeConnectorSidepanelResourceSection: DetailsTabSectionExtensionHook = (
   element: Edge,
 ) => {
   if (

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import {
   DaemonSetModel,
   DeploymentConfigModel,
@@ -10,7 +10,9 @@ import {
 import { getResource } from '@console/topology/src/utils';
 import MonitoringTab from '../monitoring/overview/MonitoringTab';
 
-export const getObserveSideBarTabSection: DetailsTabSectionCallback = (element: GraphElement) => {
+export const useObserveSideBarTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const resource = getResource(element);
   if (
     !resource ||

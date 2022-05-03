@@ -6,7 +6,7 @@ import {
   K8sResourceCommon,
   PodsAdapterDataType,
 } from '@console/dynamic-plugin-sdk/src';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import { PodKind, podPhase, referenceForModel } from '@console/internal/module/k8s';
@@ -84,7 +84,9 @@ export const getKnativeSidepanelPodsAdapterSection = (
   return undefined;
 };
 
-export const getKnativeSidepanelDetailsTab: DetailsTabSectionCallback = (element: GraphElement) => {
+export const useKnativeSidepanelDetailsTab: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   if (
     [
       TYPE_EVENT_PUB_SUB_LINK,
@@ -102,7 +104,7 @@ export const getKnativeSidepanelDetailsTab: DetailsTabSectionCallback = (element
   return [undefined, true, undefined];
 };
 
-export const getKnativeSidePanelEventSinkDetailsTab: DetailsTabSectionCallback = (
+export const useKnativeSidePanelEventSinkDetailsTab: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() === NodeType.EventSink) {
@@ -113,7 +115,7 @@ export const getKnativeSidePanelEventSinkDetailsTab: DetailsTabSectionCallback =
   return [undefined, true, undefined];
 };
 
-export const getKnativeSidepanelRoutesSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelRoutesSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() === NodeType.KnService || element.getType() === NodeType.Revision) {
@@ -129,7 +131,7 @@ export const getKnativeSidepanelRoutesSection: DetailsTabSectionCallback = (
   return [undefined, true, undefined];
 };
 
-export const getKnativeSidepanelEventSourcesSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelEventSourcesSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (![TYPE_KNATIVE_SERVICE, TYPE_SINK_URI].includes(element.getType())) {

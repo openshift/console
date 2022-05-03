@@ -6,7 +6,7 @@ import {
   isBuildAdapter,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { BuildConfigData } from '@console/shared';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { BuildOverview } from './BuildOverview';
@@ -14,9 +14,10 @@ import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
 const BuildTabSection: React.FC<{
+  id: string;
   buildAdapter: AdapterDataType<BuildConfigData>;
   extensionsResolved: boolean;
-}> = ({ buildAdapter, extensionsResolved }) => {
+}> = ({ id, buildAdapter, extensionsResolved }) => {
   const [
     { data: buildConfigs, loaded: buildConfigsDataLoaded },
     setBuildConfigsData,
@@ -32,6 +33,7 @@ const BuildTabSection: React.FC<{
     <TopologySideBarTabSection>
       {extensionsResolved && (
         <ResolveAdapter<BuildConfigData>
+          key={id}
           resource={buildAdapter.resource}
           useAdapterHook={buildAdapter.provider}
           onAdapterDataResolved={handleAdapterResolved}
@@ -42,7 +44,9 @@ const BuildTabSection: React.FC<{
   ) : null;
 };
 
-export const useBuildsSideBarTabSection: DetailsTabSectionCallback = (element: GraphElement) => {
+export const useBuildsSideBarTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const [buildAdapterExtensions, extensionsResolved] = useResolvedExtensions<BuildAdapter>(
     isBuildAdapter,
   );
@@ -58,7 +62,11 @@ export const useBuildsSideBarTabSection: DetailsTabSectionCallback = (element: G
     return [undefined, true, undefined];
   }
   const section = (
-    <BuildTabSection buildAdapter={buildAdapter} extensionsResolved={extensionsResolved} />
+    <BuildTabSection
+      id={element.getId()}
+      buildAdapter={buildAdapter}
+      extensionsResolved={extensionsResolved}
+    />
   );
   return [section, true, undefined];
 };

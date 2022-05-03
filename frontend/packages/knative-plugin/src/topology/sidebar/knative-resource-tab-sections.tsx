@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { DetailsTabSectionCallback } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import { SidebarSectionHeading, ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import {
+  SidebarSectionHeading,
+  ResourceLink,
+  ExternalLink,
+} from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, PodKind, podPhase } from '@console/internal/module/k8s';
 import { AllPodStatus, usePodsWatcher } from '@console/shared';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
@@ -52,7 +56,7 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
   );
 };
 
-export const getKnativeSidepanelEventSinkSection: DetailsTabSectionCallback = (
+export const useKnativeSidepanelEventSinkSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
 ) => {
   if (element.getType() === NodeType.EventSink) {
