@@ -224,7 +224,7 @@ const config: Configuration = {
       filename: './multicluster-logout.html',
       template: './public/multicluster-logout.html',
       inject: false,
-      chunksSortMode: 'none',
+      chunksSortMode: 'manual',
     }),
     new HtmlWebpackPlugin({
       filename: './index.html',
