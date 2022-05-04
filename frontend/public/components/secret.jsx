@@ -181,14 +181,6 @@ const TLS_FILTER_VALUE = 'TLS';
 const SA_TOKEN_FILTER_VALUE = 'Service Account Token';
 const OPAQUE_FILTER_VALUE = 'Opaque';
 
-const secretTypeFilterValues = [
-  IMAGE_FILTER_VALUE,
-  SOURCE_FILTER_VALUE,
-  TLS_FILTER_VALUE,
-  SA_TOKEN_FILTER_VALUE,
-  OPAQUE_FILTER_VALUE,
-];
-
 export const secretTypeFilterReducer = (secret) => {
   switch (secret.type) {
     case SecretType.dockercfg:
@@ -212,15 +204,6 @@ export const secretTypeFilterReducer = (secret) => {
   }
 };
 
-const filters = [
-  {
-    filterGroupName: 'Type',
-    type: 'secret-type',
-    reducer: secretTypeFilterReducer,
-    items: secretTypeFilterValues.map((filterValue) => ({ id: filterValue, title: filterValue })),
-  },
-];
-
 const SecretsPage = (props) => {
   const { t } = useTranslation();
   const createItems = {
@@ -236,6 +219,41 @@ const SecretsPage = (props) => {
     createLink: (type) =>
       `/k8s/ns/${props.namespace || 'default'}/secrets/~new/${type !== 'yaml' ? type : ''}`,
   };
+
+  const secretTypeFilterValues = [
+    {
+      id: IMAGE_FILTER_VALUE,
+      title: t('public~Image'),
+    },
+    {
+      id: SOURCE_FILTER_VALUE,
+      title: t('public~Source'),
+    },
+    {
+      id: TLS_FILTER_VALUE,
+      title: t('public~TLS'),
+    },
+    {
+      id: SA_TOKEN_FILTER_VALUE,
+      title: t('public~Service Account Token'),
+    },
+    {
+      id: OPAQUE_FILTER_VALUE,
+      title: t('public~Opaque'),
+    },
+  ];
+
+  const filters = [
+    {
+      filterGroupName: 'Type',
+      type: 'secret-type',
+      reducer: secretTypeFilterReducer,
+      items: secretTypeFilterValues.map((filterValue) => ({
+        id: filterValue.id,
+        title: filterValue.title,
+      })),
+    },
+  ];
 
   return (
     <ListPage

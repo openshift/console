@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import {
@@ -84,11 +85,11 @@ export enum ListFilterId {
 }
 
 export const ListFilterLabels = {
-  [ListFilterId.Running]: 'Running',
-  [ListFilterId.Failed]: 'Failed',
-  [ListFilterId.Succeeded]: 'Succeeded',
-  [ListFilterId.Cancelled]: 'Cancelled',
-  [ListFilterId.Other]: 'Other',
+  [ListFilterId.Running]: i18next.t('pipelines-plugin~Running'),
+  [ListFilterId.Failed]: i18next.t('pipelines-plugin~Failed'),
+  [ListFilterId.Succeeded]: i18next.t('pipelines-plugin~Succeeded'),
+  [ListFilterId.Cancelled]: i18next.t('pipelines-plugin~Cancelled'),
+  [ListFilterId.Other]: i18next.t('pipelines-plugin~Other'),
 };
 
 export enum PipelineResourceListFilterId {

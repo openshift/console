@@ -371,5 +371,6 @@
   "Skipped": "Skipped",
   "Cancelled": "Cancelled",
   "Pending": "Pending",
-  "PipelineRun not started yet": "PipelineRun not started yet"
+  "PipelineRun not started yet": "PipelineRun not started yet",
+  "Other": "Other"
 }
