@@ -56,6 +56,7 @@ export const topologyPO = {
     resourceTitle: 'pf-c-data-list__cell.odc-topology-list-view__kind-label',
     switcher: '[data-test-id="topology-switcher-view"][aria-label="Graph view"]',
     view: '[aria-label="Topology List View"]',
+    switchGraph: '[aria-label="Graph view"]',
   },
   sidePane: {
     actionsDropDown: '[data-test-id="actions-menu-button"]',
@@ -251,6 +252,24 @@ export const topologyPO = {
     importFromGitOption: '[data-test-action="Import from Git"]',
     filterResources: '[data-test="filter-by-resource"]',
     deploymentCheckbox: '[data-test="Deployment"]',
+  },
+  quickSearchPO: {
+    listView: '[aria-label="List view"]',
+    graphView: '[aria-label="Graph view"]',
+    toggleView: '[data-test-id="topology-switcher-view"]',
+    noResults: '[data-test="quick-search-no-results"]',
+    quickstartDrawer: '[data-test="quickstart drawer"]',
+    quickStarts: '#quickStarts',
+    pageTitle: '[data-test="page-title"]',
+    submitBtn: '[data-test-id="submit-button"]',
+    samplePage: '#Samples',
+    resourseTitle: '[data-test-id="resource-title"]',
+    appformName: '[data-test-id="application-form-app-name"]',
+    djangoPostgreSQL: '[data-test="item-name-Django + PostgreSQL-Templates"]',
+    NETSample: '[data-test="item-name-.NET-Samples"]',
+    monitorApp: '[data-test="item-name-Monitor your sample application-Quick Starts"]',
+    nodejsDevfiles: '[data-test="item-name-Basic Node.js-Devfiles"]',
+    nodejsSamples: '[data-test="item-name-Basic Node.js-Samples"]',
   },
 };
 
