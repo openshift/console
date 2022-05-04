@@ -40,7 +40,7 @@ import { isTopologyComponentFactory, TopologyComponentFactory } from '../../exte
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
 import { componentFactory } from './components';
-import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
+import { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory } from './layouts/layoutFactory';
 import TopologyControlBar from './TopologyControlBar';
 
 import './Topology.scss';
@@ -97,7 +97,7 @@ const graphModel: Model = {
   graph: {
     id: TOPOLOGY_GRAPH_ID,
     type: 'graph',
-    layout: COLA_LAYOUT,
+    layout: DEFAULT_LAYOUT,
     layers: [BOTTOM_LAYER, GROUPS_LAYER, 'groups2', DEFAULT_LAYER, TOP_LAYER],
   },
 };
@@ -177,7 +177,16 @@ const Topology: React.FC<TopologyProps &
     newVisualization.addEventListener(GRAPH_POSITION_CHANGE_EVENT, onCurrentGraphModelChange);
 
     if (storedLayout) {
-      graphModel.graph.layout = storedLayout.layout;
+      // Cleanup removed layouts, otherwise the `newVisualization.fromModel` call
+      // will crash in @patternfly/react-topology Visualization `getLayout(type: string)`
+      if (!SUPPORTED_LAYOUTS.includes(storedLayout.layout)) {
+        graphModel.graph.layout = DEFAULT_LAYOUT;
+        setTopologyLayoutData((prevState) => {
+          return { ...prevState, layout: DEFAULT_LAYOUT };
+        });
+      } else {
+        graphModel.graph.layout = storedLayout.layout;
+      }
     }
     newVisualization.fromModel(graphModel);
     newVisualization.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids: string[]) => {
