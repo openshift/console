@@ -50,7 +50,7 @@ describe('test VM template source image', () => {
     virtualization.templates.testSource(template.name, ADD_SOURCE);
   });
 
-  it('ID(CNV-5651) add PVC clone image and delete', () => {
+  xit('ID(CNV-5651) add PVC clone image and delete', () => {
     cy.createDataVolume(testName, 'default');
     virtualization.templates.addSource(template.name);
     addSource.addBootSource(ProvisionSource.CLONE_PVC, {
