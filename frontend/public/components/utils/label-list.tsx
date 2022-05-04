@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-core';
@@ -11,15 +12,17 @@ import { K8sResourceKindReference, kindForReference } from '../../module/k8s';
 export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
   const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
   const kindOf = `co-m-${kindForReference(kind.toLowerCase())}`;
-  const klass = classNames(kindOf, { 'co-m-expand': expand }, 'co-label');
+  const klass = classNames(kindOf, { 'co-label--expand': expand }, 'co-label');
 
   return (
-    <PfLabel className={klass} href={href} isTruncated>
-      <span className="co-label__key" data-test="label-key">
-        {name}
-      </span>
-      {value && <span className="co-label__eq">=</span>}
-      {value && <span className="co-label__value">{value}</span>}
+    <PfLabel className={klass} isTruncated>
+      <Link className={`co-text-${kindForReference(kind.toLowerCase())}`} to={href}>
+        <span className="co-label__key" data-test="label-key">
+          {name}
+        </span>
+        {value && <span className="co-label__eq">=</span>}
+        {value && <span className="co-label__value">{value}</span>}
+      </Link>
     </PfLabel>
   );
 };
@@ -42,7 +45,12 @@ class TranslatedLabelList extends React.Component<LabelListProps> {
             {t('public~No labels')}
           </div>
         ) : (
-          <PfLabelGroup className="co-label-group" defaultIsOpen={true} numLabels={20}>
+          <PfLabelGroup
+            className="co-label-group"
+            data-test="label-list"
+            defaultIsOpen={true}
+            numLabels={20}
+          >
             {list}
           </PfLabelGroup>
         )}
