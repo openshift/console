@@ -25,6 +25,18 @@ export const topologyPage = {
       }
     });
   },
+  verifyUserIsInListView: () => {
+    cy.byLegacyTestID('topology-view-shortcuts').should('be.visible');
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get('body').then(($body) => {
+      if ($body.find('.odc-topology-graph-view').length !== 0) {
+        cy.get(topologyPO.switcher)
+          .should('be.enabled')
+          .click({ force: true });
+        cy.get(topologyPO.list.switchGraph).should('be.visible');
+      }
+    });
+  },
   waitForLoad: (timeout = 50000) => {
     app.waitForLoad();
     cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
