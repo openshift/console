@@ -1,89 +1,60 @@
-$color-row-filter-border: $pf-color-black-300;
-$color-row-filter-border--active: $pf-color-blue-300;
+@import '~@patternfly/patternfly/sass-utilities/all';
 
-.co-m-row-filter__controls {
-  display: flex;
-  flex: 1;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  z-index: 1;
-}
-
-.co-m-row-filter__items {
-  font-weight: var(--pf-global--FontWeight--bold);
-  padding: 7px 10px;
-  white-space: nowrap;
-}
-
-.co-m-row-filter__selector {
-  white-space: nowrap !important;
-}
-
-.row-filter {
+.co-row-filter {
   background-color: var(--pf-global--BackgroundColor--100);
-  display: flex;
-  flex-wrap: wrap;
   margin-bottom: $pf-global--spacer--xl;
-  // use pseudo element for border so .row-filter__box-es can overlaps
-  &::before {
-    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-    bottom: calc(var(--pf-global--spacer--xl) - 1px);
-    content: '';
-    left: $pf-global-gutter;
-    position: absolute;
-    right: $pf-global-gutter;
-    top: 0;
-  }
-}
-
-.row-filter__box {
-  background: $pf-color-black-150;
-  display: inline-block;
-  margin: 0 -1px -1px 0;
-  padding: 7px 10px;
-  //  relative is to trigger z-index
   position: relative;
-  &,
-  &:focus,
-  &:hover {
-    border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
-    color: inherit;
-    text-decoration: none;
+
+  // use pseudo element for border so that .pf-c-toggle-group__item(s) overlap
+  @media screen and (min-width: $pf-global--breakpoint--md) {
+    &::before {
+      border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+      border-bottom-right-radius: var(--pf-global--BorderRadius--sm);
+      border-top-right-radius: var(--pf-global--BorderRadius--sm);
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
   }
-  &:focus {
-    border-color: var(--pf-global--BorderColor--200);
-    border-style: dotted;
-    z-index: 2;
-  }
-  &:hover {
-    text-decoration: none;
+
+  .pf-c-toggle-group {
+    overflow: auto;
   }
 }
 
-.row-filter__box--active {
-  background: $pf-color-blue-50;
-  border-color: $color-row-filter-border--active !important;
-  // z-index is because latter blocks overlap the joining outline of former blocks
-  z-index: 1;
-  &:focus {
-    border-color: darken($color-row-filter-border--active, 25%) !important;
+// .pf-c-toggle-group has a default border-radius
+// Since .co-row-filter wraps both .pf-c-toggle-group and .co-row-filter__items with a boxed border at > 768px,
+// we move the top-right & bottom-right radius from .pf-c-toggle-group__item:list-child to the right side of the .co-row-filter box.
+@media screen and (min-width: $pf-global--breakpoint--md) {
+  .co-row-filter .pf-c-toggle-group__item:last-child .pf-c-toggle-group__button,
+  .co-row-filter .pf-c-toggle-group__item:last-child .pf-c-toggle-group__button::before {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
   }
 }
 
-.row-filter__box--empty {
-  color: $pf-color-black-500 !important;
-  .row-filter__number-bubble {
-    background: inherit;
+.co-row-filter__items {
+  font-weight: var(--pf-global--FontWeight--bold);
+  white-space: nowrap;
+
+  @media screen and (min-width: $pf-global--breakpoint--md) {
+    padding: 0 var(--pf-global--spacer--md);
   }
 }
 
-.row-filter__number-bubble {
-  background: $pf-color-white;
-  border-radius: 4px;
+.co-row-filter__number-bubble {
   border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+  border-radius: var(--pf-global--BorderRadius--sm);
   display: inline-block;
-  line-height: 16px;
-  margin-right: 6px;
+  line-height: var(--pf-global--LineHeight--sm);;
+  margin-right: var(--pf-global--spacer--sm);
   padding: 2px 5px 0;
   text-align: center;
+
+  &.co-row-filter__number-bubble--active {
+    border-color: var(--pf-global--primary-color--100);
+  }
 }
