@@ -1,5 +1,4 @@
 import { AbstractAnchor, Point } from '@patternfly/react-topology';
-import { EVENT_MARKER_RADIUS } from '../../const';
 
 export default class EventSinkTargetAnchor extends AbstractAnchor {
   getLocation(): Point {
@@ -8,6 +7,6 @@ export default class EventSinkTargetAnchor extends AbstractAnchor {
 
   getReferencePoint(): Point {
     const bounds = this.owner.getBounds();
-    return new Point(bounds.x - EVENT_MARKER_RADIUS, bounds.y + bounds.height / 2);
+    return new Point(bounds.x, bounds.y + bounds.height / 2);
   }
 }

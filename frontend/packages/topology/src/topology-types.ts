@@ -8,6 +8,7 @@ import {
   EventListener,
   ModelKind,
   GraphElement,
+  TopologyQuadrant,
 } from '@patternfly/react-topology';
 import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
@@ -80,13 +81,6 @@ export type DisplayFilters = TopologyDisplayOption[];
 // Applies the filters on the model and returns the ids of filters that were relevant
 export type TopologyApplyDisplayOptions = (model: Model, filters: DisplayFilters) => string[];
 
-export enum TopologyDecoratorQuadrant {
-  upperLeft = 'upperLeft',
-  upperRight = 'upperRight',
-  lowerLeft = 'lowerLeft',
-  lowerRight = 'lowerRight',
-}
-
 export type TopologyDecoratorGetter = (
   element: Node,
   radius: number,
@@ -97,7 +91,7 @@ export type TopologyDecoratorGetter = (
 export type TopologyDecorator = {
   id: string;
   priority: number;
-  quadrant: TopologyDecoratorQuadrant;
+  quadrant: TopologyQuadrant;
   decorator: TopologyDecoratorGetter;
 };
 

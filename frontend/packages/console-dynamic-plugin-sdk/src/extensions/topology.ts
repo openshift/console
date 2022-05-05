@@ -1,3 +1,4 @@
+import { TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { WatchK8sResourcesGeneric } from './console-types';
 import {
@@ -9,7 +10,6 @@ import {
   TopologyDataModelGetter,
   TopologyDataModelReconciler,
   TopologyDecoratorGetter,
-  TopologyDecoratorQuadrant,
   TopologyDisplayOption,
   ViewComponentFactory,
 } from './topology-types';
@@ -73,7 +73,7 @@ export type TopologyDecoratorProvider = ExtensionDeclaration<
     // priority for topology decorator specific to the extension
     priority: number;
     // quadrant for topology decorator specific to the extension
-    quadrant: TopologyDecoratorQuadrant;
+    quadrant: TopologyQuadrant;
     // decorator specific to the extension
     decorator: CodeRef<TopologyDecoratorGetter>;
   }

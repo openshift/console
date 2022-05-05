@@ -17,6 +17,7 @@ import {
   createConnectorCallback,
   CreateConnector,
   EditableDragOperationType,
+  BaseEdge,
 } from '@console/topology/src/components/graph-view';
 import { withEditReviewAccess } from '@console/topology/src/utils';
 import {
@@ -37,7 +38,6 @@ import {
 import EventingPubSubLink from './edges/EventingPubSubLink';
 import EventSinkLink from './edges/EventSinkLink';
 import EventSourceLink from './edges/EventSourceLink';
-import KafkaConnectionLink from './edges/KafkaConnectionLink';
 import TrafficLink from './edges/TrafficLink';
 import KnativeService from './groups/KnativeService';
 import {
@@ -158,7 +158,7 @@ export const getKnativeComponentFactory = (
         ),
       );
     case TYPE_KAFKA_CONNECTION_LINK:
-      return withTargetDrag(eventSourceKafkaLinkDragSourceSpec())(KafkaConnectionLink);
+      return withTargetDrag(eventSourceKafkaLinkDragSourceSpec())(BaseEdge);
     case TYPE_EVENT_PUB_SUB_LINK:
       return withContextMenu(contextMenuActions)(
         withTargetDrag(eventingPubSubLinkDragSourceSpec())(EventingPubSubLink),

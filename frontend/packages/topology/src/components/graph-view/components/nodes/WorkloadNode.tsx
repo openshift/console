@@ -3,16 +3,18 @@ import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
   observer,
+  ScaleDetailsLevel,
+  useVisualizationController,
+  WithContextMenuProps,
   WithCreateConnectorProps,
+  WithDndDropProps,
   WithDragNodeProps,
   WithSelectionProps,
-  WithDndDropProps,
-  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { calculateRadius, usePodsWatcher, PodRCData } from '@console/shared';
-import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../../../filters';
+import { calculateRadius, PodRCData, usePodsWatcher } from '@console/shared';
+import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
 import BaseNode from './BaseNode';
 import { getNodeDecorators } from './decorators/getNodeDecorators';
@@ -60,10 +62,16 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
   const showPodCount = showPodCountFilter?.value ?? false;
   const { decorators } = element.getGraph().getData();
-  const nodeDecorators = getNodeDecorators(element, decorators, cx, cy, radius, decoratorRadius);
+  const controller = useVisualizationController();
+  const detailsLevel = controller.getGraph().getDetailsLevel();
+  const nodeDecorators =
+    detailsLevel === ScaleDetailsLevel.high
+      ? getNodeDecorators(element, decorators, cx, cy, radius, decoratorRadius)
+      : null;
   const iconImageUrl = getImageForIconClass(workloadData.builderImage) ?? workloadData.builderImage;
+
   return (
-    <g>
+    <g className="odc-workload-node">
       <Tooltip
         content={tipContent}
         trigger="manual"
@@ -72,15 +80,14 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
       >
         <BaseNode
           className="odc-workload-node"
-          outerRadius={radius}
-          innerRadius={donutStatus ? podSetInnerRadius(size, donutStatus) : 0}
+          innerRadius={podSetInnerRadius(size, donutStatus)}
           icon={!showPodCount ? iconImageUrl : undefined}
           kind={workloadData.kind}
           element={element}
           dropTarget={dropTarget}
           canDrop={canDrop}
-          {...rest}
           attachments={nodeDecorators}
+          {...rest}
         >
           {donutStatus ? (
             <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={showPodCount} />

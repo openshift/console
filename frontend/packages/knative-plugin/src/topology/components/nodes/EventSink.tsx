@@ -3,36 +3,21 @@ import { SignInAltIcon } from '@patternfly/react-icons';
 import {
   Node,
   observer,
-  useHover,
   WithSelectionProps,
   WithDndDropProps,
   WithContextMenuProps,
-  useSvgAnchor,
   useCombineRefs,
   WithDragNodeProps,
-  createSvgIdUrl,
   WithCreateConnectorProps,
   Edge,
   useAnchor,
   AnchorEnd,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared';
-import {
-  NodeShadows,
-  NODE_SHADOW_FILTER_ID_HOVER,
-  NODE_SHADOW_FILTER_ID,
-  PodSet,
-} from '@console/topology/src/components/graph-view';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import {
-  useSearchFilter,
-  useDisplayFilters,
-  getFilterById,
-  SHOW_LABELS_FILTER_ID,
-} from '@console/topology/src/filters';
+import { PodSet } from '@console/topology/src/components/graph-view';
+import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { KafkaSinkModel } from '../../../models';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
@@ -53,26 +38,14 @@ export type EventSinkProps = {
 
 const EventSink: React.FC<EventSinkProps> = ({
   element,
-  selected,
-  onSelect,
-  onContextMenu,
-  contextMenuOpen,
   dragNodeRef,
   dndDropRef,
-  dragging,
-  edgeDragging,
   onShowCreateConnector,
-  onHideCreateConnector,
+  ...rest
 }) => {
-  const svgAnchorRef = useSvgAnchor();
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
-  const [hover, hoverRef] = useHover();
-  const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
+  const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
   const { data, resources, resource } = element.getData();
-  const [filtered] = useSearchFilter(element.getLabel(), resource?.metadata?.labels);
-  const displayFilters = useDisplayFilters();
-  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
-  const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
   const isKafkaConnectionLinkPresent =
@@ -121,40 +94,16 @@ const EventSink: React.FC<EventSinkProps> = ({
     resource,
   ]);
 
-  React.useLayoutEffect(() => {
-    if (!isKafkaConnectionLinkPresent) {
-      if (hover) {
-        onShowCreateConnector && onShowCreateConnector();
-      } else {
-        onHideCreateConnector && onHideCreateConnector();
-      }
-    }
-  }, [hover, onShowCreateConnector, onHideCreateConnector, isKafkaConnectionLinkPresent]);
-
   return (
-    <g
-      className={classNames('odc-event-source', {
-        'is-filtered': filtered,
-        'is-dragging': dragging || edgeDragging,
-        'is-selected': selected,
-      })}
-      onClick={onSelect}
-      onContextMenu={onContextMenu}
-      ref={groupRefs}
+    <BaseNode
+      className="odc-event-source"
+      onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
+      kind={data.kind}
+      element={element}
+      dragNodeRef={groupRefs}
+      labelIcon={<SignInAltIcon />}
+      {...rest}
     >
-      <NodeShadows />
-      <polygon
-        key={hover || dragging || contextMenuOpen ? 'polygon-hover' : 'polygon'}
-        className="odc-event-source__bg"
-        ref={svgAnchorRef}
-        filter={createSvgIdUrl(
-          hover || dragging || contextMenuOpen
-            ? NODE_SHADOW_FILTER_ID_HOVER
-            : NODE_SHADOW_FILTER_ID,
-        )}
-        points={`${width / 2}, ${(height - size) / 2} ${width - (width - size) / 2},${height /
-          2} ${width / 2},${height - (height - size) / 2} ${(width - size) / 2},${height / 2}`}
-      />
       {donutStatus && !isKafkaSink && (
         <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
       )}
@@ -165,21 +114,7 @@ const EventSink: React.FC<EventSinkProps> = ({
         height={size * 0.35}
         xlinkHref={getEventSourceIcon(data.kind, resources.obj)}
       />
-
-      {showLabels && (data.kind || element.getLabel()) && (
-        <SvgBoxedText
-          className="odc-base-node__label"
-          x={width / 2}
-          y={(height + size) / 2 + 20}
-          paddingX={8}
-          paddingY={4}
-          kind={data.kind}
-          typeIcon={<SignInAltIcon />}
-        >
-          {element.getLabel()}
-        </SvgBoxedText>
-      )}
-    </g>
+    </BaseNode>
   );
 };
 

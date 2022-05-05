@@ -1,76 +1,71 @@
 import * as React from 'react';
 import {
+  BadgeLocation,
+  DefaultNode,
   Node,
-  useAnchor,
-  EllipseAnchor,
+  observer,
+  useCombineRefs,
+  useHover,
+  WithContextMenuProps,
   WithCreateConnectorProps,
   WithDndDropProps,
   WithDragNodeProps,
   WithSelectionProps,
-  WithContextMenuProps,
-  useCombineRefs,
-  useHover,
-  observer,
-  createSvgIdUrl,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import {
-  getFilterById,
-  useDisplayFilters,
-  useSearchFilter,
-  SHOW_LABELS_FILTER_ID,
-} from '../../../../filters';
+import { K8sVerb, modelFor, referenceFor } from '@console/internal/module/k8s';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
+import { useSearchFilter } from '../../../../filters';
+import { useShowLabel } from '../../../../filters/useShowLabel';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
-import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { NodeShadows, NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
+import { getKindStringAndAbbreviation } from './nodeUtils';
 
+import '../../../svg/SvgResourceIcon.scss';
 import './BaseNode.scss';
 
 type BaseNodeProps = {
-  className: string;
-  outerRadius: number;
+  className?: string;
   innerRadius?: number;
   icon?: string;
   kind?: string;
+  labelIconClass?: string; // Icon to show in label
+  labelIcon?: React.ReactNode;
+  labelIconPadding?: number;
+  badge?: string;
+  badgeColor?: string;
+  badgeTextColor?: string;
+  badgeBorderColor?: string;
+  badgeClassName?: string;
+  badgeLocation?: BadgeLocation;
   children?: React.ReactNode;
   attachments?: React.ReactNode;
   element: Node;
   dragging?: boolean;
-  edgeDragging?: boolean;
   dropTarget?: boolean;
   canDrop?: boolean;
-} & WithSelectionProps &
-  WithDragNodeProps &
-  WithDndDropProps &
-  WithContextMenuProps &
-  WithCreateConnectorProps;
+  createConnectorAccessVerb?: K8sVerb;
+} & Partial<WithSelectionProps> &
+  Partial<WithDragNodeProps> &
+  Partial<WithDndDropProps> &
+  Partial<WithContextMenuProps> &
+  Partial<WithCreateConnectorProps>;
 
 const BaseNode: React.FC<BaseNodeProps> = ({
   className,
-  outerRadius,
   innerRadius,
   icon,
   kind,
   element,
-  selected,
-  onSelect,
   children,
-  attachments,
   dragNodeRef,
-  dndDropRef,
-  canDrop,
-  dragging,
-  edgeDragging,
-  dropTarget,
-  onHideCreateConnector,
   onShowCreateConnector,
   onContextMenu,
   contextMenuOpen,
+  createConnectorAccessVerb = 'patch',
+  ...rest
 }) => {
   const [hover, hoverRef] = useHover();
-  useAnchor(EllipseAnchor);
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
@@ -78,63 +73,41 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   const resourceModel = modelFor(referenceFor(resourceObj));
   const iconRadius = innerRadius * 0.9;
   const editAccess = useAccessReview({
-    group: resourceModel.apiGroup,
-    verb: 'patch',
-    resource: resourceModel.plural,
+    group: resourceModel?.apiGroup,
+    verb: createConnectorAccessVerb,
+    resource: resourceModel?.plural,
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
   const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
-  const displayFilters = useDisplayFilters();
-  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
-  const showLabels = showLabelsFilter?.value || hover;
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
+  const showLabel = useShowLabel(hover);
+  const kindData = kind && getKindStringAndAbbreviation(kind);
 
-  React.useLayoutEffect(() => {
-    if (editAccess) {
-      if (hover) {
-        onShowCreateConnector && onShowCreateConnector();
-      } else {
-        onHideCreateConnector && onHideCreateConnector();
-      }
-    }
-  }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess]);
+  const badgeClassName = kindData
+    ? classNames('odc-resource-icon', {
+        [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
+      })
+    : '';
 
   return (
-    <g
+    <DefaultNode
       className={classNames('odc-base-node', className, {
-        'is-hover': hover || contextMenuOpen,
-        'is-highlight': canDrop,
-        'is-dragging': dragging || edgeDragging,
-        'is-dropTarget': canDrop && dropTarget,
         'is-filtered': filtered,
-        'is-selected': selected,
       })}
+      truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
+      element={element}
+      showLabel={showLabel}
+      onShowCreateConnector={editAccess && onShowCreateConnector}
+      onContextMenu={onContextMenu}
+      contextMenuOpen={contextMenuOpen}
+      dragNodeRef={refs}
+      badge={kindData?.kindAbbr}
+      badgeColor={kindData?.kindColor}
+      badgeClassName={badgeClassName}
+      {...rest}
     >
-      <NodeShadows />
-      <g
-        data-test-id="base-node-handler"
-        onClick={onSelect}
-        onContextMenu={onContextMenu}
-        ref={refs}
-      >
-        <circle
-          key={
-            hover || dragging || edgeDragging || dropTarget || contextMenuOpen
-              ? 'circle-hover'
-              : 'circle'
-          }
-          className="odc-base-node__bg"
-          ref={dndDropRef}
-          cx={cx}
-          cy={cy}
-          r={outerRadius}
-          filter={createSvgIdUrl(
-            hover || dragging || edgeDragging || dropTarget || contextMenuOpen
-              ? NODE_SHADOW_FILTER_ID_HOVER
-              : NODE_SHADOW_FILTER_ID,
-          )}
-        />
+      <g data-test-id="base-node-handler">
         {icon && (
           <image
             x={cx - iconRadius}
@@ -144,22 +117,9 @@ const BaseNode: React.FC<BaseNodeProps> = ({
             xlinkHref={icon}
           />
         )}
-        {showLabels && (kind || element.getLabel()) && (
-          <SvgBoxedText
-            className="odc-base-node__label"
-            x={cx}
-            y={cy + outerRadius + 24}
-            paddingX={8}
-            paddingY={4}
-            kind={kind}
-          >
-            {element.getLabel()}
-          </SvgBoxedText>
-        )}
         {children}
       </g>
-      {attachments}
-    </g>
+    </DefaultNode>
   );
 };
 

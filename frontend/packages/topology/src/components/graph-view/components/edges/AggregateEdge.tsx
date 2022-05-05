@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Edge, Layer, useHover, EdgeConnectorArrow, observer } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import { Edge, EdgeTerminalType, observer } from '@patternfly/react-topology';
+import BaseEdge from './BaseEdge';
 
 import './AggregateEdge.scss';
 
@@ -8,42 +8,22 @@ type AggregateEdgeProps = {
   element: Edge;
 };
 
-const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element }) => {
-  const [hover, hoverRef] = useHover();
-  const startPoint = element.getStartPoint();
-  const endPoint = element.getEndPoint();
+const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element, ...others }) => {
   const { bidirectional } = element.getData();
 
+  const endTerminalType =
+    !bidirectional && (!element.getSource().isCollapsed() || !element.getTarget().isCollapsed())
+      ? EdgeTerminalType.directional
+      : EdgeTerminalType.none;
+
   return (
-    <Layer id={hover ? 'top' : undefined}>
-      <g
-        ref={hoverRef}
-        data-test-id="edge-handler"
-        className={classNames('odc-base-edge odc-aggregate-edge', {
-          'is-hover': hover,
-        })}
-      >
-        <line
-          x1={startPoint.x}
-          y1={startPoint.y}
-          x2={endPoint.x}
-          y2={endPoint.y}
-          strokeWidth={10}
-          stroke="transparent"
-        />
-        <line
-          className="odc-base-edge__link"
-          x1={startPoint.x}
-          y1={startPoint.y}
-          x2={endPoint.x}
-          y2={endPoint.y}
-        />
-        {!bidirectional &&
-          (!element.getSource().isCollapsed() || !element.getTarget().isCollapsed()) && (
-            <EdgeConnectorArrow edge={element} />
-          )}
-      </g>
-    </Layer>
+    <BaseEdge
+      data-test-id="edge-handler"
+      element={element}
+      className="odc-base-edge odc-aggregate-edge"
+      endTerminalType={endTerminalType}
+      {...others}
+    />
   );
 };
 

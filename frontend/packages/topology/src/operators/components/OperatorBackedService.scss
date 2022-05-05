@@ -22,19 +22,19 @@
     stroke-dasharray: none;
   }
 
-  &.is-selected &__bg {
+  &.pf-m-selected &__bg {
     fill: $selected-fill-color;
     stroke: $selected-stroke-color;
     stroke-width: $group-node-selected-stroke-width;
     stroke-dasharray: $group-node-stroke-dasharray;
   }
 
-  &.is-highlight &__bg {
+  &.pf-m-highlight &__bg {
     fill: $pf-color-black-150;
     stroke: $interactive-stroke-color;
   }
 
-  &.is-dropTarget &__bg {
+  &.pf-m-drop-target &__bg {
     fill: $interactive-fill-color;
     stroke: $interactive-stroke-color;
   }
@@ -44,8 +44,8 @@
 .odc-m-filter-active {
   .odc-operator-backed-service {
     opacity: $de-emphasize-opacity;
-    &.is-highlight,
-    &.is-dragging {
+    &.pf-m-highlight,
+    &.pf-m-dragging {
       opacity: 1;
     }
   }

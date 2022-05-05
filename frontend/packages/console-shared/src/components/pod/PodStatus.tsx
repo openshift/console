@@ -95,7 +95,7 @@ const PodStatus: React.FC<PodStatusProps> = ({
       <ChartDonut
         ariaTitle={`${title}${subTitle && ` ${subTitle}`}`}
         animate={{
-          duration: ANIMATION_DURATION,
+          duration: prevVData.current ? ANIMATION_DURATION : 0,
           onEnd: updateOnEnd ? forceUpdate : undefined,
         }}
         standalone={standalone}

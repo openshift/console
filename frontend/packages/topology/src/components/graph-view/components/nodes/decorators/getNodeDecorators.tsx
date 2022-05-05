@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Node } from '@patternfly/react-topology';
-import { TopologyDecorator, TopologyDecoratorQuadrant } from '../../../../../topology-types';
+import { Node, TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
+import { TopologyDecorator } from '../../../../../topology-types';
 
 const getExtensionDecoratorForQuadrant = (
   location: string,
@@ -19,19 +19,19 @@ const getExtensionDecoratorForQuadrant = (
   const deltaY = nodeRadius > 0 ? nodeRadius : nodeHeight / 2;
   const offset = nodeRadius > 0 ? decoratorRadius * 0.7 : 0;
   switch (location) {
-    case TopologyDecoratorQuadrant.upperRight:
+    case TopologyQuadrant.upperRight:
       x = centerX + deltaX - offset;
       y = centerY - deltaY + offset;
       break;
-    case TopologyDecoratorQuadrant.lowerRight:
+    case TopologyQuadrant.lowerRight:
       x = centerX + deltaX - offset;
       y = centerY + deltaY - offset;
       break;
-    case TopologyDecoratorQuadrant.upperLeft:
+    case TopologyQuadrant.upperLeft:
       x = centerX - deltaX + offset;
       y = centerY - deltaY + offset;
       break;
-    case TopologyDecoratorQuadrant.lowerLeft:
+    case TopologyQuadrant.lowerLeft:
       x = centerX - deltaX + offset;
       y = centerY + deltaY - offset;
       break;

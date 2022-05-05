@@ -7,6 +7,7 @@ import {
   WithSelectionProps,
   WithContextMenuProps,
   WithDndDropProps,
+  WithDragNodeProps,
   RectAnchor,
   useAnchor,
   useDragNode,
@@ -15,31 +16,33 @@ import {
   createSvgIdUrl,
   useCombineRefs,
   WithCreateConnectorProps,
+  NodeLabel,
 } from '@patternfly/react-topology';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
-  nodeDragSourceSpec,
+  NodeDragSourceSpecType,
 } from '@console/topology/src/components/graph-view';
 import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import {
-  useSearchFilter,
-  useDisplayFilters,
-  getFilterById,
-  SHOW_LABELS_FILTER_ID,
-} from '@console/topology/src/filters';
+import { useSearchFilter } from '@console/topology/src/filters';
+import { useShowLabel } from '@console/topology/src/filters/useShowLabel';
 import { getResource } from '@console/topology/src/utils/topology-utils';
-import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 import { isServerlessFunction } from '../../knative-topology-utils';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 
 export type KnativeServiceGroupProps = {
   element: Node;
+  badge?: string;
+  badgeColor?: string;
+  badgeClassName?: string;
   highlight?: boolean;
+  dragSpec?: NodeDragSourceSpecType;
+  dragging?: boolean;
+  regrouping?: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
   edgeDragging?: boolean;
@@ -47,16 +50,24 @@ export type KnativeServiceGroupProps = {
   tooltipLabel?: string;
 } & WithSelectionProps &
   WithDndDropProps &
+  WithDragNodeProps &
   WithContextMenuProps &
   WithCreateConnectorProps;
 
 const DECORATOR_RADIUS = 13;
 const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   element,
+  badge,
+  badgeColor,
+  badgeClassName,
   selected,
   onSelect,
   onContextMenu,
   contextMenuOpen,
+  dragNodeRef,
+  dragSpec,
+  dragging,
+  regrouping,
   canDrop,
   dropTarget,
   edgeDragging,
@@ -69,11 +80,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const dragSpec = React.useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [
-    editAccess,
-  ]);
   const dragProps = React.useMemo(() => ({ element }), [element]);
-  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(dragSpec, dragProps);
   const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
     dragSpec,
     dragProps,
@@ -90,12 +97,10 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
     AnchorEnd.source,
     'revision-traffic',
   );
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5 + EVENT_MARKER_RADIUS), []));
+  useAnchor(RectAnchor);
 
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
-  const displayFilters = useDisplayFilters();
-  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
-  const showLabels = showLabelsFilter?.value || hover || innerHover;
+  const showLabel = useShowLabel(hover);
   const { x, y, width, height } = element.getBounds();
 
   React.useLayoutEffect(() => {
@@ -135,8 +140,8 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
         onClick={onSelect}
         onContextMenu={onContextMenu}
         className={classNames('odc-knative-service', {
-          'is-dragging': dragging || labelDragging,
-          'is-highlight': canDrop || edgeDragging,
+          'pf-m-dragging': dragging || labelDragging,
+          'pf-m-highlight': canDrop || edgeDragging,
           'is-filtered': filtered,
         })}
       >
@@ -149,10 +154,10 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
           <g
             ref={nodeRefs}
             className={classNames('odc-knative-service', {
-              'is-selected': selected,
-              'is-dragging': dragging || labelDragging,
-              'is-highlight': canDrop || edgeDragging,
-              'is-dropTarget': canDrop && dropTarget,
+              'pf-m-selected': selected,
+              'pf-m-dragging': dragging || labelDragging,
+              'pf-m-highlight': canDrop || edgeDragging,
+              'pf-m-drop-target': canDrop && dropTarget,
               'is-filtered': filtered,
               'is-function': isServerlessFunction(getResource(element)),
             })}
@@ -185,19 +190,23 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
           </g>
         </Layer>
         {decorators}
-        {showLabels && (data.kind || element.getLabel()) && (
-          <SvgBoxedText
-            className="odc-knative-service__label odc-base-node__label"
+        {showLabel && (data.kind || element.getLabel()) && (
+          <NodeLabel
+            className="pf-topology__group__label odc-knative-service__label odc-base-node__label"
+            onContextMenu={onContextMenu}
+            contextMenuOpen={contextMenuOpen}
             x={x + width / 2}
             y={y + height + 20}
             paddingX={8}
             paddingY={4}
-            kind={data.kind}
+            labelIconClass={getImageForIconClass(typeIconClass) || typeIconClass}
+            badge={badge}
+            badgeColor={badgeColor}
+            badgeClassName={badgeClassName}
             dragRef={dragLabelRef}
-            typeIconClass={typeIconClass}
           >
             {element.getLabel()}
-          </SvgBoxedText>
+          </NodeLabel>
         )}
       </g>
     </Tooltip>

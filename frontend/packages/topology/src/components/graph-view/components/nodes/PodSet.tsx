@@ -36,11 +36,11 @@ const calculateInnerPodStatusRadius = (
   return { innerPodStatusOuterRadius, innerPodStatusInnerRadius };
 };
 
-export const podSetInnerRadius = (size: number, data: PodRCData) => {
+export const podSetInnerRadius = (size: number, data?: PodRCData) => {
   const { podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(size);
   let radius = podStatusInnerRadius;
 
-  if (podDataInProgress(data.obj, data.current, data.isRollingOut)) {
+  if (data && podDataInProgress(data.obj, data.current, data.isRollingOut)) {
     const { innerPodStatusInnerRadius } = calculateInnerPodStatusRadius(
       radius,
       podStatusStrokeWidth,

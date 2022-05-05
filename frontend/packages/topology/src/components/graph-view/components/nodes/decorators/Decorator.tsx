@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
+import { Decorator as PfDecorator } from '@patternfly/react-topology';
 import { Link } from 'react-router-dom';
-import SvgDropShadowFilter from '../../../../svg/SvgDropShadowFilter';
 
 import './Decorator.scss';
 
@@ -16,55 +15,19 @@ type DecoratorTypes = {
   circleRef?: React.Ref<SVGCircleElement>;
 };
 
-const FILTER_ID = 'DecoratorDropShadowFilterId';
-const HOVER_FILTER_ID = 'DecoratorDropShadowHoverFilterId';
-
 const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   x,
   y,
   radius,
-  children,
-  onClick,
   href,
   ariaLabel,
   external,
-  circleRef,
+  ...rest
 }) => {
-  const [hover, hoverRef] = useHover();
   const decorator = (
-    <g
-      ref={hoverRef}
-      className="odc-decorator"
-      {...(onClick
-        ? {
-            onClick: (e) => {
-              e.stopPropagation();
-              onClick(e);
-            },
-          }
-        : null)}
-      {...(!href
-        ? {
-            role: 'button',
-            'aria-label': ariaLabel,
-          }
-        : null)}
-      data-test-id="decorator"
-    >
-      <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
-      <SvgDropShadowFilter id={HOVER_FILTER_ID} dy={3} stdDeviation={5} floodOpacity={0.5} />
-      <circle
-        key={hover ? 'circle-hover' : 'circle'}
-        ref={circleRef}
-        className="odc-decorator__bg"
-        cx={x}
-        cy={y}
-        r={radius}
-        filter={createSvgIdUrl(hover ? HOVER_FILTER_ID : FILTER_ID)}
-      />
-      <g transform={`translate(${x}, ${y})`}>{children}</g>
-    </g>
+    <PfDecorator x={x} y={y} radius={radius} className="odc-decorator" showBackground {...rest} />
   );
+
   if (href) {
     return external ? (
       /*

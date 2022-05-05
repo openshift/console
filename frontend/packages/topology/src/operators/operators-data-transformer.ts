@@ -1,4 +1,4 @@
-import { EdgeModel, Model } from '@patternfly/react-topology';
+import { EdgeModel, Model } from '@patternfly/react-topology/dist/esm/types';
 import * as _ from 'lodash';
 import {
   K8sResourceKind,

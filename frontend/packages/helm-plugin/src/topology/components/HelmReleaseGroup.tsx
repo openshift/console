@@ -7,61 +7,67 @@ import {
   useDragNode,
   WithSelectionProps,
   WithDndDropProps,
+  WithDragNodeProps,
   WithContextMenuProps,
   observer,
   useCombineRefs,
+  NodeLabel,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
   noRegroupDragSourceSpec,
 } from '@console/topology/src/components/graph-view';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import {
-  getFilterById,
-  useDisplayFilters,
-  useSearchFilter,
-  SHOW_LABELS_FILTER_ID,
-} from '@console/topology/src/filters';
+import { useSearchFilter } from '@console/topology/src/filters';
+import { useShowLabel } from '@console/topology/src/filters/useShowLabel';
 import { getResource } from '@console/topology/src/utils';
 
 type HelmReleaseGroupProps = {
   element: Node;
+  badge?: string;
+  badgeColor?: string;
+  badgeClassName?: string;
   editAccess: boolean;
+  dragging?: boolean;
 } & WithSelectionProps &
   WithContextMenuProps &
+  WithDragNodeProps &
   WithDndDropProps;
 
 const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   element,
+  badge,
+  badgeColor,
+  badgeClassName,
   editAccess,
   selected,
   onSelect,
   onContextMenu,
   contextMenuOpen,
   dndDropRef,
+  dragging,
+  dragNodeRef,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(noRegroupDragSourceSpec);
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
-  const displayFilters = useDisplayFilters();
-  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
-  const showLabels = showLabelsFilter?.value || hover || innerHover;
+  const showLabel = useShowLabel(hover);
   const hasChildren = element.getChildren()?.length > 0;
   const { x, y, width, height } = element.getBounds();
+  const typeIconClass = element.getData().data.chartIcon || 'icon-helm';
 
   return (
     <g
       ref={hoverRef}
       onClick={onSelect}
       onContextMenu={editAccess ? onContextMenu : null}
-      className={classNames('odc-helm-release', {
-        'is-dragging': dragging || labelDragging,
+      className={classNames('pf-topology__group odc-helm-release', {
+        'pf-m-dragging': dragging || labelDragging,
         'is-filtered': filtered,
       })}
     >
@@ -70,8 +76,8 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
         <g
           ref={nodeRefs}
           className={classNames('odc-helm-release', {
-            'is-selected': selected,
-            'is-dragging': dragging || labelDragging,
+            'pf-m-selected': selected,
+            'pf-m-dragging': dragging || labelDragging,
             'is-filtered': filtered,
           })}
         >
@@ -102,19 +108,23 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
           )}
         </g>
       </Layer>
-      {showLabels && element.getLabel() && (
-        <SvgBoxedText
-          className="odc-base-node__label"
+      {showLabel && element.getLabel() && (
+        <NodeLabel
+          className="pf-topology__group__label odc-base-node__label"
+          onContextMenu={onContextMenu}
+          contextMenuOpen={contextMenuOpen}
           x={x + width / 2}
           y={y + height + 20}
           paddingX={8}
           paddingY={4}
-          kind="HelmRelease"
+          labelIconClass={getImageForIconClass(typeIconClass) || typeIconClass}
+          badge={badge}
+          badgeColor={badgeColor}
+          badgeClassName={badgeClassName}
           dragRef={dragLabelRef}
-          typeIconClass={element.getData().data.chartIcon || 'icon-helm'}
         >
           {element.getLabel()}
-        </SvgBoxedText>
+        </NodeLabel>
       )}
     </g>
   );

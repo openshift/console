@@ -22,7 +22,7 @@
     stroke-dasharray: none;
   }
 
-  &.is-selected &__bg {
+  &.pf-m-selected &__bg {
     stroke: $selected-stroke-color;
     fill: $selected-fill-color;
     stroke-width: $group-node-selected-stroke-width;
@@ -34,7 +34,7 @@
 .odc-m-filter-active {
   .odc-helm-release {
     opacity: $de-emphasize-opacity;
-    &.is-dragging,
+    &.pf-m-dragging,
     &.is-filtered {
       opacity: 1;
     }

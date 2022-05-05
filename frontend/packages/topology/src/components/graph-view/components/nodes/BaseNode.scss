@@ -12,33 +12,9 @@
     outline: none;
   }
 
-  &__bg {
-    fill: var(--pf-global--BackgroundColor--light-100);
-  }
-
-  &.is-filtered &__bg {
+  &.is-filtered .pf-topology__node__background {
     stroke-width: 2px;
     stroke: $filtered-stroke-color;
-  }
-  &.is-selected &__bg {
-    stroke-width: 2px;
-    stroke: $selected-stroke-color;
-  }
-  &.is-highlight &__bg {
-    stroke-width: 0;
-  }
-  &.is-dropTarget &__bg {
-    stroke-width: 4px;
-    stroke: $interactive-stroke-color;
-  }
-
-  &__label {
-    fill: var(--pf-global--Color--light-100);
-    font-size: var(--pf-global--FontSize--md);
-    text {
-      pointer-events: none;
-      fill: var(--pf-global--Color--300);
-    }
   }
 }
 
@@ -46,8 +22,8 @@
 .odc-m-filter-active {
   .odc-base-node {
     opacity: $de-emphasize-opacity;
-    &.is-dragging,
-    &.is-highlight {
+    &.pf-m-dragging,
+    &.pf-m-highlight {
       opacity: 1;
     }
   }

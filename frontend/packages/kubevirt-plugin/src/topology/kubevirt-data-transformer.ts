@@ -1,4 +1,4 @@
-import { Model } from '@patternfly/react-topology';
+import { Model, NodeShape } from '@patternfly/react-topology/dist/esm/types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   K8sResourceKind,
@@ -102,7 +102,15 @@ export const getKubevirtTopologyDataModel = (
       vmsResources.push(uid);
       const data = createTopologyVMNodeData(resource, vmOverview, resources);
       vmsDataModel.nodes.push(
-        getTopologyNodeItem(resource, TYPE_VIRTUAL_MACHINE, data, WorkloadModelProps),
+        getTopologyNodeItem(
+          resource,
+          TYPE_VIRTUAL_MACHINE,
+          data,
+          WorkloadModelProps,
+          undefined,
+          undefined,
+          NodeShape.rect,
+        ),
       );
       vmsDataModel.edges.push(...getTopologyEdgeItems(resource, resources.virtualmachines.data));
       mergeGroup(getTopologyGroupItems(resource), vmsDataModel.nodes);

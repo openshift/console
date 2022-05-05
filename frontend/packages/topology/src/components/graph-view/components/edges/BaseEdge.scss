@@ -24,7 +24,7 @@
     stroke-dasharray: var(--edge--stroke-dasharray);
   }
 
-  &.is-selected {
+  &.pf-m-selected {
     fill: var(--edge--active--fill);
     stroke: var(--edge--active--stroke);
     .odc-base-edge__link,
@@ -34,7 +34,7 @@
   }
 
   &.is-hover,
-  &.is-dragging {
+  &.pf-m-dragging {
     fill: var(--edge--interactive--fill);
     stroke: var(--edge--interactive--stroke);
     .odc-base-edge__link,
@@ -52,7 +52,7 @@
   .odc-base-edge {
     pointer-events: none;
     opacity: var(--edge--drag-active--opacity);
-    &.is-dragging {
+    &.pf-m-dragging {
       opacity: var(--edge--opacity);
     }
     .pf-topology-connector-arrow {
@@ -63,7 +63,7 @@
 .odc-m-filter-active {
   .odc-base-edge {
     opacity: var(--edge--drag-active--opacity);
-    &.is-dragging {
+    &.pf-m-dragging {
       opacity: var(--edge--opacity);
     }
   }

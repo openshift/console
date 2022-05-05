@@ -1,3 +1,4 @@
+import { TopologyQuadrant } from '@patternfly/react-topology';
 import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
@@ -9,7 +10,6 @@ import {
   CreateConnectionGetter,
   ViewComponentFactory,
   TopologyDataModelReconciler,
-  TopologyDecoratorQuadrant,
   TopologyDecoratorGetter,
 } from '../topology-types';
 
@@ -51,7 +51,7 @@ namespace ExtensionProperties {
   export interface TopologyDecoratorProvider {
     id: string;
     priority: number;
-    quadrant: TopologyDecoratorQuadrant;
+    quadrant: TopologyQuadrant;
     decorator: CodeRef<TopologyDecoratorGetter>;
   }
 }
