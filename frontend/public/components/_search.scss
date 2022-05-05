@@ -1,8 +1,9 @@
 .co-search__accordion {
-  padding-top: 0 !important;
+  // Margin between each resource section results
+  margin-bottom: var(--pf-global--spacer--lg);
   // Align with search results
   @media (min-width: $screen-sm-min) {
-    .co-search-group__accordion-toggle {
+    .co-search__accordion-toggle {
       padding-left: $pf-global-gutter--md;
       padding-right: $pf-global-gutter--md;
     }
