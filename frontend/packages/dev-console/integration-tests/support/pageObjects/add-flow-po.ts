@@ -225,7 +225,10 @@ export const containerImagePO = {
 };
 
 export const eventSourcePO = {
-  search: '[placeholder="Filter by type..."]',
+  search: '[placeholder="Filter by keyword..."]',
+  yamlView: '#form-radiobutton-editorType-yaml-field',
+  formView: '#form-radiobutton-editorType-form-field',
+  addButton: 'a[role="button"]',
   apiServerSource: {
     apiServerSourceSection: '[data-test~="ApiServerSource"][data-test~="section"]',
     apiVersion: '[data-test=pairs-list-name]',
@@ -271,6 +274,15 @@ export const eventSourcePO = {
     environmentVariableName: '[data-test="pairs-list-name"]',
     environmentVariableValue: '[data-test="pairs-list-name"]',
     addMoreRow: '[data-test="add-button"]',
+  },
+  createPingSource: {
+    data: '#form-input-formData-data-PingSource-jsonData-field',
+    schedule: '#form-input-formData-data-PingSource-schedule-field',
+    name: '#form-input-formData-name-field',
+    resourceToggleButton: '[id="form-radiobutton-formData-sinkType-resource-field"]',
+    resourceDropDownField: '[id="form-ns-dropdown-formData-sink-key-field"]',
+    resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
+    resourceSearch: '[placeholder="Select resource"]',
   },
 };
 
