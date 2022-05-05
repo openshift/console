@@ -10,7 +10,7 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
 import { formatNumber } from '../format';

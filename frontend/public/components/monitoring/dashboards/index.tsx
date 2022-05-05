@@ -21,7 +21,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { RedExclamationCircleIcon } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';

@@ -21,6 +21,9 @@ import {
   InventoryItemStatusProps,
   ResourceYAMLEditorProps,
   ResourceEventStreamProps,
+  UsePrometheusPoll,
+  PrometheusPollProps,
+  PrometheusResponse,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -158,3 +161,37 @@ export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@c
  */
 export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('@console/internal/components/events')
   .WrappedResourceEventStream;
+
+const _usePrometheusPoll: (
+  props: PrometheusPollProps,
+) => [
+  PrometheusResponse,
+  unknown,
+  boolean,
+] = require('@console/internal/components/graphs/prometheus-poll-hook').usePrometheusPoll;
+
+/**
+ * React hook to poll Prometheus for a single query.
+ *
+ * @param {
+ *   query - Prometheus query string. If empty or undefined, polling is not started.
+ *   delay - polling delay interval (ms)
+ *   endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
+ *   endTime - for QUERY_RANGE enpoint, end of the query range
+ *   samples - for QUERY_RANGE enpoint
+ *   timespan - for QUERY_RANGE enpoint
+ *   namespace - a search param to append
+ *   timeout - a search param to append
+ * }
+ *
+ * @returns [
+ *   response - PrometheusResponse,
+ *   boolean - is response still loading?,
+ *   unknown - Caught error which can be originated either by the HTTP request or internal processing.
+ * ]
+ */
+export const usePrometheusPoll: UsePrometheusPoll = (props) => {
+  const result = _usePrometheusPoll(props);
+  // unify order with the rest of API
+  return [result[0], result[2], result[1]];
+};

@@ -32,5 +32,8 @@
   "Foo item": "Foo item",
   "Bar item": "Bar item",
   "Dynamic Page 1": "Dynamic Page 1",
-  "Dynamic Page 2": "Dynamic Page 2"
+  "Dynamic Page 2": "Dynamic Page 2",
+  "Prometheus error": "Prometheus error",
+  "Prometheus loading": "Prometheus loading",
+  "Prometheus data": "Prometheus data"
 }

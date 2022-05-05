@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 
 import { NamespaceModel, ServiceModel, ServiceMonitorModel } from '../../models';
