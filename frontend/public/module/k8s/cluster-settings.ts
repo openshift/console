@@ -188,6 +188,10 @@ export const hasAvailableUpdates = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(getAvailableClusterUpdates(cv));
 };
 
+export const hasNotRecommendedUpdates = (cv: ClusterVersionKind): boolean => {
+  return !_.isEmpty(getNotRecommendedUpdates(cv));
+};
+
 export const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateStatus => {
   if (invalid(cv)) {
     return ClusterUpdateStatus.Invalid;
