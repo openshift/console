@@ -36,6 +36,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
   className,
   infraType,
   isWizardFlow,
+  isMCG,
   mode, // ToDo(Sanjal): remove the use of "mode" once older OCS wizard code is removed
 }) => {
   const { t } = useTranslation();
@@ -79,6 +80,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({
         className={className}
         mode={mode}
         isWizardFlow={isWizardFlow}
+        isMCG={isMCG}
       />
     </div>
   );
