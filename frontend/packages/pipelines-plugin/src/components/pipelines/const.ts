@@ -53,6 +53,7 @@ export const SecretAnnotationType = {
 
 export const PIPELINE_GA_VERSION = '1.4.0';
 export const TRIGGERS_GA_VERSION = '1.6.0';
+export const PIPELINE_UNSIMPLIFIED_METRICS_VERSION = '1.5.2';
 export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
 export const PIPELINE_RUN_AUTO_START_FAILED = `bridge/pipeline-run-auto-start-failed`;
 
@@ -66,3 +67,11 @@ export const DEFAULT_SAMPLES = 60;
 export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
 
 export const PIPELINE_NAMESPACE = 'openshift-pipelines';
+export const PIPELINE_CONFIG_NAME = 'config';
+
+export enum PipelineMetricsLevel {
+  PIPELINE_TASK_LEVEL = 'pipeline/task',
+  PIPELINERUN_TASKRUN_LEVEL = 'pipelinerun/taskrun',
+  UNSUPPORTED_LEVEL = 'unsupported',
+  UNSIMPLIFIED_METRICS_LEVEL = 'unsimplified',
+}

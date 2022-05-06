@@ -1,5 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TEKTON_HUB_INTEGRATION_KEY } from '../components/catalog/apis/tektonHub';
+import { PipelineMetricsLevel } from '../components/pipelines/const';
+import { DurationTypes, LevelTypes, MetricsLevel, TektonConfig } from '../types';
 
 export enum IntegrationTypes {
   ENABLED = 'enabled',
@@ -9,7 +11,7 @@ export enum IntegrationTypes {
 
 type TekonHubIntegrationConfigs = { [key in IntegrationTypes]?: K8sResourceKind };
 
-const sampleTektonConfig = {
+export const sampleTektonConfig: TektonConfig = {
   apiVersion: 'operator.tekton.dev/v1alpha1',
   kind: 'TektonConfig',
   metadata: {
@@ -20,7 +22,9 @@ const sampleTektonConfig = {
     uid: '3f5045e0-44b5-4a50-8ba8-1e55e9f953d0',
   },
   spec: {
+    hub: {},
     addon: {
+      enablePipelinesAsCode: true,
       params: [
         {
           name: 'clusterTasks',
@@ -34,9 +38,6 @@ const sampleTektonConfig = {
     },
     pipeline: {
       'running-in-environment-with-injected-sidecars': true,
-      'metrics.taskrun.duration-type': 'histogram',
-      'disable-home-env-overwrite': true,
-      'metrics.pipelinerun.duration-type': 'histogram',
       params: [
         {
           name: 'enableMetrics',
@@ -44,12 +45,13 @@ const sampleTektonConfig = {
         },
       ],
       'default-service-account': 'pipeline',
-      'disable-working-directory-overwrite': true,
       'scope-when-expressions-to-task': false,
       'require-git-ssh-secret-known-hosts': false,
       'enable-tekton-oci-bundles': false,
-      'metrics.taskrun.level': 'task',
-      'metrics.pipelinerun.level': 'pipeline',
+      [MetricsLevel.METRICS_PIPELINERUN_DURATION_TYPE]: DurationTypes.HISTOGRAM,
+      [MetricsLevel.METRICS_TASKRUN_DURATION_TYPE]: DurationTypes.HISTOGRAM,
+      [MetricsLevel.METRICS_PIPELINERUN_LEVEL]: LevelTypes.PIPELINE,
+      [MetricsLevel.METRICS_TASKRUN_LEVEL]: LevelTypes.TASK,
       'enable-api-fields': 'stable',
       'enable-custom-tasks': false,
       'disable-creds-init': false,
@@ -100,10 +102,6 @@ const sampleTektonConfig = {
         type: 'Ready',
       },
     ],
-    tektonInstallerSets: {
-      'rhosp-rbac': 'rbac-resources',
-    },
-    version: 'v1.6.1',
   },
 };
 
@@ -124,6 +122,48 @@ export const tektonHubIntegrationConfigs: TekonHubIntegrationConfigs = {
       ...sampleTektonConfig.spec,
       hub: {
         params: [{ name: TEKTON_HUB_INTEGRATION_KEY, value: 'false' }],
+      },
+    },
+  },
+};
+
+export const sampleTektonConfigMetrics: { [key in PipelineMetricsLevel]?: TektonConfig } = {
+  [PipelineMetricsLevel.PIPELINE_TASK_LEVEL]: {
+    ...sampleTektonConfig,
+    spec: {
+      ...sampleTektonConfig.spec,
+      pipeline: {
+        ...sampleTektonConfig.spec.pipeline,
+        [MetricsLevel.METRICS_PIPELINERUN_DURATION_TYPE]: DurationTypes.HISTOGRAM,
+        [MetricsLevel.METRICS_TASKRUN_DURATION_TYPE]: DurationTypes.HISTOGRAM,
+        [MetricsLevel.METRICS_PIPELINERUN_LEVEL]: LevelTypes.PIPELINE,
+        [MetricsLevel.METRICS_TASKRUN_LEVEL]: LevelTypes.TASK,
+      },
+    },
+  },
+  [PipelineMetricsLevel.PIPELINERUN_TASKRUN_LEVEL]: {
+    ...sampleTektonConfig,
+    spec: {
+      ...sampleTektonConfig.spec,
+      pipeline: {
+        ...sampleTektonConfig.spec.pipeline,
+        [MetricsLevel.METRICS_PIPELINERUN_DURATION_TYPE]: DurationTypes.LASTVALUE,
+        [MetricsLevel.METRICS_TASKRUN_DURATION_TYPE]: DurationTypes.LASTVALUE,
+        [MetricsLevel.METRICS_PIPELINERUN_LEVEL]: LevelTypes.PIPELINERUN,
+        [MetricsLevel.METRICS_TASKRUN_LEVEL]: LevelTypes.TASKRUN,
+      },
+    },
+  },
+  [PipelineMetricsLevel.UNSUPPORTED_LEVEL]: {
+    ...sampleTektonConfig,
+    spec: {
+      ...sampleTektonConfig.spec,
+      pipeline: {
+        ...sampleTektonConfig.spec.pipeline,
+        [MetricsLevel.METRICS_PIPELINERUN_DURATION_TYPE]: DurationTypes.NAMESPACE,
+        [MetricsLevel.METRICS_TASKRUN_DURATION_TYPE]: DurationTypes.NAMESPACE,
+        [MetricsLevel.METRICS_PIPELINERUN_LEVEL]: LevelTypes.PIPELINERUN,
+        [MetricsLevel.METRICS_TASKRUN_LEVEL]: LevelTypes.TASKRUN,
       },
     },
   },
