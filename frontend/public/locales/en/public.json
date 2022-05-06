@@ -978,6 +978,7 @@
   "Alert state": "Alert state",
   "Create silence": "Create silence",
   "Silence State": "Silence State",
+  "Error loading silences from Alertmanager. Alertmanager may be unavailable.": "Error loading silences from Alertmanager. Alertmanager may be unavailable.",
   "Alertmanager": "Alertmanager",
   "YAML": "YAML",
   "Custom time range": "Custom time range",

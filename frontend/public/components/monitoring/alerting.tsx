@@ -1343,14 +1343,9 @@ const MonitoringListPage: React.FC<ListPageProps & {
   Row,
   rowFilters,
   getRowProps,
+  TopAlert,
 }) => {
-  const { t } = useTranslation();
-
   const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
-
-  const silencesLoadError = useSelector(
-    ({ observe }: RootState) => observe.get('silences')?.loadError,
-  );
 
   return (
     <>
@@ -1372,18 +1367,7 @@ const MonitoringListPage: React.FC<ListPageProps & {
           rowFilters={rowFilters}
           textFilter={nameFilterID}
         />
-        {silencesLoadError && !loadError && (
-          <PFAlert
-            className="co-alert"
-            isInline
-            title={t(
-              'public~Error loading silences from Alertmanager. Some of the alerts below may actually be silenced.',
-            )}
-            variant="warning"
-          >
-            {silencesLoadError.json?.error || silencesLoadError.message}
-          </PFAlert>
-        )}
+        {TopAlert}
         <div className="row">
           <div className="col-xs-12">
             <Table
@@ -1412,11 +1396,30 @@ const getRowProps = (obj: Alert | Rule) => ({
   title: obj.annotations?.description || obj.annotations?.message,
 });
 
+const SilencesNotLoadedWarning: React.FC<{ silencesLoadError: any }> = ({ silencesLoadError }) => {
+  const { t } = useTranslation();
+  return (
+    <PFAlert
+      className="co-alert"
+      isInline
+      title={t(
+        'public~Error loading silences from Alertmanager. Some of the alerts below may actually be silenced.',
+      )}
+      variant="warning"
+    >
+      {silencesLoadError.json?.error || silencesLoadError.message}
+    </PFAlert>
+  );
+};
+
 const AlertsPage_: React.FC<Alerts> = () => {
   const { t } = useTranslation();
 
   const { data, loaded, loadError }: Alerts = useSelector(
     ({ observe }: RootState) => observe.get('alerts') || {},
+  );
+  const silencesLoadError = useSelector(
+    ({ observe }: RootState) => observe.get('silences')?.loadError,
   );
 
   const Header = () => [
@@ -1465,6 +1468,9 @@ const AlertsPage_: React.FC<Alerts> = () => {
       Row={AlertTableRow}
       rowFilters={alertsRowFilters()}
       getRowProps={getRowProps}
+      TopAlert={
+        silencesLoadError && <SilencesNotLoadedWarning silencesLoadError={silencesLoadError} />
+      }
     />
   );
 };
@@ -1529,6 +1535,9 @@ const RulesPage_: React.FC<{}> = () => {
   const { loaded, loadError }: Alerts = useSelector(
     ({ observe }: RootState) => observe.get('alerts') || {},
   );
+  const silencesLoadError = useSelector(
+    ({ observe }: RootState) => observe.get('silences')?.loadError,
+  );
 
   const Header = () => [
     {
@@ -1587,6 +1596,9 @@ const RulesPage_: React.FC<{}> = () => {
       Row={RuleTableRow}
       rowFilters={rulesRowFilters}
       getRowProps={getRowProps}
+      TopAlert={
+        silencesLoadError && <SilencesNotLoadedWarning silencesLoadError={silencesLoadError} />
+      }
     />
   );
 };
@@ -1641,6 +1653,20 @@ const SilencesPage_: React.FC<Silences> = () => {
       reduxID="monitoringSilences"
       Row={SilenceTableRow}
       rowFilters={silencesRowFilters}
+      TopAlert={
+        loadError && (
+          <PFAlert
+            className="co-alert"
+            isInline
+            title={t(
+              'public~Error loading silences from Alertmanager. Alertmanager may be unavailable.',
+            )}
+            variant="danger"
+          >
+            {typeof loadError === 'string' ? loadError : loadError.message}
+          </PFAlert>
+        )
+      }
     />
   );
 };
