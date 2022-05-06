@@ -6,5 +6,7 @@ export type PipelineDetailsTabProps = {
   customData: {
     templateNames: RouteTemplate[];
     queryPrefix: string;
+    metricsLevel: string;
+    hasUpdatePermission: boolean;
   };
 };

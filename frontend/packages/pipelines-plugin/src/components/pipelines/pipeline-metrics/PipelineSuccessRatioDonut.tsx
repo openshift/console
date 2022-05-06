@@ -25,6 +25,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
   loaded = true,
   onLoad: onInitialLoad,
   queryPrefix,
+  metricsLevel,
 }) => {
   const {
     metadata: { name, namespace },
@@ -36,6 +37,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
     timespan,
     delay: interval,
     queryPrefix,
+    metricsLevel,
   });
   const pipelineSuccessData = runData?.data?.result ?? [];
 

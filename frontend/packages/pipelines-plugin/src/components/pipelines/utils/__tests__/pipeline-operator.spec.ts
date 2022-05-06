@@ -1,9 +1,13 @@
 import { SemVer } from 'semver';
-import { k8sList } from '@console/internal/module/k8s';
+import { k8sList } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
-import { getPipelineOperatorVersion, isGAVersionInstalled } from '../pipeline-operator';
+import {
+  getPipelineOperatorVersion,
+  isGAVersionInstalled,
+  isSimplifiedMetricsInstalled,
+} from '../pipeline-operator';
 
-jest.mock('@console/internal/module/k8s', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
   k8sList: jest.fn(),
 }));
 
@@ -24,6 +28,25 @@ describe('isGAVersionInstalled', () => {
 
   it('should return true if the installed operator is above 1.4.0', () => {
     expect(isGAVersionInstalled(new SemVer('1.5.1'))).toBe(true);
+  });
+});
+
+describe('isSimplifiedMetricsInstalled', () => {
+  it('should return false if the operator is not identified', () => {
+    expect(isSimplifiedMetricsInstalled(null)).toBe(false);
+  });
+
+  it('should return false if the installed operator is less than or equal to 1.5.2', () => {
+    expect(isSimplifiedMetricsInstalled(new SemVer('1.3.1'))).toBe(false);
+    expect(isSimplifiedMetricsInstalled(new SemVer('1.4.1'))).toBe(false);
+    expect(isSimplifiedMetricsInstalled(new SemVer('1.5.1'))).toBe(false);
+    expect(isSimplifiedMetricsInstalled(new SemVer('1.5.2'))).toBe(false);
+  });
+
+  it('should return true if the installed operator is above 1.5.2', () => {
+    expect(isSimplifiedMetricsInstalled(new SemVer('1.6.2'))).toBe(true);
+    expect(isSimplifiedMetricsInstalled(new SemVer('1.7.0'))).toBe(true);
+    expect(isSimplifiedMetricsInstalled(new SemVer('1.8.0'))).toBe(true);
   });
 });
 
