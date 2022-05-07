@@ -9,6 +9,10 @@ import {
   AccordionToggle,
   Button,
   ButtonVariant,
+  Divider,
+  PageSection,
+  PageSectionVariants,
+  Text,
   Toolbar,
   ToolbarChip,
   ToolbarContent,
@@ -30,14 +34,7 @@ import {
   referenceForModel,
   K8sResourceKindReference,
 } from '../module/k8s';
-import {
-  LoadingBox,
-  MsgBox,
-  PageHeading,
-  ResourceIcon,
-  setQueryArgument,
-  AsyncComponent,
-} from './utils';
+import { LoadingBox, MsgBox, ResourceIcon, setQueryArgument, AsyncComponent } from './utils';
 import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
@@ -221,7 +218,8 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       <Helmet>
         <title>{t('public~Search')}</title>
       </Helmet>
-      <PageHeading detail={true} title={t('public~Search')}>
+      <PageSection variant={PageSectionVariants.light}>
+        <Text component="h1">{t('public~Search')}</Text>
         <Toolbar
           className="co-toolbar-no-padding"
           id="search-toolbar"
@@ -277,53 +275,56 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             </ToolbarItem>
           </ToolbarContent>
         </Toolbar>
-      </PageHeading>
-      <div className="co-search">
-        <Accordion className="co-search__accordion" asDefinitionList={false}>
+      </PageSection>
+      <Divider component="div" />
+      <PageSection variant={PageSectionVariants.light}>
+        <Accordion asDefinitionList={false}>
           {[...selectedItems].map((resource) => {
             const isCollapsed = collapsedKinds.has(resource);
             return (
-              <AccordionItem key={resource}>
-                <AccordionToggle
-                  className="co-search-group__accordion-toggle"
-                  onClick={() => toggleKindExpanded(resource)}
-                  isExpanded={!isCollapsed}
-                  id={`${resource}-toggle`}
-                >
-                  {getToggleText(resource)}
-                  {perspective !== 'admin' && pinnedResourcesLoaded && (
-                    <Button
-                      className="co-search-group__pin-toggle"
-                      variant={ButtonVariant.link}
-                      onClick={(e) => pinToggle(e, resource)}
-                    >
-                      {pinnedResources.includes(resource) ? (
-                        <>
-                          <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('public~Remove from navigation')}
-                        </>
-                      ) : (
-                        <>
-                          <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('public~Add to navigation')}
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </AccordionToggle>
-                <AccordionContent isHidden={isCollapsed}>
-                  {!isCollapsed && (
-                    <ResourceList
-                      kind={resource}
-                      selector={selectorFromString(labelFilter.join(','))}
-                      nameFilter={typeaheadNameFilter}
-                      namespace={namespace}
-                      mock={noProjectsAvailable}
-                      key={resource}
-                    />
-                  )}
-                </AccordionContent>
-              </AccordionItem>
+              <div key={resource} className="co-search__accordion">
+                <AccordionItem>
+                  <AccordionToggle
+                    className="co-search__accordion-toggle"
+                    onClick={() => toggleKindExpanded(resource)}
+                    isExpanded={!isCollapsed}
+                    id={`${resource}-toggle`}
+                  >
+                    {getToggleText(resource)}
+                    {perspective !== 'admin' && pinnedResourcesLoaded && (
+                      <Button
+                        className="co-search-group__pin-toggle"
+                        variant={ButtonVariant.link}
+                        onClick={(e) => pinToggle(e, resource)}
+                      >
+                        {pinnedResources.includes(resource) ? (
+                          <>
+                            <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                            {t('public~Remove from navigation')}
+                          </>
+                        ) : (
+                          <>
+                            <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
+                            {t('public~Add to navigation')}
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </AccordionToggle>
+                  <AccordionContent isHidden={isCollapsed}>
+                    {!isCollapsed && (
+                      <ResourceList
+                        kind={resource}
+                        selector={selectorFromString(labelFilter.join(','))}
+                        nameFilter={typeaheadNameFilter}
+                        namespace={namespace}
+                        mock={noProjectsAvailable}
+                        key={resource}
+                      />
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              </div>
             );
           })}
         </Accordion>
@@ -333,7 +334,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             detail={<p>{t('public~Select one or more resources from the dropdown.')}</p>}
           />
         )}
-      </div>
+      </PageSection>
     </>
   );
 };
