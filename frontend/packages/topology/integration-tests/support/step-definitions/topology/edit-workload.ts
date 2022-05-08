@@ -1,8 +1,10 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { formPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
 import { addSecret } from '@console/topology/integration-tests/support/pages/functions/add-secret';
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
 import { topologyPO } from '../../page-objects/topology-po';
+import { topologyPage } from '../../pages/topology';
 import { editDeployment } from '../../pages/topology/topology-edit-deployment';
 
 When('user edits application groupings to {string}', (newAppName: string) => {
@@ -42,8 +44,22 @@ When('user clicks on {string} from context action menu', (actionItem: string) =>
 });
 
 Then('user will see {string} in secret name dropdown under Pull secret', (secretName: string) => {
+  cy.reload();
+  cy.get('.pf-c-alert__description', { timeout: 80000 }).should(
+    'include.text',
+    'Click reload to see the new version.',
+  );
+  if (cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options')) {
+    cy.get(topologyPO.createSecret.advancedOptions).click();
+  } else {
+    cy.log('You have already opened advanced options');
+  }
   cy.get(topologyPO.createSecret.secretDropDown).click();
-  cy.get(topologyPO.createSecret.secretDropDownItem).should('contain', secretName);
+  cy.get(topologyPO.deploymentStrategy.dropdownSecret).type(secretName);
+  cy.get(topologyPO.createSecret.secretDropDownItem, { timeout: 50000 }).should(
+    'contain',
+    secretName,
+  );
   cy.get(topologyPO.createSecret.formInputs.cancelAction).click();
 });
 
@@ -80,6 +96,8 @@ Then('user will be redirected to Topology with the updated resource limits', () 
 });
 
 When('user selects {string} Strategy type under Deployment Strategy', (strategyType: string) => {
+  cy.wait(50000);
+  cy.get(formPO.cancel).click();
   editDeployment.selectDeploymentStrategyType(strategyType);
 });
 
@@ -115,8 +133,9 @@ When('user enters NAME as {string} and VALUE as {string}', (envName: string, env
 
 When('user selects secret {string} from Pull secret dropdown', (secretName: string) => {
   cy.get(topologyPO.deploymentStrategy.selectSecret).click();
+  cy.get(topologyPO.deploymentStrategy.dropdownSecret).type(secretName);
   const CSSSelector = `[id="${secretName}-link"]`;
-  cy.get(CSSSelector).click();
+  cy.get(CSSSelector, { timeout: 50000 }).click();
 });
 
 When('user selects the Pause rollouts check box under advanced options section', () => {
@@ -208,3 +227,10 @@ When('user enters value as {string} to which it will be connected', (annotationV
 Then('user can see that two workloads are connected with arrow', () => {
   cy.get(topologyPO.graph.connector).should('be.visible');
 });
+
+Then(
+  'user right clicks on the knative workload {string} to open the Context Menu',
+  (nodeName: string) => {
+    topologyPage.getKnativeNode(nodeName).trigger('contextmenu', { force: true });
+  },
+);

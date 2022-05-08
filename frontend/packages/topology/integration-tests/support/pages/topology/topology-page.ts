@@ -205,6 +205,12 @@ export const topologyPage = {
       .should('be.visible')
       .contains(nodeName);
   },
+  getKnativeNode: (nodeName: string) => {
+    return cy
+      .get(topologyPO.graph.knativeNodeLabel)
+      .should('be.visible')
+      .contains(nodeName);
+  },
   getGroup: (groupName: string) => {
     return cy
       .get(topologyPO.graph.groupLabel)
