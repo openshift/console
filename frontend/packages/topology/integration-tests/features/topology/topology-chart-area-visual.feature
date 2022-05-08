@@ -7,7 +7,7 @@ Feature: Topology chart area
               And user has created or selected namespace "aut-topology-delete-workload"
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Empty state of topology: T-06-TC01
              When user navigates to Topology page
              Then user sees Topology page with message "No resources found"
@@ -93,11 +93,11 @@ Feature: Topology chart area
               And user checks knative service having label "KSVC" and then the name of service
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Context menu of node: T-06-TC09
-            Given user has created a workload named "nodejs-ex-git"
+            Given user has created a deployment workload "nodejs-ex-git3"
               And user is at the Topology page
-             When user right clicks on the node "nodejs-ex-git" to open context menu
+             When user right clicks on the node "nodejs-ex-git3" to open context menu
              Then user is able to see context menu options like Edit Application Grouping, Edit Pod Count, Pause Rollouts, Add Health Checks, Add Horizontal Pod Autoscaler, Add Storage, Edit Update Strategy, Edit Labels, Edit Annotations, Edit Deployment, Delete Deployment
 
 
@@ -151,43 +151,45 @@ Feature: Topology chart area
                   | DeploymentConfig |
 
 
-        @regression @to-do
+        @regression
         Scenario: Context menu on empty area: T-06-TC15
-            Given user is at the Topology page
+            Given user has installed OpenShift Serverless Operator
+              And user has installed Crunchy Postgres for Kubernetes operator
+              And user navigates to Topology Page
              When user right clicks on the empty chart area
               And user hovers on Add to Project
-             Then user is able to see options like Samples, From Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
+             Then user is able to see options like Samples, Import from Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression @to-do
+        @regression
         Scenario: Add to Project in topology: T-06-TC16
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user hovers on Add to Project
               And user clicks on Samples
-              And user selects go sample and clicks Create
-              And user hovers on Add to Project and clicks on Import from Git
-              And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on Container Image
-              And user fills the form and clicks Create
-              And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on From Catalog
+              And user selects go sample
+              And user fills the "Go Sample" form and clicks Create
+              And user hovers on Add to Project and clicks on "Import from Git"
+              And user fills the "Import From Git" form and clicks Create
+              And user hovers on Add to Project and clicks on "Container Image"
+              And user fills the "Container Image" form and clicks Create
+              And user hovers on Add to Project and clicks on "From Catalog"
               And user selects Python Builder Image and clicks Create Application
-              And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on Database
-              And user selects Postgres Database and clicks on Create
-              And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on Operator Backed
+              And user fills the "Catalog" form and clicks Create
+              And user hovers on Add to Project and clicks on "Database"
+              And user selects Postgres Database and clicks on Instantiate Template
+              And user clicks on Create button
+              And user hovers on Add to Project and clicks on "Operator Backed"
               And user selects Postgres and clicks on Create
-              And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on Helm Charts
+              And user fills the "Operator Backed" form and clicks Create
+              And user hovers on Add to Project and clicks on "Helm Charts"
               And user selects Nodejs and clicks on Install Helm Charts
-              And user clicks on Install
-              And user hovers on Add to Project and clicks on From Event Source
+              And user fills the "Helm Chart" form and clicks Create
+              And user hovers on Add to Project and clicks on "Event Source"
               And user selects Api Server Source and clicks on Create Event Source
-              And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on From Channel
-              And user clicks on Create
+              And user fills the "Event Source" form and clicks Create
+              And user hovers on Add to Project and clicks on "Channel"
+              And user fills the "Channel" form and clicks Create
              Then user is able to see different applications created from Samples, Import from Git, Container Image, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
@@ -316,9 +318,10 @@ Feature: Topology chart area
              Then user will see the the workload "nodejs-2" selected with sidebar open
 
 
-        @regression @odc-5947 @broken-test
+        @regression @odc-5947
         Scenario: Create Service Binding option in nodes actions menu: T-06-TC27
             Given user has installed Service Binding operator
+              And user has created or selected namespace "binding-service"
               And user is at developer perspective
               And user is at Topology page chart view
               And user has created a deployment workload "node-js1"
