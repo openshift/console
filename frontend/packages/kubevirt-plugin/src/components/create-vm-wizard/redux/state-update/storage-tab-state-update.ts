@@ -12,6 +12,10 @@ import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import {
+  SourceRefActions,
+  SourceRefActionsNames,
+} from '../../../../redux/actions/sourceRef-actions';
 import { ValidationErrorType } from '../../../../selectors';
 import {
   getDataVolumeAccessModes,
@@ -79,7 +83,11 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   const oldSourceStorage: VMWizardStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
 
   // Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR USER_TEMPLATE and WORKLOAD_PROFILE
+  dispatch(SourceRefActions[SourceRefActionsNames.clearValues]());
   const newSourceStorage = getNewProvisionSourceStorage(state, id);
+  if (newSourceStorage?.sourceRef) {
+    dispatch(SourceRefActions[SourceRefActionsNames.updateValue](newSourceStorage?.sourceRef));
+  }
   const oldType =
     (oldSourceStorage &&
       StorageUISource.fromTypes(

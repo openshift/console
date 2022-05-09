@@ -377,4 +377,5 @@ export type VMWizardStorage = {
     devicePath?: string;
     fileName?: string;
   };
+  sourceRef?: DataSourceKind;
 };

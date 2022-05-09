@@ -8,6 +8,7 @@ import { SysprepData } from '../../../../components/create-vm-wizard/tabs/advanc
 import { VMWizardNetwork, VMWizardStorage } from '../../../../components/create-vm-wizard/types';
 import { V1GPU, V1HostDevice } from '../../../../types/api';
 import { ITemplate } from '../../../../types/template';
+import { DataSourceKind } from '../../../../types/vm/index';
 import { EnhancedK8sMethods } from '../../../enhancedK8sMethods/enhancedK8sMethods';
 
 export type CreateVMParams = {
@@ -25,6 +26,7 @@ export type CreateVMParams = {
   sysprepData: SysprepData;
   gpus: V1GPU;
   hostDevices: V1HostDevice;
+  sourceRef: DataSourceKind;
 };
 
 export type DefaultVMLikeEntityParams = {

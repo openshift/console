@@ -25,7 +25,7 @@ import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 import { CreateVMParams } from './types';
 
 const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
-  const { vmSettings, storages, isTemplate } = params;
+  const { vmSettings, storages, isTemplate, sourceRef } = params;
   const settings = asSimpleSettings(vmSettings);
 
   const resolvedStorages = storages.map((storage) => {
@@ -57,6 +57,14 @@ const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
           ? cloudInitNoCloudUserData
           : ['#cloud-config', cloudInitNoCloudUserData].join('\n'),
       });
+    }
+
+    if (
+      sourceRef &&
+      dataVolumeWrapper &&
+      sourceRef?.spec?.source?.pvc?.name === dataVolumeWrapper?.getPersistentVolumeClaimName()
+    ) {
+      dataVolumeWrapper.setSourceRef(sourceRef);
     }
 
     return {
