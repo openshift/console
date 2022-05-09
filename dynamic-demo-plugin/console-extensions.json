@@ -310,5 +310,11 @@
       "path": "/test-events",
       "component": { "$codeRef": "events.default" }
     }
+  },
+  {
+    "type": "console.dashboards/overview/detail/item",
+    "properties": {
+      "component": { "$codeRef": "overviewDetailItem.default" }
+    }
   }
 ]

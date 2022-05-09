@@ -9,11 +9,16 @@ import {
   useFlag,
   useCanClusterUpgrade,
 } from '@console/shared';
+import {
+  useResolvedExtensions,
+  isOverviewDetailItem,
+  WatchK8sResource,
+  OverviewDetailItem as OverviewDetailItemType,
+} from '@console/dynamic-plugin-sdk';
 import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
@@ -99,6 +104,10 @@ export const DetailsCard = withDashboardResources(
     const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
       ClusterVersionKind
     >(clusterVersionResource);
+    const [detailItemsExtensions] = useResolvedExtensions<OverviewDetailItemType>(
+      isOverviewDetailItem,
+    );
+
     React.useEffect(() => {
       if (flagPending(openshiftFlag)) {
         return;
@@ -171,7 +180,7 @@ export const DetailsCard = withDashboardResources(
                       )}
                   </OverviewDetailItem>
                   <OverviewDetailItem
-                    title={t('public~Provider')}
+                    title={t('public~Infrastructure provider')}
                     error={
                       !!infrastructureError || (infrastructure && !infrastructurePlatform)
                         ? t('public~Not available')
@@ -222,6 +231,10 @@ export const DetailsCard = withDashboardResources(
                       {t('public~No (single master)')}
                     </OverviewDetailItem>
                   )}
+                  {detailItemsExtensions.map((e) => {
+                    const Component = e.properties.component;
+                    return <Component key={e.uid} />;
+                  })}
                 </>
               ) : (
                 <OverviewDetailItem

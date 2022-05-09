@@ -19,7 +19,7 @@ describe('Cluster dashboard', () => {
       const expectedTitles = [
         'Cluster API address',
         'Cluster ID',
-        'Provider',
+        'Infrastructure provider',
         'OpenShift version',
         'Service Level Agreement (SLA)',
         'Update channel',
