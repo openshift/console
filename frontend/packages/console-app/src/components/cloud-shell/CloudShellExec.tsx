@@ -49,7 +49,7 @@ type DispatchProps = {
   onActivate: (active: boolean) => void;
 };
 
-type CloudShellExecProps = Props & DispatchProps & StateProps & WithFlagsProps;
+export type CloudShellExecProps = Props & DispatchProps & StateProps & WithFlagsProps;
 
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
@@ -77,26 +77,20 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const tick = useActivityTick(workspaceName, namespace);
 
   React.useEffect(() => {
-    let tickOnInterval = setInterval(tick, TICK_INTERVAL);
-
-    // Function to handle ticking
-    const handleTickOnVisible = () => {
-      if (document.visibilityState === 'hidden' || !isActiveTab) {
-        clearInterval(tickOnInterval);
-        tickOnInterval = null;
+    let startTime;
+    let tickReq;
+    const handleTick = (timestamp) => {
+      if ((!startTime || timestamp - startTime >= TICK_INTERVAL) && isActiveTab) {
+        startTime = timestamp;
+        tick();
       }
-      if (document.visibilityState === 'visible' && isActiveTab) {
-        tickOnInterval = tickOnInterval || setInterval(tick, TICK_INTERVAL);
-      }
+      tickReq = window.requestAnimationFrame(handleTick);
     };
 
-    document.addEventListener('visibilitychange', handleTickOnVisible, false);
-    handleTickOnVisible();
+    tickReq = window.requestAnimationFrame(handleTick);
 
     return () => {
-      clearInterval(tickOnInterval);
-      tickOnInterval = null;
-      document.removeEventListener('visibilitychange', handleTickOnVisible);
+      window.cancelAnimationFrame(tickReq);
     };
   }, [isActiveTab, tick]);
 
@@ -286,6 +280,9 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     </div>
   );
 };
+
+// For testing
+export const InternalCloudShellExec = CloudShellExec;
 
 const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   onActivate: (active: boolean) => dispatch(setCloudShellActive(active)),
