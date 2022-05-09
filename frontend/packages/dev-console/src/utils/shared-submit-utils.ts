@@ -76,7 +76,7 @@ export const createService = (
     !ports.some((port) => unknownTargetPort === port.containerPort.toString())
   ) {
     const port = { containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' };
-    ports = [...ports, port];
+    ports = [...ports.filter((p) => p.containerPort !== defaultUnknownPort), port];
   }
 
   const newService: any = {

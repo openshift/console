@@ -33,6 +33,24 @@ describe('Shared submit utils', () => {
       const serviceObj = createService(mockDeployImageData);
       expect(serviceObj).toMatchSnapshot();
     });
+
+    it('should expose only the custom port as TargetPort when it is set', () => {
+      const mockData: GitImportFormData = _.cloneDeep(mockFormData);
+
+      mockData.build.strategy = 'Source';
+      mockData.git.url = 'https://github.com/nodeshift-blog-examples/react-web-app';
+      mockData.route.unknownTargetPort = '3000';
+      const serviceObj = createService(mockData);
+      const { ports } = serviceObj.spec;
+
+      expect(ports).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            port: 8080,
+          }),
+        ]),
+      );
+    });
   });
 
   describe('Create Route', () => {
