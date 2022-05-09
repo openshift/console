@@ -140,7 +140,7 @@
     "@patternfly/quickstarts": "2.0.1",
     "@patternfly/react-catalog-view-extension": "4.57.2",
     "@patternfly/react-charts": "6.59.2",
-    "@patternfly/react-core": "4.206.2",
+    "@patternfly/react-core": "4.211.5",
     "@patternfly/react-log-viewer": "4.51.2",
     "@patternfly/react-table": "4.75.2",
     "@patternfly/react-tokens": "4.58.2",
