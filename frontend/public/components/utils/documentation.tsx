@@ -2,6 +2,8 @@
 export const openshiftHelpBase =
   window.SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
 
+export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';
+
 export const getNetworkPolicyDocLink = (openshiftFlag: boolean) => {
   return openshiftFlag
     ? `${openshiftHelpBase}networking/network_policy/about-network-policy.html`
