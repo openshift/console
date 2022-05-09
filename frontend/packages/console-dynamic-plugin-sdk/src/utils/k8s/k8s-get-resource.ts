@@ -4,7 +4,7 @@ const abbrBlacklist = ['ASS'];
  * @deprecated - This is SDK internal function for resource-icon purposes, use Console version instead.
  * Provides an abbreviation string for given kind with respect to abbrBlacklist.
  * @param kind Kind for which the abbreviation is generated.
- * @return Abbreviation string for given kind.
+ * @returns Abbreviation string for given kind.
  * TODO: Use in resource-icon component once it is being migrated to the SDK.
  * * */
 export const kindToAbbr = (kind) => {

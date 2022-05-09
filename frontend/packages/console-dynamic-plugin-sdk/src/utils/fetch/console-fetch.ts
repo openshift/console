@@ -11,7 +11,7 @@ import { getConsoleRequestHeaders } from './console-fetch-utils';
  * @param url The URL to fetch
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
- * @return A promise that resolves to the response
+ * @returns A promise that resolves to the response
  * * */
 export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) => {
   const fetchPromise = getUtilsConfig().appFetch(url, options);

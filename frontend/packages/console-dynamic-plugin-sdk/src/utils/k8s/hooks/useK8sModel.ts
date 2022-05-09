@@ -23,7 +23,7 @@ export const getK8sModel = (
 /**
  * Hook that retrieves the k8s model for provided K8sGroupVersionKind from redux.
  * @param groupVersionKind group, version, kind of k8s resource {@link K8sGroupVersionKind} is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` {@link K8sResourceKindReference}.
- * @return An array with the first item as k8s model and second item as inFlight status
+ * @returns An array with the first item as k8s model and second item as inFlight status
  * @example
  * ```ts
  * const Component: React.FC = () => {

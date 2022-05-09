@@ -16,7 +16,7 @@ import { useModelsLoaded } from './useModelsLoaded';
 /**
  * Hook that retrieves the k8s resource along with status for loaded and error.
  * @param initResource options needed to watch for resource.
- * @return An array with first item as resource(s), second item as loaded status and third item as error state if any.
+ * @returns An array with first item as resource(s), second item as loaded status and third item as error state if any.
  * @example
  * ```ts
  * const Component: React.FC = () => {
