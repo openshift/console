@@ -162,8 +162,8 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const ipAddrs = getVmiIpAddresses(vmi);
   const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
 
-  const { sshServices } = useSSHService(vm);
-  const { command, user } = useSSHCommand(vm);
+  const { sshServices } = useSSHService(vmi);
+  const { command, user } = useSSHCommand(sshServices, vm || vmi);
   const vmiReady = isVMIReady(vmi);
   const sshServicesRunning = sshServices?.running;
 
@@ -263,17 +263,18 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       >
         {vmiReady ? (
           <>
-            <span data-test="details-item-user-credentials-user-name">
-              {t('kubevirt-plugin~user: {{user}}', { user })}
-            </span>
-            <ClipboardCopy
-              isReadOnly
-              data-test="SSHDetailsPage-command"
-              className="SSHDetailsPage-clipboard-command"
-            >
-              {sshServicesRunning ? command : `ssh ${user}@`}
-            </ClipboardCopy>
-            {!sshServicesRunning && (
+            <div data-test="details-item-user-credentials-user-name">
+              {user && t('kubevirt-plugin~user: {{user}}', { user })}
+            </div>
+            {sshServicesRunning ? (
+              <ClipboardCopy
+                isReadOnly
+                data-test="SSHDetailsPage-command"
+                className="SSHDetailsPage-clipboard-command"
+              >
+                {command}
+              </ClipboardCopy>
+            ) : (
               <span className="kubevirt-menu-actions__secondary-title">
                 {t('kubevirt-plugin~Requires SSH service')}
               </span>
@@ -289,7 +290,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         dataTest="ssh-access-details-item"
         idValue={prefixedID(id, 'ssh-access')}
         canEdit={vmiReady}
-        onEditClick={() => SSHModal({ vm })}
+        onEditClick={() => SSHModal({ vm: vm || vmi, sshServices })}
       >
         <span data-test="details-item-ssh-access-port">
           {vmiReady ? (

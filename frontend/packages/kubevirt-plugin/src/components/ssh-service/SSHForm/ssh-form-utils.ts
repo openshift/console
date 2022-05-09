@@ -24,6 +24,7 @@ export const inputValidation = {
 
 export const PORT = 22000;
 export const TARGET_PORT = 22;
+export const VM_NAME_SERVICE_SELECTOR = 'vm.kubevirt.io/name';
 
 export const getCloudInitValues = (vm: VMKind | VMIKind, field: string) => {
   const volume = vm?.spec?.template?.spec?.volumes?.find(({ name }) => name === CLOUDINIT_DISK);
@@ -38,6 +39,7 @@ export const getCloudInitValues = (vm: VMKind | VMIKind, field: string) => {
 export const createOrDeleteSSHService = async (
   virtualMachine: VMKind | VMIKind,
   enableSSHService: boolean,
+  sshServiceName?: string,
 ) => {
   const metadata = virtualMachine?.metadata;
   const createOrDelete = enableSSHService ? k8sCreate : k8sKill;
@@ -46,7 +48,7 @@ export const createOrDeleteSSHService = async (
       kind: ServiceModel.kind,
       apiVersion: ServiceModel.apiVersion,
       metadata: {
-        name: `${metadata?.name}-ssh-service`,
+        name: sshServiceName ?? `${metadata?.name}-ssh-service`,
         namespace: metadata?.namespace,
         ownerReferences: [buildOwnerReference(virtualMachine, { blockOwnerDeletion: false })],
       },
@@ -65,7 +67,7 @@ export const createOrDeleteSSHService = async (
             ),
           ),
           'kubevirt.io/domain': metadata?.name,
-          'vm.kubevirt.io/name': metadata?.name,
+          [VM_NAME_SERVICE_SELECTOR]: metadata?.name,
         },
       },
     });

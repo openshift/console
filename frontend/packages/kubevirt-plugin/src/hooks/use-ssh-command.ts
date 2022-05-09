@@ -4,7 +4,6 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getInfrastructureAPIURL } from '@console/shared/src';
 import { getCloudInitValues } from '../components/ssh-service/SSHForm/ssh-form-utils';
 import { VMIKind, VMKind } from '../types';
-import useSSHService from './use-ssh-service';
 
 export type useSSHCommandResult = {
   command: string;
@@ -14,8 +13,16 @@ export type useSSHCommandResult = {
   loadingRoutesError: string;
 };
 
-const useSSHCommand = (vm: VMKind | VMIKind): useSSHCommandResult => {
-  const { sshServices } = useSSHService(vm);
+type useSSHCommandType = (
+  sshServices: {
+    running: boolean;
+    port: number;
+    serviceName: string;
+  },
+  vm: VMKind | VMIKind,
+) => useSSHCommandResult;
+
+const useSSHCommand: useSSHCommandType = (sshServices, vm): useSSHCommandResult => {
   const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
     InfrastructureModel,
     'cluster',
@@ -26,9 +33,12 @@ const useSSHCommand = (vm: VMKind | VMIKind): useSSHCommandResult => {
   const consoleHostname = window.location.hostname; // fallback to console hostname
 
   const user = getCloudInitValues(vm, 'user');
-  const command = `ssh ${user && `${user}@`}${apiHostname || consoleHostname} -p ${
-    sshServices?.port
-  }`;
+
+  let command = 'ssh ';
+
+  if (user) command += `${user}@`;
+
+  command += `${apiHostname || consoleHostname} -p ${sshServices?.port}`;
 
   return {
     command,

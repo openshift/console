@@ -16,11 +16,26 @@ import { VMIKind, VMKind } from '../types';
 import useSSHSelectors from './use-ssh-selectors';
 
 export type useSSHServiceResult = {
-  sshServices: { running: boolean; port: number };
+  sshServices: { running: boolean; port: number; serviceName: string };
   createOrDeleteSSHService: (vm: VMKind | VMIKind) => void;
 };
 
-const useSSHService = (vm?: VMKind | VMIKind): useSSHServiceResult => {
+const compareSelectorsToVMLabels = (
+  selectors: { [key: string]: string },
+  vmLabels: { [key: string]: string },
+): boolean => {
+  if (!selectors || Object.keys(selectors).length === 0) return false;
+
+  let selectorsEquals = true;
+
+  for (const [key, value] of Object.entries(selectors)) {
+    if (value !== vmLabels?.[key]) selectorsEquals = false;
+  }
+
+  return selectorsEquals;
+};
+
+const useSSHService = (vm?: VMIKind): useSSHServiceResult => {
   const dispatch = useDispatch();
   const { metadata } = vm || {};
   const [activeNamespace] = useActiveNamespace();
@@ -41,22 +56,28 @@ const useSSHService = (vm?: VMKind | VMIKind): useSSHServiceResult => {
 
   React.useEffect(() => {
     if (metadata?.name && isServicesLoaded) {
-      const service = services.find(
-        ({ metadata: serviceMetadata }) =>
-          serviceMetadata?.name === `${metadata?.name}-ssh-service`,
+      const sshService = services.find(
+        (service) =>
+          compareSelectorsToVMLabels(service?.spec?.selector, metadata.labels) &&
+          service?.spec?.ports?.find((port) => parseInt(port.targetPort, 10) === TARGET_PORT),
       );
       dispatch(
         sshActions[SSHActionsNames.updateSSHServices](
-          !!service,
-          getServicePort(service, TARGET_PORT)?.nodePort,
+          !!sshService,
+          getServicePort(sshService, TARGET_PORT)?.nodePort,
           metadata?.name,
+          sshService?.metadata?.name,
         ),
       );
     }
   }, [metadata, services, isServicesLoaded, dispatch]);
 
   const createOrDeleteSSHServiceWithEnableSSHService = (virtualMachine: VMKind | VMIKind) =>
-    createOrDeleteSSHService(virtualMachine, enableSSHService);
+    createOrDeleteSSHService(
+      virtualMachine,
+      enableSSHService,
+      sshServices?.[metadata?.name]?.serviceName,
+    );
 
   return {
     sshServices: sshServices?.[metadata?.name],

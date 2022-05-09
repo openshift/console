@@ -12,7 +12,7 @@ export type SSHState = {
   tempSSHKey: string | null;
   isValidSSHKey: boolean;
   updateSSHKeyInGlobalNamespaceSecret: boolean;
-  sshServices: { [key: string]: { running: boolean; port: number } };
+  sshServices: { [key: string]: { running: boolean; port: number; serviceName: string } };
 };
 
 export type useSSHSelectorsResult = SSHState & {

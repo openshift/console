@@ -14,6 +14,7 @@ type SSHActionsObject = (
   val?: string | boolean,
   port?: number | string,
   machineName?: string,
+  serviceName?: string,
 ) => {
   type: string;
   payload: string | boolean | null | undefined | { [key: string]: any };
@@ -30,9 +31,10 @@ export const sshActions: SSHActions = {
     isRunning: boolean,
     port: number | string,
     machineName: string,
+    serviceName: string,
   ) => ({
     type: SSHActionsNames.updateSSHServices,
-    payload: { machineName, isRunning, port },
+    payload: { machineName, isRunning, port, serviceName },
   }),
   [SSHActionsNames.showRestoreKeyButton]: (value: boolean) => ({
     type: SSHActionsNames.showRestoreKeyButton,

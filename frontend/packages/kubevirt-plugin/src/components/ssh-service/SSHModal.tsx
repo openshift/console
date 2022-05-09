@@ -8,7 +8,6 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
-import useSSHService from '../../hooks/use-ssh-service';
 import { VirtualMachineModel } from '../../models';
 import { VMIKind, VMKind } from '../../types';
 import { ModalFooter } from '../modals/modal/modal-footer';
@@ -19,11 +18,16 @@ import './ssh-modal.scss';
 
 type SSHModalProps = ModalComponentProps & {
   vm: VMIKind | VMKind;
+
+  sshServices: {
+    running: boolean;
+    port: number;
+    serviceName: string;
+  };
 };
 
-const SSHModal: React.FC<SSHModalProps> = ({ vm, close }) => {
+const SSHModal: React.FC<SSHModalProps> = ({ vm, sshServices, close }) => {
   const { t } = useTranslation();
-  const { sshServices } = useSSHService(vm);
   const [isEnabled, setEnabled] = React.useState<boolean>(sshServices?.running);
 
   return (
@@ -61,7 +65,7 @@ const SSHModal: React.FC<SSHModalProps> = ({ vm, close }) => {
       </ModalBody>
       <ModalFooter
         onSubmit={() => {
-          createOrDeleteSSHService(vm, isEnabled);
+          createOrDeleteSSHService(vm, isEnabled, sshServices?.serviceName);
           close();
         }}
         onCancel={close}

@@ -20,7 +20,11 @@ const authorizedSSHKeysReducer = (state = initialState, { type, payload }) => {
         ...state,
         sshServices: {
           ...state.sshServices,
-          [payload?.machineName]: { running: payload?.isRunning, port: payload?.port },
+          [payload?.machineName]: {
+            running: payload?.isRunning,
+            port: payload?.port,
+            serviceName: payload?.serviceName,
+          },
         },
       };
     case SSHActionsNames.showRestoreKeyButton:
