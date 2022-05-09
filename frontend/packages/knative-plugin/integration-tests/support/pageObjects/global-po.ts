@@ -1,6 +1,7 @@
 export const eventingPO = {
   createEventDropDownMenu: '[data-test-id="dropdown-button"]',
   createEventSource: '[data-test-dropdown-menu="eventSource"]',
+  yamlEditor: 'div.monaco-scrollable-element.editor-scrollable.vs-dark',
   pingSource: {
     create: '[data-test="EventSource-PingSource"]',
     dataField: '[id="form-input-formData-data-PingSource-jsonData-field"]',

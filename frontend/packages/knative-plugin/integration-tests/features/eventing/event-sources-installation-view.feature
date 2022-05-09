@@ -4,9 +4,8 @@ Feature: Event Sources Installation View
 
 
         Background:
-            Given user has installed Red Hat Integration - Camel K Operator
-
-
+            Given user has created or selected namespace "aut-eventsources"
+            
         @regression @manual
         Scenario: Install Event Source from Developer Catalog Page using YAML View: KF-01-TC01
             Given user is at Add page
@@ -21,7 +20,7 @@ Feature: Event Sources Installation View
               And Topology page have the Event Source created
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Install Event Source from Add Page using Form View: KF-01-TC02
             Given user is at Add page
               And user has created "hello-openshift" knative service
@@ -34,15 +33,15 @@ Feature: Event Sources Installation View
               And user selects "hello-openshift" as a resource
               And user clicks on the Create button
              Then user will be redirected to Topology page
-              And Topology page have the Event Source created
+              And Topology page have the "ping-source" Event Source created
 
 
-        @regression @to-do
+        @regression
         Scenario: Switch from YAML to Form view: KF-01-TC03
-            Given user is at the Create Event Source page
+            Given user is at the Ping Source Create page
              When user selects the YAML View
               And user does some valid changes in the yaml for Event Source
-              And user selects the Form view
+              And user selects Form view
              Then user will see that the data hasn't lost
 
 

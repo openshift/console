@@ -74,8 +74,8 @@ export enum builderImages {
 }
 
 export enum eventSourceCards {
-  ApiServerSource = 'Api Server Source',
-  ContainerSource = 'Container Source',
-  PingSource = 'Ping Source',
-  SinkBinding = 'Sink Binding',
+  ApiServerSource = 'ApiServerSource',
+  ContainerSource = 'ContainerSource',
+  PingSource = 'PingSource',
+  SinkBinding = 'SinkBinding',
 }
