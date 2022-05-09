@@ -41,7 +41,7 @@ export const iGetRelevantTemplates = (
 
   return ImmutableList<ITemplate>(
     (iCommonTemplates || ImmutableMap())
-      .valueSeq()
+      ?.valueSeq()
       .filter((iTemplate) => {
         const labels = iGetLabels(iTemplate);
 
@@ -134,7 +134,7 @@ export const iGetDefaultTemplate = (
   iCommonTemplates: ImmutableMap<string, ITemplate>,
   os: string,
 ): ITemplate =>
-  (iCommonTemplates || ImmutableMap()).valueSeq().find((iTemplate) => {
+  (iCommonTemplates || ImmutableMap())?.valueSeq().find((iTemplate) => {
     const labels = iGetLabels(iTemplate);
     return labels && labels.get(getOsLabel(os)) && labels.get(TEMPLATE_DEFAULT_LABEL) === 'true';
   });

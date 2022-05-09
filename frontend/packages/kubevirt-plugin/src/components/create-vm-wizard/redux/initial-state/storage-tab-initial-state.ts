@@ -313,7 +313,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     const [dataSources] = iGetCommonData(state, id, VMWizardProps.dataSources);
     const [pvcs] = iGetCommonData(state, id, VMWizardProps.pvcs);
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
-      .valueSeq()
+      ?.valueSeq()
       .find((iPVC) => iGetName(iPVC) === pvcName);
 
     const dsBaseImage = findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
