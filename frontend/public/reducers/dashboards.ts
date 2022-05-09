@@ -1,5 +1,6 @@
 import { ActionType, DashboardsAction } from '../actions/dashboards';
-import { Map as ImmutableMap, fromJS } from 'immutable';
+import { fromJS, Map as ImmutableMap } from 'immutable';
+import { RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export enum RESULTS_TYPE {
   PROMETHEUS = 'PROMETHEUS',
@@ -11,16 +12,6 @@ export const defaults = {
   [RESULTS_TYPE.PROMETHEUS]: fromJS({}),
   [RESULTS_TYPE.URL]: fromJS({}),
 };
-
-type Request<R> = {
-  active: boolean;
-  timeout: NodeJS.Timer;
-  inFlight: boolean;
-  data: R;
-  error: any;
-};
-
-export type RequestMap<R> = ImmutableMap<string, Request<R>>;
 
 export type DashboardsState = ImmutableMap<string, RequestMap<any>>;
 

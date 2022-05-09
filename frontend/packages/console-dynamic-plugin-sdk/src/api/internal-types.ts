@@ -1,14 +1,15 @@
+import { Map as ImmutableMap } from 'immutable';
 import {
-  K8sResourceCommon,
   FirehoseResult,
-  PrometheusResponse,
   HealthState,
-  StatusGroupMapper,
-  QueryParams,
-  TopConsumerPopoverProps,
+  K8sResourceCommon,
   LIMIT_STATE,
+  PrometheusResponse,
+  QueryParams,
+  StatusGroupMapper,
+  TopConsumerPopoverProps,
 } from '../extensions/console-types';
-import { K8sModel, Alert } from './common-types';
+import { Alert, K8sModel } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
   className?: string;
@@ -228,3 +229,39 @@ export enum ActionMenuVariant {
   KEBAB = 'plain',
   DROPDOWN = 'default',
 }
+
+type Request<R> = {
+  active: boolean;
+  timeout: NodeJS.Timer;
+  inFlight: boolean;
+  data: R;
+  error: any;
+};
+
+export type RequestMap<R> = ImmutableMap<string, Request<R>>;
+
+export type Fetch = (url: string) => Promise<any>;
+export type WatchURLProps = {
+  url: string;
+  fetch?: Fetch;
+};
+
+export type WatchPrometheusQueryProps = {
+  query: string;
+  namespace?: string;
+  timespan?: number;
+};
+
+export type UseDashboardResources = ({
+  prometheusQueries,
+  urls,
+  notificationAlertLabelSelectors,
+}: {
+  prometheusQueries?: WatchPrometheusQueryProps[];
+  urls?: WatchURLProps[];
+  notificationAlertLabelSelectors?: { [k: string]: string };
+}) => {
+  urlResults: RequestMap<any>;
+  prometheusResults: RequestMap<PrometheusResponse>;
+  notificationAlerts: { alerts: Alert[]; loaded: boolean; loadError: Error };
+};

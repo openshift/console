@@ -3,11 +3,12 @@ import { Dispatch } from 'react-redux';
 
 import { coFetchJSON } from '../co-fetch';
 import { k8sBasePath } from '../module/k8s/k8s';
-import { isWatchActive, RESULTS_TYPE, RequestMap } from '../reducers/dashboards';
+import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboards';
 import { RootState } from '../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
 import { PrometheusResponse } from '../components/graphs';
 import { URL_POLL_DEFAULT_DELAY } from '../components/utils/url-poll-hook';
+import { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export enum ActionType {
   StopWatch = 'stopWatch',
@@ -134,8 +135,6 @@ export type WatchPrometheusQueryAction = (
 ) => ThunkAction;
 export type StopWatchURLAction = (url: string) => void;
 export type StopWatchPrometheusAction = (query: string, timespan?: number) => void;
-
-export type Fetch = (url: string) => Promise<any>;
 
 type FetchPeriodically = (
   dispatch: Dispatch,
