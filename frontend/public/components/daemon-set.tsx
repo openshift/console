@@ -13,7 +13,7 @@ import {
   ActionMenuVariant,
   usePrometheusGate,
 } from '@console/shared';
-import { K8sResourceKind, referenceFor, referenceForModel } from '../module/k8s';
+import { K8sResourceKind, referenceFor, referenceForModel, DaemonSetKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
@@ -34,6 +34,7 @@ import {
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
@@ -68,6 +69,7 @@ export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }
         obj={ds}
         path="status.desiredNumberScheduled"
       />
+      <PodDisruptionBudgetField obj={ds} />
     </dl>
   );
 };
@@ -267,7 +269,7 @@ export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (prop
 };
 
 type DaemonSetDetailsListProps = {
-  ds: K8sResourceKind;
+  ds: DaemonSetKind;
 };
 
 type EnvironmentPageProps = {
@@ -282,7 +284,7 @@ type EnvironmentTabProps = {
 };
 
 type DaemonSetDetailsProps = {
-  obj: K8sResourceKind;
+  obj: DaemonSetKind;
 };
 
 type DaemonSetsPageProps = {

@@ -196,6 +196,27 @@
       },
       "provider": { "$codeRef": "actions.useCronJobActionsProvider" }
     }
+  }, 
+   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "ReplicaSet"
+      },
+      "provider": { "$codeRef": "actions.useReplicaSetActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "ReplicationController"
+      },
+      "provider": { "$codeRef": "actions.useReplicationControllerActionsProvider" }
+    }
   },
   {
     "type": "console.user-preference/group",

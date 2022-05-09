@@ -177,6 +177,11 @@ const AdminNav: React.FC<AdminNavProps> = ({ pluginNavItems }) => {
           resource="horizontalpodautoscalers"
           name={t('public~HorizontalPodAutoscalers')}
         />
+        <ResourceNSLink
+          id="poddisruptionbudgets"
+          resource="poddisruptionbudgets"
+          name={t('public~PodDisruptionBudgets')}
+        />
       </NavSection>
 
       {/* Temporary addition of Knative Serverless and Virtualization section until extensibility allows for section ordering

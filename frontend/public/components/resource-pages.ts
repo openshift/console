@@ -61,6 +61,7 @@ import {
   VolumeSnapshotClassModel,
   ClusterRoleBindingModel,
 } from '../models';
+import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
 const addResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
@@ -300,6 +301,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.OAuthDetailsPage,
     ),
   )
+  .set(referenceForModel(PodDisruptionBudgetModel), () =>
+    import('@console/app/src/components/pdb/PDBDetailsPage' /* webpackChunkName: "pdb" */).then(
+      (m) => m.PodDisruptionBudgetDetailsPage,
+    ),
+  )
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-details' /* webpackChunkName: "volume-snapshot-details" */
@@ -500,6 +506,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ClusterOperatorModel), () =>
     import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(
       (m) => m.ClusterOperatorPage,
+    ),
+  )
+  .set(referenceForModel(PodDisruptionBudgetModel), () =>
+    import('@console/app/src/components/pdb/PDBPage' /* webpackChunkName: "pdb" */).then(
+      (m) => m.PodDisruptionBudgetsPage,
     ),
   )
   .set(referenceForModel(VolumeSnapshotModel), () =>

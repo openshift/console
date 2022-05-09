@@ -32,3 +32,19 @@ export const QuickStartModel: K8sKind = {
   plural: 'consolequickstarts',
   propagationPolicy: 'Background',
 };
+
+export const PodDisruptionBudgetModel: K8sKind = {
+  label: 'PodDisruptionBudget',
+  // t('console-app~PodDisruptionBudget')
+  labelKey: 'console-app~PodDisruptionBudget',
+  labelPlural: 'PodDisruptionBudgets',
+  // t('console-app~PodDisruptionBudgets')
+  labelPluralKey: 'console-app~PodDisruptionBudgets',
+  plural: 'poddisruptionbudgets',
+  apiVersion: 'v1',
+  apiGroup: 'policy',
+  abbr: 'PDB',
+  namespaced: true,
+  kind: 'PodDisruptionBudget',
+  id: 'poddisruptionbudget',
+};

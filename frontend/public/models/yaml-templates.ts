@@ -5,6 +5,7 @@ import * as k8sModels from '../models';
 import * as appModels from '@console/app/src/models/';
 import { YAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
@@ -1269,6 +1270,43 @@ spec:
   volumeSnapshotRef:
     name: example-snap
     namespace: default
+`,
+  )
+  .setIn(
+    [referenceForModel(PodDisruptionBudgetModel), 'default'],
+    `
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ''
+`,
+  )
+  .setIn(
+    [referenceForModel(PodDisruptionBudgetModel), 'pdb-max-unavailable'],
+    `
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: example
+spec:
+ maxUnavailable: 0
+ selector:
+    matchLabels:
+      app: hello-openShift
+`,
+  )
+  .setIn(
+    [referenceForModel(PodDisruptionBudgetModel), 'pdb-min-available'],
+    `
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: example
+spec:
+ minAvailable: "25%"
+ selector:
+    matchLabels:
+      app: hello-openShift
 `,
   );
 

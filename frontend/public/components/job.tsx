@@ -36,6 +36,7 @@ import {
 } from './utils';
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
   // t('public~Edit parallelism')
@@ -164,6 +165,7 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
                 path="status.failed"
                 defaultValue="0"
               />
+              <PodDisruptionBudgetField obj={job} />
             </dl>
           </div>
         </div>
