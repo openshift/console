@@ -8,18 +8,19 @@ import {
   Selector,
   DetailsItem,
   LabelList,
+  LabelListProps,
 } from '@console/internal/components/utils';
-import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
+import { k8sPatch, k8sUpdate, Selector as SelectorType } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
 import { CapabilityProps, SpecCapability, Error } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
-import { EndpointList } from './endpoint';
+import { EndpointList, EndpointListProps } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
-const PodCount: React.FC<SpecCapabilityProps> = ({
+const PodCount: React.FC<SpecCapabilityProps<number>> = ({
   description,
   descriptor,
   label,
@@ -46,13 +47,19 @@ const PodCount: React.FC<SpecCapabilityProps> = ({
   </DetailsItem>
 );
 
-const Endpoints: React.FC<SpecCapabilityProps> = ({ description, label, obj, fullPath, value }) => (
+const Endpoints: React.FC<SpecCapabilityProps<EndpointListProps['endpoints']>> = ({
+  description,
+  label,
+  obj,
+  fullPath,
+  value,
+}) => (
   <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
     <EndpointList endpoints={value} />
   </DetailsItem>
 );
 
-const Label: React.FC<SpecCapabilityProps> = ({
+const Label: React.FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
   description,
   label,
   model,
@@ -69,7 +76,7 @@ const Label: React.FC<SpecCapabilityProps> = ({
   </DetailsItem>
 );
 
-const NamespaceSelector: React.FC<SpecCapabilityProps> = ({
+const NamespaceSelector: React.FC<SpecCapabilityProps<{ matchNames: string[] }>> = ({
   description,
   label,
   obj,
@@ -112,7 +119,7 @@ const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const BasicSelector: React.FC<SpecCapabilityProps> = ({
+const BasicSelector: React.FC<SpecCapabilityProps<SelectorType>> = ({
   capability,
   description,
   label,
@@ -128,7 +135,7 @@ const BasicSelector: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
+const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
   model,
   obj,
   description,
@@ -201,7 +208,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
+const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
   description,
   descriptor,
   label,
@@ -252,6 +259,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
   );
 };
 
+// TODO [tech debt] Create a type definition for udpate strategy api and use it here
 const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
   description,
   descriptor,
@@ -331,14 +339,14 @@ export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = ({
         return DefaultCapability;
     }
   }, [props.descriptor, props.value, capability]);
-  return !Component ? null : (
+  return Component ? (
     <div className={className}>
-      <Component capability={capability} {...props} />
+      <Component {...props} capability={capability} />
     </div>
-  );
+  ) : null;
 };
 
-type SpecCapabilityProps = CapabilityProps<SpecCapability>;
+type SpecCapabilityProps<V = any> = CapabilityProps<SpecCapability, V>;
 PodCount.displayName = 'PodCount';
 Endpoints.displayName = 'Endpoints';
 Label.displayName = 'Label';

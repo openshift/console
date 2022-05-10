@@ -21,7 +21,7 @@ export const Invalid: React.FC<{ path: string }> = ({ path }) => {
   );
 };
 
-export const DefaultCapability: React.FC<CommonCapabilityProps> = ({
+export const DefaultCapability: React.FC<CommonCapabilityProps<string | number | boolean>> = ({
   description,
   label,
   obj,
@@ -43,7 +43,7 @@ export const DefaultCapability: React.FC<CommonCapabilityProps> = ({
   );
 };
 
-export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps> = ({
+export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps<string>> = ({
   capability,
   description,
   descriptor,
@@ -69,7 +69,6 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps> = ({
 
       return null;
     }
-
     return <ResourceLink kind={gvk} name={value} namespace={obj.metadata.namespace} />;
   }, [value, capability, obj.metadata.namespace, t, descriptor]);
   return (
@@ -79,7 +78,7 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps> = ({
   );
 };
 
-export const SecretCapability: React.FC<CommonCapabilityProps> = ({
+export const SecretCapability: React.FC<CommonCapabilityProps<string>> = ({
   description,
   label,
   obj,
@@ -117,4 +116,9 @@ export const SecretCapability: React.FC<CommonCapabilityProps> = ({
   );
 };
 
-type CommonCapabilityProps = CapabilityProps<SpecCapability | StatusCapability>;
+type CommonCapabilityProps<V = any> = CapabilityProps<SpecCapability | StatusCapability, V>;
+
+Invalid.displayName = 'Invalid';
+DefaultCapability.displayName = 'DefaultCapability';
+K8sResourceLinkCapability.displayName = 'K8sResourceLinkCapability';
+SecretCapability.displayName = 'SecretCapability';

@@ -7,9 +7,9 @@ import { DefaultCapability, Invalid, K8sResourceLinkCapability, SecretCapability
 import { CapabilityProps, StatusCapability } from '../types';
 import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { Phase } from './phase';
-import { PodStatusChart } from './pods';
+import { PodStatusChart, PodStatusChartProps } from './pods';
 
-const PodStatuses: React.FC<StatusCapabilityProps> = ({
+const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = ({
   description,
   descriptor,
   fullPath,
@@ -36,7 +36,13 @@ const PodStatuses: React.FC<StatusCapabilityProps> = ({
   );
 };
 
-const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, obj, value }) => {
+const Link: React.FC<StatusCapabilityProps<string>> = ({
+  description,
+  fullPath,
+  label,
+  obj,
+  value,
+}) => {
   const { t } = useTranslation();
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
@@ -49,7 +55,7 @@ const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, o
   );
 };
 
-const K8sPhase: React.FC<StatusCapabilityProps> = ({
+const K8sPhase: React.FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -61,7 +67,7 @@ const K8sPhase: React.FC<StatusCapabilityProps> = ({
   </DetailsItem>
 );
 
-const K8sPhaseReason: React.FC<StatusCapabilityProps> = ({
+const K8sPhaseReason: React.FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -82,7 +88,7 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps> = ({
   );
 };
 
-const MainStatus: React.FC<StatusCapabilityProps> = ({
+const MainStatus: React.FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -131,17 +137,16 @@ export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = ({
         return isMainStatusDescriptor(props.descriptor) ? MainStatus : DefaultCapability;
     }
   }, [capability, props.value, props.descriptor]);
-  return !Component ? null : (
+  return Component ? (
     <div className={className}>
       <Component {...props} capability={capability} />
     </div>
-  );
+  ) : null;
 };
 
-type StatusCapabilityProps = CapabilityProps<StatusCapability>;
+type StatusCapabilityProps<V = any> = CapabilityProps<StatusCapability, V>;
 
 Phase.displayName = 'Phase';
-Invalid.displayName = 'Invalid';
 PodStatuses.displayName = 'PodStatuses';
 Link.displayName = 'Link';
 K8sPhase.displayName = 'K8sPhase';
