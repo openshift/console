@@ -172,7 +172,7 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
   const errorPodCount = _.size(_.filter(pods, (pod) => isPodError(pod)));
   const podsShown = Math.max(Math.min(errorPodCount, MAX_ERROR_PODS), MAX_PODS);
   const linkTo = allPodsLink || `${resourcePath(referenceFor(obj), name, namespace)}/pods`;
-  const emptyMessage = emptyText || t('public~No Pods found for this resource.');
+  const emptyMessage = emptyText || t('console-shared~No Pods found for this resource.');
 
   const podAlert = showWaitingForBuildAlert ? (
     <Alert
@@ -182,13 +182,13 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
       actionLinks={
         <AlertActionLink onClick={() => setShowWaitingPods(!showWaitingPods)}>
           {showWaitingPods
-            ? t('public~Hide waiting pods with errors')
-            : t('public~Show waiting pods with errors')}
+            ? t('console-shared~Hide waiting pods with errors')
+            : t('console-shared~Show waiting pods with errors')}
         </AlertActionLink>
       }
     >
       {t(
-        'public~Waiting for the first build to run successfully. You may temporarily see "ImagePullBackOff" and "ErrImagePull" errors while waiting.',
+        'console-shared~Waiting for the first build to run successfully. You may temporarily see "ImagePullBackOff" and "ErrImagePull" errors while waiting.',
       )}
     </Alert>
   ) : null;
@@ -198,7 +198,7 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
       <SidebarSectionHeading text={t('public~Pods')}>
         {_.size(pods) > podsShown && (
           <Link className="sidebar__section-view-all" to={linkTo}>
-            {t('public~View all {{podSize}}', { podSize: _.size(pods) })}
+            {t('console-shared~View all {{podSize}}', { podSize: _.size(pods) })}
           </Link>
         )}
       </SidebarSectionHeading>

@@ -1160,10 +1160,36 @@
   {
     "type": "console.topology/details/tab-section",
     "properties": {
-      "id": "topology-tab-section-eventsource-sink",
+      "id": "topology-tab-section-eventsource-target",
       "tab": "topology-side-bar-tab-resource",
       "section": {
         "$codeRef": "knativeTopologySidebar.getKnativeSidepanelSinkSection"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-eventsource-associateddeployment",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getKnativeSidepanelSinkAssociatedDeployment"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-eventsource-ownedeventsources",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "knativeTopologySidebar.getKnativeSidepanelSinkEventSources"
       }
     },
     "flags": {
@@ -1674,6 +1700,17 @@
     },
     "flags": {
       "required": ["FLAG_KAFKA_SINK"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "knativeTopologySidebar.getEventSourcePodsApdapter"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
     }
   }
 ]

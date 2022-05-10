@@ -4,7 +4,11 @@ import { ExternalLink, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
-import EventSourceResources from '../../components/overview/EventSourceResources';
+import {
+  EventSourceDeployments,
+  OwnedEventSources,
+  EventSourceTarget,
+} from '../../components/overview/EventSourceResources';
 import { CamelKameletBindingModel } from '../../models';
 import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 import { TYPE_SINK_URI } from '../const';
@@ -18,14 +22,55 @@ export const getKnativeSidepanelSinkSection = (element: GraphElement) => {
   }
   if (
     isDynamicEventResourceKind(referenceFor(resource)) ||
-    (resource.kind === CamelKameletBindingModel.kind && data.kameletType === KameletType.Source)
+    (resource.kind === CamelKameletBindingModel.kind &&
+      data.data.kameletType === KameletType.Source)
   ) {
     return (
       <TopologySideBarTabSection>
-        <EventSourceResources
-          obj={resource}
-          ownedSources={element.getData().resources.eventSources}
+        <EventSourceTarget obj={resource} />
+      </TopologySideBarTabSection>
+    );
+  }
+  return undefined;
+};
+
+export const getKnativeSidepanelSinkAssociatedDeployment = (element: GraphElement) => {
+  const resource = getResource(element);
+  const data = element.getData();
+  if (!resource || !data?.resources) {
+    return null;
+  }
+  if (
+    isDynamicEventResourceKind(referenceFor(resource)) ||
+    (resource.kind === CamelKameletBindingModel.kind &&
+      data.data.kameletType === KameletType.Source)
+  ) {
+    return (
+      <TopologySideBarTabSection>
+        <EventSourceDeployments
+          data-test="event-source-deployments"
+          deploymentObj={data.resources.associatedDeployment}
         />
+      </TopologySideBarTabSection>
+    );
+  }
+  return undefined;
+};
+
+export const getKnativeSidepanelSinkEventSources = (element: GraphElement) => {
+  const resource = getResource(element);
+  const data = element.getData();
+  if (!resource || !data?.resources) {
+    return null;
+  }
+  if (
+    isDynamicEventResourceKind(referenceFor(resource)) ||
+    (resource.kind === CamelKameletBindingModel.kind &&
+      data.data.kameletType === KameletType.Source)
+  ) {
+    return (
+      <TopologySideBarTabSection>
+        <OwnedEventSources eventSources={data.resources.eventSources} />
       </TopologySideBarTabSection>
     );
   }
