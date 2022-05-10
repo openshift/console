@@ -27,6 +27,10 @@ $overview-sidebar-width: 550px;
     margin-bottom: var(--pf-global--spacer--md);
   }
 
+  &__paragraph {
+    margin-bottom: var(--pf-c-content--MarginBottom);
+  }
+
   h2 {
     margin: 0 0 var(--pf-global--spacer--sm) 0;
   }

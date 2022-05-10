@@ -51,12 +51,12 @@ export const NetworkPolicyConditionalSelector: React.FunctionComponent<NetworkPo
         <label>{title}</label>
       </span>
       <div className="help-block">
-        <p>{helpText}</p>
+        <p className="co-create-networkpolicy__paragraph">{helpText}</p>
       </div>
       {isVisible ? (
         <>
           <div className="help-block">
-            <p>{secondHelpText}</p>
+            <p className="co-create-networkpolicy__paragraph">{secondHelpText}</p>
           </div>
           <NameValueEditorComponent
             nameValuePairs={values.length > 0 ? values : [['', '']]}

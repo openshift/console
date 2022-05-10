@@ -2,4 +2,8 @@
   &__body {
     padding: 0 var(--pf-global--spacer--lg) var(--pf-global--spacer--lg);
   }
+
+  &__paragraph {
+    margin-bottom: var(--pf-c-content--MarginBottom);
+  }
 }

@@ -96,7 +96,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
         {params.length > 0 && (
           <div>
             <h2>{t('pipelines-plugin~Parameters')}</h2>
-            <p className="co-help-text">
+            <p className="co-help-text opp-task-sidebar__paragraph">
               <Trans ns="pipelines-plugin">
                 Use this format when you reference variables in this form:{' '}
                 <code className="co-code">$(</code>

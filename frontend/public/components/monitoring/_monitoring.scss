@@ -287,6 +287,10 @@ $monitoring-line-height: 18px;
       padding-top: 26px;
     }
   }
+
+  &__paragraph {
+    margin-bottom: var(--pf-c-content--MarginBottom);
+  }
 }
 
 .monitoring-state-icon--pending {

@@ -50,3 +50,7 @@
 .co-create-networkpolicy__selector-preview button.pf-c-tree-view__node[role="treeitem"] > .pf-c-tree-view__node-container {
   cursor: default;
 }
+
+.co-create-networkpolicy__paragraph {
+  margin-bottom: var(--pf-c-content--MarginBottom);
+}
