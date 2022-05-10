@@ -104,7 +104,7 @@ const GraphEmptyState: React.FC<GraphEmptyStateProps> = ({ children, title }) =>
 );
 
 const SpanControls: React.FC<SpanControlsProps> = React.memo(
-  ({ defaultSpanText, onChange, span }) => {
+  ({ defaultSpanText, onChange, span, hasReducedResolution }) => {
     const [isValid, setIsValid] = React.useState(true);
     const [text, setText] = React.useState(formatPrometheusDuration(span));
 
@@ -153,6 +153,16 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
         >
           {t('public~Reset zoom')}
         </Button>
+        {hasReducedResolution && (
+          <Alert
+            isInline
+            isPlain
+            className="query-browser__reduced-resolution"
+            title={t('public~Displaying with reduced resolution due to large dataset.')}
+            variant="info"
+            truncateTitle={1}
+          />
+        )}
       </>
     );
   },
@@ -874,6 +884,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   };
 
   const isGraphDataEmpty = !graphData || graphData.every((d) => d.length === 0);
+  const hasReducedResolution = !isGraphDataEmpty && samples < maxSamplesForSpan && !updating;
 
   return (
     <div
@@ -887,7 +898,12 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       ) : (
         <div className="query-browser__controls">
           <div className="query-browser__controls--left">
-            <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
+            <SpanControls
+              defaultSpanText={defaultSpanText}
+              onChange={onSpanChange}
+              span={span}
+              hasReducedResolution={hasReducedResolution}
+            />
             {updating && <Loading />}
           </div>
           <div className="query-browser__controls--right">
@@ -907,54 +923,44 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       {error && <Error error={error} />}
       {isGraphDataEmpty && !updating && <GraphEmpty />}
       {!isGraphDataEmpty && (
-        <>
-          {samples < maxSamplesForSpan && !updating && (
-            <Alert
-              isInline
-              className="co-alert"
-              title={t('public~Displaying with reduced resolution due to large dataset.')}
-              variant="info"
-            />
-          )}
-          <div
-            className={classNames('graph-wrapper graph-wrapper--query-browser', {
-              'graph-wrapper--query-browser--with-legend': showLegend && !!formatSeriesTitle,
-            })}
-          >
-            <div ref={containerRef} style={{ width: '100%' }}>
-              {width > 0 && (
-                <>
-                  {disableZoom ? (
-                    <Graph
-                      allSeries={graphData}
-                      disabledSeries={disabledSeries}
-                      fixedXDomain={xDomain}
-                      formatSeriesTitle={formatSeriesTitle}
-                      isStack={canStack && isStacked}
-                      showLegend={showLegend}
-                      span={span}
-                      units={units}
-                      width={width}
-                    />
-                  ) : (
-                    <ZoomableGraph
-                      allSeries={graphData}
-                      disabledSeries={disabledSeries}
-                      fixedXDomain={xDomain}
-                      formatSeriesTitle={formatSeriesTitle}
-                      isStack={canStack && isStacked}
-                      onZoom={zoomableGraphOnZoom}
-                      showLegend={showLegend}
-                      span={span}
-                      units={units}
-                      width={width}
-                    />
-                  )}
-                </>
-              )}
-            </div>
+        <div
+          className={classNames('graph-wrapper graph-wrapper--query-browser', {
+            'graph-wrapper--query-browser--with-legend': showLegend && !!formatSeriesTitle,
+          })}
+        >
+          <div ref={containerRef} style={{ width: '100%' }}>
+            {width > 0 && (
+              <>
+                {disableZoom ? (
+                  <Graph
+                    allSeries={graphData}
+                    disabledSeries={disabledSeries}
+                    fixedXDomain={xDomain}
+                    formatSeriesTitle={formatSeriesTitle}
+                    isStack={canStack && isStacked}
+                    showLegend={showLegend}
+                    span={span}
+                    units={units}
+                    width={width}
+                  />
+                ) : (
+                  <ZoomableGraph
+                    allSeries={graphData}
+                    disabledSeries={disabledSeries}
+                    fixedXDomain={xDomain}
+                    formatSeriesTitle={formatSeriesTitle}
+                    isStack={canStack && isStacked}
+                    onZoom={zoomableGraphOnZoom}
+                    showLegend={showLegend}
+                    span={span}
+                    units={units}
+                    width={width}
+                  />
+                )}
+              </>
+            )}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -1033,6 +1039,7 @@ type SpanControlsProps = {
   defaultSpanText: string;
   onChange: (span: number) => void;
   span: number;
+  hasReducedResolution: boolean;
 };
 
 type TooltipProps = {

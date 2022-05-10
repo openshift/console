@@ -336,6 +336,10 @@ $monitoring-line-height: 18px;
   display: flex;
 }
 
+.query-browser__reduced-resolution.pf-c-alert{
+  align-content: center;
+}
+
 .query-browser__controls--right {
   display: flex;
   margin-left: auto;
