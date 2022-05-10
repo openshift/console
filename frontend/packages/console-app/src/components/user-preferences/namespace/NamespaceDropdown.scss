@@ -1,6 +1,7 @@
 .pf-c-menu-toggle.co-user-preference__namespace-menu-toggle {
   padding: var(--pf-global--spacer--form-element) var(--pf-global--spacer--sm)
     var(--pf-global--spacer--form-element) var(--pf-global--spacer--sm) !important;
+  background-color: var(--pf-global--BackgroundColor--400);
   &::before,
   &::after {
     border-width: var(--pf-global--BorderWidth--sm) !important;
