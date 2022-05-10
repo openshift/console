@@ -950,15 +950,15 @@ export const getFilters = (t: TFunction): RowFilter<PodKind>[] => [
     },
     reducer: podPhaseFilterReducer,
     items: [
-      { id: 'Running', title: 'Running' },
-      { id: 'Pending', title: 'Pending' },
-      { id: 'Terminating', title: 'Terminating' },
-      { id: 'CrashLoopBackOff', title: 'CrashLoopBackOff' },
+      { id: 'Running', title: t('public~Running') },
+      { id: 'Pending', title: t('public~Pending') },
+      { id: 'Terminating', title: t('public~Terminating') },
+      { id: 'CrashLoopBackOff', title: t('public~CrashLoopBackOff') },
       // Use title "Completed" to match what appears in the status column for the pod.
       // The pod phase is "Succeeded," but the container state is "Completed."
-      { id: 'Succeeded', title: 'Completed' },
-      { id: 'Failed', title: 'Failed' },
-      { id: 'Unknown', title: 'Unknown ' },
+      { id: 'Succeeded', title: t('public~Completed') },
+      { id: 'Failed', title: t('public~Failed') },
+      { id: 'Unknown', title: t('public~Unknown') },
     ],
   },
 ];
