@@ -157,6 +157,7 @@
   "Create autoscaler": "Create autoscaler",
   "Update history": "Update history",
   "History": "History",
+  "There is a threshold for rendering update data which may cause gaps in the information below.": "There is a threshold for rendering update data which may cause gaps in the information below.",
   "State": "State",
   "Completed": "Completed",
   "Release notes": "Release notes",
