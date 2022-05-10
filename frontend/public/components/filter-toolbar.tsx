@@ -38,6 +38,8 @@ import { createColumnManagementModal } from './modals';
 import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared/src';
 import { TextFilter } from './factory';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import useRowFilterFix from './useRowFilterFix';
+import useLabelSelectionFix from './useLabelSelectionFix';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -108,7 +110,6 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     ? `${uniqueFilterName}-${labelFilter}`
     : labelFilter;
   const params = new URLSearchParams(location.search);
-  const labelFilters = params.get(labelFilterQueryArgumentKey)?.split(',') ?? [];
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
   const [isOpen, setOpen] = React.useState(false);
   const [nameInputText, setNameInputText] = React.useState(
@@ -167,11 +168,15 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
       ),
     [generatedRowFilters],
   );
-
-  // Parse selected row filters from url query params
-  const selectedRowFilters = React.useMemo(
-    () => _.flatMap(filterKeys, (f) => params.get(f)?.split(',') ?? []),
-    [filterKeys, params],
+  const [selectedRowFilters, onRowFilterSearchParamChange, rowFiltersInitialized] = useRowFilterFix(
+    params,
+    filters,
+    filterKeys,
+    defaultSelections,
+  );
+  const [labelSelection, onLabelSelectionChange, labelSelectionInitialized] = useLabelSelectionFix(
+    params,
+    labelFilterQueryArgumentKey,
   );
 
   // Map row filters to select groups
@@ -213,18 +218,9 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     });
   };
 
-  const setRowFilterQueryParameters = (selected: string[]) => {
-    if (!_.isEmpty(selectedRowFilters) || !_.isEmpty(selected)) {
-      _.forIn(filters, (value, key) => {
-        const recognized = _.filter(selected, (item) => value.includes(item));
-        setOrRemoveQueryArgument(filterKeys[key], recognized.join(','));
-      });
-    }
-  };
-
   const updateRowFilterSelected = (id: string[]) => {
     const selectedNew = _.xor(selectedRowFilters, id);
-    setRowFilterQueryParameters(selectedNew);
+    onRowFilterSearchParamChange(selectedNew);
     applyRowFilter(selectedNew);
   };
 
@@ -238,7 +234,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   const applyLabelFilters = (values: string[]) => {
     setLabelInputText('');
-    setOrRemoveQueryArgument(labelFilterQueryArgumentKey, values.join(','));
+    onLabelSelectionChange(values);
     applyFilters(labelFilter, { all: values });
   };
 
@@ -267,18 +263,26 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   // Run once on mount to apply filters from query params
   React.useEffect(() => {
     if (!hideNameLabelFilters || !hideLabelFilter) {
-      applyFilters(labelFilter, { all: labelFilters });
+      applyFilters(labelFilter, { all: labelSelection });
     }
     if (!hideNameLabelFilters) {
       applyFilters(textFilter, { selected: [nameInputText] });
     }
-    if (_.isEmpty(selectedRowFilters)) {
-      updateRowFilterSelected(defaultSelections);
-    } else {
-      applyRowFilter(selectedRowFilters);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /**
+   * Initialize any external data filters based on the hack-fix data when they are finished init
+   * TODO: Remove during https://issues.redhat.com/browse/CONSOLE-3147
+   */
+  React.useEffect(() => {
+    if (rowFiltersInitialized && labelSelectionInitialized) {
+      applyFilters(labelFilter, { all: labelSelection });
+      applyRowFilter(selectedRowFilters);
+    }
+    // Trigger the update only when we are initialized to sync the url params with the data
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowFiltersInitialized, labelSelectionInitialized]);
 
   return (
     <Toolbar
@@ -346,10 +350,10 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   setLabelInputText('');
                   applyLabelFilters([]);
                 }}
-                chips={labelFilters}
+                chips={labelSelection}
                 deleteChip={(f, chip: string) => {
                   setLabelInputText('');
-                  applyLabelFilters(_.difference(labelFilters, [chip]));
+                  applyLabelFilters(_.difference(labelSelection, [chip]));
                 }}
                 categoryName={t('public~Label')}
               >
@@ -374,7 +378,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       <AutocompleteInput
                         className="co-text-node"
                         onSuggestionSelect={(selected) => {
-                          applyLabelFilters(_.uniq([...labelFilters, selected]));
+                          applyLabelFilters(_.uniq([...labelSelection, selected]));
                         }}
                         showSuggestions
                         textValue={labelInputText}
