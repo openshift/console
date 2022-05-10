@@ -138,7 +138,7 @@ export const OS: React.FC<OSProps> = React.memo(
         const baseImageFoundInCluster =
           loadedBaseImages?.find(
             (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
-          ) || findDataSourcePVC(dataSourcesData, pvcsData, pvcName, pvcNamespace);
+          ) || findDataSourcePVC(dataSourcesData, pvcsData, pvcName, pvcNamespace)?.dsBaseImage;
         const isBaseImageUploading =
           iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) ===
           CDI_PVC_PHASE_RUNNING;
@@ -198,7 +198,7 @@ export const OS: React.FC<OSProps> = React.memo(
 
     React.useEffect(() => {
       const osImage = operatingSystemBaseImages.find((image) => image.id === os);
-      const matchingDataSourcePVC = findDataSourcePVC(
+      const { dsBaseImage: matchingDataSourcePVC } = findDataSourcePVC(
         dataSources,
         pvcs,
         osImage?.pvcName,
