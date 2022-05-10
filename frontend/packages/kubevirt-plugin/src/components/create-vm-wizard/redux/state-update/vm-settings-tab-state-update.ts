@@ -175,7 +175,7 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
       pvcName &&
       iBaseImages &&
       iBaseImages
-        .valueSeq()
+        ?.valueSeq()
         .find((iPVC) => iGetName(iPVC) === pvcName && iGetNamespace(iPVC) === pvcNamespace);
     iBaseImageUploading =
       iGetAnnotation(iBaseImage, CDI_UPLOAD_POD_ANNOTATION) === CDI_PVC_PHASE_RUNNING;
