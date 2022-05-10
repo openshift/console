@@ -3,9 +3,7 @@ import { UseActivePerspective } from '../extensions/console-types';
 
 /**
  * Hook that provides the currently active perspective and a callback for setting the active perspective
- * @returns Tuple `[activePerspective, setActivePerspective]` where:
- *  `activePerspective` is the currently active perspective as defined in redux state
- *  `setActivePerspective` is a callback that accepts a string argument and sets the appropriate active perspective redux state
+ * @returns A tuple containing the current active perspective and setter callback.
  * @example
  * ```tsx
  * const Component: React.FC = (props) => {
