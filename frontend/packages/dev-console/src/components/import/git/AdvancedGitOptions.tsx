@@ -43,7 +43,7 @@ const AdvancedGitOptions: React.FC<{
           name={`${fieldPrefix}git.dir`}
           label={t('devconsole~Context dir')}
           helpText={t(
-            'devconsole~Optional subdirectory for the Application source code, used as a context directory for build.',
+            'devconsole~Optional subdirectory for the source code, used as a context directory for build.',
           )}
           onChange={handleGitDirChange}
         />

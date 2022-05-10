@@ -219,7 +219,7 @@
         {
           "key": "NPM_RUN",
           "label": "%devconsole~Run command%",
-          "description": "%devconsole~Optional parameter for Node.js applications to define the npm run <command>.%",
+          "description": "%devconsole~Optional arguments for npm run.%",
           "defaultValue": "start"
         }
       ]
