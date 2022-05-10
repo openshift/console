@@ -310,7 +310,7 @@ const FailingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   );
 };
 
-const UpToDateMessage: React.FC<{}> = () => {
+export const UpToDateMessage: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <span>
@@ -969,13 +969,14 @@ export const ClusterNotUpgradeableAlert: React.FC<ClusterNotUpgradeableAlertProp
   );
 };
 
-export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
-  canUpgrade,
-  cv,
+export const MachineConfigPoolsArePausedAlert: React.FC<MachineConfigPoolsArePausedAlertProps> = ({
   machineConfigPools,
-  status,
 }) => {
   const { t } = useTranslation();
+  const [clusterVersion] = useK8sWatchResource<ClusterVersionKind>({
+    kind: clusterVersionReference,
+    name: 'version',
+  });
   // assume if 'worker' is editable, others are too
   const workerMachineConfigPoolIsEditable = useAccessReview({
     group: MachineConfigPoolModel.apiGroup,
@@ -983,10 +984,45 @@ export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
     verb: 'patch',
     name: NodeTypes.worker,
   });
-  const channel = cv.spec.channel;
   const pausedMCPs = machineConfigPools
     .filter((mcp) => !isMCPMaster(mcp))
     .filter((mcp) => isMCPPaused(mcp));
+  return clusterIsUpToDateOrUpdateAvailable(getClusterUpdateStatus(clusterVersion)) &&
+    pausedMCPs.length > 0 ? (
+    <Alert
+      isInline
+      title={t('public~{{resource}} updates are paused.', {
+        resource: NodeModel.label,
+      })}
+      customIcon={<PauseCircleIcon />}
+      actionLinks={
+        workerMachineConfigPoolIsEditable && (
+          <AlertActionLink onClick={() => Promise.all(getMCPsToPausePromises(pausedMCPs, false))}>
+            {t('public~Resume all updates')}
+          </AlertActionLink>
+        )
+      }
+      className="co-alert"
+      data-test-id="cluster-settings-alerts-paused-nodes"
+    >
+      <p>
+        {t(
+          'public~You can update your cluster, but make sure to resume your {{resource}} updates quickly to avoid failures.',
+          { resource: NodeModel.label },
+        )}
+      </p>
+    </Alert>
+  ) : null;
+};
+
+export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
+  canUpgrade,
+  cv,
+  machineConfigPools,
+  status,
+}) => {
+  const { t } = useTranslation();
+  const channel = cv.spec.channel;
   if (!canUpgrade) {
     return (
       <Alert
@@ -1024,33 +1060,7 @@ export const ClusterSettingsAlerts: React.FC<ClusterSettingsAlertsProps> = ({
         />
       )}
       {!!getConditionUpgradeableFalse(cv) && <ClusterNotUpgradeableAlert cv={cv} />}
-      {clusterIsUpToDateOrUpdateAvailable(status) && pausedMCPs.length > 0 && (
-        <Alert
-          isInline
-          title={t('public~{{resource}} updates are paused.', {
-            resource: NodeModel.label,
-          })}
-          customIcon={<PauseCircleIcon />}
-          actionLinks={
-            workerMachineConfigPoolIsEditable && (
-              <AlertActionLink
-                onClick={() => Promise.all(getMCPsToPausePromises(pausedMCPs, false))}
-              >
-                {t('public~Resume all updates')}
-              </AlertActionLink>
-            )
-          }
-          className="co-alert"
-          data-test-id="cluster-settings-alerts-paused-nodes"
-        >
-          <p>
-            {t(
-              'public~You can update your cluster, but make sure to resume your {{resource}} updates quickly to avoid failures.',
-              { resource: NodeModel.label },
-            )}
-          </p>
-        </Alert>
-      )}
+      <MachineConfigPoolsArePausedAlert machineConfigPools={machineConfigPools} />
     </>
   );
 };
@@ -1470,6 +1480,10 @@ type UpdateInProgressProps = {
 type ClusterNotUpgradeableAlertProps = {
   cv: ClusterVersionKind;
   onCancel?: () => void;
+};
+
+type MachineConfigPoolsArePausedAlertProps = {
+  machineConfigPools: MachineConfigPoolKind[];
 };
 
 type ClusterSettingsAlertsProps = {

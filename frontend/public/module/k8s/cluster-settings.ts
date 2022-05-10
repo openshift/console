@@ -314,7 +314,7 @@ export const isMCPMaster = (mcp: MachineConfigPoolKind) => mcp.metadata.name ===
 
 export const isMCPWorker = (mcp: MachineConfigPoolKind) => mcp.metadata.name === NodeTypes.worker;
 
-export const isMCPPaused = (mcp: MachineConfigPoolKind) => mcp.spec.paused;
+export const isMCPPaused = (mcp: MachineConfigPoolKind) => mcp.spec?.paused;
 
 export const sortMCPsByCreationTimestamp = (a: MachineConfigPoolKind, b: MachineConfigPoolKind) =>
   a.metadata.creationTimestamp.localeCompare(b.metadata.creationTimestamp);
