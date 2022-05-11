@@ -565,6 +565,7 @@
   "To take a snapshot you can either edit an existing disk to add a snapshot-supported storage class or add a new disk with a compatible storage class defined. For further details, please contact your cluster admin.": "To take a snapshot you can either edit an existing disk to add a snapshot-supported storage class or add a new disk with a compatible storage class defined. For further details, please contact your cluster admin.",
   "Learn more about snapshots": "Learn more about snapshots",
   "Take Snapshot": "Take Snapshot",
+  "Can not create virtual machine snapshot which includes hotplug volume while VM is running": "Can not create virtual machine snapshot which includes hotplug volume while VM is running",
   "Snapshot only includes disks backed by a snapshot-supported storage class": "Snapshot only includes disks backed by a snapshot-supported storage class",
   "Snapshot Name": "Snapshot Name",
   "unsupported approve checkbox": "unsupported approve checkbox",
