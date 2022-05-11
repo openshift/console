@@ -35,6 +35,9 @@ export const getIconProps = (item: CatalogItem) => {
   if (icon.class) {
     return { iconImg: null, iconClass: normalizeIconClass(icon.class) };
   }
+  if (icon.node) {
+    return { iconImg: null, iconClass: null, icon: icon.node };
+  }
   return { iconImg: catalogImg, iconClass: null };
 };
 

@@ -20,7 +20,7 @@ const normalizeEventSources = (
       uid,
       name,
       description,
-      icon: { url: getEventSourceIcon(referenceForModel(eventSource)), class: null },
+      icon: { url: getEventSourceIcon(referenceForModel(eventSource)) as string, class: null },
       type: 'EventSource',
       provider,
       cta: { label: t('knative-plugin~Create Event Source'), href },
