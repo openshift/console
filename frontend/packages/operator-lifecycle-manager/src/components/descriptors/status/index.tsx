@@ -1,18 +1,15 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { DetailsItem } from '@console/internal/components/utils';
 import { Status, SuccessStatus } from '@console/shared';
-import { DefaultCapability, Invalid, K8sResourceLinkCapability } from '../common';
+import { DefaultCapability, Invalid, K8sResourceLinkCapability, SecretCapability } from '../common';
 import { CapabilityProps, StatusCapability } from '../types';
 import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { Phase } from './phase';
-import { PodStatusChart } from './pods';
+import { PodStatusChart, PodStatusChartProps } from './pods';
 
-const PodStatuses: React.FC<StatusCapabilityProps> = ({
+const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = ({
   description,
   descriptor,
   fullPath,
@@ -39,7 +36,13 @@ const PodStatuses: React.FC<StatusCapabilityProps> = ({
   );
 };
 
-const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, obj, value }) => {
+const Link: React.FC<StatusCapabilityProps<string>> = ({
+  description,
+  fullPath,
+  label,
+  obj,
+  value,
+}) => {
   const { t } = useTranslation();
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
@@ -52,7 +55,7 @@ const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, o
   );
 };
 
-const K8sPhase: React.FC<StatusCapabilityProps> = ({
+const K8sPhase: React.FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -64,7 +67,7 @@ const K8sPhase: React.FC<StatusCapabilityProps> = ({
   </DetailsItem>
 );
 
-const K8sPhaseReason: React.FC<StatusCapabilityProps> = ({
+const K8sPhaseReason: React.FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -85,39 +88,7 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps> = ({
   );
 };
 
-const Secret: React.FC<StatusCapabilityProps> = ({ description, label, obj, fullPath, value }) => {
-  const { t } = useTranslation();
-  const [reveal, setReveal] = React.useState(false);
-
-  return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-      <div className="co-toggle-reveal-value">
-        <Button
-          type="button"
-          variant="link"
-          isInline
-          className="pf-m-link--align-right co-toggle-reveal-value__btn"
-          onClick={() => setReveal(!reveal)}
-        >
-          {reveal ? (
-            <>
-              <EyeSlashIcon className="co-icon-space-r" />
-              {t('olm~Hide values')}
-            </>
-          ) : (
-            <>
-              <EyeIcon className="co-icon-space-r" />
-              {t('olm~Reveal values')}
-            </>
-          )}
-        </Button>
-        <SecretValue value={value} encoded={false} reveal={reveal} />
-      </div>
-    </DetailsItem>
-  );
-};
-
-const MainStatus: React.FC<StatusCapabilityProps> = ({
+const MainStatus: React.FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -129,51 +100,56 @@ const MainStatus: React.FC<StatusCapabilityProps> = ({
   </DetailsItem>
 );
 
-export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = (props) => {
+export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = ({
+  className,
+  ...props
+}) => {
   const [capability] =
     getValidCapabilitiesForValue<StatusCapability>(props.descriptor, props.value) ?? [];
 
-  if (capability?.startsWith(StatusCapability.k8sResourcePrefix)) {
-    return <K8sResourceLinkCapability capability={capability} {...props} />;
-  }
+  const Component = React.useMemo(() => {
+    if (capability?.startsWith(StatusCapability.k8sResourcePrefix)) {
+      return K8sResourceLinkCapability;
+    }
 
-  switch (capability) {
-    case StatusCapability.podStatuses:
-      return <PodStatuses {...props} />;
-    case StatusCapability.w3Link:
-      return <Link {...props} />;
-    case StatusCapability.k8sPhase:
-      return <K8sPhase {...props} />;
-    case StatusCapability.k8sPhaseReason:
-      return <K8sPhaseReason {...props} />;
-    case StatusCapability.password:
-      return <Secret {...props} />;
-    case StatusCapability.hidden:
-      return null;
-    default:
-      if (_.isObject(props.value)) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `[Invalid StatusDescriptor] Descriptor is incompatible with non-primitive value.`,
-          props.descriptor,
-        );
-      }
-      return isMainStatusDescriptor(props.descriptor) ? (
-        <MainStatus {...props} />
-      ) : (
-        <DefaultCapability {...props} />
-      );
-  }
+    switch (capability) {
+      case StatusCapability.podStatuses:
+        return PodStatuses;
+      case StatusCapability.w3Link:
+        return Link;
+      case StatusCapability.k8sPhase:
+        return K8sPhase;
+      case StatusCapability.k8sPhaseReason:
+        return K8sPhaseReason;
+      case StatusCapability.password:
+        return SecretCapability;
+      case StatusCapability.hidden:
+        return null;
+      default:
+        if (_.isObject(props.value)) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[Invalid StatusDescriptor] Cannot render a descriptor detail item for 'status.${props.descriptor.path}'. A valid x-descriptor must be provided for non-primitive properties.`,
+            'See https://github.com/openshift/console/blob/master/frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md#olm-descriptor-reference',
+          );
+          return null;
+        }
+        return isMainStatusDescriptor(props.descriptor) ? MainStatus : DefaultCapability;
+    }
+  }, [capability, props.value, props.descriptor]);
+  return Component ? (
+    <div className={className}>
+      <Component {...props} capability={capability} />
+    </div>
+  ) : null;
 };
 
-type StatusCapabilityProps = CapabilityProps<StatusCapability>;
+type StatusCapabilityProps<V = any> = CapabilityProps<StatusCapability, V>;
 
 Phase.displayName = 'Phase';
-Invalid.displayName = 'Invalid';
 PodStatuses.displayName = 'PodStatuses';
 Link.displayName = 'Link';
 K8sPhase.displayName = 'K8sPhase';
 K8sPhaseReason.displayName = 'K8sPhaseReason';
 MainStatus.displayName = 'MainStatus';
 StatusDescriptorDetailsItem.displayName = 'StatusDescriptorDetailsItem';
-Secret.displayName = 'Secret';

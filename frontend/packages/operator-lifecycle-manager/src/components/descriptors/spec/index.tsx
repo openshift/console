@@ -1,27 +1,26 @@
 import * as React from 'react';
 import { Button, Switch, Checkbox } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import {
   LoadingInline,
   ResourceLink,
   Selector,
   DetailsItem,
   LabelList,
+  LabelListProps,
 } from '@console/internal/components/utils';
-import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
+import { k8sPatch, k8sUpdate, Selector as SelectorType } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import { DefaultCapability, K8sResourceLinkCapability } from '../common';
+import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
 import { CapabilityProps, SpecCapability, Error } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
-import { EndpointList } from './endpoint';
+import { EndpointList, EndpointListProps } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
-const PodCount: React.FC<SpecCapabilityProps> = ({
+const PodCount: React.FC<SpecCapabilityProps<number>> = ({
   description,
   descriptor,
   label,
@@ -48,13 +47,19 @@ const PodCount: React.FC<SpecCapabilityProps> = ({
   </DetailsItem>
 );
 
-const Endpoints: React.FC<SpecCapabilityProps> = ({ description, label, obj, fullPath, value }) => (
+const Endpoints: React.FC<SpecCapabilityProps<EndpointListProps['endpoints']>> = ({
+  description,
+  label,
+  obj,
+  fullPath,
+  value,
+}) => (
   <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
     <EndpointList endpoints={value} />
   </DetailsItem>
 );
 
-const Label: React.FC<SpecCapabilityProps> = ({
+const Label: React.FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
   description,
   label,
   model,
@@ -71,7 +76,7 @@ const Label: React.FC<SpecCapabilityProps> = ({
   </DetailsItem>
 );
 
-const NamespaceSelector: React.FC<SpecCapabilityProps> = ({
+const NamespaceSelector: React.FC<SpecCapabilityProps<{ matchNames: string[] }>> = ({
   description,
   label,
   obj,
@@ -114,7 +119,7 @@ const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const BasicSelector: React.FC<SpecCapabilityProps> = ({
+const BasicSelector: React.FC<SpecCapabilityProps<SelectorType>> = ({
   capability,
   description,
   label,
@@ -130,7 +135,7 @@ const BasicSelector: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
+const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
   model,
   obj,
   description,
@@ -203,7 +208,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
+const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
   description,
   descriptor,
   label,
@@ -254,38 +259,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const Secret: React.FC<SpecCapabilityProps> = ({ description, label, obj, fullPath, value }) => {
-  const { t } = useTranslation();
-  const [reveal, setReveal] = React.useState(false);
-
-  return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-      <div className="co-toggle-reveal-value">
-        <Button
-          type="button"
-          variant="link"
-          isInline
-          className="pf-m-link--align-right co-toggle-reveal-value__btn"
-          onClick={() => setReveal(!reveal)}
-        >
-          {reveal ? (
-            <>
-              <EyeSlashIcon className="co-icon-space-r" />
-              {t('olm~Hide values')}
-            </>
-          ) : (
-            <>
-              <EyeIcon className="co-icon-space-r" />
-              {t('olm~Reveal values')}
-            </>
-          )}
-        </Button>
-        <SecretValue value={value} encoded={false} reveal={reveal} />
-      </div>
-    </DetailsItem>
-  );
-};
-
+// TODO [tech debt] Create a type definition for udpate strategy api and use it here
 const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
   description,
   descriptor,
@@ -316,52 +290,63 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = (props) => {
+export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = ({
+  className,
+  ...props
+}) => {
   const [capability] =
     getValidCapabilitiesForValue<SpecCapability>(props.descriptor, props.value) ?? [];
 
-  if (capability?.startsWith(SpecCapability.k8sResourcePrefix)) {
-    return <K8sResourceLinkCapability capability={capability} {...props} />;
-  }
+  const Component = React.useMemo(() => {
+    if (capability?.startsWith(SpecCapability.k8sResourcePrefix)) {
+      return K8sResourceLinkCapability;
+    }
 
-  if (capability?.startsWith(SpecCapability.selector)) {
-    return <BasicSelector capability={capability} {...props} />;
-  }
+    if (capability?.startsWith(SpecCapability.selector)) {
+      return BasicSelector;
+    }
 
-  switch (capability) {
-    case SpecCapability.podCount:
-      return <PodCount {...props} />;
-    case SpecCapability.endpointList:
-      return <Endpoints {...props} />;
-    case SpecCapability.label:
-      return <Label {...props} />;
-    case SpecCapability.namespaceSelector:
-      return <NamespaceSelector {...props} />;
-    case SpecCapability.resourceRequirements:
-      return <ResourceRequirements {...props} />;
-    case SpecCapability.booleanSwitch:
-      return <BooleanSwitch {...props} />;
-    case SpecCapability.password:
-      return <Secret {...props} />;
-    case SpecCapability.updateStrategy:
-      return <UpdateStrategy {...props} />;
-    case SpecCapability.checkbox:
-      return <CheckboxUIComponent {...props} />;
-    case SpecCapability.hidden:
-      return null;
-    default:
-      if (_.isObject(props.value)) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `[Invalid SpecDescriptor] Descriptor is incompatible with non-primitive value.`,
-          props.descriptor,
-        );
-      }
-      return <DefaultCapability {...props} />;
-  }
+    switch (capability) {
+      case SpecCapability.podCount:
+        return PodCount;
+      case SpecCapability.endpointList:
+        return Endpoints;
+      case SpecCapability.label:
+        return Label;
+      case SpecCapability.namespaceSelector:
+        return NamespaceSelector;
+      case SpecCapability.resourceRequirements:
+        return ResourceRequirements;
+      case SpecCapability.booleanSwitch:
+        return BooleanSwitch;
+      case SpecCapability.password:
+        return SecretCapability;
+      case SpecCapability.updateStrategy:
+        return UpdateStrategy;
+      case SpecCapability.checkbox:
+        return CheckboxUIComponent;
+      case SpecCapability.hidden:
+        return null;
+      default:
+        if (_.isObject(props.value)) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[Invalid SpecDescriptor] Cannot render 'spec.${props.descriptor.path}'. A valid x-descriptor must be provided for non-primitive properties.`,
+            'See https://github.com/openshift/console/blob/master/frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md#olm-descriptor-reference',
+          );
+          return null;
+        }
+        return DefaultCapability;
+    }
+  }, [props.descriptor, props.value, capability]);
+  return Component ? (
+    <div className={className}>
+      <Component {...props} capability={capability} />
+    </div>
+  ) : null;
 };
 
-type SpecCapabilityProps = CapabilityProps<SpecCapability>;
+type SpecCapabilityProps<V = any> = CapabilityProps<SpecCapability, V>;
 PodCount.displayName = 'PodCount';
 Endpoints.displayName = 'Endpoints';
 Label.displayName = 'Label';
@@ -370,6 +355,5 @@ ResourceRequirements.displayName = 'ResourceRequirements';
 BasicSelector.displayName = 'BasicSelector';
 BooleanSwitch.displayName = 'BooleanSwitch';
 CheckboxUIComponent.displayName = 'CheckboxUIComponent';
-Secret.displayName = 'Secret';
 UpdateStrategy.displayName = 'UpdateStrategy';
 SpecDescriptorDetailsItem.displayName = 'SpecDescriptorDetailsItem';

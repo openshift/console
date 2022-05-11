@@ -64,8 +64,9 @@ export type Descriptor<T = any> = {
 export type SpecDescriptor = Descriptor<SpecCapability>;
 export type StatusDescriptor = Descriptor<StatusCapability>;
 
-export type CapabilityProps<C extends SpecCapability | StatusCapability> = {
+export type CapabilityProps<C extends SpecCapability | StatusCapability, V = any> = {
   capability?: C;
+  className?: string;
   description?: string;
   descriptor: Descriptor<C>;
   fullPath?: string[];
@@ -74,7 +75,7 @@ export type CapabilityProps<C extends SpecCapability | StatusCapability> = {
   namespace?: string;
   obj?: K8sResourceKind;
   onError?: (error: Error) => void;
-  value: any;
+  value: V;
 };
 
 export type Error = { message: string };
