@@ -16,6 +16,7 @@ import {
   UseActiveNamespace,
   VirtualizedGridProps,
   LazyActionMenuProps,
+  UseDashboardResources,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -54,3 +55,5 @@ export const useUtilizationDuration: UseUtilizationDuration = require('@console/
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;
 export const ServicesList = require('@console/internal/components/service').ServicesList;
+export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
+  .useDashboardResources;

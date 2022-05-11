@@ -2,10 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
-import { RESULTS_TYPE, RequestMap } from '../../reducers/dashboards';
+import { RESULTS_TYPE } from '../../reducers/dashboards';
 import { NotificationAlerts } from '../../reducers/observe';
 import {
-  Fetch,
   StopWatchPrometheusAction,
   stopWatchPrometheusQuery,
   stopWatchURL,
@@ -20,6 +19,7 @@ import { RootState } from '../../redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
 import { K8sResourceKind, AppliedClusterResourceQuotaKind } from '../../module/k8s';
 import { PrometheusResponse } from '../graphs';
+import { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 const mapDispatchToProps: DispatchToProps = (dispatch) => ({
   watchURL: (url, fetch) => dispatch(watchURL(url, fetch)),
