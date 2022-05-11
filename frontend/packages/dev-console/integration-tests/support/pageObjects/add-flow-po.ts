@@ -229,6 +229,7 @@ export const eventSourcePO = {
   yamlView: '#form-radiobutton-editorType-yaml-field',
   formView: '#form-radiobutton-editorType-form-field',
   addButton: 'a[role="button"]',
+  nodeHandler: '[data-test-id="base-node-handler"]',
   apiServerSource: {
     apiServerSourceSection: '[data-test~="ApiServerSource"][data-test~="section"]',
     apiVersion: '[data-test=pairs-list-name]',
@@ -283,6 +284,16 @@ export const eventSourcePO = {
     resourceDropDownField: '[id="form-ns-dropdown-formData-sink-key-field"]',
     resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
     resourceSearch: '[placeholder="Select resource"]',
+  },
+  createSinkBinding: {
+    resourceToggleButton: '[data-test="resource-view-input"]',
+    resourceDropDownField: '[id="form-ns-dropdown-formData-sink-key-field"]',
+    resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
+    resourceSearchField: '[data-test-id="dropdown-text-filter"]',
+    createButton: '[data-test=confirm-action]',
+    moveSinkButton: '[data-test-action="Move sink"]',
+    eventSourceNode: 'g.odc-event-source',
+    uriNode: 'g.odc-sink-uri',
   },
 };
 

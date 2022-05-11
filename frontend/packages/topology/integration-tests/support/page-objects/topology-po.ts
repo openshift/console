@@ -24,6 +24,7 @@ export const topologyPO = {
     filterDropdown: '[id^=pf-select-toggle-id]',
     nodeLabel: 'g.pf-topology__node__label',
     groupLabel: 'g.pf-topology__group__label',
+    selectNodeLabel: 'g.odc-base-node__label',
     knativeServiceNode: '[data-type="knative-service"]',
     eventSourceNode: '[data-type="event-source-link"]',
     contextMenu: '#popper-container ul',

@@ -199,6 +199,12 @@ export const topologyPage = {
       .should('be.visible')
       .contains(nodeName);
   },
+  getNodeLabel: (nodeName: string) => {
+    return cy
+      .get(topologyPO.graph.selectNodeLabel)
+      .should('be.visible')
+      .contains(nodeName);
+  },
   getGroup: (groupName: string) => {
     return cy
       .get(topologyPO.graph.groupLabel)
@@ -226,6 +232,9 @@ export const topologyPage = {
   },
   clickOnNode: (nodeName: string) => {
     topologyPage.getNode(nodeName).click({ force: true });
+  },
+  clickOnNodeLabel: (nodeName: string) => {
+    topologyPage.getNodeLabel(nodeName).click({ force: true });
   },
   clickOnGroup: (groupName: string) => {
     topologyPage.getGroup(groupName).click({ force: true });
