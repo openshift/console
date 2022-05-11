@@ -29,6 +29,7 @@ import {
   EventSourceMetaData,
   YamlFormSyncData,
 } from '../components/add/import-types';
+import { craftResourceKey } from '../components/pub-sub/pub-sub-utils';
 import { CAMEL_K_PROVIDER_ANNOTATION } from '../const';
 import { CamelKameletModel } from '../models';
 import { getEventSourceIcon } from './get-knative-icon';
@@ -362,6 +363,7 @@ export const sanitizeSourceToForm = (
 ) => {
   const specData = newFormData.spec;
   const appGroupName = newFormData.metadata?.labels?.['app.kubernetes.io/part-of'];
+  const sinkRef = specData?.sink?.ref;
   const formData = {
     ...formDataValues,
     application: {
@@ -377,12 +379,15 @@ export const sanitizeSourceToForm = (
       }),
     },
     name: newFormData.metadata?.name,
-    sinkType: specData?.sink?.ref ? SinkType.Resource : SinkType.Uri,
+    sinkType: sinkRef ? SinkType.Resource : SinkType.Uri,
     sink: {
-      apiVersion: specData?.sink?.ref?.apiVersion,
-      kind: specData?.sink?.ref?.kind,
-      name: specData?.sink?.ref?.name,
-      key: `${specData?.sink?.ref?.kind}-${specData?.sink?.ref?.name}`,
+      apiVersion: sinkRef?.apiVersion,
+      kind: sinkRef?.kind,
+      name: sinkRef?.name,
+      key: craftResourceKey(sinkRef?.name, {
+        kind: sinkRef?.kind,
+        apiVersion: sinkRef?.apiVersion,
+      }),
       uri: specData?.sink?.uri || '',
     },
     data: {
