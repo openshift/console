@@ -1220,53 +1220,62 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
         {_.isEmpty(history) ? (
           <EmptyBox label={t('public~History')} />
         ) : (
-          <div className="co-table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>{t('public~Version')}</th>
-                  <th>{t('public~State')}</th>
-                  <th>{t('public~Started')}</th>
-                  <th>{t('public~Completed')}</th>
-                  {releaseNotes && (
-                    <th className="hidden-xs hidden-sm">{t('public~Release notes')}</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {_.map(history, (update, i) => (
-                  <tr key={i}>
-                    <td
-                      className="co-break-all co-select-to-copy"
-                      data-test-id="cv-details-table-version"
-                    >
-                      {update.version || '-'}
-                    </td>
-                    <td data-test-id="cv-details-table-state">{update.state || '-'}</td>
-                    <td>
-                      <Timestamp timestamp={update.startedTime} />
-                    </td>
-                    <td>
-                      {update.completionTime ? (
-                        <Timestamp timestamp={update.completionTime} />
-                      ) : (
-                        '-'
-                      )}
-                    </td>
+          <>
+            <TextContent>
+              <Text component={TextVariants.p} className="help-block pf-u-mb-lg">
+                {t(
+                  'public~There is a threshold for rendering update data which may cause gaps in the information below.',
+                )}
+              </Text>
+            </TextContent>
+            <div className="co-table-container">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>{t('public~Version')}</th>
+                    <th>{t('public~State')}</th>
+                    <th>{t('public~Started')}</th>
+                    <th>{t('public~Completed')}</th>
                     {releaseNotes && (
-                      <td className="hidden-xs hidden-sm">
-                        {getReleaseNotesLink(update.version) ? (
-                          <ReleaseNotesLink version={update.version} />
+                      <th className="hidden-xs hidden-sm">{t('public~Release notes')}</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {_.map(history, (update, i) => (
+                    <tr key={i}>
+                      <td
+                        className="co-break-all co-select-to-copy"
+                        data-test-id="cv-details-table-version"
+                      >
+                        {update.version || '-'}
+                      </td>
+                      <td data-test-id="cv-details-table-state">{update.state || '-'}</td>
+                      <td>
+                        <Timestamp timestamp={update.startedTime} />
+                      </td>
+                      <td>
+                        {update.completionTime ? (
+                          <Timestamp timestamp={update.completionTime} />
                         ) : (
                           '-'
                         )}
                       </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      {releaseNotes && (
+                        <td className="hidden-xs hidden-sm">
+                          {getReleaseNotesLink(update.version) ? (
+                            <ReleaseNotesLink version={update.version} />
+                          ) : (
+                            '-'
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </>
