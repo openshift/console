@@ -4,11 +4,13 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   devNavigationMenu,
   pageTitle,
+  switchPerspective,
 } from '@console/dev-console/integration-tests/support/constants';
 import { formPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   editAnnotations,
   navigateTo,
+  perspective,
   yamlEditor,
 } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineActions, pipelineTabs, repositoryDetailsTabs } from '../../constants';
@@ -21,6 +23,7 @@ import {
   pipelineRunDetailsPage,
 } from '../../pages';
 import { actionsDropdownMenu, tableFunctions } from '../../pages/functions/common';
+import { tasksPage } from '../../pages/pipelines/task-page';
 
 Given('user has installed pipelines as code', () => {
   // Steps to install pipeline as code feature : https://gist.github.com/chmouel/272df2cfbeef5606ca36d29a9a2d2f96
@@ -270,4 +273,23 @@ Then('user should see commit message in tooltip', () => {
 
 Then('user clicks on Pipeline Runs tab', () => {
   cy.get(repositoryDetailsPO.pipelineRunsTab).click();
+});
+
+Given('user is at Pipelines tab in admin page', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  tasksPage.openPipelinePage();
+  tasksPage.togglePipelineSidebar();
+});
+
+When('user clicks on Setup GitHub App button', () => {
+  cy.byTestID('secondary-action')
+    .should('be.visible')
+    .click();
+});
+
+Then('user can see {string}, {string} and {string}', (el1, el2, el3: string) => {
+  cy.byTestID('form-setup-github-app')
+    .should('contain', el1)
+    .and('contain', el2)
+    .and('contain', el3);
 });

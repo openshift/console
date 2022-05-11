@@ -30,7 +30,12 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
     }
   };
   return (
-    <FlexForm action={PAC_GH_APP_NEW} onSubmit={submitFrom} method="post">
+    <FlexForm
+      action={PAC_GH_APP_NEW}
+      onSubmit={submitFrom}
+      method="post"
+      data-test="form-setup-github-app"
+    >
       <FormBody flexLayout>
         <FormSection>
           <FormGroup
