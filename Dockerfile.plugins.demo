@@ -27,7 +27,7 @@ LABEL io.k8s.display-name="OpenShift Console Demo Plugin" \
       io.openshift.tags="openshift" \
       maintainer="Vojtech Szocs <vszocs@redhat.com>"
 
-USER node
+USER 1001
 
 WORKDIR /opt/console-demo-plugin
 ENTRYPOINT [ "./http-server.sh", "./static" ]
