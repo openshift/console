@@ -19,6 +19,15 @@ export interface GitOpsManifestData {
   applications: GitOpsAppGroupData[];
 }
 
+export interface GitOpsHistoryData {
+  deployed_at: number;
+  message: string;
+  environment: string;
+  repo_url: string;
+  author: string;
+  revision: string;
+}
+
 export const WORKLOAD_KINDS = [
   DeploymentModel.kind,
   DeploymentConfigModel.kind,

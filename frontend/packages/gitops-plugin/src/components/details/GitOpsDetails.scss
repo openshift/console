@@ -46,9 +46,9 @@
     }
     &__deployment-history {
       margin-top: var(--pf-global--spacer--xs);
+      justify-content: space-between;
     }
     &__argo-external-link {
-      margin-right: var(--pf-global--spacer--xs);
       vertical-align: middle;
     }
     &__cluster-url {

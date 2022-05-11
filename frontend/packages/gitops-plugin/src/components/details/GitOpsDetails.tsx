@@ -14,6 +14,7 @@ import {
 import { GitAltIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ExternalLink, Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
@@ -27,10 +28,11 @@ import './GitOpsDetails.scss';
 interface GitOpsDetailsProps {
   envs: GitOpsEnvironment[];
   appName: string;
+  manifestURL: string;
   error: Error;
 }
 
-const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, error }) => {
+const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestURL, error }) => {
   const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
@@ -146,9 +148,17 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, error }) =
                           <Timestamp timestamp={env.lastDeployed} />
                         </StackItem>
                       )}
-                      {argocdLink && (
-                        <StackItem>
-                          <Split className="gop-gitops-details__env-section__deployment-history">
+                      <StackItem>
+                        <Split className="gop-gitops-details__env-section__deployment-history">
+                          <SplitItem className="gop-gitops-details__env-section__deployment-history__deploymentHistoryPageLink">
+                            <Link
+                              to={`/environments/${appName}/deploymenthistory?url=${manifestURL}&rowFilter-environment=${env.environment}`}
+                              title={t('gitops-plugin~Deployment history')}
+                            >
+                              {t('gitops-plugin~Deployment history')}
+                            </Link>
+                          </SplitItem>
+                          {argocdLink && (
                             <Tooltip content="Argo CD">
                               <SplitItem className="gop-gitops-details__env-section__deployment-history__argocd-link">
                                 <ExternalLink
@@ -166,9 +176,9 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, error }) =
                                 </ExternalLink>
                               </SplitItem>
                             </Tooltip>
-                          </Split>
-                        </StackItem>
-                      )}
+                          )}
+                        </Split>
+                      </StackItem>
                     </Stack>
                   </CardBody>
                 </Card>

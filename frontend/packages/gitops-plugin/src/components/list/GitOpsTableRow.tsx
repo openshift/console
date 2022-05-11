@@ -56,7 +56,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <Link to={`/environments/${appGroup.name}?url=${appGroup.repo_url}`} title={name}>
+        <Link to={`/environments/${appGroup.name}/overview?url=${appGroup.repo_url}`} title={name}>
           {name}
         </Link>
       </TableData>

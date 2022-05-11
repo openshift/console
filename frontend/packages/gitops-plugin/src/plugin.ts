@@ -35,12 +35,12 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      exact: true,
+      exact: false,
       path: '/environments/:appName',
       loader: async () =>
         (
           await import(
-            './components/GitOpsDetailsPage' /* webpackChunkName: "gitops-plugin-details-page" */
+            './components/GitOpsDetailsPageTabs' /* webpackChunkName: "gitops-plugin-details-page" */
           )
         ).default,
     },
