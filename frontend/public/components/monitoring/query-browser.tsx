@@ -297,7 +297,7 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   const width = children?.[0]?.[0]?.props?.width ?? '100%';
   return (
     <foreignObject height={75} width="100%" y={245}>
-      <div className="monitoring-dashboards__legend-wrap">
+      <div className="monitoring-dashboards__legend-wrap horizontal-scroll">
         <svg width={width}>{children}</svg>
       </div>
     </foreignObject>
