@@ -246,7 +246,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
               filterGroupCounts={filterGroupCounts}
               filterGroupMap={filterGroupMap}
               filterGroupsShowAll={filterGroupsShowAll}
-              catalogItemsCount={items.length}
               onShowAllToggle={handleShowAllToggle}
               onFilterChange={handleFilterChange}
             />
