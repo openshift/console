@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FormGroup, TextInput, ValidatedOptions } from '@patternfly/react-core';
+import { useDeepCompareMemoize } from '@console/shared';
 import { kmsConfigValidation } from './utils';
 import { KMSConfigureProps } from './providers';
 import { HpcsConfig, HPCSParams, ProviderNames } from '../../types';
@@ -12,8 +13,8 @@ const IBM_TOKEN_URL = 'https://iam.cloud.ibm.com/oidc/token';
 export const HpcsConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, className }) => {
   const { t } = useTranslation();
 
-  const kms: HpcsConfig = state.kms?.[ProviderNames.HPCS];
-  const kmsObj: HpcsConfig = _.cloneDeep(kms);
+  const kms: HpcsConfig = useDeepCompareMemoize(state.kms?.[ProviderNames.HPCS], true);
+  const kmsObj: HpcsConfig = React.useMemo(() => _.cloneDeep(kms), [kms]);
 
   React.useEffect(() => {
     const hasHandled: boolean = kmsConfigValidation(kms, ProviderNames.HPCS);
