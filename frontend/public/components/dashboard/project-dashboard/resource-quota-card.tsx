@@ -62,6 +62,11 @@ export const ResourceQuotaCard = withDashboardResources(
                 <ResourceQuotaItem key={rq.metadata.uid} resourceQuota={rq} />
               ))}
           </ResourceQuotaBody>
+        </CardBody>
+        <CardHeader>
+          <CardTitle>{t('public~AppliedClusterResourceQuotas')}</CardTitle>
+        </CardHeader>
+        <CardBody>
           <ResourceQuotaBody
             error={!!acrqLoadError}
             isLoading={!acrqLoaded}
