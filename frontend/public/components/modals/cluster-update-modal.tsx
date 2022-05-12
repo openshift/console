@@ -137,7 +137,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
   });
   const helpLink = isUpstream()
     ? `${openshiftHelpBase}updating/update-using-custom-machine-config-pools.html`
-    : `${openshiftHelpBase}html/updating/update-using-custom-machine-config-pools.html`;
+    : `${openshiftHelpBase}html/updating_clusters/update-using-custom-machine-config-pools.html`;
   const { t } = useTranslation();
 
   return (
