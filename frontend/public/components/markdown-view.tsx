@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash-es';
-import { Converter } from 'showdown';
+import { Converter, ShowdownOptions } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
 import { useForceRender, useResizeObserver } from '@console/shared';
@@ -17,13 +17,21 @@ type ShowdownExtension = {
   replace?: (...args: any[]) => string;
 };
 
-const markdownConvert = (markdown, extensions: ShowdownExtension[]) => {
+const markdownConvert = (
+  markdown,
+  extensions: ShowdownExtension[],
+  options: ShowdownOptions = {},
+) => {
   const converter = new Converter({
     tables: true,
     openLinksInNewWindow: true,
     strikethrough: true,
     emoji: true,
   });
+
+  for (const [key, value] of Object.entries(options)) {
+    converter.setOption(key, value);
+  }
 
   extensions && converter.addExtension(extensions);
 
@@ -77,6 +85,7 @@ type SyncMarkdownProps = {
   extensions?: ShowdownExtension[];
   renderExtension?: (contentDocument: HTMLDocument, rootSelector: string) => React.ReactNode;
   inline?: boolean;
+  options?: ShowdownOptions;
 };
 
 type InnerSyncMarkdownProps = Pick<SyncMarkdownProps, 'renderExtension' | 'exactHeight'> & {
@@ -92,6 +101,7 @@ export const SyncMarkdownView: React.FC<SyncMarkdownProps> = ({
   renderExtension,
   exactHeight,
   inline,
+  options,
 }) => {
   const { t } = useTranslation();
   const markup = React.useMemo(() => {
@@ -102,8 +112,12 @@ export const SyncMarkdownView: React.FC<SyncMarkdownProps> = ({
           omission: '\u2026',
         })
       : content;
-    return markdownConvert(truncatedContent || emptyMsg || t('public~Not available'), extensions);
-  }, [content, emptyMsg, extensions, t, truncateContent]);
+    return markdownConvert(
+      truncatedContent || emptyMsg || t('public~Not available'),
+      extensions,
+      options,
+    );
+  }, [content, emptyMsg, extensions, options, t, truncateContent]);
   const innerProps: InnerSyncMarkdownProps = {
     renderExtension: extensions?.length > 0 ? renderExtension : undefined,
     exactHeight,
