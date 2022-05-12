@@ -1,9 +1,11 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import * as _ from 'lodash';
 import {
   isEncodedCodeRef,
   parseEncodedCodeRefValue,
 } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
 import { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
@@ -13,8 +15,22 @@ import { Extension, ActivePlugin } from '../typings';
 import { trimStartMultiLine } from '../utils/string';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
 
+const getExtensionsFilePath = (pkg: PluginPackage) => path.resolve(pkg._path, extensionsFile);
+
+const getExposedModuleFilePath = (pkg: PluginPackage, moduleName: string) =>
+  path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
+
+export type ActivePluginsModuleData = {
+  /** Generated module source code. */
+  code: string;
+  /** Diagnostics collected while generating module source code. */
+  diagnostics: { errors: string[]; warnings: string[] };
+  /** Absolute file paths representing webpack file dependencies of the generated module. */
+  fileDependencies: string[];
+};
+
 /**
- * Generate the `@console/active-plugins` virtual module source.
+ * Generate the Console active plugins virtual module source.
  */
 export const getActivePluginsModule = (
   pluginPackages: PluginPackage[],
@@ -147,4 +163,45 @@ export const getDynamicExtensions = (
   }
 
   return trimStartMultiLine(source);
+};
+export const getActivePluginsModuleData = (
+  pluginPackages: PluginPackage[],
+): ActivePluginsModuleData => {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const fileDependencies: string[] = [];
+
+  const code = getActivePluginsModule(
+    pluginPackages,
+    () => `
+      import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+    `,
+    (pkg) =>
+      getDynamicExtensions(
+        pkg,
+        getExtensionsFilePath(pkg),
+        (errorMessage) => {
+          errors.push(errorMessage);
+        },
+        (codeRefSource) => `applyCodeRefSymbol(${codeRefSource})`,
+      ),
+  );
+
+  for (const pkg of pluginPackages) {
+    fileDependencies.push(getExtensionsFilePath(pkg));
+
+    Object.keys(pkg.consolePlugin.exposedModules || {}).forEach((moduleName) => {
+      const moduleFilePath = getExposedModuleFilePath(pkg, moduleName);
+
+      if (fs.existsSync(moduleFilePath) && fs.statSync(moduleFilePath).isFile()) {
+        fileDependencies.push(moduleFilePath);
+      } else {
+        warnings.push(
+          `Exposed module '${moduleName}' in static plugin ${pkg.name} refers to non-existent file ${moduleFilePath}`,
+        );
+      }
+    });
+  }
+
+  return { code, diagnostics: { errors, warnings }, fileDependencies };
 };

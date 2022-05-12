@@ -268,7 +268,7 @@
     "cache-loader": "^4.1.0",
     "chalk": "2.4.x",
     "chromedriver": "90.x",
-    "circular-dependency-plugin": "5.x",
+    "circular-dependency-plugin": "^5.2.2",
     "comment-json": "4.x",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^5.2.7",
@@ -313,6 +313,7 @@
     "monaco-editor-core": "0.20.0",
     "monaco-editor-webpack-plugin": "^1.9.0",
     "node-sass": "^7.0.0",
+    "null-loader": "^4.0.1",
     "prettier": "1.19.1",
     "protractor": "^5.4.4",
     "protractor-fail-fast": "3.x",
@@ -330,11 +331,11 @@
     "ts-node": "^10.2.1",
     "typescript": "3.8.3",
     "umd-compat-loader": "^2.1.2",
-    "webpack": "^5.58.1",
+    "val-loader": "^4.0.0",
+    "webpack": "^5.72.0",
     "webpack-bundle-analyzer": "3.9.x",
     "webpack-cli": "^4.9.0",
-    "webpack-dev-server": "^4.3.1",
-    "webpack-virtual-modules": "^0.4.3"
+    "webpack-dev-server": "^4.9.0"
   },
   "engines": {
     "node": ">=14.x"

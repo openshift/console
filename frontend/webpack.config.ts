@@ -9,8 +9,8 @@ import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin
 
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { getActivePluginsModuleData } from '@console/plugin-sdk/src/codegen/active-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
 
 interface Configuration extends webpack.Configuration {
@@ -20,7 +20,6 @@ interface Configuration extends webpack.Configuration {
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const VirtualModulesPlugin = require('webpack-virtual-modules');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -31,6 +30,7 @@ const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
 
 /* Helpers */
+const staticPluginPackages = resolvePluginPackages();
 const extractCSS = new MiniCssExtractPlugin({
   filename:
     NODE_ENV === 'production' ? 'app-bundle.[contenthash].css' : 'app-bundle.[name].[hash].css',
@@ -40,7 +40,6 @@ const extractCSS = new MiniCssExtractPlugin({
 });
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map((m) => _.escapeRegExp(m)).join('|')})\\/`);
-const virtualModules = new VirtualModulesPlugin();
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
 const sharedPluginTest = getVendorModuleRegExp(Object.keys(sharedPluginModules));
 const sharedPatternFlyCoreTest = getVendorModuleRegExp([
@@ -67,6 +66,9 @@ const config: Configuration = {
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      prettier: false,
+    },
     fallback: {
       fs: false,
       stream: false,
@@ -84,6 +86,13 @@ const config: Configuration = {
         // Disable tree shaking on modules shared with Console dynamic plugins
         test: sharedPluginTest,
         sideEffects: true,
+      },
+      {
+        test: path.resolve(__dirname, 'get-active-plugins.js'),
+        loader: 'val-loader',
+        options: {
+          getModuleData: () => getActivePluginsModuleData(staticPluginPackages),
+        },
       },
       { test: /\.glsl$/, use: ['raw-loader', 'glslify-loader'] },
       {
@@ -123,14 +132,6 @@ const config: Configuration = {
       {
         test: /node_modules[\\\\|/](yaml-language-server)/,
         loader: 'umd-compat-loader',
-      },
-      {
-        test: /prettier\/parser-yaml/,
-        loader: 'null-loader',
-      },
-      {
-        test: /prettier/,
-        loader: 'null-loader',
       },
       {
         test: /node_modules[\\\\|/](vscode-json-languageservice)/,
@@ -174,7 +175,7 @@ const config: Configuration = {
       },
       {
         test: /\.css$/,
-        include: path.resolve(__dirname, './node_modules/monaco-editor'),
+        include: path.resolve(__dirname, 'node_modules/monaco-editor'),
         use: ['style-loader', 'css-loader'],
       },
       {
@@ -213,7 +214,10 @@ const config: Configuration = {
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
-    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, memoryLimit: 4096 }),
+    new ForkTsCheckerWebpackPlugin({
+      checkSyntacticErrors: true,
+      memoryLimit: 4096,
+    }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
       template: './public/tokener.html',
@@ -264,8 +268,6 @@ const config: Configuration = {
       { from: './packages/local-storage-operator-plugin/locales', to: 'locales' },
     ]),
     extractCSS,
-    virtualModules,
-    new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),
     ...(REACT_REFRESH
       ? [
           new ReactRefreshWebpackPlugin({
@@ -281,13 +283,15 @@ const config: Configuration = {
 };
 
 if (CHECK_CYCLES === 'true') {
-  new CircularDependencyPreset({
-    exclude: /node_modules|public\/dist/,
-    reportFile: '.webpack-cycles',
-    thresholds: {
-      minLengthCycles: 17,
-    },
-  }).apply(config.plugins);
+  config.plugins.push(
+    ...new CircularDependencyPreset({
+      exclude: /node_modules|public\/dist/,
+      reportFile: '.webpack-cycles',
+      thresholds: {
+        minLengthCycles: 17,
+      },
+    }).plugins,
+  );
 }
 
 if (ANALYZE_BUNDLE === 'true') {

@@ -14,11 +14,6 @@
     "typeRoots": ["node_modules/@types", "@types"],
     "types": ["node", "jest", "cypress", "cypress-axe", "cypress-file-upload", "console"]
   },
-  "exclude": [
-    ".yarn",
-    "**/node_modules",
-    "**/dist",
-    "packages/console-dynamic-plugin-sdk/scripts"
-  ],
+  "exclude": [".yarn", "**/node_modules", "**/dist", "packages/console-dynamic-plugin-sdk/scripts"],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
 }
