@@ -22,7 +22,7 @@ type AdapterFunc = <D extends BaseOptions>(
  * An adapter function to call the underlying APIs with provided options.
  * @param func The function to be called.
  * @param knownArgs  The list of arguments to be provided to underlying API in order.
- * @return The function called with provided arguments.
+ * @returns The function called with provided arguments.
  * * */
 const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
   return (options) => {
@@ -54,7 +54,7 @@ const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
  * @param opts The options to pass
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
  * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
- * @return A promise that resolves to the response as JSON object with a resource if the name is provided
+ * @returns A promise that resolves to the response as JSON object with a resource if the name is provided
  * else it returns all the resouces matching the model. In case of failure, the promise gets rejected with HTTP error response.
  * * */
 export const k8sGet = (

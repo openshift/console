@@ -30,6 +30,20 @@ import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/das
 export * from '../app/components';
 export * from './common-types';
 
+/**
+ * React hook for consuming Console extensions with resolved `CodeRef` properties.
+ * This hook accepts the same argument(s) as `useExtensions` hook and returns an adapted list of extension instances, resolving all code references within each extension's properties.
+ * Initially, the hook returns an empty array. Once the resolution is complete, the React component is re-rendered with the hook returning an adapted list of extensions.
+ * When the list of matching extensions changes, the resolution is restarted. The hook will continue to return the previous result until the resolution completes.
+ * The hook's result elements are guaranteed to be referentially stable across re-renders.
+ * @example
+ * ```ts
+ * const [navItemExtensions, navItemsResolved] = useResolvedExtensions<NavItem>(isNavItem);
+ * // process adapted extensions and render your component
+ * ```
+ * @param typeGuards A list of callbacks that each accept a dynamic plugin extension as an argument and return a boolean flag indicating whether or not the extension meets desired type constraints
+ * @returns Tuple containing a list of adapted extension instances with resolved code references, a boolean flag indicating whether the resolution is complete, and a list of errors detected during the resolution.
+ */
 export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;
 
@@ -58,6 +72,25 @@ export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/c
   .default;
 export const TableData: React.FC<TableDataProps> = require('@console/internal/components/factory/Table/VirtualizedTable')
   .TableData;
+
+/**
+ * A hook that provides a list of user-selected active TableColumns.
+ * @param options - object
+ * @param `options.columns` - An array of all available TableColumns
+ * @param `options.showNamespaceOverride` - (optional) If true, a namespace column will be included, regardless of column management selections
+ * @param `options.columnManagementID` - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a 'group~verion~kind' string for a resource.
+ * @returns A tuple containing the current user selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
+ * @example
+ * ```tsx
+ *   // See implementation for more details on TableColumn type
+ *   const [activeColumns, userSettingsLoaded] = useActiveColumns({
+ *     columns,
+ *     false,
+ *     columnManagementID,
+ *   });
+ *   return userSettingsAreLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+ * ```
+ */
 export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')
   .useActiveColumns;
 export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/internal/components/factory/ListPage/ListPageHeader')
@@ -72,6 +105,33 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = req
   .ListPageCreateDropdown;
 export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/internal/components/factory/ListPage/ListPageFilter')
   .default;
+
+/**
+ * A hook that manages filter state for the ListPageFilter component.
+ * @param data - An array of data points
+ * @param rowFilters - (optional) An array of RowFilter elements that define the available filter options
+ * @param staticFilters - (optional) An array of FilterValue elements that are statically applied to the data
+ * @returns A tuple containing the data filtered by all static filteres, the data filtered by all static and row filters, and a callback that updates rowFilters
+ * @example
+ * ```tsx
+ *   // See implementation for more details on RowFilter and FilterValue types
+ *   const [staticData, filteredData, onFilterChange] = useListPageFilter(
+ *     data,
+ *     rowFilters,
+ *     staticFilters,
+ *   );
+ *   // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
+ *   return (
+ *     <>
+ *       <ListPageHeader .../>
+ *       <ListPagBody>
+ *         <ListPageFilter data={staticData} onFilterChange={onFilterChange} />
+ *         <List data={filteredData} />
+ *       </ListPageBody>
+ *     </>
+ *   )
+ * ```
+ */
 export const useListPageFilter: UseListPageFilter = require('@console/internal/components/factory/ListPage/filter-hook')
   .useListPageFilter;
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')

@@ -32,7 +32,7 @@ const getImpersonateKey = (impersonate?: ImpersonateKind): string => {
  * @param verb K8s verb.
  * @param namespace namespace.
  * @param impersonateKey parameter to include in the cache key even though it's not used in the function body.
- * @return Memoized result of the access review.
+ * @returns Memoized result of the access review.
  */
 const checkAccessInternal = _.memoize(
   (
@@ -72,7 +72,7 @@ const checkAccessInternal = _.memoize(
  * Provides information about user access to a given resource.
  * @param resourceAttributes resource attributes for access review
  * @param impersonate impersonation details
- * @return Object with resource access information.
+ * @returns Object with resource access information.
  */
 export const checkAccess = (
   resourceAttributes: AccessReviewResourceAttributes,
@@ -102,7 +102,7 @@ export const checkAccess = (
  * Hook that provides information about user access to a given resource.
  * @param resourceAttributes resource attributes for access review
  * @param impersonate impersonation details
- * @return Array with isAllowed and loading values.
+ * @returns Array with isAllowed and loading values.
  */
 export const useAccessReview = (
   resourceAttributes: AccessReviewResourceAttributes,
@@ -145,7 +145,7 @@ export const useAccessReview = (
  * Hook that provides allowed status about user access to a given resource.
  * @param resourceAttributes resource attributes for access review
  * @param impersonate impersonation details
- * @return The isAllowed boolean value.
+ * @returns The isAllowed boolean value.
  */
 export const useAccessReviewAllowed = (
   resourceAttributes: AccessReviewResourceAttributes,
