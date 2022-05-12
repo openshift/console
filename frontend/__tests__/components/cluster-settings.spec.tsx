@@ -353,7 +353,7 @@ describe('Update Link', () => {
         .find('[data-test-id="cv-update-button"]')
         .render()
         .text(),
-    ).toBe('Update');
+    ).toBe('Select a version');
   });
 });
 

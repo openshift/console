@@ -126,7 +126,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
 import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../utils/service-level';
-import { hasAvailableUpdates } from '../../module/k8s/cluster-settings';
+import { hasAvailableUpdates, hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
 
 const cancelUpdate = (cv: ClusterVersionKind) => {
   k8sPatch(ClusterVersionModel, cv, [{ path: '/spec/desiredUpdate', op: 'remove' }]).catch(
@@ -387,12 +387,14 @@ export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, canUpgrade }) =>
   });
   const status = getClusterUpdateStatus(cv);
   const { t } = useTranslation();
+  const hasNotRecommended = hasNotRecommendedUpdates(cv);
   return canUpgrade &&
-    hasAvailableUpdates(cv) &&
+    (hasAvailableUpdates(cv) || hasNotRecommended) &&
     (status === ClusterUpdateStatus.ErrorRetrieving ||
       status === ClusterUpdateStatus.Failing ||
       status === ClusterUpdateStatus.UpdatesAvailable ||
-      status === ClusterUpdateStatus.Updating) &&
+      status === ClusterUpdateStatus.Updating ||
+      (status === ClusterUpdateStatus.UpToDate && hasNotRecommended)) &&
     workerMachineConfigPoolIsEditable ? (
     <div className="co-cluster-settings__details">
       <Button
@@ -401,7 +403,7 @@ export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, canUpgrade }) =>
         onClick={() => clusterUpdateModal({ cv })}
         data-test-id="cv-update-button"
       >
-        {t('public~Update')}
+        {t('public~Select a version')}
       </Button>
     </div>
   ) : null;
@@ -1122,6 +1124,17 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                 </div>
                 {clusterIsUpToDateOrUpdateAvailable(status) && (
                   <>
+                    {!hasAvailableUpdates(cv) && hasNotRecommendedUpdates(cv) && (
+                      <Alert
+                        className="pf-u-my-sm"
+                        isInline
+                        isPlain
+                        title={t(
+                          'public~Click "Select a version" to view supported but not recommended versions.',
+                        )}
+                        variant="info"
+                      />
+                    )}
                     <UpdatesGraph cv={cv} />
                     {workerMachineConfigPool && (
                       <UpdatesProgress>
