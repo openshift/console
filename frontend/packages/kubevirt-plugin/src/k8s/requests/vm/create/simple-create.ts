@@ -29,7 +29,7 @@ import {
 import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/basic';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm/selectors';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../../statuses/template/types';
-import { VMKind } from '../../../../types';
+import { VMKind, DataSourceKind } from '../../../../types';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { getEmptyInstallStorage } from '../../../../utils/storage';
 import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
@@ -47,13 +47,14 @@ type GetRootDataVolume = (args: {
   storageClass: string;
   dataSource: string;
   url?: string;
-  pvcName: string;
-  pvcNamespace: string;
+  pvcName?: string;
+  pvcNamespace?: string;
   container?: string;
   cdRom: boolean;
   accessMode: string;
   provider?: string;
   volumeMode: string;
+  sourceRef?: DataSourceKind;
 }) => DataVolumeWrapper;
 
 export const getRootDataVolume: GetRootDataVolume = ({
@@ -71,6 +72,7 @@ export const getRootDataVolume: GetRootDataVolume = ({
   accessMode,
   provider,
   volumeMode,
+  sourceRef,
 }) => {
   const provisionSource = ProvisionSource.fromString(dataSource);
   const size = provisionSource === ProvisionSource.DISK ? pvcSize : `${sizeValue}${sizeUnit}`;
@@ -88,6 +90,10 @@ export const getRootDataVolume: GetRootDataVolume = ({
     name: pvcName,
     namespace: pvcNamespace,
   });
+  if (sourceRef) {
+    dataVolume.setSourceRef(sourceRef);
+  }
+
   if (cdRom) {
     dataVolume.addLabel(LABEL_CDROM_SOURCE, 'true');
   }
@@ -160,6 +166,19 @@ export const prepareVM = async (
         url: customSource.url?.value,
         volumeMode: customSource.volumeMode.value,
       });
+    } else if (!isTemplateSourceError(sourceStatus) && sourceStatus?.sourceRef) {
+      const { accessModes, resources, storageClassName, volumeMode } = sourceStatus.pvc.spec;
+      isCDRom = sourceStatus.isCDRom;
+      rootDataVolume = getRootDataVolume({
+        name: rootVolume.getDataVolumeName(),
+        accessMode: accessModes[0],
+        cdRom: isCDRom,
+        sourceRef: sourceStatus?.sourceRef,
+        dataSource: ProvisionSource.DISK.getValue(),
+        pvcSize: resources.requests.storage,
+        storageClass: storageClassName,
+        volumeMode,
+      });
     } else if (!isTemplateSourceError(sourceStatus)) {
       const { accessModes, resources, storageClassName, volumeMode } = sourceStatus.pvc.spec;
       isCDRom = sourceStatus.isCDRom;
@@ -215,6 +234,10 @@ export const prepareVM = async (
         .asResource(),
     );
     vmWrapper.setSSHKey([`${AUTHORIZED_SSH_KEYS}-${name}`]);
+  }
+
+  if (sourceStatus?.sourceRef) {
+    vmWrapper.removePVC();
   }
 
   const os = ignoreCaseSort(getTemplateOperatingSystems([template]), ['name'])[0];

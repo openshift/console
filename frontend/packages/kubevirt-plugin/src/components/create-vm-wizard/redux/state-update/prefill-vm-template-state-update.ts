@@ -6,6 +6,10 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import {
+  SourceRefActions,
+  SourceRefActionsNames,
+} from '../../../../redux/actions/sourceRef-actions';
 import { getName } from '../../../../selectors';
 import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
 import {
@@ -257,9 +261,12 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     }
     storagesUpdate.unshift(...templateStorages);
   } else {
+    dispatch(SourceRefActions[SourceRefActionsNames.clearValues]());
     const newSourceStorage = getNewProvisionSourceStorage(state, id);
     if (newSourceStorage) {
       storagesUpdate.unshift({ ...newSourceStorage, id: getNextStorageID() });
+      newSourceStorage?.sourceRef &&
+        dispatch(SourceRefActions[SourceRefActionsNames.updateValue](newSourceStorage?.sourceRef));
     }
   }
 

@@ -1,4 +1,5 @@
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
+import { DataSourceKind } from '../../../../types';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { getStringEnumValues } from '../../../../utils/types';
 import { SysprepData } from '../../tabs/advanced-tab/sysprep/utils/sysprep-utils';
@@ -54,6 +55,9 @@ export const getSSHTempKey = (state): string =>
   state?.plugins?.kubevirt?.authorizedSSHKeys?.tempSSHKey;
 
 export const getSysprepData = (state): SysprepData => state?.plugins?.kubevirt?.sysprep;
+
+export const getSourceRefData = (state): DataSourceKind =>
+  state?.plugins?.kubevirt?.sourceRef?.value;
 
 export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata => {
   const stepData = iGetCreateVMWizardTabs(state, wizardID);
