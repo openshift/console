@@ -181,7 +181,8 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
       iGetAnnotation(iBaseImage, CDI_UPLOAD_POD_ANNOTATION) === CDI_PVC_PHASE_RUNNING;
 
     if (!iBaseImage) {
-      iBaseImage = findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
+      const { dsBaseImage } = findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
+      iBaseImage = dsBaseImage;
     }
   }
 

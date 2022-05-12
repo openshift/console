@@ -266,6 +266,17 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensureStorageConsistency();
     return this;
   };
+  removePVC = () => {
+    this.ensureDataVolumeTemplates();
+    this.data.spec.dataVolumeTemplates = this.getDataVolumeTemplates().map((dataVolume) => {
+      if (dataVolume.spec.source.pvc) {
+        const { source, ...specWithoutPVC } = dataVolume.spec;
+        return { ...dataVolume, spec: specWithoutPVC };
+      }
+      return dataVolume;
+    }) as V1DataVolumeTemplateSpec[];
+    return this;
+  };
   removeInterface = (interfaceName: string) => {
     this.ensurePath('spec.template.spec.domain.devices', {});
     this.data.spec.template.spec.domain.devices.interfaces = this.getNetworkInterfaces().filter(

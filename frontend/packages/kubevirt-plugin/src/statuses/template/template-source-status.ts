@@ -71,6 +71,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
           provider: RED_HAT,
           isReady: matchedDataSourceDataVolume?.status?.phase === 'Succeeded',
           pvc: matchedDataSourcePVC,
+          sourceRef: matchedDataSource,
           dataVolume: matchedDataSourceDataVolume,
           isCDRom: isCDRom(matchedDataSourceDataVolume, matchedDataSourcePVC),
           addedOn: getCreationTimestamp(matchedDataSourceDataVolume),

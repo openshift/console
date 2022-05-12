@@ -25,6 +25,7 @@ export type TemplateSourceStatusError = {
   alert?: boolean;
   dataVolume?: V1alpha1DataVolume;
   pvc?: PersistentVolumeClaimKind;
+  sourceRef?: DataSourceKind;
 };
 
 export type TemplateSourceStatusBundle = {
@@ -38,6 +39,7 @@ export type TemplateSourceStatusBundle = {
   container?: string;
   dvTemplate?: V1alpha1DataVolume;
   pxe?: string;
+  sourceRef?: DataSourceKind;
   addedOn: string;
 };
 

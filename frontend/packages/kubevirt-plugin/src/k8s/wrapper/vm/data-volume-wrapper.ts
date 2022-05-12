@@ -13,6 +13,7 @@ import {
   getDataVolumeStorageSize,
   getDataVolumeVolumeMode,
 } from '../../../selectors/dv/selectors';
+import { DataSourceKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { compareOwnerReference } from '../../../utils';
 import { K8sResourceObjectWithTypePropertyWrapper } from '../common/k8s-resource-object-with-type-property-wrapper';
@@ -35,7 +36,11 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   }
 
   init(
-    data: K8sInitAddon & { size?: string | number; unit?: string; storageClassName?: string } = {},
+    data: K8sInitAddon & {
+      size?: string | number;
+      unit?: string;
+      storageClassName?: string;
+    } = {},
   ) {
     super.init(data);
     const { size, unit, storageClassName } = data;
@@ -84,6 +89,16 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   getAccessModesEnum = () => {
     const accessModes = this.getAccessModes();
     return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
+  };
+
+  setSourceRef = (sourceRef: DataSourceKind) => {
+    delete this.data.spec.pvc;
+    this.data.spec.sourceRef = {
+      kind: sourceRef?.kind,
+      name: sourceRef?.metadata?.name,
+      namespace: sourceRef?.metadata?.namespace,
+    };
+    return this;
   };
 
   setPVCSize = (value: string | number, unit = 'Gi') => {

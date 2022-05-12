@@ -51,5 +51,6 @@ export const findDataSourcePVC = (
       iGetName(iPVC) === dataSource?.spec?.source?.pvc?.name &&
       iGetNamespace(iPVC) === dataSource?.spec?.source?.pvc?.namespace,
   );
-  return dsBaseImage;
+
+  return { dsBaseImage, dataSource: dsBaseImage && dataSource };
 };
