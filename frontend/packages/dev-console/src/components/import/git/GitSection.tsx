@@ -315,6 +315,7 @@ const GitSection: React.FC<GitSectionProps> = ({
           recommendedStrategy: null,
           showEditImportStrategy: true,
         });
+        setFieldValue('build.strategy', BuildStrategyType.Source);
         return;
       }
 
@@ -570,6 +571,7 @@ const GitSection: React.FC<GitSectionProps> = ({
             title={GitReadableTypes[values.git.type]}
             fullWidth
             required
+            dataTest="git-type"
           />
           {values.git.type === GitProvider.UNSURE && (
             <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>

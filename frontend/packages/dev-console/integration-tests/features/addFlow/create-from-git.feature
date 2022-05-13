@@ -262,3 +262,16 @@ Feature: Create Application from git form
               And user will be redirected to Repositories page to verify that "openshift-pac-repo" repository is not present
 
         
+        @regression @ocp-43404
+        Scenario: Disable devfile import strategy for git type - other: A-06-TC18
+            Given user is at Import from Git form
+             When user enters Git Repo URL as "https://mysupersecretgit.example.com/org/repo"
+             Then devfile import strategy is disabled
+
+        @regression @ocp-43404
+        Scenario: When devfile path is not detected: A-06-TC19
+            Given user is at Import from Git form
+             When user enters Git Repo URL as "https://github.com/nodeshift-starters/devfile-sample"
+              And user clicks on Edit import strategy
+              And user enters Devfile Path as "devfile1"
+             Then user see message "Devfile not detected"
