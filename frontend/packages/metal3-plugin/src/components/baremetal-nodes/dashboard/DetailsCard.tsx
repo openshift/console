@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { resourcePathFromModel, ResourceLink } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
-import { referenceForModel } from '@console/internal/module/k8s';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
@@ -17,7 +17,7 @@ import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 const DetailsCard: React.FC = () => {
   const { t } = useTranslation();
   const { obj } = React.useContext(NodeDashboardContext);
-  const { host } = React.useContext(BareMetalNodeDashboardContext);
+  const { host, hostsLoaded } = React.useContext(BareMetalNodeDashboardContext);
   const detailsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/details`;
   return (
     <Card data-test-id="details-card">
@@ -35,12 +35,16 @@ const DetailsCard: React.FC = () => {
           <DetailItem isLoading={!obj} title={t('metal3-plugin~Role')}>
             <NodeRoles node={obj} />
           </DetailItem>
-          <DetailItem isLoading={!host} title={t('metal3-plugin~Bare Metal Host')}>
-            <ResourceLink
-              kind={referenceForModel(BareMetalHostModel)}
-              name={host?.metadata?.name}
-              namespace={host?.metadata?.namespace}
-            />
+          <DetailItem isLoading={!hostsLoaded} title={t('metal3-plugin~Bare Metal Host')}>
+            {host?.metadata?.name && host?.metadata?.namespace ? (
+              <ResourceLink
+                groupVersionKind={getGroupVersionKindForModel(BareMetalHostModel)}
+                name={host?.metadata?.name}
+                namespace={host?.metadata?.namespace}
+              />
+            ) : (
+              <span className="text-secondary">{t('metal3-plugin~Not available')}</span>
+            )}
           </DetailItem>
           <DetailItem isLoading={!obj} title={t('metal3-plugin~Node Addresses')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />

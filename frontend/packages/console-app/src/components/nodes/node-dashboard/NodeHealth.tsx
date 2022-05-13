@@ -4,6 +4,7 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ResourceLink } from '@console/internal/components/utils';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -237,15 +238,15 @@ export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAler
   const { obj, setHealthCheck } = React.useContext(NodeDashboardContext);
   const { name, namespace } = getNodeMachineNameAndNamespace(obj);
   const { t } = useTranslation();
-  const machineResource = React.useMemo(
-    () => ({
-      kind: referenceForModel(MachineModel),
-      name,
-      namespace,
-    }),
-    [name, namespace],
+  const machine = useK8sWatchResource<MachineKind>(
+    name && namespace
+      ? {
+          groupVersionKind: getGroupVersionKindForModel(MachineModel),
+          name,
+          namespace,
+        }
+      : undefined,
   );
-  const machine = useK8sWatchResource<MachineKind>(machineResource);
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
   const healthState = disabledAlert
     ? { state: HealthState.NOT_AVAILABLE }

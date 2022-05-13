@@ -10,12 +10,18 @@ import {
   HealthCheck,
 } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import UtilizationCard from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
+import {
+  getGroupVersionKindForModel,
+  useK8sWatchResource,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
 import { createBasicLookup, getNodeMachineName, getName } from '@console/shared';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import { BareMetalHostModel } from '../../../models';
 import { getHostMachineName, getNodeMaintenanceNodeName } from '../../../selectors';
 import { getNodeServerCSR } from '../../../selectors/csr';
+import { BareMetalHostKind } from '../../../types';
 import { BareMetalNodeDetailsPageProps } from '../../types';
 import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 import DetailsCard from './DetailsCard';
@@ -28,7 +34,6 @@ const rightCards = [{ Card: ActivityCard }];
 
 const BareMetalNodeDashboard: React.FC<BareMetalNodeDetailsPageProps> = ({
   obj,
-  hosts,
   nodeMaintenances,
   csrs,
 }) => {
@@ -37,6 +42,12 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDetailsPageProps> = ({
   if (obj !== state.obj) {
     dispatch({ type: ActionType.OBJ, payload: obj });
   }
+
+  const [hosts, hostsLoaded] = useK8sWatchResource<BareMetalHostKind[]>({
+    groupVersionKind: getGroupVersionKindForModel(BareMetalHostModel),
+    namespaced: true,
+    isList: true,
+  });
 
   const hostsByMachineName = createBasicLookup(hosts, getHostMachineName);
   const host = hostsByMachineName[getNodeMachineName(obj)];
@@ -68,6 +79,7 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDetailsPageProps> = ({
 
   const bmnContext = {
     host,
+    hostsLoaded,
     nodeMaintenance,
     csr,
   };
