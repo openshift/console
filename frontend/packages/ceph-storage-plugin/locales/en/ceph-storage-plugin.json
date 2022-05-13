@@ -684,7 +684,6 @@
   "Selected nodes are based on the StorageClass <1>{{scName}}</1> and with a recommended requirement of 14 CPU and 34 GiB RAM per node.": "Selected nodes are based on the StorageClass <1>{{scName}}</1> and with a recommended requirement of 14 CPU and 34 GiB RAM per node.",
   "Selected nodes are based on the StorageClass <1>{{scName}}</1> and fulfill the stretch cluster requirements with a recommended requirement of 14 CPU and 34 GiB RAM per node.": "Selected nodes are based on the StorageClass <1>{{scName}}</1> and fulfill the stretch cluster requirements with a recommended requirement of 14 CPU and 34 GiB RAM per node.",
   "Storage": "Storage",
-  "Disks": "Disks",
   "Backing Store": "Backing Store",
   "Bucket Class": "Bucket Class",
   "Namespace Store": "Namespace Store",
