@@ -960,7 +960,11 @@ export const ClusterNotUpgradeableAlert: React.FC<ClusterNotUpgradeableAlertProp
         )
       }
     >
-      <SyncMarkdownView content={clusterUpgradeableFalseCondition.message} inline />
+      <SyncMarkdownView
+        content={clusterUpgradeableFalseCondition.message}
+        inline
+        options={{ simplifiedAutoLink: true }}
+      />
     </Alert>
   );
 };

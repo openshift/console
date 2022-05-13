@@ -254,6 +254,7 @@
     "@types/react-transition-group": "2.x",
     "@types/react-virtualized": "9.x",
     "@types/semver": "^6.0.0",
+    "@types/showdown": "1.9.4",
     "@types/webpack": "4.x",
     "@types/webpack-dev-server": "^4.1.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.4.1",
