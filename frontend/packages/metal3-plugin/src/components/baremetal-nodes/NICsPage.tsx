@@ -21,7 +21,7 @@ const NICsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => {
     const hostsByMachineName = createBasicLookup(hosts, getHostMachineName);
     host = hostsByMachineName[getNodeMachineName(obj)];
   }
-  return <BareMetalHostNICs obj={host} loadError={loadError} />;
+  return <BareMetalHostNICs obj={host} loaded={loaded} loadError={loadError} />;
 };
 
 export default NICsPage;
