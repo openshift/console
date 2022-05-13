@@ -42,6 +42,14 @@ type Metrics = {
   moderate?: number;
 };
 
+type Conditions = {
+  Available?: number;
+  Degraded?: number;
+  Disabled?: number;
+  Progressing?: number;
+  UploadDegraded?: number;
+};
+
 export const mapMetrics = (response: PrometheusResponse): Metrics => {
   const values: Metrics = {};
   for (let i = 0; i < response.data.result.length; i++) {
@@ -58,6 +66,16 @@ export const mapMetrics = (response: PrometheusResponse): Metrics => {
   return values;
 };
 
+export const mapConditions = (response: PrometheusResponse): Conditions =>
+  response?.data?.result && Array.isArray(response.data.result)
+    ? response.data.result.reduce((prev, cur) => {
+        if (cur?.metric?.condition && cur?.value?.[1]) {
+          prev[cur.metric.condition] = parseInt(cur.value[1], 10);
+        }
+        return prev;
+      }, {})
+    : {};
+
 // An error occurred while requesting Insights results (e.g. IO is turned off)
 export const isError = (values: Metrics) => _.isEmpty(values);
 
@@ -65,5 +83,5 @@ export const isError = (values: Metrics) => _.isEmpty(values);
 export const isWaiting = (values: Metrics) =>
   Object.values(values).some((cur: number) => cur === -1);
 
-// Insights Operator is disabled by removing the pull secret
-export const isDisabled = (response) => !!parseInt(response?.data?.result?.[0]?.value?.[1], 10);
+export const errorUpload = (conditions: Conditions) =>
+  !!conditions.Degraded && !!conditions.UploadDegraded;

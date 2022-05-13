@@ -3,6 +3,7 @@ import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ErrorState } from '@console/internal/components/error';
 import {
   ExternalLink,
   isUpstream,
@@ -18,8 +19,9 @@ import {
   riskSorting,
   mapMetrics,
   isWaiting,
-  isDisabled,
   isError,
+  mapConditions,
+  errorUpload,
 } from './mappers';
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
@@ -49,6 +51,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   ] = responses;
   const { t } = useTranslation();
   const metrics = mapMetrics(metricsResponse);
+  const conditions = mapConditions(operatorStatusResponse);
   const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
   const riskEntries = Object.entries(metrics).sort(
     ([k1], [k2]) => riskSorting[k2] - riskSorting[k1],
@@ -56,7 +59,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const numberOfIssues = Object.values(metrics).reduce((acc, cur) => acc + cur, 0);
   const waiting = isWaiting(metrics) || !metricsResponse || !operatorStatusResponse;
   const error = isError(metrics) || metricsError || operatorStatusError;
-  const disabled = isDisabled(operatorStatusResponse);
+  const disabled = !!conditions.Disabled;
 
   const insightsLink = isUpstream()
     ? `${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`
@@ -75,7 +78,9 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
 
   const lastRefreshTime = parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] || '0', 10);
 
-  return (
+  return errorUpload(conditions) ? (
+    <ErrorState />
+  ) : (
     <Stack hasGutter>
       <StackItem>
         {t('insights-plugin~Last refresh')}: <Timestamp timestamp={lastRefreshTime} isUnix simple />
