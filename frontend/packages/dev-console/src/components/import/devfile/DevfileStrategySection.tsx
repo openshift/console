@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService, ImportStrategy } from '@console/git-service/src';
+import { getGitService, ImportStrategy, GitProvider } from '@console/git-service/src';
 import { InputField } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { ImportTypes } from '../import-types';
 import FormSection from '../section/FormSection';
 import { useDevfileServer, useDevfileSource, useSelectedDevfileSample } from './devfileHooks';
 import DevfileInfo from './DevfileInfo';
@@ -16,7 +17,7 @@ const DevfileStrategySection: React.FC = () => {
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fireTelemetryEvent = useTelemetry();
   const {
-    import: { showEditImportStrategy, strategies, recommendedStrategy },
+    import: { showEditImportStrategy, strategies, recommendedStrategy, selectedStrategy },
     git: { url, type, ref, dir, secretResource },
     devfile,
   } = values;
@@ -77,16 +78,19 @@ const DevfileStrategySection: React.FC = () => {
       return t('devconsole~Validated');
     }
     if (validated === ValidatedOptions.error) {
+      if (type === GitProvider.UNSURE) {
+        return t('devconsole~Could not get Devfile for an unknown Git type');
+      }
       return t('devconsole~Devfile not detected');
     }
     return t(
       'devconsole~Allows the builds to use a different path to locate your Devfile, relative to the Context Dir field',
     );
-  }, [t, validated]);
+  }, [t, type, validated]);
 
   React.useEffect(() => {
     if (
-      importType !== 'devfile' &&
+      importType !== ImportTypes.devfile &&
       recommendedStrategy &&
       recommendedStrategy.type !== ImportStrategy.DEVFILE
     ) {
@@ -106,9 +110,11 @@ const DevfileStrategySection: React.FC = () => {
   }, [recommendedStrategy, setFieldValue, strategies]);
 
   React.useEffect(() => {
-    importType === 'devfile' && devfile.devfilePath && handleDevfileChange();
+    (importType === ImportTypes.devfile || selectedStrategy.type === ImportStrategy.DEVFILE) &&
+      devfile.devfilePath &&
+      handleDevfileChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devfile.devfilePath, importType]);
+  }, [importType, devfile.devfilePath, selectedStrategy.type]);
 
   return (
     <>
@@ -133,6 +139,7 @@ const DevfileStrategySection: React.FC = () => {
             placeholder={t('devconsole~Enter Devfile path')}
             helpText={helpText}
             helpTextInvalid={helpText}
+            data-test="git-form-devfile-path-input"
             validated={validated}
             onBlur={() => {
               handleDevfileChange();

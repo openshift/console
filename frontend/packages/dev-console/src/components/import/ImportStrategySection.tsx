@@ -134,6 +134,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
                 className="odc-import-strategy-section__edit-strategy-button"
                 onClick={handleEditStrategy}
                 icon={!showEditImportStrategy ? <PencilAltIcon /> : <UndoIcon />}
+                data-test="import-strategy-button"
               >
                 {!showEditImportStrategy
                   ? t('devconsole~Edit Import Strategy')
