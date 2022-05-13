@@ -17,8 +17,15 @@ import {
   app,
   navigateTo,
   perspective,
+  projectNameSpace,
 } from '@console/dev-console/integration-tests/support/pages/app';
+import { chartAreaPO } from '../../page-objects/chart-area-po';
 import { topologyPO, typeOfWorkload } from '../../page-objects/topology-po';
+import {
+  addToProjectOptions,
+  createWorkloadUsingOptions,
+  verifyMultipleWorkloadInTopologyPage,
+} from '../../pages/functions/chart-functions';
 import {
   topologyActions,
   topologyHelper,
@@ -232,3 +239,146 @@ Then('user will see alert {string}', (alertName: string) => {
     .should('contain', alertName);
   modal.cancel();
 });
+
+Given('user has installed Crunchy Postgres for Kubernetes operator', () => {
+  verifyAndInstallOperator(operators.CrunchyPostgresforKubernetes);
+});
+
+Given('user navigates to Topology Page', () => {
+  perspective.switchTo(switchPerspective.Developer);
+  projectNameSpace.selectOrCreateProject('aut-topology-delete-workload');
+  navigateTo(devNavigationMenu.Topology);
+  app.waitForLoad();
+  topologyPage.verifyTopologyPage();
+});
+
+Then('user is able to see Start building your application, Add page links', () => {
+  cy.get(topologyPO.emptyView.startBuildingYourApplicationLink).should('be.visible');
+  cy.get(topologyPO.emptyView.addPageLink).should('be.visible');
+});
+
+Then('Display options dropdown, Filter by resource and Find by name fields are disabled', () => {
+  cy.contains('Display options').should('be.disabled');
+  cy.get(topologyPO.filterByResourceDropDown).should('be.disabled');
+  cy.get(topologyPO.search).should('be.disabled');
+});
+
+Then('switch view is disabled', () => {
+  cy.get(topologyPO.switcher).should('have.attr', 'aria-disabled', 'true');
+});
+
+When('user right clicks on the node {string} to open context menu', (nodeName: string) => {
+  topologyPage.rightClickOnNode(nodeName);
+});
+
+Then(
+  'user is able to see context menu options like Edit Application Grouping, Edit Pod Count, Pause Rollouts, Add Health Checks, Add Horizontal Pod Autoscaler, Add Storage, Edit Update Strategy, Edit Labels, Edit Annotations, Edit Deployment, Delete Deployment',
+  () => {
+    cy.get(chartAreaPO.editApplicationGrouping).should('be.visible');
+    cy.get(chartAreaPO.editPodCount).should('be.visible');
+    cy.get(chartAreaPO.pauseRollouts).should('be.visible');
+    cy.get(chartAreaPO.addHealthChecks).should('be.visible');
+    cy.get(chartAreaPO.addHorizontalPod).should('be.visible');
+    cy.get(chartAreaPO.addStorage).should('be.visible');
+    cy.get(chartAreaPO.editUpdateStrategy).should('be.visible');
+    cy.get(chartAreaPO.editLabels).should('be.visible');
+    cy.get(chartAreaPO.editAnnotations).should('be.visible');
+    cy.get(chartAreaPO.editDeployment).should('be.visible');
+    cy.get(chartAreaPO.deleteDeployment).should('be.visible');
+  },
+);
+
+When('user right clicks on the empty chart area', () => {
+  cy.get(chartAreaPO.topologyArea).rightclick(10, 10);
+});
+
+When('user hovers on Add to Project', () => {
+  cy.get(chartAreaPO.addToProject).trigger('mouseover');
+});
+
+Then(
+  'user is able to see options like Samples, Import from Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel',
+  () => {
+    cy.get(chartAreaPO.samples).should('be.visible');
+    cy.get(chartAreaPO.importFromGit).should('be.visible');
+    cy.get(chartAreaPO.containerImage).should('be.visible');
+    cy.get(chartAreaPO.catalog).should('be.visible');
+    cy.get(chartAreaPO.database).should('be.visible');
+    cy.get(chartAreaPO.operatorBacked).should('be.visible');
+    cy.get(chartAreaPO.helmCharts).should('be.visible');
+    cy.get(chartAreaPO.eventsource).should('be.visible');
+    cy.get(chartAreaPO.channel).should('be.visible');
+  },
+);
+
+When('user clicks on Samples', () => {
+  cy.get(chartAreaPO.samples).click();
+});
+
+When('user selects go sample', () => {
+  cy.get(chartAreaPO.filterItem).type('Go');
+  cy.get(chartAreaPO.sampleBasicGo).click();
+});
+
+When('user hovers on Add to Project and clicks on {string}', (optionName: string) => {
+  cy.get(chartAreaPO.topologyArea).rightclick(10, 10);
+  cy.get(chartAreaPO.addToProject).trigger('mouseover');
+  addToProjectOptions(optionName);
+});
+
+When('user fills the {string} form and clicks Create', (optionName: string) => {
+  createWorkloadUsingOptions(optionName);
+});
+
+When('user selects Python Builder Image and clicks Create Application', () => {
+  cy.get(chartAreaPO.filterItem).type('python');
+  cy.get(chartAreaPO.pythonBuilderImage).click();
+  cy.get(chartAreaPO.overlayCreate).click({ force: true });
+});
+
+When('user selects Postgres Database and clicks on Instantiate Template', () => {
+  cy.get(chartAreaPO.filterItem).type('postgresql');
+  cy.get(chartAreaPO.postgresqlTemplate).click();
+  cy.get(chartAreaPO.overlayCreate).click({ force: true });
+});
+
+When('user selects Postgres and clicks on Create', () => {
+  cy.get(chartAreaPO.filterItem).type('postgresql');
+  cy.get(chartAreaPO.operatorBackedPostgres).click();
+  cy.get(chartAreaPO.overlayCreate).click({ force: true });
+});
+
+When('user selects Nodejs and clicks on Install Helm Charts', () => {
+  cy.get(chartAreaPO.filterItem).type('nodejs');
+  cy.get(chartAreaPO.helmNodejs).click();
+  cy.get(chartAreaPO.overlayCreate).click({ force: true });
+});
+
+When('user selects Api Server Source and clicks on Create Event Source', () => {
+  cy.get(chartAreaPO.filterItem).type('ApiServerSource');
+  cy.get(chartAreaPO.apiEventSource).click();
+  cy.get(chartAreaPO.overlayCreate).click({ force: true });
+});
+
+When('user clicks on Create button', () => {
+  cy.get(chartAreaPO.contentScrollable)
+    .contains('Create')
+    .click();
+});
+
+Then(
+  'user is able to see different applications created from Samples, Import from Git, Container Image, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel',
+  () => {
+    verifyMultipleWorkloadInTopologyPage([
+      'go-basic',
+      'nodejs-ex-git',
+      'hello-openshift',
+      'python-app',
+      'postgres',
+      'postgres-operator-backed',
+      'helm-nodejs',
+      'api-server-source',
+      'channel',
+    ]);
+  },
+);

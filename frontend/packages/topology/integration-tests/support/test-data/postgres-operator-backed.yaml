@@ -1,0 +1,48 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: postgres-operator-backed
+  namespace: aut-topology-delete-workload
+spec:
+  port: 5432
+  dataSource:
+    pgbackrest:
+      stanza: db
+      repo:
+        name: repo1
+  standby:
+    enabled: true
+    repoName: repo1
+  userInterface:
+    pgAdmin:
+      replicas: 1
+      dataVolumeClaimSpec:
+        accessModes:
+          - "read"
+  proxy:
+    pgBouncer:
+      port: 5432
+      replicas: 1
+  backups:
+    pgbackrest:
+      restore:
+        enabled: false
+        repoName: repo1
+      repos:
+        - name: repo1  
+  patroni:
+    leaderLeaseDurationSeconds: 30
+    port: 8008
+    switchover:
+      type: Switchover
+      enabled: false
+    syncPeriodSeconds: 10
+  instances:
+    - dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+      replicas: 1
+  postgresVersion: 13
