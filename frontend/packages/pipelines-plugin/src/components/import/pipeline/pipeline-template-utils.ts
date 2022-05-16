@@ -51,7 +51,7 @@ export const getPipelineParams = (
       case 'GIT_REPO':
         return { ...param, default: gitUrl };
       case 'GIT_REVISION':
-        return { ...param, default: gitRef };
+        return { ...param, default: gitRef || '' };
       case 'PATH_CONTEXT':
         return { ...param, default: gitDir.replace(/^\//, '') || param.default };
       case 'IMAGE_NAME':
