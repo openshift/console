@@ -91,3 +91,41 @@ export enum HelmActionOrigins {
   list = 'list',
   topology = 'topology',
 }
+
+export interface ProjectHelmChartRepositoryType {
+  apiVersion: string;
+  kind: string;
+  metadata: {
+    name?: string;
+    namespace: string;
+    labels?: { [key: string]: string };
+    annotations?: { [key: string]: string };
+  };
+  spec: {
+    connectionConfig: {
+      url: string;
+      ca?: { name: string };
+      tlsClientConfig?: { name: string };
+    };
+    description?: string;
+    disabled?: boolean;
+    name?: string;
+  };
+}
+
+export interface ProjectHelmChartRepositoryFormData {
+  repoName?: string;
+  repoUrl?: string;
+  repoDescription?: string;
+  ca?: string;
+  tlsClientConfig?: string;
+  disabled?: boolean;
+  metadata?: object;
+}
+
+export interface ProjectHelmChartRepositoryData {
+  editorType: string;
+  yamlData: string;
+  formData: ProjectHelmChartRepositoryFormData;
+  formReloadCount?: number;
+}

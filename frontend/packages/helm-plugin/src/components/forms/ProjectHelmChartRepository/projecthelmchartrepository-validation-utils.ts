@@ -1,8 +1,10 @@
 import { TFunction } from 'i18next';
 import * as yup from 'yup';
 import { nameRegex } from '@console/shared/src';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { ProjectHelmChartRepositoryData } from '../../../types/helm-types';
 
-const urlRegex = /^https?:?:\/\/:?.+/;
+const urlRegex = /^https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/;
 
 export const createProjectHelmChartRepositoryValidationSchema = (t: TFunction) =>
   yup.object().shape({
@@ -26,4 +28,20 @@ export const createProjectHelmChartRepositoryValidationSchema = (t: TFunction) =
       })
       .max(2048, t('helm-plugin~Please enter a URL that is less then 2048 characters.'))
       .required(t('helm-plugin~Required')),
+  });
+
+export const validationSchema = (t: TFunction) =>
+  yup.mixed().test({
+    test(formValues: ProjectHelmChartRepositoryData) {
+      const formYamlDefinition = yup.object({
+        editorType: yup.string().oneOf(Object.values(EditorType)),
+        yamlData: yup.string(),
+        formData: yup.mixed().when('editorType', {
+          is: EditorType.Form,
+          then: createProjectHelmChartRepositoryValidationSchema(t),
+        }),
+      });
+
+      return formYamlDefinition.validate(formValues, { abortEarly: false });
+    },
   });

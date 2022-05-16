@@ -315,5 +315,16 @@
     "flags": {
       "required": ["OPENSHIFT_HELM"]
     }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "ProjectHelmChartRepository"
+      },
+      "component": { "$codeRef": "helmComponents.ProjectHelmChartRepositoryListPage" }
+    }
   }
 ]
