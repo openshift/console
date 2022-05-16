@@ -69,7 +69,7 @@ const MigrationTool: React.FC<MigrationToolProps> = ({
           >
             <ExternalLink
               text={t('kubevirt-plugin~Learn more')}
-              href="https://access.redhat.com/documentation/en-us/migration_toolkit_for_virtualization/2.0/"
+              href="https://access.redhat.com/documentation/en-us/migration_toolkit_for_virtualization/"
             />
           </Alert>
         )}
