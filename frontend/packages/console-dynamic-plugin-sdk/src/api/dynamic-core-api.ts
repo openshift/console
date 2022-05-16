@@ -75,17 +75,17 @@ export const TableData: React.FC<TableDataProps> = require('@console/internal/co
 
 /**
  * A hook that provides a list of user-selected active TableColumns.
- * @param options - object
- * @param `options.columns` - An array of all available TableColumns
- * @param `options.showNamespaceOverride` - (optional) If true, a namespace column will be included, regardless of column management selections
- * @param `options.columnManagementID` - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a 'group~verion~kind' string for a resource.
+ * @param options - Which are passed as a key-value map
+ * @param options.columns - An array of all available TableColumns
+ * @param options.showNamespaceOverride - (optional) If true, a namespace column will be included, regardless of column management selections
+ * @param options.columnManagementID - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a 'group~verion~kind' string for a resource.
  * @returns A tuple containing the current user selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
  * @example
  * ```tsx
  *   // See implementation for more details on TableColumn type
  *   const [activeColumns, userSettingsLoaded] = useActiveColumns({
  *     columns,
- *     false,
+ *     showNamespaceOverride: false,
  *     columnManagementID,
  *   });
  *   return userSettingsAreLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
@@ -232,23 +232,16 @@ const _usePrometheusPoll: (
 
 /**
  * React hook to poll Prometheus for a single query.
- *
- * @param {
- *   query - Prometheus query string. If empty or undefined, polling is not started.
- *   delay - polling delay interval (ms)
- *   endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
- *   endTime - for QUERY_RANGE enpoint, end of the query range
- *   samples - for QUERY_RANGE enpoint
- *   timespan - for QUERY_RANGE enpoint
- *   namespace - a search param to append
- *   timeout - a search param to append
- * }
- *
- * @returns [
- *   response - PrometheusResponse,
- *   boolean - is response still loading?,
- *   unknown - Caught error which can be originated either by the HTTP request or internal processing.
- * ]
+ * @param options - Which is passed as a key-value map
+ * @param options.query - Prometheus query string. If empty or undefined, polling is not started.
+ * @param options.delay - polling delay interval (ms)
+ * @param options.endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
+ * @param options.endTime - for QUERY_RANGE enpoint, end of the query range
+ * @param options.samples - for QUERY_RANGE enpoint
+ * @param options.timespan - for QUERY_RANGE enpoint
+ * @param options.namespace - a search param to append
+ * @param options.timeout - a search param to append
+ * @returns A tuple containing the query response, a boolean flag indicating whether the response has completed, and any errors encountered during the request or post-processing of the request
  */
 export const usePrometheusPoll: UsePrometheusPoll = (props) => {
   const result = _usePrometheusPoll(props);

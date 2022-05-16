@@ -15,7 +15,7 @@ import { K8sGroupVersionKind, K8sResourceKindReference } from '../../extensions/
  * @param K8sGroupVersionKind.kind Pass kind of k8s resource or model.
  * @returns The reference for any k8s resource i.e `group~version~kind`.
  * If the group will not be present then "core" will be returned as part of the group in reference.
- * * */
+ */
 export const getReference = ({
   group,
   version,
@@ -28,7 +28,7 @@ export const getReference = ({
  * Provides a reference string that uniquely identifies the group, version, and kind of a k8s model.
  * @param model k8s model
  * @returns The reference for model i.e `group~version~kind`.
- * * */
+ */
 export const getReferenceForModel = (model: K8sModel): K8sResourceKindReference =>
   getReference({ group: model.apiGroup, version: model.apiVersion, kind: model.kind });
 
@@ -104,7 +104,7 @@ export const getGroupVersionKindForReference = (
  * Provides a reference string that uniquely identifies the group, version, and kind of K8sGroupVersionKind.
  * @param kind kind can be of type K8sResourceKindReference or K8sGroupVersionKind
  * @returns The reference i.e `group~version~kind`.
- * * */
+ */
 export const transformGroupVersionKindToReference = (
   kind: K8sResourceKindReference | K8sGroupVersionKind,
 ): K8sResourceKindReference =>

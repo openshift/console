@@ -76,21 +76,10 @@ const generateDoc = (comment: tsdoc.DocComment) => {
   const summary = renderDocNode(comment.summarySection);
   const exampleBlock = comment.customBlocks.find((block) => block?.blockTag?.tagName === EXAMPLE);
   const example = renderDocNode(exampleBlock?.content);
-  // FIXME: Let tsdoc parser do the work instead of trying to manually parse the name and content.
-  // If the tsdoc is ill-formatted and isn't being parsed correctly, we should fix that in the tsdoc
-  // comment itself rather than create a special case in our parser.
-  const parameters = comment.params.blocks.map((param) => {
-    let { parameterName } = param;
-    let description = renderDocNode(param.content);
-    if (!parameterName) {
-      parameterName = description.substring(1, description.indexOf('-') - 1);
-      description = description.substring(description.indexOf('-') + 1);
-    }
-    return {
-      parameterName,
-      description,
-    };
-  });
+  const parameters = comment.params.blocks.map((param) => ({
+    parameterName: param.parameterName,
+    description: renderDocNode(param.content),
+  }));
   const returns = renderDocNode(comment.returnsBlock?.content);
   return {
     summary,

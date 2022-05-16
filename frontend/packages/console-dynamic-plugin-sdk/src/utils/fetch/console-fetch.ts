@@ -12,7 +12,7 @@ import { getConsoleRequestHeaders } from './console-fetch-utils';
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
  * @returns A promise that resolves to the response
- * * */
+ */
 export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) => {
   const fetchPromise = getUtilsConfig().appFetch(url, options);
 
@@ -57,7 +57,7 @@ const consoleFetchCommon = async (
  * @param timeout The timeout in milliseconds
  * @param cluster The name of the cluster to make the request to. Defaults to the active cluster the user has selected
  * @returns A promise that resolves to the response as JSON object.
- * * */
+ */
 export const consoleFetchJSON: ConsoleFetchJSON = (
   url,
   method = 'GET',
@@ -81,7 +81,7 @@ export const consoleFetchJSON: ConsoleFetchJSON = (
  * @param timeout The timeout in milliseconds
  * @param cluster The name of the cluster to make the request to. Defaults to the active cluster the user has selected
  * @returns A promise that resolves to the response as text.
- * * */
+ */
 export const consoleFetchText: ConsoleFetchText = (url, options = {}, timeout, cluster) => {
   return consoleFetchCommon(url, 'GET', options, timeout, cluster);
 };
@@ -116,7 +116,7 @@ const consoleFetchSendJSON = (
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
  * @param cluster The name of the cluster to make the request to. Defaults to the active cluster the user has selected
- * * */
+ */
 consoleFetchJSON.delete = (url, json = null, options = {}, timeout, cluster) => {
   return json
     ? consoleFetchSendJSON(url, 'DELETE', json, options, timeout, cluster)
@@ -131,7 +131,7 @@ consoleFetchJSON.delete = (url, json = null, options = {}, timeout, cluster) => 
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
  * @param cluster The name of the cluster to make the request to. Defaults to the active cluster the user has selected
- * * */
+ */
 consoleFetchJSON.post = (url: string, json, options = {}, timeout, cluster) =>
   consoleFetchSendJSON(url, 'POST', json, options, timeout, cluster);
 
@@ -143,7 +143,7 @@ consoleFetchJSON.post = (url: string, json, options = {}, timeout, cluster) =>
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
  * @param cluster The name of the cluster to make the request to. Defaults to the active cluster the user has selected
- * * */
+ */
 consoleFetchJSON.put = (url: string, json, options = {}, timeout, cluster) =>
   consoleFetchSendJSON(url, 'PUT', json, options, timeout, cluster);
 
@@ -155,6 +155,6 @@ consoleFetchJSON.put = (url: string, json, options = {}, timeout, cluster) =>
  * @param options The options to pass to fetch
  * @param timeout The timeout in milliseconds
  * @param cluster The name of the cluster to make the request to. Defaults to the active cluster the user has selected
- * * */
+ */
 consoleFetchJSON.patch = (url: string, json, options = {}, timeout, cluster) =>
   consoleFetchSendJSON(url, 'PATCH', json, options, timeout, cluster);

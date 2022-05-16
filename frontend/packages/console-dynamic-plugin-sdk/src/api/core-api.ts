@@ -13,7 +13,7 @@ import { UseActivePerspective } from '../extensions/console-types';
  *      onChange={(e) => setActivePerspective(e.target.value)}
  *    >
  *      {
- *        // ...perspective opttions
+ *        // ...perspective options
  *      }
  *    </select>
  * }
