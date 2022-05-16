@@ -722,7 +722,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               namespace,
               query,
               samples,
-              timeout: '30s',
+              timeout: '60s',
               timespan: span,
             }),
           ),

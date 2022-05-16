@@ -215,7 +215,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
         endpoint: PrometheusEndpoint.QUERY_RANGE,
         query: prometheusQuery,
         samples: NUM_SAMPLES,
-        timeout: '30s',
+        timeout: '60s',
         timespan,
         namespace,
       });
