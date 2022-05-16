@@ -16,7 +16,7 @@ export const KMS_PROVIDER = 'KMS_PROVIDER';
 export const SupportedProviders = {
   [ProviderNames.VAULT]: {
     group: 'Vault',
-    supported: [KmsImplementations.VAULT_TOKENS],
+    supported: [KmsImplementations.VAULT_TOKENS, KmsImplementations.VAULT_TENANT_SA],
   },
   [ProviderNames.HPCS]: {
     group: 'Hyper Protect Crypto Services',
