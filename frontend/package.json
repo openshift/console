@@ -1,4 +1,6 @@
 {
+  "name": "openshift-console",
+  "version": "0.0.0",
   "description": "OpenShift Web Console",
   "repository": "https://github.com/openshift/console",
   "license": "Apache-2.0",
