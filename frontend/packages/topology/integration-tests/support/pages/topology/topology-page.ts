@@ -1,3 +1,4 @@
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import {
   displayOptions,
   nodeActions,
@@ -239,6 +240,9 @@ export const topologyPage = {
       .click({ force: true });
   },
   verifyApplicationGroupingsDeleted: (appName: string) => {
+    cy.reload();
+    app.waitForLoad();
+    guidedTour.close();
     const id = `[data-id="group:${appName}"]`;
     cy.get(id, { timeout: 50000 }).should('not.exist');
   },
