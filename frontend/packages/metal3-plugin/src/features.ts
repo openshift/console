@@ -9,7 +9,8 @@ import { ProvisioningModel } from './models';
 export const BAREMETAL_FLAG = 'BAREMETAL';
 export const NODE_MAINTENANCE_FLAG = 'NODE_MAINTENANCE';
 export const BMO_ENABLED_FLAG = 'BMO_ENABLED';
-export const NODE_MAINTENANCE_OLD_FLAG = 'NODE_MAINTENANCE_OLD';
+export const NODE_MAINTENANCE_KV_BETA_FLAG = 'NODE_MAINTENANCE_KV_BETA';
+export const NODE_MAINTENANCE_KV_ALPHA_FLAG = 'NODE_MAINTENANCE_KV_ALPHA';
 
 export const detectBaremetalPlatform: FeatureDetector = (dispatch) =>
   fetchK8s<K8sResourceKind>(InfrastructureModel, 'cluster').then(

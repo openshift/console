@@ -26,9 +26,15 @@ import {
   BAREMETAL_FLAG,
   NODE_MAINTENANCE_FLAG,
   detectBMOEnabled,
-  NODE_MAINTENANCE_OLD_FLAG,
+  NODE_MAINTENANCE_KV_BETA_FLAG,
+  NODE_MAINTENANCE_KV_ALPHA_FLAG,
 } from './features';
-import { BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel } from './models';
+import {
+  BareMetalHostModel,
+  NodeMaintenanceModel,
+  NodeMaintenanceKubevirtAlphaModel,
+  NodeMaintenanceKubevirtBetaModel,
+} from './models';
 import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { BareMetalHostKind } from './types';
 
@@ -51,7 +57,12 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
     properties: {
-      models: [BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel],
+      models: [
+        BareMetalHostModel,
+        NodeMaintenanceModel,
+        NodeMaintenanceKubevirtAlphaModel,
+        NodeMaintenanceKubevirtBetaModel,
+      ],
     },
   },
   {
@@ -71,8 +82,15 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: NodeMaintenanceOldModel,
-      flag: NODE_MAINTENANCE_OLD_FLAG,
+      model: NodeMaintenanceKubevirtBetaModel,
+      flag: NODE_MAINTENANCE_KV_BETA_FLAG,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: NodeMaintenanceKubevirtAlphaModel,
+      flag: NODE_MAINTENANCE_KV_ALPHA_FLAG,
     },
   },
   {
@@ -140,9 +158,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: NodeModel,
       additionalResources: {
-        oldMaintenances: {
+        kvAlphaMaintenances: {
           isList: true,
-          kind: referenceForModel(NodeMaintenanceOldModel),
+          kind: referenceForModel(NodeMaintenanceKubevirtAlphaModel),
+          optional: true,
+        },
+        kvBetaMaintenances: {
+          isList: true,
+          kind: referenceForModel(NodeMaintenanceKubevirtBetaModel),
           optional: true,
         },
         maintenances: {
@@ -177,9 +200,14 @@ const plugin: Plugin<ConsumedExtensions> = [
           isList: true,
           kind: NodeModel.kind,
         },
-        oldMaintenances: {
+        kvAlphaMaintenances: {
           isList: true,
-          kind: referenceForModel(NodeMaintenanceOldModel),
+          kind: referenceForModel(NodeMaintenanceKubevirtAlphaModel),
+          optional: true,
+        },
+        kvBetaMaintenances: {
+          isList: true,
+          kind: referenceForModel(NodeMaintenanceKubevirtBetaModel),
           optional: true,
         },
         maintenances: {
@@ -249,7 +277,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       k8sResource: {
         isList: true,
-        kind: referenceForModel(NodeMaintenanceOldModel),
+        kind: referenceForModel(NodeMaintenanceKubevirtAlphaModel),
         prop: 'maintenances',
       },
       isActivity: (resource) => _.get(resource.status, 'phase') === 'Running',
@@ -260,7 +288,26 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_OLD_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_KV_ALPHA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: referenceForModel(NodeMaintenanceKubevirtBetaModel),
+        prop: 'maintenances',
+      },
+      isActivity: (resource) => _.get(resource.status, 'phase') === 'Running',
+      getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
+      loader: () =>
+        import(
+          './components/maintenance/MaintenanceDashboardActivity' /* webpackChunkName: "node-maintenance" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_KV_BETA_FLAG],
     },
   },
   {
