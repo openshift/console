@@ -386,7 +386,8 @@ export const createOrUpdateDeployImageResources = async (
     }
     if (!_.isEmpty(ports)) {
       const originalService = appResources?.service?.data;
-      const service = createService(formData, undefined, originalService);
+      const originalRoute = appResources?.route?.data;
+      const service = createService(formData, undefined, originalService, originalRoute);
       const request =
         verb === 'update'
           ? !_.isEmpty(originalService)

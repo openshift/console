@@ -27,6 +27,7 @@ export const createService = (
   formData: DeployImageFormData | GitImportFormData | UploadJarFormData,
   imageStreamData?: K8sResourceKind,
   originalService?: K8sResourceKind,
+  originalRoute?: K8sResourceKind,
 ): K8sResourceKind => {
   const {
     project: { name: namespace },
@@ -76,7 +77,12 @@ export const createService = (
     !ports.some((port) => unknownTargetPort === port.containerPort.toString())
   ) {
     const port = { containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' };
+    const existingRouteTargetPort = originalRoute?.spec?.port?.targetPort;
     ports = [...ports.filter((p) => p.containerPort !== defaultUnknownPort), port];
+
+    if (existingRouteTargetPort) {
+      ports = [...ports.filter((p) => p.containerPort !== existingRouteTargetPort), port];
+    }
   }
 
   const newService: any = {
