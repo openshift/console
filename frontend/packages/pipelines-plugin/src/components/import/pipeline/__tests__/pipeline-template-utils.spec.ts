@@ -604,6 +604,34 @@ describe('getPipelineParams', () => {
     ).toEqual([{ name: 'GIT_REPO', default: 'https://github.com/owner/repo' }]);
   });
 
+  it('should contain empty string in GIT_REVISION param when gitRef is undefined or null', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'GIT_REVISION', default: '' }],
+        'name',
+        'namespace',
+        'gitUrl',
+        undefined, // git ref
+        'gitDir',
+        'dockerfilePath',
+        'tag',
+      ),
+    ).toEqual([{ name: 'GIT_REVISION', default: '' }]);
+
+    expect(
+      getPipelineParams(
+        [{ name: 'GIT_REVISION', default: '' }],
+        'name',
+        'namespace',
+        'gitUrl',
+        null, // git ref
+        'gitDir',
+        'dockerfilePath',
+        'tag',
+      ),
+    ).toEqual([{ name: 'GIT_REVISION', default: '' }]);
+  });
+
   it('should return empty object if params is invalid or not an array', () => {
     expect(
       getPipelineParams(
