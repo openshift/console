@@ -47,6 +47,38 @@
   }
 }
 
+.horizontal-scroll {
+  overflow-x: auto;
+  padding-left: var(--pf-global--spacer--md);
+  padding-right: var(--pf-global--spacer--md);
+
+  &:before, &:after {
+    bottom: 0;
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: var(--pf-global--spacer--md);
+    z-index: 1;
+  }
+  &:before {
+    background: linear-gradient(
+      to right,
+      var(--pf-global--BackgroundColor--100),
+      rgba(255, 255, 255, 0)
+    );
+    left: 0;
+  }
+  &:after {
+    background: linear-gradient(
+      to left,
+      var(--pf-global--BackgroundColor--100),
+      rgba(255, 255, 255, 0)
+    );
+    right: 0;
+  }
+}
+
 .monitoring-dashboards__card {
   height: calc(100% - 20px);
   margin: 0 0 20px 0;
@@ -127,25 +159,9 @@
 .monitoring-dashboards__legend-wrap {
   $legend-content-height: 65px;
   height: $legend-content-height + 10px; // Add space for the horizontal scrollbar
-  overflow-x: auto;
-  padding-right: var(--pf-global--spacer--lg);
   padding-top: 1px;
   svg {
     max-height: $legend-content-height; // Required for Chrome to prevent vertical scrolling
-  }
-  &:after {
-    background: linear-gradient(
-      to left,
-      var(--pf-global--BackgroundColor--100),
-      rgba(255, 255, 255, 0)
-    );
-    content: '';
-    height: $legend-content-height;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: var(--pf-global--spacer--lg);
   }
 }
 
@@ -453,22 +469,15 @@ $monitoring-line-height: 18px;
   }
 
   tr > :first-child {
-    width: 40px;
     padding-top: 0;
     padding-bottom: 0;
+    padding-left: 0;
     vertical-align: middle;
   }
 }
 
-.query-browser__table-cell {
-  @include co-break-word;
-  min-width: 120px;
-  --pf-c-table-cell--PaddingRight: 0;
-  --pf-c-table__sort-indicator--MarginLeft: 4px;
-}
-
 .query-browser__table-wrapper {
-  overflow-x: auto;
+  position: relative;
   width: 100%;
 
   table {
