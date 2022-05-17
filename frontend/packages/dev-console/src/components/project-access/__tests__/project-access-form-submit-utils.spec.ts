@@ -2,9 +2,8 @@ import {
   getRolesWithNameChange,
   getNewRoles,
   getRemovedRoles,
-  getGroupedRole,
+  getRolesWithMultipleSubjects,
 } from '../project-access-form-submit-utils';
-import { UserRoleBinding } from '../project-access-form-utils-types';
 import {
   roleBindingsToBeCreated1,
   rolesBindingsToBeRemoved1,
@@ -14,8 +13,9 @@ import {
   rolesBindingsToBeRemoved,
   formValues2,
   roleBindingsToBeCreated2,
-  roleBindingsWithRequiredRoles,
-  getGroupedRoleResult,
+  newRoles,
+  updateRoles,
+  removeRoles,
 } from './project-access-form-data';
 
 describe('Project Access handleSubmit Utils', () => {
@@ -25,25 +25,238 @@ describe('Project Access handleSubmit Utils', () => {
   });
 
   it('should get new roles added by the user', async () => {
-    const newRoles = getNewRoles(initialRoles1, formValues2);
-    expect(newRoles).toEqual(roleBindingsToBeCreated2);
+    const result = getNewRoles(initialRoles1, formValues2);
+    expect(result).toEqual(roleBindingsToBeCreated2);
   });
 
-  it('should get roles with Name change', async () => {
+  it('should get roles with name change', async () => {
     const rolesWithNameChange = getRolesWithNameChange(
       roleBindingsToBeCreated1,
       rolesBindingsToBeRemoved1,
     );
     expect(rolesWithNameChange).toEqual(rolesWithNameChangeResult);
   });
+  it('should get roles with multiple subjects', () => {
+    const result = getRolesWithMultipleSubjects(newRoles, removeRoles, updateRoles);
+    expect(result).toEqual([
+      {
+        role: 'admin',
+        roleBindingName: 'admin-d',
+        subject: {
+          kind: 'User',
+          apiGroup: 'rbac.authorization.k8s.io',
+          name: 'user1',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'system:admin',
+          },
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'user5',
+          },
+        ],
+      },
+    ]);
+  });
+  it('should not update the subject type if the subject name is changed', () => {
+    const newRoles1 = [
+      {
+        role: 'view',
+        roleBindingName: 'group-rb',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'Group',
+          name: 'a-group1',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'Group',
+            name: 'a-group',
+          },
+        ],
+      },
+    ];
 
-  it('should remove user belonging to grouped subjects in a Role Binding', async () => {
-    const role: UserRoleBinding = {
-      role: 'admin',
-      roleBindingName: 'check-view',
-      user: 'mno',
-    };
-    const groupedRole = getGroupedRole(role, roleBindingsWithRequiredRoles);
-    expect(groupedRole).toEqual(getGroupedRoleResult);
+    const removeRoles1 = [
+      {
+        role: 'view',
+        roleBindingName: 'group-rb',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'Group',
+          name: 'a-group',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'Group',
+            name: 'a-group',
+          },
+        ],
+      },
+    ];
+    const rolesWithNameChange = getRolesWithNameChange(newRoles1, removeRoles1);
+    expect(rolesWithNameChange).toEqual([
+      {
+        role: 'view',
+        roleBindingName: 'group-rb',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'Group',
+          name: 'a-group1',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'Group',
+            name: 'a-group',
+          },
+        ],
+      },
+    ]);
+  });
+  it('should create delete the old rolebinding and create a new one if the role is changed', () => {
+    const initialRoles = [
+      {
+        role: 'edit',
+        roleBindingName: 'edit',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'pipeline',
+          namespace: 'xyz',
+        },
+        subjects: [
+          {
+            kind: 'ServiceAccount',
+            name: 'pipeline',
+            namespace: 'xyz',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'admin',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'User',
+          name: 'kube:admin',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'kube:admin',
+          },
+        ],
+      },
+      {
+        role: 'view',
+        roleBindingName: 'group-rb',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'Group',
+          name: 'a-group',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'Group',
+            name: 'a-group',
+          },
+        ],
+      },
+    ];
+
+    const formRoles = [
+      {
+        role: 'edit',
+        roleBindingName: 'edit',
+        subject: {
+          kind: 'ServiceAccount',
+          name: 'pipeline',
+          namespace: 'xyz',
+        },
+        subjects: [
+          {
+            kind: 'ServiceAccount',
+            name: 'pipeline',
+            namespace: 'xyz',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'admin',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'User',
+          name: 'kube:admin',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'User',
+            name: 'kube:admin',
+          },
+        ],
+      },
+      {
+        role: 'admin',
+        roleBindingName: 'group-rb',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'Group',
+          name: 'a-group',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'Group',
+            name: 'a-group',
+          },
+        ],
+      },
+    ];
+    expect(getNewRoles(initialRoles, formRoles)).toEqual([
+      {
+        role: 'admin',
+        roleBindingName: 'group-rb',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'Group',
+          name: 'a-group',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'Group',
+            name: 'a-group',
+          },
+        ],
+      },
+    ]);
+    expect(getRemovedRoles(initialRoles, formRoles)).toEqual([
+      {
+        role: 'view',
+        roleBindingName: 'group-rb',
+        subject: {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'Group',
+          name: 'a-group',
+        },
+        subjects: [
+          {
+            apiGroup: 'rbac.authorization.k8s.io',
+            kind: 'Group',
+            name: 'a-group',
+          },
+        ],
+      },
+    ]);
   });
 });

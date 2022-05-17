@@ -18,13 +18,12 @@ import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
   getRolesWithNameChange,
-  sendRoleBindingRequest,
   getNewRoles,
   getRemovedRoles,
-  sendK8sRequest,
-  getGroupedRole,
+  sendRoleBindingRequest,
+  getRolesWithMultipleSubjects,
 } from './project-access-form-submit-utils';
-import { filterRoleBindings, getUserRoleBindings, Roles } from './project-access-form-utils';
+import { getUserRoleBindings, Roles } from './project-access-form-utils';
 import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
 import { validationSchema } from './project-access-form-validation-utils';
 import ProjectAccessForm from './ProjectAccessForm';
@@ -47,9 +46,10 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
     return <LoadingBox />;
   }
 
-  const filteredRoleBindings = filterRoleBindings(roleBindings.data, Object.keys(roles.data));
-
-  const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(filteredRoleBindings);
+  const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(
+    roleBindings.data,
+    Object.keys(roles.data),
+  );
 
   const rbacLink = isUpstream()
     ? `${openshiftHelpBase}authentication/using-rbac.html`
@@ -65,36 +65,31 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
     let removeRoles = getRemovedRoles(initialValues.projectAccess, values.projectAccess);
     const updateRoles = getRolesWithNameChange(newRoles, removeRoles);
 
-    if (!_.isEmpty(updateRoles)) {
-      newRoles = _.filter(
-        newRoles,
+    const updateRolesWithMultipleSubjects = getRolesWithMultipleSubjects(
+      newRoles,
+      removeRoles,
+      updateRoles,
+    );
+
+    if (updateRoles.length > 0) {
+      newRoles = newRoles.filter(
         (o1) => !updateRoles.find((o2) => o1.roleBindingName === o2.roleBindingName),
       );
-      removeRoles = _.filter(
-        removeRoles,
+      removeRoles = removeRoles.filter(
         (o1) => !updateRoles.find((o2) => o1.roleBindingName === o2.roleBindingName),
       );
     }
-
+    updateRoles.push(...updateRolesWithMultipleSubjects);
     const roleBindingRequests = [];
     roleBinding.metadata.namespace = namespace;
 
-    removeRoles = _.filter(removeRoles, (removeRole) => {
-      const groupedRole = getGroupedRole(removeRole, roleBindings.data);
-      if (groupedRole) {
-        roleBindingRequests.push(sendK8sRequest(Verb.Patch, groupedRole));
-        return false;
-      }
-      return true;
-    });
-
-    if (!_.isEmpty(updateRoles)) {
+    if (updateRoles.length > 0) {
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Patch, updateRoles, roleBinding));
     }
-    if (!_.isEmpty(removeRoles)) {
+    if (removeRoles.length > 0) {
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Remove, removeRoles, roleBinding));
     }
-    if (!_.isEmpty(newRoles)) {
+    if (newRoles.length > 0) {
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Create, newRoles, roleBinding));
     }
 

@@ -53,9 +53,13 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
             name="projectAccess"
             addLabel={t('devconsole~Add access')}
             headers={[t('devconsole~Name'), t('devconsole~Role')]}
-            emptyValues={{ user: '', role: '' }}
+            emptyValues={{ name: '', role: '' }}
           >
-            <InputField name="user" type={TextInputTypes.text} placeholder={t('devconsole~Name')} />
+            <InputField
+              name="subject.name"
+              type={TextInputTypes.text}
+              placeholder={t('devconsole~Name')}
+            />
             <DropdownField
               name="role"
               title={t('devconsole~Select a role')}
@@ -68,8 +72,8 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
       <FormFooter
         handleReset={onReload}
         isSubmitting={isSubmitting}
-        errorMessage={status && status.submitError}
-        successMessage={status && !dirty && status.success}
+        errorMessage={status?.submitError}
+        successMessage={!dirty && status?.success}
         disableSubmit={isStaleInfo || disableSubmit}
         showAlert={isStaleInfo || !disableSubmit}
         submitLabel={t('devconsole~Save')}

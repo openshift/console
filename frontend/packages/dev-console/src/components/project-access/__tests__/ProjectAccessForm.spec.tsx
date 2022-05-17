@@ -31,12 +31,22 @@ describe('Project Access Form', () => {
         projectAccess: [
           {
             roleBindingName: 'abc-admin',
-            user: 'abc',
+            subject: {
+              name: 'abc',
+              kind: 'User',
+              apiGroup: 'rbac.authorization.k8s.io',
+            },
+            subjects: [],
             role: 'admin',
           },
           {
             roleBindingName: 'xyz-edit',
-            user: 'xyz',
+            subject: {
+              name: 'xyz',
+              kind: 'User',
+              apiGroup: 'rbac.authorization.k8s.io',
+            },
+            subjects: [],
             role: 'edit',
           },
         ],
