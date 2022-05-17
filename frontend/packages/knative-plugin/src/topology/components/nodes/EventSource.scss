@@ -19,6 +19,11 @@
     stroke-width: 2px;
     stroke: $selected-stroke-color;
   }
+
+  &__svg-icon svg {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .odc-m-drag-active,

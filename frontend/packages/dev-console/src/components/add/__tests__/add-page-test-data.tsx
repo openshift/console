@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CatalogIcon } from '@patternfly/react-icons';
+import { CatalogIcon, SignOutAltIcon } from '@patternfly/react-icons';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 
@@ -172,7 +172,7 @@ const eventSource: AddActionExtension = {
       'Create an Event source to register interest in a class of events from a particular system',
     groupId: 'developer-catalog',
     href: '/catalog/ns/:namespace?catalogType=EventSource',
-    icon: 'static/assets/event-source.svg',
+    icon: <SignOutAltIcon />,
     id: 'knative-event-source',
     label: 'Event Source',
   },

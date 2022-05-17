@@ -43,13 +43,25 @@ const EventSource: React.FC<EventSourceProps> = ({ element, onShowCreateConnecto
       labelIcon={<SignOutAltIcon />}
       {...rest}
     >
-      <image
-        x={width * 0.25}
-        y={height * 0.25}
-        width={size * 0.5}
-        height={size * 0.5}
-        xlinkHref={getEventSourceIcon(data.kind, resources.obj)}
-      />
+      {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
+        <image
+          x={width * 0.25}
+          y={height * 0.25}
+          width={size * 0.5}
+          height={size * 0.5}
+          xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType()) as string}
+        />
+      ) : (
+        <foreignObject
+          x={width * 0.25}
+          y={height * 0.25}
+          width={size * 0.5}
+          height={size * 0.5}
+          className="odc-event-source__svg-icon"
+        >
+          {getEventSourceIcon(data.kind, resources.obj, element.getType())}
+        </foreignObject>
+      )}
     </BaseNode>
   );
 };

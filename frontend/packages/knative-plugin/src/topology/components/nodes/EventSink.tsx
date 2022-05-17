@@ -107,13 +107,25 @@ const EventSink: React.FC<EventSinkProps> = ({
       {donutStatus && !isKafkaSink && (
         <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
       )}
-      <image
-        x={width * 0.33}
-        y={height * 0.33}
-        width={size * 0.35}
-        height={size * 0.35}
-        xlinkHref={getEventSourceIcon(data.kind, resources.obj)}
-      />
+      {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
+        <image
+          x={width * 0.33}
+          y={height * 0.33}
+          width={size * 0.35}
+          height={size * 0.35}
+          xlinkHref={getEventSourceIcon(data.kind, resources.obj, element.getType()) as string}
+        />
+      ) : (
+        <foreignObject
+          x={width * 0.33}
+          y={height * 0.33}
+          width={size * 0.35}
+          height={size * 0.35}
+          className="odc-event-source__svg-icon"
+        >
+          {getEventSourceIcon(data.kind, resources.obj, element.getType())}
+        </foreignObject>
+      )}
     </BaseNode>
   );
 };
