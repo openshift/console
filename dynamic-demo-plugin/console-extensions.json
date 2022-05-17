@@ -187,15 +187,17 @@
     }
   },
   {
-    "type": "console.page/resource/tab",
+    "type": "console.tab/horizontalNav",
     "properties": {
       "model": {
         "group": "project.openshift.io",
         "version": "v1",
         "kind": "Project"
       },
-      "name": "Demo Plugin",
-      "href": "/demo-plugin",
+      "page": {
+        "name": "Demo Plugin",
+        "href": "/demo-plugin"
+      },
       "component": { "$codeRef": "projectTabContent" }
     }
   },

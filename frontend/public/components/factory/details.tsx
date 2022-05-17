@@ -87,6 +87,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           name: p.properties.name,
           component: (cProps) => renderAsyncComponent(p, cProps),
         })),
+      /** @deprecated -- if there is a bug here, encourage `console.tab/horizontalNav` usage instead */
       ...dynamicResourcePageExtensions
         .filter((p) => {
           if (p.properties.model.version) {
