@@ -195,7 +195,7 @@ const nodeDropTargetSpec: DropTargetSpec<
     if (isEdge(item)) {
       return canDropEdgeOnNode(monitor.getOperation()?.type, item as Edge, props.element);
     }
-    if (item === props.element) {
+    if (!props.element || item === props.element) {
       return false;
     }
     return !props.element.getTargetEdges().find((e) => e.getSource() === item);

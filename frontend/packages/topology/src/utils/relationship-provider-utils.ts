@@ -57,7 +57,7 @@ export const getRelationshipProvider = (): DropTargetSpec<
       if (isEdge(item)) {
         return canDropEdgeOnNode(monitor.getOperation()?.type, item, props.element);
       }
-      if (item === props.element) {
+      if (!props.element || item === props.element) {
         return false;
       }
       const relationshipExtension = getRelExtension(monitor, props);

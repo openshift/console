@@ -27,12 +27,12 @@ const BindableNode: React.FC<BindableNodeProps> = ({
   selected,
   onSelect,
   tooltipLabel,
-  ...props
+  ...rest
 }) => {
   const spec = React.useMemo(() => getRelationshipProvider(), []);
   const { width, height } = element.getBounds();
   const iconRadius = Math.min(width, height) * 0.25;
-  const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...props });
+  const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...rest });
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
   const iconData = element.getData()?.data?.icon || openshiftImg;
@@ -48,7 +48,7 @@ const BindableNode: React.FC<BindableNodeProps> = ({
       innerRadius={iconRadius}
       selected={selected}
       element={element}
-      {...props}
+      {...rest}
       dndDropRef={dndDropRef}
       {...dndDropProps}
     />
