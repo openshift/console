@@ -17,7 +17,7 @@ const BMN_STATUS_GROUP_MAPPER = {
 
 export const getBMNStatusGroups: StatusGroupMapper = (
   nodes: NodeKind[],
-  { maintenances, csrs, oldMaintenances },
+  { maintenances, csrs, kvAlphaMaintenances, kvBetaMaintenances },
 ) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
@@ -37,10 +37,20 @@ export const getBMNStatusGroups: StatusGroupMapper = (
     },
   };
   const maintenancesByNodeName = createBasicLookup(maintenances, getNodeMaintenanceNodeName);
-  const oldMaintenancesByNodeName = createBasicLookup(oldMaintenances, getNodeMaintenanceNodeName);
+  const kvAlphaMaintenancesByNodeName = createBasicLookup(
+    kvAlphaMaintenances,
+    getNodeMaintenanceNodeName,
+  );
+  const kvBetaMaintenancesByNodeName = createBasicLookup(
+    kvBetaMaintenances,
+    getNodeMaintenanceNodeName,
+  );
   nodes.forEach((node) => {
     const nodeName = getName(node);
-    const nodeMaintenance = maintenancesByNodeName[nodeName] || oldMaintenancesByNodeName[nodeName];
+    const nodeMaintenance =
+      maintenancesByNodeName[nodeName] ||
+      kvBetaMaintenancesByNodeName[nodeName] ||
+      kvAlphaMaintenancesByNodeName[nodeName];
     const csr = getNodeServerCSR(csrs as CertificateSigningRequestKind[], node);
     const { status } = bareMetalNodeStatus({ node, nodeMaintenance, csr });
     const group =
