@@ -75,7 +75,11 @@ esac
 # https://docs.cypress.io/guides/guides/continuous-integration.html#Colors
 export NO_COLOR=1
 if [ "$SCENARIO" == "nightly-cypress" ]; then
-  ./test-cypress.sh -n true
+  PACKAGE=""
+  if [ $# -gt 1 ]; then
+    PACKAGE="-p $2"
+  fi
+  ./test-cypress.sh -n true $PACKAGE
 elif [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./test-cypress.sh -h true
 elif [ "$SCENARIO" == "login" ]; then
