@@ -6,6 +6,7 @@ import {
   HealthState,
   K8sResourceCommon,
   LIMIT_STATE,
+  PrometheusPollProps,
   PrometheusResponse,
   QueryParams,
   StatusGroupMapper,
@@ -278,6 +279,38 @@ export type QuickStartsLoaderProps = {
   children: (quickStarts: QuickStart[], loaded: boolean) => React.ReactNode;
 };
 
-export type QuickStartsSectionWrapperProps = {
-  children: React.ReactElement[];
+export type PollsData = {
+  callback: () => any;
+  delay?: number;
+  dependencies?: any[];
 };
+
+export type PollsDataMap = {
+  [key: string]: PollsData;
+};
+
+export type UsePolls = (pollsDataMap: PollsDataMap) => void;
+
+export type URLPollData = {
+  url: string;
+  delay?: number;
+  dependencies?: any[];
+};
+
+export type URLPollsDataMap = {
+  [key: string]: URLPollData;
+};
+
+export type URLPollResult = {
+  error?: string;
+  response?: any;
+  loading?: boolean;
+};
+
+export type URLPollsResultMap = {
+  [key: string]: URLPollResult;
+};
+
+export type UseURLPolls = (pollData: URLPollsDataMap) => URLPollsResultMap;
+
+export type UsePrometheusPolls = (prometheusPollItems: PrometheusPollProps[]) => URLPollsResultMap;

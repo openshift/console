@@ -19,6 +19,9 @@ import {
   UseDashboardResources,
   UseUserSettings,
   QuickStartsLoaderProps,
+  UsePolls,
+  UseURLPolls,
+  UsePrometheusPolls,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -63,3 +66,7 @@ export const useDashboardResources: UseDashboardResources = require('@console/sh
   .useDashboardResources;
 export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
   .useUserSettings;
+export const usePolls: UsePolls = require('@console/shared/src/hooks/usePolls').default;
+export const useURLPolls: UseURLPolls = require('@console/shared/src/hooks/useURLPolls').default;
+export const usePrometheusPolls: UsePrometheusPolls = require('@console/shared/src/hooks/usePrometheusPolls')
+  .default;
