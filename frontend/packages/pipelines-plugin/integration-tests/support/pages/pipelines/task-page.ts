@@ -38,7 +38,7 @@ export const tasksPage = {
   openPipelinePage: () => {
     cy.get('[data-quickstart-id="qs-nav-pipelines"]')
       .eq(1)
-      .click();
+      .click({ force: true });
   },
   clickOnCreatePipeline: () => {
     cy.get('[data-test-id="dropdown-button"]').click();

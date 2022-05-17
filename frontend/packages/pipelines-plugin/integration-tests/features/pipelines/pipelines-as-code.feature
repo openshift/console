@@ -132,3 +132,23 @@ Feature: Perform Actions on repository
         Examples:
                   | repository_name |
                   | test-repo       |
+
+
+        @regression @odc-6460
+        Scenario: Setup GitHub page: P-11-TC12
+            Given user is at Pipelines tab in admin page
+             When user clicks on Setup GitHub App button
+             Then user can see "GitHub application name", "See GitHub permissions" and "View all steps in documentation"
+
+
+        @regression @manual @odc-6460
+        #This test case is manual as it navigates to github in between the process
+        Scenario: Create and configure the GitHub Application to work with Pipelines as code: P-11-TC13
+            Given user is at Pipelines tab in admin page
+             When user clicks on Setup GitHub App button
+              And user enters GitHub application name as "pac-app123"
+              And user clicks on Setup button
+              And user confirms access in github
+              And user clicks Create GitHub App button in Create GitHub App page
+             Then user will be redirected to GitHub App details
+              And user will see App Name as "pac-app123", App Link as "https://github.com/apps/pac-app123" and Secret as "pipelines-as-code-secret" in "openshift-pipelines" namespace
