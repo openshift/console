@@ -23,11 +23,12 @@ const getTemplateToVMCountMap = (resources) => {
   const templates = loaded && resources?.templates;
 
   const templateToVMCountMap = new Map();
-  const numVMs = vms.length;
+  const numVMs = vms?.length || 0;
 
   if (loaded) {
     vms.forEach((vm) => {
-      const template = vm?.metadata?.labels[LABEL_USED_TEMPLATE_NAME];
+      const labels = vm?.metadata?.labels;
+      const template = labels ? labels[LABEL_USED_TEMPLATE_NAME] : 'Other';
       const value = templateToVMCountMap.has(template)
         ? templateToVMCountMap.get(template).vmCount + 1
         : 1;
@@ -41,7 +42,7 @@ const getTemplateToVMCountMap = (resources) => {
   for (const key of templateToVMCountMap.keys()) {
     const templateChartData = templateToVMCountMap.get(key);
     const additionalData = {
-      percentage: Math.round((templateChartData.vmCount / numVMs) * 100),
+      percentage: numVMs ? Math.round((templateChartData.vmCount / numVMs) * 100) : 0,
       color: colorListIter.next().value,
       namespace: getTemplateNS(key, templates),
     };
