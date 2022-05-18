@@ -62,6 +62,10 @@ export const getUnionMemberTypes = (typeChecker: ts.TypeChecker, node: ts.Node) 
 export const getJSDoc = (node: ts.Node): ts.JSDoc[] =>
   tsu.canHaveJsDoc(node) ? tsu.getJsDoc(node) : [];
 
+export const hasDeprecationJSDoc = (node: ts.Declaration): boolean => {
+  return getJSDoc(node).some((d) => d.tags && d.tags.find((t) => t.tagName.text === 'deprecated'));
+};
+
 export const getJSDocComments = (node: ts.Declaration) => {
   return _.compact(
     getJSDoc(node).map((d) => {
