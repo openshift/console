@@ -4,3 +4,4 @@ export const PAC_GH_APP_DOC =
 export const PAC_GH_APP_MANIFEST_API = 'https://api.github.com/app-manifests';
 export const EVENT_LISTNER_NAME = 'pipelines-as-code-interceptor';
 export const PAC_SECRET_NAME = 'pipelines-as-code-secret';
+export const PAC_GH_APP_NAME = 'pipelines-ci-clustername';

@@ -3,7 +3,7 @@ import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s'
 import { RouteModel } from '@console/internal/models';
 import { RouteKind } from '@console/internal/module/k8s';
 import { PIPELINE_NAMESPACE } from '../../pipelines/const';
-import { EVENT_LISTNER_NAME } from '../const';
+import { EVENT_LISTNER_NAME, PAC_GH_APP_NAME } from '../const';
 
 type GHManifestData = {
   name: string;
@@ -47,7 +47,7 @@ export const usePacGHManifest = (): { loaded: boolean; manifestData: GHManifestD
   }, []);
 
   const manifestData: GHManifestData = {
-    name: 'pac-app',
+    name: PAC_GH_APP_NAME,
     url: locURL,
     // eslint-disable-next-line @typescript-eslint/camelcase
     hook_attributes: {
