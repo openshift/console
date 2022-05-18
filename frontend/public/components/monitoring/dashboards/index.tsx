@@ -753,8 +753,10 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
     return data?.rows?.length
       ? data.rows
       : data?.panels?.reduce((acc, panel) => {
-          if (panel.type === 'row' || acc.length === 0) {
+          if (panel.type === 'row') {
             acc.push(_.cloneDeep(panel));
+          } else if (acc.length === 0) {
+            acc.push({ panels: [panel] });
           } else {
             const row = acc[acc.length - 1];
             if (_.isNil(row.panels)) {
