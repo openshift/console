@@ -12,6 +12,8 @@ metadata:
     app: vm-example
     os.template.kubevirt.io/fedora31: 'true'
     workload.template.kubevirt.io/server: 'true'
+    flavor.template.kubevirt.io/small: 'true'
+    vm.kubevirt.io/template: fedora-server-small
   annotations:
     name.os.template.kubevirt.io/fedora31: Fedora 31
     description: VM example
@@ -19,8 +21,14 @@ spec:
   running: false
   template:
     metadata:
+      annotations:
+        vm.kubevirt.io/flavor: small
+        vm.kubevirt.io/os: fedora
+        vm.kubevirt.io/workload: server
       labels:
+        flavor.template.kubevirt.io/small: 'true'
         kubevirt.io/domain: vm-example
+        kubevirt.io/size: small
         vm.kubevirt.io/name: vm-example
         os.template.kubevirt.io/fedora31: 'true'
         workload.template.kubevirt.io/server: 'true'
