@@ -20,6 +20,7 @@ describe('Filtering and Searching', () => {
     cy.createProject(testName);
     cy.visit(`/k8s/ns/${testName}/deployments`);
     listPage.clickCreateYAMLbutton();
+    cy.byTestID('yaml-view-input').click();
     yamlEditor.isLoaded();
     yamlEditor.getEditorContent().then((content) => {
       const newContent = _.defaultsDeep(

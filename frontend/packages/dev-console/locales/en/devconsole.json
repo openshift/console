@@ -207,7 +207,6 @@
   "Runs a command in a new pod using the container from the deployment template. You can add additional environment variables and volumes": "Runs a command in a new pod using the container from the deployment template. You can add additional environment variables and volumes",
   "Tags the current image as an image stream tag if the deployment succeeds": "Tags the current image as an image stream tag if the deployment succeeds",
   "{{resource}} has been created": "{{resource}} has been created",
-  "Create": "Create",
   "Create {{kind}}": "Create {{kind}}",
   "Edit {{kind}}": "Edit {{kind}}",
   "Edit {{kind}} form": "Edit {{kind}} form",

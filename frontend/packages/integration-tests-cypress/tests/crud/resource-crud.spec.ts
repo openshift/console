@@ -109,7 +109,13 @@ describe('Kubernetes resource CRUD operations', () => {
     'PersistentVolumeClaim',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
-  const resourcesWithSyncedEditor = new Set(['NetworkPolicy', 'ConfigMap', 'Route']);
+  const resourcesWithSyncedEditor = new Set([
+    'NetworkPolicy',
+    'ConfigMap',
+    'Route',
+    'DeploymentConfig',
+    'Deployment',
+  ]);
 
   testObjs.forEach((testObj, resource) => {
     const {
@@ -154,6 +160,14 @@ describe('Kubernetes resource CRUD operations', () => {
               metadata: { name, labels: { [testLabel]: testName } },
               ...(kind === 'Route'
                 ? { spec: { to: { kind: 'Service', name: 'example' }, port: { targetPort: 80 } } }
+                : {}),
+              ...(kind === 'DeploymentConfig'
+                ? {
+                    spec: {
+                      selector: { app: name },
+                      template: { metadata: { labels: { app: name } } },
+                    },
+                  }
                 : {}),
             },
             safeLoad(content),
