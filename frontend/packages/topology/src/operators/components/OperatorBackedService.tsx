@@ -47,7 +47,7 @@ export const obsDropTargetSpec = (
     if (isEdge(item)) {
       return canDropEdgeOnNode(monitor.getOperation()?.type, item, props.element);
     }
-    if (item === props.element) {
+    if (!props.element || item === props.element) {
       return false;
     }
     return !props.element.getTargetEdges().find((e) => e.getSource() === item);
@@ -80,7 +80,7 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
   ...rest
 }) => {
   const spec = React.useMemo(() => obsDropTargetSpec(serviceBinding), [serviceBinding]);
-  const [dndDropProps, dndDropRef] = useDndDrop(spec, rest as any);
+  const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...rest });
   const resourceObj = getResource(element);
   const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : null;
   const editAccess = useAccessReview({
