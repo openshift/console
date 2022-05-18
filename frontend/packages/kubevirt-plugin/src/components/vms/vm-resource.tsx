@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ClipboardCopy, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { GenericStatus } from '@console/dynamic-plugin-sdk';
 import {
   NodeLink,
   ResourceLink,
@@ -65,7 +66,7 @@ import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/c
 import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
 import { vmStatusModal } from '../modals/vm-status-modal/vm-status-modal';
 import SSHModal from '../ssh-service/SSHModal';
-import { VMStatus } from '../vm-status/vm-status';
+import { getVMStatusIcon } from '../vm-status/vm-status';
 import VMDetailsItem from './VMDetailsItem';
 import VMDetailsItemTemplate from './VMDetailsItemTemplate';
 import VMEditWithPencil from './VMEditWithPencil';
@@ -182,7 +183,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         onEditClick={() => vmStatusModal({ vmi })}
         idValue={prefixedID(id, 'vm-statuses')}
       >
-        <VMStatus vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} />
+        <GenericStatus title={vm?.status?.printableStatus} Icon={getVMStatusIcon(status, false)} />
       </VMDetailsItem>
 
       <VMDetailsItem
