@@ -16,7 +16,7 @@
   "Application": "Application",
   "Warning: the application grouping already exists.": "Warning: the application grouping already exists.",
   "A unique name given to the application grouping to label your resources.": "A unique name given to the application grouping to label your resources.",
-  "Select an application for your grouping or no application group to not use an application grouping.": "Select an application for your grouping or no application group to not use an application grouping.",
+  "Select an Application to group this component.": "Select an Application to group this component.",
   "Application name": "Application name",
   "All applications": "All applications",
   "Export application": "Export application",

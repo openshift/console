@@ -97,9 +97,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           label={label}
           helperTextInvalid={errorMessage}
           validated={isValid ? 'default' : 'error'}
-          helperText={t(
-            'topology~Select an application for your grouping or no application group to not use an application grouping.',
-          )}
+          helperText={t('topology~Select an Application to group this component.')}
         >
           <ApplicationDropdown
             id={fieldId}

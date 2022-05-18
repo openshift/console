@@ -30,7 +30,7 @@ const normalizeBuilderImages = (
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
-    const createLabel = t('devconsole~Create Application');
+    const createLabel = t('devconsole~Create');
     const type = 'Sample';
 
     const item: CatalogItem = {

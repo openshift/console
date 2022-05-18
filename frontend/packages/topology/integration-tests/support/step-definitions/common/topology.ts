@@ -175,7 +175,7 @@ When('user clicks Create application on Quick Search Dialog', () => {
     .contains('Builder Images', { timeout: 60000 })
     .click();
   cy.get('button')
-    .contains('Create application')
+    .contains('Create')
     .click();
 });
 

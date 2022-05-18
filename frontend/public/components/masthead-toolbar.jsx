@@ -290,6 +290,18 @@ class MastheadToolbarContents_ extends React.Component {
               });
             },
           },
+          {
+            label: t('public~Red Hat Hybrid Cloud Console'),
+            externalLink: true,
+            href: 'https://console.redhat.com',
+            image: <img src={redhatLogoImg} alt="" />,
+            callback: () => {
+              fireTelemetryEvent('Launcher Menu Accessed', {
+                id: 'Red Hat Hybrid Cloud Console',
+                name: 'Red Hat Hybrid Cloud Console',
+              });
+            },
+          },
         ],
       });
     }
