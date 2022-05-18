@@ -18,9 +18,9 @@ RUN yarn install && \
 # Stage 1: build the target image
 FROM node:10
 
-COPY --from=build /src/console/dynamic-demo-plugin/dist /opt/console-demo-plugin/static
-COPY --from=build /src/console/dynamic-demo-plugin/node_modules /opt/console-demo-plugin/node_modules
-COPY --from=build /src/console/dynamic-demo-plugin/http-server.sh /opt/console-demo-plugin/http-server.sh
+COPY --from=build /src/console/dynamic-demo-plugin/dist /opt/console-plugin-demo/static
+COPY --from=build /src/console/dynamic-demo-plugin/node_modules /opt/console-plugin-demo/node_modules
+COPY --from=build /src/console/dynamic-demo-plugin/http-server.sh /opt/console-plugin-demo/http-server.sh
 
 LABEL io.k8s.display-name="OpenShift Console Demo Plugin" \
       io.k8s.description="Sample OpenShift Console dynamic plugin used for testing purposes." \
@@ -29,5 +29,5 @@ LABEL io.k8s.display-name="OpenShift Console Demo Plugin" \
 
 USER 1001
 
-WORKDIR /opt/console-demo-plugin
+WORKDIR /opt/console-plugin-demo
 ENTRYPOINT [ "./http-server.sh", "./static" ]
