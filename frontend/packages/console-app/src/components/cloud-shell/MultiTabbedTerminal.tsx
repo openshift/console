@@ -77,7 +77,7 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
             </div>
           }
         >
-          <CloudShellTerminal />
+          <CloudShellTerminal isActiveTab={activeTabKey === terminalNumber} />
         </Tab>
       ))}
       {terminalTabs.length < MAX_TERMINAL_TABS && (
