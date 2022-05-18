@@ -534,7 +534,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      disallowed: [OCS_INDEPENDENT_FLAG, MCG_STANDALONE, FEATURES.ADD_CAPACITY],
+      disallowed: [OCS_INDEPENDENT_FLAG, MCG_STANDALONE],
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl
