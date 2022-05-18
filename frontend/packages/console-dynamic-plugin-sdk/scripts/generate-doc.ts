@@ -36,8 +36,7 @@ renderTemplate('scripts/templates/console-extensions.md.ejs', {
     // Sort extensions by their `type` value
     .sort((a, b) => {
       if (a.isDeprecated !== b.isDeprecated) {
-        if (a.isDeprecated) return 1;
-        if (b.isDeprecated) return -1;
+        return a.isDeprecated ? 1 : -1;
       }
       return a.type.localeCompare(b.type);
     })
