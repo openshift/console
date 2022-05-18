@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s/types';
+import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s/types';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { AccessMode, DiskType, VolumeMode, VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
@@ -262,7 +262,7 @@ export class CombinedDiskFactory {
   static initializeFromVMLikeEntity = (
     vmLikeEntity: VMGenericLikeEntityKind,
     datavolumes?: FirehoseResult<V1alpha1DataVolume[]>,
-    pvcs?: FirehoseResult,
+    pvcs?: PersistentVolumeClaimKind[],
   ) => {
     const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
 
@@ -271,9 +271,9 @@ export class CombinedDiskFactory {
       volumes: vmiLikeWrapper?.getVolumes() || [],
       dataVolumeTemplates: getDataVolumeTemplates(asVM(vmLikeEntity)),
       dataVolumes: getLoadedData(datavolumes, []),
-      pvcs: getLoadedData(pvcs),
+      pvcs: pvcs || [],
       dataVolumesLoading: !isLoaded(datavolumes),
-      pvcsLoading: !isLoaded(pvcs),
+      pvcsLoading: true,
       namespace: getNamespace(vmLikeEntity),
     });
   };
