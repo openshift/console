@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd frontend
-yarn install
+
+if [ ! -d node_modules ]; then
+  yarn install
+fi
 
 function generateReport {
   yarn run cypress-postreport
