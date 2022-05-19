@@ -124,6 +124,9 @@ func main() {
 	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
 
+	telemetryFlags := serverconfig.MultiKeyValue{}
+	fs.Var(&telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
+
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
 	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
@@ -219,10 +222,9 @@ func main() {
 		klog.Infof("Setting user inactivity timout to %d seconds", *fInactivityTimeout)
 	}
 
-	consolePluginsMap := consolePluginsFlags.ToMap()
-	if len(consolePluginsMap) > 0 {
+	if len(consolePluginsFlags) > 0 {
 		klog.Infoln("The following console plugins are enabled:")
-		for pluginName := range consolePluginsMap {
+		for pluginName := range consolePluginsFlags {
 			klog.Infof(" - %s\n", pluginName)
 		}
 	}
@@ -245,13 +247,14 @@ func main() {
 		InactivityTimeout:         *fInactivityTimeout,
 		DevCatalogCategories:      *fDevCatalogCategories,
 		UserSettingsLocation:      *fUserSettingsLocation,
-		EnabledConsolePlugins:     consolePluginsMap,
+		EnabledConsolePlugins:     consolePluginsFlags,
 		PluginProxy:               *fPluginProxy,
 		QuickStarts:               *fQuickStarts,
 		AddPage:                   *fAddPage,
 		ProjectAccessClusterRoles: *fProjectAccessClusterRoles,
 		K8sProxyConfigs:           make(map[string]*proxy.Config),
 		K8sClients:                make(map[string]*http.Client),
+		Telemetry:                 telemetryFlags,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}

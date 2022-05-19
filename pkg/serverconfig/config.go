@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -19,21 +20,28 @@ import (
 type MultiKeyValue map[string]string
 
 func (mkv *MultiKeyValue) String() string {
-	return fmt.Sprint(*mkv)
+	keyValuePairs := []string{}
+	for k, v := range *mkv {
+		keyValuePairs = append(keyValuePairs, fmt.Sprintf("%s=%s", k, v))
+	}
+	sort.Strings(keyValuePairs)
+	return strings.Join(keyValuePairs, ", ")
 }
 
 func (mkv *MultiKeyValue) Set(value string) error {
-	kv := strings.SplitN(value, "=", 2)
-	if len(kv) != 2 {
-		return fmt.Errorf("invalid value string %s", value)
+	keyValuePairs := strings.Split(value, ",")
+	for _, keyValuePair := range keyValuePairs {
+		keyValuePair = strings.TrimSpace(keyValuePair)
+		if len(keyValuePair) == 0 {
+			continue
+		}
+		splitted := strings.SplitN(keyValuePair, "=", 2)
+		if len(splitted) != 2 {
+			return fmt.Errorf("invalid key value pair %s", keyValuePair)
+		}
+		(*mkv)[splitted[0]] = splitted[1]
 	}
-	emap := *mkv
-	emap[kv[0]] = kv[1]
 	return nil
-}
-
-func (mkv *MultiKeyValue) ToMap() map[string]string {
-	return map[string]string(*mkv)
 }
 
 // Parse configuration from
@@ -54,7 +62,7 @@ func Parse(fs *flag.FlagSet, args []string, envPrefix string) error {
 
 	configFile := fs.Lookup("config").Value.String()
 	if configFile != "" {
-		if err := SetFlagsFromConfig(fs, configFile); err != nil {
+		if err := SetFlagsFromConfigFile(fs, configFile); err != nil {
 			klog.Fatalf("Failed to load config: %v", err)
 			return err
 		}
@@ -69,8 +77,8 @@ func Parse(fs *flag.FlagSet, args []string, envPrefix string) error {
 	return nil
 }
 
-// SetFlagsFromConfig sets flag values based on a YAML config file.
-func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
+// SetFlagsFromConfigFile sets flag values based on a YAML config file.
+func SetFlagsFromConfigFile(fs *flag.FlagSet, filename string) (err error) {
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return err
@@ -82,6 +90,11 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 		return err
 	}
 
+	return SetFlagsFromConfig(fs, config)
+}
+
+// SetFlagsFromConfig sets flag values based on a YAML config.
+func SetFlagsFromConfig(fs *flag.FlagSet, config Config) (err error) {
 	if !(config.APIVersion == "console.openshift.io/v1beta1" || config.APIVersion == "console.openshift.io/v1") || config.Kind != "ConsoleConfig" {
 		return fmt.Errorf("unsupported version (apiVersion: %s, kind: %s), only console.openshift.io/v1 ConsoleConfig is supported", config.APIVersion, config.Kind)
 	}
@@ -103,6 +116,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	if err != nil {
 		return err
 	}
+	addTelemetry(fs, config.Telemetry)
 
 	return nil
 }
@@ -310,9 +324,15 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 	return alreadySet
 }
 
-func addPlugins(fs *flag.FlagSet, plugins map[string]string) {
+func addPlugins(fs *flag.FlagSet, plugins MultiKeyValue) {
 	for pluginName, pluginEndpoint := range plugins {
 		fs.Set("plugins", fmt.Sprintf("%s=%s", pluginName, pluginEndpoint))
+	}
+}
+
+func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
+	for key, value := range telemetry {
+		fs.Set("telemetry", fmt.Sprintf("%s=%s", key, value))
 	}
 }
 
