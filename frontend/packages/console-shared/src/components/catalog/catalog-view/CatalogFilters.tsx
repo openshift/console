@@ -19,7 +19,6 @@ type CatalogFiltersProps = {
   filterGroupCounts: CatalogFilterCounts;
   filterGroupMap: { [key: string]: CatalogItemAttribute };
   filterGroupsShowAll: { [key: string]: boolean };
-  catalogItemsCount: number;
   onFilterChange: (filterType: string, id: string, value: boolean) => void;
   onShowAllToggle: (groupName: string) => void;
 };
@@ -29,7 +28,6 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   filterGroupCounts,
   filterGroupMap,
   filterGroupsShowAll,
-  catalogItemsCount,
   onFilterChange,
   onShowAllToggle,
 }) => {
@@ -39,19 +37,6 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
       acc[groupName] = activeFilters[groupName];
       return acc;
     }, {});
-
-  const getFilterGroup = (filterGroup: CatalogFilter, groupName: string): CatalogFilter => {
-    const filterGroupKeys = Object.keys(filterGroup);
-
-    return filterGroupKeys.length > 0
-      ? _.omitBy(filterGroup, (filter, filterName) => {
-          const { label, active } = filter;
-          const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
-          const showFilter = label && (active || (count > 0 && catalogItemsCount !== count));
-          return !showFilter;
-        })
-      : {};
-  };
 
   const renderFilterItem = (filter: CatalogFilterItem, filterName: string, groupName: string) => {
     const { label, active } = filter;
@@ -75,8 +60,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   };
 
   const renderFilterGroup = (filterGroup: CatalogFilter, groupName: string) => {
-    const fg = getFilterGroup(filterGroup, groupName);
-    const filterGroupKeys = Object.keys(fg);
+    const filterGroupKeys = Object.keys(filterGroup);
     if (filterGroupKeys.length > 0) {
       const sortedFilterGroup = filterGroupKeys.sort().reduce<CatalogFilter>((acc, filterName) => {
         acc[filterName] = filterGroup[filterName];
