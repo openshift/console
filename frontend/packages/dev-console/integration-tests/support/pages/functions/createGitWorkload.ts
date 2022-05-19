@@ -49,7 +49,7 @@ export const createGitWorkloadIfNotExistsOnTopologyPage = (
     if ($body.find(topologyPO.emptyStateIcon).length) {
       cy.log(`Topology doesn't have workload "${componentName}", lets create it`);
       navigateTo(devNavigationMenu.Add);
-      createGitWorkload(gitUrl, componentName, resourceType);
+      createGitWorkload(gitUrl, componentName, resourceType, appName);
       topologyPage.verifyWorkloadInTopologyPage(componentName);
     } else {
       topologyPage.search(componentName);
