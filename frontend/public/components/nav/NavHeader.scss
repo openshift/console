@@ -1,3 +1,6 @@
+@import '~@patternfly/patternfly/sass-utilities/all';
+@import '../../style/vars';
+
 .oc-nav-header {
   border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
   padding: 0.6rem var(--pf-global--spacer--sm);
@@ -44,7 +47,9 @@
       color: var(--pf-global--Color--light-100);
       &.pf-m-md {
         font-size: $co-side-nav-section-font-size;
-        font-family: var(--pf-global--FontFamily--sans-serif); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
+        font-family: var(
+          --pf-global--FontFamily--sans-serif
+        ); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
       }
     }
 

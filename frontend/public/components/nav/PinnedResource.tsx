@@ -7,9 +7,12 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
 import { K8sModel, modelFor } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
-import { NavLinkComponent, ResourceClusterLink, ResourceNSLink, RootNavLink } from './items';
 
 import './PinnedResource.scss';
+import { NavLinkComponent } from './NavLink';
+import { NavLinkRoot } from './NavLinkRoot';
+import { NavLinkResourceNS } from './NavLinkResourceNS';
+import { NavLinkResourceCluster } from './NavLinkResourceCluster';
 
 type PinnedResourceProps = {
   resourceRef?: string;
@@ -143,10 +146,10 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
     tipText: duplicates ? `${label}: ${apiGroup || 'core'}/${apiVersion}` : null,
     id: resourceRef,
   };
-  const Component: NavLinkComponent = namespaced ? ResourceNSLink : ResourceClusterLink;
+  const Component: NavLinkComponent = namespaced ? NavLinkResourceNS : NavLinkResourceCluster;
   const previewRef = draggable ? (node: React.ReactElement) => preview(drop(node)) : null;
   return (
-    <RootNavLink
+    <NavLinkRoot
       dragRef={previewRef}
       data-test={draggable ? 'draggable-pinned-resource-item' : 'pinned-resource-item'}
       className={classNames('oc-pinned-resource', {
@@ -157,7 +160,7 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
       {...props}
     >
       <RemoveButton onChange={onChange} navResources={navResources} resourceRef={resourceRef} />
-    </RootNavLink>
+    </NavLinkRoot>
   );
 };
 

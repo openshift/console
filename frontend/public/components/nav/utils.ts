@@ -1,15 +1,22 @@
 import {
-  NavSection as PluginNavSection,
-  NavItem as PluginNavItem,
-  Separator,
+  isHrefNavItem,
+  isResourceNSNavItem,
+  isResourceClusterNavItem,
+  NavExtension,
+  isNavSection,
+  ExtensionK8sModel,
+  K8sModel,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { referenceForModel, referenceForExtensionModel } from '@console/internal/module/k8s';
+import { stripBasePath } from '../utils';
+import { NavLinkHref } from './NavLinkHref';
+import { NavLinkResourceNS } from './NavLinkResourceNS';
+import { NavLinkResourceCluster } from './NavLinkResourceCluster';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
 
-type NavItem = PluginNavSection | PluginNavItem | Separator;
-
-const itemDependsOnItem = (s1: NavItem, s2: NavItem): boolean => {
+const itemDependsOnItem = (s1: NavExtension, s2: NavExtension): boolean => {
   if (!s1.properties.insertBefore && !s1.properties.insertAfter) {
     return false;
   }
@@ -18,10 +25,10 @@ const itemDependsOnItem = (s1: NavItem, s2: NavItem): boolean => {
   return before.includes(s2.properties.id) || after.includes(s2.properties.id);
 };
 
-const isPositioned = (item: NavItem, allItems: NavItem[]): boolean =>
+const isPositioned = (item: NavExtension, allItems: NavExtension[]): boolean =>
   !!allItems.find((i) => itemDependsOnItem(item, i));
 
-const findIndexForItem = (item: NavItem, currentItems: NavItem[]): number => {
+const findIndexForItem = (item: NavExtension, currentItems: NavExtension[]): number => {
   const { insertBefore, insertAfter } = item.properties;
   let index = -1;
   const before = toArray(insertBefore);
@@ -42,7 +49,10 @@ const findIndexForItem = (item: NavItem, currentItems: NavItem[]): number => {
   return index;
 };
 
-const insertItem = (item: NavItem, currentItems: NavItem[]): void => {
+const insertItem = (
+  item: LoadedExtension<NavExtension>,
+  currentItems: LoadedExtension<NavExtension>[],
+): void => {
   const index = findIndexForItem(item, currentItems);
   if (index >= 0) {
     currentItems.splice(index, 0, item);
@@ -51,7 +61,10 @@ const insertItem = (item: NavItem, currentItems: NavItem[]): void => {
   }
 };
 
-const insertPositionedItems = (insertItems: NavItem[], currentItems: NavItem[]): void => {
+const insertPositionedItems = (
+  insertItems: LoadedExtension<NavExtension>[],
+  currentItems: LoadedExtension<NavExtension>[],
+): void => {
   if (insertItems.length === 0) {
     return;
   }
@@ -70,15 +83,15 @@ const insertPositionedItems = (insertItems: NavItem[], currentItems: NavItem[]):
 };
 
 export const getSortedNavItems = (
-  navItems: LoadedExtension<NavItem>[],
-): LoadedExtension<NavItem>[] => {
+  navItems: LoadedExtension<NavExtension>[],
+): LoadedExtension<NavExtension>[] => {
   const sortedItems = navItems.filter((item) => !isPositioned(item, navItems));
   const positionedItems = navItems.filter((item) => isPositioned(item, navItems));
   insertPositionedItems(positionedItems, sortedItems);
   return sortedItems;
 };
 
-export const sortExtensionItems = <E extends NavItem>(
+export const sortExtensionItems = <E extends NavExtension>(
   extensionItems: LoadedExtension<E>[],
 ): LoadedExtension<E>[] => {
   // Mapped by item id
@@ -107,7 +120,7 @@ export const sortExtensionItems = <E extends NavItem>(
     }, []);
   };
 
-  const sortItems = (preSorted: NavItem[], itemsToSort: NavItem[]): NavItem[] => {
+  const sortItems = (preSorted: NavExtension[], itemsToSort: NavExtension[]): NavExtension[] => {
     if (itemsToSort.length < 2) {
       preSorted.push(...itemsToSort);
       return;
@@ -142,4 +155,36 @@ export const sortExtensionItems = <E extends NavItem>(
   sortItems(sortedItems, extensionItems);
 
   return sortedItems;
+};
+
+export const isTopLevelNavItem = (e: LoadedExtension<NavExtension>) =>
+  isNavSection(e) || !e.properties.section;
+
+export const isNavExtensionActive = (
+  e: LoadedExtension<NavExtension>,
+  location: string,
+  namespace: string,
+) => {
+  return (
+    (isHrefNavItem(e) && NavLinkHref.isActive(e.properties, location)) ||
+    (isResourceNSNavItem(e) && NavLinkResourceNS.isActive(e.properties, location, namespace)) ||
+    (isResourceClusterNavItem(e) && NavLinkResourceCluster.isActive(e.properties, location))
+  );
+};
+
+export const matchesPath = (path: string, prefix: string): boolean =>
+  path === prefix || path.startsWith(`${prefix}/`);
+
+export const matchesModel = (path: string, model: K8sModel): boolean =>
+  model && matchesPath(path, referenceForModel(model));
+
+export const matchesExtensionModel = (path: string, model: ExtensionK8sModel): boolean =>
+  model && matchesPath(path, referenceForExtensionModel(model));
+
+export const stripNS = (path: string): string => {
+  path = stripBasePath(path);
+  return path
+    .replace(/^\/?k8s\//, '')
+    .replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '')
+    .replace(/^\//, '');
 };

@@ -72,6 +72,13 @@ export type NavSection = ExtensionDeclaration<
   }
 >;
 
+export type NavExtension =
+  | NavSection
+  | Separator
+  | HrefNavItem
+  | ResourceNSNavItem
+  | ResourceClusterNavItem;
+
 // Type guards
 
 export const isHrefNavItem = (e: Extension): e is HrefNavItem =>
@@ -94,3 +101,6 @@ export const isNavItem = (e: Extension): e is NavItem =>
 
 export const isNavItemOrSeparator = (e: Extension): e is NavItem | Separator =>
   isNavItem(e) || isSeparator(e);
+
+export const isNavExtension = (e: Extension): e is NavExtension =>
+  isNavItem(e) || isSeparator(e) || isNavSection(e);

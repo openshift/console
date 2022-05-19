@@ -1,28 +1,24 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { NavGroup } from '@patternfly/react-core';
-import { useExtensions } from '@console/plugin-sdk';
-import {
-  Separator,
-  NavItem,
-  isNavSection,
-  NavSection as PluginNavSection,
-  isNavItem,
-  useActivePerspective,
-} from '@console/dynamic-plugin-sdk';
+import { NavGroup, NavList } from '@patternfly/react-core';
 import { modelFor } from '@console/internal/module/k8s';
 import PinnedResource from './PinnedResource';
-import { usePinnedResources } from '@console/shared';
-import { getSortedNavItems } from './navSortUtils';
-import AdminNav from './admin-nav';
 import withDragDropContext from '../utils/drag-drop-context';
-import { PluginNavItems } from './items';
+import {
+  useActivePerspective,
+  isNavSection,
+  isNavItem,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
+import { usePinnedResources } from '@console/shared';
+import { PluginNavItems } from './PluginNavItems';
+import { useNavExtensionsForPerspective } from './useNavExtensionForPerspective';
+import { getSortedNavItems, isTopLevelNavItem } from './utils';
 
-import './_perspective-nav.scss';
+import './PerspectiveNav.scss';
 
 const PerspectiveNav: React.FC<{}> = () => {
-  const [perspective] = useActivePerspective();
-  const allItems = useExtensions<PluginNavSection | NavItem | Separator>(isNavSection, isNavItem);
+  const [activePerspective] = useActivePerspective();
+  const allItems = useNavExtensionsForPerspective(activePerspective);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const [validPinnedResources, setValidPinnedResources] = React.useState<string[]>([]);
   const [isDragged, setIsDragged] = React.useState(false);
@@ -33,17 +29,9 @@ const PerspectiveNav: React.FC<{}> = () => {
   }, [setValidPinnedResources, pinnedResources]);
 
   const orderedNavItems = React.useMemo(() => {
-    const topLevelItems = allItems.filter(
-      (s) => s.properties.perspective === perspective && !(s as NavItem).properties.section,
-    );
+    const topLevelItems = allItems.filter(isTopLevelNavItem);
     return getSortedNavItems(topLevelItems);
-  }, [allItems, perspective]);
-
-  // Until admin perspective is contributed through extensions, render static
-  // `AdminNav` and any additional plugin nav items.
-  if (perspective === 'admin') {
-    return <AdminNav pluginNavItems={orderedNavItems} />;
-  }
+  }, [allItems]);
 
   const getPinnedItems = (): React.ReactElement[] =>
     validPinnedResources.map((resource, idx) => (
@@ -62,16 +50,38 @@ const PerspectiveNav: React.FC<{}> = () => {
   const NavGroupWithDnd = withDragDropContext(() => (
     <NavGroup
       title=""
+      aria-label="pinned resources"
       className={classNames('no-title', { 'oc-perspective-nav--dragging': isDragged })}
     >
       {getPinnedItems()}
     </NavGroup>
   ));
 
-  return (
-    <div className="oc-perspective-nav" data-test-id="dev-perspective-nav">
+  // We have to use NavList if there is at least one extension that will render an <li>, but we
+  // can't use NavList if there are no extensions that render an <li>
+  const hasListItem = orderedNavItems.some(
+    (item) => (isNavSection(item) && item.properties.name) || isNavItem(item),
+  );
+
+  const content = (
+    <>
       <PluginNavItems items={orderedNavItems} />
       {pinnedResourcesLoaded && validPinnedResources?.length > 0 ? <NavGroupWithDnd /> : null}
+    </>
+  );
+
+  return hasListItem ? (
+    <NavList
+      className="oc-perspective-nav"
+      title=""
+      aria-label="main nav"
+      data-test-id={`${activePerspective}-perspective-nav`}
+    >
+      {content}
+    </NavList>
+  ) : (
+    <div className="oc-perspective-nav" data-test-id={`${activePerspective}-perspective-nav`}>
+      {content}
     </div>
   );
 };
