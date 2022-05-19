@@ -1,4 +1,5 @@
 import { RouteKind, SecretKind } from '@console/internal/module/k8s';
+import { PAC_GH_APP_NAME } from '../components/pac/const';
 
 export const sampleSecretData: SecretKind = {
   kind: 'Secret',
@@ -9,7 +10,10 @@ export const sampleSecretData: SecretKind = {
     uid: '9bedeb70-32fa-4942-baf1-aca03dfe9d6c',
     resourceVersion: '243043',
     creationTimestamp: '2022-04-22T07:38:23Z',
-    annotations: { appName: 'pac-app', appUrl: 'https://github.com/apps/pac-app' },
+    annotations: {
+      appName: PAC_GH_APP_NAME,
+      appUrl: 'https://github.com/apps/pipelines-ci-clustername',
+    },
     managedFields: [
       {
         manager: 'Mozilla',

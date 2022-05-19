@@ -3,6 +3,8 @@ import {
   Alert,
   AlertActionCloseButton,
   FormGroup,
+  Hint,
+  HintBody,
   Text,
   TextVariants,
 } from '@patternfly/react-core';
@@ -94,6 +96,20 @@ const PacOverview: React.FC<PacOverviewProps> = ({
                 </Trans>
               )}
             </Alert>
+          )}
+          {!showSuccessAlert && annotations?.appUrl && (
+            <Hint>
+              <HintBody>
+                <Trans t={t} ns="pipelines-plugin">
+                  Use this{' '}
+                  <a href={annotations.appUrl} target="_blank" rel="noopener noreferrer">
+                    link
+                  </a>{' '}
+                  to install the GitHub Application to your repositories in your
+                  organization/account.
+                </Trans>
+              </HintBody>
+            </Hint>
           )}
           <br />
           <FormGroup fieldId="app-overview">
