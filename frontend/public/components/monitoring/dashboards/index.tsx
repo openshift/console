@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
   CardActions,
+  Tooltip,
 } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
@@ -70,6 +71,11 @@ import { getActivePerspective, getAllVariables } from './monitoring-dashboard-ut
 
 const NUM_SAMPLES = 30;
 
+const intervalVariableRegExps = ['__interval', '__rate_interval', '__auto_interval_[a-z]+'];
+
+const isIntervalVariable = (itemKey: string): boolean =>
+  _.some(intervalVariableRegExps, (re) => itemKey?.match(new RegExp(`\\$${re}`, 'g')));
+
 const evaluateTemplate = (
   template: string,
   variables: ImmutableMap<string, Variable>,
@@ -79,27 +85,25 @@ const evaluateTemplate = (
     return undefined;
   }
 
-  // Handle the special `$__interval` and `$__rate_interval` variables
+  const range: Variable = { value: `${Math.floor(timespan / 1000)}s` };
+  const allVariables = {
+    ...variables.toJS(),
+    __range: range,
+    /* eslint-disable camelcase */
+    __range_ms: range,
+    __range_s: range,
+    /* eslint-enable camelcase */
+  };
+
+  // Handle the special "interval" variables
   const intervalMS = timespan / NUM_SAMPLES;
   const intervalMinutes = Math.floor(intervalMS / 1000 / 60);
   // Use a minimum of 5m to make sure we have enough data to perform `irate` calculations, which
   // require 2 data points each. Otherwise, there could be gaps in the graph.
   const interval: Variable = { value: `${Math.max(intervalMinutes, 5)}m` };
-  const range: Variable = { value: `${Math.floor(timespan / 1000)}s` };
-  const allVariables = {
-    ...variables.toJS(),
-    __interval: interval,
-    __range: range,
-    /* eslint-disable camelcase */
-    __range_ms: range,
-    __range_s: range,
-    __rate_interval: interval,
-    /* eslint-enable camelcase */
-
-    // This is last to ensure it is applied after all other variable substitutions (because the
-    // other variable substitutions may result in "$__auto_interval_*" being inserted)
-    '__auto_interval_[a-z]+': interval,
-  };
+  // Add these last to ensure they are applied after other variable substitutions (because the other
+  // variable substitutions may result in interval variables like $__interval being inserted)
+  intervalVariableRegExps.forEach((k) => (allVariables[k] = interval));
 
   let result = template;
   _.each(allVariables, (v, k) => {
@@ -163,7 +167,11 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       onTypeaheadInputChanged={(v) => setFilterText(v.toLowerCase())}
       placeholderText={
         Object.keys(items).includes(selectedKey) ? (
-          items[selectedKey]
+          isIntervalVariable(selectedKey) ? (
+            'Auto interval'
+          ) : (
+            items[selectedKey]
+          )
         ) : (
           <>
             <RedExclamationCircleIcon /> {t('public~Select a dashboard from the dropdown')}
@@ -178,11 +186,18 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   );
 };
 
-const VariableOption = ({ itemKey }) => (
-  <SelectOption key={itemKey} value={itemKey}>
-    {itemKey === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? 'All' : itemKey}
-  </SelectOption>
-);
+const VariableOption = ({ itemKey }) =>
+  isIntervalVariable(itemKey) ? (
+    <Tooltip content={itemKey}>
+      <SelectOption key={itemKey} value={itemKey}>
+        Auto interval
+      </SelectOption>
+    </Tooltip>
+  ) : (
+    <SelectOption key={itemKey} value={itemKey}>
+      {itemKey === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? 'All' : itemKey}
+    </SelectOption>
+  );
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace }) => {
   const { t } = useTranslation();
