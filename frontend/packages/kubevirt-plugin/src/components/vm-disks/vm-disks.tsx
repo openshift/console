@@ -16,11 +16,7 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  PersistentVolumeClaimKind,
-  TemplateKind,
-} from '@console/internal/module/k8s';
+import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
@@ -41,7 +37,7 @@ import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMIKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { dimensifyHeader, getResource } from '../../utils';
+import { dimensifyHeader, getLoadedData, getResource } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
 import { VMTabProps } from '../vms/types';
@@ -57,7 +53,7 @@ const getStoragesData = ({
   pvcs,
 }: {
   vmLikeEntity: VMGenericLikeEntityKind;
-  pvcs: FirehoseResult<K8sResourceKind[]>;
+  pvcs: PersistentVolumeClaimKind[];
   datavolumes: FirehoseResult<V1alpha1DataVolume[]>;
 }): StorageBundle[] => {
   const combinedDiskFactory = CombinedDiskFactory.initializeFromVMLikeEntity(
@@ -165,7 +161,7 @@ type VMDisksProps = VMTabProps & {
   vmi?: VMIKind;
 };
 
-export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi }) => {
+export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, pvcs }) => {
   const commonTemplate = new VMTemplateWrapper(vmLikeEntity).asResource(true);
   const isCommon = isCommonTemplate(commonTemplate);
   const vmTemplateQuery = getVMTemplateNamespacedName(vmLikeEntity);
@@ -210,12 +206,12 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi }) => {
 
   const flatten: Flatten<{
     datavolumes: V1alpha1DataVolume[];
-    pvcs: PersistentVolumeClaimKind[];
-  }> = ({ datavolumes, pvcs }) =>
+    persistentvolumeclaims: PersistentVolumeClaimKind[];
+  }> = ({ datavolumes, persistentvolumeclaims }) =>
     getStoragesData({
       vmLikeEntity: !isVMRunning ? vmLikeEntity : vmi,
       datavolumes,
-      pvcs,
+      pvcs: getLoadedData(persistentvolumeclaims) || pvcs,
     });
 
   const createFn = () =>
@@ -252,6 +248,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi }) => {
         columnClasses: diskTableColumnClasses,
         showGuestAgentHelp: true,
         pendingChangesDisks,
+        pvcs,
       }}
       hideLabelFilter
     />
@@ -295,7 +292,7 @@ export const VMDisksAndFileSystemsPage: React.FC<VMTabProps> = (props) => {
 
   return (
     <>
-      <VMDisks {...props} vmi={vmi} />
+      <VMDisks {...props} vmi={vmi} pvcs={pvcs} />
       <FileSystemsList vmi={vmi} vmStatusBundle={vmStatusBundle} />
     </>
   );
