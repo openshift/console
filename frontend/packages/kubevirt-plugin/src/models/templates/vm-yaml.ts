@@ -10,10 +10,10 @@ metadata:
   name: vm-example
   labels:
     app: vm-example
-    os.template.kubevirt.io/fedora31: 'true'
+    os.template.kubevirt.io/fedora35: 'true'
     workload.template.kubevirt.io/server: 'true'
   annotations:
-    name.os.template.kubevirt.io/fedora31: Fedora 31
+    name.os.template.kubevirt.io/fedora35: Fedora 35
     description: VM example
 spec:
   running: false
@@ -22,7 +22,7 @@ spec:
       labels:
         kubevirt.io/domain: vm-example
         vm.kubevirt.io/name: vm-example
-        os.template.kubevirt.io/fedora31: 'true'
+        os.template.kubevirt.io/fedora35: 'true'
         workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
@@ -42,6 +42,7 @@ spec:
           interfaces:
             - masquerade: {}
               name: default
+              model: virtio
           networkInterfaceMultiqueue: true
           rng: {}
         resources:
@@ -54,7 +55,7 @@ spec:
       terminationGracePeriodSeconds: 0
       volumes:
         - containerDisk:
-            image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest'
+            image: 'quay.io/containerdisks/fedora:35'
           name: containerdisk
         - cloudInitNoCloud:
             userData: |-
