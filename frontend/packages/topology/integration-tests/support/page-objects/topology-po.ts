@@ -272,6 +272,16 @@ export const topologyPO = {
     nodejsDevfiles: '[data-test="item-name-Basic Node.js-Devfiles"]',
     nodejsSamples: '[data-test="item-name-Basic Node.js-Samples"]',
   },
+  toolbarFilterPO: {
+    deployment: '[data-test="Deployment"]',
+    deploymentConfig: '[data-test="DeploymentConfig"]',
+    deploymentSpan: '[data-test="Deployment"] span',
+    deploymentConfigSpan: '[data-test="DeploymentConfig"] span',
+    deploymentCheckbox: '[data-test="Deployment"] input',
+    deploymentConfigCheckbox: '[data-test="DeploymentConfig"] input',
+    deploymentApp: '#nodejs-ex-git-app-Deployment',
+    deploymentConfigApp: '#nodejs-ex-git-app-DeploymentConfig',
+  },
 };
 
 export const typeOfWorkload = (workload: string) => {

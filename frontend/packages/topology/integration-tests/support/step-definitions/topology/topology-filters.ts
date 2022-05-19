@@ -38,3 +38,26 @@ When('user unchecks the Expand', () => {
 Then('user will see the Knative Services checkbox is disabled', () => {
   topologyPage.verifyExpandDisabled();
 });
+
+Then('user will see Deployment and DeploymentConfig options with 1 associated with it', () => {
+  cy.get(topologyPO.toolbarFilterPO.deployment).should('be.visible');
+  cy.get(topologyPO.toolbarFilterPO.deploymentConfig).should('be.visible');
+  cy.get(topologyPO.toolbarFilterPO.deploymentSpan).contains('Deployment (1)');
+  cy.get(topologyPO.toolbarFilterPO.deploymentConfigSpan).contains('DeploymentConfig (1)');
+});
+
+Then('user clicks on Deployment checkbox to see only the deployment type workload', () => {
+  cy.get(topologyPO.toolbarFilterPO.deploymentCheckbox).check();
+  cy.get(topologyPO.toolbarFilterPO.deploymentApp).should('be.visible');
+  cy.get(topologyPO.toolbarFilterPO.deploymentConfigApp).should('not.exist');
+});
+
+Then(
+  'user clicks on DeploymentConfig checkbox to see only the deploymentconfig type workload',
+  () => {
+    cy.get(topologyPO.toolbarFilterPO.deploymentCheckbox).uncheck();
+    cy.get(topologyPO.toolbarFilterPO.deploymentConfigCheckbox).check();
+    cy.get(topologyPO.toolbarFilterPO.deploymentConfigApp).should('be.visible');
+    cy.get(topologyPO.toolbarFilterPO.deploymentApp).should('not.exist');
+  },
+);
