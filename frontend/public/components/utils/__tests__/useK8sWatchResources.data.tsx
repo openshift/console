@@ -5,7 +5,7 @@ export const podData = {
   kind: 'Pod',
   metadata: {
     name: 'my-pod',
-    namespace: 'default',
+    namespace: 'my-namespace',
     resourceVersion: '123',
   },
 };
@@ -18,7 +18,7 @@ export const podList = {
     kind: 'Pod',
     metadata: {
       name,
-      namespace: 'default',
+      namespace: 'my-namespace',
       resourceVersion: '123',
     },
   })),
