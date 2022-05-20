@@ -170,7 +170,7 @@ describe('processReduxId', () => {
     // And it could not be the same because optional parameter could change!
     expect(firstTime).not.toBe(secondTime);
     // But at least the data should be the same
-    expect(firstTime.data).not.toBe(secondTime.data); // TODO
+    expect(firstTime.data).toBe(secondTime.data);
   });
 
   it('should return different data for isList true and false, but same data when calling multiple times', () => {});
@@ -914,10 +914,10 @@ describe('Firehose', () => {
     expect(propsChildA.resources.pods.data[0]).toBe(propsChildB.resources.pods.data[0]);
 
     // pod 'resource' object (with data, loaded, etc.) object
-    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Should be the same?
-    expect(propsChildA.data).not.toBe(propsChildB.pod.data); // Should be the same?
-    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Should be the same?
-    expect(propsChildA.resources.pod.data).not.toBe(propsChildB.resources.pod.data); // Should be the same?
+    expect(propsChildA.pod).not.toBe(propsChildB.pod); // Could be the same?
+    expect(propsChildA.data).toBe(propsChildB.data);
+    expect(propsChildA.resources.pod).not.toBe(propsChildB.resources.pod); // Could be the same?
+    expect(propsChildA.resources.pod.data).toBe(propsChildB.resources.pod.data);
   });
 });
 
@@ -1070,7 +1070,7 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
 
     // And they also should return the same instance for lists
-    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
+    expect(lastFirehoseChildProps.pods.data).toBe(lastUseResourcesHookResult.pods.data);
     expect(lastFirehoseChildProps.pods.data[0]).toBe(lastUseResourcesHookResult.pods.data[0]);
     expect(lastFirehoseChildProps.pods.data[1]).toBe(lastUseResourcesHookResult.pods.data[1]);
     expect(lastFirehoseChildProps.pods.data[2]).toBe(lastUseResourcesHookResult.pods.data[2]);
@@ -1155,7 +1155,7 @@ describe('Firehose together with useK8sWatchResources', () => {
     expect(lastFirehoseChildProps.pod.data).toEqual(lastUseResourcesHookResult.pod.data);
 
     // And they also should return the same instance for lists
-    expect(lastFirehoseChildProps.pods.data).not.toBe(lastUseResourcesHookResult.pods.data); // Could be the same!
+    expect(lastFirehoseChildProps.pods.data).toBe(lastUseResourcesHookResult.pods.data);
     expect(lastFirehoseChildProps.pods.data[0]).toBe(lastUseResourcesHookResult.pods.data[0]);
     expect(lastFirehoseChildProps.pods.data[1]).toBe(lastUseResourcesHookResult.pods.data[1]);
     expect(lastFirehoseChildProps.pods.data[2]).toBe(lastUseResourcesHookResult.pods.data[2]);
@@ -1245,15 +1245,23 @@ describe('Firehose together with useK8sWatchResources', () => {
       expect(lastUseResourcesHookResult.pods).toEqual({
         loaded: true,
         loadError: '',
-        data: ['my-pod1', 'my-pod2', 'my-pod3'].map((name) => ({
-          apiVersion: 'v1',
-          kind: 'Pod',
-          metadata: {
-            name,
-            namespace: 'my-namespace',
-            resourceVersion: '123',
+        data: {
+          '(my-namespace)-my-pod1': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
           },
-        })),
+          '(my-namespace)-my-pod2': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+          '(my-namespace)-my-pod3': {
+            apiVersion: 'v1',
+            kind: 'Pod',
+            metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
+          },
+        },
       });
     });
 
@@ -1337,23 +1345,15 @@ describe('Firehose together with useK8sWatchResources', () => {
       // and should return an array.
       expect(lastFirehoseChildProps.pods).toEqual({
         kind: 'Pod',
-        data: {
-          '(my-namespace)-my-pod1': {
-            apiVersion: 'v1',
-            kind: 'Pod',
-            metadata: { name: 'my-pod1', namespace: 'my-namespace', resourceVersion: '123' },
+        data: ['my-pod1', 'my-pod2', 'my-pod3'].map((name) => ({
+          apiVersion: 'v1',
+          kind: 'Pod',
+          metadata: {
+            name,
+            namespace: 'my-namespace',
+            resourceVersion: '123',
           },
-          '(my-namespace)-my-pod2': {
-            apiVersion: 'v1',
-            kind: 'Pod',
-            metadata: { name: 'my-pod2', namespace: 'my-namespace', resourceVersion: '123' },
-          },
-          '(my-namespace)-my-pod3': {
-            apiVersion: 'v1',
-            kind: 'Pod',
-            metadata: { name: 'my-pod3', namespace: 'my-namespace', resourceVersion: '123' },
-          },
-        },
+        })),
         loaded: true,
         loadError: '',
         filters: {},
