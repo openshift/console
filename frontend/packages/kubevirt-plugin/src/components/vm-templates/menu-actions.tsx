@@ -6,6 +6,7 @@ import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
 import { VMWizardMode, VMWizardName } from '../../constants/vm';
 import { CustomizeSourceFunction } from '../../hooks/use-customize-source-modal';
 import { SupportModalFunction } from '../../hooks/use-support-modal';
+import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VirtualMachineModel } from '../../models';
 import { getNamespace } from '../../selectors';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
@@ -48,6 +49,7 @@ const newTemplateFromCommon: MenuAction = (kind, vmTemplate, { namespace }) => (
     template: vmTemplate.variants[0],
   }),
   accessReview: asAccessReview(kind, vmTemplate, 'patch'),
+  isDisabled: new VMTemplateWrapper(vmTemplate.variants[0]).getWorkloadProfile() === 'saphana',
 });
 
 const vmTemplateCreateVMAction: MenuAction = (
