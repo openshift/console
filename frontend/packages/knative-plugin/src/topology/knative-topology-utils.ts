@@ -76,6 +76,7 @@ export const getKnNodeModelProps = (type: string) => {
     case NodeType.EventSource:
     case NodeType.EventSink:
     case NodeType.EventSourceKafka:
+    case NodeType.KafkaSink:
       return {
         width: NODE_WIDTH,
         height: NODE_HEIGHT,
