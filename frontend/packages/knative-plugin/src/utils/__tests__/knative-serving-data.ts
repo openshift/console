@@ -352,7 +352,7 @@ const eventSourceData = {
     schedule: '* * * * *',
   },
   [EventSources.PingSource]: {
-    jsonData: '',
+    data: '',
     schedule: '* * * * *',
   },
   [EventSources.ApiServerSource]: {
