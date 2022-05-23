@@ -1111,16 +1111,20 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
               </dd>
               <dt>{t('olm~Status reason')}</dt>
               <dd>{status ? status.message : t('olm~Unknown')}</dd>
-              <dt>{t('olm~Operator Deployments')}</dt>
-              {spec.install.spec.deployments.map(({ name }) => (
-                <dd key={name}>
-                  <ResourceLink
-                    name={name}
-                    kind="Deployment"
-                    namespace={operatorNamespaceFor(props.obj)}
-                  />
-                </dd>
-              ))}
+              {!_.isEmpty(spec.install.spec?.deployments) && (
+                <>
+                  <dt>{t('olm~Operator Deployments')}</dt>
+                  {spec.install.spec.deployments.map(({ name }) => (
+                    <dd key={name}>
+                      <ResourceLink
+                        name={name}
+                        kind="Deployment"
+                        namespace={operatorNamespaceFor(props.obj)}
+                      />
+                    </dd>
+                  ))}
+                </>
+              )}
               {!_.isEmpty(permissions) && (
                 <>
                   <dt>{t('olm~Operator ServiceAccounts')}</dt>
