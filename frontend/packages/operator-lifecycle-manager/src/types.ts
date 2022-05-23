@@ -118,7 +118,7 @@ export type ClusterServiceVersionKind = {
   spec: {
     install: {
       strategy: 'Deployment';
-      spec: {
+      spec?: {
         permissions: {
           serviceAccountName: string;
           rules: { apiGroups: string[]; resources: string[]; verbs: string[] }[];
@@ -129,7 +129,7 @@ export type ClusterServiceVersionKind = {
     customresourcedefinitions?: { owned?: CRDDescription[]; required?: CRDDescription[] };
     apiservicedefinitions?: { owned?: APIServiceDefinition[]; required?: APIServiceDefinition[] };
     replaces?: string;
-    installModes: { type: InstallModeType; supported: boolean }[];
+    installModes?: { type: InstallModeType; supported: boolean }[];
     displayName?: string;
     description?: string;
     provider?: { name: string };
