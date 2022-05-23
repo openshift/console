@@ -23,7 +23,7 @@ import {
 } from '../../module/k8s';
 import { configureClusterUpstreamModal, labelsModal } from '../modals';
 
-const editLabelsModal = (e, props) => {
+export const editLabelsModal = (e, props) => {
   e.preventDefault();
   labelsModal(props);
 };
