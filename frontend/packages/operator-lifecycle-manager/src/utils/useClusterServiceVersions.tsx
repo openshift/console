@@ -10,7 +10,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { getImageForCSVIcon } from '@console/shared';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../components';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind } from '../types';
+import { ProvidedAPI, ClusterServiceVersionKind } from '../types';
 
 type ExpandCollapseDescriptionProps = {
   children: React.ReactNode;
@@ -43,10 +43,10 @@ const normalizeClusterServiceVersions = (
   const formatTileDescription = (csvDescription: string): string =>
     `## ${t('olm~Operator description')}\n${csvDescription}`;
 
-  const operatorProvidedAPIs: CatalogItem[] = _.flatten(
-    clusterServiceVersions.map((csv) => providedAPIsForCSV(csv).map((desc) => ({ ...desc, csv }))),
-  )
-    .reduce(
+  const operatorProvidedAPIs: CatalogItem[] = _.flatten<
+    ProvidedAPI & { csv: ClusterServiceVersionKind }
+  >(clusterServiceVersions.map((csv) => providedAPIsForCSV(csv).map((desc) => ({ ...desc, csv }))))
+    .reduce<(ProvidedAPI & { csv: ClusterServiceVersionKind })[]>(
       (all, cur) =>
         all.find((v) => referenceForProvidedAPI(v) === referenceForProvidedAPI(cur))
           ? all
@@ -57,7 +57,7 @@ const normalizeClusterServiceVersions = (
       const { creationTimestamp } = desc.csv.metadata;
       const uid = `${desc.csv.metadata.uid}-${desc.displayName}`;
       const { description } = desc;
-      const provider = desc.csv.spec.provider.name;
+      const provider = desc.csv.spec.provider?.name;
       const operatorName = desc.csv.spec.displayName;
       const supportUrl =
         desc.csv.metadata.annotations?.['marketplace.openshift.io/support-workflow'];
