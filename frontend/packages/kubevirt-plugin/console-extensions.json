@@ -34,18 +34,6 @@
     }
   },
   {
-    "type": "console.navigation/section",
-    "properties": {
-      "id": "virtualization",
-      "name": "%kubevirt-plugin~Virtualization%",
-      "insertAfter": "workloads"
-    },
-    "flags": {
-      "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
-    }
-  },
-  {
     "type": "console.navigation/href",
     "properties": {
       "id": "virtualizationoverview",
@@ -761,7 +749,8 @@
       "insertAfter": "workloads"
     },
     "flags": {
-      "required": ["KUBEVIRT"]
+      "required": ["KUBEVIRT"],
+      "disallowed": ["KUBEVIRT_DYNAMIC"]
     }
   }
 ]
