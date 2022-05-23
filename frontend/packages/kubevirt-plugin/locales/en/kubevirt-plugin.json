@@ -1,5 +1,4 @@
 {
-  "Virtualization": "Virtualization",
   "Overview": "Overview",
   "VirtualMachines": "VirtualMachines",
   "Templates": "Templates",
@@ -11,6 +10,7 @@
   "VM templates": "VM templates",
   "With Data upload form": "With Data upload form",
   "Hardware Devices": "Hardware Devices",
+  "Virtualization": "Virtualization",
   "Access mode": "Access mode",
   "Add": "Add",
   "Access and Volume modes should follow storage feature matrix": "Access and Volume modes should follow storage feature matrix",
