@@ -6,6 +6,7 @@ import {
   K8sResourceCommon,
   PodsAdapterDataType,
 } from '@console/dynamic-plugin-sdk/src';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import { PodKind, podPhase, referenceForModel } from '@console/internal/module/k8s';
@@ -83,7 +84,9 @@ export const getKnativeSidepanelPodsAdapterSection = (
   return undefined;
 };
 
-export const getKnativeSidepanelDetailsTab = (element: GraphElement) => {
+export const useKnativeSidepanelDetailsTab: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   if (
     [
       TYPE_EVENT_PUB_SUB_LINK,
@@ -95,34 +98,46 @@ export const getKnativeSidepanelDetailsTab = (element: GraphElement) => {
     ].includes(element.getType())
   ) {
     const knObj = element.getData().resources;
-    return <KnativeOverviewDetails item={knObj} />;
+    const section = <KnativeOverviewDetails item={knObj} />;
+    return [section, true, undefined];
   }
-  return undefined;
+  return [undefined, true, undefined];
 };
 
-export const getKnativeSidePanelEventSinkDetailsTab = (element: GraphElement) => {
+export const useKnativeSidePanelEventSinkDetailsTab: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   if (element.getType() === NodeType.EventSink) {
     const knObj = element.getData().resources;
-    return <KnativeEventSinkOverviewDetails item={knObj} />;
+    const section = <KnativeEventSinkOverviewDetails item={knObj} />;
+    return [section, true, undefined];
   }
-  return undefined;
+  return [undefined, true, undefined];
 };
 
-export const getKnativeSidepanelRoutesSection = (element: GraphElement) => {
+export const useKnativeSidepanelRoutesSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   if (element.getType() === NodeType.KnService || element.getType() === NodeType.Revision) {
     const knObj = element.getData().resources;
     const resource = getResource(element);
-    return (
+    const section = (
       <TopologySideBarTabSection>
         <KSRoutesOverviewList ksroutes={knObj.ksroutes} resource={resource} />
       </TopologySideBarTabSection>
     );
+    return [section, true, undefined];
   }
-  return undefined;
+  return [undefined, true, undefined];
 };
 
-export const getKnativeSidepanelEventSourcesSection = (element: GraphElement) => {
-  if (![TYPE_KNATIVE_SERVICE, TYPE_SINK_URI].includes(element.getType())) return undefined;
+export const useKnativeSidepanelEventSourcesSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (![TYPE_KNATIVE_SERVICE, TYPE_SINK_URI].includes(element.getType())) {
+    return [undefined, true, undefined];
+  }
   const knObj = element.getData().resources;
-  return <EventSourcesOverviewList items={knObj.eventSources} />;
+  const section = <EventSourcesOverviewList items={knObj.eventSources} />;
+  return [section, true, undefined];
 };

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { PodDetailsList, PodResourceSummary } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
@@ -26,8 +27,11 @@ const PodSideBarDetails: React.FC<PodSideBarDetailsProps> = ({ pod }) => {
   );
 };
 
-export const getPodSideBarDetails = (element: GraphElement) => {
+export const usePodSideBarDetails: DetailsTabSectionExtensionHook = (element: GraphElement) => {
   const resource = getResource<PodKind>(element);
-  if (!resource || resource.kind !== PodModel.kind) return undefined;
-  return <PodSideBarDetails pod={resource} />;
+  if (!resource || resource.kind !== PodModel.kind) {
+    return [undefined, true, undefined];
+  }
+  const section = <PodSideBarDetails pod={resource} />;
+  return [section, true, undefined];
 };

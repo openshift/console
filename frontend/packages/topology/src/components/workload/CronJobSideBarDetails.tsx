@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { DetailsItem, ResourceSummary, Timestamp } from '@console/internal/components/utils';
 import { CronJobModel } from '@console/internal/models';
 import { CronJobKind } from '@console/internal/module/k8s';
@@ -47,8 +48,11 @@ const CronJobSideBarDetails: React.FC<CronJobSideBarDetailsProps> = ({ cronjob }
   );
 };
 
-export const getCronJobSideBarDetails = (element: GraphElement) => {
+export const useCronJobSideBarDetails: DetailsTabSectionExtensionHook = (element: GraphElement) => {
   const resource = getResource<CronJobKind>(element);
-  if (!resource || resource.kind !== CronJobModel.kind) return undefined;
-  return <CronJobSideBarDetails cronjob={resource} />;
+  if (!resource || resource.kind !== CronJobModel.kind) {
+    return [undefined, true, undefined];
+  }
+  const section = <CronJobSideBarDetails cronjob={resource} />;
+  return [section, true, undefined];
 };

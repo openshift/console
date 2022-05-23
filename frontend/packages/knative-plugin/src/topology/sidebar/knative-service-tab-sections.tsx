@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { AdapterDataType } from '@console/dynamic-plugin-sdk/src';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { BuildConfigData, useBuildConfigsWatcher } from '@console/shared';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
@@ -13,15 +14,20 @@ import {
   TriggersOverviewList,
 } from './KnativeOverviewSections';
 
-export const getKnativeSidepanelRevisionSection = (element: GraphElement) => {
-  if (element.getType() !== NodeType.KnService) return undefined;
+export const useKnativeSidepanelRevisionSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (element.getType() !== NodeType.KnService) {
+    return [undefined, true, undefined];
+  }
   const knObj = element.getData().resources;
   const resource = getResource(element);
-  return (
+  const section = (
     <TopologySideBarTabSection>
       <RevisionsOverviewList revisions={knObj.revisions} service={resource} />
     </TopologySideBarTabSection>
   );
+  return [section, true, undefined];
 };
 
 export const getKnativeSidepanelBuildAdapterSection = (
@@ -32,25 +38,39 @@ export const getKnativeSidepanelBuildAdapterSection = (
   return { resource, provider: useBuildConfigsWatcher };
 };
 
-export const getKnativeSidepanelSubscriptionsSection = (element: GraphElement) => {
-  if (element.getType() !== NodeType.KnService) return undefined;
+export const useKnativeSidepanelSubscriptionsSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (element.getType() !== NodeType.KnService) {
+    return [undefined, true, undefined];
+  }
   const knObj = element.getData().resources;
   const { subscribers } = knObj;
   const [channels] = getSubscriberByType(subscribers);
-  return <SubscriptionsOverviewList subscriptions={channels} />;
+  const section = <SubscriptionsOverviewList subscriptions={channels} />;
+  return [section, true, undefined];
 };
 
-export const getKnativeSidepanelTriggersSection = (element: GraphElement) => {
-  if (element.getType() !== NodeType.KnService) return undefined;
+export const useKnativeSidepanelTriggersSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (element.getType() !== NodeType.KnService) {
+    return [undefined, true, undefined];
+  }
   const knObj = element.getData().resources;
   const { subscribers } = knObj;
   const [, brokers] = getSubscriberByType(subscribers);
-  return <TriggersOverviewList subscriptions={brokers} />;
+  const section = <TriggersOverviewList subscriptions={brokers} />;
+  return [section, true, undefined];
 };
 
-export const getKnativeSidepanelDomainMappingsSection = (element: GraphElement) => {
-  if (element.getType() !== NodeType.KnService) return undefined;
+export const useKnativeSidepanelDomainMappingsSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (element.getType() !== NodeType.KnService) {
+    return [undefined, true, undefined];
+  }
   const knObj = element.getData().resources;
-
-  return <DomainMappingsOverviewList items={knObj.domainMappings} />;
+  const section = <DomainMappingsOverviewList items={knObj.domainMappings} />;
+  return [section, true, undefined];
 };

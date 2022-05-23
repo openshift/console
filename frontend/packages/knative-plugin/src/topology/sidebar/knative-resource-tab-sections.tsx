@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import {
   SidebarSectionHeading,
   ResourceLink,
@@ -55,16 +56,19 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
   );
 };
 
-export const getKnativeSidepanelEventSinkSection = (element: GraphElement) => {
+export const useKnativeSidepanelEventSinkSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   if (element.getType() === NodeType.EventSink) {
     const resource = getResource(element);
-    return resource ? (
+    const section = resource ? (
       <TopologySideBarTabSection>
         <EventSinkSourceSection resource={resource} />
       </TopologySideBarTabSection>
     ) : null;
+    return [section, true, undefined];
   }
-  return undefined;
+  return [undefined, true, undefined];
 };
 
 export const usePodsForEventSink = (resource: K8sResourceKind, data) => {

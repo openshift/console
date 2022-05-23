@@ -642,8 +642,8 @@
     "properties": {
       "id": "topology-tab-section-vm-details",
       "tab": "topology-side-bar-tab-details",
-      "section": {
-        "$codeRef": "topologySidebar.getVmSidePanelDetailsTabSection"
+      "provider": {
+        "$codeRef": "topologySidebar.useVmSidePanelDetailsTabSection"
       }
     },
     "flags": {

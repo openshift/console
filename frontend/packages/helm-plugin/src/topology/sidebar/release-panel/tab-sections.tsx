@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
 import { getResource } from '@console/topology/src/utils';
@@ -28,19 +29,30 @@ const HelmReleasePanelDetailsTabSection: React.FC<{ element: GraphElement }> = (
   );
 };
 
-export const getHelmReleasePanelDetailsTabSection = (element: GraphElement) => {
-  if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
-  return <HelmReleasePanelDetailsTabSection element={element} />;
+export const useHelmReleasePanelDetailsTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (element.getType() !== TYPE_HELM_RELEASE) {
+    return [undefined, true, undefined];
+  }
+  const section = <HelmReleasePanelDetailsTabSection element={element} />;
+  return [section, true, undefined];
 };
 
-export const getHelmReleasePanelResourceTabSection = (element: GraphElement) => {
-  if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
+export const useHelmReleasePanelResourceTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (element.getType() !== TYPE_HELM_RELEASE) {
+    return [undefined, true, undefined];
+  }
   const { manifestResources } = element.getData().data;
   const resource = getResource(element);
-  if (!manifestResources || !resource?.metadata) return null;
+  if (!manifestResources || !resource?.metadata) {
+    return [null, true, undefined];
+  }
   const { namespace } = resource.metadata;
 
-  return (
+  const section = (
     <div className="overview__sidebar-pane-body">
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
@@ -48,10 +60,16 @@ export const getHelmReleasePanelResourceTabSection = (element: GraphElement) => 
       />
     </div>
   );
+  return [section, true, undefined];
 };
 
-export const getHelmReleasePanelReleaseNotesTabSection = (element: GraphElement) => {
-  if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
+export const useHelmReleasePanelReleaseNotesTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
+  if (element.getType() !== TYPE_HELM_RELEASE) {
+    return [undefined, true, undefined];
+  }
   const { releaseNotes } = element.getData().data;
-  return <TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} />;
+  const section = <TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} />;
+  return [section, true, undefined];
 };

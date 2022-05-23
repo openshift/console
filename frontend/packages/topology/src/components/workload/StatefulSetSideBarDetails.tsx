@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { StatefulSetModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -19,8 +20,13 @@ const StatefulSetSideBarDetails: React.FC<StatefulSetSideBarDetailsProps> = ({ s
   </div>
 );
 
-export const getStatefulSetSideBarDetails = (element: GraphElement) => {
+export const useStatefulSetSideBarDetails: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const resource = getResource(element);
-  if (!resource || resource.kind !== StatefulSetModel.kind) return undefined;
-  return <StatefulSetSideBarDetails ss={resource} />;
+  if (!resource || resource.kind !== StatefulSetModel.kind) {
+    return [undefined, true, undefined];
+  }
+  const section = <StatefulSetSideBarDetails ss={resource} />;
+  return [section, true, undefined];
 };

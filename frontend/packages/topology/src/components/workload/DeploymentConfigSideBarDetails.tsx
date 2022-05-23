@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { DeploymentConfigDetailsList } from '@console/internal/components/deployment-config';
 import {
   LoadingInline,
@@ -48,8 +49,13 @@ const DeploymentConfigSideBarDetails: React.FC<DeploymentConfigSideBarDetailsPro
   );
 };
 
-export const getDeploymentConfigSideBarDetails = (element: GraphElement) => {
+export const useDeploymentConfigSideBarDetails: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const resource = getResource(element);
-  if (!resource || resource.kind !== DeploymentConfigModel.kind) return undefined;
-  return <DeploymentConfigSideBarDetails dc={resource} />;
+  if (!resource || resource.kind !== DeploymentConfigModel.kind) {
+    return [undefined, true, undefined];
+  }
+  const section = <DeploymentConfigSideBarDetails dc={resource} />;
+  return [section, true, undefined];
 };
