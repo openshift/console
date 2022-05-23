@@ -147,7 +147,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
           className="odc-topology-list-view__group-children"
           aria-label={t('topology~{{kindLabel}} {{label}}', {
             label: item.getLabel(),
-            kindLabel: modelFor(kind).label,
+            kindLabel: modelFor(kind)?.label ?? kind,
           })}
           id={`${item.getId()}-${item.getLabel()}`}
           isHidden={false}
