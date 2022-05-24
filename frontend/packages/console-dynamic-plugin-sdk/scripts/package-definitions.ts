@@ -75,7 +75,7 @@ export const getCorePackage: GetPackageDefinition = (
   },
   filesToCopy: {
     ...commonFiles,
-    'generated/doc': 'doc',
+    docs: 'docs',
   },
 });
 

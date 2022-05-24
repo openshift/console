@@ -9,9 +9,13 @@ released, installed and upgraded independently from each other. To ensure compat
 other plugins, each plugin must declare its dependencies using [semantic version](https://semver.org/)
 ranges.
 
-See the
-[OpenShift Console Dynamic Plugins feature page](https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md)
-for a high level overview of dynamic plugins in relation to OLM operators and cluster administration.
+## Related Documentation
+*[Extension Documentation](./docs/console-extensions.md)* - Detailed documentation of every available console extension point.
+
+*[API Documentation](./docs/api.md)* - Detailed documentation of hooks, components, and other APIs provided by this package. 
+
+*[OpenShift Console Dynamic Plugins feature page](https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md)* - A high level overview of dynamic plugins in relation to OLM operators and cluster administration.
+
 
 Example project structure:
 

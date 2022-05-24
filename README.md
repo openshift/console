@@ -469,3 +469,26 @@ We support the latest versions of the following browsers:
 - Firefox
 
 IE 11 and earlier is not supported.
+
+## Frontend Packages
+- [ceph-storage-plugin](./frontend/packages/ceph-storage-plugin/README.md)
+
+- [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
+[[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)
+[[Console Extensions]](./frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md)
+
+- [console-plugin-shared](./frontend/packages/console-plugin-shared/README.md)
+
+- [dev-console](./frontend/packages/dev-console/README.md)
+
+- [eslint-plugin-console](./frontend/packages/eslint-plugin-console/README.md)
+
+- [integration-tests-cypress](./frontend/packages/integration-tests-cypress/README.md)
+
+- [knative-plugin](./frontend/packages/knative-plugin/README.md)
+
+- operator-lifecycle-manager
+[[Descriptors README]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/README.md)
+[[Descriptors API Reference]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md)
+
+- [rhoas-plugin](./frontend/packages/rhoas-plugin/README.md)
