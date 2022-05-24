@@ -134,6 +134,7 @@ const KMSConnection: React.FC<EncryptionProps> = ({
               infraType={infraType}
               className="odf-security-kms-connection"
               isWizardFlow
+              isMCG={isMCG}
             />
           )
         }
@@ -234,7 +235,7 @@ export const Encryption: React.FC<EncryptionProps> = ({
                   kms={kms}
                   dispatch={dispatch}
                   infraType={infraType}
-                  isMCG={isMCG}
+                  isMCG={!!isMCG}
                 />
               </>
             )
