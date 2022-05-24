@@ -6682,12 +6682,14 @@ mapbox-gl-function@^1.2.1:
 mapbox-gl-shaders@mapbox/mapbox-gl-shaders#de2ab007455aa2587c552694c68583f94c9f2747:
   version "1.0.0"
   resolved "https://codeload.github.com/mapbox/mapbox-gl-shaders/tar.gz/de2ab007455aa2587c552694c68583f94c9f2747"
+  integrity "sha512-EsGBaXdsEGmV/pcRlLcH9RyN4KgegS/sYAFseYR3auueT5lXA0DDY/GUgzVSSEGXSXCM0C/xJ1O10UM7O5JP+Q=="
   dependencies:
     brfs "^1.4.0"
 
 mapbox-gl-style-spec@mapbox/mapbox-gl-style-spec#83b1a3e5837d785af582efd5ed1a212f2df6a4ae:
   version "8.8.0"
   resolved "https://codeload.github.com/mapbox/mapbox-gl-style-spec/tar.gz/83b1a3e5837d785af582efd5ed1a212f2df6a4ae"
+  integrity "sha512-ua6GjNGpETd9guhdlWTWZSiIR0Akf68000Zq3TwyQJIMyNkmJ5NwrxnVG5fbcz35jPZLYzD6LbLnzaSiu9vHJA=="
   dependencies:
     csscolorparser "~1.0.2"
     jsonlint-lines-primitives "~1.6.0"
