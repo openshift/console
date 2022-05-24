@@ -53,7 +53,9 @@ import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core'; // P
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
-import '@patternfly/patternfly/patternfly-theme-dark.css'; // load dark theme here as MiniCssExtractPlugin ignores load order of sass and dark theme must load after all other css
+// load dark theme here as MiniCssExtractPlugin ignores load order of sass and dark theme must load after all other css
+import '@patternfly/patternfly/patternfly-theme-dark.css';
+import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 const breakpointMD = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
