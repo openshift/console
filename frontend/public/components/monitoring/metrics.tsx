@@ -53,7 +53,6 @@ import {
   toggleGraphs,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
-import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL } from '../graphs/helpers';
 import {
@@ -130,6 +129,8 @@ export const ToggleGraph: React.FC<{}> = () => {
   );
 };
 
+const metricsFilter = (a: string, b: string): boolean => b.includes(a);
+
 const MetricsDropdown: React.FC<{}> = () => {
   const { t } = useTranslation();
 
@@ -190,7 +191,7 @@ const MetricsDropdown: React.FC<{}> = () => {
 
   return (
     <Dropdown
-      autocompleteFilter={fuzzyCaseInsensitive}
+      autocompleteFilter={metricsFilter}
       disabled={error !== undefined}
       id="metrics-dropdown"
       items={items || {}}
