@@ -25,6 +25,29 @@
   }
 }
 
+.co-label.pf-c-label {
+  --pf-c-label__text--MaxWidth: 100%;
+}
+
+.co-label-group {
+  max-width: 100%;
+}
+
+.co-label,
+.co-label-group > *,
+.co-label-group li,
+.co-label-group ul {
+  min-width: 0;
+}
+
+.co-label__key,
+.co-label__value {
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 tags-input {
   min-width: 100%;
 }
@@ -44,11 +67,19 @@ tags-input .host:active {
 }
 
 tags-input .tags {
+  align-content: flex-start;
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
   border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
   color: $input-color;
   cursor: text;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pf-global--spacer--xs);
   line-height: $co-m-label-line-height;
+
+  > span {
+    display: contents;
+  }
 }
 
 .modal-body tags-input .tags {

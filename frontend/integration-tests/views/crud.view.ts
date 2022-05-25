@@ -51,7 +51,7 @@ export const clickTab = async (name: string) => {
   await navTabFor(name).click();
 };
 
-export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
+export const labelsForRow = (name: string) => rowForName(name).$$('.co-label');
 export const textFilter = $('[data-test-id="item-filter"]');
 export const actions = Object.freeze({
   labels: 'Edit labels',

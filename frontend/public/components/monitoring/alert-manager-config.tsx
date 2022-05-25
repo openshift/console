@@ -10,6 +10,8 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
+  Label as PfLabel,
+  LabelGroup as PfLabelGroup,
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -196,21 +198,19 @@ const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
   const list = _.map(labels, (value, key) => {
     count++;
     return key === 'default' ? (
-      <span key="default" className="co-m-label__value">
-        {t('public~All (default receiver)')}
-      </span>
+      <span key="default">{t('public~All (default receiver)')}</span>
     ) : (
-      <React.Fragment key={`label-${key}-${value}`}>
-        <span className="co-m-label__key">{key}</span>
-        <span className="co-m-label__eq">=</span>
-        <span className="co-m-label__value">{value}</span>
+      <PfLabel className="co-label" key={`label-${key}-${value}`}>
+        <span className="co-label__key">{key}</span>
+        <span className="co-label__eq">=</span>
+        <span className="co-label__value">{value}</span>
         {count < _.size(labels) && <>,&nbsp;</>}
-      </React.Fragment>
+      </PfLabel>
     );
   });
   return (
     <div>
-      <div className="co-m-label co-m-label--expand">{list}</div>
+      <PfLabelGroup className="co-label-group">{list}</PfLabelGroup>
     </div>
   );
 };

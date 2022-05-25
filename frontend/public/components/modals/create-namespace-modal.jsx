@@ -231,7 +231,7 @@ const CreateNamespaceModalWithTranslation = connect(
                 </label>
                 <div className="modal-body__field">
                   <SelectorInput
-                    labelClassName="co-text-namespace"
+                    labelClassName="co-m-namespace"
                     onChange={this.onLabels}
                     tags={[]}
                   />

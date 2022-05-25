@@ -1,3 +1,6 @@
+
+@import '~@patternfly/patternfly/components/Label/label.scss';
+
 $kinds: (
   alert: $color-alert-dark,
   alertmanager: $color-alertmanager-dark,
@@ -28,13 +31,52 @@ $kinds: (
   silence: $color-alert-dark,
 );
 
+$kindsToModifier: (
+  alert: 'blue',
+  alertmanager: 'orange',
+  alertrule: 'purple',
+  clusterserviceversion: 'blue',
+  configmap: 'purple',
+  daemonset: 'blue',
+  deployment: 'blue',
+  deploymentconfig: 'blue',
+  ingress: 'purple',
+  job: 'blue',
+  machine: 'purple',
+  machineautoscaler: 'purple',
+  machineconfig: 'purple',
+  machineconfigpool: 'purple',
+  machinedeployment: 'purple',
+  machineset: 'purple',
+  metricstarget: 'blue',
+  namespace: 'green',
+  node: 'purple',
+  pod: 'cyan',
+  project: 'green',
+  replicaset: 'blue',
+  replicationcontroller: 'blue',
+  secret: 'orange',
+  service: 'green',
+  serviceaccount: 'purple' ,
+  servicemonitor: 'green',
+  silence: 'blue',
+);
+
 @each $kind, $color in $kinds {
-  .co-text-#{$kind} {
+  .co-text-#{$kind}:where(:not([class*='co-m-'])) {
     color: $color;
 
     &:link, &:visited, &:hover, &:active {
       color: $color;
       text-decoration: none;
+    }
+  }
+}
+
+@each $kind, $color in $kindsToModifier {
+  .co-label {
+    &.co-m-#{$kind} {
+      @extend .pf-m-#{$color};
     }
   }
 }

@@ -145,7 +145,7 @@ describe('Using OLM descriptor components', () => {
   it('pre-populates Labels field', () => {
     getOperandFormFieldElement(LABELS_FIELD_ID).should('exist');
     getOperandFormFieldLabel(LABELS_FIELD_ID).should('have.text', 'Labels');
-    cy.get(`#${LABELS_FIELD_ID}_field .tag-item__content`).should(
+    cy.get(`#${LABELS_FIELD_ID}_field .tag-item-content`).should(
       'have.text',
       `automatedTestName=${testName}`,
     );
