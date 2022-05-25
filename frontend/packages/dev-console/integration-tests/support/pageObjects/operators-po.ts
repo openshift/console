@@ -44,6 +44,7 @@ export const operatorsPO = {
       '[data-test="container-security-operator-redhat-operators-openshift-marketplace"]',
     shipwrightOperator:
       '[data-test="shipwright-operator-community-operators-openshift-marketplace"]',
+    redisOperatorCard: '[data-test="redis-operator-community-operators-openshift-marketplace"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',

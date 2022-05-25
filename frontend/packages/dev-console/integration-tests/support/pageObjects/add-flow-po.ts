@@ -188,6 +188,9 @@ export const catalogPO = {
       AddHostButton: '#root_ingress_hosts_add-btn',
     },
   },
+  operatorBacked: {
+    name: '#root_metadata_name',
+  },
   s2I: {
     gitRepoUrl: '[data-test-id="git-form-input-url"]',
     builderImageVersion: '#form-dropdown-image-tag-field',

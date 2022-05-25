@@ -11,6 +11,7 @@ import {
 } from '@console/dev-console/integration-tests/support/constants/global';
 import {
   createGitWorkload,
+  createOperatorBacked,
   verifyAndInstallOperator,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
@@ -27,6 +28,7 @@ import {
   verifyMultipleWorkloadInTopologyPage,
 } from '../../pages/functions/chart-functions';
 import {
+  createServiceBindingConnect,
   topologyActions,
   topologyHelper,
   topologyPage,
@@ -330,6 +332,13 @@ When('user fills the {string} form and clicks Create', (optionName: string) => {
   createWorkloadUsingOptions(optionName);
 });
 
+When(
+  'user fills the {string} form with yaml at {string} and clicks Create',
+  (optionName: string, yamlLocation: string) => {
+    createWorkloadUsingOptions(optionName, yamlLocation);
+  },
+);
+
 When('user selects Python Builder Image and clicks Create Application', () => {
   cy.get(chartAreaPO.filterItem).type('python');
   cy.get(chartAreaPO.pythonBuilderImage).click();
@@ -382,3 +391,52 @@ Then(
     ]);
   },
 );
+
+Given('user has created namespace {string}', (projectName: string) => {
+  Cypress.env('NAMESPACE', projectName);
+  projectNameSpace.selectOrCreateProject(`${projectName}`);
+});
+
+Given('user has installed Redis Operator', () => {
+  verifyAndInstallOperator(operators.RedisOperator);
+});
+
+Given(
+  'user has created a operator backed service of {string} operator named {string}',
+  (operatorName, name: string) => {
+    navigateTo(devNavigationMenu.Add);
+    createOperatorBacked(operatorName, name);
+  },
+);
+
+Given(
+  'user has created a operator backed service {string} from yaml {string}',
+  (name: string, location: string) => {
+    createWorkloadUsingOptions('Operator Backed', location);
+    topologyHelper.verifyWorkloadInTopologyPage(name);
+  },
+);
+
+Given(
+  'user has created service binding connnector {string} between {string} and {string}',
+  (bindingName, node1, node2: string) => {
+    createServiceBindingConnect(bindingName, node1, node2);
+  },
+);
+
+When('user clicks on service binding connector', () => {
+  cy.byLegacyTestID('edge-handler')
+    .should('be.visible')
+    .click();
+});
+
+When('user clicks on the service binding name {string} at the sidebar', (bindingName: string) => {
+  cy.byLegacyTestID(`${bindingName}`)
+    .should('be.visible')
+    .click();
+});
+
+Then('user will see {string} Status on Service binding details page', (status: string) => {
+  cy.byTestID('resource-status').should('have.text', status);
+  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
+});

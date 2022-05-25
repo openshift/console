@@ -4,3 +4,4 @@ export * from './createHelmRelease';
 export * from './installOperatorOnCluster';
 export * from './createChannel';
 export * from './knativeSubscriptions';
+export * from './createOperatorBacked';

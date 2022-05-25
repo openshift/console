@@ -398,3 +398,26 @@ export const topologyListPage = {
     cy.get(id).click({ force: true });
   },
 };
+
+export const createServiceBindingConnect = (
+  bindingName: string = 'testing',
+  senderNode: string,
+  recieverNode: string,
+) => {
+  topologyPage.rightClickOnNode(senderNode);
+  cy.byTestActionID('Create Service Binding')
+    .should('be.visible')
+    .click();
+  cy.get('#form-input-name-field')
+    .should('be.visible')
+    .clear()
+    .type(bindingName);
+  cy.get('#form-ns-dropdown-service-field')
+    .should('be.visible')
+    .click();
+  cy.get(`#${recieverNode}-link`)
+    .should('be.visible')
+    .click();
+  cy.get('#confirm-action').click();
+  cy.get('[data-test-id="edge-handler"]', { timeout: 10000 }).should('be.visible');
+};
