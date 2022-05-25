@@ -246,5 +246,5 @@ const _usePrometheusPoll: (
 export const usePrometheusPoll: UsePrometheusPoll = (props) => {
   const result = _usePrometheusPoll(props);
   // unify order with the rest of API
-  return [result[0], result[2], result[1]];
+  return [result[0], !result[2], result[1]];
 };

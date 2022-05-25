@@ -22,7 +22,7 @@ import { usePrometheusPoll, PrometheusEndpoint } from '@openshift-console/dynami
 export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
 
-  const [result, loading, error] = usePrometheusPoll({
+  const [result, loaded, error] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
     query: 'sum(http_requests_total)',
   });
@@ -62,7 +62,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
                 {error}
               </Alert>
             )}
-            {loading && (
+            {!loaded && (
               <Alert
                 variant="info"
                 data-testid="prometheus-loading"
@@ -71,7 +71,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
                 {t('Prometheus loading')}
               </Alert>
             )}
-            {!error && !loading && (
+            {!error && loaded && (
               <Alert data-testid="prometheus-data" title={t('Prometheus data')}>
                 {JSON.stringify(result.data)}
               </Alert>
