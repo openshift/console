@@ -166,7 +166,7 @@ export type PrometheusPollProps = {
 
 export type UsePrometheusPoll = (
   props: PrometheusPollProps,
-) => [PrometheusResponse, boolean, unknown];
+) => [PrometheusResponse | undefined, boolean, unknown];
 
 export type WatchK8sResource = {
   /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
