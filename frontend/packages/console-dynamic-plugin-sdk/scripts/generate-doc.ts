@@ -34,7 +34,12 @@ console.log('Generating Console plugin documentation');
 renderTemplate('scripts/templates/console-extensions.md.ejs', {
   extensions: getConsoleExtensions()
     // Sort extensions by their `type` value
-    .sort((a, b) => a.type.localeCompare(b.type))
+    .sort((a, b) => {
+      if (a.isDeprecated !== b.isDeprecated) {
+        return a.isDeprecated ? 1 : -1;
+      }
+      return a.type.localeCompare(b.type);
+    })
     // Sort extension properties by their optional modifier
     .map<ExtensionTypeInfo>((e) => ({
       ...e,
@@ -44,6 +49,7 @@ renderTemplate('scripts/templates/console-extensions.md.ejs', {
     })),
   printComments: (docComments: string[]) => printJSDocComments(docComments).replace(/\n/g, '<br/>'),
   escapeTableCell: (value: string) => value.replace(/\|/g, '\\|'),
+  safeHeaderLink: (value: string) => value.replace(/[./]/g, ''),
 });
 
 type ComponentInfo = {

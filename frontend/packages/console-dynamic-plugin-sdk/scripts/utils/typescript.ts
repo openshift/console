@@ -62,6 +62,19 @@ export const getUnionMemberTypes = (typeChecker: ts.TypeChecker, node: ts.Node) 
 export const getJSDoc = (node: ts.Node): ts.JSDoc[] =>
   tsu.canHaveJsDoc(node) ? tsu.getJsDoc(node) : [];
 
-export const getJSDocComments = (node: ts.Node) => _.compact(getJSDoc(node).map((d) => d.comment));
+export const hasDeprecationJSDoc = (node: ts.Declaration): boolean => {
+  return getJSDoc(node).some((d) => d.tags && d.tags.find((t) => t.tagName.text === 'deprecated'));
+};
+
+export const getJSDocComments = (node: ts.Declaration) => {
+  return _.compact(
+    getJSDoc(node).map((d) => {
+      if (d.tags) {
+        return d.tags.map((t) => `@${t.tagName.text} ${t.comment}`).join('\n');
+      }
+      return d.comment;
+    }),
+  );
+};
 
 export const printJSDocComments = (docComments: string[]) => docComments.join('\n\n').trim();

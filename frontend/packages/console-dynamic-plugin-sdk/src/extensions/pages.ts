@@ -43,7 +43,10 @@ export type ResourceDetailsPage = ExtensionDeclaration<
   ResourcePageProperties & {}
 >;
 
-/** Adds new resource tab page to Console router. */
+/**
+ * @deprecated - Use `console.tab/horizontalNav` instead
+ * Adds new resource tab page to Console router.
+ */
 export type ResourceTabPage = ExtensionDeclaration<
   'console.page/resource/tab',
   Omit<ResourcePageProperties, 'component'> & {
@@ -77,5 +80,6 @@ export const isResourceListPage = (e: Extension): e is ResourceListPage =>
 export const isResourceDetailsPage = (e: Extension): e is ResourceDetailsPage =>
   e.type === 'console.page/resource/details';
 
+/** @deprecated - use `console.tab/horizontalNav` */
 export const isResourceTabPage = (e: Extension): e is ResourceTabPage =>
   e.type === 'console.page/resource/tab';

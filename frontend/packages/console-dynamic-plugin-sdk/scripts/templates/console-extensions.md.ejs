@@ -1,8 +1,8 @@
 # OpenShift Console Extension Types
 
 <%# Table of contents _%>
-<% extensions.map((e) => e.type).forEach((type, index) => { _%>
-<%- index + 1 %>. [`<%- type %>`](#<%- type %>)
+<% extensions.forEach((e, index) => { _%>
+<%- index + 1 %>. <%- e.isDeprecated ? '[DEPRECATED]' : '' %> [`<%- e.type %>`](#<%- safeHeaderLink(e.type) %>)
 <% }); _%>
 
 <%# Generate one section per extension type _%>
@@ -11,7 +11,7 @@
 
 ## `<%- e.type %>`
 
-### Summary
+### Summary <%- e.isDeprecated ? '[DEPRECATED]' : '' %>
 
 <%- printComments(e.docComments) || '(not available)' %>
 

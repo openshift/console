@@ -7,6 +7,7 @@ import {
   getUnionMemberTypes,
   getJSDocComments,
   printJSDocComments,
+  hasDeprecationJSDoc,
 } from './typescript';
 
 export type ConsoleTypeDeclarations = Record<'CodeRef' | 'EncodedCodeRef', ts.Declaration>;
@@ -14,6 +15,8 @@ export type ConsoleTypeDeclarations = Record<'CodeRef' | 'EncodedCodeRef', ts.De
 type ContainsJSDoc = {
   /** JSDoc comments attached to the corresponding AST node. */
   docComments: string[];
+  /** If a JSDoc tag of @deprecated is present on the item */
+  isDeprecated: boolean;
 };
 
 type ExtensionPropertyInfo = {
@@ -73,13 +76,12 @@ const parseExtensionTypeInfo = (
   }
 
   const consoleExtensionType = typeArgT.literal.text;
-  const consoleExtensionProperties: ExtensionPropertyInfo[] = [];
-
-  typeChecker
+  const consoleExtensionProperties = typeChecker
     .getTypeFromTypeNode(typeArgP)
     .getProperties()
-    .forEach((p) => {
-      consoleExtensionProperties.push({
+    .map<ExtensionPropertyInfo>((p) => {
+      const declarations = _.head(p.declarations);
+      return {
         name: p.getName(),
         // TODO(vojtech): using ts.TypeFormatFlags.MultilineObjectLiterals flag doesn't seem
         // to insert newline characters as expected, should revisit this issue in the future
@@ -93,8 +95,9 @@ const parseExtensionTypeInfo = (
         ),
         // eslint-disable-next-line no-bitwise
         optional: !!(p.flags & ts.SymbolFlags.Optional),
-        docComments: getJSDocComments(_.head(p.declarations)),
-      });
+        docComments: getJSDocComments(declarations),
+        isDeprecated: hasDeprecationJSDoc(declarations),
+      };
     });
 
   return {
@@ -102,6 +105,7 @@ const parseExtensionTypeInfo = (
     type: consoleExtensionType,
     properties: consoleExtensionProperties,
     docComments: getJSDocComments(typeDeclaration),
+    isDeprecated: hasDeprecationJSDoc(typeDeclaration),
   };
 };
 
