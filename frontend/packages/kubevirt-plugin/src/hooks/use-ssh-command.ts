@@ -1,10 +1,9 @@
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { InfrastructureModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { NodeModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getInfrastructureAPIURL } from '@console/shared/src';
-import { getCloudInitValues } from '../components/ssh-service/SSHForm/ssh-form-utils';
-import { VMIKind, VMKind } from '../types';
-import useSSHService from './use-ssh-service';
+import { getCloudInitValues, TARGET_PORT } from '../components/ssh-service/SSHForm/ssh-form-utils';
+import { VMIKind } from '../types';
+import { useSSHService2 } from './use-ssh-service';
 
 export type useSSHCommandResult = {
   command: string;
@@ -14,28 +13,34 @@ export type useSSHCommandResult = {
   loadingRoutesError: string;
 };
 
-const useSSHCommand = (vm: VMKind | VMIKind): useSSHCommandResult => {
-  const { sshServices } = useSSHService(vm);
-  const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
-    InfrastructureModel,
-    'cluster',
-  );
-  const infrastuctureApiUrl =
-    infrastructureLoaded && !infrastructureError && getInfrastructureAPIURL(infrastructure);
-  const apiHostname = infrastuctureApiUrl && new URL(infrastuctureApiUrl).hostname;
+// based on dynamic-plugin solution: https://github.com/kubevirt-ui/kubevirt-plugin/pull/478
+const useSSHCommand = (vmi: VMIKind): useSSHCommandResult => {
+  const [sshService] = useSSHService2(vmi);
+  const [node, loaded, error] = useK8sWatchResource<K8sResourceKind>({
+    kind: NodeModel.kind,
+    isList: false,
+    name: vmi?.status?.nodeName,
+  });
+
+  const servicePort = sshService?.spec?.ports?.find(
+    (port) => parseInt(port.targetPort, 10) === TARGET_PORT,
+  )?.nodePort;
+  const nodeInternalIPAddress = node?.status?.addresses?.find(
+    (address) => address.type === 'InternalIP',
+  )?.address;
+
   const consoleHostname = window.location.hostname; // fallback to console hostname
 
-  const user = getCloudInitValues(vm, 'user');
-  const command = `ssh ${user && `${user}@`}${apiHostname || consoleHostname} -p ${
-    sshServices?.port
-  }`;
+  const user = getCloudInitValues(vmi, 'user');
+  const command = `ssh ${user && `${user}@`}${nodeInternalIPAddress ||
+    consoleHostname} -p ${servicePort}`;
 
   return {
     command,
     user,
-    port: sshServices?.port,
-    isRoutesLoaded: infrastructureLoaded,
-    loadingRoutesError: infrastructureError,
+    port: servicePort,
+    isRoutesLoaded: loaded,
+    loadingRoutesError: error,
   };
 };
 

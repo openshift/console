@@ -25,8 +25,8 @@ export const inputValidation = {
 export const PORT = 22000;
 export const TARGET_PORT = 22;
 
-export const getCloudInitValues = (vm: VMKind | VMIKind, field: string) => {
-  const volume = vm?.spec?.template?.spec?.volumes?.find(({ name }) => name === CLOUDINIT_DISK);
+export const getCloudInitValues = (vmi: VMIKind, field: string) => {
+  const volume = vmi?.spec?.volumes?.find(({ name }) => name === CLOUDINIT_DISK);
   const selector =
     (volume?.hasOwnProperty(CLOUD_INIT_CONFIG_DRIVE) && CLOUD_INIT_CONFIG_DRIVE) ||
     (volume?.hasOwnProperty(CLOUD_INIT_NO_CLOUD) && CLOUD_INIT_NO_CLOUD);
