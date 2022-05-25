@@ -32,10 +32,7 @@ const CHECK_UPDATE_WAIT = 300000;
 const enableDemoPlugin = (enable: boolean) => {
   // find console demo plugin and enable it
   cy.visit('k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins');
-  cy.url().should(
-    'include',
-    'k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
-  );
+  cy.get('tbody').should('be.visible');
   cy.get('.co-resource-item__resource-name')
     .byLegacyTestID(PLUGIN_NAME)
     .should('be.visible');
@@ -190,6 +187,46 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
       nav.sidenav.clickNavLink(['Demo Plugin', 'K8s API']);
       cy.byTestID('test-k8sapi-title').should('contain', 'K8s API from Dynamic Plugin SDK');
       apiIDs.forEach((id) => k8sAPINavTest(id));
+    });
+
+    it(`Demo Plugin should have correct order and properties`, () => {
+      cy.contains('button', 'Demo Plugin').should('have.attr', 'data-test', 'nav-demo-plugin');
+      cy.get('button.pf-c-nav__link')
+        .eq(2)
+        .should('have.text', 'Workloads');
+      cy.get('button.pf-c-nav__link')
+        .eq(3)
+        .should('have.text', 'Demo Plugin');
+      cy.get('button.pf-c-nav__link')
+        .eq(4)
+        .should('have.text', 'Networking');
+    });
+
+    it(`test cluster inventory customization`, () => {
+      cy.visit('/dashboards');
+      cy.byLegacyTestID('inventory-card').should('be.visible');
+      cy.contains('Worker Nodes')
+        .invoke('attr', 'href')
+        .should('eq', '/k8s/cluster/nodes?rowFilter-node-role=worker');
+    });
+
+    it(`test cluster utilization customization`, () => {
+      cy.visit('/dashboards');
+      cy.byLegacyTestID('utilization-card').should('be.visible');
+      cy.byTestID('utilization-item-title', { timeout: 60000 }).should('contain.text', 'Foo item');
+      cy.byTestID('utilization-item-title', { timeout: 60000 }).should('contain.text', 'Bar item');
+    });
+
+    it(`test proxy service`, () => {
+      cy.visit('/test-proxy-service');
+      cy.contains('Dynamic Plugin Proxy Services example').should('be.visible');
+      cy.contains('success').should('be.visible');
+    });
+
+    it('test project customized tab', () => {
+      cy.visit('/k8s/cluster/projects/openshift-apiserver');
+      cy.byLegacyTestID('horizontal-link-Demo Plugin').click();
+      cy.contains('is the demo plugin addition for the project model').should('be.visible');
     });
   });
 } else {

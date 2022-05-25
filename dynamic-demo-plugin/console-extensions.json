@@ -47,7 +47,10 @@
     "properties": {
       "id": "admin-demo-section",
       "perspective": "admin",
-      "name": "%plugin__console-demo-plugin~Demo Plugin%"
+      "name": "%plugin__console-demo-plugin~Demo Plugin%",
+      "insertAfter": "workloads",
+      "insertBefore": "networking",
+      "dataAttributes": {"data-test": "nav-demo-plugin"}
     }
   },
   {
