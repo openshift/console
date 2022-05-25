@@ -28,7 +28,12 @@ type RoutePageProperties = {
   exact?: boolean;
 };
 
-/** Adds new page to Console router. */
+/**
+ * Adds new page to Console router.
+ *
+ * Under the hood we use React Router.
+ * See https://v5.reactrouter.com/
+ */
 export type RoutePage = ExtensionDeclaration<'console.page/route', RoutePageProperties>;
 
 /** Adds new resource list page to Console router. */
@@ -58,7 +63,12 @@ export type ResourceTabPage = ExtensionDeclaration<
   }
 >;
 
-/** Adds new standalone page (rendered outside the common page layout) to Console router. */
+/**
+ * Adds new standalone page (rendered outside the common page layout) to Console router.
+ *
+ * Under the hood we use React Router.
+ * See https://v5.reactrouter.com/
+ */
 export type StandaloneRoutePage = ExtensionDeclaration<
   'console.page/route/standalone',
   Omit<RoutePageProperties, 'perspective'>
