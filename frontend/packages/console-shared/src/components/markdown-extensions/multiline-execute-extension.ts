@@ -11,7 +11,7 @@ const useMultilineExecuteCommandShowdownExtension = () => {
   return useMemo(
     () => ({
       type: 'lang',
-      regex: /```[\n]((.*?\n)+)```{{execute}}/g,
+      regex: /```[\n]\s*((((?!```).)*?\n)+)\s*```{{execute}}/g,
       replace: (
         text: string,
         group: string,
