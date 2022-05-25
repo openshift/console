@@ -2,7 +2,7 @@
 
 $border-color: var(--pf-global--BorderColor--light-100);
 .odc-pipeline-vis-task {
-  fill: white;
+  fill: var(--pf-global--BackgroundColor--light-100);
   stroke: $border-color;
   stroke-width: 1;
   cursor: default;
@@ -28,6 +28,7 @@ $border-color: var(--pf-global--BorderColor--light-100);
 .odc-pipeline-vis-task-text {
   cursor: default;
   dominant-baseline: middle;
+  fill: var(--pf-global--Color--100);
 
   &.is-text-center {
     text-anchor: middle;

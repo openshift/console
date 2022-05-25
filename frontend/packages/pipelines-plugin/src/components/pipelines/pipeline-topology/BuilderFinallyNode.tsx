@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { chart_color_blue_300 as blueColor } from '@patternfly/react-tokens';
 import { observer, Node, NodeModel, Point } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { PipelineVisualizationTask } from '../detail-page-tabs/pipeline-details/PipelineVisualizationTask';
@@ -189,7 +188,11 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
               y={FINALLY_ADD_LINK_TEXT_HEIGHT - FINALLY_ADD_LINK_SIZE}
               tooltip={t('pipelines-plugin~Add finally task')}
             />
-            <text fill={blueColor.value} x={FINALLY_ADD_LINK_SIZE} data-test="add-finally-node">
+            <text
+              x={FINALLY_ADD_LINK_SIZE}
+              data-test="add-finally-node"
+              className="opp-builder-finally-node__text"
+            >
               {t('pipelines-plugin~Add finally task')}
             </text>
           </g>

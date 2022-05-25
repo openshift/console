@@ -35,4 +35,7 @@
     border-color: var(--pf-global--BorderColor--100);
     margin: 0;
   }
+  &__render-text {
+    fill: var(--pf-global--Color--100);
+  }
 }
