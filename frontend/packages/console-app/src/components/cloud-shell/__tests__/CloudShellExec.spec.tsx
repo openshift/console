@@ -11,6 +11,14 @@ Object.defineProperty(window, 'requestAnimationFrame', {
   value: (callback) => callback(),
 });
 
+jest.mock('@console/shared', () => {
+  const originalModule = (jest as any).requireActual('@console/shared');
+  return {
+    ...originalModule,
+    useTelemetry: () => {},
+  };
+});
+
 jest.mock('../useActivityTick', () => ({
   default: jest.fn(),
 }));
@@ -20,6 +28,7 @@ const namespace = 'namespace1';
 
 const cloudShellExecProps: CloudShellExecProps = {
   workspaceName: workspace,
+  workspaceId: '12377979',
   container: 'test1',
   podname: 'testpod',
   namespace,

@@ -3,11 +3,16 @@ import { Skeleton, SelectOption, Select, SelectVariant } from '@patternfly/react
 import { useTranslation } from 'react-i18next';
 import { isPerspective, Perspective } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
-import { usePreferredPerspective } from './usePreferredPerspective';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import {
+  PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
+  usePreferredPerspective,
+} from './usePreferredPerspective';
 
 const PerspectiveDropdown: React.FC = () => {
   // resources and calls to hooks
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const allPerspectives = perspectiveExtensions.map((extension) => extension.properties);
   const [
@@ -48,6 +53,10 @@ const PerspectiveDropdown: React.FC = () => {
     const selectedValue = getDropdownValueForLabel(selection);
     selectedValue !== preferredPerspective && setPreferredPerspective(selectedValue);
     setDropdownOpen(false);
+    fireTelemetryEvent('User Preference Changed', {
+      property: PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
+      value: selectedValue,
+    });
   };
 
   return loaded ? (

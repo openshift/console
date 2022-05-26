@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { Skeleton, SelectOption, Select, SelectVariant, Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { supportedLocales } from './const';
 import { useLanguage } from './useLanguage';
-import { usePreferredLanguage } from './usePreferredLanguage';
+import { PREFERRED_LANGUAGE_USER_SETTING_KEY, usePreferredLanguage } from './usePreferredLanguage';
 
 import './LanguageDropdown.scss';
 
 const LanguageDropdown: React.FC = () => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const selectOptions: JSX.Element[] = React.useMemo(
@@ -28,12 +30,20 @@ const LanguageDropdown: React.FC = () => {
   const onSelect = (_, selection: string) => {
     if (selection !== preferredLanguage) {
       setPreferredLanguage(selection);
+      fireTelemetryEvent('User Preference Changed', {
+        property: PREFERRED_LANGUAGE_USER_SETTING_KEY,
+        value: 'custom',
+      });
     }
     setDropdownOpen(false);
   };
 
   const onUsingDefault = (checked: boolean) => {
     setIsUsingDefault(checked);
+    fireTelemetryEvent('User Preference Changed', {
+      property: PREFERRED_LANGUAGE_USER_SETTING_KEY,
+      value: checked,
+    });
     if (checked) {
       setPreferredLanguage(null);
     }

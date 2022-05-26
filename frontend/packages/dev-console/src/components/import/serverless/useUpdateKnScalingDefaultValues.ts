@@ -10,8 +10,13 @@ export const setKnScalingDefaultValue = (initialValues, knScalingConfig) => {
     knScalingConfig['container-concurrency-target-default'] || '';
   initialValues.serverless.scaling.concurrencyutilization =
     knScalingConfig['container-concurrency-target-percentage'] || '';
+  initialValues.serverless.scaling.defaultConcurrencytarget =
+    knScalingConfig['container-concurrency-target-default'] || '';
+  initialValues.serverless.scaling.defaultConcurrencyutilization =
+    knScalingConfig['container-concurrency-target-percentage'] || '';
   initialValues.serverless.scaling.autoscale = {
     autoscalewindow,
+    defaultAutoscalewindow: autoscalewindow,
     autoscalewindowUnit,
     defaultAutoscalewindowUnit,
   };

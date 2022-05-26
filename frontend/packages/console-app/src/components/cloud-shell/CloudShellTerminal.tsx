@@ -63,6 +63,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   const workspacePhase = workspace?.status?.phase;
   const workspaceName = workspace?.metadata?.name;
   const workspaceNamespace = workspace?.metadata?.namespace;
+  const workspaceId = workspace?.metadata?.uid;
 
   const username = user?.metadata?.name;
 
@@ -189,6 +190,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
       <CloudshellExec
         workspaceName={workspaceName}
         namespace={workspaceNamespace}
+        workspaceId={workspaceId}
         container={initData.container}
         podname={initData.pod}
         shcommand={initData.cmd || []}

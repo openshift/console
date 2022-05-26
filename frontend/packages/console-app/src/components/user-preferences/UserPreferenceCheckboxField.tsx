@@ -4,7 +4,7 @@ import {
   UserPreferenceCheckboxField as CheckboxFieldType,
   UserPreferenceCheckboxFieldValue,
 } from '@console/dynamic-plugin-sdk/src';
-import { useUserSettings } from '@console/shared';
+import { useTelemetry, useUserSettings } from '@console/shared';
 import { UserPreferenceFieldProps } from './types';
 
 type UserPreferenceCheckboxFieldProps = UserPreferenceFieldProps<CheckboxFieldType>;
@@ -23,6 +23,7 @@ const UserPreferenceCheckboxField: React.FC<UserPreferenceCheckboxFieldProps> = 
     setCurrentUserPreferenceValue,
     currentUserPreferenceValueLoaded,
   ] = useUserSettings<UserPreferenceCheckboxFieldValue>(userSettingsKey);
+  const fireTelemetryEvent = useTelemetry();
 
   const loaded: boolean = currentUserPreferenceValueLoaded;
 
@@ -34,6 +35,10 @@ const UserPreferenceCheckboxField: React.FC<UserPreferenceCheckboxFieldProps> = 
   const onChange = (checked: boolean) => {
     const checkedValue: UserPreferenceCheckboxFieldValue = checked ? trueValue : falseValue;
     checkedValue !== currentUserPreferenceValue && setCurrentUserPreferenceValue(checkedValue);
+    fireTelemetryEvent('User Preference Changed', {
+      property: userSettingsKey,
+      value: checkedValue,
+    });
   };
 
   return loaded ? (

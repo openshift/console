@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Select, SelectGroup, SelectOption, SelectVariant, Switch } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
 import { EXPAND_GROUPS_FILTER_ID } from './const';
 
@@ -24,6 +25,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   opened = false,
 }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [isOpen, setIsOpen] = React.useState(opened);
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
 
@@ -32,6 +34,10 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     const index = filters.findIndex((f) => f.id === key);
     const filter = { ...filters[index], value: (e.target as HTMLInputElement).checked };
     onChange([...filters.slice(0, index), filter, ...filters.slice(index + 1)]);
+    fireTelemetryEvent('Topology Display Option Changed', {
+      property: key,
+      value: (e.target as HTMLInputElement).checked,
+    });
   };
 
   const onGroupsExpandedChange = (value: boolean) => {
@@ -44,6 +50,10 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       value,
     };
     onChange([...filters.slice(0, index), filter, ...filters.slice(index + 1)]);
+    fireTelemetryEvent('Topology Display Option Changed', {
+      property: EXPAND_GROUPS_FILTER_ID,
+      value,
+    });
   };
 
   const expandFilters = filters

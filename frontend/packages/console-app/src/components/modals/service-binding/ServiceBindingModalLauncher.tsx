@@ -12,6 +12,7 @@ import {
   modelFor,
 } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { ServiceBindingModel } from '@console/topology/src/models';
 import { createServiceBinding } from '@console/topology/src/operators/actions/serviceBindings';
 import { useValuesForPerspectiveContext } from '../../detect-perspective/useValuesForPerspectiveContext';
@@ -46,6 +47,7 @@ const handleRedirect = async (
 const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (props) => {
   const { source, model } = props;
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useValuesForPerspectiveContext();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const handleSubmit = async (values, actions) => {
@@ -65,6 +67,7 @@ const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (pro
       try {
         await createServiceBinding(source, values.bindableService, values.name);
         props.close();
+        fireTelemetryEvent('Service Binding Created');
         getQueryArgument('view') === null &&
           handleRedirect(source.metadata.namespace, activePerspective, perspectiveExtensions);
       } catch (errorMessage) {

@@ -1,15 +1,20 @@
 import * as React from 'react';
 import { Checkbox, FormGroup, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
   TerminationType,
   InsecureTrafficType,
   PassthroughInsecureTrafficType,
 } from '../import/import-types';
-import { usePreferredRoutingOptions } from './usePreferredRoutingOptions';
+import {
+  PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+  usePreferredRoutingOptions,
+} from './usePreferredRoutingOptions';
 
 const SecureRouteFields: React.FC = () => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [
     preferredRoutingOptions,
     setPreferredRoutingOptions,
@@ -59,8 +64,11 @@ const SecureRouteFields: React.FC = () => {
         tlsTermination,
         insecureTraffic,
       });
+      fireTelemetryEvent('User Preference Changed', {
+        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+      });
     },
-    [insecureTraffic, setPreferredRoutingOptions, tlsTermination],
+    [fireTelemetryEvent, insecureTraffic, setPreferredRoutingOptions, tlsTermination],
   );
 
   const onTLSTerminationToggle = React.useCallback(
@@ -81,8 +89,11 @@ const SecureRouteFields: React.FC = () => {
         insecureTraffic,
       });
       setIsTLSTerminationOpen(false);
+      fireTelemetryEvent('User Preference Changed', {
+        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+      });
     },
-    [insecureTraffic, secure, setPreferredRoutingOptions],
+    [fireTelemetryEvent, insecureTraffic, secure, setPreferredRoutingOptions],
   );
 
   const onInsecureTrafficSelect = React.useCallback(
@@ -93,8 +104,11 @@ const SecureRouteFields: React.FC = () => {
         insecureTraffic: selection,
       });
       setIsInsecureTrafficOpen(false);
+      fireTelemetryEvent('User Preference Changed', {
+        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+      });
     },
-    [secure, setPreferredRoutingOptions, tlsTermination],
+    [fireTelemetryEvent, secure, setPreferredRoutingOptions, tlsTermination],
   );
 
   return (
