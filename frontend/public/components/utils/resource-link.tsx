@@ -82,6 +82,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   children,
   dataTest,
   onClick,
+  truncate,
 }) => {
   if (!kind && !groupVersionKind) {
     return null;
@@ -91,6 +92,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   const value = displayName ? displayName : name;
   const classes = classNames('co-resource-item', className, {
     'co-resource-item--inline': inline,
+    'co-resource-item--truncate': truncate,
   });
 
   return (

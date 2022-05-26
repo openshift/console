@@ -42,7 +42,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   const status = loading ? t('Loading') : error;
   const usedLabelText = usedLabel || t('public~used');
   const secondaryTitleText = secondaryTitle || usedLabelText;
-  const labelText = label || data ? humanize(data.y).string : t('No data');
+  const labelText = label || (data ? humanize(data.y).string : undefined) || t('No data');
 
   const labels = ({ datum: { x, y } }) =>
     x ? `${x} ${usedLabelText}` : `${y} ${remainderLabel || t('available')}`;
@@ -123,7 +123,7 @@ type GaugeChartProps = {
   humanize?: Humanize;
   invert?: boolean;
   isLoaded?: boolean;
-  label: string;
+  label?: string;
   loading?: boolean;
   query?: string;
   remainderLabel?: string;

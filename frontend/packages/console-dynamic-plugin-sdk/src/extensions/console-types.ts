@@ -466,6 +466,7 @@ export type ResourceLinkProps = {
   title?: string;
   dataTest?: string;
   onClick?: () => void;
+  truncate?: boolean;
 };
 
 export type UseK8sModel = (
