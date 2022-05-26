@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { Firehose } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -15,13 +16,14 @@ const PipelinesList: React.FC<PipelinesListProps> = ({
     params: { ns: namespace },
   },
 }) => {
+  const { t } = useTranslation();
   const resources = [
     {
       isList: true,
       kind: referenceForModel(PipelineModel),
       namespace,
       prop: PipelineModel.id,
-      filters: { ...filters },
+      filters: { ...filters(t) },
     },
   ];
   return (

@@ -137,7 +137,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
       EmptyMsg={emptyState}
       queryArg="rowFilter-helm-release-status"
       textFilter="name"
-      rowFilters={helmReleasesRowFilters}
+      rowFilters={helmReleasesRowFilters(t)}
       sortBy="name"
       sortOrder={SortByDirection.asc}
       rowFilterReducer={filterHelmReleasesByStatus}

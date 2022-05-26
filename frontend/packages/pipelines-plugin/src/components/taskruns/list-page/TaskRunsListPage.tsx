@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -17,6 +18,7 @@ const TaskRunsListPage: React.FC<Omit<
   'canCreate' | 'kind' | 'ListComponent' | 'rowFilters'
 > &
   TaskRunsListPageProps> = ({ hideBadge, showPipelineColumn = true, namespace, ...props }) => {
+  const { t } = useTranslation();
   const searchParams = getURLSearchParams();
   const kind = searchParams?.kind;
   const badge = usePipelineTechPreviewBadge(namespace);
@@ -33,7 +35,7 @@ const TaskRunsListPage: React.FC<Omit<
       canCreate={kind?.includes(referenceForModel(TaskRunModel)) ?? false}
       kind={referenceForModel(TaskRunModel)}
       ListComponent={TaskRunsList}
-      rowFilters={taskRunFilters}
+      rowFilters={taskRunFilters(t)}
       badge={hideBadge ? null : badge}
       namespace={namespace}
     />

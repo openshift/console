@@ -245,13 +245,10 @@ const SecretsPage = (props) => {
 
   const filters = [
     {
-      filterGroupName: 'Type',
+      filterGroupName: t('public~Type'),
       type: 'secret-type',
       reducer: secretTypeFilterReducer,
-      items: secretTypeFilterValues.map((filterValue) => ({
-        id: filterValue.id,
-        title: filterValue.title,
-      })),
+      items: secretTypeFilterValues,
     },
   ];
 

@@ -65,7 +65,7 @@ export const getHostFilterStatus = (bundle: BareMetalHostBundle): string => {
 };
 
 export const hostStatusFilter = (t: TFunction): RowFilter<BareMetalHostBundle> => ({
-  filterGroupName: 'Status',
+  filterGroupName: t('metal3-plugin~Status'),
   type: 'host-status',
   reducer: getHostFilterStatus,
   items: _.map(hostStatesToFilterMap, ({ title }, id) => ({ id, title: t(title) })),

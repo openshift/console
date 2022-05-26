@@ -36,7 +36,7 @@ const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (p
           flatten={(_resources) => _.get(_resources, ['pipeline', 'data'], {})}
           kinds={['Pipeline']}
           ListComponent={PipelineList}
-          rowFilters={filters}
+          rowFilters={filters(t)}
           hideNameLabelFilters={props.hideNameLabelFilters}
         />
       </PipelineAugmentRuns>
