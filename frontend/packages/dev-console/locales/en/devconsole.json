@@ -206,6 +206,8 @@
   "The custom strategy allows you to specify container image that will provide your own deployment behavior.": "The custom strategy allows you to specify container image that will provide your own deployment behavior.",
   "Runs a command in a new pod using the container from the deployment template. You can add additional environment variables and volumes": "Runs a command in a new pod using the container from the deployment template. You can add additional environment variables and volumes",
   "Tags the current image as an image stream tag if the deployment succeeds": "Tags the current image as an image stream tag if the deployment succeeds",
+  "{{resource}} has been created": "{{resource}} has been created",
+  "Create {{kind}}": "Create {{kind}}",
   "Edit {{kind}}": "Edit {{kind}}",
   "Edit {{kind}} form": "Edit {{kind}} form",
   "Hide advanced image options": "Hide advanced image options",

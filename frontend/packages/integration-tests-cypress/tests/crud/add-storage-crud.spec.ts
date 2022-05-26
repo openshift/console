@@ -1,7 +1,10 @@
+import { safeLoad, safeDump } from 'js-yaml';
+import * as _ from 'lodash';
 import { testName, checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { errorMessage, submitButton } from '../../views/form';
 import { listPage } from '../../views/list-page';
+import * as yamlEditor from '../../views/yaml-editor';
 
 const k8sWorkloads = [
   'replicationcontrollers',
@@ -44,7 +47,41 @@ describe('Add storage is applicable for all workloads', () => {
     const mountPath = '/data';
     describe(resourceType, () => {
       it(`create a ${resourceType} resource and adds storage to it`, () => {
-        listPage.createNamespacedResourceWithDefaultYAML(resourceType, testName);
+        if (resourceType === 'deployments' || resourceType === 'deploymentconfigs') {
+          const name = `${testName}-${resourceType}`;
+          cy.visit(`/k8s/ns/${testName}/${resourceType}`);
+          listPage.clickCreateYAMLbutton();
+          cy.byTestID('yaml-view-input').click();
+          // sidebar needs to be fully loaded, else it sometimes overlays the Create button
+          cy.byTestID('resource-sidebar').should('exist');
+          yamlEditor.isLoaded();
+          let newContent;
+          // get, update, and set yaml editor content.
+          yamlEditor.getEditorContent().then((content) => {
+            newContent = _.defaultsDeep(
+              {},
+              {
+                metadata: { name },
+                ...(resourceType === 'deploymentconfigs'
+                  ? {
+                      spec: {
+                        selector: { app: name },
+                        template: { metadata: { labels: { app: name } } },
+                      },
+                    }
+                  : {}),
+              },
+
+              safeLoad(content),
+            );
+            yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+              yamlEditor.clickSaveCreateButton();
+              cy.get(errorMessage).should('not.exist');
+            });
+          });
+        } else {
+          listPage.createNamespacedResourceWithDefaultYAML(resourceType, testName);
+        }
         cy.get(errorMessage).should('not.exist');
 
         detailsPage.clickPageActionFromDropdown('Add storage');

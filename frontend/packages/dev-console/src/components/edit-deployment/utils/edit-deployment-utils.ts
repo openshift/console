@@ -280,13 +280,13 @@ export const convertDeploymentToEditForm = (
 ): EditDeploymentFormData => {
   const resourceType = getResourcesType(deployment);
   return {
-    name: deployment.metadata.name,
-    resourceVersion: deployment.metadata.resourceVersion,
+    name: deployment.metadata.name ?? '',
+    resourceVersion: deployment.metadata.resourceVersion ?? '',
     deploymentStrategy: getStrategy(deployment, resourceType),
     containers: deployment.spec.template?.spec?.containers ?? [],
     imageName: deployment.spec.template?.spec?.containers?.[0]?.image,
-    envs: deployment.spec.template?.spec?.containers?.[0]?.env,
-    imagePullSecret: deployment.spec.template?.spec?.imagePullSecrets?.[0]?.name,
+    envs: deployment.spec.template?.spec?.containers?.[0]?.env ?? [],
+    imagePullSecret: deployment.spec.template?.spec?.imagePullSecrets?.[0]?.name ?? '',
     paused: deployment.spec.paused ?? false,
     replicas: deployment.spec.replicas,
     ...getTriggersAndImageStreamValues(deployment, resourceType),
@@ -455,6 +455,7 @@ export const convertEditFormToDeployment = (
   deployment: K8sResourceKind,
 ): K8sResourceKind => {
   const {
+    name,
     deploymentStrategy,
     containers,
     imageName,
@@ -474,7 +475,8 @@ export const convertEditFormToDeployment = (
     ...deployment,
     metadata: {
       ...deployment.metadata,
-      resourceVersion,
+      name,
+      ...(resourceVersion ? { resourceVersion } : {}),
     },
     spec: {
       ...deployment.spec,
@@ -483,6 +485,13 @@ export const convertEditFormToDeployment = (
       strategy: getUpdatedStrategy(deploymentStrategy, resourceType),
       template: {
         ...deployment.spec.template,
+        metadata: {
+          ...deployment.spec.template.metadata,
+          labels: {
+            ...deployment.spec.template.metadata.labels,
+            ...(name ? { app: name } : {}),
+          },
+        },
         spec: {
           ...deployment.spec.template.spec,
           containers: getUpdatedContainers(containers, fromImageStreamTag, isi, imageName, envs),
@@ -500,6 +509,10 @@ export const convertEditFormToDeployment = (
       ...newDeployment,
       spec: {
         ...newDeployment.spec,
+        selector: {
+          ...newDeployment.spec.selector,
+          ...(newDeployment.metadata.name ? { app: newDeployment.metadata.name } : {}),
+        },
         triggers: [
           ...(fromImageStreamTag
             ? [
@@ -531,6 +544,16 @@ export const convertEditFormToDeployment = (
           ...(fromImageStreamTag
             ? getTriggerAnnotation(containers[0].name, image, imgNs, triggers.image, tag)
             : {}),
+        },
+      },
+      spec: {
+        ...newDeployment.spec,
+        selector: {
+          ...newDeployment.spec.selector,
+          matchLabels: {
+            ...newDeployment.spec.selector.matchLabels,
+            ...(newDeployment.metadata.name ? { app: newDeployment.metadata.name } : {}),
+          },
         },
       },
     };

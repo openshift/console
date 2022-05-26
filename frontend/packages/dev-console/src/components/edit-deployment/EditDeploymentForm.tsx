@@ -43,8 +43,9 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
 }) => {
   const { t } = useTranslation();
   const resourceType = getResourcesType(resource);
+  const isNew = !resource.metadata.name || resource.metadata.name === '~new';
 
-  const isStale = resource.metadata.resourceVersion !== formData.resourceVersion;
+  const isStale = !isNew && resource.metadata.resourceVersion !== formData.resourceVersion;
 
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.editDeploymentForm.editor.lastView';
 
@@ -102,14 +103,14 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
         />
       </FormBody>
       <FormFooter
-        handleReset={onReload}
+        handleReset={isNew ? null : onReload}
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
         infoTitle={t('devconsole~This object has been updated.')}
         infoMessage={t('devconsole~Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Save')}
+        submitLabel={isNew ? t('devconsole~Create') : t('devconsole~Save')}
         disableSubmit={
           (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
         }

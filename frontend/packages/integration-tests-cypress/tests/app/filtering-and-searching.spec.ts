@@ -20,6 +20,7 @@ describe('Filtering and Searching', () => {
     cy.createProject(testName);
     cy.visit(`/k8s/ns/${testName}/deployments`);
     listPage.clickCreateYAMLbutton();
+    cy.byTestID('yaml-view-input').click();
     yamlEditor.isLoaded();
     yamlEditor.getEditorContent().then((content) => {
       const newContent = _.defaultsDeep(
@@ -82,7 +83,7 @@ describe('Filtering and Searching', () => {
 
   it('searches for object by kind, label, and name', () => {
     cy.visit(`/search/all-namespaces`, {
-      qs: { kind: 'Pod', q: 'app=httpd', name: WORKLOAD_NAME },
+      qs: { kind: 'Pod', q: 'app=name', name: WORKLOAD_NAME },
     });
     listPage.rows.shouldExist(WORKLOAD_NAME);
     listPage.filter.numberOfActiveFiltersShouldBe(3);
