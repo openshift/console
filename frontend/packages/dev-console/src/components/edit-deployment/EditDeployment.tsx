@@ -3,9 +3,10 @@ import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
@@ -31,6 +32,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const isNew = !name || name === '~new';
 
   const initialValues = React.useRef({
     editorType: EditorType.Form,
@@ -50,6 +52,9 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
     if (values.editorType === EditorType.YAML) {
       try {
         deploymentRes = safeLoad(values.yamlData);
+        if (!deploymentRes?.metadata?.namespace) {
+          deploymentRes.metadata.namespace = namespace;
+        }
       } catch (err) {
         actions.setStatus({
           submitSuccess: '',
@@ -61,24 +66,39 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
       deploymentRes = convertEditFormToDeployment(values.formData, resource);
     }
 
-    const resourceCall = k8sUpdate(
-      resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel,
-      deploymentRes,
-      namespace,
-      name,
-    );
+    const resourceCall = isNew
+      ? k8sCreateResource({
+          model: resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel,
+          data: deploymentRes,
+        })
+      : k8sUpdateResource({
+          model: resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel,
+          data: deploymentRes,
+          name,
+          ns: namespace,
+        });
 
     return resourceCall
       .then((res: K8sResourceKind) => {
-        const resVersion = res.metadata.resourceVersion;
-        actions.setStatus({
-          submitError: '',
-          submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
-            name,
-            resVersion,
-          }),
-        });
-        handleRedirect(namespace, perspective, perspectiveExtensions);
+        if (isNew) {
+          const model =
+            resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel;
+          actions.setStatus({
+            submitError: '',
+            submitSuccess: t('devconsole~{{resource}} has been created', { resource: res.kind }),
+          });
+          history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
+        } else {
+          const resVersion = res.metadata.resourceVersion;
+          actions.setStatus({
+            submitError: '',
+            submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
+              name,
+              resVersion,
+            }),
+          });
+          handleRedirect(namespace, perspective, perspectiveExtensions);
+        }
       })
       .catch((err) => {
         actions.setStatus({ submitSuccess: '', submitError: err.message });

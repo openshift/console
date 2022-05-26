@@ -105,6 +105,7 @@ export const deploymentStrategySchema = (strategy: DeploymentStrategy) => {
 
 export const editDeploymentFormSchema = (formValues: EditDeploymentFormData) =>
   yup.object({
+    name: yup.string().required(i18n.t('devconsole~Required')),
     deploymentStrategy: deploymentStrategySchema(formValues.deploymentStrategy),
     fromImageStreamTag: yup.boolean(),
     ...(!formValues.fromImageStreamTag

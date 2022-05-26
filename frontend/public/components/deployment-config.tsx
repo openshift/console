@@ -353,10 +353,14 @@ export const DeploymentConfigsList: React.FC = (props) => {
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
 export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => {
+  const createProps = {
+    to: `/create-deployment/ns/${props.namespace || 'default'}/~new/form?kind=DeploymentConfig`,
+  };
   return (
     <ListPage
       kind={DeploymentConfigsReference}
       ListComponent={DeploymentConfigsList}
+      createProps={createProps}
       canCreate={true}
       {...props}
     />

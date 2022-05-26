@@ -22,7 +22,9 @@ describe('Interacting with the environment variable editor', () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
-    await yamlView.isLoaded();
+    await crudView.isLoaded();
+    await crudView.createYAMLSwitchRadio.click();
+    await yamlView.isSwitchViewLoaded();
     const content = await yamlView.getEditorContent();
     const newContent = _.defaultsDeep(
       {},
@@ -32,15 +34,13 @@ describe('Interacting with the environment variable editor', () => {
     await yamlView.setEditorContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
-    await browser.wait(until.presenceOf(crudView.actionsButton));
+    await crudView.isDetailsPageLoaded();
     execSync(
       `oc create cm my-config --from-literal=cmk1=config1 --from-literal=cmk2=config2 -n ${testName}`,
     );
     execSync(
       `oc create secret generic my-secret --from-literal=key1=supersecret --from-literal=key2=topsecret -n ${testName}`,
     );
-    checkLogs();
-    checkErrors();
   });
 
   afterEach(() => {
@@ -89,7 +89,7 @@ describe('Interacting with the environment variable editor', () => {
       expect(resourceText).toEqual(valueFrom);
       expect(prefixText).toEqual(prefix);
     } else {
-      expect(resourceText).toEqual('httpd');
+      expect(resourceText).toEqual('container');
       expect(prefixText).toEqual('');
     }
   };
