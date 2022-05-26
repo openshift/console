@@ -99,6 +99,9 @@ const useCloudShellWorkspace = (
       // did a previous search result in no namespace found
       !noNamespaceFound);
 
+  // eslint-disable-next-line no-console
+  console.log('sn', searchNamespaces);
+
   // FIXME need to use a service account on the backend to find the workspace instead of inefficiently looping through namespaces
   React.useEffect(() => {
     let unmounted = false;
@@ -124,6 +127,8 @@ const useCloudShellWorkspace = (
                     },
                   },
                 });
+                // eslint-disable-next-line no-console
+                console.log('projects', project, workspaceList);
                 if (unmounted) return;
                 const foundWorkspace = findWorkspace(workspaceList);
                 if (foundWorkspace) {
@@ -156,6 +161,8 @@ const useCloudShellWorkspace = (
     workspaceModel,
   ]);
 
+  // eslint-disable-next-line no-console
+  console.log('useCloudShellworkspace', searching, workspace, loaded);
   return [
     workspace,
     // loaded if we have a resource loaded and currently not searching

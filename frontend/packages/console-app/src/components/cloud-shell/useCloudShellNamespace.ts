@@ -10,7 +10,7 @@ const useCloudShellNamespace = (): [string, string] => {
       try {
         if (!terminalNamespace) {
           const namespaceRequest = await getTerminalInstalledNamespace();
-          const namespace = await namespaceRequest.text();
+          const namespace = await namespaceRequest?.text();
           setTerminalNamespace(namespace);
         }
       } catch (e) {

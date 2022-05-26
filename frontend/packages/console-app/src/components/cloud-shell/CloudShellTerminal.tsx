@@ -163,6 +163,9 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
     );
   }
 
+  // eslint-disable-next-line no-console
+  console.log('cloudShellTerminal', operatorNamespace, initData, initError, workspace, loaded);
+
   // failed to init the terminal
   if (initError) {
     return (
@@ -172,7 +175,11 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
 
   // loading the workspace resource
   if (!loaded || isAdminCheckLoading || !operatorNamespace) {
-    return <TerminalLoadingBox message="" />;
+    return (
+      <TerminalLoadingBox
+        message={`loaded:${loaded},isAdminCheckLoading:${isAdminCheckLoading},operatorNamespace:${operatorNamespace}`}
+      />
+    );
   }
 
   // waiting for the workspace to start and initialize the terminal
