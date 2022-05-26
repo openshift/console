@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as fuzzy from 'fuzzysearch';
+import * as fuzzy from 'fuzzysort';
 import * as PropTypes from 'prop-types';
 import { Alert } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -32,7 +32,7 @@ class ListDropdownWithTranslation extends React.Component {
 
     this.state.title = props.loaded ? props.placeholder : <LoadingInline />;
 
-    this.autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
+    this.autocompleteFilter = (text, item) => fuzzy.go(text, item, { key: 'name' });
     // Pass both the resource name and the resource kind to onChange()
     this.onChange = (key) => {
       if (_.find(this.props.actionItems, { actionKey: key })) {
