@@ -366,5 +366,6 @@
   "Hide operator description": "operator 설명 숨기기",
   "Show operator description": "operator 설명 표시",
   "Operator description": "Operator 설명",
-  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "이 리소스는 {{operatorName}} (Operator Lifecycle Manager에 의해 사용되는 Kubernetes Operator)에 의해 제공됩니다."
+  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "이 리소스는 {{operatorName}} (Operator Lifecycle Manager에 의해 사용되는 Kubernetes Operator)에 의해 제공됩니다.",
+  "Show more": "자세히보기"
 }

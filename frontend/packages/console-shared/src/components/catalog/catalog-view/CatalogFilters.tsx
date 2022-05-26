@@ -61,6 +61,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
 
   const renderFilterGroup = (filterGroup: CatalogFilter, groupName: string) => {
     const filterGroupKeys = Object.keys(filterGroup);
+
     if (filterGroupKeys.length > 0) {
       const sortedFilterGroup = filterGroupKeys.sort().reduce<CatalogFilter>((acc, filterName) => {
         acc[filterName] = filterGroup[filterName];

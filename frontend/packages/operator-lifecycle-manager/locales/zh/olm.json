@@ -366,5 +366,6 @@
   "Hide operator description": "隐藏 Operator 描述",
   "Show operator description": "显示 Operator 描述",
   "Operator description": "Operator 描述",
-  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "此资源由 Operator Lifecycle Manager 启用的一个 Kubernetes Operator {{operatorName}} 提供。"
+  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "此资源由 Operator Lifecycle Manager 启用的一个 Kubernetes Operator {{operatorName}} 提供。",
+  "Show more": "显示更多"
 }

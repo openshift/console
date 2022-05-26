@@ -370,5 +370,6 @@
   "Hide operator description": "Hide operator description",
   "Show operator description": "Show operator description",
   "Operator description": "Operator description",
-  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager."
+  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.",
+  "Show more": "Show more"
 }
