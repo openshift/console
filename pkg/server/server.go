@@ -104,6 +104,7 @@ type jsGlobals struct {
 	UserSettingsLocation       string                     `json:"userSettingsLocation"`
 	AddPage                    string                     `json:"addPage"`
 	ConsolePlugins             []string                   `json:"consolePlugins"`
+	I18nNamespaces             []string                   `json:"i18nNamespaces"`
 	QuickStarts                string                     `json:"quickStarts"`
 	ProjectAccessClusterRoles  string                     `json:"projectAccessClusterRoles"`
 	Clusters                   []string                   `json:"clusters"`
@@ -133,6 +134,7 @@ type Server struct {
 	InactivityTimeout    int
 	// Map that contains list of enabled plugins and their endpoints.
 	EnabledConsolePlugins serverconfig.MultiKeyValue
+	I18nNamespaces        []string
 	PluginProxy           string
 	// Clients with the correct TLS setup for communicating with the API servers.
 	K8sClients                       map[string]*http.Client
@@ -541,6 +543,10 @@ func (s *Server) HTTPHandler() http.Handler {
 		s.PublicDir,
 	)
 
+	handleFunc(localesEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		pluginsHandler.HandleI18nResources(w, r)
+	})
+
 	handle(pluginAssetsEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginAssetsEndpoint),
 		authHandler(func(w http.ResponseWriter, r *http.Request) {
@@ -582,21 +588,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
-
-	// we need to create another instance of `PluginsHandler` with shorter timeout,
-	// so calls for plugins that doesnt contain locales will fail sooner
-	i18nPluginsHandler := plugins.NewPluginsHandler(
-		&http.Client{
-			Timeout:   10 * time.Second,
-			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
-		},
-		s.EnabledConsolePlugins,
-		s.PublicDir,
-	)
-
-	handleFunc(localesEndpoint, func(w http.ResponseWriter, r *http.Request) {
-		i18nPluginsHandler.HandleI18nResources(w, r)
-	})
 
 	// Helm Endpoints
 	metricsHandler := func(next http.Handler) http.Handler {
@@ -714,6 +705,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		DevCatalogCategories:       s.DevCatalogCategories,
 		UserSettingsLocation:       s.UserSettingsLocation,
 		ConsolePlugins:             plugins,
+		I18nNamespaces:             s.I18nNamespaces,
 		QuickStarts:                s.QuickStarts,
 		AddPage:                    s.AddPage,
 		ProjectAccessClusterRoles:  s.ProjectAccessClusterRoles,
