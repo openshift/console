@@ -928,6 +928,7 @@ export const PodList: React.FC<PodListProps> = ({ showNamespaceOverride, showNod
       <VirtualizedTable<PodKind, PodRowData>
         {...props}
         aria-label={t('public~Pods')}
+        label={t('public~Pods')}
         columns={activeColumns}
         Row={PodTableRow}
         rowData={rowData}
@@ -1015,6 +1016,8 @@ export const PodsPage: React.FC<PodPageProps> = ({
     fieldSelector,
   });
 
+  const error403 = loadError && loadError.code === 403;
+
   const filters = React.useMemo(() => getFilters(t), [t]);
 
   const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {
@@ -1025,7 +1028,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
     userSettingsLoaded && (
       <>
         <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
-          {canCreate && (
+          {canCreate && !error403 && (
             <ListPageCreate groupVersionKind={referenceForModel(PodModel)}>
               {t('public~Create Pod')}
             </ListPageCreate>
@@ -1053,14 +1056,26 @@ export const PodsPage: React.FC<PodPageProps> = ({
             hideLabelFilter={hideLabelFilter}
             hideColumnManagement={hideColumnManagement}
           />
-          <PodList
-            data={filteredData}
-            unfilteredData={pods}
-            loaded={loaded}
-            loadError={loadError}
-            showNamespaceOverride={showNamespaceOverride}
-            showNodes={showNodes}
-          />
+          {error403 && (
+            <PodList
+              data={[]}
+              unfilteredData={pods}
+              loaded={error403}
+              loadError=""
+              showNamespaceOverride={showNamespaceOverride}
+              showNodes={showNodes}
+            />
+          )}
+          {!error403 && (
+            <PodList
+              data={filteredData}
+              unfilteredData={pods}
+              loaded={loaded}
+              loadError={loadError}
+              showNamespaceOverride={showNamespaceOverride}
+              showNodes={showNodes}
+            />
+          )}
         </ListPageBody>
       </>
     )
