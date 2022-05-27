@@ -507,7 +507,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     validSubscriptionFilters: t('olm~Valid subscription'),
   };
 
-  const showMoreText = t('olm~Show more');
+  const showMoreText = t('public~{{numRemaining}} more');
 
   return (
     <>
