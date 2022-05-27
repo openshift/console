@@ -37,7 +37,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
 
   return (
     <>
-      <div className="odc-pipeline-builder-form__short-section">
+      <div className="opp-pipeline-builder-form__short-section">
         <InputField
           label={t('pipelines-plugin~Name')}
           name="formData.name"

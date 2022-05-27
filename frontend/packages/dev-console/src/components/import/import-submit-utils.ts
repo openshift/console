@@ -145,13 +145,20 @@ export const createOrUpdateImageStream = (
 
 export const createWebhookSecret = (
   formData: GitImportFormData | UploadJarFormData,
+  imageStream: K8sResourceKind,
   secretType: string,
   dryRun: boolean,
 ): Promise<K8sResourceKind> => {
   const {
     name,
+    application: { name: applicationName },
     project: { name: namespace },
+    image: { tag: selectedTag },
+    labels: userLabels,
   } = formData;
+
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
 
   const webhookSecret = {
     apiVersion: 'v1',
@@ -160,6 +167,7 @@ export const createWebhookSecret = (
     metadata: {
       name: `${name}-${secretType}-webhook-secret`,
       namespace,
+      labels: { ...defaultLabels, ...userLabels },
     },
     stringData: { WebHookSecretKey: generateSecret() },
     type: SecretType.opaque,
@@ -586,7 +594,12 @@ export const createDevfileResources = async (
     generatedImageStreamName,
   );
 
-  const webhookSecretResponse = await createWebhookSecret(formData, 'generic', dryRun);
+  const webhookSecretResponse = await createWebhookSecret(
+    formData,
+    devfileResourceObjects.imageStream,
+    'generic',
+    dryRun,
+  );
 
   const deploymentResponse = await createOrUpdateDeployment(
     formData,
@@ -699,9 +712,9 @@ export const createOrUpdateResources = async (
   }
 
   if (verb === 'create') {
-    responses.push(await createWebhookSecret(formData, 'generic', dryRun));
+    responses.push(await createWebhookSecret(formData, imageStream, 'generic', dryRun));
     if (webhookTrigger) {
-      responses.push(await createWebhookSecret(formData, gitType, dryRun));
+      responses.push(await createWebhookSecret(formData, imageStream, gitType, dryRun));
     }
   }
 

@@ -18,7 +18,6 @@ export const clusterVersionProps: ClusterVersionKind = {
   status: {
     availableUpdates: [
       {
-        force: false,
         image:
           'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
         version: '4.5.4',
@@ -49,7 +48,6 @@ export const clusterVersionProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'registry.svc.ci.openshift.org/ocp/release@sha256:8f923b7b8efdeac619eb0e7697106c1d17dd3d262c49d8742b38600417cf7d1d',
       version: '4.5.2',
@@ -85,7 +83,6 @@ export const clusterVersionUpdatingProps: ClusterVersionKind = {
     channel: 'stable-4.5',
     clusterID: '727841c6-242d-4592-90d1-699925c4cfba',
     desiredUpdate: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',
@@ -95,7 +92,6 @@ export const clusterVersionUpdatingProps: ClusterVersionKind = {
   status: {
     availableUpdates: [
       {
-        force: false,
         image:
           'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
         version: '4.5.4',
@@ -126,7 +122,6 @@ export const clusterVersionUpdatingProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',
@@ -174,7 +169,6 @@ export const clusterVersionUpgradeableFalseProps: ClusterVersionKind = {
   status: {
     availableUpdates: [
       {
-        force: false,
         image:
           'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
         version: '4.5.4',
@@ -213,7 +207,6 @@ export const clusterVersionUpgradeableFalseProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'registry.svc.ci.openshift.org/ocp/release@sha256:8f923b7b8efdeac619eb0e7697106c1d17dd3d262c49d8742b38600417cf7d1d',
       version: '4.5.2',
@@ -249,7 +242,6 @@ export const clusterVersionUpdatedProps: ClusterVersionKind = {
     channel: 'stable-4.5',
     clusterID: '94ffb461-7099-4064-b628-8526b35a6389',
     desiredUpdate: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',
@@ -283,7 +275,6 @@ export const clusterVersionUpdatedProps: ClusterVersionKind = {
       },
     ],
     desired: {
-      force: false,
       image:
         'quay.io/openshift-release-dev/ocp-release@sha256:02dfcae8f6a67e715380542654c952c981c59604b1ba7f569b13b9e5d0fbbed3',
       version: '4.5.4',
@@ -310,6 +301,134 @@ export const clusterVersionUpdatedProps: ClusterVersionKind = {
     ],
     observedGeneration: 2,
     versionHash: 'qSkCqxZtYDI=',
+  },
+};
+
+export const masterMachineConfigPoolProp: MachineConfigPoolKind = {
+  apiVersion: 'machineconfiguration.openshift.io/v1',
+  kind: 'MachineConfigPool',
+  metadata: {
+    creationTimestamp: '2020-08-06T11:52:19Z',
+    generation: 3,
+    labels: {
+      'machineconfiguration.openshift.io/mco-built-in': '',
+      'operator.machineconfiguration.openshift.io/required-for-upgrade': '',
+    },
+    name: 'master',
+    resourceVersion: '80196',
+    uid: 'c34d2940-6dfb-4196-966f-4617e508fdbd',
+  },
+  spec: {
+    configuration: {
+      name: 'rendered-master-9ca9eaaebe062d1f20232f7b7b9e4456',
+      source: [
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '00-master',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-master-container-runtime',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-master-kubelet',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-master-c34d2940-6dfb-4196-966f-4617e508fdbd-registries',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-master-ssh',
+        },
+      ],
+    },
+    machineConfigSelector: {
+      matchLabels: { 'machineconfiguration.openshift.io/role': 'master' },
+    },
+    nodeSelector: { matchLabels: { 'node-role.kubernetes.io/master': '' } },
+    paused: false,
+  },
+  status: {
+    conditions: [
+      {
+        lastTransitionTime: '2020-08-06T11:53:11Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'RenderDegraded',
+      },
+      {
+        lastTransitionTime: '2020-08-06T11:53:38Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'NodeDegraded',
+      },
+      {
+        lastTransitionTime: '2020-08-06T11:53:38Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'Degraded',
+      },
+      {
+        lastTransitionTime: '2020-08-06T14:27:00Z',
+        message: 'All nodes are updated with rendered-master-9ca9eaaebe062d1f20232f7b7b9e4456',
+        reason: '',
+        status: 'True',
+        type: 'Updated',
+      },
+      {
+        lastTransitionTime: '2020-08-06T14:27:00Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'Updating',
+      },
+    ],
+    configuration: {
+      name: 'rendered-master-9ca9eaaebe062d1f20232f7b7b9e4456',
+      source: [
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '00-master',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-master-container-runtime',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-master-kubelet',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-master-c34d2940-6dfb-4196-966f-4617e508fdbd-registries',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-master-ssh',
+        },
+      ],
+    },
+    degradedMachineCount: 0,
+    machineCount: 3,
+    observedGeneration: 3,
+    readyMachineCount: 3,
+    unavailableMachineCount: 0,
+    updatedMachineCount: 3,
   },
 };
 
@@ -438,138 +557,143 @@ export const workerMachineConfigPoolProp: MachineConfigPoolKind = {
   },
 };
 
+export const pausedWorkerMachineConfigPoolProp: MachineConfigPoolKind = {
+  apiVersion: 'machineconfiguration.openshift.io/v1',
+  kind: 'MachineConfigPool',
+  metadata: {
+    creationTimestamp: '2020-08-06T11:52:19Z',
+    generation: 3,
+    labels: { 'machineconfiguration.openshift.io/mco-built-in': '' },
+    name: 'worker',
+    resourceVersion: '79610',
+    uid: '195b087d-796f-4970-bbf9-bdf3d8989f14',
+  },
+  spec: {
+    configuration: {
+      name: 'rendered-worker-8fcfc03c3e3b9ad41853868d06b8b116',
+      source: [
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '00-worker',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-worker-container-runtime',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-worker-kubelet',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-worker-195b087d-796f-4970-bbf9-bdf3d8989f14-registries',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-worker-ssh',
+        },
+      ],
+    },
+    machineConfigSelector: {
+      matchLabels: { 'machineconfiguration.openshift.io/role': 'worker' },
+    },
+    nodeSelector: { matchLabels: { 'node-role.kubernetes.io/worker': '' } },
+    paused: true,
+  },
+  status: {
+    conditions: [
+      {
+        lastTransitionTime: '2020-08-06T11:53:11Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'RenderDegraded',
+      },
+      {
+        lastTransitionTime: '2020-08-06T11:53:15Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'NodeDegraded',
+      },
+      {
+        lastTransitionTime: '2020-08-06T11:53:15Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'Degraded',
+      },
+      {
+        lastTransitionTime: '2020-08-06T14:25:56Z',
+        message: 'All nodes are updated with rendered-worker-8fcfc03c3e3b9ad41853868d06b8b116',
+        reason: '',
+        status: 'True',
+        type: 'Updated',
+      },
+      {
+        lastTransitionTime: '2020-08-06T14:25:56Z',
+        message: '',
+        reason: '',
+        status: 'False',
+        type: 'Updating',
+      },
+    ],
+    configuration: {
+      name: 'rendered-worker-8fcfc03c3e3b9ad41853868d06b8b116',
+      source: [
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '00-worker',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-worker-container-runtime',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '01-worker-kubelet',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-worker-195b087d-796f-4970-bbf9-bdf3d8989f14-registries',
+        },
+        {
+          apiVersion: 'machineconfiguration.openshift.io/v1',
+          kind: 'MachineConfig',
+          name: '99-worker-ssh',
+        },
+      ],
+    },
+    degradedMachineCount: 0,
+    machineCount: 3,
+    observedGeneration: 3,
+    readyMachineCount: 3,
+    unavailableMachineCount: 0,
+    updatedMachineCount: 3,
+  },
+};
+
 export const machineConfigPoolsProps: ListKind<MachineConfigPoolKind> = {
   apiVersion: 'machineconfiguration.openshift.io/v1',
-  items: [
-    {
-      apiVersion: 'machineconfiguration.openshift.io/v1',
-      kind: 'MachineConfigPool',
-      metadata: {
-        creationTimestamp: '2020-08-06T11:52:19Z',
-        generation: 3,
-        labels: {
-          'machineconfiguration.openshift.io/mco-built-in': '',
-          'operator.machineconfiguration.openshift.io/required-for-upgrade': '',
-        },
-        name: 'master',
-        resourceVersion: '80196',
-        uid: 'c34d2940-6dfb-4196-966f-4617e508fdbd',
-      },
-      spec: {
-        configuration: {
-          name: 'rendered-master-9ca9eaaebe062d1f20232f7b7b9e4456',
-          source: [
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '00-master',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '01-master-container-runtime',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '01-master-kubelet',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '99-master-c34d2940-6dfb-4196-966f-4617e508fdbd-registries',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '99-master-ssh',
-            },
-          ],
-        },
-        machineConfigSelector: {
-          matchLabels: { 'machineconfiguration.openshift.io/role': 'master' },
-        },
-        nodeSelector: { matchLabels: { 'node-role.kubernetes.io/master': '' } },
-        paused: false,
-      },
-      status: {
-        conditions: [
-          {
-            lastTransitionTime: '2020-08-06T11:53:11Z',
-            message: '',
-            reason: '',
-            status: 'False',
-            type: 'RenderDegraded',
-          },
-          {
-            lastTransitionTime: '2020-08-06T11:53:38Z',
-            message: '',
-            reason: '',
-            status: 'False',
-            type: 'NodeDegraded',
-          },
-          {
-            lastTransitionTime: '2020-08-06T11:53:38Z',
-            message: '',
-            reason: '',
-            status: 'False',
-            type: 'Degraded',
-          },
-          {
-            lastTransitionTime: '2020-08-06T14:27:00Z',
-            message: 'All nodes are updated with rendered-master-9ca9eaaebe062d1f20232f7b7b9e4456',
-            reason: '',
-            status: 'True',
-            type: 'Updated',
-          },
-          {
-            lastTransitionTime: '2020-08-06T14:27:00Z',
-            message: '',
-            reason: '',
-            status: 'False',
-            type: 'Updating',
-          },
-        ],
-        configuration: {
-          name: 'rendered-master-9ca9eaaebe062d1f20232f7b7b9e4456',
-          source: [
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '00-master',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '01-master-container-runtime',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '01-master-kubelet',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '99-master-c34d2940-6dfb-4196-966f-4617e508fdbd-registries',
-            },
-            {
-              apiVersion: 'machineconfiguration.openshift.io/v1',
-              kind: 'MachineConfig',
-              name: '99-master-ssh',
-            },
-          ],
-        },
-        degradedMachineCount: 0,
-        machineCount: 3,
-        observedGeneration: 3,
-        readyMachineCount: 3,
-        unavailableMachineCount: 0,
-        updatedMachineCount: 3,
-      },
-    },
-    { ...workerMachineConfigPoolProp },
-  ],
+  items: [{ ...masterMachineConfigPoolProp }, { ...workerMachineConfigPoolProp }],
+  kind: 'MachineConfigPoolList',
+  metadata: {
+    resourceVersion: '167399',
+  },
+};
+
+export const machineConfigPoolsWithPausedWorkerProps: ListKind<MachineConfigPoolKind> = {
+  apiVersion: 'machineconfiguration.openshift.io/v1',
+  items: [{ ...masterMachineConfigPoolProp }, { ...pausedWorkerMachineConfigPoolProp }],
   kind: 'MachineConfigPoolList',
   metadata: {
     resourceVersion: '167399',

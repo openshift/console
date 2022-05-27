@@ -127,7 +127,7 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   const dimensify = dimensifyRow(columnClasses);
 
   const isSizeLoading = size === undefined;
-  const isStorageClassLoading = size === undefined;
+  const isStorageClassLoading = storageClass === undefined;
   const pvcName = disk?.persistentVolumeClaimWrapper?.getName();
   const pvcNamespace = disk?.persistentVolumeClaimWrapper?.getNamespace();
   const pvcLink = pvcName && pvcNamespace && (

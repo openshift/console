@@ -6,7 +6,16 @@ import { Link } from 'react-router-dom';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Split,
+  SplitItem,
+  Text,
+  TextContent,
+  TextVariants,
+} from '@patternfly/react-core';
 import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import {
@@ -44,7 +53,7 @@ export const ResourceItemDeleting = () => {
 };
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
-  <Breadcrumb>
+  <Breadcrumb className="co-breadcrumb">
     {breadcrumbs.map((crumb, i, { length }) => {
       const isLast = i === length - 1;
 
@@ -95,6 +104,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     menuActions,
     buttonActions,
     customActionMenu,
+    link,
     obj,
     breadcrumbs,
     breadcrumbsFor,
@@ -105,6 +115,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     getResourceStatus = (resource: K8sResourceKind): string =>
       _.get(resource, ['status', 'phase'], null),
     className,
+    centerText,
+    helpText,
   } = props;
   const extraResources = _.reduce(
     props.resourceKeys,
@@ -124,72 +136,92 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
   return (
-    <div
-      className={classNames(
-        'co-m-nav-title',
-        { 'co-m-nav-title--detail': detail },
-        { 'co-m-nav-title--logo': props.icon },
-        { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
-        className,
-      )}
-      style={style}
-    >
+    <>
       {showBreadcrumbs && (
-        <Split style={{ alignItems: 'baseline' }}>
-          <SplitItem isFilled>
-            <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
-          </SplitItem>
-          {badge && (
-            <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
-          )}
-        </Split>
+        <div className="pf-c-page__main-breadcrumb">
+          <Split style={{ alignItems: 'baseline' }}>
+            <SplitItem isFilled>
+              <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
+            </SplitItem>
+            {badge && (
+              <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
+            )}
+          </Split>
+        </div>
       )}
-      {showHeading && (
-        <h1
-          className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}
-        >
-          {props.icon ? (
-            <props.icon obj={data} />
-          ) : (
-            <div className="co-m-pane__name co-resource-item">
-              {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-              <span data-test-id="resource-title" className="co-resource-item__resource-name">
-                {resourceTitle}
-                {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
-                  <ManagedByOperatorLink obj={data} />
+      <div
+        className={classNames(
+          'co-m-nav-title',
+          { 'co-m-nav-title--detail': detail },
+          { 'co-m-nav-title--logo': props.icon },
+          { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
+          className,
+        )}
+        style={style}
+      >
+        {showHeading && (
+          <Text
+            component={TextVariants.h1}
+            className={classNames('co-m-pane__heading', {
+              'co-m-pane__heading--baseline': link,
+              'co-m-pane__heading--center': centerText,
+              'co-m-pane__heading--logo': props.icon,
+              'co-m-pane__heading--with-help-text': helpText,
+            })}
+          >
+            {props.icon ? (
+              <props.icon obj={data} />
+            ) : (
+              <div className="co-m-pane__name co-resource-item">
+                {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
+                <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                  {resourceTitle}
+                  {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
+                    <ManagedByOperatorLink obj={data} />
+                  )}
+                </span>
+                {resourceStatus && (
+                  <ResourceStatus additionalClassNames="hidden-xs">
+                    <Status status={resourceStatus} />
+                  </ResourceStatus>
                 )}
-              </span>
-              {resourceStatus && (
-                <ResourceStatus additionalClassNames="hidden-xs">
-                  <Status status={resourceStatus} />
-                </ResourceStatus>
-              )}
-            </div>
-          )}
-          {!breadcrumbsFor && !breadcrumbs && badge && (
-            <span className="co-m-pane__heading-badge">{badge}</span>
-          )}
-          {showActions && (
-            <div className="co-actions" data-test-id="details-actions">
-              {hasButtonActions && (
-                <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-              )}
-              {hasMenuActions && (
-                <ActionsMenu
-                  actions={
-                    _.isFunction(menuActions)
-                      ? menuActions(kindObj, data, extraResources, customData)
-                      : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                  }
-                />
-              )}
-              {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
-            </div>
-          )}
-        </h1>
-      )}
-      {props.children}
-    </div>
+              </div>
+            )}
+            {!breadcrumbsFor && !breadcrumbs && badge && (
+              <span className="co-m-pane__heading-badge">{badge}</span>
+            )}
+            {link && <div className="co-m-pane__heading-link">{link}</div>}
+            {showActions && (
+              <div className="co-actions" data-test-id="details-actions">
+                {hasButtonActions && (
+                  <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                )}
+                {hasMenuActions && (
+                  <ActionsMenu
+                    actions={
+                      _.isFunction(menuActions)
+                        ? menuActions(kindObj, data, extraResources, customData)
+                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                    }
+                  />
+                )}
+                {_.isFunction(customActionMenu)
+                  ? customActionMenu(kindObj, data)
+                  : customActionMenu}
+              </div>
+            )}
+          </Text>
+        )}
+        {helpText && (
+          <TextContent>
+            <Text component={TextVariants.p} className="help-block co-m-pane__heading-help-text">
+              {helpText}
+            </Text>
+          </TextContent>
+        )}
+        {props.children}
+      </div>
+    </>
   );
 });
 
@@ -293,6 +325,7 @@ export type PageHeadingProps = {
   customActionMenu?:
     | React.ReactNode
     | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
+  link?: React.ReactNode;
   obj?: FirehoseResult<K8sResourceKind>;
   resourceKeys?: string[];
   style?: object;
@@ -303,6 +336,8 @@ export type PageHeadingProps = {
   icon?: React.ComponentType<{ obj?: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   className?: string;
+  centerText?: boolean;
+  helpText?: React.ReactNode;
 };
 
 export type ResourceOverviewHeadingProps = {

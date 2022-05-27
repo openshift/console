@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PageSection, PageSectionVariants, Stack, StackItem } from '@patternfly/react-core';
+import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,6 @@ import { useExplicitPipelineTaskTouch, useFormikFetchAndSaveTasks } from './hook
 import { removeTaskModal } from './modals';
 import PipelineBuilderFormEditor from './PipelineBuilderFormEditor';
 import PipelineBuilderHeader from './PipelineBuilderHeader';
-import Sidebar from './task-sidebar/Sidebar';
 import TaskSidebar from './task-sidebar/TaskSidebar';
 import {
   CleanupResults,
@@ -69,8 +68,13 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
 
   statusRef.current = status;
 
+  const resetSelectedTask = (): void => {
+    setSelectedTask(null);
+    selectedTaskRef.current = null;
+  };
   const onTaskSearch: TaskSearchCallback = (callback: () => void): void => {
     setMenuOpen(true);
+    resetSelectedTask();
     savedCallback.current = callback;
   };
   const onTaskSelection = (task: PipelineTask, resource: TaskKind, isFinallyTask: boolean) => {
@@ -113,8 +117,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   };
 
   const closeSidebarAndHandleReset = React.useCallback(() => {
-    setSelectedTask(null);
-    selectedTaskRef.current = null;
+    resetSelectedTask();
     handleReset();
   }, [handleReset]);
 
@@ -140,45 +143,90 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     />
   );
 
+  const closeRef = React.useCallback(() => {
+    if (!!contentRef.current && !!selectedTask) {
+      const currentSelection: SelectedBuilderTask = selectedTaskRef.current;
+      setTimeout(() => {
+        if (
+          currentSelection?.taskIndex === selectedTaskRef.current?.taskIndex &&
+          currentSelection?.isFinallyTask === selectedTaskRef.current?.isFinallyTask
+        ) {
+          // Clicked on itself or on a non-node
+          setSelectedTask(null);
+        }
+      }, 0); // let the click logic flow through
+    }
+  }, [selectedTask]);
+
   return (
-    <>
-      <div
-        ref={contentRef}
-        className="odc-pipeline-builder-form ocs-quick-search-modal__no-backdrop"
+    <Drawer isExpanded={!!selectedTask} position="right">
+      <DrawerContent
+        panelContent={
+          selectedTask ? (
+            <TaskSidebar
+              // Intentional remount when selection changes
+              key={selectedTask?.taskIndex}
+              onClose={() => setSelectedTask(null)}
+              resourceList={formData.resources || []}
+              workspaceList={formData.workspaces || []}
+              errorMap={status?.tasks || {}}
+              onRenameTask={(data: UpdateOperationRenameTaskData) => {
+                updateTasks(
+                  applyChange(taskGroup, { type: UpdateOperationType.RENAME_TASK, data }),
+                );
+              }}
+              onRemoveTask={(taskName: string) => {
+                removeTaskModal(taskName, () => {
+                  setSelectedTask(null);
+                  updateTasks(
+                    applyChange(taskGroup, {
+                      type: UpdateOperationType.REMOVE_TASK,
+                      data: { taskName },
+                    }),
+                  );
+                });
+              }}
+              selectedData={selectedTask}
+            />
+          ) : null
+        }
       >
-        <Stack>
-          <StackItem>
+        <DrawerContentBody onClick={closeRef}>
+          <div
+            className="opp-pipeline-builder  ocs-quick-search-modal__no-backdrop"
+            ref={contentRef}
+          >
             <PipelineBuilderHeader namespace={namespace} />
-          </StackItem>
-          <PageSection variant={PageSectionVariants.light}>
-            <FlexForm onSubmit={handleSubmit}>
-              <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
-                <PipelineQuickSearch
-                  namespace={namespace}
-                  viewContainer={contentRef.current}
-                  isOpen={menuOpen}
-                  callback={savedCallback.current}
-                  setIsOpen={(open) => setMenuOpen(open)}
-                  onUpdateTasks={onUpdateTasks}
-                  taskGroup={taskGroup}
-                />
-                <SyncedEditorField
-                  name="editorType"
-                  formContext={{
-                    name: 'formData',
-                    editor: formEditor,
-                    label: t('pipelines-plugin~Pipeline builder'),
-                    sanitizeTo: (yamlPipeline: PipelineKind) =>
-                      sanitizeToForm(formData, yamlPipeline),
-                  }}
-                  yamlContext={{
-                    name: 'yamlData',
-                    editor: yamlEditor,
-                    sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
-                  }}
-                  lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
-                />
-              </FormBody>
+            <FlexForm className="opp-pipeline-builder-form" onSubmit={handleSubmit}>
+              <div className="opp-pipeline-builder-form__content">
+                <FormBody flexLayout disablePaneBody className="opp-pipeline-builder-form__grid">
+                  <PipelineQuickSearch
+                    namespace={namespace}
+                    viewContainer={contentRef.current}
+                    isOpen={menuOpen}
+                    callback={savedCallback.current}
+                    setIsOpen={(open) => setMenuOpen(open)}
+                    onUpdateTasks={onUpdateTasks}
+                    taskGroup={taskGroup}
+                  />
+                  <SyncedEditorField
+                    name="editorType"
+                    formContext={{
+                      name: 'formData',
+                      editor: formEditor,
+                      label: t('pipelines-plugin~Pipeline builder'),
+                      sanitizeTo: (yamlPipeline: PipelineKind) =>
+                        sanitizeToForm(formData, yamlPipeline),
+                    }}
+                    yamlContext={{
+                      name: 'yamlData',
+                      editor: yamlEditor,
+                      sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
+                    }}
+                    lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+                  />
+                </FormBody>
+              </div>
               <FormFooter
                 handleReset={closeSidebarAndHandleReset}
                 errorMessage={status?.submitError}
@@ -200,52 +248,10 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 sticky
               />
             </FlexForm>
-          </PageSection>
-        </Stack>
-      </div>
-      <Sidebar
-        closeAreaNode={contentRef.current}
-        open={!!selectedTask}
-        onRequestClose={() => {
-          const currentSelection: SelectedBuilderTask = selectedTaskRef.current;
-          setTimeout(() => {
-            if (
-              currentSelection?.taskIndex === selectedTaskRef.current?.taskIndex &&
-              currentSelection?.isFinallyTask === selectedTaskRef.current?.isFinallyTask
-            ) {
-              // Clicked on itself or on a non-node
-              setSelectedTask(null);
-            }
-          }, 0); // let the click logic flow through
-        }}
-      >
-        {() => (
-          <TaskSidebar
-            // Intentional remount when selection changes
-            key={selectedTask.taskIndex}
-            onClose={() => setSelectedTask(null)}
-            resourceList={formData.resources || []}
-            workspaceList={formData.workspaces || []}
-            errorMap={status?.tasks || {}}
-            onRenameTask={(data: UpdateOperationRenameTaskData) => {
-              updateTasks(applyChange(taskGroup, { type: UpdateOperationType.RENAME_TASK, data }));
-            }}
-            onRemoveTask={(taskName: string) => {
-              removeTaskModal(taskName, () => {
-                setSelectedTask(null);
-                updateTasks(
-                  applyChange(taskGroup, {
-                    type: UpdateOperationType.REMOVE_TASK,
-                    data: { taskName },
-                  }),
-                );
-              });
-            }}
-            selectedData={selectedTask}
-          />
-        )}
-      </Sidebar>
-    </>
+          </div>
+        </DrawerContentBody>
+      </DrawerContent>
+    </Drawer>
   );
 };
 

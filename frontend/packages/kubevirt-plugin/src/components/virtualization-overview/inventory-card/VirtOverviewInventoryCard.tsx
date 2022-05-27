@@ -9,7 +9,7 @@ import { FirehoseResource } from '@console/internal/components/utils/types';
 import { NodeModel, TemplateModel } from '@console/internal/models/index';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../../constants';
+import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL } from '../../../constants';
 import { VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { ResourcesSection } from './ResourcesSection';
@@ -29,7 +29,12 @@ const vmTemplatesResource = {
   isList: true,
   prop: 'vmTemplates',
   selector: {
-    matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+    matchExpressions: [
+      {
+        key: TEMPLATE_TYPE_LABEL,
+        operator: 'Exists',
+      },
+    ],
   },
 };
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared/src';
@@ -55,8 +56,7 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
     (value: DeploymentStrategyType) => {
       const strategyDefaultValues = getStrategyData(value, {}, resName, resNamespace, resourceType);
       const strategyData = {
-        ...strategyDefaultValues,
-        ...deploymentStrategy,
+        ..._.merge(strategyDefaultValues, deploymentStrategy),
         type: value,
       };
       initialValues.formData.deploymentStrategy = strategyData;

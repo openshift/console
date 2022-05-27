@@ -193,7 +193,7 @@ export const CamelIntegrationModel: K8sKind = {
 
 export const KafkaModel: K8sKind = {
   apiGroup: STRIMZI_KAFKA_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1beta2',
   kind: 'Kafka',
   label: 'Kafka',
   // t('knative-plugin~Kafka')
@@ -211,7 +211,7 @@ export const KafkaModel: K8sKind = {
 
 export const KafkaTopicModel: K8sKind = {
   apiGroup: STRIMZI_KAFKA_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1beta2',
   kind: 'KafkaTopic',
   label: 'KafkaTopic',
   // t('knative-plugin~KafkaTopic')

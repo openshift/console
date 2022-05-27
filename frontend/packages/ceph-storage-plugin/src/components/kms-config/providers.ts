@@ -20,6 +20,7 @@ export type KMSConfigureProps = {
   infraType?: string;
   mode?: string;
   isWizardFlow?: boolean;
+  isMCG?: boolean;
 };
 
 export type AdvancedKMSModalProps = {
@@ -29,6 +30,7 @@ export type AdvancedKMSModalProps = {
     | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
   dispatch: EncryptionDispatch;
   mode?: string;
+  isWizardFlow?: boolean;
 } & HandlePromiseProps &
   ModalComponentProps;
 

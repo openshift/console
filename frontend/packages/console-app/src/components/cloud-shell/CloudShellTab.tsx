@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router';
 import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
-import { InlineTechPreviewBadge, useFlag } from '@console/shared';
+import { useFlag } from '@console/shared';
 import { FLAG_DEVWORKSPACE } from '../../consts';
 import CloudShellTerminal from './CloudShellTerminal';
 import './CloudShellTab.scss';
@@ -19,7 +19,6 @@ const CloudShellTab: React.FC = () => {
         <div className="co-cloud-shell-tab__header-text">
           {t('console-app~OpenShift command line terminal')}
         </div>
-        <InlineTechPreviewBadge />
       </div>
       <div className="co-cloud-shell-tab__body">
         <CloudShellTerminal />

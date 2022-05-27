@@ -10,10 +10,10 @@ metadata:
   name: vm-template-example
   labels:
     template.kubevirt.io/type: vm
-    os.template.kubevirt.io/fedora31: 'true'
+    os.template.kubevirt.io/fedora35: 'true'
     workload.template.kubevirt.io/server: 'true'
   annotations:
-    name.os.template.kubevirt.io/fedora31: Fedora 31
+    name.os.template.kubevirt.io/fedora35: Fedora 35
     description: VM template example
 objects:
   - apiVersion: kubevirt.io/v1
@@ -46,6 +46,7 @@ objects:
               interfaces:
                 - masquerade: {}
                   name: default
+                  model: virtio
               networkInterfaceMultiqueue: true
               rng: {}
             resources:
@@ -58,7 +59,7 @@ objects:
           volumes:
             - name: containerdisk
               containerDisk:
-                image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest'
+                image: 'quay.io/containerdisks/fedora:35'
             - cloudInitNoCloud:
                 userData: |-
                   #cloud-config

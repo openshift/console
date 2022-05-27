@@ -15,6 +15,7 @@ import {
   useResolvedExtensions,
   ResourceTabPage as DynamicResourceTabPage,
   isResourceTabPage as isDynamicResourceTabPage,
+  K8sModel,
 } from '@console/dynamic-plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -32,7 +33,6 @@ import {
   K8sResourceKind,
   K8sKind,
   referenceForModel,
-  referenceFor,
   referenceForExtensionModel,
 } from '../../module/k8s';
 import { ErrorBoundaryFallback } from '../error';
@@ -64,7 +64,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   const resourceKeys = _.map(props.resources, 'prop');
   const [pluginBreadcrumbs, setPluginBreadcrumbs] = React.useState(undefined);
   const [model] = useK8sModel(props.kind);
-  const kindObj = props.kindObj ?? model;
+  const kindObj: K8sModel = props.kindObj ?? model;
   const renderAsyncComponent = (page: ResourceTabPage, cProps: PageComponentProps) => (
     <AsyncComponent loader={page.properties.loader} {...cProps} />
   );
@@ -80,7 +80,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         .filter(
           (p) =>
             referenceForModel(p.properties.model) ===
-            (kindObj ? referenceFor(kindObj) : props.kind),
+            (kindObj ? referenceForModel(kindObj) : props.kind),
         )
         .map((p) => ({
           href: p.properties.href,
@@ -92,7 +92,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           if (p.properties.model.version) {
             return (
               referenceForExtensionModel(p.properties.model) ===
-              (kindObj ? referenceFor(kindObj) : props.kind)
+              (kindObj ? referenceForModel(kindObj) : props.kind)
             );
           }
           return (

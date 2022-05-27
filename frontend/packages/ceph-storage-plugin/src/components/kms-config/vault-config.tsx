@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
-
 import {
   FormGroup,
   FormSelect,
@@ -15,7 +14,7 @@ import {
 import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useFlag } from '@console/shared/src/hooks/flag';
-
+import { useDeepCompareMemoize } from '@console/shared';
 import { setEncryptionDispatch, parseURL, kmsConfigValidation, isLengthUnity } from './utils';
 import { KMSConfigureProps, EncryptionDispatch } from './providers';
 import {
@@ -28,7 +27,6 @@ import { InternalClusterState, ActionType } from '../ocs-install/internal-mode/r
 import { WizardState } from '../create-storage-system/reducer';
 import { FEATURES } from '../../features';
 import { advancedVaultModal } from '../modals/advanced-kms-modal/advanced-vault-modal';
-
 import {
   VaultConfig,
   ProviderNames,
@@ -36,7 +34,6 @@ import {
   KmsEncryptionLevel,
   VaultAuthMethodMapping,
 } from '../../types';
-
 import './kms-config.scss';
 
 export const ValutConfigure: React.FC<KMSConfigureProps> = ({
@@ -45,49 +42,70 @@ export const ValutConfigure: React.FC<KMSConfigureProps> = ({
   className,
   mode,
   isWizardFlow,
+  isMCG,
 }) => {
   const { t } = useTranslation();
 
   const isKmsVaultSASupported = useFlag(FEATURES.ODF_VAULT_SA_KMS);
 
-  const vaultState: VaultConfig = state.kms?.[ProviderNames.VAULT] || state.kms;
-  const vaultStateClone: VaultConfig = _.cloneDeep(vaultState);
+  const vaultState: VaultConfig = useDeepCompareMemoize(
+    state.kms?.[ProviderNames.VAULT] || state.kms,
+    true,
+  );
+  const vaultStateClone: VaultConfig = React.useMemo(() => _.cloneDeep(vaultState), [vaultState]);
+
   const { encryption } = state;
 
-  const updateVaultState = (vaultConfig: VaultConfig) => {
-    mode
-      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, vaultConfig)
-      : dispatch({
-          type: 'securityAndNetwork/setVault',
-          payload: vaultConfig,
-        });
-  };
-
-  const setAuthMethod = (authMethod: VaultAuthMethods) => {
-    vaultStateClone.authMethod = authMethod;
-    updateVaultState(vaultStateClone);
-  };
-
-  const filteredVaultAuthMethodMapping = Object.values(VaultAuthMethodMapping).filter(
-    (authMethod) =>
-      (encryption.clusterWide
-        ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.CLUSTER_WIDE)
-        : true) &&
-      (encryption.storageClass
-        ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.STORAGE_CLASS)
-        : true),
+  const updateVaultState = React.useCallback(
+    (vaultConfig: VaultConfig) => {
+      mode
+        ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, vaultConfig)
+        : dispatch({
+            type: 'securityAndNetwork/setVault',
+            payload: vaultConfig,
+          });
+    },
+    [dispatch, mode],
   );
 
-  const vaultAuthMethods = filteredVaultAuthMethodMapping.map((authMethod) => authMethod.value);
-  if (!vaultAuthMethods.includes(vaultState.authMethod)) {
-    if (isKmsVaultSASupported) {
-      // From 4.10 kubernetes is default auth method
-      setAuthMethod(VaultAuthMethods.KUBERNETES);
-    } else {
-      // upto 4.9 token is the default auth method
-      setAuthMethod(VaultAuthMethods.TOKEN);
+  const setAuthMethod = React.useCallback(
+    (authMethod: VaultAuthMethods) => {
+      vaultStateClone.authMethod = authMethod;
+      updateVaultState(vaultStateClone);
+    },
+    [updateVaultState, vaultStateClone],
+  );
+
+  const filteredVaultAuthMethodMapping = React.useMemo(
+    () =>
+      Object.values(VaultAuthMethodMapping).filter(
+        (authMethod) =>
+          (encryption.clusterWide || isMCG
+            ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.CLUSTER_WIDE)
+            : false) ||
+          (encryption.storageClass
+            ? authMethod.supportedEncryptionType.includes(KmsEncryptionLevel.STORAGE_CLASS)
+            : false),
+      ),
+    [encryption.clusterWide, encryption.storageClass, isMCG],
+  );
+
+  const vaultAuthMethods = React.useMemo(
+    () => filteredVaultAuthMethodMapping.map((authMethod) => authMethod.value),
+    [filteredVaultAuthMethodMapping],
+  );
+
+  React.useEffect(() => {
+    if (!vaultAuthMethods.includes(vaultState.authMethod)) {
+      if (isKmsVaultSASupported && vaultAuthMethods.includes(VaultAuthMethods.KUBERNETES)) {
+        // From 4.10 kubernetes is default auth method
+        setAuthMethod(VaultAuthMethods.KUBERNETES);
+      } else {
+        // upto 4.9 token is the default auth method
+        setAuthMethod(VaultAuthMethods.TOKEN);
+      }
     }
-  }
+  }, [isKmsVaultSASupported, setAuthMethod, vaultAuthMethods, vaultState.authMethod]);
 
   return (
     <>
@@ -143,7 +161,8 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
   dispatch,
   updateVaultState,
 }) => {
-  const vaultStateClone: VaultConfig = _.cloneDeep(vaultState);
+  const vaultStateClone: VaultConfig = React.useMemo(() => _.cloneDeep(vaultState), [vaultState]);
+
   const Component: React.FC<VaultAuthMethodProps> =
     vaultState.authMethod === VaultAuthMethods.TOKEN
       ? VaultTokenConfigure
@@ -176,6 +195,7 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
       state,
       dispatch,
       mode,
+      isWizardFlow,
     });
 
   // vault state update
@@ -198,11 +218,14 @@ const ValutConnectionForm: React.FC<ValutConnectionFormProps> = ({
     updateVaultState(vaultStateClone);
   };
 
-  const setAuthValue = (authValue: string) => {
-    vaultStateClone.authValue.value = authValue;
-    vaultStateClone.authValue.valid = authValue !== '';
-    updateVaultState(vaultStateClone);
-  };
+  const setAuthValue = React.useCallback(
+    (authValue: string) => {
+      vaultStateClone.authValue.value = authValue;
+      vaultStateClone.authValue.valid = authValue !== '';
+      updateVaultState(vaultStateClone);
+    },
+    [updateVaultState, vaultStateClone],
+  );
 
   const validateAddressMessage = () =>
     vaultState.address.value === ''

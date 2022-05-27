@@ -2,8 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
-import { translateExtension } from '../utils/extension-i18n';
-import useTranslationExt from '../utils/useTranslationExt';
+import useTranslatedExtensions from '../utils/useTranslatedExtensions';
 import { subscribeToExtensions } from './pluginSubscriptionService';
 
 /**
@@ -51,16 +50,15 @@ export const useExtensions = <E extends Extension>(
   const unsubscribeRef = React.useRef<VoidFunction>(null);
   const extensionsInUseRef = React.useRef<LoadedExtension<E>[]>([]);
   const latestTypeGuardsRef = React.useRef<ExtensionTypeGuard<E>[]>(typeGuards);
-  const { t } = useTranslationExt();
 
   const trySubscribe = React.useCallback(() => {
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToExtensions<E>((extensions) => {
-        extensionsInUseRef.current = extensions.map((e) => translateExtension(e, t));
+        extensionsInUseRef.current = extensions;
         isMountedRef.current && forceRender();
       }, ...latestTypeGuardsRef.current);
     }
-  }, [forceRender, t]);
+  }, [forceRender]);
 
   const tryUnsubscribe = React.useCallback(() => {
     if (unsubscribeRef.current !== null) {
@@ -84,5 +82,5 @@ export const useExtensions = <E extends Extension>(
     [tryUnsubscribe],
   );
 
-  return extensionsInUseRef.current;
+  return useTranslatedExtensions<E>(extensionsInUseRef.current);
 };

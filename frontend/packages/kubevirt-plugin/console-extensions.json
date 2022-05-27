@@ -661,6 +661,16 @@
     }
   },
   {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useModifyApplicationActionProvider" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
     "type": "console.action/resource-provider",
     "properties": {
       "model": {

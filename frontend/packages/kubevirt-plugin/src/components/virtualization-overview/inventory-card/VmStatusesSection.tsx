@@ -1,21 +1,12 @@
 import * as React from 'react';
-import {
-  EmptyState,
-  EmptyStateIcon,
-  Flex,
-  FlexItem,
-  Grid,
-  GridItem,
-  Title,
-} from '@patternfly/react-core';
-import { VirtualMachineIcon } from '@patternfly/react-icons';
+import { Flex, FlexItem, Grid, GridItem, TitleSizes } from '@patternfly/react-core';
 import classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared';
 import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../../flags/const';
 import { isVM, isVMI } from '../../../selectors/check-type';
 import { getVMStatus } from '../../../statuses/vm/vm-status';
+import { EmptyStateNoVMs } from '../../EmptyState/EmptyStateNoVMs';
 import { useVmStatusResources } from '../../vm-status/use-vm-status-resources';
 import { VMStatusInventoryItem } from './VMStatusInventoryItem';
 
@@ -45,19 +36,6 @@ const LoadingComponent: React.FC = () => (
     </GridItem>
   </Grid>
 );
-
-const EmptyVMStatusState: React.FC = () => {
-  const { t } = useTranslation();
-
-  return (
-    <EmptyState>
-      <EmptyStateIcon icon={VirtualMachineIcon} />
-      <Title headingLevel="h4" size="md">
-        {t('kubevirt-plugin~No virtual machines found')}
-      </Title>
-    </EmptyState>
-  );
-};
 
 const UNKNOWN = 'Unknown';
 
@@ -126,7 +104,7 @@ export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLo
   return (
     <>
       {!vmsLoaded && <LoadingComponent />}
-      {numStatuses === 0 && vmsLoaded && <EmptyVMStatusState />}
+      {numStatuses === 0 && vmsLoaded && <EmptyStateNoVMs titleSize={TitleSizes.md} />}
       {numStatuses > 0 && vmsLoaded && (
         <Grid hasGutter className="kv-inventory-card__statuses-grid">
           <GridItem

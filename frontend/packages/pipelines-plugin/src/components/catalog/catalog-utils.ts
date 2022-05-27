@@ -1,8 +1,7 @@
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TektonConfigModel } from '../../models';
-import { TektonHubTask } from '../../types/tektonHub';
-import { TEKTON_HUB_INTEGRATION_KEY } from './const';
+import { TektonHubTask, TEKTON_HUB_INTEGRATION_KEY } from './apis/tektonHub';
 
 export const getClusterPlatform = (): string =>
   `${window.SERVER_FLAGS.GOOS}/${window.SERVER_FLAGS.GOARCH}`;
@@ -17,11 +16,15 @@ export const useTektonHubIntegration = () => {
     TektonConfigModel,
     'config',
   );
+  if (!configLoaded) {
+    return false;
+  }
+  // return false only if TEKTON_HUB_INTEGRATION_KEY value is set to 'false'
   if (config && configLoaded && !configLoadErr) {
-    const devconsoleIntegrationEnabled = config.spec?.hub?.params.find(
+    const devconsoleIntegrationEnabled = config.spec?.hub?.params?.find(
       (p) => p.name === TEKTON_HUB_INTEGRATION_KEY,
     );
-    return devconsoleIntegrationEnabled ? devconsoleIntegrationEnabled.value : true;
+    return devconsoleIntegrationEnabled?.value?.toLowerCase() !== 'false';
   }
   return true;
 };

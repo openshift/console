@@ -5,6 +5,7 @@ import { K8sResourceCommon, FilterValue } from '../../../extensions/console-type
 import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
 import { k8sWatch } from '../../../utils/k8s/k8s-utils';
+import { WSFactory } from '../../../utils/k8s/ws-factory';
 import { getImpersonate, getActiveCluster } from '../../core/reducers/coreSelectors';
 
 type K8sResourceKind = K8sResourceCommon & {
@@ -61,9 +62,9 @@ export const partialObjectMetadataHeader = {
   Accept: 'application/json;as=PartialObjectMetadata;v=v1;g=meta.k8s.io,application/json',
 };
 
-const WS = {} as { [id: string]: WebSocket & any };
-const POLLs = {};
-const REF_COUNTS = {};
+const WS: { [id: string]: WSFactory } = {};
+const POLLs: { [id: string]: number } = {};
+const REF_COUNTS: { [id: string]: number } = {};
 
 const paginationLimit = 250;
 
@@ -177,7 +178,7 @@ export const watchK8sList = (
           `${getReferenceForModel(k8skind)} does not support watching, falling back to polling.`,
         );
         if (!POLLs[id]) {
-          POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+          POLLs[id] = window.setTimeout(pollAndWatch, 15 * 1000);
         }
         return;
       }
@@ -200,7 +201,7 @@ export const watchK8sList = (
       dispatch(errored(id, e));
 
       if (!POLLs[id]) {
-        POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+        POLLs[id] = window.setTimeout(pollAndWatch, 15 * 1000);
       }
       return;
     }
@@ -212,26 +213,27 @@ export const watchK8sList = (
           return;
         }
         // eslint-disable-next-line no-console
-        console.log('WS closed abnormally - starting polling loop over!');
+        console.log('WS closed abnormally');
         const ws = WS[id];
-        ws && ws.destroy();
+        const timedOut = true;
+        ws && ws.destroy(timedOut);
       })
       .ondestroy((timedOut) => {
         if (!timedOut) {
           return;
         }
-        // If the WS is unsucessful for timeout duration, assume it is less work
-        //  to update the entire list and then start the WS again
+        // If the WS is unsuccessful for timeout duration, assume it is less work
+        // to update the entire list and then start the WS again
 
         // eslint-disable-next-line no-console
-        console.log(`${id} timed out - restarting polling`);
+        console.log(`WS ${id} timed out - restarting polling`);
         delete WS[id];
 
         if (POLLs[id]) {
           return;
         }
 
-        POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+        POLLs[id] = window.setTimeout(pollAndWatch, 15 * 1000);
       })
       .onbulkmessage((events) =>
         [updateListFromWS, extraAction].forEach((f) => f && dispatch(f(id, events))),
@@ -281,7 +283,7 @@ export const watchK8sObject = (
         console.log(err);
       });
   };
-  POLLs[id] = setInterval(poller, 30 * 1000);
+  POLLs[id] = window.setInterval(poller, 30 * 1000);
   poller();
 
   if (!_.get(k8sType, 'verbs', ['watch']).includes('watch')) {

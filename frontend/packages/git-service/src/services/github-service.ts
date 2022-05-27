@@ -1,5 +1,6 @@
 import * as Octokit from '@octokit/rest';
 import * as GitUrlParse from 'git-url-parse';
+import { Base64 } from 'js-base64';
 import {
   GitSource,
   SecretType,
@@ -27,7 +28,8 @@ export class GithubService extends BaseService {
     switch (this.gitsource.secretType) {
       case SecretType.PERSONAL_ACCESS_TOKEN:
       case SecretType.BASIC_AUTH:
-        return { auth: this.gitsource.secretContent };
+      case SecretType.OAUTH:
+        return { auth: Base64.decode(this.gitsource.secretContent.password) };
       default:
         return null;
     }

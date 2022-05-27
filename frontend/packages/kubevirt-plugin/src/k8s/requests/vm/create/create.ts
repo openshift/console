@@ -122,6 +122,7 @@ export const createVM = async (params: CreateVMParams) => {
     openshiftFlag,
     isProviderImport,
     sysprepData,
+    sourceRef,
   } = params;
   const { k8sCreate, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
 
@@ -185,6 +186,10 @@ export const createVM = async (params: CreateVMParams) => {
       disk: sysprepDisk(),
       volume: sysprepVolume(vmWrapper),
     });
+  }
+
+  if (sourceRef) {
+    vmWrapper.removePVC();
   }
 
   initializeCommonVMMetadata(combinedSimpleSettings, vmWrapper);

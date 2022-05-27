@@ -99,6 +99,7 @@ const DebugTerminalInner: React.FC<DebugTerminalInnerProps> = ({ debugPod, initi
 export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const [errorMessage, setErrorMessage] = React.useState('');
   const [generatedDebugPodName, setGeneratedDebugPodName] = React.useState('');
+  const { t } = useTranslation();
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata.name}-debug-`;
@@ -153,7 +154,7 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
 
   if (generatedDebugPodName) {
     if (err) {
-      return <DebugTerminalError error={err} />;
+      return <DebugTerminalError error={err.message || t('public~The debug pod failed.')} />;
     }
     if (loaded) {
       return <DebugTerminalInner initialContainer={containerName} debugPod={debugPod} />;

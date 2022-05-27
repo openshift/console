@@ -1,12 +1,21 @@
+$overview-sidebar-width: 550px;
+
 .opp-task-sidebar {
+  width: $overview-sidebar-width;
+  max-width: 100%;
+  position: absolute;
+  background: var(--pf-global--BackgroundColor--100);
+  right: 0;
+  height: 100%;
+  box-shadow: var(--pf-global--BoxShadow--md);
+
   &__header {
     // Hack for Popper to go under the header
-    background: white;
+    background: var(--pf-global--BackgroundColor--100);
     z-index: 10000;
   }
 
   &__content {
-    margin-bottom: var(--pf-global--spacer--lg);
     padding: var(--pf-global--spacer--lg);
     overflow-y: auto;
   }

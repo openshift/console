@@ -769,11 +769,16 @@ export type MachineConfigPoolKind = {
   status: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
-export type ClusterUpdate = {
-  force: boolean;
-  image: string;
+export type Release = {
   version: string;
+  image: string;
+  url?: string;
   channels?: string[];
+};
+
+export type ConditionalUpdate = {
+  release: Release;
+  conditions: K8sResourceCondition[];
 };
 
 export type UpdateHistory = {
@@ -799,18 +804,19 @@ export type ClusterVersionCondition = {
 } & K8sResourceCondition;
 
 type ClusterVersionStatus = {
-  availableUpdates: ClusterUpdate[];
-  conditions: ClusterVersionCondition[];
-  desired: ClusterUpdate;
+  desired: Release;
   history: UpdateHistory[];
   observedGeneration: number;
   versionHash: string;
+  conditions?: ClusterVersionCondition[];
+  availableUpdates: Release[];
+  conditionalUpdates?: ConditionalUpdate[];
 };
 
 type ClusterVersionSpec = {
   channel: string;
   clusterID: string;
-  desiredUpdate?: ClusterUpdate;
+  desiredUpdate?: Release;
   upstream?: string;
 };
 

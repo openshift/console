@@ -12,6 +12,10 @@ import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import {
+  SourceRefActions,
+  SourceRefActionsNames,
+} from '../../../../redux/actions/sourceRef-actions';
 import { ValidationErrorType } from '../../../../selectors';
 import {
   getDataVolumeAccessModes,
@@ -56,7 +60,8 @@ import { InternalActionType, UpdateOptions } from '../types';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-
+  const [, dataSourcesLoaded] = iGetCommonData(state, id, VMWizardProps.dataSources);
+  const [, pvcsLoaded] = iGetCommonData(state, id, VMWizardProps.pvcs);
   if (
     !hasVMSettingsValueChanged(
       prevState,
@@ -67,7 +72,9 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
       VMSettingsField.WORKLOAD_PROFILE,
       VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
       VMSettingsField.PROVISION_SOURCE_TYPE,
-    )
+    ) &&
+    !dataSourcesLoaded &&
+    !pvcsLoaded
   ) {
     return;
   }
@@ -76,7 +83,11 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   const oldSourceStorage: VMWizardStorage = iOldSourceStorage && iOldSourceStorage.toJSON();
 
   // Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR USER_TEMPLATE and WORKLOAD_PROFILE
+  dispatch(SourceRefActions[SourceRefActionsNames.clearValues]());
   const newSourceStorage = getNewProvisionSourceStorage(state, id);
+  if (newSourceStorage?.sourceRef) {
+    dispatch(SourceRefActions[SourceRefActionsNames.updateValue](newSourceStorage?.sourceRef));
+  }
   const oldType =
     (oldSourceStorage &&
       StorageUISource.fromTypes(
@@ -337,8 +348,7 @@ const initialStorageWindowsPVCUpdater = ({ id, prevState, dispatch, getState }: 
   const state = getState();
   const relevantOptions = iGetRelevantTemplateSelectors(state, id);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-  const template =
-    iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions).toJS();
+  const template = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
   const iStorageClassConfigMap = iGetLoadedCommonData(
     state,
     id,
@@ -368,8 +378,8 @@ const initialStorageWindowsPVCUpdater = ({ id, prevState, dispatch, getState }: 
     );
   })?.metadata?.labels?.[LABEL_CDROM_SOURCE];
 
-  if (isCdRom && removableRootDisk && iStorageClassConfigMap) {
-    if (isWindowsTemplate(template)) {
+  if (isCdRom && removableRootDisk && iStorageClassConfigMap && template) {
+    if (isWindowsTemplate(template.toJS())) {
       dispatch(
         vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
           id: getNextIDResolver(storages),

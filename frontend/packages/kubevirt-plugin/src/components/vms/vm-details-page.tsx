@@ -17,7 +17,6 @@ import {
 import { VIRTUALMACHINES_BASE_URL } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
   VM_DETAIL_ENVIRONMENT,
   VM_DETAIL_SNAPSHOTS,
 } from '../../constants/vm';
@@ -123,7 +122,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       isList: true,
       namespace,
       prop: 'templates',
-      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+      matchExpressions: [
+        {
+          key: TEMPLATE_TYPE_LABEL,
+          operator: 'Exists',
+        },
+      ],
     }),
     {
       kind: kubevirtReferenceForModel(VirtualMachineInstanceMigrationModel),

@@ -1,5 +1,9 @@
 $co-external-link-padding-right: 15px;
 
+.co-breadcrumb {
+  padding-bottom: var(--pf-global--spacer--sm);
+}
+
 dl.co-inline {
   dd {
     margin-bottom: 1em;
@@ -153,6 +157,13 @@ dl.co-inline {
 .co-section-heading-tertiary {
   font-size: 16px;
   margin: 15px 0;
+}
+
+// TODO: remove when $font-size-base goes away or to 16px
+// and when override `label` font-weight style from _bootstrap-residual.scss is removed
+.co-switch-label .pf-c-switch__label {
+  font-size: $font-size-base;
+  font-weight: var(--pf-global--FontWeight--normal);
 }
 
 .co-table-container {

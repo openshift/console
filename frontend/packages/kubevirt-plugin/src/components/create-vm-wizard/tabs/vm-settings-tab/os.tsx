@@ -13,7 +13,7 @@ import {
   getFlavors,
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
-import { OperatingSystemRecord } from '../../../../types';
+import { OperatingSystemRecord, OperationSystemField } from '../../../../types';
 import {
   iGet,
   iGetIsLoaded,
@@ -61,6 +61,8 @@ export const OS: React.FC<OSProps> = React.memo(
     const cloneBaseDiskImage = iGetFieldValue(cloneBaseDiskImageField);
     const mountWindowsGuestTools = iGetFieldValue(mountWindowsGuestToolsField);
     const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
+    const [dataSourcesData] = dataSources;
+    const [pvcsData] = pvcs;
 
     const params = {
       flavor,
@@ -136,11 +138,11 @@ export const OS: React.FC<OSProps> = React.memo(
         const baseImageFoundInCluster =
           loadedBaseImages?.find(
             (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
-          ) || findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
+          ) || findDataSourcePVC(dataSourcesData, pvcsData, pvcName, pvcNamespace)?.dsBaseImage;
         const isBaseImageUploading =
           iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) ===
           CDI_PVC_PHASE_RUNNING;
-        const osField: any = {
+        const osField: OperationSystemField = {
           id: operatingSystem.id,
           name: operatingSystem.name,
           baseImageFoundInCluster,
@@ -192,7 +194,20 @@ export const OS: React.FC<OSProps> = React.memo(
         return osField;
       },
     );
-    const baseImage = operatingSystemBaseImages.find((image) => image.id === os);
+    const [baseImage, setBaseImage] = React.useState<OperationSystemField>();
+
+    React.useEffect(() => {
+      const osImage = operatingSystemBaseImages.find((image) => image.id === os);
+      const { dsBaseImage: matchingDataSourcePVC } = findDataSourcePVC(
+        dataSources,
+        pvcs,
+        osImage?.pvcName,
+        osImage?.pvcNamespace,
+      );
+      if (osImage && dataSources && pvcs && !baseImage) {
+        setBaseImage({ ...osImage, pvcName: iGetName(matchingDataSourcePVC) || osImage.pvcName });
+      }
+    }, [baseImage, dataSources, operatingSystemBaseImages, os, pvcs]);
 
     const numOfMountedDisks = cloneBaseDiskImage + mountWindowsGuestTools; // using boolean addition operator to count true
     const mountedDisksHelpMsg = numOfMountedDisks > 0 && (

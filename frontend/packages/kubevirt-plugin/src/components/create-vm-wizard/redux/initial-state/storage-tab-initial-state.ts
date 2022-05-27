@@ -310,24 +310,26 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const pvcName = iGetPVCName(iTemplate);
     const pvcNamespace = iGetPVCNamespace(iTemplate);
-    const dataSources = iGetCommonData(state, id, VMWizardProps.dataSources);
-    const pvcs = iGetCommonData(state, id, VMWizardProps.pvcs);
+    const [dataSources] = iGetCommonData(state, id, VMWizardProps.dataSources);
+    const [pvcs] = iGetCommonData(state, id, VMWizardProps.pvcs);
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
-      .valueSeq()
-      .find((iPVC) => iGetName(iPVC) === pvcName);
-
-    const dsBaseImage = findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
+      ?.valueSeq()
+      ?.find((iPVC) => iGetName(iPVC) === pvcName);
+    const { dsBaseImage, dataSource } = findDataSourcePVC(dataSources, pvcs, pvcName, pvcNamespace);
     const image = dsBaseImage || iBaseImage;
     const pvcSize = iGetIn(image, ['spec', `resources`, `requests`, `storage`]);
 
-    return getBaseImageStorage(
-      iGetName(image),
-      iGetNamespace(image),
-      pvcSize,
-      diskBus,
-      accessMode,
-      volumeMode,
-    );
+    return {
+      ...getBaseImageStorage(
+        iGetName(image),
+        iGetNamespace(image),
+        pvcSize,
+        diskBus,
+        accessMode,
+        volumeMode,
+      ),
+      sourceRef: dataSource,
+    };
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate) {
     const iOldSourceStorage = iGetProvisionSourceStorage(state, id);

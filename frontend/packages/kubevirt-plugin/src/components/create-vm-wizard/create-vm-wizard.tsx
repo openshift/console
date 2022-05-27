@@ -18,14 +18,12 @@ import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
   VMWizardMode,
   VMWizardView,
 } from '../../constants/vm';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { usePrevious } from '../../hooks/use-previous';
-import { useUpdateStorages } from '../../hooks/use-update-data-volume';
 import { DataSourceModel, DataVolumeModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getTemplateName } from '../../selectors/vm-template/basic';
@@ -429,12 +427,12 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     kind: referenceForModel(DataVolumeModel),
     isList: true,
   });
-  const [pvcs] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
+  const pvcs = useK8sWatchResource<PersistentVolumeClaimKind[]>({
     namespace: imagesNamespace,
     kind: PersistentVolumeClaimModel.kind,
     isList: true,
   });
-  const [dataSources] = useK8sWatchResource<DataSourceKind[]>({
+  const dataSources = useK8sWatchResource<DataSourceKind[]>({
     namespace: imagesNamespace,
     kind: kubevirtReferenceForModel(DataSourceModel),
     isList: true,
@@ -478,7 +476,12 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
           getResource(TemplateModel, {
             namespace: activeNamespace,
             prop: VMWizardProps.userTemplates,
-            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+            matchExpressions: [
+              {
+                key: TEMPLATE_TYPE_LABEL,
+                operator: 'Exists',
+              },
+            ],
           }),
         );
       }
@@ -490,7 +493,12 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
             namespace: initialData.userTemplateNs,
             prop: VMWizardProps.userTemplate,
             isList: false,
-            matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+            matchExpressions: [
+              {
+                key: TEMPLATE_TYPE_LABEL,
+                operator: 'Exists',
+              },
+            ],
           }),
         );
       }
@@ -508,7 +516,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     [commonTemplates, userMode],
   );
 
-  useUpdateStorages(reduxID);
   const openshiftCNVBaseImagesListResult = useBaseImages(loadedCommonTemplates);
   // TODO integrate the list of watches into the redux store to prevent unnecessary copying of data
   const openshiftCNVBaseImages = React.useMemo(

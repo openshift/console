@@ -1,12 +1,22 @@
-.odc-pipeline-builder-form {
-  overflow: auto;
+.opp-pipeline-builder-form {
+  margin-top: var(--pf-global--spacer--md);
   height: 100%;
-
+  &__content {
+    display: flex;
+    flex-grow: 1;
+  }
   &__grid {
-    grid-template-columns: minmax(0, 1fr);
+    padding-left: var(--pf-global--spacer--lg);
+    padding-right: var(--pf-global--spacer--lg);
   }
 
   &__short-section {
     max-width: 400px;
   }
+}
+
+.opp-pipeline-builder {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }

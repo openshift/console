@@ -5,6 +5,10 @@ import {
 } from '../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
 import { ResultsWrapper } from '../../../../k8s/enhancedK8sMethods/types';
 import { createVM as _createVM, createVMTemplate } from '../../../../k8s/requests/vm/create/create';
+import {
+  SourceRefActions,
+  SourceRefActionsNames,
+} from '../../../../redux/actions/sourceRef-actions';
 import { SysprepActions, SysprepActionsNames } from '../../../../redux/actions/sysprep-actions';
 import { immutableListToJS } from '../../../../utils/immutable';
 import { createOrDeleteSSHService } from '../../../ssh-service/SSHForm/ssh-form-utils';
@@ -13,7 +17,11 @@ import { iGetNetworks } from '../../selectors/immutable/networks';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { iGetStorages } from '../../selectors/immutable/storage';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
-import { getEnableSSHService, getSysprepData } from '../../selectors/immutable/wizard-selectors';
+import {
+  getEnableSSHService,
+  getSysprepData,
+  getSourceRefData,
+} from '../../selectors/immutable/wizard-selectors';
 import { iGetHardwareField } from '../../tabs/advanced-tab/hardware-devices/selectors';
 import {
   AUTOUNATTEND,
@@ -40,6 +48,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
 
   const enableSSHService = getEnableSSHService(state);
   const sysprepData = getSysprepData(state);
+  const sourceRef = getSourceRefData(state);
   const enhancedK8sMethods = new EnhancedK8sMethods();
 
   const importProviders = iGetImportProviders(state, id).toJS() as ImportProvidersSettings;
@@ -73,6 +82,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
     sysprepData,
     gpus,
     hostDevices,
+    sourceRef,
   };
 
   const create = isCreateTemplate ? createVMTemplate : _createVM;
@@ -89,6 +99,9 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
       if (sysprepData?.[AUTOUNATTEND] || sysprepData?.[UNATTEND]) {
         createSysprepConfigMap(vm, sysprepData);
         dispatch(SysprepActions[SysprepActionsNames.clearValues]());
+      }
+      if (sourceRef) {
+        dispatch(SourceRefActions[SourceRefActionsNames.clearValues]());
       }
       dispatch(
         vmWizardInternalActions[InternalActionType.SetResults](id, tabState, isValid, false, false),

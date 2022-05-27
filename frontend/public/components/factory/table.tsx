@@ -75,6 +75,7 @@ import {
   serviceClassDisplayName,
   MachineKind,
   VolumeSnapshotKind,
+  ClusterOperator,
 } from '../../module/k8s';
 import { useTableData } from './table-data-hook';
 
@@ -115,8 +116,8 @@ const sorts = {
   targetScrapeDuration: (target: Target): number => target?.lastScrapeDuration,
   string: (val) => JSON.stringify(val),
   number: (val) => _.toNumber(val),
-  getClusterOperatorStatus,
-  getClusterOperatorVersion,
+  getClusterOperatorStatus: (operator: ClusterOperator) => getClusterOperatorStatus(operator),
+  getClusterOperatorVersion: (operator: ClusterOperator) => getClusterOperatorVersion(operator),
   getTemplateInstanceStatus,
   nodeRoles: (node: NodeKind): string => {
     const roles = getNodeRoles(node);
