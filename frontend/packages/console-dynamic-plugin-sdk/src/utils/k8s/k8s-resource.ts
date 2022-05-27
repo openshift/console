@@ -23,7 +23,7 @@ type AdapterFunc = <D extends BaseOptions>(
  * @param func The function to be called.
  * @param knownArgs  The list of arguments to be provided to underlying API in order.
  * @returns The function called with provided arguments.
- * * */
+ */
 const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
   return (options) => {
     const args = knownArgs.map((arg) => {
@@ -53,10 +53,10 @@ const adapterFunc: AdapterFunc = (func: Function, knownArgs: string[]) => {
  * @param ns The namespace to look into, should not be specified for cluster-scoped resources.
  * @param opts The options to pass
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
- * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
+ * See more at https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @returns A promise that resolves to the response as JSON object with a resource if the name is provided
  * else it returns all the resouces matching the model. In case of failure, the promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sGet = (
   model: K8sModel,
   name: string,
@@ -89,10 +89,10 @@ type K8sGetResource = <R extends K8sResourceCommon>(options: OptionsGet) => Prom
  * @param options.path - Appends as subpath if provided
  * @param options.queryParams - The query parameters to be included in the URL.
  * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc.
- * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
+ * See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @returns A promise that resolves to the response as JSON object with a resource if the name is provided
  * else it returns all the resources matching the model. In case of failure, the promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sGetResource: K8sGetResource = adapterFunc(k8sGet, [
   'model',
   'name',
@@ -109,7 +109,7 @@ export const k8sGetResource: K8sGetResource = adapterFunc(k8sGet, [
  * @param opts The options to pass.
  * @returns A promise that resolves to the response of the resource created.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sCreate = <R extends K8sResourceCommon>(
   model: K8sModel,
   data: R,
@@ -140,7 +140,7 @@ type K8sCreateResource = <R extends K8sResourceCommon>(options: OptionsCreate<R>
  * @param options.queryParams - The query parameters to be included in the URL.
  * @returns A promise that resolves to the response of the resource created.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sCreateResource: K8sCreateResource = adapterFunc(k8sCreate, [
   'model',
   'data',
@@ -159,7 +159,7 @@ export const k8sCreateResource: K8sCreateResource = adapterFunc(k8sCreate, [
  * @param opts The options to pass
  * @returns A promise that resolves to the response of the resource updated.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sUpdate = <R extends K8sResourceCommon>(
   model: K8sModel,
   data: R,
@@ -198,7 +198,7 @@ type K8sUpdateResource = <R extends K8sResourceCommon>(options: OptionsUpdate<R>
  * @param options.queryParams - The query parameters to be included in the URL.
  * @returns A promise that resolves to the response of the resource updated.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sUpdateResource: K8sUpdateResource = adapterFunc(k8sUpdate, [
   'model',
   'data',
@@ -212,14 +212,14 @@ export const k8sUpdateResource: K8sUpdateResource = adapterFunc(k8sUpdate, [
  * It patches any resource in the cluster, based on provided model, resource, data.
  * When a client needs to perform the partial update, they can use k8sPatch.
  * Alternatively can use k8sUpdate to replace an existing resource entirely.
- * See more {@link https://datatracker.ietf.org/doc/html/rfc6902}
+ * See more https://datatracker.ietf.org/doc/html/rfc6902
  * @param model k8s model
  * @param resource The resource to be patched
  * @param data Only the data to be patched on existing resource with the operation, path, and value
  * @param opts The options to pass
  * @returns A promise that resolves to the response of the resource patched.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sPatch = <R extends K8sResourceCommon>(
   model: K8sModel,
   resource: R,
@@ -262,7 +262,7 @@ type K8sPatchResource = <R extends K8sResourceCommon>(options: OptionsPatch<R>) 
  * It patches any resource in the cluster, based on provided options.
  * When a client needs to perform the partial update, they can use k8sPatch.
  * Alternatively can use k8sUpdate to replace an existing resource entirely.
- * See more {@link https://datatracker.ietf.org/doc/html/rfc6902}
+ * See more https://datatracker.ietf.org/doc/html/rfc6902
  * @param options Which are passed as key-value pairs in the map.
  * @param options.model - k8s model
  * @param options.resource - The resource to be patched.
@@ -271,7 +271,7 @@ type K8sPatchResource = <R extends K8sResourceCommon>(options: OptionsPatch<R>) 
  * @param options.queryParams - The query parameters to be included in the URL.
  * @returns A promise that resolves to the response of the resource patched.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sPatchResource: K8sPatchResource = adapterFunc(k8sPatch, [
   'model',
   'resource',
@@ -283,18 +283,18 @@ export const k8sPatchResource: K8sPatchResource = adapterFunc(k8sPatch, [
  * @deprecated Use {@link k8sDeleteResource} instead. Support for k8sKill will be removed in a future release.
  * It deletes resources from the cluster, based on the provided model, resource.
  * The garbage collection works based on 'Foreground' | 'Background', can be configured with propagationPolicy property in provided model or passed in json.
- * See more {@link https://kubernetes.io/docs/concepts/architecture/garbage-collection/}
+ * See more https://kubernetes.io/docs/concepts/architecture/garbage-collection/
  * @param model k8s model
  * @param resource The resource to be deleted.
  * @param opts The Options to pass
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
- * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
+ * See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @param options.json - Can control garbage collection of resource explicitly if provided else will default to model's "propagationPolicy".
  * @example
  * { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
  * @returns A promise that resolves to the response of kind Status.
  * In case of failure promise gets rejected with HTTP error response.
- * * */
+ */
 export const k8sKill = <R extends K8sResourceCommon>(
   model: K8sModel,
   resource: R,
@@ -335,7 +335,7 @@ type K8sDeleteResource = <R extends K8sResourceCommon>(options: OptionsDelete<R>
  * @param options.path - Appends as subpath if provided
  * @param options.queryParams - The query parameters to be included in the URL.
  * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc.
- * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
+ * See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @param options.json - Can control garbage collection of resources explicitly if provided else will default to model's "propagationPolicy".
  * @example
  * { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
@@ -358,7 +358,7 @@ export const k8sDeleteResource: K8sDeleteResource = adapterFunc(k8sKill, [
  * @param raw If true then returns raw data i.e if the query is for Pod then resolved resources will not be in an array but a resource will be returned of kind PodList
  * and it will have a key "item" which will be an array of Pod kind.
  * @param requestInit The fetch init object to use. This can have request headers, method, redirect, etc.
- * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
+ * See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @returns A promise that resolves to the response with the resources in an array.
  * In case of failure promise gets rejected with HTTP error response.
  * */
@@ -404,9 +404,9 @@ type K8sListResource = <R extends K8sResourceCommon>(
  * @param options.model - k8s model
  * @param options.queryParams - The query parameters to be included in the URL and can pass label selector's as well with key "labelSelector".
  * @param options.requestInit - The fetch init object to use. This can have request headers, method, redirect, etc.
- * See more {@link https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html}
+ * See more https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.requestinit.html
  * @returns A promise that resolves to the response
- * * */
+ */
 export const k8sListResource: K8sListResource = adapterFunc(k8sList, [
   'model',
   'queryParams',

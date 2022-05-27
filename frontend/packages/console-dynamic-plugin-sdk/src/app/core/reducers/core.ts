@@ -9,7 +9,7 @@ import { ActionType, CoreAction } from '../actions/core';
  * @param action.payload associated payload for the action
  * @see CoreAction
  * @returns The the updated state.
- * * */
+ */
 export const coreReducer = (
   state: CoreState = { user: { identities: [] }, activeCluster: '' },
   action: CoreAction,

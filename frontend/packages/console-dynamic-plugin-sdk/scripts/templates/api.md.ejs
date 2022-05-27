@@ -23,12 +23,11 @@
 
 <% } %>
 
-<!-- FIXME This section does not render see  https://bugzilla.redhat.com/show_bug.cgi?id=2083154-->
-<% if(api.doc.paramters) { %>
+<% if(api.doc.parameters?.length > 0) { %>
 ### Parameters
 
 | Parameter Name | Description |
-| -------------- | ------------------------------------ |
+| -------------- | ----------- |
 <% api.doc.parameters.forEach((param) => { _%>
 | `<%- param.parameterName %>` | <%- removeNewLines(param.description) %> |
 <% }); _%>
