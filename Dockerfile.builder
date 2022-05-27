@@ -8,13 +8,12 @@
 # You can test the image using `./builder-run.sh`. For instance:
 #   $ ./builder-run.sh ./build-backend.sh
 
-FROM golang:1.16-stretch
+FROM golang:1.18-stretch
 
 MAINTAINER Ed Rooth - CoreOS
 
 ### For golang testing stuff
-RUN go get -u golang.org/x/lint/golint
-RUN go get github.com/jstemmer/go-junit-report
+RUN go install github.com/jstemmer/go-junit-report@latest
 
 ### Install NodeJS and yarn
 ENV NODE_VERSION="v14.16.0"
