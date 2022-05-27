@@ -285,18 +285,13 @@ class Dropdown_ extends DropdownMixin {
   applyTextFilter_(autocompleteText, items) {
     const { autocompleteFilter } = this.props;
     if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
-      const newItems = [];
       let totalItems = _.map(items, (item) => item.props);
-      totalItems = autocompleteFilter(autocompleteText, totalItems);
-      _.map(totalItems, (filterItem) => {
-        _.some(items, (item) => {
-          if (item.props.name === filterItem.target) {
-            newItems.push(item);
-            return true;
-          }
-        });
-      });
-      items = newItems;
+      const result = autocompleteFilter(autocompleteText, totalItems);
+      totalItems = [];
+      _.forEach(result, (filterItem) =>
+        totalItems.push(items[`${filterItem.obj.name}-${filterItem.obj.kind}`]),
+      );
+      items = totalItems;
     }
     this.setState({ autocompleteText, items });
   }
