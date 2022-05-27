@@ -27,6 +27,7 @@ export const buildBareMetalHostObject = (
   online = true,
   description = '',
   enablePowerManagement,
+  bootMode,
 ): BareMetalHostKind => {
   const bmh: BareMetalHostKind = {
     apiVersion: `${BareMetalHostModel.apiGroup}/${BareMetalHostModel.apiVersion}`,
@@ -41,6 +42,9 @@ export const buildBareMetalHostObject = (
       online,
     },
   };
+  if (bootMode) {
+    bmh.spec.bootMode = bootMode;
+  }
   if (enablePowerManagement) {
     bmh.spec.bmc = {
       address: BMCAddress,

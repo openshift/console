@@ -61,6 +61,7 @@ export type BareMetalHostKind = {
     online: boolean;
     externallyProvisioned?: boolean;
     description?: string;
+    bootMode?: string;
   };
   status?: {
     hardwareProfile: string;

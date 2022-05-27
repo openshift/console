@@ -10,6 +10,7 @@ import {
   SwitchField,
   FormFooter,
   CheckboxField,
+  FormSelectField,
 } from '@console/shared/src';
 import { AddBareMetalHostFormValues } from './types';
 
@@ -46,6 +47,25 @@ const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
         data-test-id="add-baremetal-host-form-description-input"
         name="description"
         label={t('metal3-plugin~Description')}
+      />
+      <FormSelectField
+        data-test-id="add-baremetal-host-form-bootmode-input"
+        name="bootMode"
+        label={t('metal3-plugin~Boot mode')}
+        options={[
+          {
+            value: 'UEFI',
+            label: 'UEFI',
+          },
+          {
+            value: 'UEFISecureBoot',
+            label: 'UEFISecureBoot',
+          },
+          {
+            value: 'legacy',
+            label: 'Legacy',
+          },
+        ]}
       />
       <InputField
         type={TextInputTypes.text}

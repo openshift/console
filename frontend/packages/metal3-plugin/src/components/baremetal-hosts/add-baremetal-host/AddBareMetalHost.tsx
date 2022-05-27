@@ -47,6 +47,7 @@ const getInitialValues = (
   enablePowerManagement: isEditing
     ? !!host?.spec?.bmc?.address || !!host?.spec?.bmc?.credentialsName || enablePowerMgmt
     : true,
+  bootMode: host?.spec?.bootMode || 'UEFI',
 });
 
 type AddBareMetalHostProps = {
