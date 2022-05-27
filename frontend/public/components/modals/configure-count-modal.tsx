@@ -12,6 +12,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     buttonTextKey,
     buttonTextVariables,
     defaultValue,
+    labelKey,
     path,
     resource,
     resourceKind,
@@ -45,6 +46,10 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
       },
     );
   };
+
+  if (labelKey) {
+    messageVariables.resourceKinds = t(labelKey, titleVariables);
+  }
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
@@ -81,6 +86,7 @@ export const configureReplicaCountModal = (props) => {
         // t('public~Edit Pod count')
         titleKey: 'public~Edit Pod count',
         // t('public~{{resourceKinds}} maintain the desired number of healthy pods.', {resourceKind: props.resourceKind.labelPlural})
+        labelKey: props.resourceKind.labelPluralKey,
         messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
         messageVariables: { resourceKinds: props.resourceKind.labelPlural },
         path: '/spec/replicas',
@@ -122,6 +128,7 @@ export type ConfigureCountModalProps = {
   buttonTextKey?: string;
   buttonTextVariables?: { [key: string]: any };
   defaultValue: number;
+  labelKey?: string;
   path: string;
   resource: K8sResourceKind;
   resourceKind: K8sKind;
