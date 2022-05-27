@@ -366,6 +366,5 @@
   "Hide operator description": "Operator の説明の非表示",
   "Show operator description": "Operator の説明の表示",
   "Operator description": "Operator の説明",
-  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "このリソースは、{{operatorName}} (Operator Lifecycle Manager によって有効にされる Kubernetes Operator) によって提供されます。",
-  "Show more": "もっと見せる"
+  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "このリソースは、{{operatorName}} (Operator Lifecycle Manager によって有効にされる Kubernetes Operator) によって提供されます。"
 }
