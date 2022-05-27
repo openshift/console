@@ -1056,26 +1056,14 @@ export const PodsPage: React.FC<PodPageProps> = ({
             hideLabelFilter={hideLabelFilter}
             hideColumnManagement={hideColumnManagement}
           />
-          {error403 && (
-            <PodList
-              data={[]}
-              unfilteredData={pods}
-              loaded={error403}
-              loadError=""
-              showNamespaceOverride={showNamespaceOverride}
-              showNodes={showNodes}
-            />
-          )}
-          {!error403 && (
-            <PodList
-              data={filteredData}
-              unfilteredData={pods}
-              loaded={loaded}
-              loadError={loadError}
-              showNamespaceOverride={showNamespaceOverride}
-              showNodes={showNodes}
-            />
-          )}
+          <PodList
+            data={error403 ? [] : filteredData}
+            unfilteredData={pods}
+            loaded={error403 ? error403 : loaded}
+            loadError={error403 ? '' : loadError}
+            showNamespaceOverride={showNamespaceOverride}
+            showNodes={showNodes}
+          />
         </ListPageBody>
       </>
     )
