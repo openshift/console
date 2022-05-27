@@ -8,6 +8,7 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { KUBEVIRT_QUICK_START_USER_SETTINGS_KEY } from './getting-started-card/const';
 import { GettingStartedContainerCard } from './getting-started-card/GettingStartedContainerCard';
+import HighPriorityAlerts from './HighPriorityAlerts';
 import { VirtOverviewInventoryCard } from './inventory-card/VirtOverviewInventoryCard';
 import { VirtOverviewPermissionsCard } from './permissions-card/VirtOverviewPermissionsCard';
 import { RunningVMsPerTemplateCard } from './running-vms-per-template-card/RunningVMsPerTemplateCard';
@@ -32,7 +33,9 @@ export const WrappedVirtualizationOverviewPage: React.FC = () => {
       <Helmet>
         <title>Virtualization Overview</title>
       </Helmet>
-      <PageHeading title={title} detail badge={badge} />
+      <PageHeading title={title} detail badge={badge}>
+        <HighPriorityAlerts />
+      </PageHeading>
       <Dashboard>
         <GettingStartedContainerCard />
         <DashboardGrid leftCards={leftCards} mainCards={mainCards} rightCards={rightCards} />
