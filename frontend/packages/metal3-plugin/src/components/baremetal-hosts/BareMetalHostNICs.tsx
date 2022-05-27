@@ -38,10 +38,11 @@ const NICsTableRow: React.FC<RowFunctionArgs<BareMetalHostNIC>> = ({ obj: nic })
 
 type BareMetalHostNICsProps = {
   obj: BareMetalHostKind;
+  loaded: boolean;
   loadError?: any;
 };
 
-const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadError }) => {
+const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadError, loaded }) => {
   const { t } = useTranslation();
   const nics = getHostNICs(host);
   return (
@@ -52,8 +53,13 @@ const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadEr
           aria-label={t('metal3-plugin~Bare Metal Host NICs')}
           Header={NICsTableHeader(t)}
           Row={NICsTableRow}
-          loaded={!!host}
-          loadError={loadError}
+          loaded={loaded}
+          loadError={
+            loadError ||
+            (loaded && !host
+              ? { message: t('metal3-plugin~Bare metal host is not available') }
+              : undefined)
+          }
           getRowProps={getRowProps}
         />
       </div>

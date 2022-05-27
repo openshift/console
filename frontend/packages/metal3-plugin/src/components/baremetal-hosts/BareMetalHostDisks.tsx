@@ -39,10 +39,15 @@ const DisksTableRow: React.FC<RowFunctionArgs<BareMetalHostDisk>> = ({ obj }) =>
 
 type BareMetalHostDisksProps = {
   obj: BareMetalHostKind;
+  loaded: boolean;
   loadError?: any;
 };
 
-const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host, loadError }) => {
+const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({
+  obj: host,
+  loadError,
+  loaded,
+}) => {
   const { t } = useTranslation();
   const disks = getHostStorage(host);
   return (
@@ -53,8 +58,13 @@ const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host, load
           aria-label="Bare Metal Host Disks"
           Header={DisksTableHeader(t)}
           Row={DisksTableRow}
-          loaded={!!host}
-          loadError={loadError}
+          loaded={loaded}
+          loadError={
+            loadError ||
+            (loaded && !host
+              ? { message: t('metal3-plugin~Bare metal host is not available') }
+              : undefined)
+          }
           getRowProps={getRowProps}
         />
       </div>
