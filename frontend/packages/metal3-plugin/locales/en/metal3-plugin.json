@@ -8,6 +8,7 @@
   "Name": "Name",
   "Provide a unique name for the new Bare Metal Host.": "Provide a unique name for the new Bare Metal Host.",
   "Description": "Description",
+  "Boot mode": "Boot mode",
   "Boot MAC Address": "Boot MAC Address",
   "The MAC address of the NIC connected to the network that will be used to provision the host.": "The MAC address of the NIC connected to the network that will be used to provision the host.",
   "Enable power management": "Enable power management",

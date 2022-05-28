@@ -81,6 +81,7 @@ export const createBareMetalHost = async ({
   username,
   online,
   enablePowerManagement,
+  bootMode,
 }: BareMetalHostOpts) => {
   const secret =
     enablePowerManagement && buildBareMetalHostSecret(name, namespace, username, password);
@@ -93,6 +94,7 @@ export const createBareMetalHost = async ({
     online,
     description,
     enablePowerManagement,
+    bootMode,
   );
   enablePowerManagement && (await k8sCreate(SecretModel, secret));
   await k8sCreate(BareMetalHostModel, bareMetalHost);
@@ -111,11 +113,12 @@ export const updateBareMetalHost = async (
     password,
     username,
     enablePowerManagement,
+    bootMode,
   }: BareMetalHostOpts,
 ) => {
   const patches = [
     ...new PatchBuilder('/spec').buildAddObjectKeysPatches(
-      { description, bootMACAddress },
+      { description, bootMACAddress, bootMode },
       host.spec,
     ),
   ];

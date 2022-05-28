@@ -8,4 +8,5 @@ export type AddBareMetalHostFormValues = {
   online: boolean;
   description: string;
   enablePowerManagement: boolean;
+  bootMode: string;
 };
