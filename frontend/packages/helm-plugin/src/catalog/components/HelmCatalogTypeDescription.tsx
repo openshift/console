@@ -1,75 +1,44 @@
 import * as React from 'react';
-import { QuickStartContextValues, QuickStartContext } from '@patternfly/quickstarts';
 import { Trans } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
-import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import { isModifiedEvent } from '@console/shared/src';
+import { Link } from 'react-router-dom';
+import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-internal';
+import { ProjectHelmChartRepositoryModel } from '../../models';
 
-type NamespacedHCRQuickStartInfoProps = {
-  onClick: (event: React.MouseEvent<HTMLElement>) => void;
-  to: { pathname: string; search: string };
+const LinkToCreatePHCR: React.FC = () => {
+  const [namespace] = useActiveNamespace();
+  const [isAllowed] = useAccessReview({
+    group: ProjectHelmChartRepositoryModel.apiGroup,
+    resource: ProjectHelmChartRepositoryModel.plural,
+    verb: 'create',
+    namespace,
+  });
+
+  const createPHCR = (
+    <>
+      {' '}
+      <Trans ns="helm-plugin">
+        Alternatively, developers can{' '}
+        <Link to={`/ns/${namespace}/projecthelmchartrepositories/~new`}>
+          try to configure their own custom Helm Chart repository
+        </Link>
+        .
+      </Trans>
+    </>
+  );
+
+  return isAllowed ? createPHCR : null;
 };
 
-export const NamespacedHCRQuickStartInfo: React.FC<NamespacedHCRQuickStartInfoProps> = ({
-  onClick,
-  to,
-}) => (
-  <Trans ns="helm-plugin">
-    {' '}
-    Alternatively, developers can try{' '}
-    <Link to={to} onClick={onClick}>
-      this quick start
-    </Link>{' '}
-    to configure their own custom Helm Chart repository.
-  </Trans>
-);
-
 const HelmCatalogTypeDescription: React.FC = () => {
-  const NAMESPACED_HELM_CHART_REPO_QUICKSTART_NAME = 'install-helmchartrepo-ns';
-  const { pathname, search } = useLocation();
-  const { setActiveQuickStart } = React.useContext<QuickStartContextValues>(QuickStartContext);
-  const queryParams = new URLSearchParams(search);
-  queryParams.set('quickstart', NAMESPACED_HELM_CHART_REPO_QUICKSTART_NAME);
-
-  const to = {
-    pathname,
-    search: `?${queryParams.toString()}`,
-  };
-
   return (
-    <QuickStartsLoader>
-      {(quickStarts, loaded) => {
-        const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
-          if (isModifiedEvent(event)) {
-            return;
-          }
-          setActiveQuickStart(NAMESPACED_HELM_CHART_REPO_QUICKSTART_NAME);
-        };
-
-        const isNamespacedHCRQuickStartAvailable =
-          loaded &&
-          quickStarts?.length > 0 &&
-          !!quickStarts.find(
-            (qs) => qs.metadata.name === NAMESPACED_HELM_CHART_REPO_QUICKSTART_NAME,
-          );
-
-        return (
-          <>
-            <Trans ns="helm-plugin">
-              Browse for charts that help manage complex installations and upgrades. Cluster
-              administrators can customize the content made available in the catalog.
-            </Trans>
-            {isNamespacedHCRQuickStartAvailable && (
-              <NamespacedHCRQuickStartInfo
-                data-test-id="namespaced-hcr-quickstart-link"
-                to={to}
-                onClick={handleOnClick}
-              />
-            )}
-          </>
-        );
-      }}
-    </QuickStartsLoader>
+    <>
+      <Trans ns="helm-plugin">
+        Browse for charts that help manage complex installations and upgrades. Cluster
+        administrators can customize the content made available in the catalog.
+        <LinkToCreatePHCR />
+      </Trans>
+    </>
   );
 };
 
