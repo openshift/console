@@ -27,7 +27,7 @@ Then(
 );
 
 Then(
-  'user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs',
+  'user can see Pipeline success ratio, Number of Pipeline Runs graphs for default metrics level',
   () => {
     cy.get(pipelineDetailsPO.metrics.graphTitle)
       .eq(0)
@@ -35,12 +35,6 @@ Then(
     cy.get(pipelineDetailsPO.metrics.graphTitle)
       .eq(1)
       .should('contain.text', pipelineDetailsText.metrics.graphs.numberOfPipelineRuns);
-    cy.get(pipelineDetailsPO.metrics.graphTitle)
-      .eq(2)
-      .should('contain.text', pipelineDetailsText.metrics.graphs.pipelineRunDuration);
-    cy.get(pipelineDetailsPO.metrics.graphTitle)
-      .eq(3)
-      .should('contain.text', pipelineDetailsText.metrics.graphs.taskRunDuration);
   },
 );
 

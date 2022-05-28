@@ -1,12 +1,22 @@
 import * as React from 'react';
-import { compare, gte, parse, SemVer } from 'semver';
-import { k8sList } from '@console/internal/module/k8s';
+import { compare, gt, gte, parse, SemVer } from 'semver';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import { k8sList } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
   ClusterServiceVersionPhase,
 } from '@console/operator-lifecycle-manager';
-import { PIPELINE_GA_VERSION, TRIGGERS_GA_VERSION } from '../const';
+import { TektonConfigModel } from '../../../models';
+import {
+  PIPELINE_UNSIMPLIFIED_METRICS_VERSION,
+  PIPELINE_GA_VERSION,
+  TRIGGERS_GA_VERSION,
+  PipelineMetricsLevel,
+  PIPELINE_NAMESPACE,
+} from '../const';
+import { MetricsQueryPrefix } from '../pipeline-metrics/pipeline-metrics-utils';
+import { getPipelineMetricsLevel, usePipelineConfig } from './pipeline-config';
 
 export const getPipelineOperatorVersion = async (namespace: string): Promise<SemVer | null> => {
   const allCSVs: ClusterServiceVersionKind[] = await k8sList(ClusterServiceVersionModel, {
@@ -48,4 +58,37 @@ export const isGAVersionInstalled = (operator: SemVer): boolean => {
 export const isTriggersGAVersion = (operator: SemVer): boolean => {
   if (!operator) return false;
   return gte(operator.version, TRIGGERS_GA_VERSION);
+};
+
+export const isSimplifiedMetricsInstalled = (operator: SemVer): boolean => {
+  if (!operator) return false;
+  return gt(operator.version, PIPELINE_UNSIMPLIFIED_METRICS_VERSION);
+};
+
+export const usePipelineMetricsLevel = (namespace: string) => {
+  const pipelineOperator: SemVer = usePipelineOperatorVersion(namespace);
+  const [config] = usePipelineConfig();
+
+  const [hasUpdatePermission] = useAccessReview({
+    group: TektonConfigModel.apiGroup,
+    resource: TektonConfigModel.plural,
+    namespace: PIPELINE_NAMESPACE,
+    verb: 'update',
+  });
+
+  const simplifiedMetrics = isSimplifiedMetricsInstalled(pipelineOperator);
+  const metricsLevel = simplifiedMetrics
+    ? getPipelineMetricsLevel(config)
+    : PipelineMetricsLevel.UNSIMPLIFIED_METRICS_LEVEL;
+
+  const queryPrefix =
+    pipelineOperator && !isGAVersionInstalled(pipelineOperator)
+      ? MetricsQueryPrefix.TEKTON
+      : MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER;
+
+  return {
+    metricsLevel,
+    queryPrefix,
+    hasUpdatePermission,
+  };
 };
