@@ -84,7 +84,9 @@ export const checkUser = (
   t: Function,
 ) => {
   errorCatcher.removeError('user');
-  const isValidUsername = /^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$/.test(obj?.user as string);
+  const isValidUsername = /^[a-zA-Z_]([a-zA-Z0-9_-]{0,31}|[a-zA-Z0-9_-]{0,30}\$)$/.test(
+    obj?.user as string,
+  );
   if (!isValidUsername) {
     errorCatcher.addError(
       t('kubevirt-plugin~Username is required. must be a valid OS username'),
