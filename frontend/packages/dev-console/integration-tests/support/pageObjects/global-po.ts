@@ -9,7 +9,6 @@ export const devNavigationMenuPO = {
   search: '[data-test-id="search-header"]',
   helm: '[data-test-id="helm-releases-header"]',
   project: '[data-test-id="project-details-header"]',
-  configMaps: '#ConfigMap',
   secret: '#Secret',
   dropdownButton: '[data-test-id="dropdown-button"]',
   environments: '[data-test-id="environments-header"]',
@@ -43,3 +42,7 @@ export const formPO = {
   successAlert: '[aria-label="Success Alert"]',
 };
 export const alert = '.pf-c-alert';
+export const pagePO = {
+  create: '[data-test="item-create"]',
+  breadcrumb: '[aria-label="Breadcrumb"]',
+};

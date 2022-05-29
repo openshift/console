@@ -12,6 +12,7 @@ export const addPagePO = {
   buildWithGuidedDocumentation: '[data-test="card quick-start"]',
   buildWithGuidedDocumentationItems: '[data-test="card quick-start"] [data-test~="item"]',
   viewAllQuickStarts: '[data-test="item all-quick-starts"]',
+  helmChartRepositoriesCard: '[data-test="card helm-chart-repositories"]',
 };
 
 export const gitPO = {
@@ -331,4 +332,16 @@ export const quickSearchAddPO = {
   quickSearchCreateButton: '[data-test="create-quick-search"]',
   viewInDevCatalog: '#devCatalog',
   quickSearchNoResults: '[data-test="quick-search-no-results"]',
+};
+
+export const helmChartRepositoriesPO = {
+  yaml: {
+    yamlSwitcher: '[data-test="yaml-view-input"]',
+    yamlEditor: '[data-test="yaml-editor"]',
+  },
+  formTitle: '[data-test="form-title"]',
+  cancelButton: '[data-test-id="cancel-button"]',
+  name: '#form-input-formData-repoName-field',
+  description: '#form-input-formData-repoDescription-field',
+  url: '#form-input-formData-repoUrl-field',
 };

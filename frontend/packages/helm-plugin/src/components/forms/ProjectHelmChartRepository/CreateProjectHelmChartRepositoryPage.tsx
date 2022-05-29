@@ -23,7 +23,7 @@ const CreateProjectHelmChartRepositoryPage: React.FC<CreateProjectHelmChartRepos
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications disabled>
-      <Helmet>
+      <Helmet data-test="helm-plugin~title Create ProjectHelmChartRepository">
         <title>Create ProjectHelmChartRepository</title>
       </Helmet>
       <CreateProjectHelmChartRepository resource={newResource} namespace={namespace} />
