@@ -268,8 +268,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__overlay-body {
     margin: 0;
-    padding-left: var(--pf-global--spacer--lg);
-    padding-right: var(--pf-global--spacer--lg);
     padding-top: var(--pf-global--spacer--md);
     @media (min-width: $screen-sm-min) {
       display: flex;
@@ -285,7 +283,9 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     h1,
     h2,
     h3 {
-      color: var(--pf-global--Color--100); // same color as styles hardcoded in markdown text component
+      color: var(
+        --pf-global--Color--100
+      ); // same color as styles hardcoded in markdown text component
     }
 
     h2 {
@@ -295,7 +295,9 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     p,
     li,
     ol {
-      color: var(--pf-global--Color--100); // same color as styles hardcoded in markdown text component
+      color: var(
+        --pf-global--Color--100
+      ); // same color as styles hardcoded in markdown text component
       font-size: $font-size-base !important;
     }
 
