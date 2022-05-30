@@ -22,7 +22,6 @@ interface VolumeClaimTemplateFormProps {
   initialSizeValue?: string;
   initialSizeUnit?: string;
   initialVolumeMode?: string;
-  initialStorageClass?: string;
 }
 
 interface RequestSize {
@@ -35,7 +34,6 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
   initialSizeValue = '1',
   initialSizeUnit = 'Gi',
   initialVolumeMode = 'Filesystem',
-  initialStorageClass = 'gp2',
 }) => {
   const { t } = useTranslation();
   const [field] = useField(name);
@@ -49,7 +47,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
   const [requestSizeValue, setRequestSizeValue] = React.useState(initialSizeValue);
   const [requestSizeUnit, setRequestSizeUnit] = React.useState(initialSizeUnit);
   const [storageProvisioner, setStorageProvisioner] = React.useState('');
-  const [storageClass, setStorageClass] = React.useState(initialStorageClass);
+  const [storageClass, setStorageClass] = React.useState('');
   useFormikValidationFix(field.value);
 
   const handleAccessMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
@@ -138,8 +136,6 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
             data-test="storageclass-dropdown"
             describedBy="storageclass-dropdown-help"
             required={false}
-            defaultClass={initialStorageClass}
-            valueFromAST
             name="storageClass"
           />
         </div>
