@@ -283,15 +283,22 @@ class Dropdown_ extends DropdownMixin {
   }
 
   applyTextFilter_(autocompleteText, items) {
-    const { autocompleteFilter } = this.props;
+    const { autocompleteFilter, weightedSort } = this.props;
     if (autocompleteFilter && !_.isEmpty(autocompleteText)) {
-      let totalItems = _.map(items, (item) => item.props);
-      const result = autocompleteFilter(autocompleteText, totalItems);
-      totalItems = [];
-      _.forEach(result, (filterItem) =>
-        totalItems.push(items[`${filterItem.obj.name}-${filterItem.obj.kind}`]),
-      );
-      items = totalItems;
+      if (weightedSort) {
+        // Use fuzzysort
+        let totalItems = _.map(items, (item) => item.props);
+        const result = autocompleteFilter(autocompleteText, totalItems);
+        totalItems = {};
+        _.forEach(result, (item) => {
+          const key = `${item.obj.name}-${item.obj.kind}`;
+          totalItems[key] = items[key];
+        });
+        items = totalItems;
+      } else {
+        // Use fuzzysearch
+        items = _.pickBy(items, (item, key) => autocompleteFilter(autocompleteText, item, key));
+      }
     }
     this.setState({ autocompleteText, items });
   }
@@ -635,6 +642,7 @@ Dropdown.propTypes = {
   describedBy: PropTypes.string,
   required: PropTypes.bool,
   dataTest: PropTypes.string,
+  weightedSort: PropTypes.bool,
 };
 
 class ActionsMenuDropdown_ extends DropdownMixin {

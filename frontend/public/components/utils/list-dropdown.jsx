@@ -141,6 +141,7 @@ class ListDropdownWithTranslation extends React.Component {
       <Dropdown
         actionItems={this.props.actionItems}
         autocompleteFilter={this.autocompleteFilter}
+        weightedSort={true}
         autocompletePlaceholder={placeholder}
         items={items}
         selectedKey={selectedKey}
