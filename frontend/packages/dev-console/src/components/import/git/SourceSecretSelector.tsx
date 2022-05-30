@@ -11,6 +11,7 @@ import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 import { secretModalLauncher } from '../CreateSecretModal';
 
 const CREATE_SOURCE_SECRET = 'create-source-secret';
+const CLEAR_SOURCE_SECRET = 'clear-source-secret';
 
 const SourceSecretSelector: React.FC<{
   formContextField?: string;
@@ -45,6 +46,9 @@ const SourceSecretSelector: React.FC<{
         save: handleSave,
         secretType: SecretTypeAbstraction.source,
       });
+    } else if (key === CLEAR_SOURCE_SECRET) {
+      setFieldValue(`${fieldPrefix}git.secret`, '');
+      setFieldValue(`${fieldPrefix}git.secretResource`, {});
     } else {
       setFieldValue(`${fieldPrefix}git.secret`, key);
     }
@@ -73,6 +77,10 @@ const SourceSecretSelector: React.FC<{
             {
               actionTitle: t('devconsole~Create new Secret'),
               actionKey: CREATE_SOURCE_SECRET,
+            },
+            {
+              actionTitle: t('devconsole~No Secret'),
+              actionKey: CLEAR_SOURCE_SECRET,
             },
           ]}
           selectedKey={secret}
