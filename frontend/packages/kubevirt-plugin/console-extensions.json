@@ -8,6 +8,17 @@
   {
     "type": "console.flag/model",
     "properties": {
+      "flag": "CNV_411",
+      "model": {
+        "group": "tektontasks.kubevirt.io",
+        "version": "v1alpha1",
+        "kind": "TektonTasks"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
       "flag": "KUBEVIRT_CDI",
       "model": {
         "group": "cdi.kubevirt.io",
@@ -30,7 +41,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT_HAS_v1_API"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -45,7 +56,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -60,7 +71,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT_HAS_v1_API"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -75,7 +86,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT_HAS_v1alpha3_API"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -92,7 +103,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT_HAS_v1_API"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -109,7 +120,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT_HAS_v1alpha3_API"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -123,7 +134,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -138,7 +149,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -152,7 +163,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -166,7 +177,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -178,7 +189,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -190,7 +201,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -203,7 +214,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -220,7 +231,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -233,7 +244,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT", "CAN_GET_NS", "OPENSHIFT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -262,7 +273,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -402,7 +413,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -427,7 +438,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -440,7 +451,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -458,7 +469,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -476,7 +487,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -683,7 +694,7 @@
       }
     },
     "flags": {
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -709,7 +720,7 @@
       }
     },
     "flags": {
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   },
   {
@@ -750,7 +761,7 @@
     },
     "flags": {
       "required": ["KUBEVIRT"],
-      "disallowed": ["KUBEVIRT_DYNAMIC"]
+      "disallowed": ["CNV_411"]
     }
   }
 ]

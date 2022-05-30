@@ -169,12 +169,6 @@ describe('Demo dynamic plugin test', () => {
     dynamicNavIDs.forEach((id) => dynamicNavTest(id));
   });
 
-  it(`test Test Consumer nav item`, () => {
-    nav.sidenav.clickNavLink(['Demo Plugin', 'Test Consumer']);
-    cy.byTestID('test-consumer-title').should('contain', 'Extensions of type Console.flag/Model');
-    cy.get('.pf-c-card').should('have.length', 21);
-  });
-
   it(`test Test Utilities nav item`, () => {
     nav.sidenav.clickNavLink(['Demo Plugin', 'Test Utilities']);
     cy.byTestID('test-utilities-title').should('contain', 'Utilities from Dynamic Plugin SDK');
