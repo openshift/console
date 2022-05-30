@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compare, gt, gte, parse, SemVer } from 'semver';
-import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { k8sList } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { useAccessReview2 } from '@console/internal/components/utils';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
@@ -69,7 +69,7 @@ export const usePipelineMetricsLevel = (namespace: string) => {
   const pipelineOperator: SemVer = usePipelineOperatorVersion(namespace);
   const [config] = usePipelineConfig();
 
-  const [hasUpdatePermission] = useAccessReview({
+  const [hasUpdatePermission] = useAccessReview2({
     group: TektonConfigModel.apiGroup,
     resource: TektonConfigModel.plural,
     namespace: PIPELINE_NAMESPACE,
