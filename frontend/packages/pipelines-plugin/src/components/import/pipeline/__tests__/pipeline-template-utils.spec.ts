@@ -12,6 +12,7 @@ import {
   isDockerPipeline,
   pipelineRuntimeOrVersionChanged,
   updatePipelineForImportFlow,
+  getPipelineParams,
 } from '../pipeline-template-utils';
 
 jest.mock('@console/internal/module/k8s', () => ({
@@ -569,5 +570,197 @@ describe('pipelineRuntimeOrVersionChanged', () => {
       },
     };
     expect(pipelineRuntimeOrVersionChanged(mockTemplate, mockPipeline)).toBe(true);
+  });
+});
+
+describe('getPipelineParams', () => {
+  it('should contain the application name in APP_NAME param if app name is passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'APP_NAME', default: '' }],
+        'my-app',
+        'my-namespace',
+        'https://github.com/owner/repo',
+        'main', // git ref
+        '/', // git Dir
+        '', // dockerfilePath
+        '0.1', // tag
+      ),
+    ).toEqual([{ name: 'APP_NAME', default: 'my-app' }]);
+  });
+
+  it('should contain the repository url in GIT_REPO param if repo is passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'GIT_REPO', default: '' }],
+        'my-app',
+        'my-namespace',
+        'https://github.com/owner/repo',
+        'main', // git ref
+        '/', // git Dir
+        '', // dockerfilePath
+        '0.1', // tag
+      ),
+    ).toEqual([{ name: 'GIT_REPO', default: 'https://github.com/owner/repo' }]);
+  });
+
+  it('should return empty object if params is invalid or not an array', () => {
+    expect(
+      getPipelineParams(
+        null,
+        'name',
+        'namespace',
+        'gitUrl',
+        'gitRef',
+        'gitDir',
+        'dockerfilePath',
+        'tag',
+      ),
+    ).toEqual([]);
+    expect(
+      getPipelineParams(
+        undefined,
+        'name',
+        'namespace',
+        'gitUrl',
+        'gitRef',
+        'gitDir',
+        'dockerfilePath',
+        'tag',
+      ),
+    ).toEqual([]);
+  });
+
+  it('should contain empty string in GIT_REVISION param when gitRef is not passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'GIT_REVISION', default: '' }],
+        'name',
+        'namespace',
+        'gitUrl',
+        '', // git ref
+        'gitDir',
+        'dockerfilePath',
+        'tag',
+      ),
+    ).toEqual([{ name: 'GIT_REVISION', default: '' }]);
+  });
+
+  it('should contain the branch name in GIT_REVISION param when gitRef is passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'GIT_REVISION', default: '' }],
+        'my-app',
+        'my-namespace',
+        'https://github.com/owner/repo',
+        'main', // git ref
+        '/', // git Dir
+        '', // dockerfilePath
+        '0.1', // tag
+      ),
+    ).toEqual([{ name: 'GIT_REVISION', default: 'main' }]);
+  });
+
+  it('should contain the context directory path in PATH_CONTEXT param if git directory is passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'PATH_CONTEXT', default: '' }],
+        'my-app',
+        'my-namespace',
+        'https://github.com/owner/repo',
+        'main', // git ref
+        '/frontend', // git Dir
+        '', // dockerfilePath
+        '0.1', // tag
+      ),
+    ).toEqual([{ name: 'PATH_CONTEXT', default: 'frontend' }]);
+  });
+
+  it('should contain the image url in  IMAGE_NAME param if image name param is passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'IMAGE_NAME', default: '' }],
+        'my-app',
+        'my-namespace',
+        'https://github.com/owner/repo',
+        'main', // git ref
+        '/frontend', // git Dir
+        '', // dockerfilePath
+        '0.1', // tag
+      ),
+    ).toEqual([
+      {
+        name: 'IMAGE_NAME',
+        default: 'image-registry.openshift-image-registry.svc:5000/my-namespace/my-app',
+      },
+    ]);
+  });
+
+  it('should contain the docker path in  DOCKERFILE param if it is passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'DOCKERFILE', default: '' }],
+        'my-app',
+        'my-namespace',
+        'https://github.com/owner/repo',
+        'main', // git ref
+        '/frontend', // git Dir
+        '/dockerpath', // dockerfilePath
+        '0.1', // tag
+      ),
+    ).toEqual([
+      {
+        name: 'DOCKERFILE',
+        default: '/dockerpath',
+      },
+    ]);
+  });
+
+  it('should contain the tag in VERSION param if it is passed', () => {
+    expect(
+      getPipelineParams(
+        [{ name: 'VERSION', default: '' }],
+        'my-app',
+        'my-namespace',
+        'https://github.com/owner/repo',
+        'main', // git ref
+        '/frontend', // git Dir
+        '/dockerpath', // dockerfilePath
+        '0.1', // tag
+      ),
+    ).toEqual([
+      {
+        name: 'VERSION',
+        default: '0.1',
+      },
+    ]);
+  });
+
+  it('should return params that are passed', () => {
+    const pipelineParams = [
+      { name: 'APP_NAME', default: '' },
+      { name: 'GIT_REPO', default: '' },
+      { name: 'GIT_REVISION', default: '' },
+      { name: 'IMAGE_NAME', default: '' },
+      { name: 'DOCKERFILE', default: '' },
+      { name: 'VERSION', default: '' },
+    ];
+    const finalParams = getPipelineParams(
+      pipelineParams,
+      'my-app',
+      'my-namespace',
+      'https://github.com/owner/repo',
+      'main', // git ref
+      '/frontend', // git Dir
+      '/dockerpath', // dockerfilePath
+      '0.1', // tag
+    );
+
+    expect(finalParams).toHaveLength(pipelineParams.length);
+
+    finalParams.forEach((p) => {
+      const foundParam = pipelineParams.find((pipelineParam) => pipelineParam.name === p.name);
+      expect(foundParam).toBeTruthy();
+    });
   });
 });
