@@ -37,7 +37,7 @@ const useCloudShellWorkspace = (
   React.useEffect(() => {
     setNamespace(defaultNamespace);
     // a new namespace means we can start a new search
-    setNoNamespaceFound(false);
+    defaultNamespace && setNoNamespaceFound(false);
   }, [defaultNamespace, setNamespace, setNoNamespaceFound]);
 
   const [canListWorkspaces, loadingAccessReview] = useAccessReview2({
