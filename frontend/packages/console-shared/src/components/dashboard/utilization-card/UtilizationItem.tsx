@@ -156,6 +156,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       }
 
       humanAvailable = humanizeValue(max - current).string;
+      if (humanAvailable === '') {
+        humanAvailable = '0';
+      }
     }
 
     const chart = (
