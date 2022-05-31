@@ -47,15 +47,18 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     );
   };
 
+  const messageVariablesSafe = { ...messageVariables };
   if (labelKey) {
-    messageVariables.resourceKinds = t(labelKey, titleVariables);
+    messageVariablesSafe.resourceKinds = t(labelKey, titleVariables);
   }
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>{titleKey ? t(titleKey, titleVariables) : title}</ModalTitle>
       <ModalBody>
-        <p className="modal-paragraph">{messageKey ? t(messageKey, messageVariables) : message}</p>
+        <p className="modal-paragraph">
+          {messageKey ? t(messageKey, messageVariablesSafe) : message}
+        </p>
         <NumberSpinner
           value={value}
           onChange={(e: any) => setValue(e.target.value)}
