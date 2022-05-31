@@ -208,20 +208,24 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
     if (element.getType() === TYPE_APPLICATION_GROUP) {
       if (inFlight) return [[], !inFlight, undefined];
       const path = connectorSource ? '' : 'add-to-application';
+      const sourceObj = connectorSource?.getData()?.resource;
+      const sourceReference = sourceObj
+        ? `${referenceFor(sourceObj)}/${sourceObj?.metadata?.name}`
+        : undefined;
       const actions = [
         ...(connectorSource ? [] : [DeleteApplicationAction(appData, kindObj)]),
-        AddActions.FromGit(namespace, application, undefined, path, !isImportResourceAccess),
+        AddActions.FromGit(namespace, application, sourceReference, path, !isImportResourceAccess),
         AddActions.ContainerImage(
           namespace,
           application,
-          undefined,
+          sourceReference,
           path,
           !isCatalogImageResourceAccess,
         ),
         AddActions.UploadJarFile(
           namespace,
           application,
-          undefined,
+          sourceReference,
           path,
           !isCatalogImageResourceAccess,
         ),
