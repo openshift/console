@@ -41,6 +41,8 @@ describe('Interacting with the environment variable editor', () => {
     execSync(
       `oc create secret generic my-secret --from-literal=key1=supersecret --from-literal=key2=topsecret -n ${testName}`,
     );
+    checkLogs();
+    checkErrors();
   });
 
   afterEach(() => {
