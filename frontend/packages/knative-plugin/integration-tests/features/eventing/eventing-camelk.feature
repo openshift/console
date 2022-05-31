@@ -1,4 +1,4 @@
-@knative-camelK
+@knative-camelk
 Feature: CamelK Connector Event Sources
     User should be able to install Connector Event Sources
 
@@ -12,83 +12,76 @@ Feature: CamelK Connector Event Sources
         @smoke
         Scenario: Kamelets display in event sources add page: KC-02-TC01
             Given user is at Add page
-             When user clicks on "Event Sources" card
+             When user clicks on Event Sources card
              Then user will be redirected to page with header name "Event Sources"
               And user is able to see multiple sources of the kind kamelets
 
 
-        @regression @to-do
-        Scenario: Kamelets from Community provider in event sources page : KC-02-TC02
-            Given user is at Event Sources page
-             When user clicks on "Apache Software Foundation" provider filter
-             Then user is able to see community kamelets from "Apache Software Foundation" provider
-
-
-        @regression @to-do
+        @regression
         Scenario: CamelK Connector Event Source cards: KC-02-TC02
-            Given user is at Developer perspective
-             When user goes to +Add page
-              And user clicks on the Event Sources card
-             Then user will see the AWS 2 Simple Queue Service card
-              And user will see Salesforce card
-              And user will see AWS Kinesis card
-              And user will see Jira card
-              And user will see Slack card
-              And user will see Telegram card
+            Given user is at developer perspective
+             When user is at Add page
+              And user clicks on Event Sources card
+             Then user will see the "AWS SQS Source" card
+              And user will see the "Salesforce Source" card
+              And user will see the "AWS Kinesis Source" card
+              And user will see the "Jira Source" card
+              And user will see the "Slack Source" card
+              And user will see the "Telegram Source" card
 
 
-        @regression @to-do
+        @regression
         Scenario: Create AWS 2 Simple Queue Service connector: KC-02-TC03
             Given user is at Event Sources page
-             When user clicks on AWS Sqs card
-              And user clicks on Create button
+             When user clicks on the "AWS SQS Source" card
+              And user creates "AWS SQS Source"
              Then user will be redirected to Topology page
-              And user will see AWS Sqs connector
+              And user will see "aws-sqs" connector
 
 
         @regression
         Scenario: Create Salesforce connector: KC-02-TC04
             Given user is at Event Sources page
-             When user clicks on Salesforce card
-              And user clicks on Create button
+             When user clicks on the "Salesforce Source" card
+              And user creates "Salesforce Source"
              Then user will be redirected to Topology page
-              And user will see Salesforce connector
+              And user will see "salesforce" connector
 
 
         @regression
         Scenario: Create AWS Kinesis connector: KC-02-TC05
             Given user is at Event Sources page
-             When user clicks on AWS Kinesis card
-              And user clicks on Create button
+             When user clicks on the "AWS Kinesis Source" card
+              And user creates "AWS Kinesis Source"
              Then user will be redirected to Topology page
-              And user will see AWS Kinesis connector
+              And user will see "aws-kinesis" connector
 
 
         @regression
         Scenario: Create Jira connector: KC-02-TC06
             Given user is at Event Sources page
-             When user clicks on Jira card
-              And user clicks on Create button
+             When user clicks on the "Jira Source" card
+              And user creates "Jira Source"
              Then user will be redirected to Topology page
-              And user will see Jira connector
+              And user will see "jira" connector
 
 
         @regression
         Scenario: Create Slack connector: KC-02-TC07
             Given user is at Event Sources page
-             When user clicks on Slack card
-              And user clicks on Create button
+             When user clicks on the "Slack Source" card
+              And user creates "Slack Source"
              Then user will be redirected to Topology page
-              And user will see Slack connector
+              And user will see "slack" connector
 
 
         @regression
         Scenario: Create Telegram connector: KC-02-TC08
             Given user is at Event Sources page
-             When user clicks on Telegram card
-              And user clicks on Create button
+             When user clicks on the "Telegram Source" card
+              And user creates "Telegram Source"
              Then user will be redirected to Topology page
-              And user will see Telegram connector
+              And user will see "telegram" connector
 
 
         @regression @manual
