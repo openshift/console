@@ -62,6 +62,7 @@
     "properties": {
       "id": "objectbuckets",
       "section": "storage",
+      "insertAfter": "volumesnapshotcontents",
       "name": "%ceph-storage-plugin~Object Buckets%",
       "model": {
         "group": "objectbucket.io",
@@ -80,6 +81,7 @@
     "properties": {
       "id": "objectbuckets",
       "section": "storage",
+      "insertAfter": "volumesnapshotcontents",
       "name": "%ceph-storage-plugin~Object Buckets%",
       "model": {
         "group": "objectbucket.io",
@@ -98,6 +100,7 @@
       "id": "objectbucketclaims",
       "section": "storage",
       "name": "%ceph-storage-plugin~Object Bucket Claims%",
+      "insertAfter": "volumesnapshotcontents",
       "model": {
         "group": "objectbucket.io",
         "kind": "ObjectBucketClaim",
@@ -115,6 +118,7 @@
     "properties": {
       "id": "objectbucketclaims",
       "section": "storage",
+      "insertAfter": "volumesnapshotcontents",
       "name": "%ceph-storage-plugin~Object Bucket Claims%",
       "model": {
         "group": "objectbucket.io",

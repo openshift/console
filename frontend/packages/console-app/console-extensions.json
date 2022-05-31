@@ -63,10 +63,10 @@
   {
     "type": "console.navigation/resource-cluster",
     "properties": {
-      "id": "volumesnapshots",
+      "id": "volumesnapshotcontents",
       "section": "storage",
       "name": "%console-app~VolumeSnapshotContents%",
-      "insertBefore": "deployments",
+      "insertAfter": "volumesnapshotclasses",
       "model": {
         "group": "snapshot.storage.k8s.io",
         "kind": "VolumeSnapshotContent",
