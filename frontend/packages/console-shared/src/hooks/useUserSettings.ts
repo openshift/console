@@ -4,6 +4,7 @@ import * as React from 'react';
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
+import { UseUserSettings } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -35,12 +36,8 @@ const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => vo
   return [counterRef.current !== initialValue, increment, decrement];
 };
 
-export const useUserSettings = <T>(
-  key: string,
-  defaultValue?: T,
-  sync: boolean = false,
-): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
-  // Mount status for safty state updates
+export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = false) => {
+  // Mount status for safety state updates
   const mounted = React.useRef(true);
   React.useEffect(() => () => (mounted.current = false), []);
 

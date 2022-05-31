@@ -1,3 +1,5 @@
+import * as React from 'react';
+import { QuickStart } from '@patternfly/quickstarts';
 import { Map as ImmutableMap } from 'immutable';
 import {
   FirehoseResult,
@@ -264,4 +266,18 @@ export type UseDashboardResources = ({
   urlResults: RequestMap<any>;
   prometheusResults: RequestMap<PrometheusResponse>;
   notificationAlerts: { alerts: Alert[]; loaded: boolean; loadError: Error };
+};
+
+export type UseUserSettings = <T>(
+  key: string,
+  defaultValue?: T,
+  sync?: boolean,
+) => [T, React.Dispatch<React.SetStateAction<T>>, boolean];
+
+export type QuickStartsLoaderProps = {
+  children: (quickStarts: QuickStart[], loaded: boolean) => React.ReactNode;
+};
+
+export type QuickStartsSectionWrapperProps = {
+  children: React.ReactElement[];
 };

@@ -6,6 +6,7 @@ export const sharedPluginModules = [
   '@openshift-console/dynamic-plugin-sdk-internal',
   '@patternfly/react-core',
   '@patternfly/react-table',
+  '@patternfly/quickstarts',
   'react',
   'react-helmet',
   'react-i18next',

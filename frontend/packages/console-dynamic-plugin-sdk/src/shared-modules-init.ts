@@ -10,6 +10,7 @@ const modules: SharedModuleResolution = {
     require('@console/dynamic-plugin-sdk/src/lib-internal'),
   '@patternfly/react-core': async () => () => require('@patternfly/react-core'),
   '@patternfly/react-table': async () => () => require('@patternfly/react-table'),
+  '@patternfly/quickstarts': async () => () => require('@patternfly/quickstarts'),
   react: async () => () => require('react'),
   'react-helmet': async () => () => require('react-helmet'),
   'react-i18next': async () => () => require('react-i18next'),
