@@ -88,8 +88,8 @@ export const configureReplicaCountModal = (props) => {
         defaultValue: 0,
         // t('public~Edit Pod count')
         titleKey: 'public~Edit Pod count',
-        // t('public~{{resourceKinds}} maintain the desired number of healthy pods.', {resourceKind: props.resourceKind.labelPlural})
         labelKey: props.resourceKind.labelPluralKey,
+        // t('public~{{resourceKinds}} maintain the desired number of healthy pods.', {resourceKind: props.resourceKind.labelPlural})
         messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
         messageVariables: { resourceKinds: props.resourceKind.labelPlural },
         path: '/spec/replicas',
