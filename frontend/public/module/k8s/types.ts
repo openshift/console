@@ -753,19 +753,24 @@ export type MachineConfigPoolStatus = {
   updatedMachineCount: number;
   readyMachineCount: number;
   unavailableMachineCount: number;
-  conditions: MachineConfigPoolCondition[];
+  conditions?: MachineConfigPoolCondition[];
 };
 
 export type MachineConfigPoolSpec = {
   machineConfigSelector?: Selector;
   maxUnavailable?: number | string;
   nodeSelector?: Selector;
-  paused: boolean;
+  paused?: boolean;
 };
 
 export type MachineConfigPoolKind = {
-  spec: MachineConfigPoolSpec;
-  status: MachineConfigPoolStatus;
+  /*
+   * spec is required per
+   * https://github.com/openshift/machine-config-operator/blob/master/pkg/apis/machineconfiguration.openshift.io/v1/types.go#L228-L229
+   * but the API doesn't enforce it
+   */
+  spec?: MachineConfigPoolSpec;
+  status?: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
 export type Release = {
