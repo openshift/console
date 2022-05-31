@@ -103,6 +103,13 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
     this.setState(state);
   }
 
+  componentDidMount() {
+    const { defaultClass } = this.state;
+    if (defaultClass) {
+      this.onChange(defaultClass);
+    }
+  }
+
   componentDidUpdate() {
     const { defaultClass, selectedKey } = this.state;
     if (selectedKey) {
