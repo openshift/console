@@ -4,6 +4,11 @@ import { Card, CardActions, CardHeader, CardTitle } from '@patternfly/react-core
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
+  isProjectOverviewUtilizationItem,
+  ProjectOverviewUtilizationItem,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk/src';
+import {
   humanizeBinaryBytes,
   humanizeCpuCores,
   humanizeDecimalBytesPerSec,
@@ -38,6 +43,10 @@ export const UtilizationCard: React.FC = () => {
   const [queries, multilineQueries] = React.useMemo(
     () => [getUtilizationQueries(projectName), getMultilineQueries(projectName)],
     [projectName],
+  );
+
+  const [dynamicItemExtensions] = useResolvedExtensions<ProjectOverviewUtilizationItem>(
+    isProjectOverviewUtilizationItem,
   );
 
   return (
@@ -88,6 +97,19 @@ export const UtilizationCard: React.FC = () => {
             utilizationQuery={queries[ProjectQueries.POD_COUNT]}
             namespace={projectName}
           />
+          {dynamicItemExtensions.map(({ uid, properties }) => (
+            <PrometheusUtilizationItem
+              key={uid}
+              title={properties.title}
+              humanizeValue={properties.humanize}
+              utilizationQuery={properties.getUtilizationQuery(projectName)}
+              requestQuery={properties.getRequestQuery?.(projectName)}
+              limitQuery={properties.getLimitQuery?.(projectName)}
+              totalQuery={properties.getTotalQuery?.(projectName)}
+              namespace={projectName}
+              TopConsumerPopover={properties.TopConsumerPopover}
+            />
+          ))}
         </ProjectUtilizationContext.Provider>
       </UtilizationBody>
     </Card>
