@@ -16,7 +16,7 @@ const mapStateToProps = (state: RootState) => ({
   namespace: getActiveNamespace(state),
 });
 
-export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
+const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   canAccessMonitoring,
   children,
   query,
