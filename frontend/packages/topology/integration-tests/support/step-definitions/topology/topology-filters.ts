@@ -61,3 +61,69 @@ Then(
     cy.get(topologyPO.toolbarFilterPO.deploymentApp).should('not.exist');
   },
 );
+When('user clicks display options', () => {
+  cy.get(topologyPO.displayFilter.display).click();
+});
+
+When('user disbales expand option', () => {
+  // eslint-disable-next-line promise/catch-or-return
+  cy.get('body').then((el) => {
+    if (el.find(topologyPO.displayFilter.disabledClass).length === 0) {
+      cy.get(topologyPO.displayFilter.expandOption).click({ force: true });
+    }
+  });
+});
+
+When('user enables expand option', () => {
+  // eslint-disable-next-line promise/catch-or-return
+  cy.get('body').then((el) => {
+    if (el.find(topologyPO.displayFilter.disabledClass).length !== 0) {
+      cy.get(topologyPO.displayFilter.expandOption).click({ force: true });
+    }
+  });
+});
+
+When('user unchecks the application grouping option', () => {
+  cy.get(topologyPO.displayFilter.applicationGroupingOption).uncheck({ force: true });
+});
+
+When('user checks the application grouping option', () => {
+  cy.get(topologyPO.displayFilter.applicationGroupingOption).check({ force: true });
+});
+
+Then('user will see the application_groupings checkbox will disable', () => {
+  cy.get(topologyPO.displayFilter.applicationGroupingOption).should('be.disabled');
+});
+
+Then('user will see workload in text view', () => {
+  cy.get(topologyPO.displayFilter.unexpandedNode).should('not.exist');
+});
+
+When('user checks the pod count option', () => {
+  cy.get(topologyPO.displayFilter.podLabelOptions)
+    .eq(2)
+    .check();
+});
+
+Then('user will able to see the pod count inside workload', () => {
+  cy.get(topologyPO.displayFilter.podRingText).should('be.visible');
+});
+
+When('user unchecks the labels option', () => {
+  cy.get(topologyPO.displayFilter.podLabelOptions)
+    .eq(3)
+    .uncheck();
+});
+
+Then('user will not able to see the labels on workload', () => {
+  cy.get(topologyPO.graph.nodeLabel).should('not.exist');
+  cy.get(topologyPO.graph.groupLabel).should('not.exist');
+});
+
+Then('user will see deployment section is not visible', () => {
+  cy.get(topologyPO.displayFilter.deploymentLabel).should('not.exist');
+});
+
+Then('user will see deployments in count view', () => {
+  cy.get(topologyPO.displayFilter.deployemntCount).should('be.visible');
+});
