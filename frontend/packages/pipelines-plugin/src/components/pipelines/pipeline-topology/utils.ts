@@ -1,6 +1,4 @@
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import { global_BackgroundColor_200 as greyBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
-import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
@@ -373,9 +371,9 @@ export const getWhenExpressionDiamondState = (
       diamondColor = getRunStatusColor(status).pftoken.value;
     }
   } else if (!isFinallyTask) {
-    diamondColor = greyBackgroundColor.value;
+    diamondColor = 'var(--pf-global--BackgroundColor--200)';
   } else {
-    diamondColor = lightBackgroundColor.value;
+    diamondColor = 'var(--pf-global--BackgroundColor--light-100)';
   }
 
   let tooltipContent: string;
