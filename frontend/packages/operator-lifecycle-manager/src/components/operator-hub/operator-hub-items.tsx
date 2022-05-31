@@ -507,8 +507,6 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     validSubscriptionFilters: t('olm~Valid subscription'),
   };
 
-  const showMoreText = t('public~{{numRemaining}} more');
-
   return (
     <>
       <TileViewPage
@@ -518,7 +516,6 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         getAvailableFilters={determineAvailableFilters}
         filterGroups={operatorHubFilterGroups}
         filterGroupNameMap={filterGroupNameMap}
-        showMore={showMoreText}
         keywordCompare={keywordCompare}
         renderTile={renderTile}
         emptyStateTitle={t('olm~No Results Match the Filter Criteria')}

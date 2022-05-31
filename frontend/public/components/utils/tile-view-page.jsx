@@ -743,8 +743,13 @@ export class TileViewPage extends React.Component {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     onUpdateFilters,
   ) {
-    const { filterGroupNameMap, showMore } = this.props;
+    const { filterGroupNameMap } = this.props;
     const { filterGroupsShowAll } = this.state;
+
+    const maxShown = 5;
+    const showMoreText = i18n.t('public~{{numRemaining}} more', {
+      numRemaining: Object.keys(filterGroup).length - maxShown,
+    });
 
     return (
       <FilterSidePanelCategory
@@ -753,7 +758,8 @@ export class TileViewPage extends React.Component {
         onShowAllToggle={() => this.onShowAllToggle(groupName)}
         showAll={_.get(filterGroupsShowAll, groupName, false)}
         data-test-group-name={groupName}
-        showText={Object.keys(filterGroup).length - 5 + showMore}
+        maxShowCount={maxShown}
+        showText={showMoreText}
       >
         {_.map(filterGroup, (filter, filterName) => {
           const { label, active } = filter;
@@ -918,7 +924,6 @@ TileViewPage.propTypes = {
   getAvailableFilters: PropTypes.func,
   filterGroups: PropTypes.array.isRequired,
   filterGroupNameMap: PropTypes.object,
-  showMore: PropTypes.string,
   renderFilterGroup: PropTypes.func,
   keywordCompare: PropTypes.func.isRequired,
   renderTile: PropTypes.func.isRequired,
