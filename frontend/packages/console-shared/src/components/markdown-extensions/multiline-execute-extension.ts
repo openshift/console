@@ -45,7 +45,7 @@ const useMultilineExecuteCommandShowdownExtension = () => {
                 </div>
               </div>
               <div class="pf-c-code-block__content">
-                <pre class="pf-c-code-block__pre ocs-code-block__pre">
+                <pre class="pf-c-code-block__pre pfext-code-block__pre">
                   <code class="pf-c-code-block__code" 
                     ${MARKDOWN_SNIPPET_ID}="${groupType}">${group}</code>
                 </pre>
