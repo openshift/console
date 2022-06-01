@@ -19,7 +19,7 @@ import {
 import ExecuteCommand from './ExecuteCommand';
 import Terminal, { ImperativeTerminalType } from './Terminal';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import useActivityTick, { TICK_INTERVAL } from './useActivityTick';
+// import useActivityTick, { TICK_INTERVAL } from './useActivityTick';
 
 import './CloudShellExec.scss';
 
@@ -63,7 +63,6 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   flags,
   impersonate,
   workspaceModel,
-  isActiveTab = false,
   onActivate,
 }) => {
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
@@ -74,27 +73,32 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const terminal = React.useRef<ImperativeTerminalType>();
   const { t } = useTranslation();
 
-  const tick = useActivityTick(workspaceName, namespace);
+  // eslint-disable-next-line no-console
+  console.log('render cse', workspaceName, container, podname);
 
-  React.useEffect(() => {
-    let startTime;
-    let tickReq;
-    const handleTick = (timestamp) => {
-      if ((!startTime || timestamp - startTime >= TICK_INTERVAL) && isActiveTab) {
-        startTime = timestamp;
-        tick();
-      }
-      tickReq = window.requestAnimationFrame(handleTick);
-    };
+  // const tick = useActivityTick(workspaceName, namespace);
 
-    tickReq = window.requestAnimationFrame(handleTick);
+  // React.useEffect(() => {
+  //   let startTime;
+  //   let tickReq;
+  //   const handleTick = (timestamp) => {
+  //     if ((!startTime || timestamp - startTime >= TICK_INTERVAL) && isActiveTab) {
+  //       startTime = timestamp;
+  //       tick();
+  //     }
+  //     tickReq = window.requestAnimationFrame(handleTick);
+  //   };
 
-    return () => {
-      window.cancelAnimationFrame(tickReq);
-    };
-  }, [isActiveTab, tick]);
+  //   tickReq = window.requestAnimationFrame(handleTick);
+
+  //   return () => {
+  //     window.cancelAnimationFrame(tickReq);
+  //   };
+  // }, [isActiveTab, tick]);
 
   const onData = (data: string): void => {
+    // eslint-disable-next-line no-console
+    console.log('onData', ws);
     ws.current?.send(`0${Base64.encode(data)}`);
   };
 
@@ -148,6 +152,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
 
     websocket
       .onmessage((msg) => {
+        // eslint-disable-next-line no-console
+        console.log('onmessage', msg);
         const currentTerminal = terminal.current;
         // error channel
         if (msg[0] === '3') {
@@ -166,11 +172,15 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       })
       .onopen(() => {
         const currentTerminal = terminal.current;
+        // eslint-disable-next-line no-console
+        console.log('onopen', currentTerminal);
         currentTerminal && currentTerminal.reset();
         previous = '';
         if (!unmounted) setWsOpen(true);
       })
       .onclose((evt) => {
+        // eslint-disable-next-line no-console
+        console.log('closing ws', evt);
         if (!evt || evt.wasClean === true) {
           return;
         }
@@ -223,6 +233,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
 
     return () => {
       unmounted = true;
+      // eslint-disable-next-line no-console
+      console.log('unmounting cloudshellexec', websocket);
       websocket.destroy();
     };
   }, [
