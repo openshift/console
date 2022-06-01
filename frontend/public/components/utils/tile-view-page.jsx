@@ -747,7 +747,7 @@ export class TileViewPage extends React.Component {
     const { filterGroupsShowAll } = this.state;
 
     const maxShown = 5;
-    const showMoreText = i18n.t('public~{{numRemaining}} more', {
+    const showMoreText = i18n.t('public~Show {{numRemaining}} more', {
       numRemaining: Object.keys(filterGroup).length - maxShown,
     });
 
@@ -760,6 +760,7 @@ export class TileViewPage extends React.Component {
         data-test-group-name={groupName}
         maxShowCount={maxShown}
         showText={showMoreText}
+        hideText={i18n.t('public~Show less')}
       >
         {_.map(filterGroup, (filter, filterName) => {
           const { label, active } = filter;
