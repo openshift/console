@@ -52,8 +52,8 @@ export const getBaseInitialValues = (
       hostname: '',
       secure: false,
       tls: {
-        termination: '',
-        insecureEdgeTerminationPolicy: '',
+        termination: null,
+        insecureEdgeTerminationPolicy: null,
         caCertificate: '',
         certificate: '',
         destinationCACertificate: '',

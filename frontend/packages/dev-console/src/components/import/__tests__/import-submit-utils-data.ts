@@ -110,8 +110,8 @@ export const defaultData: GitImportFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: '',
-      insecureEdgeTerminationPolicy: '',
+      termination: null,
+      insecureEdgeTerminationPolicy: null,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -540,8 +540,8 @@ export const defaultDevfileFormData: GitImportFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: '',
-      insecureEdgeTerminationPolicy: '',
+      termination: null,
+      insecureEdgeTerminationPolicy: null,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',

@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/shared';
 import { usePreferredRoutingOptions } from '../../user-preferences/usePreferredRoutingOptions';
 import {
-  TerminationTypes,
-  PassthroughInsecureTrafficTypes,
-  InsecureTrafficTypes,
+  TerminationType,
+  PassthroughInsecureTrafficType,
+  InsecureTrafficType,
 } from '../import-types';
 
 const SecureRoute: React.FC = () => {
@@ -22,6 +22,24 @@ const SecureRoute: React.FC = () => {
     },
     setFieldValue,
   } = useFormikContext<FormikValues>();
+
+  const terminationOptions = {
+    [TerminationType.EDGE]: t('devconsole~Edge'),
+    [TerminationType.PASSTHROUGH]: t('devconsole~Passthrough'),
+    [TerminationType.REENCRYPT]: t('devconsole~Re-encrypt'),
+  };
+  const insecureTrafficOptions =
+    tls.termination === TerminationType.PASSTHROUGH
+      ? {
+          [PassthroughInsecureTrafficType.None]: t('devconsole~None'),
+          [PassthroughInsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+        }
+      : {
+          [InsecureTrafficType.None]: t('devconsole~None'),
+          [InsecureTrafficType.Allow]: t('devconsole~Allow'),
+          [InsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+        };
+
   React.useEffect(() => {
     if (formType !== 'edit' && preferredRoutingOptionsLoaded) {
       setFieldValue('route.secure', secureRoute, false);
@@ -51,18 +69,14 @@ const SecureRoute: React.FC = () => {
           <DropdownField
             name="route.tls.termination"
             label={t('devconsole~TLS termination')}
-            items={TerminationTypes}
+            items={terminationOptions}
             title={t('devconsole~Select termination type')}
             fullWidth
           />
           <DropdownField
             name="route.tls.insecureEdgeTerminationPolicy"
             label={t('devconsole~Insecure traffic')}
-            items={
-              tls.termination === 'passthrough'
-                ? PassthroughInsecureTrafficTypes
-                : InsecureTrafficTypes
-            }
+            items={insecureTrafficOptions}
             title={t('devconsole~Select insecure traffic type')}
             helpText={t('devconsole~Policy for traffic on insecure schemes like HTTP.')}
             fullWidth

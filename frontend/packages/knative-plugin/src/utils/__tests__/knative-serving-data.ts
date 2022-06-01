@@ -74,8 +74,8 @@ export const defaultData: DeployImageFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: '',
-      insecureEdgeTerminationPolicy: '',
+      termination: null,
+      insecureEdgeTerminationPolicy: null,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
