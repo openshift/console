@@ -12,7 +12,7 @@ metadata:
   annotations:
     openshift.io/generated-by: OpenShiftWebConsole
 spec:
-  jsonData: Message
+  data: Message
   schedule: '* * * * *'
   sink:
     ref:

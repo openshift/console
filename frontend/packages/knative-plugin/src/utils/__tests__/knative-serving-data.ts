@@ -349,7 +349,7 @@ export const deploymentKnativeData: K8sResourceKind = {
 
 const eventSourceData = {
   [EventSources.PingSource]: {
-    jsonData: '',
+    data: '',
     schedule: '* * * * *',
   },
   [EventSources.ApiServerSource]: {

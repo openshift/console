@@ -151,7 +151,7 @@ export const getCatalogEventSourceResource = (
 export const getEventSourceData = (source: string) => {
   const eventSourceData = {
     [EventSources.PingSource]: {
-      jsonData: '',
+      data: '',
       schedule: '',
     },
     [EventSources.SinkBinding]: {
