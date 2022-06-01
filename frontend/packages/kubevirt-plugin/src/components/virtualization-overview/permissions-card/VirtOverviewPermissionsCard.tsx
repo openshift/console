@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import { usePermissionsCardPermissions } from '../../../hooks/use-permissions-card-permissions';
 import { PermissionsCardPopover } from './PermissionsCardPopover';
 import { PermissionsCountItem } from './PermissionsCountItem';
@@ -39,7 +39,7 @@ export const VirtOverviewPermissionsCard: React.FC = () => {
             <FlexItem>
               <PermissionsCountItem
                 count={numNotAllowedCapabilities}
-                Icon={RedExclamationCircleIcon}
+                Icon={YellowExclamationTriangleIcon}
                 isLoading={permissionsLoading}
               />
             </FlexItem>
