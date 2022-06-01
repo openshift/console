@@ -146,6 +146,7 @@ const allStatuses = [
   OperatorStatus.Progressing,
   OperatorStatus.Degraded,
   OperatorStatus.CannotUpdate,
+  OperatorStatus.Unavailable,
   OperatorStatus.Unknown,
 ];
 
