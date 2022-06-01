@@ -1,0 +1,10 @@
+.kv-high-priority-alerts {
+  margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.kv-high-priority-alerts__alert {
+  margin-bottom: var(--pf-global--spacer--sm);
+  &:last-child{
+    margin-bottom: 0;
+  }
+}
