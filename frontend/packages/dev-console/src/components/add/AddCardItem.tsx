@@ -13,7 +13,7 @@ type AddCardItemProps = {
 
 const AddCardItem: React.FC<AddCardItemProps> = ({
   action: {
-    properties: { id, label, icon, href, description },
+    properties: { id, label, icon, href, description, iconRenderAs },
   },
   namespace,
 }) => {
@@ -21,6 +21,15 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
   const [showDetails] = useShowAddCardItemDetails();
 
   const actionIcon = (): JSX.Element => {
+    if (typeof icon === 'string' && iconRenderAs === 'svg') {
+      return (
+        <span className="odc-add-card-item__icon" aria-hidden="true">
+          <svg viewBox="0 0 100 100" width="1.2em">
+            <use href={`${icon}#Layer_1`} />
+          </svg>
+        </span>
+      );
+    }
     if (typeof icon === 'string') {
       return <img className="odc-add-card-item__icon" src={icon} alt={label} aria-hidden="true" />;
     }

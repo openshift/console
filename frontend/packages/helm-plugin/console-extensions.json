@@ -124,7 +124,8 @@
       "href": "/catalog/ns/:namespace?catalogType=HelmChart",
       "label": "%helm-plugin~Helm Chart%",
       "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
-      "icon": { "$codeRef": "helmUtils.helmCatalogIconSVG" }
+      "icon": { "$codeRef": "helmUtils.helmCatalogIconSVG" },
+      "iconRenderAs": "svg"
     }
   },
   {
