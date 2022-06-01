@@ -22,7 +22,6 @@ export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> =
       version: PodDisruptionBudgetModel.apiVersion,
     },
     isList: true,
-    namespaced: true,
     namespace,
   });
 

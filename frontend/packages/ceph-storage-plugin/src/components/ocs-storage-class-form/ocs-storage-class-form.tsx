@@ -477,7 +477,6 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
 
   const csiCMWatchResource: WatchK8sResource = {
     kind: ConfigMapModel.kind,
-    namespaced: true,
     isList: false,
     namespace: CEPH_STORAGE_NAMESPACE,
     name: KMSConfigMapCSIName,

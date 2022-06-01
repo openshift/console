@@ -174,7 +174,6 @@ const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromi
   ({ host, nodeName, status, inProgress, errorMessage, handlePromise, close, cancel }) => {
     const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
       kind: PodModel.kind,
-      namespaced: false,
       isList: true,
       fieldSelector: `spec.nodeName=${nodeName}`,
     });

@@ -39,7 +39,7 @@ import { usePrevious } from './usePrevious';
  * ```
  */
 export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
-  const cluster = useSelector((state: SDKStoreState) => getActiveCluster(state));
+  const cluster = useSelector<SDKStoreState>(getActiveCluster);
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 

@@ -44,7 +44,6 @@ const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
         ? {
             kind: StorageClassModel.kind,
             isList: true,
-            namespaced: false,
           }
         : null,
     );

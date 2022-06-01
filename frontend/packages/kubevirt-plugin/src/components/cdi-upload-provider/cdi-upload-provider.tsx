@@ -11,7 +11,6 @@ import { CDI_UPLOAD_URL_BUILDER, UPLOAD_STATUS } from './consts';
 const resource: WatchK8sResource = {
   kind: kubevirtReferenceForModel(CDIConfigModel),
   isList: false,
-  namespaced: false,
   name: 'config',
 };
 

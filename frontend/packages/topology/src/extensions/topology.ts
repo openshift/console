@@ -1,5 +1,5 @@
 import { TopologyQuadrant } from '@patternfly/react-topology';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResourcesOptional } from '@console/dynamic-plugin-sdk';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import {
@@ -25,7 +25,7 @@ namespace ExtensionProperties {
     /** Priority for the factory */
     priority: number;
     /** Resources to be fetched from useK8sWatchResources hook. */
-    resources?: (namespace: string) => WatchK8sResources<any>;
+    resources?: (namespace: string) => WatchK8sResourcesOptional<any>;
     /** Keys in resources containing workloads. */
     workloadKeys?: string[];
     /** Getter for the data model factory */

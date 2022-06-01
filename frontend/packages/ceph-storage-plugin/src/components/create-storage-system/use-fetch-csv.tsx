@@ -30,7 +30,6 @@ export const useFetchCsv = (specName: string, namespace?: string): UseFetchCsvRe
   const [csv, csvLoaded, csvLoadError] = useK8sWatchResource<ClusterServiceVersionKind>({
     kind: referenceForModel(ClusterServiceVersionModel),
     name: csvName.current,
-    namespaced: true,
     namespace: csvNamespace.current,
     isList: false,
   });

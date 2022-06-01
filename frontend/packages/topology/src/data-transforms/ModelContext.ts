@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { Model } from '@patternfly/react-topology';
 import { observable, computed } from 'mobx';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResourcesOptional } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   TopologyDataModelDepicted,
@@ -18,7 +18,7 @@ import {
 
 export type ModelExtensionContext = {
   priority: number;
-  resources?: (namespace: string) => WatchK8sResources<any>;
+  resources?: (namespace: string) => WatchK8sResourcesOptional<any>;
   workloadKeys?: string[];
   dataModelGetter?: TopologyDataModelGetter;
   dataModelDepicter?: TopologyDataModelDepicted;
@@ -44,7 +44,7 @@ export class ExtensibleModel {
   public extensionsLoaded: boolean = false;
 
   @observable.ref
-  public watchedResources: WatchK8sResources<any> = {};
+  public watchedResources: WatchK8sResourcesOptional<any> = {};
 
   public onExtensionsLoaded: (extensibleModel: ExtensibleModel) => void;
 

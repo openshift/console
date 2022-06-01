@@ -112,7 +112,6 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
       ? {
           kind: StorageClassModel.kind,
           isList: true,
-          namespaced: false,
         }
       : null,
   );

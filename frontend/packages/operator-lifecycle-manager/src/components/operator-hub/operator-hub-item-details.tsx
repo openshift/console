@@ -72,7 +72,6 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
     name: subscription?.status?.installedCSV,
     namespace: subscription?.metadata?.namespace,
     isList: false,
-    namespaced: true,
   });
   const nsPath = `/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}`;
   const to = installedCSV
@@ -111,7 +110,6 @@ const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
           name: subscription?.status?.installedCSV,
           namespace: subscription?.metadata?.namespace,
           isList: false,
-          namespaced: true,
         }
       : null,
   );

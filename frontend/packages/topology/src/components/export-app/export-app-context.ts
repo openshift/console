@@ -33,9 +33,7 @@ export const useExportAppFormToast = () => {
         groupVersionKind: groupVersionKind || getGroupVersionKindForModel(ExportModel),
         name,
         namespace: resNamespace,
-        namespaced: true,
         isList: false,
-        optional: true,
       };
       return acc;
     }, {} as Record<string, WatchK8sResource>);

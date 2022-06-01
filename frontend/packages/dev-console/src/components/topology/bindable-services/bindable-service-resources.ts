@@ -1,12 +1,12 @@
 import {
   referenceForGroupVersionKind,
   referenceForModel,
-  WatchK8sResources,
+  WatchK8sResourcesOptional,
 } from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { getBindableServicesList } from './fetch-bindable-services-utils';
 
-export const getBindableServiceResources = (namespace: string): WatchK8sResources<any> => {
+export const getBindableServiceResources = (namespace: string): WatchK8sResourcesOptional<any> => {
   const resources = {
     serviceBindingRequests: {
       namespace,

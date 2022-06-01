@@ -14,7 +14,6 @@ import BareMetalHostDisks from '../baremetal-hosts/BareMetalHostDisks';
 const DisksPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => {
   const [hosts, loaded, loadError] = useK8sWatchResource<BareMetalHostKind[]>({
     groupVersionKind: getGroupVersionKindForModel(BareMetalHostModel),
-    namespaced: true,
     isList: true,
   });
   let host: BareMetalHostKind;

@@ -37,7 +37,6 @@ export const BootSource: React.FC<BootSourceProps> = ({ template, state, dispatc
       ? {
           kind: StorageClassModel.kind,
           isList: true,
-          namespaced: false,
         }
       : null,
   );

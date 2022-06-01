@@ -18,7 +18,6 @@ export const PodDisruptionBudgetField: React.FC<PodDisruptionBudgetFieldProps> =
       version: PodDisruptionBudgetModel.apiVersion,
     },
     isList: true,
-    namespaced: true,
     namespace: obj.metadata.namespace,
   });
   const pdb = getPDBResource(pdbResources, obj);

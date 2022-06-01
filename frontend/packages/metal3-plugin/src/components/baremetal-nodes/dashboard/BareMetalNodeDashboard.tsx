@@ -45,7 +45,6 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDetailsPageProps> = ({
 
   const [hosts, hostsLoaded] = useK8sWatchResource<BareMetalHostKind[]>({
     groupVersionKind: getGroupVersionKindForModel(BareMetalHostModel),
-    namespaced: true,
     isList: true,
   });
 

@@ -25,7 +25,7 @@ import {
   isDashboardsOverviewInventoryItem as isDynamicDashboardsOverviewInventoryItem,
   isDashboardsOverviewInventoryItemReplacement as isDynamicDashboardsOverviewInventoryItemReplacement,
   ResolvedExtension,
-  WatchK8sResources,
+  WatchK8sResourcesOptional,
   ClusterOverviewInventoryItem,
   isClusterOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
@@ -195,6 +195,6 @@ type ClusterInventoryItemProps = DashboardItemProps & {
   model: K8sKind;
   mapperLoader?: () => Promise<StatusGroupMapper>;
   resolvedMapper?: StatusGroupMapper;
-  additionalResources?: WatchK8sResources<any>;
+  additionalResources?: WatchK8sResourcesOptional<any>;
   expandedComponent?: LazyLoader;
 };

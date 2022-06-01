@@ -89,7 +89,6 @@ const ListPage = () => {
       kind: 'Pod',
     },
     isList: true,
-    namespaced: true,
   });
 
   const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {

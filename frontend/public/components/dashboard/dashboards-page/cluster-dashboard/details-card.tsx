@@ -87,7 +87,6 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
 
 const clusterVersionResource: WatchK8sResource = {
   kind: referenceForModel(ClusterVersionModel),
-  namespaced: false,
   name: 'version',
   isList: false,
 };

@@ -102,7 +102,6 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const snapshotResource: WatchK8sResource = {
     isList: true,
     kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
-    namespaced: true,
     namespace,
   };
 

@@ -23,7 +23,6 @@ export const killCDIBoundPVC = (pvc: PersistentVolumeClaimKind) =>
 export const PVCDeleteAlertExtension: React.FC<{ pvc: PersistentVolumeClaimKind }> = ({ pvc }) => {
   const templatesResource: WatchK8sResource = {
     isList: true,
-    optional: true,
     kind: TemplateModel.kind,
     namespace: TEMPLATE_VM_COMMON_NAMESPACE,
     selector: {

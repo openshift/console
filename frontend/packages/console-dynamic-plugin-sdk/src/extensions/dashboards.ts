@@ -9,6 +9,7 @@ import {
   WatchK8sResults,
   FirehoseResource,
   FirehoseResult,
+  WatchK8sResourcesOptional,
 } from './console-types';
 import {
   CardSpan,
@@ -302,5 +303,5 @@ type DashboardsOverviewInventoryItemProperties<
   /** Function which maps various statuses to groups. */
   mapper?: CodeRef<StatusGroupMapper<T, R>>;
   /** Additional resources which will be fetched and passed to the `mapper` function. */
-  additionalResources?: CodeRef<WatchK8sResources<R>>;
+  additionalResources?: CodeRef<WatchK8sResourcesOptional<R>>;
 };

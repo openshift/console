@@ -202,7 +202,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: {
         ceph: {
           kind: referenceForModel(models.CephClusterModel),
-          namespaced: false,
           isList: true,
         },
       },

@@ -176,10 +176,8 @@ export type WatchK8sResource = {
   namespace?: string;
   isList?: boolean;
   selector?: Selector;
-  namespaced?: boolean;
   limit?: number;
   fieldSelector?: string;
-  optional?: boolean;
   partialMetadata?: boolean;
   cluster?: string;
 };
@@ -198,6 +196,10 @@ export type WatchK8sResults<R extends ResourcesObject> = {
 
 export type WatchK8sResources<R extends ResourcesObject> = {
   [k in keyof R]: WatchK8sResource;
+};
+
+export type WatchK8sResourcesOptional<R extends ResourcesObject> = {
+  [k in keyof R]: WatchK8sResource & { optional?: boolean };
 };
 
 export type WatchK8sResourcesGeneric = {

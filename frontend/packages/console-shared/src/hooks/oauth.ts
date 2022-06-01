@@ -17,7 +17,6 @@ export const useOAuthData = (canEdit: boolean) =>
       ? {
           kind: referenceForModel(OAuthModel),
           isList: false,
-          namespaced: false,
           name: 'cluster',
         }
       : null,

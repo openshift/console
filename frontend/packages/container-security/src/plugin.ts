@@ -95,7 +95,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: {
         imageManifestVuln: {
           kind: referenceForModel(ImageManifestVulnModel),
-          namespaced: true,
           isList: true,
         },
       },

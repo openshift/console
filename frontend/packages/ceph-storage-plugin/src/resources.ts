@@ -31,7 +31,6 @@ export const cephClusterResource: FirehoseResource = {
 
 export const pvResource: WatchK8sResource = {
   kind: PersistentVolumeModel.kind,
-  namespaced: false,
   isList: true,
 };
 
@@ -43,7 +42,6 @@ export const pvcResource: FirehoseResource = {
 
 export const scResource: WatchK8sResource = {
   kind: StorageClassModel.kind,
-  namespaced: false,
   isList: true,
 };
 
@@ -62,7 +60,6 @@ export const subscriptionResource: FirehoseResource = {
 
 export const cephBlockPoolResource: WatchK8sResource = {
   kind: referenceForModel(CephBlockPoolModel),
-  namespaced: true,
   isList: true,
   namespace: CEPH_STORAGE_NAMESPACE,
 };
@@ -75,13 +72,11 @@ export const cephCapacityResource = {
 
 export const nodeResource: WatchK8sResource = {
   kind: NodeModel.kind,
-  namespaced: false,
   isList: true,
 };
 
 export const nodesDiscoveriesResource: WatchK8sResource = {
   kind: referenceForModel(LocalVolumeDiscoveryResult),
-  namespaced: false,
   isList: true,
 };
 

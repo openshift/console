@@ -1,9 +1,9 @@
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResourcesOptional } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 
-export const getOperatorWatchedResources = (namespace: string): WatchK8sResources<any> => {
+export const getOperatorWatchedResources = (namespace: string): WatchK8sResourcesOptional<any> => {
   return {
     clusterServiceVersions: {
       isList: true,
@@ -14,7 +14,9 @@ export const getOperatorWatchedResources = (namespace: string): WatchK8sResource
   };
 };
 
-export const getServiceBindingWatchedResources = (namespace: string): WatchK8sResources<any> => {
+export const getServiceBindingWatchedResources = (
+  namespace: string,
+): WatchK8sResourcesOptional<any> => {
   return {
     serviceBindingRequests: {
       isList: true,

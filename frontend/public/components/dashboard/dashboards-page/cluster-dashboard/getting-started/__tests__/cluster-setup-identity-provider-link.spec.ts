@@ -44,7 +44,6 @@ describe('useIdentityProviderLink', () => {
     expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
       kind: 'config.openshift.io~v1~OAuth',
       isList: false,
-      namespaced: false,
       name: 'cluster',
     });
   });

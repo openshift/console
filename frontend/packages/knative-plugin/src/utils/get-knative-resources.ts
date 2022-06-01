@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResources, WatchK8sResourcesOptional } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
@@ -311,7 +311,7 @@ export const knativeEventingTriggerResourceWatchers = (namespace: string) => {
 
 export const knativeCamelIntegrationsResourceWatchers = (
   namespace: string,
-): WatchK8sResources<any> => {
+): WatchK8sResourcesOptional<any> => {
   return {
     [CamelIntegrationModel.plural]: {
       isList: true,
@@ -363,7 +363,7 @@ export const strimziResourcesWatcher = (namespace: string): WatchK8sResources<an
 
 export const knativeCamelKameletBindingResourceWatchers = (
   namespace: string,
-): WatchK8sResources<any> => {
+): WatchK8sResourcesOptional<any> => {
   return {
     [CamelKameletBindingModel.plural]: {
       isList: true,
@@ -376,7 +376,7 @@ export const knativeCamelKameletBindingResourceWatchers = (
 
 export const knativeCamelDomainMappingResourceWatchers = (
   namespace: string,
-): WatchK8sResources<{ [key: string]: K8sResourceKind[] }> => {
+): WatchK8sResourcesOptional<{ [key: string]: K8sResourceKind[] }> => {
   return {
     [DomainMappingModel.plural]: {
       isList: true,

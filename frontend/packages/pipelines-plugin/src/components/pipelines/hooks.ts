@@ -49,7 +49,6 @@ export const useLatestPipelineRun = (pipelineName: string, namespace: string): P
     selector: {
       matchLabels: { [TektonResourceLabel.pipeline]: pipelineName },
     },
-    optional: true,
     isList: true,
   };
   const [pipelineRun, pipelineRunLoaded, pipelineRunError] = useK8sWatchResource<PipelineRunKind[]>(
@@ -69,7 +68,6 @@ export const usePipelinePVC = (
     selector: {
       matchLabels: { [TektonResourceLabel.pipeline]: pipelineName },
     },
-    optional: true,
     isList: true,
   };
   const [PVC, PVCLoaded, PVCError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(pvcResource);

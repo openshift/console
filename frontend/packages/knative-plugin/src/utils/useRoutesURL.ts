@@ -19,7 +19,6 @@ export const useRoutesURL = (resource: K8sResourceKind): string => {
           isList: true,
           kind: referenceForModel(RouteModel),
           namespace,
-          optional: true,
         },
   );
 

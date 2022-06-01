@@ -46,7 +46,6 @@ const NamespaceDropdown: React.FC = () => {
   const [options, optionsLoaded, optionsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
     kind: model?.kind,
     isList: true,
-    optional: true,
   });
   const [
     preferredNamespace,

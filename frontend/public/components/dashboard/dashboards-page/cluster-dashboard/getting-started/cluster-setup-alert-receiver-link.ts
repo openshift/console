@@ -25,7 +25,6 @@ const useAlertManagerConfigSecret = (watch: boolean) =>
       ? {
           kind: SecretModel.kind,
           isList: false,
-          namespaced: true,
           namespace: 'openshift-monitoring',
           name: 'alertmanager-main',
         }

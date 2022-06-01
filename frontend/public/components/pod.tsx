@@ -1009,7 +1009,6 @@ export const PodsPage: React.FC<PodPageProps> = ({
   const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
     kind,
     isList: true,
-    namespaced: true,
     namespace,
     selector,
     fieldSelector,

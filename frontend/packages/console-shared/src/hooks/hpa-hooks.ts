@@ -18,7 +18,6 @@ export const useRelatedHPA = (
   const [hpas, loaded, error] = useK8sWatchResource<HorizontalPodAutoscalerKind[]>({
     kind: HorizontalPodAutoscalerModel.kind,
     namespace: workloadNamespace,
-    optional: true,
     isList: true,
   });
 

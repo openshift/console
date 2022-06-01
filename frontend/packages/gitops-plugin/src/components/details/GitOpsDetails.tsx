@@ -37,7 +37,6 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestUR
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
   });
   const argocdLink = _.find(
     consoleLinks,

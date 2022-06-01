@@ -77,7 +77,6 @@ const ServiceListPage: React.FC = () => {
     name: ServicesRequestCRName,
     namespace: currentNamespace,
     isList: false,
-    optional: true,
   });
 
   const remoteKafkaInstances = watchedKafkaRequest?.status?.userKafkas || [];

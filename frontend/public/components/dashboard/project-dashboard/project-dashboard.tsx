@@ -49,7 +49,6 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
   });
   const namespaceLinks = getNamespaceDashboardConsoleLinks(obj, consoleLinks);
   const context = {

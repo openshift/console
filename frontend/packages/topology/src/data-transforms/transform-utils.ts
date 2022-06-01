@@ -1,7 +1,7 @@
 import { EdgeModel, Model, NodeModel, NodeShape } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResourcesOptional } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
@@ -317,7 +317,7 @@ export const getWorkloadResources = (
   );
 };
 
-export const getBaseWatchedResources = (namespace: string): WatchK8sResources<any> => {
+export const getBaseWatchedResources = (namespace: string): WatchK8sResourcesOptional<any> => {
   return {
     deploymentConfigs: {
       isList: true,

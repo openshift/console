@@ -92,7 +92,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       ? {
           kind: StorageClassModel.kind,
           isList: true,
-          namespaced: false,
         }
       : null,
   );

@@ -74,7 +74,6 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
   });
   const kialiLink = getNamespaceDashboardKialiLink(consoleLinks, namespace);
   const queryParams = useQueryParams();

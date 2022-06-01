@@ -12,7 +12,6 @@ export const useMappedVMRestores = (
   const restoreResource: WatchK8sResource = {
     isList: true,
     kind: kubevirtReferenceForModel(VirtualMachineRestoreModel),
-    namespaced: true,
     namespace,
   };
 

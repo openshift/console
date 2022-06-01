@@ -58,7 +58,6 @@ export const useFormikFetchAndSaveTasks = (namespace: string, validateForm: () =
     clusterTasks: {
       kind: referenceForModel(ClusterTaskModel),
       isList: true,
-      namespaced: false,
     },
   });
   const namespacedTaskData = namespacedTasks.loaded ? namespacedTasks.data : null;

@@ -81,7 +81,6 @@ import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
   isList: true,
-  optional: true,
   kind: TemplateModel.kind,
   namespace: TEMPLATE_VM_COMMON_NAMESPACE,
   selector: {
@@ -605,7 +604,6 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
       ? {
           kind: StorageClassModel.kind,
           isList: true,
-          namespaced: false,
         }
       : null,
   );

@@ -27,7 +27,6 @@ const SourceSecretSelector: React.FC<{
           kind: SecretModel.kind,
           namespace,
           name: secret,
-          optional: true,
           isList: false,
         }
       : null,

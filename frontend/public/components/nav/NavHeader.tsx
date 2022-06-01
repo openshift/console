@@ -74,7 +74,6 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
   });
 
   const togglePerspectiveOpen = React.useCallback(() => {

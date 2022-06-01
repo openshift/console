@@ -39,7 +39,6 @@ export const PDBFormPage: React.FC<{
       version,
     },
     name,
-    namespaced: true,
     namespace: match.params.ns,
   });
 
@@ -50,7 +49,6 @@ export const PDBFormPage: React.FC<{
       version: PodDisruptionBudgetModel.apiVersion,
     },
     isList: true,
-    namespaced: true,
     namespace: match.params.ns,
   });
 

@@ -885,7 +885,6 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
   // Check if the CR is already present - only watches for the model in namespace
   const [customResource, customResourceLoaded] = useK8sWatchResource<K8sResourceCommon[]>({
     kind: referenceForModel(model),
-    namespaced: true,
     isList: true,
   });
 

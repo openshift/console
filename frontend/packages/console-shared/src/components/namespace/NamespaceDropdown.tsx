@@ -236,7 +236,6 @@ const NamespaceMenu: React.FC<{
   const [options, optionsLoaded] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: isProjects ? ProjectModel.kind : NamespaceModel.kind,
-    optional: true,
   });
 
   const optionItems = React.useMemo(() => {

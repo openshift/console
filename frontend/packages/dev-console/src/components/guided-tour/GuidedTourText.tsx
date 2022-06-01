@@ -74,7 +74,6 @@ export const FinishTourText: React.FC = () => {
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
   });
   const { t } = useTranslation();
   const openshiftBlogLink =

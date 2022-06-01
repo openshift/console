@@ -413,7 +413,6 @@ const getK8sWatchResources = (
             isList: true,
             ...(namespace
               ? {
-                  namespaced: true,
                   namespace,
                 }
               : {}),
@@ -594,7 +593,6 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
             kind: k8Kind,
             version,
           },
-          namespaced: true,
           namespace,
           isList: true,
         },
@@ -951,7 +949,6 @@ type GetK8sWatchResources = {
     kind: string;
     isList: boolean;
     namespace?: string;
-    namespaced?: boolean;
   };
 };
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically

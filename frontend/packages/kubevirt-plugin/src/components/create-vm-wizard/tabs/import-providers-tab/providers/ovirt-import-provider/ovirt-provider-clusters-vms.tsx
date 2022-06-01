@@ -69,7 +69,6 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
         ? {
             kind: StorageClassModel.kind,
             isList: true,
-            namespaced: false,
           }
         : null,
     );

@@ -21,7 +21,6 @@ const EditDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y 
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
   });
   const { cheURL, cheIconURL } = getCheDecoratorData(consoleLinks);
   const workloadData = element.getData().data;

@@ -130,7 +130,6 @@ describe('useAlertReceiverLink', () => {
     expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
       kind: 'Secret',
       isList: false,
-      namespaced: true,
       namespace: 'openshift-monitoring',
       name: 'alertmanager-main',
     });

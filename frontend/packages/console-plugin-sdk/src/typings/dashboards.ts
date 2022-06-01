@@ -4,6 +4,7 @@ import {
   ResourcesObject,
   WatchK8sResults,
   GridPosition,
+  WatchK8sResourcesOptional,
 } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
@@ -158,7 +159,7 @@ namespace ExtensionProperties {
     mapper?: () => Promise<StatusGroupMapper>;
 
     /** Additional resources which will be fetched and passed to `mapper` function. */
-    additionalResources?: WatchK8sResources<any>;
+    additionalResources?: WatchK8sResourcesOptional<any>;
 
     /** Loader for the component which will be used when item is expanded. */
     expandedComponent?: LazyLoader<ExpandedComponentProps>;

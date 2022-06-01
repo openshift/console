@@ -38,7 +38,6 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
   const snapshotResource: WatchK8sResource = {
     isList: true,
     kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
-    namespaced: true,
     namespace: getNamespace(vm),
   };
 

@@ -22,7 +22,6 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
   });
   const source = getResource(edge.getSource());
   const target = getResource(edge.getTarget());

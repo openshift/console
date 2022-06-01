@@ -96,7 +96,6 @@ const filterSubsystems = (
 
 const cvResource: WatchK8sResource = {
   kind: referenceForModel(ClusterVersionModel),
-  namespaced: false,
   name: 'version',
   isList: false,
 };

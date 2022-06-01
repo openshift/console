@@ -23,7 +23,6 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
     isList: false,
     name: ServiceAccountCRName,
     namespace,
-    namespaced: true,
   });
 
   const loadedOrError = loaded || errorMsg;
