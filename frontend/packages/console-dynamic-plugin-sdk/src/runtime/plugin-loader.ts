@@ -8,7 +8,9 @@ import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { initSharedPluginModules } from '../shared-modules-init';
 import { RemoteEntryModule } from '../types';
 import { resolveURL } from '../utils/url';
+import { resolvePluginDependencies } from './plugin-dependencies';
 import { fetchPluginManifest } from './plugin-manifest';
+import { getPluginID } from './plugin-utils';
 
 type ConsolePluginData = {
   /** The manifest containing plugin metadata and extension declarations. */
@@ -20,8 +22,6 @@ type ConsolePluginData = {
 const pluginMap = new Map<string, ConsolePluginData>();
 
 export const scriptIDPrefix = 'console-plugin';
-
-export const getPluginID = (m: ConsolePluginManifestJSON) => `${m.name}@${m.version}`;
 
 export const getScriptElementID = (m: ConsolePluginManifestJSON) => `${scriptIDPrefix}-${m.name}`;
 
@@ -39,7 +39,10 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
       return;
     }
 
-    pluginMap.set(pluginID, { manifest, entryCallbackFired: false });
+    pluginMap.set(pluginID, {
+      manifest,
+      entryCallbackFired: false,
+    });
 
     const script = document.createElement('script');
     script.id = getScriptElementID(manifest);
@@ -110,11 +113,6 @@ export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
   );
 };
 
-export const loadPluginFromURL = async (baseURL: string) => {
-  const manifest = await fetchPluginManifest(baseURL);
-  return loadDynamicPlugin(baseURL, manifest);
-};
-
 export const loadAndEnablePlugin = async (
   pluginName: string,
   pluginStore: PluginStore,
@@ -123,10 +121,18 @@ export const loadAndEnablePlugin = async (
   const url = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`;
 
   try {
-    const pluginID = await loadPluginFromURL(url);
+    const manifest = await fetchPluginManifest(url);
+
+    await resolvePluginDependencies(
+      manifest,
+      pluginStore.getAllowedDynamicPluginNames(),
+      window.SERVER_FLAGS.releaseVersion,
+    );
+
+    const pluginID = await loadDynamicPlugin(url, manifest);
     pluginStore.setDynamicPluginEnabled(pluginID, true);
   } catch (e) {
-    console.error(`Error while loading plugin from ${url}`, e);
+    console.error(`Error while loading plugin ${pluginName} from ${url}`, e);
     onError();
   }
 };

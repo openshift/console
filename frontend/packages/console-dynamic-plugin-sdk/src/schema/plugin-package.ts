@@ -17,7 +17,10 @@ export type ConsolePluginMetadata = {
   description?: string;
   /** Specific modules exposed through the plugin's remote entry. */
   exposedModules?: { [moduleName: string]: string };
-  /** Plugin API and other plugins required for this plugin to work. */
+  /**
+   * Plugin API and other plugins required for this plugin to work.
+   * Values must be valid semver ranges or `*` representing any version.
+   */
   dependencies: {
     '@console/pluginAPI': string;
     [pluginName: string]: string;
