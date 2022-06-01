@@ -58,7 +58,7 @@ const TaskList: React.FC<any> = ({
     [unselectedTaskText],
   );
   const renderText = (
-    <text x={width / 2} y={height / 2 + 1}>
+    <text x={width / 2} y={height / 2 + 1} className="odc-task-list-node__render-text">
       {truncatedTaskText}
     </text>
   );

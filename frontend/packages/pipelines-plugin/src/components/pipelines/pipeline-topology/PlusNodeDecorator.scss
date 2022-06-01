@@ -1,3 +1,6 @@
 .odc-plus-node-decorator {
   cursor: pointer;
+  &__circle {
+    fill: var(--pf-global--link--Color);
+  }
 }

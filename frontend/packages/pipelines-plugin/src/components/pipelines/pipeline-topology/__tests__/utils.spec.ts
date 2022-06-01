@@ -1,8 +1,6 @@
 import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import { global_BackgroundColor_200 as greyBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
-import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import { runStatus } from '../../../../utils/pipeline-augment';
 import {
@@ -154,7 +152,7 @@ describe('When expression decorator color', () => {
       false,
       false,
     );
-    expect(diamondColor).toBe(greyBackgroundColor.value);
+    expect(diamondColor).toBe('var(--pf-global--BackgroundColor--200)');
     expect(tooltipContent).toBe('When expression');
   });
 
@@ -164,7 +162,7 @@ describe('When expression decorator color', () => {
       false,
       true,
     );
-    expect(diamondColor).toBe(lightBackgroundColor.value);
+    expect(diamondColor).toBe('var(--pf-global--BackgroundColor--light-100)');
     expect(tooltipContent).toBe('When expression');
   });
 
