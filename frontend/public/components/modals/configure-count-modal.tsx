@@ -12,6 +12,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     buttonTextKey,
     buttonTextVariables,
     defaultValue,
+    labelKey,
     path,
     resource,
     resourceKind,
@@ -46,11 +47,18 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     );
   };
 
+  const messageVariablesSafe = { ...messageVariables };
+  if (labelKey) {
+    messageVariablesSafe.resourceKinds = t(labelKey, titleVariables);
+  }
+
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>{titleKey ? t(titleKey, titleVariables) : title}</ModalTitle>
       <ModalBody>
-        <p className="modal-paragraph">{messageKey ? t(messageKey, messageVariables) : message}</p>
+        <p className="modal-paragraph">
+          {messageKey ? t(messageKey, messageVariablesSafe) : message}
+        </p>
         <NumberSpinner
           value={value}
           onChange={(e: any) => setValue(e.target.value)}
@@ -80,6 +88,7 @@ export const configureReplicaCountModal = (props) => {
         defaultValue: 0,
         // t('public~Edit Pod count')
         titleKey: 'public~Edit Pod count',
+        labelKey: props.resourceKind.labelPluralKey,
         // t('public~{{resourceKinds}} maintain the desired number of healthy pods.', {resourceKind: props.resourceKind.labelPlural})
         messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
         messageVariables: { resourceKinds: props.resourceKind.labelPlural },
@@ -122,6 +131,7 @@ export type ConfigureCountModalProps = {
   buttonTextKey?: string;
   buttonTextVariables?: { [key: string]: any };
   defaultValue: number;
+  labelKey?: string;
   path: string;
   resource: K8sResourceKind;
   resourceKind: K8sKind;
