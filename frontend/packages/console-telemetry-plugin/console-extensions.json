@@ -1,0 +1,18 @@
+[
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "telemetryFlags.detectTelemetry" }
+    }
+  },
+
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
+        "$codeRef": "telemetryListeners.segment"
+      }
+    },
+    "flags": { "required": ["TELEMETRY"] }
+  }
+]

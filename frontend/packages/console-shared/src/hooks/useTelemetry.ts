@@ -15,7 +15,8 @@ export const useTelemetry = () => {
     (eventType, properties) => {
       extensions.forEach((e) =>
         e.properties.listener(eventType, {
-          consoleVersion: window.SERVER_FLAGS.consoleVersion,
+          consoleVersion: window.SERVER_FLAGS?.consoleVersion,
+          clusterType: window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE,
           ...properties,
         }),
       );

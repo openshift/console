@@ -49,6 +49,7 @@ declare interface Window {
     projectAccessClusterRoles: string;
     clusters: string[];
     controlPlaneTopology: string;
+    telemetry: Record<string, string>;
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
