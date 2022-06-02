@@ -4,6 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { PauseCircleIcon, SyncAltIcon } from '@patternfly/react-icons';
 
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
@@ -21,6 +22,7 @@ import {
   DetailsItem,
   Kebab,
   KebabAction,
+  LoadingInline,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -31,6 +33,10 @@ import {
   WorkloadPausedAlert,
 } from './utils';
 import { ResourceEventStream } from './events';
+import {
+  MachineConfigPoolsArePausedAlert,
+  UpToDateMessage,
+} from './cluster-settings/cluster-settings';
 
 const pauseAction: KebabAction = (kind, obj) => ({
   // t('public~Resume updates')
@@ -58,6 +64,25 @@ const getConditionStatus = (
   const { conditions } = mcp.status || {};
   const condition = _.find(conditions, { type });
   return condition ? condition.status : K8sResourceConditionStatus.Unknown;
+};
+
+enum MCPUpdateStatus {
+  Paused = 'Paused',
+  Updating = 'Updating',
+  Updated = 'Updated',
+}
+
+const getMachineConfigPoolUpdateStatus = (mcp: MachineConfigPoolKind) => {
+  if (mcp.spec?.paused) {
+    return MCPUpdateStatus.Paused;
+  }
+  if (getConditionStatus(mcp, MachineConfigPoolConditionType.Updating) === 'True') {
+    return MCPUpdateStatus.Updating;
+  }
+  if (getConditionStatus(mcp, MachineConfigPoolConditionType.Updated) === 'True') {
+    return MCPUpdateStatus.Updated;
+  }
+  return null;
 };
 
 const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristicsProps> = ({
@@ -236,6 +261,29 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
+const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps> = ({ obj }) => {
+  const { t } = useTranslation();
+  switch (getMachineConfigPoolUpdateStatus(obj)) {
+    case MCPUpdateStatus.Paused:
+      return (
+        <>
+          <PauseCircleIcon /> {t('public~Paused')}
+        </>
+      );
+    case MCPUpdateStatus.Updating:
+      return (
+        <>
+          <SyncAltIcon className="fa-spin co-icon-space-r" />
+          {t('public~Updating')}
+        </>
+      );
+    case MCPUpdateStatus.Updated:
+      return <UpToDateMessage />;
+    default:
+      return <LoadingInline />;
+  }
+};
+
 export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
   <DetailsPage
     {...props}
@@ -246,12 +294,10 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
 );
 
 const tableColumnClasses = [
-  'pf-u-w-33-on-md pf-u-w-25-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg pf-u-w-33-on-xl',
-  'pf-u-w-10-on-xl',
-  'pf-m-hidden pf-m-visible-on-sm pf-u-w-10-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-10-on-xl',
-  'pf-u-w-10-on-xl',
+  '',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-33-on-md',
+  '',
+  '',
   Kebab.columnClass,
 ];
 
@@ -272,24 +318,16 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('public~Updated'),
+        title: t('public~Degraded'),
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('public~Updating'),
+        title: t('public~Update status'),
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('public~Paused'),
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: t('public~Degraded'),
-        props: { className: tableColumnClasses[5] },
-      },
-      {
         title: '',
-        props: { className: tableColumnClasses[6] },
+        props: { className: tableColumnClasses[4] },
       },
     ];
   };
@@ -311,19 +349,13 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
             '-'
           )}
         </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          {getConditionStatus(obj, MachineConfigPoolConditionType.Updated)}
-        </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
-        </TableData>
-        <TableData className={tableColumnClasses[4]}>
-          {obj.spec?.paused ? t('public~True') : t('public~False')}
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
+        <TableData className={classNames(tableColumnClasses[2], 'co-truncate')}>
           {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
         </TableData>
-        <TableData className={tableColumnClasses[6]}>
+        <TableData className={tableColumnClasses[3]}>
+          <MachineConfigPoolUpdateStatus obj={obj} />
+        </TableData>
+        <TableData className={tableColumnClasses[4]}>
           <ResourceKebab
             actions={machineConfigPoolMenuActions}
             kind={machineConfigPoolReference}
@@ -335,13 +367,16 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   };
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~MachineConfigPools')}
-      Header={MachineConfigPoolTableHeader}
-      Row={MachineConfigPoolTableRow}
-      virtualize
-    />
+    <>
+      <MachineConfigPoolsArePausedAlert machineConfigPools={props.data} />
+      <Table
+        {...props}
+        aria-label={t('public~MachineConfigPools')}
+        Header={MachineConfigPoolTableHeader}
+        Row={MachineConfigPoolTableRow}
+        virtualize
+      />
+    </>
   );
 };
 
@@ -371,5 +406,9 @@ type MachineConfigPoolCharacteristicsProps = {
 };
 
 type MachineConfigPoolSummaryProps = {
+  obj: MachineConfigPoolKind;
+};
+
+type MachineConfigPoolUpdateStatusProps = {
   obj: MachineConfigPoolKind;
 };
