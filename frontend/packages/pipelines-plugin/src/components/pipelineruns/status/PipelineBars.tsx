@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { PipelineRunKind } from '../../../types';
-import { runStatus, getRunStatusColor } from '../../../utils/pipeline-augment';
+import { ComputedStatus, PipelineRunKind } from '../../../types';
+import { getRunStatusColor } from '../../../utils/pipeline-augment';
 import HorizontalStackedBars from '../../charts/HorizontalStackedBars';
 import { useTaskStatus } from '../hooks/useTaskStatus';
 import TaskStatusToolTip from './TaskStatusTooltip';
@@ -18,10 +18,10 @@ export const PipelineBars: React.FC<PipelineBarProps> = ({ pipelinerun }) => {
       <HorizontalStackedBars
         height="1em"
         inline
-        values={Object.keys(runStatus).map((status) => ({
-          color: getRunStatusColor(runStatus[status]).pftoken.value,
+        values={Object.keys(ComputedStatus).map((status) => ({
+          color: getRunStatusColor(ComputedStatus[status]).pftoken.value,
           name: status,
-          size: taskStatus[runStatus[status]],
+          size: taskStatus[ComputedStatus[status]],
         }))}
       />
     </Tooltip>

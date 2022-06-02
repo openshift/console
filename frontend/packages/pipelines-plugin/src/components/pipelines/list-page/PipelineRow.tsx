@@ -4,7 +4,10 @@ import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel, PipelineRunModel } from '../../../models';
 import { PipelineWithLatest } from '../../../types';
-import { pipelineFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import {
+  pipelineFilterReducer,
+  pipelineTitleFilterReducer,
+} from '../../../utils/pipeline-filter-reducer';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
 import { tableColumnClasses } from './pipeline-table';
@@ -21,7 +24,7 @@ const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
   return (
     <PipelineRunStatus
       status={pipelineFilterReducer(obj)}
-      title={pipelineFilterReducer(obj)}
+      title={pipelineTitleFilterReducer(obj)}
       pipelineRun={obj.latestRun}
     />
   );

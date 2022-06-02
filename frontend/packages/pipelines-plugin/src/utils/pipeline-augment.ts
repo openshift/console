@@ -20,7 +20,7 @@ import {
   TriggerBindingModel,
   PipelineModel,
 } from '../models';
-import { PipelineKind, PipelineRunKind, PipelineTask } from '../types';
+import { ComputedStatus, PipelineKind, PipelineRunKind, PipelineTask } from '../types';
 import { pipelineRunFilterReducer, SucceedConditionReason } from './pipeline-filter-reducer';
 
 interface Metadata {
@@ -148,41 +148,28 @@ export const augmentRunsToData = (
   return data;
 };
 
-export enum runStatus {
-  Succeeded = 'Succeeded',
-  Failed = 'Failed',
-  Running = 'Running',
-  'In Progress' = 'In Progress',
-  FailedToStart = 'FailedToStart',
-  PipelineNotStarted = 'PipelineNotStarted',
-  Skipped = 'Skipped',
-  Cancelled = 'Cancelled',
-  Pending = 'Pending',
-  Idle = 'Idle',
-}
-
 export const getRunStatusColor = (status: string): StatusMessage => {
   switch (status) {
-    case runStatus.Succeeded:
+    case ComputedStatus.Succeeded:
       return { message: i18next.t('pipelines-plugin~Succeeded'), pftoken: successColor };
-    case runStatus.Failed:
+    case ComputedStatus.Failed:
       return { message: i18next.t('pipelines-plugin~Failed'), pftoken: failureColor };
-    case runStatus.FailedToStart:
+    case ComputedStatus.FailedToStart:
       return {
         message: i18next.t('pipelines-plugin~PipelineRun failed to start'),
         pftoken: failureColor,
       };
-    case runStatus.Running:
+    case ComputedStatus.Running:
       return { message: i18next.t('pipelines-plugin~Running'), pftoken: runningColor };
-    case runStatus['In Progress']:
+    case ComputedStatus['In Progress']:
       return { message: i18next.t('pipelines-plugin~Running'), pftoken: runningColor };
 
-    case runStatus.Skipped:
+    case ComputedStatus.Skipped:
       return { message: i18next.t('pipelines-plugin~Skipped'), pftoken: skippedColor };
-    case runStatus.Cancelled:
+    case ComputedStatus.Cancelled:
       return { message: i18next.t('pipelines-plugin~Cancelled'), pftoken: cancelledColor };
-    case runStatus.Idle:
-    case runStatus.Pending:
+    case ComputedStatus.Idle:
+    case ComputedStatus.Pending:
       return { message: i18next.t('pipelines-plugin~Pending'), pftoken: pendingColor };
     default:
       return {
@@ -243,38 +230,39 @@ export const getTaskStatus = (pipelinerun: PipelineRunKind, pipeline: PipelineKi
   if (pipelinerun?.status?.taskRuns) {
     plrTasks.forEach((taskRun) => {
       const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun]);
-      if (status === 'Succeeded' || status === 'Completed' || status === 'Complete') {
-        taskStatus[runStatus.Succeeded]++;
+      if (status === 'Succeeded') {
+        taskStatus[ComputedStatus.Succeeded]++;
       } else if (status === 'Running') {
-        taskStatus[runStatus.Running]++;
+        taskStatus[ComputedStatus.Running]++;
       } else if (status === 'Failed') {
-        taskStatus[runStatus.Failed]++;
+        taskStatus[ComputedStatus.Failed]++;
       } else if (status === 'Cancelled') {
-        taskStatus[runStatus.Cancelled]++;
+        taskStatus[ComputedStatus.Cancelled]++;
       } else {
-        taskStatus[runStatus.Pending]++;
+        taskStatus[ComputedStatus.Pending]++;
       }
     });
 
-    const pipelineRunHasFailure = taskStatus[runStatus.Failed] > 0;
-    const pipelineRunIsCancelled = pipelineRunFilterReducer(pipelinerun) === runStatus.Cancelled;
+    const pipelineRunHasFailure = taskStatus[ComputedStatus.Failed] > 0;
+    const pipelineRunIsCancelled =
+      pipelineRunFilterReducer(pipelinerun) === ComputedStatus.Cancelled;
     const unhandledTasks =
       totalTasks >= plrTaskLength ? totalTasks - plrTaskLength - skippedTaskLength : totalTasks;
 
     if (pipelineRunHasFailure || pipelineRunIsCancelled) {
-      taskStatus[runStatus.Cancelled] += unhandledTasks;
+      taskStatus[ComputedStatus.Cancelled] += unhandledTasks;
     } else {
-      taskStatus[runStatus.Pending] += unhandledTasks;
+      taskStatus[ComputedStatus.Pending] += unhandledTasks;
     }
   } else if (
     pipelinerun?.status?.conditions?.[0]?.status === 'False' ||
     pipelinerun?.spec.status === SucceedConditionReason.PipelineRunCancelled
   ) {
-    taskStatus[runStatus.Cancelled] = totalTasks;
+    taskStatus[ComputedStatus.Cancelled] = totalTasks;
   } else if (pipelinerun?.spec.status === SucceedConditionReason.PipelineRunPending) {
-    taskStatus[runStatus.Pending] += totalTasks;
+    taskStatus[ComputedStatus.Pending] += totalTasks;
   } else {
-    taskStatus[runStatus.PipelineNotStarted]++;
+    taskStatus[ComputedStatus.PipelineNotStarted]++;
   }
   return taskStatus;
 };
@@ -330,5 +318,5 @@ export const shouldHidePipelineRunStop = (pipelineRun: PipelineRunKind): boolean
   !(
     pipelineRun &&
     (countRunningTasks(pipelineRun) > 0 ||
-      pipelineRunFilterReducer(pipelineRun) === runStatus.Running)
+      pipelineRunFilterReducer(pipelineRun) === ComputedStatus.Running)
   );

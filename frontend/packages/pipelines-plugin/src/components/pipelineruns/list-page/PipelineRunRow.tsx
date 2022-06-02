@@ -5,7 +5,10 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
-import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import {
+  pipelineRunFilterReducer,
+  pipelineRunTitleFilterReducer,
+} from '../../../utils/pipeline-filter-reducer';
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../status/PipelineRunStatus';
@@ -22,7 +25,7 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
   return (
     <PipelineRunStatus
       status={pipelineRunFilterReducer(obj)}
-      title={pipelineRunFilterReducer(obj)}
+      title={pipelineRunTitleFilterReducer(obj)}
       pipelineRun={obj}
     />
   );

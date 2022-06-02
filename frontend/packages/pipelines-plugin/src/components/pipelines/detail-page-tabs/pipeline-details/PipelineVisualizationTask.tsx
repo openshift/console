@@ -12,8 +12,14 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
-import { TektonTaskSpec, PipelineTaskRef, TaskKind, WhenExpression } from '../../../../types';
-import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
+import {
+  ComputedStatus,
+  TektonTaskSpec,
+  PipelineTaskRef,
+  TaskKind,
+  WhenExpression,
+} from '../../../../types';
+import { getRunStatusColor } from '../../../../utils/pipeline-augment';
 import { WHEN_EXPRESSSION_DIAMOND_SIZE } from '../../pipeline-topology/const';
 import WhenExpressionDecorator from '../../pipeline-topology/WhenExpressionDecorator';
 import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils';
@@ -78,15 +84,21 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
 }) => {
   const taskStatus = task.status || {
     duration: '',
-    reason: runStatus.Idle,
+    reason: ComputedStatus.Idle,
   };
-  if (pipelineRunStatus === runStatus.Failed || pipelineRunStatus === runStatus.Cancelled) {
-    if (task.status?.reason === runStatus.Idle || task.status?.reason === runStatus.Pending) {
-      taskStatus.reason = runStatus.Cancelled;
+  if (
+    pipelineRunStatus === ComputedStatus.Failed ||
+    pipelineRunStatus === ComputedStatus.Cancelled
+  ) {
+    if (
+      task.status?.reason === ComputedStatus.Idle ||
+      task.status?.reason === ComputedStatus.Pending
+    ) {
+      taskStatus.reason = ComputedStatus.Cancelled;
     }
   }
   if (isSkipped) {
-    taskStatus.reason = runStatus.Skipped;
+    taskStatus.reason = ComputedStatus.Skipped;
   }
 
   const taskComponent = (
@@ -153,15 +165,15 @@ const TaskComponent: React.FC<TaskProps> = ({
     ? `${resourcePathFromModel(PipelineRunModel, pipelineRunName, namespace)}/logs/${name}`
     : undefined;
   const enableLogLink =
-    status?.reason !== runStatus.Idle &&
-    status?.reason !== runStatus.Pending &&
-    status?.reason !== runStatus.Cancelled &&
+    status?.reason !== ComputedStatus.Idle &&
+    status?.reason !== ComputedStatus.Pending &&
+    status?.reason !== ComputedStatus.Cancelled &&
     !!path;
   const hasWhenExpression = pipelineTask?.when?.length > 0;
   const hasRunAfter = pipelineTask?.runAfter?.length > 0;
   const taskStatusColor = status
     ? getRunStatusColor(status.reason).pftoken.value
-    : getRunStatusColor(runStatus.Cancelled).pftoken.value;
+    : getRunStatusColor(ComputedStatus.Cancelled).pftoken.value;
 
   const [hover, hoverRef] = useHover();
   const truncatedVisualName = React.useMemo(
@@ -213,8 +225,9 @@ const TaskComponent: React.FC<TaskProps> = ({
           >
             <g
               className={cx({
-                'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
-                'odc-pipeline-vis-task--icon-stop': status.reason !== runStatus.Running,
+                'fa-spin odc-pipeline-vis-task--icon-spin':
+                  status.reason === ComputedStatus.Running,
+                'odc-pipeline-vis-task--icon-stop': status.reason !== ComputedStatus.Running,
               })}
             >
               <StatusIcon status={status.reason} disableSpin />
@@ -296,7 +309,7 @@ const SvgTaskStatus: React.FC<SvgTaskStatusProps> = ({ steps, x, y, width }) => 
             y={y}
             width={stepWidth - gap}
             height={2}
-            fill={getRunStatusColor(step.runStatus).pftoken.value}
+            fill={getRunStatusColor(step.status).pftoken.value}
           />
         );
       })}

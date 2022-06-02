@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { TaskStatus, runStatus, getRunStatusColor } from '../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../types';
+import { TaskStatus, getRunStatusColor } from '../../../utils/pipeline-augment';
 import './TaskStatusTooltip.scss';
 
 interface TaskStatusToolTipProps {
@@ -9,7 +10,7 @@ interface TaskStatusToolTipProps {
 const TaskStatusToolTip: React.FC<TaskStatusToolTipProps> = ({ taskStatus }) => {
   return (
     <div className="odc-task-status-tooltip">
-      {Object.keys(runStatus).map((status) => {
+      {Object.keys(ComputedStatus).map((status) => {
         const { message, pftoken } = getRunStatusColor(status);
         return taskStatus[status] ? (
           <React.Fragment key={status}>
@@ -18,7 +19,8 @@ const TaskStatusToolTip: React.FC<TaskStatusToolTipProps> = ({ taskStatus }) => 
               style={{ background: pftoken.value }}
             />
             <div>
-              {status === runStatus.PipelineNotStarted || status === runStatus.FailedToStart
+              {status === ComputedStatus.PipelineNotStarted ||
+              status === ComputedStatus.FailedToStart
                 ? message
                 : `${taskStatus[status]} ${message}`}
             </div>
