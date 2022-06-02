@@ -3,8 +3,7 @@ import { Bullseye, EmptyState, EmptyStateBody, EmptyStateVariant } from '@patter
 import { TableComposable, Thead, Tbody, Th, Td, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading } from '@console/internal/components/utils';
-import { TektonResultsRun } from '../../../types';
-import { runStatus } from '../../../utils/pipeline-augment';
+import { ComputedStatus, TektonResultsRun } from '../../../types';
 import { handleURLs } from '../../../utils/render-utils';
 
 export interface ResultsListProps {
@@ -31,7 +30,7 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, resourceName, status
   return (
     <>
       <SectionHeading text={t('pipelines-plugin~{{resourceName}} results', { resourceName })} />
-      {status !== runStatus.Failed ? (
+      {status !== ComputedStatus.Failed ? (
         <TableComposable
           aria-label={t('pipelines-plugin~{{resourceName}} results', { resourceName })}
           {...reactPropFix}

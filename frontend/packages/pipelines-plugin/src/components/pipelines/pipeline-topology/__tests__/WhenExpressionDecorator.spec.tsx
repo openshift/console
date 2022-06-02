@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { runStatus } from '../../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../../types';
 import WhenExpressionDecorator from '../WhenExpressionDecorator';
 
 type WhenExpressionDecoratorProps = React.ComponentProps<typeof WhenExpressionDecorator>;
@@ -15,7 +15,7 @@ describe('WhenExpressionDecorator', () => {
   const props: WhenExpressionDecoratorProps = {
     width: 10,
     height: 10,
-    status: runStatus.Failed,
+    status: ComputedStatus.Failed,
     isPipelineRun: true,
     isFinallyTask: false,
   };
@@ -64,28 +64,28 @@ describe('WhenExpressionDecorator', () => {
   });
 
   it('should contain the succeeded tooltip content if the task status is succeeded', () => {
-    wrapper.setProps({ enableTooltip: true, status: runStatus.Succeeded });
+    wrapper.setProps({ enableTooltip: true, status: ComputedStatus.Succeeded });
     const tooltip = wrapper.find(Tooltip);
     expect(tooltip.props().content).toEqual(whenExpressionContent('When expression was met'));
   });
 
   it('should contain the skipped tooltip content if the task status is skipped', () => {
-    wrapper.setProps({ enableTooltip: true, status: runStatus.Skipped });
+    wrapper.setProps({ enableTooltip: true, status: ComputedStatus.Skipped });
     const tooltip = wrapper.find(Tooltip);
     expect(tooltip.props().content).toEqual(whenExpressionContent('When expression was not met'));
   });
 
   it('should contain the default tooltip content for other task status', () => {
-    wrapper.setProps({ enableTooltip: true, status: runStatus.PipelineNotStarted });
+    wrapper.setProps({ enableTooltip: true, status: ComputedStatus.PipelineNotStarted });
 
     expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
-    wrapper.setProps({ enableTooltip: true, status: runStatus.Failed });
+    wrapper.setProps({ enableTooltip: true, status: ComputedStatus.Failed });
     expect(wrapper.find(Tooltip).props().content).toEqual(
       whenExpressionContent('When expression was met'),
     );
-    wrapper.setProps({ enableTooltip: true, status: runStatus.Pending });
+    wrapper.setProps({ enableTooltip: true, status: ComputedStatus.Pending });
     expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
-    wrapper.setProps({ enableTooltip: true, status: runStatus['In Progress'] });
+    wrapper.setProps({ enableTooltip: true, status: ComputedStatus['In Progress'] });
     expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
   });
 });

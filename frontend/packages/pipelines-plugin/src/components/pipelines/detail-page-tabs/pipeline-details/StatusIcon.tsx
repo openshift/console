@@ -9,7 +9,8 @@ import {
   SyncAltIcon,
 } from '@patternfly/react-icons';
 import * as cx from 'classnames';
-import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../../types';
+import { getRunStatusColor } from '../../../../utils/pipeline-augment';
 
 interface StatusIconProps {
   status: string;
@@ -20,24 +21,24 @@ interface StatusIconProps {
 
 export const StatusIcon: React.FC<StatusIconProps> = ({ status, disableSpin, ...props }) => {
   switch (status) {
-    case runStatus['In Progress']:
-    case runStatus.Running:
+    case ComputedStatus['In Progress']:
+    case ComputedStatus.Running:
       return <SyncAltIcon {...props} className={cx({ 'fa-spin': !disableSpin })} />;
 
-    case runStatus.Succeeded:
+    case ComputedStatus.Succeeded:
       return <CheckCircleIcon {...props} />;
 
-    case runStatus.Failed:
+    case ComputedStatus.Failed:
       return <ExclamationCircleIcon {...props} />;
 
-    case runStatus.Idle:
-    case runStatus.Pending:
+    case ComputedStatus.Idle:
+    case ComputedStatus.Pending:
       return <HourglassHalfIcon {...props} />;
 
-    case runStatus.Cancelled:
+    case ComputedStatus.Cancelled:
       return <BanIcon {...props} />;
 
-    case runStatus.Skipped:
+    case ComputedStatus.Skipped:
       return <AngleDoubleRightIcon {...props} />;
 
     default:
@@ -51,7 +52,7 @@ export const ColoredStatusIcon: React.FC<StatusIconProps> = ({ status, ...others
       style={{
         color: status
           ? getRunStatusColor(status).pftoken.value
-          : getRunStatusColor(runStatus.Cancelled).pftoken.value,
+          : getRunStatusColor(ComputedStatus.Cancelled).pftoken.value,
       }}
     >
       <StatusIcon status={status} {...others} />

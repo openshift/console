@@ -1,7 +1,8 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../../types';
+import { getRunStatusColor } from '../../../../utils/pipeline-augment';
 import { StepStatus } from './pipeline-step-utils';
 import { StatusIcon } from './StatusIcon';
 
@@ -23,7 +24,7 @@ const TooltipColoredStatusIcon = ({ status }) => {
 
   const icon = <StatusIcon status={status} {...sharedProps} />;
 
-  if (status === runStatus.Succeeded || status === runStatus.Failed) {
+  if (status === ComputedStatus.Succeeded || status === ComputedStatus.Failed) {
     // Succeeded and Failed icons have transparent centers shapes - in tooltips, this becomes an undesired black
     // This will simply wrap the icon and place a white backdrop
     return (
@@ -59,7 +60,7 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
           {t('pipelines-plugin~Finally task')}
         </div>
       )}
-      {steps.map(({ duration, name, runStatus: status }) => {
+      {steps.map(({ duration, name, status }) => {
         return (
           <div
             className={classNames('odc-pipeline-visualization-step-list__step', {

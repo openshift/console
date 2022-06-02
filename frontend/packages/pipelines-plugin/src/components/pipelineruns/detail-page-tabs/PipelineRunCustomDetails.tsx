@@ -2,7 +2,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared';
 import { PipelineRunKind } from '../../../types';
-import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import {
+  pipelineRunFilterReducer,
+  pipelineRunTitleFilterReducer,
+} from '../../../utils/pipeline-filter-reducer';
 import {
   convertBackingPipelineToPipelineResourceRefProps,
   getPipelineResourceLinks,
@@ -33,7 +36,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         <dd>
           <Status
             status={pipelineRunFilterReducer(pipelineRun)}
-            title={pipelineRunFilterReducer(pipelineRun)}
+            title={pipelineRunTitleFilterReducer(pipelineRun)}
           />
         </dd>
       </dl>
