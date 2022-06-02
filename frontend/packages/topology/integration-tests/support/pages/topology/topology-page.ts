@@ -373,3 +373,10 @@ export const addGitWorkload = (
   createForm.clickCreate();
   app.waitForLoad();
 };
+
+export const topologyListPage = {
+  clickOnApplicationGroupings: (appName: string) => {
+    const id = `[data-test="group:${appName}"]`;
+    cy.get(id).click({ force: true });
+  },
+};

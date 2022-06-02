@@ -7,6 +7,7 @@ import { addToApplication } from '@console/topology/integration-tests/support/pa
 import {
   topologyPage,
   addGitWorkload,
+  topologyListPage,
 } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
 import { topologyPO } from '../../page-objects/topology-po';
@@ -92,3 +93,28 @@ When('user clicks on the Resources dropdown', () => {
 Then('user sees that all the checkboxes are unchecked', () => {
   cy.get(topologyPO.grouping.deploymentCheckbox).should('not.be.checked');
 });
+
+When('user clicks on list view button', () => {
+  topologyPage.verifyUserIsInGraphView();
+  cy.get(topologyPO.quickSearchPO.listView).click();
+});
+
+Then(
+  'user clicks on application grouping {string} in the list view',
+  (applicationGrouping: string) => {
+    topologyListPage.clickOnApplicationGroupings(applicationGrouping);
+  },
+);
+
+Given(
+  'user has created workload {string} in application grouping {string}',
+  (workloadName: string, appName: string) => {
+    createGitWorkloadIfNotExistsOnTopologyPage(
+      'https://github.com/sclorg/nodejs-ex.git',
+      workloadName,
+      'deployment',
+      appName,
+    );
+    topologyHelper.verifyWorkloadInTopologyPage('ex-node-js');
+  },
+);

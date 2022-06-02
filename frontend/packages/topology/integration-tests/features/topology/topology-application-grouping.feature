@@ -4,7 +4,7 @@ Feature: Application groupings in topology
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-groupings-topoogy"
+              And user has created or selected namespace "aut-groupings-topology"
 
 
         @smoke
@@ -42,3 +42,13 @@ Feature: Application groupings in topology
               And user clicks on "Delete application" from context action menu
               And user enters the name "app2" in the Delete application modal and clicks on Delete button
              Then user will not see Application groupings "app2"
+
+        @smoke
+        Scenario: Verify Application grouping in Topology List view: T-05-TC05
+            Given user has created workload "ex-node-js" in application grouping "nodejs-ex-git-app"
+              And user is at Topology page
+             When user clicks on List view button
+              And user clicks on application grouping "nodejs-ex-git-app" in the list view
+             Then user can see sidebar opens with Resources tab selected by default for application groupings
+              And user is able to see workload "ex-node-js" under resources tab in the sidebar
+              And user can see Actions dropdown menu
