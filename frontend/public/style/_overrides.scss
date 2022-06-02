@@ -4,14 +4,46 @@ form.pf-c-form {
   --pf-c-form__helper-text--Color: var(--pf-global--Color--200);
 }
 
-// Positions the img in OperatorHub that are nested with <span class="catalog-tile-pf-icon"><img ...>
-.catalog-tile-pf-icon--align-top {
-  vertical-align: top;
-}
-
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
 .catalog-tile-pf-title {
   @include co-break-word;
+}
+
+.co-catalog-tile {
+  .catalog-tile-pf-icon {
+    font-size: unset !important;
+  }
+  .co-catalog--logo {
+    height: 100%;
+    max-width: 80px;
+    min-width: auto;
+    object-fit: contain;
+    width: 100%;
+  }
+  .catalog-tile-pf-icon {
+    @include catalog-logo-background(var(--pf-global--spacer--sm));
+    height: 50px;
+    margin-bottom: calc(-1 * var(--pf-global--spacer--sm)); // Cancels bottom padding
+    margin-left: calc(-1 * var(--pf-global--spacer--sm)); // Align logo with left edge
+    margin-top: calc(-1 * var(--pf-global--spacer--sm)); // Align logo with top edge
+    max-width: 100%;
+    min-width: 50px; // prevent collapsed state before img loads
+    :where(.pf-theme-dark) & {
+      margin-left: 0;
+      margin-top: 0;
+    }
+  }
+}
+
+.catalog-item-header-pf-icon  {
+  @include catalog-logo-background(var(--pf-global--spacer--sm));
+}
+
+.co-catalog-page__overlay-header {
+  .catalog-item-header-pf-icon {
+    max-width: 80px;
+    width: auto;
+  }
 }
 
 // Override to remove accordion left border and prevent overlap https://bugzilla.redhat.com/show_bug.cgi?id=1942193

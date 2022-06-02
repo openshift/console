@@ -362,14 +362,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
   const badges = item?.catalogSourceDisplayName
     ? [<Badge text={item.catalogSourceDisplayName} />]
     : [];
-  const icon = (
-    <img
-      className="catalog-tile-pf-icon catalog-tile-pf-icon--align-top"
-      loading="lazy"
-      src={imgUrl}
-      alt=""
-    />
-  );
+  const icon = <img className="co-catalog--logo" loading="lazy" src={imgUrl} alt="" />;
 
   return (
     <CatalogTile

@@ -19,12 +19,14 @@ const KnEventMetaDescription: React.FC<KnEventMetaDescriptionProps> = ({ normali
     <div className="kn-event-metadata-description__container">
       <div className="co-clusterserviceversion-logo">
         <div className="co-clusterserviceversion-logo__icon">
-          <img
-            className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
-            src={iconUrl}
-            alt={name}
-            aria-hidden
-          />
+          <span className="co-catalog-item-icon__bg">
+            <img
+              className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
+              src={iconUrl}
+              alt={name}
+              aria-hidden
+            />
+          </span>
         </div>
         <div className="co-clusterserviceversion-logo__name">
           <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">{name}</h1>

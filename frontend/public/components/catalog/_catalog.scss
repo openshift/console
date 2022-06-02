@@ -45,6 +45,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-item-details {
+  align-items: flex-start;
   display: flex;
   margin: 0 0 10px;
 
@@ -74,7 +75,14 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-item-icon {
-  padding-right: 10px;
+  @include catalog-logo-background();
+  margin-right: 15px;
+
+  &__bg {
+    align-items: center;
+    display: flex;
+    min-height: 40px;
+  }
 
   &__icon {
     font-size: $catalog-item-icon-size-sm;
@@ -87,6 +95,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__img {
     max-height: $catalog-item-icon-size-sm;
     max-width: $catalog-item-icon-size-sm;
+    width: 100%; // prevent image size collapse to 0
 
     &[src$='.svg'] {
       width: $catalog-item-icon-size-sm;

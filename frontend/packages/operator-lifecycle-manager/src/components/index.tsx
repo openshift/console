@@ -115,12 +115,14 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
   return (
     <div className="co-clusterserviceversion-logo">
       <div className="co-clusterserviceversion-logo__icon">
-        <img
-          className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
-          src={imgSrc}
-          alt={displayName}
-          aria-hidden
-        />
+        <span className="co-catalog-item-icon__bg">
+          <img
+            className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
+            src={imgSrc}
+            alt={displayName}
+            aria-hidden
+          />
+        </span>
       </div>
       <div className="co-clusterserviceversion-logo__name">
         <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">

@@ -1,5 +1,6 @@
 // OpenShift variables
 @import '../../../public/style/vars';
+@import '../../../public/style/mixin/catalog-logo-background';
 
 $co-affinity-row-margin: 15px;
 
@@ -27,16 +28,6 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion-link {
-  .co-clusterserviceversion-logo {
-    flex-direction: column;
-    @media (min-width: $screen-xs-min) and (max-width: $screen-xs-max),
-      (min-width: $screen-md-min) {
-      flex-direction: row;
-    }
-  }
-}
-
-.co-clusterserviceversion-link {
   &:focus,
   &:hover {
     text-decoration: none;
@@ -48,18 +39,17 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion-logo {
+  align-items: flex-start;
   display: flex;
 }
 
 .co-clusterserviceversion-logo__icon {
+  @include catalog-logo-background();
   align-items: center;
-  background: var(--pf-global--BackgroundColor--100);
   display: flex;
   flex: 0 0 auto;
-  height: 40px;
   justify-content: center;
   margin: 0 15px 5px 0;
-  width: 40px;
 }
 
 .co-clusterserviceversion-logo__name {

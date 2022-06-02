@@ -1,3 +1,5 @@
+@import '../../../../../public/style/mixin/catalog-logo-background';
+
 .ocs-quick-search-list {
   height: 100%;
   display: flex;
@@ -33,8 +35,11 @@
     align-items: center;
   }
   &__item-icon {
+    @include catalog-logo-background();
+    display: flex;
+    height: 30px;
+    justify-content: center;
     width: 30px;
-    text-align: center;
   }
   &__item-name {
     font-size: var(--pf-global--FontSize--md);
