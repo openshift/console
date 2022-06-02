@@ -1,4 +1,5 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { GitProvider } from '@console/git-service/src';
+import { K8sResourceKind, SecretKind } from '@console/internal/module/k8s';
 import { Condition } from '../../types';
 
 export type RepositoryStatus = {
@@ -23,6 +24,16 @@ export type RepositoryKind = K8sResourceKind & {
 
 export type RepositoryFormValues = {
   name: string;
+  gitProvider: GitProvider;
   gitUrl: string;
-  accessToken?: string;
+  method: string;
+  yamlData: string;
+  showOverviewPage: boolean;
+  webhook: {
+    method: string;
+    token: string;
+    secret: string;
+    url: string;
+    secretObj?: SecretKind;
+  };
 };

@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Formik, FormikBag } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { history } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { RepositoryModel } from '../../models';
 import { defaultRepositoryFormValues } from './consts';
 import { createRepositoryResources, repositoryValidationSchema } from './repository-form-utils';
 import { RepositoryForm } from './RepositoryForm';
@@ -19,23 +17,20 @@ const RepositoryFormPage: React.FC<RepositoryFormPageProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleSubmit = async (
+  const handleSubmit = (
     values: RepositoryFormValues,
-    actions: FormikBag<any, RepositoryFormValues>,
-  ) => {
-    try {
-      const repository = await createRepositoryResources(
-        values.name,
-        ns,
-        values.gitUrl,
-        values.accessToken,
-      );
-      history.push(
-        `/k8s/ns/${ns}/${referenceForModel(RepositoryModel)}/${repository.metadata.name}`,
-      );
-    } catch (e) {
-      actions.setStatus({ submitError: e.message });
-    }
+    actions: FormikHelpers<RepositoryFormValues>,
+  ): void => {
+    createRepositoryResources(values, ns)
+      .then(() => {
+        actions.setFieldValue('showOverviewPage', true);
+        actions.setStatus({
+          submitError: '',
+        });
+      })
+      .catch((e) => {
+        actions.setStatus({ submitError: e.message });
+      });
   };
 
   return (
