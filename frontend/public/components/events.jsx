@@ -47,7 +47,11 @@ export const getLastTime = (event) => {
   return event.lastTimestamp || lastObservedTime || event.eventTime;
 };
 export const sortEvents = (events) => {
-  return _.orderBy(events, [getLastTime, getFirstTime, 'name'], ['desc', 'desc', 'asc']);
+  return _.orderBy(
+    events,
+    [(event) => (event.lastTimestamp || event.eventTime ? getLastTime : ''), getFirstTime, 'name'],
+    ['desc', 'desc', 'asc'],
+  );
 };
 
 // Predicate function to filter by event "type" (normal, warning, or all)
