@@ -1762,6 +1762,7 @@
   "StorageClass for the new claim": "StorageClass for the new claim",
   "All Items": "All Items",
   "Other": "Other",
+  "Show {{numRemaining}} more": "Show {{numRemaining}} more",
   "Clear All Filters": "Clear All Filters",
   "{{totalItems}} items": "{{totalItems}} items",
   "Filter by keyword...": "Filter by keyword...",
