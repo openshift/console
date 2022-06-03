@@ -282,6 +282,7 @@ export const eventSourcePO = {
     resourceToggleButton: '[id="form-radiobutton-formData-sinkType-resource-field"]',
     resourceDropDownField: '[id="form-ns-dropdown-formData-sink-key-field"]',
     resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
+    resourceFilter: '[data-test-id="dropdown-text-filter"]',
     resourceSearch: '[placeholder="Select resource"]',
   },
 };
