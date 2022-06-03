@@ -1,0 +1,28 @@
+.co-overview-inventory-card__item {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.co-overview-inventory-card__item-loading {
+  margin-right: 0.5rem !important;
+}
+
+.co-overview-inventory-card__item-body {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.co-overview-inventory-card__item-title {
+  display: flex;
+  margin-right: 0.5rem;
+}
+
+.co-overview-inventory-card__item-status {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-left: 1.8rem;
+}

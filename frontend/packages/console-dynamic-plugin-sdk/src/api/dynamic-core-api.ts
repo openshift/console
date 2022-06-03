@@ -165,22 +165,57 @@ export {
   getGroupVersionKindForModel,
 } from '../utils/k8s/k8s-ref';
 
+/**
+ * @deprecated use OverviewStatusPopupSection from @openshift-console/plugin-shared
+ */
 export const StatusPopupSection: React.FC<StatusPopupSectionProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
   .StatusPopupSection;
+
+/**
+ * @deprecated use OverviewStatusPopupItem from @openshift-console/plugin-shared
+ */
 export const StatusPopupItem: React.FC<StatusPopupItemProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
   .default;
+
+/**
+ * @deprecated use OverviewPage from @openshift-console/plugin-shared
+ */
 export const Overview: React.FC<OverviewProps> = require('@console/shared/src/components/dashboard/Dashboard')
   .default;
+
+/**
+ * @deprecated use OverviewGrid from @openshift-console/plugin-shared
+ */
 export const OverviewGrid: React.FC<OverviewGridProps> = require('@console/shared/src/components/dashboard/DashboardGrid')
   .default;
+
+/**
+ * @deprecated use OverviewInventoryItem from @openshift-console/plugin-shared
+ */
 export const InventoryItem: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .default;
+
+/**
+ * @deprecated use OverviewInventoryItemTitle from @openshift-console/plugin-shared
+ */
 export const InventoryItemTitle: React.FC<InventoryItemTitleProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemTitle;
+
+/**
+ * @deprecated use OverviewInventoryItemBody from @openshift-console/plugin-shared
+ */
 export const InventoryItemBody: React.FC<InventoryItemBodyProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemBody;
+
+/**
+ * @deprecated use OverviewInventoryItemStatus from @openshift-console/plugin-shared
+ */
 export const InventoryItemStatus: React.FC<InventoryItemStatusProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemStatus;
+
+/**
+ * @deprecated use OverviewInventoryItemLoading from @openshift-console/plugin-shared
+ */
 export const InventoryItemLoading: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemLoading;
 

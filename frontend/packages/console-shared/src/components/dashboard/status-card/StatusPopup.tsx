@@ -6,6 +6,9 @@ import {
 
 import './status-popup.scss';
 
+/**
+ * @deprecated use OverviewStatusPopupSection from @openshift-console/plugin-shared
+ */
 export const StatusPopupSection: React.FC<StatusPopupSectionProps> = ({
   firstColumn,
   secondColumn,
@@ -20,6 +23,9 @@ export const StatusPopupSection: React.FC<StatusPopupSectionProps> = ({
   </>
 );
 
+/**
+ * @deprecated use OverviewStatusPopupItem from @openshift-console/plugin-shared
+ */
 const Status: React.FC<StatusPopupItemProps> = ({ value, icon, children }) => (
   <div className="co-status-popup__row">
     {children}

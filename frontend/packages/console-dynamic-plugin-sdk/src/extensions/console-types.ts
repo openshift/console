@@ -523,6 +523,9 @@ export type StatusComponentProps = {
   popoverTitle?: string;
 };
 
+/**
+ * @deprecated
+ */
 export type OverviewProps = {
   className?: string;
   children: React.ReactNode;
@@ -536,25 +539,40 @@ export enum GridPosition {
 
 export type OverviewCardSpan = 4 | 6 | 12;
 
+/**
+ * @deprecated
+ */
 export type OverviewGridCard = {
   Card: React.ComponentType<any>;
   span?: OverviewCardSpan;
 };
 
+/**
+ * @deprecated
+ */
 export type OverviewGridProps = {
   mainCards: OverviewGridCard[];
   leftCards?: OverviewGridCard[];
   rightCards?: OverviewGridCard[];
 };
 
+/**
+ * @deprecated
+ */
 export type InventoryItemTitleProps = {
   children: React.ReactNode;
 };
 
+/**
+ * @deprecated
+ */
 export type InventoryItemBodyProps = {
   error?: any;
 };
 
+/**
+ * @deprecated
+ */
 export type InventoryItemStatusProps = {
   count: number;
   icon: React.ReactNode;

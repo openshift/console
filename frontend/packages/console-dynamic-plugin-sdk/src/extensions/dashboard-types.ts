@@ -70,12 +70,18 @@ export type URLHealthHandler<
   T extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[]
 > = (response: R, error: any, additionalResource?: FirehoseResult<T>) => SubsystemHealth;
 
+/**
+ * @deprecated
+ */
 export type StatusPopupItemProps = {
   children: React.ReactNode;
   value?: string;
   icon?: React.ReactNode;
 };
 
+/**
+ * @deprecated
+ */
 export type StatusPopupSectionProps = {
   firstColumn: React.ReactNode;
   secondColumn?: React.ReactNode;

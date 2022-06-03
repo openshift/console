@@ -1,0 +1,20 @@
+.co-overview-status-card__popup-status {
+    align-items: center;
+    display: flex;
+    padding-left: var(--pf-global--spacer--xs);
+    white-space: nowrap;
+  }
+  
+.co-overview-status-card__popup-icon {
+  padding-left: var(--pf-global--spacer--xs);
+}
+
+.co-overview-status-card__popup-row {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--pf-global--spacer--xs);
+}
+
+.co-overview-status-card__popup-text--bold {
+  font-weight: var(--pf-global--FontWeight--bold);
+}

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import { OverviewPage, OverviewGrid } from '@openshift-console/plugin-shared/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, LabelSelector, referenceForModel, Selector } from '../../../module/k8s';
@@ -66,9 +65,9 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
 
   return (
     <ProjectDashboardContext.Provider value={context}>
-      <Dashboard>
-        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
-      </Dashboard>
+      <OverviewPage>
+        <OverviewGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
+      </OverviewPage>
     </ProjectDashboardContext.Provider>
   );
 };

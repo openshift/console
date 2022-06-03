@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens/dist/js/global_breakpoint_lg';
-import { OverviewGridCard, OverviewGridProps } from '@console/dynamic-plugin-sdk';
-import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
-
-import './dashboard.scss';
+import { useRefWidth } from '../../hooks/use-ref-width';
 
 const mapCardsToGrid = (
   cards: OverviewGridCard[] = [],
@@ -18,10 +15,20 @@ const mapCardsToGrid = (
     </GridItem>
   ));
 
-/**
- * @deprecated use OverviewGrid from @openshift-console/plugin-shared
- */
-const DashboardGrid: React.FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {
+export type OverviewCardSpan = 4 | 6 | 12;
+
+export type OverviewGridCard = {
+  Card: React.ComponentType<any>;
+  span?: OverviewCardSpan;
+};
+
+export type OverviewGridProps = {
+  mainCards: OverviewGridCard[];
+  leftCards?: OverviewGridCard[];
+  rightCards?: OverviewGridCard[];
+};
+
+export const OverviewGrid: React.FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {
   const [containerRef, width] = useRefWidth();
   const smallGrid = !!containerRef.current && width <= parseInt(breakpointLG.value, 10);
 
@@ -41,32 +48,30 @@ const DashboardGrid: React.FC<OverviewGridProps> = ({ mainCards, leftCards, righ
   return (
     <div ref={containerRef}>
       {smallGrid ? (
-        <Grid className="co-dashboard-grid">
+        <Grid hasGutter>
           <GridItem lg={12} md={12} sm={12}>
-            <Grid className="co-dashboard-grid">{mainGridCards}</Grid>
+            <Grid hasGutter>{mainGridCards}</Grid>
           </GridItem>
           <GridItem lg={12} md={12} sm={12}>
-            <Grid className="co-dashboard-grid">{leftGridCards}</Grid>
+            <Grid hasGutter>{leftGridCards}</Grid>
           </GridItem>
           <GridItem lg={12} md={12} sm={12}>
-            <Grid className="co-dashboard-grid">{rightGridCards}</Grid>
+            <Grid hasGutter>{rightGridCards}</Grid>
           </GridItem>
         </Grid>
       ) : (
-        <Grid className="co-dashboard-grid">
+        <Grid hasGutter>
           <GridItem lg={3} md={3} sm={3}>
-            <Grid className="co-dashboard-grid">{leftGridCards}</Grid>
+            <Grid hasGutter>{leftGridCards}</Grid>
           </GridItem>
           <GridItem lg={6} md={6} sm={6}>
-            <Grid className="co-dashboard-grid">{mainGridCards}</Grid>
+            <Grid hasGutter>{mainGridCards}</Grid>
           </GridItem>
           <GridItem lg={3} md={3} sm={3}>
-            <Grid className="co-dashboard-grid">{rightGridCards}</Grid>
+            <Grid hasGutter>{rightGridCards}</Grid>
           </GridItem>
         </Grid>
       )}
     </div>
   );
 };
-
-export default DashboardGrid;

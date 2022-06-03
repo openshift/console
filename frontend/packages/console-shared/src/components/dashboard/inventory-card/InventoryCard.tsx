@@ -7,16 +7,28 @@ import {
   InventoryItemStatusProps,
 } from '@console/dynamic-plugin-sdk';
 
+/**
+ * @deprecated use OverviewInventoryItem from @openshift-console/plugin-shared
+ */
 const InventoryItem: React.FC = ({ children }) => (
   <div className="co-inventory-card__item">{children}</div>
 );
 
+/**
+ * @deprecated use OverviewInventoryItemLoading from @openshift-console/plugin-shared
+ */
 export const InventoryItemLoading: React.FC = () => <div className="skeleton-inventory" />;
 
+/**
+ * @deprecated use OverviewInventoryTitle from @openshift-console/plugin-shared
+ */
 export const InventoryItemTitle: React.FC<InventoryItemTitleProps> = ({ children }) => (
   <div className="co-inventory-card__item-title">{children}</div>
 );
 
+/**
+ * @deprecated use OverviewInventoryBody from @openshift-console/plugin-shared
+ */
 export const InventoryItemBody: React.FC<InventoryItemBodyProps> = ({ error, children }) => {
   const { t } = useTranslation();
   return (
@@ -32,6 +44,9 @@ export const InventoryItemBody: React.FC<InventoryItemBodyProps> = ({ error, chi
   );
 };
 
+/**
+ * @deprecated use OverviewInventoryStatus from @openshift-console/plugin-shared
+ */
 export const InventoryItemStatus: React.FC<InventoryItemStatusProps> = ({
   count,
   icon,

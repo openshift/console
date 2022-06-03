@@ -5,12 +5,14 @@ import { MonitoringIcon } from '@patternfly/react-icons';
 import {
   K8sResourceCommon,
   useK8sWatchResource,
-  InventoryItem,
-  InventoryItemTitle,
-  InventoryItemBody,
-  InventoryItemStatus,
-  InventoryItemLoading,
 } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  OverviewInventoryItem,
+  OverviewInventoryItemTitle,
+  OverviewInventoryItemBody,
+  OverviewInventoryItemStatus,
+  OverviewInventoryItemLoading,
+} from '@openshift-console/plugin-shared';
 
 const workerNodesLink = '/k8s/cluster/nodes?rowFilter-node-role=worker';
 
@@ -27,16 +29,16 @@ const WorkerNodeInventory: React.FC = () => {
   if (loadError) {
     title = <Link to={workerNodesLink}>{t('Worker Nodes')}</Link>;
   } else if (!loaded) {
-    title = <><InventoryItemLoading /><Link to={workerNodesLink}>{t('Worker Nodes')}</Link></>;
+    title = <><OverviewInventoryItemLoading /><Link to={workerNodesLink}>{t('Worker Nodes')}</Link></>;
   }
 
   return (
-    <InventoryItem>
-      <InventoryItemTitle>{title}</InventoryItemTitle>
-      <InventoryItemBody error={loadError}>
-        {loaded && <InventoryItemStatus count={workerNodes.length} icon={<MonitoringIcon />} />}
-      </InventoryItemBody>
-    </InventoryItem>
+    <OverviewInventoryItem>
+      <OverviewInventoryItemTitle>{title}</OverviewInventoryItemTitle>
+      <OverviewInventoryItemBody error={loadError}>
+        {loaded && <OverviewInventoryItemStatus count={workerNodes.length} icon={<MonitoringIcon />} />}
+      </OverviewInventoryItemBody>
+    </OverviewInventoryItem>
   )
 };
 

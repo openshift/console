@@ -1,0 +1,8 @@
+.co-overview-page {
+  background-color: var(--pf-global--BackgroundColor--200);
+  flex: 1 0 auto;
+  padding: var(--pf-global--gutter);
+  @media(min-width: var(--pf-global--breakpoint--xl)) {
+    padding: var(--pf-global--gutter--md)
+  }
+}

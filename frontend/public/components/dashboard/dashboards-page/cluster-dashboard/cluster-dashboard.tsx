@@ -1,6 +1,5 @@
 import * as React from 'react';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import { OverviewPage, OverviewGrid } from '@openshift-console/plugin-shared/src';
 import { StatusCard } from './status-card';
 import { DetailsCard } from './details-card';
 import { InventoryCard } from './inventory-card';
@@ -31,10 +30,10 @@ export const ClusterDashboard: React.FC<{}> = () => {
 
   return (
     <ClusterDashboardContext.Provider value={context}>
-      <Dashboard>
+      <OverviewPage>
         <GettingStartedSection />
-        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
-      </Dashboard>
+        <OverviewGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+      </OverviewPage>
     </ClusterDashboardContext.Provider>
   );
 };
