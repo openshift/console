@@ -10,7 +10,7 @@ import * as k8sActions from '../../actions/k8s';
 import {
   INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL,
   INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL,
-} from '@console/dynamic-plugin-sdk';
+} from './k8s-watch-hook';
 
 const shallowMapEquals = (a, b) => {
   if (a === b || (a.size === 0 && b.size === 0)) {
