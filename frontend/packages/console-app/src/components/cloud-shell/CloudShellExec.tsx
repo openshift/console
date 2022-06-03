@@ -19,8 +19,6 @@ import {
 import ExecuteCommand from './ExecuteCommand';
 import Terminal, { ImperativeTerminalType } from './Terminal';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import useActivityTick, { TICK_INTERVAL } from './useActivityTick';
-
 import './CloudShellExec.scss';
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
@@ -36,7 +34,6 @@ type Props = {
   namespace: string;
   shcommand?: string[];
   workspaceModel: K8sKind;
-  isActiveTab?: boolean;
 };
 
 type StateProps = {
@@ -63,7 +60,6 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   flags,
   impersonate,
   workspaceModel,
-  isActiveTab = false,
   onActivate,
 }) => {
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
@@ -73,26 +69,6 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const ws = React.useRef<WSFactory>();
   const terminal = React.useRef<ImperativeTerminalType>();
   const { t } = useTranslation();
-
-  const tick = useActivityTick(workspaceName, namespace);
-
-  React.useEffect(() => {
-    let startTime;
-    let tickReq;
-    const handleTick = (timestamp) => {
-      if ((!startTime || timestamp - startTime >= TICK_INTERVAL) && isActiveTab) {
-        startTime = timestamp;
-        tick();
-      }
-      tickReq = window.requestAnimationFrame(handleTick);
-    };
-
-    tickReq = window.requestAnimationFrame(handleTick);
-
-    return () => {
-      window.cancelAnimationFrame(tickReq);
-    };
-  }, [isActiveTab, tick]);
 
   const onData = (data: string): void => {
     ws.current?.send(`0${Base64.encode(data)}`);

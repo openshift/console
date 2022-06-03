@@ -51,6 +51,7 @@ export const CLOUD_SHELL_RESTRICTED_ANNOTATION = 'controller.devfile.io/restrict
 export const CLOUD_SHELL_STOPPED_BY_ANNOTATION = 'controller.devfile.io/stopped-by';
 export const CLOUD_SHELL_SOURCE_ANNOTATION = 'controller.devfile.io/devworkspace-source';
 export const CLOUD_SHELL_PROTECTED_NAMESPACE = 'openshift-terminal';
+export const TICK_INTERVAL = 60000;
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
 
@@ -58,7 +59,7 @@ const v1alpha1DevworkspaceComponent = [
   {
     plugin: {
       name: 'web-terminal',
-      id: 'redhat-developer/web-terminal/latest',
+      id: 'redhat-developer/web-terminal-dev/latest',
     },
   },
 ];
@@ -105,7 +106,7 @@ export const newCloudShellWorkSpace = (
   },
   spec: {
     started: true,
-    routingClass: 'web-terminal',
+    routingClass: 'basic',
     template: {
       components:
         version === v1alpha1WorkspaceModel.apiVersion
@@ -148,7 +149,12 @@ export const initTerminal = (
 };
 
 export const sendActivityTick = (workspaceName: string, namespace: string): void => {
-  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, { method: 'POST' });
+  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, {
+    method: 'POST',
+  }).catch((error) =>
+    // eslint-disable-next-line no-console
+    console.error(error),
+  );
 };
 
 export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
