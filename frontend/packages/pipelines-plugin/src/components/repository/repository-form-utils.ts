@@ -99,23 +99,27 @@ export const createRepositoryResources = async (
     },
     spec: {
       url: gitUrl,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      git_provider: {
-        ...(gitHost !== 'github.com' ? { url: gitHost } : {}),
-        ...(secretRef
-          ? {
-              secret: {
-                name: secretRef.metadata.name,
-                key: 'provider.token',
-              },
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              webhook_secret: {
-                name: secretRef.metadata.name,
-                key: 'webhook.secret',
-              },
-            }
-          : {}),
-      },
+      ...(secretRef || gitHost !== 'github.com'
+        ? {
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            git_provider: {
+              ...(gitHost !== 'github.com' ? { url: gitHost } : {}),
+              ...(secretRef
+                ? {
+                    secret: {
+                      name: secretRef?.metadata?.name,
+                      key: 'provider.token',
+                    },
+                    // eslint-disable-next-line @typescript-eslint/camelcase
+                    webhook_secret: {
+                      name: secret?.metadata?.name,
+                      key: 'webhook.secret',
+                    },
+                  }
+                : {}),
+            },
+          }
+        : {}),
     },
   };
 

@@ -1,4 +1,8 @@
-import { k8sCreateResource, k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import {
+  k8sCreateResource,
+  k8sGetResource,
+  k8sListResourceItems,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { GitProvider } from '@console/git-service';
 import { RepositoryModel } from '../../../models';
 import {
@@ -6,16 +10,20 @@ import {
   createRepositoryResources,
   detectGitType,
   getPipelineRunDefaultTemplate,
+  getPipelineRunTemplate,
+  recommendRepositoryName,
 } from '../repository-form-utils';
 import { RepositoryFormValues } from '../types';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
   k8sCreateResource: jest.fn(),
   k8sGetResource: jest.fn(),
+  k8sListResourceItems: jest.fn(),
 }));
 
 const k8sCreateMock = k8sCreateResource as jest.Mock;
 const k8sGetMock = k8sGetResource as jest.Mock;
+const k8sListResourceItemsMock = k8sListResourceItems as jest.Mock;
 
 describe('createRepositoryResources', () => {
   afterEach(jest.resetAllMocks);
@@ -52,8 +60,6 @@ describe('createRepositoryResources', () => {
         metadata: { name: 'test-repo', namespace: 'test-ns' },
         spec: {
           url: 'https://github.com/sample/repo',
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          git_provider: {},
         },
       },
     });
@@ -141,14 +147,27 @@ describe('detectGitType', () => {
 });
 
 describe('createRepositoryName', () => {
-  fit('should create repository name with prefix', () => {
+  it('should create repository name with prefix', () => {
     expect(createRepositoryName('nodejs-ex')).toEqual('git-nodejs-ex');
     expect(createRepositoryName('ruby-ex')).toEqual('git-ruby-ex');
   });
 
-  fit('should convert and return a valid repo name', () => {
+  it('should convert and return a valid repo name', () => {
     expect(createRepositoryName('NODEJS1')).toEqual('git-nodejs-1');
     expect(createRepositoryName('RUBY')).toEqual('git-ruby');
+  });
+});
+
+describe('recommendRepositoryName', () => {
+  it('should return undefined for invalid values', () => {
+    expect(recommendRepositoryName('')).toBeUndefined();
+    expect(recommendRepositoryName(null)).toBeUndefined();
+    expect(recommendRepositoryName(undefined)).toBeUndefined();
+  });
+
+  it('should recommend a repo cr name based on the url', () => {
+    expect(recommendRepositoryName('https://example.com/myrepo')).toEqual('git-myrepo');
+    expect(recommendRepositoryName('https://example.com/myRepo123')).toEqual('git-my-repo-123');
   });
 });
 
@@ -172,6 +191,22 @@ describe('getPipelineRunDefaultTemplate', () => {
   it('should return custom template', async () => {
     k8sGetMock.mockReturnValueOnce({ data: { template: 'my-custom-template-string' } });
     const template = await getPipelineRunDefaultTemplate('nodejs-ex');
+    expect(template).toEqual(expect.stringContaining('my-custom-template-string'));
+  });
+});
+
+describe('getPipelineRunTemplate', () => {
+  it('should return a default template if custom template is not available', async () => {
+    k8sListResourceItemsMock.mockReturnValueOnce([]);
+    const template = await getPipelineRunTemplate('nodejs', 'repo-name');
+    expect(template).toEqual(expect.stringContaining('name: repo-name'));
+  });
+
+  it('should return custom template', async () => {
+    k8sListResourceItemsMock.mockReturnValueOnce([
+      { data: { template: 'my-custom-template-string' } },
+    ]);
+    const template = await getPipelineRunTemplate('nodejs', 'repo-name');
     expect(template).toEqual(expect.stringContaining('my-custom-template-string'));
   });
 });

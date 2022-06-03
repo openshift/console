@@ -162,6 +162,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac }) => {
 
             activeChildren: (
               <ResourceDropdownField
+                helpText={t(
+                  'pipelines-plugin~Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
+                )}
                 name="webhook.secretRef"
                 resources={resources}
                 dataSelector={['metadata', 'name']}

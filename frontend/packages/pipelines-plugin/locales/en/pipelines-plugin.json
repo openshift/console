@@ -371,6 +371,7 @@
   "Use your Git Personal token. Create a token with repo, public_repo & admin:repo_hook scopes and give your token an expiration, i.e 30d.": "Use your Git Personal token. Create a token with repo, public_repo & admin:repo_hook scopes and give your token an expiration, i.e 30d.",
   "Git access token": "Git access token",
   "Git access token secret": "Git access token secret",
+  "Secret with the Git access token for pulling pipeline and tasks from your Git repository.": "Secret with the Git access token for pulling pipeline and tasks from your Git repository.",
   "Select a secret": "Select a secret",
   "Webhook URL": "Webhook URL",
   "We have detected a URL that can be used to configure the webhook.": "We have detected a URL that can be used to configure the webhook.",
