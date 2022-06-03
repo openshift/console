@@ -1,14 +1,21 @@
 import * as React from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { FormFooter, FlexForm, FormBody, FormHeader, InputField } from '@console/shared';
+import { history } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { FormFooter, FlexForm, FormBody, useActiveNamespace } from '@console/shared';
+import { RepositoryModel } from '../../models';
+import RepositoryFormSection from './sections/RepositoryFormSection';
+import RepositoryOverview from './sections/RepositoryOverview';
+import { RepositoryFormValues } from './types';
 
-type RepositoryFormProps = FormikProps<FormikValues>;
+import './RepositoryForm.scss';
+
+type RepositoryFormProps = FormikProps<FormikValues & RepositoryFormValues>;
 
 export const RepositoryForm: React.FC<RepositoryFormProps> = ({
+  values,
   status,
   isSubmitting,
   dirty,
@@ -17,37 +24,23 @@ export const RepositoryForm: React.FC<RepositoryFormProps> = ({
   errors,
 }) => {
   const { t } = useTranslation();
-
+  const [namespace] = useActiveNamespace();
+  const { showOverviewPage } = values;
+  const onClose = () => {
+    history.push(`/k8s/ns/${namespace}/${referenceForModel(RepositoryModel)}/${values.name}`);
+  };
   return (
-    <FlexForm onSubmit={handleSubmit}>
-      <FormBody>
-        <FormHeader title={t('pipelines-plugin~Create Repository')} />
-        <FormSection>
-          <InputField
-            label={t('pipelines-plugin~Name')}
-            name="name"
-            type={TextInputTypes.text}
-            required
-          />
-          <InputField
-            label={t('pipelines-plugin~Git Repository')}
-            name="gitUrl"
-            type={TextInputTypes.text}
-            required
-          />
-          <InputField
-            label={t('pipelines-plugin~Token')}
-            name="accessToken"
-            type={TextInputTypes.text}
-          />
-        </FormSection>
+    <FlexForm onSubmit={handleSubmit} className="opp-repository-form">
+      <FormBody className="opp-repository-form__body">
+        {showOverviewPage ? <RepositoryOverview /> : <RepositoryFormSection />}
       </FormBody>
       <FormFooter
-        handleReset={handleReset}
+        handleSubmit={showOverviewPage ? onClose : null}
+        handleReset={showOverviewPage ? null : handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('pipelines-plugin~Create')}
-        disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
+        submitLabel={showOverviewPage ? t('pipelines-plugin~Close') : t('pipelines-plugin~Add')}
+        disableSubmit={showOverviewPage ? false : !dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('pipelines-plugin~Cancel')}
         sticky
       />

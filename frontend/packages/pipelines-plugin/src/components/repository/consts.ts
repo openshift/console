@@ -1,3 +1,4 @@
+import { GitProvider } from '@console/git-service/src';
 import { RepositoryFormValues } from './types';
 
 export enum RepositoryFields {
@@ -30,7 +31,39 @@ export const RepositoryAnnotations: Record<RepoAnnotationFields, string> = {
 
 export const baseURL = 'https://github.com';
 
+export enum PacConfigurationTypes {
+  GITHUB = 'github',
+  WEBHOOK = 'webhook',
+}
+
 export const defaultRepositoryFormValues: RepositoryFormValues = {
-  name: '',
   gitUrl: '',
+  gitProvider: GitProvider.INVALID,
+  name: '',
+  method: 'github',
+  showOverviewPage: false,
+  yamlData: ``,
+  webhook: {
+    token: '',
+    method: 'token',
+    secret: '',
+    url: '',
+  },
+};
+
+export const AccessTokenDocLinks = {
+  [GitProvider.GITHUB]:
+    'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token',
+  [GitProvider.GITLAB]: 'https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html',
+  [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/',
+};
+
+export const WebhookDocLinks = {
+  [GitProvider.GITHUB]:
+    'https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks',
+  [GitProvider.GITLAB]:
+    'https://docs.gitlab.com/ee/user/project/integrations/webhooks.html#configure-a-webhook-in-gitlab',
+  [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/',
+  [GitProvider.UNSURE]:
+    'https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks',
 };

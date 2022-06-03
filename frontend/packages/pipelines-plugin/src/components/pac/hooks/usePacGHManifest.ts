@@ -1,9 +1,6 @@
 import * as React from 'react';
-import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { RouteModel } from '@console/internal/models';
-import { RouteKind } from '@console/internal/module/k8s';
-import { PIPELINE_NAMESPACE } from '../../pipelines/const';
-import { EVENT_LISTNER_NAME, PAC_GH_APP_NAME } from '../const';
+import { PAC_GH_APP_NAME } from '../const';
+import { getControllerUrl } from '../pac-utils';
 
 type GHManifestData = {
   name: string;
@@ -24,18 +21,8 @@ export const usePacGHManifest = (): { loaded: boolean; manifestData: GHManifestD
   React.useEffect(() => {
     const getELRoute = async () => {
       try {
-        const [elRouteData] = await k8sListResourceItems<RouteKind>({
-          model: RouteModel,
-          queryParams: {
-            ns: PIPELINE_NAMESPACE,
-            labelSelector: {
-              matchLabels: {
-                eventlistener: EVENT_LISTNER_NAME,
-              },
-            },
-          },
-        });
-        setElRoute(elRouteData?.spec?.host && `https://${elRouteData.spec.host}`);
+        const controllerUrl = await getControllerUrl();
+        setElRoute(controllerUrl);
         setLoded(true);
       } catch (err) {
         setLoded(true);
