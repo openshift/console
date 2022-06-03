@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 
-import { KUBE_ADMIN_USERNAMES } from '@console/shared';
+import { KUBE_ADMIN_USERNAMES, useCanClusterUpgrade } from '@console/shared';
 import { OAuthModel } from '../models';
 import { userStateToProps } from '../reducers/ui';
 import { resourcePathFromModel } from './utils/resource-link';
@@ -13,8 +13,9 @@ const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 export const KubeAdminNotifier = connect(userStateToProps)(({ user }) => {
   const { t } = useTranslation();
+  const canUpgrade = useCanClusterUpgrade();
   const username = _.get(user, 'metadata.name');
-  return KUBE_ADMIN_USERNAMES.includes(username) ? (
+  return KUBE_ADMIN_USERNAMES.includes(username) && canUpgrade ? (
     <div className="co-global-notification">
       <div className="co-global-notification__content">
         <p className="co-global-notification__text">
