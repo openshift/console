@@ -148,7 +148,11 @@ export const initTerminal = (
 };
 
 export const sendActivityTick = (workspaceName: string, namespace: string): void => {
-  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, { method: 'POST' });
+  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, {
+    method: 'POST',
+  }).catch((
+    e, // eslint-disable-next-line no-console
+  ) => console.error(e));
 };
 
 export const checkTerminalAvailable = () => coFetch('/api/terminal/available');

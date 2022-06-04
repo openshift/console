@@ -30,7 +30,9 @@ type StateProps = {
 
 type Props = {
   onCancel?: () => void;
-  isActiveTab?: boolean;
+  setCurrentNamespace?: (name: string, terminalNumber: number) => void;
+  setCurrentWorkspace?: (namespace: string, terminalNumber: number) => void;
+  terminalNumber: number;
 };
 
 type CloudShellTerminalProps = StateProps & Props;
@@ -40,8 +42,10 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   user,
   onCancel,
   userSettingState: namespace,
-  isActiveTab = false,
   setUserSettingState: setNamespace,
+  setCurrentNamespace,
+  setCurrentWorkspace,
+  terminalNumber,
 }) => {
   const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
   const [initData, setInitData] = React.useState<TerminalInitData>();
@@ -64,6 +68,9 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   const workspaceName = workspace?.metadata?.name;
   const workspaceNamespace = workspace?.metadata?.namespace;
   const workspaceId = workspace?.metadata?.uid;
+
+  workspaceName && setCurrentWorkspace(workspaceName, terminalNumber);
+  workspaceNamespace && setCurrentNamespace(workspaceNamespace, terminalNumber);
 
   const username = user?.metadata?.name;
 
@@ -195,7 +202,6 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         podname={initData.pod}
         shcommand={initData.cmd || []}
         workspaceModel={workspaceModel}
-        isActiveTab={isActiveTab}
       />
     );
   }

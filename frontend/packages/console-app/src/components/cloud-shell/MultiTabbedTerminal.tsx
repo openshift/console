@@ -4,8 +4,8 @@ import { CloseIcon, PlusIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { Tabs } from '../tabs';
+import { sendActivityTick } from './cloud-shell-utils';
 import CloudShellTerminal from './CloudShellTerminal';
-
 import './MultiTabbedTerminal.scss';
 
 const MAX_TERMINAL_TABS = 8;
@@ -17,6 +17,8 @@ interface MultiTabbedTerminalProps {
 export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClose }) => {
   const [terminalTabs, setTerminalTabs] = React.useState<number[]>([1]);
   const [activeTabKey, setActiveTabKey] = React.useState<number>(1);
+  const [tickNamespace, setTickNamespace] = React.useState<string>(null);
+  const [tickWorkspace, setTickWorkspace] = React.useState<string>(null);
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
 
@@ -31,6 +33,23 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
     }
   };
 
+  // eslint-disable-next-line no-console
+  console.log(tickWorkspace, tickNamespace);
+
+  const tick = React.useCallback(
+    () => tickWorkspace && tickNamespace && sendActivityTick(tickWorkspace, tickNamespace),
+    [tickWorkspace, tickNamespace],
+  );
+
+  React.useEffect(() => {
+    const tickReq = tick && setInterval(tick, 10000);
+    // eslint-disable-next-line no-console
+    console.log('tiking');
+    return () => {
+      tickReq && clearInterval(tickReq);
+    };
+  }, [tick]);
+
   const removeCurrentTerminal = (event, tabIndex: number) => {
     event.stopPropagation();
     const tabs = [...terminalTabs];
@@ -39,6 +58,13 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
     }
     tabs.splice(tabIndex, 1);
     setTerminalTabs(tabs);
+  };
+
+  const setCurrentNamespace = (namespace, terminalNumber) => {
+    terminalNumber === activeTabKey && tickNamespace !== namespace && setTickNamespace(namespace);
+  };
+  const setCurrentWorkspace = (workspace, terminalNumber) => {
+    terminalNumber === activeTabKey && tickWorkspace !== workspace && setTickWorkspace(workspace);
   };
 
   return (
@@ -81,7 +107,11 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
             </div>
           }
         >
-          <CloudShellTerminal isActiveTab={activeTabKey === terminalNumber} />
+          <CloudShellTerminal
+            setCurrentNamespace={setCurrentNamespace}
+            setCurrentWorkspace={setCurrentWorkspace}
+            terminalNumber={terminalNumber}
+          />
         </Tab>
       ))}
       {terminalTabs.length < MAX_TERMINAL_TABS && (
