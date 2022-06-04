@@ -1,21 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { getUser } from '@console/dynamic-plugin-sdk';
-import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
-import {
-  useFlag,
-  withUserSettingsCompatibility,
-  WithUserSettingsCompatibilityProps,
-} from '@console/shared';
-import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../consts';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 import { TerminalInitData, initTerminal, startWorkspace } from './cloud-shell-utils';
 import CloudshellExec from './CloudShellExec';
-import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
 import TerminalLoadingBox from './TerminalLoadingBox';
@@ -24,34 +13,28 @@ import useCloudShellWorkspace from './useCloudShellWorkspace';
 
 import './CloudShellTerminal.scss';
 
-type StateProps = {
-  user: UserKind;
-};
-
-type Props = {
+type CloudShellTerminalProps = {
   onCancel?: () => void;
-  isActiveTab?: boolean;
+  isAdmin: boolean;
+  isAdminCheckLoading: boolean;
+  isv1Alpha2Available: boolean;
+  user: UserKind;
+  namespace;
+  setNamespace;
 };
 
-type CloudShellTerminalProps = StateProps & Props;
-
-const CloudShellTerminal: React.FC<CloudShellTerminalProps &
-  WithUserSettingsCompatibilityProps<string>> = ({
+const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({
   user,
   onCancel,
-  userSettingState: namespace,
-  isActiveTab = false,
-  setUserSettingState: setNamespace,
+  namespace,
+  setNamespace,
+  isAdmin,
+  isAdminCheckLoading,
+  isv1Alpha2Available,
 }) => {
   const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initError, setInitError] = React.useState<string>();
-  const [isAdmin, isAdminCheckLoading] = useAccessReview2({
-    namespace: 'openshift-terminal',
-    verb: 'create',
-    resource: 'pods',
-  });
-  const isv1Alpha2Available = useFlag(FLAG_V1ALPHA2DEVWORKSPACE);
   const workspaceModel = !isv1Alpha2Available ? v1alpha1WorkspaceModel : WorkspaceModel;
   const [workspace, loaded, loadError] = useCloudShellWorkspace(
     user,
@@ -120,6 +103,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   // initialize the terminal once it is Running
   React.useEffect(() => {
     let unmounted = false;
+    const defaultError = t('console-app~Failed to connect to your OpenShift command line terminal');
 
     if (workspacePhase === 'Running') {
       initTerminal(username, workspaceName, workspaceNamespace)
@@ -128,9 +112,6 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         })
         .catch((e) => {
           if (!unmounted) {
-            const defaultError = t(
-              'console-app~Failed to connect to your OpenShift command line terminal',
-            );
             if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
               // eslint-disable-next-line promise/no-nesting
               e.response
@@ -146,6 +127,11 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
             }
           }
         });
+    }
+
+    // handle devWorkspace CR Failed state
+    if (workspacePhase === 'Failed') {
+      setInitError(defaultError);
     }
 
     return () => {
@@ -195,7 +181,6 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         podname={initData.pod}
         shcommand={initData.cmd || []}
         workspaceModel={workspaceModel}
-        isActiveTab={isActiveTab}
       />
     );
   }
@@ -225,19 +210,4 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   );
 };
 
-// For testing
-export const InternalCloudShellTerminal = CloudShellTerminal;
-
-const stateToProps = (state: RootState): StateProps => ({
-  user: getUser(state),
-});
-
-export default connect<StateProps, null, Props>(stateToProps)(
-  withUserSettingsCompatibility<
-    CloudShellTerminalProps & WithUserSettingsCompatibilityProps<string>,
-    string
-  >(
-    CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY,
-    CLOUD_SHELL_NAMESPACE,
-  )(CloudShellTerminal),
-);
+export default CloudShellTerminal;
