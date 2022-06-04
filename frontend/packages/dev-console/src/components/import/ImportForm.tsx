@@ -13,13 +13,13 @@ import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { KnativeServingModel } from '@console/knative-plugin/src';
 import { useExtensions } from '@console/plugin-sdk';
-import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
+import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction, useTelemetry } from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { getBaseInitialValues } from './form-initial-values';
-import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
+import { createOrUpdateResources, getTelemetryImport, handleRedirect } from './import-submit-utils';
 import {
   GitImportFormData,
   FirehoseList,
@@ -56,6 +56,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   projects,
 }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const postFormCallback = usePostFormSubmitAction();
@@ -166,6 +167,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
           });
         }
 
+        fireTelemetryEvent('Git Import', getTelemetryImport(values));
         handleRedirect(projectName, perspective, perspectiveExtensions);
       })
       .catch((err) => {

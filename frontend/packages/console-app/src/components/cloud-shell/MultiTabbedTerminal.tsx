@@ -2,8 +2,10 @@ import * as React from 'react';
 import { Button, Tab, TabTitleText, TabTitleIcon } from '@patternfly/react-core';
 import { CloseIcon, PlusIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { Tabs } from '../tabs';
 import CloudShellTerminal from './CloudShellTerminal';
+
 import './MultiTabbedTerminal.scss';
 
 const MAX_TERMINAL_TABS = 8;
@@ -16,6 +18,7 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
   const [terminalTabs, setTerminalTabs] = React.useState<number[]>([1]);
   const [activeTabKey, setActiveTabKey] = React.useState<number>(1);
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   const addNewTerminal = () => {
     if (terminalTabs.length < MAX_TERMINAL_TABS) {
@@ -24,6 +27,7 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
       tabs.push(newTerminalNumber);
       setTerminalTabs(tabs);
       setActiveTabKey(newTerminalNumber);
+      fireTelemetryEvent('Web Terminal New Tab');
     }
   };
 

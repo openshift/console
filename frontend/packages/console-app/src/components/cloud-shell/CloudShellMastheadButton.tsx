@@ -4,6 +4,7 @@ import { TerminalIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import isMultiClusterEnabled from '../../utils/isMultiClusterEnabled';
@@ -21,6 +22,7 @@ type Props = StateProps & DispatchProps;
 
 const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
   const terminalAvailable = useCloudShellAvailable();
+  const fireTelemetryEvent = useTelemetry();
 
   const { t } = useTranslation();
 
@@ -28,12 +30,17 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
     return null;
   }
 
+  const openCloudshell = () => {
+    onClick();
+    fireTelemetryEvent('Web Terminal Initiated');
+  };
+
   return (
     <PageHeaderToolsItem>
       <Button
         variant="plain"
         aria-label={t('console-app~Command line terminal')}
-        onClick={onClick}
+        onClick={openCloudshell}
         className={open ? 'pf-m-selected' : undefined}
         data-tour-id="tour-cloud-shell-button"
         data-quickstart-id="qs-masthead-cloudshell"

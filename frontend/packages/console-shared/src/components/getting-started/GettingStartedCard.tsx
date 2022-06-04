@@ -12,6 +12,8 @@ import {
   SimpleListItem,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 import './GettingStartedCard.scss';
 
@@ -47,6 +49,14 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
   links,
   moreLink,
 }) => {
+  const fireTelemetryEvent = useTelemetry();
+  const [activePerspective] = useActivePerspective();
+
+  const telemetryCallback = () => {
+    fireTelemetryEvent('Getting Started Card Link Clicked', {
+      id: activePerspective,
+    });
+  };
   return (
     <Flex
       direction={{ default: 'column' }}
@@ -92,7 +102,10 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                         }
                   }
                   href={link.href}
-                  onClick={link.onClick}
+                  onClick={(e) => {
+                    telemetryCallback();
+                    link.onClick?.(e);
+                  }}
                 >
                   {link.title}
                 </SimpleListItem>
@@ -106,7 +119,10 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
         <FlexItem>
           {moreLink.onClick ? (
             <Button
-              onClick={moreLink.onClick}
+              onClick={(e) => {
+                telemetryCallback();
+                moreLink.onClick(e);
+              }}
               isInline
               variant="link"
               data-test={`item ${moreLink.id}`}
@@ -115,6 +131,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
             </Button>
           ) : moreLink.external ? (
             <a
+              onClick={telemetryCallback}
               href={moreLink.href}
               target="_blank"
               className="co-external-link"
@@ -124,7 +141,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
               {moreLink.title}
             </a>
           ) : (
-            <Link to={moreLink.href} data-test={`item ${moreLink.id}`}>
+            <Link to={moreLink.href} data-test={`item ${moreLink.id}`} onClick={telemetryCallback}>
               {moreLink.title}
             </Link>
           )}
