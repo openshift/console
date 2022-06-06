@@ -54,6 +54,12 @@ export const CLOUD_SHELL_PROTECTED_NAMESPACE = 'openshift-terminal';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
 
+export enum CLOUD_SHELL_PHASE {
+  STARTING = 'Starting',
+  FAILED = 'Failed',
+  RUNNING = 'Running',
+}
+
 const v1alpha1DevworkspaceComponent = [
   {
     plugin: {
@@ -148,7 +154,12 @@ export const initTerminal = (
 };
 
 export const sendActivityTick = (workspaceName: string, namespace: string): void => {
-  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, { method: 'POST' });
+  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, {
+    method: 'POST',
+  }).catch((e) =>
+    // eslint-disable-next-line no-console
+    console.error(e),
+  );
 };
 
 export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
