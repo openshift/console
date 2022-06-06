@@ -1,0 +1,133 @@
+# Based on https://github.com/shipwright-io/build/tree/v0.9.0/samples/buildrun
+#
+# 1. Added label `build.shipwright.io/name`
+#
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: buildah-golang-buildrun
+  labels:
+    build.shipwright.io/name: buildah-golang-build
+spec:
+  buildRef:
+    name: buildah-golang-build
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: buildkit-buildrun
+  labels:
+    build.shipwright.io/name: buildkit-build
+spec:
+  buildRef:
+    name: buildkit-build
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: buildpack-nodejs-buildrun-heroku
+  labels:
+    build.shipwright.io/name: buildpack-nodejs-build-heroku
+spec:
+  buildRef:
+    name: buildpack-nodejs-build-heroku
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: buildpack-nodejs-buildrun-namespaced-heroku
+  labels:
+    build.shipwright.io/name: buildpack-nodejs-build-namespaced-heroku
+spec:
+  buildRef:
+    name: buildpack-nodejs-build-namespaced-heroku
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: buildpack-nodejs-buildrun
+  labels:
+    build.shipwright.io/name: buildpack-nodejs-build
+spec:
+  buildRef:
+    name: buildpack-nodejs-build
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: buildpack-nodejs-buildrun-namespaced
+  labels:
+    build.shipwright.io/name: buildpack-nodejs-build-namespaced
+spec:
+  buildRef:
+    name: buildpack-nodejs-build-namespaced
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: kaniko-trivy-bad-buildrun
+  labels:
+    build.shipwright.io/name: kaniko-trivy-bad-build
+spec:
+  buildRef:
+    name: kaniko-trivy-bad-build
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: kaniko-trivy-good-buildrun
+  labels:
+    build.shipwright.io/name: kaniko-trivy-good-build
+spec:
+  buildRef:
+    name: kaniko-trivy-good-build
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: kaniko-golang-buildrun
+  labels:
+    build.shipwright.io/name: kaniko-golang-build
+spec:
+  buildRef:
+    name: kaniko-golang-build
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: ko-buildrun
+  labels:
+    build.shipwright.io/name: ko-build
+spec:
+  buildRef:
+    name: ko-build
+  serviceAccount:
+    generate: true
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  name: s2i-nodejs-buildrun
+  labels:
+    build.shipwright.io/name: s2i-nodejs-build
+spec:
+  buildRef:
+    name: s2i-nodejs-build

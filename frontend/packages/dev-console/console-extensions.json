@@ -458,22 +458,41 @@
     }
   },
   {
-    "type": "console.navigation/resource-ns",
+    "type": "console.navigation/href",
     "properties": {
       "id": "builds",
       "perspective": "dev",
       "section": "resources",
       "name": "%devconsole~Builds%",
+      "href": "/builds",
+      "namespaced": true,
       "insertBefore": ["helm", "pipelines"],
-      "model": {
-        "kind": "BuildConfig",
-        "version": "v1",
-        "group": "build.openshift.io"
-      },
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-builds",
         "data-test-id": "build-header"
       }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/builds"],
+      "component": { "$codeRef": "builds.NamespaceRedirect" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/builds/all-namespaces", "/builds/ns/:ns"],
+      "component": { "$codeRef": "builds.BuildsTabListPage" }
     },
     "flags": {
       "required": ["OPENSHIFT"]

@@ -13,6 +13,7 @@
     "@console/topology": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
     "@console/pipelines-plugin": "0.0.0-fixed",
+    "@console/shipwright-plugin": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
@@ -24,6 +25,7 @@
     },
     "exposedModules": {
       "actions": "src/actions",
+      "builds": "src/components/builds",
       "icons": "src/utils/icons.tsx",
       "catalog": "src/components/catalog",
       "fileUpload": "src/components/jar-file-upload/index.ts",

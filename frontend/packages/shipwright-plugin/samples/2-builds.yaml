@@ -1,0 +1,181 @@
+# Based on https://github.com/shipwright-io/build/tree/v0.9.0/samples/build
+#
+# 1. Replaced ClusterBuildStrategy with BuildStrategy
+#
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: buildah-golang-build
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-go
+    contextDir: docker-build
+  strategy:
+    name: buildah
+    kind: BuildStrategy
+  dockerfile: Dockerfile
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/taxi-app
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: buildkit-build
+  annotations:
+    build.build.dev/build-run-deletion: "true"
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-go
+    contextDir: docker-build
+  strategy:
+    name: buildkit
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/taxi-app
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: buildpack-nodejs-build-heroku
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build
+  strategy:
+    name: buildpacks-v3-heroku
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/taxi-app
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: buildpack-nodejs-build-namespaced-heroku
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build
+  strategy:
+    name: buildpacks-v3-heroku
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/taxi-app
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: buildpack-nodejs-build
+  annotations:
+    build.shipwright.io/build-run-deletion: "false"
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build
+  strategy:
+    name: buildpacks-v3
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/taxi-app
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: buildpack-nodejs-build-namespaced
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build
+  strategy:
+    name: buildpacks-v3
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/taxi-app
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: kaniko-trivy-bad-build
+  annotations:
+    build.shipwright.io/build-run-deletion: "true"
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-scanning
+  strategy:
+    name: kaniko-trivy
+    kind: BuildStrategy
+  dockerfile: Dockerfile.bad
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/bad-trivy
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: kaniko-trivy-good-build
+  annotations:
+    build.shipwright.io/build-run-deletion: "true"
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-scanning
+  strategy:
+    name: kaniko-trivy
+    kind: BuildStrategy
+  dockerfile: Dockerfile.good
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/good-trivy
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: kaniko-golang-build
+  annotations:
+    build.shipwright.io/build-run-deletion: "true"
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-go
+    contextDir: docker-build
+  strategy:
+    name: kaniko
+    kind: BuildStrategy
+  dockerfile: Dockerfile
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/taxi-app
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: ko-build
+  annotations:
+    build.build.dev/build-run-deletion: "false"
+spec:
+  paramValues:
+    - name: go-flags
+      value: "-v -mod=vendor -ldflags=-w"
+    - name: go-version
+      value: "1.17"
+    - name: package-directory
+      value: ./cmd/shipwright-build-controller
+  source:
+    url: https://github.com/shipwright-io/build
+  strategy:
+    name: ko
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/shipwright-build
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: s2i-nodejs-build
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build/
+  strategy:
+    name: source-to-image
+    kind: BuildStrategy
+  builder:
+    image: docker.io/centos/nodejs-10-centos7
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/nodejs-ex
