@@ -71,7 +71,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
                 {t('Prometheus loading')}
               </Alert>
             )}
-            {!error && loaded && (
+            {!error && loaded && result && (
               <Alert data-testid="prometheus-data" title={t('Prometheus data')}>
                 {JSON.stringify(result.data)}
               </Alert>
