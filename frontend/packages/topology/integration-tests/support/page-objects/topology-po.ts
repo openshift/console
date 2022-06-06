@@ -282,6 +282,17 @@ export const topologyPO = {
     deploymentApp: '#nodejs-ex-git-app-Deployment',
     deploymentConfigApp: '#nodejs-ex-git-app-DeploymentConfig',
   },
+  displayFilter: {
+    display: '.odc-topology-filter-dropdown__select',
+    expandOption: '.odc-topology-filter-dropdown__expand-groups-switcher input',
+    applicationGroupingOption: '.odc-topology-filter-dropdown__expand-groups-label input',
+    unexpandedNode: '.odc-workload-node',
+    disabledClass: '.pf-m-disabled',
+    podLabelOptions: '.odc-topology-filter-dropdown__group input',
+    podRingText: '.pod-ring__center-text',
+    deploymentLabel: '#nodejs-ex-git-app-Deployment-label',
+    deployemntCount: '.odc-topology-list-view__group-resource-count',
+  },
 };
 
 export const typeOfWorkload = (workload: string) => {
