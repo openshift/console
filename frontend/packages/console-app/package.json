@@ -40,7 +40,8 @@
       "reduxReducer": "src/redux/reducer.ts",
       "actions": "src/actions",
       "userPreferences": "src/components/user-preferences",
-      "perspective": "src/utils/perspective"
+      "perspective": "src/utils/perspective",
+      "dynamicPluginsHealthResource": "src/components/dashboards-page/dynamic-plugins-health-resource"
     }
   }
 }

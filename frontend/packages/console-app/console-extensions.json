@@ -1094,5 +1094,15 @@
       "href": "/monitoring/targets",
       "startsWith": ["monitoring/targets"]
     }
+  },
+  {
+    "type": "console.dashboards/overview/health/resource",
+    "properties": {
+      "title": "%console-app~Dynamic Plugins%",
+      "resources": { "$codeRef": "dynamicPluginsHealthResource.dynamicPluginsResources" },
+      "healthHandler": { "$codeRef": "dynamicPluginsHealthResource.getDynamicPluginHealthState" },
+      "popupComponent": { "$codeRef": "dynamicPluginsHealthResource.DynamicPluginsPopover" },
+      "popupTitle": "%console-app~Dynamic Plugin status%"
+    }
   }
 ]
