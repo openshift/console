@@ -20,9 +20,8 @@ import {
 } from './detail-page-tabs';
 import { PipelineDetailsTabProps } from './detail-page-tabs/types';
 import { useDevPipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
-import { MetricsQueryPrefix } from './pipeline-metrics/pipeline-metrics-utils';
 import PipelineMetrics from './pipeline-metrics/PipelineMetrics';
-import { isGAVersionInstalled, usePipelineOperatorVersion } from './utils/pipeline-operator';
+import { usePipelineMetricsLevel } from './utils/pipeline-operator';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
@@ -32,12 +31,8 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
   const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
-  const pipelineOperator = usePipelineOperatorVersion(namespace);
   const badge = usePipelineTechPreviewBadge(namespace);
-  const queryPrefix =
-    pipelineOperator && !isGAVersionInstalled(pipelineOperator)
-      ? MetricsQueryPrefix.TEKTON
-      : MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER;
+  const { hasUpdatePermission, queryPrefix, metricsLevel } = usePipelineMetricsLevel(namespace);
 
   const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineKebabActions(latestPipelineRun, templateNames.length > 0),
@@ -50,7 +45,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
       {...props}
       badge={badge}
       menuActions={augmentedMenuActions}
-      customData={{ templateNames, queryPrefix }}
+      customData={{ templateNames, queryPrefix, metricsLevel, hasUpdatePermission }}
       breadcrumbsFor={() => breadcrumbsFor}
       pages={[
         navFactory.details(PipelineDetails),
