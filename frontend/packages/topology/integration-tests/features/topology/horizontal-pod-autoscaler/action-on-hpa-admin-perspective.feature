@@ -4,7 +4,8 @@ Feature: Perform actions on HPA in Administrative perspective
 
 
         Background:
-            Given user has created or selected namespace "topology-hpa"
+            Given user is at developer perspective
+              And user has created or selected namespace "topology-hpa"
               And user has created a deployment workload "nodejs-ex-git" with CPU resource limit "100" and Memory resource limit "100"
               And user is at administrator perspective
 
@@ -69,7 +70,7 @@ Feature: Perform actions on HPA in Administrative perspective
                   | nodejs-ex-git-1 | test-hpa | new-test-hpa | 7           | 4           | 75       | 60          |
 
 
-        @regression @to-do
+        @regression
         Scenario: Delete HPA from Administrative perspective: TH-01-TC03
             Given user is at HorizontalPodAutoscaler page under workloads section
               And user has created HorizontalPodAutoscaler

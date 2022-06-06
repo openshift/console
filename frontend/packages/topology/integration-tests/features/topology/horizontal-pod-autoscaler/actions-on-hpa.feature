@@ -4,10 +4,11 @@ Feature: Perform actions on HPA in Topology page
 
 
         Background:
-            Given user has created or selected namespace "topology-hpa"
+            Given user is at developer perspective
+              And user has created or selected namespace "topology-hpa"
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: Add HorizontalPodAutoscaler to deployment workload: TH-02-TC01
             Given user has created a deployment workload "nodejs-ex-git" with CPU resource limit "100" and Memory resource limit "100"
               And user is at Topology page
@@ -19,9 +20,8 @@ Feature: Perform actions on HPA in Topology page
               And user enters CPU Utilization as "<cpu_utilisation>"
               And user enters Memory Utilization as "<memory_utilization>"
               And user clicks on Save button
-              And user clicks on workload "nodejs-ex-git"
-              And user selects Resources tab on sidebar
-             Then user can see two pods under pod section
+             Then user can see sidebar opens with Resources tab selected by default
+              And user can see two pods under pod section
               And user can see HorizontalPodAutoscalers section
               And user can see the "<hpa_name>" with HPA tag associated present under HPA section
 
@@ -30,11 +30,11 @@ Feature: Perform actions on HPA in Topology page
                   | test-hpa | 2           | 5           | 60              | 30                 |
 
 
-        @regression @to-do
+        @regression
         Scenario Outline: Edit HorizontalPodAutoscaler: TH-02-TC02
-            Given user has a workload "<workload_name>" with HPA assigned to it
+            Given user has a deployment workload "<workload_name>" with HPA assigned to it
               And user is at Topology page
-             When user clicks on workload "nodejs-ex-git"
+             When user clicks on workload "<workload_name>"
               And user selects "Edit HorizontalPodAutoscaler" option from Actions menu
               And user sees values are prefilled
               And user checks the name value but cannot edit it
@@ -43,24 +43,23 @@ Feature: Perform actions on HPA in Topology page
               And user checks and edit the cpu value to "<cpu_utilisation>"
               And user checks and edit the memory value to "<memory_utilization>"
               And user clicks on Save button
-              And user clicks on workload "nodejs-ex-git"
-              And user selects Resources tab on sidebar
-              And user sees Horizontal Pod Autoscalers section
+             Then user can see sidebar opens with Resources tab selected by default
+              And user can see HorizontalPodAutoscalers section
               And user goes to the details tab
-             Then user can see the changed pods number
+              And user can see the changed pods number
 
         Examples:
                   | workload_name   | hpa_max_pod | hpa_min_pod | cpu_utilisation | memory_utilization |
                   | nodejs-ex-git-1 | 6           | 3           | 75              | 50                 |
 
 
-        @regression @to-do
+        @regression
         Scenario: Remove HorizontalPodAutoscaler: TH-02-TC03
-            Given user has a deployment workload "nodejs-ex-git-1" with HPA assigned to it
-              And user is at Topology page
+            Given user is at Topology page
+              And user can see a deployment workload "nodejs-ex-git-1" created with HPA assigned to it
              When user right clicks on workload "nodejs-ex-git-1"
               And user selects "Remove HorizontalPodAutoscaler" option from context menu
-              And user clicks Remove on "Remove HorizontalPodAutoscaler?" modal
+              And user clicks Remove on Remove HorizontalPodAutoscaler? modal
               And user clicks on workload "nodejs-ex-git-1"
               And user selects Resources tab on sidebar
              Then user can not see HorizontalPodAutoscalers section

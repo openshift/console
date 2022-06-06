@@ -65,3 +65,42 @@ export const createGitWorkloadIfNotExistsOnTopologyPage = (
     }
   });
 };
+
+export const createGitWorkloadWithResourceLimit = (
+  gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
+  componentName: string = 'nodejs-ex-git',
+  resourceType: string = 'Deployment',
+  appName: string = 'nodejs-ex-git-app',
+  limitCPU: string = '100',
+  limitMemory: string = '100',
+  isPipelineSelected: boolean = false,
+) => {
+  addPage.selectCardFromOptions(addOptions.ImportFromGit);
+  gitPage.enterGitUrl(gitUrl);
+  gitPage.verifyValidatedMessage(gitUrl);
+  gitPage.enterComponentName(componentName);
+  gitPage.selectResource(resourceType);
+  gitPage.enterAppName(appName);
+  cy.byLegacyTestID('import-git-form')
+    .contains('Resource limits')
+    .click();
+  cy.get(topologyPO.resourceLimits.limitCPU).type(limitCPU);
+  cy.get(topologyPO.resourceLimits.limitMemory).type(limitMemory);
+  if (isPipelineSelected === true) {
+    gitPage.selectAddPipeline();
+  }
+  createForm.clickCreate().then(() => {
+    cy.get('.co-m-loader').should('not.exist');
+    cy.get('body').then(($body) => {
+      if ($body.find(formPO.errorAlert).length !== 0) {
+        cy.get(formPO.errorAlert)
+          .find('.co-pre-line')
+          .then(($ele) => {
+            cy.log($ele.text());
+          });
+      } else {
+        cy.log(`Workload : "${componentName}" is created`);
+      }
+    });
+  });
+};
