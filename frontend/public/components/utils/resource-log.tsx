@@ -566,7 +566,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   const onScroll = ({ scrollOffsetToBottom, scrollDirection, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested && status !== STREAM_EOF) {
-      if (scrollOffsetToBottom === 0) {
+      if (scrollOffsetToBottom < 1) {
         setStatus(STREAM_ACTIVE);
       } else if (scrollDirection === 'backward') {
         setStatus(STREAM_PAUSED);
