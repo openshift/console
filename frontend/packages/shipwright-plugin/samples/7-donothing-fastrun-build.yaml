@@ -1,0 +1,45 @@
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: donothing-build-strategy
+spec:
+  buildSteps:
+    - name: donothing
+      command:
+        - echo
+        - donothing-build-strategy
+      image: ubuntu
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  namespace: build-examples
+  name: donothing-build
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-nodejs
+    contextDir: source-build
+  strategy:
+    name: donothing-build-strategy
+    kind: BuildStrategy
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/donothing-build
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  generateName: donothing-build-
+spec:
+  buildRef:
+    name: donothing-build
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  generateName: donothing-build-
+spec:
+  buildRef:
+    name: donothing-build

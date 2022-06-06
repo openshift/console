@@ -49,18 +49,20 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
     }
   };
 
-  const items = Object.keys(menuActions).reduce((acc, key) => {
-    const menuAction: MenuAction = menuActions[key];
-    const label =
-      menuAction.label ||
-      (menuAction.model?.labelKey ? t(menuAction.model.labelKey) : menuAction.model?.label);
-    if (!label) return acc;
+  const items = menuActions
+    ? Object.keys(menuActions).reduce<Record<string, string>>((acc, key) => {
+        const menuAction: MenuAction = menuActions[key];
+        const label =
+          menuAction.label ||
+          (menuAction.model?.labelKey ? t(menuAction.model.labelKey) : menuAction.model?.label);
+        if (!label) return acc;
 
-    return {
-      ...acc,
-      [key]: label,
-    };
-  }, {});
+        return {
+          ...acc,
+          [key]: label,
+        };
+      }, {})
+    : undefined;
 
   return (
     <>
@@ -79,14 +81,16 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
             )}
           </ActionListItem>
           <ActionListItem>
-            <Dropdown
-              buttonClassName="pf-m-primary"
-              menuClassName="pf-m-align-right-on-md"
-              title={t('console-shared~Create')}
-              noSelection
-              items={items}
-              onChange={onSelectCreateAction}
-            />
+            {items && (
+              <Dropdown
+                buttonClassName="pf-m-primary"
+                menuClassName="pf-m-align-right-on-md"
+                title={t('console-shared~Create')}
+                noSelection
+                items={items}
+                onChange={onSelectCreateAction}
+              />
+            )}
           </ActionListItem>
         </ActionList>
       </PageHeading>

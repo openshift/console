@@ -219,7 +219,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
       title={t('public~BuildConfigs')}
       kind={BuildConfigsReference}
       ListComponent={BuildConfigsList}
-      canCreate={true}
+      canCreate={props.canCreate ?? true}
       filterLabel={props.filterLabel}
       rowFilters={filters}
     />
@@ -232,6 +232,7 @@ export type BuildConfigsDetailsProps = {
 };
 
 export type BuildConfigsPageProps = {
+  canCreate?: boolean;
   filterLabel?: string;
   mock?: boolean;
 };
