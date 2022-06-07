@@ -26,7 +26,7 @@ export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFil
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     const name = params.get('name');
-    if (name && name !== filter?.name?.selected?.[0]) {
+    if (!_.isNil(name) && name !== filter?.name?.selected?.[0]) {
       setFilter((state) => ({ ...state, name: { selected: [name] } }));
     }
   }, [filter, location]);
