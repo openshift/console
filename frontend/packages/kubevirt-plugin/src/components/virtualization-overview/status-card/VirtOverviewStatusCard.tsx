@@ -21,7 +21,6 @@ import {
   isResolvedDashboardsOverviewHealthURLSubsystem,
 } from '@console/dynamic-plugin-sdk';
 import { URLHealthItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/health-item';
-import { DashboardAlerts } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/status-card';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
@@ -35,6 +34,7 @@ import HealthBody from '@console/shared/src/components/dashboard/status-card/Hea
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { NetworkAddonsConfigModel } from '../../../models';
 import { StorageHealthItem } from './StorageHealthItem';
+import VirtualizationOverviewDashboardAlerts from './VirtOverviewDashboardAlerts';
 
 export const NetworkAddonsConfigResource: FirehoseResource = {
   kind: referenceForModel(NetworkAddonsConfigModel),
@@ -139,7 +139,7 @@ export const VirtOverviewStatusCard = connect<VirtOverviewStatusCardProps>(mapSt
             })}
           </Gallery>
         </HealthBody>
-        <DashboardAlerts />
+        <VirtualizationOverviewDashboardAlerts />
       </Card>
     );
   },
