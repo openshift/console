@@ -13,6 +13,8 @@ import {
   cloudProviderID,
   Timestamp,
 } from '@console/internal/components/utils';
+import { DetailsItem } from '@console/internal/components/utils/details-item';
+import { editLabelsModal } from '@console/internal/components/utils/details-page';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
@@ -57,10 +59,17 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dd>
               <NodeIPList ips={getNodeAddresses(node)} expand />
             </dd>
-            <dt>{t('console-app~Node labels')}</dt>
-            <dd>
+            <DetailsItem
+              label={t('console-app~Labels')}
+              obj={node}
+              path="metadata.labels"
+              valueClassName="details-item__value--labels"
+              onEdit={(e) => editLabelsModal(e, { resource: node, kind: NodeModel })}
+              canEdit={canUpdate}
+              editAsGroup
+            >
               <LabelList kind="Node" labels={node.metadata.labels} />
-            </dd>
+            </DetailsItem>
             <dt>{t('console-app~Taints')}</dt>
             <dd>
               {canUpdate ? (
