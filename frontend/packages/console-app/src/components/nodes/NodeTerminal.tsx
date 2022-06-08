@@ -138,6 +138,10 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
         console.warn('Could not delete node terminal debug namespace.', e);
       }
     };
+    const closeTab = (event) => {
+      event.preventDefault();
+      deleteNamespace(namespace.metadata.name);
+    };
     const createDebugPod = async () => {
       try {
         namespace = await k8sCreate(NamespaceModel, {
@@ -174,10 +178,10 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
       }
     };
     createDebugPod();
-    window.addEventListener('beforeunload', deleteNamespace);
+    window.addEventListener('beforeunload', closeTab);
     return () => {
       deleteNamespace(namespace.metadata.name);
-      window.removeEventListener('beforeunload', deleteNamespace);
+      window.removeEventListener('beforeunload', closeTab);
     };
   }, [nodeName]);
 
