@@ -209,4 +209,11 @@ describe('getPipelineRunTemplate', () => {
     const template = await getPipelineRunTemplate('nodejs', 'repo-name');
     expect(template).toEqual(expect.stringContaining('my-custom-template-string'));
   });
+
+  it('should return default template if there is an error while fetching', async () => {
+    /* eslint-disable-next-line prefer-promise-reject-errors */
+    k8sListResourceItemsMock.mockReturnValueOnce(Promise.reject({ message: '403' }));
+    const template = await getPipelineRunTemplate('nodejs', 'repo-name');
+    expect(template).toEqual(expect.stringContaining('name: repo-name'));
+  });
 });
