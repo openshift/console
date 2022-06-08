@@ -5,7 +5,11 @@ export const ServiceBindingModel: K8sKind = {
   kind: 'ServiceBinding',
   plural: 'servicebindings',
   label: 'ServiceBinding',
+  // t('service-binding-plugin~ServiceBinding')
+  labelKey: 'service-binding-plugin~ServiceBinding',
   labelPlural: 'ServiceBindings',
+  // t('service-binding-plugin~ServiceBindings')
+  labelPluralKey: 'service-binding-plugin~ServiceBindings',
   abbr: 'SB',
   apiGroup: 'binding.operators.coreos.com',
   apiVersion: 'v1alpha1',

@@ -4,7 +4,7 @@ import { configureUpdateStrategyModal, errorModal } from '@console/internal/comp
 import { togglePaused, asAccessReview } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, K8sKind, k8sCreate } from '@console/internal/module/k8s';
-import { ServiceBindingModel } from '@console/topology/src/models';
+import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { resourceLimitsModal } from '../../components/modals/resource-limits';
 import { serviceBindingModal } from '../../components/modals/service-binding';
 import { ResourceActionFactory } from './common-factory';

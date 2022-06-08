@@ -3,7 +3,7 @@ import {
   referenceForModel,
   WatchK8sResources,
 } from '@console/internal/module/k8s';
-import { ServiceBindingModel } from '@console/topology/src/models';
+import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { getBindableServicesList } from './fetch-bindable-services-utils';
 
 export const getBindableServiceResources = (namespace: string): WatchK8sResources<any> => {

@@ -1,7 +1,7 @@
 import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
-import { ServiceBindingModel } from '../models';
+import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 
 export const getOperatorWatchedResources = (namespace: string): WatchK8sResources<any> => {
   return {

@@ -1,0 +1,62 @@
+[
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "binding.operators.coreos.com"
+      }
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "binding.operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ServiceBinding"
+      },
+      "label": "%service-binding-plugin~ServiceBinding%",
+      "labelPlural": "%service-binding-plugin~ServiceBindings%",
+      "abbr": "SB"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "binding.operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ServiceBinding"
+      },
+      "flag": "ALLOW_SERVICE_BINDING"
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "binding.operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ServiceBinding"
+      },
+      "component": { "$codeRef": "pages.ServiceBindingListPage" }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "binding.operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ServiceBinding"
+      },
+      "component": { "$codeRef": "pages.ServiceBindingDetailsPage" }
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  }
+]

@@ -18,10 +18,10 @@ import {
   K8sResourceKind,
   referenceFor,
 } from '@console/internal/module/k8s';
+import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
-import { ServiceBindingModel } from '@console/topology/src/models';
 import { AddActions, disabledActionsFilter } from './add-resources';
 import { DeleteApplicationAction } from './context-menu';
 import { EditImportApplication } from './creators';
