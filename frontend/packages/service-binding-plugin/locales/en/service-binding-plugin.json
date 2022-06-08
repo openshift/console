@@ -1,0 +1,14 @@
+{
+  "ServiceBinding details": "ServiceBinding details",
+  "Status": "Status",
+  "Application": "Application",
+  "Services": "Services",
+  "Conditions": "Conditions",
+  "Connected": "Connected",
+  "Error": "Error",
+  "ServiceBindings": "ServiceBindings",
+  "Name": "Name",
+  "Namespace": "Namespace",
+  "Created": "Created",
+  "ServiceBinding": "ServiceBinding"
+}

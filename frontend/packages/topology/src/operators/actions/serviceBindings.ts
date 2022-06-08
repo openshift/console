@@ -8,7 +8,7 @@ import {
   referenceFor,
   apiVersionForModel,
 } from '@console/internal/module/k8s';
-import { ServiceBindingModel } from '../../models';
+import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 
 export const createServiceBinding = (

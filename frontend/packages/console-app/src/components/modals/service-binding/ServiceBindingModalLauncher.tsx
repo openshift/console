@@ -12,8 +12,8 @@ import {
   modelFor,
 } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';
+import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { ServiceBindingModel } from '@console/topology/src/models';
 import { createServiceBinding } from '@console/topology/src/operators/actions/serviceBindings';
 import { useValuesForPerspectiveContext } from '../../detect-perspective/useValuesForPerspectiveContext';
 import CreateServiceBindingForm, {

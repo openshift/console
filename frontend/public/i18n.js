@@ -53,6 +53,7 @@ export const init = () => {
         'pipelines-plugin',
         'public',
         'rhoas-plugin',
+        'service-binding-plugin',
         'topology',
         ...pluginStore.getAllowedDynamicPluginNames().map((name) => `plugin__${name}`),
       ],
