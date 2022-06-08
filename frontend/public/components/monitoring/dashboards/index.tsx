@@ -67,9 +67,11 @@ import {
 import { useBoolean } from '../hooks/useBoolean';
 import { useIsVisible } from '../hooks/useIsVisible';
 import { useFetchDashboards } from './useFetchDashboards';
-import { getActivePerspective, getAllVariables } from './monitoring-dashboard-utils';
-
-const NUM_SAMPLES = 30;
+import {
+  DEFAULT_GRAPH_SAMPLES,
+  getActivePerspective,
+  getAllVariables,
+} from './monitoring-dashboard-utils';
 
 const intervalVariableRegExps = ['__interval', '__rate_interval', '__auto_interval_[a-z]+'];
 
@@ -96,7 +98,7 @@ const evaluateTemplate = (
   };
 
   // Handle the special "interval" variables
-  const intervalMS = timespan / NUM_SAMPLES;
+  const intervalMS = timespan / DEFAULT_GRAPH_SAMPLES;
   const intervalMinutes = Math.floor(intervalMS / 1000 / 60);
   // Use a minimum of 5m to make sure we have enough data to perform `irate` calculations, which
   // require 2 data points each. Otherwise, there could be gaps in the graph.
@@ -229,7 +231,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
       const url = getPrometheusURL({
         endpoint: PrometheusEndpoint.QUERY_RANGE,
         query: prometheusQuery,
-        samples: NUM_SAMPLES,
+        samples: DEFAULT_GRAPH_SAMPLES,
         timeout: '60s',
         timespan,
         namespace,
