@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
+import { Alert, FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import {
@@ -30,6 +30,7 @@ import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
   NamespaceModel,
+  StorageClassModel,
   PersistentVolumeClaimModel,
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
@@ -69,6 +70,13 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
     const [pvcResource, pvcResourceLoaded, pvcResourceLoadError] = useK8sGet<
       PersistentVolumeClaimKind
     >(PersistentVolumeClaimModel, resource?.spec?.source?.persistentVolumeClaimName, namespace);
+
+    const [pvcStorageClass] = useK8sGet<StorageClassResourceKind>(
+      StorageClassModel,
+      volumeSnapshotAnnotations?.[snapshotPVCStorageClassAnnotation],
+    );
+
+    const isEncrypted = pvcStorageClass?.parameters?.['encrypted'] === 'true' ?? false;
 
     const [
       snapshotClassResource,
@@ -136,6 +144,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
         },
       );
     };
+
     return (
       <form onSubmit={submit} name="form" className="modal-content">
         <ModalTitle>{t('console-app~Restore as new PVC')}</ModalTitle>
@@ -146,6 +155,14 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               crash-consistent PVC copy will be created.
             </Trans>
           </p>
+          {isEncrypted && (
+            <Alert
+              className="co-alert"
+              variant="warning"
+              title={'Encrypted snapshots cannot be restored with a non-encrypted storage class'}
+              isInline
+            />
+          )}
           <FormGroup
             label={t('console-app~Name')}
             isRequired
