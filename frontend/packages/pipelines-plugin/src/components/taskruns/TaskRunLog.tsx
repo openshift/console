@@ -36,8 +36,8 @@ const TaskRunLog: React.FC<TaskRunLogProps> = ({ obj }) => {
   }
   return (
     <StatusBox
-      loadError={t('pipelines-plugin~Pod not found')}
       label={t('pipelines-plugin~TaskRun log')}
+      loadError={new Error(t('pipelines-plugin~Pod not found'))}
     />
   );
 };

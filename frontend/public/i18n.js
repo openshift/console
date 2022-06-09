@@ -51,6 +51,7 @@ export const init = () => {
         'notification-drawer',
         'olm',
         'pipelines-plugin',
+        'shipwright-plugin',
         'public',
         'rhoas-plugin',
         'topology',

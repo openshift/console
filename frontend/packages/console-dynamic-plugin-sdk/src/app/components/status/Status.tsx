@@ -15,8 +15,9 @@ import { YellowExclamationTriangleIcon } from './icons';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
 import StatusIconAndText from './StatusIconAndText';
 
-type StatusProps = StatusComponentProps & {
+export type StatusProps = StatusComponentProps & {
   status: string;
+  children?: React.ReactNode;
 };
 
 const Status: React.FC<StatusProps> = ({
