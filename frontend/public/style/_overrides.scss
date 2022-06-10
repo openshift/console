@@ -226,6 +226,11 @@ form.pf-c-form {
   }
 }
 
+// Remove when upstream issue is addressed. https://github.com/patternfly/patternfly/issues/4889
+.pf-theme-dark .pf-c-card  {
+  --pf-c-card--BackgroundColor: var(--pf-global--BackgroundColor--dark-300);
+}
+
 .table {
   margin-bottom: 0;
   &--layout-fixed {
