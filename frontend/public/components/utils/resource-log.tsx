@@ -129,6 +129,9 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
   );
 };
 const showDebugAction = (pod: PodKind, containerName: string) => {
+  if (!containerName) {
+    return false;
+  }
   const containerStatus = pod?.status?.containerStatuses?.find((c) => c.name === containerName);
   if (pod?.status?.phase === 'Succeeded' || pod?.status?.phase === 'Pending') {
     return false;
@@ -145,7 +148,7 @@ const showDebugAction = (pod: PodKind, containerName: string) => {
     return false;
   }
 
-  return !containerStatus?.state?.running || !containerStatus.ready;
+  return !containerStatus?.state?.running || !containerStatus?.ready;
 };
 
 // Component for log stream controls
