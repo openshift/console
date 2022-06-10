@@ -1,1 +1,23 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><style>.cls-1{fill:#000;}.cls-2{fill:#000;}.cls-3{fill:none;stroke:#fff;stroke-miterlimit:10;}.cls-4{fill:#fff;}.cls-5{fill:#fff;}</style></defs><title>Red_Hat-Openshift4-Catalog_Icons-Pipelines</title><circle class="cls-1" cx="50" cy="50" r="50"/><path class="cls-2" d="M85.36,14.64A50,50,0,0,1,14.64,85.36Z"/><circle class="cls-3" cx="50" cy="50" r="27.55"/><path class="cls-3" d="M33.81,27.71a27.56,27.56,0,0,1,34.64,1.82"/><polygon class="cls-4" points="64.66 31.49 72.29 33.81 70.48 26.04 64.66 31.49"/><path class="cls-3" d="M27.71,66.19a27.56,27.56,0,0,1,1.82-34.64"/><polygon class="cls-4" points="31.49 35.34 33.81 27.71 26.04 29.52 31.49 35.34"/><path class="cls-3" d="M66.19,72.29a27.56,27.56,0,0,1-34.64-1.82"/><polygon class="cls-4" points="35.34 68.51 27.71 66.19 29.52 73.96 35.34 68.51"/><path class="cls-3" d="M72.29,33.81a27.56,27.56,0,0,1-1.82,34.64"/><polygon class="cls-4" points="68.51 64.66 66.19 72.29 73.96 70.48 68.51 64.66"/><path class="cls-4" d="M44.86,27.93a7.28,7.28,0,1,1,10.31,0,7.16,7.16,0,0,1-10.31,0"/><path class="cls-5" d="M44.86,27.93,55.15,17.64a7.33,7.33,0,0,1,0,10.31,7.16,7.16,0,0,1-10.31,0"/><path class="cls-4" d="M44.86,82.66a7.28,7.28,0,1,1,10.31,0,7.17,7.17,0,0,1-10.31,0"/><path class="cls-5" d="M44.86,82.66,55.15,72.37a7.33,7.33,0,0,1,0,10.31,7.17,7.17,0,0,1-10.31,0"/><path class="cls-4" d="M17.31,55.11a7.27,7.27,0,1,1,10.3,0,7.16,7.16,0,0,1-10.3,0"/><path class="cls-5" d="M17.31,55.11,27.59,44.82a7.33,7.33,0,0,1,0,10.31,7.16,7.16,0,0,1-10.3,0"/><path class="cls-4" d="M72.41,55.11a7.27,7.27,0,1,1,10.3,0,7.16,7.16,0,0,1-10.3,0"/><path class="cls-5" d="M72.41,55.11,82.69,44.82a7.33,7.33,0,0,1,0,10.31,7.16,7.16,0,0,1-10.3,0"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="Layer_1" data-name="Layer 1" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+   <defs id="defs4">
+      <mask maskUnits="userSpaceOnUse" id="mask2609">
+         <g id="g2633">
+            <circle class="cls-1" cx="44.261604" cy="49.292576" r="50" id="circle2611" style="fill:#ffffff" />
+            <g id="g2631" transform="translate(-4.8966262,-0.73784312)">
+               <path style="color:#000000;fill:#000000;stroke-miterlimit:10;-inkscape-stroke:none" d="m 49.148437,21.802734 c -15.485649,0 -28.050781,12.563179 -28.050781,28.048828 0,15.48565 12.565132,28.050782 28.050781,28.050782 15.48565,0 28.048829,-12.565132 28.048829,-28.050782 0,-15.485649 -12.563179,-28.048828 -28.048829,-28.048828 z m 0,1 c 14.94521,0 27.048829,12.103619 27.048829,27.048828 0,14.94521 -12.103619,27.050782 -27.048829,27.050782 -14.945209,0 -27.050781,-12.105572 -27.050781,-27.050782 0,-14.945209 12.105572,-27.048828 27.050781,-27.048828 z" id="path2613" />
+               <polygon class="cls-4" points="70.48,26.04 64.66,31.49 72.29,33.81 " id="polygon2615" transform="translate(-0.8517701,-0.1476191)" style="fill:#000000" />
+               <polygon class="cls-4" points="26.04,29.52 31.49,35.34 33.81,27.71 " id="polygon2617" transform="translate(-0.8517701,-0.1476191)" style="fill:#000000" />
+               <polygon class="cls-4" points="29.52,73.96 35.34,68.51 27.71,66.19 " id="polygon2619" transform="translate(-0.8517701,-0.1476191)" style="fill:#000000" />
+               <polygon class="cls-4" points="73.96,70.48 68.51,64.66 66.19,72.29 " id="polygon2621" transform="translate(-0.8517701,-0.1476191)" style="fill:#000000" />
+               <path class="cls-4" d="m 44.00823,27.782381 a 7.28,7.28 0 1 1 10.31,0 7.16,7.16 0 0 1 -10.31,0" id="path2623" style="fill:#000000" />
+               <path class="cls-4" d="m 44.00823,82.512381 a 7.28,7.28 0 1 1 10.31,0 7.17,7.17 0 0 1 -10.31,0" id="path2625" style="fill:#000000" />
+               <path class="cls-4" d="m 16.45823,54.962381 a 7.27,7.27 0 1 1 10.3,0 7.16,7.16 0 0 1 -10.3,0" id="path2627" style="fill:#000000" />
+               <path class="cls-4" d="m 71.55823,54.962381 a 7.27,7.27 0 1 1 10.3,0 7.16,7.16 0 0 1 -10.3,0" id="path2629" style="fill:#000000" />
+            </g>
+         </g>
+      </mask>
+   </defs>
+   <title id="title6">Red_Hat-Openshift4-Catalog_Icons-Pipelines</title>
+   <rect style="fill:#000000;stroke:none;stroke-width:4.33381;stop-color:#000000" id="rect2492" width="100" height="100" x="-5.7383962" y="-0.7074244" mask="url(#mask2609)" transform="translate(5.7383957,0.70742413)" />
+</svg>

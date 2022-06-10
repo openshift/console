@@ -16,6 +16,10 @@
     // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
     font-size: var(--pf-global--FontSize--md);
     margin-right: var(--pf-global--spacer--sm);
+    svg {
+      fill: var(--pf-global--Color--100);
+      vertical-align: -0.125em;
+    }
   }
 
   &__title {
