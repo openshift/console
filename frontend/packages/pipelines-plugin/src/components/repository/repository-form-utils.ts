@@ -112,7 +112,7 @@ export const createRepositoryResources = async (
                     },
                     // eslint-disable-next-line @typescript-eslint/camelcase
                     webhook_secret: {
-                      name: secret?.metadata?.name,
+                      name: secretRef?.metadata?.name,
                       key: 'webhook.secret',
                     },
                   }
@@ -283,18 +283,23 @@ export const getPipelineRunTemplate = async (
   runtime: string,
   repoName: string,
 ): Promise<string> => {
-  const [pipelineRunTemplateCfg] = await k8sListResourceItems<ConfigMapKind>({
-    model: ConfigMapModel,
-    queryParams: {
-      ns: PIPELINE_NAMESPACE,
-      labelSelector: {
-        matchLabels: {
-          'pipelinesascode.openshift.io/runtime': runtime,
+  let runTimeTemplate;
+  try {
+    const [pipelineRunTemplateCfg] = await k8sListResourceItems<ConfigMapKind>({
+      model: ConfigMapModel,
+      queryParams: {
+        ns: PIPELINE_NAMESPACE,
+        labelSelector: {
+          matchLabels: {
+            'pipelinesascode.openshift.io/runtime': runtime,
+          },
         },
       },
-    },
-  });
-  const pipelineRunTemplate =
-    pipelineRunTemplateCfg?.data?.template ?? (await getPipelineRunDefaultTemplate(repoName));
+    });
+    runTimeTemplate = pipelineRunTemplateCfg?.data?.template;
+  } catch (e) {
+    console.log('failed to fetch runtime template:', e); // eslint-disable-line no-console
+  }
+  const pipelineRunTemplate = runTimeTemplate ?? (await getPipelineRunDefaultTemplate(repoName));
   return pipelineRunTemplate;
 };
