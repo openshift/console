@@ -91,6 +91,7 @@ const Status: React.FC<StatusProps> = ({
     case 'Up to date':
     case 'Provisioned as node':
     case 'Preferred':
+    case 'Connected':
       return <SuccessStatus {...statusProps} />;
 
     case 'Info':

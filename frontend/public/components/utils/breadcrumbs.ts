@@ -21,12 +21,13 @@ export const breadcrumbsForDetailsPage = (kindObj: K8sKind, match: any) => () =>
     ? breadcrumbsForGlobalConfig(i18next.t(kindObj.labelKey) || kindObj.label, match.url)
     : [
         {
-          name: i18next.t(kindObj.labelPluralKey) || kindObj.labelPlural,
+          name:
+            (kindObj.labelPluralKey && i18next.t(kindObj.labelPluralKey)) || kindObj.labelPlural,
           path: getBreadcrumbPath(match),
         },
         {
           name: i18next.t('public~{{kind}} details', {
-            kind: i18next.t(kindObj.labelKey) || kindObj.label,
+            kind: (kindObj.labelKey && i18next.t(kindObj.labelKey)) || kindObj.label,
           }),
           path: `${match.url}`,
         },

@@ -13,7 +13,7 @@ import {
   PostFormSubmissionAction,
   CustomFeatureFlag,
 } from '@console/plugin-sdk';
-import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/service-binding-plugin/src/const';
 import { TopologyDataModelFactory } from '@console/topology/src/extensions';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import { getGuidedTour } from './components/guided-tour';
