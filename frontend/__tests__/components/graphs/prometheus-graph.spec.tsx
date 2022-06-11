@@ -11,7 +11,6 @@ import { history } from '@console/internal/components/utils/router';
 import {
   PrometheusGraph,
   PrometheusGraphLink,
-  getPrometheusExpressionBrowserURL,
 } from '@console/internal/components/graphs/prometheus-graph';
 import store from '@console/internal/redux';
 
@@ -99,14 +98,4 @@ describe('<PrometheusGraphLink />', () => {
     expect(wrapper.find(Link).exists()).toBe(true);
     expect(wrapper.find(Link).props().to).toEqual('/monitoring/query-browser?query0=test');
   });
-});
-
-describe('getPrometheusExpressionBrowserURL()', () => {
-  const url = getPrometheusExpressionBrowserURL('https://mock.prometheus.url', [
-    'test-query-1',
-    'test-query-2',
-  ]);
-  expect(url).toBe(
-    'https://mock.prometheus.url/graph?g0.range_input=1h&g0.expr=test-query-1&g0.tab=0&g1.range_input=1h&g1.expr=test-query-2&g1.tab=0',
-  );
 });
