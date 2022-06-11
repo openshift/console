@@ -466,7 +466,6 @@
       "label": "%knative-plugin~Broker%",
       "description": "%knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers%",
       "icon": { "$codeRef": "icons.channelIconSVG" },
-      "iconRenderAs": "svg",
       "accessReview": [{ "group": "eventing.knative.dev", "resource": "brokers", "verb": "create" }]
     }
   },
@@ -482,7 +481,6 @@
       "label": "%knative-plugin~Channel%",
       "description": "%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%",
       "icon": { "$codeRef": "icons.channelIconSVG" },
-      "iconRenderAs": "svg",
       "accessReview": [
         { "group": "eventing.knative.dev", "resource": "channels", "verb": "create" }
       ]
