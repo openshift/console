@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
-import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../../../utils/service-level';
+import { useServiceLevelTitle, ServiceLevelText } from '../../../utils/service-level';
 import {
   referenceForModel,
   getOpenShiftVersion,
@@ -203,12 +203,10 @@ export const DetailsCard = withDashboardResources(
                     <ClusterVersion cv={clusterVersionData} />
                   </OverviewDetailItem>
 
-                  <ServiceLevel clusterID={clusterID}>
-                    <OverviewDetailItem title={useServiceLevelTitle()}>
-                      {/* Service Level handles loading and error state */}
-                      <ServiceLevelText clusterID={clusterID} />
-                    </OverviewDetailItem>
-                  </ServiceLevel>
+                  <OverviewDetailItem title={useServiceLevelTitle()}>
+                    {/* Service Level handles loading and error state */}
+                    <ServiceLevelText clusterID={clusterID} />
+                  </OverviewDetailItem>
 
                   <OverviewDetailItem
                     title={t('public~Update channel')}
