@@ -22,6 +22,7 @@ import {
   ResourceYAMLEditorProps,
   ResourceEventStreamProps,
   UsePrometheusPoll,
+  TimestampProps,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -238,3 +239,16 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
   // unify order with the rest of API
   return [result[0], !result[2], result[1]];
 };
+
+/**
+ * A component to render timestamp.
+ * The timestamps are synchronized between invidual instances of the Timestamp component.
+ * The provided timestamp is formatted according to user locale.
+ *
+ * @param {TimestampProps['timestamp']} timestamp - the timestamp to render. Format is expected to be ISO 8601 (used by Kubernetes), epoch timestamp, or an instance of a Date.
+ * @param {TimestampProps['simple']} simple - render simple version of the component omitting icon and tooltip.
+ * @param {TimestampProps['omitSuffix']} omitSuffix - formats the date ommiting the suffix.
+ * @param {TimestampProps['className']} className - additional class name for the component.
+ */
+export const Timestamp: React.FC<TimestampProps> = require('@console/internal/components/utils/timestamp')
+  .Timestamp;
