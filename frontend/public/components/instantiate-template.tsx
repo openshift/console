@@ -29,12 +29,12 @@ import {
 } from './utils';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
-  k8sCreate,
   K8sResourceKind,
   TemplateKind,
   TemplateInstanceKind,
   TemplateParameter,
 } from '../module/k8s';
+import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { RootState } from '../redux';
 
 const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
@@ -186,7 +186,10 @@ class TemplateForm_ extends React.Component<
       // Remove empty values.
       stringData: parameters,
     };
-    return k8sCreate(SecretModel, secret);
+    return k8sCreateResource({
+      model: SecretModel,
+      data: secret,
+    });
   }
 
   createTemplateInstance(secret: K8sResourceKind): Promise<K8sResourceKind> {
@@ -206,7 +209,36 @@ class TemplateForm_ extends React.Component<
         },
       },
     };
-    return k8sCreate(TemplateInstanceModel, instance);
+    return k8sCreateResource({
+      model: TemplateInstanceModel,
+      data: instance,
+    });
+  }
+
+  updatesecretOwnerRef(
+    secret: K8sResourceKind,
+    templateInstance: K8sResourceKind,
+  ): Promise<K8sResourceKind> {
+    const updatedSecret = {
+      ...secret,
+      metadata: {
+        ...secret.metadata,
+        ownerReferences: [
+          {
+            apiVersion: templateInstance.apiVersion,
+            kind: templateInstance.kind,
+            name: templateInstance.metadata.name,
+            uid: templateInstance.metadata.uid,
+          },
+        ],
+      },
+    };
+    return k8sUpdateResource({
+      model: SecretModel,
+      data: updatedSecret,
+      name: secret.metadata.name,
+      ns: secret.metadata.namespace,
+    });
   }
 
   save = (event: React.FormEvent<EventTarget>) => {
@@ -221,16 +253,17 @@ class TemplateForm_ extends React.Component<
     this.setState({ error: '', inProgress: true });
     this.createTemplateSecret()
       .then((secret: K8sResourceKind) => {
-        return this.createTemplateInstance(secret).then(() => {
-          this.setState({ inProgress: false });
-          const activeExtension = perspectiveExtensions.find(
-            (p) => p.properties.id === activePerspective,
-          );
-          (async () => {
+        return this.createTemplateInstance(secret).then(
+          async (templateInstance: K8sResourceKind) => {
+            await this.updatesecretOwnerRef(secret, templateInstance);
+            this.setState({ inProgress: false });
+            const activeExtension = perspectiveExtensions.find(
+              (p) => p.properties.id === activePerspective,
+            );
             const url = (await activeExtension.properties.importRedirectURL())(namespace);
             history.push(url);
-          })();
-        });
+          },
+        );
       })
       .catch((err) => this.setState({ inProgress: false, error: err.message }));
   };
