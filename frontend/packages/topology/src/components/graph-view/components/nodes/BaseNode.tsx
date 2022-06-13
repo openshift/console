@@ -1,9 +1,14 @@
 import * as React from 'react';
 import {
   BadgeLocation,
+  DEFAULT_LAYER,
   DefaultNode,
+  Layer,
   Node,
+  NodeStatus,
   observer,
+  ScaleDetailsLevel,
+  TOP_LAYER,
   useCombineRefs,
   useHover,
   WithContextMenuProps,
@@ -41,10 +46,13 @@ type BaseNodeProps = {
   children?: React.ReactNode;
   attachments?: React.ReactNode;
   element: Node;
+  hoverRef?: (node: Element) => () => void;
   dragging?: boolean;
   dropTarget?: boolean;
   canDrop?: boolean;
   createConnectorAccessVerb?: K8sVerb;
+  nodeStatus?: NodeStatus;
+  showStatusBackground?: boolean;
 } & Partial<WithSelectionProps> &
   Partial<WithDragNodeProps> &
   Partial<WithDndDropProps> &
@@ -57,15 +65,16 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   icon,
   kind,
   element,
+  hoverRef,
   children,
-  dragNodeRef,
   onShowCreateConnector,
   onContextMenu,
   contextMenuOpen,
   createConnectorAccessVerb = 'patch',
   ...rest
 }) => {
-  const [hover, hoverRef] = useHover();
+  const [hover, internalHoverRef] = useHover();
+  const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
@@ -80,10 +89,14 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     namespace: resourceObj.metadata.namespace,
   });
   const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
-  const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
-  const showLabel = useShowLabel(hover);
+  const showLabel = useShowLabel(hover || contextMenuOpen);
   const kindData = kind && getKindStringAndAbbreviation(kind);
 
+  const detailsLevel = element
+    .getController()
+    .getGraph()
+    .getDetailsLevel();
+  const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
   const badgeClassName = kindData
     ? classNames('odc-resource-icon', {
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
@@ -91,35 +104,43 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     : '';
 
   return (
-    <DefaultNode
-      className={classNames('odc-base-node', className, {
-        'is-filtered': filtered,
-      })}
-      truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
-      element={element}
-      showLabel={showLabel}
-      onShowCreateConnector={editAccess && onShowCreateConnector}
-      onContextMenu={onContextMenu}
-      contextMenuOpen={contextMenuOpen}
-      dragNodeRef={refs}
-      badge={kindData?.kindAbbr}
-      badgeColor={kindData?.kindColor}
-      badgeClassName={badgeClassName}
-      {...rest}
-    >
-      <g data-test-id="base-node-handler">
-        {icon && (
-          <image
-            x={cx - iconRadius}
-            y={cy - iconRadius}
-            width={iconRadius * 2}
-            height={iconRadius * 2}
-            xlinkHref={icon}
-          />
-        )}
-        {children}
+    <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
+      <g ref={nodeHoverRefs}>
+        <DefaultNode
+          className={classNames('odc-base-node', className, {
+            'is-filtered': filtered,
+          })}
+          truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
+          element={element}
+          showLabel={showLabel}
+          scaleLabel={detailsLevel !== ScaleDetailsLevel.high}
+          scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
+          onShowCreateConnector={
+            editAccess && detailsLevel !== ScaleDetailsLevel.low && onShowCreateConnector
+          }
+          onContextMenu={onContextMenu}
+          contextMenuOpen={contextMenuOpen}
+          badge={kindData?.kindAbbr}
+          badgeColor={kindData?.kindColor}
+          badgeClassName={badgeClassName}
+          showStatusBackground={!showDetails}
+          {...rest}
+        >
+          <g data-test-id="base-node-handler">
+            {icon && showDetails && (
+              <image
+                x={cx - iconRadius}
+                y={cy - iconRadius}
+                width={iconRadius * 2}
+                height={iconRadius * 2}
+                xlinkHref={icon}
+              />
+            )}
+            {showDetails && children}
+          </g>
+        </DefaultNode>
       </g>
-    </DefaultNode>
+    </Layer>
   );
 };
 

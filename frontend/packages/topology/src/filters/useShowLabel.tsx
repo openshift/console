@@ -9,7 +9,7 @@ const useShowLabel = (hover: boolean): boolean => {
   const detailsLevel = controller.getGraph().getDetailsLevel();
   const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
 
-  return detailsLevel === ScaleDetailsLevel.high && (showLabelsFilter?.value || hover);
+  return hover || (detailsLevel === ScaleDetailsLevel.high && showLabelsFilter?.value);
 };
 
 export { useShowLabel };

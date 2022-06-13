@@ -8,17 +8,9 @@
     pointer-events: none;
   }
 
-  .pf-topology__node__background {
-    fill: var(--pf-global--BackgroundColor--light-100);
-  }
-
   &.is-filtered .pf-topology__node__background {
     stroke-width: 2px;
     stroke: $filtered-stroke-color;
-  }
-  &.pf-m-selected .pf-topology__node__background {
-    stroke-width: 2px;
-    stroke: $selected-stroke-color;
   }
   &.pf-m-highlight .pf-topology__node__background {
     stroke: $interactive-stroke-color;

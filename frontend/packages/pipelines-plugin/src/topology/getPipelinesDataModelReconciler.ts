@@ -2,6 +2,7 @@ import { Model } from '@patternfly/react-topology';
 import { TopologyDataResources } from '@console/topology/src/topology-types';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
 import { getPipelinesAndPipelineRunsForResource } from '../utils/pipeline-plugin-utils';
+import { getLatestPipelineRunStatus } from '../utils/pipeline-utils';
 
 export const getPipelinesDataModelReconciler = (
   model: Model,
@@ -19,6 +20,8 @@ export const getPipelinesDataModelReconciler = (
       if (pipelineData) {
         node.data.resources.pipelines = pipelineData.pipelines;
         node.data.resources.pipelineRuns = pipelineData.pipelineRuns;
+        const { status } = getLatestPipelineRunStatus(pipelineData.pipelineRuns);
+        node.data.resources.pipelineRunStatus = status;
       }
     }
   });

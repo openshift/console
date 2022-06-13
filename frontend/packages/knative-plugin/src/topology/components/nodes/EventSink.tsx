@@ -12,6 +12,9 @@ import {
   Edge,
   useAnchor,
   AnchorEnd,
+  useHover,
+  useVisualizationController,
+  ScaleDetailsLevel,
 } from '@patternfly/react-topology';
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
@@ -41,9 +44,11 @@ const EventSink: React.FC<EventSinkProps> = ({
   dragNodeRef,
   dndDropRef,
   onShowCreateConnector,
+  contextMenuOpen,
   ...rest
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
+  const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
   const { data, resources, resource } = element.getData();
   const { width, height } = element.getBounds();
@@ -54,6 +59,9 @@ const EventSink: React.FC<EventSinkProps> = ({
   const { revisions, associatedDeployment = {} } = resources;
   const revisionIds = revisions?.map((revision) => revision.metadata.uid);
   const { loaded, loadError, pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
+  const controller = useVisualizationController();
+  const detailsLevel = controller.getGraph().getDetailsLevel();
+  const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
 
   const {
     podData: podsDeployment,
@@ -100,11 +108,12 @@ const EventSink: React.FC<EventSinkProps> = ({
       onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
       kind={data.kind}
       element={element}
+      hoverRef={hoverRef}
       dragNodeRef={groupRefs}
       labelIcon={<SignInAltIcon />}
       {...rest}
     >
-      {donutStatus && !isKafkaSink && (
+      {donutStatus && showDetails && !isKafkaSink && (
         <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
       )}
       {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
