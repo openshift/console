@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  Alert as ConsoleAlert,
-  AlertSeverity,
-} from '@console/internal/components/monitoring/types';
+import { AlertSeverity } from '@console/internal/components/monitoring/types';
 import { ExternalLink } from '@console/internal/components/utils';
 import useFilteredAlerts from '../../hooks/useFilteredAlerts';
 
@@ -50,7 +47,7 @@ const AlertTitle = ({ alert }) => {
 };
 
 const HighPriorityAlerts: React.FC = () => {
-  const filteredAlerts: ConsoleAlert[] = useFilteredAlerts(isKubeVirtHighPriorityAlert);
+  const [filteredAlerts] = useFilteredAlerts(isKubeVirtHighPriorityAlert);
 
   return (
     <div className="kv-high-priority-alerts">

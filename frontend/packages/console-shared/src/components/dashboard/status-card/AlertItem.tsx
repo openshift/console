@@ -13,6 +13,7 @@ import {
   getAlertMessage,
   getAlertDescription,
   getAlertTime,
+  getAlertSummary,
 } from './alert-utils';
 
 const CriticalIcon = () => <RedExclamationCircleIcon title="Critical" />;
@@ -63,7 +64,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
     <StatusItem
       Icon={getSeverityIcon(getAlertSeverity(alert))}
       timestamp={getAlertTime(alert)}
-      message={getAlertDescription(alert) || getAlertMessage(alert)}
+      message={getAlertDescription(alert) || getAlertMessage(alert) || getAlertSummary(alert)}
     >
       {text && action ? (
         <Button variant={ButtonVariant.link} onClick={() => action(alert)} isInline>
