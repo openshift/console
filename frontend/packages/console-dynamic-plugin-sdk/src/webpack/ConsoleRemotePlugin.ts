@@ -3,7 +3,7 @@ import * as readPkg from 'read-pkg';
 import * as webpack from 'webpack';
 import { remoteEntryFile } from '../constants';
 import { ConsolePackageJSON } from '../schema/plugin-package';
-import { sharedPluginModules } from '../shared-modules';
+import { sharedPluginModulesMetadata } from '../shared-modules';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { loadSchema, ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 
@@ -85,17 +85,25 @@ export class ConsoleRemotePlugin {
           name: `exposed-${moduleName}`,
         }),
       ),
-      shared: sharedPluginModules.reduce(
-        (acc, moduleRequest) => ({
-          ...acc,
-          // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-          [moduleRequest]: {
-            // Allow only a single version of the shared module at runtime
+      // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
+      shared: Object.entries(sharedPluginModulesMetadata).reduce(
+        (acc, [moduleRequest, moduleMetadata]) => {
+          const adaptedMetadata = _.defaults({}, moduleMetadata, {
             singleton: true,
-            // Prevent plugins from using a fallback version of the shared module
-            import: false,
-          },
-        }),
+            allowFallback: false,
+          });
+
+          const moduleConfig: Record<string, any> = {
+            singleton: adaptedMetadata.singleton,
+          };
+
+          if (!adaptedMetadata.allowFallback) {
+            moduleConfig.import = false;
+          }
+
+          acc[moduleRequest] = moduleConfig;
+          return acc;
+        },
         {},
       ),
     }).apply(compiler);
