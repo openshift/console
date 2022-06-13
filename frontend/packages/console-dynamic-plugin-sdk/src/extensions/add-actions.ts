@@ -19,7 +19,6 @@ export type AddAction = ExtensionDeclaration<
     icon?: CodeRef<React.ReactNode>;
     /** Optional access review to control visibility / enablement of the action. */
     accessReview?: AccessReviewResourceAttributes[];
-    iconRenderAs?: 'svg' | 'img';
   }
 >;
 

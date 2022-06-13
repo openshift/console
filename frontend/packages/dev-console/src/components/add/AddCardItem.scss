@@ -16,10 +16,10 @@
     // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
     font-size: var(--pf-global--FontSize--md);
     margin-right: var(--pf-global--spacer--sm);
-    svg {
-      fill: var(--pf-global--Color--100);
-      vertical-align: -0.125em;
-    }
+  }
+
+  &__img-icon {
+    vertical-align: -0.125em;
   }
 
   &__title {
@@ -40,5 +40,11 @@
   a {
     padding-left: 0;
     text-decoration: none;
+  }
+}
+
+:root:where(.pf-theme-dark) .odc-add-card-item {
+  &__img-icon {
+      filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }
 }
