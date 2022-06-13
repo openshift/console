@@ -41,7 +41,7 @@
   "pipeline visualization": "파이프 라인 시각화",
   "Unable to detect Event listener URL": "이벤트 리스너 URL을 감지할 수 없음",
   "GitHub application name": "GitHub 애플리케이션 이름",
-  "Provide a unique name": "고유한 이름 제공",
+  "Provide a unique name for your GitHub app, e.g. \"pipelines-ci-clustername\"": "GitHub 앱의 고유한 이름(예: \"pipelines-ci-clustername\")을 입력",
   "Enter name of application": "애플리케이션 이름 입력",
   "View all steps in documentation": "문서의 모든 단계보기",
   "Setup": "설정",
@@ -52,6 +52,7 @@
   "Something unexpected happened!!": "예상치 못한 일이 발생했습니다!!",
   "You have successfully setup the GitHub App": "GitHub 앱을 성공적으로 설정했습니다.",
   "<0>Use the <2>link</2> to install the newly created GitHub application to your repositories in your organization/account</0>": "<0><2>링크</2>를 사용하여 새로 생성된 GitHub 애플리케이션을 조직/계정의 리포지토리에 설치합니다.</0>",
+  "Use this <2>link</2> to install the GitHub Application to your repositories in your organization/account.": "<2>링크</2>를 사용하여 조직/계정의 리포지토리에 GitHub 애플리케이션을 설치합니다.",
   "App Name": "앱 이름",
   "App Link": "앱 링크",
   "Secret": "시크릿",
@@ -258,6 +259,7 @@
   "PipelineRun Duration": "파이프 라인 실행 기간",
   "TaskRun Duration": "작업 실행 기간",
   "Start your pipeline to view pipeline metrics.": "파이프 라인을 시작하여 파이프 라인 메트릭을 표시합니다.",
+  "Administrators can try <2>this quick start</2> to configure their metrics level to pipelinerun and taskrun. The pipelinerun and taskrun metrics level collects large volume of metrics over time in unbounded cardinality which may lead to metrics unreliability.": "관리자는 <2>이 빠른 시작</2>을 통해 파이프라인 실행 및 태스크 실행을 위한 메트릭 수준을 구성할 수 있습니다. 파이프라인 실행 및 작업 실행 메트릭 수준은 시간 경과에 따른 대량의 메트릭을 무한 카디널리티로 수집하여 메트릭을 신뢰할 수 없게 할 수 있습니다.",
   "Refresh Interval": "새로 고침 간격",
   "Time Range": "시간 범위",
   "Pipeline run count chart": "파이프 라인 실행 횟수 차트",
@@ -368,5 +370,6 @@
   "Skipped": "생략",
   "Cancelled": "취소",
   "Pending": "보류",
-  "PipelineRun not started yet": "파이프라인 실행이 아직 시작되지 않음"
+  "PipelineRun not started yet": "파이프라인 실행이 아직 시작되지 않음",
+  "Other": "기타"
 }

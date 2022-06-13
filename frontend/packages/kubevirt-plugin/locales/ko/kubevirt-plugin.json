@@ -1,5 +1,4 @@
 {
-  "Virtualization": "가상화",
   "Overview": "개요",
   "VirtualMachines": "가상 머신",
   "Templates": "템플릿",
@@ -11,6 +10,7 @@
   "VM templates": "가상 머신 템플릿",
   "With Data upload form": "데이터 업로드 양식",
   "Hardware Devices": "하드웨어 장치",
+  "Virtualization": "가상화",
   "Access mode": "액세스 모드",
   "Add": "추가",
   "Access and Volume modes should follow storage feature matrix": "액세스 및 볼륨 모드는 스토리지 기능 매트릭스를 따라야합니다.",
@@ -684,6 +684,7 @@
   "Migration Toolkit for Virtualization": "Migration Toolkit for Containers",
   "Recommended Operators": "권장 Operator",
   "Ease operational complexity with virtualization by using Operators.": "Operator를 사용하여 가상화로 운영 복잡성을 완화합니다.",
+  "Runbook": "Runbook",
   "VM statuses": "VM 상태",
   "Permissions": "권한",
   "Task": "작업",

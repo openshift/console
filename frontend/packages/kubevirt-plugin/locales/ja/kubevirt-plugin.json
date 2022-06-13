@@ -1,5 +1,4 @@
 {
-  "Virtualization": "仮想化",
   "Overview": "概要",
   "VirtualMachines": "仮想マシン",
   "Templates": "テンプレート",
@@ -11,6 +10,7 @@
   "VM templates": "仮想マシンテンプレート",
   "With Data upload form": "データアップロードフォームの使用",
   "Hardware Devices": "ハードウェアデバイス",
+  "Virtualization": "仮想化",
   "Access mode": "アクセスモード",
   "Add": "追加",
   "Access and Volume modes should follow storage feature matrix": "アクセスおよびボリュームモードはストレージ機能マトリックスに従う必要があります。",
@@ -684,6 +684,7 @@
   "Migration Toolkit for Virtualization": "Migration Toolkit for Virtualization",
   "Recommended Operators": "推奨される Operator",
   "Ease operational complexity with virtualization by using Operators.": "Operator を使用して、仮想化に関する運用上の複雑さを軽減します。",
+  "Runbook": "runbook",
   "VM statuses": "仮想マシンのステータス",
   "Permissions": "パーミッション",
   "Task": "タスク",
