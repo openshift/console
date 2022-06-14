@@ -13,6 +13,7 @@ export class NavLinkResourceCluster extends NavLink<NavLinkResourceClusterProps>
       );
     }
     return (
+      NavLink.isActive(props, resourcePath) ||
       resourcePath === props.resource ||
       _.startsWith(resourcePath, `${props.resource}/`) ||
       matchesModel(resourcePath, props.model)
