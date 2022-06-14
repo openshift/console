@@ -39,8 +39,9 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
 
   const formHelpText = (
     <Trans t={t} ns="helm-plugin">
-      Select the version to rollback <strong style={{ color: '#000' }}>{{ releaseName }}</strong>{' '}
-      to, from the table below:
+      {'Select the version to rollback '}
+      <strong style={{ color: 'var(--pf-global--Color--100)' }}>{{ releaseName }}</strong> to, from
+      the table below:
     </Trans>
   );
 

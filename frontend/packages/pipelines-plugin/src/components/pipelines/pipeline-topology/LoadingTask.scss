@@ -1,5 +1,5 @@
 .opp-pipeline-vis-loading-node {
-  fill: white;
+  fill: var(--pf-global--BackgroundColor--light-100);
   stroke: var(--pf-global--BorderColor--light-100);
   stroke-width: 1;
 
@@ -7,5 +7,6 @@
     dominant-baseline: middle;
     text-anchor: middle;
     cursor: pointer;
+    fill: var(--pf-global--Color--100);
   }
 }
