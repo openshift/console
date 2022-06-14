@@ -16,7 +16,10 @@ export const intOrString = (val: string | number): string | number => {
   return isValidInt ? parseInt(val, 10) : val;
 };
 
-export const pdbToK8sResource = (from: FormValues): PodDisruptionBudgetKind => {
+export const pdbToK8sResource = (
+  from: FormValues,
+  existingRes?: PodDisruptionBudgetKind,
+): PodDisruptionBudgetKind => {
   const requirement = from.requirement === 'Requirement' ? null : from.requirement;
 
   const res: PodDisruptionBudgetKind = {
@@ -33,8 +36,15 @@ export const pdbToK8sResource = (from: FormValues): PodDisruptionBudgetKind => {
       },
     },
   };
+
+  // Remove requirement because only one of maxUnavailable and minAvailable in a single PodDisruptionBudget can be specify
+  const omitRequirementFromExistingRes = _.omit(existingRes, [
+    'spec.minAvailable',
+    'spec.maxUnavailable',
+  ]);
+
   const pdbRes = requirement
-    ? _.merge(res, {
+    ? _.merge({}, omitRequirementFromExistingRes, res, {
         spec: {
           [requirement]:
             from.minAvailable !== ''
@@ -87,14 +97,14 @@ export const patchPDB = (
       value: formValues.selector.matchExpressions,
     });
   }
-  if (!_.isNil(existingResource?.spec?.minAvailable) && formValues.minAvailable !== '') {
+  if (formValues.minAvailable !== '') {
     patch.push({
       op: 'add',
       path: '/spec/minAvailable',
       value: intOrString(formValues.minAvailable),
     });
   }
-  if (!_.isNil(existingResource?.spec?.maxUnavailable) && formValues.maxUnavailable !== '') {
+  if (formValues.maxUnavailable !== '') {
     patch.push({
       op: 'add',
       path: '/spec/maxUnavailable',
