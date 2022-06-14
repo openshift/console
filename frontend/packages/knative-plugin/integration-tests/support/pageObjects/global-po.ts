@@ -1,6 +1,7 @@
 export const eventingPO = {
   createEventDropDownMenu: '[data-test-id="dropdown-button"]',
   createEventSource: '[data-test-dropdown-menu="eventSource"]',
+  createKnativeEvent: '[data-test="item knative-event-source"]',
   yamlEditor: 'div.monaco-scrollable-element.editor-scrollable.vs-dark',
   catlogTiles: '.odc-catalog-tile',
   eventSourceCard: '[data-test="item knative-event-source"]',
@@ -41,6 +42,7 @@ export const eventingPO = {
     secretKey: '[id="root_secretKey"]',
     stream: '[id="root_stream"]',
   },
+  createSidebar: '.co-catalog-page__overlay-actions',
   pingSource: {
     create: '[data-test="EventSource-PingSource"]',
     dataField: '[id="form-input-formData-data-PingSource-jsonData-field"]',
@@ -50,6 +52,7 @@ export const eventingPO = {
     resourceItem: '[data-test="dropdown-menu-item-link"]',
     submit: '[data-test-id="submit-button"]',
     details: '[id="nodejs-ex-git-app-PingSource"]',
+    save: '[data-test="save-changes"]',
   },
   apiServerSource: {
     create: '[data-test="EventSource-ApiServerSource"]',
