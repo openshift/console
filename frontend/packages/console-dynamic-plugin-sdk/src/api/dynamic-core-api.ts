@@ -22,8 +22,6 @@ import {
   ResourceYAMLEditorProps,
   ResourceEventStreamProps,
   UsePrometheusPoll,
-  PrometheusPollProps,
-  PrometheusResponse,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -138,8 +136,6 @@ export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/inter
   .ResourceLink;
 export { default as ResourceStatus } from '../app/components/utils/resource-status';
 
-export { checkAccess, useAccessReview, useAccessReviewAllowed } from '../app/components/utils/rbac';
-
 export {
   useK8sModel,
   useK8sModels,
@@ -222,14 +218,6 @@ export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@c
 export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('@console/internal/components/events')
   .WrappedResourceEventStream;
 
-const _usePrometheusPoll: (
-  props: PrometheusPollProps,
-) => [
-  PrometheusResponse,
-  unknown,
-  boolean,
-] = require('@console/internal/components/graphs/prometheus-poll-hook').usePrometheusPoll;
-
 /**
  * React hook to poll Prometheus for a single query.
  * @param options - Which is passed as a key-value map
@@ -243,8 +231,10 @@ const _usePrometheusPoll: (
  * @param options.timeout - a search param to append
  * @returns A tuple containing the query response, a boolean flag indicating whether the response has completed, and any errors encountered during the request or post-processing of the request
  */
-export const usePrometheusPoll: UsePrometheusPoll = (props) => {
-  const result = _usePrometheusPoll(props);
+export const usePrometheusPoll: UsePrometheusPoll = (options) => {
+  const result = require('@console/internal/components/graphs/prometheus-poll-hook').usePrometheusPoll(
+    options,
+  );
   // unify order with the rest of API
   return [result[0], !result[2], result[1]];
 };
