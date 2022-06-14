@@ -66,7 +66,7 @@ const BuildRunStatus: React.FC<{ buildRun: BuildRun }> = ({ buildRun }) => {
     <Status {...getBuildRunStatusProps(buildRun)}>
       {status === ComputedBuildRunStatus.FAILED ? (
         <>
-          <pre>{failedCondition.reason}</pre>
+          <pre data-test="failure-popup">{failedCondition.reason}</pre>
           {failedCondition.message}
         </>
       ) : null}

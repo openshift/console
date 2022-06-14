@@ -1,5 +1,6 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pipelinesPage } from '@console/pipelines-plugin/integration-tests/support/pages';
+import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { pageTitle, operators, switchPerspective } from '../../constants';
 import { operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';
@@ -139,6 +140,36 @@ const waitForPipelineTasks = (retries: number = 30) => {
   });
 };
 
+const createShipwrightBuild = () => {
+  projectNameSpace.selectProject(Cypress.env('NAMESPACE'));
+  cy.get('body').then(($body) => {
+    if ($body.find(operatorsPO.installOperators.search)) {
+      cy.get(operatorsPO.installOperators.search)
+        .clear()
+        .type(operators.ShipwrightOperator);
+    }
+  });
+  cy.get(operatorsPO.installOperators.shipwrightBuildLink).click({ force: true });
+  cy.get('body').then(($body) => {
+    if ($body.text().includes('Page Not Found')) {
+      cy.reload();
+    }
+  });
+  detailsPage.titleShouldContain(pageTitle.ShipwrightBuild);
+  app.waitForLoad();
+  cy.get('body').then(($body) => {
+    if ($body.find('[role="grid"]').length > 0) {
+      cy.log(`${pageTitle.ShipwrightBuild} already subscribed`);
+    } else {
+      cy.byTestID('item-create').click();
+      detailsPage.titleShouldContain(pageTitle.ShipwrightBuild);
+      cy.byTestID('create-dynamic-form').click();
+      cy.byLegacyTestID('details-actions').should('be.visible');
+      cy.contains('Ready', { timeout: 150000 }).should('be.visible');
+    }
+  });
+};
+
 const performPostInstallationSteps = (operator: operators): void => {
   switch (operator) {
     case operators.ServerlessOperator:
@@ -167,6 +198,10 @@ const performPostInstallationSteps = (operator: operators): void => {
     case operators.WebTerminalOperator:
       cy.log(`Performing Web Terminal post-installation steps`);
       waitForCRDs(operators.WebTerminalOperator);
+      break;
+    case operators.ShipwrightOperator:
+      cy.log(`Performing Shipwright Operator post-installation steps`);
+      createShipwrightBuild();
       break;
     default:
       cy.log(`Nothing to do in post-installation steps`);

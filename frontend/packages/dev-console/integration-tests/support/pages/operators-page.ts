@@ -171,6 +171,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.quayContainerSecurity).click();
         break;
       }
+      case 'Shipwright Operator':
+      case operators.ShipwrightOperator: {
+        cy.get(operatorsPO.operatorHub.shipwrightOperator).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }
