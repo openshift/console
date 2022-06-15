@@ -61,7 +61,9 @@
       "clusterOverview": "./utils/cluster-overview",
       "yamlEditor": "./components/YAMLEditorPage",
       "events": "./components/APIServerEvents",
-      "overviewDetailItem": "./components/OverviewDetailItem"
+      "overviewDetailItem": "./components/OverviewDetailItem",
+      "projectOverviewInventory": "./components/ProjectOverview/Inventory",
+      "projectOverview": "./utils/project-overview"
     },
     "dependencies": {
       "@console/pluginAPI": "*"

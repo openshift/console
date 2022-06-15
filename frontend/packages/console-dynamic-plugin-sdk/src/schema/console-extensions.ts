@@ -49,6 +49,10 @@ import {
   ResourceTabPage,
 } from '../extensions/pages';
 import { Perspective } from '../extensions/perspectives';
+import {
+  ProjectOverviewInventoryItem,
+  ProjectOverviewUtilizationItem,
+} from '../extensions/project-overview';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
 import { ReduxReducer } from '../extensions/redux';
 import { ModelMetadata } from '../extensions/resource-metadata';
@@ -126,7 +130,9 @@ export type SupportedExtension =
   | ClusterOverviewInventoryItem
   | ClusterOverviewUtilizationItem
   | ClusterOverviewMultilineUtilizationItem
-  | OverviewDetailItem;
+  | OverviewDetailItem
+  | ProjectOverviewUtilizationItem
+  | ProjectOverviewInventoryItem;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

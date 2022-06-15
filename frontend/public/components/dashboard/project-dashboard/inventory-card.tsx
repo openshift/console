@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import {
   PodModel,
   DeploymentModel,
@@ -39,8 +39,11 @@ import {
   isDashboardsProjectOverviewInventoryItem as isDynamicProjectDashboardInventoryItem,
   K8sResourceCommon,
   WatchK8sResources,
+  ProjectOverviewInventoryItem,
+  isProjectOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 
 const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
   kind: model.crd ? referenceForModel(model) : model.kind,
@@ -105,18 +108,20 @@ const ProjectInventoryItem = withDashboardResources(
     );
 
     return (
-      <ResourceInventoryItem
-        kind={model}
-        isLoading={
-          !projectName || !resourceLoaded || !additionalResourcesLoaded || !dynamicResourcesLoaded
-        }
-        namespace={projectName}
-        error={!!resourceLoadError || additionalResourcesLoadError || dynamicResourcesError}
-        resources={resourceData}
-        additionalResources={additionalResourcesData}
-        mapper={mapper}
-        dataTest="resource-inventory-item"
-      />
+      <StackItem>
+        <ResourceInventoryItem
+          kind={model}
+          isLoading={
+            !projectName || !resourceLoaded || !additionalResourcesLoaded || !dynamicResourcesLoaded
+          }
+          namespace={projectName}
+          error={!!resourceLoadError || additionalResourcesLoadError || dynamicResourcesError}
+          resources={resourceData}
+          additionalResources={additionalResourcesData}
+          mapper={mapper}
+          dataTest="resource-inventory-item"
+        />
+      </StackItem>
     );
   },
 );
@@ -128,6 +133,10 @@ export const InventoryCard = () => {
   const [dynamicItemExtensions] = useResolvedExtensions<DynamicProjectDashboardInventoryItem>(
     isDynamicProjectDashboardInventoryItem,
   );
+  const [inventoryExtensions] = useResolvedExtensions<ProjectOverviewInventoryItem>(
+    isProjectOverviewInventoryItem,
+  );
+
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const canListSecrets = useAccessReview({
@@ -144,46 +153,55 @@ export const InventoryCard = () => {
         <CardTitle>{t('public~Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
-        <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />
-        <ProjectInventoryItem projectName={projectName} model={DeploymentConfigModel} />
-        <ProjectInventoryItem projectName={projectName} model={StatefulSetModel} />
-        <ProjectInventoryItem
-          projectName={projectName}
-          model={PodModel}
-          mapper={getPodStatusGroups}
-        />
-        <ProjectInventoryItem
-          projectName={projectName}
-          model={PersistentVolumeClaimModel}
-          mapper={getPVCStatusGroups}
-        />
-        <ProjectInventoryItem projectName={projectName} model={ServiceModel} />
-        <ProjectInventoryItem projectName={projectName} model={RouteModel} />
-        <ProjectInventoryItem projectName={projectName} model={ConfigMapModel} />
-        {canListSecrets && <ProjectInventoryItem projectName={projectName} model={SecretModel} />}
-        {itemExtensions.map((item) => (
+        <Stack hasGutter>
+          <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />
+          <ProjectInventoryItem projectName={projectName} model={DeploymentConfigModel} />
+          <ProjectInventoryItem projectName={projectName} model={StatefulSetModel} />
           <ProjectInventoryItem
-            key={item.properties.model.kind}
             projectName={projectName}
-            model={item.properties.model}
-            mapper={item.properties.mapper}
-            additionalResources={item.properties.additionalResources}
+            model={PodModel}
+            mapper={getPodStatusGroups}
           />
-        ))}
-        {dynamicItemExtensions.map((item) => (
           <ProjectInventoryItem
-            key={item.properties.model.kind}
             projectName={projectName}
-            model={item.properties.model}
-            mapper={item.properties.mapper}
-            additionalDynamicResources={item.properties.additionalResources}
+            model={PersistentVolumeClaimModel}
+            mapper={getPVCStatusGroups}
           />
-        ))}
-        <ProjectInventoryItem
-          projectName={projectName}
-          model={VolumeSnapshotModel}
-          mapper={getVSStatusGroups}
-        />
+          <ProjectInventoryItem projectName={projectName} model={ServiceModel} />
+          <ProjectInventoryItem projectName={projectName} model={RouteModel} />
+          <ProjectInventoryItem projectName={projectName} model={ConfigMapModel} />
+          {canListSecrets && <ProjectInventoryItem projectName={projectName} model={SecretModel} />}
+          <ProjectInventoryItem
+            projectName={projectName}
+            model={VolumeSnapshotModel}
+            mapper={getVSStatusGroups}
+          />
+          {itemExtensions.map((item) => (
+            <ProjectInventoryItem
+              key={item.properties.model.kind}
+              projectName={projectName}
+              model={item.properties.model}
+              mapper={item.properties.mapper}
+              additionalResources={item.properties.additionalResources}
+            />
+          ))}
+          {dynamicItemExtensions.map((item) => (
+            <ProjectInventoryItem
+              key={item.properties.model.kind}
+              projectName={projectName}
+              model={item.properties.model}
+              mapper={item.properties.mapper}
+              additionalDynamicResources={item.properties.additionalResources}
+            />
+          ))}
+          {inventoryExtensions.map(({ uid, properties: { component: Component } }) => (
+            <ErrorBoundary key={uid}>
+              <StackItem>
+                <Component projectName={projectName} />
+              </StackItem>
+            </ErrorBoundary>
+          ))}
+        </Stack>
       </CardBody>
     </Card>
   );
