@@ -8,13 +8,13 @@ import { Link, match as RMatch } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { useDocumentListener, KEYBOARD_SHORTCUTS, useDeepCompareMemoize } from '@console/shared';
+import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { storagePrefix } from '../row-filter';
-import { ErrorPage404, ErrorBoundaryFallback } from '../error';
+import { ErrorPage404 } from '../error';
 import { K8sKind, K8sResourceCommon, referenceForModel, Selector } from '../../module/k8s';
 import {
   Dropdown,
@@ -490,7 +490,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       nameFilter={nameFilter}
     />
   );
-}, ErrorBoundaryFallback);
+}, ErrorBoundaryFallbackPage);
 
 ListPage.displayName = 'ListPage';
 

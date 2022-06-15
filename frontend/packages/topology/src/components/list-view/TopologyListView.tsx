@@ -13,11 +13,10 @@ import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { alertingLoaded } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
-import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
 import { useQueryParams } from '@console/shared';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
 import { TYPE_APPLICATION_GROUP } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { subscribeOverviewAlerts } from '../utils/subscribeOverviewAlerts';
@@ -340,7 +339,7 @@ const TopologyListView = withFallback(
     stateToProps,
     dispatchToProps,
   )(React.memo(ConnectedTopologyListView)),
-  ErrorBoundaryFallback,
+  ErrorBoundaryFallbackPage,
 );
 
 export default TopologyListView;
