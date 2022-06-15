@@ -4,6 +4,7 @@ import {
   app,
   createGitWorkload,
   navigateTo,
+  projectNameSpace,
   topologyActions,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
@@ -12,6 +13,7 @@ import {
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
 import { topologyPO } from '../../page-objects/topology-po';
+import { checkPodsText } from '../../pages/functions/add-secret';
 
 Given('user has scaled up the pod to 2 for workload {string}', (workloadName: string) => {
   topologyPage.componentNode(workloadName).click({ force: true });
@@ -31,6 +33,8 @@ Then(
   'user is able to see pod Scaling to {string} for workload {string}',
   (podText: string, workloadName: string) => {
     topologySidePane.close();
+    cy.reload();
+    app.waitForDocumentLoad();
     topologyPage.componentNode(workloadName).click({ force: true });
     topologySidePane.selectTab('Details');
     topologySidePane.verifyPodText(podText);
@@ -90,6 +94,8 @@ When('user enters value as {string}', (annotationValue: string) => {
 });
 
 Then('user can see route decorator has been hidden for workload {string}', (appName: string) => {
+  cy.reload();
+  app.waitForDocumentLoad();
   topologyHelper.search(appName);
   cy.get(topologyPO.graph.reset).click();
   cy.get(topologyPO.highlightNode)
@@ -100,8 +106,52 @@ Then('user can see route decorator has been hidden for workload {string}', (appN
 });
 
 Then('user can see the new route href in route decorator be {string}', (value: string) => {
-  cy.get(topologyPO.graph.routeDecorator)
-    .scrollIntoView()
-    .parents()
-    .should('have.attr', 'href', value);
+  cy.reload();
+  app.waitForDocumentLoad();
+  topologyHelper.search('nodejs-ex-2');
+  cy.get(topologyPO.graph.reset).click();
+  cy.get(topologyPO.highlightNode)
+    .should('be.visible')
+    .within(() => {
+      cy.get(topologyPO.graph.routeDecorator, { timeout: 120000 }).should(
+        'have.attr',
+        'href',
+        value,
+      );
+    });
+});
+
+Given('user has selected namespace {string}', (projectName: string) => {
+  projectNameSpace.selectProject(projectName);
+});
+
+When('user clicks on knative workload {string}', (workloadName: string) => {
+  topologyPage.waitForLoad();
+  topologyPage.knativeNode(workloadName).click({ force: true });
+});
+
+When('user clicks on sidebar workload {string}', (workloadName: string) => {
+  topologyPage.waitForLoad();
+  topologyPage.componentNode(workloadName).click({ force: true });
+});
+
+When('user opens Details tab', () => {
+  topologyPage.waitForLoad();
+  topologyPage.componentNode('nodejs-ex-git-1').click({ force: true });
+  topologySidePane.selectTab('Details');
+});
+
+When('user can see pod count is 1', () => {
+  topologySidePane.close();
+  topologyPage.componentNode('nodejs-ex-git-1').click({ force: true });
+  checkPodsText();
+});
+
+When('user can see workload {string} is created', (workloadName: string) => {
+  navigateTo(devNavigationMenu.Topology);
+  topologyPage.componentNode(workloadName).should('be.visible');
+});
+
+When('user clicks on {string} from action menu', (actionItem: string) => {
+  topologyActions.selectAction(actionItem);
 });
