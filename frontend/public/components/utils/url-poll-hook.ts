@@ -1,15 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useState } from 'react';
+import { UseURLPoll } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { usePoll } from './poll-hook';
 import { useSafeFetch } from './safe-fetch-hook';
 
 export const URL_POLL_DEFAULT_DELAY = 15000; // 15 seconds
 
-export const useURLPoll = <R>(
+export const useURLPoll: UseURLPoll = <R>(
   url: string,
   delay = URL_POLL_DEFAULT_DELAY,
   ...dependencies: any[]
-): URLPoll<R> => {
+) => {
   const [error, setError] = useState();
   const [response, setResponse] = useState<R>();
   const [loading, setLoading] = useState(true);
@@ -39,5 +40,3 @@ export const useURLPoll = <R>(
 
   return [response, error, loading];
 };
-
-export type URLPoll<R> = [R, any, boolean];

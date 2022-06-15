@@ -278,6 +278,8 @@ export type QuickStartsLoaderProps = {
   children: (quickStarts: QuickStart[], loaded: boolean) => React.ReactNode;
 };
 
-export type QuickStartsSectionWrapperProps = {
-  children: React.ReactElement[];
-};
+export type UseURLPoll = <R>(
+  url: string,
+  delay?: number,
+  ...dependencies: any[]
+) => [R, any, boolean];
