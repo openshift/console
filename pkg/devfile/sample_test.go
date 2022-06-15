@@ -2,24 +2,13 @@ package devfile
 
 import (
 	"encoding/json"
-	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/devfile/registry-support/index/generator/schema"
 )
 
 func TestGetRegistrySamples(t *testing.T) {
-
-	nodejsBase64Image := "https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg"
-
-	quarkusBase64Image := "https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg"
-
-	springBootBase64Image := "https://spring.io/images/projects/spring-edf462fec682b9d48cf628eaf9e19521.svg"
-
-	pythonBase64Image := "https://www.python.org/static/community_logos/python-logo-generic.svg"
-
-	goBase64Image := "https://go.dev/blog/go-brand/Go-Logo/SVG/Go-Logo_Blue.svg"
-
 	tests := []struct {
 		name        string
 		registry    string
@@ -35,7 +24,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					DisplayName: "Basic Node.js",
 					Description: "A simple Hello World Node.js application",
 					Tags:        []string{"NodeJS", "Express"},
-					Icon:        nodejsBase64Image,
+					Icon:        "https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg",
 					Type:        schema.SampleDevfileType,
 					ProjectType: "nodejs",
 					Language:    "nodejs",
@@ -51,7 +40,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					DisplayName: "Basic Quarkus",
 					Description: "A simple Hello World Java application using Quarkus",
 					Tags:        []string{"Java", "Quarkus"},
-					Icon:        quarkusBase64Image,
+					Icon:        "https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg",
 					Type:        schema.SampleDevfileType,
 					ProjectType: "quarkus",
 					Language:    "java",
@@ -67,7 +56,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					DisplayName: "Basic Spring Boot",
 					Description: "A simple Hello World Java Spring Boot application using Maven",
 					Tags:        []string{"Java", "Spring"},
-					Icon:        springBootBase64Image,
+					Icon:        "https://spring.io/images/projects/spring-edf462fec682b9d48cf628eaf9e19521.svg",
 					Type:        schema.SampleDevfileType,
 					ProjectType: "springboot",
 					Language:    "java",
@@ -83,7 +72,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					DisplayName: "Basic Python",
 					Description: "A simple Hello World application using Python",
 					Tags:        []string{"Python"},
-					Icon:        pythonBase64Image,
+					Icon:        "https://www.python.org/static/community_logos/python-logo-generic.svg",
 					Type:        schema.SampleDevfileType,
 					ProjectType: "python",
 					Language:    "python",
@@ -99,7 +88,7 @@ func TestGetRegistrySamples(t *testing.T) {
 					DisplayName: "Basic Go",
 					Description: "A simple Hello World application using Go",
 					Tags:        []string{"Go"},
-					Icon:        goBase64Image,
+					Icon:        "https://go.dev/blog/go-brand/Go-Logo/SVG/Go-Logo_Blue.svg",
 					Type:        schema.SampleDevfileType,
 					ProjectType: "go",
 					Language:    "go",
@@ -107,6 +96,22 @@ func TestGetRegistrySamples(t *testing.T) {
 					Git: &schema.Git{
 						Remotes: map[string]string{
 							"origin": "https://github.com/devfile-samples/devfile-sample-go-basic.git",
+						},
+					},
+				},
+				{
+					Name:        "dotnet60-basic",
+					DisplayName: "Basic .NET 6.0",
+					Description: "A simple application using .NET 6.0",
+					Tags:        []string{"dotnet"},
+					Icon:        "https://github.com/dotnet/brand/raw/main/logo/dotnet-logo.png",
+					Type:        schema.SampleDevfileType,
+					ProjectType: "dotnet",
+					Language:    "dotnet",
+					Provider:    "Red Hat",
+					Git: &schema.Git{
+						Remotes: map[string]string{
+							"origin": "https://github.com/devfile-samples/devfile-sample-dotnet60-basic.git",
 						},
 					},
 				},
@@ -126,14 +131,16 @@ func TestGetRegistrySamples(t *testing.T) {
 			} else if !tt.wantErr && err != nil {
 				t.Errorf("Got unexpected error: %s", err)
 			} else if !tt.wantErr {
-				var registryIndex []schema.Schema
-				err = json.Unmarshal(bytes, &registryIndex)
+				var parsedRegistryIndex []schema.Schema
+				err = json.Unmarshal(bytes, &parsedRegistryIndex)
+				actualRegistryIndex, _ := json.MarshalIndent(parsedRegistryIndex, "", "  ")
+				expectedRegistryIndex, _ := json.MarshalIndent(tt.wantSamples, "", "  ")
 				if err != nil {
 					t.Errorf("Got unexpected error: %s", err)
 					return
 				}
-				if !reflect.DeepEqual(registryIndex, tt.wantSamples) {
-					t.Errorf("expected %+v does not match actual %+v", registryIndex, tt.wantSamples)
+				if strings.Compare(string(expectedRegistryIndex), string(actualRegistryIndex)) != 0 {
+					t.Errorf("expected %s does not match actual %s", expectedRegistryIndex, actualRegistryIndex)
 				}
 
 			}
