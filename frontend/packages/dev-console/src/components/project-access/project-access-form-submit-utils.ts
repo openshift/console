@@ -86,16 +86,15 @@ export const getRemovedRoles = (
 export const sendRoleBindingRequest = (
   verb: string,
   roles: UserRoleBinding[],
-  roleBinding: RoleBinding,
+  namespace: string,
 ) => {
-  const rb = _.clone(roleBinding);
-  const finalArray = [];
+  const finalArray: Promise<K8sResourceKind>[] = [];
   _.forEach(roles, (user) => {
     const roleBindingName =
       verb === Verb.Create
         ? generateRoleBindingName(user.subject.name, user.role)
         : user.roleBindingName;
-    rb.subjects =
+    const subjects =
       verb === Verb.Create || verb === Verb.Remove
         ? [
             {
@@ -107,9 +106,21 @@ export const sendRoleBindingRequest = (
         : user.subjects.length > 1
         ? user.subjects
         : [user.subject];
-    rb.roleRef.name = user.role;
-    rb.metadata.name = roleBindingName;
-    finalArray.push(sendK8sRequest(verb, rb));
+    const roleBinding: RoleBinding = {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'RoleBinding',
+      metadata: {
+        name: roleBindingName,
+        namespace,
+      },
+      roleRef: {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'ClusterRole',
+        name: user.role,
+      },
+      subjects,
+    };
+    finalArray.push(sendK8sRequest(verb, roleBinding));
   });
   return finalArray;
 };

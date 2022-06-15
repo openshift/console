@@ -23,18 +23,3 @@ export type RoleBinding = K8sResourceCommon & {
   roleRef: SubjectType;
   subjects?: SubjectType[];
 };
-
-export const roleBinding: RoleBinding = {
-  apiVersion: 'rbac.authorization.k8s.io/v1',
-  kind: 'RoleBinding',
-  metadata: {
-    name: '',
-    namespace: '',
-  },
-  roleRef: {
-    apiGroup: 'rbac.authorization.k8s.io',
-    kind: 'ClusterRole',
-    name: '',
-  },
-  subjects: [],
-};
