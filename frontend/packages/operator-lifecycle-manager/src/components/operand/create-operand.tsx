@@ -28,6 +28,7 @@ import {
   hasNoFields,
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
@@ -167,10 +168,12 @@ const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
       </Helmet>
       <ModelStatusBox groupVersionKind={match.params.plural}>
         {createResourceExtension ? (
-          <AsyncComponent
-            loader={createResourceExtension.properties.component}
-            namespace={match.params.ns}
-          />
+          <ErrorBoundaryPage>
+            <AsyncComponent
+              loader={createResourceExtension.properties.component}
+              namespace={match.params.ns}
+            />
+          </ErrorBoundaryPage>
         ) : (
           <CreateOperand
             match={match}

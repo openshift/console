@@ -6,6 +6,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, ResourceLink, LoadingBox } from '../utils';
 import { connectToPlural } from '../../kinds';
@@ -94,7 +95,9 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
           </div>
         </>
       )}
-      <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
+      <ErrorBoundaryPage>
+        <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
+      </ErrorBoundaryPage>
     </div>
   );
 };
