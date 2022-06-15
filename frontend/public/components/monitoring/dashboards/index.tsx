@@ -552,12 +552,12 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
 
   const panelClassModifier = getPanelClassModifier(panel);
 
-  const handleZoom = (timeRange: number, endTime: number) => {
+  const handleZoom = React.useCallback((timeRange: number, endTime: number) => {
     setQueryArguments({
       endTime: endTime.toString(),
       timeRange: timeRange.toString(),
     });
-  };
+  }, []);
 
   return (
     <div

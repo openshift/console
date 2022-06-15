@@ -351,7 +351,7 @@ const Graph: React.FC<GraphProps> = React.memo(
     _.each(allSeries, (series, i) => {
       _.each(series, ([metric, values]) => {
         // Ignore any disabled series
-        data.push(_.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? null : values);
+        data.push(_.some(disabledSeries?.[i], (s) => _.isEqual(s, metric)) ? null : values);
         if (formatSeriesTitle) {
           const name = formatSeriesTitle(metric, i);
           legendData.push({ name });
@@ -633,7 +633,7 @@ const getMaxSamplesForSpan = (span: number) =>
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
-  disabledSeries = [],
+  disabledSeries,
   disableZoom,
   filterLabels,
   fixedEndTime,
