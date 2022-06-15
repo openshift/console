@@ -21,10 +21,9 @@ import {
   isHorizontalNavTab as DynamicIsHorizontalNavTab,
   ExtensionK8sGroupModel,
 } from '@console/dynamic-plugin-sdk';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
-import { ErrorBoundaryFallback } from '../error';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
 import { ResourceMetricsDashboard } from './resource-metrics';
@@ -304,7 +303,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     const path = `${props.match.path}/${p.path || p.href}`;
     const render = (params: RouteComponentProps) => {
       return (
-        <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+        <ErrorBoundaryPage>
           <p.component
             {...params}
             {...componentProps}
@@ -313,7 +312,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
             customData={props.customData}
             params={params}
           />
-        </ErrorBoundary>
+        </ErrorBoundaryPage>
       );
     };
     return <Route path={path} exact key={p.nameKey || p.name} render={render} />;
