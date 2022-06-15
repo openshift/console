@@ -15,7 +15,9 @@ export const getRolesWithNameChange = (
   const rolesWithNameChange = _.filter(createRoles, (o1) =>
     deleteRoles.find(
       (o2) =>
-        o1.roleBindingName === o2.roleBindingName && o1.user !== o2.user && o1.role === o2.role,
+        o1.roleBindingName === o2.roleBindingName &&
+        o1.subject.name !== o2.subject.name &&
+        o1.role === o2.role,
     ),
   );
   return rolesWithNameChange;
@@ -31,7 +33,7 @@ export const sendK8sRequest = (
     case Verb.Remove:
       return k8sKill(RoleBindingModel, roleBinding);
     case Verb.Patch:
-      return k8sPatch(RoleBindingModel, { metadata: roleBinding.metadata }, [
+      return k8sPatch(RoleBindingModel, roleBinding, [
         { op: 'replace', path: `/subjects`, value: roleBinding.subjects },
       ]);
     default:
@@ -50,10 +52,11 @@ export const getNewRoles = (
   const newRoles = _.uniqBy(
     _.filter(
       formValues,
-      (o1) => !initialRoles.find((o2) => o1.user === o2.user && o1.role === o2.role),
+      (o1) =>
+        !initialRoles.find((o2) => o1.subject.name === o2.subject.name && o1.role === o2.role),
     ),
     function(user) {
-      return JSON.stringify([user.user, user.role]);
+      return JSON.stringify([user.subject.name, user.role]);
     },
   );
   return newRoles;
@@ -65,30 +68,88 @@ export const getRemovedRoles = (
 ): UserRoleBinding[] => {
   const removeRoles = _.filter(
     initialRoles,
-    (o1) => !formValues.find((o2: UserRoleBinding) => o1.user === o2.user && o1.role === o2.role),
+    (o1) =>
+      !formValues.find(
+        (o2: UserRoleBinding) => o1.subject.name === o2.subject.name && o1.role === o2.role,
+      ),
   );
   return removeRoles;
 };
 
-export const sendRoleBindingRequest = (verb: string, roles: UserRoleBinding[], roleBinding) => {
+export const sendRoleBindingRequest = (
+  verb: string,
+  roles: UserRoleBinding[],
+  roleBinding: RoleBinding,
+) => {
+  const rb = _.clone(roleBinding);
   const finalArray = [];
   _.forEach(roles, (user) => {
     const roleBindingName =
-      verb === Verb.Create ? generateRoleBindingName(user.user, user.role) : user.roleBindingName;
-    roleBinding.subjects[0].name = user.user;
-    roleBinding.roleRef.name = user.role;
-    roleBinding.metadata.name = roleBindingName;
-    finalArray.push(sendK8sRequest(verb, roleBinding));
+      verb === Verb.Create
+        ? generateRoleBindingName(user.subject.name, user.role)
+        : user.roleBindingName;
+    rb.subjects =
+      verb === Verb.Create || verb === Verb.Remove
+        ? [
+            {
+              apiGroup: 'rbac.authorization.k8s.io',
+              kind: user.subject?.kind || 'User',
+              name: user.subject.name,
+            },
+          ]
+        : user.subjects.length > 1
+        ? user.subjects
+        : [user.subject];
+    rb.roleRef.name = user.role;
+    rb.metadata.name = roleBindingName;
+    finalArray.push(sendK8sRequest(verb, rb));
   });
   return finalArray;
 };
 
-export const getGroupedRole = (role: UserRoleBinding, roleBindings: RoleBinding[]): RoleBinding => {
-  const groupedRoleBinding = roleBindings.find(
-    (roleBinding: RoleBinding) =>
-      roleBinding.metadata.name === role.roleBindingName && roleBinding.subjects.length > 1,
+export const getRolesWithMultipleSubjects = (
+  newRoles: UserRoleBinding[],
+  removeRoles: UserRoleBinding[],
+  updateRoles: UserRoleBinding[],
+) => {
+  const updateRolesWithMultipleSubjects: UserRoleBinding[] = [];
+  _.remove(
+    newRoles,
+    (newRole) =>
+      newRole.subjects?.length > 1 &&
+      removeRoles.find(
+        (role) => role.roleBindingName === newRole.roleBindingName && role.role === newRole.role,
+      ),
   );
-  const newSubjects = groupedRoleBinding?.subjects.filter((subject) => subject.name !== role.user);
-  const groupedRole = groupedRoleBinding ? { ...groupedRoleBinding, subjects: newSubjects } : null;
-  return groupedRole;
+
+  _.remove(removeRoles, (removeRole) => {
+    if (removeRole.subjects.length > 1) {
+      const roleWithMultipleSubjects = updateRolesWithMultipleSubjects.find(
+        (r) => r.roleBindingName === removeRole.roleBindingName,
+      );
+      if (roleWithMultipleSubjects) {
+        const newSubs = roleWithMultipleSubjects.subjects.filter(
+          (sub) => sub.name !== removeRole.subject.name,
+        );
+        roleWithMultipleSubjects.subjects = newSubs;
+      } else {
+        const newSubs = removeRole.subjects.filter((sub) => sub.name !== removeRole.subject.name);
+        updateRolesWithMultipleSubjects.push({ ...removeRole, subjects: newSubs });
+      }
+      return true;
+    }
+    return false;
+  });
+
+  _.remove(updateRoles, (updateRole) => {
+    if (updateRole.subjects.length > 1) {
+      const roleWithMultipleSubjects = updateRolesWithMultipleSubjects.find(
+        (r) => r.roleBindingName === updateRole.roleBindingName,
+      );
+      roleWithMultipleSubjects.subjects.push(updateRole.subject);
+      return true;
+    }
+    return false;
+  });
+  return updateRolesWithMultipleSubjects;
 };

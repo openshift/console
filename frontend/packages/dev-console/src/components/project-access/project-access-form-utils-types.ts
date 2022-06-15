@@ -6,21 +6,22 @@ export enum Verb {
   Patch = 'Patch',
 }
 
-export interface UserRoleBinding {
-  roleBindingName?: string;
-  user: string;
-  role: string;
-}
-
-type ApiGroupType = {
-  apiGroup: string;
+type SubjectType = {
+  apiGroup?: string;
   kind: string;
   name: string;
 };
 
+export type UserRoleBinding = {
+  roleBindingName?: string;
+  role: string;
+  subject: SubjectType;
+  subjects: SubjectType[];
+};
+
 export type RoleBinding = K8sResourceCommon & {
-  roleRef: ApiGroupType;
-  subjects?: ApiGroupType[];
+  roleRef: SubjectType;
+  subjects?: SubjectType[];
 };
 
 export const roleBinding: RoleBinding = {
@@ -35,11 +36,5 @@ export const roleBinding: RoleBinding = {
     kind: 'ClusterRole',
     name: '',
   },
-  subjects: [
-    {
-      apiGroup: 'rbac.authorization.k8s.io',
-      kind: 'User',
-      name: '',
-    },
-  ],
+  subjects: [],
 };
