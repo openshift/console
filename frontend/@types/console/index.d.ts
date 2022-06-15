@@ -15,6 +15,7 @@ declare module '*.png' {
 declare interface Window {
   SERVER_FLAGS: {
     alertManagerBaseURL: string;
+    alertmanagerUserWorkloadBaseURL: string;
     authDisabled: boolean;
     basePath: string;
     branding: string;
