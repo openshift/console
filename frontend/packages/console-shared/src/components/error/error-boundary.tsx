@@ -1,8 +1,20 @@
 import * as React from 'react';
+import { ErrorBoundaryFallbackProps } from './types';
+
+type ErrorBoundaryProps = {
+  FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
+};
+
+/** Needed for tests -- should not be imported by application logic */
+export type ErrorBoundaryState = {
+  hasError: boolean;
+  error: { message: string; stack: string; name: string };
+  errorInfo: { componentStack: string };
+};
 
 const DefaultFallback: React.FC = () => <div />;
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +38,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     });
     // Log the error so something shows up in the JS console when `DefaultFallback` is used.
     // eslint-disable-next-line no-console
-    console.error('Catched error in a child component:', error, errorInfo);
+    console.error('Caught error in a child component:', error, errorInfo);
   }
 
   render() {
@@ -45,34 +57,4 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 }
 
-export const withFallback: WithFallback = (WrappedComponent, FallbackComponent) => {
-  const Component = (props) => (
-    <ErrorBoundary FallbackComponent={FallbackComponent}>
-      <WrappedComponent {...props} />
-    </ErrorBoundary>
-  );
-  Component.displayName = `withFallback(${WrappedComponent.displayName || WrappedComponent.name})`;
-  return Component;
-};
-
-export type WithFallback = <P = {}>(
-  Component: React.ComponentType<P>,
-  FallbackComponent?: React.ComponentType<any>,
-) => React.ComponentType<P>;
-
-export type ErrorBoundaryFallbackProps = {
-  errorMessage: string;
-  componentStack: string;
-  stack: string;
-  title: string;
-};
-
-export type ErrorBoundaryProps = {
-  FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
-};
-
-export type ErrorBoundaryState = {
-  hasError: boolean;
-  error: { message: string; stack: string; name: string };
-  errorInfo: { componentStack: string };
-};
+export default ErrorBoundary;

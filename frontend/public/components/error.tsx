@@ -14,8 +14,7 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { global_danger_color_100 as globalDangerColor100 } from '@patternfly/react-tokens';
 
-import { ErrorBoundaryFallbackProps } from '@console/shared/src/components/error/error-boundary';
-import { CopyToClipboard, getQueryArgument, PageHeading, ExpandCollapse } from './utils';
+import { getQueryArgument, PageHeading } from './utils';
 
 const getMessage = (type: string, id: string): string => {
   // User messages for error_types returned in auth.go
@@ -82,37 +81,6 @@ export const ErrorPage404: React.SFC<ErrorPage404Props> = (props) => {
         <title>{t('public~Page Not Found (404)')}</title>
       </Helmet>
       <ErrorComponent title={t('public~404: Page Not Found')} message={props.message} />
-    </div>
-  );
-};
-
-export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (props) => {
-  const { t } = useTranslation();
-  return (
-    <div className="co-m-pane__body">
-      <PageHeading title={t('public~Oh no! Something went wrong.')} centerText />
-      <ExpandCollapse
-        textCollapsed={t('public~Show details')}
-        textExpanded={t('public~Hide details')}
-      >
-        <h3 className="co-section-heading-tertiary">{props.title}</h3>
-        <div className="form-group">
-          <label htmlFor="description">{t('public~Description:')}</label>
-          <p>{props.errorMessage}</p>
-        </div>
-        <div className="form-group">
-          <label htmlFor="componentTrace">{t('public~Component trace:')}</label>
-          <div className="co-copy-to-clipboard__stacktrace-width-height">
-            <CopyToClipboard value={props.componentStack.trim()} />
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="stackTrace">{t('public~Stack trace:')}</label>
-          <div className="co-copy-to-clipboard__stacktrace-width-height">
-            <CopyToClipboard value={props.stack.trim()} />
-          </div>
-        </div>
-      </ExpandCollapse>
     </div>
   );
 };
