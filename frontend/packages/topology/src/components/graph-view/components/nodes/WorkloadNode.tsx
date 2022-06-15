@@ -8,7 +8,6 @@ import {
   useHover,
   useVisualizationController,
   WithContextMenuProps,
-  WithCreateConnectorProps,
   WithDndDropProps,
   WithDragNodeProps,
   WithSelectionProps,
@@ -26,6 +25,7 @@ import {
   useBuildConfigsWatcher,
   usePodsWatcher,
 } from '@console/shared';
+import { WithCreateConnectorProps } from '../../../../behavior/withCreateConnector';
 import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
 import BaseNode from './BaseNode';
@@ -157,6 +157,7 @@ type WorkloadPodsNodeProps = WorkloadNodeProps & {
 const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function WorkloadPodsNode({
   donutStatus,
   element,
+  children,
   urlAnchorRef,
   canDrop,
   dropTarget,
@@ -220,6 +221,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
           {donutStatus && showDetails ? (
             <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={showPodCount} />
           ) : null}
+          {children}
         </BaseNode>
       </Tooltip>
     </g>

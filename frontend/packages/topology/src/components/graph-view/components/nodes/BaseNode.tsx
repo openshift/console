@@ -10,9 +10,7 @@ import {
   ScaleDetailsLevel,
   TOP_LAYER,
   useCombineRefs,
-  useHover,
   WithContextMenuProps,
-  WithCreateConnectorProps,
   WithDndDropProps,
   WithDragNodeProps,
   WithSelectionProps,
@@ -21,6 +19,8 @@ import classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { K8sVerb, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
+import useHover from '../../../../behavior/useHover';
+import { WithCreateConnectorProps } from '../../../../behavior/withCreateConnector';
 import { useSearchFilter } from '../../../../filters';
 import { useShowLabel } from '../../../../filters/useShowLabel';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
@@ -71,9 +71,11 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   onContextMenu,
   contextMenuOpen,
   createConnectorAccessVerb = 'patch',
+  createConnectorDrag,
   ...rest
 }) => {
-  const [hover, internalHoverRef] = useHover();
+  const [hoverChange, setHoverChange] = React.useState<boolean>(false);
+  const [hover, internalHoverRef] = useHover(200, 200, [hoverChange]);
   const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
   const { width, height } = element.getDimensions();
   const cx = width / 2;
@@ -102,7 +104,11 @@ const BaseNode: React.FC<BaseNodeProps> = ({
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
       })
     : '';
-
+  React.useEffect(() => {
+    if (!createConnectorDrag) {
+      setHoverChange((prev) => !prev);
+    }
+  }, [createConnectorDrag]);
   return (
     <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
       <g ref={nodeHoverRefs}>
@@ -113,7 +119,6 @@ const BaseNode: React.FC<BaseNodeProps> = ({
           truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
           element={element}
           showLabel={showLabel}
-          scaleLabel={detailsLevel !== ScaleDetailsLevel.high}
           scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
           onShowCreateConnector={
             editAccess && detailsLevel !== ScaleDetailsLevel.low && onShowCreateConnector

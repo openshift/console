@@ -8,12 +8,12 @@ import {
   RectAnchor,
   useAnchor,
   WithContextMenuProps,
-  WithCreateConnectorProps,
   WithDndDropProps,
   WithDragNodeProps,
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
+import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { BaseNode } from '@console/topology/src/components/graph-view';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { VMStatus } from '../../../constants/vm/vm-status';
@@ -40,7 +40,13 @@ const VM_STATUS_GAP = 7;
 const VM_STATUS_WIDTH = 7;
 const VM_STATUS_RADIUS = 7;
 
-const ObservedVmNode: React.FC<VmNodeProps> = ({ element, canDrop, dropTarget, ...rest }) => {
+const ObservedVmNode: React.FC<VmNodeProps> = ({
+  element,
+  canDrop,
+  dropTarget,
+  children,
+  ...rest
+}) => {
   useAnchor(RectAnchor);
   const { width, height } = element.getBounds();
   const vmData = element.getData().data;
@@ -139,6 +145,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({ element, canDrop, dropTarget, .
             height={height - (VM_STATUS_GAP + VM_STATUS_WIDTH) * 2}
           />
           {imageComponent}
+          {children}
         </BaseNode>
       </Tooltip>
     </g>

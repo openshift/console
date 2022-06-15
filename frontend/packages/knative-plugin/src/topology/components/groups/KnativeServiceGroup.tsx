@@ -12,15 +12,14 @@ import {
   useAnchor,
   useDragNode,
   Layer,
-  useHover,
   createSvgIdUrl,
   useCombineRefs,
-  WithCreateConnectorProps,
   NodeLabel,
 } from '@patternfly/react-topology';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { WithCreateConnectorProps, useHover } from '@console/topology/src/behavior';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
@@ -74,11 +73,14 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   dndDropRef,
   editAccess,
   tooltipLabel,
+  children,
   onHideCreateConnector,
   onShowCreateConnector,
+  createConnectorDrag,
 }) => {
   const { t } = useTranslation();
-  const [hover, hoverRef] = useHover();
+  const [hoverChange, setHoverChange] = React.useState<boolean>(false);
+  const [hover, hoverRef] = useHover(200, 200, [hoverChange]);
   const [innerHover, innerHoverRef] = useHover();
   const dragProps = React.useMemo(() => ({ element }), [element]);
   const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
@@ -112,6 +114,12 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
       }
     }
   }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
+
+  React.useEffect(() => {
+    if (!createConnectorDrag) {
+      setHoverChange((prev) => !prev);
+    }
+  }, [createConnectorDrag]);
 
   const decorators = getNodeDecorators(
     element,
@@ -208,6 +216,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             {element.getLabel()}
           </NodeLabel>
         )}
+        {children}
       </g>
     </Tooltip>
   );

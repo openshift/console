@@ -8,7 +8,6 @@ import {
   WithContextMenuProps,
   useCombineRefs,
   WithDragNodeProps,
-  WithCreateConnectorProps,
   Edge,
   useAnchor,
   AnchorEnd,
@@ -19,6 +18,7 @@ import {
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared';
+import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { PodSet } from '@console/topology/src/components/graph-view';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { KafkaSinkModel } from '../../../models';
@@ -45,6 +45,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   dndDropRef,
   onShowCreateConnector,
   contextMenuOpen,
+  children,
   ...rest
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
@@ -135,6 +136,7 @@ const EventSink: React.FC<EventSinkProps> = ({
           {getEventSourceIcon(data.kind, resources.obj, element.getType())}
         </foreignObject>
       )}
+      {children}
     </BaseNode>
   );
 };

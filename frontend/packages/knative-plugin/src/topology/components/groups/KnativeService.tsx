@@ -5,12 +5,12 @@ import {
   WithSelectionProps,
   WithContextMenuProps,
   WithDndDropProps,
-  WithCreateConnectorProps,
   useDragNode,
 } from '@patternfly/react-topology';
 import classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { nodeDragSourceSpec, GroupNode } from '@console/topology/src/components/graph-view';
 import { getKindStringAndAbbreviation } from '@console/topology/src/components/graph-view/components/nodes/nodeUtils';
 import { getResource } from '@console/topology/src/utils';
@@ -30,7 +30,7 @@ export type KnativeServiceProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const KnativeService: React.FC<KnativeServiceProps> = (props) => {
+const KnativeService: React.FC<KnativeServiceProps> = ({ children, ...props }) => {
   const { element } = props;
   const { data } = element.getData();
   const resourceObj = getResource(props.element);
@@ -62,7 +62,9 @@ const KnativeService: React.FC<KnativeServiceProps> = (props) => {
         badgeClassName={badgeClassName}
         dragging={dragging}
         dragNodeRef={dragNodeRef}
-      />
+      >
+        {children}
+      </GroupNode>
     );
   }
 
@@ -77,7 +79,9 @@ const KnativeService: React.FC<KnativeServiceProps> = (props) => {
       dragSpec={dragSpec}
       regrouping={regrouping}
       dragNodeRef={dragNodeRef}
-    />
+    >
+      {children}
+    </KnativeServiceGroup>
   );
 };
 

@@ -5,10 +5,10 @@ import {
   withTargetDrag,
   withSelection,
   withDndDrop,
-  withCreateConnector,
 } from '@patternfly/react-topology';
 import { ViewComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { contextMenuActions } from '@console/topology/src/actions';
+import { withCreateConnector } from '@console/topology/src/behavior';
 import {
   NodeComponentProps,
   withContextMenu,
