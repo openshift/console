@@ -32,7 +32,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback } from '@console/shared/src/components/error';
 import {
   alertingErrored,
   alertingLoaded,

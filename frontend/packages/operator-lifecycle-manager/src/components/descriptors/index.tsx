@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getSchemaAtPath } from '@console/shared';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback } from '@console/shared/src/components/error';
 import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';
 import { Descriptor, DescriptorType } from './types';

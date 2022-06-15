@@ -7,7 +7,7 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { Firehose, LoadingBox, DetailsItem } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundary } from '@console/shared/src/components/error';
 import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../mocks';
 import {
   SubscriptionModel,
