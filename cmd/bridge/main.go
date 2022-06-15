@@ -47,7 +47,7 @@ const (
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
 
-	// Well-known location of the tenant aware Alert Manager service for OpenShift. This is only accessible in-cluster.
+	// Default location of the tenant aware Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerTenancyHost = "alertmanager-main.openshift-monitoring.svc:9092"
 
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
@@ -115,6 +115,8 @@ func main() {
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 
+	fAlertmanagerUserWorkloadHost := fs.String("alermanager-user-workload-host", openshiftAlertManagerHost, "Location of the Alertmanager service for user-defined alerts.")
+	fAlertmanagerTenancyHost := fs.String("alermanager-tenancy-host", openshiftAlertManagerTenancyHost, "Location of the tenant-aware Alertmanager service.")
 	fAlermanagerPublicURL := fs.String("alermanager-public-url", "", "Public URL of the cluster's AlertManager server.")
 	fGrafanaPublicURL := fs.String("grafana-public-url", "", "Public URL of the cluster's Grafana server.")
 	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
@@ -241,33 +243,35 @@ func main() {
 	}
 
 	srv := &server.Server{
-		PublicDir:                 *fPublicDir,
-		BaseURL:                   baseURL,
-		LogoutRedirect:            logoutRedirect,
-		Branding:                  branding,
-		CustomProductName:         *fCustomProductName,
-		CustomLogoFile:            *fCustomLogoFile,
-		ControlPlaneTopology:      *fControlPlaneTopology,
-		StatuspageID:              *fStatuspageID,
-		DocumentationBaseURL:      documentationBaseURL,
-		AlertManagerPublicURL:     alertManagerPublicURL,
-		GrafanaPublicURL:          grafanaPublicURL,
-		PrometheusPublicURL:       prometheusPublicURL,
-		ThanosPublicURL:           thanosPublicURL,
-		LoadTestFactor:            *fLoadTestFactor,
-		InactivityTimeout:         *fInactivityTimeout,
-		DevCatalogCategories:      *fDevCatalogCategories,
-		UserSettingsLocation:      *fUserSettingsLocation,
-		EnabledConsolePlugins:     consolePluginsFlags,
-		I18nNamespaces:            i18nNamespaces,
-		PluginProxy:               *fPluginProxy,
-		QuickStarts:               *fQuickStarts,
-		AddPage:                   *fAddPage,
-		ProjectAccessClusterRoles: *fProjectAccessClusterRoles,
-		K8sProxyConfigs:           make(map[string]*proxy.Config),
-		K8sClients:                make(map[string]*http.Client),
-		Telemetry:                 telemetryFlags,
-		ReleaseVersion:            *fReleaseVersion,
+		PublicDir:                    *fPublicDir,
+		BaseURL:                      baseURL,
+		LogoutRedirect:               logoutRedirect,
+		Branding:                     branding,
+		CustomProductName:            *fCustomProductName,
+		CustomLogoFile:               *fCustomLogoFile,
+		ControlPlaneTopology:         *fControlPlaneTopology,
+		StatuspageID:                 *fStatuspageID,
+		DocumentationBaseURL:         documentationBaseURL,
+		AlertManagerUserWorkloadHost: *fAlertmanagerUserWorkloadHost,
+		AlertManagerTenancyHost:      *fAlertmanagerTenancyHost,
+		AlertManagerPublicURL:        alertManagerPublicURL,
+		GrafanaPublicURL:             grafanaPublicURL,
+		PrometheusPublicURL:          prometheusPublicURL,
+		ThanosPublicURL:              thanosPublicURL,
+		LoadTestFactor:               *fLoadTestFactor,
+		InactivityTimeout:            *fInactivityTimeout,
+		DevCatalogCategories:         *fDevCatalogCategories,
+		UserSettingsLocation:         *fUserSettingsLocation,
+		EnabledConsolePlugins:        consolePluginsFlags,
+		I18nNamespaces:               i18nNamespaces,
+		PluginProxy:                  *fPluginProxy,
+		QuickStarts:                  *fQuickStarts,
+		AddPage:                      *fAddPage,
+		ProjectAccessClusterRoles:    *fProjectAccessClusterRoles,
+		K8sProxyConfigs:              make(map[string]*proxy.Config),
+		K8sClients:                   make(map[string]*http.Client),
+		Telemetry:                    telemetryFlags,
+		ReleaseVersion:               *fReleaseVersion,
 	}
 
 	managedClusterConfigs := []serverconfig.ManagedClusterConfig{}
@@ -427,10 +431,15 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
+			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerUserWorkloadHost, Path: "/api"},
+			}
 			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerTenancyHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerTenancyHost, Path: "/api"},
 			}
 			srv.MeteringProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
@@ -487,6 +496,11 @@ func main() {
 				Endpoint:        offClusterAlertManagerURL,
 			}
 			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        offClusterAlertManagerURL,
+			}
+			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        offClusterAlertManagerURL,
