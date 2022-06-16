@@ -73,7 +73,7 @@ const TabBarTabHookResolver: React.FC<TabBarTabHookResolverProps> = ({
   );
 
   const [tabs, tabsLoaded] = React.useMemo(() => {
-    if (Object.keys(resolvedTabSections).length === 0) return [[], false];
+    if (Object.keys(resolvedTabSections).length === 0) return [[], true];
 
     const resolvedTabs: Tab[] = tabExtensions.reduce((acc, { id: tabId, label }) => {
       if (!resolvedTabSections[tabId]) {

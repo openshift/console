@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateYAML } from '@console/internal/components/create-yaml';
-import { PageHeading } from '@console/internal/components/utils';
+import { PageHeading, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sPodControllerKind, getGroupVersionKind } from '@console/internal/module/k8s';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PodDisruptionBudgetModel } from '../../models';
 import { pdbToK8sResource } from './pdb-models';
 import PDBForm from './PDBForm';
@@ -31,7 +32,7 @@ export const PDBFormPage: React.FC<{
   const groupVersionKind = getGroupVersionKind(match.params.resourceRef) || [];
   const [group, version, kind] = groupVersionKind;
 
-  const [resource] = useK8sWatchResource<K8sPodControllerKind>({
+  const [resource, loadedResource] = useK8sWatchResource<K8sPodControllerKind>({
     groupVersionKind: {
       group,
       kind,
@@ -42,7 +43,7 @@ export const PDBFormPage: React.FC<{
     namespace: match.params.ns,
   });
 
-  const [pdbResources] = useK8sWatchResource<PodDisruptionBudgetKind[]>({
+  const [pdbResources, loadedPDBResource] = useK8sWatchResource<PodDisruptionBudgetKind[]>({
     groupVersionKind: {
       group: PodDisruptionBudgetModel.apiGroup,
       kind: PodDisruptionBudgetModel.kind,
@@ -62,44 +63,63 @@ export const PDBFormPage: React.FC<{
   const initialPDB = {
     name: '',
     namespace: match.params.ns,
-    requirement: 'minAvailable',
-    selector: {},
+    selector: { matchLabels: resource?.spec?.template?.metadata?.labels } || {},
   };
   const [helpText, setHelpText] = React.useState(formHelpText);
   const k8sObj = pdbToK8sResource(initialPDB);
+
   const YAMLEditor: React.FC<YAMLEditorProps> = ({ onChange, initialYAML = '' }) => {
-    return <CreateYAML hideHeader match={match} onChange={onChange} template={initialYAML} />;
+    return (
+      <CreateYAML
+        hideHeader
+        match={match}
+        onChange={onChange}
+        template={
+          initialYAML ||
+          safeJSToYAML(existingResource, 'yamlData', {
+            skipInvalid: true,
+          })
+        }
+        isCreate={!existingResource}
+      />
+    );
   };
 
   const title = !existingResource
     ? t('console-app~Create {{label}}', { label: PodDisruptionBudgetModel.label })
     : t('console-app~Edit {{label}}', { label: PodDisruptionBudgetModel.label });
+  const stillLoading = !loadedResource || !loadedPDBResource;
 
   return (
     <>
-      <PageHeading title={title}>
-        <span className="help-block">{helpText}</span>
-      </PageHeading>
+      {stillLoading ? (
+        <LoadingBox />
+      ) : (
+        <>
+          <PageHeading title={title}>
+            <span className="help-block">{helpText}</span>
+          </PageHeading>
 
-      <SyncedEditor
-        context={{
-          formContext: {
-            existingResource,
-            selector: resource?.spec?.template?.metadata?.labels,
-            params: match.params,
-          },
-          yamlContext: {},
-        }}
-        FormEditor={PDBForm}
-        initialData={k8sObj}
-        initialType={EditorType.Form}
-        onChangeEditorType={(type) =>
-          setHelpText(type === EditorType.Form ? formHelpText : yamlHelpText)
-        }
-        YAMLEditor={YAMLEditor}
-        lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
-        displayConversionError
-      />
+          <SyncedEditor
+            context={{
+              formContext: {
+                existingResource,
+                params: match.params,
+              },
+              yamlContext: {},
+            }}
+            FormEditor={PDBForm}
+            initialData={existingResource || k8sObj}
+            initialType={EditorType.Form}
+            onChangeEditorType={(type) =>
+              setHelpText(type === EditorType.Form ? formHelpText : yamlHelpText)
+            }
+            YAMLEditor={YAMLEditor}
+            lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+            displayConversionError
+          />
+        </>
+      )}
     </>
   );
 };

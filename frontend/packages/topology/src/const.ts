@@ -1,7 +1,5 @@
 import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
 
-export const ALLOW_SERVICE_BINDING_FLAG = 'ALLOW_SERVICE_BINDING';
-
 export const TYPE_WORKLOAD = 'workload';
 export const TYPE_CONNECTS_TO = 'connects-to';
 export const TYPE_AGGREGATE_EDGE = 'aggregate-edge';

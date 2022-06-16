@@ -7,8 +7,11 @@
   border: 0;
 
   &__icon {
-    height: 32px;
+    height: 36px;
     max-width: 100%;
+    padding: var(--pf-global--spacer--xs);
+    border-radius: var(--pf-global--BorderRadius--sm);
+    background: var(--pf-global--palette--white);
   }
 
   &__title {

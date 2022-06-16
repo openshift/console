@@ -1,0 +1,18 @@
+{
+  "name": "@console/service-binding-plugin",
+  "version": "0.0.0-fixed",
+  "description": "OpenShift Console ServiceBinding Plugin",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/service-binding-plugin/src/**\",\"!**/__tests__/**\",\"!packages/service-binding-plugin/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/service-binding-plugin",
+    "test": "yarn --cwd ../.. test packages/service-binding-plugin"
+  },
+  "dependencies": {},
+  "consolePlugin": {
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "pages": "src/pages.ts"
+    }
+  }
+}

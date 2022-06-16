@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '../../../actions/observe';
 import { RootState } from '../../../redux';
 import { FormatSeriesTitle, QueryBrowser } from '../query-browser';
-import { getActivePerspective } from './monitoring-dashboard-utils';
+import { DEFAULT_GRAPH_SAMPLES, getActivePerspective } from './monitoring-dashboard-utils';
 
 type Props = {
   formatSeriesTitle?: FormatSeriesTitle;
@@ -49,7 +49,7 @@ const Graph: React.FC<Props> = ({
 
   return (
     <QueryBrowser
-      defaultSamples={30}
+      defaultSamples={DEFAULT_GRAPH_SAMPLES}
       fixedEndTime={endTime}
       formatSeriesTitle={formatSeriesTitle}
       hideControls

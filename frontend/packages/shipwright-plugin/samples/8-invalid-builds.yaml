@@ -1,0 +1,27 @@
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: clusterbuildstrategy-not-found
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-go.git
+    contextDir: source-build
+  strategy:
+    kind: ClusterBuildStrategy
+    name: not-found
+  output:
+    image: foo/bar:latest
+---
+apiVersion: shipwright.io/v1alpha1
+kind: Build
+metadata:
+  name: buildstrategy-not-found
+spec:
+  source:
+    url: https://github.com/shipwright-io/sample-go.git
+    contextDir: source-build
+  strategy:
+    kind: BuildStrategy
+    name: not-found
+  output:
+    image: foo/bar:latest

@@ -4,10 +4,9 @@ import classNames from 'classnames';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared';
 import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../../flags/const';
-import { isVM, isVMI } from '../../../selectors/check-type';
-import { getVMStatus } from '../../../statuses/vm/vm-status';
 import { EmptyStateNoVMs } from '../../EmptyState/EmptyStateNoVMs';
 import { useVmStatusResources } from '../../vm-status/use-vm-status-resources';
+import { getVMStatusString } from '../utils';
 import { VMStatusInventoryItem } from './VMStatusInventoryItem';
 
 import './virt-overview-inventory-card.scss';
@@ -37,39 +36,10 @@ const LoadingComponent: React.FC = () => (
   </Grid>
 );
 
-const UNKNOWN = 'Unknown';
-
-const getPrintableVMStatus = (vmLike) => {
-  let status = UNKNOWN;
-  if (isVM(vmLike)) {
-    status = vmLike?.status?.printableStatus || UNKNOWN;
-  } else if (isVMI(vmLike)) {
-    status = vmLike?.status?.phase || UNKNOWN;
-  }
-  return status;
-};
-
-const getVMStatusFromBundle = (vmLike, statusResources) => {
-  const resources = {
-    vm: vmLike,
-    vmi: undefined,
-    pods: statusResources.pods,
-    pvcs: statusResources.pvcs,
-    dvs: statusResources.dvs,
-    migrations: statusResources.migrations,
-  };
-  return getVMStatus(resources)?.status?.toSimpleSortString() || UNKNOWN;
-};
-
-const getVmStatus = (vmLike, statusResources, printableVmStatusFlag) =>
-  printableVmStatusFlag
-    ? getPrintableVMStatus(vmLike)
-    : getVMStatusFromBundle(vmLike, statusResources);
-
-const getVmStatusCounts = (vms, statusResources, printableVmStatusFlag) => {
+const getVMStatusCounts = (vms, statusResources, printableVmStatusFlag) => {
   const statusCounts = {};
   vms.forEach((vmLike) => {
-    const status = getVmStatus(vmLike, statusResources, printableVmStatusFlag);
+    const status = getVMStatusString(vmLike, statusResources, printableVmStatusFlag);
     const count = statusCounts[status] || 0;
     statusCounts[status] = count + 1;
   });
@@ -77,22 +47,22 @@ const getVmStatusCounts = (vms, statusResources, printableVmStatusFlag) => {
   return statusCounts;
 };
 
-export type VmStatusesSectionProps = {
+export type VMStatusesSectionProps = {
   vms: K8sResourceKind[];
   vmsLoaded: boolean;
 };
 
-export const VmStatusesSection: React.FC<VmStatusesSectionProps> = ({ vms, vmsLoaded }) => {
+export const VMStatusesSection: React.FC<VMStatusesSectionProps> = ({ vms, vmsLoaded }) => {
   const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
   const statusResources = useVmStatusResources(undefined);
-  const statusCounts = getVmStatusCounts(vms, statusResources, printableVmStatusFlag);
+  const statusCounts = getVMStatusCounts(vms, statusResources, printableVmStatusFlag);
 
   const statusItems = [];
   for (const [key, value] of Object.entries(statusCounts)) {
     const status = key as string;
     const count = value as number;
     statusItems.push(
-      <FlexItem>
+      <FlexItem key={`${status}-${count}`}>
         <VMStatusInventoryItem status={status} count={count} />
       </FlexItem>,
     );

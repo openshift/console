@@ -42,7 +42,10 @@ import {
   updateServiceAccount,
   getSecretAnnotations,
 } from '@console/pipelines-plugin/src/utils/pipeline-utils';
+import { LimitsData } from '@console/shared/src/types';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
+import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import {
   getAppLabels,
   getPodLabels,
@@ -63,6 +66,9 @@ import {
   Resources,
   DevfileSuggestedResources,
   UploadJarFormData,
+  RouteData,
+  ServerlessData,
+  DeploymentData,
 } from './import-types';
 
 export const generateSecret = () => {
@@ -822,4 +828,164 @@ export const handleRedirect = async (
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
   history.push(redirectURL);
+};
+
+export const isRouteAdvOptionsUsed = (
+  type: string,
+  routeData: RouteData,
+  ksvcRouteData: ServerlessData,
+): boolean => {
+  if (type !== Resources.KnativeService && routeData) {
+    if (!!routeData.hostname || !!routeData.path || !routeData.secure) return true;
+    if (routeData?.tls) {
+      for (const tlsKey in routeData.tls) {
+        if (routeData.tls.hasOwnProperty(tlsKey)) {
+          if (
+            ['caCertificate', 'certificate', 'destinationCACertificate', 'key'].includes(tlsKey) &&
+            !!routeData.tls[tlsKey]
+          )
+            return true;
+          if (tlsKey === 'insecureEdgeTerminationPolicy' && routeData.tls[tlsKey] !== 'None')
+            return true;
+          if (tlsKey === 'termination' && routeData.tls[tlsKey] !== 'reencrypt') return true;
+        }
+      }
+    }
+    return false;
+  }
+  if (ksvcRouteData.domainMapping?.length > 0) return true;
+  return false;
+};
+
+export const isScalingAdvOptions = (
+  type: string,
+  scalingData: DeploymentData,
+  ksvcData: ServerlessData,
+): boolean => {
+  if (type !== Resources.KnativeService && scalingData?.replicas > 1) {
+    return true;
+  }
+  const ksvcScalingData = ksvcData?.scaling;
+  if (ksvcScalingData) {
+    for (const scKey in ksvcScalingData) {
+      if (ksvcScalingData.hasOwnProperty(scKey)) {
+        if (['concurrencylimit', 'maxpods', 'minpods'].includes(scKey) && !!ksvcScalingData[scKey])
+          return true;
+        if (
+          scKey === 'concurrencytarget' &&
+          ksvcScalingData[scKey] !== ksvcScalingData.defaultConcurrencytarget
+        )
+          return true;
+        if (
+          scKey === 'concurrencyutilization' &&
+          ksvcScalingData[scKey] !== ksvcScalingData.defaultConcurrencyutilization
+        )
+          return true;
+        if (scKey === 'autoscale' && ksvcScalingData[scKey]) {
+          const autoscaleData = ksvcScalingData[scKey];
+          for (const asKey in autoscaleData) {
+            if (autoscaleData.hasOwnProperty(asKey)) {
+              if (
+                asKey === 'autoscalewindow' &&
+                autoscaleData[asKey] !== autoscaleData.defaultAutoscalewindow
+              )
+                return true;
+              if (
+                asKey === 'autoscalewindowUnit' &&
+                autoscaleData[asKey] !== autoscaleData.defaultAutoscalewindowUnit
+              )
+                return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
+};
+
+export const isResourceLimitAdvOptions = (resLimits: LimitsData): boolean => {
+  const isLimitUsed = (resLimitObj) => {
+    for (const limitKey in resLimitObj) {
+      if (resLimitObj.hasOwnProperty(limitKey)) {
+        if (['limit', 'request'].includes(limitKey) && !!resLimitObj[limitKey]) return true;
+        if (limitKey === 'limitUnit' && resLimitObj[limitKey] !== resLimitObj.defaultLimitUnit)
+          return true;
+        if (limitKey === 'requestUnit' && resLimitObj[limitKey] !== resLimitObj.defaultRequestUnit)
+          return true;
+      }
+    }
+    return false;
+  };
+
+  if (isLimitUsed(resLimits.cpu) || isLimitUsed(resLimits.memory)) return true;
+  return false;
+};
+
+export const getTelemetryImport = (values: GitImportFormData) => {
+  if (!values) return {};
+  // get devfile data if exists
+  let devfileJson;
+  if (values.devfile?.devfileContent) {
+    devfileJson = safeYAMLToJS(values.devfile.devfileContent);
+  }
+  const applicationType =
+    (!values.application?.selectedKey && values.application?.name) ||
+    values.application?.selectedKey === values.application?.name
+      ? 'default'
+      : values.application?.selectedKey === CREATE_APPLICATION_KEY && !!values.application?.name
+      ? 'custom'
+      : 'none';
+  const resourceType =
+    values.resources === Resources.Kubernetes
+      ? 'Deployment'
+      : values.resources === Resources.OpenShift
+      ? 'DeploymentConfig'
+      : values.resources === Resources.KnativeService && 'Knative Service';
+  const selStrategy = values.import?.selectedStrategy?.name;
+  const telemetryImportData = {
+    useRecommended: values.image?.recommended === values.image?.selected,
+    recommendedStrategy: values.import?.recommendedStrategy?.name,
+    recommendedBuilderImage: values.image?.recommended,
+    strategy: selStrategy,
+    builderImage: values.image?.selected,
+
+    devFileLanguage: devfileJson?.metadata?.projectType || '',
+    devFileProjectType: devfileJson?.metadata?.language || '',
+
+    application: applicationType,
+
+    resource: resourceType,
+
+    targetPortChanged: !!values.route?.unknownTargetPort,
+
+    // currently run command is being used only for Node app
+    useRunCommand: !!values.image?.imageEnv?.NPM_RUN,
+
+    useAdvancedOptionsGit: values.git.dir !== '/' || !!values.git.ref || !!values.git.secret,
+
+    useAdvancedOptionsBuild:
+      values.build?.env.length > 0 || _.some(values.build?.triggers, (key) => !key),
+    useAdvancedOptionsDeployment:
+      selStrategy !== 'Devfile' &&
+      (values.deployment?.env.length > 0 || !values.deployment?.triggers?.image),
+    useAdvancedOptionsRoute: isRouteAdvOptionsUsed(
+      values.resources,
+      values.route,
+      values.serverless,
+    ),
+    useAdvancedOptionsHealthChecks:
+      values.healthChecks?.livenessProbe?.enabled ||
+      values.healthChecks?.readinessProbe?.enabled ||
+      values.healthChecks?.startupProbe?.enabled,
+    useAdvancedOptionsScaling: isScalingAdvOptions(
+      values.resources,
+      values.deployment,
+      values.serverless,
+    ),
+    useAdvancedOptionsResourceLimits: isResourceLimitAdvOptions(values.limits),
+    useAdvancedOptionsLabels: !_.isEmpty(values.labels),
+  };
+
+  return telemetryImportData;
 };

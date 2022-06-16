@@ -318,5 +318,19 @@
     "properties": {
       "component": { "$codeRef": "overviewDetailItem.default" }
     }
+  },
+  {
+    "type": "console.project-overview/inventory-item",
+    "properties": {
+      "component": { "$codeRef": "projectOverviewInventory.default" }
+    }
+  },
+  {
+    "type": "console.project-overview/utilization-item",
+    "properties": {
+      "title": "%plugin__console-demo-plugin~Foo item%",
+      "getUtilizationQuery":  { "$codeRef": "projectOverview.getUtilizationQuery" },
+      "humanize": { "$codeRef": "clusterOverview.humanize"}
+    }
   }
 ]

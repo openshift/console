@@ -7,3 +7,9 @@
     max-width: 100%;
   }
 }
+
+:root:where(.pf-theme-dark) .odc-helm-release__empty-list {
+  &__image {
+    filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
+  }
+}

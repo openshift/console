@@ -22,7 +22,14 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
 
   const actionIcon = (): JSX.Element => {
     if (typeof icon === 'string') {
-      return <img className="odc-add-card-item__icon" src={icon} alt={label} aria-hidden="true" />;
+      return (
+        <img
+          className="odc-add-card-item__icon odc-add-card-item__img-icon"
+          src={icon}
+          alt={label}
+          aria-hidden="true"
+        />
+      );
     }
     if (typeof icon !== 'string' && React.isValidElement(icon)) {
       return (

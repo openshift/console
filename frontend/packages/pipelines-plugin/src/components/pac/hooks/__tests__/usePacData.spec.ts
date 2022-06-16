@@ -3,12 +3,13 @@ import { coFetch } from '@console/internal/co-fetch';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 import { sampleSecretData } from '../../../../test-data/pac-data';
-import { createPACSecret } from '../../pac-utils';
+import { createPACSecret, updatePACInfo } from '../../pac-utils';
 import { usePacData } from '../usePacData';
 
 const useK8sGetMock = useK8sGet as jest.Mock;
 const coFetchMock = coFetch as jest.Mock;
 const createPACSecretMock = createPACSecret as jest.Mock;
+const updatePACInfoMock = updatePACInfo as jest.Mock;
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
@@ -20,6 +21,7 @@ jest.mock('@console/internal/co-fetch', () => ({
 
 jest.mock('../../pac-utils', () => ({
   createPACSecret: jest.fn(),
+  updatePACInfo: jest.fn(),
 }));
 
 describe('usePacData', () => {
@@ -67,6 +69,18 @@ describe('usePacData', () => {
     expect(result.current.secretData).toBeDefined();
     expect(result.current.isFirstSetup).toBe(true);
     expect(result.current.loadError).toEqual(null);
+  });
+
+  it('should update the pipelines-as-code-info configmap', async () => {
+    useK8sGetMock.mockReturnValue([undefined, true, null]);
+    const { result, rerender } = testHook(() => usePacData('1234'));
+    await act(async () => {
+      rerender();
+    });
+    expect(result.current.loaded).toBe(true);
+    expect(result.current.secretData).toBeDefined();
+    expect(result.current.isFirstSetup).toBe(true);
+    expect(updatePACInfoMock).toHaveBeenCalledTimes(1);
   });
 
   it('should return loaded as false if secret fetch call(useK8sGet) is not complete', async () => {

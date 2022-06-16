@@ -2,19 +2,27 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
+import { Router } from 'react-router';
 import { match as RouterMatch } from 'react-router-dom';
-import { Table, DetailsPage, MultiListPage, ListPage } from '@console/internal/components/factory';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import { Table, DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
+  ListPageCreateLink,
+  ListPageCreateDropdown,
+} from '@console/internal/components/factory/ListPage/ListPageCreate';
+import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
+import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
+import {
+  history,
   Timestamp,
   LabelList,
-  StatusBox,
   ResourceKebab,
   FirehoseResourcesResult,
+  ResourceLink,
 } from '@console/internal/components/utils';
 import * as k8sModels from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
 import * as extensionHooks from '@console/plugin-sdk';
-import { referenceForProvidedAPI } from '..';
 import {
   testCRD,
   testResourceInstance,
@@ -107,11 +115,17 @@ jest.mock('react-redux', () => ({
 const i18nNS = 'public';
 
 describe(OperandTableRow.displayName, () => {
-  let wrapper: ShallowWrapper<OperandTableRowProps>;
+  let wrapper: ReactWrapper<OperandTableRowProps>;
 
   beforeEach(() => {
     spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
-    wrapper = shallow(<OperandTableRow obj={testResourceInstance} columns={[]} />);
+    wrapper = mount(<OperandTableRow obj={testResourceInstance} columns={[]} />, {
+      wrappingComponent: (props) => (
+        <Router history={history}>
+          <Provider store={store} {...props} />
+        </Router>
+      ),
+    });
   });
 
   it('renders column for resource name', () => {
@@ -124,17 +138,22 @@ describe(OperandTableRow.displayName, () => {
   it('renders column for resource type', () => {
     const col = wrapper.childAt(1);
 
-    expect(col.shallow().text()).toEqual(testResourceInstance.kind);
+    expect(col.text()).toEqual(testResourceInstance.kind);
   });
-
-  it('renders column for resource status', () => {
+  it('renders column for resource namespace', () => {
     const col = wrapper.childAt(2);
+    const link = col.find(ResourceLink);
+
+    expect(link.props().name).toEqual(testResourceInstance.metadata.namespace);
+  });
+  it('renders column for resource status', () => {
+    const col = wrapper.childAt(3);
 
     expect(col.find(OperandStatus).props().operand).toEqual(testResourceInstance);
   });
 
   it('renders column for resource labels', () => {
-    const col = wrapper.childAt(3);
+    const col = wrapper.childAt(4);
     const labelList = col.find(LabelList);
 
     expect(labelList.props().kind).toEqual(testResourceInstance.kind);
@@ -142,7 +161,7 @@ describe(OperandTableRow.displayName, () => {
   });
 
   it('renders column for last updated timestamp', () => {
-    const col = wrapper.childAt(4);
+    const col = wrapper.childAt(5);
     const timestamp = col.find(Timestamp);
 
     expect(timestamp.props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
@@ -163,30 +182,37 @@ describe(OperandTableRow.displayName, () => {
 });
 
 describe(OperandList.displayName, () => {
-  let wrapper: ShallowWrapper<OperandListProps>;
+  let wrapper: ReactWrapper<OperandListProps>;
   let resources: k8sModels.K8sResourceKind[];
 
   beforeEach(() => {
     resources = [testResourceInstance];
     spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
-    // eslint-disable-next-line react/jsx-pascal-case
-    wrapper = shallow(<OperandList loaded data={resources} />);
+    wrapper = mount(<OperandList loaded data={resources} />, {
+      wrappingComponent: (props) => (
+        <Router history={history}>
+          <Provider store={store} {...props} />
+        </Router>
+      ),
+    });
   });
 
   it('renders a `Table` of the custom resource instances of the given kind', () => {
-    const table: ShallowWrapper<any> = wrapper.find(Table);
+    const table: ReactWrapper<any> = wrapper.find(Table);
+
     expect(
       Object.keys(wrapper.props()).reduce(
-        (k, prop) => table.prop(prop) === wrapper.prop(prop),
+        (k, prop) => _.isEqual(table.prop(prop), wrapper.prop(prop)),
         false,
       ),
     ).toBe(true);
-    expect(table.props().Header().length).toEqual(6);
+    expect(table.props().Header().length).toEqual(7);
     expect(table.props().Header()[0].title).toEqual('Name');
     expect(table.props().Header()[1].title).toEqual('Kind');
-    expect(table.props().Header()[2].title).toEqual('Status');
-    expect(table.props().Header()[3].title).toEqual('Labels');
-    expect(table.props().Header()[4].title).toEqual('Last updated');
+    expect(table.props().Header()[2].title).toEqual('Namespace');
+    expect(table.props().Header()[3].title).toEqual('Status');
+    expect(table.props().Header()[4].title).toEqual('Labels');
+    expect(table.props().Header()[5].title).toEqual('Last updated');
     expect(_.isFunction(table.props().Row)).toBe(true);
   });
 });
@@ -498,7 +524,7 @@ describe(OperandDetailsPage.displayName, () => {
 });
 
 describe(ProvidedAPIsPage.displayName, () => {
-  let wrapper: ShallowWrapper<ProvidedAPIsPageProps>;
+  let wrapper: ReactWrapper<ProvidedAPIsPageProps>;
 
   beforeAll(() => {
     // Since crd models have not been loaded into redux state, just force return of the correct model type
@@ -506,37 +532,29 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   beforeEach(() => {
-    wrapper = shallow(<ProvidedAPIsPage obj={testClusterServiceVersion} />);
+    wrapper = mount(<ProvidedAPIsPage obj={testClusterServiceVersion} />, {
+      wrappingComponent: (props) => (
+        <Router history={history}>
+          <Provider store={store} {...props} />
+        </Router>
+      ),
+    });
   });
-
-  it('renders a `StatusBox` if given app has no owned or required custom resources', () => {
-    const obj = _.cloneDeep(testClusterServiceVersion);
-    obj.spec.customresourcedefinitions = {};
-    wrapper.setProps({ obj });
-
-    expect(wrapper.find(MultiListPage).exists()).toBe(false);
-    expect(wrapper.find(StatusBox).props().loaded).toBe(true);
-    expect(wrapper.find(StatusBox).props().EmptyMsg).toBeDefined();
+  it('render listpage components', () => {
+    expect(wrapper.find(ListPageHeader).exists()).toBe(true);
+    expect(wrapper.find(ListPageCreateDropdown).exists()).toBe(true);
+    expect(wrapper.find(ListPageBody).exists()).toBe(true);
+    expect(wrapper.find(ListPageFilter).exists()).toBe(true);
   });
-
-  it('renders a `MultiListPage` with correct props', () => {
-    const { owned = [], required = [] } = testClusterServiceVersion.spec.customresourcedefinitions;
-    const listPage = wrapper.find(MultiListPage);
-
-    expect(listPage.props().ListComponent).toEqual(OperandList);
-    expect(listPage.props().filterLabel).toEqual('Resources by name');
-    expect(listPage.props().canCreate).toBe(true);
-    expect(listPage.props().resources).toEqual(
-      owned.concat(required).map((crdDesc) => ({
-        kind: referenceForProvidedAPI(crdDesc),
-        namespaced: true,
-        prop: crdDesc.kind,
-      })),
-    );
-    expect(listPage.props().namespace).toEqual(testClusterServiceVersion.metadata.namespace);
+  it('render ListPageCreateDropdown with the correct text', () => {
+    expect(
+      wrapper
+        .find(ListPageCreateDropdown)
+        .children()
+        .text(),
+    ).toEqual('Create new');
   });
-
-  it('passes `createProps` for dropdown create button if app has multiple owned CRDs', () => {
+  it('passes `items` props and render ListPageCreateDropdown create button if app has multiple owned CRDs', () => {
     const obj = _.cloneDeep(testClusterServiceVersion);
     obj.spec.customresourcedefinitions.owned.push({
       name: 'foobars.testapp.coreos.com',
@@ -545,64 +563,65 @@ describe(ProvidedAPIsPage.displayName, () => {
       kind: 'FooBar',
     });
     wrapper.setProps({ obj });
-    const listPage = wrapper.find(MultiListPage);
+    const listPageCreateDropdown = wrapper.find(ListPageCreateDropdown);
 
-    expect(listPage.props().createButtonText).toEqual('Create new');
-    expect(listPage.props().createProps.to).not.toBeDefined();
-    expect(listPage.props().createProps.items).toEqual({
+    expect(listPageCreateDropdown.props().items).toEqual({
       'testresources.testapp.coreos.com': 'Test Resource',
       'foobars.testapp.coreos.com': 'Foo Bars',
     });
+  });
+  it('check if ListPageBody component renders the correct children', () => {
     expect(
-      listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name),
-    ).toEqual(
-      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/~new`,
-    );
-  });
-
-  it('passes `createProps` for single create button if app has only one owned CRD', () => {
-    const listPage = wrapper.find(MultiListPage);
-
-    expect(listPage.props().createButtonText).toEqual('Create Test Resource');
-    expect(listPage.props().createProps.items).not.toBeDefined();
-    expect(listPage.props().createProps.createLink).not.toBeDefined();
-    expect(listPage.props().createProps.to).toEqual(
-      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/~new`,
-    );
-  });
-
-  it('passes `flatten` function which removes `required` resources with owner references to items not in the same list', () => {
-    const otherResourceInstance = _.cloneDeep(testOwnedResourceInstance);
-    otherResourceInstance.metadata.ownerReferences[0].uid = 'abfcd938-b991-11e7-845d-0eb774f2814a';
-    const resources: FirehoseResourcesResult = {
-      TestOwnedResource: {
-        data: [testOwnedResourceInstance, otherResourceInstance],
-        loaded: true,
-        loadError: undefined,
-      },
-      TestResource: {
-        data: [testResourceInstance],
-        loaded: true,
-        loadError: undefined,
-      },
-    };
-
-    const { flatten } = wrapper.find(MultiListPage).props();
-    const data = flatten(resources);
-
-    expect(data.length).toEqual(2);
+      wrapper
+        .find(ListPageBody)
+        .children()
+        .children().length,
+    ).toBe(2);
   });
 });
 
 describe(ProvidedAPIPage.displayName, () => {
-  let wrapper: ShallowWrapper<ProvidedAPIPageProps>;
+  let wrapper: ReactWrapper<ProvidedAPIPageProps>;
 
-  it('does not allow creation if "create" not included in the verbs for the model', () => {
-    wrapper = shallow(
+  beforeEach(() => {
+    wrapper = mount(
       <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} namespace="foo" />,
+      {
+        wrappingComponent: (props) => (
+          <Router history={history}>
+            <Provider store={store} {...props} />
+          </Router>
+        ),
+      },
     );
+  });
 
-    expect(wrapper.find(ListPage).props().canCreate).toBe(false);
+  it('render listpage components', () => {
+    expect(wrapper.find(ListPageHeader).exists()).toBe(true);
+    expect(wrapper.find(ListPageCreateLink).exists()).toBe(true);
+    expect(wrapper.find(ListPageBody).exists()).toBe(true);
+    expect(wrapper.find(ListPageFilter).exists()).toBe(true);
+  });
+  it('render ListPageCreateLink with the correct props for create button if app has single owned CRDs', () => {
+    expect(wrapper.find(ListPageCreateLink).props().to).toEqual(
+      `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResourceRO/~new`,
+    );
+  });
+  it('render ListPageCreateLink with the correct text', () => {
+    expect(
+      wrapper
+        .find(ListPageCreateLink)
+        .children()
+        .text(),
+    ).toEqual('Create Test Resource');
+  });
+  it('check if ListPageBody component renders the correct children', () => {
+    expect(
+      wrapper
+        .find(ListPageBody)
+        .children()
+        .children().length,
+    ).toBe(2);
   });
 });
 

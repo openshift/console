@@ -639,7 +639,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
   const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
   const isUpdated = percentMCPNodes === 100;
   const { t } = useTranslation();
-  return hideIfComplete && isUpdated
+  return totalMCPNodes === 0 || (hideIfComplete && isUpdated)
     ? null
     : machineConfigOperatorLoaded && renderedConfigLoaded && (
         <UpdatesGroup divided={divided}>

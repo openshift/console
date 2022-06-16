@@ -10,14 +10,14 @@ Feature: Manage user preferences
         @smoke
         Scenario: Visiting User Preference page: UP-01-TC01
             Given user is at admin perspective
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
              Then user sees "General" tab selected on User Preferences page
               And user sees "Language" tab on User Preferences page
 
         @regression
         Scenario: Setting Developer preference for perspective: UP-01-TC02
             Given user is at admin perspective
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user changes user preference "Perspective" dropdown to "Developer"
               And user reloads the console without perspective
              Then user sees the "Developer" perspective
@@ -27,7 +27,7 @@ Feature: Manage user preferences
         Scenario: Setting a preference for a project: UP-01-TC03
             Given user has created project "test-preference111"
              When user selects "All Projects" from the project menu
-              And user clicks on user dropdown on masthead and selects "User Preference"
+              And user clicks on user dropdown on masthead and selects "User Preferences"
               And user clicks on "Project" dropdown on User Preferences page
               And user searches and selects project "test-preference11" from the dropdown
               And user reloads the console
@@ -36,7 +36,7 @@ Feature: Manage user preferences
 
         @regression @broken-test
         Scenario: Creating project with project preference: UP-01-TC04
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user clicks on "Project" dropdown on User Preferences page
               And user types project "test-preference222" in search bar
               And user clicks on Create project option from the dropdown
@@ -49,7 +49,7 @@ Feature: Manage user preferences
         Scenario: Setting Graph preference for Topology: UP-01-TC05
             Given user has created or selected namespace "aut-user-preferences"
               And user has created workload "node1" with resource type "deployment"
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user changes user preference "Topology" dropdown to "Graph"
               And user reloads the console
               And user clicks on Topology in navigation menu
@@ -60,7 +60,7 @@ Feature: Manage user preferences
         # marked broken-test due to bug https://bugzilla.redhat.com/show_bug.cgi?id=2014313
         Scenario: Setting List preference for Topology: UP-01-TC06
             Given user has created or selected namespace "aut-user-preferences"
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user changes user preference "Topology" dropdown to "List"
               And user reloads the console
               And user clicks on Topology in navigation menu
@@ -70,7 +70,7 @@ Feature: Manage user preferences
         @regression @broken-test
         Scenario: Setting Form preference for Create/Edit resource method: UP-01-TC07
             Given user has created or selected namespace "aut-user-preferences"
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user changes user preference "Create/Edit resource method" dropdown to "Form"
               And user clicks on Add in navigation menu
               And user clicks on Helm charts
@@ -82,7 +82,7 @@ Feature: Manage user preferences
         @regression
         Scenario: Setting YAML preference for Create/Edit resource method: UP-01-TC08
             Given user has created or selected namespace "aut-user-preferences"
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user changes user preference "Create/Edit resource method" dropdown to "YAML"
               And user clicks on Add in navigation menu
               And user clicks on Helm charts
@@ -94,7 +94,7 @@ Feature: Manage user preferences
         @regression @broken-test
         Scenario: Setting a preference for language: UP-01-TC09
             Given user is at admin perspective
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user clicks on "Language" tab on User Preferences page
               And user clicks on the checkbox to uncheck it
               And user changes user preference "Language" dropdown to "日本語"
@@ -104,7 +104,7 @@ Feature: Manage user preferences
         @regression @odc-6303 @broken-test
         Scenario: Setting Routing options preference for import form: UP-01-TC10
             Given user has created or selected namespace "aut-user-preferences"
-             When user clicks on user dropdown on masthead and selects "User Preference"
+             When user clicks on user dropdown on masthead and selects "User Preferences"
               And user deselects the checkbox of user preference "Secure Route"
               And user clicks on Add in navigation menu
               And user clicks on "Import from Git" card
@@ -112,3 +112,10 @@ Feature: Manage user preferences
               And user enters name as "node-route" in General section
               And user clicks "Show advanced Routing options" link in Advanced Options section
              Then user is able to see "Secure Route" checkbox is deselected
+
+
+        @regression @manual @odc-5990
+        Scenario: Setting theme preference for Console: UP-01-TC11
+             When user clicks on user dropdown on masthead and selects "User Preferences"
+              And user changes user preference "Theme" dropdown to "Dark"
+             Then user can see console in dark theme

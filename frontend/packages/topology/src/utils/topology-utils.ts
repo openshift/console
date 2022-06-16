@@ -11,7 +11,7 @@ import {
   RouteKind,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { ALLOW_SERVICE_BINDING_FLAG } from '../const';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/service-binding-plugin/src/const';
 import OdcBaseNode from '../elements/OdcBaseNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';
 import { TopologyDataObject } from '../topology-types';

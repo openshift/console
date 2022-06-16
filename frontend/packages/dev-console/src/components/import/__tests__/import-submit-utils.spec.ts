@@ -18,6 +18,9 @@ import * as submitUtils from '../import-submit-utils';
 import { Resources } from '../import-types';
 import {
   defaultData,
+  devfileImportData,
+  ghImportDefaultData,
+  ghImportTelData,
   nodeJsBuilderImage as buildImage,
   sampleClusterTriggerBinding,
   sampleDevfileFormData,
@@ -483,6 +486,162 @@ describe('Import Submit Utils', () => {
           },
         },
         status: {},
+      });
+    });
+  });
+
+  describe('get git import telemetry data', () => {
+    it('getTelemetryImport should return appropriate data if no advanced options are used', () => {
+      const telGHData = submitUtils.getTelemetryImport(ghImportDefaultData);
+      expect(telGHData).toEqual(ghImportTelData);
+    });
+
+    it('isResourceLimitAdvOptions should return false if resource limit options are not used', () => {
+      const telGhResLimit = submitUtils.isResourceLimitAdvOptions(ghImportDefaultData.limits);
+      expect(telGhResLimit).toEqual(false);
+    });
+
+    it('isScalingAdvOptions should return false if scaling options are not used', () => {
+      const telGhScalingData = submitUtils.isScalingAdvOptions(
+        ghImportDefaultData.resources,
+        ghImportDefaultData.deployment,
+        ghImportDefaultData.serverless,
+      );
+      expect(telGhScalingData).toEqual(false);
+    });
+
+    it('isRouteAdvOptionsUsed should return false if route options are not used', () => {
+      const telGhRouteData = submitUtils.isRouteAdvOptionsUsed(
+        ghImportDefaultData.resources,
+        ghImportDefaultData.route,
+        ghImportDefaultData.serverless,
+      );
+      expect(telGhRouteData).toEqual(false);
+    });
+
+    it('getTelemetryImport should return appropriate data with useAdvancedOptionsRoute option as true if route advanced options are used', () => {
+      const ghImportAdvData = {
+        ...ghImportDefaultData,
+        route: {
+          ...ghImportDefaultData.route,
+          path: 'domain.org',
+        },
+      };
+      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData);
+      expect(telGHData).toEqual({ ...ghImportTelData, useAdvancedOptionsRoute: true });
+
+      const telGhRouteData = submitUtils.isRouteAdvOptionsUsed(
+        ghImportAdvData.resources,
+        ghImportAdvData.route,
+        ghImportAdvData.serverless,
+      );
+
+      expect(telGhRouteData).toEqual(true);
+    });
+
+    it('getTelemetryImport should return appropriate data with useAdvancedOptionsScaling option as true if scaling advanced options are used', () => {
+      const ghImportAdvData = {
+        ...ghImportDefaultData,
+        deployment: {
+          ...ghImportDefaultData.deployment,
+          replicas: 2,
+        },
+      };
+      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData);
+      expect(telGHData).toEqual({ ...ghImportTelData, useAdvancedOptionsScaling: true });
+
+      const telGhScalingData = submitUtils.isScalingAdvOptions(
+        ghImportAdvData.resources,
+        ghImportAdvData.deployment,
+        ghImportAdvData.serverless,
+      );
+
+      expect(telGhScalingData).toEqual(true);
+    });
+
+    it('getTelemetryImport should return appropriate data with useAdvancedOptionsScaling option as true if scaling advanced options are used for Serverless', () => {
+      const ghImportAdvData = {
+        ...ghImportDefaultData,
+        resources: Resources.KnativeService,
+        serverless: {
+          ...ghImportDefaultData.serverless,
+          scaling: {
+            ...ghImportDefaultData.serverless.scaling,
+            concurrencytarget: 102,
+          },
+        },
+      };
+      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData);
+      expect(telGHData).toEqual({
+        ...ghImportTelData,
+        resource: 'Knative Service',
+        useAdvancedOptionsScaling: true,
+      });
+
+      const telGhScalingData = submitUtils.isScalingAdvOptions(
+        ghImportAdvData.resources,
+        ghImportAdvData.deployment,
+        ghImportAdvData.serverless,
+      );
+
+      expect(telGhScalingData).toEqual(true);
+    });
+
+    it('getTelemetryImport should return appropriate data with useAdvancedOptionsRoute option as true if route advanced options are used', () => {
+      const ghImportAdvData = {
+        ...ghImportDefaultData,
+        route: {
+          ...ghImportDefaultData.route,
+          hostname: 'domain.org',
+        },
+      };
+      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData);
+      expect(telGHData).toEqual({ ...ghImportTelData, useAdvancedOptionsRoute: true });
+
+      const telGhScalingData = submitUtils.isRouteAdvOptionsUsed(
+        ghImportAdvData.resources,
+        ghImportAdvData.route,
+        ghImportAdvData.serverless,
+      );
+
+      expect(telGhScalingData).toEqual(true);
+    });
+
+    it('getTelemetryImport should return appropriate data with useAdvancedOptionsRoute option as true if route advanced options are used for Serverless', () => {
+      const ghImportAdvData = {
+        ...ghImportDefaultData,
+        resources: Resources.KnativeService,
+        serverless: {
+          ...ghImportDefaultData.serverless,
+          domainMapping: ['domain.org'],
+        },
+      };
+      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData);
+      expect(telGHData).toEqual({
+        ...ghImportTelData,
+        resource: 'Knative Service',
+        useAdvancedOptionsRoute: true,
+      });
+
+      const telGhScalingData = submitUtils.isRouteAdvOptionsUsed(
+        ghImportAdvData.resources,
+        ghImportAdvData.route,
+        ghImportAdvData.serverless,
+      );
+
+      expect(telGhScalingData).toEqual(true);
+    });
+
+    it('getTelemetryImport should return appropriate data for devfile', () => {
+      const ghImportdevfileData = {
+        ...ghImportDefaultData,
+        devfile: devfileImportData,
+      };
+      const telGHData = submitUtils.getTelemetryImport(ghImportdevfileData);
+      expect(telGHData).toEqual({
+        ...ghImportTelData,
+        devFileLanguage: 'python',
+        devFileProjectType: 'python',
       });
     });
   });

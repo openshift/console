@@ -16,6 +16,7 @@ export default (state: UIState, action: UIAction): UIState => {
     return ImmutableMap({
       activeNavSectionId: 'workloads',
       location: pathname,
+      showOperandsInAllNamespaces: true,
       activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       createProjectMessage: '',
@@ -67,7 +68,6 @@ export default (state: UIState, action: UIAction): UIState => {
       }
       return state.set('activeNamespace', ns);
     }
-
     case ActionType.SetServiceLevel:
       return state.set('serviceLevel', {
         level: action.payload.serviceLevel,
@@ -141,6 +141,9 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['utilizationDuration', 'selectedKey'], action.payload.key);
     case ActionType.SetUtilizationDurationEndTime:
       return state.setIn(['utilizationDuration', 'endTime'], action.payload.endTime);
+
+    case ActionType.SetShowOperandsInAllNamespaces:
+      return state.set('showOperandsInAllNamespaces', action.payload.value);
     default:
       break;
   }

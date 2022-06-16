@@ -4,9 +4,9 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FirehoseResource, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
-import { EventingContextType, EventingContext } from '../../../../topology/eventing-context';
+import { getDynamicChannelResourceList } from '../../../../utils/fetch-dynamic-eventsources-utils';
 import { knativeEventingResourcesBroker } from '../../../../utils/get-knative-resources';
 import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
 
@@ -16,31 +16,16 @@ export interface SourceResourcesProps {
 }
 
 const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink }) => {
-  const {
-    channelsData: { eventSourceChannels, loaded: chLoaded },
-  } = React.useContext<EventingContextType>(EventingContext);
   const { t } = useTranslation();
   const [resourceAlert, setResourceAlert] = React.useState(false);
   const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
     FormikValues
   >();
 
-  const [resourcesData, setResouceData] = React.useState<FirehoseResource[]>([]);
-  React.useEffect(() => {
-    if (chLoaded && resourcesData.length === 0) {
-      setResouceData([
-        ...eventSourceChannels.map((model) => ({
-          isList: true,
-          kind: referenceForModel(model),
-          namespace,
-          prop: referenceForModel(model),
-          optional: true,
-        })),
-        ...knativeEventingResourcesBroker(namespace),
-      ]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chLoaded, namespace]);
+  const resourcesData = [
+    ...getDynamicChannelResourceList(namespace),
+    ...knativeEventingResourcesBroker(namespace),
+  ];
 
   const autocompleteFilter = (strText: string, item: React.ReactElement): boolean =>
     fuzzy(strText, item?.props?.name);

@@ -1,0 +1,21 @@
+reviewers:
+  - andrewballantyne
+  - abhinandan13jan
+  - debsmita1
+  - divyanshiGupta
+  - christianvogt
+  - invincibleJai
+  - jerolimov
+  - karthikjeeyar
+  - rohitkrai03
+  - rottencandy
+  - sahil143
+  - vikram-raj
+approvers:
+  - andrewballantyne
+  - christianvogt
+  - invincibleJai
+  - jerolimov
+  - rohitkrai03
+labels:
+  - component/shipwright

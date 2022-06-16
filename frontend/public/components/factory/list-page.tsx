@@ -369,7 +369,7 @@ export type Flatten<
   R = any
 > = (resources: FirehoseResourcesResult<F>) => R;
 
-type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
+export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   kind: string;
   helpText?: React.ReactNode;
   selector?: Selector;

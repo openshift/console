@@ -1,7 +1,7 @@
 import { INCONTEXT_ACTIONS_SERVICE_BINDING } from '@console/dev-console/src/const';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
-import { ALLOW_SERVICE_BINDING_FLAG } from '../const';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/service-binding-plugin/src/const';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,

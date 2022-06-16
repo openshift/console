@@ -6,7 +6,7 @@ import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
 import { PIPELINE_NAMESPACE } from '../../pipelines/const';
 import { PAC_GH_APP_MANIFEST_API, PAC_SECRET_NAME } from '../const';
-import { createPACSecret } from '../pac-utils';
+import { createPACSecret, updatePACInfo } from '../pac-utils';
 
 export const usePacData = (
   code: string,
@@ -35,6 +35,7 @@ export const usePacData = (
           // eslint-disable-next-line @typescript-eslint/camelcase
           const { name, id, pem, webhook_secret, html_url } = data;
           const secret = await createPACSecret(id.toString(), pem, webhook_secret, name, html_url);
+          await updatePACInfo(html_url);
           if (mounted) {
             setSecretData(secret);
             setloaded(true);

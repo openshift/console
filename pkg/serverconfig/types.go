@@ -19,9 +19,10 @@ type Config struct {
 	Providers                `yaml:"providers"`
 	Helm                     `yaml:"helm"`
 	MonitoringInfo           `yaml:"monitoringInfo,omitempty"`
-	Plugins                  map[string]string `yaml:"plugins,omitempty"`
-	ManagedClusterConfigFile string            `yaml:"managedClusterConfigFile,omitempty"`
-	Proxy                    Proxy             `yaml:"proxy,omitempty"`
+	Plugins                  MultiKeyValue `yaml:"plugins,omitempty"`
+	ManagedClusterConfigFile string        `yaml:"managedClusterConfigFile,omitempty"`
+	Proxy                    Proxy         `yaml:"proxy,omitempty"`
+	Telemetry                MultiKeyValue `yaml:"telemetry,omitempty"`
 }
 
 type Proxy struct {

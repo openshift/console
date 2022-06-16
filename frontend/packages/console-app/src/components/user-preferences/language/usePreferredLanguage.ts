@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 
-const PREFERRED_LANGUAGE_USER_SETTING_KEY = 'console.preferredLanguage';
+export const PREFERRED_LANGUAGE_USER_SETTING_KEY = 'console.preferredLanguage';
 const PREFERRED_LANGUAGE_LOCAL_STORAGE_KEY = 'bridge/language';
 
 export const usePreferredLanguage = (): [

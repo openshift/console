@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction } from 'react';
 import { useUserSettings } from '@console/shared';
 
-const PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY = 'devconsole.import.secureRoutingOptions';
+export const PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY =
+  'devconsole.import.secureRoutingOptions';
 
 type RoutingOptions = {
   secure: boolean;

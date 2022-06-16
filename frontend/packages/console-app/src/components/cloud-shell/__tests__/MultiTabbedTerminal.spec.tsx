@@ -3,15 +3,34 @@ import { PlusIcon } from '@patternfly/react-icons';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
+import { sendActivityTick } from '../cloud-shell-utils';
 import ChoudShellTerminal from '../CloudShellTerminal';
 import MultiTabTerminal from '../MultiTabbedTerminal';
 
+Object.defineProperty(window, 'requestAnimationFrame', {
+  writable: true,
+  value: (callback) => callback(),
+});
+
+jest.mock('../cloud-shell-utils', () => {
+  return {
+    sendActivityTick: jest.fn(),
+  };
+});
+
 describe('MultiTabTerminal', () => {
+  jest.useFakeTimers();
+  let count = 0;
+  jest
+    .spyOn(window, 'requestAnimationFrame')
+    .mockImplementation((cb) => setTimeout(() => cb(100 * ++count), 100));
+  (sendActivityTick as jest.Mock).mockImplementation((a, b) => [a, b]);
   const multiTabTerminalWrapper = mount(
     <Provider store={store}>
       <MultiTabTerminal />
     </Provider>,
   );
+
   it('should initially load with only one console', () => {
     expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(1);
   });
@@ -52,4 +71,7 @@ describe('MultiTabTerminal', () => {
       .simulate('click');
     expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(5);
   });
+
+  (window.requestAnimationFrame as any).mockRestore();
+  jest.clearAllTimers();
 });

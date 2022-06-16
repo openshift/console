@@ -217,7 +217,7 @@ export const RepositoryModel: K8sKind = {
   id: 'repository',
   labelPlural: 'Repositories',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 

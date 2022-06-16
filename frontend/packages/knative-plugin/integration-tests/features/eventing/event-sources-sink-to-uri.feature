@@ -13,15 +13,15 @@ Feature: Event Sources can able sink to URI as well as Resource
         Scenario: Context Menu for URI: KE-03-TC01
             Given user has sinked event source "sink-binding" to URI "http://cluster.example.com/svc"
               And user is at Topology page
-             When user right clicks on URI "http://cluster.example.com/svc" to open context menu
+             When user right clicks on URI to open context menu
              Then user is able to see a context menu with option "Edit URI"
 
 
         @smoke
         Scenario: Update the URI for Sink Binding: KE-03-TC02
-            Given user has sinked event source "sink-binding" to URI "http://cluster.example.com/svc"
+            Given user has sinked event source "sink-binding" to URI
               And user is at Topology page
-             When user right clicks on URI "http://cluster.example.com/svc" to open context menu
+             When user right clicks on URI to open context menu
               And user selects "Edit URI" from context menu
               And user enters the uri as "http://cluster.example.com/svc-1" in "Edit URI" modal
               And user clicks on save
@@ -57,7 +57,7 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see the associated Connections on the Resources tab
 
 
-        @to-do
+        @manual
         Scenario: Manually drag a Connector from URI to Knative Service: KE-03-TC06
             Given user has sinked an event source to URI
               And user has a Knative Service
@@ -66,9 +66,9 @@ Feature: Event Sources can able sink to URI as well as Resource
              Then user will see that Event Source is now connected to Knative Service
 
 
-        @regression @to-do
+        @regression
         Scenario: Move sink from URI to new Resource: KE-03-TC07
-            Given user has sinked an event source to URI
+            Given user has sinked event source "sink-binding" to URI
               And user is at Topology page
              When user right clicks on the event source
               And user clicks on the Move Sink option
@@ -77,19 +77,6 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user clicks on Save button
              Then user will see that event source is now connected to new resource
               And user will see that the already existed URI will get vanished
-
-
-        @regression @to-do
-        Scenario: Move sink from URI to new URI: KE-03-TC08
-            Given user has sinked an event source to URI
-              And user is at Topology page
-             When user right clicks on the event source
-              And user clicks on the Move Sink option
-              And user selects sink to URI option
-              And user removes the privious URI
-              And user enters the URI
-              And user clicks on Save button
-             Then user will see that event source is now connected to new URI
 
 
         @regression @manual

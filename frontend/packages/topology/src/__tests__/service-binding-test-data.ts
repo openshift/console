@@ -1,5 +1,5 @@
 import { apiVersionForModel, DeploymentKind } from '@console/internal/module/k8s';
-import { ServiceBindingModel } from '../models';
+import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { TopologyDataResources } from '../topology-types';
 
 export const sbrBackingServiceSelectors: Partial<TopologyDataResources> = {

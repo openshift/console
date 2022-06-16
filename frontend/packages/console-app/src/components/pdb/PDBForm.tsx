@@ -22,8 +22,8 @@ import { MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
   ButtonBar,
   history,
-  resourcePathFromModel,
   SelectorInput,
+  resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { k8sCreate } from '@console/internal/module/k8s';
@@ -35,12 +35,9 @@ import { PodDisruptionBudgetKind } from './types';
 const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   formData,
   onChange,
-  selector,
   existingResource,
 }) => {
   const { t } = useTranslation();
-  const previousValueRef = React.useRef([]);
-  const previousValue = previousValueRef.current;
   const converted = formValuesFromK8sResource(formData);
   const [formValues, setFormValues] = React.useState(converted);
   const [error, setError] = React.useState('');
@@ -59,14 +56,10 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const onFormValuesChange = React.useCallback(
     (values) => {
       setFormValues(values);
-      onChange(pdbToK8sResource(values));
+      onChange(pdbToK8sResource(values, existingResource));
     },
-    [onChange],
+    [onChange, existingResource],
   );
-
-  React.useEffect(() => {
-    previousValueRef.current = SelectorInput.arrayify(selector);
-  });
 
   React.useEffect(() => {
     setRequirement(formValues.requirement);
@@ -75,11 +68,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     if (!_.isEmpty(existingResource) && _.isEmpty(formValues.name)) {
       onFormValuesChange(formValuesFromK8sResource(existingResource));
     }
-    if (!_.isEqual(SelectorInput.arrayify(selector), previousValue)) {
-      setLabels(SelectorInput.arrayify(selector));
-      onFormValuesChange({ ...formValues, selector: { matchLabels: selector } });
-    }
-  }, [existingResource, formValues, onFormValuesChange, previousValue, requirement, selector]);
+  }, [existingResource, formValues, onFormValuesChange, requirement]);
 
   const handleNameChange = (value: string) => onFormValuesChange({ ...formValues, name: value });
 

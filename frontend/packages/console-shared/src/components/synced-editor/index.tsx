@@ -42,7 +42,11 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   const { formContext, yamlContext } = context;
   const { t } = useTranslation();
   const [formData, setFormData] = React.useState<K8sResourceKind>(initialData);
-  const [yaml, setYAML] = React.useState(safeJSToYAML(initialData));
+  const [yaml, setYAML] = React.useState(
+    safeJSToYAML(initialData, 'yamlData', {
+      skipInvalid: true,
+    }),
+  );
   const [switchError, setSwitchError] = React.useState<string | undefined>();
   const [yamlWarning, setYAMLWarning] = React.useState<boolean>(false);
   const [editorType, setEditorType, loaded] = useEditorType(lastViewUserSettingKey, initialType);
@@ -59,6 +63,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
       .then((js) => {
         setSwitchError(undefined);
         handleFormDataChange(js);
+        setYAML('');
       })
       .catch((err) => setSwitchError(String(err)));
   };

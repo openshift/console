@@ -1,0 +1,959 @@
+# Based on https://github.com/shipwright-io/build/releases/download/v0.9.0/sample-strategies.yaml
+#
+# - Changed ClusterBuildStrategy to BuildStrategy, add namespace `build-examples`
+# - Removed all securityContext sections
+# - Removed `prepare` (chown -R 1000:1000 /tekton/home) from
+#     buildpacks-v3,
+#     buildpacks-v3-heroku,
+#     buildkit
+#     ko
+# - Removed `seccomp` annotation in `buildkit-build`
+#
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: buildah
+spec:
+  buildSteps:
+    - name: build-and-push
+      image: quay.io/containers/buildah:v1.23.1
+      workingDir: $(params.shp-source-root)
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          set -euo pipefail
+
+          # Parse parameters
+          context=
+          dockerfile=
+          image=
+          buildArgs=()
+          inBuildArgs=false
+          registriesBlock=""
+          inRegistriesBlock=false
+          registriesInsecure=""
+          inRegistriesInsecure=false
+          registriesSearch=""
+          inRegistriesSearch=false
+          tlsVerify=true
+          while [[ $# -gt 0 ]]; do
+            arg="$1"
+            shift
+
+            if [ "${arg}" == "--context" ]; then
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              context="$1"
+              shift
+            elif [ "${arg}" == "--dockerfile" ]; then
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              dockerfile="$1"
+              shift
+            elif [ "${arg}" == "--image" ]; then
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              image="$1"
+              shift
+            elif [ "${arg}" == "--build-args" ]; then
+              inBuildArgs=true
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+            elif [ "${arg}" == "--registries-block" ]; then
+              inRegistriesBlock=true
+              inBuildArgs=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+            elif [ "${arg}" == "--registries-insecure" ]; then
+              inRegistriesInsecure=true
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesSearch=false
+            elif [ "${arg}" == "--registries-search" ]; then
+              inRegistriesSearch=true
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+            elif [ "${inBuildArgs}" == "true" ]; then
+              buildArgs+=("--build-arg" "${arg}")
+            elif [ "${inRegistriesBlock}" == "true" ]; then
+              registriesBlock="${registriesBlock}'${arg}', "
+            elif [ "${inRegistriesInsecure}" == "true" ]; then
+              registriesInsecure="${registriesInsecure}'${arg}', "
+
+              # This assumes that the image is passed before the insecure registries which is fair in this context
+              if [[ ${image} == ${arg}/* ]]; then
+                tlsVerify=false
+              fi
+            elif [ "${inRegistriesSearch}" == "true" ]; then
+              registriesSearch="${registriesSearch}'${arg}', "
+            else
+              echo "Invalid usage"
+              exit 1
+            fi
+          done
+
+          # Verify the existence of the context directory
+          if [ ! -d "${context}" ]; then
+            echo -e "The context directory '${context}' does not exist."
+            echo -n "ContextDirNotFound" > '$(results.shp-error-reason.path)'
+            echo -n "The context directory '${context}' does not exist." > '$(results.shp-error-message.path)'
+            exit 1
+          fi
+          cd "${context}"
+
+          # Verify the existence of the Dockerfile
+          if [ ! -f "${dockerfile}" ]; then
+            echo -e "The Dockerfile '${dockerfile}' does not exist."
+            echo -n "DockerfileNotFound" > '$(results.shp-error-reason.path)'
+            echo -n "The Dockerfile '${dockerfile}' does not exist." > '$(results.shp-error-message.path)'
+            exit 1
+          fi
+
+          echo "[INFO] Creating registries config file..."
+          if [ "${registriesSearch}" != "" ]; then
+            cat <<EOF >>/tmp/registries.conf
+          [registries.search]
+          registries = [${registriesSearch::-2}]
+
+          EOF
+          fi
+          if [ "${registriesInsecure}" != "" ]; then
+            cat <<EOF >>/tmp/registries.conf
+          [registries.insecure]
+          registries = [${registriesInsecure::-2}]
+
+          EOF
+          fi
+          if [ "${registriesBlock}" != "" ]; then
+            cat <<EOF >>/tmp/registries.conf
+          [registries.block]
+          registries = [${registriesBlock::-2}]
+
+          EOF
+          fi
+
+          # Building the image
+          echo "[INFO] Building image ${image}"
+          buildah bud "${buildArgs[@]}" \
+            --registries-conf=/tmp/registries.conf \
+            --tag="${image}" \
+            --file="${dockerfile}" \
+            .
+
+          # Push the image
+          echo "[INFO] Pushing image ${image}"
+          buildah push \
+            --digestfile='$(results.shp-image-digest.path)' \
+            --tls-verify="${tlsVerify}" \
+            "${image}" \
+            "docker://${image}"
+        # That's the separator between the shell script and its args
+        - --
+        - --context
+        - $(params.shp-source-context)
+        - --dockerfile
+        - $(build.dockerfile)
+        - --image
+        - $(params.shp-output-image)
+        - --build-args
+        - $(params.build-args[*])
+        - --registries-block
+        - $(params.registries-block[*])
+        - --registries-insecure
+        - $(params.registries-insecure[*])
+        - --registries-search
+        - $(params.registries-search[*])
+      resources:
+        limits:
+          cpu: "1"
+          memory: 2Gi
+        requests:
+          cpu: 250m
+          memory: 65Mi
+  parameters:
+    - name: build-args
+      description: "The values for the args in the Dockerfile. Values must be in the format KEY=VALUE."
+      type: array
+      defaults: []
+    - name: registries-block
+      description: The registries that need to block pull access.
+      type: array
+      defaults: []
+    - name: registries-insecure
+      description: The fully-qualified name of insecure registries. An insecure registry is one that does not have a valid SSL certificate or only supports HTTP.
+      type: array
+      defaults: []
+    - name: registries-search
+      description: The registries for searching short name images such as `golang:latest`.
+      type: array
+      defaults:
+        - docker.io
+        - quay.io
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: buildkit
+spec:
+  parameters:
+    - name: build-args
+      description: "The values for the ARGs in the Dockerfile. Values must be in the format KEY=VALUE."
+      type: array
+      defaults: []
+    - name: cache
+      description: "Configure BuildKit's cache usage. Allowed values are 'disabled' and 'registry'. The default is 'registry'."
+      type: string
+      default: registry
+    - name: insecure-registry
+      type: string
+      description: "Enables the push to an insecure registry"
+      default: "false"
+    - name: platforms
+      description: "Build the image for different platforms. By default, the image is built for the platform used by the FROM image. If that is present for multiple platforms, then it is built for the environment's platform."
+      type: array
+      defaults: []
+    - name: secrets
+      description: "The secrets to pass to the build. Values must be in the format ID=FILE_CONTENT."
+      type: array
+      defaults: []
+  buildSteps:
+    - name: build-and-push
+      image: moby/buildkit:nightly-rootless
+      imagePullPolicy: Always
+      workingDir: $(params.shp-source-root)
+      env:
+        - name: DOCKER_CONFIG
+          value: /tekton/home/.docker
+        - name: HOME
+          value: /tekton/home
+        # See https://github.com/moby/buildkit/blob/master/docs/rootless.md#about---oci-worker-no-process-sandbox for more information
+        - name: BUILDKITD_FLAGS
+          value: --oci-worker-no-process-sandbox
+        - name: PARAM_SOURCE_CONTEXT
+          value: $(params.shp-source-context)
+        - name: PARAM_DOCKERFILE
+          value: $(params.DOCKERFILE)
+        - name: PARAM_OUTPUT_IMAGE
+          value: $(params.shp-output-image)
+        - name: PARAM_INSECURE_REGISTRY
+          value: $(params.insecure-registry)
+        - name: PARAM_CACHE
+          value: $(params.cache)
+      command:
+        - /bin/ash
+      args:
+        - -c
+        - |
+          set -euo pipefail
+
+          # Verify the existence of the context directory
+          if [ ! -d "${PARAM_SOURCE_CONTEXT}" ]; then
+            echo -e "The context directory '${PARAM_SOURCE_CONTEXT}' does not exist."
+            echo -n "ContextDirNotFound" > '$(results.shp-error-reason.path)'
+            echo -n "The context directory '${PARAM_SOURCE_CONTEXT}' does not exist." > '$(results.shp-error-message.path)'
+            exit 1
+          fi
+
+          # Prepare the file arguments
+          DOCKERFILE_PATH="${PARAM_SOURCE_CONTEXT}/${PARAM_DOCKERFILE}"
+          DOCKERFILE_DIR="$(dirname "${DOCKERFILE_PATH}")"
+          DOCKERFILE_NAME="$(basename "${DOCKERFILE_PATH}")"
+
+          # Verify the existence of the Dockerfile
+          if [ ! -f "${DOCKERFILE_PATH}" ]; then
+            echo -e "The Dockerfile '${DOCKERFILE_PATH}' does not exist."
+            echo -n "DockerfileNotFound" > '$(results.shp-error-reason.path)'
+            echo -n "The Dockerfile '${DOCKERFILE_PATH}' does not exist." > '$(results.shp-error-message.path)'
+            exit 1
+          fi
+
+          # We only have ash here and therefore no bash arrays to help add dynamic arguments (the build-args) to the build command.
+
+          echo "#!/bin/ash" > /tmp/run.sh
+          echo "set -euo pipefail" >> /tmp/run.sh
+          echo "buildctl-daemonless.sh \\" >> /tmp/run.sh
+          echo "build \\" >> /tmp/run.sh
+          echo "--progress=plain \\" >> /tmp/run.sh
+          echo "--frontend=dockerfile.v0 \\" >> /tmp/run.sh
+          echo "--opt=filename=\"${DOCKERFILE_NAME}\" \\" >> /tmp/run.sh
+          echo "--local=context=\"${PARAM_SOURCE_CONTEXT}\" \\" >> /tmp/run.sh
+          echo "--local=dockerfile=\"${DOCKERFILE_DIR}\" \\" >> /tmp/run.sh
+          echo "--output=type=image,name=\"${PARAM_OUTPUT_IMAGE}\",push=true,registry.insecure=\"${PARAM_INSECURE_REGISTRY}\" \\" >> /tmp/run.sh
+          if [ "${PARAM_CACHE}" == "registry" ]; then
+            echo "--export-cache=type=inline \\" >> /tmp/run.sh
+            echo "--import-cache=type=registry,ref=\"${PARAM_OUTPUT_IMAGE}\" \\" >> /tmp/run.sh
+          elif [ "${PARAM_CACHE}" == "disabled" ]; then
+            echo "--no-cache \\" >> /tmp/run.sh
+          else
+            echo -e "An invalid value for the parameter 'cache' has been provided: '${PARAM_CACHE}'. Allowed values are 'disabled' and 'registry'."
+            echo -n "InvalidParameterValue" > '$(results.shp-error-reason.path)'
+            echo -n "An invalid value for the parameter 'cache' has been provided: '${PARAM_CACHE}'. Allowed values are 'disabled' and 'registry'." > '$(results.shp-error-message.path)'
+            exit 1
+          fi
+
+          stage=""
+          platforms=""
+          for a in "$@"
+          do
+            if [ "${a}" == "--build-args" ]; then
+              stage=build-args
+            elif [ "${a}" == "--platforms" ]; then
+              stage=platforms
+            elif [ "${a}" == "--secrets" ]; then
+              stage=secrets
+            elif [ "${stage}" == "build-args" ]; then
+              echo "--opt=\"build-arg:${a}\" \\" >> /tmp/run.sh
+            elif [ "${stage}" == "platforms" ]; then
+              if [ "${platforms}" == "" ]; then
+                platforms="${a}"
+              else
+                platforms="${platforms},${a}"
+              fi
+            elif [ "${stage}" == "secrets" ]; then
+              # Split ID=FILE_CONTENT into variables id and data
+
+              # using head because the data could be multiline
+              id="$(echo "${a}" | head -1 | sed 's/=.*//')"
+
+              # This is hacky, we remove the suffix ${id}= from all lines of the data.
+              # If the data would be multiple lines and a line would start with ${id}=
+              # then we would remove it. We could force users to give us the secret
+              # base64 encoded. But ultimately, the best solution might be if the user
+              # mounts the secret and just gives us the path here.
+              data="$(echo "${a}" | sed "s/^${id}=//")"
+
+              # Write the secret data into a temporary file, once we have volume support
+              # in the build strategy, we should use a memory based emptyDir for this.
+              echo -n "${data}" > "/tmp/secret_${id}"
+
+              # Add the secret argument
+              echo "--secret id=${id},src="/tmp/secret_${id}" \\" >> /tmp/run.sh
+            fi
+          done
+
+          if [ "${platforms}" != "" ]; then
+            echo "--opt=\"platform=${platforms}\" \\" >> /tmp/run.sh
+          fi
+
+          echo "--metadata-file /tmp/image-metadata.json" >> /tmp/run.sh
+
+          chmod +x /tmp/run.sh
+          /tmp/run.sh
+
+          # Store the image digest
+          grep containerimage.digest /tmp/image-metadata.json | sed -E 's/.*containerimage.digest":\s*"([^"]*).*/\1/' | tr -d '\n' > '$(results.shp-image-digest.path)'
+        # That's the separator between the shell script and its args
+        - --
+        - --build-args
+        - $(params.build-args[*])
+        - --platforms
+        - $(params.platforms[*])
+        - --secrets
+        - $(params.secrets[*])
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: buildpacks-v3-heroku
+spec:
+  parameters:
+    - name: platform-api-version
+      description: The referenced version is the minimum version that all relevant buildpack implementations support.
+      default: "0.4"
+  buildSteps:
+    - name: build-and-push
+      image: heroku/buildpacks:18
+      env:
+        - name: CNB_PLATFORM_API
+          value: $(params.platform-api-version)
+        - name: PARAM_SOURCE_CONTEXT
+          value: $(params.shp-source-context)
+        - name: PARAM_OUTPUT_IMAGE
+          value: $(params.shp-output-image)
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - "set -euo pipefail\n\necho \"> Processing environment variables...\"\nENV_DIR=\"/platform/env\"\n\nenvs=($(env))\n\n# Denying the creation of non required files from system environments.\n# The creation of a file named PATH (corresponding to PATH system environment)\n# caused failure for python source during pip install (https://github.com/Azure-Samples/python-docs-hello-world)\nblock_list=(\"PATH\" \"HOSTNAME\" \"PWD\" \"_\" \"SHLVL\" \"HOME\" \"\")\n\nfor env in \"${envs[@]}\"; do\n  blocked=false\n\n  IFS='=' read -r key value string <<< \"$env\"\n\n  for str in \"${block_list[@]}\"; do\n    if [[ \"$key\" == \"$str\" ]]; then\n      blocked=true\n      break\n    fi\n  done\n\n  if [ \"$blocked\" == \"false\" ]; then\n    path=\"${ENV_DIR}/${key}\"\n    echo -n \"$value\" > \"$path\"\n  fi\ndone\n\nLAYERS_DIR=/tmp/layers\nCACHE_DIR=/tmp/cache\n\nmkdir \"$CACHE_DIR\" \"$LAYERS_DIR\"\n\nfunction anounce_phase {\n  printf \"===> %s\\n\" \"$1\" \n}\n\nanounce_phase \"DETECTING\"\n/cnb/lifecycle/detector -app=\"${PARAM_SOURCE_CONTEXT}\" -layers=\"$LAYERS_DIR\"\n\nanounce_phase \"ANALYZING\"\n/cnb/lifecycle/analyzer -layers=\"$LAYERS_DIR\" -cache-dir=\"$CACHE_DIR\" \"${PARAM_OUTPUT_IMAGE}\"\n\nanounce_phase \"RESTORING\"\n/cnb/lifecycle/restorer -cache-dir=\"$CACHE_DIR\"\n\nanounce_phase \"BUILDING\"\n/cnb/lifecycle/builder -app=\"${PARAM_SOURCE_CONTEXT}\" -layers=\"$LAYERS_DIR\"\n\nexporter_args=( -layers=\"$LAYERS_DIR\" -report=/tmp/report.toml -cache-dir=\"$CACHE_DIR\" -app=\"${PARAM_SOURCE_CONTEXT}\")\ngrep -q \"buildpack-default-process-type\" \"$LAYERS_DIR/config/metadata.toml\" || exporter_args+=( -process-type web ) \n\nanounce_phase \"EXPORTING\"\n/cnb/lifecycle/exporter \"${exporter_args[@]}\" \"${PARAM_OUTPUT_IMAGE}\"\n\n# Store the image digest\ngrep digest /tmp/report.toml | tr -d ' \\\"\\n' | sed s/digest=// > \"$(results.shp-image-digest.path)\"\n"
+      volumeMounts:
+        - mountPath: /platform/env
+          name: platform-env
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 65Mi
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: buildpacks-v3
+spec:
+  parameters:
+    - name: platform-api-version
+      description: The referenced version is the minimum version that all relevant buildpack implementations support.
+      default: "0.4"
+  buildSteps:
+    - name: build-and-push
+      image: docker.io/paketobuildpacks/builder:full
+      imagePullPolicy: Always
+      env:
+        - name: CNB_PLATFORM_API
+          value: $(params.platform-api-version)
+        - name: PARAM_SOURCE_CONTEXT
+          value: $(params.shp-source-context)
+        - name: PARAM_OUTPUT_IMAGE
+          value: $(params.shp-output-image)
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - "set -euo pipefail\n\necho \"> Processing environment variables...\"\nENV_DIR=\"/platform/env\"\n\nenvs=($(env))\n\n# Denying the creation of non required files from system environments.\n# The creation of a file named PATH (corresponding to PATH system environment)\n# caused failure for python source during pip install (https://github.com/Azure-Samples/python-docs-hello-world)\nblock_list=(\"PATH\" \"HOSTNAME\" \"PWD\" \"_\" \"SHLVL\" \"HOME\" \"\")\n\nfor env in \"${envs[@]}\"; do\n  blocked=false\n\n  IFS='=' read -r key value string <<< \"$env\"\n\n  for str in \"${block_list[@]}\"; do\n    if [[ \"$key\" == \"$str\" ]]; then\n      blocked=true\n      break\n    fi\n  done\n\n  if [ \"$blocked\" == \"false\" ]; then\n    path=\"${ENV_DIR}/${key}\"\n    echo -n \"$value\" > \"$path\"\n  fi\ndone\n\nLAYERS_DIR=/tmp/layers\nCACHE_DIR=/tmp/cache\n\nmkdir \"$CACHE_DIR\" \"$LAYERS_DIR\"\n\nfunction anounce_phase {\n  printf \"===> %s\\n\" \"$1\" \n}\n\nanounce_phase \"DETECTING\"\n/cnb/lifecycle/detector -app=\"${PARAM_SOURCE_CONTEXT}\" -layers=\"$LAYERS_DIR\"\n\nanounce_phase \"ANALYZING\"\n/cnb/lifecycle/analyzer -layers=\"$LAYERS_DIR\" -cache-dir=\"$CACHE_DIR\" \"${PARAM_OUTPUT_IMAGE}\"\n\nanounce_phase \"RESTORING\"\n/cnb/lifecycle/restorer -cache-dir=\"$CACHE_DIR\"\n\nanounce_phase \"BUILDING\"\n/cnb/lifecycle/builder -app=\"${PARAM_SOURCE_CONTEXT}\" -layers=\"$LAYERS_DIR\"\n\nexporter_args=( -layers=\"$LAYERS_DIR\" -report=/tmp/report.toml -cache-dir=\"$CACHE_DIR\" -app=\"${PARAM_SOURCE_CONTEXT}\")\ngrep -q \"buildpack-default-process-type\" \"$LAYERS_DIR/config/metadata.toml\" || exporter_args+=( -process-type web ) \n\nanounce_phase \"EXPORTING\"\n/cnb/lifecycle/exporter \"${exporter_args[@]}\" \"${PARAM_OUTPUT_IMAGE}\"\n\n# Store the image digest\ngrep digest /tmp/report.toml | tr -d ' \\\"\\n' | sed s/digest=// > \"$(results.shp-image-digest.path)\"\n"
+      volumeMounts:
+        - mountPath: /platform/env
+          name: platform-env
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 65Mi
+
+---
+# This Build Strategy will intentionally fail if the image has any
+# critical CVEs. It will not be pushed into the destination registry
+# if any critical vulnerabilities are found.
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: kaniko-trivy
+spec:
+  buildSteps:
+    - name: kaniko-build
+      image: gcr.io/kaniko-project/executor:v1.8.1
+      workingDir: $(params.shp-source-root)
+      env:
+        - name: HOME
+          value: /tekton/home
+        - name: AWS_ACCESS_KEY_ID
+          value: NOT_SET
+        - name: AWS_SECRET_KEY
+          value: NOT_SET
+      command:
+        - /kaniko/executor
+      args:
+        - --skip-tls-verify=true
+        - --dockerfile=$(build.dockerfile)
+        - --context=$(params.shp-source-context)
+        - --destination=$(params.shp-output-image)
+        - --oci-layout-path=/kaniko/oci-image-layout
+        - --snapshotMode=redo
+        - --no-push
+        - --tarPath
+        - /kaniko/tar-image/image.tar
+      volumeMounts:
+        - name: layout
+          mountPath: /kaniko/oci-image-layout
+        - name: tar
+          mountPath: /kaniko/tar-image
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 65Mi
+    - name: trivy-scan
+      image: docker.io/aquasec/trivy:0.25.3
+      volumeMounts:
+        - mountPath: /image/
+          name: tar
+      command:
+        - trivy
+      args:
+        - image
+        - --exit-code=1
+        - --severity=CRITICAL
+        - --input
+        - /image/image.tar
+      env:
+        - name: HOME
+          value: /tekton/home
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 65Mi
+    - name: crane-push
+      image: gcr.io/go-containerregistry/crane:v0.8.0
+      volumeMounts:
+        - mountPath: /image/
+          name: tar
+      command:
+        - crane
+      args:
+        - push
+        - /image/image.tar
+        - $(params.shp-output-image)
+      env:
+        - name: HOME
+          value: /tekton/home
+    - name: results
+      image: registry.access.redhat.com/ubi8/ubi-minimal
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          set -euo pipefail
+
+          # Store the image digest
+          grep digest /kaniko/oci-image-layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > "$(results.shp-image-digest.path)"
+
+          # Store the image size
+          du -b -c /kaniko/oci-image-layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > "$(results.shp-image-size.path)"
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      volumeMounts:
+        - name: layout
+          mountPath: /kaniko/oci-image-layout
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: kaniko
+spec:
+  buildSteps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:v1.8.1
+      workingDir: $(params.shp-source-root)
+      env:
+        - name: HOME
+          value: /tekton/home
+        - name: DOCKER_CONFIG
+          value: /tekton/home/.docker
+        - name: AWS_ACCESS_KEY_ID
+          value: NOT_SET
+        - name: AWS_SECRET_KEY
+          value: NOT_SET
+      command:
+        - /kaniko/executor
+      args:
+        - --skip-tls-verify=true
+        - --dockerfile=$(build.dockerfile)
+        - --context=$(params.shp-source-context)
+        - --destination=$(params.shp-output-image)
+        - --oci-layout-path=/kaniko/oci-image-layout
+        - --snapshotMode=redo
+        - --push-retry=3
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 65Mi
+      volumeMounts:
+        - name: layout
+          mountPath: /kaniko/oci-image-layout
+    - name: results
+      image: registry.access.redhat.com/ubi8/ubi-minimal
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          set -euo pipefail
+
+          # Store the image digest
+          grep digest /kaniko/oci-image-layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > "$(results.shp-image-digest.path)"
+
+          # Store the image size
+          du -b -c /kaniko/oci-image-layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > "$(results.shp-image-size.path)"
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      volumeMounts:
+        - name: layout
+          mountPath: /kaniko/oci-image-layout
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: ko
+spec:
+  parameters:
+    - name: go-flags
+      description: "Value for the GOFLAGS environment variable."
+      default: ""
+    - name: go-version
+      description: "Version of Go, must match a tag from https://hub.docker.com/_/golang?tab=tags"
+      default: "1.17"
+    - name: ko-version
+      description: "Version of ko, must be either 'latest', or a release name from https://github.com/google/ko/releases"
+      default: latest
+    - name: package-directory
+      description: "The directory inside the context directory containing the main package."
+      default: "."
+    - name: target-platform
+      description: "Target platform to be built. For example: 'linux/arm64'. Multiple platforms can be provided separated by comma, for example: 'linux/arm64,linux/amd64'. The value 'all' will build all platforms supported by the base image. The value 'current' will build the platform on which the build runs."
+      default: current
+  buildSteps:
+    - name: build-and-push
+      image: golang:$(params.go-version)
+      imagePullPolicy: Always
+      workingDir: $(params.shp-source-root)
+      env:
+        - name: DOCKER_CONFIG
+          value: /tekton/home/.docker
+        - name: HOME
+          value: /tekton/home
+        - name: GOFLAGS
+          value: $(params.go-flags)
+        - name: PARAM_OUTPUT_IMAGE
+          value: $(params.shp-output-image)
+        - name: PARAM_SOURCE_CONTEXT
+          value: $(params.shp-source-context)
+        - name: PARAM_TARGET_PLATFORM
+          value: $(params.target-platform)
+        - name: PARAM_PACKAGE_DIRECTORY
+          value: $(params.package-directory)
+        - name: PARAM_KO_VERSION
+          value: $(params.ko-version)
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          set -euo pipefail
+
+          # Parse image URL to extract repository and tag, must work with
+          # - a URL without a tag and a port: registry/image
+          # - a URL without a tag but a port: registry:port/image
+          # - a URL with a tag but without a port: registry/image:tag
+          # - a URL with both a tag and a port: registry:port/image:tag
+
+          REPO=
+          TAG=
+
+          IFS=':' read -ra PARTS <<< "${PARAM_OUTPUT_IMAGE}"
+          for PART in "${PARTS[@]}"; do
+            if [ "${REPO}" == "" ]; then
+              REPO="${PART}"
+          	elif [[ "${PART}" == *"/"* ]]; then
+              REPO="${REPO}:${PART}"
+            elif [ "${TAG}" == "" ]; then
+              TAG="${PART}"
+            else
+              REPO="${REPO}:${TAG}"
+              TAG="${PART}"
+            fi
+          done
+
+          # Determine the ko version
+          KO_VERSION="${PARAM_KO_VERSION}"
+          if [ "${KO_VERSION}" == "latest" ]; then
+            KO_VERSION=$(curl --silent "https://api.github.com/repos/google/ko/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          fi
+
+          # Create one variable with v-suffix and one without as we need both for the download URL
+          if [[ ${KO_VERSION} = v* ]]; then
+            KO_VERSION_WITH_V=${KO_VERSION}
+            KO_VERSION_WITHOUT_V=${KO_VERSION:1}
+          else
+            KO_VERSION_WITH_V=v${KO_VERSION}
+            KO_VERSION_WITHOUT_V=${KO_VERSION}
+          fi
+
+          # Download ko to the temp directory
+          curl -f -s -L "https://github.com/google/ko/releases/download/${KO_VERSION_WITH_V}/ko_${KO_VERSION_WITHOUT_V}_$(uname)_$(uname -m | sed 's/aarch64/arm64/').tar.gz" | tar xzf - -C /tmp ko
+
+          # Determine the platform
+          PLATFORM="${PARAM_TARGET_PLATFORM}"
+          if [ "${PLATFORM}" == "current" ]; then
+            PLATFORM="$(uname | tr '[:upper:]' '[:lower:]')/$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')"
+          fi
+
+          # Print version information
+          go version
+          echo "ko version $(/tmp/ko version)"
+
+          # Run ko
+
+          export GOROOT="$(go env GOROOT)"
+          export KO_DOCKER_REPO="${REPO}"
+
+          pushd "${PARAM_SOURCE_CONTEXT}" > /dev/null
+            if [ "${TAG}" == "" ]; then
+              /tmp/ko publish "${PARAM_PACKAGE_DIRECTORY}" --bare --oci-layout-path=/tmp/layout --platform="${PLATFORM}"
+            else
+              /tmp/ko publish "${PARAM_PACKAGE_DIRECTORY}" --bare --oci-layout-path=/tmp/layout --platform="${PLATFORM}" --tags="${TAG}"
+            fi
+          popd > /dev/null
+
+          # Store the image digest
+          grep digest /tmp/layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > '$(results.shp-image-digest.path)'
+
+          # Store the image size
+          du -b -c /tmp/layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > '$(results.shp-image-size.path)'
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 65Mi
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: source-to-image-redhat
+spec:
+  buildSteps:
+    - name: s2i-generate
+      image: registry.redhat.io/ocp-tools-43-tech-preview/source-to-image-rhel8:latest
+      workingDir: $(params.shp-source-root)
+      args:
+        - build
+        - $(params.shp-source-context)
+        - $(build.builder.image)
+        - $(params.shp-output-image)
+        - --as-dockerfile=/s2i/Dockerfile
+      volumeMounts:
+        - name: s2i
+          mountPath: /s2i
+    - name: buildah
+      image: quay.io/containers/buildah:v1.23.1
+      workingDir: /s2i
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          set -euo pipefail
+
+          # Parse parameters
+          image=
+          registriesBlock=""
+          inRegistriesBlock=false
+          registriesInsecure=""
+          inRegistriesInsecure=false
+          registriesSearch=""
+          inRegistriesSearch=false
+          tlsVerify=true
+          while [[ $# -gt 0 ]]; do
+            arg="$1"
+            shift
+
+            if [ "${arg}" == "--image" ]; then
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              image="$1"
+              shift
+            elif [ "${arg}" == "--registries-block" ]; then
+              inRegistriesBlock=true
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+            elif [ "${arg}" == "--registries-insecure" ]; then
+              inRegistriesInsecure=true
+              inRegistriesBlock=false
+              inRegistriesSearch=false
+            elif [ "${arg}" == "--registries-search" ]; then
+              inRegistriesSearch=true
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+            elif [ "${inRegistriesBlock}" == "true" ]; then
+              registriesBlock="${registriesBlock}'${arg}', "
+            elif [ "${inRegistriesInsecure}" == "true" ]; then
+              registriesInsecure="${registriesInsecure}'${arg}', "
+
+              # This assumes that the image is passed before the insecure registries which is fair in this context
+              if [[ ${image} == ${arg}/* ]]; then
+                tlsVerify=false
+              fi
+            elif [ "${inRegistriesSearch}" == "true" ]; then
+              registriesSearch="${registriesSearch}'${arg}', "
+            else
+              echo "Invalid usage"
+              exit 1
+            fi
+          done
+
+          echo "[INFO] Creating registries config file..."
+          if [ "${registriesSearch}" != "" ]; then
+            cat <<EOF >>/tmp/registries.conf
+          [registries.search]
+          registries = [${registriesSearch::-2}]
+
+          EOF
+          fi
+          if [ "${registriesInsecure}" != "" ]; then
+            cat <<EOF >>/tmp/registries.conf
+          [registries.insecure]
+          registries = [${registriesInsecure::-2}]
+
+          EOF
+          fi
+          if [ "${registriesBlock}" != "" ]; then
+            cat <<EOF >>/tmp/registries.conf
+          [registries.block]
+          registries = [${registriesBlock::-2}]
+
+          EOF
+          fi
+
+          # Building the image
+          echo "[INFO] Building image ${image}"
+          buildah bud \
+            --registries-conf=/tmp/registries.conf \
+            --tag="${image}"
+
+          # Push the image
+          echo "[INFO] Pushing image ${image}"
+          buildah push \
+            --digestfile='$(results.shp-image-digest.path)' \
+            --tls-verify="${tlsVerify}" \
+            "docker://${image}"
+        # That's the separator between the shell script and its args
+        - --
+        - --image
+        - $(params.shp-output-image)
+        - --registries-block
+        - $(params.registries-block[*])
+        - --registries-insecure
+        - $(params.registries-insecure[*])
+        - --registries-search
+        - $(params.registries-search[*])
+      volumeMounts:
+        - name: s2i
+          mountPath: /s2i
+  parameters:
+    - name: registries-block
+      description: The registries that need to block pull access.
+      type: array
+      defaults: []
+    - name: registries-insecure
+      description: The fully-qualified name of insecure registries. An insecure registry is one that does not have a valid SSL certificate or only supports HTTP.
+      type: array
+      defaults: []
+    - name: registries-search
+      description: The registries for searching short name images such as `golang:latest`.
+      type: array
+      defaults:
+        - docker.io
+        - quay.io
+
+---
+apiVersion: shipwright.io/v1alpha1
+kind: BuildStrategy
+metadata:
+  namespace: build-examples
+  name: source-to-image
+spec:
+  buildSteps:
+    - command:
+        - /usr/local/bin/s2i
+        - build
+        - $(params.shp-source-context)
+        - $(build.builder.image)
+        - '--as-dockerfile'
+        - /gen-source/Dockerfile.gen
+      image: quay.io/openshift-pipeline/s2i:nightly
+      imagePullPolicy: Always
+      name: s2i-build-as-dockerfile
+      volumeMounts:
+        - mountPath: /gen-source
+          name: gen-source
+      workingDir: $(params.shp-source-root)
+    - args:
+        - '--skip-tls-verify=true'
+        - '--dockerfile=/gen-source/Dockerfile.gen'
+        - '--context=/gen-source'
+        - '--destination=$(params.shp-output-image)'
+        - '--oci-layout-path=/kaniko/oci-image-layout'
+        - '--snapshotMode=redo'
+        - '--push-retry=3'
+      command:
+        - /kaniko/executor
+      env:
+        - name: DOCKER_CONFIG
+          value: /tekton/home/.docker
+        - name: HOME
+          value: /tekton/home
+        - name: AWS_ACCESS_KEY_ID
+          value: NOT_SET
+        - name: AWS_SECRET_KEY
+          value: NOT_SET
+      image: gcr.io/kaniko-project/executor:v1.8.1
+      name: build-and-push
+      volumeMounts:
+        - mountPath: /gen-source
+          name: gen-source
+        - name: layout
+          mountPath: /kaniko/oci-image-layout
+      workingDir: /gen-source
+    - name: results
+      image: registry.access.redhat.com/ubi8/ubi-minimal
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          set -euo pipefail
+
+          # Store the image digest
+          grep digest /kaniko/oci-image-layout/index.json | sed -E 's/.*sha256([^"]*).*/sha256\1/' | tr -d '\n' > "$(results.shp-image-digest.path)"
+
+          # Store the image size
+          du -b -c /kaniko/oci-image-layout/blobs/sha256/* | tail -1 | sed 's/\s*total//' | tr -d '\n' > "$(results.shp-image-size.path)"
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      volumeMounts:
+        - name: layout
+          mountPath: /kaniko/oci-image-layout

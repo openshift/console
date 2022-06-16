@@ -10,26 +10,13 @@ import { featureReducerName } from '../../reducers/features';
 import { getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';
 
-export const getPrometheusExpressionBrowserURL = (url, queries): string => {
-  if (!url || _.isEmpty(queries)) {
-    return null;
-  }
-  const params = new URLSearchParams();
-  _.each(queries, (query, i) => {
-    params.set(`g${i}.range_input`, '1h');
-    params.set(`g${i}.expr`, query);
-    params.set(`g${i}.tab`, '0');
-  });
-  return `${url}/graph?${params.toString()}`;
-};
-
 const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:
     !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
   namespace: getActiveNamespace(state),
 });
 
-export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
+const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   canAccessMonitoring,
   children,
   query,

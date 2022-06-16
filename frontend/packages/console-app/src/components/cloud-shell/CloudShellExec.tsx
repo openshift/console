@@ -8,7 +8,7 @@ import { PodModel } from '@console/internal/models';
 import { resourceURL, K8sKind } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
-import { FLAGS } from '@console/shared';
+import { FLAGS, useTelemetry } from '@console/shared';
 import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
 import {
   getCloudShellCR,
@@ -19,8 +19,6 @@ import {
 import ExecuteCommand from './ExecuteCommand';
 import Terminal, { ImperativeTerminalType } from './Terminal';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import useActivityTick, { TICK_INTERVAL } from './useActivityTick';
-
 import './CloudShellExec.scss';
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
@@ -31,12 +29,12 @@ import './CloudShellExec.scss';
 
 type Props = {
   workspaceName: string;
+  workspaceId: string;
   container: string;
   podname: string;
   namespace: string;
   shcommand?: string[];
   workspaceModel: K8sKind;
-  isActiveTab?: boolean;
 };
 
 type StateProps = {
@@ -56,6 +54,7 @@ const NO_SH =
 
 const CloudShellExec: React.FC<CloudShellExecProps> = ({
   workspaceName,
+  workspaceId,
   container,
   podname,
   namespace,
@@ -63,9 +62,9 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   flags,
   impersonate,
   workspaceModel,
-  isActiveTab = false,
   onActivate,
 }) => {
+  const fireTelemetryEvent = useTelemetry();
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
   const [wsError, setWsError] = React.useState<string>();
   const [wsReopening, setWsReopening] = React.useState<boolean>(false);
@@ -74,28 +73,9 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const terminal = React.useRef<ImperativeTerminalType>();
   const { t } = useTranslation();
 
-  const tick = useActivityTick(workspaceName, namespace);
-
-  React.useEffect(() => {
-    let startTime;
-    let tickReq;
-    const handleTick = (timestamp) => {
-      if ((!startTime || timestamp - startTime >= TICK_INTERVAL) && isActiveTab) {
-        startTime = timestamp;
-        tick();
-      }
-      tickReq = window.requestAnimationFrame(handleTick);
-    };
-
-    tickReq = window.requestAnimationFrame(handleTick);
-
-    return () => {
-      window.cancelAnimationFrame(tickReq);
-    };
-  }, [isActiveTab, tick]);
-
   const onData = (data: string): void => {
     ws.current?.send(`0${Base64.encode(data)}`);
+    fireTelemetryEvent('Web Terminal Command Issued', { sessionId: workspaceId });
   };
 
   const handleResize = React.useCallback((cols: number, rows: number) => {
@@ -200,6 +180,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             const currentTerminal = terminal.current;
             currentTerminal && currentTerminal.onConnectionClosed(error);
             websocket.destroy();
+            fireTelemetryEvent('Web Terminal Timeout');
             if (!unmounted) setWsError(error);
           })
           .catch((e) => {
@@ -225,6 +206,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       unmounted = true;
       websocket.destroy();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     container,
     flags,
@@ -246,6 +228,9 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           <Button
             variant="primary"
             onClick={() => {
+              fireTelemetryEvent('Web Terminal Timeout', {
+                reconnect: customResource.status.phase === 'Running',
+              });
               if (customResource && customResource.status.phase !== 'Running') {
                 startWorkspace(customResource);
               } else if (!wsReopening) {

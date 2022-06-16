@@ -1,0 +1,183 @@
+[
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io"
+      },
+      "color": "#7c8fa4",
+      "badge": "tech"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~Build%",
+      "labelPlural": "%shipwright-plugin~Builds%",
+      "abbr": "B",
+      "badge": "tech"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "color": "#7c8fa4",
+      "label": "%shipwright-plugin~BuildRun%",
+      "labelPlural": "%shipwright-plugin~BuildRuns%",
+      "abbr": "BR",
+      "badge": "tech"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "flag": "SHIPWRIGHT_BUILD"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "flag": "SHIPWRIGHT_BUILDRUN"
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "shipwright-builds",
+      "name": "%shipwright-plugin~Shipwright Builds%",
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "builds",
+      "id": "shipwright-buildruns",
+      "insertAfter": "shipwright-buildruns",
+      "name": "%shipwright-plugin~Shipwright BuildRuns%",
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildListPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "component": { "$codeRef": "pages.BuildDetailsPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunListPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "component": { "$codeRef": "pages.BuildRunDetailsPage" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "Build"
+      },
+      "provider": { "$codeRef": "actions.useBuildActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildRun"
+      },
+      "provider": { "$codeRef": "actions.useBuildRunActions" }
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"]
+    }
+  }
+]

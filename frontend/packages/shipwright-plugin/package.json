@@ -1,0 +1,19 @@
+{
+  "name": "@console/shipwright-plugin",
+  "version": "0.0.0-fixed",
+  "description": "OpenShift Shipwright Plugin",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/shipwright-plugin/src/**\",\"!**/__tests__/**\",\"!packages/shipwright-plugin/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/shipwright-plugin",
+    "test": "yarn --cwd ../.. test packages/shipwright-plugin"
+  },
+  "dependencies": {},
+  "consolePlugin": {
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "pages": "src/pages.ts",
+      "actions": "src/actions.ts"
+    }
+  }
+}

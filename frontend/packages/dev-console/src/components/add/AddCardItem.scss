@@ -18,6 +18,10 @@
     margin-right: var(--pf-global--spacer--sm);
   }
 
+  &__img-icon {
+    vertical-align: -0.125em;
+  }
+
   &__title {
     display: inline;
     vertical-align: middle;
@@ -36,5 +40,11 @@
   a {
     padding-left: 0;
     text-decoration: none;
+  }
+}
+
+:root:where(.pf-theme-dark) .odc-add-card-item {
+  &__img-icon {
+      filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }
 }

@@ -28,6 +28,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     hideHeader = false,
     onChange = () => null,
     resourceObjPath,
+    isCreate = true,
   } = props;
   const { params } = match;
   const { t } = useTranslation();
@@ -74,7 +75,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     <AsyncComponent
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
       initialResource={obj}
-      create={true}
+      create={isCreate}
       kind={kindObj.kind}
       header={header}
       hideHeader={hideHeader}
@@ -118,6 +119,7 @@ export type CreateYAMLProps = {
   download?: boolean;
   header?: string;
   hideHeader?: boolean;
+  isCreate?: boolean;
   resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
   onChange?: (yaml: string) => any;
 };

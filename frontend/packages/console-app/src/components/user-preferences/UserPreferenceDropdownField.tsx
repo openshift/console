@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Select, SelectOption, SelectVariant, Skeleton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UserPreferenceDropdownField as DropdownFieldType } from '@console/dynamic-plugin-sdk/src';
-import { useUserSettings } from '@console/shared';
+import { useTelemetry, useUserSettings } from '@console/shared';
 import { UserPreferenceFieldProps } from './types';
 
 type UserPreferenceDropdownFieldProps = UserPreferenceFieldProps<DropdownFieldType>;
@@ -15,6 +15,7 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
 }) => {
   // resources and calls to hooks
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [
     currentUserPreferenceValue,
     setCurrentUserPreferenceValue,
@@ -45,6 +46,10 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
     const selectedValue = getDropdownValueFromLabel(selection);
     selectedValue !== currentUserPreferenceValue && setCurrentUserPreferenceValue(selectedValue);
     setDropdownOpen(false);
+    fireTelemetryEvent('User Preference Changed', {
+      property: userSettingsKey,
+      value: selectedValue,
+    });
   };
 
   return loaded ? (

@@ -33,10 +33,13 @@ export const getBaseInitialValues = (
         maxpods: '',
         concurrencytarget: '',
         concurrencylimit: '',
+        defaultConcurrencytarget: '',
+        defaultConcurrencyutilization: '',
         autoscale: {
           autoscalewindow: '',
           autoscalewindowUnit: '',
           defaultAutoscalewindowUnit: 's',
+          defaultAutoscalewindow: '',
         },
         concurrencyutilization: '',
       },

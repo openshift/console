@@ -1,8 +1,9 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { nodeActions } from '@console/dev-console/integration-tests/support/constants/topology';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { app } from '@console/dev-console/integration-tests/support/pages/app';
+import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { moveSink } from '@console/dev-console/integration-tests/support/pages/modal';
 import {
   topologyPage,
@@ -26,7 +27,7 @@ When(
 When('user clicks on save', () => {
   modal.submit();
   modal.shouldBeClosed();
-  cy.reload();
+  navigateTo(devNavigationMenu.Topology);
 });
 
 When('user selects {string} from context menu', (option: string) => {

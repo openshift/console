@@ -182,7 +182,7 @@ export interface DockerData {
   dockerfileHasError?: boolean;
 }
 
-type DevfileData = {
+export type DevfileData = {
   devfilePath?: string;
   devfileContent?: string;
   devfileSourceUrl?: string;
@@ -265,6 +265,8 @@ export interface ServerlessScaling {
   maxpods: number | '';
   concurrencytarget: number | '';
   concurrencylimit: number | '';
+  defaultConcurrencytarget?: number | '';
+  defaultConcurrencyutilization?: number | '';
   autoscale: AutoscaleWindowType;
   concurrencyutilization: number | '';
 }
@@ -322,6 +324,7 @@ export enum PassthroughInsecureTrafficType {
 
 export interface AutoscaleWindowType {
   autoscalewindow: number | '';
+  defaultAutoscalewindow?: number | '';
   autoscalewindowUnit: string;
   defaultAutoscalewindowUnit: string;
 }

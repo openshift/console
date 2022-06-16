@@ -26,7 +26,11 @@ import {
   NoResults,
 } from '@console/shared/src/components/namespace/NamespaceDropdown';
 import NamespaceMenuToggle from '@console/shared/src/components/namespace/NamespaceMenuToggle';
-import { usePreferredNamespace } from './usePreferredNamespace';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import {
+  PREFERRED_NAMESPACE_USER_SETTING_KEY,
+  usePreferredNamespace,
+} from './usePreferredNamespace';
 import './NamespaceDropdown.scss';
 
 type OptionItem = {
@@ -36,6 +40,7 @@ type OptionItem = {
 
 const NamespaceDropdown: React.FC = () => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const [model, canCreate] = useProjectOrNamespaceModel() as [K8sKind, boolean];
   const isProject: boolean = model?.kind === ProjectModel.kind;
   const [options, optionsLoaded, optionsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -86,9 +91,13 @@ const NamespaceDropdown: React.FC = () => {
         blocking: true,
         onSubmit: (newProject) => {
           setPreferredNamespace(newProject.metadata.name);
+          fireTelemetryEvent('User Preference Changed', {
+            property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
+            value: newProject.metadata.name,
+          });
         },
       }),
-    [setPreferredNamespace],
+    [fireTelemetryEvent, setPreferredNamespace],
   );
 
   const loadErrorDescription: string = isProject
@@ -125,6 +134,10 @@ const NamespaceDropdown: React.FC = () => {
     const selectedValue = getDropdownValueForLabel(selection);
     selectedValue !== preferredNamespace && setPreferredNamespace(selectedValue);
     setDropdownOpen(false);
+    fireTelemetryEvent('User Preference Changed', {
+      property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
+      value: selectedValue,
+    });
   };
 
   const selected = getDropdownLabelForValue();

@@ -12,6 +12,7 @@ export const addPagePO = {
   buildWithGuidedDocumentation: '[data-test="card quick-start"]',
   buildWithGuidedDocumentationItems: '[data-test="card quick-start"] [data-test~="item"]',
   viewAllQuickStarts: '[data-test="item all-quick-starts"]',
+  helmChartRepositoriesCard: '[data-test="card helm-chart-repositories"]',
 };
 
 export const gitPO = {
@@ -229,6 +230,7 @@ export const eventSourcePO = {
   yamlView: '#form-radiobutton-editorType-yaml-field',
   formView: '#form-radiobutton-editorType-form-field',
   addButton: 'a[role="button"]',
+  nodeHandler: '[data-test-id="base-node-handler"]',
   apiServerSource: {
     apiServerSourceSection: '[data-test~="ApiServerSource"][data-test~="section"]',
     apiVersion: '[data-test=pairs-list-name]',
@@ -284,6 +286,16 @@ export const eventSourcePO = {
     resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
     resourceSearch: '[placeholder="Select resource"]',
   },
+  createSinkBinding: {
+    resourceToggleButton: '[data-test="resource-view-input"]',
+    resourceDropDownField: '[id="form-ns-dropdown-formData-sink-key-field"]',
+    resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
+    resourceSearchField: '[data-test-id="dropdown-text-filter"]',
+    createButton: '[data-test=confirm-action]',
+    moveSinkButton: '[data-test-action="Move sink"]',
+    eventSourceNode: 'g.odc-event-source',
+    uriNode: 'g.odc-sink-uri',
+  },
 };
 
 export const eventSinkPO = {
@@ -331,4 +343,16 @@ export const quickSearchAddPO = {
   quickSearchCreateButton: '[data-test="create-quick-search"]',
   viewInDevCatalog: '#devCatalog',
   quickSearchNoResults: '[data-test="quick-search-no-results"]',
+};
+
+export const helmChartRepositoriesPO = {
+  yaml: {
+    yamlSwitcher: '[data-test="yaml-view-input"]',
+    yamlEditor: '[data-test="yaml-editor"]',
+  },
+  formTitle: '[data-test="form-title"]',
+  cancelButton: '[data-test-id="cancel-button"]',
+  name: '#form-input-formData-repoName-field',
+  description: '#form-input-formData-repoDescription-field',
+  url: '#form-input-formData-repoUrl-field',
 };

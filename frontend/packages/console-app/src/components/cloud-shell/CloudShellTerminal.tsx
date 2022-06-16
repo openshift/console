@@ -13,7 +13,12 @@ import {
 } from '@console/shared';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../consts';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
-import { TerminalInitData, initTerminal, startWorkspace } from './cloud-shell-utils';
+import {
+  TerminalInitData,
+  initTerminal,
+  startWorkspace,
+  CLOUD_SHELL_PHASE,
+} from './cloud-shell-utils';
 import CloudshellExec from './CloudShellExec';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
@@ -30,7 +35,9 @@ type StateProps = {
 
 type Props = {
   onCancel?: () => void;
-  isActiveTab?: boolean;
+  terminalNumber?: number;
+  setWorkspaceName?: (name: string, terminalNumber: number) => void;
+  setWorkspaceNamespace?: (namespace: string, terminalNumber: number) => void;
 };
 
 type CloudShellTerminalProps = StateProps & Props;
@@ -40,8 +47,10 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   user,
   onCancel,
   userSettingState: namespace,
-  isActiveTab = false,
   setUserSettingState: setNamespace,
+  terminalNumber,
+  setWorkspaceName,
+  setWorkspaceNamespace,
 }) => {
   const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
   const [initData, setInitData] = React.useState<TerminalInitData>();
@@ -63,6 +72,17 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   const workspacePhase = workspace?.status?.phase;
   const workspaceName = workspace?.metadata?.name;
   const workspaceNamespace = workspace?.metadata?.namespace;
+  const workspaceId = workspace?.metadata?.uid;
+
+  terminalNumber &&
+    workspaceName &&
+    setWorkspaceName &&
+    setWorkspaceName(workspaceName, terminalNumber);
+
+  terminalNumber &&
+    workspaceNamespace &&
+    setWorkspaceNamespace &&
+    setWorkspaceNamespace(workspaceNamespace, terminalNumber);
 
   const username = user?.metadata?.name;
 
@@ -119,17 +139,15 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   // initialize the terminal once it is Running
   React.useEffect(() => {
     let unmounted = false;
+    const defaultError = t('console-app~Failed to connect to your OpenShift command line terminal');
 
-    if (workspacePhase === 'Running') {
+    if (workspacePhase === CLOUD_SHELL_PHASE.RUNNING) {
       initTerminal(username, workspaceName, workspaceNamespace)
         .then((res: TerminalInitData) => {
           if (!unmounted) setInitData(res);
         })
         .catch((e) => {
           if (!unmounted) {
-            const defaultError = t(
-              'console-app~Failed to connect to your OpenShift command line terminal',
-            );
             if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
               // eslint-disable-next-line promise/no-nesting
               e.response
@@ -146,11 +164,18 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
           }
         });
     }
+    if (workspacePhase === CLOUD_SHELL_PHASE.FAILED) {
+      setInitError(defaultError);
+    }
+
+    if (workspacePhase === CLOUD_SHELL_PHASE.STARTING) {
+      setInitError(null);
+    }
 
     return () => {
       unmounted = true;
     };
-  }, [username, workspaceName, workspaceNamespace, workspacePhase, t]);
+  }, [username, workspaceName, workspaceNamespace, workspacePhase, t, terminalNumber]);
 
   // failed to load the workspace
   if (loadError) {
@@ -189,11 +214,11 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
       <CloudshellExec
         workspaceName={workspaceName}
         namespace={workspaceNamespace}
+        workspaceId={workspaceId}
         container={initData.container}
         podname={initData.pod}
         shcommand={initData.cmd || []}
         workspaceModel={workspaceModel}
-        isActiveTab={isActiveTab}
       />
     );
   }

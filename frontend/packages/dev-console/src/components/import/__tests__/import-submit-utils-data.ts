@@ -3,7 +3,13 @@ import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { serverlessInitialValues } from '../__mocks__/serverless-mock';
-import { GitImportFormData, Resources } from '../import-types';
+import {
+  DevfileData,
+  GitImportFormData,
+  InsecureTrafficType,
+  Resources,
+  TerminationType,
+} from '../import-types';
 
 export const mockPipelineTemplate: PipelineKind = {
   apiVersion: 'tekton.dev/v1alpha1',
@@ -939,5 +945,355 @@ export const sampleClusterTriggerBinding = {
         value: '$(body.pusher.name)',
       },
     ],
+  },
+};
+
+export const ghImportDefaultData: GitImportFormData = {
+  project: { name: 'app-test', displayName: '', description: '' },
+  application: { initial: '', name: 'ruby-ex-git-app', selectedKey: '', isInContext: false },
+  name: 'ruby-ex-git',
+  image: {
+    selected: 'ruby',
+    recommended: 'ruby',
+    tag: '3.0-ubi7',
+    tagObj: {
+      name: '3.0-ubi7',
+      annotations: {
+        description:
+          'Build and run Ruby 3.0 applications on UBI 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-ruby-container/blob/master/3.0/README.md.',
+        iconClass: 'icon-ruby',
+        'openshift.io/display-name': 'Ruby 3.0 (UBI 7)',
+        'openshift.io/provider-display-name': 'Red Hat, Inc.',
+        sampleRepo: 'https://github.com/sclorg/ruby-ex.git',
+        supports: 'ruby:3.0,ruby',
+        tags: 'builder,ruby',
+        version: '3.0',
+      },
+      from: { kind: 'DockerImage', name: 'registry.redhat.io/ubi7/ruby-30:latest' },
+      generation: 2,
+      importPolicy: {},
+      referencePolicy: { type: 'Local' },
+    },
+    ports: [{ containerPort: 8080, protocol: 'TCP' }],
+    isRecommending: false,
+    couldNotRecommend: false,
+  },
+  serverless: {
+    scaling: {
+      minpods: '',
+      maxpods: '',
+      concurrencytarget: 100,
+      concurrencylimit: '',
+      defaultConcurrencytarget: 100,
+      autoscale: {
+        autoscalewindow: 60,
+        defaultAutoscalewindow: 60,
+        autoscalewindowUnit: 's',
+        defaultAutoscalewindowUnit: 's',
+      },
+      concurrencyutilization: 70,
+      defaultConcurrencyutilization: 70,
+    },
+    domainMapping: [],
+  },
+  route: {
+    disable: false,
+    create: true,
+    targetPort: '',
+    unknownTargetPort: '',
+    defaultUnknownPort: 8080,
+    path: '',
+    hostname: '',
+    secure: true,
+    tls: {
+      termination: TerminationType.REENCRYPT,
+      insecureEdgeTerminationPolicy: InsecureTrafficType.None,
+      caCertificate: '',
+      certificate: '',
+      destinationCACertificate: '',
+      key: '',
+    },
+  },
+  resources: Resources.Kubernetes,
+  build: { env: [], triggers: { webhook: true, image: true, config: true }, strategy: 'Source' },
+  deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
+  labels: {},
+  limits: {
+    cpu: {
+      request: '',
+      requestUnit: 'm',
+      defaultRequestUnit: 'm',
+      limit: '',
+      limitUnit: 'm',
+      defaultLimitUnit: 'm',
+    },
+    memory: {
+      request: '',
+      requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: '',
+      limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
+    },
+  },
+  healthChecks: {
+    readinessProbe: {
+      showForm: false,
+      enabled: false,
+      modified: false,
+      data: {
+        failureThreshold: '3',
+        requestType: 'httpGet',
+        tcpSocket: { port: '8080' },
+        exec: { command: [''] },
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
+      },
+    },
+    livenessProbe: {
+      showForm: false,
+      enabled: false,
+      modified: false,
+      data: {
+        failureThreshold: '3',
+        requestType: 'httpGet',
+        tcpSocket: { port: '8080' },
+        exec: { command: [''] },
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
+      },
+    },
+    startupProbe: {
+      showForm: false,
+      enabled: false,
+      modified: false,
+      data: {
+        failureThreshold: '3',
+        requestType: 'httpGet',
+        tcpSocket: { port: '8080' },
+        exec: { command: [''] },
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
+      },
+    },
+  },
+  resourceTypesNotValid: [],
+  git: {
+    url: 'https://github.com/sclorg/ruby-ex.git',
+    type: GitProvider.GITHUB,
+    ref: '',
+    dir: '/',
+    showGitType: false,
+    secret: '',
+    isUrlValidating: false,
+    detectedType: GitProvider.GITHUB,
+  },
+  docker: { dockerfilePath: '', dockerfileHasError: true },
+  devfile: { devfilePath: '', devfileHasError: false },
+  import: {
+    loaded: true,
+    loadError: null,
+    strategies: [
+      {
+        name: 'Builder Image',
+        type: 0,
+        priority: 0,
+        detectedFiles: ['Gemfile', 'Gemfile.lock', 'README.md', 'config.ru'],
+        detectedCustomData: [
+          {
+            name: 'Ruby',
+            type: 'ruby',
+            language: 'ruby',
+            priority: 0,
+            detectedFiles: ['Gemfile', 'Gemfile.lock', 'config.ru'],
+          },
+        ],
+      },
+    ],
+    selectedStrategy: {
+      name: 'Builder Image',
+      type: 0,
+      priority: 0,
+      detectedFiles: ['Gemfile', 'Gemfile.lock', 'README.md', 'config.ru'],
+      detectedCustomData: [
+        {
+          name: 'Ruby',
+          type: 'ruby',
+          language: 'ruby',
+          priority: 0,
+          detectedFiles: ['Gemfile', 'Gemfile.lock', 'config.ru'],
+        },
+      ],
+    },
+    recommendedStrategy: {
+      name: 'Builder Image',
+      type: 0,
+      priority: 0,
+      detectedFiles: ['Gemfile', 'Gemfile.lock', 'README.md', 'config.ru'],
+      detectedCustomData: [
+        {
+          name: 'Ruby',
+          type: 'ruby',
+          language: 'ruby',
+          priority: 0,
+          detectedFiles: ['Gemfile', 'Gemfile.lock', 'config.ru'],
+        },
+      ],
+    },
+    showEditImportStrategy: false,
+    strategyChanged: false,
+  },
+};
+
+export const ghImportTelData = {
+  useRecommended: true,
+  recommendedStrategy: 'Builder Image',
+  recommendedBuilderImage: 'ruby',
+  strategy: 'Builder Image',
+  builderImage: 'ruby',
+  devFileLanguage: '',
+  devFileProjectType: '',
+  application: 'default',
+  resource: 'Deployment',
+  targetPortChanged: false,
+  useRunCommand: false,
+  useAdvancedOptionsGit: false,
+  useAdvancedOptionsBuild: false,
+  useAdvancedOptionsDeployment: false,
+  useAdvancedOptionsRoute: false,
+  useAdvancedOptionsHealthChecks: false,
+  useAdvancedOptionsScaling: false,
+  useAdvancedOptionsResourceLimits: false,
+  useAdvancedOptionsLabels: false,
+};
+
+export const devfileImportData: DevfileData = {
+  devfilePath: 'devfile.yaml',
+  devfileHasError: false,
+  devfileContent:
+    'schemaVersion: 2.2.0\nmetadata:\n  name: python\n  projectType: python\n  language: python\n  version: 1.0.0\n  provider: Red Hat\n  supportUrl: https://github.com/devfile-samples/devfile-support#support-information\n  attributes:\n    alpha.dockerimage-port: 8081\nparent:\n  id: python\n  registryUrl: "https://registry.devfile.io"\ncomponents:\n  - name: outerloop-build\n    image:\n      imageName: python-image:latest\n      dockerfile:\n        uri: docker/Dockerfile\n        buildContext: .\n        rootRequired: false\n  - name: outerloop-deploy\n    kubernetes:\n      uri: outerloop-deploy.yaml\ncommands:\n  - id: build-image\n    apply:\n      component: outerloop-build\n  - id: deployk8s\n    apply:\n      component: outerloop-deploy\n  - id: deploy\n    composite:\n      commands:\n        - build-image\n        - deployk8s\n      group:\n        kind: deploy\n        isDefault: true\n',
+  devfileSuggestedResources: {
+    imageStream: {
+      kind: 'ImageStream',
+      apiVersion: 'image.openshift.io/v1',
+      metadata: {
+        creationTimestamp: null,
+      },
+      spec: {
+        lookupPolicy: {
+          local: false,
+        },
+      },
+      status: {
+        dockerImageRepository: '',
+      },
+    },
+    buildResource: {
+      kind: 'BuildConfig',
+      apiVersion: 'build.openshift.io/v1',
+      metadata: {
+        creationTimestamp: null,
+      },
+      spec: {
+        source: {
+          type: 'Git',
+          git: {
+            uri: 'https://github.com/devfile-samples/devfile-sample-python-basic',
+          },
+          contextDir: '.',
+        },
+        strategy: {
+          type: 'Docker',
+          dockerStrategy: {
+            dockerfilePath: 'docker/Dockerfile',
+          },
+        },
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'devfile-sample-python:latest:latest',
+          },
+        },
+        resources: {},
+        postCommit: {},
+        nodeSelector: null,
+      },
+      status: {
+        lastVersion: 0,
+      },
+    },
+    deployResource: {
+      kind: 'Deployment',
+      apiVersion: 'apps/v1',
+      metadata: {
+        creationTimestamp: null,
+      },
+      spec: {
+        selector: {
+          matchLabels: {
+            app: 'devfile-sample-python',
+          },
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+          },
+          spec: {},
+        },
+        strategy: {
+          type: 'Recreate',
+        },
+      },
+      status: {},
+    },
+    service: {
+      kind: 'Service',
+      apiVersion: 'v1',
+      metadata: {
+        creationTimestamp: null,
+      },
+      spec: {
+        ports: [
+          {
+            name: 'port-8080',
+            port: 8080,
+            targetPort: 8080,
+          },
+          {
+            name: 'http-8081',
+            port: 8081,
+            targetPort: '8081',
+          },
+        ],
+      },
+      status: {
+        loadBalancer: {},
+      },
+    },
+    route: {
+      kind: 'Route',
+      apiVersion: 'route.openshift.io/v1',
+      metadata: {
+        creationTimestamp: null,
+      },
+      spec: {
+        path: '/',
+        to: {
+          kind: 'Service',
+          name: 'devfile-sample-python',
+          weight: null,
+        },
+        port: {
+          targetPort: '8081',
+        },
+      },
+      status: {},
+    },
   },
 };
