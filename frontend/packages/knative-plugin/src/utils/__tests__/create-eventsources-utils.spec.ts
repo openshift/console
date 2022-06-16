@@ -81,7 +81,7 @@ describe('Create knative Utils', () => {
   });
 
   it('expect getEventSourceData should return data for builtin Sources', () => {
-    expect(getEventSourceData(EventSources.PingSource).jsonData).toBeDefined();
+    expect(getEventSourceData(EventSources.PingSource).data).toBeDefined();
     expect(getEventSourceData(EventSources.PingSource).schedule).toBeDefined();
 
     expect(getEventSourceData(EventSources.CronJobSource).data).toBeDefined();
@@ -246,7 +246,7 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
       uri: '',
     },
     type: 'PingSource',
-    data: { PingSource: { jsonData: '', schedule: '' } },
+    data: { PingSource: { data: '', schedule: '' } },
   };
 
   it('expect an empty form to return a EventSource data with updated properties', () => {
