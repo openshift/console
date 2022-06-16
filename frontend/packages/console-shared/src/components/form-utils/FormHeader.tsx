@@ -18,7 +18,7 @@ const FormHeader: React.FC<FormHeaderProps> = ({ title, helpText, marginTop, mar
 
   return (
     <div style={marginStyles}>
-      <Title headingLevel="h1" size="2xl">
+      <Title headingLevel="h1" size="2xl" data-test="form-title">
         {title}
       </Title>
       <FormHelperText isHidden={false} style={{ marginTop: 'var(--pf-global--spacer--xs)' }}>

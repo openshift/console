@@ -143,7 +143,10 @@ export const navigateTo = (opt: devNavigationMenu) => {
       break;
     }
     case devNavigationMenu.ConfigMaps: {
-      cy.get(devNavigationMenuPO.configMaps).click();
+      perspective.switchTo(switchPerspective.Developer);
+      cy.byTestID('nav')
+        .contains('ConfigMaps')
+        .click();
       detailsPage.titleShouldContain(pageTitle.ConfigMaps);
       cy.testA11y('Config maps Page in dev perspective');
       break;
@@ -158,6 +161,66 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.get(devNavigationMenuPO.environments).click();
       detailsPage.titleShouldContain(pageTitle.Environments);
       cy.testA11y('Environments Page in dev perspective');
+      break;
+    }
+    case devNavigationMenu.Routes: {
+      cy.get('body').then(($body) => {
+        if ($body.text().includes('Routes')) {
+          cy.byTestID('nav')
+            .contains('Routes')
+            .click();
+        } else {
+          cy.get(devNavigationMenuPO.search).click();
+          cy.get('[aria-label="Options menu"]').click();
+          cy.get('[placeholder="Select Resource"]')
+            .should('be.visible')
+            .type('route');
+          cy.get('[data-filter-text="RTRoute"]').then(($el) => {
+            if ($el.text().includes('route.openshift.io/v1')) {
+              cy.wrap($el)
+                .contains('route.openshift.io/v1')
+                .click();
+            } else {
+              cy.wrap($el).click();
+            }
+          });
+          cy.get('.co-search-group__pin-toggle')
+            .should('be.visible')
+            .click();
+          cy.byTestID('nav')
+            .contains('Routes')
+            .should('be.visible')
+            .click();
+        }
+      });
+      detailsPage.titleShouldContain(pageTitle.Routes);
+      cy.testA11y('Routes Page in dev perspective');
+      break;
+    }
+    case devNavigationMenu.Deployments: {
+      cy.get('body').then(($body) => {
+        if ($body.text().includes('Deployments')) {
+          cy.byTestID('nav')
+            .contains('Deployments')
+            .click();
+        } else {
+          cy.get(devNavigationMenuPO.search).click();
+          cy.get('[aria-label="Options menu"]').click();
+          cy.get('[placeholder="Select Resource"]')
+            .should('be.visible')
+            .type('Deployment');
+          cy.get('[data-filter-text="DDeployment"]').click();
+          cy.get('.co-search-group__pin-toggle')
+            .should('be.visible')
+            .click();
+          cy.byTestID('nav')
+            .contains('Deployments')
+            .should('be.visible')
+            .click();
+        }
+      });
+      detailsPage.titleShouldContain(pageTitle.Deployments);
+      cy.testA11y('Deployments Page in dev perspective');
       break;
     }
     default: {
@@ -318,5 +381,29 @@ export const yamlEditor = {
 
   clickSave: () => {
     cy.byTestID('save-changes').click();
+  },
+};
+
+export const kebabMenu = {
+  openKebabMenu: (name: string) => {
+    cy.get('input[data-test-id="item-filter"]')
+      .should('be.visible')
+      .clear()
+      .type(name);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    cy.get('div[role="grid"]').should('be.visible');
+    cy.get('div[role="grid"]').within(() => {
+      cy.get('tr td:nth-child(1)').each(($el, index) => {
+        if ($el.text().includes(name)) {
+          cy.get('tbody tr')
+            .eq(index)
+            .find('[data-test-id="kebab-button"]')
+            .then(($ele1) => {
+              cy.wrap($ele1).click({ force: true });
+            });
+        }
+      });
+    });
   },
 };

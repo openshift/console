@@ -12,6 +12,8 @@ export enum addOptions {
   UploadJARFile = 'Upload JAR file',
   Broker = 'Broker',
   EventSink = 'Event Sink',
+  Sharing = 'Sharing',
+  HelmChartRepositories = 'Helm Chart Repositories',
 }
 
 export enum buildConfigOptions {
