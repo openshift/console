@@ -25,6 +25,7 @@ export const topologyPO = {
     filterDropdown: '[id^=pf-select-toggle-id]',
     nodeContextMenu: '.pf-c-dropdown__menu-item',
     nodeLabel: 'g.pf-topology__node__label',
+    knativeNodeLabel: '.odc-base-node__label',
     groupLabel: 'g.pf-topology__group__label',
     selectNodeLabel: 'g.odc-base-node__label',
     knativeServiceNode: '[data-type="knative-service"]',
@@ -195,6 +196,7 @@ export const topologyPO = {
     enterReplica: 'input[id="form-number-spinner-formData-replicas-field"]',
     saveEdit: '[data-test-id="submit-button"]',
     selectSecret: '[id="form-ns-dropdown-formData-imagePullSecret-field"]',
+    dropdownSecret: '[data-test-id="dropdown-text-filter"]',
     timeout:
       'input[id="form-input-formData-deploymentStrategy-recreateParams-timeoutSeconds-field"]',
     deployImageCheckbox: 'input[name="formData.fromImageStreamTag"]',

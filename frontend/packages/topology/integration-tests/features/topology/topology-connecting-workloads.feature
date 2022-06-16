@@ -4,6 +4,7 @@ Feature: Connecting nodes
 
         Background:
             Given user is at developer perspective
+              And user is at Add page
               And user has created or selected namespace "aut-tp-connect-workloads"
               And user has created workload "nodejs-ex-git" with resource type "Deployment"
               And user is at Add page
