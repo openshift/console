@@ -3,8 +3,28 @@ import { TFunction } from 'i18next';
 import { Trans } from 'react-i18next';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
-import { NodeMaintenanceModel, NodeMaintenanceOldModel } from '../../models';
+import {
+  NodeMaintenanceModel,
+  NodeMaintenanceKubevirtBetaModel,
+  NodeMaintenanceKubevirtAlphaModel,
+} from '../../models';
 import { getNodeMaintenanceReason, getNodeMaintenanceNodeName } from '../../selectors';
+
+const getMaintenanceModel = (nodeMaintenance: K8sResourceKind) => {
+  if (
+    nodeMaintenance.apiVersion ===
+    `${NodeMaintenanceModel.apiGroup}/${NodeMaintenanceModel.apiVersion}`
+  ) {
+    return NodeMaintenanceModel;
+  }
+  if (
+    nodeMaintenance.apiVersion ===
+    `${NodeMaintenanceKubevirtBetaModel.apiGroup}/${NodeMaintenanceKubevirtBetaModel.apiVersion}`
+  ) {
+    return NodeMaintenanceKubevirtBetaModel;
+  }
+  return NodeMaintenanceKubevirtAlphaModel;
+};
 
 const stopNodeMaintenanceModal = (nodeMaintenance: K8sResourceKind, t: TFunction) => {
   const reason = getNodeMaintenanceReason(nodeMaintenance);
@@ -19,13 +39,7 @@ const stopNodeMaintenanceModal = (nodeMaintenance: K8sResourceKind, t: TFunction
       </Trans>
     ),
     btnText: t('metal3-plugin~Stop maintenance'),
-    executeFn: () =>
-      k8sKill(
-        nodeMaintenance.apiVersion.includes(NodeMaintenanceModel.apiGroup)
-          ? NodeMaintenanceModel
-          : NodeMaintenanceOldModel,
-        nodeMaintenance,
-      ),
+    executeFn: () => k8sKill(getMaintenanceModel(nodeMaintenance), nodeMaintenance),
   });
 };
 
