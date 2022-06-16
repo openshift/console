@@ -86,11 +86,11 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
     if (updateRoles.length > 0) {
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Patch, updateRoles, roleBinding));
     }
-    if (removeRoles.length > 0) {
-      roleBindingRequests.push(...sendRoleBindingRequest(Verb.Remove, removeRoles, roleBinding));
-    }
     if (newRoles.length > 0) {
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Create, newRoles, roleBinding));
+    }
+    if (removeRoles.length > 0) {
+      roleBindingRequests.push(...sendRoleBindingRequest(Verb.Remove, removeRoles, roleBinding));
     }
 
     return Promise.all(roleBindingRequests)
