@@ -1,6 +1,14 @@
 import * as React from 'react';
-import { render, fireEvent, screen, cleanup, waitFor, configure } from '@testing-library/react';
-import { omit } from 'lodash';
+import {
+  render,
+  fireEvent,
+  screen,
+  cleanup,
+  waitFor,
+  configure,
+  act,
+} from '@testing-library/react';
+import { cloneDeep, omit } from 'lodash';
 import { coFetch } from '@console/internal/co-fetch';
 import {
   sampleClusterTaskCatalogItem,
@@ -19,7 +27,7 @@ jest.mock('@console/internal/co-fetch', () => ({
 
 beforeEach(() => {
   coFetchMock.mockClear();
-  coFetchMock.mockReturnValueOnce(
+  coFetchMock.mockReturnValue(
     Promise.resolve({
       json: () => ({
         data: {
@@ -74,14 +82,34 @@ describe('pipelineQuickSearchDetails', () => {
 
   describe('CTA button tests', () => {
     it('Add button should be disabled if the versions is not available', async () => {
+      const taskWithoutVersion = cloneDeep({ ...tektonHubProps.selectedItem });
+      taskWithoutVersion.attributes.versions = [];
+      coFetchMock.mockReturnValue(
+        Promise.resolve({
+          json: () => ({
+            data: {
+              versions: [],
+            },
+          }),
+        }),
+      );
       const { getByRole } = render(
-        <PipelineQuickSearchDetails
-          {...clusterTaskProps}
-          selectedItem={omit(clusterTaskProps.selectedItem, 'attributes.versions')}
-        />,
+        <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={taskWithoutVersion} />,
       );
       await waitFor(() => {
-        expect(getByRole('button', { name: 'Add' }).getAttribute('aria-disabled')).toBe('true');
+        expect(getByRole('button', { name: 'Install and add' }).getAttribute('aria-disabled')).toBe(
+          'true',
+        );
+      });
+    });
+
+    it('Add button should be enabled if the versions is not available in the user created task', async () => {
+      const customTask = omit(clusterTaskProps.selectedItem, 'attributes.versions');
+      const { getByRole } = render(
+        <PipelineQuickSearchDetails {...clusterTaskProps} selectedItem={customTask} />,
+      );
+      await waitFor(() => {
+        expect(getByRole('button', { name: 'Add' }).getAttribute('aria-disabled')).toBe('false');
       });
     });
 
@@ -212,6 +240,56 @@ describe('pipelineQuickSearchDetails', () => {
       );
       await waitFor(() => {
         expect(queryByTestId('task-tag-list')).toBeNull();
+      });
+    });
+  });
+
+  describe('Fetching Versions API', () => {
+    it('should not call the versions API multiple times for the same task', async () => {
+      const taskWithoutVersion = cloneDeep({ ...tektonHubProps.selectedItem });
+      taskWithoutVersion.attributes.versions = [];
+
+      await act(async () => {
+        render(
+          <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={taskWithoutVersion} />,
+        );
+      });
+
+      await act(async () => {
+        render(
+          <PipelineQuickSearchDetails
+            {...tektonHubProps}
+            selectedItem={tektonHubProps.selectedItem}
+          />,
+        );
+      });
+
+      await waitFor(() => {
+        expect(coFetchMock).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('should call the versions API multiple times for different task', async () => {
+      const taskWithoutVersion = cloneDeep({ ...tektonHubProps.selectedItem });
+      taskWithoutVersion.uid = '12345';
+      taskWithoutVersion.attributes.versions = [];
+
+      await act(async () => {
+        render(
+          <PipelineQuickSearchDetails {...tektonHubProps} selectedItem={taskWithoutVersion} />,
+        );
+      });
+
+      const newTask = cloneDeep({ ...tektonHubProps.selectedItem });
+      newTask.uid = '54678';
+      newTask.attributes.versions = [];
+
+      await act(async () => {
+        render(<PipelineQuickSearchDetails {...tektonHubProps} selectedItem={newTask} />);
+      });
+
+      await waitFor(() => {
+        expect(coFetchMock).toHaveBeenCalledTimes(2);
       });
     });
   });
