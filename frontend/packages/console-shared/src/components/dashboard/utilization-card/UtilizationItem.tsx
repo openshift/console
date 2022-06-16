@@ -145,9 +145,10 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     let humanMax: string;
     let humanAvailable: string;
-    if (!_.isNil(current) && max) {
+    if (max) {
+      const currentUtilization = current ?? 0;
+      const percentage = (100 * currentUtilization) / max;
       humanMax = humanizeValue(max).string;
-      const percentage = (100 * current) / max;
 
       if (percentage >= 90) {
         chartStyle[0] = { data: { fill: chartStatusColors[AreaChartStatus.ERROR] } };
@@ -155,10 +156,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         chartStyle[0] = { data: { fill: chartStatusColors[AreaChartStatus.WARNING] } };
       }
 
-      humanAvailable = humanizeValue(max - current).string;
-      if (humanAvailable === '') {
-        humanAvailable = '0';
-      }
+      humanAvailable = humanizeValue(max - currentUtilization).string;
     }
 
     const chart = (
