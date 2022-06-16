@@ -167,6 +167,9 @@ export const topologyPage = {
   componentNode: (nodeName: string) => {
     return cy.get('g.pf-topology__node__label > text').contains(nodeName);
   },
+  knativeNode: (nodeName: string) => {
+    return cy.get('g.odc-knative-service__label > text').contains(nodeName);
+  },
   getEventSource: (eventSource: string) => {
     return cy
       .get('[data-type="event-source"] g.pf-topology__node__label > text')

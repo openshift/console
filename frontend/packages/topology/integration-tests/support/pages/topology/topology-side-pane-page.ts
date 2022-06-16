@@ -77,8 +77,9 @@ export const topologySidePane = {
       .get(topologyPO.sidePane.podScale)
       .eq(1)
       .click(),
-  verifyPodText: (scaleNumber: string) =>
-    cy.get(topologyPO.sidePane.podText).should('contain.text', scaleNumber),
+  verifyPodText: (scaleNumber: string) => {
+    cy.get(topologyPO.sidePane.podText, { timeout: 120000 }).should('contain.text', scaleNumber);
+  },
   verifyHealthCheckAlert: () => cy.get(topologyPO.sidePane.healthCheckAlert).should('be.visible'),
   verifyWorkloadInAppSideBar: (workloadName: string) =>
     cy

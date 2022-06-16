@@ -43,7 +43,7 @@ export const topologyPO = {
     addNewAnnotations: '[data-test="add-button"]',
     deleteApplication: '[id="form-input-resourceName-field"]',
     connector: '[data-test-id="edge-handler"]',
-    routeDecorator: '[aria-label="Open URL"] [data-test-id="decorator"]',
+    routeDecorator: '[aria-label="Open URL"]',
     subscriber: {
       dropdown: '[id="form-ns-dropdown-spec-subscriber-ref-name-field"]',
       filter: '[class="pf-c-dropdown__toggle-text"]',
@@ -85,7 +85,7 @@ export const topologyPO = {
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
     tabName: '[role="dialog"] li button',
-    healthCheckAlert: 'div.ocs-health-checks-alert',
+    healthCheckAlert: 'div.odc-topology-sidebar-alert',
     podScale: 'button.pf-c-button.pf-m-plain.pf-m-block',
     podText: 'text.pf-chart-donut-title.pod-ring__center-text',
     applicationGroupingsTitle: '.overview__sidebar-pane-head.resource-overview__heading',
