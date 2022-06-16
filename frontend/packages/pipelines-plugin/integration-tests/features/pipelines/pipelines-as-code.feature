@@ -92,7 +92,7 @@ Feature: Perform Actions on repository
              Then annotation section contains the value "1 annotation"
 
 
-        # test data needs to be created using before execuitng below 2 scenarios : https://docs.google.com/document/d/1nUFtwtuZooDhOGg1YrjXn0zrOhZDrJ4h1oE6h35Noao/edit#
+    # test data needs to be created using before execuitng below 2 scenarios : https://docs.google.com/document/d/1nUFtwtuZooDhOGg1YrjXn0zrOhZDrJ4h1oE6h35Noao/edit#
         @regression
         Scenario Outline: Pipeline Run Details page for the repository: P-11-TC09
             Given pipeline run is displayed for "<repository_name>"
@@ -152,3 +152,66 @@ Feature: Perform Actions on repository
               And user clicks Create GitHub App button in Create GitHub App page
              Then user will be redirected to GitHub App details
               And user will see App Name as "pac-app123", App Link as "https://github.com/apps/pac-app123" and Secret as "pipelines-as-code-secret" in "openshift-pipelines" namespace
+
+
+        @regression @odc-6461 @manual
+        # Manual test case as pipeline 1.8 is not yet available
+        Scenario Outline: Add a Git repository to pipeline as code using webhook url: P-11-TC14
+            Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
+              And user is at repositories page
+             When user clicks on Create Repository button
+              And user enters Git Repo URL of repository as "<repository_url>"
+              And user enters Name of repository as "<repository_name>"
+              And user clicks on Show configuration options
+              And user enters personal access token in the git access token field
+              And user clicks on Generate button under Webhook secret
+              And user clicks on Add button
+             Then user will be redirected to steps to configure Git repository page
+
+        Examples:
+                  | catalog_yaml                             | image_content_policy_yaml           | repository_url              | repository_name |
+                  | testData/installPipelineOperator1.8.yaml | testData/imageContentPolicy1.8.yaml | https://github.com/testing/ | git-testing     |
+
+
+        @regression @odc-6461 @manual
+        Scenario Outline: Triggering a pipeline run in added Git repository to pipeline as code using webhook url: P-11-TC15
+            Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
+              And user has copied webhook url and webhook secret
+              And user is on steps to configure Git repository page with its github repo
+              # Follow scenario P-11-TC14 to be redirected to configure git repository steps
+             When user clicks on Add webhook in repository Settings
+              And user pastes the webhook url to Payload URL
+              And user pastes webhook secret to Secret
+              # Skip the next step if the testing cluster has SSL enabled
+              And user disables SSL verification
+              And user selects "Send me everything" option
+              And user clicks on Add webhook button
+              And user creates the ".tekton" directory in git repo to store you pipeline
+              And user creates a new file called "push.yaml" in .tekton directory
+              And user adds the code from step 2 of configure git repo page in "push.yaml"
+              And user commits the changes
+              And user pushes them to your Git repository
+              And user clicks on close button configure Git repository page in console
+              And user clicks on PipelineRuns tab in Repository details page
+              And user commits a change in github repo
+             Then user will see pipeline run created on the repository details page
+
+
+        @regression @odc-6461 @manual
+        Scenario Outline: Add a Git repository to pipeline as code using GitHub App: P-11-TC16
+            Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
+              And user has setted up GitHub App "pipelines-ci-clustername1"
+              # Follow scenario P-11-TC13 to setup GitHub App
+              And user is at repositories page
+             When user clicks on Create Repository button
+              And user enters Git Repo URL of repository as "<repository_url>"
+              And user enters Name of repository as "<repository_name>"
+              And user clicks on Show configuration options
+              And user clicks "Use GitHub App"
+              And user clicks on "https://github.com/apps/pipelines-ci-clustername1"
+              And user clicks on Install button in github page
+              And user selects location to install pipelines-ci-clustername1
+              And user selects "Only select repositories" option
+              And user selects repositories
+              And user clicks on Install button
+             Then user will see "pipelines-ci-clustername1" in the selected location

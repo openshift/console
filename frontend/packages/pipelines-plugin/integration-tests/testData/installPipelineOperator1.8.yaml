@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: custom-operators
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  # image needs to be updated with the latest image, visit the url to get the latest image at the time of testing.
+  image: quay.io/openshift-pipeline/redhat-operator-index:236551
+  displayName: custom-operators
+  updateStrategy:
+    registryPoll:
+      interval: 30m
