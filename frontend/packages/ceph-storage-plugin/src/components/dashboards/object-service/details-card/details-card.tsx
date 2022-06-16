@@ -11,7 +11,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { InfrastructureModel } from '@console/internal/models/index';
 import {
   SubscriptionModel,
@@ -71,13 +71,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
     'data',
   ]) as PrometheusResponse;
   const systemLoadError = prometheusResults.getIn([NOOBAA_SYSTEM_NAME_QUERY, 'loadError']);
-  const dashboardLinkLoadError = prometheusResults.getIn([
-    NOOBAA_DASHBOARD_LINK_QUERY,
-    'loadError',
-  ]);
 
   const systemName = getMetric(systemResult, 'system_name');
-  const systemLink = getMetric(dashboardLinkResult, 'dashboard');
 
   const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
 
@@ -110,16 +105,12 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             title={t('ceph-storage-plugin~System name')}
             isLoading={!systemResult || !dashboardLinkResult}
             error={
-              systemLoadError || dashboardLinkLoadError || !systemName || !systemLink
-                ? t('ceph-storage-plugin~Not available')
-                : undefined
+              systemLoadError || !systemName ? t('ceph-storage-plugin~Not available') : undefined
             }
           >
-            <ExternalLink
-              href={systemLink}
-              dataTestID="system-name-mcg"
-              text={t('ceph-storage-plugin~Multicloud Object Gateway')}
-            />
+            <p data-test-id="system-name-mcg">
+              {t('ceph-storage-plugin~Multicloud Object Gateway')}
+            </p>
             {hasRGW && (
               <p
                 className="ceph-details-card__rgw-system-name--margin"
