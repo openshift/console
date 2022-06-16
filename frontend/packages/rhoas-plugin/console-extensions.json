@@ -129,7 +129,8 @@
           },
           "opts": {
             "isList": true,
-            "optional": true
+            "optional": true,
+            "namespaced": true
           }
         }
       },
