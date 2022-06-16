@@ -5,10 +5,9 @@ import {
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
 } from '@patternfly/react-icons';
-import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
-import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { global_palette_green_500 as okColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
-import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
+import * as classNames from 'classnames';
+
+import './icons.scss';
 
 export type ColoredIconProps = {
   className?: string;
@@ -20,8 +19,7 @@ export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, ti
   <CheckCircleIcon
     data-test="success-icon"
     size={size}
-    color={okColor.value}
-    className={className}
+    className={classNames('dps-icons__green-check-icon', className)}
     title={title}
   />
 );
@@ -33,8 +31,7 @@ export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
 }) => (
   <ExclamationCircleIcon
     size={size}
-    color={dangerColor.value}
-    className={className}
+    className={classNames('dps-icons__red-exclamation-icon', className)}
     title={title}
   />
 );
@@ -46,12 +43,11 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
 }) => (
   <ExclamationTriangleIcon
     size={size}
-    color={warningColor.value}
-    className={className}
+    className={classNames('dps-icons__yellow-exclamation-icon', className)}
     title={title}
   />
 );
 
 export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, title }) => (
-  <InfoCircleIcon color={blueInfoColor.value} className={className} title={title} />
+  <InfoCircleIcon className={classNames('dps-icons__blue-info-icon', className)} title={title} />
 );
