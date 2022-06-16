@@ -270,8 +270,8 @@ export const topologyPage = {
   },
   getKnativeRevision: (serviceName: string) => {
     return cy
-      .get('[data-type="knative-service"]')
-      .find('[data-type="knative-revision"] g.odc-workload-node')
+      .get('[data-type="knative-revision"]')
+      .find('g.odc-workload-node')
       .contains(serviceName);
   },
   waitForKnativeRevision: () => {

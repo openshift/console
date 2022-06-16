@@ -111,7 +111,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   }, [createConnectorDrag]);
   return (
     <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
-      <g ref={nodeHoverRefs}>
+      <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
         <DefaultNode
           className={classNames('odc-base-node', className, {
             'is-filtered': filtered,

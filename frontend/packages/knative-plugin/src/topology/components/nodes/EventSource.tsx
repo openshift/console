@@ -26,7 +26,12 @@ export type EventSourceProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const EventSource: React.FC<EventSourceProps> = ({ element, onShowCreateConnector, children, ...rest }) => {
+const EventSource: React.FC<EventSourceProps> = ({
+  element,
+  onShowCreateConnector,
+  children,
+  ...rest
+}) => {
   const { data, resources } = element.getData();
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
