@@ -42,6 +42,8 @@ export const operatorsPO = {
       '[data-test="crunchy-postgres-operator-certified-operators-openshift-marketplace"]',
     quayContainerSecurity:
       '[data-test="container-security-operator-redhat-operators-openshift-marketplace"]',
+    shipwrightOperator:
+      '[data-test="shipwright-operator-community-operators-openshift-marketplace"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
@@ -57,6 +59,7 @@ export const operatorsPO = {
     knativeEventingLink: '[title="knativeeventings.operator.knative.dev"]',
     operatorStatus: '[data-test="status-text"]',
     checlusterCRLink: '[title="checlusters.org.eclipse.che"]',
+    shipwrightBuildLink: '[title="shipwrightbuilds.operator.shipwright.io"]',
   },
   sidePane: {
     install: '[data-test-id="operator-install-btn"]',

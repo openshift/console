@@ -14,6 +14,7 @@ export const pageTitle = {
   Add: 'Add',
   GitOPs: 'GitOps',
   Observe: 'Observe',
+  Builds: 'Builds',
   BuildConfigs: 'Build Configs',
   Search: 'Search',
   HelmReleases: 'Helm Releases',
@@ -54,4 +55,5 @@ export const pageTitle = {
   KnativeEventings: 'KnativeEventings',
   CreateRepository: 'Create Repository',
   CustomResourceDefinitions: 'CustomResourceDefinitions',
+  ShipwrightBuild: 'ShipwrightBuild',
 };

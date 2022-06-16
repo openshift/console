@@ -46,3 +46,4 @@ export const pagePO = {
   create: '[data-test="item-create"]',
   breadcrumb: '[aria-label="Breadcrumb"]',
 };
+export const resourceRow = '[data-test-rows="resource-row"]';
