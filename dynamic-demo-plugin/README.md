@@ -153,6 +153,13 @@ conster Header: React.FC = () => {
 };
 ```
 
+The demo plugin contains `console.openshift.io/use-i18n` annotation, which
+indicates whether the `ConsolePlugin` contains localization resources.
+If the annotation is set to `"true"`, the localization resources from
+the i18n namespace named after the dynamic plugin, in this case `plugin__console-demo-plugin`,
+are loaded. If the annotation is set to any other value or is missing on the `ConsolePlugin`
+resource, localization resources are not loaded.
+
 For labels in `console-extensions.json`, you can use the format
 `%plugin__console-demo-plugin~My Label%`. Console will replace the value with
 the message for the current language from the `plugin__console-demo-plugin`

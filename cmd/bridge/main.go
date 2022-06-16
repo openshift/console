@@ -123,6 +123,7 @@ func main() {
 	consolePluginsFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
+	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
 
 	telemetryFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
@@ -229,6 +230,15 @@ func main() {
 		}
 	}
 
+	i18nNamespaces := strings.Split(*fI18NamespacesFlags, ",")
+	if *fI18NamespacesFlags != "" {
+		for _, str := range i18nNamespaces {
+			if str == "" {
+				bridge.FlagFatalf("i18n-namespaces", "list must contain name of i18n namespaces separated by comma")
+			}
+		}
+	}
+
 	srv := &server.Server{
 		PublicDir:                 *fPublicDir,
 		BaseURL:                   baseURL,
@@ -248,6 +258,7 @@ func main() {
 		DevCatalogCategories:      *fDevCatalogCategories,
 		UserSettingsLocation:      *fUserSettingsLocation,
 		EnabledConsolePlugins:     consolePluginsFlags,
+		I18nNamespaces:            i18nNamespaces,
 		PluginProxy:               *fPluginProxy,
 		QuickStarts:               *fQuickStarts,
 		AddPage:                   *fAddPage,

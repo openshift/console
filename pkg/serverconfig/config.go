@@ -111,6 +111,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config Config) (err error) {
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
+	addI18nNamespaces(fs, config.I18nNamespaces)
 	addManagedClusters(fs, config.ManagedClusterConfigFile)
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
@@ -334,6 +335,10 @@ func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
 	for key, value := range telemetry {
 		fs.Set("telemetry", fmt.Sprintf("%s=%s", key, value))
 	}
+}
+
+func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
+	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
 }
 
 func addManagedClusters(fs *flag.FlagSet, fileName string) {

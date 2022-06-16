@@ -20,6 +20,7 @@ type Config struct {
 	Helm                     `yaml:"helm"`
 	MonitoringInfo           `yaml:"monitoringInfo,omitempty"`
 	Plugins                  MultiKeyValue `yaml:"plugins,omitempty"`
+	I18nNamespaces           []string      `yaml:"i18nNamespaces,omitempty"`
 	ManagedClusterConfigFile string        `yaml:"managedClusterConfigFile,omitempty"`
 	Proxy                    Proxy         `yaml:"proxy,omitempty"`
 	Telemetry                MultiKeyValue `yaml:"telemetry,omitempty"`

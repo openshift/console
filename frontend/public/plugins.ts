@@ -17,6 +17,10 @@ const getEnabledDynamicPluginNames = () => {
   return allPluginNames.filter((pluginName) => !disabledPluginNames.includes(pluginName));
 };
 
+const getI18nNamespaces = () => {
+  return window.SERVER_FLAGS.i18nNamespaces;
+};
+
 // The '@console/active-plugins' module is generated during a webpack build,
 // so we use dynamic require() instead of the usual static import statement.
 const activePlugins =
@@ -25,8 +29,9 @@ const activePlugins =
     : [];
 
 const dynamicPluginNames = getEnabledDynamicPluginNames();
+const i18nNamespaces = getI18nNamespaces();
 
-export const pluginStore = new PluginStore(activePlugins, dynamicPluginNames);
+export const pluginStore = new PluginStore(activePlugins, dynamicPluginNames, i18nNamespaces);
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Console plugin store for debugging

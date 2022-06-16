@@ -56,7 +56,7 @@ export const init = () => {
         'rhoas-plugin',
         'service-binding-plugin',
         'topology',
-        ...pluginStore.getAllowedDynamicPluginNames().map((name) => `plugin__${name}`),
+        ...pluginStore.getI18nNamespaces(),
       ],
       defaultNS: 'public',
       nsSeparator: '~',

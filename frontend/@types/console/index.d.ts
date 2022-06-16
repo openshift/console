@@ -45,6 +45,7 @@ declare interface Window {
     userSettingsLocation: string;
     addPage: string; // JSON encoded configuration
     consolePlugins: string[]; // Console dynamic plugins enabled on the cluster
+    i18nNamespaces: string[]; // Available i18n namespaces
     quickStarts: string;
     projectAccessClusterRoles: string;
     clusters: string[];
