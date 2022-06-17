@@ -57,8 +57,19 @@ declare interface Window {
   Cypress?: {};
 }
 
-// TODO: Remove when upgrading to TypeScript 4.1.2+, which has a type for RelativeTimeFormat.
+// TODO: Remove when upgrading to TypeScript 4.1.2+, which has a type for ListFormat and RelativeTimeFormat.
 declare namespace Intl {
+  type ListFormatOptions = {
+    localeMatcher: string;
+    type: string;
+    style: string;
+  };
+
+  class ListFormat {
+    constructor(locales?: Locale | string | undefined, options?: Partial<ListFormatOptions>);
+    public format(list?: Iterable<string>): string;
+  }
+
   class RelativeTimeFormat {
     constructor(locale: string);
     format(n: number, unit: string);

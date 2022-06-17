@@ -22,6 +22,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "OperatorBackedService",
+      "title": "%olm~Operator Backed Services%",
       "provider": { "$codeRef": "utils.catalogCSVProvider" }
     },
     "flags": {

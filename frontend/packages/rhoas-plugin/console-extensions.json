@@ -97,6 +97,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "managedservices",
+      "title": "%rhoas-plugin~Application Services%",
       "provider": { "$codeRef": "catalog.rhoasProvider" }
     },
     "flags": {

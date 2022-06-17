@@ -10,7 +10,7 @@ type CatalogExtensionHookResolverProps = {
   useValue: ExtensionHook<CatalogItem[]>;
   options: CatalogExtensionHookOptions;
   onValueResolved: (value: CatalogItem[], id: string) => void;
-  onValueError: (error: any) => void;
+  onValueError: (error: any, id: string) => void;
 };
 
 const CatalogExtensionHookResolver: React.FC<CatalogExtensionHookResolverProps> = ({
@@ -27,8 +27,8 @@ const CatalogExtensionHookResolver: React.FC<CatalogExtensionHookResolverProps> 
   }, [id, loaded, onValueResolved, value]);
 
   React.useEffect(() => {
-    if (loadError) onValueError(loadError);
-  }, [loadError, onValueError]);
+    if (loadError) onValueError(loadError, id);
+  }, [id, loadError, onValueError]);
 
   return null;
 };

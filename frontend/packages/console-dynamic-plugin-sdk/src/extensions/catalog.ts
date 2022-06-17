@@ -27,6 +27,8 @@ export type CatalogItemProvider = ExtensionDeclaration<
     catalogId: string | string[];
     /** Type ID for the catalog item type. */
     type: string;
+    /** Title for the catalog item provider */
+    title: string;
     /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
     provider: CodeRef<ExtensionHook<CatalogItem[], CatalogExtensionHookOptions>>;
     /** Priority for this provider. Defaults to 0. Higher priority providers may override catalog
