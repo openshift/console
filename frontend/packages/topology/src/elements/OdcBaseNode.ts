@@ -1,4 +1,3 @@
-import { BaseNode } from '@patternfly/react-topology';
 import { observable } from 'mobx';
 import {
   K8sResourceKind,
@@ -6,6 +5,10 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { OdcNodeModel } from '../topology-types';
+//
+// Import from @patternfly/react-topology when updated to a branch containing https://github.com/patternfly/patternfly-react/pull/7573
+//
+import BaseNode from './BaseNode';
 
 class OdcBaseNode extends BaseNode {
   @observable.ref
