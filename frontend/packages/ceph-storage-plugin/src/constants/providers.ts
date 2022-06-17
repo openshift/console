@@ -75,4 +75,6 @@ export const AWS_REGIONS = [
   'ap-south-1',
   'me-south-1',
   'sa-east-1',
+  'us-gov-west-1',
+  'us-gov-east-1',
 ];
