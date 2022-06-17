@@ -12,9 +12,9 @@ import {
   Text,
   SelectProps,
 } from '@patternfly/react-core';
+import { WizardState } from '../../reducer';
 
 import { arbiterText } from '../../../../constants';
-import { WizardState } from '../../reducer';
 import { EnableArbiterLabel } from '../../../ocs-install/install-wizard/capacity-and-nodes';
 
 const HelperText: React.FC<{ enableArbiter: boolean }> = ({ enableArbiter }) => {
@@ -52,6 +52,11 @@ export const StretchCluster: React.FC<StretchClusterProps> = ({
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
 
+  const handleSelection: SelectProps['onSelect'] = (e, selection) => {
+    onSelect(e, selection);
+    setIsOpen(false);
+  };
+
   return (
     <>
       <TextContent>
@@ -82,7 +87,7 @@ export const StretchCluster: React.FC<StretchClusterProps> = ({
                 placeholderText={t('ceph-storage-plugin~Select an arbiter zone')}
                 aria-label={t('ceph-storage-plugin~Arbiter zone selection')}
                 onToggle={(value: boolean) => setIsOpen(value)}
-                onSelect={onSelect}
+                onSelect={handleSelection}
                 selections={arbiterLocation}
                 isOpen={isOpen}
                 id="arbiter-zone-selection"
