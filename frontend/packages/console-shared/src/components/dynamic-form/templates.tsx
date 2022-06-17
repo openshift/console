@@ -115,7 +115,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
 }) => {
   const { t } = useTranslation();
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
-  const singularLabel = label.replace(/s$/, '');
+  // const singularLabel = label.replace(/s$/, '');
   return (
     <FieldSet
       defaultLabel={label}
@@ -137,7 +137,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
                   variant="link"
                 >
                   <MinusCircleIcon className="co-icon-space-r" />
-                  {t('console-shared~Remove {{singularLabel}}', { singularLabel })}
+                  {t('console-shared~Remove {{singularLabel}}', { singularLabel: label })}
                 </Button>
               </div>
             )}
@@ -148,7 +148,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
       <div className="row">
         <Button id={`${idSchema.$id}_add-btn`} type="button" onClick={onAddClick} variant="link">
           <PlusCircleIcon className="co-icon-space-r" />
-          {t('console-shared~Add {{singularLabel}}', { singularLabel })}
+          {t('console-shared~Add {{singularLabel}}', { singularLabel: label })}
         </Button>
       </div>
     </FieldSet>
