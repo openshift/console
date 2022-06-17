@@ -17,7 +17,7 @@ export const useReplicationControllerActionsProvider = (resource: ReplicationCon
   const actions = React.useMemo(
     () => [
       CommonActionFactory.ModifyCount(kindObj, resource),
-      ...(!_.isNil(deploymentPhase) && !['New', 'Pending', 'Running'].includes(deploymentPhase)
+      ...(!_.isNil(deploymentPhase) && ['New', 'Pending', 'Running'].includes(deploymentPhase)
         ? [ReplicationControllerFactory.CancelRollout(kindObj, resource)]
         : []),
       ...pdbActions,
