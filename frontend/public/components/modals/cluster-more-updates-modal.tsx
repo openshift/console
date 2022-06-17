@@ -28,13 +28,14 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
   const availableUpdates = getSortedUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();
+  const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
   const { t } = useTranslation();
 
   return (
     <div className="modal-content">
       <ModalTitle>{t('public~Other available paths')}</ModalTitle>
       <ModalBody>
-        {!!getConditionUpgradeableFalse(cv) && <ClusterNotUpgradeableAlert cv={cv} />}
+        {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert cv={cv} />}
         <table className="table">
           <thead>
             <tr>
@@ -48,9 +49,10 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
                 <tr key={update.version}>
                   <td>
                     {update.version}
-                    {isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
-                      <UpdateBlockedLabel />
-                    )}
+                    {clusterUpgradeableFalse &&
+                      isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
+                        <UpdateBlockedLabel />
+                      )}
                   </td>
                   {releaseNotes && (
                     <td>
