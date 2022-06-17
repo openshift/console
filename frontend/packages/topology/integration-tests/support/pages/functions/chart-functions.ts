@@ -1,4 +1,10 @@
-import { app, gitPage, yamlEditor } from '@console/dev-console/integration-tests/support/pages';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import {
+  app,
+  gitPage,
+  navigateTo,
+  yamlEditor,
+} from '@console/dev-console/integration-tests/support/pages';
 import { chartAreaPO } from '../../page-objects/chart-area-po';
 import { topologyPO } from '../../page-objects/topology-po';
 import { topologyHelper, topologyPage } from '../topology';
@@ -15,7 +21,7 @@ export const verifyMultipleWorkloadInTopologyPage = (workloadNames: string[]) =>
   }
 };
 
-export const createWorkloadUsingOptions = (optionName: string) => {
+export const createWorkloadUsingOptions = (optionName: string, optionalData?: string) => {
   switch (optionName) {
     case 'Go Sample':
       gitPage.verifyValidatedMessage(
@@ -70,9 +76,11 @@ export const createWorkloadUsingOptions = (optionName: string) => {
         .clear();
 
       // eslint-disable-next-line no-case-declarations
-      const yamlLocation = 'support/test-data/postgres-operator-backed.yaml';
+      const yamlLocation = `support/${optionalData}`;
       yamlEditor.setEditorContent(yamlLocation);
       cy.get(chartAreaPO.saveChanges).click();
+      cy.get('[aria-label="Breadcrumb"]').should('contain', 'PostgresCluster details');
+      navigateTo(devNavigationMenu.Topology);
       break;
 
     case 'Helm Chart':

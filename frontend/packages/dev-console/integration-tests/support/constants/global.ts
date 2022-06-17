@@ -38,6 +38,7 @@ export enum operators {
   CrunchyPostgresforKubernetes = 'Crunchy Postgres for Kubernetes',
   QuayContainerSecurity = 'Quay Container Security',
   ShipwrightOperator = 'Shipwright Operator',
+  RedisOperator = 'Redis Operator',
 }
 
 export enum authenticationType {

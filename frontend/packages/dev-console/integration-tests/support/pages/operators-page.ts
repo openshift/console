@@ -176,6 +176,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.shipwrightOperator).click();
         break;
       }
+      case 'Redis Operator':
+      case operators.RedisOperator: {
+        cy.get(operatorsPO.operatorHub.redisOperatorCard).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }

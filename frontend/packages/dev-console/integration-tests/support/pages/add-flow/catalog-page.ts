@@ -31,6 +31,18 @@ export const catalogPage = {
       .get('form h1')
       .eq(0)
       .should('have.text', pageTitle.InstallHelmCharts),
+  verifySelectOperatorBackedCard: (cardName: string) => {
+    cy.byTestID(`OperatorBackedService-${cardName}`)
+      .first()
+      .click();
+  },
+  verifyCreateOperatorBackedPage: (title: string) =>
+    detailsPage.titleShouldContain(`Create ${title}`),
+  enterOperatorBackedName: (OperatorBackedName: string) =>
+    cy
+      .get(catalogPO.operatorBacked.name)
+      .clear()
+      .type(OperatorBackedName),
   clickButtonOnCatalogPageSidePane: () => {
     catalogPage.verifyDialog();
     cy.get(catalogPO.sidePane.instantiateTemplate).click({ force: true });

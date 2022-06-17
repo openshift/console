@@ -39,7 +39,7 @@ export const chartAreaPO = {
   channelName: '[data-test-id="channel-name"]',
   saveChanges: '[data-test="save-changes"]',
   yamlEditor: 'div.monaco-scrollable-element.editor-scrollable.vs-dark',
-  yamlView: '[data-test="yaml-view-input"]',
+  yamlView: '[data-test="import-yaml"]',
   dangerAlert: '[aria-label="Danger Alert"]',
   infoAlert: '[aria-label="Info Alert"]',
   contentScrollable: '#content-scrollable',
