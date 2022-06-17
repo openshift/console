@@ -106,6 +106,8 @@ export type Action = {
   disabled?: boolean;
   /** The tooltip for this action. */
   tooltip?: string;
+  /** The disabled tooltip for this action. */
+  disabledTooltip?: string;
   /** The icon for this action. */
   icon?: string | React.ReactNode;
   /** A `/` separated string where each segment denotes
