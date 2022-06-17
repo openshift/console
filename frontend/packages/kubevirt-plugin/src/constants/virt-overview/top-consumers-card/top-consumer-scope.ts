@@ -7,17 +7,17 @@ type TopConsumerScopeData = {
 export class TopConsumerScope extends ObjectEnum<string> {
   static readonly PROJECT = new TopConsumerScope('PROJECT', {
     // t('kubevirt-plugin~Project')
-    dropdownLabel: 'Project',
+    dropdownLabel: 'kubevirt-plugin~Project',
   });
 
   static readonly VM = new TopConsumerScope('VM', {
     // t('kubevirt-plugin~VM')
-    dropdownLabel: 'VM',
+    dropdownLabel: 'kubevirt-plugin~VM',
   });
 
   static readonly NODE = new TopConsumerScope('NODE', {
     // t('kubevirt-plugin~Node')
-    dropdownLabel: 'Node',
+    dropdownLabel: 'kubevirt-plugin~Node',
   });
 
   private readonly dropdownLabel: string;

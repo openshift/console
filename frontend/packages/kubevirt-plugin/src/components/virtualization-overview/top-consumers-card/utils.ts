@@ -18,10 +18,7 @@ export const humanizeTopConsumerMetric = (value: number, metric: TopConsumerMetr
     case TopConsumerMetric.MEMORY:
       humanizedValue = humanizeBinaryBytes(value, 'B', 'GiB');
       break;
-    case TopConsumerMetric.FILESYSTEM:
-      humanizedValue = humanizeBinaryBytes(value, 'B');
-      break;
-    case TopConsumerMetric.MEMORY_SWAP:
+    case TopConsumerMetric.MEMORY_SWAP_TRAFFIC:
       humanizedValue = humanizeDecimalBytes(value, 'MB');
       break;
     case TopConsumerMetric.VCPU_WAIT:

@@ -20,8 +20,8 @@ import './top-consumers-card.scss';
 const initialMetrics = [
   TopConsumerMetric.CPU,
   TopConsumerMetric.MEMORY,
-  TopConsumerMetric.FILESYSTEM,
-  TopConsumerMetric.MEMORY_SWAP,
+  TopConsumerMetric.MEMORY_SWAP_TRAFFIC,
+  TopConsumerMetric.VCPU_WAIT,
   TopConsumerMetric.STORAGE_THROUGHPUT,
   TopConsumerMetric.STORAGE_IOPS,
 ];

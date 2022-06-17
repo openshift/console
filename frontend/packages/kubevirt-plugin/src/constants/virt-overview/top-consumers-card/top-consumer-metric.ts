@@ -16,18 +16,11 @@ export class TopConsumerMetric extends TopConsumerMetricObjectEnum<string> {
     chartLabel: 'kubevirt-plugin~Memory',
   });
 
-  static readonly FILESYSTEM = new TopConsumerMetric('filesystem', {
-    // t('kubevirt-plugin~By filesystem')
-    dropdownLabel: 'kubevirt-plugin~By filesystem',
-    // t('kubevirt-plugin~Used filesystem')
-    chartLabel: 'kubevirt-plugin~Used filesystem',
-  });
-
-  static readonly MEMORY_SWAP = new TopConsumerMetric('memory-swap', {
-    // t('kubevirt-plugin~By memory swap')
-    dropdownLabel: 'kubevirt-plugin~By memory swap',
-    // t('kubevirt-plugin~Memory swap')
-    chartLabel: 'kubevirt-plugin~Memory swap',
+  static readonly MEMORY_SWAP_TRAFFIC = new TopConsumerMetric('memory-swap-traffic', {
+    // t('kubevirt-plugin~By memory swap traffic')
+    dropdownLabel: 'kubevirt-plugin~By memory swap traffic',
+    // t('kubevirt-plugin~Memory swap traffic')
+    chartLabel: 'kubevirt-plugin~Memory swap traffic',
   });
 
   static readonly VCPU_WAIT = new TopConsumerMetric('vcpu-wait', {
