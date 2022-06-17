@@ -26,13 +26,11 @@ const navLinkRootMapStateToProps = (
   state: RootState,
   { component: Component, ...props }: NavLinkRootProps,
 ): NavLinkRootStateProps => {
+  const activeNamespace = getActiveNamespace(state);
+  const location = stripNS(state.UI.get('location'));
   return {
-    activeNamespace: getActiveNamespace(state),
-    isActive: Component.isActive(
-      props,
-      stripNS(state.UI.get('location')),
-      getActiveNamespace(state),
-    ),
+    activeNamespace,
+    isActive: Component.isActive(props, location, activeNamespace),
   };
 };
 

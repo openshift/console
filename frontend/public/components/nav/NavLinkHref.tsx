@@ -7,7 +7,11 @@ import { formatNamespacedRouteForHref, formatNamespacedRouteForResource } from '
 export class NavLinkHref extends NavLink<NavLinkHrefProps> {
   static isActive(props, resourcePath) {
     const noNSHref = stripNS(props.href);
-    return resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`);
+    return (
+      NavLink.isActive(props, resourcePath) ||
+      resourcePath === noNSHref ||
+      _.startsWith(resourcePath, `${noNSHref}/`)
+    );
   }
 
   get to() {

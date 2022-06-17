@@ -14,7 +14,7 @@ export class NavLinkResourceNS extends NavLink<NavLinkResourceNSProps> {
       return matchesExtensionModel(resourcePath, props.model);
     }
     const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
-    return matchesPath(resourcePath, href);
+    return NavLink.isActive(props, resourcePath) || matchesPath(resourcePath, href);
   }
 
   get to() {

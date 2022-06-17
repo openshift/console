@@ -12,8 +12,9 @@ export class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  static isActive(...args): boolean {
-    throw new Error('not implemented');
+  static isActive(props: NavLinkProps, location: string, activeNamespace?: string): boolean {
+    const { startsWith } = props;
+    return startsWith?.some((path) => location.startsWith(path));
   }
 
   get to(): string {
