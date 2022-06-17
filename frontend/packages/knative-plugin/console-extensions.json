@@ -1672,7 +1672,7 @@
     "type": "console.topology/data/factory",
     "properties": {
       "id": "knative-kafka-sink-topology-data-factory",
-      "priority": "99",
+      "priority": "500",
       "resources": {
         "kafkasinks": {
           "model": {
@@ -1683,6 +1683,7 @@
           "opts": { "isList": true, "optional": true, "namespaced": true }
         }
       },
+      "workloadKeys": ["kafkasinks"],
       "getDataModel": {
         "$codeRef": "topology.getKafkaSinkKnativeTopologyData"
       }
