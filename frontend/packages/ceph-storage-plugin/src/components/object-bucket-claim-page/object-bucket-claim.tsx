@@ -44,6 +44,7 @@ const tableColumnClasses = [
 
 const OBCTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   const storageClassName = _.get(obj, 'spec.storageClassName');
+  const { t } = useTranslation();
 
   return (
     <>
@@ -67,7 +68,14 @@ const OBCTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
         {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <ResourceKebab
+          actions={menuActions}
+          kind={kind}
+          resource={obj}
+          hoverMessage={t(
+            'ceph-storage-plugin~Disabled because the ObjectBucketClaim is being deleted.',
+          )} /* hoverMessage is only visible when kebab is disabled, i.e., when its associated resource is being deleted */
+        />
       </TableData>
     </>
   );

@@ -452,7 +452,8 @@ export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
 };
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const { actions, kindObj, resource, isDisabled, customData } = props;
+  const { actions, kindObj, resource, isDisabled, customData, hoverMessage } = props;
+  const { t } = useTranslation();
 
   if (!kindObj) {
     return null;
@@ -468,6 +469,7 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
       isDisabled={
         isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')
       }
+      hoverMessage={hoverMessage ? hoverMessage : t('public~Resource is being deleted.')}
     />
   );
 });
@@ -543,7 +545,7 @@ class KebabWithTranslation extends React.Component<
   getDivReference = () => this.divElement.current;
 
   render() {
-    const { options, isDisabled, t } = this.props;
+    const { options, isDisabled, t, hoverMessage } = this.props;
 
     const menuOptions = kebabOptionsToMenu(options);
 
@@ -554,21 +556,23 @@ class KebabWithTranslation extends React.Component<
           'pf-m-expanded': this.state.active,
         })}
       >
-        <button
-          ref={this.dropdownElement}
-          type="button"
-          aria-expanded={this.state.active}
-          aria-haspopup="true"
-          aria-label={t('public~Actions')}
-          className="pf-c-dropdown__toggle pf-m-plain"
-          data-test-id="kebab-button"
-          disabled={isDisabled}
-          onClick={this.toggle}
-          onFocus={this.onHover}
-          onMouseEnter={this.onHover}
-        >
-          <EllipsisVIcon />
-        </button>
+        <Tooltip content={hoverMessage} isVisible={isDisabled && !!hoverMessage} trigger="manual">
+          <button
+            ref={this.dropdownElement}
+            type="button"
+            aria-expanded={this.state.active}
+            aria-haspopup="true"
+            aria-label={t('public~Actions')}
+            className="pf-c-dropdown__toggle pf-m-plain"
+            data-test-id="kebab-button"
+            disabled={isDisabled}
+            onClick={this.toggle}
+            onFocus={this.onHover}
+            onMouseEnter={this.onHover}
+          >
+            <EllipsisVIcon />
+          </button>
+        </Tooltip>
         <Popper
           open={!isDisabled && this.state.active}
           placement="bottom-end"
@@ -640,6 +644,7 @@ export type ResourceKebabProps = {
   resource: K8sResourceKind;
   isDisabled?: boolean;
   customData?: { [key: string]: any };
+  hoverMessage?: string;
 };
 
 type KebabSubMenu = {
@@ -656,6 +661,7 @@ type KebabProps = {
   options: KebabOption[];
   isDisabled?: boolean;
   columnClass?: string;
+  hoverMessage?: string;
 };
 
 type KebabItemProps = {
