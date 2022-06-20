@@ -306,3 +306,7 @@ export type DynamicPluginInfo = LoadedDynamicPluginInfo | NotLoadedDynamicPlugin
 
 export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
   i.status === 'Loaded';
+
+export const isNotLoadedDynamicPluginInfo = (
+  i: DynamicPluginInfo,
+): i is NotLoadedDynamicPluginInfo => i.status === 'Failed' || i.status === 'Pending';
