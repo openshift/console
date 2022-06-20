@@ -1,8 +1,9 @@
+import * as React from 'react';
 import i18next from 'i18next';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { eventSinkIcon } from '../utils/icons';
+import { EventSinkIcon, eventIconStyle } from '../utils/icons';
 
 export const EVENT_SINK_ADD_CONNECTOR_ACTION = 'event-sink-add-connector-action';
 
@@ -22,7 +23,7 @@ export const AddEventSinkAction = (
   return {
     id: 'event-sink-add',
     label: i18next.t('knative-plugin~Event Sink'),
-    icon: eventSinkIcon,
+    icon: <EventSinkIcon style={eventIconStyle} />,
     cta: {
       href: `${pageUrl}?${params.toString()}`,
     },

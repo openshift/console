@@ -8,10 +8,8 @@
   }
 }
 
-:root:where(.pf-theme-dark) .odc-topology-context-menu {
-  .pf-c-dropdown__menu-item-icon {
+:root:where(.pf-theme-dark) .pf-c-dropdown__menu-item-icon {
     img {
       filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
     }
-  }
 }
