@@ -1,0 +1,14 @@
+.dps-icons {
+  &__green-check-icon {
+    fill: var(--pf-global--palette--green-500) !important;
+  }
+  &__red-exclamation-icon {
+    fill: var(--pf-global--danger-color--100) !important;
+  }
+  &__yellow-exclamation-icon {
+    fill: var(--pf-global--warning-color--100) !important;
+  }
+  &__blue-info-icon {
+    fill: var(--pf-global--palette--blue-300) !important;
+  }
+}
