@@ -13,6 +13,7 @@ export { default as ResourceDropdownField } from './ResourceDropdownField';
 export { default as ResourceLimitField } from './ResourceLimitField';
 export { default as SwitchField } from './SwitchField';
 export { default as TextAreaField } from './TextAreaField';
+export { default as YAMLEditorFormikField } from './YAMLEditorFormikField';
 export { default as YAMLEditorField } from './YAMLEditorField';
 export { default as ItemSelectorField } from './item-selector-field/ItemSelectorField';
 export { default as InputGroupField } from './InputGroupField';

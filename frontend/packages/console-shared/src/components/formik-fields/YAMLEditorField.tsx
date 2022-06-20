@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,9 +14,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ConsoleYAMLSampleModel } from '@console/internal/models';
 import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
 import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
+import { YAMLEditorFieldProps } from 'packages/console-dynamic-plugin-sdk/src/extensions/yaml-field-types';
 import { getResourceSidebarSamples } from '../../utils';
-import { YAMLEditorFieldProps } from './field-types';
-
 import './YAMLEditorField.scss';
 
 const SampleResource: WatchK8sResource = {
@@ -26,15 +24,14 @@ const SampleResource: WatchK8sResource = {
 };
 
 const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
-  name,
   label,
   model,
   schema,
   showSamples,
   onSave,
+  onChange,
+  value,
 }) => {
-  const [field] = useField(name);
-  const { setFieldValue } = useFormikContext<FormikValues>();
   const { t } = useTranslation();
   const editorRef = React.useRef();
 
@@ -81,9 +78,9 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
         <AsyncComponent
           loader={() => import('../editor/YAMLEditor').then((c) => c.default)}
           forwardRef={editorRef}
-          value={field.value}
+          value={value}
           minHeight="200px"
-          onChange={(yaml: string) => setFieldValue(name, yaml)}
+          onChange={onChange}
           onSave={onSave}
           showShortcuts
           toolbarLinks={

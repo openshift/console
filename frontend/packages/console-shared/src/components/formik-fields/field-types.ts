@@ -4,8 +4,7 @@ import {
   gridItemSpanValueShape,
   SelectVariant,
 } from '@patternfly/react-core';
-import { JSONSchema7 } from 'json-schema';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
 
 export interface FieldProps {
@@ -110,14 +109,6 @@ export interface MultiColumnFieldProps extends FieldProps {
   disableAddRow?: boolean;
   tooltipAddRow?: string;
 }
-
-export interface YAMLEditorFieldProps extends FieldProps {
-  model?: K8sKind;
-  schema?: JSONSchema7;
-  showSamples: boolean;
-  onSave?: () => void;
-}
-
 export interface NameValuePair {
   name: string;
   value: string;

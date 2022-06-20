@@ -1,5 +1,6 @@
 /* eslint-disable */
 import * as React from 'react';
+import { YAMLEditorFieldProps } from '../extensions';
 import {
   HorizontalNavProps,
   UseResolvedExtensions,
@@ -238,3 +239,15 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
   // unify order with the rest of API
   return [result[0], !result[2], result[1]];
 };
+
+/**
+ * YAML editor field component
+ * @param label - (optional) label that will show on the side bar
+ * @param model - (optional) resource model
+ * @param schema - (optional) resource schema
+ * @param showSamples - flag for sample viewing in sidebar
+ * @param onSave - callback for saving the yaml
+ * @param value - yaml value
+ * @param onChange - callback for yaml changes
+ */
+export const YAMLEditorField: React.FC<YAMLEditorFieldProps> = require("@console/shared/src/components/formik-fields/YAMLEditorField").default;

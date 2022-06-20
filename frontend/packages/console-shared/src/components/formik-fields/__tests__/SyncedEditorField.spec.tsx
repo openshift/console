@@ -9,7 +9,7 @@ import { useEditorType } from '../../synced-editor/useEditorType';
 import DynamicFormField from '../DynamicFormField';
 import RadioGroupField from '../RadioGroupField';
 import SyncedEditorField from '../SyncedEditorField';
-import YAMLEditorField from '../YAMLEditorField';
+import YAMLEditorFormikField from '../YAMLEditorFormikField';
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{ value: 'form' }, {}]),
@@ -32,7 +32,7 @@ describe('SyncedEditorField', () => {
 
   const mockEditors = {
     form: <DynamicFormField name="formData" schema={{}} />,
-    yaml: <YAMLEditorField name="yamlData" showSamples />,
+    yaml: <YAMLEditorFormikField name="yamlData" showSamples />,
   };
 
   const props: SyncedEditorFieldProps = {
@@ -79,7 +79,7 @@ describe('SyncedEditorField', () => {
     mockUseField.mockReturnValue([{ value: EditorType.YAML }, {}]);
     mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), true]);
     wrapper = shallow(<SyncedEditorField {...props} />);
-    expect(wrapper.find(YAMLEditorField).exists()).toBe(true);
+    expect(wrapper.find(YAMLEditorFormikField).exists()).toBe(true);
   });
 
   it('should disable corresponding radio button if any editor context is disabled', () => {

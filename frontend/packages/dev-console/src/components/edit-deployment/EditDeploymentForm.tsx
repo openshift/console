@@ -10,7 +10,7 @@ import {
   FormFooter,
   FormHeader,
   SyncedEditorField,
-  YAMLEditorField,
+  YAMLEditorFormikField,
 } from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -54,7 +54,7 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
   );
 
   const yamlEditor = (
-    <YAMLEditorField
+    <YAMLEditorFormikField
       name="yamlData"
       model={resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel}
       showSamples={!resource}
