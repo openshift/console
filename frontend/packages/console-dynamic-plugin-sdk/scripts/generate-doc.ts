@@ -10,6 +10,10 @@ import { resolvePath, relativePath } from './utils/path';
 import { ExtensionTypeInfo, getConsoleTypeResolver } from './utils/type-resolver';
 import { getProgramFromFile, printJSDocComments } from './utils/typescript';
 
+const EXAMPLE = '@example';
+const DYNAMIC_PKG_PATH = '@console/dynamic-plugin-sdk/';
+const GITHUB_URL = 'https://github.com/openshift/console/tree/release-4.11/frontend';
+
 const getConsoleExtensions = () => {
   const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));
   return getConsoleTypeResolver(program).getConsoleExtensions(true).result;
@@ -21,7 +25,7 @@ const renderTemplate = (srcFile: string, data: {}) => {
     root: resolvePath('.'),
   });
 
-  const outPath = resolvePath(`generated/doc/${path.parse(srcFile).name}`);
+  const outPath = resolvePath(`docs/${path.parse(srcFile).name}`);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, content);
@@ -57,9 +61,6 @@ type ComponentInfo = {
   doc: any;
 };
 
-const EXAMPLE = '@example';
-const DYNAMIC_PKG_PATH = '@console/dynamic-plugin-sdk/';
-
 const renderDocNode = (docNode: tsdoc.DocNode): string => {
   let result: string = '';
   if (docNode) {
@@ -74,9 +75,29 @@ const renderDocNode = (docNode: tsdoc.DocNode): string => {
   return result;
 };
 
-const generateGitLinkDoc = (filePath: string) => ({
-  summary: `[For more details please refer the implementation](${filePath})`,
-});
+// Use typescript AST to traverse the VariableDeclaration initializer, find the first call to
+// require(), and resolve the import. If no call to require is found, returns null.
+const resolveRequire = (variableDeclaration: ts.VariableDeclaration) => {
+  return variableDeclaration.initializer?.forEachChild((node) => {
+    if (ts.isCallExpression(node) && node.expression.getText() === 'require') {
+      const [requireArgument] = node.arguments ?? [];
+      if (ts.isStringLiteral(requireArgument)) {
+        return require.resolve(requireArgument.text);
+      }
+    }
+    return null; // ts.Node.forEachChild keeps traversing until a truthy value is returned
+  });
+};
+
+const generateGitLinkDoc = (variableDeclaration: ts.VariableDeclaration) => {
+  const resolvedRequire = resolveRequire(variableDeclaration);
+  const absolutePath = resolvedRequire ?? variableDeclaration.getSourceFile().fileName;
+  const urlPath = absolutePath.replace(/.*((packages|public)\/.*)/, '$1');
+  const link = `${GITHUB_URL}/${urlPath}`;
+  return {
+    summary: `[For more details please refer the implementation](${link})`,
+  };
+};
 
 const generateDoc = (comment: tsdoc.DocComment) => {
   const summary = renderDocNode(comment.summarySection);
@@ -105,38 +126,6 @@ const getDocPath = (relPath: string, absolutePath?: string): string => {
   return require.resolve(path.resolve(dirName, relPath));
 };
 
-const consoleLinkGenerator = (fileLocation: string, isRequire: boolean) => {
-  const WORKSPACE = '@';
-  const ABSOLUTE = '/frontend/';
-  const INTERNAL_PKG = '@console/internal';
-  const WEB_ROOT_LINK = 'https://github.com/openshift/console/tree/master/frontend';
-  const location = isRequire
-    ? fileLocation.substring(fileLocation.indexOf("'"), fileLocation.lastIndexOf("'"))
-    : fileLocation;
-  const isWorkspaceScoped = fileLocation.includes(WORKSPACE);
-  if (isWorkspaceScoped) {
-    const rootPath = `${__dirname.split('/packages')[0]}`;
-    if (location.includes(INTERNAL_PKG)) {
-      // Internal Paths are resolved a bit differently
-      const INTERNAL_PATH = `${WEB_ROOT_LINK}/public`;
-      const webPath = location.substring(INTERNAL_PKG.length + 2);
-      const approxFilePath = `${rootPath}/public/${webPath}`;
-      const exactPath = require.resolve(approxFilePath);
-      const webLink = `${INTERNAL_PATH}/${webPath}.${exactPath.split('.')[1]}`;
-      return webLink;
-    }
-    const PKG_PATH = `/packages`;
-    // only console packages are exposed as part of the SDK
-    const webPath = `${PKG_PATH}/console-${location.substring(PKG_PATH.length + 1)}`;
-    const approxFilePath = `${rootPath}${webPath}`;
-    const exactPath = require.resolve(approxFilePath);
-    const webLink = `${WEB_ROOT_LINK}${webPath}.${exactPath.split('.')[1]}`;
-    return webLink;
-  }
-  const subPath = location.split(ABSOLUTE)[1];
-  const webLink = `${WEB_ROOT_LINK}/${subPath}`;
-  return webLink;
-};
 const sanitizePath = (uglyPath: string): string => uglyPath.replace(/'/g, '');
 
 const parseFile = (
@@ -166,40 +155,22 @@ const parseFile = (
         parseFile(tsdocParser, require.resolve(filePath), exportedComponents, docRequired);
       }
     } else if (ts.isVariableStatement(node) && tsu.canHaveJsDoc(node)) {
-      const name = node.declarationList.declarations[0].name.getText();
+      const [variableDeclaration] = node.declarationList.declarations;
+      const name = variableDeclaration.name.getText();
       if ((exposedComponents && exposedComponents.includes(name)) || !exposedComponents) {
-        const comment = _.compact(tsu.getJsDoc(node, sourceFile));
-        if (!_.isEmpty(comment)) {
-          const filtered = _.head(comment);
-          const str = filtered.getFullText();
+        const [comment] = _.compact(tsu.getJsDoc(node, sourceFile)) ?? [];
+        if (comment) {
+          const str = comment.getFullText();
           const parsedText = tsdocParser.parseString(str).docComment;
-          // This particular one contains the comment
-          const component = {
+          exportedComponents.push({
             name,
             doc: generateDoc(parsedText),
-          };
-          exportedComponents.push(component);
+          });
         } else {
-          const variableDeclaration = node.declarationList.declarations[0];
-          const lastChildIndex = variableDeclaration.getChildCount() - 1;
-          const filePath = variableDeclaration.getChildAt(lastChildIndex).getFullText();
-          // Check if it contains require
-          const REQUIRE_REGEX = /require\(.*\);?/g;
-          const udpatedFilePath = filePath.replace(/\n| */g, '');
-          const isRequireStatement = REQUIRE_REGEX.test(udpatedFilePath);
-          const component: ComponentInfo = {
+          exportedComponents.push({
             name,
-            doc: null,
-          };
-          let link = null;
-          if (isRequireStatement) {
-            link = consoleLinkGenerator(udpatedFilePath, isRequireStatement);
-          } else {
-            const codeLocation = variableDeclaration.getSourceFile().fileName;
-            link = consoleLinkGenerator(codeLocation, isRequireStatement);
-          }
-          component.doc = generateGitLinkDoc(link);
-          exportedComponents.push(component);
+            doc: generateGitLinkDoc(variableDeclaration),
+          });
         }
       }
     }
