@@ -13,7 +13,7 @@ import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL } from '../../../constants';
 import { VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { ResourcesSection } from './ResourcesSection';
-import { VmStatusesSection } from './VmStatusesSection';
+import { VMStatusesSection } from './VMStatusesSection';
 
 import './virt-overview-inventory-card.scss';
 
@@ -119,7 +119,7 @@ export const InventoryCard: React.FC<DashboardItemProps> = ({
             </div>
           </GridItem>
           <GridItem span={8}>
-            <VmStatusesSection
+            <VMStatusesSection
               vms={(resources?.vms?.data as K8sResourceKind[]) ?? []}
               vmsLoaded={resources?.vms?.loaded}
             />
