@@ -920,48 +920,46 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           </div>
         </div>
       )}
-      {error && <Error error={error} />}
-      {isGraphDataEmpty && !updating && <GraphEmpty />}
-      {!isGraphDataEmpty && (
-        <div
-          className={classNames('graph-wrapper graph-wrapper--query-browser', {
-            'graph-wrapper--query-browser--with-legend': showLegend && !!formatSeriesTitle,
-          })}
-        >
-          <div ref={containerRef} style={{ width: '100%' }}>
-            {width > 0 && (
-              <>
-                {disableZoom ? (
-                  <Graph
-                    allSeries={graphData}
-                    disabledSeries={disabledSeries}
-                    fixedXDomain={xDomain}
-                    formatSeriesTitle={formatSeriesTitle}
-                    isStack={canStack && isStacked}
-                    showLegend={showLegend}
-                    span={span}
-                    units={units}
-                    width={width}
-                  />
-                ) : (
-                  <ZoomableGraph
-                    allSeries={graphData}
-                    disabledSeries={disabledSeries}
-                    fixedXDomain={xDomain}
-                    formatSeriesTitle={formatSeriesTitle}
-                    isStack={canStack && isStacked}
-                    onZoom={zoomableGraphOnZoom}
-                    showLegend={showLegend}
-                    span={span}
-                    units={units}
-                    width={width}
-                  />
-                )}
-              </>
-            )}
-          </div>
+      <div
+        className={classNames('graph-wrapper graph-wrapper--query-browser', {
+          'graph-wrapper--query-browser--with-legend': showLegend && !!formatSeriesTitle,
+        })}
+      >
+        <div ref={containerRef} style={{ width: '100%' }}>
+          {error && <Error error={error} />}
+          {isGraphDataEmpty && !updating && <GraphEmpty />}
+          {!isGraphDataEmpty && width > 0 && (
+            <>
+              {disableZoom ? (
+                <Graph
+                  allSeries={graphData}
+                  disabledSeries={disabledSeries}
+                  fixedXDomain={xDomain}
+                  formatSeriesTitle={formatSeriesTitle}
+                  isStack={canStack && isStacked}
+                  showLegend={showLegend}
+                  span={span}
+                  units={units}
+                  width={width}
+                />
+              ) : (
+                <ZoomableGraph
+                  allSeries={graphData}
+                  disabledSeries={disabledSeries}
+                  fixedXDomain={xDomain}
+                  formatSeriesTitle={formatSeriesTitle}
+                  isStack={canStack && isStacked}
+                  onZoom={zoomableGraphOnZoom}
+                  showLegend={showLegend}
+                  span={span}
+                  units={units}
+                  width={width}
+                />
+              )}
+            </>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
