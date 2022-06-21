@@ -66,7 +66,7 @@
   "Click reload to see the new version.": "点重新加载以查看新版本。",
   "Save": "保存",
   "Advanced options": "高级选项",
-  "Click on the names to access advanced options for": "点名称访问高级选项",
+  "Click on the names to access advanced options for <0></0>.": "点名称访问<0></0>的高级选项。",
   "Triggers": "触发器",
   "Secrets": "Secret",
   "Run Policy": "运行策略",
