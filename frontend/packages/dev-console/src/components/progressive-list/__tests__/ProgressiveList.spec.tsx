@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
+import { Trans, useTranslation } from 'react-i18next';
 import ProgressiveList from '../ProgressiveList';
 import ProgressiveListFooter from '../ProgressiveListFooter';
 import ProgressiveListItem from '../ProgressiveListItem';
@@ -9,10 +10,22 @@ const DummyComponent: React.FC = () => <div id="dummy">Dummy Component</div>;
 const BarComponent: React.FC = () => <div id="bar">Bar Component</div>;
 const FooComponent: React.FC = () => <div id="foo">Foo Component</div>;
 
+const Footer = ({ children }) => {
+  const { t } = useTranslation();
+  return (
+    <Trans
+      t={t}
+      ns="devconsole"
+      defaults="Click on the names to access advanced options for <0></0>."
+      components={[children]}
+    />
+  );
+};
+
 describe(ProgressiveList.displayName, () => {
   it('component should exist', () => {
     const wrapper = shallow(
-      <ProgressiveList visibleItems={[]} onVisibleItemChange={() => {}}>
+      <ProgressiveList Footer={Footer} visibleItems={[]} onVisibleItemChange={() => {}}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
         </ProgressiveListItem>
@@ -23,7 +36,7 @@ describe(ProgressiveList.displayName, () => {
 
   it('should only display component related to item name mentioned in the visibleItems array', () => {
     const wrapper = shallow(
-      <ProgressiveList visibleItems={['Bar', 'Foo']} onVisibleItemChange={() => {}}>
+      <ProgressiveList Footer={Footer} visibleItems={['Bar', 'Foo']} onVisibleItemChange={() => {}}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
         </ProgressiveListItem>
@@ -46,7 +59,7 @@ describe(ProgressiveList.displayName, () => {
       visibleItems.push(item);
     };
     const wrapper = shallow(
-      <ProgressiveList visibleItems={visibleItems} onVisibleItemChange={callback}>
+      <ProgressiveList Footer={Footer} visibleItems={visibleItems} onVisibleItemChange={callback}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
         </ProgressiveListItem>
