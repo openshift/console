@@ -20,7 +20,8 @@ const RepositoryOverview = () => {
         </Title>
         <Text>
           <Trans t={t} ns="pipelines-plugin">
-            Copy this code to .tekton directory in your <a href={values.gitUrl}>Git repository</a>.{' '}
+            Copy this code to <code className="co-code">.tekton</code> directory in your{' '}
+            <a href={values.gitUrl}>Git repository</a>.{' '}
             <ExternalLink
               text={t('pipelines-plugin~Learn more')}
               href="https://pipelinesascode.com/docs/guide/authoringprs/"
@@ -31,8 +32,8 @@ const RepositoryOverview = () => {
       <FormGroup fieldId="instructions">
         <Text>
           <Trans t={t} ns="pipelines-plugin">
-            You can now add PipelineRuns to the .tekton directory in your{' '}
-            <a href={values.gitUrl}>Git repository</a> and execute them on Git events.
+            You can now add PipelineRuns to the <code className="co-code">.tekton</code> directory
+            in your <a href={values.gitUrl}>Git repository</a> and execute them on Git events.
           </Trans>
         </Text>
       </FormGroup>
@@ -40,21 +41,23 @@ const RepositoryOverview = () => {
         <Title headingLevel="h4" size={TitleSizes.md}>
           {t('pipelines-plugin~Step 1')}
         </Title>
-        <Text>
-          {t(
-            'pipelines-plugin~In your repository, create the .tekton directory to store you pipeline.',
-          )}
-        </Text>
+        <Trans t={t} ns="pipelines-plugin">
+          <Text>
+            In your repository, create the <code className="co-code">.tekton</code> directory to
+            store you pipeline.
+          </Text>
+        </Trans>
       </FormGroup>
       <FormGroup fieldId="step-2">
         <Title headingLevel="h4" size={TitleSizes.md}>
           {t('pipelines-plugin~Step 2')}
         </Title>
-        <Text>
-          {t(
-            'pipelines-plugin~In the .tekton directory, create a new file called "push.yaml" and add the following code:',
-          )}
-        </Text>
+        <Trans t={t} ns="pipelines-plugin">
+          <Text>
+            In the <code className="co-code">.tekton</code> directory, create a new file called
+            <code className="co-code">push.yaml</code> and add the following code:
+          </Text>
+        </Trans>
         <>
           <YAMLEditorToolbar showShortcuts toolbarLinks={[]} />
           <EditorField
@@ -86,25 +89,22 @@ const RepositoryOverview = () => {
         </Text>
       </FormGroup>
       <FormGroup fieldId="step-4">
-        <Title headingLevel="h4" size={TitleSizes.md}>
-          {t('pipelines-plugin~Step 4')}
-        </Title>
         <Text>
           <Trans t={t} ns="pipelines-plugin">
-            Install Tekton CLI from{' '}
+            You can install Tekton CLI from{' '}
             <ExternalLink
               text={t('pipelines-plugin~releases')}
               href="https://github.com/openshift-pipelines/pipelines-as-code/releases"
             />{' '}
-            page. You can generate example pipelineruns using the `tkn pac generate`
+            page and generate example pipelineruns using the{' '}
+            <code className="co-code">tkn pac generate</code>
           </Trans>
         </Text>
         <br />
-        <Text>
-          {t(
-            'pipelines-plugin~Your Git repository is now configured to run push.yaml on every Git push event.',
-          )}
-        </Text>
+        <Trans t={t} ns="pipelines-plugin">
+          Your Git repository is now configured to run <code className="co-code">push.yaml</code> on
+          every Git push event.
+        </Trans>
       </FormGroup>
     </FormSection>
   );
