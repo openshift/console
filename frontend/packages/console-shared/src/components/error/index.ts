@@ -3,7 +3,8 @@ export { default as ErrorBoundary } from './error-boundary';
 export * from './types';
 
 // Packaged, easy to use, fallback options
-export { ErrorBoundaryPage, ErrorBoundaryInline } from './fallbacks/convienceWrappers';
+export { default as ErrorBoundaryPage } from './fallbacks/ErrorBoundaryPage';
+export { default as ErrorBoundaryInline } from './fallbacks/ErrorBoundaryInline';
 
 // Custom fallback options
 export { default as withFallback } from './fallbacks/withFallback';

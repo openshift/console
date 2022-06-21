@@ -235,7 +235,12 @@ export const DetailsCard = withDashboardResources(
                   {detailItemsExtensions.map((e) => {
                     const Component = e.properties.component;
                     return (
-                      <ErrorBoundaryInline key={e.uid}>
+                      <ErrorBoundaryInline
+                        key={e.uid}
+                        wrapper={({ children }) => (
+                          <OverviewDetailItem title="">{children}</OverviewDetailItem>
+                        )}
+                      >
                         <Component />
                       </ErrorBoundaryInline>
                     );
