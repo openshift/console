@@ -5,9 +5,14 @@ import { getLastLanguage } from '@console/app/src/components/user-preferences/la
 export interface ProgressiveListFooterProps {
   items: string[];
   onShowItem: (item: string) => void;
+  Footer: (children) => React.ReactElement;
 }
 
-const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({ items, onShowItem }) => {
+const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({
+  items,
+  onShowItem,
+  Footer,
+}) => {
   if (!items || items.length === 0) {
     return null;
   }
@@ -21,25 +26,26 @@ const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({ items, on
   let lastLen = 0;
 
   return (
-    <>
-      {items.map((item) => {
-        const currentIdx = formattedString.indexOf(item);
+    <Footer>
+      <>
+        {items.map((item) => {
+          const currentIdx = formattedString.indexOf(item);
+          const element = (
+            <React.Fragment key={item}>
+              {formattedString.slice(lastIdx + lastLen, currentIdx)}
+              <Button variant="link" isInline onClick={() => onShowItem(item)}>
+                {item}
+              </Button>
+            </React.Fragment>
+          );
 
-        const element = (
-          <React.Fragment key={item}>
-            {formattedString.slice(lastIdx + lastLen, currentIdx)}
-            <Button variant="link" isInline onClick={() => onShowItem(item)}>
-              {item}
-            </Button>
-          </React.Fragment>
-        );
+          lastIdx = currentIdx;
+          lastLen = item.length;
 
-        lastIdx = currentIdx;
-        lastLen = item.length;
-
-        return element;
-      })}
-    </>
+          return element;
+        })}
+      </>
+    </Footer>
   );
 };
 
