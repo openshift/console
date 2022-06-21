@@ -205,6 +205,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     const onKeyDown = (e: KeyboardEvent) => {
       switch (e.code) {
         case 'Escape': {
+          e.preventDefault();
           onCancel();
           break;
         }
@@ -219,7 +220,15 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           break;
         }
         case 'Enter': {
+          e.preventDefault();
           onEnter(e);
+          break;
+        }
+        case 'Space': {
+          if (e.ctrlKey) {
+            e.preventDefault();
+            closeModal();
+          }
           break;
         }
         default:
