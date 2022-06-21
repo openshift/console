@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TRIGGERS_ANNOTATION } from '@console/shared';
 import { ROUTE_DISABLED_ANNOTATION } from '@console/topology/src/const';
+import { ResourcesKinds, Resources } from '../components/import/import-types';
 
 export const getAppLabels = ({
   name,
@@ -92,10 +93,11 @@ export const getUserAnnotations = (allAnnotations: { [key: string]: string }) =>
   return _.omit(allAnnotations, defaultAnnotations);
 };
 
-export const getPodLabels = (name: string) => {
+export const getPodLabels = (resource: Resources, name: string) => {
+  const resourceKind = _.toLower(ResourcesKinds[resource]);
   return {
     app: name,
-    deploymentconfig: name,
+    [resourceKind]: name,
   };
 };
 

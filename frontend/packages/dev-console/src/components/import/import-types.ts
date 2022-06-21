@@ -298,6 +298,11 @@ export const ReadableResourcesNames = {
   [Resources.KnativeService]: `devconsole~Serverless Deployment`,
 };
 
+export const ResourcesKinds = {
+  [Resources.OpenShift]: DeploymentConfigModel.kind,
+  [Resources.Kubernetes]: DeploymentModel.kind,
+};
+
 export interface ImportData {
   type: ImportTypes;
   title: string;

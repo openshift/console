@@ -36,13 +36,14 @@ export const createService = (
     labels: userLabels,
     image: { ports: imagePorts, tag: selectedTag },
     route: { unknownTargetPort, defaultUnknownPort },
+    resources,
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
   const git = _.get(formData, 'git');
 
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const podLabels = getPodLabels(name);
+  const podLabels = getPodLabels(resources, name);
   const defaultAnnotations = git
     ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
     : getCommonAnnotations();
