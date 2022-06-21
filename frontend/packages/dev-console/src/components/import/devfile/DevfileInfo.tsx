@@ -19,12 +19,16 @@ const DevfileInfo: React.FC<DevfileInfoProps> = ({ devfileSample }) => {
     <div>
       <div className="co-catalog-item-details">
         {iconUrl ? (
-          <img
-            className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
-            src={iconUrl}
-            alt={displayName}
-            aria-hidden
-          />
+          <div className="co-catalog-item-icon">
+            <span className="co-catalog-item-icon__bg">
+              <img
+                className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
+                src={iconUrl}
+                alt={displayName}
+                aria-hidden
+              />
+            </span>
+          </div>
         ) : (
           <LayerGroupIcon size="xl" />
         )}

@@ -238,26 +238,28 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
   const iconClass = getImageStreamIcon(tag);
   const iconClassImg = getImageForIconClass(iconClass);
   return (
-    <span className="co-catalog-item-icon" aria-hidden>
-      {iconClassImg ? (
-        <img
-          className={classNames(
-            'co-catalog-item-icon__img',
-            iconSize && `co-catalog-item-icon__img--${iconSize}`,
-          )}
-          src={iconClassImg}
-          alt={t('public~Icon')}
-        />
-      ) : (
-        <span
-          className={classNames(
-            'co-catalog-item-icon__icon',
-            iconSize && `co-catalog-item-icon__icon--${iconSize}`,
-            normalizeIconClass(iconClass),
-          )}
-        />
-      )}
-    </span>
+    <div className="co-catalog-item-icon">
+      <span className="co-catalog-item-icon__bg" aria-hidden>
+        {iconClassImg ? (
+          <img
+            className={classNames(
+              'co-catalog-item-icon__img',
+              iconSize && `co-catalog-item-icon__img--${iconSize}`,
+            )}
+            src={iconClassImg}
+            alt={t('public~Icon')}
+          />
+        ) : (
+          <span
+            className={classNames(
+              'co-catalog-item-icon__icon',
+              iconSize && `co-catalog-item-icon__icon--${iconSize}`,
+              normalizeIconClass(iconClass),
+            )}
+          />
+        )}
+      </span>
+    </div>
   );
 };
 

@@ -71,24 +71,26 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   return (
     <div className="co-catalog-item-info">
       <div className="co-catalog-item-details">
-        <span className="co-catalog-item-icon">
-          {imgURL ? (
-            <img
-              className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
-              src={imgURL}
-              alt={displayName}
-              aria-hidden
-            />
-          ) : (
-            <span
-              className={classNames(
-                'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
-                normalizeIconClass(iconClass),
-              )}
-              aria-hidden
-            />
-          )}
-        </span>
+        <div className="co-catalog-item-icon">
+          <span className="co-catalog-item-icon__bg">
+            {imgURL ? (
+              <img
+                className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
+                src={imgURL}
+                alt={displayName}
+                aria-hidden
+              />
+            ) : (
+              <span
+                className={classNames(
+                  'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
+                  normalizeIconClass(iconClass),
+                )}
+                aria-hidden
+              />
+            )}
+          </span>
+        </div>
         <div>
           <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
           {!_.isEmpty(tags) && (
