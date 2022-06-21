@@ -1,16 +1,19 @@
 import * as React from 'react';
-import { FormikValues, useField, useFormikContext } from 'formik';
-import { YAMLEditorFormikFieldProps } from 'packages/console-dynamic-plugin-sdk/src/extensions/yaml-field-types';
+import { FormikValues, useFormikContext } from 'formik';
+import { YAMLEditorFieldProps } from 'packages/console-dynamic-plugin-sdk/src';
 import YAMLEditorField from './YAMLEditorField';
 
+type YAMLEditorFormikFieldProps = Omit<YAMLEditorFieldProps, 'value' | 'onChange'> & {
+  name: string;
+};
+
 const YAMLEditorFormikField: React.FC<YAMLEditorFormikFieldProps> = ({ name, ...props }) => {
-  const [field] = useField(name);
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue } = useFormikContext<FormikValues>();
   return (
     <YAMLEditorField
       {...props}
       onChange={(value) => setFieldValue(name, value)}
-      value={field.value}
+      value={values[name]}
     />
   );
 };
