@@ -16,7 +16,12 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { ExternalLink, Firehose, FirehoseResult } from '@console/internal/components/utils';
+import {
+  ExternalLink,
+  Firehose,
+  FirehoseResult,
+  humanizeBinaryBytes,
+} from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { DeviceType } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
@@ -83,7 +88,7 @@ const getStoragesData = (
       name: combinedDisk.getName(),
       source: combinedDisk.getSourceValue(),
       diskInterface: combinedDisk.getDiskInterface(),
-      size: combinedDisk.getReadableSize(),
+      size: combinedDisk.getSize() && humanizeBinaryBytes(combinedDisk.getSize().value).string,
       storageClass: combinedDisk.getStorageClassName(),
       type: combinedDisk.getType(),
     };
