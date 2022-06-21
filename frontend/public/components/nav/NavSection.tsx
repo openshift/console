@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NavExpandable, NavGroup } from '@patternfly/react-core';
-
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { useNavExtensionsForSection } from './useNavExtensionsForSection';
@@ -10,6 +10,7 @@ import { PluginNavItems } from './PluginNavItems';
 export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [activeNamespace] = useActiveNamespace();
+  const { t } = useTranslation();
   const location = useLocation();
   const navExtensions = useNavExtensionsForSection(id);
   const isActive = React.useMemo(() => {
@@ -25,7 +26,12 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
 
   if (!name) {
     return (
-      <NavGroup title="" className="no-title" {...dataAttributes}>
+      <NavGroup
+        title=""
+        className="no-title"
+        aria-label={t('public~Navigation')}
+        {...dataAttributes}
+      >
         <PluginNavItems items={navExtensions} />
       </NavGroup>
     );

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { NavGroup, NavList } from '@patternfly/react-core';
 import { modelFor } from '@console/internal/module/k8s';
@@ -22,6 +23,7 @@ const PerspectiveNav: React.FC<{}> = () => {
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const [validPinnedResources, setValidPinnedResources] = React.useState<string[]>([]);
   const [isDragged, setIsDragged] = React.useState(false);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     const validResources = pinnedResources.filter((res) => !!modelFor(res));
@@ -50,7 +52,7 @@ const PerspectiveNav: React.FC<{}> = () => {
   const NavGroupWithDnd = withDragDropContext(() => (
     <NavGroup
       title=""
-      aria-label="pinned resources"
+      aria-label={t('public~Pinned resources')}
       className={classNames('no-title', { 'oc-perspective-nav--dragging': isDragged })}
     >
       {getPinnedItems()}
@@ -74,7 +76,7 @@ const PerspectiveNav: React.FC<{}> = () => {
     <NavList
       className="oc-perspective-nav"
       title=""
-      aria-label="main nav"
+      aria-label={t('public~Main navigation')}
       data-test-id={`${activePerspective}-perspective-nav`}
     >
       {content}
