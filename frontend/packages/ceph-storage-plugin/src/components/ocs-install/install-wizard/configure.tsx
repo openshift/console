@@ -139,9 +139,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
           isChecked={encryptionChecked}
           data-checked-state={encryptionChecked}
           label={t('ceph-storage-plugin~Enable Encryption')}
-          description={t(
-            'ceph-storage-plugin~Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted.',
-          )}
+          description={t('ceph-storage-plugin~Data encryption for block and file storage.')}
           onChange={toggleEncryption}
         />
       </div>

@@ -204,10 +204,10 @@ export const Encryption: React.FC<EncryptionProps> = ({
   };
 
   const description = !isMCG
-    ? t(
-        'ceph-storage-plugin~Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted.',
-      )
-    : t('ceph-storage-plugin~MultiCloud Object Gateway is always encrypted.');
+    ? t('ceph-storage-plugin~Data encryption for block and file storage.')
+    : t(
+        'ceph-storage-plugin~MultiCloud Object Gateway supports encryption for objects by default.',
+      );
 
   const encryptionLabel = !isMCG
     ? t('ceph-storage-plugin~Enable data encryption for block and file storage')
