@@ -66,7 +66,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__tag {
-    color: $pf-color-black-600;
+    color: var(--pf-global--Color--200);
     font-size: ($font-size-base - 1);
     margin-right: 5px;
     text-transform: uppercase;
