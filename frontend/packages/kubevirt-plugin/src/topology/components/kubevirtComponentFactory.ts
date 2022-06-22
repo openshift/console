@@ -1,12 +1,7 @@
 import * as React from 'react';
-import {
-  GraphElement,
-  withCreateConnector,
-  withDndDrop,
-  withDragNode,
-  withSelection,
-} from '@patternfly/react-topology';
+import { GraphElement, withDndDrop, withDragNode, withSelection } from '@patternfly/react-topology';
 import { contextMenuActions } from '@console/topology/src/actions';
+import { withCreateConnector } from '@console/topology/src/behavior';
 import {
   CreateConnector,
   createConnectorCallback,

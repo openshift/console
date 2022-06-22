@@ -7,9 +7,9 @@ import {
   WithDndDropProps,
   WithContextMenuProps,
   WithDragNodeProps,
-  WithCreateConnectorProps,
   Edge,
 } from '@patternfly/react-topology';
+import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { TYPE_KAFKA_CONNECTION_LINK } from '../../const';
@@ -26,7 +26,12 @@ export type EventSourceProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const EventSource: React.FC<EventSourceProps> = ({ element, onShowCreateConnector, ...rest }) => {
+const EventSource: React.FC<EventSourceProps> = ({
+  element,
+  onShowCreateConnector,
+  children,
+  ...rest
+}) => {
   const { data, resources } = element.getData();
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
@@ -62,6 +67,7 @@ const EventSource: React.FC<EventSourceProps> = ({ element, onShowCreateConnecto
           {getEventSourceIcon(data.kind, resources.obj, element.getType())}
         </foreignObject>
       )}
+      {children}
     </BaseNode>
   );
 };

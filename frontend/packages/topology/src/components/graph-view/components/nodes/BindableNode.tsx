@@ -4,12 +4,12 @@ import {
   Node,
   useDndDrop,
   WithContextMenuProps,
-  WithCreateConnectorProps,
   WithDragNodeProps,
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { getTopologyResourceObject } from '../../../../utils';
 import { getRelationshipProvider } from '../../../../utils/relationship-provider-utils';
 import BaseNode from './BaseNode';

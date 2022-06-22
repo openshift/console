@@ -5,11 +5,11 @@ import {
   withTargetDrag,
   withSelection,
   withDndDrop,
-  withCreateConnector,
   DragObjectWithType,
   ComponentFactory,
 } from '@patternfly/react-topology';
 import { contextMenuActions, graphActionContext, groupActionContext } from '../../../actions';
+import { withCreateConnector } from '../../../behavior/withCreateConnector';
 import {
   TYPE_WORKLOAD,
   TYPE_CONNECTS_TO,

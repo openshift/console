@@ -1,13 +1,16 @@
 import * as React from 'react';
 import {
   BadgeLocation,
+  DEFAULT_LAYER,
   DefaultNode,
+  Layer,
   Node,
+  NodeStatus,
   observer,
+  ScaleDetailsLevel,
+  TOP_LAYER,
   useCombineRefs,
-  useHover,
   WithContextMenuProps,
-  WithCreateConnectorProps,
   WithDndDropProps,
   WithDragNodeProps,
   WithSelectionProps,
@@ -16,6 +19,8 @@ import classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { K8sVerb, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
+import useHover from '../../../../behavior/useHover';
+import { WithCreateConnectorProps } from '../../../../behavior/withCreateConnector';
 import { useSearchFilter } from '../../../../filters';
 import { useShowLabel } from '../../../../filters/useShowLabel';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
@@ -41,10 +46,13 @@ type BaseNodeProps = {
   children?: React.ReactNode;
   attachments?: React.ReactNode;
   element: Node;
+  hoverRef?: (node: Element) => () => void;
   dragging?: boolean;
   dropTarget?: boolean;
   canDrop?: boolean;
   createConnectorAccessVerb?: K8sVerb;
+  nodeStatus?: NodeStatus;
+  showStatusBackground?: boolean;
 } & Partial<WithSelectionProps> &
   Partial<WithDragNodeProps> &
   Partial<WithDndDropProps> &
@@ -57,15 +65,18 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   icon,
   kind,
   element,
+  hoverRef,
   children,
-  dragNodeRef,
   onShowCreateConnector,
   onContextMenu,
   contextMenuOpen,
   createConnectorAccessVerb = 'patch',
+  createConnectorDrag,
   ...rest
 }) => {
-  const [hover, hoverRef] = useHover();
+  const [hoverChange, setHoverChange] = React.useState<boolean>(false);
+  const [hover, internalHoverRef] = useHover(200, 200, [hoverChange]);
+  const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
@@ -80,46 +91,61 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     namespace: resourceObj.metadata.namespace,
   });
   const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
-  const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
-  const showLabel = useShowLabel(hover);
+  const showLabel = useShowLabel(hover || contextMenuOpen);
   const kindData = kind && getKindStringAndAbbreviation(kind);
 
+  const detailsLevel = element
+    .getController()
+    .getGraph()
+    .getDetailsLevel();
+  const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
   const badgeClassName = kindData
     ? classNames('odc-resource-icon', {
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
       })
     : '';
-
+  React.useEffect(() => {
+    if (!createConnectorDrag) {
+      setHoverChange((prev) => !prev);
+    }
+  }, [createConnectorDrag]);
   return (
-    <DefaultNode
-      className={classNames('odc-base-node', className, {
-        'is-filtered': filtered,
-      })}
-      truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
-      element={element}
-      showLabel={showLabel}
-      onShowCreateConnector={editAccess && onShowCreateConnector}
-      onContextMenu={onContextMenu}
-      contextMenuOpen={contextMenuOpen}
-      dragNodeRef={refs}
-      badge={kindData?.kindAbbr}
-      badgeColor={kindData?.kindColor}
-      badgeClassName={badgeClassName}
-      {...rest}
-    >
-      <g data-test-id="base-node-handler">
-        {icon && (
-          <image
-            x={cx - iconRadius}
-            y={cy - iconRadius}
-            width={iconRadius * 2}
-            height={iconRadius * 2}
-            xlinkHref={icon}
-          />
-        )}
-        {children}
+    <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
+      <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
+        <DefaultNode
+          className={classNames('odc-base-node', className, {
+            'is-filtered': filtered,
+          })}
+          truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
+          element={element}
+          showLabel={showLabel}
+          scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
+          onShowCreateConnector={
+            editAccess && detailsLevel !== ScaleDetailsLevel.low && onShowCreateConnector
+          }
+          onContextMenu={onContextMenu}
+          contextMenuOpen={contextMenuOpen}
+          badge={kindData?.kindAbbr}
+          badgeColor={kindData?.kindColor}
+          badgeClassName={badgeClassName}
+          showStatusBackground={!showDetails}
+          {...rest}
+        >
+          <g data-test-id="base-node-handler">
+            {icon && showDetails && (
+              <image
+                x={cx - iconRadius}
+                y={cy - iconRadius}
+                width={iconRadius * 2}
+                height={iconRadius * 2}
+                xlinkHref={icon}
+              />
+            )}
+            {showDetails && children}
+          </g>
+        </DefaultNode>
       </g>
-    </DefaultNode>
+    </Layer>
   );
 };
 
