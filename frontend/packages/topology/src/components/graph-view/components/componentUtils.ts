@@ -14,7 +14,6 @@ import {
   DragSpecOperationType,
   CREATE_CONNECTOR_DROP_TYPE,
   CREATE_CONNECTOR_OPERATION,
-  withContextMenu as withTopologyContextMenu,
   isGraph,
   withDndDrop,
   DragEvent,
@@ -24,9 +23,10 @@ import i18next from 'i18next';
 import { action } from 'mobx';
 import { errorModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ActionContext } from '@console/shared';
 import { createConnection, moveNodeToGroup } from '../../../utils';
 import { isWorkloadRegroupable, graphContextMenu, groupContextMenu } from './nodeContextMenu';
-
+import withTopologyContextMenu from './withTopologyContextMenu';
 import './GraphComponent.scss';
 
 const MOVE_CONNECTOR_DROP_TYPE = '#moveConnector#';
@@ -319,7 +319,7 @@ const withNoDrop = () => {
   return withDndDrop<any, any, {}, NodeComponentProps>(noDropTargetSpec);
 };
 
-const withContextMenu = <E extends GraphElement>(actions: (element: E) => React.ReactElement[]) => {
+const withContextMenu = <E extends GraphElement>(actions: (element: E) => ActionContext) => {
   return withTopologyContextMenu(
     actions,
     document.getElementById('popper-container'),
