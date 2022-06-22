@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SignOutAltIcon } from '@patternfly/react-icons';
 import {
   Node,
   observer,
@@ -12,6 +11,7 @@ import {
 import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
+import { EventSourceIcon } from '../../../utils/icons';
 import { TYPE_KAFKA_CONNECTION_LINK } from '../../const';
 
 import './EventSource.scss';
@@ -45,7 +45,7 @@ const EventSource: React.FC<EventSourceProps> = ({
       onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
       kind={data.kind}
       element={element}
-      labelIcon={<SignOutAltIcon />}
+      labelIcon={<EventSourceIcon />}
       {...rest}
     >
       {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (

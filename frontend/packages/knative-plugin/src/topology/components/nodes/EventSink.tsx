@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SignInAltIcon } from '@patternfly/react-icons';
 import {
   Node,
   observer,
@@ -23,6 +22,7 @@ import { PodSet } from '@console/topology/src/components/graph-view';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { KafkaSinkModel } from '../../../models';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
+import { EventSinkIcon } from '../../../utils/icons';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import { TYPE_EVENT_SINK_LINK, TYPE_KAFKA_CONNECTION_LINK } from '../../const';
 import EventSinkTargetAnchor from '../anchors/EventSinkTargetAnchor';
@@ -111,7 +111,7 @@ const EventSink: React.FC<EventSinkProps> = ({
       element={element}
       hoverRef={hoverRef}
       dragNodeRef={groupRefs}
-      labelIcon={<SignInAltIcon />}
+      labelIcon={<EventSinkIcon />}
       {...rest}
     >
       {donutStatus && showDetails && !isKafkaSink && (

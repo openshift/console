@@ -10,6 +10,7 @@ import {
   EVENT_SOURCE_API_SERVER_KIND,
   EVENT_SOURCE_CONTAINER_KIND,
   EVENT_SOURCE_PING_KIND,
+  EVENT_SINK_KAFKA_KIND,
 } from '../const';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.svg';
 import * as camelSourceImg from '../imgs/logos/camelsource.svg';
@@ -18,7 +19,7 @@ import * as kafkaSourceImg from '../imgs/logos/kafkasource.svg';
 import * as pingSourceImg from '../imgs/logos/pingsource.svg';
 import * as sinkBindingSourceImg from '../imgs/logos/sinkbindingsource.svg';
 import { TYPE_EVENT_SINK } from '../topology/const';
-import { eventSinkIcon, eventSourceIcon } from './icons';
+import { eventSinkIconSVG, eventSourceIconSVG } from './icons';
 
 const getEventSourceIconFromKind = (kind: string, nodeType?: string): React.ReactNode | string => {
   switch (kindForReference(kind)) {
@@ -34,8 +35,10 @@ const getEventSourceIconFromKind = (kind: string, nodeType?: string): React.Reac
       return kafkaSourceImg;
     case EVENT_SOURCE_SINK_BINDING_KIND:
       return sinkBindingSourceImg;
+    case EVENT_SINK_KAFKA_KIND:
+      return eventSinkIconSVG;
     default:
-      return nodeType === TYPE_EVENT_SINK ? eventSinkIcon : eventSourceIcon;
+      return nodeType === TYPE_EVENT_SINK ? eventSinkIconSVG : eventSourceIconSVG;
   }
 };
 

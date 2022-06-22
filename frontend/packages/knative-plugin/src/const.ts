@@ -39,3 +39,4 @@ export const EVENT_SOURCE_API_SERVER_KIND = 'ApiServerSource';
 export const EVENT_SOURCE_CONTAINER_KIND = 'ContainerSource';
 export const EVENT_SOURCE_PING_KIND = 'PingSource';
 export const EVENT_SOURCE_CRONJOB_KIND = 'CronJobSource';
+export const EVENT_SINK_KAFKA_KIND = 'KafkaSink';
