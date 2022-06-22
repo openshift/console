@@ -11,6 +11,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { FLAGS, useUserSettings, getPerspectiveVisitedKey } from '@console/shared';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
@@ -757,7 +758,9 @@ const AppContents: React.FC<{}> = () => {
           className="pf-page__main-section--flex"
           padding={{ default: 'noPadding' }}
         >
-          <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
+          <ErrorBoundaryPage>
+            <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
+          </ErrorBoundaryPage>
         </PageSection>
       </div>
     </div>

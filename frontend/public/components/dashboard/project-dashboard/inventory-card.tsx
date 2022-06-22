@@ -43,7 +43,7 @@ import {
   isProjectOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundary } from '@console/shared/src/components/error';
 
 const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
   kind: model.crd ? referenceForModel(model) : model.kind,

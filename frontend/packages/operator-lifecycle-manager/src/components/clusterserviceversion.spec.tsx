@@ -19,7 +19,7 @@ import {
 } from '@console/internal/components/utils';
 import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundary } from '@console/shared/src/components/error';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import {
   testClusterServiceVersion,

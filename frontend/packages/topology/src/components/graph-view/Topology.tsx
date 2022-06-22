@@ -26,14 +26,13 @@ import {
   isTopologyComponentFactory as isDynamicTopologyComponentFactory,
   TopologyComponentFactory as DynamicTopologyComponentFactory,
 } from '@console/dynamic-plugin-sdk';
-import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { RootState } from '@console/internal/redux';
 import {
   useQueryParams,
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
 } from '@console/shared';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
@@ -364,5 +363,5 @@ export default withFallback(
       {},
     )(React.memo(Topology)),
   ),
-  ErrorBoundaryFallback,
+  ErrorBoundaryFallbackPage,
 );

@@ -9,7 +9,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
 
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback } from '@console/shared/src/components/error';
 import { coFetchJSON } from '../../co-fetch';
 import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';

@@ -7,11 +7,10 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
-import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { useQueryParams, useUserSettingsCompatibility } from '@console/shared';
+import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
   LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
   LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
@@ -158,4 +157,4 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   );
 };
 
-export default withFallback(TopologyPage, ErrorBoundaryFallback);
+export default withFallback(TopologyPage, ErrorBoundaryFallbackPage);

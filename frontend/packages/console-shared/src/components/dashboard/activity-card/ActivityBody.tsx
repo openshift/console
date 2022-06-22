@@ -13,6 +13,7 @@ import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/eve
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { EventKind } from '@console/internal/module/k8s';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import EventItem from './EventItem';
 
 import './activity-card.scss';
@@ -173,11 +174,13 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       ({ results, loader, component: Component }, idx) => (
         // eslint-disable-next-line react/no-array-index-key
         <Activity key={idx}>
-          {loader ? (
-            <AsyncComponent loader={loader} results={results} />
-          ) : (
-            <Component results={results} />
-          )}
+          <ErrorBoundaryInline>
+            {loader ? (
+              <AsyncComponent loader={loader} results={results} />
+            ) : (
+              <Component results={results} />
+            )}
+          </ErrorBoundaryInline>
         </Activity>
       ),
     );
@@ -186,11 +189,13 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       .forEach(({ resource, timestamp, loader, component: Component }) =>
         allActivities.push(
           <Activity key={resource.metadata.uid} timestamp={timestamp}>
-            {loader ? (
-              <AsyncComponent loader={loader} resource={resource} />
-            ) : (
-              <Component resource={resource} />
-            )}
+            <ErrorBoundaryInline>
+              {loader ? (
+                <AsyncComponent loader={loader} resource={resource} />
+              ) : (
+                <Component resource={resource} />
+              )}
+            </ErrorBoundaryInline>
           </Activity>,
         ),
       );

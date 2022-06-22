@@ -148,7 +148,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
   subscription,
 }) => {
   const { t } = useTranslation();
-  switch (subscription.status.state) {
+  switch (subscription.status?.state) {
     case SubscriptionState.SubscriptionStateUpgradeAvailable:
       return (
         <span>

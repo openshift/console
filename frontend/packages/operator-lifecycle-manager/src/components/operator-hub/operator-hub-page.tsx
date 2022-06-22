@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
-import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import {
   Firehose,
   PageHeading,
@@ -15,7 +14,7 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
@@ -320,7 +319,7 @@ export const OperatorHubPage = withFallback(
       </div>
     </>
   ),
-  ErrorBoundaryFallback,
+  ErrorBoundaryFallbackPage,
 );
 
 export type OperatorHubPageProps = {

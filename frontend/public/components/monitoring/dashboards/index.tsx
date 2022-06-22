@@ -24,10 +24,9 @@ import * as classNames from 'classnames';
 
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { RedExclamationCircleIcon } from '@console/shared';
+import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import {
   DashboardsClearVariables,
@@ -39,7 +38,6 @@ import {
   dashboardsVariableOptionsLoaded,
   queryBrowserDeleteAllQueries,
 } from '../../../actions/observe';
-import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL } from '../../graphs/helpers';
 import {
@@ -861,4 +859,4 @@ type MonitoringDashboardsPageProps = {
   };
 };
 
-export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallback);
+export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallbackPage);

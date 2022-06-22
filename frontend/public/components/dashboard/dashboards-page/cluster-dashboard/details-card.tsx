@@ -9,6 +9,7 @@ import {
   useFlag,
   useCanClusterUpgrade,
 } from '@console/shared';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import {
   useResolvedExtensions,
   isOverviewDetailItem,
@@ -233,7 +234,16 @@ export const DetailsCard = withDashboardResources(
                   )}
                   {detailItemsExtensions.map((e) => {
                     const Component = e.properties.component;
-                    return <Component key={e.uid} />;
+                    return (
+                      <ErrorBoundaryInline
+                        key={e.uid}
+                        wrapper={({ children }) => (
+                          <OverviewDetailItem title="">{children}</OverviewDetailItem>
+                        )}
+                      >
+                        <Component />
+                      </ErrorBoundaryInline>
+                    );
                   })}
                 </>
               ) : (

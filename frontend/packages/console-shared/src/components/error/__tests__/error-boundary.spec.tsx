@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { ErrorBoundary, withFallback } from '..';
+import { ErrorBoundaryState } from '../error-boundary'; // not for public consumption
 
-import {
-  ErrorBoundary,
-  ErrorBoundaryProps,
-  ErrorBoundaryState,
-  withFallback,
-} from '@console/shared/src/components/error/error-boundary';
+type ErrorBoundaryProps = React.ComponentProps<typeof ErrorBoundary>;
 
 describe(ErrorBoundary.name, () => {
   let wrapper: ShallowWrapper<ErrorBoundaryProps, ErrorBoundaryState>;

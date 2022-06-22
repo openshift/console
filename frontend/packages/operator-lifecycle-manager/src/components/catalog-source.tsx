@@ -34,7 +34,7 @@ import {
 import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import { referenceForModel, K8sKind, k8sPatch } from '@console/internal/module/k8s';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback } from '@console/shared/src/components/error';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 import {
   SubscriptionModel,

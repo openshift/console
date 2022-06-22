@@ -33,7 +33,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 
 import {
   queryBrowserDeleteAllSeries,

@@ -65,7 +65,7 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback } from '@console/shared/src/components/error';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
