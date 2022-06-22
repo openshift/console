@@ -85,28 +85,6 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "actions.useDeploymentActionsProvider" }
-    }
-  },
-  {
-    "type": "console.action/resource-provider",
-    "properties": {
-      "model": {
-        "group": "apps.openshift.io",
-        "version": "v1",
-        "kind": "DeploymentConfig"
-      },
-      "provider": { "$codeRef": "actions.useDeploymentConfigActionsProvider" }
-    }
-  },
-  {
-    "type": "console.action/resource-provider",
-    "properties": {
-      "model": {
-        "group": "apps",
-        "version": "v1",
-        "kind": "Deployment"
-      },
       "provider": { "$codeRef": "actions.useCreateServiceBindingProvider" }
     },
     "flags": {
@@ -141,6 +119,28 @@
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "provider": { "$codeRef": "actions.useDeploymentActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "provider": { "$codeRef": "actions.useDeploymentConfigActionsProvider" }
     }
   },
   {
