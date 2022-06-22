@@ -133,13 +133,21 @@ const BaseNode: React.FC<BaseNodeProps> = ({
         >
           <g data-test-id="base-node-handler">
             {icon && showDetails && (
-              <image
-                x={cx - iconRadius}
-                y={cy - iconRadius}
-                width={iconRadius * 2}
-                height={iconRadius * 2}
-                xlinkHref={icon}
-              />
+              <>
+                <circle
+                  fill="var(--pf-global--palette--white)"
+                  cx={cx}
+                  cy={cy}
+                  r={innerRadius + 6}
+                />
+                <image
+                  x={cx - iconRadius}
+                  y={cy - iconRadius}
+                  width={iconRadius * 2}
+                  height={iconRadius * 2}
+                  xlinkHref={icon}
+                />
+              </>
             )}
             {showDetails && children}
           </g>

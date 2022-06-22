@@ -79,6 +79,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
           width={width * 0.8}
           height={width * 0.5}
           xlinkHref={eventPubSubImg}
+          className="odc-eventing-pubsub--image"
         />
         {children}
       </BaseNode>
