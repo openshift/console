@@ -14,7 +14,7 @@ import { default as OCSOverview, BLOCK_FILE, OBJECT } from './ocs-system-dashboa
 import { BlockPoolListPage } from '../block-pool/block-pool-list-page';
 import { CEPH_STORAGE_NAMESPACE } from '../../constants';
 import { CephBlockPoolModel } from '../../models';
-import { MCG_FLAG, CEPH_FLAG } from '../../features';
+import { MCG_FLAG, CEPH_FLAG, OCS_INDEPENDENT_FLAG } from '../../features';
 
 type ODFSystemDashboardPageProps = Omit<DashboardsPageProps, 'match'> & {
   match: Match<{ systemName: string }>;
@@ -42,9 +42,11 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
     },
   ]);
 
+  const isExternal = useFlag(OCS_INDEPENDENT_FLAG);
+
   React.useEffect(() => {
     const isBlockPoolAdded = pages.find((page) => page.href === blockPoolRef);
-    if (isCephAvailable && !isBlockPoolAdded) {
+    if (isCephAvailable && !isBlockPoolAdded && !isExternal) {
       setPages([
         ...pages,
         {
@@ -54,7 +56,10 @@ const ODFSystemDashboard: React.FC<ODFSystemDashboardPageProps> = ({
         },
       ]);
     }
-  }, [isCephAvailable, pages, t]);
+    if (isBlockPoolAdded && isExternal) {
+      setPages((p) => p.filter((page) => page.href !== blockPoolRef));
+    }
+  }, [isExternal, isCephAvailable, pages, t]);
 
   const breadcrumbs = [
     {
