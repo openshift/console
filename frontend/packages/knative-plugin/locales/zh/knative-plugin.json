@@ -67,6 +67,7 @@
   "IntegrationPlatforms": "IntegrationPlatforms",
   "KafkaSink": "KafkaSink",
   "KafkaSinks": "KafkaSinks",
+  "Serverless": "无服务器",
   "Add Event Sink": "添加事件接收器",
   "Add Subscription": "添加订阅",
   "Add Trigger": "添加触发器",

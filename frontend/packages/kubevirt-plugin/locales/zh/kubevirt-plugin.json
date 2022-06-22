@@ -1,5 +1,4 @@
 {
-  "Virtualization": "虚拟化",
   "Overview": "概述",
   "VirtualMachines": "虚拟机器",
   "Templates": "模板",
@@ -11,6 +10,7 @@
   "VM templates": "虚拟机模板",
   "With Data upload form": "使用 Data upload 表单",
   "Hardware Devices": "硬件设备",
+  "Virtualization": "虚拟化",
   "Access mode": "访问模式",
   "Add": "添加",
   "Access and Volume modes should follow storage feature matrix": "访问和卷模式应该遵循存储功能列表",
@@ -684,6 +684,7 @@
   "Migration Toolkit for Virtualization": "Virtualization 迁移工具套件",
   "Recommended Operators": "推荐的 Operator",
   "Ease operational complexity with virtualization by using Operators.": "使用 Operator 简化虚拟化操作的复杂性。",
+  "Runbook": "Runbook",
   "VM statuses": "虚拟机状态",
   "Permissions": "权限",
   "Task": "任务",

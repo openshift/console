@@ -67,6 +67,7 @@
   "IntegrationPlatforms": "통합 플랫폼",
   "KafkaSink": "KafkaSink",
   "KafkaSinks": "KafkaSinks",
+  "Serverless": "서버리스",
   "Add Event Sink": "이벤트 싱크 추가",
   "Add Subscription": "서브스크립션 추가",
   "Add Trigger": "트리거 추가",

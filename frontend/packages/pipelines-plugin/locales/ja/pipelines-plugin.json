@@ -41,7 +41,7 @@
   "pipeline visualization": "パイプラインの可視化",
   "Unable to detect Event listener URL": "イベントリスナー URL を検出できない",
   "GitHub application name": "GitHub アプリケーション名",
-  "Provide a unique name": "一意の名前を指定",
+  "Provide a unique name for your GitHub app, e.g. \"pipelines-ci-clustername\"": "GitHub アプリに一意の名前を指定します (例: pipelines-ci-clustername)",
   "Enter name of application": "アプリケーションの名前を入力",
   "View all steps in documentation": "ドキュメントのすべての手順の表示",
   "Setup": "セットアップ",
@@ -52,6 +52,7 @@
   "Something unexpected happened!!": "予期しないことが発生しました",
   "You have successfully setup the GitHub App": "GitHub アプリケーションを正常に設定しました。",
   "<0>Use the <2>link</2> to install the newly created GitHub application to your repositories in your organization/account</0>": "<0><2>link</2> を使用して、新たに作成された GitHub アプリケーションを組織/アカウントのリポジトリーにインストールします。</0>",
+  "Use this <2>link</2> to install the GitHub Application to your repositories in your organization/account.": "<2>リンク</2> を使用して、GitHub アプリケーションを組織/アカウントのリポジトリーにインストールします。",
   "App Name": "アプリケーション名",
   "App Link": "アプリケーションリンク",
   "Secret": "シークレット",
@@ -258,6 +259,7 @@
   "PipelineRun Duration": "パイプライン実行の期間",
   "TaskRun Duration": "タスク実行の期間",
   "Start your pipeline to view pipeline metrics.": "パイプラインを起動して、パイプラインメトリクスを表示します。",
+  "Administrators can try <2>this quick start</2> to configure their metrics level to pipelinerun and taskrun. The pipelinerun and taskrun metrics level collects large volume of metrics over time in unbounded cardinality which may lead to metrics unreliability.": "管理者は、<2>このクイックスタート</2> でメトリックスのレベルを pipelinerun と taskrun に設定できます。pipelinerun と taskrun のメトリックスレベルは、バインドされていないカーディナリティーで多数のメトリックスを収集しますが、これによりメトリックスの信頼性が損なわれる可能性があります。",
   "Refresh Interval": "更新間隔",
   "Time Range": "時間の範囲",
   "Pipeline run count chart": "パイプライン実行数のチャート",
@@ -368,5 +370,6 @@
   "Skipped": "省略",
   "Cancelled": "キャンセル済み",
   "Pending": "保留中",
-  "PipelineRun not started yet": "パイプライン実行がまだ開始されていません"
+  "PipelineRun not started yet": "パイプライン実行がまだ開始されていません",
+  "Other": "その他"
 }

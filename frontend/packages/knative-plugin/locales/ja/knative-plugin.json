@@ -67,6 +67,7 @@
   "IntegrationPlatforms": "統合プラットフォーム",
   "KafkaSink": "KafkaSink",
   "KafkaSinks": "KafkaSinks",
+  "Serverless": "Serverless",
   "Add Event Sink": "イベントシンクの追加",
   "Add Subscription": "サブスクリプションの追加",
   "Add Trigger": "トリガーの追加",
