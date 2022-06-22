@@ -117,6 +117,12 @@ const EventSink: React.FC<EventSinkProps> = ({
       {donutStatus && showDetails && !isKafkaSink && (
         <PodSet size={size * 0.75} x={width / 2} y={height / 2} data={donutStatus} />
       )}
+      <circle
+        cx={width * 0.5}
+        cy={height * 0.5}
+        r={width * 0.25}
+        fill="var(--pf-global--palette--white)"
+      />
       {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
         <image
           x={width * 0.33}

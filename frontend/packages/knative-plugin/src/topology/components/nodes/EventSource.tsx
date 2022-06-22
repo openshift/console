@@ -48,6 +48,12 @@ const EventSource: React.FC<EventSourceProps> = ({
       labelIcon={<EventSourceIcon />}
       {...rest}
     >
+      <circle
+        cx={width * 0.5}
+        cy={height * 0.5}
+        r={width * 0.25 + 6}
+        fill="var(--pf-global--palette--white)"
+      />
       {typeof getEventSourceIcon(data.kind, resources.obj) === 'string' ? (
         <image
           x={width * 0.25}
