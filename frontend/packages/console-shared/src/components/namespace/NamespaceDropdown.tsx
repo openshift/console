@@ -333,7 +333,7 @@ const NamespaceMenu: React.FC<{
     >
       {/*
         //@ts-ignore */}
-      <MenuContent menuHeight="60vh" maxMenuHeight="60vh">
+      <MenuContent maxMenuHeight="60vh">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}
