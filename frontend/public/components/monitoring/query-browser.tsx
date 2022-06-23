@@ -351,7 +351,7 @@ const Graph: React.FC<GraphProps> = React.memo(
     _.each(allSeries, (series, i) => {
       _.each(series, ([metric, values]) => {
         // Ignore any disabled series
-        data.push(_.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? null : values);
+        data.push(_.some(disabledSeries?.[i], (s) => _.isEqual(s, metric)) ? null : values);
         if (formatSeriesTitle) {
           const name = formatSeriesTitle(metric, i);
           legendData.push({ name });
@@ -633,7 +633,7 @@ const getMaxSamplesForSpan = (span: number) =>
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
-  disabledSeries = [],
+  disabledSeries,
   disableZoom,
   filterLabels,
   fixedEndTime,
@@ -920,48 +920,46 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           </div>
         </div>
       )}
-      {error && <Error error={error} />}
-      {isGraphDataEmpty && !updating && <GraphEmpty />}
-      {!isGraphDataEmpty && (
-        <div
-          className={classNames('graph-wrapper graph-wrapper--query-browser', {
-            'graph-wrapper--query-browser--with-legend': showLegend && !!formatSeriesTitle,
-          })}
-        >
-          <div ref={containerRef} style={{ width: '100%' }}>
-            {width > 0 && (
-              <>
-                {disableZoom ? (
-                  <Graph
-                    allSeries={graphData}
-                    disabledSeries={disabledSeries}
-                    fixedXDomain={xDomain}
-                    formatSeriesTitle={formatSeriesTitle}
-                    isStack={canStack && isStacked}
-                    showLegend={showLegend}
-                    span={span}
-                    units={units}
-                    width={width}
-                  />
-                ) : (
-                  <ZoomableGraph
-                    allSeries={graphData}
-                    disabledSeries={disabledSeries}
-                    fixedXDomain={xDomain}
-                    formatSeriesTitle={formatSeriesTitle}
-                    isStack={canStack && isStacked}
-                    onZoom={zoomableGraphOnZoom}
-                    showLegend={showLegend}
-                    span={span}
-                    units={units}
-                    width={width}
-                  />
-                )}
-              </>
-            )}
-          </div>
+      <div
+        className={classNames('graph-wrapper graph-wrapper--query-browser', {
+          'graph-wrapper--query-browser--with-legend': showLegend && !!formatSeriesTitle,
+        })}
+      >
+        <div ref={containerRef} style={{ width: '100%' }}>
+          {error && <Error error={error} />}
+          {isGraphDataEmpty && !updating && <GraphEmpty />}
+          {!isGraphDataEmpty && width > 0 && (
+            <>
+              {disableZoom ? (
+                <Graph
+                  allSeries={graphData}
+                  disabledSeries={disabledSeries}
+                  fixedXDomain={xDomain}
+                  formatSeriesTitle={formatSeriesTitle}
+                  isStack={canStack && isStacked}
+                  showLegend={showLegend}
+                  span={span}
+                  units={units}
+                  width={width}
+                />
+              ) : (
+                <ZoomableGraph
+                  allSeries={graphData}
+                  disabledSeries={disabledSeries}
+                  fixedXDomain={xDomain}
+                  formatSeriesTitle={formatSeriesTitle}
+                  isStack={canStack && isStacked}
+                  onZoom={zoomableGraphOnZoom}
+                  showLegend={showLegend}
+                  span={span}
+                  units={units}
+                  width={width}
+                />
+              )}
+            </>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
