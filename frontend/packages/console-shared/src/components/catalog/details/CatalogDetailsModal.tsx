@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
+import { Split, SplitItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
@@ -8,6 +9,8 @@ import CatalogBadges from '../CatalogBadges';
 import useCtaLink from '../hooks/useCtaLink';
 import { getIconProps } from '../utils/catalog-utils';
 import CatalogDetailsPanel from './CatalogDetailsPanel';
+
+import './CatalogDetailsModal.scss';
 
 type CatalogDetailsModalProps = {
   item: CatalogItem;
@@ -28,12 +31,7 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
     ? t('console-shared~Provided by {{provider}}', { provider: item.provider })
     : null;
 
-  const vendor = (
-    <div>
-      {provider}
-      {badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}
-    </div>
-  );
+  const vendor = <div>{provider}</div>;
 
   const modalHeader = (
     <>
@@ -43,18 +41,23 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
         vendor={vendor}
         {...getIconProps(item)}
       />
-      {to && (
-        <div className="co-catalog-page__overlay-actions">
-          <Link
-            className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-            to={to}
-            role="button"
-            onClick={onClose}
-          >
-            {label}
-          </Link>
-        </div>
-      )}
+      <Split className="odc-catalog-details-modal__header">
+        <SplitItem>
+          {to && (
+            <div className="co-catalog-page__overlay-actions">
+              <Link
+                className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+                to={to}
+                role="button"
+                onClick={onClose}
+              >
+                {label}
+              </Link>
+            </div>
+          )}
+        </SplitItem>
+        <SplitItem>{badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}</SplitItem>
+      </Split>
     </>
   );
 
