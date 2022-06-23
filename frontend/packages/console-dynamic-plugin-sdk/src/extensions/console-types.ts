@@ -618,3 +618,10 @@ export type ResourceYAMLEditorProps = {
 export type ResourceEventStreamProps = {
   resource: K8sResourceCommon;
 };
+
+export type TimestampProps = {
+  timestamp: string | number | Date;
+  simple?: boolean;
+  omitSuffix?: boolean;
+  className?: string;
+};

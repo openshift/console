@@ -58,6 +58,7 @@
 56. [`ResourceYAMLEditor`](#resourceyamleditor)
 57. [`ResourceEventStream`](#resourceeventstream)
 58. [`usePrometheusPoll`](#useprometheuspoll)
+59. [`Timestamp`](#timestamp)
 
 ---
 
@@ -1363,5 +1364,27 @@ React hook to poll Prometheus for a single query.
 ### Returns
 
 A tuple containing the query response, a boolean flag indicating whether the response has completed, and any errors encountered during the request or post-processing of the request
+
+
+---
+
+## `Timestamp`
+
+### Summary
+
+A component to render timestamp.<br/>The timestamps are synchronized between invidual instances of the Timestamp component.<br/>The provided timestamp is formatted according to user locale.
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `timestamp` | the timestamp to render. Format is expected to be ISO 8601 (used by Kubernetes), epoch timestamp, or an instance of a Date. |
+| `simple` | render simple version of the component omitting icon and tooltip. |
+| `omitSuffix` | formats the date ommiting the suffix. |
+| `className` | additional class name for the component. |
+
 
 

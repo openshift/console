@@ -76,14 +76,15 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
     critical: 'insights-plugin~critical',
   };
 
-  const lastRefreshTime = parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] || '0', 10);
+  const lastRefreshTime =
+    parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] || '0', 10) * 1000;
 
   return errorUpload(conditions) ? (
     <ErrorState />
   ) : (
     <Stack hasGutter>
       <StackItem>
-        {t('insights-plugin~Last refresh')}: <Timestamp timestamp={lastRefreshTime} isUnix simple />
+        {t('insights-plugin~Last refresh')}: <Timestamp timestamp={lastRefreshTime} simple />
       </StackItem>
       <StackItem className="text-muted">
         {t(
