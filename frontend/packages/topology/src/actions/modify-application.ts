@@ -19,5 +19,11 @@ export const getModifyApplicationAction = (
         blocking: true,
         initialApplication: '',
       }),
+    accessReview: {
+      verb: 'patch',
+      group: kind.apiGroup,
+      resource: kind.plural,
+      namespace: obj?.metadata?.namespace,
+    },
   };
 };

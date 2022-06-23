@@ -49,7 +49,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
         <Title headingLevel="h2" size="md" className="co-m-form-row">
           <Trans ns="topology">
             Select an Application group to add the component{' '}
-            <strong>{resource.metadata.name}</strong> to
+            <strong>{{ resourceName: resource.metadata.name }}</strong> to
           </Trans>
         </Title>
         <div className="pf-c-form">
