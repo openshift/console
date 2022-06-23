@@ -13,6 +13,7 @@ import {
   Dropdown as PFDropdown,
   DropdownItem,
   DropdownPosition,
+  DropdownToggle,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -65,7 +66,6 @@ import { RootState } from '../../redux';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL } from '../graphs/helpers';
 import {
-  ActionsMenu,
   AsyncComponent,
   Dropdown,
   getURLSearchParams,
@@ -86,6 +86,8 @@ let focusedQuery;
 const MetricsActionsMenu: React.FC<{}> = () => {
   const { t } = useTranslation();
 
+  const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
+
   const isAllExpanded = useSelector(({ observe }: RootState) =>
     observe.getIn(['queryBrowser', 'queries']).every((q) => q.get('isExpanded')),
   );
@@ -98,21 +100,31 @@ const MetricsActionsMenu: React.FC<{}> = () => {
     focusedQuery = undefined;
   };
 
-  const actionsMenuActions = [
-    { label: t('public~Add query'), callback: addQuery },
-    {
-      label: isAllExpanded
-        ? t('public~Collapse all query tables')
-        : t('public~Expand all query tables'),
-      callback: () => dispatch(queryBrowserSetAllExpanded(!isAllExpanded)),
-    },
-    { label: t('public~Delete all queries'), callback: doDelete },
+  const dropdownItems = [
+    <DropdownItem key="add-query" component="button" onClick={addQuery}>
+      {t('public~Add query')}
+    </DropdownItem>,
+    <DropdownItem
+      key="collapse-all"
+      component="button"
+      onClick={() => dispatch(queryBrowserSetAllExpanded(!isAllExpanded))}
+    >
+      {isAllExpanded ? t('public~Collapse all query tables') : t('public~Expand all query tables')}
+    </DropdownItem>,
+    <DropdownItem key="delete-all" component="button" onClick={doDelete}>
+      {t('public~Delete all queries')}
+    </DropdownItem>,
   ];
 
   return (
-    <div className="co-actions">
-      <ActionsMenu actions={actionsMenuActions} />
-    </div>
+    <PFDropdown
+      className="co-actions-menu"
+      dropdownItems={dropdownItems}
+      isOpen={isOpen}
+      onSelect={setClosed}
+      position={DropdownPosition.right}
+      toggle={<DropdownToggle onToggle={setIsOpen}>Actions</DropdownToggle>}
+    />
   );
 };
 
@@ -335,7 +347,7 @@ const QueryKebab: React.FC<{ index: number }> = ({ index }) => {
     <DropdownItem key="delete" component="button" onClick={doDelete}>
       {t('public~Delete query')}
     </DropdownItem>,
-    <DropdownItem key="duplicate" component="button" onClick={doClone }>
+    <DropdownItem key="duplicate" component="button" onClick={doClone}>
       {t('public~Duplicate query')}
     </DropdownItem>,
   ];
