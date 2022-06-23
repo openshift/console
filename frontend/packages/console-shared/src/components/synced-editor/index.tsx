@@ -63,7 +63,6 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
       .then((js) => {
         setSwitchError(undefined);
         handleFormDataChange(js);
-        setYAML('');
       })
       .catch((err) => setSwitchError(String(err)));
   };
