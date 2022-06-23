@@ -20,7 +20,7 @@ const mapCardsToGrid = (
 
 const DashboardGrid: React.FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {
   const [containerRef, width] = useRefWidth();
-  const smallGrid = !!containerRef.current && width <= parseInt(breakpointLG.value, 10);
+  const smallGrid = !!width && width <= parseInt(breakpointLG.value, 10);
 
   const mainGridCards = React.useMemo(() => mapCardsToGrid(mainCards, 'main', smallGrid), [
     mainCards,

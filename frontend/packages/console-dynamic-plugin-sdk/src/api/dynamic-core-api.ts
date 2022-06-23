@@ -133,6 +133,31 @@ export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/i
  */
 export const useListPageFilter: UseListPageFilter = require('@console/internal/components/factory/ListPage/filter-hook')
   .useListPageFilter;
+
+/**
+ * Component that creates a link to a specific resource type with an icon badge
+ * @param {K8sResourceKindReference} [kind] - (optional) the kind of resource i.e. Pod, Deployment, Namespace
+ * @param {K8sGroupVersionKind} [groupVersionKind] - (optional) object with groupd, version, and kind
+ * @param {string} [className] -  (optional) class style for component
+ * @param {string} [displayName] -  (optional) display name for component, overwrites the resource name if set
+ * @param {boolean} [inline=false] -  (optional) flag to create icon badge and name inline with children
+ * @param {boolean} [linkTo=true] -  (optional) flag to create a Link object - defaults to true
+ * @param {string} [name] -  (optional) name of resource
+ * @param {string} [namesapce] -  (optional) specific namespace for the kind resource to link to
+ * @param {boolean} [hideIcon] -  (optional) flag to hide the icon badge
+ * @param {string} [title] -  (optional) title for the link object (not displayed)
+ * @param {string} [dataTest] -  (optional) identifier for testing
+ * @param {function} [onClick] -  (optional) callback function for when component is clicked
+ * @param {boolean} [truncate=false] -  (optional) flag to truncate the link if too long
+ * @example
+ * ```tsx
+ *   <ResourceLink
+ *       kind="Pod"
+ *       name="testPod"
+ *       title={metadata.uid}
+ *   />
+ * ```
+ */
 export const ResourceLink: React.FC<ResourceLinkProps> = require('@console/internal/components/utils/resource-link')
   .ResourceLink;
 export { default as ResourceStatus } from '../app/components/utils/resource-status';

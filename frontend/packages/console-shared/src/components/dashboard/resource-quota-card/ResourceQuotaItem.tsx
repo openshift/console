@@ -1,37 +1,49 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import {
-  getQuotaResourceTypes,
-  QuotaScopesInline,
-  QuotaGaugeCharts,
-} from '@console/internal/components/resource-quota';
+import { ExpandableSection, Split, SplitItem } from '@patternfly/react-core';
+import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
+import { QuotaScopesInline } from '@console/internal/components/resource-quota';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { ResourceQuotaModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-
-import './resource-quota-card.scss';
+import { ResourceQuotaKind } from '@console/internal/module/k8s';
+import QuotaSummary from './QuotaSummary';
 
 const ResourceQuotaItem: React.FC<ResourceQuotaItemProps> = ({ resourceQuota }) => {
-  const resourceTypes = getQuotaResourceTypes(resourceQuota);
-  const scopes = _.get(resourceQuota, 'spec.scopes');
+  const resources = Object.keys(resourceQuota.status?.hard ?? {});
+  const [isExpanded, setExpanded] = React.useState(resources.length <= 4);
+
+  const scopes = resourceQuota.spec?.scopes;
   return (
     <>
-      <div>
-        <ResourceLink
-          kind={ResourceQuotaModel.kind}
-          name={resourceQuota.metadata.name}
-          className="co-resource-item--truncate co-resource-quota-card__item-title"
-          namespace={resourceQuota.metadata.namespace}
-          inline
-          dataTest="resource-quota-link"
-        />
-        {scopes && <QuotaScopesInline scopes={scopes} />}
-      </div>
-      <QuotaGaugeCharts
-        quota={resourceQuota}
-        resourceTypes={resourceTypes}
-        chartClassName="co-resource-quota-card__chart"
-      />
+      <Split hasGutter>
+        <SplitItem isFilled>
+          <ExpandableSection
+            onToggle={setExpanded}
+            isExpanded={isExpanded}
+            toggleContent={
+              <ResourceLink
+                groupVersionKind={{
+                  kind: ResourceQuotaModel.kind,
+                  version: ResourceQuotaModel.apiVersion,
+                }}
+                name={resourceQuota.metadata.name}
+                namespace={resourceQuota.metadata.namespace}
+                inline
+                truncate
+                dataTest="resource-quota-link"
+              />
+            }
+          />
+        </SplitItem>
+        <SplitItem>
+          <QuotaSummary hard={resourceQuota.status?.hard} used={resourceQuota.status?.used} />
+        </SplitItem>
+      </Split>
+      {isExpanded && (
+        <>
+          {scopes && <QuotaScopesInline scopes={scopes} />}
+          <ResourceQuotaCharts resourceQuota={resourceQuota} />
+        </>
+      )}
     </>
   );
 };
@@ -39,5 +51,5 @@ const ResourceQuotaItem: React.FC<ResourceQuotaItemProps> = ({ resourceQuota }) 
 export default ResourceQuotaItem;
 
 type ResourceQuotaItemProps = {
-  resourceQuota: K8sResourceKind;
+  resourceQuota: ResourceQuotaKind;
 };

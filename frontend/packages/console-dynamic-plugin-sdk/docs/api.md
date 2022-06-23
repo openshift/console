@@ -592,10 +592,42 @@ A tuple containing the data filtered by all static filteres, the data filtered b
 
 ### Summary
 
-[For more details please refer the implementation](https://github.com/openshift/console/tree/release-4.11/frontend/public/components/utils/resource-link.tsx)
+Component that creates a link to a specific resource type with an icon badge
 
 
 
+### Example
+
+
+```tsx
+  <ResourceLink
+      kind="Pod"
+      name="testPod"
+      title={metadata.uid}
+  />
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `kind` | (optional) the kind of resource i.e. Pod, Deployment, Namespace |
+| `groupVersionKind` | (optional) object with groupd, version, and kind |
+| `className` | (optional) class style for component |
+| `displayName` | (optional) display name for component, overwrites the resource name if set |
+| `inline` | (optional) flag to create icon badge and name inline with children |
+| `linkTo` | (optional) flag to create a Link object - defaults to true |
+| `name` | (optional) name of resource |
+| `namesapce` | (optional) specific namespace for the kind resource to link to |
+| `hideIcon` | (optional) flag to hide the icon badge |
+| `title` | (optional) title for the link object (not displayed) |
+| `dataTest` | (optional) identifier for testing |
+| `onClick` | (optional) callback function for when component is clicked |
+| `truncate` | (optional) flag to truncate the link if too long |
 
 
 

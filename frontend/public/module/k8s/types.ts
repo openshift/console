@@ -324,14 +324,28 @@ export type DeploymentKind = {
   };
 } & K8sResourceCommon;
 
-export type AppliedClusterResourceQuotaKind = {
+export type ResourceQuotaKind = {
+  spec?: {
+    hard?: { [key: string]: string };
+    scopes?: string[];
+    scopeSelector?: {
+      matchExpressions?: { scopeName: string; operator: string; values?: string[] }[];
+    };
+  };
+  status?: {
+    hard?: { [key: string]: string };
+    used?: { [key: string]: string };
+  };
+} & K8sResourceCommon;
+
+export type ClusterResourceQuotaKind = {
   spec?: {
     selector?: {
       labels?: Selector;
       annotations?: MatchLabels;
     };
     quota?: {
-      hard?: { [key: string]: number };
+      hard?: { [key: string]: string };
       scopes?: string[];
       scopeSelector?: {
         matchExpressions?: { scopeName: string; operator: string; values?: string[] }[];
@@ -341,11 +355,13 @@ export type AppliedClusterResourceQuotaKind = {
   status?: {
     namespaces?: {
       namespace: string;
-      status: { used?: { [key: string]: number }; hard?: { [key: string]: number } };
+      status: { used?: { [key: string]: string }; hard?: { [key: string]: string } };
     }[];
-    total?: { hard?: { [key: string]: number }; used?: { [key: string]: number } };
+    total?: { hard?: { [key: string]: string }; used?: { [key: string]: string } };
   };
 } & K8sResourceCommon;
+
+export type AppliedClusterResourceQuotaKind = ClusterResourceQuotaKind;
 
 type CurrentObject = {
   averageUtilization?: number;

@@ -1,14 +1,5 @@
 @import '../../../styles/skeleton-screen';
 
-.co-resource-quota-card__chart {
-  margin-bottom: 0;
-  padding-top: var(--pf-global--spacer--md);
-}
-
-.co-resource-quota-card__item-title {
-  margin-top: var(--pf-global--spacer--md);
-}
-
 .skeleton-quota {
   animation: $skeleton-animation;
   background: $skeleton-color;

@@ -49,14 +49,14 @@ export const DonutChart: React.FC<DonutChartProps> = ({
         <ChartDonut
           ariaTitle={ariaChartTitle || title}
           ariaDesc={ariaDescription}
-          data={data as any[]}
+          data={data}
           height={width} // Changes the scale of the graph, not actual width and height
           padding={0}
           labels={labels}
           width={width}
           subTitle={secondaryTitleText}
           colorScale={
-            namespaceData[0].y === 100
+            namespaceData[0]?.y === 100
               ? [
                   chart_color_gold_400.value,
                   chart_color_gold_500.value,
@@ -76,7 +76,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
 };
 
 type DonutChartProps = {
-  data: { x: string; y: DataPoint }[];
+  data: DataPoint[];
   label: string;
   query?: string;
   secondaryTitle?: string;
