@@ -73,7 +73,7 @@ export const useKnativeSidepanelEventSinkSection: DetailsTabSectionExtensionHook
 
 export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
   const { t } = useTranslation();
-  const { revisions, associatedDeployment = {} } = data;
+  const { revisions, associatedDeployment } = data;
   const { pods, loaded, loadError } = usePodsForRevisions(
     revisions?.map((r) => r.metadata.uid) ?? '',
     resource.metadata.namespace,
@@ -120,7 +120,7 @@ export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
 };
 
 export const usePodsForEventSource = (resource: K8sResourceKind, data) => {
-  const { associatedDeployment = {} } = data;
+  const { associatedDeployment } = data;
   const {
     podData: podsDeployment,
     loadError: loadErrorDeployment,
@@ -133,7 +133,7 @@ export const usePodsForEventSource = (resource: K8sResourceKind, data) => {
 
   return React.useMemo(
     () =>
-      Object.keys(associatedDeployment).length === 0
+      !associatedDeployment || Object.keys(associatedDeployment).length === 0
         ? null
         : {
             pods: podsDeployment?.pods ?? [],

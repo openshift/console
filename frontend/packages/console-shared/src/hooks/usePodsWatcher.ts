@@ -7,6 +7,11 @@ import { getPodsDataForResource, getResourcesToWatchForPods } from '../utils';
 import { useDebounceCallback } from './debounce';
 import { useDeepCompareMemoize } from './deep-compare-memoize';
 
+/**
+ * Watches for all Pods for a kind and namespace.
+ * Kind and namespace is used from the given `resource` and can be overridden
+ * with the `kind` and `namespace` parameters.
+ */
 export const usePodsWatcher = (
   resource: K8sResourceKind,
   kind?: string,
@@ -15,12 +20,12 @@ export const usePodsWatcher = (
   const [loaded, setLoaded] = useSafetyFirst<boolean>(false);
   const [loadError, setLoadError] = useSafetyFirst<string>('');
   const [podData, setPodData] = useSafetyFirst<PodRCData>(undefined);
-  const watchKind = kind || resource.kind;
-  const watchNS = namespace || resource.metadata.namespace;
-  const watchedResources = React.useMemo(() => getResourcesToWatchForPods(watchKind, watchNS), [
-    watchKind,
-    watchNS,
-  ]);
+  const watchKind = kind || resource?.kind;
+  const watchNS = namespace || resource?.metadata.namespace;
+  const watchedResources = React.useMemo(
+    () => (watchKind ? getResourcesToWatchForPods(watchKind, watchNS) : {}),
+    [watchKind, watchNS],
+  );
 
   const resources = useK8sWatchResources(watchedResources);
 

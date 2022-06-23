@@ -4,7 +4,12 @@ import {
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { apiVersionForModel, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import {
+  apiVersionForModel,
+  K8sResourceKind,
+  PodKind,
+  WatchK8sResources,
+} from '@console/internal/module/k8s';
 import { PodRCData } from '../types';
 import {
   getJobsForCronJob,
@@ -128,6 +133,9 @@ export const getPodsForCronJob = (cronJob: K8sResourceKind, resources: any): Pod
 export const getPodsForCronJobs = (cronJobs: K8sResourceKind[], resources: any): PodRCData[] =>
   cronJobs ? cronJobs.map((cronJob) => getPodsForCronJob(cronJob, resources)) : [];
 
+/**
+ * Extract the resources from `getResourcesToWatchForPods` which are watched with `useK8sWatchResources`.
+ */
 export const getPodsDataForResource = (
   resource: K8sResourceKind,
   kind: string,
@@ -163,7 +171,31 @@ export const getPodsDataForResource = (
   }
 };
 
-export const getResourcesToWatchForPods = (kind: string, namespace: string) => {
+/**
+ * Return a `WatchK8sResources` object for `useK8sWatchResources` to get all related `Pods`
+ * for a given kind and namespace.
+ *
+ * - It watches for all `Pods` and all `ReplicationControllers` for a `DeploymentConfig`
+ * - It watches for all `Pods` and all `ReplicaSets` for a `Deployment`
+ * - It watches for all `Pods` and all `StatefulSets` for a `StatefulSet`
+ * - It watches for all `Pods` and all `Jobs` for a `CronJob`
+ * - And it watches for all `Pods` for all other kinds, or when no kind is provided.
+ *
+ * See also `getPodsDataForResource` above
+ */
+export const getResourcesToWatchForPods = (
+  kind: string,
+  namespace: string,
+): WatchK8sResources<any> => {
+  if (!kind) {
+    return {
+      pods: {
+        isList: true,
+        kind: 'Pod',
+        namespace,
+      },
+    };
+  }
   switch (kind) {
     case 'DeploymentConfig':
       return {

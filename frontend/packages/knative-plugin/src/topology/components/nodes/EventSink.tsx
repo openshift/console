@@ -57,8 +57,11 @@ const EventSink: React.FC<EventSinkProps> = ({
   const isKafkaConnectionLinkPresent =
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
       .length > 0;
-  const { revisions, associatedDeployment = {} } = resources;
-  const revisionIds = revisions?.map((revision) => revision.metadata.uid);
+  const { revisions, associatedDeployment } = resources;
+  const revisionIds = React.useMemo(() => revisions?.map((revision) => revision.metadata.uid), [
+    revisions,
+  ]);
+
   const { loaded, loadError, pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
   const controller = useVisualizationController();
   const detailsLevel = controller.getGraph().getDetailsLevel();
@@ -70,8 +73,8 @@ const EventSink: React.FC<EventSinkProps> = ({
     loaded: loadedDeployment,
   } = usePodsWatcher(
     associatedDeployment,
-    associatedDeployment.kind ?? DeploymentModel.kind,
-    associatedDeployment.metadata?.namespace || resource.metadata?.namespace,
+    associatedDeployment?.kind ?? DeploymentModel.kind,
+    associatedDeployment?.metadata?.namespace || resource.metadata?.namespace,
   );
 
   const isKafkaSink = referenceFor(resource) === referenceForModel(KafkaSinkModel);
