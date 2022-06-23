@@ -33,7 +33,8 @@ const ImageOption: React.FC<{
   fallbackTitle: string;
   items: Record<string, string>;
   dataTest: string;
-}> = ({ fieldPrefix, label, fallbackTitle, items, dataTest }) => {
+  required?: boolean;
+}> = ({ fieldPrefix, label, fallbackTitle, items, dataTest, required }) => {
   const { t } = useTranslation();
   const [{ value: type }] = useField<ImageOptionType>(`${fieldPrefix}.type`);
 
@@ -45,6 +46,7 @@ const ImageOption: React.FC<{
         items={items}
         title={items[type] || fallbackTitle}
         dataTest={`${dataTest} type`}
+        required={required}
       />
 
       {type === 'imageStreamTag' ? (
@@ -111,6 +113,7 @@ const ImagesSection: React.FC<{}> = () => {
         fallbackTitle={t('devconsole~Please select')}
         items={buildFromItems}
         dataTest="build-from"
+        required
       />
       <ImageOption
         fieldPrefix="formData.images.pushTo"

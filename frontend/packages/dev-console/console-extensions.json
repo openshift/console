@@ -1005,7 +1005,8 @@
         "/dev-monitoring",
         "/helm-releases",
         "/upload-jar",
-        "/search-page"
+        "/search-page",
+        "/builds"
       ],
       "component": { "$codeRef": "common.NamespaceRedirect" }
     }

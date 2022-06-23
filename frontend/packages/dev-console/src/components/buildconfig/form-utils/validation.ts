@@ -6,26 +6,35 @@ import { BuildConfigFormikValues } from './types';
 const nameSchema = () => yup.string().required(i18n.t('devconsole~Required'));
 
 const sourceSchema = () =>
-  yup.object({
-    git: yup.object().when('type', {
-      is: 'git',
-      then: yup.object({
-        git: yup.object({
-          url: yup.string().required(i18n.t('devconsole~Required')),
-          ref: yup.string(),
-          dir: yup.string(),
+  yup
+    .object({
+      type: yup
+        .string()
+        .required(i18n.t('devconsole~Required'))
+        .oneOf(['git', 'dockerfile', 'binary']),
+      git: yup.object().when('type', {
+        is: 'git',
+        then: yup.object({
+          git: yup.object({
+            url: yup.string().required(i18n.t('devconsole~Required')),
+            ref: yup.string(),
+            dir: yup.string(),
+          }),
         }),
       }),
-    }),
-    dockerfile: yup.string().when('type', {
-      is: 'dockerfile',
-      then: yup.string(),
-    }),
-  });
+      dockerfile: yup.string().when('type', {
+        is: 'dockerfile',
+        then: yup.string(),
+      }),
+    })
+    .required(i18n.t('devconsole~Required'));
 
-const imageSchema = () =>
+const imageSchema = (allowedTypes: string[]) =>
   yup.object({
-    type: yup.string().required(i18n.t('devconsole~Required')),
+    type: yup
+      .string()
+      .required(i18n.t('devconsole~Required'))
+      .oneOf(allowedTypes),
     imageStreamTag: yup.object().when('type', {
       is: 'imageStreamTag',
       then: yup.object({
@@ -48,8 +57,8 @@ const imageSchema = () =>
 
 const imagesSchema = () =>
   yup.object({
-    buildFrom: imageSchema(),
-    pushTo: imageSchema(),
+    buildFrom: imageSchema(['imageStreamTag', 'imageStreamImage', 'dockerImage']),
+    pushTo: imageSchema(['none', 'imageStreamTag', 'imageStreamImage', 'dockerImage']),
   });
 
 const environmentVariablesSchema = () => yup.array();

@@ -63,6 +63,11 @@ export const getDefaultDeploymentConfig = (namespace: string): K8sResourceKind =
           maxSurge: '25%',
         },
       },
+      triggers: [
+        {
+          type: 'ConfigChange',
+        },
+      ],
     },
   };
 
@@ -106,11 +111,6 @@ export const getDefaultDeployment = (namespace: string): K8sResourceKind => {
           maxUnavailable: '25%',
         },
       },
-      triggers: [
-        {
-          type: 'ConfigChange',
-        },
-      ],
     },
   };
 
