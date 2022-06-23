@@ -12,6 +12,7 @@ import {
   NotificationCategory,
   NotificationTypes,
 } from '@console/patternfly';
+import { isNotLoadedDynamicPluginInfo } from '@console/plugin-sdk';
 import {
   alertingErrored,
   alertingLoaded,
@@ -58,16 +59,19 @@ import {
   useResolvedExtensions,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
+import { history, resourcePath } from '@console/internal/components/utils';
 import { coFetchJSON } from '../co-fetch';
+import { ConsolePluginModel } from '../models';
 import {
   ClusterVersionKind,
   getNewerClusterVersionChannel,
   getSimilarClusterVersionChannels,
   getSortedAvailableUpdates,
+  referenceForModel,
   Release,
   splitClusterVersionChannel,
 } from '../module/k8s';
+import { pluginStore } from '../plugins';
 import { useAccessReview2 } from './utils/rbac';
 import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
@@ -146,6 +150,11 @@ const getUpdateNotificationEntries = (
   const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
   const entries = [];
 
+  const dynamicPluginInfo = pluginStore.getDynamicPluginInfo();
+  const failedPlugins = dynamicPluginInfo
+    .filter(isNotLoadedDynamicPluginInfo)
+    .filter((plugin) => plugin.status === 'Failed');
+
   if (!_.isEmpty(updateData)) {
     entries.push(
       <NotificationEntry
@@ -177,6 +186,27 @@ const getUpdateNotificationEntries = (
         toggleNotificationDrawer={toggleNotificationDrawer}
         targetPath="/settings/cluster?showChannels"
       />,
+    );
+  }
+  if (failedPlugins.length > 0) {
+    entries.push(
+      ...failedPlugins.map((plugin) => {
+        const link = resourcePath(referenceForModel(ConsolePluginModel), plugin.pluginName);
+        return (
+          <NotificationEntry
+            actionPath={link}
+            actionText={i18next.t('public~View plugin')}
+            key={`${plugin.pluginName}-dynamic-plugin-fail`}
+            description={i18next.t('public~Something went wrong with the {{pluginName}} plugin.', {
+              pluginName: plugin.pluginName,
+            })}
+            type={NotificationTypes.warning}
+            title={i18next.t('public~Dynamic plugin error')}
+            toggleNotificationDrawer={toggleNotificationDrawer}
+            targetPath={link}
+          />
+        );
+      }),
     );
   }
   return entries;
