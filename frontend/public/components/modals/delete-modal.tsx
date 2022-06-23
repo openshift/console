@@ -66,7 +66,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
 
   const { kind, resource, message, errorMessage } = props;
   return (
-    <form onSubmit={submit} name="form" className="modal-content ">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
         {t('public~Delete {{kind}}?', {
