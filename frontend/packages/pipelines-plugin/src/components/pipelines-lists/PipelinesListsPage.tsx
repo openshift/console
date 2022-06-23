@@ -17,7 +17,7 @@ import {
   SecondaryButtonAction,
   useFlag,
 } from '@console/shared';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../const';
+import { FLAG_OPENSHIFT_PIPELINE_AS_CODE, FLAG_OPENSHIFT_PIPELINE_CONDITION } from '../../const';
 import {
   PipelineModel,
   PipelineResourceModel,
@@ -40,6 +40,7 @@ interface PipelinesListPageProps {
 const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+  const isConditionsEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_CONDITION);
   const {
     params: { ns: namespace },
   } = match;
@@ -62,7 +63,7 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
     },
     pipelineRun: { model: PipelineRunModel },
     pipelineResource: { model: PipelineResourceModel },
-    condition: { model: ConditionModel },
+    ...(isConditionsEnabled ? { condition: { model: ConditionModel } } : {}),
     ...(isRepositoryEnabled
       ? {
           repository: {
@@ -90,17 +91,21 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
       component: PipelineResourcesListPage,
       pageData: { showTitle, hideBadge },
     },
-    {
-      href: 'conditions',
-      name: t(ConditionModel.labelPluralKey),
-      component: DefaultPage,
-      pageData: {
-        kind: referenceForModel(ConditionModel),
-        canCreate,
-        namespace,
-        showTitle,
-      },
-    },
+    ...(isConditionsEnabled
+      ? [
+          {
+            href: 'conditions',
+            name: t(ConditionModel.labelPluralKey),
+            component: DefaultPage,
+            pageData: {
+              kind: referenceForModel(ConditionModel),
+              canCreate,
+              namespace,
+              showTitle,
+            },
+          },
+        ]
+      : []),
     ...(isRepositoryEnabled
       ? [
           {
