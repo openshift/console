@@ -67,7 +67,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   };
 
   return (
-    <form onSubmit={onSubmit} name="form" className="modal-content ">
+    <form onSubmit={onSubmit} name="form" className="modal-content">
       <ModalTitle className="modal-header">
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
         {t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
