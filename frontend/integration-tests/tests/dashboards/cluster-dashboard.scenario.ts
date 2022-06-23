@@ -29,7 +29,10 @@ describe('Cluster Dashboard', () => {
         // Underlating issue is a `504 Gateway Timeout` error.
         // See also https://bugzilla.redhat.com/show_bug.cgi?id=2096374
         // 'Service Level Agreement (SLA)',
-        'Update channel',
+
+        // We need to disable everything after the SLA validation because
+        // of the index based implementation.
+        // 'Update channel',
       ];
       const items = clusterDashboardView.detailsCardList.$$('dt');
       const values = clusterDashboardView.detailsCardList.$$('dd');
