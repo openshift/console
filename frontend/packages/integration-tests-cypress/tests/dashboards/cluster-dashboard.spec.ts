@@ -60,7 +60,7 @@ describe('Cluster dashboard', () => {
     });
     it('has health indicators', () => {
       cy.byLegacyTestID('status-card').should('be.visible');
-      const expectedTitles = ['Cluster', 'Control Plane', 'Operators'];
+      const expectedTitles = ['Cluster', 'Control Plane', 'Operators', 'Dynamic Plugins'];
       expectedTitles.forEach((title) => {
         cy.byTestID(title).should('include.text', title);
       });

@@ -136,10 +136,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
       title: t('console-app~Description'),
       transforms: [sortable],
     },
-    {
-      title: t('console-app~Status'),
-      transforms: [sortable],
-    },
+    { title: '' },
   ];
   const onSort = (e, index, direction) => {
     const sortedRows = rows.sort((a, b) =>
