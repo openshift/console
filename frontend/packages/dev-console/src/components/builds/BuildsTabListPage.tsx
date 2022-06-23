@@ -64,7 +64,7 @@ const BuildsTabListPage: React.FC<BuildsTabListPageProps> = ({ match }) => {
   if (namespace) {
     menuActions.buildConfig = {
       label: t('devconsole~BuildConfig'),
-      onSelection: () => `/k8s/ns/${namespace}/buildconfigs/~new`,
+      onSelection: () => `/k8s/ns/${namespace}/buildconfigs/~new/form`,
     };
   }
   if (buildConfigComponent) {
