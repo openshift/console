@@ -326,6 +326,7 @@ export const createOrUpdateDeployment = (
     limits: { cpu, memory },
     git: { url: repository, ref },
     healthChecks,
+    resources,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -338,7 +339,7 @@ export const createOrUpdateDeployment = (
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(name, imageName, namespace, imageChange),
   };
-  const podLabels = getPodLabels(name);
+  const podLabels = getPodLabels(resources, name);
   const templateLabels = getTemplateLabels(originalDeployment);
 
   const newDeployment = {
@@ -400,6 +401,7 @@ export const createOrUpdateDeploymentConfig = (
     limits: { cpu, memory },
     git: { url: repository, ref },
     healthChecks,
+    resources,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -409,7 +411,7 @@ export const createOrUpdateDeploymentConfig = (
     ...getGitAnnotations(repository, ref),
     ...getRouteAnnotations(),
   };
-  const podLabels = getPodLabels(name);
+  const podLabels = getPodLabels(resources, name);
   const templateLabels = getTemplateLabels(originalDeploymentConfig);
 
   const newDeploymentConfig = {

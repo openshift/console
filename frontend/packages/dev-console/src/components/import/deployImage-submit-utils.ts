@@ -113,6 +113,7 @@ const getMetadata = (formData: DeployImageFormData) => {
     labels: userLabels,
     imageStream: { image: imageStreamName, tag: selectedTag, namespace },
     runtimeIcon,
+    resources,
   } = formData;
   const defaultLabels = getAppLabels({
     name,
@@ -123,7 +124,7 @@ const getMetadata = (formData: DeployImageFormData) => {
     namespace,
   });
   const labels = { ...defaultLabels, ...userLabels };
-  const podLabels = getPodLabels(name);
+  const podLabels = getPodLabels(resources, name);
 
   const volumes = [];
   const volumeMounts = [];

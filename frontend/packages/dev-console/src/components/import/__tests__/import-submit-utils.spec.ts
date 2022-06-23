@@ -450,7 +450,7 @@ describe('Import Submit Utils', () => {
               creationTimestamp: null,
               labels: {
                 app: 'devfile-sample',
-                deploymentconfig: 'devfile-sample',
+                deployment: 'devfile-sample',
               },
             },
             spec: {
