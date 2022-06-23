@@ -87,7 +87,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
     return null;
   }
   const kindReference = groupVersionKind ? getReference(groupVersionKind) : kind;
-  const path = resourcePath(kindReference, name, namespace);
+  const path = linkTo ? resourcePath(kindReference, name, namespace) : undefined;
   const value = displayName ? displayName : name;
   const classes = classNames('co-resource-item', className, {
     'co-resource-item--inline': inline,
@@ -96,7 +96,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   return (
     <span className={classes}>
       {!hideIcon && <ResourceIcon kind={kindReference} />}
-      {path && linkTo ? (
+      {path ? (
         <Link
           to={path}
           title={title}
