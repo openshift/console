@@ -34,7 +34,7 @@ const Status: React.FC<StatusProps> = ({
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
 
     case 'Pending':
-      return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon color="inherit" />} />;
+      return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
 
     case 'Planning':
       return <StatusIconAndText {...statusProps} icon={<ClipboardListIcon />} />;
