@@ -60,6 +60,7 @@ const breakpointMD = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
+import { withoutSensitiveInformations } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
 
 initI18n();
@@ -284,7 +285,7 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   // Also because some pages update the URL as the user enters a search term.
   const fireUrlChangeEvent = useDebounceCallback(fireTelemetryEvent);
   React.useEffect(() => {
-    fireUrlChangeEvent('page', history.location);
+    fireUrlChangeEvent('page', withoutSensitiveInformations(history.location));
 
     let { pathname, search } = history.location;
     const unlisten = history.listen((location) => {
@@ -292,7 +293,7 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
       if (pathname !== nextPathname || search !== nextSearch) {
         pathname = nextPathname;
         search = nextSearch;
-        fireUrlChangeEvent('page', location);
+        fireUrlChangeEvent('page', withoutSensitiveInformations(location));
       }
     });
     return () => unlisten();
