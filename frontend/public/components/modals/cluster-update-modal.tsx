@@ -63,7 +63,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
     isList: true,
     kind: referenceForModel(MachineConfigPoolModel),
   });
-  const [error, setError] = React.useState(errorMessage);
+  const [error, setError] = React.useState('');
   const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = React.useState<string[]>([]);
   const [upgradeType, setUpgradeType] = React.useState<upgradeTypes>(upgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = React.useState(false);
@@ -321,7 +321,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
         </div>
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={error}
+        errorMessage={errorMessage || error}
         inProgress={inProgress}
         submitText={t('public~Update')}
         cancelText={t('public~Cancel')}
