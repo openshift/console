@@ -62,25 +62,27 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
     <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>{t('public~Expand {{kind}}', { kind: kind.label })}</ModalTitle>
       <ModalBody>
-        <p>
-          <Trans t={t} ns="public">
-            Increase the capacity of PVC{' '}
-            <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
-            Note that capacity can't be less than the current PVC size. This can be a time-consuming
-            process.
-          </Trans>
-        </p>
-        <label className="control-label co-required">{t('public~Total size')}</label>
-        <RequestSizeInput
-          name={t('public~requestSize')}
-          required
-          onChange={handleRequestSizeInputChange}
-          defaultRequestSizeUnit={requestSizeUnit}
-          defaultRequestSizeValue={requestSizeValue}
-          dropdownUnits={dropdownUnits}
-          testID="pvc-expand-size-input"
-          minValue={defaultSize[0]}
-        />
+        <div className="form-group">
+          <p>
+            <Trans t={t} ns="public">
+              Increase the capacity of PVC{' '}
+              <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
+              Note that capacity can't be less than the current PVC size. This can be a
+              time-consuming process.
+            </Trans>
+          </p>
+          <label className="control-label co-required">{t('public~Total size')}</label>
+          <RequestSizeInput
+            name={t('public~requestSize')}
+            required
+            onChange={handleRequestSizeInputChange}
+            defaultRequestSizeUnit={requestSizeUnit}
+            defaultRequestSizeValue={requestSizeValue}
+            dropdownUnits={dropdownUnits}
+            testID="pvc-expand-size-input"
+            minValue={defaultSize[0]}
+          />
+        </div>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}

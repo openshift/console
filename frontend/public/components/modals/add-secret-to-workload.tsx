@@ -205,59 +205,63 @@ export class AddSecretToWorkloadModalWithTrans extends React.Component<
               autocompleteFilter={this.autocompleteFilter}
               autocompletePlaceholder={selectWorkloadPlaceholder}
               id="co-add-secret-to-workload__workload"
+              className="modal-body__field"
+              dropDownClassName="pf-m-full-width"
             />
           </div>
-          <fieldset>
-            <legend className="co-legend co-required">{t('public~Add secret as')}</legend>
-            <RadioInput
-              title={t('public~Environment variables')}
-              name="co-add-secret-to-workload__add-as"
-              id="co-add-secret-to-workload__envvars"
-              value="environment"
-              onChange={this.onAddAsChange}
-              checked={addAsEnvironment}
-            />
-            {addAsEnvironment && (
-              <div className="co-m-radio-desc">
-                <div className="form-group">
-                  <label htmlFor="co-add-secret-to-workload__prefix">{t('public~Prefix')}</label>
-                  <input
-                    className="pf-c-form-control"
-                    name="prefix"
-                    id="co-add-secret-to-workload__prefix"
-                    placeholder="(optional)"
-                    type="text"
-                    onChange={this.handleChange}
-                  />
+          <div className="form-group">
+            <fieldset>
+              <legend className="co-legend co-required">{t('public~Add secret as')}</legend>
+              <RadioInput
+                title={t('public~Environment variables')}
+                name="co-add-secret-to-workload__add-as"
+                id="co-add-secret-to-workload__envvars"
+                value="environment"
+                onChange={this.onAddAsChange}
+                checked={addAsEnvironment}
+              />
+              {addAsEnvironment && (
+                <div className="co-m-radio-desc">
+                  <div className="form-group">
+                    <label htmlFor="co-add-secret-to-workload__prefix">{t('public~Prefix')}</label>
+                    <input
+                      className="pf-c-form-control"
+                      name="prefix"
+                      id="co-add-secret-to-workload__prefix"
+                      placeholder="(optional)"
+                      type="text"
+                      onChange={this.handleChange}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-            <RadioInput
-              title={t('public~Volume')}
-              name="co-add-secret-to-workload__add-as"
-              id="co-add-secret-to-workload__volume"
-              value="volume"
-              onChange={this.onAddAsChange}
-              checked={addAsVolume}
-            />
-            {addAsVolume && (
-              <div className="co-m-radio-desc">
-                <div className="form-group">
-                  <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
-                    {t('public~Mount path')}
-                  </label>
-                  <input
-                    className="pf-c-form-control"
-                    name="mountPath"
-                    id="co-add-secret-to-workload__mountpath"
-                    type="text"
-                    onChange={this.handleChange}
-                    required
-                  />
+              )}
+              <RadioInput
+                title={t('public~Volume')}
+                name="co-add-secret-to-workload__add-as"
+                id="co-add-secret-to-workload__volume"
+                value="volume"
+                onChange={this.onAddAsChange}
+                checked={addAsVolume}
+              />
+              {addAsVolume && (
+                <div className="co-m-radio-desc">
+                  <div className="form-group">
+                    <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
+                      {t('public~Mount path')}
+                    </label>
+                    <input
+                      className="pf-c-form-control"
+                      name="mountPath"
+                      id="co-add-secret-to-workload__mountpath"
+                      type="text"
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-          </fieldset>
+              )}
+            </fieldset>
+          </div>
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={this.state.errorMessage}

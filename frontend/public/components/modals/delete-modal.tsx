@@ -75,18 +75,22 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
       </ModalTitle>
       <ModalBody className="modal-body">
         {message}
-        <div>
+        <div className="form-group">
           {_.has(resource.metadata, 'namespace') ? (
-            <Trans t={t} ns="public">
-              Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>{' '}
-              in namespace <strong>{{ namespace: resource.metadata.namespace }}</strong>?
-            </Trans>
+            <p>
+              <Trans t={t} ns="public">
+                Are you sure you want to delete{' '}
+                <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>{' '}
+                in namespace <strong>{{ namespace: resource.metadata.namespace }}</strong>?
+              </Trans>
+            </p>
           ) : (
-            <Trans t={t} ns="public">
-              Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>?
-            </Trans>
+            <p>
+              <Trans t={t} ns="public">
+                Are you sure you want to delete{' '}
+                <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>?
+              </Trans>
+            </p>
           )}
           {_.has(kind, 'propagationPolicy') && (
             <div className="checkbox">

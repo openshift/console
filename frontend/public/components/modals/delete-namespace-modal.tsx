@@ -24,7 +24,6 @@ import {
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getActiveNamespace } from '../../reducers/ui';
 import { setActiveNamespace } from '../../actions/ui';
-
 export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   cancel,
   close,
@@ -73,30 +72,32 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
         {t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
       </ModalTitle>
       <ModalBody>
-        <p>
-          <Trans t={t} ns="public">
-            This action cannot be undone. It will destroy all pods, services and other objects in
-            the namespace{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong>.
-          </Trans>
-        </p>
-        <p>
-          <Trans t={t} ns="public">
-            Confirm deletion by typing{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
-          </Trans>
-        </p>
-        <input
-          type="text"
-          data-test="project-name-input"
-          className="pf-c-form-control"
-          onKeyUp={onKeyUp}
-          placeholder={t('public~Enter name')}
-          aria-label={t('public~Enter the name of the {{label}} to delete', {
-            label: t(kind.labelKey),
-          })}
-          autoFocus={true}
-        />
+        <div className="form-group">
+          <p>
+            <Trans t={t} ns="public">
+              This action cannot be undone. It will destroy all pods, services and other objects in
+              the namespace{' '}
+              <strong className="co-break-word">{{ name: resource.metadata.name }}</strong>.
+            </Trans>
+          </p>
+          <p>
+            <Trans t={t} ns="public">
+              Confirm deletion by typing{' '}
+              <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
+            </Trans>
+          </p>
+          <input
+            type="text"
+            data-test="project-name-input"
+            className="pf-c-form-control"
+            onKeyUp={onKeyUp}
+            placeholder={t('public~Enter name')}
+            aria-label={t('public~Enter the name of the {{label}} to delete', {
+              label: t(kind.labelKey),
+            })}
+            autoFocus={true}
+          />
+        </div>
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('public~Delete')}

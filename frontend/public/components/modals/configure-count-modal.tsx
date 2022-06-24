@@ -56,17 +56,19 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>{titleKey ? t(titleKey, titleVariables) : title}</ModalTitle>
       <ModalBody>
-        <p className="modal-paragraph">
-          {messageKey ? t(messageKey, messageVariablesSafe) : message}
-        </p>
-        <NumberSpinner
-          value={value}
-          onChange={(e: any) => setValue(e.target.value)}
-          changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
-          autoFocus
-          required
-          min={0}
-        />
+        <div className="form-group">
+          <p>
+            {messageKey ? t(messageKey, messageVariablesSafe) : message}
+          </p>
+          <NumberSpinner
+            value={value}
+            onChange={(e: any) => setValue(e.target.value)}
+            changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
+            autoFocus
+            required
+            min={0}
+          />
+        </div>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={props.errorMessage}

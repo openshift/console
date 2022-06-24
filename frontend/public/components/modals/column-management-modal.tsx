@@ -7,6 +7,8 @@ import {
   DataListItemRow,
   DataListCell,
   DataListItemCells,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
@@ -111,10 +113,10 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle className="modal-header">{t('public~Manage columns')}</ModalTitle>
       <ModalBody>
-        <div className="co-m-form-row">
-          <p>{t('public~Selected columns will appear in the table.')}</p>
-        </div>
-        <div className="co-m-form-row">
+        <div className="form-group">
+          <p className="modal-paragraph">
+            {t('public~Selected columns will appear in the table.')}
+          </p>
           <Alert
             className="co-alert"
             isInline
@@ -125,9 +127,9 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
               t('public~The namespace column is only shown when in "All projects"')}
           </Alert>
         </div>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            <span className="col-sm-6">
+        <div className="form-group">
+          <Grid hasGutter sm={6}>
+            <GridItem>
               <label className="control-label">
                 {t('public~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
               </label>
@@ -146,8 +148,8 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
                   />
                 ))}
               </DataList>
-            </span>
-            <span className="col-sm-6">
+            </GridItem>
+            <GridItem>
               <label className="control-label">{t('public~Additional columns')}</label>
               <DataList
                 aria-label={t('public~Additional column list')}
@@ -164,8 +166,8 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
                   />
                 ))}
               </DataList>
-            </span>
-          </div>
+            </GridItem>
+          </Grid>
         </div>
       </ModalBody>
       <ModalSubmitFooter

@@ -52,17 +52,19 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
       <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
         <ModalBody>
-          <p>
-            {t(
-              'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
-            )}
-          </p>
-          <p>
-            <ExternalLink
-              href={updateLink}
-              text={t('public~Learn more about OpenShift local update services.')}
-            />
-          </p>
+          <div className="form-group">
+            <p>
+              {t(
+                'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
+              )}
+            </p>
+            <p>
+              <ExternalLink
+                href={updateLink}
+                text={t('public~Learn more about OpenShift local update services.')}
+              />
+            </p>
+          </div>
           <div className="form-group">
             <fieldset>
               <label>{t('public~Configuration')}</label>

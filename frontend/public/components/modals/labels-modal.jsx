@@ -56,31 +56,27 @@ const BaseLabelsModal = withHandlePromise((props) => {
           : t('public~Edit labels')}
       </ModalTitle>
       <ModalBody>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            {messageKey
-              ? t(messageKey, messageVariables)
-              : t(
-                  'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
-                )}
-          </div>
+        <div className="form-group">
+          {messageKey
+            ? t(messageKey, messageVariables)
+            : t(
+                'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
+              )}
         </div>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            <label htmlFor="tags-input" className="control-label">
-              {descriptionKey
-                ? t('{{description}} for', { description: t(descriptionKey) })
-                : t('public~Labels for')}{' '}
-              <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} />{' '}
-              {resource.metadata.name}
-            </label>
-            <SelectorInput
-              onChange={(l) => setLabels(l)}
-              tags={labels}
-              labelClassName={labelClassName || `co-m-${kind.id}`}
-              autoFocus
-            />
-          </div>
+        <div className="form-group">
+          <label htmlFor="tags-input" className="control-label">
+            {descriptionKey
+              ? t('{{description}} for', { description: t(descriptionKey) })
+              : t('public~Labels for')}{' '}
+            <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} />{' '}
+            {resource.metadata.name}
+          </label>
+          <SelectorInput
+            onChange={(l) => setLabels(l)}
+            tags={labels}
+            labelClassName={labelClassName || `co-m-${kind.id}`}
+            autoFocus
+          />
         </div>
       </ModalBody>
       <ModalSubmitFooter

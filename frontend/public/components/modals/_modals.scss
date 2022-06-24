@@ -30,6 +30,10 @@
   padding: 0;
   position: relative;
   -webkit-overflow-scrolling: touch;
+
+  .form-group p:not(:last-child) {
+    margin-bottom: var(--pf-c-content--MarginBottom);
+  }
 }
 
 .modal-body-border {
@@ -39,9 +43,6 @@
 .modal-body-content {
   height: 100%;
   padding: 0 var(--pf-global--spacer--xl) var(--pf-global--spacer--xl);
-  p {
-    margin-bottom: var(--pf-c-content--MarginBottom);
-  }
 }
 
 .modal-content {
