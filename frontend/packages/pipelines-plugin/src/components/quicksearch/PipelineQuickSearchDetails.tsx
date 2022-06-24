@@ -14,6 +14,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
+import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { handleCta } from '@console/shared';
 import { QuickSearchDetailsRendererProps } from '@console/shared/src/components/quick-search/QuickSearchDetails';
@@ -53,20 +54,26 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     resetVersions();
     let mounted = true;
     if (isTektonHubTaskWithoutVersions(selectedItem)) {
-      getTektonHubTaskVersions(selectedItem.data.id)
-        .then((itemVersions = []) => {
-          if (mounted) {
-            setVersions([...itemVersions]);
+      const debouncedLoadVersions = debounce(async () => {
+        if (mounted) {
+          try {
+            const itemVersions = await getTektonHubTaskVersions(selectedItem?.data?.id);
+
             selectedItem.attributes.versions = itemVersions;
-            setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+
+            if (mounted) {
+              setVersions([...itemVersions]);
+              setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+            }
+          } catch (err) {
+            if (mounted) {
+              resetVersions();
+            }
+            console.log('failed to fetch versions:', err); // eslint-disable-line no-console
           }
-        })
-        .catch((err) => {
-          if (mounted) {
-            resetVersions();
-          }
-          console.log('failed to fetch versions:', err); // eslint-disable-line no-console
-        });
+        }
+      }, 10);
+      debouncedLoadVersions();
     }
 
     return () => (mounted = false);
@@ -97,7 +104,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
           <Split hasGutter>
             <SplitItem>
               <Button
-                isDisabled={versions.length === 0}
+                isDisabled={isTektonHubTaskWithoutVersions(selectedItem)}
                 data-test="task-cta"
                 variant={ButtonVariant.primary}
                 className="opp-quick-search-details__form-button"
