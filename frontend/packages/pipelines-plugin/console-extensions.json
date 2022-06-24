@@ -176,6 +176,17 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
+        "group": "tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Condition"
+      },
+      "flag": "OPENSHIFT_PIPELINE_CONDITION"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
         "group": "pipelinesascode.tekton.dev",
         "version": "v1alpha1",
         "kind": "Repository"
@@ -225,6 +236,9 @@
         "kind": "Condition"
       },
       "component": { "$codeRef": "pipelinesComponent.PipelineConditionDetailsPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE_CONDITION"]
     }
   },
   {
@@ -379,6 +393,9 @@
         "kind": "Condition"
       },
       "component": { "$codeRef": "pipelinesComponent.ConditionListPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE_CONDITION"]
     }
   },
   {
