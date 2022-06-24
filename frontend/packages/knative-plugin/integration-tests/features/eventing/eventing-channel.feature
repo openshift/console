@@ -2,7 +2,6 @@
 Feature: Knative Eventing Channel Support
     User should be able to experience the Knative Eventing Channel and associated features
 
-
         Background:
             Given user has created or selected namespace "aut-eventing-channel"
 
@@ -13,7 +12,6 @@ Feature: Knative Eventing Channel Support
              Then user will see the Channel card on the Add page
 
 
-
         @regression @odc-6359
         Scenario: Yaml in Channel: KE-06-TC02
              When user navigates to Add page
@@ -22,27 +20,27 @@ Feature: Knative Eventing Channel Support
              Then user can see reate button enabled
 
 
-        @regression @to-do
+        @regression
         Scenario: Create InMemoryChannel: KE-06-TC03
              When user navigates to Add page
               And user clicks on the Channel card
               And user selects auto selected InMemoryChannel from Type dropdown
               And user selects Application
-              And user enters the name of the Channel
+              And user enters the name of the Channel "channel-test"
               And user clicks on the Create button
-             Then user will see the channel created
+             Then user will see the channel "channel-test" created
 
 
-        @regression @to-do
+        @regression
         Scenario: Sink event source to Channel: KE-06-TC04
-             When user creates the channel
+             When user has already created the channel "channel-test"
               And user navigates to Add page
               And user clicks on the Event Source card
               And user selects Ping Source card
               And user enters Schedule
-              And user selects the channel from Resource dropdown
-              And user selects the Application
-              And user enters name of the event source
+              And user selects the channel "channel-test" from Resource dropdown
+              And user selects the Application in the dropdown "channel-application"
+              And user enters name of the ping source "ping-source"
               And user clicks on the Create button
              Then user will see that event source is connected to channel
 
@@ -54,121 +52,122 @@ Feature: Knative Eventing Channel Support
               And user clicks on the Event Source card
               And user selects Ping Source card
               And user enters Schedule
-              And user selects the channel from Resource dropdown
+              And user selects the channel "channel-test" from Resource dropdown
               And user selects the Application
               And user enters name of the event source
               And user clicks on the Create button
              Then user will see that multiple event sources are connected to single channel
 
 
-        @regression @to-do
+        @regression
         Scenario: Context Menu for Channel: KE-06-TC06
-             When user creates the channel
-              And user right clicks on the channel
+             When user has already created the channel "channel-test"
+              And user right clicks on the channel "channel-test"
              Then user will see the Context Menu for channel
-              And user will see Edit Application Groupings option
-              And user will see Add Subscribtion option
-              And user will see Edit Labels option
-              And user will see Edit Annotations option
-              And user will see Edit InMemoryChannel option
-              And user will see Delete InMemoryChannel option
+              And user will see option "Edit application grouping"
+              And user will see option "Add Subscription"
+              And user will see option "Add Event Sink"
+              And user will see option "Edit labels"
+              And user will see option "Edit annotations"
+              And user will see option "Edit Channel"
+              And user will see option "Delete Channel"
 
 
-        @regression @to-do
-        Scenario: Edit Application Groupings action on Channel: KE-06-TC07
-            Given user is having Channel on the Topology page
-             When user right clicks on the Channel to open the context menu
-              And user clicks on the Edit Application Groupings
+        @regression
+        Scenario: Edit Application Groupings to no application group action on Channel: KE-06-TC07
+            Given user has already created the channel "channel-test"
+             When user right clicks on the channel "channel-test"
+              And user clicks on the "Edit application grouping"
               And user will click on the Application dropdown on the modal
-              And user selects the Application
-              And user clicks on Save button
-             Then user will see the changed Application Groupings of Channel
-
-
-        @regression @to-do
-        Scenario: Edit Application Groupings to no application group action on Channel: KE-06-TC08
-            Given user is having a Channel inside an applicaiton group on the Topology page
-             When user right clicks on the Channel to open the context menu
-              And user clicks on the Edit Application Groupings
-              And user will click on the Application dropdown on the modal
-              And user selects the no application group item
+              And user selects the "No application group" item
               And user clicks on Save button
              Then user will see that Channel is without an application group
 
 
-        @regression @to-do
+        @regression
+        Scenario: Edit Application Groupings action on Channel: KE-06-TC08
+            Given user has already created the channel "channel-test"
+             When user right clicks on the channel "channel-test"
+              And user clicks on the "Edit application grouping"
+              And user will click on the Application dropdown on the modal
+              And user selects the Application "channel-application"
+              And user clicks on Save button
+             Then user will see the changed Application Groupings of Channel as "channel-application"
+
+
+        @regression
         Scenario: Edit Labels action on Channel: KE-06-TC09
-            Given user is having Channel on the Topology page
-             When user right clicks on the Channel to open the context menu
-              And user clicks on the Edit Labels
-              And user adds the label
+            Given user has already created the channel "channel-test"
+             When user right clicks on the channel "channel-test"
+              And user clicks on the "Edit labels"
+              And user adds the label "app.kubernetes.io/channel-label=12"
               And user clicks on the Save button on the modal to save labels and close the modal
-              And user clicks on the Channel to open the sidebar
-              And user opens   the Details tab
-             Then user will see the newly added label
+              And user clicks on the Channel "channel-test" to open the sidebar
+              And user opens the "Details" tab
+             Then user will see the newly added label "app.kubernetes.io/channel-label=12"
 
 
-        @regression @to-do
+        @regression
         Scenario: Edit Annotations action on Channel: KE-06-TC10
-            Given user is having Channel on the Topology page
-             When user right clicks on the Channel to open the context menu
-              And user clicks on the Edit Annotations
-              And user adds the annotations
+            Given user has already created the channel "channel-test"
+             When user right clicks on the channel "channel-test"
+              And user clicks on the "Edit annotations"
+              And user adds the annotation "eventing.knative.dev/channel.annotations" and type "test-annotation"
               And user clicks on the Save button on the modal to save annotation and close the modal
-              And user clicks on the Channel to open the sidebar
-              And user opens the Details tab
-             Then user will see the newly added annotation
+              And user clicks on the Channel "channel-test" to open the sidebar
+              And user opens the "Details" tab
+             Then user will see the newly added annotation "eventing.knative.dev/channel.annotations" and type "test-annotation"
 
 
-        @regression @to-do
+        @regression
         Scenario: Edit Channel action on Channel: KE-06-TC11
-            Given user is having Channel on the Topology page
-             When user right clicks on the Channel to open the context menu
-              And user clicks on the Edit InMemoryChannel
+            Given user has already created the channel "channel-test"
+             When user right clicks on the channel "channel-test"
+              And user clicks on the "Edit Channel"
              Then user will see the YAML editor to edit the channel
 
 
-        @regression @to-do
-        Scenario: Delete Channel action on Channel: KE-06-TC12
-            Given user is having Channel on the Topology page
-             When user right clicks on the Channel to open the context menu
-              And user clicks on the Delete InMemoryChannel
-              And user clicks on the Delete button on the modal
-             Then Channel will get deleted
-              And user won't be able to see the Channel again
+        @regression
+        Scenario: Sidebar for the Channel: KE-06-TC12
+            Given user has already created the channel "channel-test"
+             When user clicks on the Channel "channel-test" to open the sidebar
+             Then user will see the "Resources" tab
+              And user will see the "Details" tab
 
 
-        @regression @to-do
-        Scenario: Sidebar for the Channel: KE-06-TC13
-            Given user is having Channel on the Topology page
-             When user clicks on the Channel to open the sidebar
-             Then user will see the Resources tab
-              And user will see the Details tab
-
-
-        @regression @to-do
-        Scenario: Details tab for the Channel: KE-06-TC14
-            Given user is having Channel on the Topology page
-             When user clicks on the Channel to open the sidebar
-              And user opens Details tab
+        @regression
+        Scenario: Details tab for the Channel: KE-06-TC13
+            Given user has already created the channel "channel-test"
+             When user clicks on the Channel "channel-test" to open the sidebar
+              And user opens the "Details" tab
              Then user will see name of channel
               And user will see namespace of channel
               And user will see labels and annotations associated with channel
               And user will see the owner and channel created time
 
 
-        @regression @to-do
-        Scenario: Sidebar for the Channel subscribed to Knative Service: KE-06-TC15
-            Given user is having Channel subscribed to Knative Service on the Topology page
-             When user clicks on the Channel to open the sidebar
-             Then user will see the Resources tab
+        @regression
+        Scenario: Sidebar for the Channel subscribed to Knative Service: KE-06-TC14
+            Given user is having Channel subscribed to Knative Service "kn-service" on the Topology page
+             When user clicks on the Channel "channel-test" to open the sidebar
+             Then user opens the "Resources" tab
               And user will see the Subscribers
 
 
-        @regression @to-do
-        Scenario: Sidebar for the channel connected with eventsources and knative services: KE-06-TC16
+        @regression
+        Scenario: Sidebar for the channel connected with eventsources and knative services: KE-06-TC15
             Given user is having Channel subscribed to Knative Service and event source connected to it on the Topology page
-             When user clicks on the Channel to open the sidebar
-             Then user will see the Resources tab
+             When user clicks on the Channel "channel-test" to open the sidebar
+             Then user will see the "Resources" tab
               And user will see the Event Sources sinked to channel
               And user will see the Subscribers
+
+
+        @regression
+        Scenario: Delete Channel action on Channel: KE-06-TC16
+            Given user has already created the channel "channel-test"
+             When user right clicks on the channel "channel-test"
+              And user clicks on the "Delete Channel"
+              And user clicks on the Delete button on the modal
+             Then user will not see channel "channel-test"
+
