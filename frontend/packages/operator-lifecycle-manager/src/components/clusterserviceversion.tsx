@@ -15,7 +15,12 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
-import { WatchK8sResource, ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import {
+  WatchK8sResource,
+  ResourceStatus,
+  StatusIconAndText,
+  useAccessReviewAllowed,
+} from '@console/dynamic-plugin-sdk';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -54,10 +59,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import {
-  modelFor,
   referenceForModel,
   referenceFor,
-  groupVersionFor,
   k8sKill,
   k8sPatch,
   k8sGet,
@@ -877,20 +880,18 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
   const { initializationResource, csv } = props;
 
   const initializationResourceKind = initializationResource?.kind;
-  const { group: initializationResourceGroup } = groupVersionFor(
-    initializationResource?.apiVersion,
-  );
-  const model = modelFor(referenceFor(initializationResource));
+  const initializationResourceReference = referenceFor(initializationResource);
+  const [model] = useK8sModel(initializationResourceReference);
 
   // Check if the CR is already present - only watches for the model in namespace
   const [customResource, customResourceLoaded] = useK8sWatchResource<K8sResourceCommon[]>({
-    kind: referenceForModel(model),
+    kind: initializationResourceReference,
     namespaced: true,
     isList: true,
   });
 
-  const canCreateCustomResource = useAccessReview({
-    group: initializationResourceGroup,
+  const canCreateCustomResource = useAccessReviewAllowed({
+    group: model?.apiGroup,
     resource: model?.plural,
     namespace: model?.namespaced
       ? initializationResource?.metadata.namespace || csv.metadata.namespace
