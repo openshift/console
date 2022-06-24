@@ -57,11 +57,13 @@ const BaseLabelsModal = withHandlePromise((props) => {
       </ModalTitle>
       <ModalBody>
         <div className="form-group">
-          {messageKey
-            ? t(messageKey, messageVariables)
-            : t(
-                'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
-              )}
+          <p>
+            {messageKey
+              ? t(messageKey, messageVariables)
+              : t(
+                  'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
+                )}
+          </p>
         </div>
         <div className="form-group">
           <label htmlFor="tags-input" className="control-label">
