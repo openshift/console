@@ -39,6 +39,9 @@
 .modal-body-content {
   height: 100%;
   padding: 0 var(--pf-global--spacer--xl) var(--pf-global--spacer--xl);
+  p {
+    margin-bottom: var(--pf-c-content--MarginBottom);
+  }
 }
 
 .modal-content {
