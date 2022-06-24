@@ -6,10 +6,12 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { PipelineMetricsLevel } from '../const';
 import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
 import { useLatestPipelineRun } from '../hooks';
 import { GraphData } from './pipeline-metrics-utils';
 import PipelineMetricsEmptyState from './PipelineMetricsEmptyState';
+import PipelineMetricsQuickstart from './PipelineMetricsQuickstart';
 import PipelineMetricsRefreshDropdown from './PipelineMetricsRefreshDropdown';
 import PipelineMetricsTimeRangeDropdown from './PipelineMetricsTimeRangeDropdown';
 import PipelineRunCount from './PipelineRunCount';
@@ -23,13 +25,14 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
   const {
     metadata: { name, namespace },
   } = obj;
-  const { queryPrefix } = customData;
+  const { queryPrefix, metricsLevel, hasUpdatePermission } = customData;
   const { t } = useTranslation();
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
   const [interval, setInterval] = React.useState(parsePrometheusDuration('30s'));
   const [loadedGraphs, setLoadedGraphs] = React.useState([]);
   const [loaded, setLoaded] = React.useState(false);
+  const totalGraphs = metricsLevel === PipelineMetricsLevel.PIPELINE_TASK_LEVEL ? 2 : 4;
 
   const graphOnLoad = (graphData: GraphData) => {
     if (!loadedGraphs.find((g) => g.chartName === graphData.chartName) && graphData.hasData) {
@@ -37,18 +40,33 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
     }
   };
   React.useEffect(() => {
-    if (!loaded && loadedGraphs.length === 4) {
+    if (!loaded && loadedGraphs.length === totalGraphs) {
       setLoaded(true);
     }
-  }, [loaded, loadedGraphs]);
+  }, [loaded, loadedGraphs, totalGraphs]);
 
   if (!latestPipelineRun) {
     return <PipelineMetricsEmptyState />;
   }
 
   return (
-    <Stack hasGutter>
+    <Stack hasGutter key={metricsLevel}>
       <StackItem className="pipeline-metrics-dashboard__toolbar">
+        {hasUpdatePermission && metricsLevel === PipelineMetricsLevel.PIPELINE_TASK_LEVEL && (
+          <Grid
+            sm={1}
+            md={1}
+            lg={1}
+            xl={1}
+            xl2={2}
+            hasGutter
+            style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}
+          >
+            <GridItem xl2={12} xl={12} lg={12}>
+              <PipelineMetricsQuickstart />
+            </GridItem>
+          </Grid>
+        )}
         <Flex>
           <FlexItem>
             <PipelineMetricsTimeRangeDropdown timespan={timespan} setTimespan={setTimespan} />
@@ -83,6 +101,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
                   loaded={loaded}
                   onLoad={graphOnLoad}
                   queryPrefix={queryPrefix}
+                  metricsLevel={metricsLevel}
                 />
               </DashboardCardBody>
             </DashboardCard>
@@ -102,47 +121,56 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
                   loaded={loaded}
                   onLoad={graphOnLoad}
                   queryPrefix={queryPrefix}
+                  metricsLevel={metricsLevel}
                 />
               </DashboardCardBody>
             </DashboardCard>
           </GridItem>
 
-          <GridItem xl2={7} xl={12} lg={12} md={12} sm={12}>
-            <DashboardCard>
-              <DashboardCardHeader>
-                <DashboardCardTitle>
-                  {t('pipelines-plugin~PipelineRun Duration')}
-                </DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody>
-                <PipelineRunDurationGraph
-                  interval={interval}
-                  pipeline={obj}
-                  timespan={timespan}
-                  loaded={loaded}
-                  onLoad={graphOnLoad}
-                  queryPrefix={queryPrefix}
-                />
-              </DashboardCardBody>
-            </DashboardCard>
-          </GridItem>
-          <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
-            <DashboardCard>
-              <DashboardCardHeader>
-                <DashboardCardTitle>{t('pipelines-plugin~TaskRun Duration')}</DashboardCardTitle>
-              </DashboardCardHeader>
-              <DashboardCardBody>
-                <PipelineRunTaskRunGraph
-                  interval={interval}
-                  timespan={timespan}
-                  pipeline={obj}
-                  loaded={loaded}
-                  onLoad={graphOnLoad}
-                  queryPrefix={queryPrefix}
-                />
-              </DashboardCardBody>
-            </DashboardCard>
-          </GridItem>
+          {metricsLevel === PipelineMetricsLevel.PIPELINERUN_TASKRUN_LEVEL && (
+            <>
+              <GridItem xl2={7} xl={12} lg={12} md={12} sm={12}>
+                <DashboardCard>
+                  <DashboardCardHeader>
+                    <DashboardCardTitle>
+                      {t('pipelines-plugin~PipelineRun Duration')}
+                    </DashboardCardTitle>
+                  </DashboardCardHeader>
+                  <DashboardCardBody>
+                    <PipelineRunDurationGraph
+                      interval={interval}
+                      pipeline={obj}
+                      timespan={timespan}
+                      loaded={loaded}
+                      onLoad={graphOnLoad}
+                      queryPrefix={queryPrefix}
+                      metricsLevel={metricsLevel}
+                    />
+                  </DashboardCardBody>
+                </DashboardCard>
+              </GridItem>
+              <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
+                <DashboardCard>
+                  <DashboardCardHeader>
+                    <DashboardCardTitle>
+                      {t('pipelines-plugin~TaskRun Duration')}
+                    </DashboardCardTitle>
+                  </DashboardCardHeader>
+                  <DashboardCardBody>
+                    <PipelineRunTaskRunGraph
+                      interval={interval}
+                      timespan={timespan}
+                      pipeline={obj}
+                      loaded={loaded}
+                      onLoad={graphOnLoad}
+                      queryPrefix={queryPrefix}
+                      metricsLevel={metricsLevel}
+                    />
+                  </DashboardCardBody>
+                </DashboardCard>
+              </GridItem>
+            </>
+          )}
         </Grid>
       </StackItem>
     </Stack>

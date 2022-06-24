@@ -20,6 +20,7 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
   loaded = true,
   onLoad: onInitialLoad,
   queryPrefix,
+  metricsLevel,
 }) => {
   const {
     metadata: { name, namespace },
@@ -31,6 +32,7 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
     timespan,
     delay: interval,
     queryPrefix,
+    metricsLevel,
   });
   const pipelineRunDurationData = runData?.data?.result ?? [];
 

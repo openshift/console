@@ -15,6 +15,8 @@ const pipelineRunProps: React.ComponentProps<typeof PipelineRuns> = {
   customData: {
     templateNames: [],
     queryPrefix: '',
+    metricsLevel: '',
+    hasUpdatePermission: true,
   },
 };
 
