@@ -47,8 +47,13 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
   .useResolvedExtensions;
 
 /**
- * A component that creates a Navigation bar. It takes array of NavPage objects and renderes a NavBar.
- * Routing is handled as part of the component.
+ * A component that creates a Navigation bar for a page.
+ *
+ * - Routing is handled as part of the component.
+ * - `console.tab/horizontalNav` can be used to add additional content to any horizontal nav.
+ * @param {object} [resource] - The resource associated with this Navigation, an object of K8sResourceCommon type
+ * @param {NavPage[]} pages - An array of page objects
+ * @param {object} match - match object provided by React Router
  * @example
  * ```ts
  * const HomePage: React.FC = (props) => {
@@ -60,24 +65,73 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
  *     return <HorizontalNav match={props.match} pages={[page]} />
  * }
  * ```
- *
- * @param {object=} resource - The resource associated with this Navigation, an object of K8sResourceCommon type
- * @param {NavPage[]} pages - An array of page objects
- * @param {object} match - match object provided by React Router
  */
 export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/internal/components/utils/horizontal-nav')
   .HorizontalNavFacade;
+
+/**
+ * A component for making virtualized tables
+ * @param {D} data - data for table
+ * @param {boolean} loaded - flag indicating data is loaded
+ * @param {*} loadError - error object if issue loading data
+ * @param {TableColumn[]} columns - column setup
+ * @param {React.ComponentType} Row - row setup
+ * @param {D} unfilteredData - original data without filter
+ * @param {React.ComponentType} [NoDataEmptyMsg] - (optional) no data empty message component
+ * @param {React.ComponentType} [EmptyMsg] - (optional) empty message component
+ * @param {function} [scrollNode] - (optional) function to handle scroll
+ * @param {string} [label] - (optional) label for table
+ * @param {string} [ariaLabel] - (optional) aria label
+ * @param {TableGridBreakpoint} [gridBreakPoint] - sizing of how to break up grid for responsiveness
+ * @param {function} [onSelect] - (optional) function for handling select of table
+ * @param {R} [rowData] - (optional) data specific to row
+ * @example
+ * ```ts
+ * const MachineList: React.FC<MachineListProps> = (props) => {
+ *   return (
+ *     <VirtualizedTable<MachineKind>
+ *      {...props}
+ *      aria-label='Machines'
+ *      columns={getMachineColumns}
+ *      Row={getMachineTableRow}
+ *     />
+ *   );
+ * }
+ * ```
+ */  
 export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/components/factory/Table/VirtualizedTable')
   .default;
+
+/**
+ * Component for displaying table data within a table row
+ * @param {string} id - unique id for table
+ * @param {Set<string>} activeColumnIDs - active columns
+ * @param {string} [className] -  (optional) option class name for styling
+ * @example
+ * ```ts
+ * const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs }) => {
+ *   return (
+ *     <>
+ *       <TableData id={columns[0].id} activeColumnIDs={activeColumnIDs}>
+ *         <ResourceLink kind="Pod" name={obj.metadata.name} namespace={obj.metadata.namespace} />
+ *       </TableData>
+ *       <TableData id={columns[1].id} activeColumnIDs={activeColumnIDs}>
+ *         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+ *       </TableData>
+ *     </>
+ *   );
+ * };
+ * ```
+ */
 export const TableData: React.FC<TableDataProps> = require('@console/internal/components/factory/Table/VirtualizedTable')
   .TableData;
 
 /**
  * A hook that provides a list of user-selected active TableColumns.
  * @param options - Which are passed as a key-value map
- * @param options.columns - An array of all available TableColumns
- * @param options.showNamespaceOverride - (optional) If true, a namespace column will be included, regardless of column management selections
- * @param options.columnManagementID - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a 'group~verion~kind' string for a resource.
+ * @param {TableColumn<D>[]} options.columns - An array of all available TableColumns
+ * @param {boolean} [options.showNamespaceOverride] - (optional) If true, a namespace column will be included, regardless of column management selections
+ * @param {string} [options.columnManagementID] - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a 'group~verion~kind' string for a resource.
  * @returns A tuple containing the current user selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
  * @example
  * ```tsx
@@ -92,16 +146,144 @@ export const TableData: React.FC<TableDataProps> = require('@console/internal/co
  */
 export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')
   .useActiveColumns;
+
+/**
+ * Component for generating a page header 
+ * @param {string} title - heading title
+ * @param {ReactNode} [helpText] -  (optional) help section as react node
+ * @param {ReactNode} [badge] -  (optional) badge icon as react node
+ * @example
+ * ```ts
+ * const exampleList: React.FC = () => {
+ *   return (
+ *     <>
+ *       <ListPageHeader title="Example List Page"/>
+ *     </>
+ *   );
+ * };
+ * ```
+ */  
 export const ListPageHeader: React.FC<ListPageHeaderProps> = require('@console/internal/components/factory/ListPage/ListPageHeader')
   .default;
-export const ListPageCreate: React.FC<ListPageCreateProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
+
+/**
+ * Component for adding a create button for a specific resource kind that automatically generates a link to the create YAML for this resource
+ * @param {GroupVersionKind} groupVersionKind - the resource group/version/kind to represent
+ * @example
+ * ```ts
+ * const exampleList: React.FC<MyProps> = () => {
+ *   return (
+ *     <>
+ *       <ListPageHeader title="Example Pod List Page"/>
+ *         <ListPageCreate groupVersionKind="Pod">Create Pod</ListPageCreate>
+ *       </ListPageHeader>
+ *     </>
+ *   );
+ * };
+ * ```
+ */  
+ export const ListPageCreate: React.FC<ListPageCreateProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
   .default;
-export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
+
+ /**
+  * Component for creating a stylized link
+  * @param {string} to - string location where link should direct
+  * @param {object} [createAccessReview] -  (optional) object with namespace and kind used to determine access
+  * @param {ReactNode} [children] -  (optional) children for the component
+  * @example
+  * ```ts
+  * const exampleList: React.FC<MyProps> = () => {
+  *  return (
+  *   <>
+  *    <ListPageHeader title="Example Pod List Page"/>
+  *       <ListPageCreateLink to={'/link/to/my/page'}>Create Item</ListPageCreateLink>
+  *    </ListPageHeader>
+  *   </>
+  *  );
+  * };
+  * ```
+  */  
+ export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
   .ListPageCreateLink;
-export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
+
+/**
+ * Component for creating button 
+ * @param {object} [createAccessReview] - (optional) object with namespace and kind used to determine access
+ * @param {...object} [pfButtonProps] - (optional) Patternfly Button props
+ * @example
+ * ```ts
+ * const exampleList: React.FC<MyProps> = () => {
+ *   return (
+ *     <>
+ *       <ListPageHeader title="Example Pod List Page"/>
+ *         <ListPageCreateButton createAccessReview={access}>Create Pod</ListPageCreateButton>
+ *       </ListPageHeader>
+ *     </>
+ *   );
+ * };
+ * ```
+ */  
+ export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
   .ListPageCreateButton;
+
+/**
+ * Component for creating a dropdown wrapped with permissions check
+ * @param {object} items - key:ReactNode pairs of items to display in dropdown component
+ * @param {function} onClick - callback function for click on dropdown items
+ * @param {object} [createAccessReview] - (optional) object with namespace and kind used to determine access
+ * @param {ReactNode} [children] -  (optional) children for the dropdown toggle
+ * @example
+ * ```ts
+ * const exampleList: React.FC<MyProps> = () => {
+ *   const items = {
+ *     SAVE: 'Save',
+ *     DELETE: 'Delete',
+ *   }
+ *   return (
+ *     <>
+ *      <ListPageHeader title="Example Pod List Page"/>
+ *        <ListPageCreateDropdown createAccessReview={access} items={items}>Actions</ListPageCreateDropdown>
+ *      </ListPageHeader>
+ *     </>
+ *   );
+ * };
+ * ```
+ */  
 export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = require('@console/internal/components/factory/ListPage/ListPageCreate')
   .ListPageCreateDropdown;
+
+/**
+ * Component that generates filter for list page
+ * @param {D} data - An array of data points
+ * @param {boolean} loaded - indicates that data has loaded
+ * @param {function} onFilterChange - callback function for when filter is updated
+ * @param {RowFilter[]} [rowFilters] - (optional) An array of RowFilter elements that define the available filter options
+ * @param {string} [nameFilterPlaceholder] -  (optional) placeholder for name filter
+ * @param {string} [labelFilterPlaceholder] -  (optional) placeholder for label filter
+ * @param {boolean} [hideLabelFilter] -  (optional) only shows the name filter instead of both name and label filter
+ * @param {boolean} [hideNameLabelFilter] -  (optional) hides both name and label filter 
+ * @param {ColumnLayout} [columnLayout] -  (optional) column layout object
+ * @param {boolean} [hideColumnManagement] -  (optional) flag to hide the column management
+ * @example
+ * ```tsx
+ *   // See implementation for more details on RowFilter and FilterValue types
+ *   const [staticData, filteredData, onFilterChange] = useListPageFilter(
+ *     data,
+ *     rowFilters,
+ *     staticFilters,
+ *   );
+ *   // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
+ *   return (
+ *     <>
+ *       <ListPageHeader .../>
+ *       <ListPagBody>
+ *         <ListPageFilter data={staticData} onFilterChange={onFilterChange} />
+ *         <List data={filteredData} />
+ *       </ListPageBody>
+ *     </>
+ *   )
+ * ```
+ */
 export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/internal/components/factory/ListPage/ListPageFilter')
   .default;
 
@@ -187,22 +369,172 @@ export {
   getGroupVersionKindForModel,
 } from '../utils/k8s/k8s-ref';
 
+/**
+ * Component that shows the status in a popup window. Helpful component for building `console.dashboards/overview/health/resource` extensions
+ * @param {ReactNode} firstColumn - values for first column of popup 
+ * @param {ReactNode} [secondColumn] - (optional) values for second column of popup 
+ * @param {ReactNode} [children] -  (optional) children for the popup
+ * @example
+ * ```tsx
+ *   <StatusPopupSection
+ *     firstColumn={
+ *       <>
+ *         <span>{title}</span>
+ *         <span className="text-secondary">
+ *           My Example Item
+ *         </span>
+ *       </>
+ *     }
+ *     secondColumn='Status'
+ *   >
+ * ```
+ */
 export const StatusPopupSection: React.FC<StatusPopupSectionProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
   .StatusPopupSection;
+
+/**
+ * Status element used in status popup; used in `StatusPopupSection`
+ * @param {string} [value] - (optional) text value to display
+ * @param {string} [icon] - (optional) icon to display
+ * @param {React.ReactNode} children - child elements
+ * @example
+ * ```tsx
+ * <StatusPopupSection
+ *    firstColumn='Example'
+ *    secondColumn='Status'
+ * >
+ *    <StatusPopupItem icon={healthStateMapping[MCGMetrics.state]?.icon}>
+ *       Complete
+ *    </StatusPopupItem>
+ *    <StatusPopupItem icon={healthStateMapping[RGWMetrics.state]?.icon}>
+ *        Pending
+ *    </StatusPopupItem>
+ * </StatusPopupSection>
+ * ```
+ */  
 export const StatusPopupItem: React.FC<StatusPopupItemProps> = require('@console/shared/src/components/dashboard/status-card/StatusPopup')
   .default;
+
+/**
+ * Creates a wrapper component for a dashboard
+ * @param {string} [className] - (optional) style class for div
+ * @param {React.ReactNode} [children] - (optional) elements of the dashboard
+ * @example
+ * ```tsx
+ *     <Overview>
+ *       <OverviewGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+ *     </Overview>
+ *```
+ */
 export const Overview: React.FC<OverviewProps> = require('@console/shared/src/components/dashboard/Dashboard')
   .default;
-export const OverviewGrid: React.FC<OverviewGridProps> = require('@console/shared/src/components/dashboard/DashboardGrid')
+
+/**
+ * Creates a grid of card elements for a dashboard; used within `Overview`
+ * @param {OverviewGridCard[]} mainCards - cards for grid
+ * @param {OverviewGridCard[]} [leftCards] - (optional) cards for left side of grid
+ * @param {OverviewGridCard[]} [rightCards] - (optional) cards for right side of grid
+ * @example
+ * ```tsx
+ *     <Overview>
+ *       <OverviewGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+ *     </Overview>
+ *```
+ */
+ export const OverviewGrid: React.FC<OverviewGridProps> = require('@console/shared/src/components/dashboard/DashboardGrid')
   .default;
+
+/**
+ * Creates an inventory card item
+ * @param {React.ReactNode} children - elements to render inside the item
+ * @example
+ * ```tsx
+ *   return (
+ *     <InventoryItem>
+ *       <InventoryItemTitle>{title}</InventoryItemTitle>
+ *       <InventoryItemBody error={loadError}>
+ *         {loaded && <InventoryItemStatus count={workerNodes.length} icon={<MonitoringIcon />} />}
+ *       </InventoryItemBody>
+ *     </InventoryItem>
+ *   )
+ * ```
+ */
 export const InventoryItem: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .default;
+
+/**
+ * Creates a title for an inventory card item; used within `InventoryItem`
+ * @param {React.ReactNode} children - elements to render inside the title
+ * @example
+ *  ```tsx
+ *   return (
+ *     <InventoryItem>
+ *       <InventoryItemTitle>{title}</InventoryItemTitle>
+ *       <InventoryItemBody error={loadError}>
+ *         {loaded && <InventoryItemStatus count={workerNodes.length} icon={<MonitoringIcon />} />}
+ *       </InventoryItemBody>
+ *     </InventoryItem>
+ *   )
+ * ``` 
+ */
 export const InventoryItemTitle: React.FC<InventoryItemTitleProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemTitle;
+
+/**
+ * Creates the body of an inventory card; used within `InventoryCard` and can be used with `InventoryTitle`
+ * @param {React.ReactNode} children - elements to render inside the Inventory Card or title
+ * @param {*} error - elements of the div
+ * @example
+ *  ```tsx
+ *   return (
+ *     <InventoryItem>
+ *       <InventoryItemTitle>{title}</InventoryItemTitle>
+ *       <InventoryItemBody error={loadError}>
+ *         {loaded && <InventoryItemStatus count={workerNodes.length} icon={<MonitoringIcon />} />}
+ *       </InventoryItemBody>
+ *     </InventoryItem>
+ *   )
+ * ```
+ */
 export const InventoryItemBody: React.FC<InventoryItemBodyProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemBody;
+
+/**
+ * Creates a count and icon for an inventory card with optional link address; used within `InventoryItemBody`
+ * @param {number} count - count for display
+ * @param {React.ReactNode} icon - icon for display
+ * @param {string} [linkTo] - (optional) link address
+ * @example
+ *  ```tsx
+ *   return (
+ *     <InventoryItem>
+ *       <InventoryItemTitle>{title}</InventoryItemTitle>
+ *       <InventoryItemBody error={loadError}>
+ *         {loaded && <InventoryItemStatus count={workerNodes.length} icon={<MonitoringIcon />} />}
+ *       </InventoryItemBody>
+ *     </InventoryItem>
+ *   )
+ * ```
+ */
 export const InventoryItemStatus: React.FC<InventoryItemStatusProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemStatus;
+
+/**
+ * Creates a skeleton container for when an inventory card is loading; used with `InventoryItem` and related components
+ * @example
+ * ```tsx
+ * if (loadError) {
+ *    title = <Link to={workerNodesLink}>{t('Worker Nodes')}</Link>;
+ * } else if (!loaded) {
+ *   title = <><InventoryItemLoading /><Link to={workerNodesLink}>{t('Worker Nodes')}</Link></>;
+ * }
+ * return (
+ *   <InventoryItem>
+ *     <InventoryItemTitle>{title}</InventoryItemTitle>
+ *   </InventoryItem>
+ * )
+ * ```
+ */
 export const InventoryItemLoading: React.FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .InventoryItemLoading;
 
@@ -222,39 +554,36 @@ export { useFlag } from '../utils/flags';
  *   />
  * </React.Suspense>
  * ```
- * @param {ResourceYAMLEditorProps['initialResource']} initialResource - YAML/Object representing a resource to be shown by the editor.
- * This prop is used only during the inital render
+ * @param {ResourceYAMLEditorProps['initialResource']} initialResource - YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render
  * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor
- * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button.
- * Passing it will override the default update performed on the resource by the editor
+ * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button. Passing it will override the default update performed on the resource by the editor
  */
 export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
   .AsyncResourceYAMLEditor;
 
 /**
  * A component to show events related to a particular resource.
- *
  * @example
  * ```tsx
  * const [resource, loaded, loadError] = useK8sWatchResource(clusterResource);
  * return <ResourceEventStream resource={resource} />
  * ```
- * @param {ResourceEventStreamProps['resource']} - An object whose related events should be shown.
+ * @param {K8sResourceCommon} resource - An object whose related events should be shown.
  */
 export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('@console/internal/components/events')
   .WrappedResourceEventStream;
 
+
 /**
- * React hook to poll Prometheus for a single query.
- * @param options - Which is passed as a key-value map
- * @param options.query - Prometheus query string. If empty or undefined, polling is not started.
- * @param options.delay - polling delay interval (ms)
- * @param options.endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
- * @param options.endTime - for QUERY_RANGE enpoint, end of the query range
- * @param options.samples - for QUERY_RANGE enpoint
- * @param options.timespan - for QUERY_RANGE enpoint
- * @param options.namespace - a search param to append
- * @param options.timeout - a search param to append
+ * Sets up a poll to Prometheus for a single query.
+ * @param {PrometheusEndpoint} props.endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
+ * @param {string} [props.query] - (optional) Prometheus query string. If empty or undefined, polling is not started.
+ * @param {number} [props.delay] - (optional) polling delay interval (ms)
+ * @param {number} [props.endTime] - (optional) for QUERY_RANGE enpoint, end of the query range
+ * @param {number} [props.samples] - (optional) for QUERY_RANGE enpoint
+ * @param {number} [options.timespan] - (optional) for QUERY_RANGE enpoint
+ * @param {string} [options.namespace] - (optional) a search param to append
+ * @param {string} [options.timeout] - (optional) a search param to append
  * @returns A tuple containing the query response, a boolean flag indicating whether the response has completed, and any errors encountered during the request or post-processing of the request
  */
 export const usePrometheusPoll: UsePrometheusPoll = (options) => {
