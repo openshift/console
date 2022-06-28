@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { Text, Title, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
+import {
+  DOC_URL_PODDISRUPTIONBUDGET_POLICY,
+  ExternalLink,
+} from '@console/internal/components/utils';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 
 const AvailabilityRequirementPopover: React.FC = () => {
@@ -37,7 +40,8 @@ const AvailabilityRequirementPopover: React.FC = () => {
         </StackItem>
         <StackItem>
           <ExternalLink
-            href={`${openshiftHelpBase}rest_api/policy_apis/poddisruptionbudget-policy-v1.html#poddisruptionbudget-policy-v1`}
+            // no downstream URL
+            href={DOC_URL_PODDISRUPTIONBUDGET_POLICY}
             text={t('console-app~PodDisruptionBudget documentation')}
           />
         </StackItem>

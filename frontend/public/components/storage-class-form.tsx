@@ -17,6 +17,18 @@ import {
 import {
   AsyncComponent,
   ButtonBar,
+  DOC_URL_STORAGE_CLASSES_AWS_EBS,
+  DOC_URL_STORAGE_CLASSES_AZURE_DISK,
+  DOC_URL_STORAGE_CLASSES_AZURE_FILE,
+  DOC_URL_STORAGE_CLASSES_GCE,
+  DOC_URL_STORAGE_CLASSES_GLUSTERFS,
+  DOC_URL_STORAGE_CLASSES_LOCAL,
+  DOC_URL_STORAGE_CLASSES_OPENSTACK_CINDER,
+  DOC_URL_STORAGE_CLASSES_PORTWORX_VOLUME,
+  DOC_URL_STORAGE_CLASSES_QUOBYTE,
+  DOC_URL_STORAGE_CLASSES_SCALEIO,
+  DOC_URL_STORAGE_CLASSES_STORAGEOS,
+  DOC_URL_STORAGE_CLASSES_VSPHERE,
   Dropdown,
   ExternalLink,
   Firehose,
@@ -26,6 +38,7 @@ import {
   PageHeading,
   resourceObjPath,
 } from './utils';
+
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';
@@ -160,7 +173,7 @@ class StorageClassFormWithTranslation extends React.Component<
     local: {
       title: 'Local', // t('public~Local')
       provisioner: 'kubernetes.io/no-provisioner',
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#local',
+      documentationLink: DOC_URL_STORAGE_CLASSES_LOCAL,
       parameters: {},
       volumeBindingMode: 'WaitForFirstConsumer',
     },
@@ -168,7 +181,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'AWS Elastic Block Storage',
       provisioner: 'kubernetes.io/aws-ebs',
       allowVolumeExpansion: true,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#aws-ebs',
+      documentationLink: DOC_URL_STORAGE_CLASSES_AWS_EBS,
       parameters: {
         type: {
           name: 'Type', // t('public~Type')
@@ -206,7 +219,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'GCE PD',
       provisioner: 'kubernetes.io/gce-pd',
       allowVolumeExpansion: true,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#gce',
+      documentationLink: DOC_URL_STORAGE_CLASSES_GCE,
       parameters: {
         type: {
           name: 'Type', // t('public~Type')
@@ -251,7 +264,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'Glusterfs',
       provisioner: 'kubernetes.io/glusterfs',
       allowVolumeExpansion: true,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#glusterfs',
+      documentationLink: DOC_URL_STORAGE_CLASSES_GLUSTERFS,
       parameters: {
         resturl: {
           name: 'Gluster REST/Heketi URL', // t('public~Gluster REST/Heketi URL')
@@ -296,8 +309,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'OpenStack Cinder',
       provisioner: 'kubernetes.io/cinder',
       allowVolumeExpansion: true,
-      documentationLink:
-        'https://kubernetes.io/docs/concepts/storage/storage-classes/#openstack-cinder',
+      documentationLink: DOC_URL_STORAGE_CLASSES_OPENSTACK_CINDER,
       parameters: {
         type: {
           name: 'Volume type', // t('public~Volume type')
@@ -311,7 +323,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'Azure File',
       provisioner: 'kubernetes.io/azure-file',
       allowVolumeExpansion: true,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-file',
+      documentationLink: DOC_URL_STORAGE_CLASSES_AZURE_FILE,
       parameters: {
         skuName: {
           name: 'SKU name', // t('public~SKU name')
@@ -331,7 +343,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'Azure Disk',
       provisioner: 'kubernetes.io/azure-disk',
       allowVolumeExpansion: true,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-disk',
+      documentationLink: DOC_URL_STORAGE_CLASSES_AZURE_DISK,
       parameters: {
         storageaccounttype: {
           name: 'Storage account type', // t('public~Storage account type')
@@ -348,7 +360,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'Quobyte',
       provisioner: 'kubernetes.io/quobyte',
       allowVolumeExpansion: false,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#quobyte',
+      documentationLink: DOC_URL_STORAGE_CLASSES_QUOBYTE,
       parameters: {
         quobyteAPIServer: {
           name: 'Quobyte API server', // t('public~Quobyte API server')
@@ -388,7 +400,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'vSphere Volume',
       provisioner: 'kubernetes.io/vsphere-volume',
       allowVolumeExpansion: false,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#vsphere',
+      documentationLink: DOC_URL_STORAGE_CLASSES_VSPHERE,
       parameters: {
         diskformat: {
           name: 'Disk format', // t('public~Disk format')
@@ -410,8 +422,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'Portworx Volume',
       provisioner: 'kubernetes.io/portworx-volume',
       allowVolumeExpansion: true,
-      documentationLink:
-        'https://kubernetes.io/docs/concepts/storage/storage-classes/#portworx-volume',
+      documentationLink: DOC_URL_STORAGE_CLASSES_PORTWORX_VOLUME,
       parameters: {
         fs: {
           name: 'Filesystem', // t('public~Filesystem')
@@ -483,7 +494,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'ScaleIO',
       provisioner: 'kubernetes.io/scaleio',
       allowVolumeExpansion: false,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#scaleio',
+      documentationLink: DOC_URL_STORAGE_CLASSES_SCALEIO,
       parameters: {
         gateway: {
           name: 'API gateway', // t('public~API gateway')
@@ -529,7 +540,7 @@ class StorageClassFormWithTranslation extends React.Component<
       title: 'StorageOS',
       provisioner: 'kubernetes.io/storageos',
       allowVolumeExpansion: false,
-      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#storageos',
+      documentationLink: DOC_URL_STORAGE_CLASSES_STORAGEOS,
       parameters: {
         pool: {
           name: 'Pool', // t('public~Pool')
