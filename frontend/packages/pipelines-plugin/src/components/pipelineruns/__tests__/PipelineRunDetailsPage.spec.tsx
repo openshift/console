@@ -42,7 +42,7 @@ describe('PipelineRunDetailsPage:', () => {
 
   it('Should contain five tabs in the details page', () => {
     const { pages } = wrapper.props();
-    expect(pages).toHaveLength(5);
+    expect(pages).toHaveLength(6);
   });
 
   it('Should contain events page', () => {
@@ -58,5 +58,12 @@ describe('PipelineRunDetailsPage:', () => {
     const taskRunsPage = pages.find((page) => page.name === 'TaskRuns');
     expect(taskRunsPage).toBeDefined();
     expect(taskRunsPage.component).toBe(TaskRuns);
+  });
+
+  it('Should contain Parameters page', () => {
+    const { pages } = wrapper.props();
+
+    const parametersPage = pages.find((page) => page.name === 'Parameters');
+    expect(parametersPage).toBeDefined();
   });
 });
