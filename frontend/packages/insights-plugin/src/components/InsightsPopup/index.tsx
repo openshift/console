@@ -5,9 +5,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ErrorState } from '@console/internal/components/error';
 import {
+  documentationURLs,
   ExternalLink,
-  isUpstream,
-  openshiftHelpBase,
+  getDocumentationURL,
   Timestamp,
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -61,9 +61,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const error = isError(metrics) || metricsError || operatorStatusError;
   const disabled = !!conditions.Disabled;
 
-  const insightsLink = isUpstream()
-    ? `${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`
-    : `${openshiftHelpBase}html/support/remote-health-monitoring-with-connected-clusters#using-insights-to-identify-issues-with-your-cluster`;
+  const insightsURL = getDocumentationURL(documentationURLs.usingInsights);
 
   const riskKeys = {
     // t('insights-plugin~low')
@@ -166,7 +164,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         </StackItem>
       )}
       {(waiting || disabled || error) && (
-        <ExternalLink href={insightsLink} text={t('insights-plugin~More about Insights')} />
+        <ExternalLink href={insightsURL} text={t('insights-plugin~More about Insights')} />
       )}
     </Stack>
   );
