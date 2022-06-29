@@ -1,17 +1,14 @@
+import './_clone-vm-modal.scss';
+
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '../../../selectors';
-import {
-  getDataVolumeResources,
-  getDataVolumeStorageClassName,
-} from '../../../selectors/dv/selectors';
+import { getName } from '../../../selectors';
 import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
 import { getStorageSize } from '../../../selectors/selectors';
 import { getFlavorData } from '../../../selectors/vm/flavor-data';
 import {
   getCPU,
-  getDataVolumeTemplates,
   getDisks,
   getFlavor,
   getInterfaces,
@@ -20,42 +17,29 @@ import {
   getVolumes,
   getWorkloadProfile,
 } from '../../../selectors/vm/selectors';
-import { V1alpha1DataVolume } from '../../../types/api';
 import { VMKind } from '../../../types/vm';
 import { DASH } from '../../../utils';
-
-import './_clone-vm-modal.scss';
 
 const getNicsDescription = (vm: VMKind) =>
   getInterfaces(vm).map(({ name, model }) => (
     <div key={name}>{model ? `${name} - ${model}` : name}</div>
   ));
 
-const getDisksDescription = (
-  vm: VMKind,
-  pvcs: PersistentVolumeClaimKind[],
-  dataVolumes: V1alpha1DataVolume[],
-) => {
+const getDisksDescription = (vm: VMKind, pvcs: PersistentVolumeClaimKind[]) => {
   const disks = getDisks(vm);
   const volumes = getVolumes(vm);
-  const dataVolumeTemplates = getDataVolumeTemplates(vm);
+
   return disks.map((disk) => {
     const description = [disk.name];
 
     const volume = volumes.find((v) => v.name === disk.name);
     if (volume) {
-      if (volume.dataVolume) {
-        const dataVolume =
-          dataVolumeTemplates.find((dv) => getName(dv) === volume.dataVolume.name) ||
-          dataVolumes.find(
-            (dv) => getName(dv) === volume.dataVolume.name && getNamespace(dv) === getNamespace(vm),
-          );
-        description.push(
-          getStorageSize(getDataVolumeResources(dataVolume)),
-          getDataVolumeStorageClassName(dataVolume),
+      if (volume.dataVolume || volume.persistentVolumeClaim) {
+        const pvc = pvcs.find(
+          (p) =>
+            getName(p) === volume.persistentVolumeClaim?.claimName ||
+            getName(p) === volume.dataVolume?.name,
         );
-      } else if (volume.persistentVolumeClaim) {
-        const pvc = pvcs.find((p) => getName(p) === volume.persistentVolumeClaim.claimName);
         description.push(getStorageSize(getPvcResources(pvc)), getPvcStorageClassName(pvc));
       } else if (volume.containerDisk) {
         description.push('container disk');
@@ -71,10 +55,9 @@ export const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
   id,
   vm,
   persistentVolumeClaims,
-  dataVolumes,
 }) => {
   const { t } = useTranslation();
-  const disks = getDisksDescription(vm, persistentVolumeClaims, dataVolumes);
+  const disks = getDisksDescription(vm, persistentVolumeClaims);
   const nics = getNicsDescription(vm);
   return (
     <dl id={id} className="kubevirt-clone-vm-modal__configuration-summary">
@@ -105,5 +88,4 @@ type ConfigurationSummaryProps = {
   id: string;
   vm: VMKind;
   persistentVolumeClaims: PersistentVolumeClaimKind[];
-  dataVolumes: V1alpha1DataVolume[];
 };
