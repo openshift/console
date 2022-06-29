@@ -2,7 +2,14 @@ import * as _ from 'lodash';
 import * as semver from 'semver';
 import { subscribeToDynamicPlugins } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
+import { CustomError } from '../utils/error/custom-error';
 import { getPluginID } from './plugin-utils';
+
+class UnmetPluginDependenciesError extends CustomError {
+  constructor(message: string, unmetDependencies: string[]) {
+    super(`${message}:\n${unmetDependencies.join('\n')}`);
+  }
+}
 
 const unsubListenerMap = new Map<string, VoidFunction>();
 
@@ -16,10 +23,19 @@ const cleanupListener = (pluginID: string) => {
 const formatPluginNames = (values: string[]) =>
   values.sort((a, b) => a.localeCompare(b)).join(', ');
 
+const formatUnmetDependency = (depName: string, requiredRange: string, currentVersion: string) =>
+  `${depName}: required ${requiredRange}, current ${currentVersion}`;
+
+/**
+ * Resolve all dependencies within the given plugin manifest.
+ *
+ * `consolePluginAPIVersion` may be `null` which indicates that Console was not able to parse
+ * the semver version properly. In that case, the corresponding dependency check will be skipped.
+ */
 export const resolvePluginDependencies = (
   manifest: ConsolePluginManifestJSON,
-  allowedPluginNames: string[],
   consolePluginAPIVersion: string,
+  allowedPluginNames: string[],
 ) => {
   const { dependencies } = manifest;
   const pluginID = getPluginID(manifest);
@@ -28,13 +44,27 @@ export const resolvePluginDependencies = (
     throw new Error(`Dependency resolution for plugin ${pluginID} is already in progress`);
   }
 
+  // eslint-disable-next-line no-console
+  console.info(`Resolving dependencies for plugin ${pluginID}`);
+
+  // Include prerelease tag (if present) in the range check
+  // https://github.com/npm/node-semver#prerelease-tags
+  const semverOptions: semver.Options = { includePrerelease: true };
+
   // Ensure compatibility with current Console plugin API
   const pluginAPIDepName = '@console/pluginAPI';
 
-  if (!semver.satisfies(consolePluginAPIVersion, dependencies[pluginAPIDepName])) {
-    throw new Error(
-      `Unmet dependency ${pluginAPIDepName}: required ${dependencies[pluginAPIDepName]}, current ${consolePluginAPIVersion}`,
-    );
+  if (
+    consolePluginAPIVersion &&
+    !semver.satisfies(consolePluginAPIVersion, dependencies[pluginAPIDepName], semverOptions)
+  ) {
+    throw new UnmetPluginDependenciesError('Unmet dependency on Console plugin API', [
+      formatUnmetDependency(
+        pluginAPIDepName,
+        dependencies[pluginAPIDepName],
+        consolePluginAPIVersion,
+      ),
+    ]);
   }
 
   // Ensure compatibility with other dynamic plugins
@@ -87,19 +117,27 @@ export const resolvePluginDependencies = (
         rejectPromise(
           new Error(`Dependent plugins failed to load: ${formatPluginNames(failedPluginNames)}`),
         );
-      } else if (_.isEqual(requiredPluginNames, Object.keys(loadedPlugins))) {
-        const unmetDependencyErrors: string[] = [];
+      } else if (_.isEqual(_.sortBy(requiredPluginNames), _.sortBy(Object.keys(loadedPlugins)))) {
+        const unmetDependencies: string[] = [];
 
         requiredPluginNames.forEach((pluginName) => {
-          if (!semver.satisfies(loadedPlugins[pluginName], dependencies[pluginName])) {
-            unmetDependencyErrors.push(
-              `Unmet dependency ${pluginName}: required ${dependencies[pluginName]}, current ${loadedPlugins[pluginName]}`,
+          if (
+            !semver.satisfies(loadedPlugins[pluginName], dependencies[pluginName], semverOptions)
+          ) {
+            unmetDependencies.push(
+              formatUnmetDependency(
+                pluginName,
+                dependencies[pluginName],
+                loadedPlugins[pluginName],
+              ),
             );
           }
         });
 
-        if (unmetDependencyErrors.length > 0) {
-          rejectPromise(new Error(unmetDependencyErrors.join('\n')));
+        if (unmetDependencies.length > 0) {
+          rejectPromise(
+            new UnmetPluginDependenciesError('Unmet dependencies on plugins', unmetDependencies),
+          );
         } else {
           resolvePromise();
         }

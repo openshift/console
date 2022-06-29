@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import * as _ from 'lodash';
+import * as semver from 'semver';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
@@ -125,8 +126,8 @@ export const loadAndEnablePlugin = async (
 
     await resolvePluginDependencies(
       manifest,
+      semver.valid(window.SERVER_FLAGS.releaseVersion),
       pluginStore.getAllowedDynamicPluginNames(),
-      window.SERVER_FLAGS.releaseVersion,
     );
 
     const pluginID = await loadDynamicPlugin(url, manifest);

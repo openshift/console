@@ -28,6 +28,7 @@ const resolvePluginDependencies = jest.spyOn(pluginDependenciesModule, 'resolveP
 const loadDynamicPluginMock = jest.spyOn(pluginLoaderModule, 'loadDynamicPlugin');
 
 const originalConsole = { ...console };
+const originalServerFlags = window.SERVER_FLAGS;
 const consoleMock = jest.fn();
 
 beforeEach(() => {
@@ -317,25 +318,39 @@ describe('loadAndEnablePlugin', () => {
     setDynamicPluginEnabled.mockImplementation(() => {});
   });
 
-  it('loads the plugin from URL /api/plugins/{pluginName}/', async () => {
+  afterEach(() => {
+    window.SERVER_FLAGS = originalServerFlags;
+  });
+
+  it('loads the plugin from URL {basePath}api/plugins/{pluginName}/', async () => {
     fetchPluginManifest.mockImplementation(() => Promise.resolve(manifest));
     resolvePluginDependencies.mockImplementation(() => Promise.resolve());
     loadDynamicPluginMock.mockImplementation(() => Promise.resolve('Test@1.2.3'));
 
+    window.SERVER_FLAGS.basePath = '/test/';
+    window.SERVER_FLAGS.releaseVersion = '4.11.1-test.2';
+
     await loadAndEnablePlugin('Test', pluginStore);
 
-    expect(fetchPluginManifest).toHaveBeenCalledWith(
-      `${window.SERVER_FLAGS.basePath}api/plugins/Test/`,
-    );
-    expect(resolvePluginDependencies).toHaveBeenCalledWith(
-      manifest,
-      ['Test'],
-      window.SERVER_FLAGS.releaseVersion,
-    );
-    expect(loadDynamicPluginMock).toHaveBeenCalledWith(
-      `${window.SERVER_FLAGS.basePath}api/plugins/Test/`,
-      manifest,
-    );
+    expect(fetchPluginManifest).toHaveBeenLastCalledWith('/test/api/plugins/Test/');
+    expect(resolvePluginDependencies).toHaveBeenLastCalledWith(manifest, '4.11.1-test.2', ['Test']);
+    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith('/test/api/plugins/Test/', manifest);
+
+    [fetchPluginManifest, resolvePluginDependencies, loadDynamicPluginMock].forEach((mock) => {
+      expect(mock).toHaveBeenCalledTimes(1);
+    });
+
+    window.SERVER_FLAGS.releaseVersion = 'abc'; // not semver compliant
+
+    await loadAndEnablePlugin('Test', pluginStore);
+
+    expect(fetchPluginManifest).toHaveBeenLastCalledWith('/test/api/plugins/Test/');
+    expect(resolvePluginDependencies).toHaveBeenLastCalledWith(manifest, null, ['Test']);
+    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith('/test/api/plugins/Test/', manifest);
+
+    [fetchPluginManifest, resolvePluginDependencies, loadDynamicPluginMock].forEach((mock) => {
+      expect(mock).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('enables the plugin if it was loaded successfully', async () => {
@@ -356,11 +371,13 @@ describe('loadAndEnablePlugin', () => {
 
     fetchPluginManifest.mockImplementation(() => Promise.reject(new Error('boom1')));
 
+    window.SERVER_FLAGS.basePath = '/test/';
+
     await loadAndEnablePlugin('Test', pluginStore, onError);
 
     expect(onError).toHaveBeenCalledTimes(1);
     expect(consoleMock).toHaveBeenLastCalledWith(
-      'Error while loading plugin from /api/plugins/Test/',
+      `Error while loading plugin Test from /test/api/plugins/Test/`,
       new Error('boom1'),
     );
 
@@ -371,7 +388,7 @@ describe('loadAndEnablePlugin', () => {
 
     expect(onError).toHaveBeenCalledTimes(2);
     expect(consoleMock).toHaveBeenLastCalledWith(
-      'Error while loading plugin from /api/plugins/Test/',
+      `Error while loading plugin Test from /test/api/plugins/Test/`,
       new Error('boom2'),
     );
 
@@ -383,7 +400,7 @@ describe('loadAndEnablePlugin', () => {
 
     expect(onError).toHaveBeenCalledTimes(3);
     expect(consoleMock).toHaveBeenLastCalledWith(
-      'Error while loading plugin from /api/plugins/Test/',
+      `Error while loading plugin Test from /test/api/plugins/Test/`,
       new Error('boom3'),
     );
 
