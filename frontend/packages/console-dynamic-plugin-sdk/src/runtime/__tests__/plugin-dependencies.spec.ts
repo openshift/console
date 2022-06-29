@@ -53,10 +53,11 @@ describe('resolvePluginDependencies', () => {
     manifest.dependencies = { '@console/pluginAPI': '~4.12' };
 
     try {
-      await resolvePluginDependencies(manifest, ['Test', 'Foo', 'Bar'], '4.11.1');
+      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
     } catch (e) {
       expect(e.message).toEqual(
-        'Unmet dependency @console/pluginAPI: required ~4.12, current 4.11.1',
+        'Unmet dependency on Console plugin API:\n' +
+          '@console/pluginAPI: required ~4.12, current 4.11.1-test.2',
       );
       expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
       expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
@@ -65,11 +66,21 @@ describe('resolvePluginDependencies', () => {
     expect.assertions(3);
   });
 
+  it('skips Console plugin API dependency check if the actual version is null', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    manifest.dependencies = { '@console/pluginAPI': '~4.12' };
+
+    await resolvePluginDependencies(manifest, null, ['Test']);
+
+    expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
+    expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
+  });
+
   it('completes if there are no required plugins', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     manifest.dependencies = { '@console/pluginAPI': '*' };
 
-    await resolvePluginDependencies(manifest, ['Test', 'Foo', 'Bar'], '4.11.1');
+    await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar']);
 
     expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
     expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
@@ -80,7 +91,7 @@ describe('resolvePluginDependencies', () => {
     manifest.dependencies = { '@console/pluginAPI': '*', Foo: '*', Bar: '*' };
 
     try {
-      await resolvePluginDependencies(manifest, ['Test'], '4.11.1');
+      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
     } catch (e) {
       expect(e.message).toEqual('Dependent plugins are not available: Bar, Foo');
       expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
@@ -102,7 +113,7 @@ describe('resolvePluginDependencies', () => {
     });
 
     await Promise.race([
-      resolvePluginDependencies(manifest, ['Test', 'Foo', 'Bar'], '4.11.1'),
+      resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar']),
       Promise.resolve(), // avoid dependency resolution Promise timeout
     ]);
 
@@ -111,7 +122,7 @@ describe('resolvePluginDependencies', () => {
     expect(getStateForTestPurposes().unsubListenerMap.has('Test@1.2.3')).toBe(true);
 
     try {
-      await resolvePluginDependencies(manifest, ['Test', 'Foo', 'Bar'], '4.11.1');
+      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar']);
     } catch (e) {
       expect(e.message).toEqual(
         'Dependency resolution for plugin Test@1.2.3 is already in progress',
@@ -135,7 +146,7 @@ describe('resolvePluginDependencies', () => {
       ]);
     });
 
-    await resolvePluginDependencies(manifest, ['Test', 'Foo', 'Bar'], '4.11.1');
+    await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar']);
 
     expect(subscribeToDynamicPlugins).toHaveBeenCalledTimes(1);
     expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
@@ -154,7 +165,7 @@ describe('resolvePluginDependencies', () => {
     });
 
     try {
-      await resolvePluginDependencies(manifest, ['Test', 'Foo', 'Bar', 'Baz'], '4.11.1');
+      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar', 'Baz']);
     } catch (e) {
       expect(e.message).toEqual('Dependent plugins failed to load: Bar, Baz');
       expect(subscribeToDynamicPlugins).toHaveBeenCalledTimes(1);
@@ -182,11 +193,12 @@ describe('resolvePluginDependencies', () => {
     });
 
     try {
-      await resolvePluginDependencies(manifest, ['Test', 'Foo', 'Bar', 'Baz'], '4.11.1');
+      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar', 'Baz']);
     } catch (e) {
       expect(e.message).toEqual(
-        'Unmet dependency Bar: required ~1.1.1, current 1.1.0\n' +
-          'Unmet dependency Baz: required =1.1.1, current 1.1.2',
+        'Unmet dependencies on plugins:\n' +
+          'Bar: required ~1.1.1, current 1.1.0\n' +
+          'Baz: required =1.1.1, current 1.1.2',
       );
       expect(subscribeToDynamicPlugins).toHaveBeenCalledTimes(1);
       expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
