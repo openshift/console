@@ -12,7 +12,7 @@ const SysprepInfo: React.FC = () => {
           'kubevirt-plugin~Sysprep is an automation tool for Windows that automates Windows installation, setup, and custom software provisioning. An answer file is an XML-based file that contains setting definitions and values to use during Windows Setup',
         )}{' '}
         <ExternalLink
-          href="https://kubevirt.io/user-guide/virtual_machines/startup_scripts/#sysprep"
+          href="https://docs.openshift.com/container-platform/4.10/virt/virtual_machines/virt-automating-windows-sysprep.html"
           text={t('kubevirt-plugin~Learn more')}
         />
       </Text>
