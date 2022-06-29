@@ -1,3 +1,5 @@
+import './_clone-vm-modal.scss';
+
 import * as React from 'react';
 import {
   Checkbox,
@@ -29,13 +31,13 @@ import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/mo
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
-import { getName, getNamespace, ValidationErrorType, getDescription } from '../../../selectors';
+import { getDescription, getName, getNamespace, ValidationErrorType } from '../../../selectors';
 import { getVolumes, isVMExpectedRunning } from '../../../selectors/vm/selectors';
 import {
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
 } from '../../../selectors/vm/volume';
-import { VMKind, VMIKind } from '../../../types';
+import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
 import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
@@ -43,8 +45,6 @@ import { validateVmLikeEntityName } from '../../../utils/validations/vm';
 import { Errors } from '../../errors/errors';
 import { ModalFooter } from '../modal/modal-footer';
 import { ConfigurationSummary } from './configuration-summary';
-
-import './_clone-vm-modal.scss';
 
 export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
   const {
@@ -221,7 +221,6 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
               id={asId('configuration-summary')}
               vm={vm}
               persistentVolumeClaims={persistentVolumeClaimsData}
-              dataVolumes={dataVolumesData}
             />
           </FormGroup>
         </Form>
@@ -260,7 +259,9 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
   const [namespace, setNamespace] = React.useState(vmNamespace);
 
   const requestsDataVolumes = !!getVolumes(vm).find(getVolumeDataVolumeName);
-  const requestsPVCs = !!getVolumes(vm).find(getVolumePersistentVolumeClaimName);
+  const requestsPVCs =
+    !!getVolumes(vm).find(getVolumePersistentVolumeClaimName) ||
+    !!getVolumes(vm).find(getVolumeDataVolumeName);
 
   const resources: FirehoseResource[] = [
     {

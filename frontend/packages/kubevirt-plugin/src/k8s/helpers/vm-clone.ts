@@ -9,7 +9,6 @@ import { getName, getNamespace } from '../../selectors';
 import {
   getDataVolumeAccessModes,
   getDataVolumeStorageClassName,
-  getDataVolumeStorageSize,
   getDataVolumeVolumeMode,
 } from '../../selectors/dv/selectors';
 import {
@@ -194,7 +193,7 @@ export class VMClone {
                 volumeMode: getDataVolumeVolumeMode(dataVolume),
                 resources: {
                   requests: {
-                    storage: getDataVolumeStorageSize(dataVolume),
+                    storage: pvcSize,
                   },
                 },
                 storageClassName: getDataVolumeStorageClassName(dataVolume),
