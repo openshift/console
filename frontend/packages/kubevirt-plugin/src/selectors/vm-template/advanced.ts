@@ -126,6 +126,7 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
         baseImageName: getPVCName(template),
         baseImageNamespace: getPVCNamespace(template),
         baseImageRecomendedSize: dv && stringValueUnitSplit(getDataVolumeStorageSize(dv)),
+        isSourceRef: !!dv?.spec?.sourceRef,
       };
     }),
   );
