@@ -21,6 +21,7 @@ export type OperatingSystemRecord = {
   baseImageName?: string;
   baseImageNamespace?: string;
   baseImageRecomendedSize?: any;
+  isSourceRef?: boolean;
 };
 
 export type OperationSystemField = {

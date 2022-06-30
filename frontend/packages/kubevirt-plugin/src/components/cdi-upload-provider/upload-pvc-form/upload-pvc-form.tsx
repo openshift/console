@@ -126,7 +126,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const operatingSystems = getTemplateOperatingSystems(commonTemplates);
+  const operatingSystems = getTemplateOperatingSystems(commonTemplates).filter(
+    (o) => !o.isSourceRef,
+  );
   const operatingSystemHaveDV = operatingSystems.find(
     (os) => os?.baseImageName && os?.baseImageNamespace,
   );
