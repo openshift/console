@@ -1,8 +1,8 @@
 import { DataSourceKind } from '../../types';
 
 export enum SourceRefActionsNames {
-  updateValue = 'UPDATE_VALUES',
-  clearValues = 'CLEAR_VALUES',
+  updateValue = 'UPDATE_VALUES_SOURCEREF',
+  clearValues = 'CLEAR_VALUES_SOURCEREF',
 }
 
 type SourceRefActionsType = (
