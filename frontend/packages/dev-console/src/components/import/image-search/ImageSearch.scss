@@ -2,4 +2,7 @@
   &__advanced-options {
     padding-top: var(--pf-global--spacer--xs);
   }
+  &__helper-text-invalid {
+    color: var(--pf-c-form__helper-text--m-error--Color);
+  }
 }
