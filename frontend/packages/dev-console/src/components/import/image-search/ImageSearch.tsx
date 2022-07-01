@@ -144,7 +144,9 @@ const ImageSearch: React.FC = () => {
   };
 
   const helpTextInvalid = validated === ValidatedOptions.error && (
-    <span>{values.searchTerm === '' ? 'Required' : values.isi.status?.message}</span>
+    <span className="odc-image-search__helper-text-invalid">
+      {values.searchTerm === '' ? 'Required' : values.isi.status?.message}
+    </span>
   );
 
   React.useEffect(() => {
