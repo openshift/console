@@ -15,6 +15,12 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
 import { ResourceLink } from '../utils/resource-link';
+import {
+  NOOBAA_TYPE_MAP,
+  BC_PROVIDERS,
+  PROVIDERS_NOOBAA_MAP,
+} from '@console/ceph-storage-plugin/src/constants';
+import { SecretModel } from '../../models';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
@@ -22,6 +28,25 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
   const [owner, setOwner] = React.useState(null);
 
   const { t } = useTranslation();
+
+  const getType = (providerType: string) => {
+    switch (providerType) {
+      case NOOBAA_TYPE_MAP[BC_PROVIDERS.AWS]:
+        return PROVIDERS_NOOBAA_MAP[BC_PROVIDERS.AWS];
+      case NOOBAA_TYPE_MAP[BC_PROVIDERS.AZURE]:
+        return PROVIDERS_NOOBAA_MAP[BC_PROVIDERS.AZURE];
+      case NOOBAA_TYPE_MAP[BC_PROVIDERS.S3]:
+        return PROVIDERS_NOOBAA_MAP[BC_PROVIDERS.S3];
+      case NOOBAA_TYPE_MAP[BC_PROVIDERS.IBM]:
+        return PROVIDERS_NOOBAA_MAP[BC_PROVIDERS.IBM];
+      case NOOBAA_TYPE_MAP[BC_PROVIDERS.PVC]:
+        return PROVIDERS_NOOBAA_MAP[BC_PROVIDERS.PVC];
+      case NOOBAA_TYPE_MAP[BC_PROVIDERS.GCP]:
+        return PROVIDERS_NOOBAA_MAP[BC_PROVIDERS.GCP];
+      default:
+        return '';
+    }
+  };
 
   const submit = (event) => {
     event.preventDefault();
@@ -35,6 +60,20 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromisePr
 
     props.handlePromise(k8sKill(kind, resource, {}, {}, json), () => {
       props.close();
+
+      if (resource.kind === 'NamespaceStore') {
+        const type = getType(resource.spec.type);
+        const secName = type ? resource.spec[type].secret.name : '';
+        // Auto created secret will end with '-secret'
+        if (secName === resource.metadata.name.concat('-secret')) {
+          k8sKill(SecretModel, {
+            metadata: {
+              namespace: resource.metadata.namespace,
+              name: secName,
+            },
+          });
+        }
+      }
 
       // If we are currently on the deleted resource's page, redirect to the resource list page
       const re = new RegExp(`/${resource.metadata.name}(/|$)`);
