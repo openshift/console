@@ -1,15 +1,14 @@
-import { APIError } from '@console/shared';
 import {
-  Silence,
-  PrometheusAlert,
   Alert,
-  PrometheusRule,
+  AlertSeverity,
+  AlertStates,
+  PrometheusAlert,
   PrometheusLabels,
+  PrometheusRule,
   PrometheusValue,
   Rule,
   RuleStates,
-  AlertStates,
-  AlertSeverity,
+  Silence,
   SilenceStates,
 } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
@@ -72,13 +71,14 @@ type Group = {
 };
 
 export type PrometheusAPIError = {
-  response?: {
-    status: number;
-  };
-  json?: {
+  json: {
     error?: string;
   };
-} & APIError;
+  message?: string;
+  response: {
+    status: number;
+  };
+};
 
 export type PrometheusRulesResponse = {
   data: {

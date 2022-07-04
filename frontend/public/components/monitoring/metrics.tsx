@@ -67,7 +67,7 @@ import {
 } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
 import IntervalDropdown from './poll-interval-dropdown';
-import { colors, Error as QueryBrowserError, QueryBrowser } from './query-browser';
+import { colors, Error, QueryBrowser } from './query-browser';
 import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
 
@@ -395,7 +395,7 @@ export const QueryTable: React.FC<QueryTableProps> = ({ index, namespace }) => {
   if (error) {
     return (
       <div className="query-browser__table-message">
-        <QueryBrowserError error={error} title={t('public~Error loading values')} />
+        <Error error={error} title={t('public~Error loading values')} />
       </div>
     );
   }
