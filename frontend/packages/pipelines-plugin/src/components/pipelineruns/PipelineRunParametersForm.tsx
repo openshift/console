@@ -4,11 +4,11 @@ import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import PipelineRunParameters from './PipelineRunParameters';
 
-export interface PipelineRunFormProps {
+export interface PipelineRunParametersFormProps {
   obj: K8sResourceKind;
 }
 
-const PipelineRunForm: React.FC<PipelineRunFormProps> = ({ obj }) => {
+const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({ obj }) => {
   const initialValues = {
     parameters: _.get(obj.spec, 'params', []),
   };
@@ -20,4 +20,4 @@ const PipelineRunForm: React.FC<PipelineRunFormProps> = ({ obj }) => {
   );
 };
 
-export default PipelineRunForm;
+export default PipelineRunParametersForm;

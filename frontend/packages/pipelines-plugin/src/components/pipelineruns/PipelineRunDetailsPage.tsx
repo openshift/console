@@ -10,7 +10,7 @@ import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
 import TaskRuns from './detail-page-tabs/TaskRuns';
 import PipelineRunEvents from './events/PipelineRunEvents';
-import PipelineRunForm from './PipelineRunParametersForm';
+import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
@@ -40,7 +40,9 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         {
           href: 'parameters',
           name: t('pipelines-plugin~Parameters'),
-          component: (pageProps) => <PipelineRunForm obj={pageProps.obj} {...pageProps} />,
+          component: (pageProps) => (
+            <PipelineRunParametersForm obj={pageProps.obj} {...pageProps} />
+          ),
         },
         {
           href: 'logs',

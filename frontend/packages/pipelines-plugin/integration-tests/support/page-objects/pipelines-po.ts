@@ -186,6 +186,7 @@ export const pipelineRunDetailsPO = {
   yamlTab: '[data-test-id$="YAML"]',
   detailsTab: '[data-test-id$="Details"]',
   taskRunsTab: '[data-test-id="horizontal-link-TaskRuns"]',
+  parametersTab: '[data-test-id="horizontal-link-Parameters"]',
   pipelineRunsResults: '[data-test-section-heading="PipelineRun results"]',
   eventsTab: '[data-test-id$="Events"]',
   pipelineRunStatus: '[data-test="resource-status"]',
@@ -230,6 +231,9 @@ export const pipelineRunDetailsPO = {
       events: '[data-test-id="horizontal-link-public~Events"]',
     },
     status: '.odc-taskrun-details__status',
+  },
+  parameters: {
+    form: '[data-test="pipelineRun-parameters"]',
   },
 };
 
