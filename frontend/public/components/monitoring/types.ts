@@ -2,15 +2,13 @@ import {
   Alert,
   AlertSeverity,
   AlertStates,
-  PrometheusAlert,
   PrometheusLabels,
   PrometheusRule,
-  PrometheusValue,
   Rule,
   RuleStates,
   Silence,
   SilenceStates,
-} from '@console/dynamic-plugin-sdk/src/api/common-types';
+} from '@console/dynamic-plugin-sdk';
 
 import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';
@@ -25,11 +23,7 @@ export {
 // prettier 1.x doesn't support TS 3.8 syntax
 // eslint-disable-next-line prettier/prettier
 export type {
-  PrometheusAlert,
   Alert,
-  PrometheusRule,
-  PrometheusLabels,
-  PrometheusValue,
   Rule,
   Silence,
 }

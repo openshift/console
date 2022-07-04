@@ -2,6 +2,13 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import {
+  PrometheusEndpoint,
+  PrometheusLabels,
+  PrometheusResponse,
+  PrometheusResult,
+  PrometheusValue,
+} from '@console/dynamic-plugin-sdk';
+import {
   Chart,
   ChartArea,
   ChartAxis,
@@ -32,7 +39,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 
 import {
@@ -41,7 +47,6 @@ import {
   queryBrowserSetTimespan,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
-import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL } from '../graphs/helpers';
 import { queryBrowserTheme } from '../graphs/themes';

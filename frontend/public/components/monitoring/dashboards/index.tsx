@@ -1,4 +1,6 @@
+import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { PrometheusEndpoint, RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   Button,
   Label,
@@ -20,10 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { RedExclamationCircleIcon } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';

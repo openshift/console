@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { PrometheusEndpoint, PrometheusResponse } from '@console/dynamic-plugin-sdk';
 import { PerPageOptions } from '@patternfly/react-core';
 import {
   ISortBy,
@@ -11,12 +12,10 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
 import { formatNumber } from '../format';
 import { ColumnStyle, Panel } from './types';
-import { PrometheusResponse } from '../../graphs';
 import { getPrometheusURL } from '../../graphs/helpers';
 import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
 import TablePagination from '../table-pagination';

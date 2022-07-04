@@ -1,6 +1,13 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
+  PrometheusData,
+  PrometheusEndpoint,
+  PrometheusLabels,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
+import {
   ActionGroup,
   Button,
   EmptyState,
@@ -33,9 +40,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { withFallback } from '@console/shared/src/components/error';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
 import {
   queryBrowserAddQuery,
@@ -53,7 +58,7 @@ import {
   toggleGraphs,
 } from '../../actions/observe';
 import { RootState } from '../../redux';
-import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
+import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL } from '../graphs/helpers';
 import {
   ActionsMenu,
