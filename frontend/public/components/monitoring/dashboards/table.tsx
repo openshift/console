@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { PerPageOptions } from '@patternfly/react-core';
 import {
   ISortBy,
   sortable,
@@ -54,7 +55,7 @@ const getColumns = (styles: ColumnStyle[]): AugmentedColumnStyle[] => {
   return [...labelColumns, ...valueColumns];
 };
 
-const paginationOptions = [5, 10, 20, 50, 100].map((n) => ({
+const perPageOptions: PerPageOptions[] = [5, 10, 20, 50, 100].map((n) => ({
   title: n.toString(),
   value: n,
 }));
@@ -184,9 +185,9 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries, namespace }) => 
       </div>
       <TablePagination
         itemCount={sortedData.length}
-        paginationOptions={paginationOptions}
         page={page}
         perPage={perPage}
+        perPageOptions={perPageOptions}
         setPage={setPage}
         setPerPage={setPerPage}
       />
