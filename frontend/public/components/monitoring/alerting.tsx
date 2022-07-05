@@ -7,6 +7,10 @@ import {
   CodeBlock,
   CodeBlockCode,
   Popover,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
@@ -24,8 +28,10 @@ import {
   OutlinedBellIcon,
 } from '@patternfly/react-icons';
 
-import { useActivePerspective, ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective, ResourceStatus, Action } from '@console/dynamic-plugin-sdk';
 import {
+  ActionContext,
+  ActionServiceProvider,
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
@@ -435,6 +441,10 @@ const SourceHelp: React.FC<{}> = React.memo(() => {
   );
 });
 
+type ActionWithHref = Omit<Action, 'cta'> & { cta: { href: string; external?: boolean } };
+
+const isActionWithHref = (action: Action): action is ActionWithHref => 'href' in action.cta;
+
 const queryBrowserURL = (query: string, namespace: string) =>
   namespace
     ? `/dev-monitoring/ns/${namespace}/metrics?query0=${encodeURIComponent(query)}`
@@ -678,6 +688,8 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
 
+  const actionsContext: ActionContext = { 'alert-detail-toolbar-actions': { alert } };
+
   return (
     <>
       <Helmet>
@@ -716,8 +728,30 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
           <HeaderAlertMessage alert={alert} rule={rule} />
         </div>
         <div className="co-m-pane__body">
-          <ToggleGraph />
-          <SectionHeading text={t('public~Alert details')} />
+          <Toolbar className="monitoring-alert-detail-toolbar">
+            <ToolbarContent>
+              <ToolbarItem variant="label">
+                <h2>{t('public~Alert details')}</h2>
+              </ToolbarItem>
+              <ToolbarGroup alignment={{ default: 'alignRight' }}>
+                <ActionServiceProvider context={actionsContext}>
+                  {({ actions, loaded }) =>
+                    loaded
+                      ? actions.filter(isActionWithHref).map((action) => (
+                          <ToolbarItem key={action.id}>
+                            <Link to={action.cta.href}>{action.label}</Link>
+                          </ToolbarItem>
+                        ))
+                      : null
+                  }
+                </ActionServiceProvider>
+                <ToolbarItem>
+                  <ToggleGraph />
+                </ToolbarItem>
+              </ToolbarGroup>
+            </ToolbarContent>
+          </Toolbar>
+
           <div className="co-m-pane__body-group">
             <div className="row">
               <div className="col-sm-12">
@@ -1038,8 +1072,18 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
         </div>
         <div className="co-m-pane__body">
           <div className="co-m-pane__body-group">
-            <ToggleGraph />
-            <SectionHeading text={t('public~Active alerts')} />
+            <Toolbar className="monitoring-alert-detail-toolbar">
+              <ToolbarContent>
+                <ToolbarItem variant="label">
+                  <h2>{t('public~Active alerts')}</h2>
+                </ToolbarItem>
+                <ToolbarGroup alignment={{ default: 'alignRight' }}>
+                  <ToolbarItem>
+                    <ToggleGraph />
+                  </ToolbarItem>
+                </ToolbarGroup>
+              </ToolbarContent>
+            </Toolbar>
             <div className="row">
               <div className="col-sm-12">
                 <Graph
