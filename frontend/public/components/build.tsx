@@ -422,7 +422,7 @@ const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => 
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Status status={obj.status.phase} />
+        <Status status={obj.status?.phase} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
