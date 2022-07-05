@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import i18next from 'i18next';
 import * as _ from 'lodash-es';
 import {

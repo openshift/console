@@ -1,6 +1,6 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
+import * as React from 'react';
 import {
   PrometheusEndpoint,
   PrometheusLabels,

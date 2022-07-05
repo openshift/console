@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { PrometheusEndpoint, RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
