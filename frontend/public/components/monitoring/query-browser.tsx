@@ -529,7 +529,8 @@ const maxStacks = 50;
 // so don't update unless the number of samples would change by at least this proportion
 const samplesLeeway = 0.2;
 
-// Minimum step (milliseconds between data samples) because tiny steps reduce performance for almost no benefit
+// Minimum step (milliseconds between data samples) because tiny steps reduce performance for almost
+// no benefit
 const minStep = 5 * 1000;
 
 // Don't allow zooming to less than this number of milliseconds

@@ -727,7 +727,8 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         const allVariables = getAllVariables(boards, newBoard, namespace);
         dispatch(dashboardsPatchAllVariables(allVariables, activePerspective));
 
-        // Set time range and poll interval options to their defaults or from the query params if available
+        // Set time range and poll interval options to their defaults or from the query params if
+        // available
         if (refreshInterval) {
           dispatch(dashboardsSetPollInterval(_.toNumber(refreshInterval), activePerspective));
         }

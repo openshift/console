@@ -168,7 +168,8 @@ const MetricsDropdown: React.FC<{}> = () => {
     if (target) {
       target.focus();
 
-      // Restore cursor position / currently selected text (use _.defer() to delay until after the input value is set)
+      // Restore cursor position / currently selected text (use _.defer() to delay until after the
+      // input value is set)
       _.defer(() => target.setSelectionRange(selection.start, selection.start + metric.length));
     }
   };
@@ -643,8 +644,8 @@ const QueryBrowserWrapper: React.FC<{}> = () => {
   }, [dispatch]);
 
   /* eslint-disable react-hooks/exhaustive-deps */
-  // Use React.useMemo() to prevent these two arrays being recreated on every render, which would trigger unnecessary
-  // re-renders of QueryBrowser, which can be quite slow
+  // Use React.useMemo() to prevent these two arrays being recreated on every render, which would
+  // trigger unnecessary re-renders of QueryBrowser, which can be quite slow
   const queriesMemoKey = JSON.stringify(_.map(queries, 'query'));
   const queryStrings = React.useMemo(() => _.map(queries, 'query'), [queriesMemoKey]);
   const disabledSeriesMemoKey = JSON.stringify(
