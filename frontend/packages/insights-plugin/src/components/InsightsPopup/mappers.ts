@@ -40,7 +40,7 @@ type Metrics = {
 
 export const mapMetrics = (response: PrometheusResponse): Metrics => {
   const values: Metrics = {};
-  for (let i = 0; i < response.data.result.length; i++) {
+  for (let i = 0; i < response?.data.result.length; i++) {
     const value = response.data?.result?.[i]?.value?.[1];
     if (_.isNil(value)) {
       return null;
