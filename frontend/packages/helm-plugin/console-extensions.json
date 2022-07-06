@@ -26,6 +26,34 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "HelmChartRepository"
+      },
+      "provider": { "$codeRef": "helmActions.useHelmChartRepositoryActions" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "ProjectHelmChartRepository"
+      },
+      "provider": { "$codeRef": "helmActions.useHelmChartRepositoryActions" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "helmProviders.useDetectHelmChartRepositories" }
@@ -101,7 +129,11 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/ns/:ns/helmchartrepositories/~new"],
+      "path": [
+        "/ns/:ns/helmchartrepositories/~new",
+        "/ns/:ns/helmchartrepositories/:name/edit",
+        "/k8s/cluster/helmchartrepositories/:name/edit"
+      ],
       "component": { "$codeRef": "helmComponents.HelmChartRepositoryForm" }
     }
   },
@@ -132,7 +164,7 @@
     "properties": {
       "id": "project-helm-chart-repositories",
       "groupId": "helm-chart-repositories",
-      "href": "/ns/:namespace/helmchartrepositories/~new",
+      "href": "/ns/:namespace/helmchartrepositories/~new?actionOrigin=addPage",
       "label": "%helm-plugin~Helm Chart repositories%",
       "description": "%helm-plugin~Add a Helm Chart Repository to extend the Developer Catalog%",
       "icon": { "$codeRef": "helmUtils.helmChartRepositoriesIconElement" },
@@ -342,7 +374,7 @@
     "type": "dev-console.detailsPage/breadcrumbs",
     "properties": {
       "getModels": { "$codeRef": "helmProviders.getHelmChartRepositoriesModel" },
-      "breadcrumbsProvider": { "$codeRef":"helmProviders.useHelmChartRepositoriesBreadcrumbs" }
+      "breadcrumbsProvider": { "$codeRef": "helmProviders.useHelmChartRepositoriesBreadcrumbs" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]

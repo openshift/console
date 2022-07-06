@@ -1,7 +1,9 @@
 import { TFunction } from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import { Action, K8sKind } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
+import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { deleteResourceModal } from '@console/shared';
+import { ProjectHelmChartRepositoryModel } from '../models';
 import { HelmActionsScope } from './types';
 
 export const getHelmDeleteAction = (
@@ -48,5 +50,29 @@ export const getHelmRollbackAction = (
   label: t('helm-plugin~Rollback'),
   cta: {
     href: `/helm-releases/ns/${namespace}/${releaseName}/rollback?actionOrigin=${actionOrigin}`,
+  },
+});
+
+export const editChartRepository = (
+  model: K8sKind,
+  hcr: K8sResourceKind,
+  t: TFunction,
+): Action => ({
+  id: 'edit-chartrepository',
+  label: t('helm-plugin~Edit {{label}}', { label: model.kind }),
+  cta: {
+    href:
+      hcr.kind === ProjectHelmChartRepositoryModel.kind
+        ? `/ns/${hcr.metadata.namespace}/helmchartrepositories/${
+            hcr.metadata.name
+          }/edit?kind=${referenceFor(hcr)}`
+        : `/k8s/cluster/helmchartrepositories/${hcr.metadata.name}/edit?kind=${referenceFor(hcr)}`,
+  },
+  accessReview: {
+    group: model.apiGroup,
+    resource: model.plural,
+    name: hcr.metadata.name,
+    namespace: hcr.metadata.namespace,
+    verb: 'update',
   },
 });

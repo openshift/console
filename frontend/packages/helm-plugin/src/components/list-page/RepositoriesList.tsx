@@ -10,7 +10,7 @@ const RepositoriesList: React.FC<TableProps> = (props) => {
 
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>
-      <Title headingLevel="h4" size="lg">
+      <Title headingLevel="h4" size="lg" data-test="no-repositories-found">
         {t('helm-plugin~No repositories found')}
       </Title>
     </EmptyState>

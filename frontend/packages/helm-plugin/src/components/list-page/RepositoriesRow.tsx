@@ -1,14 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import {
-  ResourceKebab,
-  ResourceLink,
-  Timestamp,
-  Kebab,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { ResourceLink, Timestamp, Kebab, ExternalLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 
@@ -28,10 +23,7 @@ const tableColumnClasses = [
 const RepositoriesRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   const objReference = referenceFor(obj);
-  const menuActions = [
-    ...Kebab.getExtensionsActionsForKind(HelmChartRepositoryModel),
-    ...Kebab.factory.common,
-  ];
+  const context = { [objReference]: obj };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -72,8 +64,8 @@ const RepositoriesRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       <TableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
+      <TableData className={Kebab.columnClass}>
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
