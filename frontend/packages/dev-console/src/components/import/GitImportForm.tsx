@@ -10,7 +10,7 @@ import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
-import { GitImportFormProps } from './import-types';
+import { GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
 import ResourceSection from './section/ResourceSection';
 
@@ -34,7 +34,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
     git: { validated, gitType },
   } = values;
   const showFullForm =
-    importType === 'devfile' ||
+    importType === ImportTypes.devfile ||
     (validated !== ValidatedOptions.default && gitType !== GitProvider.INVALID);
 
   return (
@@ -52,7 +52,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
         />
         {showFullForm && (
           <>
-            {importType === 'devfile' ? (
+            {importType === ImportTypes.devfile ? (
               <DevfileStrategySection />
             ) : (
               <ImportStrategySection builderImages={builderImages} />
@@ -61,13 +61,14 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
               project={values.project}
               noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
             />
-            {values.import.selectedStrategy.type !== ImportStrategy.DEVFILE && (
-              <>
-                <ResourceSection />
-                <PipelineSection builderImages={builderImages} />
-                <AdvancedSection values={values} />
-              </>
-            )}
+            {importType !== ImportTypes.devfile &&
+              values.import.selectedStrategy.type !== ImportStrategy.DEVFILE && (
+                <>
+                  <ResourceSection />
+                  <PipelineSection builderImages={builderImages} />
+                  <AdvancedSection values={values} />
+                </>
+              )}
           </>
         )}
       </FormBody>
