@@ -1,28 +1,30 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavExpandable, NavGroup } from '@patternfly/react-core';
-import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { useNavExtensionsForSection } from './useNavExtensionsForSection';
-import { isNavExtensionActive, stripNS } from './utils';
-import { PluginNavItems } from './PluginNavItems';
+import { isNavExtensionActive } from './utils';
+import { PluginNavItem } from './PluginNavItem';
 
 export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [activeNamespace] = useActiveNamespace();
   const { t } = useTranslation();
   const location = useLocation();
   const navExtensions = useNavExtensionsForSection(id);
-  const isActive = React.useMemo(() => {
-    const path = stripNS(location);
-    return navExtensions.some((e) => isNavExtensionActive(e, path, activeNamespace));
-  }, [navExtensions, location, activeNamespace]);
+  const isActive = React.useMemo(
+    () => navExtensions.some((e) => isNavExtensionActive(e, location)),
+    [navExtensions, location],
+  );
   const hasChildren = navExtensions?.length > 0;
 
   // Section is empty
   if (!hasChildren) {
     return null;
   }
+
+  const children = navExtensions.map((extension) => (
+    <PluginNavItem key={extension.uid} extension={extension} />
+  ));
 
   if (!name) {
     return (
@@ -32,7 +34,7 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
         aria-label={t('public~Navigation')}
         {...dataAttributes}
       >
-        <PluginNavItems items={navExtensions} />
+        {children}
       </NavGroup>
     );
   }
@@ -46,7 +48,7 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
       data-test="nav"
       buttonProps={dataAttributes}
     >
-      <PluginNavItems items={navExtensions} />
+      {children}
     </NavExpandable>
   );
 };

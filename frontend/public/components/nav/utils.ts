@@ -10,9 +10,6 @@ import {
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { referenceForModel, referenceForExtensionModel } from '@console/internal/module/k8s';
 import { stripBasePath } from '../utils';
-import { NavLinkHref } from './NavLinkHref';
-import { NavLinkResourceNS } from './NavLinkResourceNS';
-import { NavLinkResourceCluster } from './NavLinkResourceCluster';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
 
@@ -82,7 +79,7 @@ const insertPositionedItems = (
   insertPositionedItems(positionedItems, currentItems);
 };
 
-export const getSortedNavItems = (
+export const getSortedNavExtensions = (
   navItems: LoadedExtension<NavExtension>[],
 ): LoadedExtension<NavExtension>[] => {
   const sortedItems = navItems.filter((item) => !isPositioned(item, navItems));
@@ -157,34 +154,66 @@ export const sortExtensionItems = <E extends NavExtension>(
   return sortedItems;
 };
 
-export const isTopLevelNavItem = (e: LoadedExtension<NavExtension>) =>
-  isNavSection(e) || !e.properties.section;
+// Returns true if path equals or starts with at least one provided prefix
+export const somePrefixMatchesPath = (path: string, ...prefixes: string[]): boolean =>
+  prefixes?.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 
-export const isNavExtensionActive = (
-  e: LoadedExtension<NavExtension>,
+// Returns true if path equals or starts with group~version~kind for the given k8s model
+export const modelMatchesPath = (path: string, model: K8sModel) =>
+  model && somePrefixMatchesPath(path, referenceForModel(model));
+
+// Returns true if path equals or starts with group~version~kind for the provided extension model
+export const extensionModelMatchesPath = (path: string, model: ExtensionK8sModel) =>
+  model && somePrefixMatchesPath(path, referenceForExtensionModel(model));
+
+// Strips '/<basePath>/k8s/cluster/', '/<basePath>/k8s/ns/<namespace>/', and
+// '/<basePath>/k8s/all-namespaces/' from the beginning a given path
+export const stripScopeFromPath = (path: string) => {
+  return stripBasePath(path)
+    ?.replace(/^\/?k8s\//, '')
+    ?.replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '')
+    ?.replace(/^\//, '');
+};
+
+const namespacedPathPattern = new RegExp(/.*\/k8s\/(all-namespaces|ns)\/.*/);
+const clusterPathPattern = new RegExp(/.*\/k8s\/cluster\/.*/);
+
+export const navLinkHrefIsActive = (
   location: string,
-  namespace: string,
+  href: string,
+  startsWith?: string[],
+): boolean =>
+  somePrefixMatchesPath(
+    stripScopeFromPath(location),
+    stripScopeFromPath(href),
+    ...(startsWith ?? []),
+  );
+
+export const navLinkResourceIsActive = (
+  location: string,
+  namespaced: boolean,
+  model: ExtensionK8sModel,
+  startsWith: string[],
 ) => {
+  const resourceReference = referenceForExtensionModel(model);
+  const strippedLocation = stripScopeFromPath(location);
+  const pathPattern = namespaced ? namespacedPathPattern : clusterPathPattern;
   return (
-    (isHrefNavItem(e) && NavLinkHref.isActive(e.properties, location)) ||
-    (isResourceNSNavItem(e) && NavLinkResourceNS.isActive(e.properties, location, namespace)) ||
-    (isResourceClusterNavItem(e) && NavLinkResourceCluster.isActive(e.properties, location))
+    pathPattern.test(location) &&
+    somePrefixMatchesPath(strippedLocation, resourceReference, ...(startsWith ?? []))
   );
 };
 
-export const matchesPath = (path: string, prefix: string): boolean =>
-  path === prefix || path.startsWith(`${prefix}/`);
+export const isTopLevelNavItem = (e: LoadedExtension<NavExtension>) =>
+  isNavSection(e) || !e.properties.section;
 
-export const matchesModel = (path: string, model: K8sModel): boolean =>
-  model && matchesPath(path, referenceForModel(model));
-
-export const matchesExtensionModel = (path: string, model: ExtensionK8sModel): boolean =>
-  model && matchesPath(path, referenceForExtensionModel(model));
-
-export const stripNS = (path: string): string => {
-  path = stripBasePath(path);
-  return path
-    .replace(/^\/?k8s\//, '')
-    .replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '')
-    .replace(/^\//, '');
+export const isNavExtensionActive = (e: LoadedExtension<NavExtension>, location: string) => {
+  return (
+    (isHrefNavItem(e) &&
+      navLinkHrefIsActive(location, e.properties.href, e.properties.startsWith)) ||
+    (isResourceNSNavItem(e) &&
+      navLinkResourceIsActive(location, true, e.properties.model, e.properties.startsWith)) ||
+    (isResourceClusterNavItem(e) &&
+      navLinkResourceIsActive(location, false, e.properties.model, e.properties.startsWith))
+  );
 };

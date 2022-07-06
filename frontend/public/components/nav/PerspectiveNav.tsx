@@ -11,15 +11,15 @@ import {
   isNavItem,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { usePinnedResources } from '@console/shared';
-import { PluginNavItems } from './PluginNavItems';
+import { PluginNavItem } from './PluginNavItem';
 import { useNavExtensionsForPerspective } from './useNavExtensionForPerspective';
-import { getSortedNavItems, isTopLevelNavItem } from './utils';
+import { getSortedNavExtensions, isTopLevelNavItem } from './utils';
 
 import './PerspectiveNav.scss';
 
 const PerspectiveNav: React.FC<{}> = () => {
   const [activePerspective] = useActivePerspective();
-  const allItems = useNavExtensionsForPerspective(activePerspective);
+  const allNavExtensions = useNavExtensionsForPerspective(activePerspective);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const [validPinnedResources, setValidPinnedResources] = React.useState<string[]>([]);
   const [isDragged, setIsDragged] = React.useState(false);
@@ -30,10 +30,10 @@ const PerspectiveNav: React.FC<{}> = () => {
     setValidPinnedResources(validResources);
   }, [setValidPinnedResources, pinnedResources]);
 
-  const orderedNavItems = React.useMemo(() => {
-    const topLevelItems = allItems.filter(isTopLevelNavItem);
-    return getSortedNavItems(topLevelItems);
-  }, [allItems]);
+  const orderedNavExtensions = React.useMemo(() => {
+    const topLevelNavExtensions = allNavExtensions.filter(isTopLevelNavItem);
+    return getSortedNavExtensions(topLevelNavExtensions);
+  }, [allNavExtensions]);
 
   const getPinnedItems = (): React.ReactElement[] =>
     validPinnedResources.map((resource, idx) => (
@@ -61,13 +61,15 @@ const PerspectiveNav: React.FC<{}> = () => {
 
   // We have to use NavList if there is at least one extension that will render an <li>, but we
   // can't use NavList if there are no extensions that render an <li>
-  const hasListItem = orderedNavItems.some(
+  const hasListItem = orderedNavExtensions.some(
     (item) => (isNavSection(item) && item.properties.name) || isNavItem(item),
   );
 
   const content = (
     <>
-      <PluginNavItems items={orderedNavItems} />
+      {orderedNavExtensions.map((extension) => (
+        <PluginNavItem key={extension.uid} extension={extension} />
+      ))}
       {pinnedResourcesLoaded && validPinnedResources?.length > 0 ? <NavGroupWithDnd /> : null}
     </>
   );
