@@ -2,27 +2,25 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel } from '../../models';
 import ProjectHelmChartRepositoryList from './ProjectHelmChartRepositoryList';
 
-const ProjectHelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof ListPage>> = (
-  props,
-) => {
+const HelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
   const createProps = {
     to: `/ns/${props.namespace || 'default'}/helmchartrepositories/~new?kind=${referenceForModel(
-      ProjectHelmChartRepositoryModel,
+      HelmChartRepositoryModel,
     )}&actionOrigin=search`,
   };
   return (
     <ListPage
       {...props}
+      aria-label={t('helm-plugin~Helm Chart Repositories')}
       canCreate
       createProps={createProps}
-      aria-label={t('helm-plugin~Project Helm Chart Repositories')}
-      kind={referenceForModel(ProjectHelmChartRepositoryModel)}
+      kind={referenceForModel(HelmChartRepositoryModel)}
       ListComponent={ProjectHelmChartRepositoryList}
     />
   );
 };
-export default ProjectHelmChartRepositoryListPage;
+export default HelmChartRepositoryListPage;

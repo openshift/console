@@ -9,6 +9,7 @@ const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
   label,
   value,
   onChange,
+  isChecked,
   ...props
 }) => {
   const [field, { touched, error }] = useField(name);
@@ -22,7 +23,7 @@ const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
       id={fieldId}
       value={value}
       label={label}
-      isChecked={field.value === value}
+      isChecked={isChecked || field.value === value}
       isValid={isValid}
       isDisabled={props.isDisabled}
       aria-label={`${fieldId}-${label}`}

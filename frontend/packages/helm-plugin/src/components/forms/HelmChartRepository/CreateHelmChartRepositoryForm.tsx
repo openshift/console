@@ -13,19 +13,19 @@ import {
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { ProjectHelmChartRepositoryModel } from '../../../models';
-import { ProjectHelmChartRepositoryType } from '../../../types/helm-types';
-import CreateProjectHelmChartRepositoryFormEditor from './CreateProjectHelmChartRepositoryFormEditor';
-import {
-  convertToForm,
-  convertToProjectHelmChartRepository,
-} from './projecthelmchartrepository-create-utils';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models';
+import { HelmChartRepositoryType } from '../../../types/helm-types';
+import CreateHelmChartRepositoryFormEditor from './CreateHelmChartRepositoryFormEditor';
+import { convertToForm, convertToHelmChartRepository } from './helmchartrepository-create-utils';
 
-const CreateProjectHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
-  resource: ProjectHelmChartRepositoryType;
+const CreateHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> & {
+  resource: HelmChartRepositoryType;
+  namespace: string;
   handleCancel: () => void;
+  showScopeType: boolean;
 }> = ({
   resource,
+  namespace,
   errors,
   handleSubmit,
   setFieldTouched,
@@ -33,25 +33,30 @@ const CreateProjectHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> &
   status,
   isSubmitting,
   dirty,
+  showScopeType,
   values: { editorType, formData, yamlData },
 }) => {
   const { t } = useTranslation();
 
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY =
-    'helm-plugin.createProjectHelmChartRepository.editor.lastView';
+    'helm-plugin.createHelmChartRepository.editor.lastView';
 
-  const formEditor = <CreateProjectHelmChartRepositoryFormEditor />;
+  const formEditor = <CreateHelmChartRepositoryFormEditor showScopeType={showScopeType} />;
 
   const yamlEditor = (
     <YAMLEditorField
       name="yamlData"
-      model={ProjectHelmChartRepositoryModel}
+      model={
+        formData.scope === ProjectHelmChartRepositoryModel.kind
+          ? ProjectHelmChartRepositoryModel
+          : HelmChartRepositoryModel
+      }
       showSamples={!resource}
       onSave={handleSubmit}
     />
   );
 
-  const sanitizeToForm = (yamlDeployment: ProjectHelmChartRepositoryType) => {
+  const sanitizeToForm = (yamlDeployment: HelmChartRepositoryType) => {
     const formDetails = convertToForm(yamlDeployment);
     if (formDetails.repoName || formDetails.repoUrl) {
       setFieldTouched('formData.repoName', true);
@@ -61,21 +66,24 @@ const CreateProjectHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> &
   };
 
   const sanitizeToYaml = () =>
-    safeJSToYAML(
-      convertToProjectHelmChartRepository(formData, resource.metadata.namespace),
-      'yamlData',
-      {
-        skipInvalid: true,
-      },
-    );
+    safeJSToYAML(convertToHelmChartRepository(formData, namespace), 'yamlData', {
+      skipInvalid: true,
+    });
+
+  const formTitle =
+    !showScopeType && formData.scope === ProjectHelmChartRepositoryModel.kind
+      ? t('helm-plugin~Create ProjectHelmChartRepository')
+      : t('helm-plugin~Create Helm Chart Repository');
+
+  const formDescription =
+    !showScopeType && formData.scope === ProjectHelmChartRepositoryModel.kind
+      ? t('helm-plugin~Add helm chart repository in the namespace.')
+      : t('helm-plugin~Add helm chart repository');
 
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormBody flexLayout>
-        <FormHeader
-          title={t('helm-plugin~Create ProjectHelmChartRepository')}
-          helpText={t('helm-plugin~Add helm chart repository in the namespace')}
-        />
+        <FormHeader title={formTitle} helpText={formDescription} />
         <SyncedEditorField
           name="editorType"
           formContext={{
@@ -108,4 +116,4 @@ const CreateProjectHelmChartRepositoryForm: React.FC<FormikProps<FormikValues> &
   );
 };
 
-export default CreateProjectHelmChartRepositoryForm;
+export default CreateHelmChartRepositoryForm;

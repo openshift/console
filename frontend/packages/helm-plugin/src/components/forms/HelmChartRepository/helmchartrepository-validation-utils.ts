@@ -2,11 +2,11 @@ import { TFunction } from 'i18next';
 import * as yup from 'yup';
 import { nameRegex } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { ProjectHelmChartRepositoryData } from '../../../types/helm-types';
+import { HelmChartRepositoryData } from '../../../types/helm-types';
 
 const urlRegex = /^https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/;
 
-export const createProjectHelmChartRepositoryValidationSchema = (t: TFunction) =>
+export const createHelmChartRepositoryValidationSchema = (t: TFunction) =>
   yup.object().shape({
     repoName: yup
       .string()
@@ -32,13 +32,13 @@ export const createProjectHelmChartRepositoryValidationSchema = (t: TFunction) =
 
 export const validationSchema = (t: TFunction) =>
   yup.mixed().test({
-    test(formValues: ProjectHelmChartRepositoryData) {
+    test(formValues: HelmChartRepositoryData) {
       const formYamlDefinition = yup.object({
         editorType: yup.string().oneOf(Object.values(EditorType)),
         yamlData: yup.string(),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: createProjectHelmChartRepositoryValidationSchema(t),
+          then: createHelmChartRepositoryValidationSchema(t),
         }),
       });
 

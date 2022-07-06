@@ -101,8 +101,8 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/ns/:ns/projecthelmchartrepositories/~new"],
-      "component": { "$codeRef": "helmComponents.ProjectHelmChartRepositoryForm" }
+      "path": ["/ns/:ns/helmchartrepositories/~new"],
+      "component": { "$codeRef": "helmComponents.HelmChartRepositoryForm" }
     }
   },
   {
@@ -132,7 +132,7 @@
     "properties": {
       "id": "project-helm-chart-repositories",
       "groupId": "helm-chart-repositories",
-      "href": "/ns/:namespace/projecthelmchartrepositories/~new",
+      "href": "/ns/:namespace/helmchartrepositories/~new",
       "label": "%helm-plugin~Helm Chart repositories%",
       "description": "%helm-plugin~Add a Helm Chart Repository to extend the Developer Catalog%",
       "icon": { "$codeRef": "helmUtils.helmChartRepositoriesIconElement" },
@@ -325,6 +325,17 @@
         "kind": "ProjectHelmChartRepository"
       },
       "component": { "$codeRef": "helmComponents.ProjectHelmChartRepositoryListPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "helm.openshift.io",
+        "version": "v1beta1",
+        "kind": "HelmChartRepository"
+      },
+      "component": { "$codeRef": "helmComponents.HelmChartRepositoryListPage" }
     }
   }
 ]

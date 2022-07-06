@@ -33,7 +33,7 @@ export const pageTitle = {
   BuilderImages: 'Builder Images',
   HelmCharts: 'Helm Charts',
   InstallHelmCharts: 'Install Helm Chart',
-  CreateProjectHelmChartRepository: 'Create ProjectHelmChartRepository',
+  CreateHelmChartRepository: 'Create Helm Chart Repository',
   OperatorBacked: 'Operator Backed',
   HelmReleaseDetails: 'Helm Release details',
   UpgradeHelmRelease: 'Upgrade Helm Release',
