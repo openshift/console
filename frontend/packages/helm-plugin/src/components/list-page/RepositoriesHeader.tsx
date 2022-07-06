@@ -2,7 +2,7 @@ import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { Kebab } from '@console/internal/components/utils';
 
-const ProjectHelmChartRepositoryHeader = (t: TFunction) => () => {
+const RepositoriesHeader = (t: TFunction) => () => {
   return [
     {
       title: t('helm-plugin~Name'),
@@ -10,8 +10,23 @@ const ProjectHelmChartRepositoryHeader = (t: TFunction) => () => {
       transforms: [sortable],
     },
     {
+      title: t('helm-plugin~Display Name'),
+      sortField: 'spec.name',
+      transforms: [sortable],
+    },
+    {
       title: t('helm-plugin~Namespace'),
       sortField: 'metadata.namespace',
+      transforms: [sortable],
+    },
+    {
+      title: t('helm-plugin~Disabled'),
+      sortField: 'spec.disabled',
+      transforms: [sortable],
+    },
+    {
+      title: t('helm-plugin~Repo URL'),
+      sortField: 'spec.connectionConfig.url',
       transforms: [sortable],
     },
     {
@@ -26,4 +41,4 @@ const ProjectHelmChartRepositoryHeader = (t: TFunction) => () => {
   ];
 };
 
-export default ProjectHelmChartRepositoryHeader;
+export default RepositoriesHeader;

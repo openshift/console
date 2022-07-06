@@ -23,7 +23,7 @@ const PageContents: React.FC<HelmReleaseListPageProps> = (props) => {
   return namespace ? (
     <div>
       <PageHeading title={t('helm-plugin~Helm Releases')} />
-      <HelmReleaseList namespace={namespace} />
+      <HelmReleaseList match={props.match} />
     </div>
   ) : (
     <CreateProjectListPage title={t('helm-plugin~Helm Releases')}>

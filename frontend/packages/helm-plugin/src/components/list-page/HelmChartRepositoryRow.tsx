@@ -2,36 +2,29 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Timestamp, Kebab } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { HelmChartRepositoryModel } from '../../models';
 
-const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
+const revisionReference = referenceForModel(HelmChartRepositoryModel);
+
+const HelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   const objReference = referenceFor(obj);
   const menuActions = [
-    ...Kebab.getExtensionsActionsForKind(
-      obj.metadata?.namespace ? ProjectHelmChartRepositoryModel : HelmChartRepositoryModel,
-    ),
+    ...Kebab.getExtensionsActionsForKind(HelmChartRepositoryModel),
     ...Kebab.factory.common,
   ];
-
   return (
     <>
       <TableData>
         <ResourceLink
-          kind={objReference}
+          kind={revisionReference}
           name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          namespace={obj.metadata?.namespace}
         />
       </TableData>
       <TableData>{obj.spec?.name ? obj.spec.name : '-'}</TableData>
-      <TableData>
-        {obj.kind === ProjectHelmChartRepositoryModel.kind ? (
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-        ) : (
-          t('helm-plugin~All Namespaces')
-        )}
-      </TableData>
+      <TableData>{t('helm-plugin~All Namespaces')}</TableData>
       <TableData>{obj.spec?.disabled ? t('helm-plugin~True') : t('helm-plugin~False')}</TableData>
       <TableData>
         {obj.spec?.connectionConfig?.url ? (
@@ -52,4 +45,4 @@ const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   );
 };
 
-export default ProjectHelmChartRepositoryRow;
+export default HelmChartRepositoryRow;

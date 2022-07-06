@@ -132,7 +132,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Helm: {
       cy.get(devNavigationMenuPO.helm).click();
-      detailsPage.titleShouldContain(pageTitle.HelmReleases);
+      detailsPage.titleShouldContain(pageTitle.Helm);
       cy.testA11y('Helm Releases Page in dev perspective');
       break;
     }

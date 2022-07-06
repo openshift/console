@@ -56,4 +56,5 @@ export const pageTitle = {
   CreateRepository: 'Create Repository',
   CustomResourceDefinitions: 'CustomResourceDefinitions',
   ShipwrightBuild: 'ShipwrightBuild',
+  Helm: 'Helm',
 };

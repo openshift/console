@@ -2,31 +2,35 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Timestamp, Kebab } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
+import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 
-const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
+const helmChartRepositoryReference = referenceForModel(HelmChartRepositoryModel);
+const projectHelmChartRepositoryReference = referenceForModel(ProjectHelmChartRepositoryModel);
+
+const RepositoriesRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   const objReference = referenceFor(obj);
   const menuActions = [
-    ...Kebab.getExtensionsActionsForKind(
-      obj.metadata?.namespace ? ProjectHelmChartRepositoryModel : HelmChartRepositoryModel,
-    ),
+    ...Kebab.getExtensionsActionsForKind(HelmChartRepositoryModel),
     ...Kebab.factory.common,
   ];
-
   return (
     <>
       <TableData>
         <ResourceLink
-          kind={objReference}
+          kind={
+            obj.kind === HelmChartRepositoryModel.kind
+              ? helmChartRepositoryReference
+              : projectHelmChartRepositoryReference
+          }
           name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          namespace={obj.metadata?.namespace}
         />
       </TableData>
       <TableData>{obj.spec?.name ? obj.spec.name : '-'}</TableData>
       <TableData>
-        {obj.kind === ProjectHelmChartRepositoryModel.kind ? (
+        {obj.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         ) : (
           t('helm-plugin~All Namespaces')
@@ -52,4 +56,4 @@ const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   );
 };
 
-export default ProjectHelmChartRepositoryRow;
+export default RepositoriesRow;

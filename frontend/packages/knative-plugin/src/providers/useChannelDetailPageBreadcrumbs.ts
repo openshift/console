@@ -14,5 +14,6 @@ export const useChannelDetailPageBreadcrumbs = (kindObj: K8sKind, urlMatch: matc
     'eventing',
     serverlessTab('Channel'),
     isAdminPerspective ? t('knative-plugin~Channels') : undefined,
+    isAdminPerspective,
   );
 };

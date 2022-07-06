@@ -11,7 +11,7 @@ Feature: Navigations on Helm Chart
         Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-05-TC01
              When user clicks on the Helm tab
              Then user will be redirected to Helm releases page
-              And user is able to see the message as no helm charts present
+              And user is able to see the message "No Helm Releases found"
               And user will get the link to install helm charts from developer catalog
 
 
