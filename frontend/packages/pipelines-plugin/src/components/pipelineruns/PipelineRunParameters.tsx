@@ -36,7 +36,7 @@ const PipelineRunParameters: React.FC<FormikProps<FormikValues>> = () => {
             type={TextInputTypes.text}
             placeholder={nameLabel}
             aria-label={nameLabel}
-            isReadOnly
+            isDisabled
           />
           <InputField
             data-test="description"
@@ -44,7 +44,7 @@ const PipelineRunParameters: React.FC<FormikProps<FormikValues>> = () => {
             type={TextInputTypes.text}
             placeholder={descriptionLabel}
             aria-label={descriptionLabel}
-            isReadOnly
+            isDisabled
           />
           <InputField
             data-test="value"
@@ -52,7 +52,7 @@ const PipelineRunParameters: React.FC<FormikProps<FormikValues>> = () => {
             type={TextInputTypes.text}
             placeholder={defaultValueLabel}
             aria-label={defaultValueLabel}
-            isReadOnly
+            isDisabled
           />
         </MultiColumnField>
       </div>
