@@ -9,7 +9,7 @@ export interface MultiColumnFieldHeaderProps {
 
 const MultiColumnFieldHeader: React.FC<MultiColumnFieldHeaderProps> = ({ headers, spans }) => (
   <div className="odc-multi-column-field__header">
-    <Grid className="odc-multi-column-field__header">
+    <Grid>
       {headers.map((header, i) => (
         <GridItem span={spans[i]} key={typeof header === 'string' ? header : header.name}>
           <div className="odc-multi-column-field__col">
@@ -32,7 +32,6 @@ const MultiColumnFieldHeader: React.FC<MultiColumnFieldHeaderProps> = ({ headers
         </GridItem>
       ))}
     </Grid>
-    <div className="odc-multi-column-field__col--button" />
   </div>
 );
 
