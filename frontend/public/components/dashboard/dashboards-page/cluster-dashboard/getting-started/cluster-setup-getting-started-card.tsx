@@ -27,8 +27,8 @@ export const ClusterSetupGettingStartedCard: React.FC = () => {
   }
 
   const moreLinkURL = window.SERVER_FLAGS.documentationBaseURL
-    ? `${window.SERVER_FLAGS.documentationBaseURL}html/post-installation_configuration/post-install-machine-configuration-tasks`
-    : 'https://docs.okd.io/latest/post_installation_configuration/machine-configuration-tasks.html';
+    ? `${window.SERVER_FLAGS.documentationBaseURL}html/post-installation_configuration/index`
+    : 'https://docs.okd.io/latest/post_installation_configuration/configuring-private-cluster.html';
 
   const moreLink: GettingStartedLink = {
     id: 'machine-configuration',
