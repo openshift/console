@@ -43,7 +43,10 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const currentPath = currentSelection
     ? currentSelection.path
     : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
-  const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath);
+  const currentDefinition: SwaggerDefinition = _.get(
+    allDefinitions,
+    getRef(_.get(allDefinitions, currentPath)) || currentPath,
+  );
   const currentProperties =
     _.get(currentDefinition, 'properties') || _.get(currentDefinition, 'items.properties');
 
