@@ -174,24 +174,24 @@ const MetricsDropdown: React.FC<{}> = () => {
     }
   };
 
-  let title: React.ReactNode = t('public~Insert metric at cursor');
+  let title: React.ReactElement = <>{t('public~Insert metric at cursor')}</>;
   if (error !== undefined) {
     const message =
       error?.response?.status === 403
         ? t('public~Access restricted.')
         : t('public~Failed to load metrics list.');
     title = (
-      <span>
+      <>
         <RedExclamationCircleIcon /> {message}
-      </span>
+      </>
     );
   } else if (items === undefined) {
     title = <LoadingInline />;
   } else if (_.isEmpty(items)) {
     title = (
-      <span>
+      <>
         <YellowExclamationTriangleIcon /> {t('public~No metrics found.')}
-      </span>
+      </>
     );
   }
 
