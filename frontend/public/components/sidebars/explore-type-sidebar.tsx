@@ -6,7 +6,6 @@ import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
   getDefinitionKey,
   getSwaggerDefinitions,
-  getSwaggerPath,
   K8sKind,
   SwaggerDefinition,
   SwaggerDefinitions,
@@ -31,32 +30,30 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   if (!kindObj && !schema) {
     return null;
   }
-
   const allDefinitions: SwaggerDefinitions = kindObj
     ? getSwaggerDefinitions()
     : schema && { 'custom-schema': schema };
   if (!allDefinitions) {
     return null;
   }
+  const resolvePath = (path) => {
+    const reference = _.has(_.get(allDefinitions, path), '$ref')
+      ? getRef(_.get(allDefinitions, path))
+      : null;
+    return reference ? [reference] : path;
+  };
   const currentSelection = _.last(drilldownHistory);
   // Show the current selected property or the top-level definition for the kind.
   const currentPath = currentSelection
     ? currentSelection.path
     : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
-  const ref = _.get(allDefinitions, currentPath).$ref
-    ? getRef(_.get(allDefinitions, currentPath))
-    : null;
-  const currentDefinition: SwaggerDefinition = _.get(
-    allDefinitions,
-    ref || currentPath,
-  );
+  const currentDefinition: SwaggerDefinition = _.get(allDefinitions, resolvePath(currentPath));
   const currentProperties =
     _.get(currentDefinition, 'properties') || _.get(currentDefinition, 'items.properties');
 
-  // Prefer the description saved in `currentSelection`. It won't always be defined in the definition itself.
-  const description = currentSelection
-    ? currentSelection.description
-    : currentDefinition.description;
+  const description = currentDefinition
+    ? currentDefinition.description
+    : currentSelection.description;
   const required = new Set(currentDefinition.required || []);
   const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.kind;
   const breadcrumbs = drilldownHistory.length
@@ -81,19 +78,24 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     setDrilldownHistory(_.take(drilldownHistory, i));
   };
 
+  const getNextPath = (nextName) => {
+    const nextLongPath = [...resolvePath(currentPath), 'properties', nextName];
+    // check if reference exists in the next definition
+    const reference = _.has(_.get(allDefinitions, nextLongPath), '$ref')
+      ? getRef(_.get(allDefinitions, currentPath))
+      : null;
+    return reference ? [reference, 'properties', nextName] : nextLongPath;
+  };
+
   // Get the path in the swagger document to additional property details for drilldown.
   // This can be
   // - A reference to another top-level definition
   // - Inline property declartions
   // - Inline property declartions for array items
   const getDrilldownPath = (name: string): string[] => {
-    const reference = _.has(_.get(allDefinitions, [...currentPath, 'properties', name]), '$ref')
-      ? getRef(_.get(allDefinitions, currentPath))
-      : null;
-    const resolvedPath = reference ? [reference] : [...currentPath, 'properties', name];
-    const path = kindObj ? resolvedPath : [...currentPath, 'properties', name];
+    const path = getNextPath(name);
     // Only allow drilldown if the reference has additional properties to explore.
-    const child = _.get(allDefinitions, path) as SwaggerDefinition;
+    const child = _.get(allDefinitions, resolvePath(path)) as SwaggerDefinition;
     return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : null;
   };
 
@@ -137,7 +139,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         ) : (
           <ul className="co-resource-sidebar-list pf-c-list">
             {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
-              const path = getDrilldownPath(name);
+              const path = resolvePath(getDrilldownPath(name));
               const definitionType = definition.type || getTypeForRef(getRef(definition));
               return (
                 <li key={name} className="co-resource-sidebar-item">
