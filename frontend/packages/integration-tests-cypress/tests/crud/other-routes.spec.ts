@@ -22,6 +22,7 @@ describe('Visiting other routes', () => {
       waitFor: () => {
         cy.byLegacyTestID('resource-title').should('exist');
         cy.byTestID('skeleton-chart').should('not.exist');
+        cy.byTestID('service-level-skeleton').should('not.exist');
       },
     },
     {

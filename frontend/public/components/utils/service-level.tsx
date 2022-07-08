@@ -214,7 +214,7 @@ export const ServiceLevel: React.FC<{ clusterID: string; children: React.ReactNo
     return null;
   }
   if (!loadingSecret && loadingServiceLevel) {
-    return <Skeleton />;
+    return <Skeleton data-test="service-level-skeleton" />;
   }
 
   return <>{children}</>;
