@@ -562,8 +562,8 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
     hideNameLabelFilters = false,
     hideColumnManagement = false,
   } = props;
-  const createPath = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`;
   const [model, inFlight] = useK8sModel(kind);
+  const createPath = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`;
   const [apiRefreshed, setAPIRefreshed] = React.useState(false);
   const dispatch = useDispatch();
 
@@ -594,8 +594,7 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
             kind: k8Kind,
             version,
           },
-          namespaced: true,
-          namespace,
+          namespace: model?.namespaced ? namespace : undefined,
           isList: true,
         },
   );
@@ -604,9 +603,9 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
 
   return inFlight ? null : (
     <ModelStatusBox groupVersionKind={kind}>
-      <ListPageHeader title={showTitle ? `${model.label}s` : undefined}>
+      <ListPageHeader title={showTitle ? model.labelPlural : undefined}>
         <div className="co-operator-details__toggle-value">
-          {allManagesNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
+          {model?.namespaced && allManagesNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
         </div>
         <ListPageCreateLink to={createPath}>
           {t('public~Create {{label}}', { label: model.label })}
