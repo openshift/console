@@ -43,9 +43,12 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const currentPath = currentSelection
     ? currentSelection.path
     : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
+  const ref = _.get(allDefinitions, currentPath).$ref
+    ? getRef(_.get(allDefinitions, currentPath))
+    : null;
   const currentDefinition: SwaggerDefinition = _.get(
     allDefinitions,
-    getRef(_.get(allDefinitions, currentPath)) || currentPath,
+    ref || currentPath,
   );
   const currentProperties =
     _.get(currentDefinition, 'properties') || _.get(currentDefinition, 'items.properties');
@@ -84,9 +87,11 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // - Inline property declartions
   // - Inline property declartions for array items
   const getDrilldownPath = (name: string): string[] => {
-    const path = kindObj
-      ? getSwaggerPath(allDefinitions, currentPath, name, true)
-      : [...currentPath, 'properties', name];
+    const reference = _.has(_.get(allDefinitions, [...currentPath, 'properties', name]), '$ref')
+      ? getRef(_.get(allDefinitions, currentPath))
+      : null;
+    const resolvedPath = reference ? [reference] : [...currentPath, 'properties', name];
+    const path = kindObj ? resolvedPath : [...currentPath, 'properties', name];
     // Only allow drilldown if the reference has additional properties to explore.
     const child = _.get(allDefinitions, path) as SwaggerDefinition;
     return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : null;
