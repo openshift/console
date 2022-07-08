@@ -19,7 +19,7 @@ export type ColoredIconProps = {
  * Component for displaying a green check mark circle icon
  * @param {string} [className] - (optional) class name for styling
  * @param {string} [title] - (optional) icon title
- * @param {string} [size] - (optional) icon size
+ * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
  * <GreenCheckCircleIcon />
@@ -38,7 +38,7 @@ export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, ti
  * Component for displaying a red exclamation mark circle icon
  * @param {string} [className] - (optional) class name for styling
  * @param {string} [title] - (optional) icon title
- * @param {string} [size] - (optional) icon size
+ * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
  * <RedExclamationCircleIcon />
@@ -60,7 +60,7 @@ export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
  * Component for displaying a yellow triangle exclamation icon
  * @param {string} [className] - (optional) class name for styling
  * @param {string} [title] - (optional) icon title
- * @param {string} [size] - (optional) icon size
+ * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
  * <YellowExclamationTriangleIcon />
@@ -82,7 +82,7 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
  * Component for displaying a blue info circle icon
  * @param {string} [className] - (optional) class name for styling
  * @param {string} [title] - (optional) icon title
- * @param {string} [size] - (optional) icon size
+ * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
  * <BlueInfoCircleIcon />
