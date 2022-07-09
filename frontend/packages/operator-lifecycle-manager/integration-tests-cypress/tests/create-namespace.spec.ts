@@ -31,6 +31,12 @@ describe('Create namespace from install operators', () => {
     cy.byTestID(operatorSelector).click();
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
 
+    // 3scale 2.11 supports only installation mode 'A specific namespace',
+    // so it was automatically selected.
+    // But starting with 2.12 it also supports 'All namespaces'.
+    // So it is required to select this radio option to specify the namespace.
+    cy.byTestID('A specific namespace on the cluster-radio-input').click();
+
     // configure operator install ("^=Create_"" will match "Create_Namespace" and "Create_Project")
     cy.byTestID('dropdown-selectbox')
       .click()
