@@ -80,10 +80,13 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 
   const getNextPath = (nextName) => {
     const nextLongPath = [...resolvePath(currentPath), 'properties', nextName];
+    const hasRef = _.has(_.get(allDefinitions, nextLongPath), ['items', '$ref']);
     // check if reference exists in the next definition
-    const reference = _.has(_.get(allDefinitions, nextLongPath), '$ref')
-      ? getRef(_.get(allDefinitions, currentPath))
-      : null;
+    const reference =
+      _.has(_.get(allDefinitions, nextLongPath), '$ref') ||
+      _.has(_.get(allDefinitions, nextLongPath), ['items', '$ref'])
+        ? getRef(_.get(allDefinitions, currentPath))
+        : null;
     return reference ? [reference, 'properties', nextName] : nextLongPath;
   };
 
