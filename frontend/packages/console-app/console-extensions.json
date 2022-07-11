@@ -194,7 +194,7 @@
         "version": "v1",
         "kind": "Pod"
       },
-      "provider": { "$codeRef": "actions.useCronJobActionsProvider" }
+      "provider": { "$codeRef": "actions.usePodActionsProvider" }
     }
   },
   {
