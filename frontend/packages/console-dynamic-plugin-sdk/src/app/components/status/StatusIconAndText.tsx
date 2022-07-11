@@ -13,8 +13,8 @@ type StatusIconAndTextProps = StatusComponentProps & {
  * Component for displaying a status icon and text
  * @param {string} [title] - (optional) status text
  * @param {boolean} [iconOnly] - (optional) if true, only displays icon
- * @param {boolean} [noTooltip] - (optional) if true, does not display tooltip
- * @param {string} [className] - (optional) class name for styling
+ * @param {boolean} [noTooltip] - (optional) if true, tooltip won't be displayed
+ * @param {string} [className] - (optional) additional class name for the component
  * @param {React.ReactElement} [icon] - (optional) icon to be displayed
  * @param {boolean} [spin] - (optional) if true, icon rotates
  * @example

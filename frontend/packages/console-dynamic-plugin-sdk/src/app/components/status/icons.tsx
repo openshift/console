@@ -17,12 +17,12 @@ export type ColoredIconProps = {
 
 /**
  * Component for displaying a green check mark circle icon
- * @param {string} [className] - (optional) class name for styling
+ * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [title] - (optional) icon title
  * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
- * <GreenCheckCircleIcon />
+ * <GreenCheckCircleIcon title="Healthy" />
  * ```
  */
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, title, size }) => (
@@ -36,12 +36,12 @@ export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, ti
 
 /**
  * Component for displaying a red exclamation mark circle icon
- * @param {string} [className] - (optional) class name for styling
+ * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [title] - (optional) icon title
  * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
- * <RedExclamationCircleIcon />
+ * <RedExclamationCircleIcon title="Failed" />
  * ```
  */
 export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
@@ -58,12 +58,12 @@ export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
 
 /**
  * Component for displaying a yellow triangle exclamation icon
- * @param {string} [className] - (optional) class name for styling
+ * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [title] - (optional) icon title
  * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
- * <YellowExclamationTriangleIcon />
+ * <YellowExclamationTriangleIcon title="Warning" />
  * ```
  */
 export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
@@ -80,12 +80,12 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
 
 /**
  * Component for displaying a blue info circle icon
- * @param {string} [className] - (optional) class name for styling
+ * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [title] - (optional) icon title
  * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
  * @example
  * ```tsx
- * <BlueInfoCircleIcon />
+ * <BlueInfoCircleIcon title="Info" />
  * ```
  */
 export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, title }) => (

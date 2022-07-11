@@ -136,7 +136,7 @@ Component for displaying a green check mark circle icon
 
 
 ```tsx
-<GreenCheckCircleIcon />
+<GreenCheckCircleIcon title="Healthy" />
 ```
 
 
@@ -147,7 +147,7 @@ Component for displaying a green check mark circle icon
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `className` | (optional) class name for styling |
+| `className` | (optional) additional class name for the component |
 | `title` | (optional) icon title |
 | `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl') |
 
@@ -167,7 +167,7 @@ Component for displaying a red exclamation mark circle icon
 
 
 ```tsx
-<RedExclamationCircleIcon />
+<RedExclamationCircleIcon title="Failed" />
 ```
 
 
@@ -178,7 +178,7 @@ Component for displaying a red exclamation mark circle icon
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `className` | (optional) class name for styling |
+| `className` | (optional) additional class name for the component |
 | `title` | (optional) icon title |
 | `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl') |
 
@@ -198,7 +198,7 @@ Component for displaying a yellow triangle exclamation icon
 
 
 ```tsx
-<YellowExclamationTriangleIcon />
+<YellowExclamationTriangleIcon title="Warning" />
 ```
 
 
@@ -209,7 +209,7 @@ Component for displaying a yellow triangle exclamation icon
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `className` | (optional) class name for styling |
+| `className` | (optional) additional class name for the component |
 | `title` | (optional) icon title |
 | `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl') |
 
@@ -229,7 +229,7 @@ Component for displaying a blue info circle icon
 
 
 ```tsx
-<BlueInfoCircleIcon />
+<BlueInfoCircleIcon title="Info" />
 ```
 
 
@@ -240,7 +240,7 @@ Component for displaying a blue info circle icon
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `className` | (optional) class name for styling |
+| `className` | (optional) additional class name for the component |
 | `title` | (optional) icon title |
 | `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl') |
 
@@ -260,7 +260,7 @@ Component for displaying an error status popover
 
 
 ```tsx
-<ErrorStatus />
+<ErrorStatus title={errorMsg} />
 ```
 
 
@@ -273,8 +273,8 @@ Component for displaying an error status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, does not display tooltip |
-| `className` | (optional) class name for styling |
+| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
 
@@ -293,7 +293,7 @@ Component for displaying an information status popover
 
 
 ```tsx
-<InfoStatus />
+<InfoStatus title={infoMsg} />
 ```
 
 
@@ -306,8 +306,8 @@ Component for displaying an information status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, does not display tooltip |
-| `className` | (optional) class name for styling |
+| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
 
@@ -326,7 +326,7 @@ Component for displaying a progressing status popover
 
 
 ```tsx
-<ProgressStatus />
+<ProgressStatus title={progressMsg} />
 ```
 
 
@@ -339,8 +339,8 @@ Component for displaying a progressing status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, does not display tooltip |
-| `className` | (optional) class name for styling |
+| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
 
@@ -359,7 +359,7 @@ Component for displaying a success status popover
 
 
 ```tsx
-<SuccessStatus />
+<SuccessStatus title={successMsg} />
 ```
 
 
@@ -372,8 +372,8 @@ Component for displaying a success status popover
 | -------------- | ----------- |
 | `title` | (optional) status text |
 | `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, does not display tooltip |
-| `className` | (optional) class name for styling |
+| `noTooltip` | (optional) if true, tooltip won't be displayed |
+| `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
 
 
