@@ -19,7 +19,9 @@ import {
   UseDashboardResources,
   UseUserSettings,
   QuickStartsLoaderProps,
+  CreateProjectListPageProps,
   UseURLPoll,
+  NamespacedPageProps,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -53,6 +55,10 @@ export const VirtualizedGrid: React.FC<VirtualizedGridProps> = require('@console
 export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
   .default;
 export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
+  .default;
+export const CreateProjectListPage: React.FC<CreateProjectListPageProps> = require('@console/shared/src/components/projects/CreateProjectListPage')
+  .default;
+export const NamespacedPage: React.FC<NamespacedPageProps> = require('@console/shared/src/components/projects/NamespacedPage')
   .default;
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')

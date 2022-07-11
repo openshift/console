@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { Divider } from '@patternfly/react-core';
+import { ProjectListPageProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ListPage } from '@console/internal/components/factory';
 import { ProjectsTable } from '@console/internal/components/namespace';
 import { PageHeading } from '@console/internal/components/utils';
 import './ProjectListPage.scss';
 
-export type ProjectListPageProps = {
-  title: string;
-  listComponent?: React.ComponentType<any>;
-  children?: React.ReactNode;
-  badge?: React.ReactNode;
-};
 const ProjectListPage: React.FC<ProjectListPageProps> = ({
   badge,
   title,

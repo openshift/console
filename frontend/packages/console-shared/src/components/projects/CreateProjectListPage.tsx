@@ -1,15 +1,9 @@
 import * as React from 'react';
+import { CreateProjectListPageProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { createProjectModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared';
-import ProjectListPage, { ProjectListPageProps } from './ProjectListPage';
-
-type LazySubTitleRender = (openProjectModal: () => void) => React.ReactNode;
-export interface CreateProjectListPageProps extends ProjectListPageProps {
-  title: string;
-  children: LazySubTitleRender;
-  onCreate?: (project: K8sResourceKind) => void;
-}
+import ProjectListPage from './ProjectListPage';
 
 const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
   onCreate,

@@ -3,6 +3,7 @@ import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { DetailsPage } from '@console/internal/components/factory';
 import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
@@ -12,7 +13,7 @@ import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import ProjectAccessPage from 'packages/dev-console/src/components/project-access/ProjectAccessPage';
 import CreateProjectListPage from '../CreateProjectListPage';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import NamespacedPage from '../NamespacedPage';
 
 export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';
 

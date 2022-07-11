@@ -5,6 +5,7 @@ import {
   FirehoseResult,
   HealthState,
   K8sResourceCommon,
+  K8sResourceKind,
   LIMIT_STATE,
   PrometheusResponse,
   QueryParams,
@@ -283,3 +284,32 @@ export type UseURLPoll = <R>(
   delay?: number,
   ...dependencies: any[]
 ) => [R, any, boolean];
+
+export type ProjectListPageProps = {
+  title: string;
+  listComponent?: React.ComponentType<any>;
+  children?: React.ReactNode;
+  badge?: React.ReactNode;
+};
+
+type LazySubTitleRender = (openProjectModal: () => void) => React.ReactNode;
+
+export interface CreateProjectListPageProps extends ProjectListPageProps {
+  title: string;
+  children: LazySubTitleRender;
+  onCreate?: (project: K8sResourceKind) => void;
+}
+
+export enum NamespacedPageVariants {
+  light = 'light',
+  default = 'default',
+}
+
+export interface NamespacedPageProps {
+  disabled?: boolean;
+  hideProjects?: boolean;
+  hideApplications?: boolean;
+  onNamespaceChange?: (newNamespace: string) => void;
+  variant?: NamespacedPageVariants;
+  toolbar?: React.ReactNode;
+}
