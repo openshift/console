@@ -6,16 +6,18 @@ import {
   isBuildAdapter,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { BuildConfigData } from '@console/shared';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { BuildOverview } from './BuildOverview';
 import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
-const BuildTabSection: React.FC<{ element: GraphElement; renderNull: () => null }> = ({
-  element,
-  renderNull,
-}) => {
+const BuildTabSection: React.FC<{
+  id: string;
+  buildAdapter: AdapterDataType<BuildConfigData>;
+  extensionsResolved: boolean;
+}> = ({ id, buildAdapter, extensionsResolved }) => {
   const [
     { data: buildConfigs, loaded: buildConfigsDataLoaded },
     setBuildConfigsData,
@@ -23,6 +25,28 @@ const BuildTabSection: React.FC<{ element: GraphElement; renderNull: () => null 
     data?: BuildConfigData;
     loaded: boolean;
   }>({ loaded: false });
+  const handleAdapterResolved = React.useCallback((data) => {
+    setBuildConfigsData({ data, loaded: true });
+  }, []);
+
+  return buildAdapter ? (
+    <TopologySideBarTabSection>
+      {extensionsResolved && (
+        <ResolveAdapter<BuildConfigData>
+          key={id}
+          resource={buildAdapter.resource}
+          useAdapterHook={buildAdapter.provider}
+          onAdapterDataResolved={handleAdapterResolved}
+        />
+      )}
+      {buildConfigsDataLoaded && <BuildOverview buildConfigs={buildConfigs.buildConfigs} />}
+    </TopologySideBarTabSection>
+  ) : null;
+};
+
+export const useBuildsSideBarTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const [buildAdapterExtensions, extensionsResolved] = useResolvedExtensions<BuildAdapter>(
     isBuildAdapter,
   );
@@ -34,30 +58,15 @@ const BuildTabSection: React.FC<{ element: GraphElement; renderNull: () => null 
       ]),
     [buildAdapterExtensions, element, extensionsResolved],
   );
-  const handleAdapterResolved = React.useCallback((data) => {
-    setBuildConfigsData({ data, loaded: true });
-  }, []);
-
-  React.useEffect(() => {
-    if (!buildAdapter) {
-      renderNull();
-    }
-  }, [buildAdapter, renderNull]);
-
-  return buildAdapter ? (
-    <TopologySideBarTabSection>
-      {extensionsResolved && (
-        <ResolveAdapter<BuildConfigData>
-          resource={buildAdapter.resource}
-          useAdapterHook={buildAdapter.provider}
-          onAdapterDataResolved={handleAdapterResolved}
-        />
-      )}
-      {buildConfigsDataLoaded && <BuildOverview buildConfigs={buildConfigs.buildConfigs} />}
-    </TopologySideBarTabSection>
-  ) : null;
-};
-
-export const getBuildsSideBarTabSection = (element: GraphElement, renderNull: () => null) => {
-  return <BuildTabSection element={element} renderNull={renderNull} />;
+  if (!buildAdapter) {
+    return [undefined, true, undefined];
+  }
+  const section = (
+    <BuildTabSection
+      id={element.getId()}
+      buildAdapter={buildAdapter}
+      extensionsResolved={extensionsResolved}
+    />
+  );
+  return [section, true, undefined];
 };

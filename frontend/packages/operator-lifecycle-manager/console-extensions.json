@@ -61,8 +61,8 @@
       "id": "topology-tab-section-operator-link",
       "tab": "topology-side-bar-tab-resource",
       "insertBefore": "topology-tab-section-pods-overview",
-      "section": {
-        "$codeRef": "topology.getManagedByOperatorLinkSideBarTabSection"
+      "provider": {
+        "$codeRef": "topology.useManagedByOperatorLinkSideBarTabSection"
       }
     }
   },
@@ -78,7 +78,7 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-details",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "topologySidebar.getOperatorBackedPanelDetailsSection" }
+      "provider": { "$codeRef": "topologySidebar.useOperatorBackedPanelDetailsSection" }
     }
   },
   {
@@ -86,7 +86,7 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-resource",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "topologySidebar.getOperatorBackedPanelResourceSection" }
+      "provider": { "$codeRef": "topologySidebar.useOperatorBackedPanelResourceSection" }
     }
   },
   {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import {
   DetailsItem,
   ResourceSummary,
@@ -45,8 +46,11 @@ const JobSideBarDetails: React.FC<JobSideBarDetailsProps> = ({ job }) => {
   );
 };
 
-export const getJobSideBarDetails = (element: GraphElement) => {
+export const useJobSideBarDetails: DetailsTabSectionExtensionHook = (element: GraphElement) => {
   const resource = getResource<JobKind>(element);
-  if (!resource || resource.kind !== JobModel.kind) return undefined;
-  return <JobSideBarDetails job={resource} />;
+  if (!resource || resource.kind !== JobModel.kind) {
+    return [undefined, true, undefined];
+  }
+  const section = <JobSideBarDetails job={resource} />;
+  return [section, true, undefined];
 };

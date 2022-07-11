@@ -5,15 +5,27 @@ import {
   useResolvedExtensions,
   NetworkAdapter,
   K8sResourceCommon,
+  DetailsTabSectionExtensionHook,
 } from '@console/dynamic-plugin-sdk';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { NetworkingOverview } from './NetworkingOverview';
 import { getDataFromAdapter } from './utils';
 
-const NetworkTabSection: React.FC<{ element: GraphElement; renderNull: () => null }> = ({
-  element,
-  renderNull,
-}) => {
+const NetworkTabSection: React.FC<{
+  networkAdapter: {
+    resource: K8sResourceCommon;
+  };
+}> = ({ networkAdapter }) => {
+  return networkAdapter ? (
+    <TopologySideBarTabSection>
+      <NetworkingOverview obj={networkAdapter.resource} />
+    </TopologySideBarTabSection>
+  ) : null;
+};
+
+export const useNetworkingSideBarTabSection: DetailsTabSectionExtensionHook = (
+  element: GraphElement,
+) => {
   const [networkAdapterExtensions, extensionsLoaded] = useResolvedExtensions<NetworkAdapter>(
     isNetworkAdapter,
   );
@@ -25,20 +37,9 @@ const NetworkTabSection: React.FC<{ element: GraphElement; renderNull: () => nul
       ]),
     [element, extensionsLoaded, networkAdapterExtensions],
   );
-
-  React.useEffect(() => {
-    if (!networkAdapter) {
-      renderNull();
-    }
-  }, [networkAdapter, renderNull]);
-
-  return networkAdapter ? (
-    <TopologySideBarTabSection>
-      <NetworkingOverview obj={networkAdapter.resource} />
-    </TopologySideBarTabSection>
-  ) : null;
-};
-
-export const getNetworkingSideBarTabSection = (element: GraphElement, renderNull: () => null) => {
-  return <NetworkTabSection element={element} renderNull={renderNull} />;
+  if (!networkAdapter) {
+    return [undefined, true, undefined];
+  }
+  const section = <NetworkTabSection networkAdapter={networkAdapter} />;
+  return [section, true, undefined];
 };
