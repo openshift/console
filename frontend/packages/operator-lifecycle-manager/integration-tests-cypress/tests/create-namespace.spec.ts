@@ -2,7 +2,7 @@ import { checkErrors, testName } from '../../../integration-tests-cypress/suppor
 import { modal } from '../../../integration-tests-cypress/views/modal';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 
-describe.skip('Create namespace from install operators', () => {
+describe('Create namespace from install operators', () => {
   before(() => {
     cy.login();
     cy.visit('/');
