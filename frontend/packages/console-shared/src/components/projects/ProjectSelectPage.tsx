@@ -14,7 +14,7 @@ import {
   kindForReference,
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src';
-import CreateProjectListPage from './projects/CreateProjectListPage';
+import CreateProjectListPage from './CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
   match: match<any>;

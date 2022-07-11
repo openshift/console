@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
+import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelinesResourceList from './PipelinesResourceList';
 
