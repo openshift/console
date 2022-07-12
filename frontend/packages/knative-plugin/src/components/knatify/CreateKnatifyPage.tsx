@@ -6,9 +6,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '@console/dev-console/src/components/NamespacedPage';
 import {
   Perspective,
   isPerspective,
@@ -16,12 +13,14 @@ import {
   WatchK8sResultsObject,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';
 import { BadgeType, getBadgeFromType, useRelatedHPA } from '@console/shared';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import {
   getInitialValuesKnatify,
   knatifyResources,

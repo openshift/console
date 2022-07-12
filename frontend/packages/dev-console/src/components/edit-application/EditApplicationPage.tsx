@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { StatusBox } from '@console/internal/components/utils';
 import {
   useK8sWatchResource,
@@ -12,7 +13,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import EditApplicationComponent from './EditApplicationComponent';
 
 type WatchResource = {

@@ -7,14 +7,13 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '@console/dev-console/src/components/NamespacedPage';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   HelmActionType,

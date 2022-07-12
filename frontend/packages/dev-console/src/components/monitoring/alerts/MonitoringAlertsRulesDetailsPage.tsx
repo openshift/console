@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { match as RMatch } from 'react-router';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { alertingLoaded, alertingSetRules } from '@console/internal/actions/observe';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import {
@@ -16,7 +17,7 @@ import {
 } from '@console/internal/components/monitoring/utils';
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
-import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 
 interface MonitoringAlertsDetailsPageProps {
   match: RMatch<{

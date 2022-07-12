@@ -3,9 +3,7 @@ import { FormGroup, Title, Split, SplitItem } from '@patternfly/react-core';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '@console/dev-console/src/components/NamespacedPage';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -16,6 +14,7 @@ import {
   useActiveNamespace,
   TechPreviewBadge,
 } from '@console/shared';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { ServicesRequestCRName } from '../../const';
 import { CloudServicesRequestModel } from '../../models/rhoas';
 import {

@@ -2,13 +2,12 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page } from '@console/internal/components/utils';
 import { MenuAction, MenuActions, MultiTabListPage, useFlag } from '@console/shared';
 import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '@console/shared/src/components/projects/NamespacedPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../const';
 import { PipelineModel, RepositoryModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';

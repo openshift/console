@@ -13,6 +13,7 @@ import { isEmpty } from 'lodash';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   ButtonBar,
   ExternalLink,
@@ -21,9 +22,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '../../../../../dev-console/src/components/NamespacedPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { ALL_NAMESPACES_KEY } from '../../../constants';
 import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';

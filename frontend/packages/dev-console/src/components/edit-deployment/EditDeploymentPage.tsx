@@ -2,10 +2,11 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentKind, K8sResourceKind } from '@console/internal/module/k8s';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import EditDeployment from './EditDeployment';
 import { getDefaultDeployment } from './utils/create-deployment-utils';
 

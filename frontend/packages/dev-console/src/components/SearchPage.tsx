@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { withStartGuide } from '@console/internal/components/start-guide';
+import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { SearchPage } from '../../../../public/components/search';
-import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
-import CreateProjectListPage from './projects/CreateProjectListPage';
 
 export interface SearchPageProps {
   match: RMatch<{

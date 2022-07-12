@@ -1,9 +1,8 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { match as RMatch } from 'react-router-dom';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '@console/dev-console/src/components/NamespacedPage';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { ProjectHelmChartRepositoryType } from '../../../types/helm-types';
 import CreateProjectHelmChartRepository from './CreateProjectHelmChartRepository';
 import { getDefaultResource } from './projecthelmchartrepository-create-utils';

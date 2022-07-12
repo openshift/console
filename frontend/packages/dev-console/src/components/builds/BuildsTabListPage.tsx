@@ -6,14 +6,15 @@ import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { getResourceListPages } from '@console/internal/components/resource-pages';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page, AsyncComponent } from '@console/internal/components/utils';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import { useFlag, MenuActions, MultiTabListPage, getBadgeFromType } from '@console/shared';
+import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import CreateProjectListPage from '../projects/CreateProjectListPage';
 
 interface BuildsTabListPageProps {
   match: Rmatch<{ ns?: string }>;

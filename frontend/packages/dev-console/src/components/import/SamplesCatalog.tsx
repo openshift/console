@@ -3,9 +3,10 @@ import { Button } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { CatalogController, CatalogServiceProvider } from '@console/shared';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import CreateProjectListPage from '../projects/CreateProjectListPage';
+import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 
 type SampleCatalogProps = RouteComponentProps<{ ns?: string }>;
 

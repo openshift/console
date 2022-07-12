@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   FirehoseResource,
   LoadingBox,
@@ -12,6 +13,7 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import {
   normalizeBuilderImages,
@@ -20,7 +22,6 @@ import {
   getSampleRef,
   getSampleContextDir,
 } from '../../utils/imagestream-utils';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources } from './import-submit-utils';
 import { BaseFormData, GitImportFormData } from './import-types';

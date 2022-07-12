@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   history,
   LoadingBox,
@@ -14,7 +15,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import {
   getRolesWithNameChange,
   getNewRoles,

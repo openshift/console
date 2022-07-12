@@ -1,13 +1,12 @@
 import * as React from 'react';
 // import { useTranslation } from 'react-i18next';
 import { useLocation, match as Rmatch, useHistory } from 'react-router-dom';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '@console/dev-console/src/components/NamespacedPage';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, AccessDenied } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared/src';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { FLAG_OPENSHIFT_PIPELINE } from '../../const';
 import { PIPELINE_NAMESPACE } from '../pipelines/const';
 import { usePacData } from './hooks/usePacData';
