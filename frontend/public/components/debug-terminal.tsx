@@ -119,6 +119,10 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
       }
     };
     let newDebugPod;
+    const closeTab = (event) => {
+      event.preventDefault();
+      deleteDebugPod(newDebugPod.metadata.name);
+    };
     const createDebugPod = async () => {
       try {
         newDebugPod = await k8sCreate(PodModel, podToCreate);
@@ -129,12 +133,12 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
     };
     createDebugPod();
 
-    window.addEventListener('beforeunload', deleteDebugPod);
+    window.addEventListener('beforeunload', closeTab);
     return () => {
       if (newDebugPod) {
         deleteDebugPod(newDebugPod.metadata.name);
       }
-      window.removeEventListener('beforeunload', deleteDebugPod);
+      window.removeEventListener('beforeunload', closeTab);
     };
   }, [debugPodName, podNamespace, podToCreate]);
 
