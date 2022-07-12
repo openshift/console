@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Label } from '@patternfly/react-core';
+import { Alert, Label, Skeleton } from '@patternfly/react-core';
 import { NotificationEntry, NotificationTypes } from '@console/patternfly';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -199,6 +199,11 @@ const useGetServiceLevel = (
     loadingSecret,
     loadingServiceLevel,
   };
+};
+
+export const ServiceLevelLoading: React.FC = () => {
+  const { t } = useTranslation();
+  return <Skeleton screenreaderText={t('public~Loading')} />;
 };
 
 export const ServiceLevel: React.FC<{

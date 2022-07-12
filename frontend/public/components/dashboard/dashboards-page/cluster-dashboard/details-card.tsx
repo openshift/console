@@ -1,13 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  CardActions,
-  Skeleton,
-} from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
 import {
   BlueArrowCircleUpIcon,
@@ -30,7 +23,12 @@ import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
-import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../../../utils/service-level';
+import {
+  ServiceLevel,
+  useServiceLevelTitle,
+  ServiceLevelText,
+  ServiceLevelLoading,
+} from '../../../utils/service-level';
 import {
   referenceForModel,
   getOpenShiftVersion,
@@ -214,8 +212,8 @@ export const DetailsCard = withDashboardResources(
                   <ServiceLevel
                     clusterID={clusterID}
                     loading={
-                      <OverviewDetailItem title={''}>
-                        <Skeleton />
+                      <OverviewDetailItem title={useServiceLevelTitle()}>
+                        <ServiceLevelLoading />
                       </OverviewDetailItem>
                     }
                   >

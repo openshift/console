@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   Alert,
   AboutModal as PfAboutModal,
-  Skeleton,
   TextContent,
   TextList,
   TextListItem,
@@ -11,7 +10,13 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
 import { getBrandingDetails } from './masthead';
-import { ReleaseNotesLink, ServiceLevel, useServiceLevelTitle, ServiceLevelText } from './utils';
+import {
+  ReleaseNotesLink,
+  ServiceLevel,
+  useServiceLevelTitle,
+  ServiceLevelText,
+  ServiceLevelLoading,
+} from './utils';
 import { k8sVersion } from '../module/status';
 import {
   getClusterID,
@@ -92,9 +97,9 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
             clusterID={clusterID}
             loading={
               <>
-                <TextListItem component="dt" />
+                <TextListItem component="dt">{useServiceLevelTitle()}</TextListItem>
                 <TextListItem component="dd">
-                  <Skeleton />
+                  <ServiceLevelLoading />
                 </TextListItem>
               </>
             }
