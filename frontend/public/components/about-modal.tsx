@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Alert,
   AboutModal as PfAboutModal,
+  Skeleton,
   TextContent,
   TextList,
   TextListItem,
@@ -87,7 +88,17 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
             {window.SERVER_FLAGS.kubeAPIServerURL}
           </TextListItem>
 
-          <ServiceLevel clusterID={clusterID}>
+          <ServiceLevel
+            clusterID={clusterID}
+            loading={
+              <>
+                <TextListItem component="dt" />
+                <TextListItem component="dd">
+                  <Skeleton />
+                </TextListItem>
+              </>
+            }
+          >
             <>
               <TextListItem component="dt">{useServiceLevelTitle()}</TextListItem>
               <TextListItem component="dd" className="co-select-to-copy">

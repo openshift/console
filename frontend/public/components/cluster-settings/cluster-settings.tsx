@@ -14,6 +14,7 @@ import {
   Progress,
   ProgressSize,
   ProgressVariant,
+  Skeleton,
   Text,
   TextContent,
   TextVariants,
@@ -1200,7 +1201,17 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                 </dd>
               </>
             )}
-            <ServiceLevel clusterID={clusterID}>
+            <ServiceLevel
+              clusterID={clusterID}
+              loading={
+                <>
+                  <dt></dt>
+                  <dd>
+                    <Skeleton />
+                  </dd>
+                </>
+              }
+            >
               <>
                 <dt>{useServiceLevelTitle()}</dt>
                 <dd>
