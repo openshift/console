@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import ProjectAccess from '../ProjectAccess';
 import ProjectAccessPage from '../ProjectAccessPage';
 

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { MultiTabListPage, useFlag } from '@console/shared';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { MultiTabListPage, useFlag, CreateProjectListPage, NamespacedPage } from '@console/shared';
 import { PipelinesPage } from '../PipelinesPage';
 import PipelineTabbedPage, { PageContents } from '../PipelineTabbedPage';
 

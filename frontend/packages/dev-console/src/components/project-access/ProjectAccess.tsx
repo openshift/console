@@ -15,7 +15,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import {
   getRolesWithNameChange,
   getNewRoles,

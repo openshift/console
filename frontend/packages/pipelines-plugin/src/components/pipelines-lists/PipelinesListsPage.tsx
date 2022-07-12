@@ -14,8 +14,8 @@ import {
   MultiTabListPage,
   SecondaryButtonAction,
   useFlag,
+  NamespacedPage,
 } from '@console/shared';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE, FLAG_OPENSHIFT_PIPELINE_CONDITION } from '../../const';
 import {
   PipelineModel,

@@ -9,9 +9,9 @@ import {
   CatalogServiceProvider,
   useCatalogCategories,
   CatalogController,
+  CreateProjectListPage,
+  NamespacedPage,
 } from '@console/shared';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 
 type CatalogPageProps = RouteComponentProps<{
   ns?: string;

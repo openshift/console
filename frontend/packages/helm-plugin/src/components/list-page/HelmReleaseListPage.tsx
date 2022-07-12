@@ -6,8 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { PageHeading } from '@console/internal/components/utils';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { CreateProjectListPage, NamespacedPage } from '@console/shared';
 import HelmReleaseList from './HelmReleaseList';
 
 type HelmReleaseListPageProps = RouteComponentProps<{ ns: string }>;

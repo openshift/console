@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { history, getQueryArgument } from '@console/internal/components/utils';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import { HelmRelease, HelmActionType, HelmActionOrigins } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';
 import HelmReleaseRollbackForm from './HelmReleaseRollbackForm';

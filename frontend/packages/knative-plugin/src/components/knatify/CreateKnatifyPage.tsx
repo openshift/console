@@ -19,8 +19,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk';
-import { BadgeType, getBadgeFromType, useRelatedHPA } from '@console/shared';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { BadgeType, getBadgeFromType, useRelatedHPA, NamespacedPage } from '@console/shared';
 import {
   getInitialValuesKnatify,
   knatifyResources,

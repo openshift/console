@@ -5,8 +5,7 @@ import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/inte
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MultiTabListPage } from '@console/shared';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { MultiTabListPage, NamespacedPage } from '@console/shared';
 import {
   EventListenerModel,
   TriggerTemplateModel,

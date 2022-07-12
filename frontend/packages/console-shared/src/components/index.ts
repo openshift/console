@@ -31,3 +31,5 @@ export * from './actions';
 export * from './quick-search';
 export * from './namespace';
 export * from './catalog';
+export * from './projects';
+export { default as NamespacedPage } from './NamespacedPage';

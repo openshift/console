@@ -8,7 +8,7 @@ import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import { QUERY_PROPERTIES } from '../../../const';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import QueryFocusApplication from '../../QueryFocusApplication';

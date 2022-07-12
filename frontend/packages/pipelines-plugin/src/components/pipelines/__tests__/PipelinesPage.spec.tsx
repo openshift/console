@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { referenceForModel } from '@console/internal/module/k8s';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import { CreateProjectListPage } from '@console/shared';
 import { PipelineModel } from '../../../models';
 import { PipelinesPage } from '../PipelinesPage';
 import PipelinesResourceList from '../PipelinesResourceList';

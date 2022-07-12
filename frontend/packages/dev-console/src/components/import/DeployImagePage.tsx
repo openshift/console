@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { PageHeading, Firehose } from '@console/internal/components/utils';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import { QUERY_PROPERTIES } from '../../const';
 import QueryFocusApplication from '../QueryFocusApplication';
 import DeployImage from './DeployImage';

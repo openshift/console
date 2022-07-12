@@ -20,8 +20,8 @@ import {
   UseUserSettings,
   QuickStartsLoaderProps,
   CreateProjectListPageProps,
-  UseURLPoll,
   NamespacedPageProps,
+  UseURLPoll,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -58,7 +58,7 @@ export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@con
   .default;
 export const CreateProjectListPage: React.FC<CreateProjectListPageProps> = require('@console/shared/src/components/projects/CreateProjectListPage')
   .default;
-export const NamespacedPage: React.FC<NamespacedPageProps> = require('@console/shared/src/components/projects/NamespacedPage')
+export const NamespacedPage: React.FC<NamespacedPageProps> = require('@console/shared/src/components/NamespacedPage')
   .default;
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')

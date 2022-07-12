@@ -13,8 +13,7 @@ import {
   K8sKind,
   kindForReference,
 } from '@console/internal/module/k8s';
-import { getBadgeFromType } from '@console/shared/src';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import { getBadgeFromType, CreateProjectListPage } from '@console/shared/src';
 
 export interface ProjectSelectPageProps {
   match: match<any>;

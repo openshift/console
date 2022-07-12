@@ -12,9 +12,7 @@ import {
   history,
   useAccessReview,
 } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { ALL_NAMESPACES_KEY, CreateProjectListPage, NamespacedPage } from '@console/shared';
 import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
 import MonitoringEvents from './events/MonitoringEvents';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';

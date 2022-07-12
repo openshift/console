@@ -13,8 +13,8 @@ import {
   FormBody,
   useActiveNamespace,
   TechPreviewBadge,
+  NamespacedPage,
 } from '@console/shared';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import { ServicesRequestCRName } from '../../const';
 import { CloudServicesRequestModel } from '../../models/rhoas';
 import {

@@ -4,9 +4,12 @@ import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { CatalogController, CatalogServiceProvider } from '@console/shared';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import {
+  CatalogController,
+  CatalogServiceProvider,
+  CreateProjectListPage,
+  NamespacedPage,
+} from '@console/shared';
 
 type SampleCatalogProps = RouteComponentProps<{ ns?: string }>;
 

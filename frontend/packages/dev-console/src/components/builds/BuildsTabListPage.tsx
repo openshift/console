@@ -11,9 +11,14 @@ import { getResourceListPages } from '@console/internal/components/resource-page
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page, AsyncComponent } from '@console/internal/components/utils';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
-import { useFlag, MenuActions, MultiTabListPage, getBadgeFromType } from '@console/shared';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import {
+  useFlag,
+  MenuActions,
+  MultiTabListPage,
+  getBadgeFromType,
+  CreateProjectListPage,
+  NamespacedPage,
+} from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 interface BuildsTabListPageProps {

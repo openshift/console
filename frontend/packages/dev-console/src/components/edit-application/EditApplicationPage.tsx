@@ -13,7 +13,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import EditApplicationComponent from './EditApplicationComponent';
 
 type WatchResource = {

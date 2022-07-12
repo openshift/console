@@ -16,8 +16,7 @@ import {
   getAlertsAndRules,
 } from '@console/internal/components/monitoring/utils';
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { ALL_NAMESPACES_KEY, NamespacedPage } from '@console/shared';
 
 interface MonitoringAlertsDetailsPageProps {
   match: RMatch<{

@@ -6,7 +6,7 @@ import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/inte
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentKind, K8sResourceKind } from '@console/internal/module/k8s';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import EditDeployment from './EditDeployment';
 import { getDefaultDeployment } from './utils/create-deployment-utils';
 

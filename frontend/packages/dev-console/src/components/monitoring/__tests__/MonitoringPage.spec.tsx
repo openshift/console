@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as utils from '@console/internal/components/utils';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import { CreateProjectListPage } from '@console/shared';
 import { PageContents } from '../MonitoringPage';
 
 describe('Monitoring Page ', () => {

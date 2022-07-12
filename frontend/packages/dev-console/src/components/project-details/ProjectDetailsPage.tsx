@@ -10,9 +10,7 @@ import { NamespaceDetails, projectMenuActions } from '@console/internal/componen
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { ALL_NAMESPACES_KEY, CreateProjectListPage, NamespacedPage } from '@console/shared';
 import ProjectAccessPage from 'packages/dev-console/src/components/project-access/ProjectAccessPage';
 
 export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';

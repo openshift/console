@@ -7,8 +7,7 @@ import { LoadingBox, LoadingInline, PageComponentProps } from '@console/internal
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { useRelatedHPA } from '@console/shared';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { useRelatedHPA, NamespacedPage } from '@console/shared';
 import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
 import HPAPageHeader from './HPAPageHeader';

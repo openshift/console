@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import { useEventSinkStatus } from '../../hooks/useEventSinkStatus';
 import EventSink from './EventSink';
 import EventSinkAlert from './EventSinkAlert';

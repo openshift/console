@@ -3,7 +3,7 @@ import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import { CreateProjectListPage } from '@console/shared';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelinesResourceList from './PipelinesResourceList';
 

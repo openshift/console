@@ -3,8 +3,7 @@ import { match as RMatch } from 'react-router';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { Firehose, history } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { ALL_NAMESPACES_KEY, NamespacedPage } from '@console/shared';
 import HelmReleaseDetails from './HelmReleaseDetails';
 
 interface HelmReleaseDetailsPageProps {

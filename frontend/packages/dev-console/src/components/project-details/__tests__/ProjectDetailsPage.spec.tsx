@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { DetailsPage } from '@console/internal/components/factory';
 import * as utils from '@console/internal/components/utils';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import { CreateProjectListPage } from '@console/shared';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
 const testProjectMatch = { url: '', params: { ns: 'test-project' }, isExact: true, path: '' };

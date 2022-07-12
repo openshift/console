@@ -5,7 +5,7 @@ import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import { PageHeading, ButtonBar } from '@console/internal/components/utils/';
 import store from '@console/internal/redux';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import DeployImage from '../DeployImage';

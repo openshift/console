@@ -6,7 +6,7 @@ import QueryFocusApplication from '@console/dev-console/src/components/QueryFocu
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { PageHeading } from '@console/internal/components/utils';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import AddBroker from './brokers/AddBroker';
 
 type EventingBrokerPageProps = RouteComponentProps<{ ns?: string }>;

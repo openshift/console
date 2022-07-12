@@ -22,7 +22,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { NamespacedPage } from '@console/shared';
 import { ALL_NAMESPACES_KEY } from '../../../constants';
 import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';

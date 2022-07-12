@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import { CreateProjectListPage } from '@console/shared';
 import { PageContents as AddPage } from '../AddPage';
 import AddCardsLoader from '../AddPageLayout';
 

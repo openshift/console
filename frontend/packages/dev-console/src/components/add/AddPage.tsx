@@ -4,8 +4,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
+import { CreateProjectListPage, NamespacedPage } from '@console/shared';
 import { withStartGuide } from '../../../../../public/components/start-guide';
 import AddPageLayout from './AddPageLayout';
 
