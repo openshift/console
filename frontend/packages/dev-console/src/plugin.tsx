@@ -239,7 +239,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "dev-console-projectDetails" */
+            './components/project-details/ProjectDetailsPage' /* webpackChunkName: "dev-console-projectDetails" */
           )
         ).default,
     },

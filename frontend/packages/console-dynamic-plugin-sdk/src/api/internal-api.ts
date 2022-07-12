@@ -72,12 +72,3 @@ export const useUserSettings: UseUserSettings = require('@console/shared/src/hoo
   .useUserSettings;
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
   .useURLPoll;
-
-// @console/dynamic-plugin-sdk/src/api/internal-types
-// @console/shared/src/components/projects/
-
-/*
-import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
-import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
-import { NamespacedPageVariants } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-*/

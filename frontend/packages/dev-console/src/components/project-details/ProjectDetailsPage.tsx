@@ -11,9 +11,9 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import CreateProjectListPage from '@console/shared/src/components/projects/CreateProjectListPage';
+import NamespacedPage from '@console/shared/src/components/projects/NamespacedPage';
 import ProjectAccessPage from 'packages/dev-console/src/components/project-access/ProjectAccessPage';
-import CreateProjectListPage from '../CreateProjectListPage';
-import NamespacedPage from '../NamespacedPage';
 
 export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';
 
