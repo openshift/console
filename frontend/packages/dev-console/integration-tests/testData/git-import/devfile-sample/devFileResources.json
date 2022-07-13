@@ -1,0 +1,138 @@
+{
+  "imageStream": {
+    "kind": "ImageStream",
+    "apiVersion": "image.openshift.io/v1",
+    "metadata": {},
+    "spec": {
+      "lookupPolicy": {
+        "local": false
+      }
+    },
+    "status": {
+      "dockerImageRepository": ""
+    }
+  },
+  "buildResource": {
+    "kind": "BuildConfig",
+    "apiVersion": "build.openshift.io/v1",
+    "metadata": {},
+    "spec": {
+      "source": {
+        "type": "Git",
+        "git": {
+          "uri": "https://github.com/nodeshift-starters/devfile-sample"
+        },
+        "contextDir": "."
+      },
+      "strategy": {
+        "type": "Docker",
+        "dockerStrategy": {
+          "dockerfilePath": "Dockerfile"
+        }
+      },
+      "output": {
+        "to": {
+          "kind": "ImageStreamTag",
+          "name": "devfile-sample:latest:latest"
+        }
+      },
+      "resources": {},
+      "postCommit": {},
+      "nodeSelector": null
+    },
+    "status": {
+      "lastVersion": 0
+    }
+  },
+  "deployResource": {
+    "kind": "Deployment",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+      "selector": {
+        "matchLabels": {
+          "app": "devfile-sample"
+        }
+      },
+      "template": {
+        "metadata": {
+          "creationTimestamp": null
+        },
+        "spec": {
+          "containers": [
+            {
+              "name": "runtime",
+              "image": "registry.access.redhat.com/ubi8/nodejs-16:latest",
+              "ports": [
+                {
+                  "name": "3000-tcp",
+                  "containerPort": 3000,
+                  "protocol": "TCP"
+                }
+              ],
+              "env": [
+                {
+                  "name": "PROJECTS_ROOT",
+                  "value": "/projects"
+                },
+                {
+                  "name": "PROJECT_SOURCE",
+                  "value": "/projects"
+                }
+              ],
+              "resources": {
+                "limits": {
+                  "memory": "1Gi"
+                }
+              },
+              "imagePullPolicy": "Always"
+            }
+          ]
+        }
+      },
+      "strategy": {
+        "type": "Recreate"
+      }
+    },
+    "status": {}
+  },
+  "service": {
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {},
+    "spec": {
+      "ports": [
+        {
+          "name": "port-3000",
+          "port": 3000,
+          "targetPort": 3000
+        },
+        {
+          "name": "http-3001",
+          "port": 3001,
+          "targetPort": "3001"
+        }
+      ]
+    },
+    "status": {
+      "loadBalancer": {}
+    }
+  },
+  "route": {
+    "kind": "Route",
+    "apiVersion": "route.openshift.io/v1",
+    "metadata": {},
+    "spec": {
+      "path": "/",
+      "to": {
+        "kind": "Service",
+        "name": "devfile-sample",
+        "weight": null
+      },
+      "port": {
+        "targetPort": "3001"
+      }
+    },
+    "status": {}
+  }
+}
