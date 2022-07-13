@@ -42,6 +42,11 @@ export const gitPage = {
         statusCode: responses.packageResponse ? 200 : 404,
         body: responses.packageResponse,
       }).as('getPackage');
+
+      cy.intercept('POST', '/api/devfile/', {
+        statusCode: responses.devFileResources ? 200 : 404,
+        body: responses.devFileResources,
+      }).as('getDevfileResources');
     }
 
     cy.get(gitPO.gitRepoUrl)
