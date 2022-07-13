@@ -231,3 +231,11 @@ When('user clicks {string} link in Advanced Options section', (linkName: string)
 Then('user is able to see Secure Route checkbox is deselected', () => {
   cy.get(gitPO.advancedOptions.routing.secureRoute).should('not.be.checked');
 });
+
+When('user clicks on Container images', () => {
+  addPage.selectCardFromOptions(addOptions.ContainerImage);
+});
+
+Then('user is able to see resources DeploymentConfig is selected', () => {
+  cy.get(gitPO.resources.deploymentConfig).should('be.checked');
+});

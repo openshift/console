@@ -20,3 +20,6 @@ export enum CONNECTOR_INCONTEXT_ACTIONS {
 export const SERVICE_BINDING_ENABLED = 'SERVICE_BINDING_ENABLED';
 
 export const SAMPLE_APPLICATION_GROUP = 'sample-app';
+
+export const PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY = 'devconsole.preferredResourceType';
+export const LAST_RESOURCE_TYPE_STORAGE_KEY = `devconsole.last.resource-type`;

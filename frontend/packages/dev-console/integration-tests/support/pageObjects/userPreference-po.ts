@@ -24,6 +24,9 @@ export const preferenceDropdownDisplayNameToName = (displayName: string) => {
     case 'Language': {
       return 'Language';
     }
+    case 'Resource Type': {
+      return 'Resource';
+    }
     default: {
       throw new Error('Preference is not available');
     }
@@ -38,6 +41,9 @@ export function getPreferenceDropdown(preference: string) {
   const preferenceName = preferenceDropdownDisplayNameToName(preference);
   if (preference === 'Topology') {
     return `[id="topology.preferred${preferenceName}"]`;
+  }
+  if (preference === 'Resource Type') {
+    return `[id="devconsole.preferred${preferenceName}"]`;
   }
   return `[id="console.preferred${preferenceName}"]`;
 }

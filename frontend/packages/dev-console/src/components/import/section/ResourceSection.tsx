@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useField } from 'formik';
+import { FormikValues, useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -11,6 +11,7 @@ import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plu
 import { RadioGroupField, RadioGroupOption } from '@console/shared';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
+import { useResourceType } from './useResourceType';
 import './ResourceSection.scss';
 
 type ResourceSectionProps = {
@@ -31,14 +32,34 @@ const createHelpText = (k8sModel: K8sKind, helpText: string) => {
 const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
+  const fieldName = 'resources';
+  const { setFieldValue } = useFormikContext<FormikValues>();
   const invalidTypes = field.value || [];
+
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
     namespace: getActiveNamespace(),
     verb: 'create',
   });
+  const canIncludeKnative =
+    !invalidTypes.includes(Resources.KnativeService) &&
+    flags[FLAG_KNATIVE_SERVING_SERVICE] &&
+    knativeServiceAccess;
 
+  const [resourceType, setResourceType] = useResourceType();
+
+  React.useEffect(() => {
+    setFieldValue(fieldName, resourceType);
+  }, [resourceType, setFieldValue]);
+
+  const onChange = React.useCallback(
+    (value) => {
+      setResourceType(value);
+      setFieldValue(fieldName, value);
+    },
+    [setFieldValue, setResourceType],
+  );
   const radioOptions = React.useMemo(() => {
     const options: RadioGroupOption[] = [];
     if (!invalidTypes.includes(Resources.Kubernetes)) {
@@ -68,10 +89,6 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       });
     }
 
-    const canIncludeKnative =
-      !invalidTypes.includes(Resources.KnativeService) &&
-      flags[FLAG_KNATIVE_SERVING_SERVICE] &&
-      knativeServiceAccess;
     if (canIncludeKnative) {
       options.push({
         label: t(ReadableResourcesNames[Resources.KnativeService]),
@@ -83,12 +100,12 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
       });
     }
     return options;
-  }, [t, invalidTypes, flags, knativeServiceAccess]);
+  }, [invalidTypes, canIncludeKnative, t]);
 
   return (
     <FormSection title={t('devconsole~Resources')} fullWidth>
       <div>{t('devconsole~Select the resource type to generate')}</div>
-      <RadioGroupField name="resources" options={radioOptions} />
+      <RadioGroupField name={fieldName} options={radioOptions} onChange={onChange} />
     </FormSection>
   );
 };
