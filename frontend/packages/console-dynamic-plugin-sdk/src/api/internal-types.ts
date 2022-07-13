@@ -178,6 +178,12 @@ export type Options = {
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
 
+export type UseLastNamespace = () => [
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
+  boolean,
+];
+
 export type VirtualizedGridProps = {
   items: VirtualizedGridItem[] | VirtualizedGridGroupedItems;
   renderCell: VirtualizedGridRenderCell;
