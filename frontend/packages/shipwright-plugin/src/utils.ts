@@ -68,6 +68,13 @@ export const getLatestBuildRunStatusforDeployment = (
   };
 };
 
+export const isBuildRunNewerThen = (newBuildRun: BuildRun, prevBuildRun: BuildRun | undefined) => {
+  const prevCreationTime = new Date(prevBuildRun?.metadata?.creationTimestamp);
+  const newCreationTime = new Date(newBuildRun?.metadata?.creationTimestamp);
+  const timeDifference = newCreationTime.getTime() - prevCreationTime.getTime();
+  return timeDifference > 0;
+};
+
 export const byCreationTime = (left: K8sResourceKind, right: K8sResourceKind): number => {
   const leftCreationTime = new Date(left?.metadata?.creationTimestamp || Date.now());
   const rightCreationTime = new Date(right?.metadata?.creationTimestamp || Date.now());

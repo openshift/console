@@ -7,6 +7,7 @@ import {
   devNavigationMenu,
   switchPerspective,
   adminNavigationMenu,
+  pageTitle,
 } from '@console/dev-console/integration-tests/support/constants';
 import {
   perspective,
@@ -14,6 +15,7 @@ import {
   navigateTo,
   app,
 } from '@console/dev-console/integration-tests/support/pages';
+import { devNavigationMenuPO } from '../../pageObjects';
 
 Given('user has logged in as a basic user', () => {
   cy.logout();
@@ -37,6 +39,12 @@ Given('user is at developer perspective', () => {
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
+});
+
+Given('user is at Builds page', () => {
+  cy.get(devNavigationMenuPO.builds).click();
+  detailsPage.titleShouldContain(pageTitle.Builds);
+  cy.testA11y('Builds Page in dev perspective');
 });
 
 When('user navigates to Topology in Developer perspective', () => {

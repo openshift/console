@@ -4,10 +4,10 @@ Feature: Shipwright build in topolgy
 
         Background:
             Given user has installed OpenShift Pipelines Operator
-              And user is at developer perspective
-              And user has created or selected namespace "aut-shipwright-build-details"
               And user has installed Shipwright Operator
               And user has installed OpenShift Serverless Operator
+              And user is at developer perspective
+              And user has created or selected namespace "aut-shipwright-build-details"
               And user is at Add page
               And user has created shipwright builds with resources
               And user is at namespace "aut-shipwright-build-details"
