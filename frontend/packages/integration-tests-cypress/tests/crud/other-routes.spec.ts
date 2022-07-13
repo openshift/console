@@ -131,7 +131,7 @@ describe('Visiting other routes', () => {
       if (route.waitFor) {
         route.waitFor();
       }
-      cy.testA11y(`${route} page`);
+      cy.testA11y(`route ${route.path.replace(/\//g, ' ')}`);
     });
   });
 });

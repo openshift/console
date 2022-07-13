@@ -125,7 +125,12 @@ import {
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
-import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../utils/service-level';
+import {
+  ServiceLevel,
+  useServiceLevelTitle,
+  ServiceLevelText,
+  ServiceLevelLoading,
+} from '../utils/service-level';
 import { hasAvailableUpdates, hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
 
 const cancelUpdate = (cv: ClusterVersionKind) => {
@@ -1200,7 +1205,17 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                 </dd>
               </>
             )}
-            <ServiceLevel clusterID={clusterID}>
+            <ServiceLevel
+              clusterID={clusterID}
+              loading={
+                <>
+                  <dt>{useServiceLevelTitle()}</dt>
+                  <dd>
+                    <ServiceLevelLoading />
+                  </dd>
+                </>
+              }
+            >
               <>
                 <dt>{useServiceLevelTitle()}</dt>
                 <dd>

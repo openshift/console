@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
 import {
   BlueArrowCircleUpIcon,
@@ -16,14 +18,17 @@ import {
   WatchK8sResource,
   OverviewDetailItem as OverviewDetailItemType,
 } from '@console/dynamic-plugin-sdk';
-import { Card, CardBody, CardHeader, CardTitle, CardActions } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
-import { useTranslation } from 'react-i18next';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
-import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../../../utils/service-level';
+import {
+  ServiceLevel,
+  useServiceLevelTitle,
+  ServiceLevelText,
+  ServiceLevelLoading,
+} from '../../../utils/service-level';
 import {
   referenceForModel,
   getOpenShiftVersion,
@@ -204,7 +209,14 @@ export const DetailsCard = withDashboardResources(
                     <ClusterVersion cv={clusterVersionData} />
                   </OverviewDetailItem>
 
-                  <ServiceLevel clusterID={clusterID}>
+                  <ServiceLevel
+                    clusterID={clusterID}
+                    loading={
+                      <OverviewDetailItem title={useServiceLevelTitle()}>
+                        <ServiceLevelLoading />
+                      </OverviewDetailItem>
+                    }
+                  >
                     <OverviewDetailItem title={useServiceLevelTitle()}>
                       {/* Service Level handles loading and error state */}
                       <ServiceLevelText clusterID={clusterID} />

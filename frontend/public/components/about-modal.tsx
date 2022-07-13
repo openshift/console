@@ -10,7 +10,13 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
 import { getBrandingDetails } from './masthead';
-import { ReleaseNotesLink, ServiceLevel, useServiceLevelTitle, ServiceLevelText } from './utils';
+import {
+  ReleaseNotesLink,
+  ServiceLevel,
+  useServiceLevelTitle,
+  ServiceLevelText,
+  ServiceLevelLoading,
+} from './utils';
 import { k8sVersion } from '../module/status';
 import {
   getClusterID,
@@ -87,7 +93,17 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
             {window.SERVER_FLAGS.kubeAPIServerURL}
           </TextListItem>
 
-          <ServiceLevel clusterID={clusterID}>
+          <ServiceLevel
+            clusterID={clusterID}
+            loading={
+              <>
+                <TextListItem component="dt">{useServiceLevelTitle()}</TextListItem>
+                <TextListItem component="dd">
+                  <ServiceLevelLoading />
+                </TextListItem>
+              </>
+            }
+          >
             <>
               <TextListItem component="dt">{useServiceLevelTitle()}</TextListItem>
               <TextListItem component="dd" className="co-select-to-copy">
