@@ -10,6 +10,7 @@ import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
 import { ExternalLink } from './utils/link';
@@ -185,7 +186,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
               Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong>{' '}
               commands.{' '}
             </Trans>
-            <ExternalLink href="https://podman.io/" text={t('public~Learn more.')} />
+            <ExternalLink href={DOC_URL_PODMAN} text={t('public~Learn more.')} />
           </p>
         </div>
       }

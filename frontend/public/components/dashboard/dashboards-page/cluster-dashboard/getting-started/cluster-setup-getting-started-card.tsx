@@ -11,6 +11,7 @@ import {
 
 import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
+import { documentationURLs, getDocumentationURL } from '../../../../utils';
 
 export const ClusterSetupGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
@@ -26,9 +27,9 @@ export const ClusterSetupGettingStartedCard: React.FC = () => {
     return null;
   }
 
-  const moreLinkURL = window.SERVER_FLAGS.documentationBaseURL
-    ? `${window.SERVER_FLAGS.documentationBaseURL}html/post-installation_configuration/post-install-machine-configuration-tasks`
-    : 'https://docs.okd.io/latest/post_installation_configuration/machine-configuration-tasks.html';
+  const moreLinkURL = getDocumentationURL(
+    documentationURLs.postInstallationMachineConfigurationTasks,
+  );
 
   const moreLink: GettingStartedLink = {
     id: 'machine-configuration',

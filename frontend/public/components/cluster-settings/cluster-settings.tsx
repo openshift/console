@@ -94,14 +94,14 @@ import {
   UpdateHistory,
 } from '../../module/k8s';
 import {
+  documentationURLs,
   EmptyBox,
   ExternalLink,
   FieldLevelHelp,
   Firehose,
   FirehoseResource,
+  getDocumentationURL,
   HorizontalNav,
-  isUpstream,
-  openshiftHelpBase,
   PageHeading,
   ReleaseNotesLink,
   ResourceLink,
@@ -427,15 +427,10 @@ export const CurrentVersionHeader: React.FC<CurrentVersionProps> = ({ cv }) => {
 };
 
 export const ChannelDocLink: React.FC<{}> = () => {
-  const upgradeLink = isUpstream()
-    ? `${openshiftHelpBase}updating/understanding-upgrade-channels-release.html#understanding-upgrade-channels_understanding-upgrade-channels-releases`
-    : `${openshiftHelpBase}html/updating_clusters/understanding-upgrade-channels-releases#understanding-upgrade-channels_understanding-upgrade-channels-releases`;
+  const upgradeURL = getDocumentationURL(documentationURLs.understandingUpgradeChannels);
   const { t } = useTranslation();
   return (
-    <ExternalLink
-      href={upgradeLink}
-      text={t('public~Learn more about OpenShift update channels')}
-    />
+    <ExternalLink href={upgradeURL} text={t('public~Learn more about OpenShift update channels')} />
   );
 };
 
