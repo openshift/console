@@ -26,10 +26,21 @@ export function getResponseMocks(repo: GithubRepo) {
   const contentsJson = require(`./${repo.folder}/contents.json`);
 
   let packageJson = null;
+  let devFileResources = null;
   try {
     packageJson = require(`./${repo.folder}/package.json`);
   } catch (err) {
     // nothing, the file does not exist
   }
-  return { repoResponse: repoJson, contentsResponse: contentsJson, packageResponse: packageJson };
+  try {
+    devFileResources = require(`./${repo.folder}/devFileResources.json`);
+  } catch (err) {
+    // nothing, the file does not exist
+  }
+  return {
+    repoResponse: repoJson,
+    contentsResponse: contentsJson,
+    packageResponse: packageJson,
+    devFileResources,
+  };
 }
