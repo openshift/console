@@ -103,11 +103,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
   const { errorMessage } = props;
 
   return (
-    <form
-      onSubmit={submit}
-      name="form"
-      className="modal-content modal-content--accommodate-dropdown toleration-modal"
-    >
+    <form onSubmit={submit} name="form" className="modal-content toleration-modal">
       <ModalTitle>{t('public~Edit tolerations')}</ModalTitle>
       <ModalBody>
         {_.isEmpty(tolerations) ? (

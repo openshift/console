@@ -188,7 +188,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
   const helpURL = getDocumentationURL(documentationURLs.updateUsingCustomMachineConfigPools);
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{t('public~Update cluster')}</ModalTitle>
       <ModalBody>
         {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}

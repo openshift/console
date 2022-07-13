@@ -34,7 +34,7 @@ const PubSubModal: React.FC<Props> = ({
   const { t } = useTranslation();
   const dirty = values?.metadata?.name && values?.spec?.subscriber?.ref?.name;
   return (
-    <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
+    <form className="modal-content" onSubmit={handleSubmit}>
       <ModalTitle>{labelTitle}</ModalTitle>
       <ModalBody>
         <FormSection fullWidth>

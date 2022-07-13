@@ -82,7 +82,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> &
 
   const sourceLabel = edge.getSource().getLabel();
   return (
-    <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={handleSubmit} className="modal-content">
       <ModalTitle>{t('topology~Move connector')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">

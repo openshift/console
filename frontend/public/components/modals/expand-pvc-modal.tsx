@@ -59,7 +59,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{t('public~Expand {{kind}}', { kind: kind.label })}</ModalTitle>
       <ModalBody>
         <p>
