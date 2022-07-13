@@ -209,6 +209,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	if clusterInfo.ControlPlaneTopology != "" {
 		fs.Set("control-plane-topology-mode", string(clusterInfo.ControlPlaneTopology))
 	}
+
+	if clusterInfo.ReleaseVersion != "" {
+		fs.Set("release-version", string(clusterInfo.ReleaseVersion))
+	}
 }
 
 func addAuth(fs *flag.FlagSet, auth *Auth) {
