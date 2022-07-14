@@ -233,7 +233,7 @@ export const pipelineRunDetailsPO = {
     status: '.odc-taskrun-details__status',
   },
   parameters: {
-    form: '[data-test="pipelineRun-parameters"]',
+    form: '[data-test="pipeline-parameters"]',
   },
 };
 
