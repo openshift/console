@@ -416,10 +416,11 @@ github.com/opencontainers/image-spec/specs-go/v1
 # github.com/opencontainers/runc v1.1.1 => github.com/opencontainers/runc v1.0.0-rc8.0.20190926150303-84373aaa560b
 ## explicit
 github.com/opencontainers/runc/libcontainer/user
-# github.com/openshift/api v0.0.0-20211103080632-8981c8822dfa
+# github.com/openshift/api v0.0.0-20220729142910-83d1191dd9fc
 ## explicit; go 1.16
 github.com/openshift/api/build/v1
 github.com/openshift/api/config/v1
+github.com/openshift/api/helm/v1beta1
 github.com/openshift/api/image/docker10
 github.com/openshift/api/image/dockerpre012
 github.com/openshift/api/image/v1
