@@ -24,7 +24,11 @@ import {
   K8sResourceKindReference,
   referenceForModel,
   referenceFor,
+  WatchK8sResource,
+  K8sResourceCommon,
 } from '../module/k8s';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
@@ -48,6 +52,8 @@ import {
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { Action } from '@console/dynamic-plugin-sdk';
+import { retryRollout } from '@console/app/src/actions/creators/deployment-factory';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -98,6 +104,52 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
     verb: 'patch',
   },
 });
+
+const replicationResource = (kind: string, namespace: string, name: string) => {
+  const resource: WatchK8sResource = {
+    kind,
+    namespace,
+    namespaced: true,
+    selector: {
+      matchLabels: {
+        'openshift.io/deployment-config.name': name,
+      },
+    },
+  };
+  return resource;
+};
+
+const retryRolloutAction = (
+  label: string,
+  kindObj: K8sKind,
+  obj: K8sResourceKind,
+  replicationKind: K8sKind,
+  replicationController: K8sResourceCommon,
+) => {
+  const action: Action = {
+    id: 'retry-rollout',
+    label,
+    cta: () =>
+      retryRollout(replicationKind, replicationController).catch((err) =>
+        errorModal({ error: err.message }),
+      ),
+    insertAfter: 'start-rollout',
+    disabled:
+      obj.spec.paused ||
+      obj.status.latestVersion === 0 ||
+      replicationController?.metadata.annotations['openshift.io/deployment.phase'] !== 'Failed',
+    disabledTooltip:
+      'This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.',
+    accessReview: {
+      group: kindObj.apiGroup,
+      resource: kindObj.plural,
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+      verb: 'patch',
+    },
+  };
+  return action;
+};
 
 const { ModifyCount, AddStorage, common } = Kebab.factory;
 
@@ -297,21 +349,53 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
+const DetailsActionMenu: React.FC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
+  const { t } = useTranslation();
+  const resourceKind = referenceForModel(kindObj);
+  const context = { [resourceKind]: obj };
+  const [replicationController, setRC] = React.useState(null);
+  const [replicationKind] = useK8sModel('ReplicationController');
+  const {
+    metadata: { namespace, name },
+  } = obj;
+
+  const resourceRC = replicationResource(replicationKind.kind, namespace, name);
+  const [rc] = useK8sWatchResource<K8sResourceCommon>(resourceRC);
+  if (rc && rc !== replicationController && rc.kind === replicationKind.kind) {
+    setRC(rc);
+  }
+  const RetryRollout = retryRolloutAction(
+    t('public~Retry rollout'),
+    kindObj,
+    obj,
+    replicationKind,
+    replicationController,
+  );
+
+  return (
+    <ActionServiceProvider context={context}>
+      {({ actions, options, loaded }) => {
+        const actionsMenu = [...actions, RetryRollout];
+        const optionsMenu = [...options, RetryRollout];
+        return (
+          loaded && (
+            <ActionMenu
+              actions={actionsMenu}
+              options={optionsMenu}
+              variant={ActionMenuVariant.DROPDOWN}
+            />
+          )
+        );
+      }}
+    </ActionServiceProvider>
+  );
+};
+
 export const DeploymentConfigsDetailsPage: React.FC<DeploymentConfigsDetailsPageProps> = (
   props,
 ) => {
   const customActionMenu = (kindObj, obj) => {
-    const resourceKind = referenceForModel(kindObj);
-    const context = { [resourceKind]: obj };
-    return (
-      <ActionServiceProvider context={context}>
-        {({ actions, options, loaded }) =>
-          loaded && (
-            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
-          )
-        }
-      </ActionServiceProvider>
-    );
+    return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   };
   return (
     <DetailsPage
@@ -327,9 +411,30 @@ DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 const kind = 'DeploymentConfig';
 
 const DeploymentConfigTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+  const { t } = useTranslation();
   const resourceKind = referenceFor(obj);
   const context = { [resourceKind]: obj };
-  const customActionMenu = <LazyActionMenu context={context} />;
+  const [kindObj] = useK8sModel('DeploymentConfig');
+  const [replicationKind] = useK8sModel('ReplicationController');
+  const [replicationController, setRC] = React.useState(null);
+  const {
+    metadata: { namespace, name },
+  } = obj;
+
+  const resourceRC = replicationResource(replicationKind.kind, namespace, name);
+  const [rc] = useK8sWatchResource<K8sResourceCommon>(resourceRC);
+  if (rc && rc !== replicationController && rc.kind === replicationKind.kind) {
+    setRC(rc);
+  }
+  const RetryRollout = retryRolloutAction(
+    t('public~Retry rollout'),
+    kindObj,
+    obj,
+    replicationKind,
+    replicationController,
+  );
+
+  const customActionMenu = <LazyActionMenu context={context} extra={RetryRollout} />;
   return <WorkloadTableRow obj={obj} customActionMenu={customActionMenu} kind={kind} />;
 };
 
@@ -367,6 +472,11 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (prop
   );
 };
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
+
+type DetailsActionMenuProps = {
+  kindObj: K8sKind;
+  obj: K8sResourceKind;
+};
 
 type ReplicationControllersTabProps = {
   obj: K8sResourceKind;

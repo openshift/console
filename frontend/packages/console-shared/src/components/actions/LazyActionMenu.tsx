@@ -65,6 +65,7 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
   variant = ActionMenuVariant.KEBAB,
   label,
   isDisabled,
+  extra,
 }) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [initActionLoader, setInitActionLoader] = React.useState<boolean>(false);
@@ -94,20 +95,24 @@ const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
       />
       {initActionLoader && (
         <ActionServiceProvider context={context}>
-          {({ actions, options, loaded }) =>
-            loaded && (
-              <LazyMenuRenderer
-                isOpen={isOpen}
-                actions={actions}
-                options={options}
-                containerRef={containerRef}
-                menuRef={menuRef}
-                toggleRef={toggleRef}
-                onClick={hideMenu}
-                focusItem={options[0]}
-              />
-            )
-          }
+          {({ actions, options, loaded }) => {
+            const menuActions = [...actions, extra];
+            const menuOptions = [...options, extra];
+            return (
+              loaded && (
+                <LazyMenuRenderer
+                  isOpen={isOpen}
+                  actions={extra ? menuActions : actions}
+                  options={extra ? menuOptions : options}
+                  containerRef={containerRef}
+                  menuRef={menuRef}
+                  toggleRef={toggleRef}
+                  onClick={hideMenu}
+                  focusItem={options[0]}
+                />
+              )
+            );
+          }}
         </ActionServiceProvider>
       )}
     </div>

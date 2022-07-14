@@ -103,6 +103,10 @@ const ActionMenuItem: React.FC<ActionMenuItemProps> = (props) => {
     <Tooltip position="left" content={action.tooltip}>
       {item}
     </Tooltip>
+  ) : action.disabled && action.disabledTooltip ? (
+    <Tooltip position="left" content={action.disabledTooltip}>
+      <div>{item}</div>
+    </Tooltip>
   ) : (
     item
   );
