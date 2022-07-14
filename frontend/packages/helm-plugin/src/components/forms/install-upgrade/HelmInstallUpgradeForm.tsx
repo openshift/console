@@ -27,6 +27,7 @@ export interface HelmInstallUpgradeFormProps {
   onVersionChange: (chart: HelmChart) => void;
   chartError: Error;
   namespace: string;
+  chartIndexEntry?: string;
 }
 
 const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUpgradeFormProps> = ({
@@ -43,6 +44,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   onVersionChange,
   chartError,
   namespace,
+  chartIndexEntry,
 }) => {
   const { t } = useTranslation();
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
@@ -136,6 +138,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
                 helmAction={helmAction}
                 onVersionChange={onVersionChange}
                 namespace={namespace}
+                chartIndexEntry={chartIndexEntry}
               />
             </GridItem>
           </Grid>

@@ -7,6 +7,7 @@ import {
   mockChartEntries,
   mockRedhatHelmChartData,
   mockHelmChartRepositories,
+  mockChartEntries1,
 } from '../../components/__tests__/helm-release-mock-data';
 import { HelmRelease, HelmReleaseStatus } from '../../types/helm-types';
 import {
@@ -20,6 +21,7 @@ import {
   getChartReadme,
   getChartEntriesByName,
   loadHelmManifestResources,
+  getChartIndexEntry,
 } from '../helm-utils';
 
 describe('Helm Releases Utils', () => {
@@ -90,6 +92,21 @@ describe('Helm Releases Utils', () => {
       mockHelmChartRepositories,
     );
     expect(chartEntries).toEqual(mockRedhatHelmChartData);
+  });
+
+  it('should return chart index entry', () => {
+    let chartIndexEntry = getChartIndexEntry(
+      mockChartEntries1,
+      'hazelcast-enterprise',
+      'ibm-helm-repo',
+    );
+    expect(chartIndexEntry).toEqual('ibm-hazelcast-enterprise--ibm-helm-repo');
+    chartIndexEntry = getChartIndexEntry(
+      mockChartEntries1,
+      'hazelcast-enterprise',
+      'IBM Helm Repo',
+    );
+    expect(chartIndexEntry).toEqual('ibm-hazelcast-enterprise--ibm-helm-repo');
   });
 
   it('should return chart entries by name from all repos if repo name not provided', () => {

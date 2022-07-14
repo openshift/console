@@ -5,9 +5,15 @@ import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
 type HelmReadmeLoaderProps = {
   chartURL: string;
+  namespace: string;
+  chartIndexEntry: string;
 };
 
-const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
+const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({
+  chartURL,
+  namespace,
+  chartIndexEntry,
+}) => {
   const { t } = useTranslation();
   const [readme, setReadme] = React.useState<string>();
   const [loaded, setLoaded] = React.useState<boolean>(false);
@@ -19,7 +25,11 @@ const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
       let chartData;
 
       try {
-        chartData = await coFetchJSON(`/api/helm/chart?url=${chartURL}`);
+        chartData = await coFetchJSON(
+          `/api/helm/chart?url=${encodeURIComponent(
+            chartURL,
+          )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry)}`,
+        );
       } catch (e) {
         // eslint-disable-next-line no-console
         console.warn('Error fetching helm chart details for readme', e);
@@ -39,7 +49,7 @@ const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
     return () => {
       unmounted = true;
     };
-  }, [chartURL, t]);
+  }, [chartIndexEntry, chartURL, namespace, t]);
 
   if (!loaded) return <div className="loading-skeleton--table" />;
 

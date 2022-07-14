@@ -37,6 +37,7 @@ export type HelmInstallUpgradeFormData = {
   releaseName: string;
   chartURL?: string;
   chartName: string;
+  chartIndexEntry?: string;
   chartRepoName: string;
   chartVersion: string;
   chartReadme: string;
@@ -54,7 +55,8 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const searchParams = new URLSearchParams(location.search);
 
   const namespace = match.params.ns || searchParams.get('preselected-ns');
-  const initialChartURL = decodeURIComponent(searchParams.get('chartURL'));
+  const initialChartURL = searchParams.get('chartURL');
+  const indexEntry = searchParams.get('indexEntry');
   const initialReleaseName = match.params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
   const helmChartRepoName = searchParams.get('chartRepoName');
@@ -72,9 +74,9 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
   const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema7>();
-
-  const helmAction: HelmActionType =
-    initialChartURL !== 'null' ? HelmActionType.Install : HelmActionType.Upgrade;
+  const helmAction: HelmActionType = initialChartURL
+    ? HelmActionType.Install
+    : HelmActionType.Upgrade;
 
   const config = React.useMemo<HelmActionConfigType>(
     () =>
@@ -85,8 +87,9 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
         t,
         helmActionOrigin,
         initialChartURL,
+        indexEntry,
       ),
-    [helmAction, helmActionOrigin, initialChartURL, initialReleaseName, namespace, t],
+    [helmAction, helmActionOrigin, indexEntry, initialChartURL, initialReleaseName, namespace, t],
   );
 
   React.useEffect(() => {
@@ -129,6 +132,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const initialValues: HelmInstallUpgradeFormData = {
     releaseName: initialReleaseName || helmChartName || '',
     chartURL: initialChartURL,
+    chartIndexEntry: indexEntry,
     chartName,
     chartRepoName: helmChartRepoName || '',
     appVersion,
@@ -144,6 +148,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     const {
       releaseName,
       chartURL,
+      chartIndexEntry,
       yamlData,
       formData,
       formSchema,
@@ -178,7 +183,8 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     const payload = {
       namespace,
       name: releaseName,
-      ...(chartURL !== 'null' || undefined ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/camelcase
+      ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/camelcase
+      ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
     };
 
@@ -241,6 +247,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             onVersionChange={setChartData}
             chartError={chartError}
             namespace={namespace}
+            chartIndexEntry={indexEntry}
           />
         )}
       </Formik>
