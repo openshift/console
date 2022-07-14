@@ -47,17 +47,19 @@ export const releaseStatusReducer = (release: HelmRelease) => {
   return release.info.status;
 };
 
-export const helmReleasesRowFilters: RowFilter[] = [
-  {
-    filterGroupName: 'Status',
-    type: 'helm-release-status',
-    reducer: releaseStatusReducer,
-    items: SelectedReleaseStatuses.map((status) => ({
-      id: status,
-      title: HelmReleaseStatusLabels[status],
-    })),
-  },
-];
+export const helmReleasesRowFilters = (t: TFunction): RowFilter[] => {
+  return [
+    {
+      filterGroupName: t('helm-plugin~Status'),
+      type: 'helm-release-status',
+      reducer: releaseStatusReducer,
+      items: SelectedReleaseStatuses.map((status) => ({
+        id: status,
+        title: HelmReleaseStatusLabels[status],
+      })),
+    },
+  ];
+};
 
 export const filterHelmReleasesByStatus = (releases: HelmRelease[], filter: string | string[]) => {
   return releases.filter((release: HelmRelease) => {

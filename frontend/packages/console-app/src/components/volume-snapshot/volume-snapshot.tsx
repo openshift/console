@@ -186,6 +186,7 @@ const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => {
 };
 
 const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
+  const { t } = useTranslation();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
   const namespace = props.namespace || props.match?.params?.ns || 'all-namespaces';
   const createProps = {
@@ -198,7 +199,7 @@ const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
       {...props}
       kind={referenceForModel(VolumeSnapshotModel)}
       ListComponent={VolumeSnapshotTable}
-      rowFilters={snapshotStatusFilters}
+      rowFilters={snapshotStatusFilters(t)}
       canCreate
       createProps={createProps}
       customData={{ disableItems: { 'Snapshot Content': !canListVSC } }}
@@ -229,13 +230,14 @@ const FilteredSnapshotTable: React.FC<FilteredSnapshotTable> = (props) => {
 };
 
 export const VolumeSnapshotPVCPage: React.FC<VolumeSnapshotPVCPage> = (props) => {
+  const { t } = useTranslation();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
   return (
     <ListPage
       {...props}
       kind={referenceForModel(VolumeSnapshotModel)}
       ListComponent={FilteredSnapshotTable}
-      rowFilters={snapshotStatusFilters}
+      rowFilters={snapshotStatusFilters(t)}
       customData={{
         pvc: props.obj,
         disableItems: { Source: true, 'Snapshot Content': !canListVSC },

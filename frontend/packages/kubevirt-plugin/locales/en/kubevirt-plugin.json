@@ -734,6 +734,7 @@
   "The following information regarding how the disks are partitioned is provided by the guest agent.": "The following information regarding how the disks are partitioned is provided by the guest agent.",
   "The following hot-plugged disks will be removed from the virtual machine": "The following hot-plugged disks will be removed from the virtual machine",
   "<0>{diskList}</0>": "<0>{diskList}</0>",
+  "Disk Type": "Disk Type",
   "VM Disks List": "VM Disks List",
   "Content": "Content",
   "Drive": "Drive",

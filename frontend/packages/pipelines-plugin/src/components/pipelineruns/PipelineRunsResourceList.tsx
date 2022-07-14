@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
@@ -16,6 +17,7 @@ const PipelineRunsResourceList: React.FC<Omit<
   'kind' | 'ListComponent' | 'rowFilters'
 > &
   PipelineRunsResourceListProps> = (props) => {
+  const { t } = useTranslation();
   const badge = usePipelineTechPreviewBadge(props.namespace);
   return (
     <ListPage
@@ -23,7 +25,7 @@ const PipelineRunsResourceList: React.FC<Omit<
       canCreate={props.canCreate ?? true}
       kind={referenceForModel(PipelineRunModel)}
       ListComponent={PipelineRunsList}
-      rowFilters={runFilters}
+      rowFilters={runFilters(t)}
       badge={props.hideBadge ? null : badge}
     />
   );

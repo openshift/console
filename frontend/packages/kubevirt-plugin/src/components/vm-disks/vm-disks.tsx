@@ -238,7 +238,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, pvcs }
         onClick: createFn,
         id: 'add-disk',
       }}
-      rowFilters={[diskSourceFilter]}
+      rowFilters={[diskSourceFilter(t)]}
       customData={{
         vmLikeEntity,
         vmi,
