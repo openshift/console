@@ -115,7 +115,8 @@ Feature: Editing an application
         @regression @manual
         Scenario: Additional parameters and lifecycle hooks for Edit deployment config: T-09-TC08
             Given user is on Edit DeploymentConfig page
-             When user clicks on "Show additional parameters and lifecycle hooks" option
+             When user changes Strategy type to "Recreate"
+              And user clicks on "Show additional parameters and lifecycle hooks" option
               And user clicks on "Add Pre Cycle Hook" under Pre Cycle Hook section
               And user clicks on "Add Mid Cycle Hook" under Mid Cycle Hook section
               And user clicks on "Add Post Cycle Hook" under Post Cycle Hook section
@@ -128,9 +129,8 @@ Feature: Editing an application
             Given user has "<resource>" workload "workload-d"
               And user is on Edit "<resource>" page
              When user selects "Deploy image from an image stream tag" checkbox
-              And user clicks on "Show advanced container options" option
-             Then user will see "Environment variables(runtime only)" under Environment variables for container mentioned in image stream section
-              And user will see "Add value" and "Add from ConfigMap or Secret" options
+              And user clicks on "Show advanced image options" option
+             Then user can see Pull Secret dropdown and Create new secret option
 
         Examples:
                   | resource         |
