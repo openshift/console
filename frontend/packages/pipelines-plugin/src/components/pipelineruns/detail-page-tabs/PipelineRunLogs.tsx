@@ -38,7 +38,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
     const { obj, activeTask } = this.props;
     const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
     const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
-    const activeItem = this.getActiveTaskRun(taskRuns, activeTask);
+    const activeItem = this.getActiveTaskRun(obj, taskRuns, activeTask);
     this.setState({ activeItem });
   }
 
@@ -47,15 +47,18 @@ class PipelineRunLogsWithTranslation extends React.Component<
       const { obj, activeTask } = this.props;
       const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
       const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
-      const activeItem = this.getActiveTaskRun(taskRuns, activeTask);
+      const activeItem = this.getActiveTaskRun(obj, taskRuns, activeTask);
       this.state.navUntouched && this.setState({ activeItem });
     }
   }
 
-  getActiveTaskRun = (taskRuns: string[], activeTask: string): string =>
-    activeTask
-      ? taskRuns.find((taskRun) => taskRun.includes(activeTask))
-      : taskRuns[taskRuns.length - 1];
+  getActiveTaskRun = (obj: PipelineRunKind, taskRuns: string[], activeTask: string): string => {
+    const activeTaskRun: string = _.findKey(
+      obj?.status?.taskRuns,
+      (taskRun) => taskRun.pipelineTaskName === activeTask,
+    );
+    return activeTaskRun || taskRuns[taskRuns.length - 1];
+  };
 
   getSortedTaskRun = (taskRunFromYaml) => {
     const taskRuns = Object.keys(taskRunFromYaml).sort((a, b) => {
