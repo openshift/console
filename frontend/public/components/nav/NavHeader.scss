@@ -5,6 +5,11 @@
   border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
   padding: 0.6rem var(--pf-global--spacer--sm);
 
+  :where(.pf-theme-dark) & {
+    // Match --pf-c-nav__item--before--BorderColor
+    border-bottom-color: var(--pf-global--BorderColor--100);
+  }
+
   @media screen and (min-width: $pf-global--breakpoint--xl) {
     padding-left: var(--pf-global--spacer--md);
     padding-right: var(--pf-global--spacer--md);
@@ -16,12 +21,22 @@
 
   .pf-c-dropdown {
     --pf-c-dropdown__menu-item--PaddingLeft: 7px;
-
     width: 100%;
     cursor: pointer;
 
     &.pf-m-expanded {
-      --pf-c-dropdown__toggle--BackgroundColor: var(--pf-global--BackgroundColor--dark-200);
+      .pf-c-dropdown__toggle {
+        background-color: var(--pf-global--BackgroundColor--dark-200);
+        :where(.pf-theme-dark) & {
+          background-color: var(--pf-global--BackgroundColor--dark-300);
+        }
+      }
+    }
+  }
+
+  .pf-c-dropdown__toggle {
+    :where(.pf-theme-dark) & {
+      background-color: var(--pf-c-page__sidebar--BackgroundColor);
     }
   }
 
