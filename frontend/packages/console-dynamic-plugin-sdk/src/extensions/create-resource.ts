@@ -1,18 +1,11 @@
-import { ExtensionK8sModel } from '../api/common-types';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { CreateResource as CoreCreateResource } from '@openshift/dynamic-plugin-sdk';
+import { Extension } from '../types';
+import { RepackageExtension } from './data-types';
 
 /** Properties of custom CreateResource component. */
 export type CreateResourceComponentProps = { namespace?: string };
 
-export type CreateResource = ExtensionDeclaration<
-  'console.resource/create',
-  {
-    /** The model for which this create resource page will be rendered. */
-    model: ExtensionK8sModel;
-    /** The component to be rendered when the model matches */
-    component: CodeRef<React.ComponentType<CreateResourceComponentProps>>;
-  }
->;
+export type CreateResource = RepackageExtension<'console.resource/create', CoreCreateResource>;
 
 // Type guards
 

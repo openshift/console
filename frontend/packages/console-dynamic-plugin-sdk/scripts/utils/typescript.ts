@@ -47,9 +47,9 @@ export const getTypeAliasDeclaration = (node: ts.Node, aliasName: string) =>
       : undefined,
   );
 
-export const getTypeReferenceNode = (node: ts.Node, typeName: string) =>
+export const getTypeReferenceNode = (node: ts.Node, typeName: string[]) =>
   ts.forEachChild<ts.TypeReferenceNode>(node, (childNode) =>
-    ts.isTypeReferenceNode(childNode) && childNode.typeName.getText() === typeName
+    ts.isTypeReferenceNode(childNode) && typeName.includes(childNode.typeName.getText())
       ? childNode
       : undefined,
   );

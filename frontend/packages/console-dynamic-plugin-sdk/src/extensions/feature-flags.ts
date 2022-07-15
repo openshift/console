@@ -1,25 +1,15 @@
-import { ExtensionK8sModel } from '../api/common-types';
+import {
+  FeatureFlag as CoreFeatureFlag,
+  ModelFeatureFlag as CoreModelFeatureFlag,
+} from '@openshift/dynamic-plugin-sdk';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { RepackageExtension } from './data-types';
 
 /** Gives full control over Console feature flags. */
-export type FeatureFlag = ExtensionDeclaration<
-  'console.flag',
-  {
-    /** Used to set/unset arbitrary feature flags. */
-    handler: CodeRef<FeatureFlagHandler>;
-  }
->;
+export type FeatureFlag = RepackageExtension<'console.flag', CoreFeatureFlag>;
 
 /** Adds new Console feature flag driven by the presence of a CRD on the cluster. */
-export type ModelFeatureFlag = ExtensionDeclaration<
-  'console.flag/model',
-  {
-    /** The name of the flag to set once the CRD is detected. */
-    flag: string;
-    /** The model which refers to a `CustomResourceDefinition`. */
-    model: ExtensionK8sModel;
-  }
->;
+export type ModelFeatureFlag = RepackageExtension<'console.flag/model', CoreModelFeatureFlag>;
 
 /** Gives full control over Console feature flags with hook handlers. */
 export type FeatureFlagHookProvider = ExtensionDeclaration<

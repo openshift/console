@@ -1,69 +1,28 @@
 import * as React from 'react';
-import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import {
+  ActionFilter as CoreActionFilter,
+  ActionGroup as CoreActionGroup,
+  ActionProvider as CoreActionProvider,
+  ResourceActionProvider as CoreResourceActionProvider,
+} from '@openshift/dynamic-plugin-sdk';
+import { Extension } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
+import { RepackageExtension } from './data-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */
-export type ActionProvider = ExtensionDeclaration<
-  'console.action/provider',
-  {
-    /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
-    contextId: string | 'resource';
-    /** A react hook which returns actions for the given scope.
-     * If contextId = `resource` then the scope will always be a K8s resource object
-     * */
-    provider: CodeRef<ExtensionHook<Action[]>>;
-  }
->;
+export type ActionProvider = RepackageExtension<'console.action/provider', CoreActionProvider>;
 
 /** ResourceActionProvider contributes a hook that returns list of actions for specific resource model */
-export type ResourceActionProvider = ExtensionDeclaration<
+export type ResourceActionProvider = RepackageExtension<
   'console.action/resource-provider',
-  {
-    /** The model for which this provider provides actions for. */
-    model: ExtensionK8sKindVersionModel;
-    /** A react hook which returns actions for the given resource model */
-    provider: CodeRef<ExtensionHook<Action[]>>;
-  }
+  CoreResourceActionProvider
 >;
 
 /** ActionGroup contributes an action group that can also be a submenu */
-export type ActionGroup = ExtensionDeclaration<
-  'console.action/group',
-  {
-    /** ID used to identify the action section. */
-    id: string;
-    /** The label to display in the UI.
-     * Required for submenus.
-     * */
-    label?: string;
-    /** Whether this group should be displayed as submenu */
-    submenu?: boolean;
-    /** Insert this item before the item referenced here.
-     * For arrays, the first one found in order is used.
-     * */
-    insertBefore?: string | string[];
-    /** Insert this item after the item referenced here.
-     * For arrays, the first one found in order is used.
-     * insertBefore takes precedence.
-     * */
-    insertAfter?: string | string[];
-  }
->;
+export type ActionGroup = RepackageExtension<'console.action/group', CoreActionGroup>;
 
 /** ActionFilter can be used to filter an action */
-export type ActionFilter = ExtensionDeclaration<
-  'console.action/filter',
-  {
-    /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
-    contextId: string | 'resource';
-    /** A function which will filter actions based on some conditions.
-     * scope: The scope in which actions should be provided for.
-     * Note: hook may be required if we want to remove the ModifyCount action from a deployment with HPA
-     * */
-    filter: CodeRef<(scope: any, action: Action) => boolean>;
-  }
->;
+export type ActionFilter = RepackageExtension<'console.action/filter', CoreActionFilter>;
 
 export type SupportedActionExtensions =
   | ActionProvider
@@ -90,7 +49,11 @@ export const isActionFilter = (e: Extension): e is ActionFilter => {
 };
 
 // Support types
-
+/**
+ * TODO: pull from Core SDK
+ * e.g., export type Action = CoreAction;
+ * once Action has been exported in Core SDK
+ */
 export type Action = {
   /** A unique identifier for this action. */
   id: string;
@@ -105,7 +68,7 @@ export type Action = {
   /** Whether the action is disabled. */
   disabled?: boolean;
   /** The tooltip for this action. */
-  tooltip?: string;
+  tooltip?: string | React.ReactNode;
   /** The disabled tooltip for this action. */
   disabledTooltip?: string;
   /** The icon for this action. */

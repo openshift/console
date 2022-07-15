@@ -61,7 +61,10 @@ const parseExtensionTypeInfo = (
     return null;
   }
 
-  const refToExtensionDeclaration = getTypeReferenceNode(typeDeclaration, 'ExtensionDeclaration');
+  const refToExtensionDeclaration = getTypeReferenceNode(typeDeclaration, [
+    'ExtensionDeclaration',
+    'RepackageExtension',
+  ]);
 
   if (refToExtensionDeclaration?.typeArguments?.length !== 2) {
     errors.push(`Extension type '${typeString}' must reference ExtensionDeclaration<T, P> type`);

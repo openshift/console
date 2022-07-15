@@ -1,5 +1,12 @@
+import {
+  NavItem as CoreNavItem,
+  HrefNavItem as CoreHrefNavItem,
+  ResourceNSNavItem as CoreResourceNSNavItem,
+  Separator as CoreSeparator,
+} from '@openshift/dynamic-plugin-sdk';
 import { ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration } from '../types';
+import { RepackageExtension } from './data-types';
 
 type NavItemProperties = {
   /** A unique identifier for this item. */
@@ -18,35 +25,13 @@ type NavItemProperties = {
   insertAfter?: string | string[];
 };
 
-export type NavItem = ExtensionDeclaration<
-  'console.navigation/href',
-  NavItemProperties & {
-    name: string;
-  }
->;
+export type NavItem = RepackageExtension<'console.navigation/href', CoreNavItem>;
 
-export type HrefNavItem = ExtensionDeclaration<
-  'console.navigation/href',
-  NavItemProperties & {
-    /** The name of this item. */
-    name: string;
-    /** The link href value. */
-    href: string;
-    /** if true, adds /ns/active-namespace to the end */
-    namespaced?: boolean;
-    /** if true, adds /k8s/ns/active-namespace to the begining */
-    prefixNamespaced?: boolean;
-  }
->;
+export type HrefNavItem = RepackageExtension<'console.navigation/href', CoreHrefNavItem>;
 
-export type ResourceNSNavItem = ExtensionDeclaration<
+export type ResourceNSNavItem = RepackageExtension<
   'console.navigation/resource-ns',
-  NavItemProperties & {
-    /** Overrides the default name. If not supplied the name of the link will equal the plural value of the model. */
-    name?: string;
-    /** The model for which this nav item links to. */
-    model: ExtensionK8sModel;
-  }
+  CoreResourceNSNavItem
 >;
 
 export type ResourceClusterNavItem = ExtensionDeclaration<
@@ -59,10 +44,7 @@ export type ResourceClusterNavItem = ExtensionDeclaration<
   }
 >;
 
-export type Separator = ExtensionDeclaration<
-  'console.navigation/separator',
-  Omit<NavItemProperties, 'startsWith'>
->;
+export type Separator = RepackageExtension<'console.navigation/separator', CoreSeparator>;
 
 export type NavSection = ExtensionDeclaration<
   'console.navigation/section',

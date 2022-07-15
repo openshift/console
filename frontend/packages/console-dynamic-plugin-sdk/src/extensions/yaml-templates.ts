@@ -1,18 +1,9 @@
-import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { YAMLTemplate as CoreYAMLTemplate } from '@openshift/dynamic-plugin-sdk';
+import { Extension } from '../types';
+import { RepackageExtension } from './data-types';
 
 /** YAML templates for editing resources via the yaml editor. */
-export type YAMLTemplate = ExtensionDeclaration<
-  'console.yaml-template',
-  {
-    /** Model associated with the template. */
-    model: ExtensionK8sModel;
-    /** The YAML template. */
-    template: CodeRef<string>;
-    /** The name of the template. Use the name `default` to mark this as the default template. */
-    name: string | 'default';
-  }
->;
+export type YAMLTemplate = RepackageExtension<'console.yaml-template', CoreYAMLTemplate>;
 
 // Type guards
 

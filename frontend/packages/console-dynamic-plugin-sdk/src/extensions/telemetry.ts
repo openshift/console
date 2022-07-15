@@ -1,11 +1,10 @@
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { TelemetryListener as CoreTelemetryListener } from '@openshift/dynamic-plugin-sdk';
+import { Extension } from '../types';
+import { RepackageExtension } from './data-types';
 
-export type TelemetryListener = ExtensionDeclaration<
+export type TelemetryListener = RepackageExtension<
   'console.telemetry/listener',
-  {
-    /** Listen for telemetry events */
-    listener: CodeRef<TelemetryEventListener>;
-  }
+  CoreTelemetryListener
 >;
 
 // P should be valid JSON

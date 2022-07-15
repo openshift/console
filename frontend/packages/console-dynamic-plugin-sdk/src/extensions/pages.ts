@@ -1,6 +1,11 @@
+import {
+  ResourceDetailsPage as CoreResourceDetailsPage,
+  ResourceListPage as CoreResourceListPage,
+} from '@openshift/dynamic-plugin-sdk';
 import { RouteComponentProps } from 'react-router';
 import { ExtensionK8sGroupKindModel, ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { RepackageExtension } from './data-types';
 
 type ResourcePageProperties = {
   /** The model for which this resource page links to. */
@@ -37,15 +42,15 @@ type RoutePageProperties = {
 export type RoutePage = ExtensionDeclaration<'console.page/route', RoutePageProperties>;
 
 /** Adds new resource list page to Console router. */
-export type ResourceListPage = ExtensionDeclaration<
+export type ResourceListPage = RepackageExtension<
   'console.page/resource/list',
-  ResourcePageProperties & {}
+  CoreResourceListPage
 >;
 
 /** Adds new resource details page to Console router. */
-export type ResourceDetailsPage = ExtensionDeclaration<
+export type ResourceDetailsPage = RepackageExtension<
   'console.page/resource/details',
-  ResourcePageProperties & {}
+  CoreResourceDetailsPage
 >;
 
 /**
