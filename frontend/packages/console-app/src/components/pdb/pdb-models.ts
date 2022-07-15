@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { Selector, k8sPatch, Patch } from '@console/internal/module/k8s';
+import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { PodDisruptionBudgetModel } from '../../models';
 import { PodDisruptionBudgetKind } from './types';
 
@@ -31,8 +32,8 @@ export const pdbToK8sResource = (
     },
     spec: {
       selector: {
-        matchLabels: from.selector.matchLabels,
-        matchExpressions: from.selector.matchExpressions,
+        matchLabels: from?.selector?.matchLabels,
+        matchExpressions: from?.selector?.matchExpressions,
       },
     },
   };
@@ -57,7 +58,7 @@ export const pdbToK8sResource = (
   return pdbRes;
 };
 
-export const formValuesFromK8sResource = (from: PodDisruptionBudgetKind): FormValues => {
+export const initialValuesFromK8sResource = (from: PodDisruptionBudgetKind): FormValues => {
   return {
     name: from?.metadata?.name || '',
     namespace: from?.metadata?.namespace || '',
@@ -140,6 +141,13 @@ export const patchPDB = (
 
   return k8sPatch(PodDisruptionBudgetModel, existingResource, patch);
 };
+
+export const mergeInitialYAMLWithExistingResource = (
+  initialYAML: string,
+  existingResource: PodDisruptionBudgetKind,
+): PodDisruptionBudgetKind =>
+  pdbToK8sResource(initialValuesFromK8sResource(safeYAMLToJS(initialYAML)), existingResource);
+
 export type FormValues = {
   name: string;
   namespace: string;
