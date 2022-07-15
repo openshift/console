@@ -153,9 +153,7 @@ describe('Using OLM descriptor components', () => {
 
   it('pre-populates Field Group', () => {
     cy.get(`#${FIELD_GROUP_ID}_field-group`).should('exist');
-    cy.get(`#${FIELD_GROUP_ID}_accordion-toggle`)
-      .should('exist')
-      .click();
+    cy.get(`#${FIELD_GROUP_ID}_accordion-toggle`).click();
     cy.get(`[for="${FIELD_GROUP_ID}_itemOne"]`).should('have.text', 'itemOne');
     cy.get(`#${FIELD_GROUP_ID}_itemOne`).should('have.value', testCR.spec.fieldGroup.itemOne);
     cy.get(`[for="${FIELD_GROUP_ID}_itemTwo"]`).should('have.text', 'itemTwo');
@@ -164,9 +162,7 @@ describe('Using OLM descriptor components', () => {
 
   it('pre-populates Array Field Group', () => {
     cy.get(`#${ARRAY_FIELD_GROUP_ID}_field-group`).should('exist');
-    cy.get(`#${ARRAY_FIELD_GROUP_ID}_accordion-toggle`)
-      .should('exist')
-      .click();
+    cy.get(`#${ARRAY_FIELD_GROUP_ID}_accordion-toggle`).click();
     cy.get(`[for="${ARRAY_FIELD_GROUP_ID}_0_itemOne"]`).should('have.text', 'Item One');
     cy.get(`#${ARRAY_FIELD_GROUP_ID}_0_itemOne`).should(
       'have.value',
@@ -185,9 +181,7 @@ describe('Using OLM descriptor components', () => {
 
   it('successfully creates operand using form', () => {
     cy.byTestID('create-dynamic-form').click();
-    cy.byTestOperandLink('olm-descriptors-test')
-      .should('exist')
-      .click();
+    cy.byTestOperandLink('olm-descriptors-test').click();
     cy.get('.co-operand-details__section--info').should('exist');
   });
 });
