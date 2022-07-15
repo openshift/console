@@ -2133,18 +2133,18 @@
     schema-utils "^3.0.0"
     source-map "^0.7.3"
 
-"@prometheus-io/codemirror-promql@^0.37.0-rc.1":
-  version "0.37.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@prometheus-io/codemirror-promql/-/codemirror-promql-0.37.0-rc.1.tgz#d9b932e403c32dd48c82968c1af68179b3e969b0"
-  integrity sha512-xKPfR5a6QGX47gavJYui2YOYopXwOOiT/uUAOZ7m6rEZTeg1txtuomQ1E3SYS8A4Soq54KJvlCZemcZtSwmQ2A==
+"@prometheus-io/codemirror-promql@^0.37.0":
+  version "0.37.0"
+  resolved "https://registry.yarnpkg.com/@prometheus-io/codemirror-promql/-/codemirror-promql-0.37.0.tgz#34a05303be1a84af67c6fb077b23b92ec50767d2"
+  integrity sha512-WgIBsbDvq8P/8zDmhiKJ8nwukOzve6WsMjz0YPjZVURxjl+jXoLu3/TZ1fqwK1wXuX/2n50LwK9eMlGpmtcx5w==
   dependencies:
-    "@prometheus-io/lezer-promql" "^0.37.0-rc.1"
+    "@prometheus-io/lezer-promql" "^0.37.0"
     lru-cache "^6.0.0"
 
-"@prometheus-io/lezer-promql@^0.37.0-rc.1":
-  version "0.37.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@prometheus-io/lezer-promql/-/lezer-promql-0.37.0-rc.1.tgz#f9b0e5cd867780af62d6c678f818e722816d55fc"
-  integrity sha512-E37+NepTuYODk2BEms/2qwYbpFyNKr5mDIGcX26GxHhmY5NMCp1ZKsTBIUKAU9urY25w4c/ncryW6KVG8Vd4rw==
+"@prometheus-io/lezer-promql@^0.37.0":
+  version "0.37.0"
+  resolved "https://registry.yarnpkg.com/@prometheus-io/lezer-promql/-/lezer-promql-0.37.0.tgz#c42a10d0114d81e079cea2572d472b6a1fbfde97"
+  integrity sha512-la6tluaMlYa0hu+c4o3BQARigTqPWG4A/Tj4UuHiLUiRT0xRaDXP8my7/WcqFJPLq6DVigux4bagIgLvVj8PgQ==
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
