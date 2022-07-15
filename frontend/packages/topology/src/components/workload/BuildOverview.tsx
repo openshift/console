@@ -2,19 +2,23 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { BuildLogLink, BuildNumberLink } from '@console/internal/components/build';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import {
   ResourceLink,
+  resourcePath,
   SidebarSectionHeading,
   useAccessReview,
 } from '@console/internal/components/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { BuildConfigModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { BuildPhase, startBuild } from '@console/internal/module/k8s/builds';
 import { LogSnippet, Status, BuildConfigOverviewItem } from '@console/shared';
+
+const MAX_VISIBLE = 3;
 
 const StatusTitle = ({ build }: { build: K8sResourceKind }) => {
   const { t } = useTranslation();
@@ -144,6 +148,18 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
           <div>
             <ResourceLink inline kind="BuildConfig" name={name} namespace={namespace} />
           </div>
+          {builds.length > MAX_VISIBLE && (
+            <div>
+              <Link
+                className="sidebar__section-view-all"
+                to={`${resourcePath(referenceFor(buildConfig), name, namespace)}/builds`}
+              >
+                {t('topology~View all {{buildsLength}}', {
+                  buildsLength: builds.length,
+                })}
+              </Link>
+            </div>
+          )}
           {canStartBuild && (
             <div>
               <Button variant="secondary" onClick={onClick} data-test-id="start-build-action">
@@ -158,7 +174,9 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
           <span className="text-muted">{t('topology~No Builds found for this Build Config.')}</span>
         </li>
       ) : (
-        builds.map((build) => <BuildOverviewItem key={build.metadata.uid} build={build} />)
+        builds
+          .slice(0, MAX_VISIBLE)
+          .map((build) => <BuildOverviewItem key={build.metadata.uid} build={build} />)
       )}
     </ul>
   );
