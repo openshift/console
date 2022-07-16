@@ -137,7 +137,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       );
     };
     return (
-      <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+      <form onSubmit={submit} name="form" className="modal-content">
         <ModalTitle>{t('console-app~Restore as new PVC')}</ModalTitle>
         <ModalBody>
           <p>

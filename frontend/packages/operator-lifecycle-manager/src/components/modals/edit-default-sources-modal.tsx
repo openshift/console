@@ -63,7 +63,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
 
   return (
     <Form onSubmit={submit}>
-      <div className="modal-content modal-content--no-inner-scroll">
+      <div className="modal-content">
         <ModalTitle>{t('olm~Edit default sources')}</ModalTitle>
         <ModalBody>
           <FormGroup fieldId="enabled-default-sources" label={t('olm~Enabled default sources')}>

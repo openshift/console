@@ -70,7 +70,7 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{t('ceph-storage-plugin~Attach OBC to a Deployment')}</ModalTitle>
       <ModalBody>
         <label htmlFor="dropdown-selectbox" className="control-label co-required">

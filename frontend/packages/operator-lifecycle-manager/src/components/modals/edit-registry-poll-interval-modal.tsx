@@ -47,7 +47,7 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
 
   return (
     <Form onSubmit={submit} name="form">
-      <div className="modal-content modal-content--no-inner-scroll">
+      <div className="modal-content">
         <ModalTitle>{t('olm~Edit registry poll interval')}</ModalTitle>
         <ModalBody>
           <FormGroup label={t('olm~Registry poll interval')} fieldId="pollInterval_dropdown">

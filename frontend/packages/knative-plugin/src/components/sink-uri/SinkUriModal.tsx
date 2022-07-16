@@ -29,7 +29,7 @@ const SinkUriModal: React.FC<Props> = ({
   const dirty = values?.uri !== initialValues.uri;
   return (
     <Form onSubmit={handleSubmit}>
-      <div className="modal-content modal-content--no-inner-scroll">
+      <div className="modal-content">
         <ModalTitle>{t('knative-plugin~Edit URI')}</ModalTitle>
         <ModalBody>
           <FormSection fullWidth>

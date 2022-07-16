@@ -100,7 +100,7 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
   };
 
   return (
-    <div className="modal-content modal-content--no-inner-scroll">
+    <div className="modal-content">
       <ModalTitle close={close}>{MODAL_TITLE}</ModalTitle>
       {isLoaded && !loadError ? (
         <>

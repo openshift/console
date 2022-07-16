@@ -59,7 +59,7 @@ const SinkPubsubModal: React.FC<Props> = ({
   const dirty = values?.ref?.name !== initialValues.ref.name;
 
   return (
-    <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
+    <form className="modal-content" onSubmit={handleSubmit}>
       <ModalTitle>{labelTitle}</ModalTitle>
       <ModalBody>
         <p>

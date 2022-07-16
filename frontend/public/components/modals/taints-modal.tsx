@@ -65,11 +65,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
   const { errorMessage } = props;
 
   return (
-    <form
-      onSubmit={submit}
-      name="form"
-      className="modal-content modal-content--accommodate-dropdown taint-modal"
-    >
+    <form onSubmit={submit} name="form" className="modal-content taint-modal">
       <ModalTitle>{t('public~Edit taints')}</ModalTitle>
       <ModalBody>
         {_.isEmpty(taints) ? (

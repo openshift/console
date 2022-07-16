@@ -118,7 +118,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
 
   return (
     <Form onSubmit={submit}>
-      <div className="modal-content modal-content--no-inner-scroll">
+      <div className="modal-content">
         <ModalTitle>{t('console-app~Clone')}</ModalTitle>
         <ModalBody>
           <FormGroup

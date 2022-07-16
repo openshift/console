@@ -101,7 +101,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
   const MODAL_TITLE = t('ceph-storage-plugin~Delete BlockPool');
 
   return (
-    <div className="modal-content modal-content--no-inner-scroll">
+    <div className="modal-content">
       <ModalTitle close={close}>
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> {MODAL_TITLE}
       </ModalTitle>

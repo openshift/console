@@ -52,7 +52,7 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     const updateURL = getDocumentationURL(documentationURLs.updateService);
 
     return (
-      <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+      <form onSubmit={submit} name="form" className="modal-content">
         <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
         <ModalBody>
           <p>

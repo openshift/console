@@ -142,11 +142,7 @@ const CreateNamespaceModalWithTranslation = connect(
       const projectsURL = getDocumentationURL(documentationURLs.workingWithProjects);
 
       return (
-        <form
-          onSubmit={this._submit.bind(this)}
-          name="form"
-          className="modal-content modal-content--no-inner-scroll"
-        >
+        <form onSubmit={this._submit.bind(this)} name="form" className="modal-content">
           <ModalTitle>
             {createProject ? t('public~Create Project') : t('public~Create Namespace')}
           </ModalTitle>

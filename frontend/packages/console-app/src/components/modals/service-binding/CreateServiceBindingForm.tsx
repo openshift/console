@@ -31,7 +31,7 @@ const CreateServiceBindingForm: React.FC<FormikProps<FormikValues> &
 }) => {
   const { t } = useTranslation();
   return (
-    <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={handleSubmit} className="modal-content">
       <ModalTitle>{t('console-app~Create Service Binding')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
