@@ -9,14 +9,13 @@ import {
   TriggerBindingModel,
 } from '../../models';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test-data/pipeline-data';
-import { PipelineKind } from '../../types';
+import { ComputedStatus, PipelineKind } from '../../types';
 import {
   getResources,
   augmentRunsToData,
   getTaskStatus,
   TaskStatus,
   getRunStatusColor,
-  runStatus,
   getResourceModelFromTask,
   pipelineRefExists,
   getPipelineFromPipelineRun,
@@ -88,14 +87,14 @@ describe('PipelineAugment test correct data is augmented', () => {
   });
 });
 
-describe('PipelineAugment test getRunStatusColor handles all runStatus values', () => {
+describe('PipelineAugment test getRunStatusColor handles all ComputedStatus values', () => {
   it('expect all but PipelineNotStarted to produce a non-default result', () => {
-    // Verify that we cover colour states for all the runStatus values
+    // Verify that we cover colour states for all the ComputedStatus values
     const failCase = 'PipelineNotStarted';
-    const defaultCase = getRunStatusColor(runStatus[failCase]);
-    const allOtherStatuses = Object.keys(runStatus)
-      .filter((status) => status !== failCase)
-      .map((status) => runStatus[status]);
+    const defaultCase = getRunStatusColor(ComputedStatus[failCase]);
+    const allOtherStatuses = Object.keys(ComputedStatus)
+      .filter((status) => status !== failCase && ComputedStatus[status] !== ComputedStatus.Other)
+      .map((status) => ComputedStatus[status]);
 
     expect(allOtherStatuses).not.toHaveLength(0);
     allOtherStatuses.forEach((statusValue) => {
@@ -106,7 +105,7 @@ describe('PipelineAugment test getRunStatusColor handles all runStatus values', 
   });
 
   it('expect all status colors to return visible text to show as a descriptor of the colour', () => {
-    const runStates = Object.values(runStatus);
+    const runStates = Object.values(ComputedStatus);
 
     expect(runStates).not.toHaveLength(0);
     runStates.forEach((statusValue) => {

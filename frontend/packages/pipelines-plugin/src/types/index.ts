@@ -4,3 +4,4 @@ export * from './pipelineRun';
 export * from './pipelineResource';
 export * from './task';
 export * from './taskRun';
+export * from './computedStatus';

@@ -11,7 +11,10 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel, RepositoryModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
-import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import {
+  pipelineRunFilterReducer,
+  pipelineRunTitleFilterReducer,
+} from '../../../utils/pipeline-filter-reducer';
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
@@ -77,7 +80,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj }) => {
         {loaded ? (
           <PipelineRunStatus
             status={pipelineRunFilterReducer(latestRun)}
-            title={pipelineRunFilterReducer(latestRun)}
+            title={pipelineRunTitleFilterReducer(latestRun)}
             pipelineRun={latestRun}
           />
         ) : (
