@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { render, fireEvent, screen, cleanup, waitFor, configure } from '@testing-library/react';
+import i18n from 'i18next';
 import * as _ from 'lodash';
+import { setI18n } from 'react-i18next';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { mockDeploymentConfig, mockEditDeploymentData } from '../__mocks__/edit-deployment-data';
@@ -56,7 +58,16 @@ beforeAll(() => {
   mockedContainerField.mockImplementation(mockContainerField);
 });
 
-beforeEach(() =>
+beforeEach(() => {
+  i18n.services.interpolator = {
+    init: () => undefined,
+    reset: () => undefined,
+    resetRegExp: () => undefined,
+    interpolate: (str: string) => str,
+    nest: (str: string) => str,
+  };
+  setI18n(i18n);
+
   render(
     <MockForm handleSubmit={handleSubmit}>
       {(props) => (
@@ -70,8 +81,8 @@ beforeEach(() =>
         </Provider>
       )}
     </MockForm>,
-  ),
-);
+  );
+});
 
 afterEach(() => cleanup());
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import '../import/ImportStrategySection.scss';
 
 export interface ProgressiveListItemProps {
   name: string;
@@ -9,7 +10,11 @@ const ProgressiveListItem: React.FC<ProgressiveListItemProps> = ({ children }) =
   React.useEffect(() => {
     element.current.scrollIntoView({ behavior: 'smooth' });
   }, []);
-  return <div ref={element}>{children}</div>;
+  return (
+    <div ref={element} className="odc-progressive-list-section">
+      {children}
+    </div>
+  );
 };
 
 export default ProgressiveListItem;
