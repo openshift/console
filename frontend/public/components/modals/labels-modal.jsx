@@ -13,7 +13,6 @@ const BaseLabelsModal = withHandlePromise((props) => {
   const [labels, setLabels] = React.useState(
     SelectorInput.arrayify(_.get(props.resource, props.path.split('/').slice(1))),
   );
-  const [errorMessage] = React.useState();
   const createPath = !labels.length;
   const { t } = useTranslation();
 
@@ -46,7 +45,15 @@ const BaseLabelsModal = withHandlePromise((props) => {
     props.handlePromise(promise, props.close);
   };
 
-  const { kind, resource, descriptionKey, messageKey, messageVariables, labelClassName } = props;
+  const {
+    kind,
+    resource,
+    descriptionKey,
+    messageKey,
+    messageVariables,
+    labelClassName,
+    errorMessage,
+  } = props;
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
