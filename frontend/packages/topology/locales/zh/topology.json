@@ -63,7 +63,7 @@
   "{{kindLabel}} {{label}}": "{{kindLabel}} {{label}}",
   "{{label}} sub-resources": "{{label}} 子资源",
   "unassigned": "未签名",
-  "Select an Application group to add the component <2>{resource.metadata.name}</2> to": "选择一个应用程序组将组件 <2>{resource.metadata.name}</2> 添加到",
+  "Select an Application group to add the component <2>{{resourceName}}</2> to": "选择一个应用程序组将组件 <2>{{resourceName}}</2> 添加到",
   "Save": "保存",
   "Connect <1>{{sourceLabel}}</1> to": "连接 <1>{{sourceLabel}}</1> 到",
   "Unable to move connector of type {{type}}.": "无法移动类型 {{type}} 的连接器。",

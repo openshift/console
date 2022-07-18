@@ -5,7 +5,7 @@
   "Manifest": "マニフェスト",
   "Affected Pods": "影響を受ける Pod",
   "Image name": "イメージ名",
-  "Namespace": "namespace",
+  "Namespace": "Namespace",
   "Highest severity": "最高レベルの重大度",
   "Fixable": "修正可能",
   "Total": "合計",

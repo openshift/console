@@ -1,0 +1,14 @@
+{
+  "ServiceBinding": "服务绑定",
+  "ServiceBindings": "ServiceBindings",
+  "ServiceBinding details": "服务绑定详情",
+  "Conditions": "条件",
+  "Status": "状态",
+  "Application": "应用程序",
+  "Services": "服务",
+  "Connected": "连接的",
+  "Error": "错误",
+  "Name": "名称",
+  "Namespace": "命名空间",
+  "Created": "创建"
+}

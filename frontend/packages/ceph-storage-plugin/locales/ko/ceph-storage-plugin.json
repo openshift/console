@@ -568,6 +568,7 @@
   "Create ObjectBucketClaim": "개체 버킷 클레임 만들기",
   "Edit YAML": "YAML 편집",
   "Attach to Deployment": "배포에 연결",
+  "Disabled because the ObjectBucketClaim is being deleted.": "ObjectBucketClaim이 삭제되어 있으므로 사용할 수 없습니다.",
   "Object Bucket Claim Details": "개체 버킷 클레임 세부 정보",
   "Object Bucket": "개체 버킷",
   "Namespace": "네임 스페이스",
