@@ -29,6 +29,8 @@ import * as drupalImg from '../../imgs/logos/drupal.svg';
 import * as eapImg from '../../imgs/logos/eap.svg';
 import * as elasticImg from '../../imgs/logos/elastic.svg';
 import * as erlangImg from '../../imgs/logos/erlang.svg';
+import * as eventSourceImg from '../../imgs/logos/event-source.svg';
+import * as eventSinkImg from '../../imgs/logos/event-sink.svg';
 import * as fedoraImg from '../../imgs/logos/fedora.svg';
 import * as freebsdImg from '../../imgs/logos/freebsd.svg';
 import * as gitImg from '../../imgs/logos/git.svg';
@@ -126,6 +128,8 @@ const logos = new Map<string, any>()
   .set('icon-eap', eapImg)
   .set('icon-elastic', elasticImg)
   .set('icon-erlang', erlangImg)
+  .set('icon-eventsource', eventSourceImg)
+  .set('icon-eventsink', eventSinkImg)
   .set('icon-fedora', fedoraImg)
   .set('icon-freebsd', freebsdImg)
   .set('icon-git', gitImg)

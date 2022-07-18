@@ -11,15 +11,16 @@ import {
   EVENT_SOURCE_PING_KIND,
   EVENT_SOURCE_CRONJOB_KIND,
 } from '../const';
-import * as eventSourceImg from '../imgs/event-source.svg';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.svg';
 import * as camelSourceImg from '../imgs/logos/camelsource.svg';
 import * as containerSourceImg from '../imgs/logos/containersource.svg';
 import * as cronJobSourceImg from '../imgs/logos/cronjobsource.svg';
 import * as kafkaSourceImg from '../imgs/logos/kafkasource.svg';
 import * as sinkBindingSourceImg from '../imgs/logos/sinkbindingsource.svg';
+import { TYPE_EVENT_SINK } from '../topology/const';
+import { eventSinkIconSVG, eventSourceIconSVG } from './icons';
 
-const getEventSourceIconFromKind = (kind: string): string => {
+const getEventSourceIconFromKind = (kind: string, nodeType?: string): string => {
   switch (kindForReference(kind)) {
     case EVENT_SOURCE_API_SERVER_KIND:
       return apiServerSourceImg;
@@ -35,15 +36,15 @@ const getEventSourceIconFromKind = (kind: string): string => {
     case EVENT_SOURCE_SINK_BINDING_KIND:
       return sinkBindingSourceImg;
     default:
-      return eventSourceImg;
+      return nodeType === TYPE_EVENT_SINK ? eventSinkIconSVG : eventSourceIconSVG;
   }
 };
 
-export const getEventSourceIcon = (kind: string, obj?: K8sResourceKind) => {
+export const getEventSourceIcon = (kind: string, obj?: K8sResourceKind, nodeType?: string) => {
   const objAnnotations = obj?.metadata?.annotations;
   return isValidUrl(objAnnotations?.[EVENT_SOURCE_ICON])
     ? objAnnotations?.[EVENT_SOURCE_ICON]
     : isValidUrl(objAnnotations?.[CAMEL_KAMELET_ICON])
     ? objAnnotations?.[CAMEL_KAMELET_ICON]
-    : getEventSourceIconFromKind(kind);
+    : getEventSourceIconFromKind(kind, nodeType);
 };
