@@ -115,7 +115,6 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
 }) => {
   const { t } = useTranslation();
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
-  // const singularLabel = label.replace(/s$/, '');
   return (
     <FieldSet
       defaultLabel={label}
