@@ -29,6 +29,9 @@
 
 .modal-body-content {
   height: 100%;
+  p {
+    margin-bottom: var(--pf-c-content--MarginBottom);
+  }
 }
 
 .modal-body-inner-shadow-covers {

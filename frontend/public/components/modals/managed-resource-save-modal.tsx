@@ -17,7 +17,7 @@ const ManagedResourceSaveModal: React.SFC<ManagedResourceSaveModalProps> = (prop
   const { owner, resource } = props;
   const { t } = useTranslation();
   return (
-    <form onSubmit={submit} name="form" className="modal-content ">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('public~Managed resource')}
       </ModalTitle>
