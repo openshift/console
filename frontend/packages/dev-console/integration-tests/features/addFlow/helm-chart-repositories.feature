@@ -38,14 +38,24 @@ Feature: Install the Helm Release
               And user enters Description as "test"
               And user enters URL as "https://raw.githubusercontent.com/IBM/charts/master/repo/community/index.yaml"
               And user clicks on Create button
-             Then user can see "helm-test1" under Chart Repositories in Helm Charts catalog page
+             Then user can see "helm-test1" for resource "helm-test1" and type "projecthelmchartrepository" under Chart Repositories in Helm Charts catalog page
+
+        @regression  @odc-6685
+        Scenario: Add namespaced helm chart repository with a display name: A-12-TC05
+            Given user is at Create Helm Chart Repository page
+             When user enters Chart repository name as "helm-test1"
+              And user enters Display name as "My Helm Charts"
+              And user enters Description as "test"
+              And user enters URL as "https://raw.githubusercontent.com/IBM/charts/master/repo/community/index.yaml"
+              And user clicks on Create button
+             Then user can see "My Helm Charts" for resource "helm-test1" and type "projecthelmchartrepository" under Chart Repositories in Helm Charts catalog page
 
         @regression
-        Scenario: Add cluster-scoped helm chart repository using a form: A-12-TC05
+        Scenario: Add cluster-scoped helm chart repository using a form: A-12-TC06
             Given user is at Create Helm Chart Repository page
              When user selects cluster-scoped scope type
               And user enters Chart repository name as "helm-test2"
               And user enters Description as "test"
               And user enters URL as "https://raw.githubusercontent.com/Azure-Samples/helm-charts/master/docs/index.yaml"
               And user clicks on Create button
-             Then user can see "helm-test2" under Chart Repositories in Helm Charts catalog page
+             Then user can see "helm-test2" for resource "helm-test2" and type "helmchartrepository" under Chart Repositories in Helm Charts catalog page
