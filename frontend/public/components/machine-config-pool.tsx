@@ -35,7 +35,7 @@ import { ResourceEventStream } from './events';
 const pauseAction: KebabAction = (kind, obj) => ({
   // t('public~Resume updates')
   // t('public~Pause updates')
-  labelKey: obj.spec.paused ? 'public~Resume updates' : 'public~Pause updates',
+  labelKey: obj.spec?.paused ? 'public~Resume updates' : 'public~Pause updates',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
   accessReview: {
     group: kind.apiGroup,
