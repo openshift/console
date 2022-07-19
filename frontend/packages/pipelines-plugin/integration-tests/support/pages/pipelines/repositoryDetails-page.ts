@@ -52,7 +52,7 @@ export const repositoryDetailsPage = {
     const labelArr = label.split('=');
     cy.byTestID('label-list').within(() => {
       cy.byTestID('label-key').should('contain.text', labelArr[0]);
-      cy.get('.co-m-label__value').should('contain.text', labelArr[1]);
+      cy.get('.co-label__value').should('contain.text', labelArr[1]);
     });
   },
 

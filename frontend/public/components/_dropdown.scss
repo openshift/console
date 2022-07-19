@@ -21,7 +21,7 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .dropdown__disabled {
-  color: $dropdown-link-disabled-color;
+  color: var(--pf-global--disabled-color--100);
   cursor: not-allowed;
 }
 
@@ -180,7 +180,7 @@ $dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--h
   li {
     &:not(.co-namespace-selector__divider):hover {
       background-color: var(--pf-global--BackgroundColor--200);
-      color: $dropdown-link-hover-color;
+      color: var(--pf-global--Color--100);
       position: relative;
     }
     > a {
