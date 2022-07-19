@@ -1,8 +1,8 @@
 # OpenShift Console API
 
 <%# Table of contents _%>
-<% apis.map((api) => api.name).forEach((component, index) => { _%>
-<%- index + 1 %>. [`<%- component %>`](#<%- toLowerCase(component) %>)
+<% apis.forEach((api, index) => { _%>
+<%- index + 1 %>. <%- api.doc.deprecated ? '[DEPRECATED]' : '' %> [`<%- api.name %>`](#<%- toLowerCase(api.name) %>)
 <% }); _%>
 
 <%# Generate one section per extension type _%>
@@ -11,9 +11,9 @@
 
 ## `<%- api.name %>`
 
-### Summary
+### Summary <%- api.doc.deprecated ? '[DEPRECATED]' : '' %>
 
-<%- printComments(api.doc.summary) || '(not available)' %>
+<%- printComments((api.doc.deprecated ? api.doc.deprecated : '') + api.doc.summary) || '(not available)' %>
 
 <% if(api.doc.example) { %>
 

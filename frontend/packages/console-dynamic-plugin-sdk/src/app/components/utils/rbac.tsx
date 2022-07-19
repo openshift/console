@@ -142,6 +142,7 @@ export const useAccessReview = (
 };
 
 /**
+ * @deprecated - Use useAccessReview from \@console/dynamic-plugin-sdk instead.
  * Hook that provides allowed status about user access to a given resource.
  * @param resourceAttributes resource attributes for access review
  * @param impersonate impersonation details
