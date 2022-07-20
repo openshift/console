@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { configureUpdateStrategyModal, errorModal } from '@console/internal/components/modals';
 import { togglePaused, asAccessReview } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
@@ -23,6 +24,56 @@ const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> 
     path: 'instantiate',
   };
   return k8sCreate(DeploymentConfigModel, req, opts);
+};
+
+const restartRollout = (model: K8sKind, obj: K8sResourceKind) => {
+  const patch = [];
+  if (!('annotations' in obj.spec.template.metadata)) {
+    patch.push({
+      path: '/spec/template/metadata/annotations',
+      op: 'add',
+      value: {},
+    });
+  }
+  patch.push({
+    path: '/spec/template/metadata/annotations/openshift.openshift.io~1restartedAt',
+    op: 'add',
+    value: new Date(),
+  });
+
+  return k8sPatchResource({
+    model,
+    resource: obj,
+    data: patch,
+  });
+};
+
+export const retryRollout = (model: K8sKind, obj: K8sResourceKind) => {
+  const patch = [
+    {
+      path: '/metadata/annotations/openshift.io~1deployment.phase',
+      op: 'replace',
+      value: 'New',
+    },
+    {
+      path: '/metadata/annotations/openshift.io~1deployment.cancelled',
+      op: 'add',
+      value: '',
+    },
+    {
+      path: '/metadata/annotations/openshift.io~1deployment.cancelled',
+      op: 'remove',
+    },
+    {
+      path: '/metadata/annotations/openshift.io~1deployment.status-reason',
+      op: 'remove',
+    },
+  ];
+  return k8sPatchResource({
+    model,
+    resource: obj,
+    data: patch,
+  });
 };
 
 export const DeploymentActionFactory: ResourceActionFactory = {
@@ -53,6 +104,20 @@ export const DeploymentActionFactory: ResourceActionFactory = {
       ? i18next.t('console-app~Resume rollouts')
       : i18next.t('console-app~Pause rollouts'),
     cta: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+      verb: 'patch',
+    },
+  }),
+  RestartRollout: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+    id: 'restart-rollout',
+    label: i18next.t('console-app~Restart rollout'),
+    cta: () => restartRollout(kind, obj).catch((err) => errorModal({ error: err.message })),
+    disabled: obj.spec.paused || false,
+    disabledTooltip: 'The deployment is paused and cannot be restarted.',
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,

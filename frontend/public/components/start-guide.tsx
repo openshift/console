@@ -6,15 +6,21 @@ import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 
 import { FLAGS } from '@console/shared/src/constants';
+import { useActiveNamespace } from '@console/shared';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ProjectModel } from '../models';
-import { createProjectModal } from './modals/create-namespace-modal';
+import { createProjectModal } from './modals';
+import { K8sResourceKind } from '../module/k8s/types';
 
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
   ({ canCreateProject = true, createProjectMessage }: OpenShiftGettingStartedProps) => {
     const { t } = useTranslation();
+    const [, setActiveNamespace] = useActiveNamespace();
+    const [perspective] = useActivePerspective();
+
     return (
       <>
         {canCreateProject ? (
@@ -50,7 +56,20 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
           </Trans>
         </p>
         {canCreateProject && (
-          <Button variant="link" onClick={() => createProjectModal({ blocking: true })}>
+          <Button
+            variant="link"
+            onClick={() =>
+              createProjectModal({
+                blocking: true,
+                onSubmit:
+                  perspective !== 'admin'
+                    ? (project: K8sResourceKind) => {
+                        setActiveNamespace(project.metadata?.name);
+                      }
+                    : undefined,
+              })
+            }
+          >
             {t('public~Create a new project')}
           </Button>
         )}

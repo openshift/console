@@ -94,14 +94,14 @@ import {
   UpdateHistory,
 } from '../../module/k8s';
 import {
+  documentationURLs,
   EmptyBox,
   ExternalLink,
   FieldLevelHelp,
   Firehose,
   FirehoseResource,
+  getDocumentationURL,
   HorizontalNav,
-  isUpstream,
-  openshiftHelpBase,
   PageHeading,
   ReleaseNotesLink,
   ResourceLink,
@@ -125,7 +125,12 @@ import {
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
-import { ServiceLevel, useServiceLevelTitle, ServiceLevelText } from '../utils/service-level';
+import {
+  ServiceLevel,
+  useServiceLevelTitle,
+  ServiceLevelText,
+  ServiceLevelLoading,
+} from '../utils/service-level';
 import { hasAvailableUpdates, hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
 
 const cancelUpdate = (cv: ClusterVersionKind) => {
@@ -422,15 +427,10 @@ export const CurrentVersionHeader: React.FC<CurrentVersionProps> = ({ cv }) => {
 };
 
 export const ChannelDocLink: React.FC<{}> = () => {
-  const upgradeLink = isUpstream()
-    ? `${openshiftHelpBase}updating/understanding-upgrade-channels-release.html#understanding-upgrade-channels_understanding-upgrade-channels-releases`
-    : `${openshiftHelpBase}html/updating_clusters/understanding-upgrade-channels-releases#understanding-upgrade-channels_understanding-upgrade-channels-releases`;
+  const upgradeURL = getDocumentationURL(documentationURLs.understandingUpgradeChannels);
   const { t } = useTranslation();
   return (
-    <ExternalLink
-      href={upgradeLink}
-      text={t('public~Learn more about OpenShift update channels')}
-    />
+    <ExternalLink href={upgradeURL} text={t('public~Learn more about OpenShift update channels')} />
   );
 };
 
@@ -1200,7 +1200,17 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                 </dd>
               </>
             )}
-            <ServiceLevel clusterID={clusterID}>
+            <ServiceLevel
+              clusterID={clusterID}
+              loading={
+                <>
+                  <dt>{useServiceLevelTitle()}</dt>
+                  <dd>
+                    <ServiceLevelLoading />
+                  </dd>
+                </>
+              }
+            >
               <>
                 <dt>{useServiceLevelTitle()}</dt>
                 <dd>

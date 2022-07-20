@@ -20,6 +20,20 @@ export type StatusProps = StatusComponentProps & {
   children?: React.ReactNode;
 };
 
+/**
+ * Component for displaying a status message
+ * @param {string} status - type of status to be displayed
+ * @param {string} [title] - (optional) status text
+ * @param {boolean} [iconOnly] - (optional) if true, only displays icon
+ * @param {boolean} [noTooltip] - (optional) if true, tooltip won't be displayed
+ * @param {string} [className] - (optional) additional class name for the component
+ * @param {string} [popoverTitle] - (optional) title for popover
+ * @param {ReactNode} [children] - (optional) children for the component
+ * @example
+ * ```tsx
+ * <Status status='Warning' />
+ * ```
+ */
 const Status: React.FC<StatusProps> = ({
   status,
   title,

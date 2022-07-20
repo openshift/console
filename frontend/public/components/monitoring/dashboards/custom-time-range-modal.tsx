@@ -60,7 +60,7 @@ const CustomTimeRangeModal = ({ cancel, close, activePerspective }: CustomTimeRa
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{t('public~Custom time range')}</ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">

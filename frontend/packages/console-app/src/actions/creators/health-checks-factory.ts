@@ -28,7 +28,6 @@ export const HealthChecksActionFactory: ResourceActionFactory = {
     id: 'add-health-checks',
     label: i18next.t('console-app~Add Health Checks'),
     cta: { href: healthChecksUrl(kind, obj) },
-    insertAfter: 'pause-rollout',
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,

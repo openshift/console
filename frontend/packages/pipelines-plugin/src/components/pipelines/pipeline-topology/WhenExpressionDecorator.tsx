@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { runStatus } from '../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../types';
 import { NODE_HEIGHT } from './const';
 import { getWhenExpressionDiamondState } from './utils';
 
@@ -11,7 +11,7 @@ type WhenExpressionDecoratorProps = {
   height: number;
   leftOffset?: number;
   stroke?: string;
-  status: runStatus;
+  status: ComputedStatus;
   appendLine?: boolean;
   enableTooltip?: boolean;
   isFinallyTask: boolean;

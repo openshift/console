@@ -38,7 +38,7 @@ export const AdvancedHpcsModal = withHandlePromise((props: AdvancedKMSModalProps
 
   return (
     <Form onSubmit={submit} key="advanced-ibm-kms-modal">
-      <div className="modal-content modal-content--no-inner-scroll">
+      <div className="modal-content">
         <ModalTitle>{t('ceph-storage-plugin~Key Management Service Advanced Settings')}</ModalTitle>
         <ModalBody>
           <FormGroup

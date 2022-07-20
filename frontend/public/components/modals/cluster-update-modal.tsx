@@ -3,7 +3,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Radio, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ExternalLink, isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
+import {
+  documentationURLs,
+  ExternalLink,
+  getDocumentationURL,
+} from '@console/internal/components/utils';
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
@@ -181,12 +185,10 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
       label: t('public~Supported but not recommended'),
     });
   }
-  const helpLink = isUpstream()
-    ? `${openshiftHelpBase}updating/update-using-custom-machine-config-pools.html`
-    : `${openshiftHelpBase}html/updating_clusters/update-using-custom-machine-config-pools.html`;
+  const helpURL = getDocumentationURL(documentationURLs.updateUsingCustomMachineConfigPools);
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{t('public~Update cluster')}</ModalTitle>
       <ModalBody>
         {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
@@ -312,7 +314,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                     title={t('public~You must resume updates within 60 days to avoid failures.')}
                     className="pf-u-mb-md"
                   >
-                    <ExternalLink href={helpLink}>{t('public~Learn more')}</ExternalLink>
+                    <ExternalLink href={helpURL}>{t('public~Learn more')}</ExternalLink>
                   </Alert>
                 </>
               )

@@ -38,7 +38,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
         {channelsExist ? t('public~Select channel') : t('public~Input channel')}
       </ModalTitle>

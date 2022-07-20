@@ -17,6 +17,18 @@ type BuildConfigFormEditorProps = {
   namespace: string;
 };
 
+const Footer = ({ children }) => {
+  const { t } = useTranslation();
+  return (
+    <Trans
+      t={t}
+      ns="devconsole"
+      defaults="Click on the names to access advanced options for <0></0>."
+      components={[children]}
+    />
+  );
+};
+
 const List: React.FC<BuildConfigFormEditorProps> = ({ namespace }) => {
   const { t } = useTranslation();
 
@@ -26,7 +38,11 @@ const List: React.FC<BuildConfigFormEditorProps> = ({ namespace }) => {
   };
 
   return (
-    <ProgressiveList visibleItems={visibleItems} onVisibleItemChange={handleVisibleItemChange}>
+    <ProgressiveList
+      visibleItems={visibleItems}
+      onVisibleItemChange={handleVisibleItemChange}
+      Footer={Footer}
+    >
       <ProgressiveListItem name={t('devconsole~Triggers')}>
         <TriggersSection namespace={namespace} />
       </ProgressiveListItem>
@@ -62,9 +78,7 @@ const BuildConfigFormEditor: React.FC<BuildConfigFormEditorProps> = ({ namespace
         fullWidth
       >
         <div>
-          <Trans ns="devconsole">
-            Click on the names to access advanced options for <List namespace={namespace} />.
-          </Trans>
+          <List namespace={namespace} />
         </div>
       </FormSection>
     </>

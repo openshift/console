@@ -10,7 +10,7 @@ import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId } from '../../components/pipelines/const';
 import { PipelineRunModel } from '../../models';
 import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
-import { runStatus } from '../pipeline-augment';
+import { ComputedStatus } from '../../types';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
@@ -78,7 +78,7 @@ describe('pipeline-utils ', () => {
   it('should expect getLatestPipelineRunStatus to return a non-started state if not provided with valid data', () => {
     const emptyState: LatestPipelineRunStatus = {
       latestPipelineRun: null,
-      status: runStatus.PipelineNotStarted,
+      status: ComputedStatus.PipelineNotStarted,
     };
     expect(getLatestPipelineRunStatus(null)).toEqual(emptyState);
     expect(getLatestPipelineRunStatus([])).toEqual(emptyState);
@@ -260,21 +260,21 @@ describe('pipeline-utils ', () => {
       ]);
     });
     const taskList = appendPipelineRunStatus(pipeline, pipelineRunWithoutStatus);
-    expect(taskList.filter((t) => t.status.reason === runStatus.Idle)).toHaveLength(2);
+    expect(taskList.filter((t) => t.status.reason === ComputedStatus.Idle)).toHaveLength(2);
   });
 
   it('should append pipelineRun running status for all the tasks', () => {
     const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
     const pipelineRun = pipelineRuns[DataState.IN_PROGRESS];
     const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
-    expect(taskList.filter((t) => t.status.reason === runStatus.Running)).toHaveLength(2);
+    expect(taskList.filter((t) => t.status.reason === ComputedStatus.Running)).toHaveLength(2);
   });
 
   it('should append pipelineRun pending status for all the tasks if taskruns are not present and pipelinerun status is PipelineRunPending', () => {
     const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
     const pipelineRun = pipelineRuns[DataState.PIPELINE_RUN_PENDING];
     const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
-    expect(taskList.filter((t) => t.status.reason === runStatus.Idle)).toHaveLength(
+    expect(taskList.filter((t) => t.status.reason === ComputedStatus.Idle)).toHaveLength(
       pipeline.spec.tasks.length,
     );
   });
@@ -283,7 +283,7 @@ describe('pipeline-utils ', () => {
     const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
     const pipelineRun = pipelineRuns[DataState.PIPELINE_RUN_CANCELLED];
     const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
-    expect(taskList.filter((t) => t.status.reason === runStatus.Cancelled)).toHaveLength(
+    expect(taskList.filter((t) => t.status.reason === ComputedStatus.Cancelled)).toHaveLength(
       pipeline.spec.tasks.length,
     );
   });

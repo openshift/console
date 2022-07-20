@@ -54,7 +54,7 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
   const eventSourceRowFilters = React.useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
-        filterGroupName: 'Type',
+        filterGroupName: t('knative-plugin~Type'),
         type: 'event-source-type',
         items: sourcesModel.map(({ id, label }) => ({ id, title: label })),
         reducer: getModelId,
@@ -62,7 +62,7 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
           !filter.selected?.length || filter.selected?.includes(getModelId(obj)),
       },
     ],
-    [sourcesModel, getModelId],
+    [t, sourcesModel, getModelId],
   );
   return (
     <MultiListPage

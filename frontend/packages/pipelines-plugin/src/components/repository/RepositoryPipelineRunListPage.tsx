@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
@@ -11,18 +12,21 @@ export interface RepositoryPipelineRunListPageProps {
   obj: RepositoryKind;
 }
 
-const RepositoryPipelineRunListPage: React.FC<RepositoryPipelineRunListPageProps> = ({ obj }) => (
-  <ListPage
-    showTitle={false}
-    canCreate={false}
-    kind={referenceForModel(PipelineRunModel)}
-    namespace={obj.metadata.namespace}
-    selector={{
-      matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: obj.metadata.name },
-    }}
-    ListComponent={RunList}
-    rowFilters={runFilters}
-  />
-);
+const RepositoryPipelineRunListPage: React.FC<RepositoryPipelineRunListPageProps> = ({ obj }) => {
+  const { t } = useTranslation();
+  return (
+    <ListPage
+      showTitle={false}
+      canCreate={false}
+      kind={referenceForModel(PipelineRunModel)}
+      namespace={obj.metadata.namespace}
+      selector={{
+        matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: obj.metadata.name },
+      }}
+      ListComponent={RunList}
+      rowFilters={runFilters(t)}
+    />
+  );
+};
 
 export default RepositoryPipelineRunListPage;

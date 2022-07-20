@@ -10,6 +10,18 @@ type AdvancedSectionProps = {
   resourceType: string;
 };
 
+const Footer = ({ children }) => {
+  const { t } = useTranslation();
+  return (
+    <Trans
+      t={t}
+      ns="devconsole"
+      defaults="Click on the names to access advanced options for <0></0>."
+      components={[children]}
+    />
+  );
+};
+
 const List: React.FC<AdvancedSectionProps> = ({ resourceType }) => {
   const { t } = useTranslation();
   const [visibleItems, setVisibleItems] = React.useState<string[]>([]);
@@ -18,7 +30,11 @@ const List: React.FC<AdvancedSectionProps> = ({ resourceType }) => {
   };
 
   return (
-    <ProgressiveList visibleItems={visibleItems} onVisibleItemChange={handleVisibleItemChange}>
+    <ProgressiveList
+      visibleItems={visibleItems}
+      onVisibleItemChange={handleVisibleItemChange}
+      Footer={Footer}
+    >
       <ProgressiveListItem name={t('devconsole~Pause rollouts')}>
         <PauseRolloutsSection name="formData.paused" resourceType={resourceType} />
       </ProgressiveListItem>
@@ -38,10 +54,8 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ resourceType }) => {
       dataTest="advanced-options-section"
       fullWidth
     >
-      <div>
-        <Trans ns="devconsole">
-          Click on the names to access advanced options for <List resourceType={resourceType} />.
-        </Trans>
+      <div data-test="edit-deployment-testid">
+        <List resourceType={resourceType} />
       </div>
     </FormSection>
   );

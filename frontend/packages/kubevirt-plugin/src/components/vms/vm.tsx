@@ -446,7 +446,7 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       createButtonText={t('kubevirt-plugin~Create virtual machine')}
       title={VirtualMachineModel.labelPlural}
       showTitle={showTitle}
-      rowFilters={[vmStatusFilter]}
+      rowFilters={[vmStatusFilter(t)]}
       ListComponent={VMList}
       resources={resources}
       flatten={flatten}

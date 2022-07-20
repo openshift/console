@@ -144,7 +144,7 @@ export class SelectorInput extends React.Component {
     };
 
     return (
-      <div className="co-search-input pf-c-form-control">
+      <div className="pf-c-form-control">
         <tags-input>
           <TagsInput
             ref={this.setRef}

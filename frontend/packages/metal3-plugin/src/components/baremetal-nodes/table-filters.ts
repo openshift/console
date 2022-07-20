@@ -33,7 +33,7 @@ export const getBareMetalNodeFilterStatus = (bundle: BareMetalNodeListBundle): s
     : _.findKey(statesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 
 export const bareMetalNodeStatusFilter = (t: TFunction): RowFilter<BareMetalNodeListBundle> => ({
-  filterGroupName: 'Status',
+  filterGroupName: t('metal3-plugin~Status'),
   type: 'bare-metal-node-status',
   reducer: getBareMetalNodeFilterStatus,
   items: _.map(statesToFilterMap, ({ titleKey }, id) => ({ id, title: t(titleKey) })),

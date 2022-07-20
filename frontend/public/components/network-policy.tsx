@@ -19,7 +19,7 @@ import {
   ExternalLink,
 } from './utils';
 import { NetworkPolicyModel } from '../models';
-import { getNetworkPolicyDocLink } from './utils/documentation';
+import { getNetworkPolicyDocURL } from './utils/documentation';
 import {
   NetworkPolicyKind,
   NetworkPolicyPort,
@@ -317,7 +317,7 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
               will reject all traffic not explicitly allowed via a NetworkPolicy. See more details
               in:{' '}
               <ExternalLink
-                href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+                href={getNetworkPolicyDocURL(flags[FLAGS.OPENSHIFT])}
                 text={t('public~NetworkPolicies documentation')}
               />
               .
@@ -357,7 +357,7 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
               SDN cluster network provider, egress network policy is not supported. See more details
               in:{' '}
               <ExternalLink
-                href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+                href={getNetworkPolicyDocURL(flags[FLAGS.OPENSHIFT])}
                 text={t('public~NetworkPolicies documentation')}
               />
               .

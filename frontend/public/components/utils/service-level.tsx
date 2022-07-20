@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Skeleton, Label } from '@patternfly/react-core';
+import { Alert, Label, Skeleton } from '@patternfly/react-core';
 import { NotificationEntry, NotificationTypes } from '@console/patternfly';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -201,10 +201,16 @@ const useGetServiceLevel = (
   };
 };
 
-export const ServiceLevel: React.FC<{ clusterID: string; children: React.ReactNode }> = ({
-  clusterID,
-  children,
-}) => {
+export const ServiceLevelLoading: React.FC = () => {
+  const { t } = useTranslation();
+  return <Skeleton screenreaderText={t('public~Loading')} />;
+};
+
+export const ServiceLevel: React.FC<{
+  clusterID: string;
+  loading: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ clusterID, loading, children }) => {
   const { hasSecretAccess, loadingSecret, loadingServiceLevel } = useGetServiceLevel(clusterID);
 
   if (!showServiceLevel(clusterID)) {
@@ -214,7 +220,7 @@ export const ServiceLevel: React.FC<{ clusterID: string; children: React.ReactNo
     return null;
   }
   if (!loadingSecret && loadingServiceLevel) {
-    return <Skeleton />;
+    return <>{loading}</>;
   }
 
   return <>{children}</>;

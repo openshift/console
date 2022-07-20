@@ -74,7 +74,7 @@
   "Run Policy": "运行策略",
   "Hooks": "Hook",
   "Advanced options": "高级选项",
-  "Click on the names to access advanced options for <1></1>.": "点名称访问<1></1>的高级选项。",
+  "Click on the names to access advanced options for <0></0>.": "点名称访问<0></0>的高级选项。",
   "Create BuildConfig": "创建构建配置",
   "Edit BuildConfig": "编辑构建配置",
   "Build Configs": "构建配置",

@@ -9,13 +9,18 @@ import {
   ModalTitle,
   createModalLauncher,
 } from '../factory/modal';
-import { ExternalLink, HandlePromiseProps, withHandlePromise } from '../utils';
+import {
+  documentationURLs,
+  ExternalLink,
+  getDocumentationURL,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '../utils';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { RadioInput } from '../radio';
 import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
 import { TextInput } from '@patternfly/react-core';
-import { isUpstream, openshiftHelpBase } from '@console/internal/components/utils';
 
 export const ConfigureClusterUpstreamModal = withHandlePromise(
   (props: ConfigureClusterUpstreamModalProps) => {
@@ -44,12 +49,10 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     };
     const { t } = useTranslation();
 
-    const updateLink = isUpstream()
-      ? `${openshiftHelpBase}updating/installing-update-service.html`
-      : `${openshiftHelpBase}html/updating_clusters/installing-update-service`;
+    const updateURL = getDocumentationURL(documentationURLs.updateService);
 
     return (
-      <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
+      <form onSubmit={submit} name="form" className="modal-content">
         <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
         <ModalBody>
           <p>
@@ -59,7 +62,7 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
           </p>
           <p>
             <ExternalLink
-              href={updateLink}
+              href={updateURL}
               text={t('public~Learn more about OpenShift local update services.')}
             />
           </p>

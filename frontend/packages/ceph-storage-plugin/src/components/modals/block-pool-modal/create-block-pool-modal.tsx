@@ -107,7 +107,7 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
   };
 
   return (
-    <div className="modal-content modal-content--no-inner-scroll">
+    <div className="modal-content">
       <ModalTitle>{MODAL_TITLE}</ModalTitle>
       <ModalBody>
         <p>{MODAL_DESC}</p>

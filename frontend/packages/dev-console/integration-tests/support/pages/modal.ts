@@ -8,7 +8,7 @@ export const editLabels = {
       .type(labelName)
       .type('{enter}'),
   numberOfLabels: () => {
-    return cy.get('tags-input span.tag-item__content');
+    return cy.get('tags-input span.tag-item-content');
   },
   removeLabel: (labelName: string) => {
     cy.get('tags-input span.tag-item')

@@ -45,7 +45,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
   const isValid = values.resourceName === resourceName;
   const submitLabel = actionLabel || t(actionLabelKey);
   return (
-    <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
+    <form onSubmit={handleSubmit} className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> {submitLabel} {resourceType}?
       </ModalTitle>

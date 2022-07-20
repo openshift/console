@@ -237,7 +237,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       {/** Modal is spanning across entire screen (for small screen sizes)
        * Wrapped components inside a <div> to fix it.
        */}
-      <div className="modal-content modal-content--no-inner-scroll">
+      <div className="modal-content">
         <ModalTitle>{t('ceph-storage-plugin~Add Capacity')}</ModalTitle>
         <ModalBody>
           <Trans t={t} ns="ceph-storage-plugin" values={{ name }}>

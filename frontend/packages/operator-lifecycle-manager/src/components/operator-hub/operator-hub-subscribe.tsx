@@ -6,15 +6,15 @@ import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
+  documentationURLs,
   Dropdown,
   ExternalLink,
   FieldLevelHelp,
   Firehose,
+  getDocumentationURL,
   history,
-  isUpstream,
   MsgBox,
   NsDropdown,
-  openshiftHelpBase,
   PageHeading,
   ResourceIcon,
   ResourceName,
@@ -513,9 +513,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const showMonitoringCheckbox =
     operatorRequestsMonitoring && _.startsWith(selectedTargetNamespace, 'openshift-');
 
-  const monitoringLink = isUpstream()
-    ? `${openshiftHelpBase}monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`
-    : `${openshiftHelpBase}html/monitoring/configuring-the-monitoring-stack#maintenance-and-support_configuring-the-monitoring-stack`;
+  const monitoringURL = getDocumentationURL(documentationURLs.configuringMonitoring);
 
   const suggestedNamespaceDetails = showSuggestedNamespaceDetails && (
     <>
@@ -560,7 +558,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat
                 operators can lead to malicious metrics data overriding existing cluster metrics.
                 For more information, see the{' '}
-                <ExternalLink href={monitoringLink}>cluster monitoring documentation</ExternalLink>.
+                <ExternalLink href={monitoringURL}>cluster monitoring documentation</ExternalLink>.
               </Trans>
             </Alert>
           )}

@@ -128,12 +128,13 @@ const VolumeSnapshotContentTable: React.FC = (props) => {
 };
 
 const VolumeSnapshotContentPage: React.FC = (props) => {
+  const { t } = useTranslation();
   return (
     <ListPage
       {...props}
       kind={referenceForModel(VolumeSnapshotContentModel)}
       ListComponent={VolumeSnapshotContentTable}
-      rowFilters={snapshotStatusFilters}
+      rowFilters={snapshotStatusFilters(t)}
       canCreate
     />
   );

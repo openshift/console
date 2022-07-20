@@ -8,6 +8,7 @@ import {
   GettingStartedCard,
   GettingStartedLink,
 } from '@console/shared/src/components/getting-started';
+import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils';
 
 export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
@@ -31,7 +32,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const moreLink: GettingStartedLink = {
     id: 'whats-new',
     title: t("public~See what's new in OpenShift {{version}}", { version }),
-    href: 'https://www.openshift.com/learn/whats-new',
+    href: DOC_URL_OPENSHIFT_WHATS_NEW,
     external: true,
   };
 

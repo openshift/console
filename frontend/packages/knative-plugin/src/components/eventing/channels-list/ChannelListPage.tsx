@@ -43,7 +43,7 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
   const channelRowFilter = React.useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
-        filterGroupName: 'Type',
+        filterGroupName: t('knative-plugin~Type'),
         type: 'event-source-type',
         items: eventSourceChannels.map(({ id, label }) => ({ id, title: label })),
         reducer: getModelId,
@@ -51,7 +51,7 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
           !filter.selected?.length || filter.selected?.includes(getModelId(obj)),
       },
     ],
-    [eventSourceChannels, getModelId],
+    [eventSourceChannels, getModelId, t],
   );
   return (
     <MultiListPage

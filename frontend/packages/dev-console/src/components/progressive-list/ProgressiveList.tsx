@@ -5,12 +5,14 @@ import ProgressiveListItem from './ProgressiveListItem';
 type ProgressiveListProps = {
   visibleItems: string[];
   onVisibleItemChange: (item: string) => void;
+  Footer: (children) => React.ReactElement;
 };
 
 const ProgressiveList: React.FC<ProgressiveListProps> = ({
   visibleItems,
   children,
   onVisibleItemChange,
+  Footer,
 }) => {
   const items: string[] = [];
   const validChildren: React.ReactNode[] = React.Children.toArray(children).filter(
@@ -29,7 +31,7 @@ const ProgressiveList: React.FC<ProgressiveListProps> = ({
           {validChildren.find(({ props }: React.ReactElement) => item === props.name)}
         </React.Fragment>
       ))}
-      <ProgressiveListFooter items={items} onShowItem={onVisibleItemChange} />
+      <ProgressiveListFooter Footer={Footer} items={items} onShowItem={onVisibleItemChange} />
     </>
   );
 };

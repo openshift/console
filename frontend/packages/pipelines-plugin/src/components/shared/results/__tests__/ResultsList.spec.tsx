@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EmptyState } from '@patternfly/react-core';
 import { TableComposable } from '@patternfly/react-table';
 import { ShallowWrapper, shallow } from 'enzyme';
-import { runStatus } from '../../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../../types';
 import { taskRunWithResults } from '../../../taskruns/__tests__/taskrun-test-data';
 import ResultsList, { ResultsListProps } from '../ResultsList';
 
@@ -12,7 +12,7 @@ describe('ResultsList', () => {
 
   beforeEach(() => {
     resultsListProps = {
-      status: runStatus.Succeeded,
+      status: ComputedStatus.Succeeded,
       resourceName: 'TaskRun',
       results: taskRunWithResults.status.taskResults,
     };
@@ -25,7 +25,7 @@ describe('ResultsList', () => {
   });
   it('Should render an EmptyState instead', () => {
     resultsListProps = {
-      status: runStatus.Failed,
+      status: ComputedStatus.Failed,
       resourceName: 'TaskRun',
       results: taskRunWithResults.status.taskResults,
     };

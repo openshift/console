@@ -7,11 +7,11 @@ import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import {
   ContainerDropdown,
+  documentationURLs,
+  getDocumentationURL,
   history,
-  isUpstream,
   PageHeading,
   ResourceLink,
-  openshiftHelpBase,
 } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
@@ -60,9 +60,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   const resourceKind = modelFor(kindForCRDResource).crd ? kindForCRDResource : kind;
   const isFormClean = _.every(values.healthChecks, { modified: false });
 
-  const healthLink = isUpstream()
-    ? `${openshiftHelpBase}applications/application-health.html`
-    : `${openshiftHelpBase}html/building_applications/application-health`;
+  const healthURL = getDocumentationURL(documentationURLs.applicationHealth);
 
   const handleSelectContainer = (containerName: string) => {
     const containerIndex = _.findIndex(resource.spec.template.spec.containers, [
@@ -86,7 +84,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
         title={
           <>
             {pageTitle}
-            <Button variant="link" component="a" href={healthLink} target="_blank">
+            <Button variant="link" component="a" href={healthURL} target="_blank">
               {t('devconsole~Learn more')} <ExternalLinkAltIcon />
             </Button>
           </>

@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Radio } from '@patternfly/react-core';
 import { mount, ReactWrapper } from 'enzyme';
+import i18n from 'i18next';
 import { act } from 'react-dom/test-utils';
+import { setI18n } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { PageHeading, ButtonBar } from '@console/internal/components/utils/';
 import store from '@console/internal/redux';
@@ -36,6 +38,15 @@ describe('DeployImage Page Test', () => {
   let deployImagePageProps: DeployImagePageProps;
   let deployImagePageWrapper: ReactWrapper;
   beforeEach(() => {
+    i18n.services.interpolator = {
+      init: () => undefined,
+      reset: () => undefined,
+      resetRegExp: () => undefined,
+      interpolate: (str: string) => str,
+      nest: (str: string) => str,
+    };
+    setI18n(i18n);
+
     deployImagePageProps = {
       history: null,
       location: {
@@ -71,6 +82,15 @@ describe('Deploy Image Test', () => {
   let deployImageProps: DeployImageProps;
   let deployImageWrapper: ReactWrapper;
   beforeEach(async () => {
+    i18n.services.interpolator = {
+      init: () => undefined,
+      reset: () => undefined,
+      resetRegExp: () => undefined,
+      interpolate: (str: string) => str,
+      nest: (str: string) => str,
+    };
+    setI18n(i18n);
+
     deployImageProps = {
       projects: {
         data: [],

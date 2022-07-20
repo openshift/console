@@ -17,7 +17,7 @@ import { confirmModal } from '@console/internal/components/modals/confirm-modal'
 import {
   ButtonBar,
   ExternalLink,
-  getNetworkPolicyDocLink,
+  getNetworkPolicyDocURL,
   history,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
@@ -220,7 +220,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
               <p>
                 {t('console-app~More information:')}&nbsp;
                 <ExternalLink
-                  href={getNetworkPolicyDocLink(isOpenShift)}
+                  href={getNetworkPolicyDocURL(isOpenShift)}
                   text={t('console-app~NetworkPolicies documentation')}
                 />
               </p>

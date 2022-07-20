@@ -32,27 +32,28 @@ import {
   Flatten,
 } from '@console/internal/components/factory';
 import {
-  Kebab,
-  MsgBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  Timestamp,
-  SectionHeading,
-  ResourceSummary,
-  ScrollToTopOnMount,
   AsyncComponent,
+  DOC_URL_OPERATORFRAMEWORK_SDK,
+  documentationURLs,
   ExternalLink,
   FirehoseResult,
-  StatusBox,
-  RequireCreatePermission,
-  resourcePathFromModel,
-  KebabOption,
-  resourceObjPath,
+  getDocumentationURL,
+  Kebab,
   KebabAction,
-  isUpstream,
-  openshiftHelpBase,
+  KebabOption,
+  MsgBox,
+  navFactory,
   Page,
+  RequireCreatePermission,
+  ResourceKebab,
+  ResourceLink,
+  resourceObjPath,
+  resourcePathFromModel,
+  ResourceSummary,
+  ScrollToTopOnMount,
+  SectionHeading,
+  StatusBox,
+  Timestamp,
 } from '@console/internal/components/utils';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -726,16 +727,14 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
   const { t } = useTranslation();
   const title = t('olm~Installed Operators');
-  const olmLink = isUpstream()
-    ? `${openshiftHelpBase}operators/understanding/olm-what-operators-are.html`
-    : `${openshiftHelpBase}html/operators/understanding-operators#olm-what-operators-are`;
+  const olmURL = getDocumentationURL(documentationURLs.operators);
   const helpText = (
     <Trans ns="olm">
       Installed Operators are represented by ClusterServiceVersions within this Namespace. For more
       information, see the{' '}
-      <ExternalLink href={olmLink}>Understanding Operators documentation</ExternalLink>. Or create
-      an Operator and ClusterServiceVersion using the{' '}
-      <ExternalLink href="https://sdk.operatorframework.io/">Operator SDK</ExternalLink>.
+      <ExternalLink href={olmURL}>Understanding Operators documentation</ExternalLink>. Or create an
+      Operator and ClusterServiceVersion using the{' '}
+      <ExternalLink href={DOC_URL_OPERATORFRAMEWORK_SDK}>Operator SDK</ExternalLink>.
     </Trans>
   );
 

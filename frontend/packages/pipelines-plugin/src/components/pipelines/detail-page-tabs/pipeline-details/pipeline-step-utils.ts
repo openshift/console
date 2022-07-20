@@ -1,4 +1,4 @@
-import { runStatus } from '../../../../utils/pipeline-augment';
+import { ComputedStatus } from '../../../../types';
 import { calculateDuration } from '../../../../utils/pipeline-utils';
 
 enum TerminatedReasons {
@@ -17,7 +17,7 @@ export type TaskStatusStep = {
 };
 
 export type TaskStatus = {
-  reason: runStatus;
+  reason: ComputedStatus;
   duration?: string;
   steps?: TaskStatusStep[];
 };
@@ -48,32 +48,32 @@ const getMatchingStepDuration = (matchingStep?: TaskStatusStep) => {
 export type StepStatus = {
   duration: string | null;
   name: string;
-  runStatus: runStatus;
+  status: ComputedStatus;
 };
 
 export const createStepStatus = (step: { name: string }, status: TaskStatus): StepStatus => {
-  let stepRunStatus: runStatus = runStatus.PipelineNotStarted;
+  let stepRunStatus: ComputedStatus = ComputedStatus.PipelineNotStarted;
   let duration: string = null;
 
   if (!status || !status.reason) {
-    stepRunStatus = runStatus.Cancelled;
-  } else if (status.reason === runStatus['In Progress']) {
+    stepRunStatus = ComputedStatus.Cancelled;
+  } else if (status.reason === ComputedStatus['In Progress']) {
     // In progress, try to get granular statuses
     const matchingStep: TaskStatusStep = getMatchingStep(step, status);
 
     if (!matchingStep) {
-      stepRunStatus = runStatus.Pending;
+      stepRunStatus = ComputedStatus.Pending;
     } else if (matchingStep.terminated) {
       stepRunStatus =
         matchingStep.terminated.reason === TerminatedReasons.Completed
-          ? runStatus.Succeeded
-          : runStatus.Failed;
+          ? ComputedStatus.Succeeded
+          : ComputedStatus.Failed;
       duration = getMatchingStepDuration(matchingStep);
     } else if (matchingStep.running) {
-      stepRunStatus = runStatus['In Progress'];
+      stepRunStatus = ComputedStatus['In Progress'];
       duration = getMatchingStepDuration(matchingStep);
     } else if (matchingStep.waiting) {
-      stepRunStatus = runStatus.Pending;
+      stepRunStatus = ComputedStatus.Pending;
     }
   } else {
     // Not in progress, just use the run status reason
@@ -85,6 +85,6 @@ export const createStepStatus = (step: { name: string }, status: TaskStatus): St
   return {
     duration,
     name: step.name,
-    runStatus: stepRunStatus,
+    status: stepRunStatus,
   };
 };
