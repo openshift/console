@@ -610,6 +610,16 @@ export type SelfSubjectAccessReviewKind = {
   };
 };
 
+export type YAMLEditorProps = {
+  value?: string;
+  options?: object;
+  minHeight?: string | number;
+  showShortcuts?: boolean;
+  toolbarLinks?: React.ReactNodeArray;
+  onChange?: (newValue, event) => {};
+  onSave?: () => {};
+};
+
 export type ResourceYAMLEditorProps = {
   initialResource: string | { [key: string]: any };
   header?: string;
