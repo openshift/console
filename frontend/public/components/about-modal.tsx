@@ -36,6 +36,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
   }, [t]);
   const clusterVersion = useClusterVersion();
   const canUpgrade = useCanClusterUpgrade();
+  const serviceLevelTitle = useServiceLevelTitle();
 
   const clusterID = getClusterID(clusterVersion);
   const channel: string = clusterVersion?.spec?.channel;
@@ -97,7 +98,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
             clusterID={clusterID}
             loading={
               <>
-                <TextListItem component="dt">{useServiceLevelTitle()}</TextListItem>
+                <TextListItem component="dt">{serviceLevelTitle}</TextListItem>
                 <TextListItem component="dd">
                   <ServiceLevelLoading />
                 </TextListItem>
@@ -105,7 +106,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
             }
           >
             <>
-              <TextListItem component="dt">{useServiceLevelTitle()}</TextListItem>
+              <TextListItem component="dt">{serviceLevelTitle}</TextListItem>
               <TextListItem component="dd" className="co-select-to-copy">
                 <ServiceLevelText inline clusterID={clusterID} />
               </TextListItem>

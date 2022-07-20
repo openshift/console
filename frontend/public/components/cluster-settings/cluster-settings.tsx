@@ -1076,10 +1076,14 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   const imageParts = desiredImage.split('@');
   const releaseNotes = showReleaseNotes();
   const status = getClusterUpdateStatus(cv);
+
+  const { t } = useTranslation();
   const canUpgrade = useCanClusterUpgrade();
   const [machineConfigPools] = useK8sWatchResource<MachineConfigPoolKind[]>(
     MachineConfigPoolsResource,
   );
+  const serviceLevelTitle = useServiceLevelTitle();
+
   const desiredVersion = getDesiredClusterVersion(cv);
   const updateStartedTime = getStartedTimeForCVDesiredVersion(cv, desiredVersion);
   const workerMachineConfigPool = getMCPByName(machineConfigPools, NodeTypes.worker);
@@ -1092,7 +1096,6 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
       .then(() => removeQueryArgument('showChannels'))
       .catch(_.noop);
   }
-  const { t } = useTranslation();
 
   return (
     <>
@@ -1204,7 +1207,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               clusterID={clusterID}
               loading={
                 <>
-                  <dt>{useServiceLevelTitle()}</dt>
+                  <dt>{serviceLevelTitle}</dt>
                   <dd>
                     <ServiceLevelLoading />
                   </dd>
@@ -1212,7 +1215,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               }
             >
               <>
-                <dt>{useServiceLevelTitle()}</dt>
+                <dt>{serviceLevelTitle}</dt>
                 <dd>
                   <ServiceLevelText clusterID={clusterID} />
                 </dd>
