@@ -120,7 +120,8 @@ describe('Using OLM descriptor components', () => {
     cy.visit(
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
     );
-    cy.byTestID('item-create').click();
+    // TODO figure out why this element is detaching
+    cy.byTestID('item-create').click({ force: true });
     cy.byLegacyTestID('resource-title').should('have.text', 'Create App');
   });
 
@@ -181,7 +182,8 @@ describe('Using OLM descriptor components', () => {
 
   it('successfully creates operand using form', () => {
     cy.byTestID('create-dynamic-form').click();
-    cy.byTestOperandLink('olm-descriptors-test').click();
+    // TODO figure out why this element is detaching
+    cy.byTestOperandLink('olm-descriptors-test').click({ force: true });
     cy.get('.co-operand-details__section--info').should('exist');
   });
 });
