@@ -17,20 +17,45 @@ export const a11yTestResults: a11yTestResultsType = {
 };
 
 Cypress.Commands.add('logA11yViolations', (violations: Result[], target: string) => {
-  // pluck specific keys to keep the table readable
-  const violationData = violations.map(({ id, impact, description, nodes }) => ({
-    id,
-    impact,
-    description,
-    nodes: nodes.length,
-  }));
   a11yTestResults.numberViolations += violations.length;
+
   cy.task(
     'log',
     `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${
       violations.length === 1 ? 'was' : 'were'
     } detected ${target ? `for ${target}` : ''}`,
   );
+
+  // include violations in this log message
+  violations.forEach((violation, index) => {
+    cy.task(
+      'log',
+      `- ${index + 1}. ${violation.impact} ${violation.id}\n  ${violation.description.replace(
+        '\n',
+        '\n  ',
+      )}\n  ${violation.help.replace(/\n/g, '\n  ')}\n  ${
+        violation.helpUrl
+      }\n  Tags: ${violation.tags.join(', ')}\n  ${
+        violation.nodes.length === 1 ? 'Node' : 'Nodes:'
+      }:`,
+    );
+    violation.nodes.forEach((node) => {
+      cy.task(
+        'log',
+        `  - ${node.failureSummary.replace(/\n/g, '\n    ')}\n    HTML: ${node.html}${
+          node.target ? `\n    Target: ${node.target.join(' ')}` : ''
+        }${node.xpath ? `\n    XPath: ${node.xpath.join(' ')}` : ''}`,
+      );
+    });
+  });
+
+  // pluck specific keys to keep the table readable
+  const violationData = violations.map(({ id, impact, description, nodes }) => ({
+    impact,
+    id,
+    description,
+    nodes: nodes.length,
+  }));
   cy.task('logTable', violationData);
 });
 
