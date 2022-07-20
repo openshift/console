@@ -595,7 +595,7 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
 
   const [staticData, filteredData, onFilterChange] = useListPageFilter(resources);
 
-  return inFlight ? null : (
+  return !model && inFlight ? null : (
     <ModelStatusBox groupVersionKind={apiGroupVersionKind}>
       <ListPageHeader title={showTitle ? `${label}s` : undefined}>
         {managesAllNamespaces && (
