@@ -19,7 +19,7 @@ import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import { AlertmanagerModel, VolumeSnapshotModel } from '../models';
+import { AlertmanagerModel, CronJobModel, VolumeSnapshotModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
 
@@ -316,6 +316,12 @@ const AppContents: React.FC<{}> = () => {
             }`}
           />
         )}
+      />
+
+      <Redirect
+        exact
+        from="/k8s/ns/:ns/batch~v1beta1~CronJob/:name"
+        to={`/k8s/ns/:ns/${CronJobModel.plural}/:name`}
       />
 
       <LazyRoute
