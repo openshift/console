@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import '@patternfly/patternfly/patternfly-addons.css';
 import { useTranslation } from 'react-i18next';
 import { Table, TableData, RowFunctionArgs } from '../factory';
 import {

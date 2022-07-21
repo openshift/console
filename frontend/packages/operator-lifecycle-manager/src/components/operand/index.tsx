@@ -522,7 +522,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
     <>
       <ListPageHeader title={showTitle ? t('olm~All Instances') : undefined}>
         {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value">
+          <div className="co-operator-details__toggle-value pf-u-ml-xl-on-md">
             <ShowOperandsInAllNamespacesRadioGroup />
           </div>
         )}
@@ -599,7 +599,7 @@ export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
     <ModelStatusBox groupVersionKind={apiGroupVersionKind}>
       <ListPageHeader title={showTitle ? `${label}s` : undefined}>
         {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value">
+          <div className="co-operator-details__toggle-value pf-u-ml-xl-on-md">
             <ShowOperandsInAllNamespacesRadioGroup />
           </div>
         )}
