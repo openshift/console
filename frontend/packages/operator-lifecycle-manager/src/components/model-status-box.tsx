@@ -10,17 +10,22 @@ type ModelStatusBoxProps = {
 
 const ModelStatusBox: React.FC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
   const { t } = useTranslation();
-  const [model] = useK8sModel(groupVersionKind);
-  return model ? (
-    <>{children}</>
-  ) : (
-    <ErrorPage404
-      message={t(
-        "olm~The server doesn't have a resource type {{kind}}. Try refreshing the page if it was recently added.",
-        { kind: kindForReference(groupVersionKind) },
-      )}
-    />
-  );
+  const [model, inFlight] = useK8sModel(groupVersionKind);
+
+  if (!model && inFlight) {
+    return null;
+  }
+  if (!model) {
+    return (
+      <ErrorPage404
+        message={t(
+          "olm~The server doesn't have a resource type {{kind}}. Try refreshing the page if it was recently added.",
+          { kind: kindForReference(groupVersionKind) },
+        )}
+      />
+    );
+  }
+  return <>{children}</>;
 };
 
 export default ModelStatusBox;
