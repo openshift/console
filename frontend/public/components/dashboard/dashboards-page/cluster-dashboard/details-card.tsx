@@ -128,6 +128,7 @@ export const DetailsCard = withDashboardResources(
       };
       fetchK8sVersion();
     }, [openshiftFlag, watchK8sResource, stopWatchK8sResource]);
+    const serviceLevelTitle = useServiceLevelTitle();
 
     const clusterID = getClusterID(clusterVersionData);
     const openShiftVersion = getOpenShiftVersion(clusterVersionData);
@@ -212,12 +213,12 @@ export const DetailsCard = withDashboardResources(
                   <ServiceLevel
                     clusterID={clusterID}
                     loading={
-                      <OverviewDetailItem title={useServiceLevelTitle()}>
+                      <OverviewDetailItem title={serviceLevelTitle}>
                         <ServiceLevelLoading />
                       </OverviewDetailItem>
                     }
                   >
-                    <OverviewDetailItem title={useServiceLevelTitle()}>
+                    <OverviewDetailItem title={serviceLevelTitle}>
                       {/* Service Level handles loading and error state */}
                       <ServiceLevelText clusterID={clusterID} />
                     </OverviewDetailItem>
