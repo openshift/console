@@ -269,7 +269,7 @@ data:
   .setIn(
     [referenceForModel(k8sModels.CronJobModel), 'default'],
     `
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: example
