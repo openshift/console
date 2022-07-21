@@ -20,6 +20,7 @@ import {
   UseUserSettings,
   QuickStartsLoaderProps,
   UseURLPoll,
+  UseLastNamespace,
 } from './internal-types';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
@@ -66,3 +67,6 @@ export const useUserSettings: UseUserSettings = require('@console/shared/src/hoo
   .useUserSettings;
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
   .useURLPoll;
+export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')
+  .useLastNamespace;
+
