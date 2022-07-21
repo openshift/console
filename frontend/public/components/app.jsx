@@ -416,6 +416,7 @@ let updateSwaggerInterval;
  * then poll swagger definitions every 5 minutes to ensure they stay up to date.
  */
 const updateSwaggerDefinitionContinual = () => {
+  console.log('here continual fetching');
   fetchSwagger().catch((e) => {
     // eslint-disable-next-line no-console
     console.error('Could not fetch OpenAPI after application start:', e);

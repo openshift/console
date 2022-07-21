@@ -19,42 +19,65 @@ const getRef = (definition: SwaggerDefinition): string => {
   return ref && re.test(ref) ? ref.replace(re, '') : null;
 };
 
-export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
+let def: SwaggerDefinitions;
+
+const changed = (newDef: SwaggerDefinitions) => {
+  if (def !== newDef) {
+    console.log('here old: ', def);
+    console.log('here new: ', newDef);
+  }
+};
+
+export const ExploreType: React.FC<ExploreTypeProps> = ({ kindObj, schema, scrollTop }) => {
   // Track the previously selected items to build breadcrumbs. Each history
   // entry contains the name, description, and path to the definition in the
   // OpenAPI document.
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
-  const { kindObj, schema } = props;
   const { t } = useTranslation();
 
   if (!kindObj && !schema) {
     return null;
   }
-  const allDefinitions: SwaggerDefinitions = kindObj
-    ? getSwaggerDefinitions()
-    : schema && { 'custom-schema': schema };
+
+  const getDefinitions = () => {
+    return kindObj ? getSwaggerDefinitions() : schema && { 'custom-schema': schema };
+  };
+
+  // if definitions were provided in props, use them
+  const allDefinitions: SwaggerDefinitions = getDefinitions();
+
+  changed(allDefinitions);
   if (!allDefinitions) {
     return null;
   }
+
   const resolvePath = (path) => {
     const reference = _.has(_.get(allDefinitions, path), '$ref')
       ? getRef(_.get(allDefinitions, path))
       : null;
     return reference ? [reference] : path;
   };
+
   const currentSelection = _.last(drilldownHistory);
   // Show the current selected property or the top-level definition for the kind.
   const currentPath = currentSelection
     ? currentSelection.path
     : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
+
   const currentDefinition: SwaggerDefinition = _.get(allDefinitions, resolvePath(currentPath));
+  if (!currentDefinition) {
+    console.log('here dont have definition');
+  }
   const currentProperties =
     _.get(currentDefinition, 'properties') || _.get(currentDefinition, 'items.properties');
 
   const description = currentDefinition
     ? currentDefinition.description
     : currentSelection.description;
-  const required = new Set(currentDefinition.required || []);
+  if (!_.has(currentDefinition, 'required')) {
+    console.log('here dont have required field in definition');
+  }
+  const required = new Set(currentDefinition?.required || []);
   const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.kind;
   const breadcrumbs = drilldownHistory.length
     ? [kindObj ? kindLabel : t('public~Schema'), ..._.map(drilldownHistory, 'name')]
@@ -68,9 +91,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   ) => {
     e.preventDefault();
     setDrilldownHistory([...drilldownHistory, { name, description: desc, path }]);
-    if (props.scrollTop) {
-      props.scrollTop();
-    }
+    scrollTop && scrollTop();
   };
 
   const breadcrumbClicked = (e: React.MouseEvent<HTMLButtonElement>, i: number) => {
@@ -80,7 +101,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 
   const getNextPath = (nextName) => {
     const nextLongPath = [...resolvePath(currentPath), 'properties', nextName];
-    const hasRef = _.has(_.get(allDefinitions, nextLongPath), ['items', '$ref']);
+    //const hasRef = _.has(_.get(allDefinitions, nextLongPath), ['items', '$ref']);
     // check if reference exists in the next definition
     const reference =
       _.has(_.get(allDefinitions, nextLongPath), '$ref') ||
